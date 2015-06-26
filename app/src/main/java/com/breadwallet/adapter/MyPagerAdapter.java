@@ -7,37 +7,37 @@ import android.support.v4.app.FragmentPagerAdapter;
 import com.breadwallet.fragments.MainFragment;
 import com.breadwallet.fragments.MainFragmentQR;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Mihail on 5/23/15.
  */
 public class MyPagerAdapter extends FragmentPagerAdapter {
-    final int PAGE_COUNT = 2;
     private MainFragment mainFragment;
     private MainFragmentQR mainFragmentQR;
+    private List<Fragment> fragments;
 
     public MyPagerAdapter(FragmentManager fragmentManager) {
         super(fragmentManager);
+
+        this.fragments = new ArrayList<>();
+        mainFragment = new MainFragment();
+        mainFragmentQR = new MainFragmentQR();
+        fragments.add(mainFragment);
+        fragments.add(mainFragmentQR);
     }
 
     // Returns total number of pages
     @Override
     public int getCount() {
-        return PAGE_COUNT;
+        return fragments.size();
     }
 
     // Returns the walletFragment to display for that page
     @Override
     public Fragment getItem(int position) {
-        switch (position) {
-            case 0:
-                mainFragment = new MainFragment();
-                return mainFragment;
-            case 1:
-                mainFragmentQR = new MainFragmentQR();
-                return mainFragmentQR;
-            default:
-                return null;
-        }
+        return fragments.get(position);
     }
 
     public MainFragment getMainFragment() {

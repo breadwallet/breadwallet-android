@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="core-1.7.2">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/app/build/intermediates/exploded-aar/me.dm7.barcodescanner/core/1.7.2/res" />
+      <root url="jar://$PROJECT_DIR$/app/build/intermediates/exploded-aar/me.dm7.barcodescanner/core/1.7.2/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.breadwallet"
-        minSdkVersion 11
+        minSdkVersion 19
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
@@ -22,5 +22,6 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:22.1.1'
+    compile 'com.andraskindler.parallaxviewpager:parallaxviewpager:0.2.0'
     compile files('libs/core.jar')
 }

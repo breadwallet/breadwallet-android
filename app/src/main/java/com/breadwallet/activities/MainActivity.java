@@ -15,8 +15,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.andraskindler.parallaxviewpager.ParallaxViewPager;
 import com.breadwallet.R;
 import com.breadwallet.adapter.MyPagerAdapter;
+import com.breadwallet.adapter.ParallaxPagerAdapter;
 import com.breadwallet.listeners.MyOnPageChangeListener;
 
 import java.util.HashMap;
@@ -31,7 +33,7 @@ public class MainActivity extends FragmentActivity {
     private ImageView pageIndicator;
     Map<String, Integer> indicatorMap;
 
-    public MainActivity(){
+    public MainActivity() {
         app = this;
     }
 
@@ -39,13 +41,20 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
+
+        viewPager = (ViewPager) findViewById(R.id.pager);
         pagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
+
+        //the parallax effect
+        final ParallaxViewPager parallaxViewPager = ((ParallaxViewPager) findViewById(R.id.parallaxviewpager));
+        parallaxViewPager.setOverlapPercentage(0.25f);
+        parallaxViewPager.setAdapter(new ParallaxPagerAdapter());
+
         viewPager.setAdapter(pagerAdapter);
         viewPager.setCurrentItem(0);
         viewPager.setOnPageChangeListener(new MyOnPageChangeListener());
         pageIndicator = (ImageView) findViewById(R.id.pagerindicator);
-        indicatorMap = new HashMap<String, Integer>();
+        indicatorMap = new HashMap<>();
         indicatorMap.put("left", R.drawable.pageindicatorleft);
         indicatorMap.put("right", R.drawable.pageindicatorright);
 
@@ -98,14 +107,15 @@ public class MainActivity extends FragmentActivity {
         }, 2000);
     }
 
-    public static MainActivity getApp(){
+    public static MainActivity getApp() {
         return app;
     }
 
-    public void setPagerIndicator(int x){
+    public void setPagerIndicator(int x) {
         String item = (x == 0) ? "left" : "right";
         Log.d(TAG, "The item is: " + item);
 
         pageIndicator.setImageResource(indicatorMap.get(item));
     }
+
 }
