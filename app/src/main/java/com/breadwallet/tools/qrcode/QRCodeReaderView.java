@@ -92,6 +92,7 @@ public class QRCodeReaderView extends SurfaceView implements SurfaceHolder.Callb
 
     @SuppressWarnings("deprecation")
     private void init() {
+        long start = System.currentTimeMillis();
         if (checkCameraHardware(getContext())) {
             mCameraManager = new CameraManager(getContext());
 
@@ -104,6 +105,7 @@ public class QRCodeReaderView extends SurfaceView implements SurfaceHolder.Callb
                 mOnQRCodeReadListener.cameraNotFound();
             }
         }
+        Log.e(TAG, "Init method Time passed: " + (System.currentTimeMillis() - start));
     }
 
 

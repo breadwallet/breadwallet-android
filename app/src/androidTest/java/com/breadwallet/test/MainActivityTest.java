@@ -5,7 +5,7 @@ import android.test.suitebuilder.annotation.SmallTest;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.activities.MainActivity;
+import com.breadwallet.presenter.activities.MainActivity;
 
 /**
  * Created by Mihail on 7/7/15.

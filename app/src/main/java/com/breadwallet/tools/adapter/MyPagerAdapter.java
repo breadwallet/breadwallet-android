@@ -14,6 +14,8 @@ import java.util.List;
 
 /**
  * Created by Mihail on 5/23/15.
+ *
+ * @author Mihail Gutan
  */
 public class MyPagerAdapter extends FragmentPagerAdapter {
     private MainFragment mainFragment;
@@ -35,18 +37,21 @@ public class MyPagerAdapter extends FragmentPagerAdapter {
         adapter = this;
     }
 
-    // Returns total number of pages
     @Override
     public int getCount() {
         return fragments.size();
     }
 
-    // Returns the walletFragment to display for that page
     @Override
     public Fragment getItem(int position) {
         return fragments.get(position);
     }
 
+    /**
+     * Show the fragments or hide, which is specified by the boolean parameter b
+     *
+     * @param b parameter that specifies to show or to hide the fragments
+     */
     public void showFragments(boolean b) {
         if (main == null) main = mainFragment.getView();
         if (mainQR == null) mainQR = mainFragmentQR.getView();

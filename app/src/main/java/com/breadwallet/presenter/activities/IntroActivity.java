@@ -7,6 +7,10 @@ import android.os.Handler;
 
 import com.breadwallet.R;
 
+
+/**
+ * The Launcher activity that is shown as an intro and then destroys itself
+ */
 public class IntroActivity extends Activity {
     private Intent intent;
 

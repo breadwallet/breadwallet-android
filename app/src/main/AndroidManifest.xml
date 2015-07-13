@@ -12,7 +12,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activities.IntroActivity"
+            android:name=".presenter.activities.IntroActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -22,15 +22,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.MainActivity"
+            android:name=".presenter.activities.MainActivity"
             android:label="@string/title_activity_main"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activities.ScanResultActivity"
+            android:name=".presenter.activities.ScanResultActivity"
             android:label="@string/title_activity_scan_result"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activities.DecoderActivity"
+            android:name=".presenter.activities.DecoderActivity"
             android:label="@string/title_activity_decoder"
             android:screenOrientation="portrait" />
     </application>

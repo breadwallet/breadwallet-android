@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_focused="true" android:state_pressed="true"
-        android:drawable="@drawable/buttonblue" />
-    <item android:state_focused="false" android:state_pressed="true"
-        android:drawable="@drawable/buttonbluepressed" />
+    <item android:drawable="@drawable/buttonblue" android:state_focused="true" android:state_pressed="true" />
+    <item android:drawable="@drawable/buttonbluepressed" android:state_focused="false" android:state_pressed="true" />
     <item android:drawable="@drawable/buttonblue" />
 </selector>

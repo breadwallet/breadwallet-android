@@ -11,7 +11,7 @@ import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.animations.SpringAnimator;
+import com.breadwallet.tools.animations.SpringAnimator;
 
 /**
  * Created by Mihail on 6/29/15.

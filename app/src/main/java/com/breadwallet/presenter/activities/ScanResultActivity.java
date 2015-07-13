@@ -57,6 +57,13 @@ public class ScanResultActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Gets a String parameter to be used to encode in a QR Code Bitmap and
+     * assign it to an ImageView
+     *
+     * @param str the String to be converted into a QR Code
+     * @see Bitmap
+     */
     private void generateQR(String str) {
         WindowManager manager = (WindowManager) getSystemService(WINDOW_SERVICE);
         Display display = manager.getDefaultDisplay();

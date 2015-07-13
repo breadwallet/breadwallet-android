@@ -6,6 +6,7 @@
     <item name="green" type="color">#FF99CC00</item>
     <item name="orange" type="color">#FFFFBB33</item>
     <item name="red" type="color">#FFFF4444</item>
+    <item name="black" type="color">#ff000000</item>
     <item name="darkpurple" type="color">#FF9933CC</item>
     <item name="darkgreen" type="color">#FF669900</item>
     <item name="darkorange" type="color">#FFFF8800</item>
@@ -14,7 +15,7 @@
     <item name="darkblue" type="color">#007fff</item>
     <item name="walletorange" type="color">#ff8000</item>
     <item name="white_trans" type="color">#64ffffff</item>
-    
+
     //the QR
     <color name="actionbar_opacity">#DD000000</color>
 
