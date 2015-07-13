@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/mainfragment" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:orientation="vertical">
+
+
+    <TextView android:id="@+id/maintextsendmoney" android:layout_width="wrap_content"
+        android:layout_height="wrap_content" android:layout_below="@+id/maintextbreadwallet"
+        android:layout_centerHorizontal="true" android:layout_gravity="center"
+        android:layout_marginTop="120dp" android:text="send money:" android:textSize="24sp" />
+
+    <Button android:id="@+id/mainbuttonscanqrcode" android:layout_width="270dp"
+        android:layout_height="60dp" android:layout_below="@+id/maintextsendmoney" android:layout_centerHorizontal="true"
+        android:layout_gravity="center" android:layout_marginTop="32dp"
+        android:background="@drawable/button" android:text=" scan QR code "
+        android:textColor="@color/darkblue" android:textSize="20sp" />
+
+    <Button android:id="@+id/mainbuttonpayaddressfromclipboard"
+        android:layout_width="270dp" android:layout_height="60dp"
+        android:layout_below="@+id/mainbuttonscanqrcode" android:layout_centerHorizontal="true"
+        android:layout_gravity="center" android:layout_marginTop="50dp"
+        android:background="@drawable/button" android:text=" pay address from clipboard " android:textColor="@color/darkblue"
+        android:textSize="20sp" />
+
+    <TextView android:id="@+id/textView" android:layout_width="wrap_content"
+        android:layout_height="wrap_content" android:layout_below="@+id/mainbuttonpayaddressfromclipboard"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center" android:layout_marginTop="15dp"
+        android:text="address" />
+
+
+</LinearLayout>

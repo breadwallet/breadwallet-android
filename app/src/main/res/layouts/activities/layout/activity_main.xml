@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainlayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.breadwallet.presenter.activities.MainActivity">
+
+    <ImageView
+        android:id="@+id/maintextbreadwallet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/breadwalletupcentered" />
+
+    <Button
+        android:id="@+id/mainbuttonburger"
+        android:layout_width="25dp"
+        android:layout_height="20dp"
+        android:layout_alignBottom="@+id/mainbuttonlocker"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="16dp"
+        android:background="@drawable/burger" />
+
+    <Button
+        android:id="@+id/mainbuttonlocker"
+        android:layout_width="20dp"
+        android:layout_height="25dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="16dp"
+        android:background="@drawable/locker" />
+
+
+    <com.breadwallet.tools.adapter.ParallaxViewPager xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/maintextbreadwallet"
+        android:background="@drawable/backgroundmain" />
+
+    <ImageView
+        android:id="@+id/pagerindicator"
+        android:layout_width="30dp"
+        android:layout_height="10dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/pageindicatorleft" />
+
+</RelativeLayout>

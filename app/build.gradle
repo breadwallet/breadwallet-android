@@ -10,6 +10,7 @@ android {
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
+//        testApplicationId "com.breadwallet.test"
     }
     buildTypes {
         release {
@@ -21,7 +22,8 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:22.1.1'
-    compile 'com.andraskindler.parallaxviewpager:parallaxviewpager:0.2.0'
-    compile files('libs/core.jar')
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:22.2.0'
+    compile 'com.google.zxing:core:3.2.0'
+    compile 'com.facebook.rebound:rebound:0.3.8' //spring animation
 }
