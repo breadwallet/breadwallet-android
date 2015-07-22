@@ -4,7 +4,6 @@
     android:id="@+id/mainlayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.breadwallet.presenter.activities.MainActivity">
 
     <ImageView
@@ -13,26 +12,24 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/breadwalletupcentered" />
 
     <Button
         android:id="@+id/mainbuttonburger"
-        android:layout_width="25dp"
-        android:layout_height="20dp"
-        android:layout_alignBottom="@+id/mainbuttonlocker"
-        android:layout_alignParentLeft="true"
+        android:layout_width="28dp"
+        android:layout_height="25dp"
+        android:layout_alignBottom="@+id/maintextbreadwallet"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
         android:layout_marginLeft="16dp"
         android:background="@drawable/burger" />
 
     <Button
         android:id="@+id/mainbuttonlocker"
-        android:layout_width="20dp"
-        android:layout_height="25dp"
+        android:layout_width="23dp"
+        android:layout_height="30dp"
+        android:layout_alignBottom="@+id/maintextbreadwallet"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
         android:layout_marginRight="16dp"
         android:background="@drawable/locker" />
 
@@ -41,8 +38,7 @@
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/maintextbreadwallet"
-        android:background="@drawable/backgroundmain" />
+        android:layout_below="@+id/maintextbreadwallet" />
 
     <ImageView
         android:id="@+id/pagerindicator"

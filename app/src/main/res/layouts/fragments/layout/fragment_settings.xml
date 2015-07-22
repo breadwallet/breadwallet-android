@@ -68,6 +68,17 @@
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@color/grey" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="20sp"
+                android:textColor="@color/darkblue"
+                android:id="@+id/three_letters_currency"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginRight="40dp"/>
+
         </RelativeLayout>
 
         <RelativeLayout

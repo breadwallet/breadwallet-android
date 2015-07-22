@@ -21,8 +21,8 @@ android {
     sourceSets {
         main {
             manifest.srcFile 'src/main/AndroidManifest.xml'
-            java.srcDirs = ['src/main/java','.apt_generated']
-            aidl.srcDirs = ['src/main/aidl','.apt_generated']
+            java.srcDirs = ['src/main/java', '.apt_generated']
+            aidl.srcDirs = ['src/main/aidl', '.apt_generated']
             assets.srcDirs = ['src/main/assets']
             res.srcDirs =
                     [
@@ -40,6 +40,7 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:22.2.0'
-    compile 'com.google.zxing:core:3.2.0'
+    compile 'com.google.zxing:core:3.2.0' //QRCode scanner
     compile 'com.facebook.rebound:rebound:0.3.8' //spring animation
+    compile 'org.json:json:20141113' //JSonParser google
 }

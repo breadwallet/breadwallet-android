@@ -1,7 +1,6 @@
 package com.breadwallet.tools.animation;
 
 import android.os.Handler;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -20,6 +19,8 @@ public class SpringAnimator {
     private static double DAMPER = 35;
     public static final String TAG = "SpringAnimation";
     private static MainActivity app;
+    public static final int TO_LEFT = -1;
+    public static final int TO_RIGHT = 1;
 
     public static void showExpandCameraGuide(final View view) {
         view.setScaleX(0.1f);
@@ -110,7 +111,7 @@ public class SpringAnimator {
                         return true;
                     case MotionEvent.ACTION_UP:
                         if (view == view.getRootView().findViewById(R.id.mainbuttonburger))
-                            app.animateSettingsFragment();
+                            FragmentAnimator.pressMenuButton(app);
                         spring.setEndValue(0f);
                         return true;
                 }
@@ -124,9 +125,10 @@ public class SpringAnimator {
      * Uses the Facebook Spring animation to show a bouncy animation on
      * the view that is given as a parameter
      *
-     * @param view a view to apply the bouncy animation
+     * @param view      a view to apply the bouncy animation
+     * @param direction SpringAnimator.TO_LEFT or  SpringAnimator.TO_RIGHT
      */
-    public static void showBouncySlide(final View view) {
+    public static void showBouncySlide(final View view, final int direction) {
         SpringSystem springSystem = SpringSystem.create();
         app = MainActivity.getApp();
 
@@ -136,7 +138,6 @@ public class SpringAnimator {
         spring.setSpringConfig(config);
         spring.setEndValue(1f);
         new Handler().postDelayed(new Runnable() {
-
             @Override
             public void run() {
                 spring.setEndValue(0f);
@@ -152,8 +153,7 @@ public class SpringAnimator {
                 // state by asking its current value in onSpringUpdate.
 
                 float value = (float) spring.getCurrentValue();
-                view.setX(value * -10);
-                Log.d(TAG, "Update X: " + value);
+                view.setX(direction * (value * -20));
             }
 
             @Override
@@ -168,7 +168,7 @@ public class SpringAnimator {
             public void onSpringEndStateChange(Spring spring) {
             }
         });
-
     }
 
 }
+

@@ -4,32 +4,31 @@ import android.content.Intent;
 import android.graphics.PointF;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.LinearInterpolator;
-import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.ScanResultActivity;
+import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.qrcode.QRCodeReaderView;
 
 public class MainFragmentDecoder extends Fragment implements QRCodeReaderView.OnQRCodeReadListener {
 
-    public static final String TAG = "DecoderActivity";
+    public static final String TAG = "MainFragmentDecoder";
 
     private boolean accessGranted = true;
     private TextView myTextView;
-    private QRCodeReaderView mydecoderview;
-    private ImageView line_image;
+    private static QRCodeReaderView mydecoderview;
+    private ImageView camera_guide_image;
     private Intent intent;
-    private MainFragmentDecoder decoderFragment;
+    private static MainFragmentDecoder decoderFragment;
     private RelativeLayout layout;
 
     public MainFragmentDecoder() {
@@ -44,20 +43,23 @@ public class MainFragmentDecoder extends Fragment implements QRCodeReaderView.On
 
         intent = new Intent(getActivity(), ScanResultActivity.class);
         myTextView = (TextView) rootView.findViewById(R.id.exampleTextView);
-        line_image = (ImageView) rootView.findViewById(R.id.red_line_image);
+        camera_guide_image = (ImageView) rootView.findViewById(R.id.camera_guide_image);
+        SpringAnimator.showExpandCameraGuide(camera_guide_image);
 
-        TranslateAnimation mAnimation = new TranslateAnimation(
-                TranslateAnimation.ABSOLUTE, 0f,
-                TranslateAnimation.ABSOLUTE, 0f,
-                TranslateAnimation.RELATIVE_TO_PARENT, 0f,
-                TranslateAnimation.RELATIVE_TO_PARENT, 0.5f);
-        mAnimation.setDuration(1000);
-        mAnimation.setRepeatCount(-1);
-        mAnimation.setRepeatMode(Animation.REVERSE);
-        mAnimation.setInterpolator(new LinearInterpolator());
-        line_image.setAnimation(mAnimation);
         // Inflate the layout for this fragment
         return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        layout = (RelativeLayout) getView().findViewById(R.id.fragment_decoder_layout);
+        mydecoderview = new QRCodeReaderView(getActivity().getApplicationContext());
+        mydecoderview.setOnQRCodeReadListener(decoderFragment);
+        if (mydecoderview != null)
+            mydecoderview.getCameraManager().startPreview();
+        mydecoderview.setVisibility(View.GONE);
+
     }
 
     /**
@@ -65,12 +67,12 @@ public class MainFragmentDecoder extends Fragment implements QRCodeReaderView.On
      * "text" : the text encoded in QR
      * "points" : points where QR control points are placed
      */
+
     @Override
     public void onQRCodeRead(String text, PointF[] points) {
         synchronized (this) {
             if (accessGranted) {
                 accessGranted = false;
-                myTextView.setText(text);
 //            Log.e(TAG, "Activity STARTED!!!!!");
                 intent.putExtra("result", text);
                 startActivity(intent);
@@ -102,30 +104,12 @@ public class MainFragmentDecoder extends Fragment implements QRCodeReaderView.On
         super.onPause();
         Log.e(TAG, "In onPause");
         mydecoderview.getCameraManager().stopPreview();
-        new ViewRemoverTask().execute();
+        layout.removeView(mydecoderview);
 
     }
 
     private class CameraOpenerTask extends AsyncTask {
 
-
-        @Override
-        protected Object doInBackground(Object[] params) {
-            layout = (RelativeLayout) getActivity().findViewById(R.id.fragment_decoder_layout);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Object o) {
-            mydecoderview = new QRCodeReaderView(getActivity().getApplicationContext());
-            mydecoderview.setOnQRCodeReadListener(decoderFragment);
-            mydecoderview.getCameraManager().startPreview();
-            layout.addView(mydecoderview);
-        }
-    }
-
-    private class ViewRemoverTask extends AsyncTask {
-
         @Override
         protected Object doInBackground(Object[] params) {
             return null;
@@ -133,9 +117,33 @@ public class MainFragmentDecoder extends Fragment implements QRCodeReaderView.On
 
         @Override
         protected void onPostExecute(Object o) {
-            layout.removeView(mydecoderview);
-            mydecoderview = null;
-            Log.e(TAG, "Removed everithing good!");
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    layout.addView(mydecoderview, 0);
+                    mydecoderview.setVisibility(View.VISIBLE);
+                }
+            }, 1300);
+
+            Log.e(TAG, "The camera started");
         }
     }
+
+    public void stopCamera() {
+        if (mydecoderview != null) {
+            mydecoderview.getCameraManager().stopPreview();
+            mydecoderview.getCameraManager().closeDriver();
+        }
+        mydecoderview = null;
+
+    }
+
+    public static MainFragmentDecoder getMainFragmentDecoder() {
+        return decoderFragment;
+    }
+
+    public static QRCodeReaderView getMydecoderview() {
+        return mydecoderview;
+    }
+
 }

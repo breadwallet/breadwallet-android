@@ -1,27 +1,27 @@
 package com.breadwallet.presenter.activities;
 
+import android.content.ClipboardManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.fragments.MainFragmentDecoder;
-import com.breadwallet.presenter.fragments.MainFragmentSettings;
-import com.breadwallet.presenter.fragments.MainFragmentSettingsPressed;
-import com.breadwallet.tools.adapter.MyPagerAdapter;
+import com.breadwallet.presenter.fragments.MainFragmentSettingsAll;
+import com.breadwallet.presenter.fragments.allsettings.FragmentSettings;
+import com.breadwallet.presenter.fragments.allsettings.settings.FragmentAbout;
+import com.breadwallet.presenter.fragments.allsettings.settings.FragmentCurrency;
+import com.breadwallet.tools.adapter.CustomPagerAdapter;
 import com.breadwallet.tools.adapter.ParallaxViewPager;
-import com.breadwallet.tools.animations.SpringAnimator;
+import com.breadwallet.tools.animation.FragmentAnimator;
+import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.others.CurrencyManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,20 +29,22 @@ import java.util.Map;
 public class MainActivity extends FragmentActivity {
     public static final String TAG = "MainActivity";
     private static MainActivity app;
+    public static final String PREFS_NAME = "MyPrefsFile";
 
+    public static boolean decoderFragmentOn;
+    private boolean onBackPressedAvailable = true;
     private boolean doubleBackToExitPressedOnce;
-    private boolean settingsON;
-    private boolean settingsPressedOn;
-    private boolean settingsAvailable = true;
-    private boolean decoderFragmentOn;
-    private MyPagerAdapter pagerAdapter;
+    private CustomPagerAdapter pagerAdapter;
     private ImageView pageIndicator;
     private Map<String, Integer> indicatorMap;
     private Button burgerButton;
-    private MainFragmentSettings mainFragmentSettings;
+    private MainFragmentSettingsAll mainFragmentSettingsAll;
     private ParallaxViewPager parallaxViewPager;
-    private MainFragmentSettingsPressed mainFragmentSettingsPressed;
+    private FragmentSettings fragmentSettings;
+    private FragmentAbout fragmentAbout;
     private MainFragmentDecoder mainFragmentDecoder;
+    private ClipboardManager myClipboard;
+    private FragmentCurrency fragmentCurrency;
 
     /**
      * Public constructor used to assign the current instance to the app variable
@@ -58,7 +60,28 @@ public class MainActivity extends FragmentActivity {
 
         initializeViews();
         SpringAnimator.showAnimation(burgerButton);
+        myClipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        CurrencyManager.startTimer();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        CurrencyManager.stoptimertask();
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        MainFragmentDecoder.getMainFragmentDecoder().stopCamera();
+        Log.e(TAG, "Activity Destroyed!");
     }
 
     /**
@@ -68,95 +91,27 @@ public class MainActivity extends FragmentActivity {
         burgerButton = (Button) findViewById(R.id.mainbuttonburger);
         Log.d(TAG, "The burger button's id: " + burgerButton.getId());
         pageIndicator = (ImageView) findViewById(R.id.pagerindicator);
-        pagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
+        pagerAdapter = new CustomPagerAdapter(getSupportFragmentManager());
         indicatorMap = new HashMap<>();
-        mainFragmentSettings = new MainFragmentSettings();
-        mainFragmentSettingsPressed = new MainFragmentSettingsPressed();
+        fragmentSettings = new FragmentSettings();
+        mainFragmentSettingsAll = new MainFragmentSettingsAll();
         mainFragmentDecoder = new MainFragmentDecoder();
+        fragmentAbout = new FragmentAbout();
+        fragmentCurrency = new FragmentCurrency();
         parallaxViewPager = ((ParallaxViewPager) findViewById(R.id.pager));
         parallaxViewPager
                 .setOverlapPercentage(0.99f)
                 .setAdapter(pagerAdapter);
+        parallaxViewPager.setBackgroundResource(R.drawable.backgroundmain);
         indicatorMap.put("left", R.drawable.pageindicatorleft);
         indicatorMap.put("right", R.drawable.pageindicatorright);
     }
 
-    /**
-     * Animate the transition on burgerButton/MenuButton pressed
-     */
-    public void animateSettingsFragment() {
-        if (settingsAvailable) {
-            Log.d(TAG, "Inside the animateSettingsFragment!");
-            settingsAvailable = false;
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    settingsAvailable = true;
-                }
-            }, 300);
-            if (!settingsON) {
-                if (!settingsPressedOn) {
-                    settingsON = true;
-                    FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                    fragmentTransaction.setCustomAnimations(R.animator.from_bottom, R.animator.from_bottom);
-                    fragmentTransaction.replace(R.id.mainlayout, mainFragmentSettings);
-                    fragmentTransaction.commit();
-                    pagerAdapter.showFragments(false);
-                    pageIndicator.setVisibility(View.GONE);
-                } else {
-                    animateSettingsPressed();
-                }
-
-            } else {
-                settingsON = false;
-                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.setCustomAnimations(R.animator.to_bottom, R.animator.to_bottom);
-                fragmentTransaction.remove(mainFragmentSettings);
-                fragmentTransaction.commit();
-                pagerAdapter.showFragments(true);
-                pageIndicator.setVisibility(View.VISIBLE);
-            }
-        }
-    }
-
-    /**
-     * Animates the fragment transition on button "Settings" pressed
-     */
-    public void animateSettingsPressed() {
-        if (!settingsPressedOn) {
-            settingsPressedOn = true;
-            settingsON = false;
-            //Disabled inspection: <Expected resource type anim>
-            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
-            fragmentTransaction.replace(R.id.mainlayout, mainFragmentSettingsPressed);
-            fragmentTransaction.commit();
-        } else {
-            settingsON = true;
-            settingsPressedOn = false;
-            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.setCustomAnimations(R.animator.from_left, R.animator.to_right);
-            fragmentTransaction.replace(R.id.mainlayout, mainFragmentSettings);
-            fragmentTransaction.commit();
-        }
-    }
-
-    public void animateDecoderFragment() {
-        decoderFragmentOn = true;
-        //Disabled inspection: <Expected resource type anim>
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_top);
-        fragmentTransaction.replace(R.id.mainlayout, mainFragmentDecoder);
-        fragmentTransaction.commit();
-        Log.e(TAG, "The mainFragmentDecoder: " + mainFragmentDecoder);
-        Log.e(TAG, "The fragmentTransaction: " + fragmentTransaction);
-    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_MENU) {
-
-            animateSettingsFragment();
+            FragmentAnimator.pressMenuButton(app);
             // return 'true' to prevent further propagation of the key event
             return true;
         }
@@ -165,52 +120,42 @@ public class MainActivity extends FragmentActivity {
         return super.onKeyDown(keyCode, event);
     }
 
-    /**
-     * Shows a custom toast using the given string as a paramater,
-     *
-     * @param message the message to be shown in the custom toast
-     */
-    public void showCustomToast(String message) {
-        LayoutInflater inflater = getLayoutInflater();
-        View layout = inflater.inflate(R.layout.toast,
-                (ViewGroup) findViewById(R.id.toast_layout_root));
-
-        TextView text = (TextView) layout.findViewById(R.id.toast_text);
-        text.setText(message);
-        Toast toast = new Toast(getApplicationContext());
-        toast.setGravity(Gravity.BOTTOM, 0, 100);
-        toast.setDuration(Toast.LENGTH_SHORT);
-        toast.setView(layout);
-        toast.show();
-    }
-
     @Override
     public void onBackPressed() {
-        if (!settingsPressedOn) {
-            if (doubleBackToExitPressedOnce) {
-                super.onBackPressed();
-                return;
-            }
-            if (settingsON) {
-                animateSettingsFragment();
-            }
-            if (decoderFragmentOn) {
-                decoderFragmentOn = false;
-                getSupportFragmentManager().beginTransaction().
-                        remove(mainFragmentDecoder).commit();
+        if (onBackPressedAvailable) {
+            onBackPressedAvailable = false;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    onBackPressedAvailable = true;
+                }
+            }, 300);
+            if (FragmentAnimator.level == 0) {
+                if (doubleBackToExitPressedOnce) {
+                    super.onBackPressed();
+                    return;
+                }
+                if (decoderFragmentOn) {
+                    decoderFragmentOn = false;
+                    getSupportFragmentManager().beginTransaction().
+                            remove(mainFragmentDecoder).commit();
+                    CustomPagerAdapter.getAdapter().showFragments(true);
+                } else {
+                    this.doubleBackToExitPressedOnce = true;
+                    ((BreadWalletApp) getApplicationContext()).showCustomToast(this,
+                            "Press again to exit!", 100, Toast.LENGTH_SHORT);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            doubleBackToExitPressedOnce = false;
+                        }
+                    }, 1000);
+                }
+            } else if (FragmentAnimator.level == 1) {
+                FragmentAnimator.pressMenuButton(this);
             } else {
-                this.doubleBackToExitPressedOnce = true;
-                showCustomToast("Press again to exit!");
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        doubleBackToExitPressedOnce = false;
-                    }
-                }, 1000);
+                FragmentAnimator.animateSlideToRight(this);
             }
-
-        } else {
-            animateSettingsPressed();
         }
     }
 
@@ -227,17 +172,111 @@ public class MainActivity extends FragmentActivity {
     }
 
     /**
-     * @return the singleton instance of the MainActivity class
+     * GETTERS AND SETTERS
      */
+
+    public FragmentSettings getFragmentSettings() {
+        return fragmentSettings;
+    }
+
     public static MainActivity getApp() {
         return app;
     }
 
-    /**
-     * @return the current instance of the class MainFragmentSettingsPressed
-     */
-    public MainFragmentSettingsPressed getMainFragmentSettingsPressed() {
-        return mainFragmentSettingsPressed;
+    public void setDecoderFragmentOn(boolean decoderFragmentOn) {
+        this.decoderFragmentOn = decoderFragmentOn;
+    }
+
+    public void setMainFragmentDecoder(MainFragmentDecoder mainFragmentDecoder) {
+        this.mainFragmentDecoder = mainFragmentDecoder;
+    }
+
+    public static void setApp(MainActivity app) {
+        MainActivity.app = app;
+    }
+
+    public Button getBurgerButton() {
+        return burgerButton;
+    }
+
+    public void setBurgerButton(Button burgerButton) {
+        this.burgerButton = burgerButton;
+    }
+
+    public boolean isDecoderFragmentOn() {
+        return decoderFragmentOn;
+    }
+
+    public boolean isDoubleBackToExitPressedOnce() {
+        return doubleBackToExitPressedOnce;
+    }
+
+    public void setDoubleBackToExitPressedOnce(boolean doubleBackToExitPressedOnce) {
+        this.doubleBackToExitPressedOnce = doubleBackToExitPressedOnce;
+    }
+
+    public Map<String, Integer> getIndicatorMap() {
+        return indicatorMap;
+    }
+
+    public void setIndicatorMap(Map<String, Integer> indicatorMap) {
+        this.indicatorMap = indicatorMap;
+    }
+
+    public MainFragmentDecoder getMainFragmentDecoder() {
+        return mainFragmentDecoder;
+    }
+
+    public MainFragmentSettingsAll getMainFragmentSettingsAll() {
+        return mainFragmentSettingsAll;
+    }
+
+    public void setMainFragmentSettingsAll(MainFragmentSettingsAll mainFragmentSettingsAll) {
+        this.mainFragmentSettingsAll = mainFragmentSettingsAll;
+    }
+
+    public void setFragmentSettings(FragmentSettings fragmentSettings) {
+        this.fragmentSettings = fragmentSettings;
+    }
+
+    public ImageView getPageIndicator() {
+        return pageIndicator;
+    }
+
+    public void setPageIndicator(ImageView pageIndicator) {
+        this.pageIndicator = pageIndicator;
+    }
+
+    public CustomPagerAdapter getPagerAdapter() {
+        return pagerAdapter;
+    }
+
+    public void setPagerAdapter(CustomPagerAdapter pagerAdapter) {
+        this.pagerAdapter = pagerAdapter;
+    }
+
+    public ClipboardManager getMyClipboard() {
+        return myClipboard;
+    }
+
+    public void setMyClipboard(ClipboardManager myClipboard) {
+        this.myClipboard = myClipboard;
+    }
+
+    public FragmentAbout getFragmentAbout() {
+        return fragmentAbout;
+    }
+
+    public void setFragmentAbout(FragmentAbout fragmentAbout) {
+        this.fragmentAbout = fragmentAbout;
+    }
+
+    public FragmentCurrency getFragmentCurrency() {
+        return fragmentCurrency;
+    }
+
+    public void setFragmentCurrency(FragmentCurrency fragmentCurrency) {
+        this.fragmentCurrency = fragmentCurrency;
     }
 
 }

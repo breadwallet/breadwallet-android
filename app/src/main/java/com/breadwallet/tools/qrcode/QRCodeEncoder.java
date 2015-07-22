@@ -1,8 +1,10 @@
 package com.breadwallet.tools.qrcode;
+
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.telephony.PhoneNumberUtils;
+import android.util.Log;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -18,6 +20,7 @@ import java.util.Map;
 public final class QRCodeEncoder {
     private static final int WHITE = 0xFFFFFFFF;
     private static final int BLACK = 0xFF000000;
+    public static final String TAG = "QRCodeEncoder";
 
     private int dimension = Integer.MIN_VALUE;
     private String contents = null;
@@ -196,8 +199,9 @@ public final class QRCodeEncoder {
             }
         }
 
-        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
         bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
+        Log.e(TAG, "The Bitmap pixels: " + bitmap.getWidth() + "  " + bitmap.getHeight());
         return bitmap;
     }
 

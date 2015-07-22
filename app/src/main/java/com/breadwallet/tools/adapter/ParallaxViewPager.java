@@ -18,12 +18,12 @@ import android.util.AttributeSet;
 import android.util.Log;
 
 import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.tools.animations.SpringAnimator;
-
+import com.breadwallet.tools.animation.FragmentAnimator;
+import com.breadwallet.tools.animation.SpringAnimator;
 
 @SuppressLint("NewApi")
 public class ParallaxViewPager extends ViewPager {
-
+    public static final String TAG = "ParallaxViewPager";
 
     public static final int FIT_WIDTH = 0;
     public static final int FIT_HEIGHT = 1;
@@ -71,6 +71,7 @@ public class ParallaxViewPager extends ViewPager {
                     destination.left = (int) Math.floor((position + positionOffset - CORRECTION_PERCENTAGE) * getWidth());
                     destination.right = (int) Math.ceil((position + positionOffset + 1 + CORRECTION_PERCENTAGE) * getWidth());
                     invalidate();
+                    Log.e(TAG, "The bitmap params: " + bitmap.getWidth() + "   " + bitmap.getHeight());
                 }
 
                 if (secondOnPageChangeListener != null) {
@@ -85,20 +86,28 @@ public class ParallaxViewPager extends ViewPager {
                     secondOnPageChangeListener.onPageSelected(position);
                 }
                 app.setPagerIndicator(position);
-                if (position == 1) {
-                    new Handler().postDelayed(new Runnable() {
+                if (FragmentAnimator.level == 0) {
+                    if (position == 1) {
+                        new Handler().postDelayed(new Runnable() {
 
-                        @Override
-                        public void run() {
-                            SpringAnimator.showBouncySlide(getRootView());
-                        }
-                    }, 80);
+                            @Override
+                            public void run() {
+                                SpringAnimator.showBouncySlide(getRootView(), SpringAnimator.TO_RIGHT);
+                            }
+                        }, 80);
+                    } else if (position == 0) {
+                        new Handler().postDelayed(new Runnable() {
 
+                            @Override
+                            public void run() {
+                                SpringAnimator.showBouncySlide(getRootView(), SpringAnimator.TO_LEFT);
+                            }
+                        }, 80);
+                    }
                 }
 
                 Log.e("AdapterParalax", "Showing animation!!!!!");
             }
-
 
             @Override
             public void onPageScrollStateChanged(int state) {
@@ -152,7 +161,10 @@ public class ParallaxViewPager extends ViewPager {
      */
     @Override
     public void setBackgroundResource(int resid) {
-        bitmap = BitmapFactory.decodeResource(getResources(), resid);
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inScaled = true;
+        options.inTargetDensity = 100;
+        bitmap = BitmapFactory.decodeResource(getResources(), resid, options);
     }
 
 
@@ -239,7 +251,6 @@ public class ParallaxViewPager extends ViewPager {
         if (bitmap != null)
             canvas.drawBitmap(bitmap, source, destination, null);
     }
-
 
     public void addOnPageChangeListener(OnPageChangeListener listener) {
         secondOnPageChangeListener = listener;

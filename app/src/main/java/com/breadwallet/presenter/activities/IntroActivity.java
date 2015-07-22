@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-
 import com.breadwallet.R;
 
 
@@ -27,7 +26,7 @@ public class IntroActivity extends Activity {
                 startActivity(intent);
                 finish();
             }
-        }, 3000);
+        }, 800);
     }
 
 }

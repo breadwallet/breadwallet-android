@@ -91,4 +91,12 @@ public class CustomPagerAdapter extends FragmentPagerAdapter {
     public View getFragmentViewByIndex(int index) {
         return index == 0 ? main : mainQR;
     }
+
+    public MainFragment getMainFragment() {
+        return mainFragment;
+    }
+
+    public MainFragmentQR getMainFragmentQR() {
+        return mainFragmentQR;
+    }
 }

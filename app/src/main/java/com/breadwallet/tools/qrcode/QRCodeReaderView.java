@@ -68,18 +68,12 @@ public class QRCodeReaderView extends SurfaceView implements SurfaceHolder.Callb
 
     public QRCodeReaderView(Context context) {
         super(context);
-        long start = System.currentTimeMillis();
-        Log.e(TAG, "In the constructor before init, time: " + start);
         init();
-        Log.e(TAG, "In the constructor after init, time spent: " + (System.currentTimeMillis() - start));
     }
 
     public QRCodeReaderView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        long start = System.currentTimeMillis();
-        Log.e(TAG, "In the constructor before init, time: " + start);
         init();
-        Log.e(TAG, "In the constructor after init, time spent: " + (System.currentTimeMillis() - start));
     }
 
     public void setOnQRCodeReadListener(OnQRCodeReadListener onQRCodeReadListener) {
@@ -92,10 +86,8 @@ public class QRCodeReaderView extends SurfaceView implements SurfaceHolder.Callb
 
     @SuppressWarnings("deprecation")
     private void init() {
-        long start = System.currentTimeMillis();
         if (checkCameraHardware(getContext())) {
             mCameraManager = new CameraManager(getContext());
-
             mHolder = this.getHolder();
             mHolder.addCallback(this);
             mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);  // Need to set this flag despite it's deprecated
@@ -105,9 +97,7 @@ public class QRCodeReaderView extends SurfaceView implements SurfaceHolder.Callb
                 mOnQRCodeReadListener.cameraNotFound();
             }
         }
-        Log.e(TAG, "Init method Time passed: " + (System.currentTimeMillis() - start));
     }
-
 
     /**
      * *************************************************

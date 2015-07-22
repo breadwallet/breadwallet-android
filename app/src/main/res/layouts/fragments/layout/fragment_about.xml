@@ -4,109 +4,78 @@
     android:layout_height="match_parent">
 
     <RelativeLayout
-        android:id="@+id/settings_pressed"
+        android:id="@+id/about"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="50dp">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="160dp"
+        android:background="@drawable/clickable_layout"
+        android:clickable="false">
 
-        <RelativeLayout
-            android:id="@+id/about"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
+        <TextView
+            android:id="@+id/about1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
             android:layout_marginTop="40dp"
-            android:background="@drawable/clickable_layout"
-            android:clickable="true">
+            android:text="breadwallet v 1.0 (testnet)"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/dark_grey" />
 
-            <TextView
-                android:id="@+id/about_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="20dp"
-                android:text="about"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/grey" />
+        <TextView
+            android:id="@+id/about2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/about1"
+            android:layout_centerHorizontal="true"
+            android:text="copyright \u00A9 2015 Mihail Gutan"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/dark_grey" />
+
+        <TextView
+            android:id="@+id/about3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/about2"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:text="this app is open source"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/dark_grey" />
+
+        <TextView
+            android:id="@+id/about4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/about3"
+            android:layout_centerHorizontal="true"
+            android:autoLink="web"
+            android:text="breadwallet.com"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/about5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/about4"
+            android:textColor="@color/dark_grey"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:text="exchange rate data provided by"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/about6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/about5"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/dark_grey"
+            android:layout_marginBottom="30dp"
+            android:text="bitpay.com/rates"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
 
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/recovery_phrase"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_below="@+id/about"
-            android:background="@drawable/clickable_layout"
-            android:clickable="true">
-
-
-            <TextView
-                android:id="@+id/recovery_phrase_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="20dp"
-                android:text="recovery phrase"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/grey" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/local_currency"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_below="@+id/recovery_phrase"
-            android:layout_marginTop="30dp"
-            android:background="@drawable/clickable_layout"
-            android:clickable="true">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="20dp"
-                android:text="local currency"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/grey" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/change_password"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_below="@+id/local_currency"
-            android:layout_marginTop="30dp"
-            android:background="@drawable/clickable_layout"
-            android:clickable="true">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="20dp"
-                android:text="change passcode"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/darkblue" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/start_recovery_wallet"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_below="@+id/change_password"
-            android:background="@drawable/clickable_layout"
-            android:clickable="true">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="20dp"
-                android:text="start/recovery another wallet"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/red" />
-
-        </RelativeLayout>
     </RelativeLayout>
+
+
 </LinearLayout>

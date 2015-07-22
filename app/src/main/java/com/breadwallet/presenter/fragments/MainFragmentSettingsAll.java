@@ -1,7 +1,6 @@
 package com.breadwallet.presenter.fragments;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,7 +10,7 @@ import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.animation.FragmentAnimator;
 
 /**
  * Created by Mihail on 6/29/15.
@@ -21,6 +20,7 @@ public class MainFragmentSettingsAll extends Fragment {
 
     private RelativeLayout settings;
     private MainActivity app;
+    private MainFragmentSettingsAll mainMainFragmentSettingsAll;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -28,7 +28,7 @@ public class MainFragmentSettingsAll extends Fragment {
         // The last two arguments ensure LayoutParams are inflated
         // properly.
         final View rootView = inflater.inflate(
-                R.layout.fragment_settings, container, false);
+                R.layout.fragment_settings_all, container, false);
 
         return rootView;
     }
@@ -37,20 +37,13 @@ public class MainFragmentSettingsAll extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         app = MainActivity.getApp();
+        mainMainFragmentSettingsAll = this;
         settings = (RelativeLayout) getView().findViewById(R.id.settings);
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                app.animateSideToLeft(app.getMainFragmentSettingsAll(), app.getMainFragmentSettingsPressed());
-                new Handler().postDelayed(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        Log.d(TAG, "Starting:   showBouncySlide()");
-                        SpringAnimator.showBouncySlide(MainActivity.getApp().getMainFragmentSettingsPressed().getView());
-                    }
-                }, 200);
-
+                FragmentAnimator.animateSlideToLeft(app, app.getFragmentSettings(), mainMainFragmentSettingsAll);
+                Log.d(TAG, "Starting:   showBouncySlide()");
             }
         });
     }
