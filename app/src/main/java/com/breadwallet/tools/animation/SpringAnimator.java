@@ -1,4 +1,4 @@
-package com.breadwallet.tools.animations;
+package com.breadwallet.tools.animation;
 
 import android.os.Handler;
 import android.util.Log;
@@ -20,6 +20,45 @@ public class SpringAnimator {
     private static double DAMPER = 35;
     public static final String TAG = "SpringAnimation";
     private static MainActivity app;
+
+    public static void showExpandCameraGuide(final View view) {
+        view.setScaleX(0.1f);
+        view.setScaleX(0.1f);
+        SpringSystem springSystem = SpringSystem.create();
+        app = MainActivity.getApp();
+
+        // Add a spring to the system.
+        final Spring spring = springSystem.createSpring();
+        SpringConfig config = new SpringConfig(200, 10);
+        spring.setSpringConfig(config);
+        spring.setEndValue(0.8f);
+
+        // Add a listener to observe the motion of the spring.
+        spring.addListener(new SpringListener() {
+
+            @Override
+            public void onSpringUpdate(Spring spring) {
+                // You can observe the updates in the spring
+                // state by asking its current value in onSpringUpdate.
+                float value = (float) spring.getCurrentValue();
+                view.setScaleX(value);
+                view.setScaleY(value);
+            }
+
+            @Override
+            public void onSpringAtRest(Spring spring) {
+            }
+
+            @Override
+            public void onSpringActivate(Spring spring) {
+            }
+
+            @Override
+            public void onSpringEndStateChange(Spring spring) {
+            }
+        });
+
+    }
 
     /**
      * Shows the springy animation on the burger button
@@ -84,7 +123,8 @@ public class SpringAnimator {
     /**
      * Uses the Facebook Spring animation to show a bouncy animation on
      * the view that is given as a parameter
-     * @param view  a view to apply the bouncy animation
+     *
+     * @param view a view to apply the bouncy animation
      */
     public static void showBouncySlide(final View view) {
         SpringSystem springSystem = SpringSystem.create();

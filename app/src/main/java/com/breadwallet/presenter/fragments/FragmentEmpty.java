@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 
 import com.breadwallet.R;
 
-public class MainFragmentEmpty extends Fragment {
+public class FragmentEmpty extends Fragment {
 
     public static final String TAG = "MainFragmentEmpty";
 

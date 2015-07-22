@@ -4,97 +4,110 @@
     android:layout_height="match_parent">
 
     <RelativeLayout
-        android:id="@+id/settings_pressed"
+        android:id="@+id/settings_all"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="50dp">
 
         <RelativeLayout
-            android:id="@+id/about"
+            android:id="@+id/transactions"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/clickable_layout"
+            android:clickable="true">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:text="no Transactions"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/light_grey" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/importprivatekey"
             android:layout_width="match_parent"
             android:layout_height="50dp"
+            android:layout_below="@+id/transactions"
             android:layout_marginTop="40dp"
             android:background="@drawable/clickable_layout"
             android:clickable="true">
 
+            <ImageView
+                android:id="@+id/cameraguide"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:background="@drawable/cameraguidebluesmall" />
+
             <TextView
-                android:id="@+id/about_text"
+                android:id="@+id/textimportprivatekey"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="20dp"
-                android:text="about"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/grey" />
-
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/recovery_phrase"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_below="@+id/about"
-            android:background="@drawable/clickable_layout"
-            android:clickable="true">
-
-
-            <TextView
-                android:id="@+id/recovery_phrase_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="20dp"
-                android:text="recovery phrase"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/grey" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/local_currency"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_below="@+id/recovery_phrase"
-            android:layout_marginTop="30dp"
-            android:background="@drawable/clickable_layout"
-            android:clickable="true">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="20dp"
-                android:text="local currency"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/grey" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/change_password"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_below="@+id/local_currency"
-            android:layout_marginTop="30dp"
-            android:background="@drawable/clickable_layout"
-            android:clickable="true">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="20dp"
-                android:text="change passcode"
+                android:layout_toEndOf="@+id/cameraguide"
+                android:text="import private key"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@color/darkblue" />
 
+
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/start_recovery_wallet"
+            android:id="@+id/rescanblockchain"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_below="@+id/change_password"
+            android:layout_below="@+id/importprivatekey"
+            android:background="@drawable/clickable_layout"
+            android:clickable="true">
+
+
+            <ImageView
+                android:id="@+id/rescanimage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:background="@drawable/rescan" />
+
+            <TextView
+                android:id="@+id/textrescanblockchain"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:layout_toEndOf="@+id/rescanimage"
+                android:text="rescan blockchain"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/darkblue" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/rescaninstructions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/rescanblockchain"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/rescan_instructions"
+            android:textColor="@color/grey"
+            android:textSize="18sp" />
+
+        <RelativeLayout
+            android:id="@+id/settings"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_below="@+id/rescaninstructions"
+            android:layout_marginTop="30dp"
             android:background="@drawable/clickable_layout"
             android:clickable="true">
 
@@ -103,9 +116,10 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="20dp"
-                android:text="start/recovery another wallet"
+                android:text="settings"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/red" />
+                android:textColor="@color/grey"
+                android:textSize="28sp" />
 
         </RelativeLayout>
     </RelativeLayout>

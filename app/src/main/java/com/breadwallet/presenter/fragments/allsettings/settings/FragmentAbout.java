@@ -1,4 +1,4 @@
-package com.breadwallet.presenter.fragments;
+package com.breadwallet.presenter.fragments.allsettings.settings;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,9 +9,9 @@ import android.view.ViewGroup;
 import com.breadwallet.R;
 
 /**
- * Created by Mihail on 6/29/15.
+ * Created by Mihail on 7/14/15.
  */
-public class MainFragmentSettingsPressed extends Fragment {
+public class FragmentAbout extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -19,7 +19,7 @@ public class MainFragmentSettingsPressed extends Fragment {
         // The last two arguments ensure LayoutParams are inflated
         // properly.
         View rootView = inflater.inflate(
-                R.layout.fragment_settings_pressed, container, false);
+                R.layout.fragment_about, container, false);
 
         return rootView;
     }

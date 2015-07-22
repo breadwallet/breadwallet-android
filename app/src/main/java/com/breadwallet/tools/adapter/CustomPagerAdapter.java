@@ -17,16 +17,17 @@ import java.util.List;
  *
  * @author Mihail Gutan
  */
-public class MyPagerAdapter extends FragmentPagerAdapter {
+public class CustomPagerAdapter extends FragmentPagerAdapter {
+    public static final String TAG = "MyPagerAdapter";
     private MainFragment mainFragment;
     private MainFragmentQR mainFragmentQR;
     private List<Fragment> fragments;
     private boolean available = true;
     private View main;
     private View mainQR;
-    private static MyPagerAdapter adapter;
+    private static CustomPagerAdapter adapter;
 
-    public MyPagerAdapter(FragmentManager fragmentManager) {
+    public CustomPagerAdapter(FragmentManager fragmentManager) {
         super(fragmentManager);
 
         this.fragments = new ArrayList<>();
@@ -83,7 +84,7 @@ public class MyPagerAdapter extends FragmentPagerAdapter {
         }
     }
 
-    public static MyPagerAdapter getAdapter() {
+    public static CustomPagerAdapter getAdapter() {
         return adapter;
     }
 

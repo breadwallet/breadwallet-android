@@ -11,15 +11,16 @@ import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.tools.animations.SpringAnimator;
+import com.breadwallet.tools.animation.SpringAnimator;
 
 /**
  * Created by Mihail on 6/29/15.
  */
-public class MainFragmentSettings extends Fragment {
+public class MainFragmentSettingsAll extends Fragment {
     public static final String TAG = "MainFragmentSettings";
 
     private RelativeLayout settings;
+    private MainActivity app;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -29,11 +30,18 @@ public class MainFragmentSettings extends Fragment {
         final View rootView = inflater.inflate(
                 R.layout.fragment_settings, container, false);
 
-        settings = (RelativeLayout) rootView.findViewById(R.id.settings);
+        return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        app = MainActivity.getApp();
+        settings = (RelativeLayout) getView().findViewById(R.id.settings);
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity) getActivity()).animateSettingsPressed();
+                app.animateSideToLeft(app.getMainFragmentSettingsAll(), app.getMainFragmentSettingsPressed());
                 new Handler().postDelayed(new Runnable() {
 
                     @Override
@@ -45,7 +53,5 @@ public class MainFragmentSettings extends Fragment {
 
             }
         });
-        return rootView;
     }
-
 }
