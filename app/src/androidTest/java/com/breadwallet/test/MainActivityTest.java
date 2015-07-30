@@ -1,10 +1,7 @@
 package com.breadwallet.test;
 
 import android.test.ActivityInstrumentationTestCase2;
-import android.test.suitebuilder.annotation.SmallTest;
-import android.widget.TextView;
 
-import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
 
 /**
@@ -24,11 +21,11 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         activity = getActivity();
     }
 
-    @SmallTest
-    public void testTextViewNotNull() {
-        TextView textView = (TextView) activity.findViewById(R.id.textView);
-        assertNotNull(textView);
-    }
+//    @SmallTest
+//    public void testTextViewNotNull() {
+//        TextView textView = (TextView) activity.findViewById(R.id.textView);
+//        assertNotNull(textView);
+//    }
 
 
 }

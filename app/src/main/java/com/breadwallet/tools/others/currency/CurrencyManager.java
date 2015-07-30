@@ -1,4 +1,4 @@
-package com.breadwallet.tools.others;
+package com.breadwallet.tools.others.currency;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -6,10 +6,10 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.tools.others.JsonParser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,12 +24,12 @@ import java.util.TimerTask;
  * Created by Mihail on 7/22/15.
  */
 public class CurrencyManager {
-    private static MainActivity app = MainActivity.getApp();
+    private static MainActivity app = MainActivity.app;
     public static final String TAG = "CurrencyManager";
-    private static ArrayAdapter currencyAdapter;
     private static Timer timer;
     private static TimerTask timerTask;
     private static final Handler handler = new Handler();
+    private static CurrencyListAdapter currencyListAdapter = new CurrencyListAdapter(MainActivity.app, R.layout.currency_list_item);
 
     public static boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
@@ -39,11 +39,13 @@ public class CurrencyManager {
     }
 
     public static List<String> getCurrencies() {
-        List<String> list = new ArrayList<>();
+        List<String> list = null;
         if (isNetworkAvailable()) {
-            JSONArray arr = null;
+            list = new ArrayList<>();
+            JSONArray arr;
             arr = JsonParser.getJSonArray("https://bitpay.com/rates");
-            for (int i = 1; i < arr.length(); i++) {
+            int length = arr.length();
+            for (int i = 1; i < length; i++) {
                 String tmp = null;
                 try {
                     JSONObject tmpObj = (JSONObject) arr.get(i);
@@ -54,7 +56,7 @@ public class CurrencyManager {
                 list.add(tmp);
             }
         } else {
-
+            if (list == null) list = new ArrayList<>();
         }
         return list;
     }
@@ -64,7 +66,6 @@ public class CurrencyManager {
 
         @Override
         protected Object doInBackground(Object[] params) {
-            currencyAdapter = new ArrayAdapter(app, R.layout.currency_list_item);
             tmp = getCurrencies();
             return null;
         }
@@ -72,16 +73,21 @@ public class CurrencyManager {
         @Override
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
-            currencyAdapter.clear();
-            Log.e(TAG, "Cleared: adapter count: " + currencyAdapter.getCount());
-            currencyAdapter.addAll(tmp);
-            Log.e(TAG, "Filled: adapter count: " + currencyAdapter.getCount());
+            if (tmp.size() > 0) {
+                currencyListAdapter.clear();
+                currencyListAdapter.addAll(tmp);
+                currencyListAdapter.notifyDataSetChanged();
+                Log.e(TAG, "Adapter changed >> Filled: adapter count: " + currencyListAdapter.getCount());
+            } else {
+                Log.e(TAG, "Adapter Not Changed, data is empty");
+            }
+
         }
     }
 
-    public static ArrayAdapter getCurrencyAddapterIfReady() {
+    public static CurrencyListAdapter getCurrencyAddapterIfReady() {
         new GetCurrenciesTask().execute();
-        return currencyAdapter;
+        return currencyListAdapter;
     }
 
     public static void initializeTimerTask() {
@@ -107,7 +113,7 @@ public class CurrencyManager {
         initializeTimerTask();
 
         //schedule the timer, after the first 5000ms the TimerTask will run every 10000ms
-        timer.schedule(timerTask, 0, 30000); //
+        timer.schedule(timerTask, 0, 60000); //
     }
 
     public static void stoptimertask() {

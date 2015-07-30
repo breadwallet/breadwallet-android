@@ -19,13 +19,13 @@ import java.util.List;
  */
 public class CustomPagerAdapter extends FragmentPagerAdapter {
     public static final String TAG = "MyPagerAdapter";
-    private MainFragment mainFragment;
-    private MainFragmentQR mainFragmentQR;
+    public MainFragment mainFragment;
+    public MainFragmentQR mainFragmentQR;
     private List<Fragment> fragments;
     private boolean available = true;
     private View main;
     private View mainQR;
-    private static CustomPagerAdapter adapter;
+    public static CustomPagerAdapter adapter;
 
     public CustomPagerAdapter(FragmentManager fragmentManager) {
         super(fragmentManager);
@@ -56,47 +56,27 @@ public class CustomPagerAdapter extends FragmentPagerAdapter {
     public void showFragments(boolean b) {
         if (main == null) main = mainFragment.getView();
         if (mainQR == null) mainQR = mainFragmentQR.getView();
-        if (available) {
-            available = false;
-            if (b) {
-                new Handler().postDelayed(new Runnable() {
+        if (b) {
+            new Handler().postDelayed(new Runnable() {
 
-                    @Override
-                    public void run() {
-                        main.setVisibility(View.VISIBLE);
-                        mainQR.setVisibility(View.VISIBLE);
-                        available = true;
-                    }
-                }, 200);
+                @Override
+                public void run() {
+                    main.setVisibility(View.VISIBLE);
+                    mainQR.setVisibility(View.VISIBLE);
+                }
+            }, 200);
 
-            } else {
-                new Handler().postDelayed(new Runnable() {
+        } else {
+            new Handler().postDelayed(new Runnable() {
 
-                    @Override
-                    public void run() {
-                        main.setVisibility(View.GONE);
-                        mainQR.setVisibility(View.GONE);
-                        available = true;
-                    }
-                }, 200);
+                @Override
+                public void run() {
+                    main.setVisibility(View.GONE);
+                    mainQR.setVisibility(View.GONE);
+                }
+            }, 200);
 
-            }
         }
     }
-
-    public static CustomPagerAdapter getAdapter() {
-        return adapter;
-    }
-
-    public View getFragmentViewByIndex(int index) {
-        return index == 0 ? main : mainQR;
-    }
-
-    public MainFragment getMainFragment() {
-        return mainFragment;
-    }
-
-    public MainFragmentQR getMainFragmentQR() {
-        return mainFragmentQR;
-    }
 }
+

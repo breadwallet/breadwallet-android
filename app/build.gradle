@@ -4,13 +4,20 @@ android {
     compileSdkVersion 22
     buildToolsVersion "21.1.2"
 
+    lintOptions {
+        abortOnError false
+    }
+
     defaultConfig {
         applicationId "com.breadwallet"
         minSdkVersion 19
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
-//        testApplicationId "com.breadwallet.test"
+        testInstrumentationRunner "android.test.InstrumentationTestRunner"
+        testHandleProfiling true
+        testFunctionalTest true
+        testApplicationId "com.breadwallet.test"
     }
     buildTypes {
         release {

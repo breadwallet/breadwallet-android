@@ -17,17 +17,22 @@
 
     <Button
         android:id="@+id/mainbuttonburger"
-        android:layout_width="28dp"
-        android:layout_height="25dp"
+        android:layout_width="25dp"
+        android:layout_height="22dp"
         android:layout_alignBottom="@+id/maintextbreadwallet"
         android:layout_alignParentStart="true"
         android:layout_marginLeft="16dp"
         android:background="@drawable/burger" />
 
+    <RelativeLayout
+        android:id="@+id/burgerbuttonlayout"
+        android:layout_width="60dp"
+        android:layout_height="60dp"></RelativeLayout>
+
     <Button
         android:id="@+id/mainbuttonlocker"
-        android:layout_width="23dp"
-        android:layout_height="30dp"
+        android:layout_width="20dp"
+        android:layout_height="27dp"
         android:layout_alignBottom="@+id/maintextbreadwallet"
         android:layout_alignParentEnd="true"
         android:layout_marginRight="16dp"
@@ -38,7 +43,8 @@
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/maintextbreadwallet" />
+        android:layout_below="@+id/maintextbreadwallet"
+        android:layout_marginTop="10dp"/>
 
     <ImageView
         android:id="@+id/pagerindicator"

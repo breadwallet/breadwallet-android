@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -17,8 +16,8 @@ import android.widget.Toast;
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.tools.animation.FragmentAnimator;
-import com.breadwallet.tools.others.CurrencyManager;
+import com.breadwallet.tools.others.currency.CurrencyListAdapter;
+import com.breadwallet.tools.others.currency.CurrencyManager;
 
 /**
  * Created by Mihail on 7/14/15.
@@ -26,11 +25,12 @@ import com.breadwallet.tools.others.CurrencyManager;
 public class FragmentCurrency extends Fragment {
     public static final String TAG = "FragmentCurrency";
     public static final String CURRENT_CURRENCY = "currentCurrency";
+    public static final String POSITION = "position";
     private ListView currencyList;
     private MainActivity app;
     private Button currencyRefresh;
     private TextView noInternetConnection;
-    private ArrayAdapter adapter;
+    private CurrencyListAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -39,8 +39,9 @@ public class FragmentCurrency extends Fragment {
         // properly.
         View rootView = inflater.inflate(
                 R.layout.fragment_local_currency, container, false);
-        app = MainActivity.getApp();
+        app = MainActivity.app;
         currencyList = (ListView) rootView.findViewById(R.id.currency_list_view);
+        currencyList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         currencyRefresh = (Button) rootView.findViewById(R.id.currencyRefresh);
         noInternetConnection = (TextView) rootView.findViewById(R.id.noInternetConnectionText);
 
@@ -57,13 +58,15 @@ public class FragmentCurrency extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
+                adapter.setSelectedIndex(position);
+                adapter.notifyDataSetChanged();
                 TextView tmp = (TextView) view.findViewById(R.id.currency_item_text);
                 final String selectedCurrency = tmp.getText().toString();
                 SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putString(CURRENT_CURRENCY, selectedCurrency.substring(0, 3));
+                editor.putInt(POSITION,position);
                 editor.commit();
-                FragmentAnimator.animateSlideToRight(app);
                 Log.d(TAG, "Selected item's text: " + selectedCurrency);
             }
         });
@@ -77,7 +80,8 @@ public class FragmentCurrency extends Fragment {
             currencyRefresh.setVisibility(View.GONE);
             noInternetConnection.setVisibility(View.GONE);
         } else {
-            ((BreadWalletApp) app.getApplicationContext()).showCustomToast(getActivity(), "No internet connection", 500, Toast.LENGTH_SHORT);
+            ((BreadWalletApp) app.getApplicationContext()).showCustomToast(getActivity(),
+                    "No internet connection", 500, Toast.LENGTH_SHORT);
             currencyRefresh.setVisibility(View.VISIBLE);
             noInternetConnection.setVisibility(View.VISIBLE);
         }

@@ -1,7 +1,5 @@
 package com.breadwallet.tools.others;
 
-import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,13 +18,13 @@ public class JsonParser {
 
     public static JSONArray getJSonArray(String URL) {
         String jsonString = callURL(URL);
-        System.out.println("\n\njsonString: " + jsonString);
+//        System.out.println("\n\njsonString: " + jsonString);
         JSONArray jsonArray = null;
         try {
             JSONObject obj = new JSONObject(jsonString);
 
             jsonArray = obj.getJSONArray("data");
-            Log.e(TAG,"\n\njsonArray: " + jsonArray);
+//            Log.e(TAG,"\n\njsonArray: " + jsonArray);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -34,7 +32,7 @@ public class JsonParser {
     }
 
     private static String callURL(String myURL) {
-        System.out.println("Requested URL:" + myURL);
+//        System.out.println("Requested URL:" + myURL);
         StringBuilder sb = new StringBuilder();
         URLConnection urlConn = null;
         InputStreamReader in = null;

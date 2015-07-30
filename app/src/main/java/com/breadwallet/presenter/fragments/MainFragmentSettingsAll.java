@@ -19,6 +19,7 @@ public class MainFragmentSettingsAll extends Fragment {
     public static final String TAG = "MainFragmentSettings";
 
     private RelativeLayout settings;
+    private RelativeLayout importPrivateKeys;
     private MainActivity app;
     private MainFragmentSettingsAll mainMainFragmentSettingsAll;
 
@@ -29,6 +30,16 @@ public class MainFragmentSettingsAll extends Fragment {
         // properly.
         final View rootView = inflater.inflate(
                 R.layout.fragment_settings_all, container, false);
+        importPrivateKeys = (RelativeLayout) rootView.findViewById(R.id.importprivatekey);
+        importPrivateKeys.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (FragmentAnimator.multiplePressingAvailable) {
+                    FragmentAnimator.pauseTheAnimationAvailabilityFor(300);
+                    FragmentAnimator.animateDecoderFragment();
+                }
+            }
+        });
 
         return rootView;
     }
@@ -36,15 +47,16 @@ public class MainFragmentSettingsAll extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        app = MainActivity.getApp();
+        app = MainActivity.app;
         mainMainFragmentSettingsAll = this;
         settings = (RelativeLayout) getView().findViewById(R.id.settings);
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FragmentAnimator.animateSlideToLeft(app, app.getFragmentSettings(), mainMainFragmentSettingsAll);
+                FragmentAnimator.animateSlideToLeft(app, app.fragmentSettings, mainMainFragmentSettingsAll);
                 Log.d(TAG, "Starting:   showBouncySlide()");
             }
         });
     }
+
 }

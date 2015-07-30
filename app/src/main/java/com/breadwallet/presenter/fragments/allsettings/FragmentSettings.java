@@ -1,8 +1,10 @@
 package com.breadwallet.presenter.fragments.allsettings;
 
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +24,8 @@ public class FragmentSettings extends Fragment {
     public static final String TAG = "FragmentSettings";
     private RelativeLayout about;
     private RelativeLayout localCurrency;
+    private RelativeLayout recoveryPhrase;
+    private RelativeLayout startRecoveryWallet;
     private MainActivity app;
     private FragmentSettings fragmentSettings;
     private TextView currencyName;
@@ -40,31 +44,57 @@ public class FragmentSettings extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        app = MainActivity.getApp();
+        app = MainActivity.app;
         fragmentSettings = this;
         about = (RelativeLayout) getView().findViewById(R.id.about);
         currencyName = (TextView) getView().findViewById(R.id.three_letters_currency);
         SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
-        String tmp = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
+        final String tmp = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
         currencyName.setText(tmp);
         localCurrency = (RelativeLayout) getView().findViewById(R.id.local_currency);
+        recoveryPhrase = (RelativeLayout) getView().findViewById(R.id.recovery_phrase);
+        startRecoveryWallet = (RelativeLayout) getView().findViewById(R.id.start_recovery_wallet);
+        startRecoveryWallet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentAnimator.pressWipeWallet(app, app.fragmentWipeWallet);
+                app.activityButtonsEnable(false);
+            }
+        });
+        recoveryPhrase.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(getActivity())
+                        .setTitle("WARNING")
+                        .setMessage("DO NOT let anyone see your recovery phrase or they can spend your bitcoins.\n\n" +
+                                "NEVER type your recovery phrase into password managers or elsewhere.\n" +
+                                "Other devices may be infected.\n\nDO NOT take a screenshot.\nScreenshots are visible to other apps and devices.")
+                        .setPositiveButton("show", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                FragmentAnimator.animateSlideToLeft(app, app.fragmentRecoveryPhrase, fragmentSettings);
+                            }
+                        })
+                        .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                Log.d(TAG, "Canceled the view of the phrase!");
+                            }
+                        })
+                        .show();
+
+            }
+        });
         about.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FragmentAnimator.animateSlideToLeft(app, app.getFragmentAbout(), fragmentSettings);
+                FragmentAnimator.animateSlideToLeft(app, app.fragmentAbout, fragmentSettings);
             }
         });
         localCurrency.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FragmentAnimator.animateSlideToLeft(app, app.getFragmentCurrency(), fragmentSettings);
+                FragmentAnimator.animateSlideToLeft(app, app.fragmentCurrency, fragmentSettings);
             }
         });
     }
 
-    public void setCurrencyText(final String selectedCurrency) {
-        currencyName.setText(selectedCurrency);
-        Log.d(TAG, "in the setCurrencyText() and the selectedCurrency is: " + selectedCurrency);
-        Log.d(TAG, "after assigning the text is: " + currencyName.getText().toString());
-    }
 }

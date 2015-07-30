@@ -222,7 +222,6 @@ public class QRCodeReaderView extends SurfaceView implements SurfaceHolder.Callb
 
     }
 
-
     /**
      * Check if this device has a camera
      */

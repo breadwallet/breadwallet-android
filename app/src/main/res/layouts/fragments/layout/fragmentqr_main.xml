@@ -23,13 +23,22 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="15dp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/mainaddresstext"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/theAddressLayout"
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_below="@+id/mainimageqrcode"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:text="mhBmRiqosSHR9YnPTKc3xXcvhEcKtjet2p"
-        android:textSize="16sp" />
+        android:orientation="vertical">
+
+        <TextView
+            android:padding="15dp"
+            android:id="@+id/mainaddresstext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:text="mhBmRiqosSHR9YnPTKc3xXcvhEcKtjet2p"
+            android:textSize="16sp" />
+    </RelativeLayout>
 </RelativeLayout>

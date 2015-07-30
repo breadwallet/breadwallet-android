@@ -44,14 +44,14 @@ public class ParallaxViewPager extends ViewPager {
     public ParallaxViewPager(Context context) {
         super(context);
         init();
-        app = MainActivity.getApp();
+        app = MainActivity.app;
     }
 
 
     public ParallaxViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
-        app = MainActivity.getApp();
+        app = MainActivity.app;
     }
 
 
@@ -71,7 +71,7 @@ public class ParallaxViewPager extends ViewPager {
                     destination.left = (int) Math.floor((position + positionOffset - CORRECTION_PERCENTAGE) * getWidth());
                     destination.right = (int) Math.ceil((position + positionOffset + 1 + CORRECTION_PERCENTAGE) * getWidth());
                     invalidate();
-                    Log.e(TAG, "The bitmap params: " + bitmap.getWidth() + "   " + bitmap.getHeight());
+//                    Log.e(TAG, "The bitmap params: " + bitmap.getWidth() + "   " + bitmap.getHeight());
                 }
 
                 if (secondOnPageChangeListener != null) {
@@ -79,9 +79,8 @@ public class ParallaxViewPager extends ViewPager {
                 }
             }
 
-
             @Override
-            public void onPageSelected(int position) {
+            public void onPageSelected(final int position) {
                 if (secondOnPageChangeListener != null) {
                     secondOnPageChangeListener.onPageSelected(position);
                 }
@@ -92,7 +91,7 @@ public class ParallaxViewPager extends ViewPager {
 
                             @Override
                             public void run() {
-                                SpringAnimator.showBouncySlide(getRootView(), SpringAnimator.TO_RIGHT);
+                                SpringAnimator.showBouncySlide(getRootView(), SpringAnimator.TO_RIGHT, 15);
                             }
                         }, 80);
                     } else if (position == 0) {
@@ -100,7 +99,7 @@ public class ParallaxViewPager extends ViewPager {
 
                             @Override
                             public void run() {
-                                SpringAnimator.showBouncySlide(getRootView(), SpringAnimator.TO_LEFT);
+                                SpringAnimator.showBouncySlide(getRootView(), SpringAnimator.TO_LEFT, 15);
                             }
                         }, 80);
                     }

@@ -18,6 +18,9 @@ import com.breadwallet.R;
 public class BreadWalletApp extends Application {
     public static final String TAG = "BreadWalletApp";
     private boolean customToastAvailable = true;
+    private String oldMessage;
+    private Toast toast;
+    ;
 
     /**
      * Shows a custom toast using the given string as a paramater,
@@ -25,7 +28,10 @@ public class BreadWalletApp extends Application {
      * @param message the message to be shown in the custom toast
      */
     public void showCustomToast(Activity app, String message, int yOffSet, int duration) {
-        if (customToastAvailable) {
+        if (toast == null) toast = new Toast(getApplicationContext());
+        if (customToastAvailable || !oldMessage.equals(message)) {
+//            toast.cancel();
+            oldMessage = message;
             customToastAvailable = false;
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -38,7 +44,6 @@ public class BreadWalletApp extends Application {
                     (ViewGroup) app.findViewById(R.id.toast_layout_root));
             TextView text = (TextView) layout.findViewById(R.id.toast_text);
             text.setText(message);
-            Toast toast = new Toast(getApplicationContext());
             toast.setGravity(Gravity.BOTTOM, 0, yOffSet);
             toast.setDuration(duration);
             toast.setView(layout);

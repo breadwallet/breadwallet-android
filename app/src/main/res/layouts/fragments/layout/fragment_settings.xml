@@ -27,6 +27,14 @@
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@color/grey" />
 
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/chevron"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginRight="20dp"/>
+
 
         </RelativeLayout>
 
@@ -48,6 +56,14 @@
                 android:text="recovery phrase"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@color/grey" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/chevron"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginRight="20dp"/>
         </RelativeLayout>
 
         <RelativeLayout
@@ -69,15 +85,23 @@
                 android:textColor="@color/grey" />
 
             <TextView
+                android:id="@+id/three_letters_currency"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="50dp"
                 android:text=""
-                android:textSize="20sp"
                 android:textColor="@color/darkblue"
-                android:id="@+id/three_letters_currency"
+                android:textSize="20sp" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/chevron"
                 android:layout_centerVertical="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginRight="40dp"/>
+                android:layout_marginRight="20dp"/>
 
         </RelativeLayout>
 

@@ -1,0 +1,68 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/edit_name"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:text="at this address:\nmhBmRiqosSHR9YnPTKc3xXcvhEcKtjet2p"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/grey"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/copy_address"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/clickable_layout"
+        android:clickable="true"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="copy address to clipboard"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/darkblue" />
+
+    <TextView
+        android:id="@+id/send_message"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/clickable_layout"
+        android:clickable="true"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="send address as message"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/darkblue" />
+
+    <TextView
+        android:id="@+id/send_email"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/clickable_layout"
+        android:clickable="true"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="send address as email"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/darkblue" />
+
+    <TextView
+        android:id="@+id/request_amount"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/clickable_layout"
+        android:clickable="true"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="request an amount"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/darkblue" />
+
+
+</LinearLayout>

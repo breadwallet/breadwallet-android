@@ -30,8 +30,10 @@ public class ScanResultActivity extends Activity {
         scanresult = (TextView) findViewById(R.id.scanresult);
         scanresultimage = (ImageView) findViewById(R.id.scanresultimage);
         String result = (String) getIntent().getExtras().get("result");
-        scanresult.setText(result.substring(9));
-        generateQR(result.substring(9));
+        String theAddress = result.substring(8);
+        scanresult.setText(theAddress);
+        generateQR(theAddress);
+
 
     }
 
@@ -86,5 +88,11 @@ public class ScanResultActivity extends Activity {
         } catch (WriterException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }

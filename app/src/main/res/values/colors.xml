@@ -13,7 +13,7 @@
     <item name="darkred" type="color">#FFCC0000</item>
     <item name="grey" type="color">#ff787878</item>
     <item name="light_grey" type="color">#ff9d9d9d</item>
-    <item name="dark_grey" type="color">#ff3b3b3b</item>
+    <item name="dark_grey" type="color">#ff484848</item>
     <item name="darkblue" type="color">#007fff</item>
     <item name="walletorange" type="color">#ff8000</item>
     <item name="white_trans" type="color">#64ffffff</item>
