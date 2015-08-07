@@ -1,17 +1,13 @@
+package com.breadwallet.presenter.activities.tests;
 
-package com.breadwallet.presenter.activities;
+import android.test.ActivityInstrumentationTestCase2;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.Handler;
-import com.breadwallet.R;
-
+import com.breadwallet.presenter.activities.ScanResultActivity;
 
 /**
  * BreadWallet
  *
- * Created by Mihail on 8/4/15.
+ * Created by Mihail on 7/30/15.
  * Copyright (c) 2015 Mihail Gutan <mihail@breadwallet.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -33,23 +29,9 @@ import com.breadwallet.R;
  * THE SOFTWARE.
  */
 
-public class IntroActivity extends Activity {
-    private Intent intent;
+public class ScanResultActivityTest extends ActivityInstrumentationTestCase2 {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_intro);
-        intent = new Intent(this, MainActivity.class);
-
-        Handler mHandler = new Handler();
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                startActivity(intent);
-                finish();
-            }
-        }, 800);
+    public ScanResultActivityTest() {
+        super(ScanResultActivity.class);
     }
-
 }

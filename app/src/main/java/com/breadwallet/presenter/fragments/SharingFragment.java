@@ -1,7 +1,28 @@
 package com.breadwallet.presenter.fragments;
 
 /**
+ * BreadWallet
+ *
  * Created by Mihail on 7/24/15.
+ * Copyright (c) 2015 Mihail Gutan <mihail@breadwallet.com>                        
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 
 import android.content.Intent;
@@ -27,7 +48,6 @@ public class SharingFragment extends DialogFragment {
     private TextView requestAmount;
     private boolean customToastAvailable = true;
     private String theAddress;
-    private String theMessage;
 
     public SharingFragment() {
         // Empty constructor required for DialogFragment
@@ -41,8 +61,7 @@ public class SharingFragment extends DialogFragment {
         sendEmail = (TextView) view.findViewById(R.id.send_email);
         sendMessage = (TextView) view.findViewById(R.id.send_message);
         requestAmount = (TextView) view.findViewById(R.id.request_amount);
-        theMessage = "Hi, here is my bitcoin address: ";
-        getDialog().setTitle("Receive bitcoins");
+        getDialog().setTitle(getResources().getString(R.string.dialog_receive_bitcoins));
 
         copyAddress.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,7 +76,7 @@ public class SharingFragment extends DialogFragment {
                         }
                     }, 2000);
                     ((BreadWalletApp) getActivity().getApplicationContext()).
-                            showCustomToast(getActivity(), "Address copied to clipboard", 360, Toast.LENGTH_SHORT);
+                            showCustomToast(getActivity(), getResources().getString(R.string.toast_address_copied), 360, Toast.LENGTH_SHORT);
                     getDialog().cancel();
                 }
             }
@@ -69,9 +88,9 @@ public class SharingFragment extends DialogFragment {
             public void onClick(View v) {
                 Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                         "mailto", "abc@gmail.com", null));
-                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Bitcoin Address");
-                emailIntent.putExtra(Intent.EXTRA_TEXT, "Hi this is my bitcoin address: " + theAddress);
-                startActivity(Intent.createChooser(emailIntent, "Send your bitcoin address"));
+                emailIntent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.bitcoin_address));
+                emailIntent.putExtra(Intent.EXTRA_TEXT, getResources().getString(R.string.sharing_message) + theAddress);
+                startActivity(Intent.createChooser(emailIntent, getResources().getString(R.string.dialog_email_title)));
                 getDialog().cancel();
             }
         });
@@ -81,7 +100,7 @@ public class SharingFragment extends DialogFragment {
             public void onClick(View v) {
                 Intent sendIntent = new Intent(Intent.ACTION_VIEW);
                 sendIntent.setData(Uri.parse("sms:"));
-                sendIntent.putExtra("sms_body", theMessage + theAddress);
+                sendIntent.putExtra("sms_body", getResources().getString(R.string.sharing_message) + theAddress);
                 startActivity(sendIntent);
                 getDialog().cancel();
             }

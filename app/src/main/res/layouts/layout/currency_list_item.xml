@@ -4,20 +4,20 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    <com.breadwallet.tools.others.AutoResizeTextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/currency_item_text"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:gravity="center_vertical"
-        android:textSize="16sp"
         android:minHeight="?android:attr/listPreferredItemHeightSmall"
         android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
         android:paddingStart="16dp"
         android:text=""
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/grey" />
+        android:textColor="@color/grey"
+        android:textSize="20sp" />
 
     <ImageView
         android:id="@+id/currency_checkmark"
@@ -27,6 +27,6 @@
         android:layout_centerVertical="true"
         android:layout_marginRight="10dp"
         android:background="@drawable/checkmark"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 </RelativeLayout>

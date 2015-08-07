@@ -38,20 +38,20 @@
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
         android:layout_marginTop="50dp"
-        android:background="@drawable/buttonblue"
+        android:background="@drawable/button"
         android:text="pay address from clipboard "
         android:textColor="@color/darkblue"
         android:textSize="20sp" />
 
     <EditText
-        android:layout_marginTop="20dp"
-        android:textColor="@color/grey"
         android:id="@+id/addresseditText"
         android:layout_width="match_parent"
         android:layout_height="150dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:background="#00000000"
         android:text="The address"
         android:textAlignment="gravity"
-        android:layout_gravity="center_horizontal"
-        android:background="#00000000" />
+        android:textColor="@color/grey" />
 
 </LinearLayout>

@@ -15,8 +15,30 @@ import com.breadwallet.tools.adapter.CustomPagerAdapter;
 import java.util.Stack;
 
 /**
+ * BreadWallet
+ *
  * Created by Mihail on 7/13/15.
+ * Copyright (c) 2015 Mihail Gutan <mihail@breadwallet.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
+
 public class FragmentAnimator {
     public static final String TAG = "FragmentAnimator";
     public static boolean settingsAllON;
@@ -41,17 +63,11 @@ public class FragmentAnimator {
      * Animate the transition on burgerButton/MenuButton pressed
      */
     public static void pressMenuButton(final MainActivity context, final Fragment to) {
-        if (settingsAvailable) {
-            Log.d(TAG, "Inside the pressMenuButton!");
-            settingsAvailable = false;
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    settingsAvailable = true;
-                }
-            }, 300);
+        if (multiplePressingAvailable) {
+            pauseTheAnimationAvailabilityFor(300);
             if (level == 0) {
                 level++;
+                MainActivity.app.setBurgerButtonImage(context.CLOSE);
                 FragmentTransaction fragmentTransaction = context.getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(R.animator.from_bottom, R.animator.from_bottom);
                 fragmentTransaction.replace(R.id.mainlayout, context.mainFragmentSettingsAll);
@@ -72,6 +88,7 @@ public class FragmentAnimator {
             } else if (level == 1) {
                 level--;
                 settingsAllON = false;
+                MainActivity.app.setBurgerButtonImage(context.BURGER);
                 FragmentTransaction fragmentTransaction = context.getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(R.animator.to_bottom, R.animator.to_bottom);
                 fragmentTransaction.remove(context.mainFragmentSettingsAll);
@@ -86,14 +103,8 @@ public class FragmentAnimator {
      * Animate the transition on wipe wallet fragment
      */
     public static void pressWipeWallet(final MainActivity context, final Fragment to) {
-        if (settingsAvailable) {
-            settingsAvailable = false;
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    settingsAvailable = true;
-                }
-            }, 300);
+        if (multiplePressingAvailable) {
+            pauseTheAnimationAvailabilityFor(300);
             if (!wipeWalletOpen) {
                 wipeWalletOpen = true;
                 FragmentTransaction fragmentTransaction = context.getSupportFragmentManager().beginTransaction();
@@ -124,6 +135,8 @@ public class FragmentAnimator {
         if (multiplePressingAvailable) {
             pauseTheAnimationAvailabilityFor(300);
             level++;
+            if (level > 1)
+                context.setBurgerButtonImage(context.BACK);
             FragmentTransaction fragmentTransaction = context.getSupportFragmentManager().beginTransaction();
             fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
             fragmentTransaction.replace(R.id.mainlayout, to);
@@ -144,14 +157,18 @@ public class FragmentAnimator {
             pauseTheAnimationAvailabilityFor(300);
             final Fragment tmp = previous.pop();
             level--;
-            Log.e(TAG, "The actual SettingsFragment: " + tmp);
+            if (level < 1)
+                context.setBurgerButtonImage(context.BURGER);
+            if (level == 1)
+                context.setBurgerButtonImage(context.CLOSE);
+//            Log.e(TAG, "The actual SettingsFragment: " + tmp);
             FragmentTransaction fragmentTransaction = context.getSupportFragmentManager().beginTransaction();
             fragmentTransaction.setCustomAnimations(R.animator.from_left, R.animator.to_right);
             fragmentTransaction.replace(R.id.mainlayout, tmp);
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    SpringAnimator.showBouncySlide(tmp.getView(), SpringAnimator.TO_LEFT,20);
+                    SpringAnimator.showBouncySlide(tmp.getView(), SpringAnimator.TO_LEFT, 20);
                 }
             }, 200);
             fragmentTransaction.commit();
@@ -167,20 +184,26 @@ public class FragmentAnimator {
                 @Override
                 public void run() {
                     multiplePressingAvailable = true;
-                    Log.w(TAG, "multiplePressingAvailable is back to - true");
+//                    Log.w(TAG, "multiplePressingAvailable is back to - true");
                 }
             }, delay);
         }
 
     }
-//
-//    public static void enablePressing() {
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                multiplePressingAvailable = true;
-//            }
-//        }, 400);
-//    }
+
+    public static void hideDecoderFragment() {
+        CustomPagerAdapter.adapter.showFragments(true);
+        MainActivity.app.decoderFragmentOn = false;
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                FragmentAnimator.multiplePressingAvailable = true;
+            }
+        }, 300);
+        MainActivity.app.getSupportFragmentManager().beginTransaction().
+                setCustomAnimations(R.animator.from_top, R.animator.to_bottom).
+                remove(MainActivity.app.mainFragmentDecoder).commit();
+
+    }
 
 }

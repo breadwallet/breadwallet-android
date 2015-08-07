@@ -1,3 +1,4 @@
+
 package com.breadwallet.presenter.fragments.allsettings;
 
 import android.content.DialogInterface;
@@ -18,8 +19,30 @@ import com.breadwallet.presenter.fragments.allsettings.settings.FragmentCurrency
 import com.breadwallet.tools.animation.FragmentAnimator;
 
 /**
+ * BreadWallet
+ *
  * Created by Mihail on 6/29/15.
+ * Copyright (c) 2015 Mihail Gutan <mihail@breadwallet.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
+
 public class FragmentSettings extends Fragment {
     public static final String TAG = "FragmentSettings";
     private RelativeLayout about;
@@ -65,16 +88,14 @@ public class FragmentSettings extends Fragment {
             @Override
             public void onClick(View v) {
                 new AlertDialog.Builder(getActivity())
-                        .setTitle("WARNING")
-                        .setMessage("DO NOT let anyone see your recovery phrase or they can spend your bitcoins.\n\n" +
-                                "NEVER type your recovery phrase into password managers or elsewhere.\n" +
-                                "Other devices may be infected.\n\nDO NOT take a screenshot.\nScreenshots are visible to other apps and devices.")
-                        .setPositiveButton("show", new DialogInterface.OnClickListener() {
+                        .setTitle(getResources().getString(R.string.warning))
+                        .setMessage(getResources().getString(R.string.dialog_do_not_let_anyone))
+                        .setPositiveButton(getResources().getString(R.string.show), new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 FragmentAnimator.animateSlideToLeft(app, app.fragmentRecoveryPhrase, fragmentSettings);
                             }
                         })
-                        .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                        .setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 Log.d(TAG, "Canceled the view of the phrase!");
                             }

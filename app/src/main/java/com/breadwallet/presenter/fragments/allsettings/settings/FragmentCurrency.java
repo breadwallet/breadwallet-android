@@ -1,3 +1,4 @@
+
 package com.breadwallet.presenter.fragments.allsettings.settings;
 
 import android.content.SharedPreferences;
@@ -16,12 +17,35 @@ import android.widget.Toast;
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.tools.others.currency.CurrencyListAdapter;
-import com.breadwallet.tools.others.currency.CurrencyManager;
+import com.breadwallet.tools.adapter.CurrencyListAdapter;
+import com.breadwallet.tools.others.CurrencyManager;
+
 
 /**
+ * BreadWallet
+ * <p/>
  * Created by Mihail on 7/14/15.
+ * Copyright (c) 2015 Mihail Gutan <mihail@breadwallet.com>
+ * <p/>
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * <p/>
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * <p/>
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
+
 public class FragmentCurrency extends Fragment {
     public static final String TAG = "FragmentCurrency";
     public static final String CURRENT_CURRENCY = "currentCurrency";
@@ -31,20 +55,22 @@ public class FragmentCurrency extends Fragment {
     private Button currencyRefresh;
     private TextView noInternetConnection;
     private CurrencyListAdapter adapter;
+    private TextView currencyItemText;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
+                             final ViewGroup container, Bundle savedInstanceState) {
         // The last two arguments ensure LayoutParams are inflated
         // properly.
-        View rootView = inflater.inflate(
+        final View rootView = inflater.inflate(
                 R.layout.fragment_local_currency, container, false);
         app = MainActivity.app;
         currencyList = (ListView) rootView.findViewById(R.id.currency_list_view);
         currencyList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         currencyRefresh = (Button) rootView.findViewById(R.id.currencyRefresh);
         noInternetConnection = (TextView) rootView.findViewById(R.id.noInternetConnectionText);
-
+        adapter = CurrencyManager.getCurrencyAddapterIfReady();
+        tryAndSetAdapter();
         currencyRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -52,22 +78,27 @@ public class FragmentCurrency extends Fragment {
                 tryAndSetAdapter();
             }
         });
-        adapter = CurrencyManager.getCurrencyAddapterIfReady();
-        tryAndSetAdapter();
+
         currencyList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                adapter.setSelectedIndex(position);
+                Integer pos = new Integer(position);
+                if (!adapter.scaledItemsIDs.contains(pos)) {
+                    if (!adapter.isTextSizeAcceptable((TextView) view.findViewById(R.id.currency_item_text))) {
+                        adapter.scaledItemsIDs.add(pos);
+                        Log.e(TAG, "Unaccepted textView size!");
+                    }
+                }
                 adapter.notifyDataSetChanged();
-                TextView tmp = (TextView) view.findViewById(R.id.currency_item_text);
-                final String selectedCurrency = tmp.getText().toString();
+                adapter.setSelectedIndex(position);
+                currencyItemText = (TextView) view.findViewById(R.id.currency_item_text);
+                final String selectedCurrency = currencyItemText.getText().toString();
                 SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putString(CURRENT_CURRENCY, selectedCurrency.substring(0, 3));
-                editor.putInt(POSITION,position);
+                editor.putInt(POSITION, position);
                 editor.commit();
-                Log.d(TAG, "Selected item's text: " + selectedCurrency);
             }
         });
 
@@ -81,10 +112,9 @@ public class FragmentCurrency extends Fragment {
             noInternetConnection.setVisibility(View.GONE);
         } else {
             ((BreadWalletApp) app.getApplicationContext()).showCustomToast(getActivity(),
-                    "No internet connection", 500, Toast.LENGTH_SHORT);
+                    getResources().getString(R.string.no_internet_connection), 500, Toast.LENGTH_SHORT);
             currencyRefresh.setVisibility(View.VISIBLE);
             noInternetConnection.setVisibility(View.VISIBLE);
         }
     }
-
 }

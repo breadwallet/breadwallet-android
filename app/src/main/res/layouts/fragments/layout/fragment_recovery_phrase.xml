@@ -13,7 +13,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="66dp"
         android:gravity="center"
-        android:text="@string/recovery_phrase_warning"
+        android:text="@string/dialog_recovery_phrase_warning"
         android:textColor="@color/dark_grey"
         android:textSize="18sp"
         android:textStyle="bold" />

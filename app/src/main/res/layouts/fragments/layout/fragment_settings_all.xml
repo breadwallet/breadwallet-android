@@ -7,7 +7,7 @@
         android:id="@+id/settings_all"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="50dp">
+        android:layout_marginTop="60dp">
 
         <RelativeLayout
             android:id="@+id/transactions"
@@ -98,7 +98,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginTop="10dp"
-            android:text="@string/rescan_instructions"
+            android:text="@string/settingsall_rescan_instructions"
             android:textColor="@color/grey"
             android:textSize="18sp" />
 

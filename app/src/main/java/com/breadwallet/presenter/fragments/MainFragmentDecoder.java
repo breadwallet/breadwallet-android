@@ -1,3 +1,4 @@
+
 package com.breadwallet.presenter.fragments;
 
 import android.content.Intent;
@@ -15,8 +16,34 @@ import android.widget.RelativeLayout;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.activities.ScanResultActivity;
+import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.qrcode.QRCodeReaderView;
+
+/**
+ * BreadWallet
+ *
+ * Created by Mihail on 7/14/15.
+ * Copyright (c) 2015 Mihail Gutan <mihail@breadwallet.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 
 public class MainFragmentDecoder extends Fragment implements QRCodeReaderView.OnQRCodeReadListener {
 
@@ -74,14 +101,13 @@ public class MainFragmentDecoder extends Fragment implements QRCodeReaderView.On
                     }
                 }, 300);
                 accessGranted = false;
-//            Log.e(TAG, "Activity STARTED!!!!!");
                 intent.putExtra("result", text);
                 startActivity(intent);
             }
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    MainActivity.app.hideDecoderFragment();
+                    FragmentAnimator.hideDecoderFragment();
                 }
             }, 1000);
         }

@@ -10,7 +10,6 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -22,7 +21,28 @@ import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.others.MyClipboardManager;
 
 /**
- * The main fragment shown in the MainActivity
+ * BreadWallet
+ * <p/>
+ * Created by Mihail on 7/14/15.
+ * Copyright (c) 2015 Mihail Gutan <mihail@breadwallet.com>
+ * <p/>
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * <p/>
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * <p/>
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 
 public class MainFragment extends Fragment {
@@ -30,6 +50,7 @@ public class MainFragment extends Fragment {
     private Button scanQRButton;
     private Button payAddressFromClipboardButton;
     public EditText addressEditText;
+    AlertDialog alertDialog;
 
 
     @Override
@@ -46,6 +67,7 @@ public class MainFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         scanQRButton = (Button) getActivity().findViewById(R.id.mainbuttonscanqrcode);
         payAddressFromClipboardButton = (Button) getActivity().findViewById(R.id.mainbuttonpayaddressfromclipboard);
+        alertDialog = new AlertDialog.Builder(getActivity()).create();
         scanQRButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -58,31 +80,29 @@ public class MainFragment extends Fragment {
         });
         addressEditText = (EditText) getView().findViewById(R.id.addresseditText);
         addressEditText.setGravity(Gravity.CENTER_HORIZONTAL);
-        payAddressFromClipboardButton.setOnTouchListener(new View.OnTouchListener() {
+        payAddressFromClipboardButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
+            public void onClick(View view) {
                 if (FragmentAnimator.multiplePressingAvailable) {
                     FragmentAnimator.pauseTheAnimationAvailabilityFor(300);
+                    if (alertDialog.isShowing()) {
+                        alertDialog.dismiss();
+                    }
                     String address = MyClipboardManager.readFromClipboard(getActivity());
                     if (checkIfAddressIsValid(address)) {
-                        switch (event.getActionMasked()) {
-                            case MotionEvent.ACTION_DOWN:
-                                payAddressFromClipboardButton.setBackgroundResource(R.drawable.buttonbluepressed);
-                                addressEditText.setText(address);
-                                new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        payAddressFromClipboardButton.setBackgroundResource(R.drawable.buttonblue);
-                                    }
-                                }, 50);
+                        payAddressFromClipboardButton.setBackgroundResource(R.drawable.buttonbluepressed);
+                        addressEditText.setText(address);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                payAddressFromClipboardButton.setBackgroundResource(R.drawable.buttonblue);
+                            }
+                        }, 50);
 
-                                break;
-                        }
                     } else {
-                        AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
-                        alertDialog.setTitle("Alert");
-                        alertDialog.setMessage("clipboard doesn't contain a valid bitcoin address");
-                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        alertDialog.setTitle(getResources().getString(R.string.alert));
+                        alertDialog.setMessage(getResources().getString(R.string.mainfragment_clipboard_invalid_data));
+                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getResources().getString(R.string.ok),
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.dismiss();
@@ -90,11 +110,11 @@ public class MainFragment extends Fragment {
                                 });
                         alertDialog.show();
                     }
-                    return false;
                 }
-                return false;
             }
+
         });
+
     }
 
     public boolean checkIfAddressIsValid(String str) {
