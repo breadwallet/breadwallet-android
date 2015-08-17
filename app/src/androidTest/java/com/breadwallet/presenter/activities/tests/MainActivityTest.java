@@ -73,15 +73,9 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
     }
 
     @MediumTest
-    public void testBurgerButtonClickability() {
-//        TouchUtils.clickView(this,burgerButtonLayout);
-//        TouchUtils.clickView(this,scanQRCode);
-//        activity.onBackPressed();
-//        TouchUtils.clickView(this, copyAddressFromClipboard);
-//        activity.onBackPressed();
-
+    public void testBurgerButton() {
         onView(withId(R.id.burgerbuttonlayout)).perform(click());
-
+//        onView(withId(R.id.settings)).perform(click());
     }
 
     @MediumTest

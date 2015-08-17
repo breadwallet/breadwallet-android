@@ -3,10 +3,10 @@ package com.breadwallet.presenter.activities;
 import android.content.ClipboardManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.PersistableBundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
@@ -17,13 +17,14 @@ import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
+import com.breadwallet.presenter.fragments.FragmentAbout;
+import com.breadwallet.presenter.fragments.FragmentCurrency;
+import com.breadwallet.presenter.fragments.FragmentRecoveryPhrase;
+import com.breadwallet.presenter.fragments.FragmentScanResult;
+import com.breadwallet.presenter.fragments.FragmentSettings;
+import com.breadwallet.presenter.fragments.FragmentWipeWallet;
 import com.breadwallet.presenter.fragments.MainFragmentDecoder;
 import com.breadwallet.presenter.fragments.MainFragmentSettingsAll;
-import com.breadwallet.presenter.fragments.allsettings.FragmentSettings;
-import com.breadwallet.presenter.fragments.allsettings.settings.FragmentAbout;
-import com.breadwallet.presenter.fragments.allsettings.settings.FragmentCurrency;
-import com.breadwallet.presenter.fragments.allsettings.settings.FragmentRecoveryPhrase;
-import com.breadwallet.presenter.fragments.allsettings.settings.FragmentWipeWallet;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
 import com.breadwallet.tools.adapter.ParallaxViewPager;
 import com.breadwallet.tools.animation.FragmentAnimator;
@@ -35,20 +36,20 @@ import java.util.Map;
 
 /**
  * BreadWallet
- *
+ * <p/>
  * Created by Mihail on 8/4/15.
  * Copyright (c) 2015 Mihail Gutan <mihail@breadwallet.com>
- *
+ * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * <p/>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
+ * <p/>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -63,15 +64,16 @@ public class MainActivity extends FragmentActivity {
     public static final String PREFS_NAME = "MyPrefsFile";
     public static MainActivity app;
     public static boolean decoderFragmentOn;
+    public static boolean scanResultFragmentOn;
     public CustomPagerAdapter pagerAdapter;
-    public RelativeLayout pageIndicator;
+    public static RelativeLayout pageIndicator;
     public ImageView pageIndicatorLeft;
     public ImageView pageIndicatorRight;
     public Map<String, Integer> burgerButtonMap;
     public Button burgerButton;
     public Button locker;
     public MainFragmentSettingsAll mainFragmentSettingsAll;
-    public ParallaxViewPager parallaxViewPager;
+    public static ParallaxViewPager parallaxViewPager;
     public FragmentSettings fragmentSettings;
     public FragmentAbout fragmentAbout;
     public MainFragmentDecoder mainFragmentDecoder;
@@ -80,12 +82,14 @@ public class MainActivity extends FragmentActivity {
     public FragmentRecoveryPhrase fragmentRecoveryPhrase;
     public FragmentWipeWallet fragmentWipeWallet;
     public RelativeLayout burgerButtonLayout;
+    public FragmentScanResult fragmentScanResult;
     private boolean onBackPressedAvailable = true;
     private boolean doubleBackToExitPressedOnce;
     public static final int BURGER = 0;
     public static final int CLOSE = 1;
     public static final int BACK = 2;
     public static final float PAGE_INDICATOR_SCALE_UP = 1.3f;
+    public static boolean beenThroughSavedInstanceMethod = false;
 
     /**
      * Public constructor used to assign the current instance to the app variable
@@ -96,28 +100,33 @@ public class MainActivity extends FragmentActivity {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+        beenThroughSavedInstanceMethod = true;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         Log.e(TAG, "Activity created!");
+        if (savedInstanceState != null) {
+            return;
+        }
         initializeViews();
-        burgerButtonLayout.setOnTouchListener(new View.OnTouchListener() {
-
+        burgerButtonLayout.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-//                Log.d(TAG, "CLicked on the burgerLayoutHelper!");
+            public void onClick(View v) {
                 SpringAnimator.showAnimation(burgerButton);
-                if (FragmentAnimator.level > 1) {
-//                    Log.e(TAG, "CHECK:Should press back!");
+                if (FragmentAnimator.level > 1 || scanResultFragmentOn) {
+                    Log.e(TAG, "CHECK:Should press back!");
                     app.onBackPressed();
                 } else {
                     FragmentAnimator.pressMenuButton(app, mainFragmentSettingsAll);
-//                    Log.e(TAG, "CHECK:Should press menu");
+                    Log.e(TAG, "CHECK:Should press menu");
                 }
-                return true;
             }
-
         });
 
     }
@@ -134,7 +143,6 @@ public class MainActivity extends FragmentActivity {
         CurrencyManager.stoptimertask();
     }
 
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -146,6 +154,7 @@ public class MainActivity extends FragmentActivity {
     /**
      * Initializes all the views and components
      */
+
     private void initializeViews() {
         burgerButtonLayout = (RelativeLayout) findViewById(R.id.burgerbuttonlayout);
         burgerButton = (Button) findViewById(R.id.mainbuttonburger);
@@ -163,6 +172,7 @@ public class MainActivity extends FragmentActivity {
         fragmentCurrency = new FragmentCurrency();
         fragmentRecoveryPhrase = new FragmentRecoveryPhrase();
         fragmentWipeWallet = new FragmentWipeWallet();
+        fragmentScanResult = new FragmentScanResult();
         parallaxViewPager = ((ParallaxViewPager) findViewById(R.id.pager));
         parallaxViewPager
                 .setOverlapPercentage(0.99f)
@@ -175,65 +185,96 @@ public class MainActivity extends FragmentActivity {
         scaleView(pageIndicatorLeft, 1f, PAGE_INDICATOR_SCALE_UP, 1f, PAGE_INDICATOR_SCALE_UP);
     }
 
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_MENU) {
-            // return 'true' to prevent further propagation of the key event
             if (FragmentAnimator.level > 1) {
-//                Log.e(TAG, "CHECK:Should press back!");
                 this.onBackPressed();
             } else {
-//                Log.e(TAG, "CHECK:Should press menu");
+                if(scanResultFragmentOn){
+                    app.onBackPressed();
+                }
                 FragmentAnimator.pressMenuButton(app, mainFragmentSettingsAll);
             }
             return true;
         }
-
         // let the system handle all other key events
         return super.onKeyDown(keyCode, event);
     }
 
     @Override
     public void onBackPressed() {
-        Log.e(TAG, "onBackPressed!!!!");
+        Log.e(TAG, "onBackPressed!");
         if (onBackPressedAvailable) {
             onBackPressedAvailable = false;
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    onBackPressedAvailable = true;
-                }
-            }, 300);
-            if (!FragmentAnimator.wipeWalletOpen) {
-                if (FragmentAnimator.level == 0) {
+            makeOnBackPressedAvailable(300);
+
+            //old implimentation, keep in case the new ones fail
+//            if (!FragmentAnimator.wipeWalletOpen) {
+//                if (FragmentAnimator.level == 0) {
+//                    if (doubleBackToExitPressedOnce) {
+//                        super.onBackPressed();
+//                        return;
+//                    }
+//                    if (decoderFragmentOn) {
+//                        FragmentAnimator.hideDecoderFragment();
+//                    } else {
+//                        this.doubleBackToExitPressedOnce = true;
+//                        ((BreadWalletApp) getApplicationContext()).showCustomToast(this,
+//                                getResources().getString(R.string.mainactivity_press_back_again), 100, Toast.LENGTH_SHORT);
+//                        new Handler().postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                doubleBackToExitPressedOnce = false;
+//                            }
+//                        }, 1000);
+//                    }
+//                } else if (FragmentAnimator.level == 1) {
+//                    FragmentAnimator.pressMenuButton(this, mainFragmentSettingsAll);
+//                    if (FragmentAnimator.multiplePressingAvailable)
+//                        FragmentAnimator.hideDecoderFragment();
+//                } else {
+//                    FragmentAnimator.animateSlideToRight(this);
+//                }
+//            } else {
+//                FragmentAnimator.pressWipeWallet(this, fragmentSettings);
+//                activityButtonsEnable(true);
+//            }
+
+            if (FragmentAnimator.wipeWalletOpen) {
+                FragmentAnimator.pressWipeWallet(this, fragmentSettings);
+                activityButtonsEnable(true);
+                return;
+            }
+            //switch the level of fragments creation.
+            switch (FragmentAnimator.level) {
+                case 0:
                     if (doubleBackToExitPressedOnce) {
                         super.onBackPressed();
-                        return;
+                        break;
                     }
                     if (decoderFragmentOn) {
                         FragmentAnimator.hideDecoderFragment();
-                    } else {
-                        this.doubleBackToExitPressedOnce = true;
-                        ((BreadWalletApp) getApplicationContext()).showCustomToast(this,
-                                getResources().getString(R.string.mainactivity_press_back_again), 100, Toast.LENGTH_SHORT);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                doubleBackToExitPressedOnce = false;
-                            }
-                        }, 1000);
+                        break;
                     }
-                } else if (FragmentAnimator.level == 1) {
+                    if (scanResultFragmentOn) {
+                        FragmentAnimator.hideScanResultFragment();
+                        break;
+                    }
+                    this.doubleBackToExitPressedOnce = true;
+                    ((BreadWalletApp) getApplicationContext()).showCustomToast(this,
+                            getResources().getString(R.string.mainactivity_press_back_again), 140, Toast.LENGTH_SHORT);
+                    makeDoubleBackToExitPressedOnce(1000);
+
+                    break;
+                case 1:
                     FragmentAnimator.pressMenuButton(this, mainFragmentSettingsAll);
                     if (FragmentAnimator.multiplePressingAvailable)
                         FragmentAnimator.hideDecoderFragment();
-                } else {
+                    break;
+                default:
                     FragmentAnimator.animateSlideToRight(this);
-                }
-            } else {
-                FragmentAnimator.pressWipeWallet(this, fragmentSettings);
-                activityButtonsEnable(true);
+                    break;
             }
         }
     }
@@ -306,5 +347,23 @@ public class MainActivity extends FragmentActivity {
                 Animation.RELATIVE_TO_SELF, 0.5f); // Pivot point of Y scaling
         anim.setFillAfter(true); // Needed to keep the result of the animation
         v.startAnimation(anim);
+    }
+
+    private void makeOnBackPressedAvailable(int ms) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                onBackPressedAvailable = true;
+            }
+        }, ms);
+    }
+
+    private void makeDoubleBackToExitPressedOnce(int ms) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce = false;
+            }
+        }, ms);
     }
 }

@@ -2,18 +2,14 @@
 package com.breadwallet.presenter.activities;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.PointF;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.animation.Animation;
-import android.view.animation.LinearInterpolator;
-import android.view.animation.TranslateAnimation;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.fragments.FragmentScanResult;
+import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.qrcode.QRCodeReaderView;
 
 /**
@@ -46,10 +42,7 @@ public class DecoderActivity extends Activity implements QRCodeReaderView.OnQRCo
     public static final String TAG = "DecoderActivity";
 
     private boolean accessGranted = true;
-    private TextView myTextView;
     private QRCodeReaderView mydecoderview;
-    private ImageView line_image;
-    private Intent intent;
     private DecoderActivity decoderActivity;
 
     public DecoderActivity() {
@@ -61,23 +54,6 @@ public class DecoderActivity extends Activity implements QRCodeReaderView.OnQRCo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_decoder);
 //
-        intent = new Intent(this, ScanResultActivity.class);
-
-        myTextView = (TextView) findViewById(R.id.exampleTextView);
-
-        line_image = (ImageView) findViewById(R.id.red_line_image);
-
-        TranslateAnimation mAnimation = new TranslateAnimation(
-                TranslateAnimation.ABSOLUTE, 0f,
-                TranslateAnimation.ABSOLUTE, 0f,
-                TranslateAnimation.RELATIVE_TO_PARENT, 0f,
-                TranslateAnimation.RELATIVE_TO_PARENT, 0.5f);
-        mAnimation.setDuration(1000);
-        mAnimation.setRepeatCount(-1);
-        mAnimation.setRepeatMode(Animation.REVERSE);
-        mAnimation.setInterpolator(new LinearInterpolator());
-        line_image.setAnimation(mAnimation);
-
     }
 
     /**
@@ -87,12 +63,15 @@ public class DecoderActivity extends Activity implements QRCodeReaderView.OnQRCo
      */
     @Override
     public void onQRCodeRead(String text, PointF[] points) {
+        Log.e(TAG, "QRCode was read!");
         if (accessGranted) {
             accessGranted = false;
-            myTextView.setText(text);
-//            Log.e(TAG, "Activity STARTED!!!!!");
-            intent.putExtra("result", text);
-            startActivity(intent);
+            if(text!= null){
+                FragmentScanResult.address = text;
+                FragmentAnimator.animateScanResultFragment();
+            } else {
+                throw new NullPointerException("The scanned text is null!");
+            }
             finish();
         }
     }

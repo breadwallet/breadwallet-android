@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="acra-4.6.1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/app/libs/acra-4.6.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

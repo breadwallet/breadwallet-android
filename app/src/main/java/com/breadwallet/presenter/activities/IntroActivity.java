@@ -47,9 +47,11 @@ public class IntroActivity extends Activity {
             @Override
             public void run() {
                 startActivity(intent);
-                finish();
+                if(!IntroActivity.this.isDestroyed()){
+                    finish();
+                }
+
             }
         }, 800);
     }
-
 }

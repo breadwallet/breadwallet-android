@@ -15,21 +15,33 @@
             android:layout_height="wrap_content"></ListView>
 
         <TextView
+            android:id="@+id/noInternetConnectionText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="No Internet Connection"
-            android:id="@+id/noInternetConnectionText"
-            android:textColor="@color/dark_grey"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="136dp" />
+            android:layout_marginTop="136dp"
+            android:text="No Internet Connection"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/grey"
+            android:visibility="gone" />
 
         <Button
+            android:id="@+id/currencyRefresh"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:background="@color/white"
             android:text="Refresh"
-            android:id="@+id/currencyRefresh"
+            android:textColor="@color/blue"
+            android:visibility="gone" />
+
+        <ProgressBar
+            android:id="@+id/currency_progress_barr"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true" />
 

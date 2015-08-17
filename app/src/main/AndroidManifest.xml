@@ -17,7 +17,6 @@
         android:label="@string/app_name"
         android:largeHeap="true"
         android:theme="@style/AppTheme">
-        >
         <activity
             android:name=".presenter.activities.IntroActivity"
             android:label="@string/app_name"
@@ -31,10 +30,6 @@
         <activity
             android:name=".presenter.activities.MainActivity"
             android:label="@string/title_activity_main"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".presenter.activities.ScanResultActivity"
-            android:label="@string/title_activity_scan_result"
             android:screenOrientation="portrait" />
         <activity
             android:name=".presenter.activities.DecoderActivity"

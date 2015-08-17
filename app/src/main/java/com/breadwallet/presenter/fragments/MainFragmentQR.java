@@ -4,6 +4,7 @@ package com.breadwallet.presenter.fragments;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
@@ -25,6 +26,10 @@ import com.breadwallet.tools.qrcode.Contents;
 import com.breadwallet.tools.qrcode.QRCodeEncoder;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * BreadWallet
@@ -57,10 +62,13 @@ public class MainFragmentQR extends Fragment {
     private static final String TEST_ADDRESS = "mhBmRiqosSHR9YnPTKc3xXcvhEcKtjet2p";
     private TextView mainAddressText;
     private RelativeLayout addressLayout;
-    private Bitmap bitmap;
+    public Bitmap bitmap;
     public SharingFragment sharingFragment;
     public FragmentManager fm;
     private int count;
+    private int firstToastY = -1;
+    private int secondToastY = -1;
+    public static File qrCodeImageFile;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -68,19 +76,21 @@ public class MainFragmentQR extends Fragment {
         // The last two arguments ensure LayoutParams are inflated
         // properly.
         final View rootView = inflater.inflate(
-                R.layout.fragmentqr_main, container, false);
+                R.layout.fragment_qr_main, container, false);
         qrcode = (ImageView) rootView.findViewById(R.id.mainimageqrcode);
         sharingFragment = new SharingFragment();
         generateQR();
         mainAddressText = (TextView) rootView.findViewById(R.id.mainaddresstext);
         addressLayout = (RelativeLayout) rootView.findViewById(R.id.theAddressLayout);
         fm = getActivity().getSupportFragmentManager();
+        final BreadWalletApp breadWalletApp = (BreadWalletApp) MainActivity.app.getApplication();
         addressLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (FragmentAnimator.multiplePressingAvailable) {
                     FragmentAnimator.pauseTheAnimationAvailabilityFor(300);
                     sharingFragment.setTheAddress(mainAddressText.getText().toString());
+                    saveBitmapToFile();
                     sharingFragment.show(fm, "sharingFragment");
                 }
             }
@@ -89,13 +99,18 @@ public class MainFragmentQR extends Fragment {
             @Override
             public void onClick(View v) {
                 if (count == 0) {
-                    ((BreadWalletApp) getActivity().getApplication()).showCustomToast(MainActivity.app,
-                            getResources().getString(R.string.toast_qr_tip), 460, Toast.LENGTH_LONG);
+                    if (firstToastY == -1)
+                        firstToastY = BreadWalletApp.DISPLAY_HEIGHT_PX - breadWalletApp.getRelativeTop(mainAddressText) + 400;
+                    breadWalletApp.showCustomToast(MainActivity.app,
+                            getResources().getString(R.string.toast_qr_tip), firstToastY, Toast.LENGTH_LONG);
                     Log.e(TAG, "Toast show nr: " + count);
                     count++;
                 } else if (count == 1) {
-                    ((BreadWalletApp) getActivity().getApplication()).showCustomToast(MainActivity.app,
-                            getResources().getString(R.string.toast_address_tip), 140, Toast.LENGTH_LONG);
+                    if (secondToastY == -1)
+                        secondToastY = BreadWalletApp.DISPLAY_HEIGHT_PX - breadWalletApp.getRelativeTop(mainAddressText);
+                    breadWalletApp.showCustomToast(MainActivity.app,
+                            getResources().getString(R.string.toast_address_tip),
+                            secondToastY, Toast.LENGTH_LONG);
                     Log.e(TAG, "Toast show nr: " + count);
                     count--;
                 }
@@ -126,6 +141,33 @@ public class MainFragmentQR extends Fragment {
 
         } catch (WriterException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void saveBitmapToFile() {
+        FileOutputStream out = null;
+        String path = Environment.getExternalStorageDirectory().toString();
+        qrCodeImageFile = new File(path, "qrImage" + ".jpeg");
+        if (qrCodeImageFile.exists()) {
+            Log.d(TAG, "File exists! deleting");
+            qrCodeImageFile.delete();
+        } else {
+            Log.d(TAG, "File did not exist, creating a new one");
+        }
+        try {
+            out = new FileOutputStream(qrCodeImageFile);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out); // bmp is your Bitmap instance
+            // PNG is a lossless format, the compression factor (100) is ignored
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

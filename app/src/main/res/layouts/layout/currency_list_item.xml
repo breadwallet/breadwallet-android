@@ -17,7 +17,7 @@
         android:text=""
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/grey"
-        android:textSize="20sp" />
+        android:textSize="16sp" />
 
     <ImageView
         android:id="@+id/currency_checkmark"

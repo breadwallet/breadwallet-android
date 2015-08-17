@@ -16,7 +16,7 @@ android {
     defaultConfig {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         applicationId "com.breadwallet"
-        minSdkVersion 18
+        minSdkVersion 17
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
@@ -47,6 +47,7 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile files('libs/acra-4.6.1.jar')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'com.google.zxing:core:3.2.0' //QRCode scanner
@@ -59,5 +60,5 @@ dependencies {
     // Set this dependency to build and run Espresso tests
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2'
     // Set this dependency to build and run UI Automator tests
-    androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.1'
+//    androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.1'
 }

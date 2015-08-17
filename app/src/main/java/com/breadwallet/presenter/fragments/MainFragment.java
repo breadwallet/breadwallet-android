@@ -16,7 +16,6 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.breadwallet.R;
-import com.breadwallet.tools.adapter.CustomPagerAdapter;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.others.MyClipboardManager;
 
@@ -50,8 +49,7 @@ public class MainFragment extends Fragment {
     private Button scanQRButton;
     private Button payAddressFromClipboardButton;
     public EditText addressEditText;
-    AlertDialog alertDialog;
-
+    private AlertDialog alertDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -74,7 +72,6 @@ public class MainFragment extends Fragment {
                 if (FragmentAnimator.multiplePressingAvailable) {
                     FragmentAnimator.pauseTheAnimationAvailabilityFor(300);
                     FragmentAnimator.animateDecoderFragment();
-                    CustomPagerAdapter.adapter.showFragments(false);
                 }
             }
         });
@@ -89,6 +86,7 @@ public class MainFragment extends Fragment {
                         alertDialog.dismiss();
                     }
                     String address = MyClipboardManager.readFromClipboard(getActivity());
+                    Log.e(TAG, "The address before check: " + address);
                     if (checkIfAddressIsValid(address)) {
                         payAddressFromClipboardButton.setBackgroundResource(R.drawable.buttonbluepressed);
                         addressEditText.setText(address);
@@ -98,6 +96,22 @@ public class MainFragment extends Fragment {
                                 payAddressFromClipboardButton.setBackgroundResource(R.drawable.buttonblue);
                             }
                         }, 50);
+                        if (MainFragmentDecoder.accessGranted) {
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    MainFragmentDecoder.accessGranted = true;
+                                }
+                            }, 300);
+                            MainFragmentDecoder.accessGranted = false;
+                            Log.e(TAG, "The address: " + address);
+                            if (address != null) {
+                                FragmentScanResult.address = address;
+                                FragmentAnimator.animateScanResultFragment();
+                            } else {
+                                throw new NullPointerException();
+                            }
+                        }
 
                     } else {
                         alertDialog.setTitle(getResources().getString(R.string.alert));

@@ -16,20 +16,20 @@ import java.util.Stack;
 
 /**
  * BreadWallet
- *
+ * <p/>
  * Created by Mihail on 7/13/15.
  * Copyright (c) 2015 Mihail Gutan <mihail@breadwallet.com>
- *
+ * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * <p/>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
+ * <p/>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -50,13 +50,39 @@ public class FragmentAnimator {
     public static Object lockObject = new Object();
 
     public static void animateDecoderFragment() {
+        MainActivity.beenThroughSavedInstanceMethod = false;
         MainActivity.app.decoderFragmentOn = true;
         //Disabled inspection: <Expected resource type anim>
         FragmentTransaction fragmentTransaction = MainActivity.app.getSupportFragmentManager().beginTransaction();
         fragmentTransaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_top);
         fragmentTransaction.replace(R.id.mainlayout, MainActivity.app.mainFragmentDecoder);
         int temp = fragmentTransaction.commitAllowingStateLoss();
+        CustomPagerAdapter.adapter.showFragments(false);
         Log.e(TAG, String.valueOf(temp));
+    }
+
+    public static void animateScanResultFragment() {
+        Log.e(TAG, "animateScanResultFragment");
+        MainActivity.beenThroughSavedInstanceMethod = false;
+        MainActivity.app.scanResultFragmentOn = true;
+        InputMethodManager keyboard = (InputMethodManager) MainActivity.app.
+                getSystemService(Context.INPUT_METHOD_SERVICE);
+        keyboard.hideSoftInputFromWindow(CustomPagerAdapter.adapter.
+                mainFragment.addressEditText.getWindowToken(), 0);
+        MainActivity.app.setBurgerButtonImage(MainActivity.app.BACK);
+        //Disabled inspection: <Expected resource type anim>
+        FragmentTransaction fragmentTransaction = MainActivity.app.getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
+        fragmentTransaction.replace(R.id.mainlayout, MainActivity.app.fragmentScanResult);
+        int temp = fragmentTransaction.commitAllowingStateLoss();
+        CustomPagerAdapter.adapter.showFragments(false);
+        Log.e(TAG, String.valueOf(temp));
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                SpringAnimator.showBouncySlide(MainActivity.app.fragmentScanResult.getView(), SpringAnimator.TO_RIGHT, 70);
+            }
+        }, 200);
     }
 
     /**
@@ -69,7 +95,7 @@ public class FragmentAnimator {
                 level++;
                 MainActivity.app.setBurgerButtonImage(context.CLOSE);
                 FragmentTransaction fragmentTransaction = context.getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.setCustomAnimations(R.animator.from_bottom, R.animator.from_bottom);
+                fragmentTransaction.setCustomAnimations(R.animator.from_top, R.animator.from_top);
                 fragmentTransaction.replace(R.id.mainlayout, context.mainFragmentSettingsAll);
                 fragmentTransaction.commit();
                 CustomPagerAdapter.adapter.showFragments(false);
@@ -81,7 +107,7 @@ public class FragmentAnimator {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        SpringAnimator.showBouncySlideVertical(to.getView(), SpringAnimator.TO_RIGHT);
+                        SpringAnimator.showBouncySlideVertical(to.getView(), SpringAnimator.TO_LEFT);
                     }
                 }, 200);
 
@@ -90,7 +116,7 @@ public class FragmentAnimator {
                 settingsAllON = false;
                 MainActivity.app.setBurgerButtonImage(context.BURGER);
                 FragmentTransaction fragmentTransaction = context.getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.setCustomAnimations(R.animator.to_bottom, R.animator.to_bottom);
+                fragmentTransaction.setCustomAnimations(R.animator.to_top, R.animator.to_top);
                 fragmentTransaction.remove(context.mainFragmentSettingsAll);
                 fragmentTransaction.commit();
                 CustomPagerAdapter.adapter.showFragments(true);
@@ -200,10 +226,29 @@ public class FragmentAnimator {
                 FragmentAnimator.multiplePressingAvailable = true;
             }
         }, 300);
-        MainActivity.app.getSupportFragmentManager().beginTransaction().
-                setCustomAnimations(R.animator.from_top, R.animator.to_bottom).
-                remove(MainActivity.app.mainFragmentDecoder).commit();
+        if (!MainActivity.beenThroughSavedInstanceMethod)
+            MainActivity.app.getSupportFragmentManager().beginTransaction().
+                    setCustomAnimations(R.animator.from_top, R.animator.to_bottom).
+                    remove(MainActivity.app.mainFragmentDecoder).commit();
+        CustomPagerAdapter.adapter.showFragments(true);
+    }
 
+    public static void hideScanResultFragment() {
+        Log.e(TAG, "hideScanResultFragment");
+        CustomPagerAdapter.adapter.showFragments(true);
+        MainActivity.app.scanResultFragmentOn = false;
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                FragmentAnimator.multiplePressingAvailable = true;
+            }
+        }, 300);
+
+        if (!MainActivity.beenThroughSavedInstanceMethod)
+            MainActivity.app.getSupportFragmentManager().beginTransaction().
+                    setCustomAnimations(R.animator.from_left, R.animator.to_right).
+                    remove(MainActivity.app.fragmentScanResult).commit();
+        MainActivity.app.setBurgerButtonImage(MainActivity.app.BURGER);
     }
 
 }

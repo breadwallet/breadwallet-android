@@ -41,17 +41,18 @@
     <string name="mainactivity_press_back_again">Press again to exit!</string>
     <string name="no_internet_connection">No internet connection</string>
     <string name="warning">WARNING</string>
-    <string name="dialog_do_not_let_anyone">DO NOT let anyone see your recovery phrase or they can spend your bitcoins.\n\n" +
-                                "NEVER type your recovery phrase into password managers or elsewhere.\n" +
-                                "Other devices may be infected.\n\nDO NOT take a screenshot.\nScreenshots are visible to other apps and devices.</string>
+    <string name="dialog_do_not_let_anyone">DO NOT let anyone see your recovery phrase or they can spend your bitcoins.\n\n
+                                NEVER type your recovery phrase into password managers or elsewhere.\nOther devices may be infected.\n\nDO NOT take a screenshot.\nScreenshots are visible to other apps and devices.</string>
     <string name="show">show</string>
     <string name="cancel">cancel</string>
     <string name="alert">Alert</string>
-    <string name="mainfragment_clipboard_invalid_data">"clipboard doesn't contain a valid bitcoin address"</string>
+    <string name="mainfragment_clipboard_invalid_data">"clipboard doesn't contain a valid bitcoin address\n"</string>
     <string name="ok">OK</string>
     <string name="sharing_message">Hi, here is my bitcoin address: </string>
     <string name="dialog_receive_bitcoins">Receive bitcoins</string>
     <string name="toast_address_copied">Address copied to clipboard</string>
     <string name="dialog_email_title">Send your bitcoin address</string>
     <string name="bitcoin_address">"Bitcoin Address"</string>
+    <string name="crash_toast_text">Crashed! Report sent to the developer\'s email.</string>
+    <string name="bitcoin_lower_unicode">&#384;</string>
 </resources>

@@ -2,20 +2,20 @@ package com.breadwallet.presenter.fragments;
 
 /**
  * BreadWallet
- *
+ * <p/>
  * Created by Mihail on 7/24/15.
- * Copyright (c) 2015 Mihail Gutan <mihail@breadwallet.com>                        
- *
+ * Copyright (c) 2015 Mihail Gutan <mihail@breadwallet.com>
+ * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * <p/>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
+ * <p/>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -30,6 +30,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +43,7 @@ import com.breadwallet.tools.others.MyClipboardManager;
 
 public class SharingFragment extends DialogFragment {
 
+    public static final String TAG = "SharingFragment";
     private TextView copyAddress;
     private TextView sendEmail;
     private TextView sendMessage;
@@ -87,9 +89,12 @@ public class SharingFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-                        "mailto", "abc@gmail.com", null));
+                        "mailto", "", null));
                 emailIntent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.bitcoin_address));
-                emailIntent.putExtra(Intent.EXTRA_TEXT, getResources().getString(R.string.sharing_message) + theAddress);
+                emailIntent.putExtra(Intent.EXTRA_TEXT, getResources().getString(R.string.sharing_message) + " " + theAddress);
+                Uri uri = Uri.parse("file://" + MainFragmentQR.qrCodeImageFile.getAbsolutePath());
+                Log.e(TAG, "The qrCodeImageFile.getAbsolutePath(): " + MainFragmentQR.qrCodeImageFile.getAbsolutePath());
+                emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
                 startActivity(Intent.createChooser(emailIntent, getResources().getString(R.string.dialog_email_title)));
                 getDialog().cancel();
             }
@@ -100,7 +105,7 @@ public class SharingFragment extends DialogFragment {
             public void onClick(View v) {
                 Intent sendIntent = new Intent(Intent.ACTION_VIEW);
                 sendIntent.setData(Uri.parse("sms:"));
-                sendIntent.putExtra("sms_body", getResources().getString(R.string.sharing_message) + theAddress);
+                sendIntent.putExtra("sms_body", getResources().getString(R.string.sharing_message) + " " + theAddress);
                 startActivity(sendIntent);
                 getDialog().cancel();
             }
@@ -119,4 +124,5 @@ public class SharingFragment extends DialogFragment {
     public void setTheAddress(String address) {
         theAddress = address;
     }
+
 }

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Point;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +14,7 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.presenter.fragments.allsettings.settings.FragmentCurrency;
+import com.breadwallet.presenter.fragments.FragmentCurrency;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +49,6 @@ public class CurrencyListAdapter extends ArrayAdapter<String> {
 
     Context mContext;
     int layoutResourceId;
-    public int selectedIndex = -1;
     public TextView textViewItem;
     public Point displayParameters = new Point();
     public List<Integer> scaledItemsIDs = new ArrayList<>();
@@ -67,12 +65,6 @@ public class CurrencyListAdapter extends ArrayAdapter<String> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        /*
-         * The convertView argument is essentially a "ScrapView" as described is Lucas post
-         * http://lucasr.org/2012/04/05/performance-tips-for-androids-listview/
-         * It will have a non-null value when ListView is asking you recycle the row layout.
-         * So, when convertView is not null, you should simply update its contents instead of inflating a new row layout.
-         */
         SharedPreferences settings = MainActivity.app.getSharedPreferences(MainActivity.PREFS_NAME, 0);
         final int tmp = settings.getInt(FragmentCurrency.POSITION, 0);
         if (convertView == null) {
@@ -86,21 +78,12 @@ public class CurrencyListAdapter extends ArrayAdapter<String> {
         textViewItem.setText(this.getItem(position));
         ImageView checkMark = (ImageView) convertView.findViewById(R.id.currency_checkmark);
 
-        if (selectedIndex >= 0) {
-            if (selectedIndex == position) {
-                checkMark.setVisibility(View.VISIBLE);
-            } else {
-                checkMark.setVisibility(View.GONE);
-            }
-        } else if (position == tmp) {
+        if (position == tmp) {
             checkMark.setVisibility(View.VISIBLE);
         } else {
             checkMark.setVisibility(View.GONE);
         }
-        if (scaledItemsIDs.contains(new Integer(position))) {
-            normalizeTextView();
-            Log.w(TAG, "The list contains the item and is being normalized!");
-        }
+        normalizeTextView();
 
         return convertView;
 
@@ -109,10 +92,6 @@ public class CurrencyListAdapter extends ArrayAdapter<String> {
     @Override
     public int getItemViewType(int position) {
         return IGNORE_ITEM_VIEW_TYPE;
-    }
-
-    public void setSelectedIndex(int index) {
-        selectedIndex = index;
     }
 
     public boolean isTextSizeAcceptable(TextView textView) {

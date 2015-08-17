@@ -2,8 +2,6 @@ package com.breadwallet.presenter.activities.tests;
 
 import android.test.ActivityInstrumentationTestCase2;
 
-import com.breadwallet.presenter.activities.ScanResultActivity;
-
 /**
  * BreadWallet
  *
