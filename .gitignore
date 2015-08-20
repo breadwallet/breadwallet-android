@@ -26,4 +26,8 @@ proguard/
 # Log Files
 *.log
 
+# The workspace.xml should be generated individually on different IDE's, thus I will ignore it.
+.idea/workspace.xml
 
+# Android Studio Navigation editor temp files
+.navigation/

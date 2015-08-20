@@ -39,6 +39,7 @@ import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
+import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.others.MyClipboardManager;
 
 public class SharingFragment extends DialogFragment {
@@ -68,18 +69,20 @@ public class SharingFragment extends DialogFragment {
         copyAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MyClipboardManager.copyToClipboard(getActivity(), theAddress);
-                if (customToastAvailable) {
-                    customToastAvailable = false;
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            customToastAvailable = true;
-                        }
-                    }, 2000);
-                    ((BreadWalletApp) getActivity().getApplicationContext()).
-                            showCustomToast(getActivity(), getResources().getString(R.string.toast_address_copied), 360, Toast.LENGTH_SHORT);
-                    getDialog().cancel();
+                if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
+                    MyClipboardManager.copyToClipboard(getActivity(), theAddress);
+                    if (customToastAvailable) {
+                        customToastAvailable = false;
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                customToastAvailable = true;
+                            }
+                        }, 2000);
+                        ((BreadWalletApp) getActivity().getApplicationContext()).
+                                showCustomToast(getActivity(), getResources().getString(R.string.toast_address_copied), 360, Toast.LENGTH_SHORT);
+                        getDialog().cancel();
+                    }
                 }
             }
 
@@ -88,33 +91,39 @@ public class SharingFragment extends DialogFragment {
         sendEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-                        "mailto", "", null));
-                emailIntent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.bitcoin_address));
-                emailIntent.putExtra(Intent.EXTRA_TEXT, getResources().getString(R.string.sharing_message) + " " + theAddress);
-                Uri uri = Uri.parse("file://" + MainFragmentQR.qrCodeImageFile.getAbsolutePath());
-                Log.e(TAG, "The qrCodeImageFile.getAbsolutePath(): " + MainFragmentQR.qrCodeImageFile.getAbsolutePath());
-                emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
-                startActivity(Intent.createChooser(emailIntent, getResources().getString(R.string.dialog_email_title)));
-                getDialog().cancel();
+                if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
+                    Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                            "mailto", "", null));
+                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.bitcoin_address));
+                    emailIntent.putExtra(Intent.EXTRA_TEXT, getResources().getString(R.string.sharing_message) + " " + theAddress);
+                    Uri uri = Uri.parse("file://" + MainFragmentQR.qrCodeImageFile.getAbsolutePath());
+                    Log.e(TAG, "The qrCodeImageFile.getAbsolutePath(): " + MainFragmentQR.qrCodeImageFile.getAbsolutePath());
+                    emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                    startActivity(Intent.createChooser(emailIntent, getResources().getString(R.string.dialog_email_title)));
+                    getDialog().cancel();
+                }
             }
         });
 
         sendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent sendIntent = new Intent(Intent.ACTION_VIEW);
-                sendIntent.setData(Uri.parse("sms:"));
-                sendIntent.putExtra("sms_body", getResources().getString(R.string.sharing_message) + " " + theAddress);
-                startActivity(sendIntent);
-                getDialog().cancel();
+                if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
+                    Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+                    sendIntent.setData(Uri.parse("sms:"));
+                    sendIntent.putExtra("sms_body", getResources().getString(R.string.sharing_message) + " " + theAddress);
+                    startActivity(sendIntent);
+                    getDialog().cancel();
+                }
             }
         });
 
         requestAmount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: actions on requesting amount
+                if(FragmentAnimator.checkTheMultipressingAvailability(300)){
+                    //TODO: actions on requesting amount
+                }
             }
         });
 

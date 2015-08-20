@@ -66,10 +66,11 @@
         android:id="@+id/imageView" />
 
     <TextView
+        android:layout_marginRight="5dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="26sp"
         android:id="@+id/test_text_charset"
-        android:text="&#9250;"
         android:layout_alignBottom="@+id/imageView"
         android:layout_toStartOf="@+id/imageView" />
 

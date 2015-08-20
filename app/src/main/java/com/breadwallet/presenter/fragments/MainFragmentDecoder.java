@@ -138,7 +138,13 @@ public class MainFragmentDecoder extends Fragment implements QRCodeReaderView.On
     }
 
     private void startQRScanner() {
-        MainActivity.app.activityButtonsEnable(false);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                MainActivity.app.activityButtonsEnable(false);
+            }
+        }, 300);
+
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -150,7 +156,8 @@ public class MainFragmentDecoder extends Fragment implements QRCodeReaderView.On
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        layout.addView(mydecoderview, 0);
+                        if (mydecoderview != null)
+                            layout.addView(mydecoderview, 0);
                     }
                 }, 800);
 
@@ -170,12 +177,7 @@ public class MainFragmentDecoder extends Fragment implements QRCodeReaderView.On
             }
         });
         mydecoderview = null;
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                MainActivity.app.activityButtonsEnable(true);
-            }
-        }, 300);
+        MainActivity.app.activityButtonsEnable(true);
 
     }
 

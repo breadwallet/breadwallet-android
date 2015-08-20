@@ -69,8 +69,7 @@ public class MainFragment extends Fragment {
         scanQRButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (FragmentAnimator.multiplePressingAvailable) {
-                    FragmentAnimator.pauseTheAnimationAvailabilityFor(300);
+                if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
                     FragmentAnimator.animateDecoderFragment();
                 }
             }
@@ -80,8 +79,7 @@ public class MainFragment extends Fragment {
         payAddressFromClipboardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (FragmentAnimator.multiplePressingAvailable) {
-                    FragmentAnimator.pauseTheAnimationAvailabilityFor(300);
+                if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
                     if (alertDialog.isShowing()) {
                         alertDialog.dismiss();
                     }

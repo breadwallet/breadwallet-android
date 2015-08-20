@@ -13,6 +13,7 @@ import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.Log;
 
+import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
@@ -105,6 +106,7 @@ public class ParallaxViewPager extends ViewPager {
                 if (secondOnPageChangeListener != null) {
                     secondOnPageChangeListener.onPageSelected(position);
                 }
+                ((BreadWalletApp) MainActivity.app.getApplication()).cancelToast();
                 app.setPagerIndicator(position);
                 if (FragmentAnimator.level == 0) {
                     if (position == 1) {

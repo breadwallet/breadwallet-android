@@ -47,6 +47,8 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
     private RelativeLayout customKeyboardLayout;
     private TextView amountToPay;
     public static String address;
+    static final String DOUBLE_ARROW = "\u21CB";
+    static final String BITCOIN_LOWERCASE = "\u2422";
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -67,6 +69,8 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         amountToPay = (TextView) getActivity().findViewById(R.id.amount_to_pay);
         createCustomKeyboardButtons();
         Log.e(TAG, "createCustomKeyboardButtons called!!!!!!");
+//        TextView doubleArrow = (TextView) getActivity().findViewById(R.id.test_text_charset);
+//        doubleArrow.setText(DOUBLE_ARROW);
     }
 
     @Override

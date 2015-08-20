@@ -3,6 +3,7 @@ package com.breadwallet.presenter.fragments;
 
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -14,25 +15,27 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.animation.FragmentAnimator;
+import com.breadwallet.tools.others.CurrencyManager;
 
 /**
  * BreadWallet
- *
+ * <p/>
  * Created by Mihail on 6/29/15.
  * Copyright (c) 2015 Mihail Gutan <mihail@breadwallet.com>
- *
+ * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * <p/>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
+ * <p/>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -51,6 +54,7 @@ public class FragmentSettings extends Fragment {
     private MainActivity app;
     private FragmentSettings fragmentSettings;
     private TextView currencyName;
+    private FragmentCurrency fragmentCurrency;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -64,14 +68,31 @@ public class FragmentSettings extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        Log.e(TAG, "In onResume");
+        ((BreadWalletApp) getActivity().getApplication()).setTopMidleView(BreadWalletApp.SETTINGS_TEXT, "settings");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.e(TAG, "In onPause");
+        ((BreadWalletApp) getActivity().getApplication()).setTopMidleView(BreadWalletApp.BREAD_WALLET_IMAGE, "");
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         app = MainActivity.app;
         fragmentSettings = this;
+        fragmentCurrency = app.fragmentCurrency;
+        new ListInitiatorTask().execute();
         about = (RelativeLayout) getView().findViewById(R.id.about);
         currencyName = (TextView) getView().findViewById(R.id.three_letters_currency);
         SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
         final String tmp = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
+        Log.e(TAG, "Tmp 3 letters: " + tmp);
         currencyName.setText(tmp);
         localCurrency = (RelativeLayout) getView().findViewById(R.id.local_currency);
         recoveryPhrase = (RelativeLayout) getView().findViewById(R.id.recovery_phrase);
@@ -79,42 +100,64 @@ public class FragmentSettings extends Fragment {
         startRecoveryWallet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FragmentAnimator.pressWipeWallet(app, app.fragmentWipeWallet);
-                app.activityButtonsEnable(false);
+                if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
+                    FragmentAnimator.pressWipeWallet(app, app.fragmentWipeWallet);
+                    app.activityButtonsEnable(false);
+                }
             }
         });
         recoveryPhrase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new AlertDialog.Builder(getActivity())
-                        .setTitle(getResources().getString(R.string.warning))
-                        .setMessage(getResources().getString(R.string.dialog_do_not_let_anyone))
-                        .setPositiveButton(getResources().getString(R.string.show), new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                FragmentAnimator.animateSlideToLeft(app, app.fragmentRecoveryPhrase, fragmentSettings);
-                            }
-                        })
-                        .setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                Log.d(TAG, "Canceled the view of the phrase!");
-                            }
-                        })
-                        .show();
-
+                if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle(getResources().getString(R.string.warning))
+                            .setMessage(getResources().getString(R.string.dialog_do_not_let_anyone))
+                            .setPositiveButton(getResources().getString(R.string.show), new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    FragmentAnimator.animateSlideToLeft(app, app.fragmentRecoveryPhrase, fragmentSettings);
+                                }
+                            })
+                            .setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Log.d(TAG, "Canceled the view of the phrase!");
+                                }
+                            })
+                            .show();
+                }
             }
         });
         about.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FragmentAnimator.animateSlideToLeft(app, app.fragmentAbout, fragmentSettings);
+                if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
+                    FragmentAnimator.animateSlideToLeft(app, app.fragmentAbout, fragmentSettings);
+                }
             }
         });
         localCurrency.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FragmentAnimator.animateSlideToLeft(app, app.fragmentCurrency, fragmentSettings);
+                if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
+                    FragmentAnimator.animateSlideToLeft(app, app.fragmentCurrency, fragmentSettings);
+                }
             }
         });
+    }
+
+    private class ListInitiatorTask extends AsyncTask {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Object doInBackground(Object[] params) {
+            fragmentCurrency.adapter = CurrencyManager.getCurrencyAddapterIfReady();
+            return null;
+        }
+
     }
 
 }

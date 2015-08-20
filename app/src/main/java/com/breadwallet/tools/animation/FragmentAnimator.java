@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
 
@@ -41,12 +42,10 @@ import java.util.Stack;
 
 public class FragmentAnimator {
     public static final String TAG = "FragmentAnimator";
-    public static boolean settingsAllON;
-    public static boolean settingsAvailable = true;
     public static int level = 0;
     public static boolean wipeWalletOpen = false;
     public static Stack<Fragment> previous = new Stack<>();
-    public static boolean multiplePressingAvailable = true;
+    private static boolean multiplePressingAvailable = true;
     public static Object lockObject = new Object();
 
     public static void animateDecoderFragment() {
@@ -89,39 +88,37 @@ public class FragmentAnimator {
      * Animate the transition on burgerButton/MenuButton pressed
      */
     public static void pressMenuButton(final MainActivity context, final Fragment to) {
-        if (multiplePressingAvailable) {
-            pauseTheAnimationAvailabilityFor(300);
-            if (level == 0) {
-                level++;
-                MainActivity.app.setBurgerButtonImage(context.CLOSE);
-                FragmentTransaction fragmentTransaction = context.getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.setCustomAnimations(R.animator.from_top, R.animator.from_top);
-                fragmentTransaction.replace(R.id.mainlayout, context.mainFragmentSettingsAll);
-                fragmentTransaction.commit();
-                CustomPagerAdapter.adapter.showFragments(false);
-                context.pageIndicator.setVisibility(View.GONE);
-                InputMethodManager keyboard = (InputMethodManager) MainActivity.app.
-                        getSystemService(Context.INPUT_METHOD_SERVICE);
-                keyboard.hideSoftInputFromWindow(CustomPagerAdapter.adapter.
-                        mainFragment.addressEditText.getWindowToken(), 0);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        SpringAnimator.showBouncySlideVertical(to.getView(), SpringAnimator.TO_LEFT);
-                    }
-                }, 200);
+        ((BreadWalletApp) MainActivity.app.getApplication()).cancelToast();
+        Log.e(TAG, "The level is: " + level);
+        if (level == 0) {
+            level++;
+            MainActivity.app.setBurgerButtonImage(context.CLOSE);
+            FragmentTransaction fragmentTransaction = context.getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.setCustomAnimations(R.animator.from_top, R.animator.from_top);
+            fragmentTransaction.replace(R.id.mainlayout, context.mainFragmentSettingsAll);
+            fragmentTransaction.commit();
+            CustomPagerAdapter.adapter.showFragments(false);
+            context.pageIndicator.setVisibility(View.GONE);
+            InputMethodManager keyboard = (InputMethodManager) MainActivity.app.
+                    getSystemService(Context.INPUT_METHOD_SERVICE);
+            keyboard.hideSoftInputFromWindow(CustomPagerAdapter.adapter.
+                    mainFragment.addressEditText.getWindowToken(), 0);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    SpringAnimator.showBouncySlideVertical(to.getView(), SpringAnimator.TO_LEFT);
+                }
+            }, 200);
 
-            } else if (level == 1) {
-                level--;
-                settingsAllON = false;
-                MainActivity.app.setBurgerButtonImage(context.BURGER);
-                FragmentTransaction fragmentTransaction = context.getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.setCustomAnimations(R.animator.to_top, R.animator.to_top);
-                fragmentTransaction.remove(context.mainFragmentSettingsAll);
-                fragmentTransaction.commit();
-                CustomPagerAdapter.adapter.showFragments(true);
-                context.pageIndicator.setVisibility(View.VISIBLE);
-            }
+        } else if (level == 1) {
+            level--;
+            MainActivity.app.setBurgerButtonImage(context.BURGER);
+            FragmentTransaction fragmentTransaction = context.getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.setCustomAnimations(R.animator.to_top, R.animator.to_top);
+            fragmentTransaction.remove(context.mainFragmentSettingsAll);
+            fragmentTransaction.commit();
+            CustomPagerAdapter.adapter.showFragments(true);
+            context.pageIndicator.setVisibility(View.VISIBLE);
         }
     }
 
@@ -129,28 +126,25 @@ public class FragmentAnimator {
      * Animate the transition on wipe wallet fragment
      */
     public static void pressWipeWallet(final MainActivity context, final Fragment to) {
-        if (multiplePressingAvailable) {
-            pauseTheAnimationAvailabilityFor(300);
-            if (!wipeWalletOpen) {
-                wipeWalletOpen = true;
-                FragmentTransaction fragmentTransaction = context.getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_top);
-                fragmentTransaction.replace(R.id.mainlayout, to);
-                fragmentTransaction.commit();
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        SpringAnimator.showBouncySlideVertical(MainActivity.app.fragmentWipeWallet.getView(), SpringAnimator.TO_RIGHT);
-                    }
-                }, 200);
+        if (!wipeWalletOpen) {
+            wipeWalletOpen = true;
+            FragmentTransaction fragmentTransaction = context.getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_top);
+            fragmentTransaction.replace(R.id.mainlayout, to);
+            fragmentTransaction.commit();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    SpringAnimator.showBouncySlideVertical(MainActivity.app.fragmentWipeWallet.getView(), SpringAnimator.TO_RIGHT);
+                }
+            }, 200);
 
-            } else {
-                wipeWalletOpen = false;
-                FragmentTransaction fragmentTransaction = context.getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.setCustomAnimations(R.animator.from_top, R.animator.to_bottom);
-                fragmentTransaction.replace(R.id.mainlayout, context.fragmentSettings);
-                fragmentTransaction.commit();
-            }
+        } else {
+            wipeWalletOpen = false;
+            FragmentTransaction fragmentTransaction = context.getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.setCustomAnimations(R.animator.from_top, R.animator.to_bottom);
+            fragmentTransaction.replace(R.id.mainlayout, context.fragmentSettings);
+            fragmentTransaction.commit();
         }
     }
 
@@ -158,63 +152,69 @@ public class FragmentAnimator {
      * Animates the fragment transition on button "Settings" pressed
      */
     public static void animateSlideToLeft(MainActivity context, final Fragment to, Fragment previousFragment) {
-        if (multiplePressingAvailable) {
-            pauseTheAnimationAvailabilityFor(300);
-            level++;
-            if (level > 1)
-                context.setBurgerButtonImage(context.BACK);
-            FragmentTransaction fragmentTransaction = context.getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
-            fragmentTransaction.replace(R.id.mainlayout, to);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    SpringAnimator.showBouncySlide(to.getView(), SpringAnimator.TO_RIGHT, 20);
-                }
-            }, 200);
-            previous.add(previousFragment);
-            fragmentTransaction.commit();
-            Log.e(TAG, "The level is: " + level);
-        }
+        level++;
+        if (level > 1)
+            context.setBurgerButtonImage(context.BACK);
+        FragmentTransaction fragmentTransaction = context.getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
+        fragmentTransaction.replace(R.id.mainlayout, to);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                SpringAnimator.showBouncySlide(to.getView(), SpringAnimator.TO_RIGHT, 20);
+            }
+        }, 200);
+        previous.add(previousFragment);
+        fragmentTransaction.commit();
+        Log.e(TAG, "The level is: " + level);
     }
 
     public static void animateSlideToRight(MainActivity context) {
-        if (multiplePressingAvailable) {
-            pauseTheAnimationAvailabilityFor(300);
-            final Fragment tmp = previous.pop();
-            level--;
-            if (level < 1)
-                context.setBurgerButtonImage(context.BURGER);
-            if (level == 1)
-                context.setBurgerButtonImage(context.CLOSE);
+        final Fragment tmp = previous.pop();
+        level--;
+        if (level < 1)
+            context.setBurgerButtonImage(context.BURGER);
+        if (level == 1)
+            context.setBurgerButtonImage(context.CLOSE);
 //            Log.e(TAG, "The actual SettingsFragment: " + tmp);
-            FragmentTransaction fragmentTransaction = context.getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.setCustomAnimations(R.animator.from_left, R.animator.to_right);
-            fragmentTransaction.replace(R.id.mainlayout, tmp);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    SpringAnimator.showBouncySlide(tmp.getView(), SpringAnimator.TO_LEFT, 20);
-                }
-            }, 200);
-            fragmentTransaction.commit();
-            Log.e(TAG, "The level is: " + level);
-        }
+        FragmentTransaction fragmentTransaction = context.getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.setCustomAnimations(R.animator.from_left, R.animator.to_right);
+        fragmentTransaction.replace(R.id.mainlayout, tmp);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                SpringAnimator.showBouncySlide(tmp.getView(), SpringAnimator.TO_LEFT, 20);
+            }
+        }, 200);
+        fragmentTransaction.commit();
+        Log.e(TAG, "The level is: " + level);
     }
 
 
-    public static void pauseTheAnimationAvailabilityFor(int delay) {
+    /**
+     * Checks if the multipressing is available and if available:
+     * - make it unavailable for delay milliseconds and return true,
+     * else :
+     * - return false.
+     *
+     * @param delay in milliseconds
+     */
+    public static boolean checkTheMultipressingAvailability(int delay) {
         synchronized (lockObject) {
-            multiplePressingAvailable = false;
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    multiplePressingAvailable = true;
-//                    Log.w(TAG, "multiplePressingAvailable is back to - true");
-                }
-            }, delay);
+            if (multiplePressingAvailable) {
+                multiplePressingAvailable = false;
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        multiplePressingAvailable = true;
+                        Log.w(TAG, "multiplePressingAvailable is back to - true");
+                    }
+                }, delay);
+                return true;
+            } else {
+                return false;
+            }
         }
-
     }
 
     public static void hideDecoderFragment() {

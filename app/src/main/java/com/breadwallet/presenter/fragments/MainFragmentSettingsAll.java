@@ -56,8 +56,7 @@ public class MainFragmentSettingsAll extends Fragment {
         importPrivateKeys.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (FragmentAnimator.multiplePressingAvailable) {
-                    FragmentAnimator.pauseTheAnimationAvailabilityFor(300);
+                if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
                     FragmentAnimator.animateDecoderFragment();
                 }
             }
@@ -75,8 +74,10 @@ public class MainFragmentSettingsAll extends Fragment {
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FragmentAnimator.animateSlideToLeft(app, app.fragmentSettings, mainMainFragmentSettingsAll);
-                Log.d(TAG, "Starting:   showBouncySlide()");
+                if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
+                    FragmentAnimator.animateSlideToLeft(app, app.fragmentSettings, mainMainFragmentSettingsAll);
+                    Log.d(TAG, "Starting:   showBouncySlide()");
+                }
             }
         });
     }

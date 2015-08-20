@@ -29,6 +29,9 @@ android {
     }
     sourceSets {
         main {
+//            java {
+//                exclude '**/SomeExcludedClass.java'
+//            }
             manifest.srcFile 'src/main/AndroidManifest.xml'
             java.srcDirs = ['src/main/java', '.apt_generated']
             aidl.srcDirs = ['src/main/aidl', '.apt_generated']
@@ -42,6 +45,11 @@ android {
                             'src/main/res'
                     ]
         }
+//        androidTest {
+//            java {
+//                exclude '**/TestSomeExcludedClass.java'
+//            }
+//        }
     }
 }
 

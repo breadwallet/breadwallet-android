@@ -5,6 +5,7 @@ import android.app.Application;
 import android.content.Context;
 import android.graphics.Point;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.others.TypefaceUtil;
 
 import org.acra.ACRA;
@@ -62,6 +64,8 @@ import org.acra.annotation.ReportsCrashes;
         resToastText = R.string.crash_toast_text
 )
 public class BreadWalletApp extends Application {
+    public static final int BREAD_WALLET_IMAGE = 0;
+    public static final int SETTINGS_TEXT = 1;
     public static final String TAG = "BreadWalletApp";
     private boolean customToastAvailable = true;
     private String oldMessage;
@@ -80,6 +84,7 @@ public class BreadWalletApp extends Application {
         DISPLAY_HEIGHT_PX = size.y;
         ACRA.init(this);
         TypefaceUtil.overrideFont(getApplicationContext(), "DEFAULT", "fonts/Roboto-Light.ttf");
+
     }
 
     /**
@@ -111,6 +116,13 @@ public class BreadWalletApp extends Application {
         }
     }
 
+    public void cancelToast() {
+        if (toast != null) {
+            Log.e(TAG, "Toast canceled");
+            toast.cancel();
+        }
+    }
+
     public int getRelativeLeft(View myView) {
         if (myView.getParent() == myView.getRootView())
             return myView.getLeft();
@@ -124,4 +136,22 @@ public class BreadWalletApp extends Application {
         else
             return myView.getTop() + getRelativeTop((View) myView.getParent());
     }
+
+    public void setTopMidleView(int view, String text) {
+        MainActivity app = MainActivity.app;
+        switch (view) {
+            case BREAD_WALLET_IMAGE:
+                if (app.viewFlipper.getDisplayedChild() == 1) {
+                    app.viewFlipper.showPrevious();
+                }
+                break;
+            case SETTINGS_TEXT:
+                if (app.viewFlipper.getDisplayedChild() == 0) {
+                    app.viewFlipper.showNext();
+                }
+                ((TextView) app.viewFlipper.getCurrentView()).setText(text);
+                break;
+        }
+    }
+
 }

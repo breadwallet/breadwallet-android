@@ -6,23 +6,38 @@
     android:layout_height="match_parent"
     tools:context="com.breadwallet.presenter.activities.MainActivity">
 
-    <ImageView
-        android:id="@+id/maintextbreadwallet"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+    <ViewFlipper
+        android:id="@+id/middle_view_flipper"
+        android:layout_width="300dp"
+        android:layout_height="28dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/breadwalletupcentered" />
+        android:layout_marginTop="20dp">
 
+        <ImageView
+            android:id="@+id/maintextbreadwallet"
+            android:layout_width="120dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/breadwalletupcentered" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="28dp"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:text="settings"
+            android:textColor="@color/grey"
+            android:textSize="22sp"></TextView>
+    </ViewFlipper>
 
     <Button
         android:id="@+id/mainbuttonburger"
         android:layout_width="25dp"
         android:layout_height="22dp"
-        android:layout_alignBottom="@+id/maintextbreadwallet"
         android:layout_alignParentStart="true"
         android:layout_marginLeft="16dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/burger" />
 
 
@@ -30,7 +45,7 @@
         android:id="@+id/mainbuttonlocker"
         android:layout_width="20dp"
         android:layout_height="27dp"
-        android:layout_alignBottom="@+id/maintextbreadwallet"
+        android:layout_alignBottom="@+id/mainbuttonburger"
         android:layout_alignParentEnd="true"
         android:layout_marginRight="16dp"
         android:background="@drawable/locker" />
@@ -40,7 +55,7 @@
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/maintextbreadwallet"
+        android:layout_below="@+id/mainbuttonburger"
         android:layout_marginTop="10dp" />
 
     <RelativeLayout

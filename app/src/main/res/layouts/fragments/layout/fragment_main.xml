@@ -26,6 +26,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="32dp"
         android:background="@drawable/button"
+        android:src="@drawable/cameraguide_blue_small"
         android:text="scan QR code"
         android:textColor="@color/darkblue"
         android:textSize="20sp" />

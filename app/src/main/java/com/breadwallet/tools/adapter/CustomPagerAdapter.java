@@ -44,7 +44,6 @@ public class CustomPagerAdapter extends FragmentPagerAdapter {
     public MainFragment mainFragment;
     public MainFragmentQR mainFragmentQR;
     private List<Fragment> fragments;
-    private boolean available = true;
     private View main;
     private View mainQR;
     public static CustomPagerAdapter adapter;

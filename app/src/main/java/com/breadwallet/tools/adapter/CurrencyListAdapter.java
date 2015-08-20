@@ -11,13 +11,10 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.fragments.FragmentCurrency;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * BreadWallet
@@ -44,14 +41,13 @@ import java.util.List;
  * THE SOFTWARE.
  */
 
-public class CurrencyListAdapter extends ArrayAdapter<String> {
+public class CurrencyListAdapter extends ArrayAdapter<CurrencyEntity> {
     public static final String TAG = "CurrencyListAdapter";
 
     Context mContext;
     int layoutResourceId;
     public TextView textViewItem;
     public Point displayParameters = new Point();
-    public List<Integer> scaledItemsIDs = new ArrayList<>();
 
     public CurrencyListAdapter(Context mContext, int layoutResourceId) {
 
@@ -75,7 +71,7 @@ public class CurrencyListAdapter extends ArrayAdapter<String> {
         // get the TextView and then set the text (item name) and tag (item ID) values
         textViewItem = null;
         textViewItem = (TextView) convertView.findViewById(R.id.currency_item_text);
-        textViewItem.setText(this.getItem(position));
+        textViewItem.setText(this.getItem(position).codeAndName);
         ImageView checkMark = (ImageView) convertView.findViewById(R.id.currency_checkmark);
 
         if (position == tmp) {
@@ -84,7 +80,6 @@ public class CurrencyListAdapter extends ArrayAdapter<String> {
             checkMark.setVisibility(View.GONE);
         }
         normalizeTextView();
-
         return convertView;
 
     }

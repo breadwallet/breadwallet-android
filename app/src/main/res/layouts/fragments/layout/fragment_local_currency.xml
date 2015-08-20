@@ -12,7 +12,9 @@
         <ListView
             android:id="@+id/currency_list_view"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"></ListView>
+            android:layout_height="wrap_content"
+            android:listSelector="@color/white"
+            android:cacheColorHint="@android:color/transparent"></ListView>
 
         <TextView
             android:id="@+id/noInternetConnectionText"

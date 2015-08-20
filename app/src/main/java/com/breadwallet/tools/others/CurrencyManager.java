@@ -9,14 +9,20 @@ import android.util.Log;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.adapter.CurrencyListAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.List;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -60,33 +66,39 @@ public class CurrencyManager {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    public static List<String> getCurrencies() {
-        List<String> list = null;
+    public static List<CurrencyEntity> getCurrencies() {
+        List<CurrencyEntity> list = new ArrayList<>();
         if (isNetworkAvailable()) {
-            list = new ArrayList<>();
             JSONArray arr;
             arr = JsonParser.getJSonArray("https://bitpay.com/rates");
             int length = arr.length();
             for (int i = 1; i < length; i++) {
-                String tmp = null;
+                CurrencyEntity tmp = new CurrencyEntity();
                 try {
                     JSONObject tmpObj = (JSONObject) arr.get(i);
-                    tmp = tmpObj.getString("code") + " - " + tmpObj.getString("name");
+                    tmp.name = tmpObj.getString("name");
+                    tmp.code = tmpObj.getString("code");
+                    tmp.codeAndName = tmp.code + " - " + tmp.name;
+                    tmp.rate = tmpObj.getDouble("rate");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 list.add(tmp);
             }
-        } else {
-            if (list == null) list = new ArrayList<>();
         }
-        if (list.size() > 0)
-            list.add("TES - testing text extra long text mega long text oh my god that's a long text");
+        if (list.size() > 0) {
+            CurrencyEntity test = new CurrencyEntity();
+            test.name = "testing text extra long text mega long text oh my god that's a long text";
+            test.code = "TES";
+            test.codeAndName = test.code + " - " + test.name;
+            test.rate = 0.999;
+            list.add(test);
+        }
         return list;
     }
 
     public static class GetCurrenciesTask extends AsyncTask {
-        List<String> tmp;
+        List<CurrencyEntity> tmp;
 
         @Override
         protected Object doInBackground(Object[] params) {
@@ -147,4 +159,80 @@ public class CurrencyManager {
             timer = null;
         }
     }
+
+    public static String getTheFinalExchangeString(double target, double current, String iso) {
+        double result = target * 1000000 / current;
+        Log.e(TAG, "result of the exchange rate calculation: " + result);
+        DecimalFormat decimalFormat = new DecimalFormat("0.00");
+        return getFormattedCurrencyString(iso, 1) + " = b" + decimalFormat.format(result);
+    }
+
+    public static String getFormattedCurrencyString(String isoCurrencyCode, double amount) {
+        // This formats currency values as the user expects to read them (default locale).
+        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
+
+        // This specifies the actual currency that the value is in, and provides the currency symbol.
+        Currency currency;
+        try {
+            currency = Currency.getInstance(isoCurrencyCode);
+            Log.e(TAG, "Currency.getInstance succeeded: " + currency.getSymbol());
+        } catch (IllegalArgumentException e) {
+            Log.e(TAG, "Currency.getInstance did not succeed, going with the default", e);
+            currency = Currency.getInstance(Locale.getDefault());
+        }
+
+        // Note we don't supply a locale to this method - uses default locale to format the currency symbol.
+        String symbol = currency.getSymbol();
+
+        // We then tell our formatter to use this symbol.
+        DecimalFormatSymbols decimalFormatSymbols = ((java.text.DecimalFormat) currencyFormat).getDecimalFormatSymbols();
+        decimalFormatSymbols.setCurrencySymbol(symbol);
+        ((java.text.DecimalFormat) currencyFormat).setDecimalFormatSymbols(decimalFormatSymbols);
+
+        return currencyFormat.format(amount);
+    }
+
+    public static String getFormattedCurrencyStringForLocale(Locale locale, String isoCurrencyCode, double amount) {
+        // This formats currency values as the user expects to read them (default locale).
+        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(locale);
+
+        // This specifies the actual currency that the value is in, and provides the currency symbol.
+        Currency currency = Currency.getInstance(isoCurrencyCode);
+
+        // Note we don't supply a locale to this method - uses default locale to format the currency symbol.
+        String symbol = currency.getSymbol(locale);
+
+        // We then tell our formatter to use this symbol.
+        DecimalFormatSymbols decimalFormatSymbols = ((java.text.DecimalFormat) currencyFormat).getDecimalFormatSymbols();
+        decimalFormatSymbols.setCurrencySymbol(symbol);
+        ((java.text.DecimalFormat) currencyFormat).setDecimalFormatSymbols(decimalFormatSymbols);
+
+        return currencyFormat.format(amount);
+    }
+
+    public static String getFormattedCurrencyStringFixed(Locale locale, String isoCurrencyCode, double amount) {
+        // This formats currency values as the user expects to read them in the supplied locale.
+        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(locale);
+
+        // This specifies the actual currency that the value is in, and provides
+        // the currency symbol that is used
+        Currency currency = Currency.getInstance(isoCurrencyCode);
+
+        // Our fix is to use the US locale as default for the symbol, unless the currency is USD
+        // and the locale is NOT the US, in which case we know it should be US$.
+        String symbol;
+        if (isoCurrencyCode.equalsIgnoreCase("usd") && !locale.equals(Locale.US)) {
+            symbol = "US$";// currency.getSymbol(Locale.UK);
+        } else {
+            symbol = currency.getSymbol(Locale.US); // US locale has the best symbol formatting table.
+        }
+
+        // We tell our formatter to use this symbol
+        DecimalFormatSymbols decimalFormatSymbols = ((java.text.DecimalFormat) currencyFormat).getDecimalFormatSymbols();
+        decimalFormatSymbols.setCurrencySymbol(symbol);
+        ((java.text.DecimalFormat) currencyFormat).setDecimalFormatSymbols(decimalFormatSymbols);
+
+        return currencyFormat.format(amount);
+    }
+
 }
