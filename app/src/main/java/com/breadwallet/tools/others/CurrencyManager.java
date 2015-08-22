@@ -1,6 +1,7 @@
 package com.breadwallet.tools.others;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -10,6 +11,7 @@ import android.util.Log;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
+import com.breadwallet.presenter.fragments.FragmentCurrency;
 import com.breadwallet.tools.adapter.CurrencyListAdapter;
 
 import org.json.JSONArray;
@@ -56,6 +58,7 @@ public class CurrencyManager {
     public static final String TAG = "CurrencyManager";
     private static Timer timer;
     private static TimerTask timerTask;
+    private static final String bitcoinLowecase = "\u0180";
     private static final Handler handler = new Handler();
     private static CurrencyListAdapter currencyListAdapter = new CurrencyListAdapter(MainActivity.app, R.layout.currency_list_item);
 
@@ -79,7 +82,7 @@ public class CurrencyManager {
                     tmp.name = tmpObj.getString("name");
                     tmp.code = tmpObj.getString("code");
                     tmp.codeAndName = tmp.code + " - " + tmp.name;
-                    tmp.rate = tmpObj.getDouble("rate");
+                    tmp.rate = (float) tmpObj.getDouble("rate");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -91,7 +94,7 @@ public class CurrencyManager {
             test.name = "testing text extra long text mega long text oh my god that's a long text";
             test.code = "TES";
             test.codeAndName = test.code + " - " + test.name;
-            test.rate = 0.999;
+            test.rate = 0.999f;
             list.add(test);
         }
         return list;
@@ -164,7 +167,26 @@ public class CurrencyManager {
         double result = target * 1000000 / current;
         Log.e(TAG, "result of the exchange rate calculation: " + result);
         DecimalFormat decimalFormat = new DecimalFormat("0.00");
-        return getFormattedCurrencyString(iso, 1) + " = b" + decimalFormat.format(result);
+        String finalResult = getFormattedCurrencyString(iso, 1) + " = " + bitcoinLowecase + decimalFormat.format(result);
+//        SpannableStringBuilder resultSpan = new SpannableStringBuilder(finalResult);
+//
+//        for (int i = 0; i < resultSpan.length(); i++) {
+//            if (resultSpan.charAt(i) == '\u0180') {
+//                CustomTypefaceSpan typefaceSpan = new CustomTypefaceSpan
+//                resultSpan.setSpan(typefaceSpan, i, i + 1, 0);
+//            }
+//        }
+        return finalResult;
+    }
+
+    public static String getCurrentBalanceText() {
+        SharedPreferences settings;
+//        DecimalFormat decimalFormat = new DecimalFormat("0.00");
+        settings = MainActivity.app.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        String iso = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
+//        float rate = settings.getFloat(FragmentCurrency.RATE, 0f);
+        String result = "\u0180" + "0" + "(" + getFormattedCurrencyString(iso, 0)+")";
+        return result;
     }
 
     public static String getFormattedCurrencyString(String isoCurrencyCode, double amount) {

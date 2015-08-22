@@ -1,10 +1,13 @@
 package com.breadwallet.presenter.activities;
 
+import android.annotation.TargetApi;
 import android.content.ClipboardManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PersistableBundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -26,6 +29,7 @@ import com.breadwallet.presenter.fragments.FragmentSettings;
 import com.breadwallet.presenter.fragments.FragmentWipeWallet;
 import com.breadwallet.presenter.fragments.MainFragmentDecoder;
 import com.breadwallet.presenter.fragments.MainFragmentSettingsAll;
+import com.breadwallet.presenter.fragments.PasswordDialogFragment;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
 import com.breadwallet.tools.adapter.ParallaxViewPager;
 import com.breadwallet.tools.animation.FragmentAnimator;
@@ -84,6 +88,7 @@ public class MainActivity extends FragmentActivity {
     public FragmentRecoveryPhrase fragmentRecoveryPhrase;
     public FragmentWipeWallet fragmentWipeWallet;
     public RelativeLayout burgerButtonLayout;
+    public RelativeLayout lockerButtonLayout;
     public FragmentScanResult fragmentScanResult;
     private boolean doubleBackToExitPressedOnce;
     public static final int BURGER = 0;
@@ -92,6 +97,7 @@ public class MainActivity extends FragmentActivity {
     public static final float PAGE_INDICATOR_SCALE_UP = 1.3f;
     public static boolean beenThroughSavedInstanceMethod = false;
     public ViewFlipper viewFlipper;
+    public PasswordDialogFragment passwordDialogFragment;
 
     /**
      * Public constructor used to assign the current instance to the app variable
@@ -116,7 +122,9 @@ public class MainActivity extends FragmentActivity {
         if (savedInstanceState != null) {
             return;
         }
+        final FragmentManager fm = getSupportFragmentManager();
         initializeViews();
+
         burgerButtonLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -133,6 +141,14 @@ public class MainActivity extends FragmentActivity {
                 }
             }
         });
+        lockerButtonLayout.setOnClickListener(new View.OnClickListener() {
+            @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void onClick(View v) {
+                SpringAnimator.showAnimation(locker);
+                passwordDialogFragment.show(fm, TAG);
+            }
+        });
 
     }
 
@@ -140,7 +156,15 @@ public class MainActivity extends FragmentActivity {
     protected void onResume() {
         super.onResume();
         CurrencyManager.startTimer();
+        ((BreadWalletApp) getApplication()).setLocked(locker, lockerButtonLayout);
+        setMiddleView();
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.e(TAG, "Activity onPause");
     }
 
     @Override
@@ -163,6 +187,7 @@ public class MainActivity extends FragmentActivity {
 
     private void initializeViews() {
         burgerButtonLayout = (RelativeLayout) findViewById(R.id.burgerbuttonlayout);
+        lockerButtonLayout = (RelativeLayout) findViewById(R.id.lockerbuttonlayout);
         burgerButton = (Button) findViewById(R.id.mainbuttonburger);
         viewFlipper = (ViewFlipper) MainActivity.app.findViewById(R.id.middle_view_flipper);
         locker = (Button) findViewById(R.id.mainbuttonlocker);
@@ -180,6 +205,7 @@ public class MainActivity extends FragmentActivity {
         fragmentRecoveryPhrase = new FragmentRecoveryPhrase();
         fragmentWipeWallet = new FragmentWipeWallet();
         fragmentScanResult = new FragmentScanResult();
+        passwordDialogFragment = new PasswordDialogFragment();
         parallaxViewPager = ((ParallaxViewPager) findViewById(R.id.pager));
         parallaxViewPager
                 .setOverlapPercentage(0.99f)
@@ -293,8 +319,10 @@ public class MainActivity extends FragmentActivity {
             parallaxViewPager.setClickable(b);
             burgerButton.setVisibility(View.VISIBLE);
             burgerButton.setClickable(b);
-            locker.setVisibility(View.VISIBLE);
-            locker.setClickable(b);
+            if (!BreadWalletApp.unlocked){
+                locker.setVisibility(View.VISIBLE);
+                locker.setClickable(b);
+            }
             burgerButtonLayout.setVisibility(View.VISIBLE);
             burgerButtonLayout.setClickable(b);
         } else {
@@ -325,6 +353,15 @@ public class MainActivity extends FragmentActivity {
                 doubleBackToExitPressedOnce = false;
             }
         }, ms);
+    }
+
+    public void setMiddleView() {
+        if (((BreadWalletApp) getApplication()).unlocked) {
+            String tmp = CurrencyManager.getCurrentBalanceText();
+            ((BreadWalletApp) getApplication()).setTopMidleView(BreadWalletApp.SETTINGS_TEXT, tmp);
+        } else {
+            ((BreadWalletApp) getApplication()).setTopMidleView(BreadWalletApp.BREAD_WALLET_IMAGE, "");
+        }
     }
 
 }

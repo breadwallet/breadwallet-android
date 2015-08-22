@@ -29,5 +29,5 @@ public class CurrencyEntity {
     public String codeAndName;
     public String name;
     public String code;
-    public double rate;
+    public float rate;
 }

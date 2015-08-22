@@ -59,7 +59,7 @@ public class SharingFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_sharing_options, container);
+        View view = inflater.inflate(R.layout.fragment_sharing_dialog, container);
         copyAddress = (TextView) view.findViewById(R.id.copy_address);
         sendEmail = (TextView) view.findViewById(R.id.send_email);
         sendMessage = (TextView) view.findViewById(R.id.send_message);

@@ -9,6 +9,7 @@ import java.lang.reflect.Field;
 
 public class TypefaceUtil {
     public static final String TAG = "TypefaceUtil";
+    public static Typeface customTypeface;
 
     /**
      * Using reflection to override default typeface
@@ -21,6 +22,7 @@ public class TypefaceUtil {
     public static void overrideFont(Context context, String defaultFontNameToOverride, String customFontFileNameInAssets) {
         try {
             final Typeface customFontTypeface = Typeface.createFromAsset(context.getAssets(), customFontFileNameInAssets);
+            customTypeface = customFontTypeface;
 
             final Field defaultFontTypefaceField = Typeface.class.getDeclaredField(defaultFontNameToOverride);
             defaultFontTypefaceField.setAccessible(true);
@@ -29,4 +31,5 @@ public class TypefaceUtil {
             Log.e(TAG, "Can not set custom font " + customFontFileNameInAssets + " instead of " + defaultFontNameToOverride);
         }
     }
+
 }

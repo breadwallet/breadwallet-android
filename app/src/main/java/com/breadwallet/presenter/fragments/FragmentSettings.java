@@ -78,7 +78,7 @@ public class FragmentSettings extends Fragment {
     public void onPause() {
         super.onPause();
         Log.e(TAG, "In onPause");
-        ((BreadWalletApp) getActivity().getApplication()).setTopMidleView(BreadWalletApp.BREAD_WALLET_IMAGE, "");
+        MainActivity.app.setMiddleView();
     }
 
     @Override

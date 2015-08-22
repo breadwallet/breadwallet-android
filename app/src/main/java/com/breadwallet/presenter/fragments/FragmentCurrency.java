@@ -51,6 +51,8 @@ public class FragmentCurrency extends Fragment {
     public static final String TAG = "FragmentCurrency";
     public static final String CURRENT_CURRENCY = "currentCurrency";
     public static final String POSITION = "position";
+    public static final String RATE = "rate";
+
     public ListView currencyList;
     public MainActivity app;
     public Button currencyRefresh;
@@ -58,7 +60,7 @@ public class FragmentCurrency extends Fragment {
     public CurrencyListAdapter adapter;
     public TextView currencyItemText;
     public ProgressBar currencyProgressBar;
-    SharedPreferences settings;
+    public SharedPreferences settings;
     private String ISO;
     int lastItemsPosition = 0;
 
@@ -98,6 +100,7 @@ public class FragmentCurrency extends Fragment {
                 lastItemsPosition = position;
                 editor.putString(CURRENT_CURRENCY, ISO);
                 editor.putInt(POSITION, position);
+                editor.putFloat(RATE, adapter.getItem(position).rate);
                 editor.commit();
                 ((BreadWalletApp) getActivity().getApplication()).setTopMidleView(BreadWalletApp.SETTINGS_TEXT,
                         CurrencyManager.getTheFinalExchangeString(1.0, adapter.getItem(position).rate, ISO));
@@ -114,9 +117,10 @@ public class FragmentCurrency extends Fragment {
         SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
         final String tmp = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
         Log.e(TAG, "Tmp 3 letters: " + tmp);
+        String readyText = CurrencyManager.getTheFinalExchangeString(1.0, adapter.getItem(settings.getInt(FragmentCurrency.POSITION, 0)).rate,
+                adapter.getItem(settings.getInt(FragmentCurrency.POSITION, 0)).code);
         ((BreadWalletApp) getActivity().getApplication()).setTopMidleView(BreadWalletApp.SETTINGS_TEXT,
-                CurrencyManager.getTheFinalExchangeString(1.0, adapter.getItem(settings.getInt(FragmentCurrency.POSITION, 0)).rate,
-                        adapter.getItem(settings.getInt(FragmentCurrency.POSITION, 0)).code));
+                readyText);
     }
 
     @Override
