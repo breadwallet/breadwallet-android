@@ -7,7 +7,7 @@
         android:id="@+id/local_currency"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="50dp">
+        android:layout_marginTop="90dp">
 
         <ListView
             android:id="@+id/currency_list_view"

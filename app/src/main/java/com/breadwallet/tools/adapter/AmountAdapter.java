@@ -1,4 +1,4 @@
-package com.breadwallet.tools.animation;
+package com.breadwallet.tools.adapter;
 
 import android.content.Context;
 import android.util.Log;
