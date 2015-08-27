@@ -1,6 +1,8 @@
 
 package com.breadwallet.presenter.fragments;
 
+import android.app.Activity;
+import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,12 +10,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.tools.animation.AmountAdapter;
+import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.tools.adapter.AmountAdapter;
+import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.others.CurrencyManager;
 
 
 /**
@@ -43,47 +49,73 @@ import com.breadwallet.tools.animation.AmountAdapter;
 
 public class FragmentScanResult extends Fragment implements View.OnClickListener {
     public static final String TAG = "FragmentScanResult";
-    private TextView scanresult;
+    private TextView scanResult;
     private RelativeLayout customKeyboardLayout;
-    private TextView amountToPay;
+    private static TextView amountToPay;
+    private static TextView amountBeforeArrow;
+    //    private static TextView bitcoinSign;
     public static String address;
+    public static final int BITCOIN_LEFT = 1;
+    public static final int BITCOIN_RIGHT = 2;
+    public static int currentCurrencyPosition = BITCOIN_RIGHT;
+    private static int parentWidth;
+    private static TextView doubleArrow;
+    public static double exchangedValue;
+    public static double rate;
     static final String DOUBLE_ARROW = "\u21CB";
-    static final String BITCOIN_LOWERCASE = "\u2422";
 
     @Override
     public View onCreateView(LayoutInflater inflater,
                              final ViewGroup container, Bundle savedInstanceState) {
         // The last two arguments ensure LayoutParams are inflated
         // properly.
-        final View rootView = inflater.inflate(
-                R.layout.fragment_scan_result, container, false);
-
+        final View rootView = inflater.inflate(R.layout.fragment_scan_result, container, false);
+        ViewTreeObserver vto = rootView.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                parentWidth = rootView.getWidth();
+            }
+        });
         return rootView;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        scanresult = (TextView) getActivity().findViewById(R.id.scan_result);
+        scanResult = (TextView) getActivity().findViewById(R.id.scan_result);
         customKeyboardLayout = (RelativeLayout) getActivity().findViewById(R.id.custom_keyboard_layout);
         amountToPay = (TextView) getActivity().findViewById(R.id.amount_to_pay);
+        amountBeforeArrow = (TextView) getActivity().findViewById(R.id.amount_before_arrow);
         createCustomKeyboardButtons();
-        Log.e(TAG, "createCustomKeyboardButtons called!!!!!!");
-//        TextView doubleArrow = (TextView) getActivity().findViewById(R.id.test_text_charset);
-//        doubleArrow.setText(DOUBLE_ARROW);
+        setExchangeText(getActivity(),0);
+
+        doubleArrow = (TextView) getActivity().findViewById(R.id.double_arrow_text);
+        doubleArrow.setText(DOUBLE_ARROW);
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchCurrencies();
+                SpringAnimator.showAnimation(amountBeforeArrow);
+                SpringAnimator.showAnimation(amountToPay);
+            }
+        };
+        doubleArrow.setOnClickListener(listener);
+        amountBeforeArrow.setOnClickListener(listener);
+        amountToPay.setOnClickListener(listener);
+
     }
 
     @Override
     public void onResume() {
-
 //        Log.e(TAG, "This is the address: " + address);
         String result = address;
 //        Log.e(TAG, "This is the result = address: " + result);
         String cleanResult = extractTheCleanAddress(result);
         if (cleanResult != null) {
-            scanresult.setText("to: " + cleanResult);
+            scanResult.setText("to: " + cleanResult);
         } else {
-            scanresult.setText("NO VALID ADDRESS");
+            scanResult.setText("NO VALID ADDRESS");
         }
         super.onResume();
     }
@@ -206,24 +238,33 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
                     break;
             }
             customKeyboardLayout.addView(b);
-
         }
     }
 
     @Override
     public void onClick(View v) {
         String tmp = ((Button) v).getText().toString();
-        switch (tmp) {
-            case "":
-                AmountAdapter.doBackSpace(getActivity(), amountToPay);
-                break;
-            case ".":
-                AmountAdapter.insertComma(getActivity(), amountToPay);
-                break;
-            default:
-                AmountAdapter.insertDigit(getActivity(), amountToPay, tmp);
-                break;
-        }
+        AmountAdapter.preConditions(getActivity(), amountToPay, tmp);
+    }
+
+    public static void setExchangeText(Activity context, double currentAmountInserted) {
+        Log.e(TAG, "This is the pulled rate: " + rate);
+        SharedPreferences settings = context.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        String ISO = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
+        rate = settings.getFloat(FragmentCurrency.RATE, 1);
+        String finalAmountBeforeArrow = CurrencyManager.getTheFinalStringBeforeArrow(rate,
+                currentAmountInserted, ISO, currentCurrencyPosition);
+        amountBeforeArrow.setText(finalAmountBeforeArrow);
+    }
+
+    public static void switchCurrencies() {
+        currentCurrencyPosition = currentCurrencyPosition == 1 ? 2 : 1;
+        String tmp = amountBeforeArrow.getText().toString();
+        amountBeforeArrow.setText(amountToPay.getText());
+        amountToPay.setText(tmp);
+        if (!AmountAdapter.comaHasBeenInserted)
+            if (amountToPay.getText().toString().contains("."))
+                AmountAdapter.comaHasBeenInserted = true;
     }
 
 }

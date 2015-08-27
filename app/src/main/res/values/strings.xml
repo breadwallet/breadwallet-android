@@ -41,8 +41,8 @@
     <string name="mainactivity_press_back_again">Press again to exit!</string>
     <string name="no_internet_connection">No internet connection</string>
     <string name="warning">WARNING</string>
-    <string name="dialog_do_not_let_anyone">DO NOT let anyone see your recovery phrase or they can spend your bitcoins.\n\n
-                                NEVER type your recovery phrase into password managers or elsewhere.\nOther devices may be infected.\n\nDO NOT take a screenshot.\nScreenshots are visible to other apps and devices.</string>
+    <string name="dialog_do_not_let_anyone">DO NOT let anyone see your recovery phrase or they can spend your bitcoins.
+        \n\nNEVER type your recovery phrase into password managers or elsewhere.\nOther devices may be infected.\n\nDO NOT take a screenshot.\nScreenshots are visible to other apps and devices.</string>
     <string name="show">show</string>
     <string name="cancel">cancel</string>
     <string name="alert">Alert</string>

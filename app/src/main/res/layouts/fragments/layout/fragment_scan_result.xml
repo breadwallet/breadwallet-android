@@ -3,20 +3,50 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingTop="75dp"
     tools:context="com.breadwallet.presenter.activities.ScanResultActivity">
 
     <TextView
         android:id="@+id/amount_to_pay"
         android:layout_width="wrap_content"
-        android:layout_height="30dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_marginLeft="3dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="40dp"
-        android:text="0"
+        android:text="\u01800"
         android:textColor="@android:color/darker_gray"
         android:textSize="26sp" />
+
+    <!--<TextView-->
+        <!--android:id="@+id/bitcoin_sign"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignBottom="@+id/amount_to_pay"-->
+        <!--android:layout_toStartOf="@+id/amount_to_pay"-->
+        <!--android:text="\u0180"-->
+        <!--android:textSize="26sp" />-->
+
+    <TextView
+        android:id="@+id/double_arrow_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/amount_to_pay"
+        android:layout_marginRight="5dp"
+        android:layout_toStartOf="@+id/amount_to_pay"
+        android:text="&#11020;"
+        android:textColor="@color/darkblue"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/amount_before_arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/double_arrow_text"
+        android:layout_marginRight="5dp"
+        android:layout_toStartOf="@+id/double_arrow_text"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/light_grey"
+        android:textSize="20sp" />
 
     <View
         android:id="@+id/first_line"
@@ -25,7 +55,7 @@
         android:layout_below="@+id/amount_to_pay"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="3dp"
         android:background="@android:color/darker_gray" />
 
     <RelativeLayout
@@ -52,26 +82,20 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/second_line"
         android:layout_centerHorizontal="true"
-        android:layout_marginLeft="16dp"
+        android:layout_marginLeft="5dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="10dp"
         android:text="@string/the_address" />
 
-    <ImageView
-        android:layout_width="15dp"
-        android:layout_height="20dp"
-        android:layout_alignBottom="@+id/amount_to_pay"
-        android:layout_toStartOf="@+id/amount_to_pay"
-        android:background="@drawable/bitcoin_lowercase"
-        android:id="@+id/imageView" />
+    <!--<ImageView-->
+    <!--android:layout_width="15dp"-->
+    <!--android:layout_height="20dp"-->
+    <!--android:layout_alignBottom="@+id/amount_to_pay"-->
+    <!--android:layout_toStartOf="@+id/amount_to_pay"-->
+    <!--android:background="@drawable/bitcoin_lowercase"-->
+    <!--android:id="@+id/imageView" />-->
 
-    <TextView
-        android:layout_marginRight="5dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="26sp"
-        android:id="@+id/test_text_charset"
-        android:layout_alignBottom="@+id/imageView"
-        android:layout_toStartOf="@+id/imageView" />
+    //this is instead of the one above
+
 
 </RelativeLayout>

@@ -1,6 +1,7 @@
 package com.breadwallet.tools.animation;
 
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 
 import com.facebook.rebound.Spring;
@@ -9,21 +10,21 @@ import com.facebook.rebound.SpringListener;
 import com.facebook.rebound.SpringSystem;
 
 /**
- * BreadWallet                                                                     
- *
+ * BreadWallet
+ * <p/>
  * Created by Mihail on 6/24/15.
  * Copyright (c) 2015 Mihail Gutan <mihail@breadwallet.com>
- *
+ * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * <p/>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
+ * <p/>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -82,47 +83,50 @@ public class SpringAnimator {
      * Shows the springy animation on the burger button
      */
     public static void showAnimation(final View view) {
-        SpringSystem springSystem = SpringSystem.create();
+        if (view != null) {
+            SpringSystem springSystem = SpringSystem.create();
 
-        // Add a spring to the system.
-        final Spring spring = springSystem.createSpring();
-        SpringConfig config = new SpringConfig(TENSION, DAMPER);
-        spring.setSpringConfig(config);
-        spring.setEndValue(1f);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                spring.setEndValue(0);
-            }
-        }, 100);
+            // Add a spring to the system.
+            final Spring spring = springSystem.createSpring();
+            SpringConfig config = new SpringConfig(TENSION, DAMPER);
+            spring.setSpringConfig(config);
+            spring.setEndValue(1f);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    spring.setEndValue(0);
+                }
+            }, 100);
 
-        // Add a listener to observe the motion of the spring.
-        spring.addListener(new SpringListener() {
+            // Add a listener to observe the motion of the spring.
+            spring.addListener(new SpringListener() {
 
-            @Override
-            public void onSpringUpdate(Spring spring) {
-                // You can observe the updates in the spring
-                // state by asking its current value in onSpringUpdate.
+                @Override
+                public void onSpringUpdate(Spring spring) {
+                    // You can observe the updates in the spring
+                    // state by asking its current value in onSpringUpdate.
 
-                float value = (float) spring.getCurrentValue();
-                float scale = 1f - (value * 0.5f);
-                view.setScaleX(scale);
-                view.setScaleY(scale);
-            }
+                    float value = (float) spring.getCurrentValue();
+                    float scale = 1f - (value * 0.5f);
+                    view.setScaleX(scale);
+                    view.setScaleY(scale);
+                }
 
-            @Override
-            public void onSpringAtRest(Spring spring) {
-            }
+                @Override
+                public void onSpringAtRest(Spring spring) {
+                }
 
-            @Override
-            public void onSpringActivate(Spring spring) {
-            }
+                @Override
+                public void onSpringActivate(Spring spring) {
+                }
 
-            @Override
-            public void onSpringEndStateChange(Spring spring) {
-            }
-        });
-
+                @Override
+                public void onSpringEndStateChange(Spring spring) {
+                }
+            });
+        } else {
+            Log.e(TAG, "The view is null cannot show bouncy animaion!");
+        }
         // Set the spring in motion; moving from 0 to 1
 
     }
@@ -207,7 +211,8 @@ public class SpringAnimator {
                 // state by asking its current value in onSpringUpdate.
 
                 float value = (float) spring.getCurrentValue();
-                view.setY(direction * (value * -20));
+                if (view != null)
+                    view.setY(direction * (value * -20));
             }
 
             @Override

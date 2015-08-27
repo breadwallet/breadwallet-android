@@ -63,7 +63,7 @@ public class MainFragmentDecoder extends Fragment implements QRCodeReaderView.On
 
         View rootView = inflater.inflate(R.layout.fragment_decoder, container, false);
 
-        camera_guide_image = (ImageView) rootView.findViewById(R.id.camera_guide_image);
+        camera_guide_image = (ImageView) rootView.findViewById(R.id.decoder_camera_guide_image);
         SpringAnimator.showExpandCameraGuide(camera_guide_image);
 
         // Inflate the layout for this fragment

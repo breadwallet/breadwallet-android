@@ -84,7 +84,7 @@ public class BreadWalletApp extends Application {
         DISPLAY_WIDTH_PX = size.x;
         DISPLAY_HEIGHT_PX = size.y;
         ACRA.init(this);
-        TypefaceUtil.overrideFont(getApplicationContext(), "DEFAULT", "fonts/Sun-ExtA.ttf");
+        TypefaceUtil.overrideFont(getApplicationContext(), "DEFAULT", "fonts/UbuntuMono-R.ttf");
 
     }
 
@@ -156,15 +156,11 @@ public class BreadWalletApp extends Application {
     }
 
     public void setLocked(View locker, View lockerButtonLayout){
-        Log.e(TAG, "The unlocked variable: " + unlocked);
         boolean clickable = unlocked ? false : true;
-        Log.e(TAG, "clickable: " + clickable);
         locker.setClickable(clickable);
         lockerButtonLayout.setClickable(clickable);
         int visible = unlocked ? View.GONE : View.VISIBLE;
-        Log.e(TAG, "visible: " + visible);
         locker.setVisibility(visible);
-        lockerButtonLayout.setVisibility(visible);
-        Log.e(TAG, "Testing the locker visibility and stuff: " + lockerButtonLayout);
+//        lockerButtonLayout.setVisibility(visible);
     }
 }

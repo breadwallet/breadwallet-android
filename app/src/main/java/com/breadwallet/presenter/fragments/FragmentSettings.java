@@ -78,7 +78,7 @@ public class FragmentSettings extends Fragment {
     public void onPause() {
         super.onPause();
         Log.e(TAG, "In onPause");
-        MainActivity.app.setMiddleView();
+        MainActivity.app.resetMiddleView();
     }
 
     @Override
@@ -154,7 +154,7 @@ public class FragmentSettings extends Fragment {
 
         @Override
         protected Object doInBackground(Object[] params) {
-            fragmentCurrency.adapter = CurrencyManager.getCurrencyAddapterIfReady();
+            fragmentCurrency.adapter = CurrencyManager.getCurrencyAdapterIfReady();
             return null;
         }
 

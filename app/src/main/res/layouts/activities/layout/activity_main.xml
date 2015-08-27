@@ -4,6 +4,7 @@
     android:id="@+id/mainlayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/almost_white"
     tools:context="com.breadwallet.presenter.activities.MainActivity">
 
     <ViewFlipper
@@ -14,7 +15,7 @@
         android:layout_marginTop="20dp">
 
         <ImageView
-            android:id="@+id/maintextbreadwallet"
+            android:id="@+id/main_label_breadwallet"
             android:layout_width="120dp"
             android:layout_height="20dp"
             android:layout_centerHorizontal="true"
@@ -32,7 +33,7 @@
     </ViewFlipper>
 
     <Button
-        android:id="@+id/mainbuttonburger"
+        android:id="@+id/main_button_burger"
         android:layout_width="25dp"
         android:layout_height="22dp"
         android:layout_alignParentStart="true"
@@ -42,35 +43,55 @@
 
 
     <Button
-        android:id="@+id/mainbuttonlocker"
+        android:id="@+id/main_button_locker"
         android:layout_width="20dp"
         android:layout_height="27dp"
-        android:layout_alignBottom="@+id/mainbuttonburger"
+        android:layout_alignBottom="@+id/main_button_burger"
         android:layout_alignParentEnd="true"
         android:layout_marginRight="16dp"
         android:background="@drawable/locker" />
 
+    <RelativeLayout
+        android:id="@+id/main_internet_status_bar"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_height="20dp"
+        android:layout_below="@+id/main_locker_button_layout"
+        android:layout_centerHorizontal="true"
+        android:background="@color/red"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:textColor="@android:color/white"
+            android:text="No internet connection" />
+
+    </RelativeLayout>
 
     <com.breadwallet.tools.adapter.ParallaxViewPager xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/pager"
+        android:id="@+id/main_viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/mainbuttonburger"
+        android:layout_below="@+id/main_internet_status_bar"
         android:layout_marginTop="10dp" />
 
     <RelativeLayout
-        android:id="@+id/burgerbuttonlayout"
+        android:id="@+id/main_burger_button_layout"
         android:layout_width="60dp"
         android:layout_height="60dp"></RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/lockerbuttonlayout"
+        android:id="@+id/main_locker_button_layout"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_alignParentRight="true"></RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/pager_indicator"
+        android:id="@+id/main_pager_indicator"
         android:layout_width="60dp"
         android:layout_height="30dp"
         android:layout_alignParentBottom="true"

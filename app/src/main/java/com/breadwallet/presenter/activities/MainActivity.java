@@ -2,6 +2,7 @@ package com.breadwallet.presenter.activities;
 
 import android.annotation.TargetApi;
 import android.content.ClipboardManager;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -35,6 +36,7 @@ import com.breadwallet.tools.adapter.ParallaxViewPager;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.others.CurrencyManager;
+import com.breadwallet.tools.others.NetworkChangeReceiver;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -98,6 +100,8 @@ public class MainActivity extends FragmentActivity {
     public static boolean beenThroughSavedInstanceMethod = false;
     public ViewFlipper viewFlipper;
     public PasswordDialogFragment passwordDialogFragment;
+    public RelativeLayout networkErrorBar;
+    private NetworkChangeReceiver receiver = new NetworkChangeReceiver();
 
     /**
      * Public constructor used to assign the current instance to the app variable
@@ -133,7 +137,7 @@ public class MainActivity extends FragmentActivity {
                     Log.e(TAG, "CHECK:Should press back!");
                     app.onBackPressed();
                 } else {
-                    //check availability here, because method onBackPressed does the checking as well.
+                    //check multi pressing availability here, because method onBackPressed does the checking as well.
                     if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
                         FragmentAnimator.pressMenuButton(app, mainFragmentSettingsAll);
                         Log.e(TAG, "CHECK:Should press menu");
@@ -149,6 +153,7 @@ public class MainActivity extends FragmentActivity {
                 passwordDialogFragment.show(fm, TAG);
             }
         });
+        scaleView(pageIndicatorLeft, 1f, PAGE_INDICATOR_SCALE_UP, 1f, PAGE_INDICATOR_SCALE_UP);
 
     }
 
@@ -157,7 +162,9 @@ public class MainActivity extends FragmentActivity {
         super.onResume();
         CurrencyManager.startTimer();
         ((BreadWalletApp) getApplication()).setLocked(locker, lockerButtonLayout);
-        setMiddleView();
+        resetMiddleView();
+        networkErrorBar.setVisibility(CurrencyManager.isNetworkAvailable() ? View.GONE : View.VISIBLE);
+        startStopReceiver(true);
 
     }
 
@@ -165,12 +172,15 @@ public class MainActivity extends FragmentActivity {
     protected void onPause() {
         super.onPause();
         Log.e(TAG, "Activity onPause");
+        startStopReceiver(false);
+
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         CurrencyManager.stoptimertask();
+
     }
 
     @Override
@@ -179,6 +189,7 @@ public class MainActivity extends FragmentActivity {
         finish();
         CurrencyManager.stoptimertask();
         Log.e(TAG, "Activity Destroyed!");
+
     }
 
     /**
@@ -186,14 +197,15 @@ public class MainActivity extends FragmentActivity {
      */
 
     private void initializeViews() {
-        burgerButtonLayout = (RelativeLayout) findViewById(R.id.burgerbuttonlayout);
-        lockerButtonLayout = (RelativeLayout) findViewById(R.id.lockerbuttonlayout);
-        burgerButton = (Button) findViewById(R.id.mainbuttonburger);
+        burgerButtonLayout = (RelativeLayout) findViewById(R.id.main_burger_button_layout);
+        lockerButtonLayout = (RelativeLayout) findViewById(R.id.main_locker_button_layout);
+        networkErrorBar = (RelativeLayout) findViewById(R.id.main_internet_status_bar);
+        burgerButton = (Button) findViewById(R.id.main_button_burger);
         viewFlipper = (ViewFlipper) MainActivity.app.findViewById(R.id.middle_view_flipper);
-        locker = (Button) findViewById(R.id.mainbuttonlocker);
-        pageIndicator = (RelativeLayout) findViewById(R.id.pager_indicator);
+        locker = (Button) findViewById(R.id.main_button_locker);
+        pageIndicator = (RelativeLayout) findViewById(R.id.main_pager_indicator);
         pageIndicatorLeft = (ImageView) findViewById(R.id.circle_indicator_left);
-        middleView = findViewById(R.id.maintextbreadwallet);
+        middleView = findViewById(R.id.main_label_breadwallet);
         pageIndicatorRight = (ImageView) findViewById(R.id.circle_indicator_right);
         pagerAdapter = new CustomPagerAdapter(getSupportFragmentManager());
         burgerButtonMap = new HashMap<>();
@@ -206,7 +218,7 @@ public class MainActivity extends FragmentActivity {
         fragmentWipeWallet = new FragmentWipeWallet();
         fragmentScanResult = new FragmentScanResult();
         passwordDialogFragment = new PasswordDialogFragment();
-        parallaxViewPager = ((ParallaxViewPager) findViewById(R.id.pager));
+        parallaxViewPager = ((ParallaxViewPager) findViewById(R.id.main_viewpager));
         parallaxViewPager
                 .setOverlapPercentage(0.99f)
                 .setAdapter(pagerAdapter);
@@ -215,7 +227,7 @@ public class MainActivity extends FragmentActivity {
         burgerButtonMap.put("close", R.drawable.x);
         burgerButtonMap.put("back", R.drawable.navigationback);
         myClipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-        scaleView(pageIndicatorLeft, 1f, PAGE_INDICATOR_SCALE_UP, 1f, PAGE_INDICATOR_SCALE_UP);
+
     }
 
     @Override
@@ -319,18 +331,22 @@ public class MainActivity extends FragmentActivity {
             parallaxViewPager.setClickable(b);
             burgerButton.setVisibility(View.VISIBLE);
             burgerButton.setClickable(b);
-            if (!BreadWalletApp.unlocked){
-                locker.setVisibility(View.VISIBLE);
-                locker.setClickable(b);
-            }
             burgerButtonLayout.setVisibility(View.VISIBLE);
             burgerButtonLayout.setClickable(b);
+            if (!BreadWalletApp.unlocked) {
+                locker.setVisibility(View.VISIBLE);
+                locker.setClickable(b);
+                lockerButtonLayout.setVisibility(View.VISIBLE);
+                lockerButtonLayout.setClickable(b);
+            }
         } else {
             parallaxViewPager.setClickable(b);
             burgerButton.setVisibility(View.GONE);
             burgerButton.setClickable(b);
             locker.setVisibility(View.GONE);
             locker.setClickable(b);
+            lockerButtonLayout.setClickable(b);
+            lockerButtonLayout.setVisibility(View.GONE);
             burgerButtonLayout.setVisibility(View.GONE);
             burgerButtonLayout.setClickable(b);
         }
@@ -355,7 +371,7 @@ public class MainActivity extends FragmentActivity {
         }, ms);
     }
 
-    public void setMiddleView() {
+    public void resetMiddleView() {
         if (((BreadWalletApp) getApplication()).unlocked) {
             String tmp = CurrencyManager.getCurrentBalanceText();
             ((BreadWalletApp) getApplication()).setTopMidleView(BreadWalletApp.SETTINGS_TEXT, tmp);
@@ -364,4 +380,11 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
+    private void startStopReceiver(boolean b) {
+        if (b) {
+            this.registerReceiver(receiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+        } else {
+            this.unregisterReceiver(receiver);
+        }
+    }
 }

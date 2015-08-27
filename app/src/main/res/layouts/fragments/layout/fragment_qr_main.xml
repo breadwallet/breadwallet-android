@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/mainfragment"
+    android:id="@+id/main_fragment_qr"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingTop="90dp">
 
     <TextView
-        android:id="@+id/maintextreceivemoney"
+        android:id="@+id/main_text_receive_money"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="60dp"
         android:text="receive money:"
         android:textSize="24sp" />
 
     <ImageView
-        android:id="@+id/mainimageqrcode"
+        android:id="@+id/main_image_qr_code"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/maintextreceivemoney"
+        android:layout_below="@+id/main_text_receive_money"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="15dp" />
 
@@ -28,12 +28,12 @@
         android:layout_marginTop="5dp"
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:layout_below="@+id/mainimageqrcode"
+        android:layout_below="@+id/main_image_qr_code"
         android:orientation="vertical">
 
         <TextView
             android:padding="15dp"
-            android:id="@+id/mainaddresstext"
+            android:id="@+id/main_address_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"

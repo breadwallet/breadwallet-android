@@ -12,12 +12,14 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.fragments.FragmentCurrency;
+import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.tools.adapter.CurrencyListAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
@@ -58,9 +60,10 @@ public class CurrencyManager {
     public static final String TAG = "CurrencyManager";
     private static Timer timer;
     private static TimerTask timerTask;
-    private static final String bitcoinLowecase = "\u0180";
+    public static final String bitcoinLowecase = "\u0180";
     private static final Handler handler = new Handler();
-    private static CurrencyListAdapter currencyListAdapter = new CurrencyListAdapter(MainActivity.app, R.layout.currency_list_item);
+    private static CurrencyListAdapter currencyListAdapter =
+            new CurrencyListAdapter(MainActivity.app, R.layout.currency_list_item);
 
     public static boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
@@ -124,7 +127,7 @@ public class CurrencyManager {
         }
     }
 
-    public static CurrencyListAdapter getCurrencyAddapterIfReady() {
+    public static CurrencyListAdapter getCurrencyAdapterIfReady() {
         new GetCurrenciesTask().execute();
         return currencyListAdapter;
     }
@@ -163,20 +166,26 @@ public class CurrencyManager {
         }
     }
 
-    public static String getTheFinalExchangeString(double target, double current, String iso) {
+    public static String getMiddleTextExchangeString(double target, double current, String iso) {
         double result = target * 1000000 / current;
         Log.e(TAG, "result of the exchange rate calculation: " + result);
         DecimalFormat decimalFormat = new DecimalFormat("0.00");
-        String finalResult = getFormattedCurrencyString(iso, 1) + " = " + bitcoinLowecase + decimalFormat.format(result);
-//        SpannableStringBuilder resultSpan = new SpannableStringBuilder(finalResult);
-//
-//        for (int i = 0; i < resultSpan.length(); i++) {
-//            if (resultSpan.charAt(i) == '\u0180') {
-//                CustomTypefaceSpan typefaceSpan = new CustomTypefaceSpan
-//                resultSpan.setSpan(typefaceSpan, i, i + 1, 0);
-//            }
-//        }
+        String finalResult = getFormattedCurrencyString(iso, "1") + " = " + bitcoinLowecase + decimalFormat.format(result);
         return finalResult;
+    }
+
+    public static String getTheFinalStringBeforeArrow(double target, double current, String iso, int mode) {
+        double exchangedValue;
+
+        //TODO find out the easy formula and change the result when switched
+        exchangedValue = current * (target / 1000000);
+        if (current == 0) exchangedValue = 0;
+        if (mode == FragmentScanResult.BITCOIN_LEFT) {
+            exchangedValue = current * (target * 1000000);
+            return getFormattedCurrencyString("BTC", String.valueOf(exchangedValue));
+        }
+        return getFormattedCurrencyString(iso, String.valueOf(exchangedValue));
+
     }
 
     public static String getCurrentBalanceText() {
@@ -185,33 +194,39 @@ public class CurrencyManager {
         settings = MainActivity.app.getSharedPreferences(MainActivity.PREFS_NAME, 0);
         String iso = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
 //        float rate = settings.getFloat(FragmentCurrency.RATE, 0f);
-        String result = "\u0180" + "0" + "(" + getFormattedCurrencyString(iso, 0)+")";
+        String result = bitcoinLowecase + "0" + "(" + getFormattedCurrencyString(iso, "0") + ")";
         return result;
     }
 
-    public static String getFormattedCurrencyString(String isoCurrencyCode, double amount) {
+    public static String getFormattedCurrencyString(String isoCurrencyCode, String amount) {
         // This formats currency values as the user expects to read them (default locale).
-        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
-
+        DecimalFormat currencyFormat = (DecimalFormat) DecimalFormat.getCurrencyInstance();
         // This specifies the actual currency that the value is in, and provides the currency symbol.
+        DecimalFormatSymbols decimalFormatSymbols;
         Currency currency;
-        try {
-            currency = Currency.getInstance(isoCurrencyCode);
-            Log.e(TAG, "Currency.getInstance succeeded: " + currency.getSymbol());
-        } catch (IllegalArgumentException e) {
-            Log.e(TAG, "Currency.getInstance did not succeed, going with the default", e);
-            currency = Currency.getInstance(Locale.getDefault());
+        if (isoCurrencyCode == "BTC") {
+            decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
+            decimalFormatSymbols.setCurrencySymbol(bitcoinLowecase);
+        } else {
+            try {
+                currency = Currency.getInstance(isoCurrencyCode);
+                Log.e(TAG, "Currency.getInstance succeeded: " + currency.getSymbol());
+            } catch (IllegalArgumentException e) {
+                Log.e(TAG, "Currency.getInstance did not succeed, going with the default", e);
+                currency = Currency.getInstance(Locale.getDefault());
+            }
+            decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
+            String symbol = currency.getSymbol();
+            decimalFormatSymbols.setCurrencySymbol(symbol);
         }
 
-        // Note we don't supply a locale to this method - uses default locale to format the currency symbol.
-        String symbol = currency.getSymbol();
+        currencyFormat.setMaximumFractionDigits(2);
+        currencyFormat.setMinimumFractionDigits(0);
+        currencyFormat.setDecimalSeparatorAlwaysShown(false);
+        currencyFormat.setGroupingUsed(false);
+        currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
 
-        // We then tell our formatter to use this symbol.
-        DecimalFormatSymbols decimalFormatSymbols = ((java.text.DecimalFormat) currencyFormat).getDecimalFormatSymbols();
-        decimalFormatSymbols.setCurrencySymbol(symbol);
-        ((java.text.DecimalFormat) currencyFormat).setDecimalFormatSymbols(decimalFormatSymbols);
-
-        return currencyFormat.format(amount);
+        return currencyFormat.format(new BigDecimal(amount).doubleValue());
     }
 
     public static String getFormattedCurrencyStringForLocale(Locale locale, String isoCurrencyCode, double amount) {

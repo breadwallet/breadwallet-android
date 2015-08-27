@@ -5,7 +5,7 @@
     android:background="@color/black">
 
     <ImageView
-        android:id="@+id/camera_guide_image"
+        android:id="@+id/decoder_camera_guide_image"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"

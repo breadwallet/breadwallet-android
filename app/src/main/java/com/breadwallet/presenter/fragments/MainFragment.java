@@ -63,8 +63,8 @@ public class MainFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        scanQRButton = (Button) getActivity().findViewById(R.id.mainbuttonscanqrcode);
-        payAddressFromClipboardButton = (Button) getActivity().findViewById(R.id.mainbuttonpayaddressfromclipboard);
+        scanQRButton = (Button) getActivity().findViewById(R.id.main_button_scan_qr_code);
+        payAddressFromClipboardButton = (Button) getActivity().findViewById(R.id.main_button_pay_address_from_clipboard);
         alertDialog = new AlertDialog.Builder(getActivity()).create();
         scanQRButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,7 +74,7 @@ public class MainFragment extends Fragment {
                 }
             }
         });
-        addressEditText = (EditText) getView().findViewById(R.id.addresseditText);
+        addressEditText = (EditText) getView().findViewById(R.id.address_edit_text);
         addressEditText.setGravity(Gravity.CENTER_HORIZONTAL);
         payAddressFromClipboardButton.setOnClickListener(new View.OnClickListener() {
             @Override

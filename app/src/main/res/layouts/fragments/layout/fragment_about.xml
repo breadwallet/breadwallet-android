@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:paddingTop="90dp">
 
     <RelativeLayout
         android:id="@+id/about"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="160dp"
+        android:layout_marginTop="70dp"
         android:background="@drawable/clickable_layout"
         android:clickable="false">
 
@@ -57,11 +58,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/about4"
-            android:textColor="@color/dark_grey"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"
             android:text="exchange rate data provided by"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/dark_grey" />
 
         <TextView
             android:id="@+id/about6"
@@ -69,10 +70,10 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/about5"
             android:layout_centerHorizontal="true"
-            android:textColor="@color/dark_grey"
             android:layout_marginBottom="30dp"
             android:text="bitpay.com/rates"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/dark_grey" />
 
 
     </RelativeLayout>

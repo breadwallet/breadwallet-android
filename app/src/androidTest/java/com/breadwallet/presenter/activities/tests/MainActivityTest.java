@@ -13,7 +13,6 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
@@ -59,9 +58,9 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         setActivityInitialTouchMode(true);
         injectInstrumentation(InstrumentationRegistry.getInstrumentation()); // injects the Instrumentation for the Espresso
         activity = getActivity();
-        burgerButtonLayout = (RelativeLayout) activity.findViewById(R.id.burgerbuttonlayout);
-        scanQRCode = (Button) activity.findViewById(R.id.mainbuttonscanqrcode);
-        copyAddressFromClipboard = (Button) activity.findViewById(R.id.mainbuttonpayaddressfromclipboard);
+        burgerButtonLayout = (RelativeLayout) activity.findViewById(R.id.main_burger_button_layout);
+        scanQRCode = (Button) activity.findViewById(R.id.main_button_scan_qr_code);
+        copyAddressFromClipboard = (Button) activity.findViewById(R.id.main_button_pay_address_from_clipboard);
     }
 
     public void testPreconditions() {
@@ -73,16 +72,15 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 
     @MediumTest
     public void testBurgerButton() {
-        onView(withId(R.id.burgerbuttonlayout)).perform(click());
+        onView(withId(R.id.main_burger_button_layout)).perform(click());
 //        onView(withId(R.id.settings)).perform(click());
     }
 
     @MediumTest
     public void testChangeText_sameActivity() {
 
-        onView(withId(R.id.addresseditText))
+        onView(withId(R.id.address_edit_text))
                 .perform(clearText(), typeText("some testing text"), closeSoftKeyboard());
-        scrollTo();
     }
 
     @MediumTest

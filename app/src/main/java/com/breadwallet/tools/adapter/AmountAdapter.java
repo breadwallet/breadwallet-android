@@ -1,10 +1,19 @@
 package com.breadwallet.tools.adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.fragments.FragmentCurrency;
+import com.breadwallet.presenter.fragments.FragmentScanResult;
+import com.breadwallet.tools.others.CurrencyManager;
+
+import java.text.DecimalFormat;
+import java.text.ParseException;
 
 /**
  * BreadWallet
@@ -32,79 +41,98 @@ import com.breadwallet.R;
  */
 public class AmountAdapter {
     private static final String TAG = "AmountAdapter";
-    private static boolean comaHasBeenInserted = false;
-    private static int digitsAfterComma = 2;
+    public static boolean comaHasBeenInserted = false;
     private static final int DIGITS_LIMIT = 10;
     private static boolean isTextColorGrey = true;
+    private static String ISO;
+
+
+    public static void preConditions(Activity context, TextView textView, String tmp) {
+        switch (tmp) {
+            case "":
+                doBackSpace(context, textView);
+                break;
+            case ".":
+                insertComma(context, textView);
+                break;
+            default:
+                insertDigit(context, textView, tmp);
+                break;
+        }
+    }
 
     public static void doBackSpace(Context context, TextView amountToPay) {
-        CharSequence amount = amountToPay.getText();
+        CharSequence amount = amountToPay.getText().toString().substring(1);
         int length = amount.length();
-        if (digitsAfterComma < 2) {
-            digitsAfterComma++;
-        }
         if (amount.charAt(length - 1) == '.') {
             comaHasBeenInserted = false;
-            digitsAfterComma = 2;
         }
         if (length == 1) {
             changeTextColor(context, amountToPay, 2);
-            amountToPay.setText("0");
+            setAmountText(amountToPay,"0");
         } else if (length == 2 && amount.charAt(0) == '0') {
             changeTextColor(context, amountToPay, 2);
-            amountToPay.setText("0");
+            setAmountText(amountToPay, "0");
         } else {
-            amountToPay.setText(amount.subSequence(0, length - 1));
+            setAmountText(amountToPay, amount.subSequence(0, length - 1).toString());
         }
-        Log.e(TAG, "doBackSpace|comaHasBeenInserted: " + comaHasBeenInserted + ", digitsAfterComma: " +
-                digitsAfterComma + ", current text: " + amountToPay.getText().toString());
+        updateExchangedCurrency(amountToPay.getText().toString().substring(1));
     }
 
     public static void insertComma(Context context, TextView amountToPay) {
         if (isTextColorGrey) {
             changeTextColor(context, amountToPay, 1);
         }
-        CharSequence amount = amountToPay.getText();
+        CharSequence amount = amountToPay.getText().toString().substring(1);
         int length = amount.length();
         if (!comaHasBeenInserted) {
             comaHasBeenInserted = true;
             if (length == 1 && amount.charAt(0) == '0') {
-                amountToPay.setText("0.");
+                setAmountText(amountToPay, "0.");
             } else {
-                amountToPay.setText(amount.toString() + ".");
+                setAmountText(amountToPay,amount.toString() + ".");
             }
         }
-//        Log.e(TAG, "insertComma|comaHasBeenInserted: " + comaHasBeenInserted + ", digitsAfterComma: " + digitsAfterComma + ", buttonPressed: " + ".");
+        updateExchangedCurrency(amountToPay.getText().toString().substring(1));
     }
 
     public static void insertDigit(Context context, TextView amountToPay, String tmp) {
-        CharSequence amount = amountToPay.getText();
+        CharSequence amount = amountToPay.getText().toString().substring(1);
         int length = amount.length();
         if (isTextColorGrey) {
             changeTextColor(context, amountToPay, 1);
         }
-        if (isDigitInsertingLegal(amountToPay.length())) {
+        if (isDigitInsertingLegal(amountToPay.getText().toString())) {
             if (length == 1 && amount.equals("0")) {
-                amountToPay.setText(tmp);
+                setAmountText(amountToPay, tmp);
             } else {
-                amountToPay.setText(amount + tmp);
+                setAmountText(amountToPay,amount + tmp);
             }
         }
-//        Log.e(TAG, "insertDigit|comaHasBeenInserted: " + comaHasBeenInserted + ", digitsAfterComma: " + digitsAfterComma + ", buttonPressed: " + tmp);
+        updateExchangedCurrency(amountToPay.getText().toString().substring(1));
+
     }
 
-    private static boolean isDigitInsertingLegal(int length) {
-        if (comaHasBeenInserted) {
-            if (digitsAfterComma > 0) {
-                digitsAfterComma--;
-                return true;
-            } else {
-                return false;
+    private static boolean isDigitInsertingLegal(String text) {
+        if (text.length() < DIGITS_LIMIT) {
+            if (comaHasBeenInserted) {
+                return digitsAfterComma(text) < 2 ? true : false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private static int digitsAfterComma(String text) {
+        int length = text.length();
+        int i;
+
+        for (i = 0; i < length; i++) {
+            if (text.charAt(i) == '.') {
+                return length - i - 1;
             }
         }
-        if (length > DIGITS_LIMIT)
-            return false;
-        return true;
+        return -1;
     }
 
     /**
@@ -120,7 +148,27 @@ public class AmountAdapter {
 
     public static void resetKeyboard() {
         comaHasBeenInserted = false;
-        digitsAfterComma = 2;
-        Log.e(TAG, "resetKeyboard called!!!!");
+        isTextColorGrey = true;
+    }
+
+    public static void updateExchangedCurrency(String tmp) {
+        double parsedValue = 0;
+        try {
+            parsedValue = DecimalFormat.getInstance().parse(tmp).doubleValue();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        Log.e(TAG, "parsedValue: " + parsedValue + " | tmp:" + tmp);
+        FragmentScanResult.setExchangeText(MainActivity.app,parsedValue);
+    }
+
+    private static void setAmountText(TextView textView, String text) {
+        if(ISO == null){
+            SharedPreferences settings = MainActivity.app.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+            ISO = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
+        }
+        String iso = FragmentScanResult.currentCurrencyPosition
+                == FragmentScanResult.BITCOIN_RIGHT ? "BTC" : ISO;
+        textView.setText(CurrencyManager.getFormattedCurrencyString(iso, text));
     }
 }

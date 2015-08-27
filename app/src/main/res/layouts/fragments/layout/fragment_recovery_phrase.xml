@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="60dp">
+    android:paddingTop="90dp">
 
     <TextView
         android:id="@+id/textView"
@@ -11,7 +11,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="66dp"
+        android:layout_marginTop="36dp"
         android:gravity="center"
         android:text="@string/dialog_recovery_phrase_warning"
         android:textColor="@color/dark_grey"

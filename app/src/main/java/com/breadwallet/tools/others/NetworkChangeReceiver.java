@@ -1,28 +1,50 @@
 package com.breadwallet.tools.others;
 
-/**
- * BreadWallet
- * <p/>
- * Created by Mihail on 8/24/15.
- * Copyright (c) 2015 Mihail Gutan <mihail@breadwallet.com>
- * <p/>
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * <p/>
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * <p/>
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-public class NetworkChangeReceiver {
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.util.Log;
+import android.view.View;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
+
+import com.breadwallet.R;
+import com.breadwallet.presenter.BreadWalletApp;
+import com.breadwallet.presenter.activities.MainActivity;
+
+public class NetworkChangeReceiver extends BroadcastReceiver {
+    public static final String TAG = "NetworkChangeReceiver";
+    public RelativeLayout networkErrorBar;
+
+    @Override
+    public void onReceive(final Context context, final Intent intent) {
+        final MainActivity app = MainActivity.app;
+        final ConnectivityManager connMgr = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        networkErrorBar = (RelativeLayout) app.findViewById(R.id.main_internet_status_bar);
+        final android.net.NetworkInfo wifi = connMgr
+                .getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+        final android.net.NetworkInfo mobile = connMgr
+                .getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+
+        if (!wifi.isAvailable() && !mobile.isAvailable()) {
+            app.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    networkErrorBar.setVisibility(View.VISIBLE);
+                    ((BreadWalletApp) app.getApplication()).showCustomToast(app, "No internet connection",
+                            500, Toast.LENGTH_SHORT);
+                }
+            });
+
+            Log.d(TAG, "Network Not Available ");
+        } else {
+            networkErrorBar.setVisibility(View.GONE);
+            Log.d(TAG, "Network Available ");
+        }
+    }
+
+
 }

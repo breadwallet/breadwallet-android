@@ -77,10 +77,10 @@ public class MainFragmentQR extends Fragment {
         // properly.
         final View rootView = inflater.inflate(
                 R.layout.fragment_qr_main, container, false);
-        qrcode = (ImageView) rootView.findViewById(R.id.mainimageqrcode);
+        qrcode = (ImageView) rootView.findViewById(R.id.main_image_qr_code);
         sharingFragment = new SharingFragment();
         generateQR();
-        mainAddressText = (TextView) rootView.findViewById(R.id.mainaddresstext);
+        mainAddressText = (TextView) rootView.findViewById(R.id.main_address_text);
         addressLayout = (RelativeLayout) rootView.findViewById(R.id.theAddressLayout);
         fm = getActivity().getSupportFragmentManager();
         final BreadWalletApp breadWalletApp = (BreadWalletApp) MainActivity.app.getApplication();

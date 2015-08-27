@@ -71,22 +71,25 @@ public class PasswordDialogFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 getDialog().cancel();
+                passwordEditText.setText("");
             }
         });
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                MainActivity app = MainActivity.app;
                 if (PassCodeManager.checkAuth(passwordEditText.getText().toString())) {
                     getDialog().cancel();
                     String tmp = CurrencyManager.getCurrentBalanceText();
-                    ((BreadWalletApp)getActivity().getApplication()).setTopMidleView(BreadWalletApp.SETTINGS_TEXT, tmp);
-                    MainActivity.app.locker.setClickable(false);
-                    MainActivity.app.lockerButtonLayout.setClickable(false);
-                    MainActivity.app.lockerButtonLayout.setVisibility(View.GONE);
-                    MainActivity.app.locker.setVisibility(View.GONE);
+                    ((BreadWalletApp) getActivity().getApplication()).setTopMidleView(BreadWalletApp.SETTINGS_TEXT, tmp);
+//                    MainActivity.app.locker.setClickable(false);
+//                    MainActivity.app.lockerButtonLayout.setClickable(false);
+//                    MainActivity.app.lockerButtonLayout.setVisibility(View.GONE);
+//                    MainActivity.app.locker.setVisibility(View.GONE);
                     ((BreadWalletApp) getActivity().getApplication()).unlocked = true;
+                    ((BreadWalletApp) getActivity().getApplication()).setLocked(app.locker, app.lockerButtonLayout);
                 } else {
-                    Log.d(TAG, "Not equal the text is: " + passwordEditText.getText().toString());
+                    Log.d(TAG, "Not equal, the text is: " + passwordEditText.getText().toString());
                     SpringAnimator.showAnimation(dialogFragment.getView());
                     passwordEditText.setText("");
                 }

@@ -3,8 +3,8 @@ package com.breadwallet.presenter.fragments;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +19,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.adapter.CurrencyListAdapter;
+import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.others.CurrencyManager;
 
 
@@ -62,7 +63,9 @@ public class FragmentCurrency extends Fragment {
     public ProgressBar currencyProgressBar;
     public SharedPreferences settings;
     private String ISO;
+    private float rate;
     int lastItemsPosition = 0;
+    private SharedPreferences.Editor editor;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -70,7 +73,7 @@ public class FragmentCurrency extends Fragment {
         // The last two arguments ensure LayoutParams are inflated
         // properly.
         final View rootView = inflater.inflate(
-                R.layout.fragment_local_currency, container, false);
+                R.layout.fragment_currency, container, false);
 
         currencyList = (ListView) rootView.findViewById(R.id.currency_list_view);
         currencyProgressBar = (ProgressBar) rootView.findViewById(R.id.currency_progress_barr);
@@ -80,13 +83,12 @@ public class FragmentCurrency extends Fragment {
         settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
         currencyList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
-        final SharedPreferences.Editor editor = settings.edit();
-        tryAndSetAdapter();
+        editor = settings.edit();
         currencyRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                adapter = CurrencyManager.getCurrencyAddapterIfReady();
                 tryAndSetAdapter();
+                SpringAnimator.showAnimation(v);
             }
         });
         currencyList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -98,12 +100,14 @@ public class FragmentCurrency extends Fragment {
                 final String selectedCurrency = currencyItemText.getText().toString();
                 ISO = selectedCurrency.substring(0, 3);
                 lastItemsPosition = position;
+                rate = adapter.getItem(position).rate;
                 editor.putString(CURRENT_CURRENCY, ISO);
-                editor.putInt(POSITION, position);
-                editor.putFloat(RATE, adapter.getItem(position).rate);
+                editor.putInt(POSITION, lastItemsPosition);
+                editor.putFloat(RATE, rate);
                 editor.commit();
-                ((BreadWalletApp) getActivity().getApplication()).setTopMidleView(BreadWalletApp.SETTINGS_TEXT,
-                        CurrencyManager.getTheFinalExchangeString(1.0, adapter.getItem(position).rate, ISO));
+                String finalExchangeRate = CurrencyManager.getMiddleTextExchangeString(1.0, rate, ISO);
+                ((BreadWalletApp) getActivity().getApplication()).setTopMidleView(
+                        BreadWalletApp.SETTINGS_TEXT, finalExchangeRate);
             }
 
         });
@@ -116,19 +120,28 @@ public class FragmentCurrency extends Fragment {
         super.onResume();
         SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
         final String tmp = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
-        Log.e(TAG, "Tmp 3 letters: " + tmp);
-        String readyText = CurrencyManager.getTheFinalExchangeString(1.0, adapter.getItem(settings.getInt(FragmentCurrency.POSITION, 0)).rate,
-                adapter.getItem(settings.getInt(FragmentCurrency.POSITION, 0)).code);
+        final float tmpRate = settings.getFloat(RATE, 0);
+        String readyText = CurrencyManager.getMiddleTextExchangeString(1.0, tmpRate,
+                tmp);
         ((BreadWalletApp) getActivity().getApplication()).setTopMidleView(BreadWalletApp.SETTINGS_TEXT,
                 readyText);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                tryAndSetAdapter();
+            }
+        }, 500);
+
     }
 
     @Override
     public void onPause() {
         super.onPause();
+
     }
 
     public void tryAndSetAdapter() {
+        adapter = CurrencyManager.getCurrencyAdapterIfReady();
         if (adapter.getCount() > 0) {
             currencyList.setAdapter(adapter);
             currencyRefresh.setVisibility(View.GONE);
