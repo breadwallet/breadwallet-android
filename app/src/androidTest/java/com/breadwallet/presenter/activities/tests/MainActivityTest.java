@@ -73,19 +73,17 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
     @MediumTest
     public void testBurgerButton() {
         onView(withId(R.id.main_burger_button_layout)).perform(click());
-//        onView(withId(R.id.settings)).perform(click());
+        onView(withId(R.id.settings)).perform(click());
+        onView(withId(R.id.about)).perform(click());
+        onView(withId(R.id.main_burger_button_layout)).perform(click());
+        onView(withId(R.id.local_currency)).perform(click());
+//        onData(withId(R.id.currency_list_view)).atPosition(2).perform(click());
     }
 
     @MediumTest
     public void testChangeText_sameActivity() {
-
         onView(withId(R.id.address_edit_text))
                 .perform(clearText(), typeText("some testing text"), closeSoftKeyboard());
-    }
-
-    @MediumTest
-    public void testSettingsClick() {
-
     }
 
 }

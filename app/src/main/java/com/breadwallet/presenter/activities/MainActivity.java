@@ -179,7 +179,7 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        CurrencyManager.stoptimertask();
+        CurrencyManager.stopTimerTask();
 
     }
 
@@ -187,7 +187,7 @@ public class MainActivity extends FragmentActivity {
     protected void onDestroy() {
         super.onDestroy();
         finish();
-        CurrencyManager.stoptimertask();
+        CurrencyManager.stopTimerTask();
         Log.e(TAG, "Activity Destroyed!");
 
     }

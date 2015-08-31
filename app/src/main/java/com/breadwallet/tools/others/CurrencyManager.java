@@ -12,7 +12,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.fragments.FragmentCurrency;
-import com.breadwallet.presenter.fragments.FragmentScanResult;
+import com.breadwallet.tools.adapter.AmountAdapter;
 import com.breadwallet.tools.adapter.CurrencyListAdapter;
 
 import org.json.JSONArray;
@@ -62,6 +62,7 @@ public class CurrencyManager {
     private static TimerTask timerTask;
     public static final String bitcoinLowecase = "\u0180";
     private static final Handler handler = new Handler();
+    public static boolean separatorNeedsToBeShown = false;
     private static CurrencyListAdapter currencyListAdapter =
             new CurrencyListAdapter(MainActivity.app, R.layout.currency_list_item);
 
@@ -75,21 +76,25 @@ public class CurrencyManager {
     public static List<CurrencyEntity> getCurrencies() {
         List<CurrencyEntity> list = new ArrayList<>();
         if (isNetworkAvailable()) {
-            JSONArray arr;
-            arr = JsonParser.getJSonArray("https://bitpay.com/rates");
-            int length = arr.length();
-            for (int i = 1; i < length; i++) {
-                CurrencyEntity tmp = new CurrencyEntity();
-                try {
-                    JSONObject tmpObj = (JSONObject) arr.get(i);
-                    tmp.name = tmpObj.getString("name");
-                    tmp.code = tmpObj.getString("code");
-                    tmp.codeAndName = tmp.code + " - " + tmp.name;
-                    tmp.rate = (float) tmpObj.getDouble("rate");
-                } catch (JSONException e) {
-                    e.printStackTrace();
+            try {
+                JSONArray arr;
+                arr = JsonParser.getJSonArray("https://bitpay.com/rates");
+                int length = arr.length();
+                for (int i = 1; i < length; i++) {
+                    CurrencyEntity tmp = new CurrencyEntity();
+                    try {
+                        JSONObject tmpObj = (JSONObject) arr.get(i);
+                        tmp.name = tmpObj.getString("name");
+                        tmp.code = tmpObj.getString("code");
+                        tmp.codeAndName = tmp.code + " - " + tmp.name;
+                        tmp.rate = (float) tmpObj.getDouble("rate");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    list.add(tmp);
                 }
-                list.add(tmp);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
         if (list.size() > 0) {
@@ -119,7 +124,6 @@ public class CurrencyManager {
                 currencyListAdapter.clear();
                 currencyListAdapter.addAll(tmp);
                 currencyListAdapter.notifyDataSetChanged();
-                Log.e(TAG, "Adapter changed >> Filled: adapter count: " + currencyListAdapter.getCount());
             } else {
                 Log.e(TAG, "Adapter Not Changed, data is empty");
             }
@@ -158,7 +162,7 @@ public class CurrencyManager {
         timer.schedule(timerTask, 0, 60000); //
     }
 
-    public static void stoptimertask() {
+    public static void stopTimerTask() {
         //stop the timer, if it's not already null
         if (timer != null) {
             timer.cancel();
@@ -168,24 +172,10 @@ public class CurrencyManager {
 
     public static String getMiddleTextExchangeString(double target, double current, String iso) {
         double result = target * 1000000 / current;
-        Log.e(TAG, "result of the exchange rate calculation: " + result);
+//        Log.e(TAG, "result of the exchange rate calculation: " + result);
         DecimalFormat decimalFormat = new DecimalFormat("0.00");
         String finalResult = getFormattedCurrencyString(iso, "1") + " = " + bitcoinLowecase + decimalFormat.format(result);
         return finalResult;
-    }
-
-    public static String getTheFinalStringBeforeArrow(double target, double current, String iso, int mode) {
-        double exchangedValue;
-
-        //TODO find out the easy formula and change the result when switched
-        exchangedValue = current * (target / 1000000);
-        if (current == 0) exchangedValue = 0;
-        if (mode == FragmentScanResult.BITCOIN_LEFT) {
-            exchangedValue = current * (target * 1000000);
-            return getFormattedCurrencyString("BTC", String.valueOf(exchangedValue));
-        }
-        return getFormattedCurrencyString(iso, String.valueOf(exchangedValue));
-
     }
 
     public static String getCurrentBalanceText() {
@@ -199,9 +189,12 @@ public class CurrencyManager {
     }
 
     public static String getFormattedCurrencyString(String isoCurrencyCode, String amount) {
+        DecimalFormat currencyFormat;
+
         // This formats currency values as the user expects to read them (default locale).
-        DecimalFormat currencyFormat = (DecimalFormat) DecimalFormat.getCurrencyInstance();
-        // This specifies the actual currency that the value is in, and provides the currency symbol.
+        currencyFormat = (DecimalFormat) DecimalFormat.getCurrencyInstance();
+        // This specifies the actual currency that the value is in, and provide
+        // s the currency symbol.
         DecimalFormatSymbols decimalFormatSymbols;
         Currency currency;
         if (isoCurrencyCode == "BTC") {
@@ -210,22 +203,21 @@ public class CurrencyManager {
         } else {
             try {
                 currency = Currency.getInstance(isoCurrencyCode);
-                Log.e(TAG, "Currency.getInstance succeeded: " + currency.getSymbol());
+//                Log.e(TAG, "Currency.getInstance succeeded: " + currency.getSymbol());
             } catch (IllegalArgumentException e) {
-                Log.e(TAG, "Currency.getInstance did not succeed, going with the default", e);
+//                Log.e(TAG, "Currency.getInstance did not succeed, going with the default", e);
                 currency = Currency.getInstance(Locale.getDefault());
             }
             decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
             String symbol = currency.getSymbol();
             decimalFormatSymbols.setCurrencySymbol(symbol);
         }
-
+        currencyFormat.setDecimalSeparatorAlwaysShown(separatorNeedsToBeShown);
         currencyFormat.setMaximumFractionDigits(2);
-        currencyFormat.setMinimumFractionDigits(0);
-        currencyFormat.setDecimalSeparatorAlwaysShown(false);
-        currencyFormat.setGroupingUsed(false);
+        currencyFormat.setMinimumFractionDigits(AmountAdapter.digitsInserted);
+        currencyFormat.setGroupingUsed(true);
         currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
-
+//        Log.e(TAG, "Returning the formatted string with separatorVisibility: " + currencyFormat.isDecimalSeparatorAlwaysShown());
         return currencyFormat.format(new BigDecimal(amount).doubleValue());
     }
 
@@ -271,5 +263,6 @@ public class CurrencyManager {
 
         return currencyFormat.format(amount);
     }
+
 
 }

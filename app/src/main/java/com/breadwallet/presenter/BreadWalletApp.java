@@ -163,4 +163,5 @@ public class BreadWalletApp extends Application {
         locker.setVisibility(visible);
 //        lockerButtonLayout.setVisibility(visible);
     }
+
 }

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<?xml version="1.0" encoding="UTF-8"?><!--
  Copyright (C) 2008 ZXing authors
 
  Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,9 +15,10 @@
  -->
 <resources>
     //The QR
-  <!-- Messages IDs -->
-    <item type="id" name="menu_flash" />
-    <item type="id" name="menu_auto_focus" />
-    <item type="id" name="menu_formats" />
-    <item type="id" name="menu_camera_selector" />
+    <!-- Messages IDs -->
+    <item name="menu_flash" type="id" />
+    <item name="menu_auto_focus" type="id" />
+    <item name="menu_formats" type="id" />
+    <item name="menu_camera_selector" type="id" />
+    <item name="keyboard_back_button" type="id" />
 </resources>

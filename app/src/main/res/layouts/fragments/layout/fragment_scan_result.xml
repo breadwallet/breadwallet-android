@@ -18,13 +18,13 @@
         android:textSize="26sp" />
 
     <!--<TextView-->
-        <!--android:id="@+id/bitcoin_sign"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignBottom="@+id/amount_to_pay"-->
-        <!--android:layout_toStartOf="@+id/amount_to_pay"-->
-        <!--android:text="\u0180"-->
-        <!--android:textSize="26sp" />-->
+    <!--android:id="@+id/bitcoin_sign"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignBottom="@+id/amount_to_pay"-->
+    <!--android:layout_toStartOf="@+id/amount_to_pay"-->
+    <!--android:text="\u0180"-->
+    <!--android:textSize="26sp" />-->
 
     <TextView
         android:id="@+id/double_arrow_text"
@@ -41,6 +41,8 @@
         android:id="@+id/amount_before_arrow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:layout_marginLeft="5dp"
         android:layout_alignBottom="@+id/double_arrow_text"
         android:layout_marginRight="5dp"
         android:layout_toStartOf="@+id/double_arrow_text"
@@ -63,7 +65,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/first_line"
-        android:layout_marginTop="15dp">
+        android:layout_marginTop="10dp">
 
     </RelativeLayout>
 

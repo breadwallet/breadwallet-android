@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:id="@+id/list_item_layout">
 
     <com.breadwallet.tools.others.AutoResizeTextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/currency_item_text"

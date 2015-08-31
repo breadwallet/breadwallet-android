@@ -48,6 +48,7 @@ public class CurrencyListAdapter extends ArrayAdapter<CurrencyEntity> {
     int layoutResourceId;
     public TextView textViewItem;
     public Point displayParameters = new Point();
+    public static CurrencyListAdapter currencyListAdapter;
 
     public CurrencyListAdapter(Context mContext, int layoutResourceId) {
 
@@ -56,6 +57,7 @@ public class CurrencyListAdapter extends ArrayAdapter<CurrencyEntity> {
         this.layoutResourceId = layoutResourceId;
         this.mContext = mContext;
         MainActivity.app.getWindowManager().getDefaultDisplay().getSize(displayParameters);
+        currencyListAdapter = this;
     }
 
     @Override

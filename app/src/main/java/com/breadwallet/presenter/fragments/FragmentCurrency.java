@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -105,6 +106,7 @@ public class FragmentCurrency extends Fragment {
                 editor.putInt(POSITION, lastItemsPosition);
                 editor.putFloat(RATE, rate);
                 editor.commit();
+                Log.e(TAG, "rate: " + rate + ", ISO: " + ISO);
                 String finalExchangeRate = CurrencyManager.getMiddleTextExchangeString(1.0, rate, ISO);
                 ((BreadWalletApp) getActivity().getApplication()).setTopMidleView(
                         BreadWalletApp.SETTINGS_TEXT, finalExchangeRate);
@@ -119,10 +121,14 @@ public class FragmentCurrency extends Fragment {
     public void onResume() {
         super.onResume();
         SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
-        final String tmp = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
-        final float tmpRate = settings.getFloat(RATE, 0);
-        String readyText = CurrencyManager.getMiddleTextExchangeString(1.0, tmpRate,
-                tmp);
+        final String iso = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
+        float tmpRate;
+        if (adapter != null && !adapter.isEmpty()) {
+            tmpRate = adapter.getItem(settings.getInt(POSITION, 0)).rate;
+        } else {
+            tmpRate = settings.getFloat(FragmentCurrency.RATE, 1);
+        }
+        String readyText = CurrencyManager.getMiddleTextExchangeString(1.0, tmpRate, iso);
         ((BreadWalletApp) getActivity().getApplication()).setTopMidleView(BreadWalletApp.SETTINGS_TEXT,
                 readyText);
         new Handler().postDelayed(new Runnable() {
