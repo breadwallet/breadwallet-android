@@ -66,7 +66,6 @@ import org.acra.annotation.ReportsCrashes;
 public class BreadWalletApp extends Application {
     public static final int BREAD_WALLET_IMAGE = 0;
     public static final int SETTINGS_TEXT = 1;
-    public static boolean unlocked = false;
     public static final String TAG = "BreadWalletApp";
     private boolean customToastAvailable = true;
     private String oldMessage;
@@ -153,15 +152,6 @@ public class BreadWalletApp extends Application {
                 ((TextView) app.viewFlipper.getCurrentView()).setText(text);
                 break;
         }
-    }
-
-    public void setLocked(View locker, View lockerButtonLayout){
-        boolean clickable = unlocked ? false : true;
-        locker.setClickable(clickable);
-        lockerButtonLayout.setClickable(clickable);
-        int visible = unlocked ? View.GONE : View.VISIBLE;
-        locker.setVisibility(visible);
-//        lockerButtonLayout.setVisibility(visible);
     }
 
 }

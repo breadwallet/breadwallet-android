@@ -168,6 +168,7 @@ public class MainFragmentDecoder extends Fragment implements QRCodeReaderView.On
     }
 
     private void stopQRScanner() {
+        MainActivity.app.activityButtonsEnable(true);
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -177,7 +178,6 @@ public class MainFragmentDecoder extends Fragment implements QRCodeReaderView.On
             }
         });
         mydecoderview = null;
-        MainActivity.app.activityButtonsEnable(true);
 
     }
 

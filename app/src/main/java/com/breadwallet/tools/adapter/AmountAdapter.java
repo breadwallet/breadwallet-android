@@ -151,32 +151,41 @@ public class AmountAdapter {
     public static void resetKeyboard() {
         comaHasBeenInserted = false;
         isTextColorGrey = true;
+        rightValue = "0";
+        leftValue = "0";
         CurrencyManager.separatorNeedsToBeShown = false;
         FragmentScanResult.currentCurrencyPosition = FragmentScanResult.BITCOIN_RIGHT;
         digitsInserted = 0;
+        calculateAndPassValuesToFragment("0");
     }
 
     public static void calculateAndPassValuesToFragment(String valuePassed) {
         Log.d(TAG, "This is the value passed: " + valuePassed);
         rightValue = valuePassed;
-        BigDecimal rightValueObject = new BigDecimal(valuePassed);
-        BigDecimal leftValueObject;
-        BigDecimal rate = new BigDecimal(FragmentScanResult.rate);
-        if (rightValueObject.equals(new BigDecimal("0"))) {
-            leftValueObject = new BigDecimal("0");
-        } else {
-            if (FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_RIGHT) {
-                //from bits to other currency using rate
-                leftValueObject = rate.multiply(rightValueObject.divide(new BigDecimal("1000000")));
-            } else if (FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_LEFT) {
-                //from other currency to bits using rate
-                leftValueObject = rightValueObject.multiply(new BigDecimal("1000000")).divide(rate, RoundingMode.CEILING);
+        try {
+            BigDecimal rightValueObject = new BigDecimal(valuePassed);
+            BigDecimal leftValueObject;
+            BigDecimal rate = new BigDecimal(FragmentScanResult.rate);
+            if (rightValueObject.equals(new BigDecimal("0"))) {
+                leftValueObject = new BigDecimal("0");
             } else {
-                throw new IllegalArgumentException("currentCurrencyPosition should be BITCOIN_LEFT or BITCOIN_RIGHT");
+                if (FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_RIGHT) {
+                    //from bits to other currency using rate
+                    leftValueObject = rate.multiply(rightValueObject.divide(new BigDecimal("1000000")));
+                } else if (FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_LEFT) {
+                    //from other currency to bits using rate
+                    leftValueObject = rightValueObject.multiply(new BigDecimal("1000000")).divide(rate, RoundingMode.CEILING);
+                } else {
+                    throw new IllegalArgumentException("currentCurrencyPosition should be BITCOIN_LEFT or BITCOIN_RIGHT");
+                }
             }
+            leftValue = new DecimalFormat("0.##").format(leftValueObject.doubleValue());
+            FragmentScanResult.updateBothTextValues(rightValueObject, leftValueObject);
+        } catch (Exception e){
+            e.printStackTrace();
+            FragmentScanResult.updateBothTextValues(new BigDecimal("0"), new BigDecimal("0"));
         }
-        leftValue = new DecimalFormat("0.##").format(leftValueObject.doubleValue());
-        FragmentScanResult.updateBothTextValues(rightValueObject, leftValueObject);
+
     }
 
     public static void switchCurrencies() {
@@ -201,7 +210,7 @@ public class AmountAdapter {
         FragmentScanResult.updateBothTextValues(new BigDecimal(rightValue), new BigDecimal(leftValue));
     }
 
-    public static String getRightValue(){
+    public static String getRightValue() {
         return rightValue;
     }
 

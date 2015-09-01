@@ -86,8 +86,7 @@ public class PasswordDialogFragment extends DialogFragment {
 //                    MainActivity.app.lockerButtonLayout.setClickable(false);
 //                    MainActivity.app.lockerButtonLayout.setVisibility(View.GONE);
 //                    MainActivity.app.locker.setVisibility(View.GONE);
-                    ((BreadWalletApp) getActivity().getApplication()).unlocked = true;
-                    ((BreadWalletApp) getActivity().getApplication()).setLocked(app.locker, app.lockerButtonLayout);
+                    app.setUnlocked(true);
                 } else {
                     Log.d(TAG, "Not equal, the text is: " + passwordEditText.getText().toString());
                     SpringAnimator.showAnimation(dialogFragment.getView());

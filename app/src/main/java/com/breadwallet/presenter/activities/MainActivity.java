@@ -102,6 +102,8 @@ public class MainActivity extends FragmentActivity {
     public PasswordDialogFragment passwordDialogFragment;
     public RelativeLayout networkErrorBar;
     private NetworkChangeReceiver receiver = new NetworkChangeReceiver();
+    public static boolean unlocked = false;
+    public static final String UNLOCKED = "unlocked";
 
     /**
      * Public constructor used to assign the current instance to the app variable
@@ -160,8 +162,6 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        CurrencyManager.startTimer();
-        ((BreadWalletApp) getApplication()).setLocked(locker, lockerButtonLayout);
         resetMiddleView();
         networkErrorBar.setVisibility(CurrencyManager.isNetworkAvailable() ? View.GONE : View.VISIBLE);
         startStopReceiver(true);
@@ -327,29 +327,24 @@ public class MainActivity extends FragmentActivity {
     }
 
     public void activityButtonsEnable(boolean b) {
-        if (b) {
-            parallaxViewPager.setClickable(b);
-            burgerButton.setVisibility(View.VISIBLE);
-            burgerButton.setClickable(b);
-            burgerButtonLayout.setVisibility(View.VISIBLE);
-            burgerButtonLayout.setClickable(b);
-            if (!BreadWalletApp.unlocked) {
-                locker.setVisibility(View.VISIBLE);
-                locker.setClickable(b);
-                lockerButtonLayout.setVisibility(View.VISIBLE);
-                lockerButtonLayout.setClickable(b);
-            }
-        } else {
-            parallaxViewPager.setClickable(b);
-            burgerButton.setVisibility(View.GONE);
-            burgerButton.setClickable(b);
-            locker.setVisibility(View.GONE);
+        Log.e(TAG, "TEST VISIBILITY: IN");
+        Log.e(TAG, "TEST VISIBILITY: 0");
+        if (!unlocked) {
+            Log.e(TAG, "TEST VISIBILITY: 1");
+            locker.setVisibility(b ? View.VISIBLE : View.GONE);
             locker.setClickable(b);
             lockerButtonLayout.setClickable(b);
-            lockerButtonLayout.setVisibility(View.GONE);
-            burgerButtonLayout.setVisibility(View.GONE);
-            burgerButtonLayout.setClickable(b);
+        } else {
+            Log.e(TAG, "TEST VISIBILITY: 2");
+            locker.setVisibility(View.GONE);
+            locker.setClickable(false);
+            lockerButtonLayout.setClickable(false);
         }
+        parallaxViewPager.setClickable(b);
+        burgerButton.setVisibility(View.VISIBLE);
+        burgerButton.setClickable(b);
+        burgerButtonLayout.setVisibility(View.VISIBLE);
+        burgerButtonLayout.setClickable(b);
     }
 
     public void scaleView(View v, float startScaleX, float endScaleX, float startScaleY, float endScaleY) {
@@ -372,7 +367,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     public void resetMiddleView() {
-        if (((BreadWalletApp) getApplication()).unlocked) {
+        if (unlocked) {
             String tmp = CurrencyManager.getCurrentBalanceText();
             ((BreadWalletApp) getApplication()).setTopMidleView(BreadWalletApp.SETTINGS_TEXT, tmp);
         } else {
@@ -387,4 +382,15 @@ public class MainActivity extends FragmentActivity {
             this.unregisterReceiver(receiver);
         }
     }
+
+    public void setUnlocked(boolean b) {
+        unlocked = b;
+        locker.setVisibility(b ? View.GONE : View.VISIBLE);
+        lockerButtonLayout.setClickable(!b);
+    }
+
+    public void updateUI() {
+
+    }
+
 }

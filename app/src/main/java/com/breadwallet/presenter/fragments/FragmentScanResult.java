@@ -4,9 +4,11 @@ package com.breadwallet.presenter.fragments;
 import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -60,11 +62,12 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
     public static final int BITCOIN_LEFT = 1;
     public static final int BITCOIN_RIGHT = 2;
     public static int currentCurrencyPosition = BITCOIN_RIGHT;
-    private static int parentWidth;
     private static TextView doubleArrow;
     private static String ISO;
     public static double rate = -1;
     static final String DOUBLE_ARROW = "\u21CB";
+    private int longClickDuration = 500;
+    private boolean isLongPress = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -72,13 +75,6 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         // The last two arguments ensure LayoutParams are inflated
         // properly.
         final View rootView = inflater.inflate(R.layout.fragment_scan_result, container, false);
-        ViewTreeObserver vto = rootView.getViewTreeObserver();
-        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                parentWidth = rootView.getWidth();
-            }
-        });
         return rootView;
     }
 
@@ -257,6 +253,29 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
                     b.setY(buttonHeight * 3 + interButtonGap * 3);
                     break;
                 case 11:
+                    b.setLongClickable(true);
+
+                    b.setOnTouchListener(new View.OnTouchListener() {
+                        @Override
+                        public boolean onTouch(View v, MotionEvent event) {
+                            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                                isLongPress = true;
+                                Handler handler = new Handler();
+                                handler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (isLongPress) {
+                                            AmountAdapter.resetKeyboard();
+                                            // set your code here
+                                        }
+                                    }
+                                }, longClickDuration);
+                            } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                                isLongPress = false;
+                            }
+                            return true;
+                        }
+                    });
                     b.setId(R.id.keyboard_back_button);
                     b.setX(interButtonGap / 2 + interButtonGap * 3 + buttonWidth * 2 + buttonWidth / 4);
                     b.setBackgroundResource(R.drawable.deletetoleft);
@@ -266,7 +285,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
                     break;
             }
             customKeyboardLayout.addView(b);
-            Log.e(TAG,"FINAL CHECK: ");
+            Log.e(TAG, "FINAL CHECK: ");
         }
     }
 
