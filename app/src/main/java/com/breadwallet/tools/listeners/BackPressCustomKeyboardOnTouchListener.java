@@ -1,5 +1,13 @@
 package com.breadwallet.tools.listeners;
 
+import android.os.Handler;
+import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.Button;
+
+import com.breadwallet.tools.adapter.AmountAdapter;
+
 /**
  * BreadWallet
  * <p/>
@@ -24,5 +32,26 @@ package com.breadwallet.tools.listeners;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class BackPressCustomKeyboardOnTouchListener {
+public class BackPressCustomKeyboardOnTouchListener implements View.OnTouchListener {
+    public static final String TAG = "OnTouchListener";
+    private final int LONG_CLICK_DURATION = 500;
+    private Handler handler = new Handler();
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    AmountAdapter.resetKeyboard();
+                    Log.e(TAG, "AmountAdapter.resetKeyboard()");
+                }
+            }, LONG_CLICK_DURATION);
+        } else if (event.getAction() == MotionEvent.ACTION_UP) {
+            handler.removeCallbacksAndMessages(null);
+            String tmp = ((Button) v).getText().toString();
+            AmountAdapter.preConditions(tmp);
+        }
+        return true;
+    }
 }

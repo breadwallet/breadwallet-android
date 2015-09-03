@@ -20,6 +20,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.adapter.CurrencyListAdapter;
+import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.others.CurrencyManager;
 
@@ -96,7 +97,6 @@ public class FragmentCurrency extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                adapter.notifyDataSetChanged();
                 currencyItemText = (TextView) view.findViewById(R.id.currency_item_text);
                 final String selectedCurrency = currencyItemText.getText().toString();
                 ISO = selectedCurrency.substring(0, 3);
@@ -110,6 +110,8 @@ public class FragmentCurrency extends Fragment {
                 String finalExchangeRate = CurrencyManager.getMiddleTextExchangeString(1.0, rate, ISO);
                 ((BreadWalletApp) getActivity().getApplication()).setTopMidleView(
                         BreadWalletApp.SETTINGS_TEXT, finalExchangeRate);
+                adapter.notifyDataSetChanged();
+
             }
 
         });
@@ -129,8 +131,7 @@ public class FragmentCurrency extends Fragment {
             tmpRate = settings.getFloat(FragmentCurrency.RATE, 1);
         }
         String readyText = CurrencyManager.getMiddleTextExchangeString(1.0, tmpRate, iso);
-        ((BreadWalletApp) getActivity().getApplication()).setTopMidleView(BreadWalletApp.SETTINGS_TEXT,
-                readyText);
+        MiddleViewAdapter.resetMiddleView(readyText);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {

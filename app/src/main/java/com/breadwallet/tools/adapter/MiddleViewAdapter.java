@@ -1,5 +1,10 @@
 package com.breadwallet.tools.adapter;
 
+import com.breadwallet.presenter.BreadWalletApp;
+import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.tools.animation.FragmentAnimator;
+import com.breadwallet.tools.others.CurrencyManager;
+
 /**
  * BreadWallet
  * <p/>
@@ -25,4 +30,34 @@ package com.breadwallet.tools.adapter;
  * THE SOFTWARE.
  */
 public class MiddleViewAdapter {
+    public static final String TAG = "MiddleViewAdapter";
+
+    public static void resetMiddleView(String text) {
+        MainActivity app = MainActivity.app;
+        if (FragmentAnimator.level == 0 || FragmentAnimator.level == 1) {
+            if (MainActivity.unlocked) {
+                String tmp = CurrencyManager.getCurrentBalanceText();
+                ((BreadWalletApp) app.getApplication()).setTopMidleView(BreadWalletApp.SETTINGS_TEXT, tmp);
+            } else {
+                ((BreadWalletApp) app.getApplication()).setTopMidleView(BreadWalletApp.BREAD_WALLET_IMAGE, "");
+            }
+        } else if(FragmentAnimator.level == 2){
+            String tmp = "settings";
+            ((BreadWalletApp) app.getApplication()).setTopMidleView(BreadWalletApp.SETTINGS_TEXT, tmp);
+        } else if(text != null){
+            ((BreadWalletApp) app.getApplication()).setTopMidleView(BreadWalletApp.SETTINGS_TEXT,
+                    text);
+        } else {
+            if (MainActivity.unlocked) {
+                String tmp = CurrencyManager.getCurrentBalanceText();
+                ((BreadWalletApp) app.getApplication()).setTopMidleView(BreadWalletApp.SETTINGS_TEXT, tmp);
+            } else {
+                ((BreadWalletApp) app.getApplication()).setTopMidleView(BreadWalletApp.BREAD_WALLET_IMAGE, "");
+            }
+        }
+    }
+
+    public static void updateUI() {
+
+    }
 }

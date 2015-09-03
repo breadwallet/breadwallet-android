@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.breadwallet.R;
+import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.others.MyClipboardManager;
 
@@ -64,7 +65,8 @@ public class MainFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         scanQRButton = (Button) getActivity().findViewById(R.id.main_button_scan_qr_code);
-        payAddressFromClipboardButton = (Button) getActivity().findViewById(R.id.main_button_pay_address_from_clipboard);
+        payAddressFromClipboardButton = (Button)
+                getActivity().findViewById(R.id.main_button_pay_address_from_clipboard);
         alertDialog = new AlertDialog.Builder(getActivity()).create();
         scanQRButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -156,5 +158,10 @@ public class MainFragment extends Fragment {
             }
         }
         return true;
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        MiddleViewAdapter.resetMiddleView(null);
     }
 }

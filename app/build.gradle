@@ -5,52 +5,57 @@ android {
     buildToolsVersion "21.1.2"
 
     lintOptions {
+        // set to true to turn off analysis progress reporting by lint
+        quiet true
+        // if true, stop the gradle build if errors are found
         abortOnError false
+        // if true, only report errors
+        ignoreWarnings true
     }
 
-    packagingOptions {
-        exclude 'LICENSE.txt'
-    }
+packagingOptions {
+    exclude 'LICENSE.txt'
+}
 
 
-    defaultConfig {
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        applicationId "com.breadwallet"
-        minSdkVersion 17
-        targetSdkVersion 22
-        versionCode 1
-        versionName "1.0"
-    }
-    buildTypes {
-        release {
-            minifyEnabled false
+defaultConfig {
+    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    applicationId "com.breadwallet"
+    minSdkVersion 17
+    targetSdkVersion 22
+    versionCode 1
+    versionName "1.0"
+}
+buildTypes {
+    release {
+        minifyEnabled false
 //            proguardFiles getDefaultProguardFiles('proguard-android.txt'), 'proguard-rules.pro'
-        }
     }
-    sourceSets {
-        main {
+}
+sourceSets {
+    main {
 //            java {
 //                exclude '**/SomeExcludedClass.java'
 //            }
-            manifest.srcFile 'src/main/AndroidManifest.xml'
-            java.srcDirs = ['src/main/java', '.apt_generated']
-            aidl.srcDirs = ['src/main/aidl', '.apt_generated']
-            assets.srcDirs = ['src/main/assets']
-            res.srcDirs =
-                    [
-                            'src/main/res/layouts/activities',
-                            'src/main/res/layouts/toasts',
-                            'src/main/res/layouts/fragments',
-                            'src/main/res/layouts',
-                            'src/main/res'
-                    ]
-        }
+        manifest.srcFile 'src/main/AndroidManifest.xml'
+        java.srcDirs = ['src/main/java', '.apt_generated']
+        aidl.srcDirs = ['src/main/aidl', '.apt_generated']
+        assets.srcDirs = ['src/main/assets']
+        res.srcDirs =
+                [
+                        'src/main/res/layouts/activities',
+                        'src/main/res/layouts/toasts',
+                        'src/main/res/layouts/fragments',
+                        'src/main/res/layouts',
+                        'src/main/res'
+                ]
+    }
 //        androidTest {
 //            java {
 //                exclude '**/TestSomeExcludedClass.java'
 //            }
 //        }
-    }
+}
 }
 
 dependencies {

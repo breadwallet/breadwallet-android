@@ -39,7 +39,8 @@
         android:layout_alignParentStart="true"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="20dp"
-        android:background="@drawable/burger" />
+        android:background="@drawable/burger"
+        android:clickable="false" />
 
 
     <Button
@@ -49,17 +50,18 @@
         android:layout_alignBottom="@+id/main_button_burger"
         android:layout_alignParentEnd="true"
         android:layout_marginRight="16dp"
-        android:background="@drawable/locker" />
+        android:background="@drawable/locker"
+        android:clickable="false" />
 
     <RelativeLayout
         android:id="@+id/main_internet_status_bar"
         android:layout_width="match_parent"
-        android:visibility="gone"
         android:layout_height="20dp"
         android:layout_below="@+id/main_locker_button_layout"
         android:layout_centerHorizontal="true"
         android:background="@color/red"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <TextView
             android:layout_width="wrap_content"
@@ -67,8 +69,8 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:layout_gravity="center"
-            android:textColor="@android:color/white"
-            android:text="No internet connection" />
+            android:text="No internet connection"
+            android:textColor="@android:color/white" />
 
     </RelativeLayout>
 
@@ -107,10 +109,10 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
             android:background="@drawable/shadow"
-            android:paddingBottom="6px"
-            android:paddingLeft="6px"
-            android:paddingRight="6px"
-            android:paddingTop="0px"
+            android:paddingBottom="@dimen/pager_indicator_shadow_padding"
+            android:paddingLeft="@dimen/pager_indicator_shadow_padding"
+            android:paddingRight="@dimen/pager_indicator_shadow_padding"
+            android:paddingTop="0dp"
             android:src="@drawable/circle_indicator" />
 
         <ImageView
@@ -121,10 +123,10 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
             android:background="@drawable/shadow"
-            android:paddingBottom="6px"
-            android:paddingLeft="6px"
-            android:paddingRight="6px"
-            android:paddingTop="0px"
+            android:paddingBottom="@dimen/pager_indicator_shadow_padding"
+            android:paddingLeft="@dimen/pager_indicator_shadow_padding"
+            android:paddingRight="@dimen/pager_indicator_shadow_padding"
+            android:paddingTop="0dp"
             android:src="@drawable/circle_indicator" />
     </RelativeLayout>
 

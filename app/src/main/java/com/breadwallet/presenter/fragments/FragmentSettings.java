@@ -15,8 +15,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.others.CurrencyManager;
 
@@ -71,14 +71,13 @@ public class FragmentSettings extends Fragment {
     public void onResume() {
         super.onResume();
         Log.e(TAG, "In onResume");
-        ((BreadWalletApp) getActivity().getApplication()).setTopMidleView(BreadWalletApp.SETTINGS_TEXT, "settings");
+        MiddleViewAdapter.resetMiddleView(null);
     }
 
     @Override
     public void onPause() {
         super.onPause();
         Log.e(TAG, "In onPause");
-        MainActivity.app.resetMiddleView();
     }
 
     @Override

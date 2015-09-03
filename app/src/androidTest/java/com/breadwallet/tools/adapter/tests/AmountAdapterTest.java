@@ -9,9 +9,11 @@ import android.widget.Button;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.adapter.AmountAdapter;
+import com.breadwallet.tools.others.MyClipboardManager;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.longClick;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
@@ -55,6 +57,7 @@ public class AmountAdapterTest extends ActivityInstrumentationTestCase2<MainActi
         injectInstrumentation(InstrumentationRegistry.getInstrumentation()); // injects the Instrumentation for the Espresso
         activity = getActivity();
         copyAddressFromClipboard = (Button) activity.findViewById(R.id.main_button_pay_address_from_clipboard);
+        MyClipboardManager.copyToClipboard(getActivity(), testAddress);
     }
 
     @MediumTest
@@ -89,7 +92,13 @@ public class AmountAdapterTest extends ActivityInstrumentationTestCase2<MainActi
         onView(withId(R.id.amount_before_arrow)).perform(click());//0.8
         onView(withId(R.id.keyboard_back_button)).perform(click());//0.
         onView(withId(R.id.keyboard_back_button)).perform(click());//0
-        assertEquals(AmountAdapter.getRightValue(), "0");
+        try {
+            System.out.println("WAITING 4 SECONDS");
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        assertEquals("0", AmountAdapter.getRightValue());
         onView(withText("1")).perform(click());
         onView(withText("2")).perform(click());
         onView(withText("3")).perform(click());
@@ -119,7 +128,6 @@ public class AmountAdapterTest extends ActivityInstrumentationTestCase2<MainActi
         onView(withId(R.id.keyboard_back_button)).perform(click());
         onView(withId(R.id.keyboard_back_button)).perform(click());
 
-
     }
 
     @MediumTest
@@ -132,10 +140,7 @@ public class AmountAdapterTest extends ActivityInstrumentationTestCase2<MainActi
         onView(withText("0")).perform(click());
         onView(withText("2")).perform(click());
         assertEquals(AmountAdapter.getRightValue(), "2");
-        onView(withId(R.id.keyboard_back_button)).perform(click());
-        onView(withId(R.id.keyboard_back_button)).perform(click());
-        onView(withId(R.id.keyboard_back_button)).perform(click());
-        onView(withId(R.id.keyboard_back_button)).perform(click());
+        onView(withId(R.id.keyboard_back_button)).perform(longClick());
 
     }
 
@@ -164,15 +169,12 @@ public class AmountAdapterTest extends ActivityInstrumentationTestCase2<MainActi
         onView(withText(".")).perform(click());
         onView(withText("0")).perform(click());
         assertEquals(AmountAdapter.getRightValue(), "11.0");// check some failing
-        onView(withId(R.id.keyboard_back_button)).perform(click());
-        onView(withId(R.id.keyboard_back_button)).perform(click());
-        onView(withId(R.id.keyboard_back_button)).perform(click());
-        onView(withId(R.id.keyboard_back_button)).perform(click());
+        onView(withId(R.id.keyboard_back_button)).perform(longClick());
 
     }
 
     @LargeTest
-    public void testCurrenciesSwitch(){
+    public void testCurrenciesSwitch() {
         onView(withId(R.id.main_button_pay_address_from_clipboard)).perform(click());
         onView(withText("1")).perform(click());
         onView(withText(".")).perform(click());
@@ -186,11 +188,7 @@ public class AmountAdapterTest extends ActivityInstrumentationTestCase2<MainActi
         onView(withText("0")).perform(click());
         onView(withText("1")).perform(click());
         onView(withText(".")).perform(click());
-        onView(withId(R.id.keyboard_back_button)).perform(click());
-        onView(withId(R.id.keyboard_back_button)).perform(click());
-        onView(withId(R.id.keyboard_back_button)).perform(click());
-        onView(withId(R.id.keyboard_back_button)).perform(click());
-        onView(withId(R.id.keyboard_back_button)).perform(click());
+        onView(withId(R.id.keyboard_back_button)).perform(longClick());
 
     }
 }

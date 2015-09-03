@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.qrcode.Contents;
 import com.breadwallet.tools.qrcode.QRCodeEncoder;
@@ -171,6 +172,11 @@ public class MainFragmentQR extends Fragment {
                 e.printStackTrace();
             }
         }
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        MiddleViewAdapter.resetMiddleView(null);
     }
 
 }

@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.breadwallet.R;
+import com.breadwallet.tools.adapter.MiddleViewAdapter;
 
 /**
  * BreadWallet
@@ -44,5 +45,11 @@ public class FragmentAbout extends Fragment {
         View rootView = inflater.inflate(
                 R.layout.fragment_about, container, false);
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        MiddleViewAdapter.resetMiddleView(null);
     }
 }

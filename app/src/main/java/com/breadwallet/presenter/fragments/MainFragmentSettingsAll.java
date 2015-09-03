@@ -10,6 +10,7 @@ import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.FragmentAnimator;
 
 /**
@@ -80,6 +81,12 @@ public class MainFragmentSettingsAll extends Fragment {
                 }
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        MiddleViewAdapter.resetMiddleView(null);
     }
 
 }

@@ -180,16 +180,18 @@ public class QRCodeReaderView extends SurfaceView implements SurfaceHolder.Callb
 
         //preview_width = width;
         //preview_height = height;
+        try {
+            mPreviewWidth = mCameraManager.getPreviewSize().x;
+            mPreviewHeight = mCameraManager.getPreviewSize().y;
 
-        mPreviewWidth = mCameraManager.getPreviewSize().x;
-        mPreviewHeight = mCameraManager.getPreviewSize().y;
+            mCameraManager.stopPreview();
+            mCameraManager.getCamera().setPreviewCallback(this);
+            mCameraManager.getCamera().setDisplayOrientation(90); // Portrait mode
 
-
-        mCameraManager.stopPreview();
-        mCameraManager.getCamera().setPreviewCallback(this);
-        mCameraManager.getCamera().setDisplayOrientation(90); // Portrait mode
-
-        mCameraManager.startPreview();
+            mCameraManager.startPreview();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

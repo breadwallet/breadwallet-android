@@ -32,12 +32,14 @@ import com.breadwallet.presenter.fragments.MainFragmentDecoder;
 import com.breadwallet.presenter.fragments.MainFragmentSettingsAll;
 import com.breadwallet.presenter.fragments.PasswordDialogFragment;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
+import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.adapter.ParallaxViewPager;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.others.CurrencyManager;
 import com.breadwallet.tools.others.NetworkChangeReceiver;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -123,6 +125,20 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //---------------------------
+        String cmd = "/system/bin/ps"; // alternative cmd would be "/proc" but then we would need to loop through proc subdirectories, etc
+        // run cmd and read its output into string
+        java.util.Scanner s = null;
+        try {
+            s = new java.util.Scanner(Runtime.getRuntime().exec(cmd).getInputStream()).useDelimiter("\\A");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String cmdRes = s.hasNext() ? s.next() : "";
+        Log.e(TAG, "TEE Test: " + cmdRes);
+
+
+        //---------------------------
 
         Log.e(TAG, "Activity created!");
         if (savedInstanceState != null) {
@@ -162,7 +178,7 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        resetMiddleView();
+        MiddleViewAdapter.resetMiddleView(null);
         networkErrorBar.setVisibility(CurrencyManager.isNetworkAvailable() ? View.GONE : View.VISIBLE);
         startStopReceiver(true);
 
@@ -341,9 +357,10 @@ public class MainActivity extends FragmentActivity {
             lockerButtonLayout.setClickable(false);
         }
         parallaxViewPager.setClickable(b);
-        burgerButton.setVisibility(View.VISIBLE);
+        viewFlipper.setVisibility(b ? View.VISIBLE : View.GONE);
+        burgerButton.setVisibility(b ? View.VISIBLE : View.GONE);
         burgerButton.setClickable(b);
-        burgerButtonLayout.setVisibility(View.VISIBLE);
+        burgerButtonLayout.setVisibility(b ? View.VISIBLE : View.GONE);
         burgerButtonLayout.setClickable(b);
     }
 
@@ -364,15 +381,6 @@ public class MainActivity extends FragmentActivity {
                 doubleBackToExitPressedOnce = false;
             }
         }, ms);
-    }
-
-    public void resetMiddleView() {
-        if (unlocked) {
-            String tmp = CurrencyManager.getCurrentBalanceText();
-            ((BreadWalletApp) getApplication()).setTopMidleView(BreadWalletApp.SETTINGS_TEXT, tmp);
-        } else {
-            ((BreadWalletApp) getApplication()).setTopMidleView(BreadWalletApp.BREAD_WALLET_IMAGE, "");
-        }
     }
 
     private void startStopReceiver(boolean b) {
