@@ -3,6 +3,7 @@ package com.breadwallet.presenter.activities;
 import android.annotation.TargetApi;
 import android.content.ClipboardManager;
 import android.content.IntentFilter;
+import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -39,7 +40,6 @@ import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.others.CurrencyManager;
 import com.breadwallet.tools.others.NetworkChangeReceiver;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -81,7 +81,7 @@ public class MainActivity extends FragmentActivity {
     public View middleView;
     public Map<String, Integer> burgerButtonMap;
     public Button burgerButton;
-    public Button locker;
+    public Button lockerButton;
     public MainFragmentSettingsAll mainFragmentSettingsAll;
     public static ParallaxViewPager parallaxViewPager;
     public FragmentSettings fragmentSettings;
@@ -91,8 +91,6 @@ public class MainActivity extends FragmentActivity {
     public FragmentCurrency fragmentCurrency;
     public FragmentRecoveryPhrase fragmentRecoveryPhrase;
     public FragmentWipeWallet fragmentWipeWallet;
-    public RelativeLayout burgerButtonLayout;
-    public RelativeLayout lockerButtonLayout;
     public FragmentScanResult fragmentScanResult;
     private boolean doubleBackToExitPressedOnce;
     public static final int BURGER = 0;
@@ -105,7 +103,8 @@ public class MainActivity extends FragmentActivity {
     public RelativeLayout networkErrorBar;
     private NetworkChangeReceiver receiver = new NetworkChangeReceiver();
     public static boolean unlocked = false;
-    public static final String UNLOCKED = "unlocked";
+    public static Point screenParamitersPoint = new Point();
+    private int middleViewPressed = 0;
 
     /**
      * Public constructor used to assign the current instance to the app variable
@@ -125,20 +124,7 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //---------------------------
-        String cmd = "/system/bin/ps"; // alternative cmd would be "/proc" but then we would need to loop through proc subdirectories, etc
-        // run cmd and read its output into string
-        java.util.Scanner s = null;
-        try {
-            s = new java.util.Scanner(Runtime.getRuntime().exec(cmd).getInputStream()).useDelimiter("\\A");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        String cmdRes = s.hasNext() ? s.next() : "";
-        Log.e(TAG, "TEE Test: " + cmdRes);
-
-
-        //---------------------------
+        getWindowManager().getDefaultDisplay().getSize(screenParamitersPoint);
 
         Log.e(TAG, "Activity created!");
         if (savedInstanceState != null) {
@@ -146,8 +132,24 @@ public class MainActivity extends FragmentActivity {
         }
         final FragmentManager fm = getSupportFragmentManager();
         initializeViews();
+        viewFlipper.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (FragmentAnimator.level == 0 && unlocked) {
+                    if (middleViewPressed % 2 == 0) {
+                        ((BreadWalletApp) getApplication()).showCustomToast(app, getResources().
+                                getString(R.string.middle_view_tip_first), (int) (screenParamitersPoint.y * 0.8), Toast.LENGTH_LONG);
+                        middleViewPressed++;
+                    } else {
+                        ((BreadWalletApp) getApplication()).showCustomToast(app, getResources().
+                                getString(R.string.middle_view_tip_second), (int) (screenParamitersPoint.y * 0.8), Toast.LENGTH_LONG);
+                        middleViewPressed++;
+                    }
+                }
+            }
+        });
 
-        burgerButtonLayout.setOnClickListener(new View.OnClickListener() {
+        burgerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SpringAnimator.showAnimation(burgerButton);
@@ -163,11 +165,11 @@ public class MainActivity extends FragmentActivity {
                 }
             }
         });
-        lockerButtonLayout.setOnClickListener(new View.OnClickListener() {
+        lockerButton.setOnClickListener(new View.OnClickListener() {
             @TargetApi(Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
-                SpringAnimator.showAnimation(locker);
+                SpringAnimator.showAnimation(lockerButton);
                 passwordDialogFragment.show(fm, TAG);
             }
         });
@@ -213,12 +215,10 @@ public class MainActivity extends FragmentActivity {
      */
 
     private void initializeViews() {
-        burgerButtonLayout = (RelativeLayout) findViewById(R.id.main_burger_button_layout);
-        lockerButtonLayout = (RelativeLayout) findViewById(R.id.main_locker_button_layout);
         networkErrorBar = (RelativeLayout) findViewById(R.id.main_internet_status_bar);
         burgerButton = (Button) findViewById(R.id.main_button_burger);
         viewFlipper = (ViewFlipper) MainActivity.app.findViewById(R.id.middle_view_flipper);
-        locker = (Button) findViewById(R.id.main_button_locker);
+        lockerButton = (Button) findViewById(R.id.main_button_locker);
         pageIndicator = (RelativeLayout) findViewById(R.id.main_pager_indicator);
         pageIndicatorLeft = (ImageView) findViewById(R.id.circle_indicator_left);
         middleView = findViewById(R.id.main_label_breadwallet);
@@ -347,21 +347,17 @@ public class MainActivity extends FragmentActivity {
         Log.e(TAG, "TEST VISIBILITY: 0");
         if (!unlocked) {
             Log.e(TAG, "TEST VISIBILITY: 1");
-            locker.setVisibility(b ? View.VISIBLE : View.GONE);
-            locker.setClickable(b);
-            lockerButtonLayout.setClickable(b);
+            lockerButton.setVisibility(b ? View.VISIBLE : View.GONE);
+            lockerButton.setClickable(b);
         } else {
             Log.e(TAG, "TEST VISIBILITY: 2");
-            locker.setVisibility(View.GONE);
-            locker.setClickable(false);
-            lockerButtonLayout.setClickable(false);
+            lockerButton.setVisibility(View.GONE);
+            lockerButton.setClickable(false);
         }
         parallaxViewPager.setClickable(b);
         viewFlipper.setVisibility(b ? View.VISIBLE : View.GONE);
         burgerButton.setVisibility(b ? View.VISIBLE : View.GONE);
         burgerButton.setClickable(b);
-        burgerButtonLayout.setVisibility(b ? View.VISIBLE : View.GONE);
-        burgerButtonLayout.setClickable(b);
     }
 
     public void scaleView(View v, float startScaleX, float endScaleX, float startScaleY, float endScaleY) {
@@ -393,8 +389,8 @@ public class MainActivity extends FragmentActivity {
 
     public void setUnlocked(boolean b) {
         unlocked = b;
-        locker.setVisibility(b ? View.GONE : View.VISIBLE);
-        lockerButtonLayout.setClickable(!b);
+        lockerButton.setVisibility(b ? View.GONE : View.VISIBLE);
+        lockerButton.setClickable(!b);
     }
 
     public void updateUI() {

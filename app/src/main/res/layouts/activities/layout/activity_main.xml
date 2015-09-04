@@ -34,30 +34,24 @@
 
     <Button
         android:id="@+id/main_button_burger"
-        android:layout_width="25dp"
-        android:layout_height="22dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_alignParentStart="true"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/burger"
-        android:clickable="false" />
+        android:background="@drawable/burger" />
 
 
     <Button
         android:id="@+id/main_button_locker"
-        android:layout_width="20dp"
-        android:layout_height="27dp"
-        android:layout_alignBottom="@+id/main_button_burger"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_alignParentEnd="true"
-        android:layout_marginRight="16dp"
-        android:background="@drawable/locker"
-        android:clickable="false" />
+        android:background="@drawable/locker" />
 
     <RelativeLayout
         android:id="@+id/main_internet_status_bar"
         android:layout_width="match_parent"
         android:layout_height="20dp"
-        android:layout_below="@+id/main_locker_button_layout"
+        android:layout_below="@+id/middle_view_flipper"
         android:layout_centerHorizontal="true"
         android:background="@color/red"
         android:orientation="horizontal"
@@ -80,17 +74,6 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/main_internet_status_bar"
         android:layout_marginTop="10dp" />
-
-    <RelativeLayout
-        android:id="@+id/main_burger_button_layout"
-        android:layout_width="60dp"
-        android:layout_height="60dp"></RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/main_locker_button_layout"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_alignParentRight="true"></RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/main_pager_indicator"

@@ -55,4 +55,6 @@
     <string name="bitcoin_address">"Bitcoin Address"</string>
     <string name="crash_toast_text">Crashed! Report sent to the developer\'s email.</string>
     <string name="bitcoin_lower_unicode">&#384;</string>
+    <string name="middle_view_tip_first">This is your bitcoin balance. Bitcoin is a currency. The exchange rate changed with the market.</string>
+    <string name="middle_view_tip_second">&#384; is for \'bits\'. &#384;1,000,000 = 1 bitcoin.</string>
 </resources>

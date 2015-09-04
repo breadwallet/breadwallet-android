@@ -2,7 +2,6 @@
 package com.breadwallet.presenter.fragments;
 
 import android.content.SharedPreferences;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -165,10 +164,9 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
 
     private void createCustomKeyboardButtons(int y) {
 
-        Point sizePoint = new Point();
-        getActivity().getWindowManager().getDefaultDisplay().getSize(sizePoint);
-        int availableWidth = sizePoint.x;
-        int availableHeight = sizePoint.y;
+
+        int availableWidth = MainActivity.screenParamitersPoint.x;
+        int availableHeight = MainActivity.screenParamitersPoint.y;
         int spaceNeededForRest = 100;
         Log.e(TAG, "AvailableWidth: " + availableWidth + ", availableHeight: " + availableHeight +
                 ", spaceNeededForRest: " + spaceNeededForRest);
