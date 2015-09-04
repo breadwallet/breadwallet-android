@@ -138,7 +138,7 @@ public class MainActivity extends FragmentActivity {
                 if (FragmentAnimator.level == 0 && unlocked) {
                     if (middleViewPressed % 2 == 0) {
                         ((BreadWalletApp) getApplication()).showCustomToast(app, getResources().
-                                getString(R.string.middle_view_tip_first), (int) (screenParamitersPoint.y * 0.8), Toast.LENGTH_LONG);
+                                getString(R.string.middle_view_tip_first), (int) (screenParamitersPoint.y * 0.7), Toast.LENGTH_LONG);
                         middleViewPressed++;
                     } else {
                         ((BreadWalletApp) getApplication()).showCustomToast(app, getResources().
@@ -180,6 +180,7 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        app = this;
         MiddleViewAdapter.resetMiddleView(null);
         networkErrorBar.setVisibility(CurrencyManager.isNetworkAvailable() ? View.GONE : View.VISIBLE);
         startStopReceiver(true);
