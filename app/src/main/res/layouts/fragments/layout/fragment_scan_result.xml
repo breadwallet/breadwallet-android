@@ -17,15 +17,6 @@
         android:textColor="@android:color/darker_gray"
         android:textSize="26sp" />
 
-    <!--<TextView-->
-    <!--android:id="@+id/bitcoin_sign"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_alignBottom="@+id/amount_to_pay"-->
-    <!--android:layout_toStartOf="@+id/amount_to_pay"-->
-    <!--android:text="\u0180"-->
-    <!--android:textSize="26sp" />-->
-
     <TextView
         android:id="@+id/double_arrow_text"
         android:layout_width="wrap_content"
@@ -34,7 +25,7 @@
         android:layout_marginRight="5dp"
         android:layout_toStartOf="@+id/amount_to_pay"
         android:text="&#11020;"
-        android:textColor="@color/darkblue"
+        android:textColor="@color/dark_blue"
         android:textSize="20sp" />
 
     <TextView
@@ -89,16 +80,6 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="10dp"
         android:text="@string/the_address" />
-
-    <!--<ImageView-->
-    <!--android:layout_width="15dp"-->
-    <!--android:layout_height="20dp"-->
-    <!--android:layout_alignBottom="@+id/amount_to_pay"-->
-    <!--android:layout_toStartOf="@+id/amount_to_pay"-->
-    <!--android:background="@drawable/bitcoin_lowercase"-->
-    <!--android:id="@+id/imageView" />-->
-
-    //this is instead of the one above
 
 
 </RelativeLayout>

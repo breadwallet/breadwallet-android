@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.util.Log;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.tools.others.CurrencyManager;
@@ -61,6 +62,7 @@ public class AmountAdapter {
     }
 
     public static void doBackSpace() {
+        MainActivity app = MainActivity.app;
         String amount = rightValue;
         Log.d(TAG, "digitsInserted: " + digitsInserted);
         int length = amount.length();
@@ -74,6 +76,7 @@ public class AmountAdapter {
             if (rightValue.equals("0.")) {
                 changeTextColor(2);
                 calculateAndPassValuesToFragment(rightValue.substring(0, length - 1));
+                ((BreadWalletApp)app.getApplication()).setLockerPayButton(BreadWalletApp.LOCKER_BUTTON);
             }
         }
         if (length > 1) {
@@ -83,6 +86,7 @@ public class AmountAdapter {
                 calculateAndPassValuesToFragment(rightValue.substring(0, length - 1));
             }
         } else {
+            ((BreadWalletApp)app.getApplication()).setLockerPayButton(BreadWalletApp.LOCKER_BUTTON);
             changeTextColor(2);
             calculateAndPassValuesToFragment("0");
         }
@@ -90,8 +94,10 @@ public class AmountAdapter {
     }
 
     public static void insertSeparator() {
+        MainActivity app = MainActivity.app;
         if (isTextColorGrey) {
             changeTextColor(1);
+            ((BreadWalletApp)app.getApplication()).setLockerPayButton(BreadWalletApp.PAY_BUTTON);
         }
         String amount = rightValue;
         CurrencyManager.separatorNeedsToBeShown = true;
@@ -102,12 +108,14 @@ public class AmountAdapter {
     }
 
     public static void insertDigit(String tmp) {
+        MainActivity app = MainActivity.app;
         String amount = rightValue;
 //        Log.e(TAG, "The text before inserting digits: " + amount);
         int length = amount.length();
 
         if (isTextColorGrey) {
             changeTextColor(1);
+            ((BreadWalletApp)app.getApplication()).setLockerPayButton(BreadWalletApp.PAY_BUTTON);
         }
         if (isDigitInsertingLegal(amount)) {
 
@@ -212,6 +220,13 @@ public class AmountAdapter {
 
     public static String getRightValue() {
         return rightValue;
+    }
+
+    public static boolean isPayLegal(){
+        //Return false for now every time.
+
+        //TODO implement this check
+        return false;
     }
 
 }

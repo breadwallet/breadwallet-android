@@ -10,16 +10,16 @@
     <item name="orange" type="color">#FFFFBB33</item>
     <item name="red" type="color">#FFFF4444</item>
     <item name="black" type="color">#ff000000</item>
-    <item name="darkpurple" type="color">#FF9933CC</item>
-    <item name="darkgreen" type="color">#FF669900</item>
-    <item name="darkorange" type="color">#FFFF8800</item>
-    <item name="darkred" type="color">#FFCC0000</item>
+    <item name="dark_purple" type="color">#FF9933CC</item>
+    <item name="dark_green" type="color">#FF669900</item>
+    <item name="dark_orange" type="color">#FFFF8800</item>
+    <item name="dark_red" type="color">#FFCC0000</item>
     <item name="grey" type="color">#ff787878</item>
     <item name="light_grey" type="color">#ff9d9d9d</item>
     <item name="extra_light_grey" type="color">#e1e1e1</item>
     <item name="dark_grey" type="color">#ff484848</item>
-    <item name="darkblue" type="color">#007fff</item>
-    <item name="walletorange" type="color">#ff8000</item>
+    <item name="dark_blue" type="color">#007fff</item>
+    <item name="wallet_orange" type="color">#ff8000</item>
     <item name="white_trans" type="color">#64ffffff</item>
 
     //the QR

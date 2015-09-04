@@ -81,7 +81,7 @@ public class PasswordDialogFragment extends DialogFragment {
                 if (PassCodeManager.checkAuth(passwordEditText.getText().toString())) {
                     getDialog().cancel();
                     String tmp = CurrencyManager.getCurrentBalanceText();
-                    ((BreadWalletApp) getActivity().getApplication()).setTopMidleView(BreadWalletApp.SETTINGS_TEXT, tmp);
+                    ((BreadWalletApp) getActivity().getApplication()).setTopMiddleView(BreadWalletApp.SETTINGS_TEXT, tmp);
                     app.setUnlocked(true);
                 } else {
                     Log.d(TAG, "Not equal, the text is: " + passwordEditText.getText().toString());

@@ -4,6 +4,8 @@
     <!--<dimen name="activity_vertical_margin">16dp</dimen>-->
     <dimen name="qr_dimension">320dp</dimen>
     <dimen name="activity_horizontal_margin">16dp</dimen>
+
     <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="transaction_item_margin">10dp</dimen>
     <dimen name="pager_indicator_shadow_padding">2dp</dimen>
 </resources>

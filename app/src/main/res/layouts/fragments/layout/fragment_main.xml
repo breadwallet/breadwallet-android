@@ -28,7 +28,7 @@
         android:background="@drawable/button"
         android:src="@drawable/cameraguide_blue_small"
         android:text="scan QR code"
-        android:textColor="@color/darkblue"
+        android:textColor="@color/dark_blue"
         android:textSize="20sp" />
 
     <Button
@@ -41,7 +41,7 @@
         android:layout_marginTop="50dp"
         android:background="@drawable/button"
         android:text="pay address from clipboard "
-        android:textColor="@color/darkblue"
+        android:textColor="@color/dark_blue"
         android:textSize="20sp" />
 
     <EditText

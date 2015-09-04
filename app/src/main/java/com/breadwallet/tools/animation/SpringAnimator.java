@@ -80,7 +80,7 @@ public class SpringAnimator {
     }
 
     /**
-     * Shows the springy animation on the burger button
+     * Shows the springy animation on views
      */
     public static void showAnimation(final View view) {
         if (view != null) {

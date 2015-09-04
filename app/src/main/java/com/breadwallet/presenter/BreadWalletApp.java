@@ -66,6 +66,8 @@ import org.acra.annotation.ReportsCrashes;
 public class BreadWalletApp extends Application {
     public static final int BREAD_WALLET_IMAGE = 0;
     public static final int SETTINGS_TEXT = 1;
+    public static final int LOCKER_BUTTON = 2;
+    public static final int PAY_BUTTON = 3;
     public static final String TAG = "BreadWalletApp";
     private boolean customToastAvailable = true;
     private String oldMessage;
@@ -137,7 +139,7 @@ public class BreadWalletApp extends Application {
             return myView.getTop() + getRelativeTop((View) myView.getParent());
     }
 
-    public void setTopMidleView(int view, String text) {
+    public void setTopMiddleView(int view, String text) {
         MainActivity app = MainActivity.app;
         switch (view) {
             case BREAD_WALLET_IMAGE:
@@ -152,6 +154,29 @@ public class BreadWalletApp extends Application {
                 ((TextView) app.viewFlipper.getCurrentView()).setText(text);
                 break;
         }
+    }
+
+    public void setLockerPayButton(int view) {
+        MainActivity app = MainActivity.app;
+        Log.e(TAG, "Flipper has # of child: " + app.lockerPayFlipper.getChildCount());
+        switch (view) {
+            case LOCKER_BUTTON:
+                if (app.lockerPayFlipper.getDisplayedChild() == 1) {
+                    app.lockerPayFlipper.showPrevious();
+                    if(MainActivity.unlocked){
+                        app.lockerButton.setVisibility(View.INVISIBLE);
+                    } else {
+                        app.lockerButton.setVisibility(View.VISIBLE);
+                    }
+                }
+                break;
+            case PAY_BUTTON:
+                if (app.lockerPayFlipper.getDisplayedChild() == 0) {
+                    app.lockerPayFlipper.showNext();
+                }
+                break;
+        }
+
     }
 
 }

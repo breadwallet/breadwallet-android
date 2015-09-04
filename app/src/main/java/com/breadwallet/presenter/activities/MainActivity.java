@@ -2,6 +2,7 @@ package com.breadwallet.presenter.activities;
 
 import android.annotation.TargetApi;
 import android.content.ClipboardManager;
+import android.content.DialogInterface;
 import android.content.IntentFilter;
 import android.graphics.Point;
 import android.os.Build;
@@ -10,6 +11,7 @@ import android.os.Handler;
 import android.os.PersistableBundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -32,6 +34,7 @@ import com.breadwallet.presenter.fragments.FragmentWipeWallet;
 import com.breadwallet.presenter.fragments.MainFragmentDecoder;
 import com.breadwallet.presenter.fragments.MainFragmentSettingsAll;
 import com.breadwallet.presenter.fragments.PasswordDialogFragment;
+import com.breadwallet.tools.adapter.AmountAdapter;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.adapter.ParallaxViewPager;
@@ -99,11 +102,12 @@ public class MainActivity extends FragmentActivity {
     public static final float PAGE_INDICATOR_SCALE_UP = 1.3f;
     public static boolean beenThroughSavedInstanceMethod = false;
     public ViewFlipper viewFlipper;
+    public ViewFlipper lockerPayFlipper;
     public PasswordDialogFragment passwordDialogFragment;
     public RelativeLayout networkErrorBar;
     private NetworkChangeReceiver receiver = new NetworkChangeReceiver();
     public static boolean unlocked = false;
-    public static Point screenParamitersPoint = new Point();
+    public static Point screenParametersPoint = new Point();
     private int middleViewPressed = 0;
 
     /**
@@ -124,7 +128,7 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getWindowManager().getDefaultDisplay().getSize(screenParamitersPoint);
+        getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
 
         Log.e(TAG, "Activity created!");
         if (savedInstanceState != null) {
@@ -138,11 +142,11 @@ public class MainActivity extends FragmentActivity {
                 if (FragmentAnimator.level == 0 && unlocked) {
                     if (middleViewPressed % 2 == 0) {
                         ((BreadWalletApp) getApplication()).showCustomToast(app, getResources().
-                                getString(R.string.middle_view_tip_first), (int) (screenParamitersPoint.y * 0.7), Toast.LENGTH_LONG);
+                                getString(R.string.middle_view_tip_first), (int) (screenParametersPoint.y * 0.7), Toast.LENGTH_LONG);
                         middleViewPressed++;
                     } else {
                         ((BreadWalletApp) getApplication()).showCustomToast(app, getResources().
-                                getString(R.string.middle_view_tip_second), (int) (screenParamitersPoint.y * 0.8), Toast.LENGTH_LONG);
+                                getString(R.string.middle_view_tip_second), (int) (screenParametersPoint.y * 0.8), Toast.LENGTH_LONG);
                         middleViewPressed++;
                     }
                 }
@@ -218,6 +222,7 @@ public class MainActivity extends FragmentActivity {
     private void initializeViews() {
         networkErrorBar = (RelativeLayout) findViewById(R.id.main_internet_status_bar);
         burgerButton = (Button) findViewById(R.id.main_button_burger);
+        lockerPayFlipper = (ViewFlipper) findViewById(R.id.locker_pay_flipper);
         viewFlipper = (ViewFlipper) MainActivity.app.findViewById(R.id.middle_view_flipper);
         lockerButton = (Button) findViewById(R.id.main_button_locker);
         pageIndicator = (RelativeLayout) findViewById(R.id.main_pager_indicator);
@@ -348,16 +353,16 @@ public class MainActivity extends FragmentActivity {
         Log.e(TAG, "TEST VISIBILITY: 0");
         if (!unlocked) {
             Log.e(TAG, "TEST VISIBILITY: 1");
-            lockerButton.setVisibility(b ? View.VISIBLE : View.GONE);
+            lockerButton.setVisibility(b ? View.VISIBLE : View.INVISIBLE);
             lockerButton.setClickable(b);
         } else {
             Log.e(TAG, "TEST VISIBILITY: 2");
-            lockerButton.setVisibility(View.GONE);
+            lockerButton.setVisibility(View.INVISIBLE);
             lockerButton.setClickable(false);
         }
         parallaxViewPager.setClickable(b);
-        viewFlipper.setVisibility(b ? View.VISIBLE : View.GONE);
-        burgerButton.setVisibility(b ? View.VISIBLE : View.GONE);
+        viewFlipper.setVisibility(b ? View.VISIBLE : View.INVISIBLE);
+        burgerButton.setVisibility(b ? View.VISIBLE : View.INVISIBLE);
         burgerButton.setClickable(b);
     }
 
@@ -394,8 +399,23 @@ public class MainActivity extends FragmentActivity {
         lockerButton.setClickable(!b);
     }
 
-    public void updateUI() {
-
+    public void pay(View view) {
+        SpringAnimator.showAnimation(view);
+        Log.d(TAG, "Test pay button!");
+        if (AmountAdapter.isPayLegal()) {
+            //TODO implement pay method
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("insufficient funds")
+                    .setCancelable(false)
+                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
     }
 
 }

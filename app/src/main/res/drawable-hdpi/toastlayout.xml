@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:layout_width="wrap_content">
 
-    <solid android:color="@color/walletorange" />
+    <solid android:color="@color/wallet_orange" />
 
     <corners android:radius="10dip" />
 

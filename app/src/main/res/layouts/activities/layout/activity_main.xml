@@ -40,12 +40,30 @@
         android:background="@drawable/burger" />
 
 
-    <Button
-        android:id="@+id/main_button_locker"
+    <ViewFlipper
+        android:id="@+id/locker_pay_flipper"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_alignParentEnd="true"
-        android:background="@drawable/locker" />
+        android:layout_alignParentEnd="true">
+
+        <Button
+            android:id="@+id/main_button_locker"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/locker" />
+
+        <TextView
+            android:id="@+id/main_button_pay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="pay"
+            android:onClick="pay"
+            android:clickable="true"
+            android:textColor="@color/dark_blue"
+            android:textSize="22sp" />
+
+    </ViewFlipper>
 
     <RelativeLayout
         android:id="@+id/main_internet_status_bar"

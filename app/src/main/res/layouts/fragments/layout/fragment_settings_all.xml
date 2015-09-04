@@ -55,7 +55,7 @@
                 android:layout_toEndOf="@+id/cameraguide"
                 android:text="import private key"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/darkblue" />
+                android:textColor="@color/dark_blue" />
 
 
         </RelativeLayout>
@@ -87,7 +87,7 @@
                 android:layout_toEndOf="@+id/rescanimage"
                 android:text="rescan blockchain"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/darkblue" />
+                android:textColor="@color/dark_blue" />
         </RelativeLayout>
 
         <TextView

@@ -91,7 +91,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginRight="50dp"
                 android:text=""
-                android:textColor="@color/darkblue"
+                android:textColor="@color/dark_blue"
                 android:textSize="20sp" />
 
             <ImageView
@@ -120,7 +120,7 @@
                 android:layout_marginLeft="20dp"
                 android:text="change passcode"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/darkblue" />
+                android:textColor="@color/dark_blue" />
 
         </RelativeLayout>
 

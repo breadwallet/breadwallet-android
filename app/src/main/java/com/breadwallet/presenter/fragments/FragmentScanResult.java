@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.adapter.AmountAdapter;
@@ -128,6 +129,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
     public void onPause() {
         super.onPause();
         AmountAdapter.resetKeyboard();
+        ((BreadWalletApp)getActivity().getApplication()).setLockerPayButton(BreadWalletApp.LOCKER_BUTTON);
     }
 
     public String extractTheCleanAddress(String str) {
@@ -165,8 +167,8 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
     private void createCustomKeyboardButtons(int y) {
 
 
-        int availableWidth = MainActivity.screenParamitersPoint.x;
-        int availableHeight = MainActivity.screenParamitersPoint.y;
+        int availableWidth = MainActivity.screenParametersPoint.x;
+        int availableHeight = MainActivity.screenParametersPoint.y;
         int spaceNeededForRest = 100;
         Log.e(TAG, "AvailableWidth: " + availableWidth + ", availableHeight: " + availableHeight +
                 ", spaceNeededForRest: " + spaceNeededForRest);
@@ -198,7 +200,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
             b.setWidth((int) buttonWidth);
             b.setHeight((int) buttonHeight);
             b.setTextSize(buttonTextSize);
-            b.setTextColor(getResources().getColor(R.color.darkblue));
+            b.setTextColor(getResources().getColor(R.color.dark_blue));
             b.setBackgroundResource(R.drawable.button);
             b.setOnClickListener(this);
             if (i < 9)
@@ -260,7 +262,6 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
                     break;
             }
             customKeyboardLayout.addView(b);
-            Log.e(TAG, "FINAL CHECK: ");
         }
     }
 
