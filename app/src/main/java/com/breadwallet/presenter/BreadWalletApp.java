@@ -65,7 +65,7 @@ import org.acra.annotation.ReportsCrashes;
 )
 public class BreadWalletApp extends Application {
     public static final int BREAD_WALLET_IMAGE = 0;
-    public static final int SETTINGS_TEXT = 1;
+    public static final int BREAD_WALLET_TEXT = 1;
     public static final int LOCKER_BUTTON = 2;
     public static final int PAY_BUTTON = 3;
     public static final String TAG = "BreadWalletApp";
@@ -147,7 +147,7 @@ public class BreadWalletApp extends Application {
                     app.viewFlipper.showPrevious();
                 }
                 break;
-            case SETTINGS_TEXT:
+            case BREAD_WALLET_TEXT:
                 if (app.viewFlipper.getDisplayedChild() == 0) {
                     app.viewFlipper.showNext();
                 }

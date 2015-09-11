@@ -13,49 +13,44 @@ android {
         ignoreWarnings true
     }
 
-packagingOptions {
-    exclude 'LICENSE.txt'
-}
+    packagingOptions {
+        exclude 'LICENSE.txt'
+    }
 
 
-defaultConfig {
-    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-    applicationId "com.breadwallet"
-    minSdkVersion 17
-    targetSdkVersion 22
-    versionCode 1
-    versionName "1.0"
-}
-buildTypes {
-    release {
-        minifyEnabled false
+    defaultConfig {
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        applicationId "com.breadwallet"
+        minSdkVersion 17
+        targetSdkVersion 22
+        versionCode 1
+        versionName "1.0"
+        ndk {
+            moduleName "BreadWalletCore"
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
 //            proguardFiles getDefaultProguardFiles('proguard-android.txt'), 'proguard-rules.pro'
+        }
     }
-}
-sourceSets {
-    main {
-//            java {
-//                exclude '**/SomeExcludedClass.java'
-//            }
-        manifest.srcFile 'src/main/AndroidManifest.xml'
-        java.srcDirs = ['src/main/java', '.apt_generated']
-        aidl.srcDirs = ['src/main/aidl', '.apt_generated']
-        assets.srcDirs = ['src/main/assets']
-        res.srcDirs =
-                [
-                        'src/main/res/layouts/activities',
-                        'src/main/res/layouts/toasts',
-                        'src/main/res/layouts/fragments',
-                        'src/main/res/layouts',
-                        'src/main/res'
-                ]
+    sourceSets {
+        main {
+            manifest.srcFile 'src/main/AndroidManifest.xml'
+            java.srcDirs = ['src/main/java', '.apt_generated']
+            aidl.srcDirs = ['src/main/aidl', '.apt_generated']
+            assets.srcDirs = ['src/main/assets']
+            res.srcDirs =
+                    [
+                            'src/main/res/layouts/activities',
+                            'src/main/res/layouts/toasts',
+                            'src/main/res/layouts/fragments',
+                            'src/main/res/layouts',
+                            'src/main/res'
+                    ]
+        }
     }
-//        androidTest {
-//            java {
-//                exclude '**/TestSomeExcludedClass.java'
-//            }
-//        }
-}
 }
 
 dependencies {
@@ -73,5 +68,5 @@ dependencies {
     // Set this dependency to build and run Espresso tests
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2'
     // Set this dependency to build and run UI Automator tests
-//    androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.1'
+    // androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.1'
 }

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingTop="50dp">
+    android:paddingTop="40dp">
 
     <TextView
         android:id="@+id/main_text_receive_money"
@@ -37,7 +37,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"
             android:gravity="center"
             android:text="mhBmRiqosSHR9YnPTKc3xXcvhEcKtjet2p"
             android:textSize="16sp" />

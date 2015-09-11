@@ -84,7 +84,7 @@ public class PasswordDialogFragment extends DialogFragment {
                 if (PassCodeManager.checkAuth(passwordEditText.getText().toString())) {
                     getDialog().cancel();
                     String tmp = CurrencyManager.getCurrentBalanceText();
-                    ((BreadWalletApp) getActivity().getApplication()).setTopMiddleView(BreadWalletApp.SETTINGS_TEXT, tmp);
+                    ((BreadWalletApp) getActivity().getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
                     app.setUnlocked(true);
                     InputMethodManager keyboard = (InputMethodManager) MainActivity.app.
                             getSystemService(Context.INPUT_METHOD_SERVICE);

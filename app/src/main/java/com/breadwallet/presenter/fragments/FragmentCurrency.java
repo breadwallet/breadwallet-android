@@ -109,7 +109,7 @@ public class FragmentCurrency extends Fragment {
                 Log.e(TAG, "rate: " + rate + ", ISO: " + ISO);
                 String finalExchangeRate = CurrencyManager.getMiddleTextExchangeString(1.0, rate, ISO);
                 ((BreadWalletApp) getActivity().getApplication()).setTopMiddleView(
-                        BreadWalletApp.SETTINGS_TEXT, finalExchangeRate);
+                        BreadWalletApp.BREAD_WALLET_TEXT, finalExchangeRate);
                 adapter.notifyDataSetChanged();
 
             }
