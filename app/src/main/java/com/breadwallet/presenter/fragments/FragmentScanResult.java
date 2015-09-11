@@ -129,7 +129,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
     public void onPause() {
         super.onPause();
         AmountAdapter.resetKeyboard();
-        ((BreadWalletApp)getActivity().getApplication()).setLockerPayButton(BreadWalletApp.LOCKER_BUTTON);
+        ((BreadWalletApp) getActivity().getApplication()).setLockerPayButton(BreadWalletApp.LOCKER_BUTTON);
     }
 
     public String extractTheCleanAddress(String str) {
@@ -166,10 +166,9 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
 
     private void createCustomKeyboardButtons(int y) {
 
-
         int availableWidth = MainActivity.screenParametersPoint.x;
         int availableHeight = MainActivity.screenParametersPoint.y;
-        int spaceNeededForRest = 100;
+        int spaceNeededForRest = availableHeight / 14;
         Log.e(TAG, "AvailableWidth: " + availableWidth + ", availableHeight: " + availableHeight +
                 ", spaceNeededForRest: " + spaceNeededForRest);
         float gapRate = 0.2f;
@@ -177,18 +176,18 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         float interButtonGap = gap / 5;
         float buttonWidth = (availableWidth - gap) / 3;
         float buttonHeight = buttonWidth;
-        float test = buttonHeight * 4 + gap;
-
-        Log.e(TAG, "space taken: " + test);
+        float spaceNeeded = buttonHeight * 4 + gap;
+        Log.e(TAG, "space taken: " + spaceNeeded);
 
         int keyboardLayoutY = y;
-        Log.e(TAG, "test: " + test + ", keyboardLayoutY: " + keyboardLayoutY);
-        if (test > (availableHeight - (spaceNeededForRest + keyboardLayoutY))) {
-            Log.e(TAG, "More Space needed!");
+        int buttonTextSize = 45;
+        Log.e(TAG, "spaceNeeded: " + spaceNeeded + ", keyboardLayoutY: " + keyboardLayoutY);
+        if (spaceNeeded > (availableHeight - (spaceNeededForRest + keyboardLayoutY))) {
+            Log.e(TAG, "More Space needed! buttonHeight: " + buttonHeight);
             buttonHeight = ((availableHeight - (spaceNeededForRest + keyboardLayoutY)) - gap) / 4;
+            buttonTextSize = (int) ((buttonHeight / 7));
         }
         int minimumHeight = (int) (buttonHeight * 4 + interButtonGap * 4);
-        int buttonTextSize = 50;
         Log.d(TAG, "The gap: " + gap + ", The buttonHeight: " + buttonHeight + ", buttonWidth: " + buttonWidth);
         if (customKeyboardLayout == null) {
             customKeyboardLayout = (RelativeLayout) getActivity().findViewById(R.id.custom_keyboard_layout);
@@ -203,6 +202,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
             b.setTextColor(getResources().getColor(R.color.dark_blue));
             b.setBackgroundResource(R.drawable.button);
             b.setOnClickListener(this);
+            b.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
             if (i < 9)
                 b.setText(String.valueOf(i + 1));
             switch (i) {

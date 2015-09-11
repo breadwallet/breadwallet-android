@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingTop="70dp">
+    android:paddingTop="50dp">
 
     <TextView
         android:id="@+id/main_text_send_money"
@@ -13,7 +13,6 @@
         android:layout_below="@+id/main_label_breadwallet"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
-        android:layout_marginTop="30dp"
         android:text="send money:"
         android:textSize="24sp" />
 
@@ -50,6 +49,8 @@
         android:layout_height="150dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:background="#00000000"
         android:text="The address"
         android:textAlignment="gravity"

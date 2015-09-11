@@ -1,146 +1,158 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="90dp">
+    android:layout_marginTop="90dp">
 
-    <RelativeLayout
-        android:id="@+id/settings_pressed"
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <RelativeLayout
-            android:id="@+id/about"
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@drawable/clickable_layout"
-            android:clickable="true">
+            android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/about_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="20dp"
-                android:text="about"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/grey" />
+            <RelativeLayout
+                android:id="@+id/settings_pressed"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="20dp"
-                android:background="@drawable/chevron" />
+                <RelativeLayout
+                    android:id="@+id/about"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/clickable_layout"
+                    android:clickable="true">
+
+                    <TextView
+                        android:id="@+id/about_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="20dp"
+                        android:text="about"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/grey" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="20dp"
+                        android:background="@drawable/chevron" />
 
 
-        </RelativeLayout>
+                </RelativeLayout>
 
-        <RelativeLayout
-            android:id="@+id/recovery_phrase"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_below="@+id/about"
-            android:background="@drawable/clickable_layout"
-            android:clickable="true">
+                <RelativeLayout
+                    android:id="@+id/recovery_phrase"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_below="@+id/about"
+                    android:background="@drawable/clickable_layout"
+                    android:clickable="true">
 
 
-            <TextView
-                android:id="@+id/recovery_phrase_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="20dp"
-                android:text="recovery phrase"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/grey" />
+                    <TextView
+                        android:id="@+id/recovery_phrase_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="20dp"
+                        android:text="recovery phrase"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/grey" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="20dp"
-                android:background="@drawable/chevron" />
-        </RelativeLayout>
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="20dp"
+                        android:background="@drawable/chevron" />
+                </RelativeLayout>
 
-        <RelativeLayout
-            android:id="@+id/local_currency"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_below="@+id/recovery_phrase"
-            android:layout_marginTop="30dp"
-            android:background="@drawable/clickable_layout"
-            android:clickable="true">
+                <RelativeLayout
+                    android:id="@+id/local_currency"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_below="@+id/recovery_phrase"
+                    android:layout_marginTop="30dp"
+                    android:background="@drawable/clickable_layout"
+                    android:clickable="true">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="20dp"
-                android:text="local currency"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/grey" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="20dp"
+                        android:text="local currency"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/grey" />
 
-            <TextView
-                android:id="@+id/three_letters_currency"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="50dp"
-                android:text=""
-                android:textColor="@color/dark_blue"
-                android:textSize="20sp" />
+                    <TextView
+                        android:id="@+id/three_letters_currency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="50dp"
+                        android:text=""
+                        android:textColor="@color/dark_blue"
+                        android:textSize="20sp" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="20dp"
-                android:background="@drawable/chevron" />
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="20dp"
+                        android:background="@drawable/chevron" />
 
-        </RelativeLayout>
+                </RelativeLayout>
 
-        <RelativeLayout
-            android:id="@+id/change_password"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_below="@+id/local_currency"
-            android:layout_marginTop="30dp"
-            android:background="@drawable/clickable_layout"
-            android:clickable="true">
+                <RelativeLayout
+                    android:id="@+id/change_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_below="@+id/local_currency"
+                    android:layout_marginTop="30dp"
+                    android:background="@drawable/clickable_layout"
+                    android:clickable="true">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="20dp"
-                android:text="change passcode"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/dark_blue" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="20dp"
+                        android:text="change passcode"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/dark_blue" />
 
-        </RelativeLayout>
+                </RelativeLayout>
 
-        <RelativeLayout
-            android:id="@+id/start_recovery_wallet"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_below="@+id/change_password"
-            android:background="@drawable/clickable_layout"
-            android:clickable="true">
+                <RelativeLayout
+                    android:id="@+id/start_recovery_wallet"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_below="@+id/change_password"
+                    android:background="@drawable/clickable_layout"
+                    android:clickable="true">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="20dp"
-                android:text="start/recovery another wallet"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/red" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="20dp"
+                        android:text="start/recovery another wallet"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/red" />
 
-        </RelativeLayout>
-    </RelativeLayout>
+                </RelativeLayout>
+            </RelativeLayout>
+        </LinearLayout>
+
+    </ScrollView>
 </LinearLayout>

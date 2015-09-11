@@ -72,6 +72,9 @@ public class PasswordDialogFragment extends DialogFragment {
             public void onClick(View v) {
                 getDialog().cancel();
                 passwordEditText.setText("");
+                InputMethodManager keyboard = (InputMethodManager) MainActivity.app.
+                        getSystemService(Context.INPUT_METHOD_SERVICE);
+                keyboard.hideSoftInputFromWindow(cancel.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
             }
         });
         ok.setOnClickListener(new View.OnClickListener() {
@@ -83,6 +86,9 @@ public class PasswordDialogFragment extends DialogFragment {
                     String tmp = CurrencyManager.getCurrentBalanceText();
                     ((BreadWalletApp) getActivity().getApplication()).setTopMiddleView(BreadWalletApp.SETTINGS_TEXT, tmp);
                     app.setUnlocked(true);
+                    InputMethodManager keyboard = (InputMethodManager) MainActivity.app.
+                            getSystemService(Context.INPUT_METHOD_SERVICE);
+                    keyboard.hideSoftInputFromWindow(ok.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
                 } else {
                     Log.d(TAG, "Not equal, the text is: " + passwordEditText.getText().toString());
                     SpringAnimator.showAnimation(dialogFragment.getView());

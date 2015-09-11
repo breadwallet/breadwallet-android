@@ -13,7 +13,6 @@
         android:layout_alignParentRight="true"
         android:layout_marginLeft="3dp"
         android:layout_marginRight="16dp"
-        android:text="\u01800"
         android:textColor="@android:color/darker_gray"
         android:textSize="26sp" />
 
@@ -24,7 +23,6 @@
         android:layout_alignBottom="@+id/amount_to_pay"
         android:layout_marginRight="5dp"
         android:layout_toStartOf="@+id/amount_to_pay"
-        android:text="&#11020;"
         android:textColor="@color/dark_blue"
         android:textSize="20sp" />
 
@@ -32,12 +30,12 @@
         android:id="@+id/amount_before_arrow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:singleLine="true"
-        android:ellipsize="start"
-        android:layout_marginLeft="5dp"
         android:layout_alignBottom="@+id/double_arrow_text"
+        android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_toStartOf="@+id/double_arrow_text"
+        android:ellipsize="start"
+        android:singleLine="true"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="@color/light_grey"
         android:textSize="20sp" />
