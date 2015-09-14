@@ -161,7 +161,6 @@ public class MainActivity extends FragmentActivity {
 //        },3000);
 
 
-
         viewFlipper.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -182,7 +181,7 @@ public class MainActivity extends FragmentActivity {
         burgerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG,"Testing burger button! should work");
+                Log.d(TAG, "Testing burger button! should work");
                 SpringAnimator.showAnimation(burgerButton);
                 if (FragmentAnimator.level > 1 || scanResultFragmentOn || decoderFragmentOn) {
                     Log.e(TAG, "CHECK:Should press back!");
@@ -205,7 +204,6 @@ public class MainActivity extends FragmentActivity {
             }
         });
         scaleView(pageIndicatorLeft, 1f, PAGE_INDICATOR_SCALE_UP, 1f, PAGE_INDICATOR_SCALE_UP);
-        //startTest
 
     }
 
@@ -445,5 +443,4 @@ public class MainActivity extends FragmentActivity {
             alert.show();
         }
     }
-
 }

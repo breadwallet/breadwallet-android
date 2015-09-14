@@ -4,7 +4,6 @@ import android.support.test.InstrumentationRegistry;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.suitebuilder.annotation.MediumTest;
 import android.widget.Button;
-import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
@@ -54,7 +53,7 @@ import static org.hamcrest.object.HasToString.hasToString;
 public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActivity> {
 
     MainActivity activity;
-    RelativeLayout burgerButtonLayout;
+    Button burgerButton;
     Button scanQRCode;
     Button copyAddressFromClipboard;
 
@@ -68,21 +67,21 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         setActivityInitialTouchMode(true);
         injectInstrumentation(InstrumentationRegistry.getInstrumentation()); // injects the Instrumentation for the Espresso
         activity = getActivity();
-        burgerButtonLayout = (RelativeLayout) activity.findViewById(R.id.main_burger_button_layout);
+        burgerButton = (Button) activity.findViewById(R.id.main_button_burger);
         scanQRCode = (Button) activity.findViewById(R.id.main_button_scan_qr_code);
         copyAddressFromClipboard = (Button) activity.findViewById(R.id.main_button_pay_address_from_clipboard);
     }
 
     public void testPreconditions() {
         assertNotNull("activity is null", activity);
-        assertNotNull("burgerButton is null", burgerButtonLayout);
+        assertNotNull("burgerButton is null", burgerButton);
         assertNotNull("scanQRCode is null", scanQRCode);
         assertNotNull("copyAddressFromClipboard is null", copyAddressFromClipboard);
     }
 
     @MediumTest
     public void testCurrencyList() {
-        onView(withId(R.id.main_burger_button_layout)).perform(click());
+        onView(withId(R.id.main_button_burger)).perform(click());
         onView(withId(R.id.settings)).perform(click());
         onView(withId(R.id.local_currency)).perform(click());
         if (!CurrencyListAdapter.currencyListAdapter.isEmpty()) {
@@ -119,7 +118,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 
     @MediumTest
     public void testFragments() {
-        onView(withId(R.id.main_burger_button_layout)).perform(click());
+        onView(withId(R.id.main_button_burger)).perform(click());
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
@@ -132,13 +131,13 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         onView(withText("show")).perform(click());
         pressBack();
         onView(withId(R.id.about)).perform(click());
-        onView(withId(R.id.main_burger_button_layout)).perform(click());
-        onView(withId(R.id.main_burger_button_layout)).perform(click());
-        onView(withId(R.id.main_burger_button_layout)).perform(click());
+        onView(withId(R.id.main_button_burger)).perform(click());
+        onView(withId(R.id.main_button_burger)).perform(click());
+        onView(withId(R.id.main_button_burger)).perform(click());
         onView(withId(R.id.main_layout)).perform(swipeLeft());
         onView(withId(R.id.theAddressLayout)).perform(click());
         onView(withId(R.id.copy_address)).perform(click());
-        onView(withId(R.id.main_locker_button_layout)).perform(click());
+        onView(withId(R.id.main_button_locker)).perform(click());
         onView(withId(R.id.edit_password)).perform(typeText("1234"));
         onView(withId(R.id.button_password_ok)).perform(click());
         assertTrue(MainActivity.unlocked);
