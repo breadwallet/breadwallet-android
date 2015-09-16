@@ -96,14 +96,14 @@ public class MainFragment extends Fragment {
                                 payAddressFromClipboardButton.setBackgroundResource(R.drawable.buttonblue);
                             }
                         }, 50);
-                        if (MainFragmentDecoder.accessGranted) {
+                        if (FragmentDecoder.accessGranted) {
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    MainFragmentDecoder.accessGranted = true;
+                                    FragmentDecoder.accessGranted = true;
                                 }
                             }, 300);
-                            MainFragmentDecoder.accessGranted = false;
+                            FragmentDecoder.accessGranted = false;
                             Log.e(TAG, "The address: " + address);
                             if (address != null) {
                                 FragmentScanResult.address = address;

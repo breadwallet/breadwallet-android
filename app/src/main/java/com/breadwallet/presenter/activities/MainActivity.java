@@ -31,8 +31,8 @@ import com.breadwallet.presenter.fragments.FragmentRecoveryPhrase;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.presenter.fragments.FragmentSettings;
 import com.breadwallet.presenter.fragments.FragmentWipeWallet;
-import com.breadwallet.presenter.fragments.MainFragmentDecoder;
-import com.breadwallet.presenter.fragments.MainFragmentSettingsAll;
+import com.breadwallet.presenter.fragments.FragmentDecoder;
+import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.presenter.fragments.PasswordDialogFragment;
 import com.breadwallet.tools.adapter.AmountAdapter;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
@@ -85,11 +85,11 @@ public class MainActivity extends FragmentActivity {
     public Map<String, Integer> burgerButtonMap;
     public Button burgerButton;
     public Button lockerButton;
-    public MainFragmentSettingsAll mainFragmentSettingsAll;
+    public FragmentSettingsAll fragmentSettingsAll;
     public static ParallaxViewPager parallaxViewPager;
     public FragmentSettings fragmentSettings;
     public FragmentAbout fragmentAbout;
-    public MainFragmentDecoder mainFragmentDecoder;
+    public FragmentDecoder mainFragmentDecoder;
     public ClipboardManager myClipboard;
     public FragmentCurrency fragmentCurrency;
     public FragmentRecoveryPhrase fragmentRecoveryPhrase;
@@ -181,7 +181,7 @@ public class MainActivity extends FragmentActivity {
         burgerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "Testing burger button! should work");
+                Log.d(TAG, "Testing burger button_regular_blue! should work");
                 SpringAnimator.showAnimation(burgerButton);
                 if (FragmentAnimator.level > 1 || scanResultFragmentOn || decoderFragmentOn) {
                     Log.e(TAG, "CHECK:Should press back!");
@@ -189,7 +189,7 @@ public class MainActivity extends FragmentActivity {
                 } else {
                     //check multi pressing availability here, because method onBackPressed does the checking as well.
                     if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
-                        FragmentAnimator.pressMenuButton(app, mainFragmentSettingsAll);
+                        FragmentAnimator.pressMenuButton(app, fragmentSettingsAll);
                         Log.e(TAG, "CHECK:Should press menu");
                     }
                 }
@@ -258,8 +258,8 @@ public class MainActivity extends FragmentActivity {
         pagerAdapter = new CustomPagerAdapter(getSupportFragmentManager());
         burgerButtonMap = new HashMap<>();
         fragmentSettings = new FragmentSettings();
-        mainFragmentSettingsAll = new MainFragmentSettingsAll();
-        mainFragmentDecoder = new MainFragmentDecoder();
+        fragmentSettingsAll = new FragmentSettingsAll();
+        mainFragmentDecoder = new FragmentDecoder();
         fragmentAbout = new FragmentAbout();
         fragmentCurrency = new FragmentCurrency();
         fragmentRecoveryPhrase = new FragmentRecoveryPhrase();
@@ -284,7 +284,7 @@ public class MainActivity extends FragmentActivity {
             if (FragmentAnimator.level > 1 || scanResultFragmentOn || decoderFragmentOn) {
                 this.onBackPressed();
             } else if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
-                FragmentAnimator.pressMenuButton(app, mainFragmentSettingsAll);
+                FragmentAnimator.pressMenuButton(app, fragmentSettingsAll);
             }
         }
         // let the system handle all other key events
@@ -323,7 +323,7 @@ public class MainActivity extends FragmentActivity {
 
                     break;
                 case 1:
-                    FragmentAnimator.pressMenuButton(this, mainFragmentSettingsAll);
+                    FragmentAnimator.pressMenuButton(this, fragmentSettingsAll);
                     FragmentAnimator.hideDecoderFragment();
                     break;
                 default:
@@ -427,7 +427,7 @@ public class MainActivity extends FragmentActivity {
 
     public void pay(View view) {
         SpringAnimator.showAnimation(view);
-        Log.d(TAG, "Test pay button!");
+        Log.d(TAG, "Test pay button_regular_blue!");
         if (AmountAdapter.isPayLegal()) {
             //TODO implement pay method
         } else {

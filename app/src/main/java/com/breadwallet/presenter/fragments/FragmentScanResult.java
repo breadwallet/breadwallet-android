@@ -200,7 +200,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
             b.setHeight((int) buttonHeight);
             b.setTextSize(buttonTextSize);
             b.setTextColor(getResources().getColor(R.color.dark_blue));
-            b.setBackgroundResource(R.drawable.button);
+            b.setBackgroundResource(R.drawable.button_regular_blue);
             b.setOnClickListener(this);
             b.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
             if (i < 9)

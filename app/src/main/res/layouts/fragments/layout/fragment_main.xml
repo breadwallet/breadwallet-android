@@ -24,7 +24,7 @@
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
         android:layout_marginTop="32dp"
-        android:background="@drawable/button"
+        android:background="@drawable/button_regular_blue"
         android:src="@drawable/cameraguide_blue_small"
         android:text="scan QR code"
         android:textColor="@color/dark_blue"
@@ -38,7 +38,7 @@
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
         android:layout_marginTop="50dp"
-        android:background="@drawable/button"
+        android:background="@drawable/button_regular_blue"
         android:text="pay address from clipboard "
         android:textColor="@color/dark_blue"
         android:textSize="20sp" />

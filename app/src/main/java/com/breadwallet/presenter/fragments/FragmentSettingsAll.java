@@ -38,13 +38,13 @@ import com.breadwallet.tools.animation.FragmentAnimator;
  * THE SOFTWARE.
  */
 
-public class MainFragmentSettingsAll extends Fragment {
+public class FragmentSettingsAll extends Fragment {
     public static final String TAG = "MainFragmentSettings";
 
     private RelativeLayout settings;
     private RelativeLayout importPrivateKeys;
     private MainActivity app;
-    private MainFragmentSettingsAll mainFragmentSettingsAll;
+    private FragmentSettingsAll fragmentSettingsAll;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -63,13 +63,13 @@ public class MainFragmentSettingsAll extends Fragment {
                 }
             }
         });
-        mainFragmentSettingsAll = this;
+        fragmentSettingsAll = this;
         settings = (RelativeLayout) rootView.findViewById(R.id.settings);
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
-                    FragmentAnimator.animateSlideToLeft(app, app.fragmentSettings, mainFragmentSettingsAll);
+                    FragmentAnimator.animateSlideToLeft(app, app.fragmentSettings, fragmentSettingsAll);
                     Log.d(TAG, "Starting:   showBouncySlide()");
                 }
             }

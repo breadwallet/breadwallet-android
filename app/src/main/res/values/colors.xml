@@ -21,6 +21,7 @@
     <item name="dark_blue" type="color">#007fff</item>
     <item name="wallet_orange" type="color">#ff8000</item>
     <item name="white_trans" type="color">#64ffffff</item>
+    <item name="black_trans" type="color">#b54a2500</item>
 
     //the QR
     <color name="actionbar_opacity">#DD000000</color>

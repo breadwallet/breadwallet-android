@@ -95,7 +95,7 @@ public class FragmentAnimator {
             MainActivity.app.setBurgerButtonImage(context.CLOSE);
             FragmentTransaction fragmentTransaction = context.getSupportFragmentManager().beginTransaction();
             fragmentTransaction.setCustomAnimations(R.animator.from_top, R.animator.from_top);
-            fragmentTransaction.replace(R.id.main_layout, context.mainFragmentSettingsAll);
+            fragmentTransaction.replace(R.id.main_layout, context.fragmentSettingsAll);
             fragmentTransaction.commit();
             CustomPagerAdapter.adapter.showFragments(false);
             context.pageIndicator.setVisibility(View.GONE);
@@ -115,7 +115,7 @@ public class FragmentAnimator {
             MainActivity.app.setBurgerButtonImage(context.BURGER);
             FragmentTransaction fragmentTransaction = context.getSupportFragmentManager().beginTransaction();
             fragmentTransaction.setCustomAnimations(R.animator.to_top, R.animator.to_top);
-            fragmentTransaction.remove(context.mainFragmentSettingsAll);
+            fragmentTransaction.remove(context.fragmentSettingsAll);
             fragmentTransaction.commit();
             CustomPagerAdapter.adapter.showFragments(true);
             context.pageIndicator.setVisibility(View.VISIBLE);
@@ -149,7 +149,7 @@ public class FragmentAnimator {
     }
 
     /**
-     * Animates the fragment transition on button "Settings" pressed
+     * Animates the fragment transition on button_regular_blue "Settings" pressed
      */
     public static void animateSlideToLeft(MainActivity context, final Fragment to, Fragment previousFragment) {
         level++;

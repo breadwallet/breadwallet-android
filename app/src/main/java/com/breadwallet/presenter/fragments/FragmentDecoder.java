@@ -43,17 +43,17 @@ import com.breadwallet.tools.qrcode.QRCodeReaderView;
  * THE SOFTWARE.
  */
 
-public class MainFragmentDecoder extends Fragment implements QRCodeReaderView.OnQRCodeReadListener {
+public class FragmentDecoder extends Fragment implements QRCodeReaderView.OnQRCodeReadListener {
 
     public static final String TAG = "MainFragmentDecoder";
 
     public static boolean accessGranted = true;
     public static QRCodeReaderView mydecoderview;
     private ImageView camera_guide_image;
-    public static MainFragmentDecoder mainFragmentDecoder;
+    public static FragmentDecoder mainFragmentDecoder;
     private RelativeLayout layout;
 
-    public MainFragmentDecoder() {
+    public FragmentDecoder() {
         mainFragmentDecoder = this;
     }
 
