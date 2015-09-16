@@ -48,7 +48,8 @@ public class IntroWarningFragment extends Fragment {
         show.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((IntroActivity)getActivity()).startMainActivity();
+                ((IntroActivity)getActivity()).startIntroShowPhrase();
+                getActivity().overridePendingTransition(R.anim.from_middle, R.anim.to_middle);
             }
         });
         return rootView;

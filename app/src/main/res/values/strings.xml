@@ -6,6 +6,8 @@
     <string name="title_activity_scan_result">ScanResultActivity</string>
     <string name="title_activity_decoder">DecoderActivity</string>
     <string name="title_activity_test_qr">TestQRActivity</string>
+    <string name="title_activity_intro_show_phrase">IntroShowPhrase</string>
+    <string name="dialog_recovery_phrase_invalid">is not a valid phrase</string>
 
     //The QR
     <string name="title_activity_qrscan">QRScanner</string>

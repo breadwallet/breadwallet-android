@@ -7,7 +7,7 @@
 
     <Button
         android:id="@+id/intro_new_wallet"
-        android:layout_width="260dp"
+        android:layout_width="220dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="200dp"
         android:layout_centerHorizontal="true"
@@ -18,7 +18,7 @@
 
     <Button
         android:id="@+id/intro_recover_wallet"
-        android:layout_width="260dp"
+        android:layout_width="220dp"
         android:layout_marginTop="60dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/intro_new_wallet"

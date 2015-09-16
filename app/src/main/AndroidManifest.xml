@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.breadwallet">
+    package="com.breadwallet" >
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -16,12 +16,11 @@
         android:icon="@mipmap/icon80"
         android:label="@string/app_name"
         android:largeHeap="true"
-        android:theme="@style/AppTheme">
-
+        android:theme="@style/AppTheme" >
         <activity
             android:name=".presenter.activities.IntroActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -36,6 +35,10 @@
             android:name=".presenter.activities.DecoderActivity"
             android:label="@string/title_activity_decoder"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".presenter.activities.IntroShowPhraseActivity"
+            android:label="@string/title_activity_intro_show_phrase" >
+        </activity>
     </application>
 
 </manifest>

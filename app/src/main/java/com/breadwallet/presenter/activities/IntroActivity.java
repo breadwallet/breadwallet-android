@@ -18,8 +18,9 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.fragments.IntroNewRestoreFragment;
+import com.breadwallet.presenter.fragments.IntroNewRecoverFragment;
 import com.breadwallet.presenter.fragments.IntroNewWalletFragment;
+import com.breadwallet.presenter.fragments.IntroRecoverWalletFragment;
 import com.breadwallet.presenter.fragments.IntroWarningFragment;
 import com.breadwallet.presenter.fragments.IntroWelcomeFragment;
 
@@ -64,9 +65,10 @@ public class IntroActivity extends FragmentActivity {
     private int mDirection = RightToLeft;
     private RectF mDisplayRect = new RectF();
     private IntroWelcomeFragment introWelcomeFragment;
-    private IntroNewRestoreFragment introNewRestoreFragment;
+    private IntroNewRecoverFragment introNewRestoreFragment;
     private IntroNewWalletFragment introNewWalletFragment;
     private IntroWarningFragment introWarningFragment;
+    private IntroRecoverWalletFragment introRecoverWalletFragment;
     private Button leftButton;
     private boolean backPressAvailable = false;
 
@@ -75,9 +77,10 @@ public class IntroActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
         introWelcomeFragment = new IntroWelcomeFragment();
-        introNewRestoreFragment = new IntroNewRestoreFragment();
+        introNewRestoreFragment = new IntroNewRecoverFragment();
         introNewWalletFragment = new IntroNewWalletFragment();
         introWarningFragment = new IntroWarningFragment();
+        introRecoverWalletFragment = new IntroRecoverWalletFragment();
         leftButton = (Button) findViewById(R.id.intro_left_button);
 
         background = (ImageView) findViewById(R.id.intro_bread_wallet_image);
@@ -88,7 +91,8 @@ public class IntroActivity extends FragmentActivity {
         background.post(new Runnable() {
             @Override
             public void run() {
-                mScaleFactor = (float) background.getHeight() / (float) background.getDrawable().getIntrinsicHeight();
+                mScaleFactor = (float) background.getHeight() /
+                        (float) background.getDrawable().getIntrinsicHeight();
                 mMatrix.postScale(mScaleFactor, mScaleFactor);
                 background.setImageMatrix(mMatrix);
                 animate();
@@ -110,7 +114,7 @@ public class IntroActivity extends FragmentActivity {
             public void run() {
                 if (noWallet) {
                     Log.e(TAG, "should create new wallet");
-                    showRestoreNewWalletFragment();
+                    showRecoverNewWalletFragment();
                 } else {
                     Log.e(TAG, "should go to the current wallet");
                     startMainActivity();
@@ -120,13 +124,12 @@ public class IntroActivity extends FragmentActivity {
         }, 800);
     }
 
-    void showRestoreNewWalletFragment() {
+    void showRecoverNewWalletFragment() {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
         fragmentTransaction.replace(introWelcomeFragment.getId(), introNewRestoreFragment);
         fragmentTransaction.commit();
     }
-
 
     public void showNewWalletFragment() {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -135,6 +138,17 @@ public class IntroActivity extends FragmentActivity {
         leftButton.setClickable(true);
         fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
         fragmentTransaction.replace(introNewRestoreFragment.getId(), introNewWalletFragment);
+        fragmentTransaction.commit();
+        backPressAvailable = true;
+    }
+
+    public void showRecoverWalletFragment() {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.addToBackStack(null);
+        leftButton.setVisibility(View.VISIBLE);
+        leftButton.setClickable(true);
+        fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
+        fragmentTransaction.replace(introNewRestoreFragment.getId(), introRecoverWalletFragment);
         fragmentTransaction.commit();
         backPressAvailable = true;
     }
@@ -157,7 +171,8 @@ public class IntroActivity extends FragmentActivity {
     private void animate() {
         updateDisplayRect();
         if (mDirection == RightToLeft) {
-            animate(mDisplayRect.left, mDisplayRect.left - (mDisplayRect.right - background.getWidth()));
+            animate(mDisplayRect.left, mDisplayRect.left -
+                    (mDisplayRect.right - background.getWidth()));
         } else {
             animate(mDisplayRect.left, 0.0f);
         }
@@ -202,6 +217,15 @@ public class IntroActivity extends FragmentActivity {
     public void startMainActivity() {
         Intent intent;
         intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        if (!IntroActivity.this.isDestroyed()) {
+            finish();
+        }
+    }
+
+    public void startIntroShowPhrase() {
+        Intent intent;
+        intent = new Intent(this, IntroShowPhraseActivity.class);
         startActivity(intent);
         if (!IntroActivity.this.isDestroyed()) {
             finish();

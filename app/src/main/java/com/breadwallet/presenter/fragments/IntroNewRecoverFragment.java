@@ -34,8 +34,9 @@ import com.breadwallet.presenter.activities.IntroActivity;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class IntroNewRestoreFragment extends Fragment {
+public class IntroNewRecoverFragment extends Fragment {
     Button newWallet;
+    Button recoverWallet;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -43,14 +44,21 @@ public class IntroNewRestoreFragment extends Fragment {
         // The last two arguments ensure LayoutParams are inflated
         // properly.
         View rootView = inflater.inflate(
-                R.layout.intro_fragment_new_restore, container, false);
+                R.layout.intro_fragment_new_recover, container, false);
         newWallet = (Button) rootView.findViewById(R.id.intro_new_wallet);
-
+        recoverWallet = (Button) rootView.findViewById(R.id.intro_recover_wallet);
 
         newWallet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ((IntroActivity) getActivity()).showNewWalletFragment();
+            }
+        });
+
+        recoverWallet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((IntroActivity) getActivity()).showRecoverWalletFragment();
             }
         });
         return rootView;
