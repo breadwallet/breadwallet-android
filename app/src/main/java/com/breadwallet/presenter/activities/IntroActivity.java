@@ -128,7 +128,6 @@ public class IntroActivity extends FragmentActivity {
 
 
     public void showNewWalletFragment() {
-        leftButton.setVisibility(View.VISIBLE);
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.addToBackStack(null);
         leftButton.setVisibility(View.VISIBLE);
@@ -140,7 +139,7 @@ public class IntroActivity extends FragmentActivity {
 
     public void showWarningFragment() {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.add(introNewWalletFragment.getId(), introWarningFragment);
+        fragmentTransaction.replace(introNewWalletFragment.getId(), introWarningFragment);
         introNewWalletFragment.introGenerate.setClickable(false);
         leftButton.setVisibility(View.GONE);
         leftButton.setClickable(false);
@@ -208,10 +207,11 @@ public class IntroActivity extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
-        if(getSupportFragmentManager().getBackStackEntryCount() <= 1){
+        if (getSupportFragmentManager().getBackStackEntryCount() <= 1) {
             leftButton.setVisibility(View.GONE);
             leftButton.setClickable(false);
+        } else {
+            super.onBackPressed();
         }
-        super.onBackPressed();
     }
 }
