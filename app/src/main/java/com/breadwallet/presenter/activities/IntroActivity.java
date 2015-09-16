@@ -68,6 +68,7 @@ public class IntroActivity extends FragmentActivity {
     private IntroNewWalletFragment introNewWalletFragment;
     private IntroWarningFragment introWarningFragment;
     private Button leftButton;
+    private boolean backPressAvailable = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,6 +136,7 @@ public class IntroActivity extends FragmentActivity {
         fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
         fragmentTransaction.replace(introNewRestoreFragment.getId(), introNewWalletFragment);
         fragmentTransaction.commit();
+        backPressAvailable = true;
     }
 
     public void showWarningFragment() {
@@ -144,6 +146,7 @@ public class IntroActivity extends FragmentActivity {
         leftButton.setVisibility(View.GONE);
         leftButton.setClickable(false);
         fragmentTransaction.commit();
+        backPressAvailable = false;
     }
 
     @Override
@@ -207,11 +210,12 @@ public class IntroActivity extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
-        if (getSupportFragmentManager().getBackStackEntryCount() <= 1) {
+        if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
             leftButton.setVisibility(View.GONE);
             leftButton.setClickable(false);
-        } else {
-            super.onBackPressed();
         }
+        if (backPressAvailable)
+            super.onBackPressed();
+
     }
 }
