@@ -96,7 +96,7 @@ public class PasswordDialogFragment extends DialogFragment {
                 }
             }
         });
-        getDialog().setTitle("Insert password");
+        getDialog().setTitle(getResources().getString(R.string.insert_password));
         return view;
     }
 

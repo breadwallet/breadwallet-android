@@ -75,7 +75,8 @@ public class IntroShowPhraseActivity extends Activity {
 
     void setCheckBoxImage() {
         checkBox.setImageResource(!checked ? R.drawable.checkbox_checked : R.drawable.checkbox_empty);
-        remindMeLate.setText(!checked ? "done" : "remind me later");
+        remindMeLate.setText(!checked ? getResources().getString(R.string.done) :
+                getResources().getString(R.string.remind_me_later));
         checked = !checked;
     }
 }

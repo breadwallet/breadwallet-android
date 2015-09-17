@@ -73,7 +73,6 @@ public class ChangePasswordDialogFragment extends DialogFragment {
         passwordEditText = (EditText) view.findViewById(R.id.edit_password);
         cancel = (Button) view.findViewById(R.id.button_password_cancel);
         ok = (Button) view.findViewById(R.id.button_password_ok);
-        passwordEditText.setText("");
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,7 +92,7 @@ public class ChangePasswordDialogFragment extends DialogFragment {
                     case AUTH_MODE_CHECK_PASS:
                         if (PassCodeManager.checkAuth(passwordEditText.getText().toString())) {
                             currentMode = AUTH_MODE_NEW_PASS;
-                            getDialog().setTitle("chose a new passcode");
+                            getDialog().setTitle(getResources().getString(R.string.chose_a_new_passcode));
                             passwordEditText.setText("");
                             Log.e(TAG, "-----1-----");
                         } else {
@@ -109,7 +108,7 @@ public class ChangePasswordDialogFragment extends DialogFragment {
                             Log.e(TAG, "-----3-----");
                             tempPassToChange = pass;
                             currentMode = AUTH_MODE_CONFIRM_PASS;
-                            getDialog().setTitle("verify passcode");
+                            getDialog().setTitle(getResources().getString(R.string.verify_passcode));
                             passwordEditText.setText("");
                         } else {
                             Log.e(TAG, "-----4-----");
@@ -136,20 +135,21 @@ public class ChangePasswordDialogFragment extends DialogFragment {
                             SpringAnimator.showAnimation(dialogFragment.getView());
                             passwordEditText.setText("");
                             currentMode = AUTH_MODE_NEW_PASS;
-                            getDialog().setTitle("chose a new passcode");
+                            getDialog().setTitle(getResources().getString(R.string.chose_a_new_passcode));
                         }
                         break;
                 }
 
             }
         });
-        getDialog().setTitle("Insert old passcode");
+        getDialog().setTitle(getResources().getString(R.string.insert_old_passcode));
         return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        passwordEditText.setText("");
         passwordEditText.post(
                 new Runnable() {
                     public void run() {

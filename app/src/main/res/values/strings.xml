@@ -1,14 +1,4 @@
 <resources>
-    <string name="app_name">BreadWallet</string>
-    <string name="the_address">address</string>
-    <string name="action_settings">Settings</string>
-    <string name="title_activity_main">MainActivity</string>
-    <string name="title_activity_scan_result">ScanResultActivity</string>
-    <string name="title_activity_decoder">DecoderActivity</string>
-    <string name="title_activity_test_qr">TestQRActivity</string>
-    <string name="title_activity_intro_show_phrase">IntroShowPhrase</string>
-    <string name="dialog_recovery_phrase_invalid">is not a valid phrase</string>
-
     //The QR
     <string name="title_activity_qrscan">QRScanner</string>
     <string name="scanner_activity">ZXing Scanner - Full Activity</string>
@@ -30,7 +20,15 @@
     <string name="ok_button">OK</string>
     <string name="cancel_button">Cancel</string>
     //End QR
-
+    <string name="app_name">BreadWallet</string>
+    <string name="the_address">address</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_scan_result">ScanResultActivity</string>
+    <string name="title_activity_decoder">DecoderActivity</string>
+    <string name="title_activity_test_qr">TestQRActivity</string>
+    <string name="title_activity_intro_show_phrase">IntroShowPhrase</string>
+    <string name="dialog_recovery_phrase_invalid">is not a valid phrase</string>
     <string name="settingsall_rescan_instructions">rescan blockchain if you think you may have missing transactions,
     or are having trouble sending (rescanning can take several minutes)</string>
     <string name="wipewallet_instructions">Enter this wallet\'s recovery phrase to wipe it and start/recover another.
@@ -59,4 +57,10 @@
     <string name="bitcoin_lower_unicode">&#384;</string>
     <string name="middle_view_tip_first">This is your bitcoin balance. Bitcoin is a currency. The exchange rate changed with the market.</string>
     <string name="middle_view_tip_second">&#384; is for \'bits\'. &#384;1,000,000 = 1 bitcoin.</string>
+    <string name="done">done</string>
+    <string name="remind_me_later">remind me later</string>
+    <string name="insert_old_passcode">Insert old passcode</string>
+    <string name="chose_a_new_passcode">chose a new passcode</string>
+    <string name="verify_passcode">verify passcode</string>
+    <string name="insert_password">Insert password</string>
 </resources>
