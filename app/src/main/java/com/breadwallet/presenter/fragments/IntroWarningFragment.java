@@ -49,7 +49,7 @@ public class IntroWarningFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 ((IntroActivity)getActivity()).startIntroShowPhrase();
-                getActivity().overridePendingTransition(R.anim.from_middle, R.anim.to_middle);
+                getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
         });
         return rootView;

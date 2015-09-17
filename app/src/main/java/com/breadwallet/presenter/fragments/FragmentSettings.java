@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -51,8 +52,11 @@ public class FragmentSettings extends Fragment {
     private RelativeLayout localCurrency;
     private RelativeLayout recoveryPhrase;
     private RelativeLayout startRecoveryWallet;
+    private RelativeLayout changePassword;
+
     private MainActivity app;
     private FragmentSettings fragmentSettings;
+    private ChangePasswordDialogFragment changePasswordDialogFragment;
     private TextView currencyName;
     private FragmentCurrency fragmentCurrency;
 
@@ -86,9 +90,11 @@ public class FragmentSettings extends Fragment {
         app = MainActivity.app;
         fragmentSettings = this;
         fragmentCurrency = app.fragmentCurrency;
+        changePasswordDialogFragment = new ChangePasswordDialogFragment();
         new ListInitiatorTask().execute();
         about = (RelativeLayout) getView().findViewById(R.id.about);
         currencyName = (TextView) getView().findViewById(R.id.three_letters_currency);
+        changePassword = (RelativeLayout) getView().findViewById(R.id.change_password);
         SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
         final String tmp = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
         Log.e(TAG, "Tmp 3 letters: " + tmp);
@@ -140,6 +146,13 @@ public class FragmentSettings extends Fragment {
                 if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
                     FragmentAnimator.animateSlideToLeft(app, app.fragmentCurrency, fragmentSettings);
                 }
+            }
+        });
+        changePassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final FragmentManager fm = getActivity().getSupportFragmentManager();
+                changePasswordDialogFragment.show(fm, TAG);
             }
         });
     }

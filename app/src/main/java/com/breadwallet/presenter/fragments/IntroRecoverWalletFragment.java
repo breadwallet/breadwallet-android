@@ -61,6 +61,7 @@ public class IntroRecoverWalletFragment extends Fragment {
                 }
                 if (validateRecoveryPhrase(editText.getText().toString())) {
                     ((IntroActivity) getActivity()).startMainActivity();
+                    getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 } else {
 
                     alertDialog.setTitle(getResources().getString(R.string.alert));

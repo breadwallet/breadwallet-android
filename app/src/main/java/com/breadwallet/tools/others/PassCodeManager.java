@@ -26,17 +26,24 @@ package com.breadwallet.tools.others;
  */
 public class PassCodeManager {
     public static final String TAG = "PassCodeManager";
-    private static final char[] PASS_CODE = {'1', '2', '3', '4'};
+    private static char[] PASS_CODE = {'1', '2', '3', '4'};
 
-    public static boolean checkAuth(String passcode) {
-        if (passcode.length() == PASS_CODE.length) {
+    public static boolean checkAuth(String pass) {
+        if (pass.length() == PASS_CODE.length) {
             int pos = 0;
             for (char c : PASS_CODE) {
-                if (c != passcode.charAt(pos++)) return false;
+                if (c != pass.charAt(pos++)) return false;
             }
         } else {
             return false;
         }
         return true;
+    }
+
+    public static void setPassCode(String pass) {
+        PASS_CODE = new char[pass.length()];
+        for (int i = 0; i < pass.length(); i++) {
+            PASS_CODE[i] = pass.charAt(i);
+        }
     }
 }

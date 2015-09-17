@@ -4,28 +4,32 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-    <Button
-        android:id="@+id/intro_new_wallet"
-        android:layout_width="220dp"
+    <RelativeLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="200dp"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/button_white"
-        android:text="new wallet"
-        android:textColor="@color/white"
-        android:textSize="20sp" />
+        android:layout_centerVertical="true">
 
-    <Button
-        android:id="@+id/intro_recover_wallet"
-        android:layout_width="220dp"
-        android:layout_marginTop="60dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/intro_new_wallet"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/button_white"
-        android:text="recover wallet"
-        android:textColor="@color/white"
-        android:textSize="20sp" />
+        <Button
+            android:id="@+id/intro_new_wallet"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button_white"
+            android:text="new wallet"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/intro_recover_wallet"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/intro_new_wallet"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="60dp"
+            android:background="@drawable/button_white"
+            android:text="recover wallet"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+    </RelativeLayout>
 
 </RelativeLayout>

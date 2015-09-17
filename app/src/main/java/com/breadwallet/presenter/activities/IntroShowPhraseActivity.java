@@ -44,6 +44,7 @@ public class IntroShowPhraseActivity extends Activity {
             @Override
             public void onClick(View v) {
                 startMainActivity();
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
         });
     }
