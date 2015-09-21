@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
     <TextView
         android:id="@+id/recover_wallet_text1"
         android:layout_width="wrap_content"
@@ -18,12 +19,12 @@
         android:layout_width="match_parent"
         android:id="@+id/recover_wallet_edit_text"
         android:layout_height="200dp"
-        android:textAlignment="viewStart"
         android:layout_below="@id/recover_wallet_text1"
         android:background="@color/white_trans"
         android:textColor="@color/wallet_orange"
         android:layout_marginTop="20dp"
-        android:layout_margin="16dp" />
+        android:layout_margin="16dp"
+        android:gravity="top"/>
 
     <Button
         android:id="@+id/recover_button"

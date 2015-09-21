@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -163,7 +164,7 @@ public class BreadWalletApp extends Application {
             case LOCKER_BUTTON:
                 if (app.lockerPayFlipper.getDisplayedChild() == 1) {
                     app.lockerPayFlipper.showPrevious();
-                    if(MainActivity.unlocked){
+                    if (MainActivity.unlocked) {
                         app.lockerButton.setVisibility(View.INVISIBLE);
                     } else {
                         app.lockerButton.setVisibility(View.VISIBLE);
@@ -177,6 +178,13 @@ public class BreadWalletApp extends Application {
                 break;
         }
 
+    }
+
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        View v = activity.getCurrentFocus();
+        if (v != null)
+            inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
 
 }

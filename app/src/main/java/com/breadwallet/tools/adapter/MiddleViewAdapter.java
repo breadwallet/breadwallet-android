@@ -41,23 +41,14 @@ public class MiddleViewAdapter {
             } else {
                 ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_IMAGE, "");
             }
-        } else if(FragmentAnimator.level == 2){
+        } else if (FragmentAnimator.level == 2) {
             String tmp = "settings";
             ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
-        } else if(text != null){
+        } else if (text != null) {
             ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT,
                     text);
         } else {
-            if (MainActivity.unlocked) {
-                String tmp = CurrencyManager.getCurrentBalanceText();
-                ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
-            } else {
-                ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_IMAGE, "");
-            }
+            ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_IMAGE, "");
         }
-    }
-
-    public static void updateUI() {
-
     }
 }

@@ -63,4 +63,5 @@
     <string name="chose_a_new_passcode">chose a new passcode</string>
     <string name="verify_passcode">verify passcode</string>
     <string name="insert_password">Insert password</string>
+    <string name="lang">en</string>
 </resources>

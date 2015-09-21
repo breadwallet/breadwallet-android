@@ -26,7 +26,6 @@ package com.breadwallet.presenter.fragments;
  */
 
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -41,7 +40,6 @@ import android.widget.EditText;
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.tools.adapter.CustomPagerAdapter;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.others.CurrencyManager;
 import com.breadwallet.tools.others.PassCodeManager;
@@ -70,25 +68,20 @@ public class PasswordDialogFragment extends DialogFragment {
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ((BreadWalletApp) getActivity().getApplication()).hideSoftKeyboard(getActivity());
                 getDialog().cancel();
                 passwordEditText.setText("");
-                InputMethodManager keyboard = (InputMethodManager) MainActivity.app.
-                        getSystemService(Context.INPUT_METHOD_SERVICE);
-                keyboard.hideSoftInputFromWindow(cancel.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
             }
         });
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity app = MainActivity.app;
                 if (PassCodeManager.checkAuth(passwordEditText.getText().toString())) {
                     getDialog().cancel();
                     String tmp = CurrencyManager.getCurrentBalanceText();
                     ((BreadWalletApp) getActivity().getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
-                    app.setUnlocked(true);
-                    InputMethodManager keyboard = (InputMethodManager) MainActivity.app.
-                            getSystemService(Context.INPUT_METHOD_SERVICE);
-                    keyboard.hideSoftInputFromWindow(ok.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
+                    ((MainActivity) getActivity()).setUnlocked(true);
+                    ((BreadWalletApp) getActivity().getApplication()).hideSoftKeyboard(getActivity());
                 } else {
                     Log.d(TAG, "Not equal, the text is: " + passwordEditText.getText().toString());
                     SpringAnimator.showAnimation(dialogFragment.getView());
@@ -106,8 +99,10 @@ public class PasswordDialogFragment extends DialogFragment {
         passwordEditText.post(
                 new Runnable() {
                     public void run() {
-                        InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
-                        inputMethodManager.toggleSoftInputFromWindow(passwordEditText.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0);
+                        InputMethodManager inputMethodManager = (InputMethodManager)
+                                getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
+                        inputMethodManager.toggleSoftInputFromWindow(passwordEditText.getApplicationWindowToken(),
+                                InputMethodManager.SHOW_FORCED, 0);
                         passwordEditText.requestFocus();
                     }
                 });
@@ -116,9 +111,8 @@ public class PasswordDialogFragment extends DialogFragment {
     @Override
     public void onPause() {
         super.onPause();
-        InputMethodManager keyboard = (InputMethodManager) MainActivity.app.
-                getSystemService(Context.INPUT_METHOD_SERVICE);
-        keyboard.hideSoftInputFromWindow(CustomPagerAdapter.adapter.
-                mainFragment.addressEditText.getWindowToken(), 0);
+
+        ((BreadWalletApp) getActivity().getApplication()).hideSoftKeyboard(getActivity());
+        ((BreadWalletApp) getActivity().getApplication()).hideSoftKeyboard(getActivity());
     }
 }

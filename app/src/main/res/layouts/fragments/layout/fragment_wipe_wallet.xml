@@ -1,8 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingTop="90dp">
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/wipe_wallet_close"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentStart="true"
+        android:background="@drawable/x" />
+
+    <Button
+        android:id="@+id/wipe_wallet_wipe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:background="@android:color/transparent"
+        android:padding="20dp"
+        android:text="wipe"
+        android:textColor="@color/dark_blue"
+        android:textSize="18sp" />
 
 
     <TextView
@@ -11,6 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
+        android:paddingTop="90dp"
         android:text="confirm:"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/light_grey" />
@@ -28,6 +46,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textSize="18sp" />
 
+
     <EditText
         android:id="@+id/editText_phrase"
         android:layout_width="fill_parent"
@@ -37,5 +56,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginTop="30dp"
-        android:gravity="top" />
+        android:gravity="top|center"
+        android:imeOptions="actionDone" />
+
 </RelativeLayout>

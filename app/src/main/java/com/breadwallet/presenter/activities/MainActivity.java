@@ -145,21 +145,19 @@ public class MainActivity extends FragmentActivity {
         final FragmentManager fm = getSupportFragmentManager();
         initializeViews();
 
-
         //testing native code bridge
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                ((BreadWalletApp)getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, messageFromNativeCode("Here, worked"));
-//                new Handler().postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        ((BreadWalletApp) getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_IMAGE, "");
-//                    }
-//                }, 2000);
-//            }
-//        },3000);
-
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ((BreadWalletApp)getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, messageFromNativeCode("Here, worked"));
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((BreadWalletApp) getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_IMAGE, "");
+                    }
+                }, 2000);
+            }
+        },3000);
 
         viewFlipper.setOnClickListener(new View.OnClickListener() {
             @Override

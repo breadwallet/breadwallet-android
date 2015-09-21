@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/textView"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="60dp"
         android:text="please write it down"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/grey"
@@ -33,7 +33,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="80dp"
         android:layout_marginBottom="30dp"
         android:layout_marginTop="220dp"
         android:background="@drawable/clickable_layout"

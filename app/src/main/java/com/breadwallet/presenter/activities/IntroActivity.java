@@ -23,6 +23,10 @@ import com.breadwallet.presenter.fragments.IntroNewWalletFragment;
 import com.breadwallet.presenter.fragments.IntroRecoverWalletFragment;
 import com.breadwallet.presenter.fragments.IntroWarningFragment;
 import com.breadwallet.presenter.fragments.IntroWelcomeFragment;
+import com.breadwallet.tools.others.PListReader;
+
+import java.io.IOException;
+import java.util.List;
 
 
 /**
@@ -105,7 +109,6 @@ public class IntroActivity extends FragmentActivity {
                 onBackPressed();
             }
         });
-
         getSupportFragmentManager().beginTransaction().add(R.id.intro_layout, introWelcomeFragment,
                 "introWelcomeFragment").commit();
 
@@ -121,7 +124,26 @@ public class IntroActivity extends FragmentActivity {
                 }
 
             }
-        }, 800);
+        }, 1200);
+
+        //testing plist:
+
+        List<String> wordList = null;
+        try {
+            wordList = PListReader.getWordList(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+//
+//        Iterator<String> it = wordList.iterator();
+//        int count = 0;
+//        while (it.hasNext()) {
+//            System.out.println(it.next() + (++count));
+//
+//        }
+
+        //end testing
+
     }
 
     void showRecoverNewWalletFragment() {
