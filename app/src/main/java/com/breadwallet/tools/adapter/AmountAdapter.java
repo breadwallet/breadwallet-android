@@ -12,6 +12,7 @@ import com.breadwallet.tools.others.CurrencyManager;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.Observable;
 
 /**
  * BreadWallet
@@ -37,7 +38,7 @@ import java.text.DecimalFormat;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class AmountAdapter {
+public class AmountAdapter extends Observable {
     private static final String TAG = "AmountAdapter";
     public static boolean comaHasBeenInserted = false;
     private static final int DIGITS_LIMIT = 12;
@@ -48,6 +49,7 @@ public class AmountAdapter {
     public static int digitsInserted = 0;
 
     public static void preConditions(String tmp) {
+
         switch (tmp) {
             case "":
                 doBackSpace();
@@ -76,7 +78,7 @@ public class AmountAdapter {
             if (rightValue.equals("0.")) {
                 changeTextColor(2);
                 calculateAndPassValuesToFragment(rightValue.substring(0, length - 1));
-                ((BreadWalletApp)app.getApplication()).setLockerPayButton(BreadWalletApp.LOCKER_BUTTON);
+                ((BreadWalletApp) app.getApplication()).setLockerPayButton(BreadWalletApp.LOCKER_BUTTON);
             }
         }
         if (length > 1) {
@@ -86,7 +88,7 @@ public class AmountAdapter {
                 calculateAndPassValuesToFragment(rightValue.substring(0, length - 1));
             }
         } else {
-            ((BreadWalletApp)app.getApplication()).setLockerPayButton(BreadWalletApp.LOCKER_BUTTON);
+            ((BreadWalletApp) app.getApplication()).setLockerPayButton(BreadWalletApp.LOCKER_BUTTON);
             changeTextColor(2);
             calculateAndPassValuesToFragment("0");
         }
@@ -97,7 +99,7 @@ public class AmountAdapter {
         MainActivity app = MainActivity.app;
         if (isTextColorGrey) {
             changeTextColor(1);
-            ((BreadWalletApp)app.getApplication()).setLockerPayButton(BreadWalletApp.PAY_BUTTON);
+            ((BreadWalletApp) app.getApplication()).setLockerPayButton(BreadWalletApp.PAY_BUTTON);
         }
         String amount = rightValue;
         CurrencyManager.separatorNeedsToBeShown = true;
@@ -115,7 +117,7 @@ public class AmountAdapter {
 
         if (isTextColorGrey) {
             changeTextColor(1);
-            ((BreadWalletApp)app.getApplication()).setLockerPayButton(BreadWalletApp.PAY_BUTTON);
+            ((BreadWalletApp) app.getApplication()).setLockerPayButton(BreadWalletApp.PAY_BUTTON);
         }
         if (isDigitInsertingLegal(amount)) {
 
@@ -189,7 +191,7 @@ public class AmountAdapter {
             }
             leftValue = new DecimalFormat("0.##").format(leftValueObject.doubleValue());
             FragmentScanResult.updateBothTextValues(rightValueObject, leftValueObject);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             FragmentScanResult.updateBothTextValues(new BigDecimal("0"), new BigDecimal("0"));
         }
@@ -222,7 +224,7 @@ public class AmountAdapter {
         return rightValue;
     }
 
-    public static boolean isPayLegal(){
+    public static boolean isPayLegal() {
         //Return false for now every time.
 
         //TODO implement this check

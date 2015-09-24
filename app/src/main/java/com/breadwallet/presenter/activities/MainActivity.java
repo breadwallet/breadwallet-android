@@ -5,10 +5,12 @@ import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.content.IntentFilter;
 import android.graphics.Point;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PersistableBundle;
+import android.support.v4.BuildConfig;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
@@ -20,6 +22,7 @@ import android.view.animation.ScaleAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
@@ -27,12 +30,12 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.fragments.FragmentAbout;
 import com.breadwallet.presenter.fragments.FragmentCurrency;
+import com.breadwallet.presenter.fragments.FragmentDecoder;
 import com.breadwallet.presenter.fragments.FragmentRecoveryPhrase;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.presenter.fragments.FragmentSettings;
-import com.breadwallet.presenter.fragments.FragmentWipeWallet;
-import com.breadwallet.presenter.fragments.FragmentDecoder;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
+import com.breadwallet.presenter.fragments.FragmentWipeWallet;
 import com.breadwallet.presenter.fragments.PasswordDialogFragment;
 import com.breadwallet.tools.adapter.AmountAdapter;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
@@ -45,6 +48,8 @@ import com.breadwallet.tools.others.NetworkChangeReceiver;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * BreadWallet
@@ -71,7 +76,7 @@ import java.util.Map;
  * THE SOFTWARE.
  */
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity implements Observer {
     public static final String TAG = "MainActivity";
     public static final String PREFS_NAME = "MyPrefsFile";
     public static MainActivity app;
@@ -109,12 +114,17 @@ public class MainActivity extends FragmentActivity {
     public static boolean unlocked = false;
     public static Point screenParametersPoint = new Point();
     private int middleViewPressed = 0;
+    public static final int DEBUG = 1;
+    public static final int RELEASE = 2;
+    public static int MODE = RELEASE;
+    private static final String DEBUG_KEY =
+            "get the debug key from logcat after calling the function below once from the emulator";
+    TextView testnet;
 
     //loading the native library
     static {
         System.loadLibrary("BreadWalletCore");
     }
-
 
     /**
      * Public constructor used to assign the current instance to the app variable
@@ -124,7 +134,7 @@ public class MainActivity extends FragmentActivity {
         app = this;
     }
 
-    private native String messageFromNativeCode(String logThis);
+//    private native String messageFromNativeCode(String logThis);
 
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
@@ -142,22 +152,27 @@ public class MainActivity extends FragmentActivity {
         if (savedInstanceState != null) {
             return;
         }
+        if (isEmulatorOrDebug()) {
+            MODE = DEBUG;
+            Log.e(TAG, "DEBUG MODE!!!!!!");
+        }
         final FragmentManager fm = getSupportFragmentManager();
         initializeViews();
+        testnet.setVisibility(MODE == DEBUG ? View.VISIBLE : View.GONE);
 
         //testing native code bridge
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                ((BreadWalletApp)getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, messageFromNativeCode("Here, worked"));
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        ((BreadWalletApp) getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_IMAGE, "");
-                    }
-                }, 2000);
-            }
-        },3000);
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                ((BreadWalletApp)getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, messageFromNativeCode("Here, worked"));
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        ((BreadWalletApp) getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_IMAGE, "");
+//                    }
+//                }, 2000);
+//            }
+//        },3000);
 
         viewFlipper.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -244,6 +259,7 @@ public class MainActivity extends FragmentActivity {
      */
 
     private void initializeViews() {
+        testnet = (TextView) findViewById(R.id.testnet);
         networkErrorBar = (RelativeLayout) findViewById(R.id.main_internet_status_bar);
         burgerButton = (Button) findViewById(R.id.main_button_burger);
         lockerPayFlipper = (ViewFlipper) findViewById(R.id.locker_pay_flipper);
@@ -426,6 +442,8 @@ public class MainActivity extends FragmentActivity {
     public void pay(View view) {
         SpringAnimator.showAnimation(view);
         Log.d(TAG, "Test pay button_regular_blue!");
+        final MediaPlayer mp = MediaPlayer.create(this, R.raw.coinflip);
+        mp.start();
         if (AmountAdapter.isPayLegal()) {
             //TODO implement pay method
         } else {
@@ -441,4 +459,14 @@ public class MainActivity extends FragmentActivity {
             alert.show();
         }
     }
+
+    @Override
+    public void update(Observable observable, Object data) {
+        //TODO balance observer stuff here
+    }
+
+    public boolean isEmulatorOrDebug() {
+        return Build.BRAND.equalsIgnoreCase("generic") || BuildConfig.DEBUG;
+    }
+
 }

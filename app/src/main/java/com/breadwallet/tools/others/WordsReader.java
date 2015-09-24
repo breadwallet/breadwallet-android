@@ -13,9 +13,9 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PListReader {
+public class WordsReader {
 
-    public static final String TAG = PListReader.class.getName();
+    public static final String TAG = WordsReader.class.getName();
     public static final int WORD_LIST_SIZE = 2048;
 
     public static List<String> getWordList(Context context) throws IOException {
@@ -42,7 +42,6 @@ public class PListReader {
         if (wordList.size() != WORD_LIST_SIZE)
             throw new IllegalArgumentException("The list should have " + WORD_LIST_SIZE + " items");
         return wordList;
-
     }
 
 }

@@ -23,7 +23,7 @@ import com.breadwallet.presenter.fragments.IntroNewWalletFragment;
 import com.breadwallet.presenter.fragments.IntroRecoverWalletFragment;
 import com.breadwallet.presenter.fragments.IntroWarningFragment;
 import com.breadwallet.presenter.fragments.IntroWelcomeFragment;
-import com.breadwallet.tools.others.PListReader;
+import com.breadwallet.tools.others.WordsReader;
 
 import java.io.IOException;
 import java.util.List;
@@ -130,7 +130,7 @@ public class IntroActivity extends FragmentActivity {
 
         List<String> wordList = null;
         try {
-            wordList = PListReader.getWordList(this);
+            wordList = WordsReader.getWordList(this);
         } catch (IOException e) {
             e.printStackTrace();
         }

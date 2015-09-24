@@ -174,7 +174,8 @@ public class CurrencyManager {
         double result = target * 1000000 / current;
 //        Log.e(TAG, "result of the exchange rate calculation: " + result);
         DecimalFormat decimalFormat = new DecimalFormat("0.00");
-        String finalResult = getFormattedCurrencyString(iso, "1") + " = " + bitcoinLowecase + decimalFormat.format(result);
+        String finalResult = getFormattedCurrencyString(iso, "1") + " = " + bitcoinLowecase +
+                decimalFormat.format(result);
         return finalResult;
     }
 
