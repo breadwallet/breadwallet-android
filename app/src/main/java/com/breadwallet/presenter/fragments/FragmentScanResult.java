@@ -21,7 +21,7 @@ import com.breadwallet.tools.adapter.AmountAdapter;
 import com.breadwallet.tools.adapter.CurrencyListAdapter;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.listeners.BackPressCustomKeyboardOnTouchListener;
-import com.breadwallet.tools.others.CurrencyManager;
+import com.breadwallet.tools.CurrencyManager;
 
 import java.math.BigDecimal;
 

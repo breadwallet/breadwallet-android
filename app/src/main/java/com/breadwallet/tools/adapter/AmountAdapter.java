@@ -7,7 +7,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
-import com.breadwallet.tools.others.CurrencyManager;
+import com.breadwallet.tools.CurrencyManager;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

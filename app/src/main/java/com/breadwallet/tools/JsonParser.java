@@ -1,4 +1,4 @@
-package com.breadwallet.tools.others;
+package com.breadwallet.tools;
 
 import org.json.JSONArray;
 import org.json.JSONException;

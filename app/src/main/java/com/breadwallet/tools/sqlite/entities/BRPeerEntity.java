@@ -1,9 +1,9 @@
-package com.breadwallet.wallet;
+package com.breadwallet.tools.sqlite.entities;
 
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail on 9/23/15.
+ * Created by Mihail on 9/29/15.
  * Copyright (c) 2015 Mihail Gutan <mihail@breadwallet.com>
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,5 +24,60 @@ package com.breadwallet.wallet;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class BRTransaction {
+public class BRPeerEntity {
+
+    private int id;
+    private int address;
+    private short misbehavin;
+    private short port;
+    private short services;
+    private long timeStamp;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getAddress() {
+        return address;
+    }
+
+    public void setAddress(int address) {
+        this.address = address;
+    }
+
+    public long getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(long timeStamp) {
+        this.timeStamp = timeStamp;
+    }
+
+    public short getMisbehavin() {
+        return misbehavin;
+    }
+
+    public void setMisbehavin(short misbehavin) {
+        this.misbehavin = misbehavin;
+    }
+
+    public short getPort() {
+        return port;
+    }
+
+    public void setPort(short port) {
+        this.port = port;
+    }
+
+    public short getServices() {
+        return services;
+    }
+
+    public void setServices(short services) {
+        this.services = services;
+    }
 }

@@ -40,7 +40,7 @@ import android.widget.Toast;
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.tools.animation.FragmentAnimator;
-import com.breadwallet.tools.others.MyClipboardManager;
+import com.breadwallet.tools.BRClipboardManager;
 
 public class SharingFragment extends DialogFragment {
 
@@ -70,7 +70,7 @@ public class SharingFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
-                    MyClipboardManager.copyToClipboard(getActivity(), theAddress);
+                    BRClipboardManager.copyToClipboard(getActivity(), theAddress);
                     if (customToastAvailable) {
                         customToastAvailable = false;
                         new Handler().postDelayed(new Runnable() {

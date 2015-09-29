@@ -1,4 +1,4 @@
-package com.breadwallet.tools.others;
+package com.breadwallet.tools;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

@@ -1,4 +1,4 @@
-package com.breadwallet.tools.others;
+package com.breadwallet.tools;
 
 /**
  * DO WHAT YOU WANT TO PUBLIC LICENSE

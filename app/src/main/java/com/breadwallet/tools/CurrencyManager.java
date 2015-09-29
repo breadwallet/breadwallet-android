@@ -1,4 +1,4 @@
-package com.breadwallet.tools.others;
+package com.breadwallet.tools;
 
 import android.content.Context;
 import android.content.SharedPreferences;

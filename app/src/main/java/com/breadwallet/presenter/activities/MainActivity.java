@@ -37,14 +37,14 @@ import com.breadwallet.presenter.fragments.FragmentSettings;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.presenter.fragments.FragmentWipeWallet;
 import com.breadwallet.presenter.fragments.PasswordDialogFragment;
+import com.breadwallet.tools.CurrencyManager;
+import com.breadwallet.tools.NetworkChangeReceiver;
 import com.breadwallet.tools.adapter.AmountAdapter;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.adapter.ParallaxViewPager;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
-import com.breadwallet.tools.others.CurrencyManager;
-import com.breadwallet.tools.others.NetworkChangeReceiver;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -117,9 +117,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     public static final int DEBUG = 1;
     public static final int RELEASE = 2;
     public static int MODE = RELEASE;
-    private static final String DEBUG_KEY =
-            "get the debug key from logcat after calling the function below once from the emulator";
-    TextView testnet;
+    public TextView testnet;
 
     //loading the native library
     static {
@@ -156,23 +154,10 @@ public class MainActivity extends FragmentActivity implements Observer {
             MODE = DEBUG;
             Log.e(TAG, "DEBUG MODE!!!!!!");
         }
+
         final FragmentManager fm = getSupportFragmentManager();
         initializeViews();
         testnet.setVisibility(MODE == DEBUG ? View.VISIBLE : View.GONE);
-
-        //testing native code bridge
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                ((BreadWalletApp)getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, messageFromNativeCode("Here, worked"));
-//                new Handler().postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        ((BreadWalletApp) getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_IMAGE, "");
-//                    }
-//                }, 2000);
-//            }
-//        },3000);
 
         viewFlipper.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -468,5 +453,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     public boolean isEmulatorOrDebug() {
         return Build.BRAND.equalsIgnoreCase("generic") || BuildConfig.DEBUG;
     }
+
+
 
 }

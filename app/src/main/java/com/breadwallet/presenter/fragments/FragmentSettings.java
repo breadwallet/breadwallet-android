@@ -19,7 +19,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.FragmentAnimator;
-import com.breadwallet.tools.others.CurrencyManager;
+import com.breadwallet.tools.CurrencyManager;
 
 /**
  * BreadWallet

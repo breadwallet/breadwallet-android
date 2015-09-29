@@ -1,4 +1,4 @@
-package com.breadwallet.tools.others;
+package com.breadwallet.tools;
 
 import android.annotation.SuppressLint;
 import android.content.ClipData;
@@ -32,7 +32,7 @@ import android.net.Uri;
  * THE SOFTWARE.
  */
 
-public class MyClipboardManager {
+public class BRClipboardManager {
 
     @SuppressLint("NewApi")
     @SuppressWarnings("deprecation")

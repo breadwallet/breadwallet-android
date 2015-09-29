@@ -3,7 +3,7 @@ package com.breadwallet.tools.adapter;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.animation.FragmentAnimator;
-import com.breadwallet.tools.others.CurrencyManager;
+import com.breadwallet.tools.CurrencyManager;
 
 /**
  * BreadWallet

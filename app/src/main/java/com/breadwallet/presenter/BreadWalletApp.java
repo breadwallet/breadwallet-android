@@ -18,7 +18,7 @@ import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.tools.others.TypefaceUtil;
+import com.breadwallet.tools.TypefaceUtil;
 
 import org.acra.ACRA;
 import org.acra.ReportField;

@@ -1,5 +1,7 @@
 package com.breadwallet.wallet;
 
+import com.breadwallet.tools.sqlite.entities.BRTransactionEntity;
+
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
@@ -42,19 +44,21 @@ public class BRWallet {
         final ByteBuffer buf = ByteBuffer.wrap(bytes);
 
         wallet.walletBuff = buf;
-
         // If needed: buf.order(ByteOrder.LITTLE_ENDIAN);
-
         // Example to convert unsigned short to a positive int
 
         return wallet;
     }
 
+    public native static void updateWallet();
+
+    public native ByteBuffer walletNew();
+
     public native long walletBalance();
 
     public native List<BRUTXO> walletUTXOs();
 
-    public native List<BRTransaction> walletTransactions();
+    public native List<BRTransactionEntity> walletTransactions();
 
     public native long walletTotalSent();
 
@@ -62,6 +66,19 @@ public class BRWallet {
 
     public native void walletSetFeePerKb();
 
+    public native char[] walletReceiveAddress();
+
+    public native char[] walletChangeAddress();
+
+    public native boolean walletContainsTxHash();
+
+    public native boolean walletContainsAddress();
+
+    public native boolean walletAddressIsUsed();
+
+    public native BRTransactionEntity walletCreateTransaction();
+
+    public native boolean walletSignTransaction();
 
     private class BRUTXO {
         BigInteger hash;

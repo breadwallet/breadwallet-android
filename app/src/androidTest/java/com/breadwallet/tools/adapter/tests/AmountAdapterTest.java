@@ -9,7 +9,7 @@ import android.widget.Button;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.adapter.AmountAdapter;
-import com.breadwallet.tools.others.MyClipboardManager;
+import com.breadwallet.tools.BRClipboardManager;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -57,7 +57,7 @@ public class AmountAdapterTest extends ActivityInstrumentationTestCase2<MainActi
         injectInstrumentation(InstrumentationRegistry.getInstrumentation()); // injects the Instrumentation for the Espresso
         activity = getActivity();
         copyAddressFromClipboard = (Button) activity.findViewById(R.id.main_button_pay_address_from_clipboard);
-        MyClipboardManager.copyToClipboard(getActivity(), testAddress);
+        BRClipboardManager.copyToClipboard(getActivity(), testAddress);
     }
 
     @MediumTest

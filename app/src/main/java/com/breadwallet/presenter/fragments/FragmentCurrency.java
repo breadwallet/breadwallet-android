@@ -22,7 +22,7 @@ import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.adapter.CurrencyListAdapter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.SpringAnimator;
-import com.breadwallet.tools.others.CurrencyManager;
+import com.breadwallet.tools.CurrencyManager;
 
 
 /**

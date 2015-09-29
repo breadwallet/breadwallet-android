@@ -1,6 +1,7 @@
 package com.breadwallet.wallet;
 
 import java.nio.ByteBuffer;
+import java.security.SecureRandom;
 import java.text.NumberFormat;
 import java.util.List;
 
@@ -104,9 +105,14 @@ public class BRWalletManager {
      * generates a random seed, saves to keychain and returns the associated seedPhrase
      */
     public String generateRandomSeed() {
+        final SecureRandom sr = new SecureRandom();
+        final byte[] keyBytes = new byte[128];
+        sr.nextBytes(keyBytes);
 
         return null;
     }
+
+    public native String encodePhrase(byte[] seed);
 
     /**
      * authenticates user and returns seed
@@ -199,7 +205,7 @@ public class BRWalletManager {
         return false;
     }
 
-    public void updateFeePerKb(){
+    public void updateFeePerKb() {
 
     }
 

@@ -18,7 +18,7 @@ import android.widget.EditText;
 import com.breadwallet.R;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.FragmentAnimator;
-import com.breadwallet.tools.others.MyClipboardManager;
+import com.breadwallet.tools.BRClipboardManager;
 
 /**
  * BreadWallet
@@ -85,7 +85,7 @@ public class MainFragment extends Fragment {
                     if (alertDialog.isShowing()) {
                         alertDialog.dismiss();
                     }
-                    String address = MyClipboardManager.readFromClipboard(getActivity());
+                    String address = BRClipboardManager.readFromClipboard(getActivity());
                     Log.e(TAG, "The address before check: " + address);
                     if (checkIfAddressIsValid(address)) {
                         payAddressFromClipboardButton.setBackgroundResource(R.drawable.buttonbluepressed);
