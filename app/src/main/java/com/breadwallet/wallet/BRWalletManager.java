@@ -112,7 +112,7 @@ public class BRWalletManager {
         return null;
     }
 
-    public native String encodePhrase(byte[] seed);
+    public native String encodePhrase(byte[] seed, byte[] wordList);
 
     /**
      * authenticates user and returns seed
