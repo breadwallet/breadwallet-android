@@ -40,7 +40,7 @@
         android:clickable="false">
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/the_phrase"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
@@ -48,7 +48,6 @@
             android:gravity="center"
             android:paddingLeft="30dp"
             android:paddingRight="30dp"
-            android:text="short apple trunk riot coyote innocent zebra venture ill lava shop flat"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/dark_grey"
             android:textSize="22sp" />

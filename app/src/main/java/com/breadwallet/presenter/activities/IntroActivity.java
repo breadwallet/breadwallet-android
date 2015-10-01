@@ -5,6 +5,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Matrix;
 import android.graphics.RectF;
@@ -12,6 +13,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -24,15 +26,14 @@ import com.breadwallet.presenter.fragments.IntroNewWalletFragment;
 import com.breadwallet.presenter.fragments.IntroRecoverWalletFragment;
 import com.breadwallet.presenter.fragments.IntroWarningFragment;
 import com.breadwallet.presenter.fragments.IntroWelcomeFragment;
-import com.breadwallet.tools.WordsReader;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.tools.sqlite.entities.BRMerkleBlockEntity;
 import com.breadwallet.tools.sqlite.entities.BRTransactionEntity;
 import com.breadwallet.tools.sqlite.entities.BRTxInputEntity;
 import com.breadwallet.tools.sqlite.entities.BRTxOutputEntity;
+import com.breadwallet.wallet.BRWalletManager;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -73,6 +74,7 @@ public class IntroActivity extends FragmentActivity {
     private static final int LeftToRight = 2;
     private static final int DURATION = 30000;
 
+    public static IntroActivity app;
     private ValueAnimator mCurrentAnimator;
     private final Matrix mMatrix = new Matrix();
     private float mScaleFactor;
@@ -89,15 +91,17 @@ public class IntroActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_intro);
+
+        app = this;
+        final BRWalletManager m = BRWalletManager.getInstance();
+//        m.generateRandomSeed(this);
 
         Log.e(TAG, "Activity created!");
         if (savedInstanceState != null) {
             return;
         }
-
-//        testSQLiteConnectivity(this);   //do some sqlite testing
+//        testSQLiteConnectivity(this);   //do some SQLite testing
         introWelcomeFragment = new IntroWelcomeFragment();
         introNewRestoreFragment = new IntroNewRecoverFragment();
         introNewWalletFragment = new IntroNewWalletFragment();
@@ -127,31 +131,38 @@ public class IntroActivity extends FragmentActivity {
                 onBackPressed();
             }
         });
+
         getSupportFragmentManager().beginTransaction().add(R.id.intro_layout, introWelcomeFragment,
                 "introWelcomeFragment").commit();
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (noWallet) {
-                    Log.e(TAG, "should create new wallet");
-                    showRecoverNewWalletFragment();
-                } else {
-                    Log.e(TAG, "should go to the current wallet");
-                    startMainActivity();
+        if (!m.isPasscodeEnabled(this)) {
+            Log.e(TAG, "WARNING device is not secured!");
+            new AlertDialog.Builder(this)
+                    .setTitle("Warning!")
+                    .setMessage("A device passcode is needed to safeguard your wallet. " +
+                            "Go to settings and turn passcode on to continue.")
+                    .setNegativeButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        } else {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (m.noWallet(app)) {
+                        Log.e(TAG, "should create new wallet");
+                        showRecoverNewWalletFragment();
+                    } else {
+                        Log.e(TAG, "should go to the current wallet");
+                        startMainActivity();
+                    }
                 }
+            }, 800);
 
-            }
-        }, 1200);
 
-        //testing plist:
-
-        List<String> wordList = null;
-        try {
-            wordList = WordsReader.getWordList(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            //testing plist:
 //
 //        Iterator<String> it = wordList.iterator();
 //        int count = 0;
@@ -160,7 +171,8 @@ public class IntroActivity extends FragmentActivity {
 //
 //        }
 
-        //end testing
+            //end testing
+        }
 
     }
 
@@ -359,4 +371,5 @@ public class IntroActivity extends FragmentActivity {
 
         }
     }
+
 }

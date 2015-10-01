@@ -44,7 +44,7 @@ import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.CurrencyManager;
-import com.breadwallet.tools.PassCodeManager;
+import com.breadwallet.tools.security.PassCodeManager;
 
 public class ChangePasswordDialogFragment extends DialogFragment {
 

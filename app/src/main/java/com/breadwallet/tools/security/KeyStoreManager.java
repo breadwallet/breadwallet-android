@@ -1,9 +1,9 @@
-package com.breadwallet.tools;
+package com.breadwallet.tools.security;
 
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail on 8/20/15.
+ * Created by Mihail on 9/29/15.
  * Copyright (c) 2015 Mihail Gutan <mihail@breadwallet.com>
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,26 +24,7 @@ package com.breadwallet.tools;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class PassCodeManager {
-    public static final String TAG = "PassCodeManager";
-    private static char[] PASS_CODE = {'1', '2', '3', '4'};
+public class KeyStoreManager {
+    public static final String TAG = KeyStoreManager.class.getName();
 
-    public static boolean checkAuth(String pass) {
-        if (pass.length() == PASS_CODE.length) {
-            int pos = 0;
-            for (char c : PASS_CODE) {
-                if (c != pass.charAt(pos++)) return false;
-            }
-        } else {
-            return false;
-        }
-        return true;
-    }
-
-    public static void setPassCode(String pass) {
-        PASS_CODE = new char[pass.length()];
-        for (int i = 0; i < pass.length(); i++) {
-            PASS_CODE[i] = pass.charAt(i);
-        }
-    }
 }

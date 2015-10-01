@@ -4,19 +4,21 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.wallet.BRWalletManager;
 
 public class IntroShowPhraseActivity extends Activity {
-    Button remindMeLate;
+    Button remindMeLater;
     RelativeLayout writeDownLayout;
     ImageView checkBox;
+    private TextView thePhrase;
     boolean checked = false;
 
     @Override
@@ -27,8 +29,9 @@ public class IntroShowPhraseActivity extends Activity {
         if (savedInstanceState != null) {
             return;
         }
-
-        remindMeLate = (Button) findViewById(R.id.remind_me_later_button);
+        BRWalletManager m = BRWalletManager.getInstance();
+        thePhrase = (TextView) findViewById(R.id.the_phrase_at_startup);
+        remindMeLater = (Button) findViewById(R.id.remind_me_later_button);
         writeDownLayout = (RelativeLayout) findViewById(R.id.write_down_notice_layout);
         checkBox = (ImageView) findViewById(R.id.write_down_check_box);
         checkBox.setOnClickListener(new View.OnClickListener() {
@@ -38,6 +41,7 @@ public class IntroShowPhraseActivity extends Activity {
             }
         });
         writeDownLayout.setVisibility(View.GONE);
+        thePhrase.setText(m.getKeyStoreString(null, this));
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -45,7 +49,7 @@ public class IntroShowPhraseActivity extends Activity {
                     writeDownLayout.setVisibility(View.VISIBLE);
             }
         }, 10000);
-        remindMeLate.setOnClickListener(new View.OnClickListener() {
+        remindMeLater.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startMainActivity();
@@ -80,7 +84,7 @@ public class IntroShowPhraseActivity extends Activity {
 
     void setCheckBoxImage() {
         checkBox.setImageResource(!checked ? R.drawable.checkbox_checked : R.drawable.checkbox_empty);
-        remindMeLate.setText(!checked ? getResources().getString(R.string.done) :
+        remindMeLater.setText(!checked ? getResources().getString(R.string.done) :
                 getResources().getString(R.string.remind_me_later));
         checked = !checked;
     }

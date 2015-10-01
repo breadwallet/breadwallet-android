@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 22
+    compileSdkVersion 23
     buildToolsVersion "21.1.2"
 
     lintOptions {
@@ -21,12 +21,14 @@ android {
     defaultConfig {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         applicationId "com.breadwallet"
-        minSdkVersion 17
-        targetSdkVersion 22
+        minSdkVersion 19
+        targetSdkVersion 23
         versionCode 1
         versionName "1.0"
         ndk {
             moduleName "BreadWalletCore"
+            ldLibs "log"
+            stl "gnustl_static"
             cFlags "-std=c99"
         }
     }
@@ -57,14 +59,13 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile files('libs/acra-4.6.1.jar')
-    compile files('libs/xmlwise-1_2.jar')
-    testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:22.2.0'
+    testCompile 'junit:junit:+'
+    compile 'com.android.support:appcompat-v7:+'
     compile 'com.google.zxing:core:3.2.0' //QRCode scanner
     compile 'com.facebook.rebound:rebound:0.3.8' //spring animation
     compile 'org.json:json:20141113' //JSonParser google
 
-    androidTestCompile 'com.android.support.test:runner:0.3'
+    androidTestCompile 'com.android.support.test:runner:+'
     // Set this dependency to use JUnit 4 rules
     androidTestCompile 'com.android.support.test:rules:0.3'
     // Set this dependency to build and run Espresso tests

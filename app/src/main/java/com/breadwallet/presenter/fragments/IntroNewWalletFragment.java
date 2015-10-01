@@ -9,6 +9,7 @@ import android.widget.Button;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.IntroActivity;
+import com.breadwallet.wallet.BRWalletManager;
 
 /**
  * BreadWallet
@@ -42,12 +43,14 @@ public class IntroNewWalletFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         // The last two arguments ensure LayoutParams are inflated
         // properly.
+        final BRWalletManager m = BRWalletManager.getInstance();
         View rootView = inflater.inflate(
                 R.layout.intro_fragment_new_wallet, container, false);
         introGenerate = (Button) rootView.findViewById(R.id.intro_new_wallet_generate);
         introGenerate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                m.generateRandomSeed(getActivity());
                 ((IntroActivity) getActivity()).showWarningFragment();
             }
         });

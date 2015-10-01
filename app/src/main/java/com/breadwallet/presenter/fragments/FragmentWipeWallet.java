@@ -1,9 +1,12 @@
 
 package com.breadwallet.presenter.fragments;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +16,7 @@ import android.widget.EditText;
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.IntroActivity;
+import com.breadwallet.wallet.BRWalletManager;
 
 /**
  * BreadWallet
@@ -40,9 +44,11 @@ import com.breadwallet.presenter.activities.IntroActivity;
  */
 
 public class FragmentWipeWallet extends Fragment {
+    public static final String TAG = FragmentWipeWallet.class.getName();
     Button close;
     EditText recoveryPhraseEditText;
     Button wipe;
+    BRWalletManager m;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -51,6 +57,7 @@ public class FragmentWipeWallet extends Fragment {
         // properly.
         View rootView = inflater.inflate(
                 R.layout.fragment_wipe_wallet, container, false);
+        m = BRWalletManager.getInstance();
         close = (Button) rootView.findViewById(R.id.wipe_wallet_close);
         recoveryPhraseEditText = (EditText) rootView.findViewById(R.id.editText_phrase);
         wipe = (Button) rootView.findViewById(R.id.wipe_wallet_wipe);
@@ -64,11 +71,34 @@ public class FragmentWipeWallet extends Fragment {
         wipe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startIntroActivity();
+                if (phraseIsValid(recoveryPhraseEditText.getText().toString())) {
+                    m.sweepPrivateKey(null, false, getActivity());
+                    startIntroActivity();
+                    getActivity().finish();
+                } else {
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle("Attention")
+                            .setMessage("This is not a valid phrase!")
+                            .setNegativeButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            })
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
+                }
             }
         });
 
         return rootView;
+    }
+
+    private boolean phraseIsValid(String insertedPhrase) {
+        String thePhrase = m.getKeyStoreString(null, getActivity());
+        if (thePhrase == null) throw new NullPointerException("Phrase is null! weird behaviour");
+        Log.e(TAG,"Inserted:" +  insertedPhrase);
+        Log.e(TAG,"Actual:" +  thePhrase);
+        return insertedPhrase.equalsIgnoreCase(thePhrase);
     }
 
     @Override

@@ -147,9 +147,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
 
         Log.e(TAG, "Activity created!");
-        if (savedInstanceState != null) {
-            return;
-        }
         if (isEmulatorOrDebug()) {
             MODE = DEBUG;
             Log.e(TAG, "DEBUG MODE!!!!!!");
@@ -234,6 +231,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     protected void onDestroy() {
         super.onDestroy();
         finish();
+        FragmentAnimator.level = 0;
         CurrencyManager.stopTimerTask();
         Log.e(TAG, "Activity Destroyed!");
 

@@ -2,14 +2,18 @@
 package com.breadwallet.presenter.fragments;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.BreadWalletApp;
+import com.breadwallet.tools.BRClipboardManager;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
+import com.breadwallet.wallet.BRWalletManager;
 
 /**
  * BreadWallet
@@ -38,11 +42,26 @@ import com.breadwallet.tools.adapter.MiddleViewAdapter;
 
 public class FragmentRecoveryPhrase extends Fragment {
 
-    @Nullable
+    public TextView thePhrase;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(
                 R.layout.fragment_recovery_phrase, container, false);
+        BRWalletManager m = BRWalletManager.getInstance();
+        thePhrase = (TextView) rootView.findViewById(R.id.the_phrase);
+
+        //TODO delete this code below which is for testing reasons only
+        thePhrase.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BRClipboardManager.copyToClipboard(getActivity(),thePhrase.getText().toString());
+                ((BreadWalletApp)getActivity().getApplication()).showCustomToast(getActivity(),
+                        "copied", 300, Toast.LENGTH_SHORT);
+            }
+        });
+
+        thePhrase.setText(m.getKeyStoreString(null, getActivity()));
         return rootView;
     }
 
