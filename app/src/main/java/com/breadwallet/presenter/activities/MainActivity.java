@@ -119,10 +119,6 @@ public class MainActivity extends FragmentActivity implements Observer {
     public static int MODE = RELEASE;
     public TextView testnet;
 
-    //loading the native library
-    static {
-        System.loadLibrary("BreadWalletCore");
-    }
 
     /**
      * Public constructor used to assign the current instance to the app variable
@@ -151,7 +147,6 @@ public class MainActivity extends FragmentActivity implements Observer {
             MODE = DEBUG;
             Log.e(TAG, "DEBUG MODE!!!!!!");
         }
-
         final FragmentManager fm = getSupportFragmentManager();
         initializeViews();
         testnet.setVisibility(MODE == DEBUG ? View.VISIBLE : View.GONE);

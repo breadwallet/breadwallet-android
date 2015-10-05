@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "21.1.2"
+    buildToolsVersion "23.0.0"
 
     lintOptions {
         // set to true to turn off analysis progress reporting by lint
@@ -28,7 +28,6 @@ android {
         ndk {
             moduleName "BreadWalletCore"
             ldLibs "log"
-            stl "gnustl_static"
             cFlags "-std=c99"
         }
     }

@@ -75,10 +75,11 @@ public class BRWalletManager {
     public static final String FEE_PER_KB_URL = "https://api.breadwallet.com/v1/fee-per-kb";
     public static final int SEED_ENTROPY_LENGTH = 128 / 8;
     public static final String SEC_ATTR_SERVICE = "org.voisine.breadwallet";
-    public static final String ANDROID_KEY_STORE = "AndroidKeyStore";
+    public static final String ANDROID_KEY_STORE = "BreadWalletKeyStore";
     public static final String ALIAS = "phrase";
 
     ByteBuffer masterPublicKey; // master public key used to generate wallet addresses
+    byte[] wallet;
     char[] seedPhrase;          // requesting seedPhrase will trigger authentication
     long seedCreationTime;      // interval since reference date, 00:00:00 01/01/01 GMT
     long secureTime;            // last known time from an ssl server connection
@@ -93,11 +94,15 @@ public class BRWalletManager {
     List<String> currencyNames; // names for local currency codes
 
     private BRWalletManager() {
+        initManager();
         /**
          * initialize the class
          */
     }
 
+    public void initManager() {
+        connect();
+    }
     public static synchronized BRWalletManager getInstance() {
         if (instance == null) {
             instance = new BRWalletManager();
@@ -105,9 +110,9 @@ public class BRWalletManager {
         return instance;
     }
 
-    public BRWallet wallet() {
-        return null;
-    }
+    public native byte[] connect();
+
+    public native byte[] wallet();
 
     public static boolean setKeychainData(ByteBuffer buffer, String key, boolean authenticated) {
 

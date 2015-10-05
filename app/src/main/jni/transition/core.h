@@ -13,3 +13,7 @@ JNIEXPORT void Java_com_breadwallet_presenter_activities_MainActivity_sendMethod
 
 JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_encodePhrase
         (JNIEnv *env, jobject obj, jbyteArray seed, jbyteArray wordList);
+
+JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_wallet
+        (JNIEnv *env, jobject obj);
+

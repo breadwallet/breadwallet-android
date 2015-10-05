@@ -88,6 +88,11 @@ public class IntroActivity extends FragmentActivity {
     private Button leftButton;
     private boolean backPressAvailable = false;
 
+    //loading the native library
+    static {
+        System.loadLibrary("BreadWalletCore");
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,6 +106,10 @@ public class IntroActivity extends FragmentActivity {
         if (savedInstanceState != null) {
             return;
         }
+        byte[] walletRaw = m.wallet();
+
+
+
 //        testSQLiteConnectivity(this);   //do some SQLite testing
         introWelcomeFragment = new IntroWelcomeFragment();
         introNewRestoreFragment = new IntroNewRecoverFragment();
