@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.security.KeyPairGeneratorSpec;
+import android.security.keystore.KeyProperties;
 import android.util.Log;
 
 import java.io.File;
@@ -75,7 +76,7 @@ public class BRWalletManager {
     public static final String FEE_PER_KB_URL = "https://api.breadwallet.com/v1/fee-per-kb";
     public static final int SEED_ENTROPY_LENGTH = 128 / 8;
     public static final String SEC_ATTR_SERVICE = "org.voisine.breadwallet";
-    public static final String ANDROID_KEY_STORE = "BreadWalletKeyStore";
+    public static final String ANDROID_KEY_STORE = "AndroidKeyStore";
     public static final String ALIAS = "phrase";
 
     ByteBuffer masterPublicKey; // master public key used to generate wallet addresses
@@ -101,7 +102,7 @@ public class BRWalletManager {
     }
 
     public void initManager() {
-        connect();
+//        connect();
     }
     public static synchronized BRWalletManager getInstance() {
         if (instance == null) {
@@ -110,7 +111,7 @@ public class BRWalletManager {
         return instance;
     }
 
-    public native byte[] connect();
+//    public native byte[] connect();
 
     public native byte[] wallet();
 
@@ -148,7 +149,7 @@ public class BRWalletManager {
 
                 KeyPairGeneratorSpec spec = new KeyPairGeneratorSpec.Builder(ctx)
                         .setAlias(ALIAS)
-                        .setKeyType("RSA")
+                        .setKeyType(KeyProperties.KEY_ALGORITHM_RSA)
                         .setKeySize(2048)
                         .setSubject(new X500Principal("CN=test"))
                         .setSerialNumber(BigInteger.ONE)
@@ -158,7 +159,7 @@ public class BRWalletManager {
                 KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA", ANDROID_KEY_STORE);
                 generator.initialize(spec);
 
-                KeyPair keyPair = generator.generateKeyPair();
+                KeyPair keyPair = generator.generateKeyPair(); // needs to be here
             }
             int nAfter = keyStore.size();
             Log.v(TAG, "Before = " + nBefore + " After = " + nAfter);
@@ -363,7 +364,7 @@ public class BRWalletManager {
     public boolean noWallet(Context ctx) {
         String phrase = getKeyStoreString(null, ctx);
 
-        return phrase.length() == 0;
+        return phrase.length() < 10;
     }
 
     /**

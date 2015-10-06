@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.0"
+    buildToolsVersion "23.0.0 "
 
     lintOptions {
         // set to true to turn off analysis progress reporting by lint
@@ -15,6 +15,7 @@ android {
 
     packagingOptions {
         exclude 'LICENSE.txt'
+//        exclude 'app/src/main/jni/breadwallet-core' //for API 19 to work
     }
 
 

@@ -70,9 +70,9 @@ public class TransactionDataSource {
         values.put(BRSQLiteHelper.TX_TIME_STAMP, transactionEntity.getTimeStamp());
         values.put(BRSQLiteHelper.TX_HASH, transactionEntity.getTxHash());
 
-        for(BRTxInputEntity input : transactionEntity.getInputs()){
+        for (BRTxInputEntity input : transactionEntity.getInputs()) {
             ContentValues inputValues = new ContentValues();
-            inputValues.put(BRSQLiteHelper.IN_INDEX,input.getIndex());
+            inputValues.put(BRSQLiteHelper.IN_INDEX, input.getIndex());
             inputValues.put(BRSQLiteHelper.IN_PREV_OUT_INDEX, input.getPrevOutIndex());
             inputValues.put(BRSQLiteHelper.IN_PREV_OUT_TX_HASH, input.getPrevOutTxHash());
             inputValues.put(BRSQLiteHelper.IN_SEQUENCE, input.getSequence());
@@ -81,23 +81,35 @@ public class TransactionDataSource {
             database.insert(BRSQLiteHelper.IN_TABLE_NAME, null, values);
         }
 
-        for(BRTxOutputEntity output : transactionEntity.getOutputs()){
+        for (BRTxOutputEntity output : transactionEntity.getOutputs()) {
             ContentValues outputValues = new ContentValues();
-            outputValues.put(BRSQLiteHelper.OUT_INDEX,output.getIndex());
+            outputValues.put(BRSQLiteHelper.OUT_INDEX, output.getIndex());
             outputValues.put(BRSQLiteHelper.OUT_TX_HASH, output.getTxHash());
             outputValues.put(BRSQLiteHelper.OUT_VALUE, output.getValue());
 
             database.insert(BRSQLiteHelper.OUT_TABLE_NAME, null, values);
         }
 
-        long insertId = database.insert(BRSQLiteHelper.TX_TABLE_NAME, null, values);
-        Cursor cursor = database.query(BRSQLiteHelper.TX_TABLE_NAME,
-                allColumns, BRSQLiteHelper.TX_COLUMN_ID + " = " + insertId, null,
-                null, null, null);
-        cursor.moveToFirst();
-        BRTransactionEntity transactionEntity1 = cursorToTransaction(cursor);
-        cursor.close();
-        return transactionEntity1;
+        database.beginTransaction();
+        try {
+            long insertId = database.insert(BRSQLiteHelper.TX_TABLE_NAME, null, values);
+            Cursor cursor = database.query(BRSQLiteHelper.TX_TABLE_NAME,
+                    allColumns, BRSQLiteHelper.TX_COLUMN_ID + " = " + insertId, null,
+                    null, null, null);
+            cursor.moveToFirst();
+            BRTransactionEntity transactionEntity1 = cursorToTransaction(cursor);
+            cursor.close();
+            database.setTransactionSuccessful();
+            return transactionEntity1;
+        } catch (Exception ex) {
+            Log.e(TAG, "Error inserting into SQLite", ex);
+            //Error in between database transaction
+        } finally {
+            database.endTransaction();
+        }
+        return null;
+
+
     }
 
     public void deleteTransaction(BRTransactionEntity transaction) {

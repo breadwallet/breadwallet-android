@@ -87,6 +87,7 @@ public class IntroActivity extends FragmentActivity {
     private IntroRecoverWalletFragment introRecoverWalletFragment;
     private Button leftButton;
     private boolean backPressAvailable = false;
+    private boolean hardwareBacked;
 
     //loading the native library
     static {
@@ -107,8 +108,6 @@ public class IntroActivity extends FragmentActivity {
             return;
         }
         byte[] walletRaw = m.wallet();
-
-
 
 //        testSQLiteConnectivity(this);   //do some SQLite testing
         introWelcomeFragment = new IntroWelcomeFragment();
@@ -169,18 +168,6 @@ public class IntroActivity extends FragmentActivity {
                     }
                 }
             }, 800);
-
-
-            //testing plist:
-//
-//        Iterator<String> it = wordList.iterator();
-//        int count = 0;
-//        while (it.hasNext()) {
-//            System.out.println(it.next() + (++count));
-//
-//        }
-
-            //end testing
         }
 
     }

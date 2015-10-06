@@ -69,15 +69,25 @@ public class PeerDataSource {
         values.put(BRSQLiteHelper.PEER_PORT, peer.getPort());
         values.put(BRSQLiteHelper.PEER_SERVICES, peer.getServices());
         values.put(BRSQLiteHelper.PEER_TIME_STAMP, peer.getTimeStamp());
+        database.beginTransaction();
+        try {
+            long insertId = database.insert(BRSQLiteHelper.PEER_TABLE_NAME, null, values);
+            Cursor cursor = database.query(BRSQLiteHelper.PEER_TABLE_NAME,
+                    allColumns, BRSQLiteHelper.PEER_COLUMN_ID + " = " + insertId, null,
+                    null, null, null);
+            cursor.moveToFirst();
+            BRPeerEntity peerEntity = cursorToPeer(cursor);
+            cursor.close();
+            database.setTransactionSuccessful();
+            return peerEntity;
+        } catch (Exception ex) {
+            Log.e(TAG, "Error inserting into SQLite", ex);
+            //Error in between database transaction
+        } finally {
+            database.endTransaction();
+        }
+        return null;
 
-        long insertId = database.insert(BRSQLiteHelper.PEER_TABLE_NAME, null, values);
-        Cursor cursor = database.query(BRSQLiteHelper.PEER_TABLE_NAME,
-                allColumns, BRSQLiteHelper.PEER_COLUMN_ID + " = " + insertId, null,
-                null, null, null);
-        cursor.moveToFirst();
-        BRPeerEntity peerEntity = cursorToPeer(cursor);
-        cursor.close();
-        return peerEntity;
     }
 
     public void deletePeer(BRPeerEntity peerEntity) {

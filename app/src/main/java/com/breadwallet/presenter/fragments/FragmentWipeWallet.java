@@ -61,6 +61,7 @@ public class FragmentWipeWallet extends Fragment {
         close = (Button) rootView.findViewById(R.id.wipe_wallet_close);
         recoveryPhraseEditText = (EditText) rootView.findViewById(R.id.editText_phrase);
         wipe = (Button) rootView.findViewById(R.id.wipe_wallet_wipe);
+        recoveryPhraseEditText.setText("");
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

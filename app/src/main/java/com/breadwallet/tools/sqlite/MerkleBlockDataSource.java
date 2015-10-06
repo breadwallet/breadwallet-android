@@ -77,15 +77,24 @@ public class MerkleBlockDataSource {
         values.put(BRSQLiteHelper.MB_COLUMN_TIME_STAMP, merkleBlock.getTimeStamp());
         values.put(BRSQLiteHelper.MB_COLUMN_TOTAL_TRANSACTIONS, merkleBlock.getTotalTransactions());
         values.put(BRSQLiteHelper.MB_COLUMN_VERSION, merkleBlock.getVersion());
-
-        long insertId = database.insert(BRSQLiteHelper.MB_TABLE_NAME, null, values);
-        Cursor cursor = database.query(BRSQLiteHelper.MB_TABLE_NAME,
-                allColumns, BRSQLiteHelper.MB_COLUMN_ID + " = " + insertId, null,
-                null, null, null);
-        cursor.moveToFirst();
-        BRMerkleBlockEntity newMerkleBlock = cursorToMerkleBlock(cursor);
-        cursor.close();
-        return newMerkleBlock;
+        database.beginTransaction();
+        try {
+            long insertId = database.insert(BRSQLiteHelper.MB_TABLE_NAME, null, values);
+            Cursor cursor = database.query(BRSQLiteHelper.MB_TABLE_NAME,
+                    allColumns, BRSQLiteHelper.MB_COLUMN_ID + " = " + insertId, null,
+                    null, null, null);
+            cursor.moveToFirst();
+            BRMerkleBlockEntity newMerkleBlock = cursorToMerkleBlock(cursor);
+            cursor.close();
+            database.setTransactionSuccessful();
+            return newMerkleBlock;
+        } catch (Exception ex) {
+            Log.e(TAG, "Error inserting into SQLite", ex);
+            //Error in between database transaction
+        } finally {
+            database.endTransaction();
+        }
+        return null;
     }
 
     public void deleteMerkleBlock(BRMerkleBlockEntity merkleBlock) {

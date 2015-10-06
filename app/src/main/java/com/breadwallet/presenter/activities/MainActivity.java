@@ -444,9 +444,14 @@ public class MainActivity extends FragmentActivity implements Observer {
     }
 
     public boolean isEmulatorOrDebug() {
-        return Build.BRAND.equalsIgnoreCase("generic") || BuildConfig.DEBUG;
-    }
+        String fing = Build.FINGERPRINT;
+        boolean isEmulator = false;
+        if (fing != null) {
+            isEmulator = fing.contains("vbox") || fing.contains("generic");
+        }
 
+        return isEmulator || BuildConfig.DEBUG;
+    }
 
 
 }
