@@ -3,6 +3,7 @@ package com.breadwallet.presenter.activities;
 import android.annotation.TargetApi;
 import android.content.ClipboardManager;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Point;
 import android.media.MediaPlayer;
@@ -190,7 +191,8 @@ public class MainActivity extends FragmentActivity implements Observer {
             @Override
             public void onClick(View v) {
                 SpringAnimator.showAnimation(lockerButton);
-                passwordDialogFragment.show(fm, TAG);
+//                passwordDialogFragment.show(fm, TAG);
+                ((BreadWalletApp) getApplication()).checkAndPromptForAuthentication(app);
             }
         });
         scaleView(pageIndicatorLeft, 1f, PAGE_INDICATOR_SCALE_UP, 1f, PAGE_INDICATOR_SCALE_UP);
@@ -422,6 +424,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         Log.d(TAG, "Test pay button_regular_blue!");
         final MediaPlayer mp = MediaPlayer.create(this, R.raw.coinflip);
         mp.start();
+        ((BreadWalletApp) getApplication()).checkAndPromptForAuthentication(this);
         if (AmountAdapter.isPayLegal()) {
             //TODO implement pay method
         } else {
@@ -453,5 +456,17 @@ public class MainActivity extends FragmentActivity implements Observer {
         return isEmulator || BuildConfig.DEBUG;
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            setUnlocked(true);
+            String tmp = CurrencyManager.getCurrentBalanceText();
+            ((BreadWalletApp) getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
+            ((BreadWalletApp) getApplication()).hideSoftKeyboard(this);
+        } else {
+            setUnlocked(false);
+            ((BreadWalletApp) getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_IMAGE, null);
+        }
+    }
 
 }

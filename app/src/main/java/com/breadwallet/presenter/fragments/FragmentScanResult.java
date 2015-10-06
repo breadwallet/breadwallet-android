@@ -251,13 +251,12 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
                     break;
                 case 11:
                     b.setLongClickable(true);
-
                     b.setOnTouchListener(new BackPressCustomKeyboardOnTouchListener());
                     b.setId(R.id.keyboard_back_button);
                     b.setX(interButtonGap / 2 + interButtonGap * 3 + buttonWidth * 2 + buttonWidth / 4);
                     b.setBackgroundResource(R.drawable.deletetoleft);
-                    b.setWidth((int) (buttonWidth / 2));
-                    b.setHeight((int) (buttonHeight / 2));
+                    b.setWidth((int) (buttonWidth / 3));
+                    b.setHeight((int) (buttonHeight / 3));
                     b.setY(buttonHeight * 3 + interButtonGap * 3 + buttonHeight / 4);
                     break;
             }

@@ -41,7 +41,7 @@ public class IntroShowPhraseActivity extends Activity {
             }
         });
         writeDownLayout.setVisibility(View.GONE);
-        thePhrase.setText(m.getKeyStoreString(null, this));
+        thePhrase.setText(m.getPhrase(this));
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {

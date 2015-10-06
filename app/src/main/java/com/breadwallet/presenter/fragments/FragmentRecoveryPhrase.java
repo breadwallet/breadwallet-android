@@ -61,7 +61,7 @@ public class FragmentRecoveryPhrase extends Fragment {
             }
         });
 
-        thePhrase.setText(m.getKeyStoreString(null, getActivity()));
+        thePhrase.setText(m.getPhrase(getActivity()));
         return rootView;
     }
 

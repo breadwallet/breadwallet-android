@@ -1,27 +1,33 @@
 package com.breadwallet.tools.security;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.security.KeyPairGeneratorSpec;
-import android.util.Base64;
+import android.security.keystore.KeyProperties;
 import android.util.Log;
-import android.widget.Toast;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigInteger;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.UnrecoverableEntryException;
+import java.security.cert.CertificateException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
+
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
+import javax.crypto.NoSuchPaddingException;
 import javax.security.auth.x500.X500Principal;
 
 /**
@@ -54,135 +60,176 @@ public class KeyStoreManager {
 
     static final String CIPHER_TYPE = "RSA/ECB/PKCS1Padding";
     static final String CIPHER_PROVIDER = "AndroidOpenSSL";
-    static List<String> keyAliases;
-    private static KeyStoreManager instance;
-    public static final String ALIAS = "phrase";
+    public static final String PHRASE_ALIAS = "phrase";
+    public static final String PIN_ALIAS = "pin";
     public static final String ANDROID_KEY_STORE = "AndroidKeyStore";
 
-    private static KeyStore keyStore;
+    public static boolean setKeyStoreString(String fileName, String strToStore, String alias, Context context) {
 
-    private KeyStoreManager(Context context) {
         try {
-            keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
+            KeyStore keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
             keyStore.load(null);
-            creteKey(context);
-        } catch (Exception e) {
-            Log.e(TAG, "Cannot access keystore!", e);
-        }
 
-    }
+            int nBefore = keyStore.size();
 
-    public static synchronized KeyStoreManager getInstance(Context context) {
-        if (instance == null) {
-            instance = new KeyStoreManager(context);
-        }
-        return instance;
-    }
+            // Create the keys if necessary
+            if (!keyStore.containsAlias(alias)) {
 
-    private void creteKey(Context context) {
-        try {
-            // Create new key if needed
-            if (!keyStore.containsAlias(ALIAS)) {
-                Calendar start = Calendar.getInstance();
-                Calendar end = Calendar.getInstance();
-                end.add(Calendar.YEAR, 1);
+                Calendar notBefore = Calendar.getInstance();
+                Calendar notAfter = Calendar.getInstance();
+                notAfter.add(Calendar.YEAR, 1);
+
                 KeyPairGeneratorSpec spec = new KeyPairGeneratorSpec.Builder(context)
-                        .setAlias(ALIAS)
-                        .setSubject(new X500Principal("CN=Mihail Gutan, O=BreadWallet"))
+                        .setAlias(alias)
+                        .setKeyType(KeyProperties.KEY_ALGORITHM_RSA)
+                        .setKeySize(2048)
+                        .setSubject(new X500Principal("CN=Mihail Gutan"))
                         .setSerialNumber(BigInteger.ONE)
-                        .setStartDate(start.getTime())
-                        .setEndDate(end.getTime())
+                        .setStartDate(notBefore.getTime())
+                        .setEndDate(notAfter.getTime())
                         .build();
                 KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA", ANDROID_KEY_STORE);
                 generator.initialize(spec);
 
-                KeyPair keyPair = generator.generateKeyPair();
+                KeyPair keyPair = generator.generateKeyPair(); // needs to be here
             }
-        } catch (Exception e) {
-            Toast.makeText(context, "Exception " + e.getMessage() + " occured", Toast.LENGTH_LONG).show();
-            Log.e(TAG, Log.getStackTraceString(e));
-        }
-    }
+            int nAfter = keyStore.size();
+            Log.v(TAG, "Before = " + nBefore + " After = " + nAfter);
 
-    public void deleteKey(final Context context) {
-        AlertDialog alertDialog = new AlertDialog.Builder(context)
-                .setTitle("Delete Key")
-                .setMessage("Do you want to delete the key \"" + ALIAS + "\" from the keystore?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        try {
-                            keyStore.deleteEntry(ALIAS);
-                        } catch (KeyStoreException e) {
-                            Toast.makeText(context, "Exception " + e.getMessage() + " occured",
-                                    Toast.LENGTH_LONG).show();
-                            Log.e(TAG, Log.getStackTraceString(e));
-                        }
-                        dialog.dismiss();
-                    }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .create();
-        alertDialog.show();
-    }
-
-    public void encryptString(String stringToEncrypt,Context context) {
-        try {
-            KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry) keyStore.getEntry(ALIAS, null);
+            // Retrieve the keys
+            KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry) keyStore.getEntry(alias, null);
+            RSAPrivateKey privateKey = (RSAPrivateKey) privateKeyEntry.getPrivateKey();
             RSAPublicKey publicKey = (RSAPublicKey) privateKeyEntry.getCertificate().getPublicKey();
 
-            if (stringToEncrypt.isEmpty()) {
-                Toast.makeText(context, "Enter text in the 'Initial Text' widget", Toast.LENGTH_LONG).show();
-                return;
-            }
+            Log.v(TAG, "private key = " + privateKey.toString());
+            Log.v(TAG, "public key = " + publicKey.toString());
 
-            Cipher inCipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", "AndroidOpenSSL");
+            // Encrypt the text
+            String dataDirectory = context.getApplicationInfo().dataDir;
+            String filesDirectory = context.getFilesDir().getAbsolutePath();
+            String encryptedDataFilePath = filesDirectory + File.separator + fileName;
+
+            Log.v(TAG, "strPhrase = " + strToStore);
+            Log.v(TAG, "dataDirectory = " + dataDirectory);
+            Log.v(TAG, "filesDirectory = " + filesDirectory);
+            Log.v(TAG, "encryptedDataFilePath = " + encryptedDataFilePath);
+
+            Cipher inCipher = Cipher.getInstance(CIPHER_TYPE, CIPHER_PROVIDER);
             inCipher.init(Cipher.ENCRYPT_MODE, publicKey);
 
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            CipherOutputStream cipherOutputStream = new CipherOutputStream(outputStream, inCipher);
-            cipherOutputStream.write(stringToEncrypt.getBytes("UTF-8"));
+            CipherOutputStream cipherOutputStream =
+                    new CipherOutputStream(
+                            new FileOutputStream(encryptedDataFilePath), inCipher);
+            cipherOutputStream.write(strToStore.getBytes("UTF-8"));
             cipherOutputStream.close();
 
-        } catch (Exception e) {
-            Toast.makeText(context, "Exception " + e.getMessage() + " occurred", Toast.LENGTH_LONG).show();
+        } catch (NoSuchAlgorithmException e) {
             Log.e(TAG, Log.getStackTraceString(e));
+            return false;
+        } catch (NoSuchProviderException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+            return false;
+        } catch (InvalidAlgorithmParameterException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+            return false;
+        } catch (KeyStoreException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+            return false;
+        } catch (CertificateException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+            return false;
+        } catch (IOException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+            return false;
+        } catch (UnrecoverableEntryException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+            return false;
+        } catch (NoSuchPaddingException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+            return false;
+        } catch (InvalidKeyException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+            return false;
+        } catch (UnsupportedOperationException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+            return false;
         }
+        return true;
     }
 
-    public String decryptString(Context context) {
+    public static String getKeyStoreString(String fileName, String alias, Context context) {
+        KeyStore keyStore;
+        String recoveredSecret = "";
+        String filesDirectory = context.getFilesDir().getAbsolutePath();
+        String encryptedDataFilePath = filesDirectory + File.separator + fileName;
         try {
-            KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry) keyStore.getEntry(ALIAS, null);
+            keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
+            keyStore.load(null);
+
+            // Retrieve the keys
+            KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry)
+                    keyStore.getEntry(alias, null);
             RSAPrivateKey privateKey = (RSAPrivateKey) privateKeyEntry.getPrivateKey();
 
-            Cipher output = Cipher.getInstance("RSA/ECB/PKCS1Padding", "AndroidOpenSSL");
-            output.init(Cipher.DECRYPT_MODE, privateKey);
+            Cipher outCipher = Cipher.getInstance(CIPHER_TYPE, CIPHER_PROVIDER);
+            outCipher.init(Cipher.DECRYPT_MODE, privateKey);
 
-            String cipherText = "Some string to decode";
             CipherInputStream cipherInputStream = new CipherInputStream(
-                    new ByteArrayInputStream(Base64.decode(cipherText, Base64.DEFAULT)), output);
-            ArrayList<Byte> values = new ArrayList<>();
+                    new FileInputStream(encryptedDataFilePath), outCipher);
+            byte[] roundTrippedBytes = new byte[1000]; // TODO: dynamically resize as we get more data
+            int index = 0;
             int nextByte;
             while ((nextByte = cipherInputStream.read()) != -1) {
-                values.add((byte) nextByte);
+                roundTrippedBytes[index] = (byte) nextByte;
+                index++;
             }
-
-            byte[] bytes = new byte[values.size()];
-            for (int i = 0; i < bytes.length; i++) {
-                bytes[i] = values.get(i).byteValue();
-            }
-
-            String finalText = new String(bytes, 0, bytes.length, "UTF-8");
-            return finalText;
-
-        } catch (Exception e) {
-            Toast.makeText(context, "Exception " + e.getMessage() + " occurred", Toast.LENGTH_LONG).show();
-            Log.e(TAG, Log.getStackTraceString(e));
+            recoveredSecret = new String(roundTrippedBytes, 0, index, "UTF-8");
+            Log.e(TAG, "round tripped string = " + recoveredSecret);
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        } catch (UnrecoverableEntryException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NoSuchProviderException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
         }
-        return null;
+
+        Log.e(TAG, "recovered: " + recoveredSecret);
+        return recoveredSecret;
     }
+
+    public static boolean deleteKeyStoreString(String alias) {
+        KeyStore keyStore;
+        try {
+            keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
+            keyStore.load(null);
+            keyStore.deleteEntry(alias);
+        } catch (CertificateException e) {
+            e.printStackTrace();
+            return false;
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return false;
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+            return false;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
 
 }

@@ -5,7 +5,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Matrix;
 import android.graphics.RectF;
@@ -13,7 +12,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -21,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.fragments.IntroNewRecoverFragment;
 import com.breadwallet.presenter.fragments.IntroNewWalletFragment;
 import com.breadwallet.presenter.fragments.IntroRecoverWalletFragment;
@@ -143,18 +142,7 @@ public class IntroActivity extends FragmentActivity {
         getSupportFragmentManager().beginTransaction().add(R.id.intro_layout, introWelcomeFragment,
                 "introWelcomeFragment").commit();
         if (!m.isPasscodeEnabled(this)) {
-            Log.e(TAG, "WARNING device is not secured!");
-            new AlertDialog.Builder(this)
-                    .setTitle("Warning!")
-                    .setMessage("A device passcode is needed to safeguard your wallet. " +
-                            "Go to settings and turn passcode on to continue.")
-                    .setNegativeButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            finish();
-                        }
-                    })
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show();
+            ((BreadWalletApp)getApplication()).showDeviceNotSecuredWarning(this);
         } else {
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -367,5 +355,6 @@ public class IntroActivity extends FragmentActivity {
 
         }
     }
+
 
 }

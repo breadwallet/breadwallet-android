@@ -1,10 +1,16 @@
 package com.breadwallet.presenter;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;
+import android.app.KeyguardManager;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Point;
+import android.os.Build;
 import android.os.Handler;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
@@ -75,6 +81,8 @@ public class BreadWalletApp extends Application {
     private Toast toast;
     public static int DISPLAY_WIDTH_PX;
     public static int DISPLAY_HEIGHT_PX;
+    public static final String CREDENTIAL_TITLE = "Insert password";
+    public static final String CREDENTIAL_DESCRIPTION = "Insert your password to unlock the app.";
 
     @Override
     public void onCreate() {
@@ -185,6 +193,33 @@ public class BreadWalletApp extends Application {
         View v = activity.getCurrentFocus();
         if (v != null)
             inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP_MR1)
+    public void checkAndPromptForAuthentication(Activity context) {
+        KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Activity.KEYGUARD_SERVICE);
+        if (keyguardManager.isKeyguardSecure()) {
+            Intent intent = keyguardManager.createConfirmDeviceCredentialIntent(CREDENTIAL_TITLE, CREDENTIAL_DESCRIPTION);
+            context.startActivityForResult(intent, 1);
+        } else {
+            showDeviceNotSecuredWarning(context);
+        }
+
+    }
+
+    public void showDeviceNotSecuredWarning(final Activity context) {
+        Log.e(TAG, "WARNING device is not secured!");
+        new AlertDialog.Builder(context)
+                .setTitle("Warning!")
+                .setMessage("A device passcode is needed to safeguard your wallet. " +
+                        "Go to settings and turn passcode on to continue.")
+                .setNegativeButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        context.finish();
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 
 }

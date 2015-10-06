@@ -67,7 +67,8 @@ public class FragmentWipeWallet extends Fragment {
         recoveryPhraseEditText.setText("");
         recoveryPhraseEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) ||
+                        (actionId == EditorInfo.IME_ACTION_DONE)) {
                     wipe.performClick();
                 }
                 return false;
@@ -84,7 +85,7 @@ public class FragmentWipeWallet extends Fragment {
             @Override
             public void onClick(View v) {
                 if (phraseIsValid(recoveryPhraseEditText.getText().toString())) {
-                    m.sweepPrivateKey(null, false, getActivity());
+                    m.sweepPrivateKey();
                     startIntroActivity();
                     getActivity().finish();
                 } else {
@@ -106,7 +107,7 @@ public class FragmentWipeWallet extends Fragment {
     }
 
     private boolean phraseIsValid(String insertedPhrase) {
-        String thePhrase = m.getKeyStoreString(null, getActivity());
+        String thePhrase = m.getPhrase(getActivity());
         if (thePhrase == null) throw new NullPointerException("Phrase is null! weird behaviour");
         Log.e(TAG,"Inserted:" +  insertedPhrase);
         Log.e(TAG,"Actual:" +  thePhrase);
