@@ -32,7 +32,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.breadwallet.tools.sqlite.entities.BRPeerEntity;
+import com.breadwallet.presenter.entities.BRPeerEntity;
 
 import java.util.ArrayList;
 import java.util.List;

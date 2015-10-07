@@ -1,11 +1,11 @@
-package com.breadwallet.tools.sqlite.entities;
+package com.breadwallet.presenter.entities;
 
-import java.io.Serializable;
+import java.util.HashSet;
 
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail on 9/25/15.
+ * Created by Mihail on 9/23/15.
  * Copyright (c) 2015 Mihail Gutan <mihail@breadwallet.com>
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -26,38 +26,21 @@ import java.io.Serializable;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class BRTxInputEntity implements Serializable {
-
+public class BRTransactionEntity {
     private int id;
-    private int index;
-    private byte[] prevOutTxHash;
-    private int prevOutIndex;
-    private int sequence;
-    private byte[] signatures = new byte[32];
+    private int blockHeight;
+    private int lockTime;
+    private long timeStamp;
     private byte[] txHash = new byte[32];
+    private HashSet<BRTxInputEntity> inputs;
+    private HashSet<BRTxOutputEntity> outputs;
 
-    public int getIndex() {
-        return index;
+    public int getBlockHeight() {
+        return blockHeight;
     }
 
-    public void setIndex(int index) {
-        this.index = index;
-    }
-
-    public int getPrevOutIndex() {
-        return prevOutIndex;
-    }
-
-    public void setPrevOutIndex(int prevOutIndex) {
-        this.prevOutIndex = prevOutIndex;
-    }
-
-    public byte[] getPrevOutTxHash() {
-        return prevOutTxHash;
-    }
-
-    public void setPrevOutTxHash(byte[] prevOutTxHash) {
-        this.prevOutTxHash = prevOutTxHash;
+    public void setBlockHeight(int blockHeight) {
+        this.blockHeight = blockHeight;
     }
 
     public int getId() {
@@ -68,20 +51,36 @@ public class BRTxInputEntity implements Serializable {
         this.id = id;
     }
 
-    public int getSequence() {
-        return sequence;
+    public HashSet<BRTxInputEntity> getInputs() {
+        return inputs;
     }
 
-    public void setSequence(int sequence) {
-        this.sequence = sequence;
+    public void setInputs(HashSet<BRTxInputEntity> inputs) {
+        this.inputs = inputs;
     }
 
-    public byte[] getSignatures() {
-        return signatures;
+    public int getLockTime() {
+        return lockTime;
     }
 
-    public void setSignatures(byte[] signatures) {
-        this.signatures = signatures;
+    public void setLockTime(int lockTime) {
+        this.lockTime = lockTime;
+    }
+
+    public HashSet<BRTxOutputEntity> getOutputs() {
+        return outputs;
+    }
+
+    public void setOutputs(HashSet<BRTxOutputEntity> outputs) {
+        this.outputs = outputs;
+    }
+
+    public long getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(long timeStamp) {
+        this.timeStamp = timeStamp;
     }
 
     public byte[] getTxHash() {

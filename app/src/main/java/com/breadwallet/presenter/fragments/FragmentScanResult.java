@@ -17,11 +17,11 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
+import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.adapter.AmountAdapter;
 import com.breadwallet.tools.adapter.CurrencyListAdapter;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.listeners.BackPressCustomKeyboardOnTouchListener;
-import com.breadwallet.tools.CurrencyManager;
 
 import java.math.BigDecimal;
 
@@ -255,8 +255,6 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
                     b.setId(R.id.keyboard_back_button);
                     b.setX(interButtonGap / 2 + interButtonGap * 3 + buttonWidth * 2 + buttonWidth / 4);
                     b.setBackgroundResource(R.drawable.deletetoleft);
-                    b.setWidth((int) (buttonWidth / 3));
-                    b.setHeight((int) (buttonHeight / 3));
                     b.setY(buttonHeight * 3 + interButtonGap * 3 + buttonHeight / 4);
                     break;
             }
@@ -282,7 +280,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
             amountToPay.setText(CurrencyManager.getFormattedCurrencyString(ISO, bitcoinValue.toString()));
             amountBeforeArrow.setText(CurrencyManager.getFormattedCurrencyString(btcIso, otherValue.toString()));
         } else {
-            throw new IllegalArgumentException("currentCurrencyPosition should be BITCOIN_LEFT or BITCOIN_RIGHT");
+            throw new IllegalArgumentException("currentPosition should be BITCOIN_LEFT or BITCOIN_RIGHT");
         }
     }
 

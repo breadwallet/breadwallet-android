@@ -1,4 +1,4 @@
-package com.breadwallet.tools.sqlite.entities;
+package com.breadwallet.presenter.entities;
 
 import java.io.Serializable;
 
@@ -26,13 +26,15 @@ import java.io.Serializable;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class BRTxOutputEntity implements Serializable {
+public class BRTxInputEntity implements Serializable {
 
+    private int id;
     private int index;
-    private char[] address;
-    private byte[] script;
-    private byte[] txHash;
-    private long value;
+    private byte[] prevOutTxHash;
+    private int prevOutIndex;
+    private int sequence;
+    private byte[] signatures = new byte[32];
+    private byte[] txHash = new byte[32];
 
     public int getIndex() {
         return index;
@@ -42,20 +44,44 @@ public class BRTxOutputEntity implements Serializable {
         this.index = index;
     }
 
-    public char[] getAddress() {
-        return address;
+    public int getPrevOutIndex() {
+        return prevOutIndex;
     }
 
-    public void setAddress(char[] arr) {
-        this.address = arr;
+    public void setPrevOutIndex(int prevOutIndex) {
+        this.prevOutIndex = prevOutIndex;
     }
 
-    public byte[] getScript() {
-        return script;
+    public byte[] getPrevOutTxHash() {
+        return prevOutTxHash;
     }
 
-    public void setScript(byte[] script) {
-        this.script = script;
+    public void setPrevOutTxHash(byte[] prevOutTxHash) {
+        this.prevOutTxHash = prevOutTxHash;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(int sequence) {
+        this.sequence = sequence;
+    }
+
+    public byte[] getSignatures() {
+        return signatures;
+    }
+
+    public void setSignatures(byte[] signatures) {
+        this.signatures = signatures;
     }
 
     public byte[] getTxHash() {
@@ -64,13 +90,5 @@ public class BRTxOutputEntity implements Serializable {
 
     public void setTxHash(byte[] txHash) {
         this.txHash = txHash;
-    }
-
-    public long getValue() {
-        return value;
-    }
-
-    public void setValue(long value) {
-        this.value = value;
     }
 }

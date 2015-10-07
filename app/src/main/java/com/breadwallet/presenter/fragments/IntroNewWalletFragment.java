@@ -52,13 +52,14 @@ public class IntroNewWalletFragment extends Fragment {
         introGenerate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new Handler().post(new Runnable() {
+                ((IntroActivity) getActivity()).showWarningFragment();
+                new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         m.generateRandomSeed(getActivity());
                     }
-                });
-                ((IntroActivity) getActivity()).showWarningFragment();
+                }, 500);
+
             }
         });
         return rootView;

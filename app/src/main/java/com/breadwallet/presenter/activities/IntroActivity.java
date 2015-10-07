@@ -16,7 +16,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
@@ -27,10 +26,10 @@ import com.breadwallet.presenter.fragments.IntroWarningFragment;
 import com.breadwallet.presenter.fragments.IntroWelcomeFragment;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
-import com.breadwallet.tools.sqlite.entities.BRMerkleBlockEntity;
-import com.breadwallet.tools.sqlite.entities.BRTransactionEntity;
-import com.breadwallet.tools.sqlite.entities.BRTxInputEntity;
-import com.breadwallet.tools.sqlite.entities.BRTxOutputEntity;
+import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
+import com.breadwallet.presenter.entities.BRTransactionEntity;
+import com.breadwallet.presenter.entities.BRTxInputEntity;
+import com.breadwallet.presenter.entities.BRTxOutputEntity;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.util.HashSet;
@@ -67,8 +66,6 @@ import java.util.Set;
 public class IntroActivity extends FragmentActivity {
     public static final String TAG = IntroActivity.class.getName();
     ImageView background;
-    RelativeLayout layout;
-    boolean noWallet = true;
     private static final int RightToLeft = 1;
     private static final int LeftToRight = 2;
     private static final int DURATION = 30000;
@@ -98,39 +95,28 @@ public class IntroActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
 
-        app = this;
-        final BRWalletManager m = BRWalletManager.getInstance();
-//        m.generateRandomSeed(this);
-
         Log.e(TAG, "Activity created!");
         if (savedInstanceState != null) {
             return;
         }
+
+        //m.generateRandomSeed(this);
+        app = this;
+        final BRWalletManager m = BRWalletManager.getInstance();
         byte[] walletRaw = m.wallet();
 
-//        testSQLiteConnectivity(this);   //do some SQLite testing
+        //testSQLiteConnectivity(this);   //do some SQLite testing
         introWelcomeFragment = new IntroWelcomeFragment();
         introNewRestoreFragment = new IntroNewRecoverFragment();
         introNewWalletFragment = new IntroNewWalletFragment();
         introWarningFragment = new IntroWarningFragment();
         introRecoverWalletFragment = new IntroRecoverWalletFragment();
         leftButton = (Button) findViewById(R.id.intro_left_button);
-
         background = (ImageView) findViewById(R.id.intro_bread_wallet_image);
         background.setScaleType(ImageView.ScaleType.MATRIX);
         leftButton.setVisibility(View.GONE);
         leftButton.setClickable(false);
-
-        background.post(new Runnable() {
-            @Override
-            public void run() {
-                mScaleFactor = (float) background.getHeight() /
-                        (float) background.getDrawable().getIntrinsicHeight();
-                mMatrix.postScale(mScaleFactor, mScaleFactor);
-                background.setImageMatrix(mMatrix);
-                animate();
-            }
-        });
+        animateBackgroundMoving();
 
         leftButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -142,7 +128,7 @@ public class IntroActivity extends FragmentActivity {
         getSupportFragmentManager().beginTransaction().add(R.id.intro_layout, introWelcomeFragment,
                 "introWelcomeFragment").commit();
         if (!m.isPasscodeEnabled(this)) {
-            ((BreadWalletApp)getApplication()).showDeviceNotSecuredWarning(this);
+            ((BreadWalletApp) getApplication()).showDeviceNotSecuredWarning(this);
         } else {
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -354,6 +340,19 @@ public class IntroActivity extends FragmentActivity {
             }
 
         }
+    }
+
+    private void animateBackgroundMoving(){
+        background.post(new Runnable() {
+            @Override
+            public void run() {
+                mScaleFactor = (float) background.getHeight() /
+                        (float) background.getDrawable().getIntrinsicHeight();
+                mMatrix.postScale(mScaleFactor, mScaleFactor);
+                background.setImageMatrix(mMatrix);
+                animate();
+            }
+        });
     }
 
 

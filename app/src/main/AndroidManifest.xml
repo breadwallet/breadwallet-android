@@ -33,7 +33,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".presenter.activities.IntroShowPhraseActivity"
-            android:label="@string/title_activity_intro_show_phrase"></activity>
+            android:label="@string/title_activity_intro_show_phrase"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

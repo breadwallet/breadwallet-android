@@ -1,4 +1,4 @@
-package com.breadwallet.tools.sqlite.entities;
+package com.breadwallet.presenter.entities;
 
 /**
  * BreadWallet

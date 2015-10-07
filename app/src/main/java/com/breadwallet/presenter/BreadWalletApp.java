@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Handler;
+import android.support.v4.BuildConfig;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Display;
@@ -189,7 +190,8 @@ public class BreadWalletApp extends Application {
     }
 
     public static void hideSoftKeyboard(Activity activity) {
-        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        InputMethodManager inputMethodManager = (InputMethodManager)
+                activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         View v = activity.getCurrentFocus();
         if (v != null)
             inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
@@ -220,6 +222,15 @@ public class BreadWalletApp extends Application {
                 })
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
+    }
+
+    public boolean isEmulatorOrDebug() {
+        String fing = Build.FINGERPRINT;
+        boolean isEmulator = false;
+        if (fing != null) {
+            isEmulator = fing.contains("vbox") || fing.contains("generic");
+        }
+        return isEmulator || BuildConfig.DEBUG;
     }
 
 }

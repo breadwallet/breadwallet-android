@@ -1,11 +1,9 @@
-package com.breadwallet.tools.sqlite.entities;
-
-import java.util.HashSet;
+package com.breadwallet.presenter.entities;
 
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail on 9/23/15.
+ * Created by Mihail on 9/29/15.
  * Copyright (c) 2015 Mihail Gutan <mihail@breadwallet.com>
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -26,22 +24,14 @@ import java.util.HashSet;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class BRTransactionEntity {
+public class BRPeerEntity {
+
     private int id;
-    private int blockHeight;
-    private int lockTime;
+    private int address;
+    private short misbehavin;
+    private short port;
+    private short services;
     private long timeStamp;
-    private byte[] txHash = new byte[32];
-    private HashSet<BRTxInputEntity> inputs;
-    private HashSet<BRTxOutputEntity> outputs;
-
-    public int getBlockHeight() {
-        return blockHeight;
-    }
-
-    public void setBlockHeight(int blockHeight) {
-        this.blockHeight = blockHeight;
-    }
 
     public int getId() {
         return id;
@@ -51,28 +41,12 @@ public class BRTransactionEntity {
         this.id = id;
     }
 
-    public HashSet<BRTxInputEntity> getInputs() {
-        return inputs;
+    public int getAddress() {
+        return address;
     }
 
-    public void setInputs(HashSet<BRTxInputEntity> inputs) {
-        this.inputs = inputs;
-    }
-
-    public int getLockTime() {
-        return lockTime;
-    }
-
-    public void setLockTime(int lockTime) {
-        this.lockTime = lockTime;
-    }
-
-    public HashSet<BRTxOutputEntity> getOutputs() {
-        return outputs;
-    }
-
-    public void setOutputs(HashSet<BRTxOutputEntity> outputs) {
-        this.outputs = outputs;
+    public void setAddress(int address) {
+        this.address = address;
     }
 
     public long getTimeStamp() {
@@ -83,11 +57,27 @@ public class BRTransactionEntity {
         this.timeStamp = timeStamp;
     }
 
-    public byte[] getTxHash() {
-        return txHash;
+    public short getMisbehavin() {
+        return misbehavin;
     }
 
-    public void setTxHash(byte[] txHash) {
-        this.txHash = txHash;
+    public void setMisbehavin(short misbehavin) {
+        this.misbehavin = misbehavin;
+    }
+
+    public short getPort() {
+        return port;
+    }
+
+    public void setPort(short port) {
+        this.port = port;
+    }
+
+    public short getServices() {
+        return services;
+    }
+
+    public void setServices(short services) {
+        this.services = services;
     }
 }

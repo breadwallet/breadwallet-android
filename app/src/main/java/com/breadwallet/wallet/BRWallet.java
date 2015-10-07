@@ -1,6 +1,6 @@
 package com.breadwallet.wallet;
 
-import com.breadwallet.tools.sqlite.entities.BRTransactionEntity;
+import com.breadwallet.presenter.entities.BRTransactionEntity;
 
 import java.io.IOException;
 import java.math.BigInteger;

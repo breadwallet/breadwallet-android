@@ -11,7 +11,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PersistableBundle;
-import android.support.v4.BuildConfig;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
@@ -144,7 +143,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
 
         Log.e(TAG, "Activity created!");
-        if (isEmulatorOrDebug()) {
+        if (((BreadWalletApp)getApplication()).isEmulatorOrDebug()) {
             MODE = DEBUG;
             Log.e(TAG, "DEBUG MODE!!!!!!");
         }
@@ -168,6 +167,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                 }
             }
         });
+
 
         burgerButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -369,14 +369,10 @@ public class MainActivity extends FragmentActivity implements Observer {
     }
 
     public void activityButtonsEnable(boolean b) {
-        Log.e(TAG, "TEST VISIBILITY: IN");
-        Log.e(TAG, "TEST VISIBILITY: 0");
         if (!unlocked) {
-            Log.e(TAG, "TEST VISIBILITY: 1");
             lockerButton.setVisibility(b ? View.VISIBLE : View.INVISIBLE);
             lockerButton.setClickable(b);
         } else {
-            Log.e(TAG, "TEST VISIBILITY: 2");
             lockerButton.setVisibility(View.INVISIBLE);
             lockerButton.setClickable(false);
         }
@@ -421,7 +417,6 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     public void pay(View view) {
         SpringAnimator.showAnimation(view);
-        Log.d(TAG, "Test pay button_regular_blue!");
         final MediaPlayer mp = MediaPlayer.create(this, R.raw.coinflip);
         mp.start();
         ((BreadWalletApp) getApplication()).checkAndPromptForAuthentication(this);
@@ -444,16 +439,6 @@ public class MainActivity extends FragmentActivity implements Observer {
     @Override
     public void update(Observable observable, Object data) {
         //TODO balance observer stuff here
-    }
-
-    public boolean isEmulatorOrDebug() {
-        String fing = Build.FINGERPRINT;
-        boolean isEmulator = false;
-        if (fing != null) {
-            isEmulator = fing.contains("vbox") || fing.contains("generic");
-        }
-
-        return isEmulator || BuildConfig.DEBUG;
     }
 
     @Override
