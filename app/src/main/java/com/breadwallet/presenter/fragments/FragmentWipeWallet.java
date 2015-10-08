@@ -17,8 +17,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.IntroActivity;
+import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.wallet.BRWalletManager;
 
 /**
@@ -117,7 +117,7 @@ public class FragmentWipeWallet extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        ((BreadWalletApp) getActivity().getApplication()).hideSoftKeyboard(getActivity());
+        MainActivity.app.softKeyboard.closeSoftKeyboard();
     }
 
     public void startIntroActivity() {

@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -83,14 +84,16 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         customKeyboardLayout = (RelativeLayout) getActivity().findViewById(R.id.custom_keyboard_layout);
         amountToPay = (TextView) getActivity().findViewById(R.id.amount_to_pay);
         amountBeforeArrow = (TextView) getActivity().findViewById(R.id.amount_before_arrow);
-        customKeyboardLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            public void onGlobalLayout() {
-                customKeyboardLayout.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                int[] locations = new int[2];
-                customKeyboardLayout.getLocationOnScreen(locations);
-                createCustomKeyboardButtons(locations[1]);
-            }
-        });
+        customKeyboardLayout.getViewTreeObserver().addOnGlobalLayoutListener(
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+                    public void onGlobalLayout() {
+                        int[] locations = new int[2];
+                        customKeyboardLayout.getLocationOnScreen(locations);
+                        customKeyboardLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        createCustomKeyboardButtons(locations[1]);
+                        Log.e(TAG, "Inside the global layout listener: location[1]: " + locations[1]);
+                    }
+                });
 
         updateBothTextValues(new BigDecimal("0"), new BigDecimal("0"));
         doubleArrow = (TextView) getActivity().findViewById(R.id.double_arrow_text);
@@ -169,31 +172,36 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         int availableWidth = MainActivity.screenParametersPoint.x;
         int availableHeight = MainActivity.screenParametersPoint.y;
         int spaceNeededForRest = availableHeight / 14;
-        Log.e(TAG, "AvailableWidth: " + availableWidth + ", availableHeight: " + availableHeight +
-                ", spaceNeededForRest: " + spaceNeededForRest);
+        Log.e(TAG, "screenParametersPoint.x: " + availableWidth + " screenParametersPoint.y: " + availableHeight);
+//        Log.e(TAG, "AvailableWidth: " + availableWidth + ", availableHeight: " + availableHeight +
+//                ", spaceNeededForRest: " + spaceNeededForRest);
         float gapRate = 0.2f;
         float gap = (availableWidth * gapRate);
         float interButtonGap = gap / 5;
         float buttonWidth = (availableWidth - gap) / 3;
         float buttonHeight = buttonWidth;
         float spaceNeeded = buttonHeight * 4 + gap;
-        Log.e(TAG, "space taken: " + spaceNeeded);
+
+//        Log.e(TAG, "space taken: " + spaceNeeded);
 
         int keyboardLayoutY = y;
         int buttonTextSize = 45;
-        Log.e(TAG, "spaceNeeded: " + spaceNeeded + ", keyboardLayoutY: " + keyboardLayoutY);
+//        Log.e(TAG, "spaceNeeded: " + spaceNeeded + ", keyboardLayoutY: " + keyboardLayoutY);
+        Log.e(TAG, String.format("gap:%f interButtonGap:%f spaceNeeded:%f spaceNeededForRest:%d keyboardLayoutY:%d",
+                gap, interButtonGap, spaceNeeded, spaceNeededForRest, keyboardLayoutY));
         if (spaceNeeded > (availableHeight - (spaceNeededForRest + keyboardLayoutY))) {
-            Log.e(TAG, "More Space needed! buttonHeight: " + buttonHeight);
+//            Log.e(TAG, "More Space needed! buttonHeight: " + buttonHeight);
             buttonHeight = ((availableHeight - (spaceNeededForRest + keyboardLayoutY)) - gap) / 4;
-            buttonTextSize = (int) ((buttonHeight / 7));
+            buttonTextSize = (int) ((buttonHeight / 5));
         }
         int minimumHeight = (int) (buttonHeight * 4 + interButtonGap * 4);
-        Log.d(TAG, "The gap: " + gap + ", The buttonHeight: " + buttonHeight + ", buttonWidth: " + buttonWidth);
+//        Log.d(TAG, "The gap: " + gap + ", The buttonHeight: " + buttonHeight + ", buttonWidth: " + buttonWidth);
         if (customKeyboardLayout == null) {
             customKeyboardLayout = (RelativeLayout) getActivity().findViewById(R.id.custom_keyboard_layout);
         }
         customKeyboardLayout.setMinimumHeight(minimumHeight);
         int childCount = 12;
+        Log.e(TAG, "Button params: width " + buttonWidth + " height " + buttonHeight);
         for (int i = 0; i < childCount; i++) {
             Button b = new Button(getActivity());
             b.setWidth((int) buttonWidth);
@@ -203,6 +211,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
             b.setBackgroundResource(R.drawable.button_regular_blue);
             b.setOnClickListener(this);
             b.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            ImageButton imageB = null;
             if (i < 9)
                 b.setText(String.valueOf(i + 1));
             switch (i) {
@@ -250,15 +259,24 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
                     b.setY(buttonHeight * 3 + interButtonGap * 3);
                     break;
                 case 11:
-                    b.setLongClickable(true);
-                    b.setOnTouchListener(new BackPressCustomKeyboardOnTouchListener());
-                    b.setId(R.id.keyboard_back_button);
-                    b.setX(interButtonGap / 2 + interButtonGap * 3 + buttonWidth * 2 + buttonWidth / 4);
-                    b.setBackgroundResource(R.drawable.deletetoleft);
-                    b.setY(buttonHeight * 3 + interButtonGap * 3 + buttonHeight / 4);
+                    imageB = new ImageButton(getActivity());
+                    imageB.setImageResource(R.drawable.deletetoleft);
+                    imageB.setOnClickListener(this);
+                    imageB.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                    imageB.setLongClickable(true);
+                    imageB.setOnTouchListener(new BackPressCustomKeyboardOnTouchListener());
+                    imageB.setId(R.id.keyboard_back_button);
+                    imageB.setBackgroundColor(android.R.color.transparent);
+                    imageB.setX(interButtonGap / 2 + interButtonGap * 3 + buttonWidth * 2 + (buttonWidth / 4));
+                    imageB.setY(buttonHeight * 3 + interButtonGap * 3 + (buttonHeight / 4));
+//                    imageB.setBackgroundResource(R.drawable.button_regular_blue);
                     break;
             }
-            customKeyboardLayout.addView(b);
+            if (imageB != null) {
+                customKeyboardLayout.addView(imageB);
+            } else {
+                customKeyboardLayout.addView(b);
+            }
         }
     }
 

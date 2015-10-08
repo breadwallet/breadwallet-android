@@ -68,7 +68,7 @@ public class PasswordDialogFragment extends DialogFragment {
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((BreadWalletApp) getActivity().getApplication()).hideSoftKeyboard(getActivity());
+                MainActivity.app.softKeyboard.closeSoftKeyboard();
                 getDialog().cancel();
                 passwordEditText.setText("");
             }
@@ -81,7 +81,7 @@ public class PasswordDialogFragment extends DialogFragment {
                     String tmp = CurrencyManager.getCurrentBalanceText();
                     ((BreadWalletApp) getActivity().getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
                     ((MainActivity) getActivity()).setUnlocked(true);
-                    ((BreadWalletApp) getActivity().getApplication()).hideSoftKeyboard(getActivity());
+                    MainActivity.app.softKeyboard.closeSoftKeyboard();
                 } else {
                     Log.d(TAG, "Not equal, the text is: " + passwordEditText.getText().toString());
                     SpringAnimator.showAnimation(dialogFragment.getView());
@@ -111,8 +111,6 @@ public class PasswordDialogFragment extends DialogFragment {
     @Override
     public void onPause() {
         super.onPause();
-
-        ((BreadWalletApp) getActivity().getApplication()).hideSoftKeyboard(getActivity());
-        ((BreadWalletApp) getActivity().getApplication()).hideSoftKeyboard(getActivity());
+        MainActivity.app.softKeyboard.closeSoftKeyboard();
     }
 }

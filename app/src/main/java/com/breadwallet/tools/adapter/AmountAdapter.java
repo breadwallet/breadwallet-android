@@ -184,7 +184,8 @@ public class AmountAdapter extends Observable {
                     leftValueObject = rate.multiply(rightValueObject.divide(new BigDecimal("1000000")));
                 } else if (FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_LEFT) {
                     //from other currency to bits using rate
-                    leftValueObject = rightValueObject.multiply(new BigDecimal("1000000")).divide(rate, RoundingMode.CEILING);
+                    leftValueObject = rightValueObject.multiply(new BigDecimal("1000000")).
+                            divide(rate, RoundingMode.CEILING);
                 } else {
                     throw new IllegalArgumentException("currentCurrencyPosition should be BITCOIN_LEFT or BITCOIN_RIGHT");
                 }

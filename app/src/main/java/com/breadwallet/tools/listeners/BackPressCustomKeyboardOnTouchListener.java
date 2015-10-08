@@ -49,7 +49,12 @@ public class BackPressCustomKeyboardOnTouchListener implements View.OnTouchListe
             }, LONG_CLICK_DURATION);
         } else if (event.getAction() == MotionEvent.ACTION_UP) {
             handler.removeCallbacksAndMessages(null);
-            String tmp = ((Button) v).getText().toString();
+            String tmp;
+            try {
+                tmp = ((Button) v).getText().toString();
+            } catch (ClassCastException ex){
+                tmp = "";
+            }
             AmountAdapter.preConditions(tmp);
         }
         return true;

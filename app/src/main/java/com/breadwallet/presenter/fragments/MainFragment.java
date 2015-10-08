@@ -16,9 +16,10 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.tools.BRClipboardManager;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.FragmentAnimator;
-import com.breadwallet.tools.BRClipboardManager;
 
 /**
  * BreadWallet
@@ -88,14 +89,15 @@ public class MainFragment extends Fragment {
                     String address = BRClipboardManager.readFromClipboard(getActivity());
                     Log.e(TAG, "The address before check: " + address);
                     if (checkIfAddressIsValid(address)) {
-                        payAddressFromClipboardButton.setBackgroundResource(R.drawable.buttonbluepressed);
-                        addressEditText.setText(address);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                payAddressFromClipboardButton.setBackgroundResource(R.drawable.buttonblue);
-                            }
-                        }, 50);
+                        //in case the button pressing starts to look ugly__________
+//                        payAddressFromClipboardButton.setBackgroundResource(R.drawable.buttonbluepressed);
+//                        addressEditText.setText(address);
+//                        new Handler().postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                payAddressFromClipboardButton.setBackgroundResource(R.drawable.buttonblue);
+//                            }
+//                        }, 50);
                         if (FragmentDecoder.accessGranted) {
                             new Handler().postDelayed(new Runnable() {
                                 @Override
@@ -159,9 +161,16 @@ public class MainFragment extends Fragment {
         }
         return true;
     }
+
     @Override
     public void onResume() {
         super.onResume();
         MiddleViewAdapter.resetMiddleView(null);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        MainActivity.app.softKeyboard.closeSoftKeyboard();
     }
 }

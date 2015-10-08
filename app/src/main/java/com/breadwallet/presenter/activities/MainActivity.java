@@ -1,6 +1,7 @@
 package com.breadwallet.presenter.activities;
 
 import android.annotation.TargetApi;
+import android.app.Service;
 import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,13 +13,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.PersistableBundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -39,6 +40,7 @@ import com.breadwallet.presenter.fragments.FragmentWipeWallet;
 import com.breadwallet.presenter.fragments.PasswordDialogFragment;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.NetworkChangeReceiver;
+import com.breadwallet.tools.SoftKeyboard;
 import com.breadwallet.tools.adapter.AmountAdapter;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
@@ -80,6 +82,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     public static final String TAG = "MainActivity";
     public static final String PREFS_NAME = "MyPrefsFile";
     public static MainActivity app;
+    public static boolean isSoftKeyboardShown = false;
     public static boolean decoderFragmentOn;
     public static boolean scanResultFragmentOn;
     public CustomPagerAdapter pagerAdapter;
@@ -118,7 +121,8 @@ public class MainActivity extends FragmentActivity implements Observer {
     public static final int RELEASE = 2;
     public static int MODE = RELEASE;
     public TextView testnet;
-
+    public SoftKeyboard softKeyboard;
+    RelativeLayout mainLayout;
 
     /**
      * Public constructor used to assign the current instance to the app variable
@@ -143,12 +147,13 @@ public class MainActivity extends FragmentActivity implements Observer {
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
 
         Log.e(TAG, "Activity created!");
-        if (((BreadWalletApp)getApplication()).isEmulatorOrDebug()) {
+        if (((BreadWalletApp) getApplication()).isEmulatorOrDebug()) {
             MODE = DEBUG;
             Log.e(TAG, "DEBUG MODE!!!!!!");
         }
-        final FragmentManager fm = getSupportFragmentManager();
+        mainLayout = (RelativeLayout) findViewById(R.id.main_layout);
         initializeViews();
+        setSoftKeyboardCallback();
         testnet.setVisibility(MODE == DEBUG ? View.VISIBLE : View.GONE);
 
         viewFlipper.setOnClickListener(new View.OnClickListener() {
@@ -231,6 +236,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         FragmentAnimator.level = 0;
         CurrencyManager.stopTimerTask();
         Log.e(TAG, "Activity Destroyed!");
+        softKeyboard.unRegisterSoftKeyboardCallback();
 
     }
 
@@ -447,11 +453,29 @@ public class MainActivity extends FragmentActivity implements Observer {
             setUnlocked(true);
             String tmp = CurrencyManager.getCurrentBalanceText();
             ((BreadWalletApp) getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
-            ((BreadWalletApp) getApplication()).hideSoftKeyboard(this);
+            softKeyboard.closeSoftKeyboard();
         } else {
             setUnlocked(false);
             ((BreadWalletApp) getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_IMAGE, null);
         }
+    }
+
+    private void setSoftKeyboardCallback() {
+        InputMethodManager im = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
+        softKeyboard = new SoftKeyboard(mainLayout, im);
+        softKeyboard.setSoftKeyboardCallback(new SoftKeyboard.SoftKeyboardChanged() {
+            @Override
+            public void onSoftKeyboardHide() {
+                Log.e(TAG, "SoftKeyboard has been hidden!");
+                isSoftKeyboardShown = false;
+            }
+
+            @Override
+            public void onSoftKeyboardShow() {
+                Log.e(TAG, "SoftKeyboard has been shown!");
+                isSoftKeyboardShown = true;
+            }
+        });
     }
 
 }
