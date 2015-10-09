@@ -66,6 +66,7 @@ public class MainFragmentQR extends Fragment {
     public Bitmap bitmap;
     public SharingFragment sharingFragment;
     public FragmentManager fm;
+    private RelativeLayout main_fragment_qr;
     private int count;
     private int firstToastY = -1;
     private int secondToastY = -1;
@@ -78,12 +79,16 @@ public class MainFragmentQR extends Fragment {
         // properly.
         final View rootView = inflater.inflate(
                 R.layout.fragment_qr_main, container, false);
+
         qrcode = (ImageView) rootView.findViewById(R.id.main_image_qr_code);
         sharingFragment = new SharingFragment();
-        generateQR();
+        main_fragment_qr = (RelativeLayout) rootView.findViewById(R.id.main_fragment_qr);
         mainAddressText = (TextView) rootView.findViewById(R.id.main_address_text);
         addressLayout = (RelativeLayout) rootView.findViewById(R.id.theAddressLayout);
+
+        generateQR();
         fm = getActivity().getSupportFragmentManager();
+        main_fragment_qr.setPadding(0, MainActivity.screenParametersPoint.y / 5, 0, 0);
         final BreadWalletApp breadWalletApp = (BreadWalletApp) MainActivity.app.getApplication();
         addressLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -173,6 +178,7 @@ public class MainFragmentQR extends Fragment {
             }
         }
     }
+
     @Override
     public void onResume() {
         super.onResume();

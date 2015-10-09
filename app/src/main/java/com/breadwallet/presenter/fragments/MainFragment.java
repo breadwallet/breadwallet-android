@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
@@ -52,6 +53,7 @@ public class MainFragment extends Fragment {
     private Button payAddressFromClipboardButton;
     public EditText addressEditText;
     private AlertDialog alertDialog;
+    private LinearLayout mainFragmentLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -67,11 +69,14 @@ public class MainFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         scanQRButton = (Button) getActivity().findViewById(R.id.main_button_scan_qr_code);
+        mainFragmentLayout = (LinearLayout) getActivity().findViewById(R.id.main_fragment);
         payAddressFromClipboardButton = (Button)
                 getActivity().findViewById(R.id.main_button_pay_address_from_clipboard);
         alertDialog = new AlertDialog.Builder(getActivity()).create();
         addressEditText = (EditText) getView().findViewById(R.id.address_edit_text);
         addressEditText.setGravity(Gravity.CENTER_HORIZONTAL);
+
+        mainFragmentLayout.setPadding(0, MainActivity.screenParametersPoint.y / 5, 0, 0);
         scanQRButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

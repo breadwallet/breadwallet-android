@@ -90,7 +90,7 @@ public class BRWalletManager {
 
 //    public native byte[] connect();
 
-    public native byte[] wallet();
+//    public native byte[] wallet();
 
     public static boolean setKeychainData(ByteBuffer buffer, String key, boolean authenticated) {
 

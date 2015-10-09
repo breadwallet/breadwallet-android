@@ -4,11 +4,18 @@
     android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/transparent"
     tools:context="com.breadwallet.presenter.activities.MainActivity">
 
+    <com.breadwallet.tools.adapter.ParallaxViewPager xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/main_viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
     <ViewFlipper
         android:id="@+id/middle_view_flipper"
         android:layout_width="300dp"
+        android:background="@android:color/transparent"
         android:layout_height="28dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp">
@@ -84,13 +91,6 @@
             android:textColor="@android:color/white" />
 
     </RelativeLayout>
-
-    <com.breadwallet.tools.adapter.ParallaxViewPager xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/main_viewpager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/main_internet_status_bar"
-        android:layout_marginTop="10dp" />
 
     <RelativeLayout
         android:id="@+id/main_pager_indicator"

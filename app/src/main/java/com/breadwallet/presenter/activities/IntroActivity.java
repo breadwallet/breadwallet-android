@@ -72,9 +72,9 @@ public class IntroActivity extends FragmentActivity {
     private boolean backPressAvailable = false;
 
     //loading the native library
-    static {
-        System.loadLibrary("BreadWalletCore");
-    }
+//    static {
+//        System.loadLibrary("BreadWalletCore");
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,7 +101,7 @@ public class IntroActivity extends FragmentActivity {
         leftButton.setClickable(false);
 
         final BRWalletManager m = BRWalletManager.getInstance();
-        byte[] walletRaw = m.wallet();
+//        byte[] walletRaw = m.wallet();
 
         BackgroundMovingAnimator.animateBackgroundMoving(background); //animates the orange BW background moving.
 
@@ -115,24 +115,7 @@ public class IntroActivity extends FragmentActivity {
         getSupportFragmentManager().beginTransaction().add(R.id.intro_layout, introWelcomeFragment,
                 "introWelcomeFragment").commit();
 
-        if (!m.isPasscodeEnabled(this)) {
-            //Device passcode/password should be enabled for the app to work
-            ((BreadWalletApp) getApplication()).showDeviceNotSecuredWarning(this);
-        } else {
-            //now check if there is a wallet or should we create/restore one.
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (m.noWallet(app)) {
-                        Log.e(TAG, "should create new wallet");
-                        showRecoverNewWalletFragment();
-                    } else {
-                        Log.e(TAG, "should go to the current wallet");
-                        startMainActivity();
-                    }
-                }
-            }, 800);
-        }
+        startTheWalletIfExists();
 
     }
 
@@ -208,6 +191,28 @@ public class IntroActivity extends FragmentActivity {
         if (backPressAvailable)
             super.onBackPressed();
 
+    }
+
+    private void startTheWalletIfExists() {
+        final BRWalletManager m = BRWalletManager.getInstance();
+        if (!m.isPasscodeEnabled(this)) {
+            //Device passcode/password should be enabled for the app to work
+            ((BreadWalletApp) getApplication()).showDeviceNotSecuredWarning(this);
+        } else {
+            //now check if there is a wallet or should we create/restore one.
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (m.noWallet(app)) {
+                        Log.e(TAG, "should create new wallet");
+                        showRecoverNewWalletFragment();
+                    } else {
+                        Log.e(TAG, "should go to the current wallet");
+                        startMainActivity();
+                    }
+                }
+            }, 800);
+        }
     }
 
     public void testSQLiteConnectivity(Activity context) {

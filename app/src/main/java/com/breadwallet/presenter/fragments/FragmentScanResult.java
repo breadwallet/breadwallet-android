@@ -3,7 +3,6 @@ package com.breadwallet.presenter.fragments;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -88,24 +87,18 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         doubleArrow = (TextView) getActivity().findViewById(R.id.double_arrow_text);
 
         /**
-         * This mess is for the custom keyboard to be created after the soft keyboard is hidden to prevent
-         * the wrong position of the keyboard layout placement
-         * */
+         * This mess is for the custom keyboard to be created after the soft keyboard is hidden
+         * (if it was previously shown) to prevent the wrong position of the keyboard layout placement
+         */
         customKeyboardLayout.getViewTreeObserver().addOnGlobalLayoutListener(
                 new ViewTreeObserver.OnGlobalLayoutListener() {
                     public void onGlobalLayout() {
-                        final ViewTreeObserver.OnGlobalLayoutListener victim = this;
                         if (!MainActivity.app.isSoftKeyboardShown()) {
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    int[] locations = new int[2];
-                                    customKeyboardLayout.getLocationOnScreen(locations);
-                                    customKeyboardLayout.getViewTreeObserver().removeOnGlobalLayoutListener(victim);
-                                    createCustomKeyboardButtons(locations[1]);
-                                    Log.e(TAG, "Inside the global layout listener: location[1]: " + locations[1]);
-                                }
-                            }, 100);
+                            int[] locations = new int[2];
+                            customKeyboardLayout.getLocationOnScreen(locations);
+                            customKeyboardLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                            createCustomKeyboardButtons(locations[1]);
+                            Log.e(TAG, "Inside the global layout listener: location[1]: " + locations[1]);
 
                         }
                     }
@@ -181,7 +174,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         int availableWidth = MainActivity.screenParametersPoint.x;
         int availableHeight = MainActivity.screenParametersPoint.y;
         int spaceNeededForRest = availableHeight / 14;
-        Log.e(TAG, "screenParametersPoint.x: " + availableWidth + " screenParametersPoint.y: " + availableHeight);
+//        Log.e(TAG, "screenParametersPoint.x: " + availableWidth + " screenParametersPoint.y: " + availableHeight);
 //        Log.e(TAG, "AvailableWidth: " + availableWidth + ", availableHeight: " + availableHeight +
 //                ", spaceNeededForRest: " + spaceNeededForRest);
         float gapRate = 0.2f;
@@ -194,8 +187,8 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         int keyboardLayoutY = y;
         int buttonTextSize = 45;
 //        Log.e(TAG, "spaceNeeded: " + spaceNeeded + ", keyboardLayoutY: " + keyboardLayoutY);
-        Log.e(TAG, String.format("gap:%f interButtonGap:%f spaceNeeded:%f spaceNeededForRest:%d keyboardLayoutY:%d",
-                gap, interButtonGap, spaceNeeded, spaceNeededForRest, keyboardLayoutY));
+//        Log.e(TAG, String.format("gap:%f interButtonGap:%f spaceNeeded:%f spaceNeededForRest:%d keyboardLayoutY:%d",
+//                gap, interButtonGap, spaceNeeded, spaceNeededForRest, keyboardLayoutY));
         if (spaceNeeded > (availableHeight - (spaceNeededForRest + keyboardLayoutY))) {
 //            Log.e(TAG, "More Space needed! buttonHeight: " + buttonHeight);
             buttonHeight = ((availableHeight - (spaceNeededForRest + keyboardLayoutY)) - gap) / 4;
@@ -208,7 +201,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         }
         customKeyboardLayout.setMinimumHeight(minimumHeight);
         int childCount = 12;
-        Log.e(TAG, "Button params: width " + buttonWidth + " height " + buttonHeight);
+//        Log.e(TAG, "Button params: width " + buttonWidth + " height " + buttonHeight);
         for (int i = 0; i < childCount; i++) {
             Button b = new Button(getActivity());
             b.setWidth((int) buttonWidth);
@@ -276,7 +269,6 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
                     imageB.setBackgroundColor(android.R.color.transparent);
                     imageB.setX(interButtonGap / 2 + interButtonGap * 3 + buttonWidth * 2 + (buttonWidth / 4));
                     imageB.setY(buttonHeight * 3 + interButtonGap * 3 + (buttonHeight / 4));
-//                    imageB.setBackgroundResource(R.drawable.button_regular_blue);
                     break;
             }
             customKeyboardLayout.addView(imageB != null ? imageB : b);
@@ -317,6 +309,14 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
             rate = settings.getFloat(FragmentCurrency.RATE, 1);
         }
         Log.d(TAG, "ISO: " + ISO + ", rate: " + rate);
+    }
+
+    /**
+     * Saves the y coordinate of the keyboard once it's created successfully the first time
+     */
+    private void saveKeyboardLocationInPrefs() {
+
+
     }
 
 }

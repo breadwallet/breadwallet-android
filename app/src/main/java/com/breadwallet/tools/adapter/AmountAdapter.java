@@ -49,7 +49,6 @@ public class AmountAdapter extends Observable {
     public static int digitsInserted = 0;
 
     public static void preConditions(String tmp) {
-
         switch (tmp) {
             case "":
                 doBackSpace();

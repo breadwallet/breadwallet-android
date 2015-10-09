@@ -197,7 +197,8 @@ public class MainActivity extends FragmentActivity implements Observer {
             public void onClick(View v) {
                 SpringAnimator.showAnimation(lockerButton);
 //                passwordDialogFragment.show(fm, TAG);
-                ((BreadWalletApp) getApplication()).checkAndPromptForAuthentication(app);
+                    ((BreadWalletApp) getApplication()).checkAndPromptForAuthentication(app);
+
             }
         });
         scaleView(pageIndicatorLeft, 1f, PAGE_INDICATOR_SCALE_UP, 1f, PAGE_INDICATOR_SCALE_UP);

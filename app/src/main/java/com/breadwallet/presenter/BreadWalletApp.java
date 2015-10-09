@@ -190,13 +190,18 @@ public class BreadWalletApp extends Application {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP_MR1)
     public void checkAndPromptForAuthentication(Activity context) {
-        KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Activity.KEYGUARD_SERVICE);
-        if (keyguardManager.isKeyguardSecure()) {
-            Intent intent = keyguardManager.createConfirmDeviceCredentialIntent(CREDENTIAL_TITLE, CREDENTIAL_DESCRIPTION);
-            context.startActivityForResult(intent, 1);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Activity.KEYGUARD_SERVICE);
+            if (keyguardManager.isKeyguardSecure()) {
+                Intent intent = keyguardManager.createConfirmDeviceCredentialIntent(CREDENTIAL_TITLE, CREDENTIAL_DESCRIPTION);
+                context.startActivityForResult(intent, 1);
+            } else {
+                showDeviceNotSecuredWarning(context);
+            }
         } else {
-            showDeviceNotSecuredWarning(context);
+            showCustomToast(context, "Ups! api level lower then 21",300, Toast.LENGTH_SHORT);
         }
+
 
     }
 
