@@ -73,18 +73,12 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         // The last two arguments ensure LayoutParams are inflated
         // properly.
         final View rootView = inflater.inflate(R.layout.fragment_scan_result, container, false);
-        return rootView;
-    }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        scanResult = (TextView) getActivity().findViewById(R.id.scan_result);
-        customKeyboardLayout = (RelativeLayout) getActivity().findViewById(R.id.custom_keyboard_layout);
-        amountToPay = (TextView) getActivity().findViewById(R.id.amount_to_pay);
-        amountBeforeArrow = (TextView) getActivity().findViewById(R.id.amount_before_arrow);
-        doubleArrow = (TextView) getActivity().findViewById(R.id.double_arrow_text);
+        scanResult = (TextView) rootView.findViewById(R.id.scan_result);
+        customKeyboardLayout = (RelativeLayout) rootView.findViewById(R.id.custom_keyboard_layout);
+        amountToPay = (TextView) rootView.findViewById(R.id.amount_to_pay);
+        amountBeforeArrow = (TextView) rootView.findViewById(R.id.amount_before_arrow);
+        doubleArrow = (TextView) rootView.findViewById(R.id.double_arrow_text);
 
         /**
          * This mess is for the custom keyboard to be created after the soft keyboard is hidden
@@ -116,7 +110,12 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         doubleArrow.setOnClickListener(listener);
         amountBeforeArrow.setOnClickListener(listener);
         amountToPay.setOnClickListener(listener);
+        return rootView;
+    }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
     }
 
     @Override

@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="140dp">
+
+        <RelativeLayout
+            android:id="@+id/transactions_item"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:id="@+id/tx_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/clickable_layout"
+                android:clickable="true"
+                android:padding="20dp">
+
+                <TextView
+                    android:id="@+id/tx_id_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="32sp"
+                    android:layout_centerVertical="true"
+                    android:text="id:"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/dark_grey" />
+
+                <TextView
+                    android:id="@+id/tx_id_text2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:textSize="32sp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_toEndOf="@id/tx_id_text"
+                    android:ellipsize="middle"
+                    android:singleLine="true"
+                    android:text="vxc987bc0xcvx0b0x80x08cb00x978x6b590x70b6x9886cb5xc5b0xb5xb6x89"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/grey" />
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/tx_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tx_id"
+                android:background="@drawable/clickable_layout"
+                android:clickable="true"
+                android:padding="20dp">
+
+                <TextView
+                    android:id="@+id/tx_status_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:textSize="32sp"
+                    android:text="status:"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/dark_grey" />
+
+                <TextView
+                    android:id="@+id/tx_status_text1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:textSize="32sp"
+                    android:text="confirmed in block #??????\n9/4@11a"
+                    android:textAlignment="viewEnd"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/grey" />
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/tx_amount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tx_status"
+                android:background="@drawable/clickable_layout"
+                android:clickable="true"
+                android:padding="20dp">
+
+                <TextView
+                    android:id="@+id/tx_amount_text"
+                    android:layout_width="wrap_content"
+                    android:textSize="32sp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="amount:"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/dark_grey" />
+
+                <TextView
+                    android:id="@+id/tx_amount_text2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="32sp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="20dp"
+                    android:text="\u01801,000,000"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/dark_grey" />
+
+                <TextView
+                    android:id="@+id/tx_amount_text1"
+                    android:layout_width="wrap_content"
+                    android:textSize="32sp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@id/tx_amount_text2"
+                    android:text="($232.16)"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/grey" />
+
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tx_from"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="32sp"
+                android:layout_below="@+id/tx_amount"
+                android:layout_centerVertical="true"
+                android:padding="20dp"
+                android:text="from:"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/dark_grey" />
+
+            <RelativeLayout
+                android:id="@+id/tx_from_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tx_from"
+                android:background="@drawable/clickable_layout"
+                android:clickable="true"
+                android:padding="20dp">
+
+
+                <TextView
+                    android:id="@+id/tx_from_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="32sp"
+                    android:singleLine="true"
+                    android:text="mhBmRiqosSHR9YnPTKc3xXcvhEcKtjet2p"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/grey" />
+
+                <TextView
+                    android:id="@+id/tx_from_text1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tx_from_text"
+                    android:textSize="32sp"
+                    android:text="spent address"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/grey" />
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tx_to"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tx_from_layout"
+                android:textSize="32sp"
+                android:layout_centerVertical="true"
+                android:padding="20dp"
+                android:text="to:"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/dark_grey" />
+
+            <RelativeLayout
+                android:id="@+id/tx_to_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tx_to"
+
+                android:padding="20dp"
+                android:background="@drawable/clickable_layout"
+                android:clickable="true">
+
+                <TextView
+                    android:id="@+id/tx_to_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="32sp"
+                    android:singleLine="true"
+                    android:text="mhBmRiqosSHR9YnPTKc3xXcvhEcKtjet2p"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/grey" />
+
+                <TextView
+                    android:id="@+id/tx_to_text1"
+                    android:layout_width="wrap_content"
+                    android:textSize="32sp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tx_to_text"
+                    android:text="wallet address"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/grey" />
+
+                <TextView
+                    android:id="@+id/tx_to_text3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="32sp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_below="@+id/tx_to_text"
+                    android:layout_marginLeft="@dimen/transaction_item_margin"
+                    android:layout_marginRight="@dimen/transaction_item_margin"
+                    android:text="\u01801,000,000"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/dark_grey" />
+
+                <TextView
+                    android:id="@+id/tx_to_text2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="32sp"
+                    android:layout_below="@+id/tx_to_text"
+                    android:layout_marginLeft="@dimen/transaction_item_margin"
+                    android:layout_toStartOf="@id/tx_to_text3"
+                    android:text="($232.16)"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/grey" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+    </LinearLayout>
+</ScrollView>

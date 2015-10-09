@@ -1,0 +1,142 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="120dp">
+
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/transactions"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:background="@drawable/clickable_layout"
+                android:clickable="true">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:text="no Transactions"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/light_grey" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/import_private_key"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_below="@+id/transactions"
+                android:layout_marginTop="40dp"
+                android:background="@drawable/clickable_layout"
+                android:clickable="true">
+
+                <ImageView
+                    android:id="@+id/camera_guide"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="40dp"
+                    android:background="@drawable/cameraguidebluesmall" />
+
+                <TextView
+                    android:id="@+id/text_import_private_key"
+                    android:layout_width="wrap_content"
+                    android:textSize="32sp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="40dp"
+                    android:layout_toEndOf="@+id/camera_guide"
+                    android:text="import private key"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/dark_blue" />
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rescan_blockchain"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_below="@+id/import_private_key"
+                android:background="@drawable/clickable_layout"
+                android:clickable="true">
+
+
+                <ImageView
+                    android:id="@+id/rescan_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="40dp"
+                    android:background="@drawable/rescan" />
+
+                <TextView
+                    android:id="@+id/text_rescan_blockchain"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="40dp"
+                    android:textSize="32sp"
+                    android:layout_toEndOf="@+id/rescan_image"
+                    android:text="rescan blockchain"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/dark_blue" />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/rescan_instructions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/rescan_blockchain"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
+                android:layout_marginTop="20dp"
+                android:text="@string/settingsall_rescan_instructions"
+                android:textColor="@color/grey"
+                android:textSize="27sp" />
+
+            <RelativeLayout
+                android:id="@+id/settings"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_below="@+id/rescan_instructions"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/clickable_layout"
+                android:clickable="true">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="40dp"
+
+                    android:text="settings"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/grey"
+                    android:textSize="32sp" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="40dp"
+                    android:background="@drawable/chevron" />
+
+            </RelativeLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

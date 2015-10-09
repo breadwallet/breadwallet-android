@@ -40,7 +40,7 @@ public class BackgroundMovingAnimator {
     private static ValueAnimator mCurrentAnimator;
     private static final Matrix mMatrix = new Matrix();
     private static float mScaleFactor;
-    private static final int DURATION = 20000;
+    private static final int DURATION = 30000;
     private static ImageView background;
 
     private static void animate() {

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/intro_new_wallet_text1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="160dp"
+        android:padding="40dp"
+        android:gravity="center"
+        android:text="start a new wallet by generating a wallet recovery phrase"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="32sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/intro_new_wallet_text2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/intro_new_wallet_text1"
+        android:layout_centerHorizontal="true"
+        android:padding="40dp"
+        android:gravity="center"
+        android:text="start a new wallet by generating a wallet recovery phrase"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="32sp" />
+
+    <Button
+        android:id="@+id/intro_new_wallet_generate"
+        android:layout_width="420dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/intro_new_wallet_text2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="80dp"
+        android:background="@drawable/button_white"
+        android:text="generate recovery phrase"
+        android:textColor="@color/white"
+        android:padding="20dp"
+        android:textSize="32sp" />
+</RelativeLayout>

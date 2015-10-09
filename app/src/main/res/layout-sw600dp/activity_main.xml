@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    tools:context="com.breadwallet.presenter.activities.MainActivity">
+
+    <com.breadwallet.tools.adapter.ParallaxViewPager xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/main_viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+    <ViewFlipper
+        android:id="@+id/middle_view_flipper"
+        android:layout_width="450dp"
+        android:background="@android:color/transparent"
+        android:layout_height="42dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp">
+
+        <ImageView
+            android:id="@+id/main_label_breadwallet"
+            android:layout_width="180dp"
+            android:layout_height="30dp"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:background="@drawable/breadwalletupcentered" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="42dp"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:text="settings"
+            android:textColor="@color/grey"
+            android:textSize="32sp"></TextView>
+    </ViewFlipper>
+
+    <Button
+        android:id="@+id/main_button_burger"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+        android:layout_alignParentStart="true"
+        android:background="@drawable/burger" />
+
+
+    <ViewFlipper
+        android:id="@+id/locker_pay_flipper"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+        android:layout_alignParentEnd="true">
+
+        <Button
+            android:id="@+id/main_button_locker"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/locker" />
+
+        <TextView
+            android:id="@+id/main_button_pay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="pay"
+            android:onClick="pay"
+            android:clickable="true"
+            android:textColor="@color/dark_blue"
+            android:textSize="44sp" />
+
+    </ViewFlipper>
+
+    <RelativeLayout
+        android:id="@+id/main_internet_status_bar"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_below="@+id/middle_view_flipper"
+        android:layout_centerHorizontal="true"
+        android:background="@color/red"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:text="No internet connection"
+            android:textColor="@android:color/white" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/main_pager_indicator"
+        android:layout_width="120dp"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="40dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/circle_indicator_left"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+            android:background="@drawable/shadow"
+            android:paddingBottom="@dimen/pager_indicator_shadow_padding"
+            android:paddingLeft="@dimen/pager_indicator_shadow_padding"
+            android:paddingRight="@dimen/pager_indicator_shadow_padding"
+            android:paddingTop="0dp"
+            android:src="@drawable/circle_indicator" />
+
+        <ImageView
+            android:id="@+id/circle_indicator_right"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/shadow"
+            android:paddingBottom="@dimen/pager_indicator_shadow_padding"
+            android:paddingLeft="@dimen/pager_indicator_shadow_padding"
+            android:paddingRight="@dimen/pager_indicator_shadow_padding"
+            android:paddingTop="0dp"
+            android:src="@drawable/circle_indicator" />
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="testnet"
+        android:textColor="@color/dark_red"
+        android:textSize="22sp"
+        android:alpha="0.7"
+        android:id="@+id/testnet"
+        android:padding="40dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true" />
+
+</RelativeLayout>
