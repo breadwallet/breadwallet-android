@@ -65,10 +65,13 @@ public class MainFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
         scanQRButton = (Button) getActivity().findViewById(R.id.main_button_scan_qr_code);
         payAddressFromClipboardButton = (Button)
                 getActivity().findViewById(R.id.main_button_pay_address_from_clipboard);
         alertDialog = new AlertDialog.Builder(getActivity()).create();
+        addressEditText = (EditText) getView().findViewById(R.id.address_edit_text);
+        addressEditText.setGravity(Gravity.CENTER_HORIZONTAL);
         scanQRButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -77,44 +80,31 @@ public class MainFragment extends Fragment {
                 }
             }
         });
-        addressEditText = (EditText) getView().findViewById(R.id.address_edit_text);
-        addressEditText.setGravity(Gravity.CENTER_HORIZONTAL);
+
         payAddressFromClipboardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
-                    if (alertDialog.isShowing()) {
-                        alertDialog.dismiss();
-                    }
+                    if (alertDialog.isShowing()) alertDialog.dismiss();
                     String address = BRClipboardManager.readFromClipboard(getActivity());
-                    Log.e(TAG, "The address before check: " + address);
+//                    Log.e(TAG, "The address before check: " + address);
                     if (checkIfAddressIsValid(address)) {
-                        //in case the button pressing starts to look ugly__________
-//                        payAddressFromClipboardButton.setBackgroundResource(R.drawable.buttonbluepressed);
-//                        addressEditText.setText(address);
-//                        new Handler().postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                payAddressFromClipboardButton.setBackgroundResource(R.drawable.buttonblue);
-//                            }
-//                        }, 50);
                         if (FragmentDecoder.accessGranted) {
+                            FragmentDecoder.accessGranted = false;
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
                                     FragmentDecoder.accessGranted = true;
                                 }
                             }, 300);
-                            FragmentDecoder.accessGranted = false;
-                            Log.e(TAG, "The address: " + address);
+//                            Log.e(TAG, "The address: " + address);
                             if (address != null) {
-                                FragmentScanResult.address = address;
                                 FragmentAnimator.animateScanResultFragment();
+                                FragmentScanResult.address = address;
                             } else {
                                 throw new NullPointerException();
                             }
                         }
-
                     } else {
                         alertDialog.setTitle(getResources().getString(R.string.alert));
                         alertDialog.setMessage(getResources().getString(R.string.mainfragment_clipboard_invalid_data));

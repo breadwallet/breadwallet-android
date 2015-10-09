@@ -3,6 +3,7 @@ package com.breadwallet.presenter.fragments;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -84,20 +85,31 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         customKeyboardLayout = (RelativeLayout) getActivity().findViewById(R.id.custom_keyboard_layout);
         amountToPay = (TextView) getActivity().findViewById(R.id.amount_to_pay);
         amountBeforeArrow = (TextView) getActivity().findViewById(R.id.amount_before_arrow);
+        doubleArrow = (TextView) getActivity().findViewById(R.id.double_arrow_text);
+
+        /**
+         * This mess is for the custom keyboard to be created after the soft keyboard is hidden to prevent
+         * the wrong position of the keyboard layout placement
+         * */
         customKeyboardLayout.getViewTreeObserver().addOnGlobalLayoutListener(
                 new ViewTreeObserver.OnGlobalLayoutListener() {
                     public void onGlobalLayout() {
-                        int[] locations = new int[2];
-                        customKeyboardLayout.getLocationOnScreen(locations);
-                        customKeyboardLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        createCustomKeyboardButtons(locations[1]);
-                        Log.e(TAG, "Inside the global layout listener: location[1]: " + locations[1]);
+                        final ViewTreeObserver.OnGlobalLayoutListener victim = this;
+                        if (!MainActivity.app.isSoftKeyboardShown()) {
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    int[] locations = new int[2];
+                                    customKeyboardLayout.getLocationOnScreen(locations);
+                                    customKeyboardLayout.getViewTreeObserver().removeOnGlobalLayoutListener(victim);
+                                    createCustomKeyboardButtons(locations[1]);
+                                    Log.e(TAG, "Inside the global layout listener: location[1]: " + locations[1]);
+                                }
+                            }, 100);
+
+                        }
                     }
                 });
-
-        updateBothTextValues(new BigDecimal("0"), new BigDecimal("0"));
-        doubleArrow = (TextView) getActivity().findViewById(R.id.double_arrow_text);
-        doubleArrow.setText(DOUBLE_ARROW);
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -106,6 +118,8 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
                 SpringAnimator.showAnimation(amountToPay);
             }
         };
+        updateBothTextValues(new BigDecimal("0"), new BigDecimal("0"));
+        doubleArrow.setText(DOUBLE_ARROW);
         doubleArrow.setOnClickListener(listener);
         amountBeforeArrow.setOnClickListener(listener);
         amountToPay.setOnClickListener(listener);
@@ -114,17 +128,12 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
 
     @Override
     public void onResume() {
-//        Log.e(TAG, "This is the address: " + address);
         updateRateAndISO();
         String result = address;
-//        Log.e(TAG, "This is the result = address: " + result);
+        //Log.e(TAG, "This is the address: " + address);
+        //Log.e(TAG, "This is the result = address: " + result);
         String cleanResult = extractTheCleanAddress(result);
-        if (cleanResult != null) {
-            scanResult.setText("to: " + cleanResult);
-        } else {
-            scanResult.setText("NO VALID ADDRESS");
-        }
-
+        scanResult.setText(cleanResult != null ? "to: " + cleanResult : "NO VALID ADDRESS");
         super.onResume();
     }
 
@@ -181,9 +190,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         float buttonWidth = (availableWidth - gap) / 3;
         float buttonHeight = buttonWidth;
         float spaceNeeded = buttonHeight * 4 + gap;
-
 //        Log.e(TAG, "space taken: " + spaceNeeded);
-
         int keyboardLayoutY = y;
         int buttonTextSize = 45;
 //        Log.e(TAG, "spaceNeeded: " + spaceNeeded + ", keyboardLayoutY: " + keyboardLayoutY);
@@ -272,11 +279,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
 //                    imageB.setBackgroundResource(R.drawable.button_regular_blue);
                     break;
             }
-            if (imageB != null) {
-                customKeyboardLayout.addView(imageB);
-            } else {
-                customKeyboardLayout.addView(b);
-            }
+            customKeyboardLayout.addView(imageB != null ? imageB : b);
         }
     }
 
@@ -287,9 +290,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
     }
 
     public static void updateBothTextValues(BigDecimal bitcoinValue, BigDecimal otherValue) {
-        if (ISO == null) {
-            updateRateAndISO();
-        }
+        if (ISO == null) updateRateAndISO();
         final String btcIso = "BTC";
         if (currentCurrencyPosition == BITCOIN_RIGHT) {
             amountToPay.setText(CurrencyManager.getFormattedCurrencyString(btcIso, bitcoinValue.toString()));
@@ -303,7 +304,6 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
     }
 
     public static void updateRateAndISO() {
-
         SharedPreferences settings = MainActivity.app.getSharedPreferences(MainActivity.PREFS_NAME, 0);
         int position = settings.getInt(FragmentCurrency.POSITION, 0);
         if (CurrencyListAdapter.currencyListAdapter != null && !CurrencyListAdapter.currencyListAdapter.isEmpty()) {

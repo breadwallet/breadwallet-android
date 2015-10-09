@@ -19,10 +19,10 @@ import android.widget.Toast;
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.adapter.CurrencyListAdapter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.SpringAnimator;
-import com.breadwallet.tools.CurrencyManager;
 
 
 /**
@@ -77,15 +77,15 @@ public class FragmentCurrency extends Fragment {
         final View rootView = inflater.inflate(
                 R.layout.fragment_currency, container, false);
 
+        app = MainActivity.app;
         currencyList = (ListView) rootView.findViewById(R.id.currency_list_view);
         currencyProgressBar = (ProgressBar) rootView.findViewById(R.id.currency_progress_barr);
         currencyRefresh = (Button) rootView.findViewById(R.id.currencyRefresh);
         noInternetConnection = (TextView) rootView.findViewById(R.id.noInternetConnectionText);
-        app = MainActivity.app;
         settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
         currencyList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-
         editor = settings.edit();
+
         currencyRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,7 +115,6 @@ public class FragmentCurrency extends Fragment {
             }
 
         });
-
         return rootView;
     }
 
@@ -125,11 +124,8 @@ public class FragmentCurrency extends Fragment {
         SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
         final String iso = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
         float tmpRate;
-        if (adapter != null && !adapter.isEmpty()) {
-            tmpRate = adapter.getItem(settings.getInt(POSITION, 0)).rate;
-        } else {
-            tmpRate = settings.getFloat(FragmentCurrency.RATE, 1);
-        }
+        tmpRate = (adapter != null && !adapter.isEmpty()) ?
+                adapter.getItem(settings.getInt(POSITION, 0)).rate : settings.getFloat(FragmentCurrency.RATE, 1);
         String readyText = CurrencyManager.getMiddleTextExchangeString(1.0, tmpRate, iso);
         MiddleViewAdapter.resetMiddleView(readyText);
         new Handler().postDelayed(new Runnable() {
@@ -144,7 +140,6 @@ public class FragmentCurrency extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-
     }
 
     public void tryAndSetAdapter() {
@@ -162,5 +157,4 @@ public class FragmentCurrency extends Fragment {
             currencyProgressBar.setVisibility(View.GONE);
         }
     }
-
 }

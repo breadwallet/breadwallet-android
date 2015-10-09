@@ -46,7 +46,6 @@ import com.breadwallet.tools.qrcode.QRCodeReaderView;
 public class FragmentDecoder extends Fragment implements QRCodeReaderView.OnQRCodeReadListener {
 
     public static final String TAG = "MainFragmentDecoder";
-
     public static boolean accessGranted = true;
     public static QRCodeReaderView mydecoderview;
     private ImageView camera_guide_image;
@@ -62,7 +61,6 @@ public class FragmentDecoder extends Fragment implements QRCodeReaderView.OnQRCo
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_decoder, container, false);
-
         camera_guide_image = (ImageView) rootView.findViewById(R.id.decoder_camera_guide_image);
         SpringAnimator.showExpandCameraGuide(camera_guide_image);
 

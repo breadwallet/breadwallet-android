@@ -29,6 +29,7 @@ public class IntroShowPhraseActivity extends Activity {
         if (savedInstanceState != null) {
             return;
         }
+
         BRWalletManager m = BRWalletManager.getInstance();
         thePhrase = (TextView) findViewById(R.id.the_phrase_at_startup);
         remindMeLater = (Button) findViewById(R.id.remind_me_later_button);

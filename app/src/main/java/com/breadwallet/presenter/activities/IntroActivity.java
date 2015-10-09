@@ -1,13 +1,8 @@
 
 package com.breadwallet.presenter.activities;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Matrix;
-import android.graphics.RectF;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
@@ -19,17 +14,18 @@ import android.widget.ImageView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
+import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
+import com.breadwallet.presenter.entities.BRTransactionEntity;
+import com.breadwallet.presenter.entities.BRTxInputEntity;
+import com.breadwallet.presenter.entities.BRTxOutputEntity;
 import com.breadwallet.presenter.fragments.IntroNewRecoverFragment;
 import com.breadwallet.presenter.fragments.IntroNewWalletFragment;
 import com.breadwallet.presenter.fragments.IntroRecoverWalletFragment;
 import com.breadwallet.presenter.fragments.IntroWarningFragment;
 import com.breadwallet.presenter.fragments.IntroWelcomeFragment;
+import com.breadwallet.tools.animation.BackgroundMovingAnimator;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
-import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
-import com.breadwallet.presenter.entities.BRTransactionEntity;
-import com.breadwallet.presenter.entities.BRTxInputEntity;
-import com.breadwallet.presenter.entities.BRTxOutputEntity;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.util.HashSet;
@@ -65,17 +61,8 @@ import java.util.Set;
 
 public class IntroActivity extends FragmentActivity {
     public static final String TAG = IntroActivity.class.getName();
-    ImageView background;
-    private static final int RightToLeft = 1;
-    private static final int LeftToRight = 2;
-    private static final int DURATION = 30000;
-
+    private ImageView background;
     public static IntroActivity app;
-    private ValueAnimator mCurrentAnimator;
-    private final Matrix mMatrix = new Matrix();
-    private float mScaleFactor;
-    private int mDirection = RightToLeft;
-    private RectF mDisplayRect = new RectF();
     private IntroWelcomeFragment introWelcomeFragment;
     private IntroNewRecoverFragment introNewRestoreFragment;
     private IntroNewWalletFragment introNewWalletFragment;
@@ -83,7 +70,6 @@ public class IntroActivity extends FragmentActivity {
     private IntroRecoverWalletFragment introRecoverWalletFragment;
     private Button leftButton;
     private boolean backPressAvailable = false;
-    private boolean hardwareBacked;
 
     //loading the native library
     static {
@@ -101,11 +87,8 @@ public class IntroActivity extends FragmentActivity {
         }
 
         //m.generateRandomSeed(this);
-        app = this;
-        final BRWalletManager m = BRWalletManager.getInstance();
-        byte[] walletRaw = m.wallet();
-
         //testSQLiteConnectivity(this);   //do some SQLite testing
+        app = this;
         introWelcomeFragment = new IntroWelcomeFragment();
         introNewRestoreFragment = new IntroNewRecoverFragment();
         introNewWalletFragment = new IntroNewWalletFragment();
@@ -116,7 +99,11 @@ public class IntroActivity extends FragmentActivity {
         background.setScaleType(ImageView.ScaleType.MATRIX);
         leftButton.setVisibility(View.GONE);
         leftButton.setClickable(false);
-        animateBackgroundMoving();
+
+        final BRWalletManager m = BRWalletManager.getInstance();
+        byte[] walletRaw = m.wallet();
+
+        BackgroundMovingAnimator.animateBackgroundMoving(background); //animates the orange BW background moving.
 
         leftButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,9 +114,12 @@ public class IntroActivity extends FragmentActivity {
 
         getSupportFragmentManager().beginTransaction().add(R.id.intro_layout, introWelcomeFragment,
                 "introWelcomeFragment").commit();
+
         if (!m.isPasscodeEnabled(this)) {
+            //Device passcode/password should be enabled for the app to work
             ((BreadWalletApp) getApplication()).showDeviceNotSecuredWarning(this);
         } else {
+            //now check if there is a wallet or should we create/restore one.
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -190,51 +180,6 @@ public class IntroActivity extends FragmentActivity {
         super.onStop();
     }
 
-    private void animate() {
-        updateDisplayRect();
-        if (mDirection == RightToLeft) {
-            animate(mDisplayRect.left, mDisplayRect.left -
-                    (mDisplayRect.right - background.getWidth()));
-        } else {
-            animate(mDisplayRect.left, 0.0f);
-        }
-    }
-
-    private void animate(float from, float to) {
-        mCurrentAnimator = ValueAnimator.ofFloat(from, to);
-        mCurrentAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                float value = (Float) animation.getAnimatedValue();
-
-                mMatrix.reset();
-                mMatrix.postScale(mScaleFactor, mScaleFactor);
-                mMatrix.postTranslate(value, 0);
-
-                background.setImageMatrix(mMatrix);
-
-            }
-        });
-        mCurrentAnimator.setDuration(DURATION);
-        mCurrentAnimator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                if (mDirection == RightToLeft)
-                    mDirection = LeftToRight;
-                else
-                    mDirection = RightToLeft;
-
-                animate();
-            }
-        });
-        mCurrentAnimator.start();
-    }
-
-    private void updateDisplayRect() {
-        mDisplayRect.set(0, 0, background.getDrawable().getIntrinsicWidth(),
-                background.getDrawable().getIntrinsicHeight());
-        mMatrix.mapRect(mDisplayRect);
-    }
 
     public void startMainActivity() {
         Intent intent;
@@ -340,19 +285,6 @@ public class IntroActivity extends FragmentActivity {
             }
 
         }
-    }
-
-    private void animateBackgroundMoving(){
-        background.post(new Runnable() {
-            @Override
-            public void run() {
-                mScaleFactor = (float) background.getHeight() /
-                        (float) background.getDrawable().getIntrinsicHeight();
-                mMatrix.postScale(mScaleFactor, mScaleFactor);
-                background.setImageMatrix(mMatrix);
-                animate();
-            }
-        });
     }
 
 

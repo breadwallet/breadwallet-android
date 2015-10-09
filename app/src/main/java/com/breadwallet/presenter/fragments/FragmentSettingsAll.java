@@ -55,6 +55,8 @@ public class FragmentSettingsAll extends Fragment {
                 R.layout.fragment_settings_all, container, false);
         app = MainActivity.app;
         importPrivateKeys = (RelativeLayout) rootView.findViewById(R.id.import_private_key);
+        fragmentSettingsAll = this;
+        settings = (RelativeLayout) rootView.findViewById(R.id.settings);
         importPrivateKeys.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -63,8 +65,6 @@ public class FragmentSettingsAll extends Fragment {
                 }
             }
         });
-        fragmentSettingsAll = this;
-        settings = (RelativeLayout) rootView.findViewById(R.id.settings);
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -82,7 +82,6 @@ public class MainActivity extends FragmentActivity implements Observer {
     public static final String TAG = "MainActivity";
     public static final String PREFS_NAME = "MyPrefsFile";
     public static MainActivity app;
-    public static boolean isSoftKeyboardShown = false;
     public static boolean decoderFragmentOn;
     public static boolean scanResultFragmentOn;
     public CustomPagerAdapter pagerAdapter;
@@ -116,7 +115,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     private NetworkChangeReceiver receiver = new NetworkChangeReceiver();
     public static boolean unlocked = false;
     public static Point screenParametersPoint = new Point();
-    private int middleViewPressed = 0;
+    private int middleViewPressedCount = 0;
     public static final int DEBUG = 1;
     public static final int RELEASE = 2;
     public static int MODE = RELEASE;
@@ -144,35 +143,36 @@ public class MainActivity extends FragmentActivity implements Observer {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Log.e(TAG, "MainActivity created!");
+        initializeViews();
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
 
-        Log.e(TAG, "Activity created!");
         if (((BreadWalletApp) getApplication()).isEmulatorOrDebug()) {
             MODE = DEBUG;
             Log.e(TAG, "DEBUG MODE!!!!!!");
         }
-        mainLayout = (RelativeLayout) findViewById(R.id.main_layout);
-        initializeViews();
-        setSoftKeyboardCallback();
         testnet.setVisibility(MODE == DEBUG ? View.VISIBLE : View.GONE);
+
+        InputMethodManager im = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
+        softKeyboard = new SoftKeyboard(mainLayout, im);
 
         viewFlipper.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (FragmentAnimator.level == 0 && unlocked) {
-                    if (middleViewPressed % 2 == 0) {
+                    if (middleViewPressedCount % 2 == 0) {
                         ((BreadWalletApp) getApplication()).showCustomToast(app, getResources().
                                 getString(R.string.middle_view_tip_first), (int) (screenParametersPoint.y * 0.7), Toast.LENGTH_LONG);
-                        middleViewPressed++;
+                        middleViewPressedCount++;
                     } else {
                         ((BreadWalletApp) getApplication()).showCustomToast(app, getResources().
                                 getString(R.string.middle_view_tip_second), (int) (screenParametersPoint.y * 0.8), Toast.LENGTH_LONG);
-                        middleViewPressed++;
+                        middleViewPressedCount++;
                     }
                 }
             }
         });
-
 
         burgerButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -245,6 +245,7 @@ public class MainActivity extends FragmentActivity implements Observer {
      */
 
     private void initializeViews() {
+        mainLayout = (RelativeLayout) findViewById(R.id.main_layout);
         testnet = (TextView) findViewById(R.id.testnet);
         networkErrorBar = (RelativeLayout) findViewById(R.id.main_internet_status_bar);
         burgerButton = (Button) findViewById(R.id.main_button_burger);
@@ -460,22 +461,13 @@ public class MainActivity extends FragmentActivity implements Observer {
         }
     }
 
-    private void setSoftKeyboardCallback() {
-        InputMethodManager im = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
-        softKeyboard = new SoftKeyboard(mainLayout, im);
-        softKeyboard.setSoftKeyboardCallback(new SoftKeyboard.SoftKeyboardChanged() {
-            @Override
-            public void onSoftKeyboardHide() {
-                Log.e(TAG, "SoftKeyboard has been hidden!");
-                isSoftKeyboardShown = false;
-            }
 
-            @Override
-            public void onSoftKeyboardShow() {
-                Log.e(TAG, "SoftKeyboard has been shown!");
-                isSoftKeyboardShown = true;
-            }
-        });
+    public boolean isSoftKeyboardShown() {
+        int[] location = new int[2];
+        viewFlipper.getLocationOnScreen(location);
+        boolean isShown = location[1] < 0;
+        Log.e(TAG, "The keyboard is shown: " + isShown + " y location: " + location[1]);
+        return isShown;
     }
 
 }

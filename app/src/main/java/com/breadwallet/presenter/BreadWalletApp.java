@@ -188,14 +188,6 @@ public class BreadWalletApp extends Application {
 
     }
 
-//    public static void hideSoftKeyboard(Activity activity) {
-//        InputMethodManager inputMethodManager = (InputMethodManager)
-//                activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-//        View v = activity.getCurrentFocus();
-//        if (v != null)
-//            inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
-//    }
-
     @TargetApi(Build.VERSION_CODES.LOLLIPOP_MR1)
     public void checkAndPromptForAuthentication(Activity context) {
         KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Activity.KEYGUARD_SERVICE);

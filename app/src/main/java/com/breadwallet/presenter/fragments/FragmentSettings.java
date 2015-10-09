@@ -53,7 +53,6 @@ public class FragmentSettings extends Fragment {
     private RelativeLayout recoveryPhrase;
     private RelativeLayout startRecoveryWallet;
     private RelativeLayout changePassword;
-
     private MainActivity app;
     private FragmentSettings fragmentSettings;
     private ChangePasswordDialogFragment changePasswordDialogFragment;
@@ -67,7 +66,6 @@ public class FragmentSettings extends Fragment {
         // properly.
         View rootView = inflater.inflate(
                 R.layout.fragment_settings, container, false);
-
         return rootView;
     }
 
@@ -97,7 +95,7 @@ public class FragmentSettings extends Fragment {
         changePassword = (RelativeLayout) getView().findViewById(R.id.change_password);
         SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
         final String tmp = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
-        Log.e(TAG, "Tmp 3 letters: " + tmp);
+//        Log.e(TAG, "Tmp 3 letters: " + tmp);
         currencyName.setText(tmp);
         localCurrency = (RelativeLayout) getView().findViewById(R.id.local_currency);
         recoveryPhrase = (RelativeLayout) getView().findViewById(R.id.recovery_phrase);
