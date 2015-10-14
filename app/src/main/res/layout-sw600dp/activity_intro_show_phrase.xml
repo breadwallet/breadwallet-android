@@ -45,8 +45,8 @@
         android:id="@+id/relativeLayout"
         android:layout_width="match_parent"
         android:layout_height="120dp"
-        android:layout_marginBottom="30dp"
-        android:layout_marginTop="220dp"
+        android:layout_marginTop="40dp"
+        android:layout_below="@+id/textView1"
         android:background="@drawable/clickable_layout"
         android:clickable="false">
 
@@ -78,10 +78,11 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+
         android:id="@+id/write_down_notice_layout"
         android:layout_below="@+id/relativeLayout"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="50dp">
 
         <TextView
             android:id="@+id/i_wrote_it_down_text"

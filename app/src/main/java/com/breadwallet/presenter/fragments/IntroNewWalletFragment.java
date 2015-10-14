@@ -1,7 +1,6 @@
 package com.breadwallet.presenter.fragments;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,13 +51,7 @@ public class IntroNewWalletFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 ((IntroActivity) getActivity()).showWarningFragment();
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        m.generateRandomSeed(getActivity());
-                    }
-                }, 500);
-
+                m.generateRandomSeed(getActivity());
             }
         });
         return rootView;

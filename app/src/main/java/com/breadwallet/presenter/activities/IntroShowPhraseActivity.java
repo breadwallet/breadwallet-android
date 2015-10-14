@@ -42,7 +42,13 @@ public class IntroShowPhraseActivity extends Activity {
             }
         });
         writeDownLayout.setVisibility(View.GONE);
-        thePhrase.setText(m.getPhrase(this));
+        String phrase = m.getPhrase(this);
+        if (phrase != null && phrase.length() > 1) {
+            thePhrase.setText(phrase);
+        } else {
+            throw new RuntimeException("Failed to retrieve the phrase!");
+        }
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {

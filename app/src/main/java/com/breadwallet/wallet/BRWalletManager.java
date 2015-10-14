@@ -8,7 +8,6 @@ import android.util.Log;
 import com.breadwallet.tools.security.KeyStoreManager;
 
 import java.nio.ByteBuffer;
-import java.security.SecureRandom;
 import java.text.NumberFormat;
 import java.util.List;
 
@@ -122,10 +121,10 @@ public class BRWalletManager {
      * generates a random seed, saves to keychain and returns the associated seedPhrase
      */
     public String generateRandomSeed(Context ctx) {
-        final SecureRandom sr = new SecureRandom();
-        final byte[] keyBytes = new byte[128];
-        sr.nextBytes(keyBytes);
-        Log.e(TAG, keyBytes.toString());
+//        final SecureRandom sr = new SecureRandom();
+//        final byte[] keyBytes = new byte[128];
+//        sr.nextBytes(keyBytes);
+//        Log.e(TAG, keyBytes.toString());
 //        byte[] wordListBytes = new byte[0];
 //        try {
 //            wordListBytes = WordsReader.getWordListBytes(IntroActivity.app);
@@ -174,7 +173,7 @@ public class BRWalletManager {
      * a signed transaction that will sweep the balance into wallet (doesn't publish the tx)
      */
     public boolean sweepPrivateKey() {
-        return KeyStoreManager.deleteKeyStoreString(KeyStoreManager.PHRASE_ALIAS);
+        return KeyStoreManager.deleteKeyStoreEntry(KeyStoreManager.PHRASE_ALIAS);
     }
 
     public long amountForString(String string) {

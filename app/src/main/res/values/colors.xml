@@ -23,6 +23,11 @@
     <item name="white_trans" type="color">#64ffffff</item>
     <item name="black_trans" type="color">#b54a2500</item>
 
+    //fingerprint
+    <color name="warning_color">#f4511e</color>
+    <color name="hint_color">#42000000</color>
+    <color name="success_color">#009688</color>
+
     //the QR
     <color name="actionbar_opacity">#DD000000</color>
 

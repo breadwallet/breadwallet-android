@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Point;
+import android.hardware.fingerprint.FingerprintManager;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
@@ -47,6 +48,7 @@ import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.adapter.ParallaxViewPager;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.auth.FingerprintAuthenticationDialogFragment;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -121,15 +123,10 @@ public class MainActivity extends FragmentActivity implements Observer {
     public static int MODE = RELEASE;
     public TextView testnet;
     public SoftKeyboard softKeyboard;
-    RelativeLayout mainLayout;
+    public RelativeLayout mainLayout;
+    public FingerprintAuthenticationDialogFragment fingerprintAuthenticationDialogFragment;
+    public FingerprintManager fingerprintManager;
 
-    /**
-     * Public constructor used to assign the current instance to the app variable
-     */
-
-    public MainActivity() {
-        app = this;
-    }
 
 //    private native String messageFromNativeCode(String logThis);
 
@@ -144,10 +141,12 @@ public class MainActivity extends FragmentActivity implements Observer {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        app = this;
         Log.e(TAG, "MainActivity created!");
         initializeViews();
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
-
+        fingerprintAuthenticationDialogFragment = new FingerprintAuthenticationDialogFragment();
+        fingerprintManager = (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
         if (((BreadWalletApp) getApplication()).isEmulatorOrDebug()) {
             MODE = DEBUG;
             Log.e(TAG, "DEBUG MODE!!!!!!");
@@ -469,6 +468,22 @@ public class MainActivity extends FragmentActivity implements Observer {
         boolean isShown = location[1] < 0;
         Log.e(TAG, "The keyboard is shown: " + isShown + " y location: " + location[1]);
         return isShown;
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    public void showAuthDialog(){
+        boolean useFingerprint = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
+        if (useFingerprint) {
+            fingerprintAuthenticationDialogFragment.setStage(fingerprintManager.hasEnrolledFingerprints()?
+                    FingerprintAuthenticationDialogFragment.Stage.FINGERPRINT:
+                    FingerprintAuthenticationDialogFragment.Stage.NEW_FINGERPRINT_ENROLLED);
+        } else {
+            fingerprintAuthenticationDialogFragment.setStage(
+                    FingerprintAuthenticationDialogFragment.Stage.PASSWORD);
+        }
+        android.app.FragmentManager fm = getFragmentManager();
+        fingerprintAuthenticationDialogFragment.show(fm,FingerprintAuthenticationDialogFragment.class.getName());
+
     }
 
 }

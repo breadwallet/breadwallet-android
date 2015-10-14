@@ -6,11 +6,11 @@ import android.app.Application;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Handler;
 import android.support.v4.BuildConfig;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Display;
@@ -83,6 +83,7 @@ public class BreadWalletApp extends Application {
     public static int DISPLAY_HEIGHT_PX;
     public static final String CREDENTIAL_TITLE = "Insert password";
     public static final String CREDENTIAL_DESCRIPTION = "Insert your password to unlock the app.";
+
 
     @Override
     public void onCreate() {
@@ -189,19 +190,19 @@ public class BreadWalletApp extends Application {
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP_MR1)
-    public void checkAndPromptForAuthentication(Activity context) {
+    public void checkAndPromptForAuthentication(FragmentActivity context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Activity.KEYGUARD_SERVICE);
             if (keyguardManager.isKeyguardSecure()) {
-                Intent intent = keyguardManager.createConfirmDeviceCredentialIntent(CREDENTIAL_TITLE, CREDENTIAL_DESCRIPTION);
-                context.startActivityForResult(intent, 1);
+//                Intent intent = keyguardManager.createConfirmDeviceCredentialIntent(CREDENTIAL_TITLE, CREDENTIAL_DESCRIPTION);
+//                context.startActivityForResult(intent, 1);
+                ((MainActivity)context).showAuthDialog();
             } else {
                 showDeviceNotSecuredWarning(context);
             }
         } else {
-            showCustomToast(context, "Ups! api level lower then 21",300, Toast.LENGTH_SHORT);
+            showCustomToast(context, "Ups! api level lower then 21", 300, Toast.LENGTH_SHORT);
         }
-
 
     }
 

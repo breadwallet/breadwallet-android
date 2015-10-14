@@ -3,8 +3,7 @@
     android:id="@+id/main_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-   >
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/main_text_send_money"
@@ -48,9 +47,9 @@
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
+        android:layout_marginTop="20dp"
         android:background="#00000000"
         android:text="The address"
         android:textAlignment="gravity"

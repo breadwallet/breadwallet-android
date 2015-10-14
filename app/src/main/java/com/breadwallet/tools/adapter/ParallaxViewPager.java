@@ -60,20 +60,16 @@ public class ParallaxViewPager extends ViewPager {
     private int projectedWidth;
     private float overlap;
     private OnPageChangeListener secondOnPageChangeListener;
-    private MainActivity app;
-
 
     public ParallaxViewPager(Context context) {
         super(context);
         init();
-        app = MainActivity.app;
     }
 
 
     public ParallaxViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
-        app = MainActivity.app;
     }
 
 
@@ -107,7 +103,7 @@ public class ParallaxViewPager extends ViewPager {
                     secondOnPageChangeListener.onPageSelected(position);
                 }
                 ((BreadWalletApp) MainActivity.app.getApplication()).cancelToast();
-                app.setPagerIndicator(position);
+                MainActivity.app.setPagerIndicator(position);
                 if (FragmentAnimator.level == 0) {
                     if (position == 1) {
                         new Handler().postDelayed(new Runnable() {
