@@ -49,6 +49,7 @@ import com.breadwallet.tools.adapter.ParallaxViewPager;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.auth.FingerprintAuthenticationDialogFragment;
+import com.breadwallet.tools.auth.PasswordAuthenticationDialogFragment;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -125,6 +126,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     public SoftKeyboard softKeyboard;
     public RelativeLayout mainLayout;
     public FingerprintAuthenticationDialogFragment fingerprintAuthenticationDialogFragment;
+    public PasswordAuthenticationDialogFragment passwordAuthenticationDialogFragment;
     public FingerprintManager fingerprintManager;
 
 
@@ -145,8 +147,8 @@ public class MainActivity extends FragmentActivity implements Observer {
         Log.e(TAG, "MainActivity created!");
         initializeViews();
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
-        fingerprintAuthenticationDialogFragment = new FingerprintAuthenticationDialogFragment();
-        fingerprintManager = (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
+        setUpApi23();
+
         if (((BreadWalletApp) getApplication()).isEmulatorOrDebug()) {
             MODE = DEBUG;
             Log.e(TAG, "DEBUG MODE!!!!!!");
@@ -196,7 +198,7 @@ public class MainActivity extends FragmentActivity implements Observer {
             public void onClick(View v) {
                 SpringAnimator.showAnimation(lockerButton);
 //                passwordDialogFragment.show(fm, TAG);
-                    ((BreadWalletApp) getApplication()).checkAndPromptForAuthentication(app);
+                ((BreadWalletApp) getApplication()).checkAndPromptForAuthentication(app);
 
             }
         });
@@ -266,6 +268,8 @@ public class MainActivity extends FragmentActivity implements Observer {
         fragmentRecoveryPhrase = new FragmentRecoveryPhrase();
         fragmentWipeWallet = new FragmentWipeWallet();
         fragmentScanResult = new FragmentScanResult();
+        fingerprintAuthenticationDialogFragment = new FingerprintAuthenticationDialogFragment();
+        passwordAuthenticationDialogFragment = new PasswordAuthenticationDialogFragment();
         passwordDialogFragment = new PasswordDialogFragment();
         parallaxViewPager = ((ParallaxViewPager) findViewById(R.id.main_viewpager));
         parallaxViewPager
@@ -471,19 +475,27 @@ public class MainActivity extends FragmentActivity implements Observer {
     }
 
     @TargetApi(Build.VERSION_CODES.M)
-    public void showAuthDialog(){
-        boolean useFingerprint = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
-        if (useFingerprint) {
-            fingerprintAuthenticationDialogFragment.setStage(fingerprintManager.hasEnrolledFingerprints()?
-                    FingerprintAuthenticationDialogFragment.Stage.FINGERPRINT:
-                    FingerprintAuthenticationDialogFragment.Stage.NEW_FINGERPRINT_ENROLLED);
-        } else {
-            fingerprintAuthenticationDialogFragment.setStage(
-                    FingerprintAuthenticationDialogFragment.Stage.PASSWORD);
-        }
+    public void showAuthDialog() {
         android.app.FragmentManager fm = getFragmentManager();
-        fingerprintAuthenticationDialogFragment.show(fm,FingerprintAuthenticationDialogFragment.class.getName());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Log.e(TAG,"Starting the fingerprint Dialog! API 23+");
+            fingerprintAuthenticationDialogFragment.setStage(
+                    FingerprintAuthenticationDialogFragment.Stage.FINGERPRINT);
+//                fingerprintAuthenticationDialogFragment.setStage(
+//                        FingerprintAuthenticationDialogFragment.Stage.PASSWORD);
 
+            fingerprintAuthenticationDialogFragment.show(fm, FingerprintAuthenticationDialogFragment.class.getName());
+        } else {
+            Log.e(TAG,"Starting the password Dialog! API <23");
+            passwordAuthenticationDialogFragment.show(fm, PasswordAuthenticationDialogFragment.class.getName());
+        }
+
+    }
+
+    private void setUpApi23() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            fingerprintManager = (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
+        }
     }
 
 }

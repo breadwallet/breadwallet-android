@@ -37,6 +37,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.CurrencyManager;
+import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.PassCodeManager;
 
 /**
@@ -59,7 +60,6 @@ public class FingerprintAuthenticationDialogFragment extends DialogFragment
 
     private FingerprintManager.CryptoObject mCryptoObject;
     private FingerprintUiHelper mFingerprintUiHelper;
-    private MainActivity mActivity;
 
     FingerprintUiHelper.FingerprintUiHelperBuilder mFingerprintUiHelperBuilder;
     InputMethodManager mInputMethodManager;
@@ -147,7 +147,6 @@ public class FingerprintAuthenticationDialogFragment extends DialogFragment
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        mActivity = (MainActivity) activity;
     }
 
 //    /**
@@ -180,6 +179,7 @@ public class FingerprintAuthenticationDialogFragment extends DialogFragment
      */
     private void verifyPassword() {
         if (!checkPassword(mPassword.getText().toString())) {
+            SpringAnimator.showAnimation(mPassword);
             return;
         }
         if (mStage == Stage.NEW_FINGERPRINT_ENROLLED) {
@@ -190,6 +190,7 @@ public class FingerprintAuthenticationDialogFragment extends DialogFragment
                 mStage = Stage.FINGERPRINT;
             }
         }
+        onAuthenticated();
         mPassword.setText("");
 //        mActivity.onPurchased(false /* without Fingerprint */);
         dismiss();
@@ -199,6 +200,7 @@ public class FingerprintAuthenticationDialogFragment extends DialogFragment
      * @return true if {@code password} is correct, false otherwise
      */
     private boolean checkPassword(String password) {
+        mPassword.setText("");
         // Assume the password is always correct.
         // In the real world situation, the password needs to be verified in the server side.
         return PassCodeManager.checkAuth(password);

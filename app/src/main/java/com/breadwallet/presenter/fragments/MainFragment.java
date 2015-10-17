@@ -166,6 +166,7 @@ public class MainFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        Log.e(TAG,"should fucking hide the softkeyboard!");
         MainActivity.app.softKeyboard.closeSoftKeyboard();
     }
 }

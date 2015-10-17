@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -191,7 +192,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         if (spaceNeeded > (availableHeight - (spaceNeededForRest + keyboardLayoutY))) {
 //            Log.e(TAG, "More Space needed! buttonHeight: " + buttonHeight);
             buttonHeight = ((availableHeight - (spaceNeededForRest + keyboardLayoutY)) - gap) / 4;
-            buttonTextSize = (int) ((buttonHeight / 5));
+            buttonTextSize = (int) ((buttonHeight / 9));
         }
         int minimumHeight = (int) (buttonHeight * 4 + interButtonGap * 4);
 //        Log.d(TAG, "The gap: " + gap + ", The buttonHeight: " + buttonHeight + ", buttonWidth: " + buttonWidth);
@@ -209,7 +210,8 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
             b.setTextColor(getResources().getColor(R.color.dark_blue));
             b.setBackgroundResource(R.drawable.button_regular_blue);
             b.setOnClickListener(this);
-            b.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            b.setGravity(Gravity.CENTER);
+            b.setTextAlignment(View.TEXT_ALIGNMENT_GRAVITY);
             ImageButton imageB = null;
             if (i < 9)
                 b.setText(String.valueOf(i + 1));
