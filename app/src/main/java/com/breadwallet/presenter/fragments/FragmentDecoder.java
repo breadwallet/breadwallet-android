@@ -99,7 +99,6 @@ public class FragmentDecoder extends Fragment implements QRCodeReaderView.OnQRCo
                     FragmentAnimator.animateScanResultFragment();
 
                 } else {
-                    throw new NullPointerException();
                 }
             }
         }

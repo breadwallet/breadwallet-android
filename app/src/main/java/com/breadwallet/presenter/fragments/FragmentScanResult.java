@@ -19,6 +19,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
+import com.breadwallet.tools.BitcoinAddressHelper;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.adapter.AmountAdapter;
 import com.breadwallet.tools.adapter.CurrencyListAdapter;
@@ -125,8 +126,8 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         String result = address;
         //Log.e(TAG, "This is the address: " + address);
         //Log.e(TAG, "This is the result = address: " + result);
-        String cleanResult = extractTheCleanAddress(result);
-        scanResult.setText(cleanResult != null ? "to: " + cleanResult : "NO VALID ADDRESS");
+        String cleanResult = BitcoinAddressHelper.getTheAddress(result);
+        scanResult.setText("to: " + cleanResult);
         super.onResume();
     }
 
@@ -137,37 +138,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         ((BreadWalletApp) getActivity().getApplication()).setLockerPayButton(BreadWalletApp.LOCKER_BUTTON);
     }
 
-    public String extractTheCleanAddress(String str) {
-        if (str == null) return "";
-        int length = str.length();
-        String tmp;
-        if (length < 34) {
-            return "";
-        } else {
-            tmp = str.substring(length - 34);
-            int tmpLength = tmp.length();
-            for (int i = 0; i < tmpLength; i++) {
-                if (tmp.charAt(i) < 48) {
-                    Log.e(TAG, "Bad address, char: " + tmp.charAt(i));
-                    return "";
-                } else {
-                    if (tmp.charAt(i) > 57 && tmp.charAt(i) < 65) {
-                        Log.e(TAG, "Bad address, char: " + tmp.charAt(i));
-                        return "";
-                    }
-                    if (tmp.charAt(i) > 90 && tmp.charAt(i) < 61) {
-                        Log.e(TAG, "Bad address, char: " + tmp.charAt(i));
-                        return "";
-                    }
-                    if (tmp.charAt(i) > 122) {
-                        Log.e(TAG, "Bad address, char: " + tmp.charAt(i));
-                        return "";
-                    }
-                }
-            }
-        }
-        return tmp;
-    }
+
 
     private void createCustomKeyboardButtons(int y) {
 

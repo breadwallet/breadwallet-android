@@ -28,6 +28,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.fragments.FragmentAbout;
@@ -128,6 +130,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     public FingerprintAuthenticationDialogFragment fingerprintAuthenticationDialogFragment;
     public PasswordAuthenticationDialogFragment passwordAuthenticationDialogFragment;
     public FingerprintManager fingerprintManager;
+    public static RequestQueue queue;
 
 
 //    private native String messageFromNativeCode(String logThis);
@@ -271,10 +274,9 @@ public class MainActivity extends FragmentActivity implements Observer {
         fingerprintAuthenticationDialogFragment = new FingerprintAuthenticationDialogFragment();
         passwordAuthenticationDialogFragment = new PasswordAuthenticationDialogFragment();
         passwordDialogFragment = new PasswordDialogFragment();
+        queue = Volley.newRequestQueue(this);
         parallaxViewPager = ((ParallaxViewPager) findViewById(R.id.main_viewpager));
-        parallaxViewPager
-                .setOverlapPercentage(0.99f)
-                .setAdapter(pagerAdapter);
+        parallaxViewPager.setOverlapPercentage(0.99f).setAdapter(pagerAdapter);
         parallaxViewPager.setBackgroundResource(R.drawable.backgroundmain);
         burgerButtonMap.put("burger", R.drawable.burger);
         burgerButtonMap.put("close", R.drawable.x);
@@ -478,17 +480,20 @@ public class MainActivity extends FragmentActivity implements Observer {
     public void showAuthDialog() {
         android.app.FragmentManager fm = getFragmentManager();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Log.e(TAG,"Starting the fingerprint Dialog! API 23+");
-            fingerprintAuthenticationDialogFragment.setStage(
-                    FingerprintAuthenticationDialogFragment.Stage.FINGERPRINT);
+            FingerprintManager fingerprintManager = (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
+            if (fingerprintManager.hasEnrolledFingerprints()) {
+                Log.e(TAG, "Starting the fingerprint Dialog! API 23+");
+                fingerprintAuthenticationDialogFragment.setStage(
+                        FingerprintAuthenticationDialogFragment.Stage.FINGERPRINT);
 //                fingerprintAuthenticationDialogFragment.setStage(
 //                        FingerprintAuthenticationDialogFragment.Stage.PASSWORD);
 
-            fingerprintAuthenticationDialogFragment.show(fm, FingerprintAuthenticationDialogFragment.class.getName());
-        } else {
-            Log.e(TAG,"Starting the password Dialog! API <23");
-            passwordAuthenticationDialogFragment.show(fm, PasswordAuthenticationDialogFragment.class.getName());
+                fingerprintAuthenticationDialogFragment.show(fm, FingerprintAuthenticationDialogFragment.class.getName());
+                return;
+            }
         }
+        Log.e(TAG, "Starting the password Dialog! API <23");
+        passwordAuthenticationDialogFragment.show(fm, PasswordAuthenticationDialogFragment.class.getName());
 
     }
 

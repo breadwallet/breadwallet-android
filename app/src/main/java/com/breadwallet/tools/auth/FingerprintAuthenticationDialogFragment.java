@@ -19,7 +19,6 @@ package com.breadwallet.tools.auth;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
-import android.hardware.fingerprint.FingerprintManager;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -58,7 +57,6 @@ public class FingerprintAuthenticationDialogFragment extends DialogFragment
 
     private Stage mStage = Stage.FINGERPRINT;
 
-    private FingerprintManager.CryptoObject mCryptoObject;
     private FingerprintUiHelper mFingerprintUiHelper;
 
     FingerprintUiHelper.FingerprintUiHelperBuilder mFingerprintUiHelperBuilder;
@@ -129,9 +127,9 @@ public class FingerprintAuthenticationDialogFragment extends DialogFragment
     @Override
     public void onResume() {
         super.onResume();
-        if (mStage == Stage.FINGERPRINT) {
-            mFingerprintUiHelper.startListening(mCryptoObject);
-        }
+//        if (mStage == Stage.FINGERPRINT) {
+//            mFingerprintUiHelper.startListening(mCryptoObject);
+//        }
     }
 
     public void setStage(Stage stage) {
