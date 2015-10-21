@@ -17,3 +17,5 @@ JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_encodePhrase
 JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_wallet
         (JNIEnv *env, jobject obj);
 
+JNIEXPORT jbyteArray Java_com_breadwallet_tools_AddressReader_getCertificatesFromPaymentRequest
+        (JNIEnv *env, jobject obj, jbyteArray certs);

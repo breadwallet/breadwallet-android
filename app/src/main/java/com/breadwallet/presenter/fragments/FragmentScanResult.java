@@ -19,7 +19,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
-import com.breadwallet.tools.BitcoinAddressHelper;
+import com.breadwallet.tools.AddressReader;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.adapter.AmountAdapter;
 import com.breadwallet.tools.adapter.CurrencyListAdapter;
@@ -126,7 +126,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         String result = address;
         //Log.e(TAG, "This is the address: " + address);
         //Log.e(TAG, "This is the result = address: " + result);
-        String cleanResult = BitcoinAddressHelper.getTheAddress(result);
+        String cleanResult = AddressReader.getTheAddress(result);
         scanResult.setText("to: " + cleanResult);
         super.onResume();
     }
