@@ -49,11 +49,11 @@ public class QRCodeReaderView extends SurfaceView implements SurfaceHolder.Callb
 
     public interface OnQRCodeReadListener {
 
-        public void onQRCodeRead(String text, PointF[] points);
+        void onQRCodeRead(String text, PointF[] points);
 
-        public void cameraNotFound();
+        void cameraNotFound();
 
-        public void QRCodeNotFoundOnCamImage();
+        void QRCodeNotFoundOnCamImage();
     }
 
     private OnQRCodeReadListener mOnQRCodeReadListener;

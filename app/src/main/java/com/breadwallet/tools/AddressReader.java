@@ -8,14 +8,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.breadwallet.presenter.activities.MainActivity;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.security.InvalidAlgorithmParameterException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertPath;
 import java.security.cert.CertPathBuilder;
@@ -25,14 +20,6 @@ import java.security.cert.CertPathParameters;
 import java.security.cert.CertPathValidator;
 import java.security.cert.CertPathValidatorException;
 import java.security.cert.CertPathValidatorResult;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.PKIXParameters;
-import java.security.cert.X509Certificate;
-import java.util.Arrays;
-
-import javax.net.ssl.TrustManagerFactory;
 
 /**
  * BreadWallet
@@ -113,48 +100,50 @@ public class AddressReader {
 //                        } catch (UnsupportedEncodingException e) {
 //                            e.printStackTrace();
 //                        }
+
+                        Log.e(TAG, "Response is: " + response.toString());
                         // Load CAs from an InputStream
-                        Certificate ca;
-                        InputStream caInput = null;
-                        try {
-                            CertificateFactory cf = CertificateFactory.getInstance("X.509");
-                            byte[] certs = getCertificatesFromPaymentRequest(response.getBytes());
-                            caInput = new ByteArrayInputStream(certs);
-                            ca = cf.generateCertificate(caInput);
-                            System.out.println("ca=" + ((X509Certificate) ca).getSubjectDN());
-                            Certificate[] chain = null; //TODO create an array of certs from the byte[] certs
-                            // Create a KeyStore containing our trusted CAs
-                            String keyStoreType = KeyStore.getDefaultType();
-                            KeyStore keyStore = KeyStore.getInstance(keyStoreType);
-                            keyStore.load(null, null);
-                            CertPathValidator cpv = CertPathValidator.getInstance(CertPathValidator.getDefaultType());
-                            keyStore.setCertificateEntry("ca", ca);
-                            PKIXParameters params = new PKIXParameters(keyStore);
-                            CertPath cp = cf.generateCertPath(Arrays.asList(chain));
-                            CertPathValidatorResult cpvr = cpv.validate(cp, params);
-                            // Create a TrustManager that trusts the CAs in our KeyStore
-                            String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
-                            TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
-                            tmf.init(keyStore);
-                        } catch (CertificateException e) {
-                            e.printStackTrace();
-                        } catch (NoSuchAlgorithmException e) {
-                            e.printStackTrace();
-                        } catch (KeyStoreException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } catch (InvalidAlgorithmParameterException e) {
-                            e.printStackTrace();
-                        } catch (CertPathValidatorException e) {
-                            e.printStackTrace();
-                        } finally {
-                            try {
-                                caInput.close();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
+//                        Certificate ca;
+//                        InputStream caInput = null;
+//                        try {
+//                            CertificateFactory cf = CertificateFactory.getInstance("X.509");
+//                            byte[] certs = getCertificatesFromPaymentRequest(response.getBytes());
+//                            caInput = new ByteArrayInputStream(certs);
+//                            ca = cf.generateCertificate(caInput);
+//                            System.out.println("ca=" + ((X509Certificate) ca).getSubjectDN());
+//                            Certificate[] chain = null; //TODO create an array of certs from the byte[] certs
+//                            // Create a KeyStore containing our trusted CAs
+//                            String keyStoreType = KeyStore.getDefaultType();
+//                            KeyStore keyStore = KeyStore.getInstance(keyStoreType);
+//                            keyStore.load(null, null);
+//                            CertPathValidator cpv = CertPathValidator.getInstance(CertPathValidator.getDefaultType());
+//                            keyStore.setCertificateEntry("ca", ca);
+//                            PKIXParameters params = new PKIXParameters(keyStore);
+//                            CertPath cp = cf.generateCertPath(Arrays.asList(chain));
+//                            CertPathValidatorResult cpvr = cpv.validate(cp, params);
+//                            // Create a TrustManager that trusts the CAs in our KeyStore
+//                            String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
+//                            TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
+//                            tmf.init(keyStore);
+//                        } catch (CertificateException e) {
+//                            e.printStackTrace();
+//                        } catch (NoSuchAlgorithmException e) {
+//                            e.printStackTrace();
+//                        } catch (KeyStoreException e) {
+//                            e.printStackTrace();
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        } catch (InvalidAlgorithmParameterException e) {
+//                            e.printStackTrace();
+//                        } catch (CertPathValidatorException e) {
+//                            e.printStackTrace();
+//                        } finally {
+//                            try {
+//                                caInput.close();
+//                            } catch (IOException e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
 
                     }
                 },
