@@ -5,8 +5,8 @@ import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -87,7 +87,7 @@ public class MainFragmentQR extends Fragment {
         addressLayout = (RelativeLayout) rootView.findViewById(R.id.theAddressLayout);
 
         generateQR();
-        fm = getActivity().getSupportFragmentManager();
+        fm = getActivity().getFragmentManager();
         main_fragment_qr.setPadding(0, MainActivity.screenParametersPoint.y / 5, 0, 0);
         final BreadWalletApp breadWalletApp = (BreadWalletApp) MainActivity.app.getApplication();
         addressLayout.setOnClickListener(new View.OnClickListener() {

@@ -4,7 +4,7 @@ package com.breadwallet.presenter.fragments;
 import android.graphics.PointF;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -99,6 +99,7 @@ public class FragmentDecoder extends Fragment implements QRCodeReaderView.OnQRCo
                     FragmentAnimator.animateScanResultFragment();
 
                 } else {
+
                 }
             }
         }
@@ -157,7 +158,6 @@ public class FragmentDecoder extends Fragment implements QRCodeReaderView.OnQRCo
                             layout.addView(mydecoderview, 0);
                     }
                 }, 800);
-
                 Log.e(TAG, "The camera started");
             }
         });
@@ -171,7 +171,7 @@ public class FragmentDecoder extends Fragment implements QRCodeReaderView.OnQRCo
             public void run() {
                 layout.removeView(mydecoderview);
                 if (mydecoderview.getCameraManager().isOpen())
-                    mydecoderview.getCameraManager().stopPreview();
+                    mydecoderview.getCameraManager().getCamera().release();
             }
         });
         mydecoderview = null;

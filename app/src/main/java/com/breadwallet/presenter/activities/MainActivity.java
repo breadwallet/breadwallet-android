@@ -14,7 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.PersistableBundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AlertDialog;
+import android.app.AlertDialog;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -261,7 +261,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         pageIndicatorLeft = (ImageView) findViewById(R.id.circle_indicator_left);
         middleView = findViewById(R.id.main_label_breadwallet);
         pageIndicatorRight = (ImageView) findViewById(R.id.circle_indicator_right);
-        pagerAdapter = new CustomPagerAdapter(getSupportFragmentManager());
+        pagerAdapter = new CustomPagerAdapter(getFragmentManager());
         burgerButtonMap = new HashMap<>();
         fragmentSettings = new FragmentSettings();
         fragmentSettingsAll = new FragmentSettingsAll();

@@ -2,8 +2,8 @@ package com.breadwallet.tools.animation;
 
 import android.content.Context;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -52,7 +52,7 @@ public class FragmentAnimator {
         MainActivity.beenThroughSavedInstanceMethod = false;
         MainActivity.app.decoderFragmentOn = true;
         //Disabled inspection: <Expected resource type anim>
-        FragmentTransaction fragmentTransaction = MainActivity.app.getSupportFragmentManager().beginTransaction();
+        FragmentTransaction fragmentTransaction = MainActivity.app.getFragmentManager().beginTransaction();
         fragmentTransaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_top);
         fragmentTransaction.replace(R.id.main_layout, MainActivity.app.mainFragmentDecoder);
         int temp = fragmentTransaction.commitAllowingStateLoss();
@@ -70,7 +70,7 @@ public class FragmentAnimator {
                 mainFragment.addressEditText.getWindowToken(), 0);
         MainActivity.app.setBurgerButtonImage(MainActivity.app.BACK);
         //Disabled inspection: <Expected resource type anim>
-        FragmentTransaction fragmentTransaction = MainActivity.app.getSupportFragmentManager().beginTransaction();
+        FragmentTransaction fragmentTransaction = MainActivity.app.getFragmentManager().beginTransaction();
         fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
         fragmentTransaction.replace(R.id.main_layout, MainActivity.app.fragmentScanResult);
         int temp = fragmentTransaction.commitAllowingStateLoss();
@@ -92,12 +92,13 @@ public class FragmentAnimator {
         Log.e(TAG, "The level is: " + level);
         if (level == 0) {
             level++;
+            CustomPagerAdapter.adapter.showFragments(false);
             MainActivity.app.setBurgerButtonImage(context.CLOSE);
-            FragmentTransaction fragmentTransaction = context.getSupportFragmentManager().beginTransaction();
+            FragmentTransaction fragmentTransaction = context.getFragmentManager().beginTransaction();
             fragmentTransaction.setCustomAnimations(R.animator.from_top, R.animator.from_top);
             fragmentTransaction.replace(R.id.main_layout, context.fragmentSettingsAll);
             fragmentTransaction.commit();
-            CustomPagerAdapter.adapter.showFragments(false);
+
             context.pageIndicator.setVisibility(View.GONE);
             InputMethodManager keyboard = (InputMethodManager) MainActivity.app.
                     getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -113,7 +114,7 @@ public class FragmentAnimator {
         } else if (level == 1) {
             level--;
             MainActivity.app.setBurgerButtonImage(context.BURGER);
-            FragmentTransaction fragmentTransaction = context.getSupportFragmentManager().beginTransaction();
+            FragmentTransaction fragmentTransaction = context.getFragmentManager().beginTransaction();
             fragmentTransaction.setCustomAnimations(R.animator.to_top, R.animator.to_top);
             fragmentTransaction.remove(context.fragmentSettingsAll);
             fragmentTransaction.commit();
@@ -128,7 +129,7 @@ public class FragmentAnimator {
     public static void pressWipeWallet(final MainActivity context, final Fragment to) {
         if (!wipeWalletOpen) {
             wipeWalletOpen = true;
-            FragmentTransaction fragmentTransaction = context.getSupportFragmentManager().beginTransaction();
+            FragmentTransaction fragmentTransaction = context.getFragmentManager().beginTransaction();
             fragmentTransaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_top);
             fragmentTransaction.replace(R.id.main_layout, to);
             fragmentTransaction.commit();
@@ -141,7 +142,7 @@ public class FragmentAnimator {
 
         } else {
             wipeWalletOpen = false;
-            FragmentTransaction fragmentTransaction = context.getSupportFragmentManager().beginTransaction();
+            FragmentTransaction fragmentTransaction = context.getFragmentManager().beginTransaction();
             fragmentTransaction.setCustomAnimations(R.animator.from_top, R.animator.to_bottom);
             fragmentTransaction.replace(R.id.main_layout, context.fragmentSettings);
             fragmentTransaction.commit();
@@ -155,7 +156,7 @@ public class FragmentAnimator {
         level++;
         if (level > 1)
             context.setBurgerButtonImage(context.BACK);
-        FragmentTransaction fragmentTransaction = context.getSupportFragmentManager().beginTransaction();
+        FragmentTransaction fragmentTransaction = context.getFragmentManager().beginTransaction();
         fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
         fragmentTransaction.replace(R.id.main_layout, to);
         new Handler().postDelayed(new Runnable() {
@@ -177,7 +178,7 @@ public class FragmentAnimator {
         if (level == 1)
             context.setBurgerButtonImage(context.CLOSE);
 //            Log.e(TAG, "The actual SettingsFragment: " + tmp);
-        FragmentTransaction fragmentTransaction = context.getSupportFragmentManager().beginTransaction();
+        FragmentTransaction fragmentTransaction = context.getFragmentManager().beginTransaction();
         fragmentTransaction.setCustomAnimations(R.animator.from_left, R.animator.to_right);
         fragmentTransaction.replace(R.id.main_layout, tmp);
         new Handler().postDelayed(new Runnable() {
@@ -226,7 +227,7 @@ public class FragmentAnimator {
             }
         }, 300);
         if (!MainActivity.beenThroughSavedInstanceMethod)
-            MainActivity.app.getSupportFragmentManager().beginTransaction().
+            MainActivity.app.getFragmentManager().beginTransaction().
                     setCustomAnimations(R.animator.from_top, R.animator.to_bottom).
                     remove(MainActivity.app.mainFragmentDecoder).commit();
         CustomPagerAdapter.adapter.showFragments(true);
@@ -244,7 +245,7 @@ public class FragmentAnimator {
         }, 300);
 
         if (!MainActivity.beenThroughSavedInstanceMethod)
-            MainActivity.app.getSupportFragmentManager().beginTransaction().
+            MainActivity.app.getFragmentManager().beginTransaction().
                     setCustomAnimations(R.animator.from_left, R.animator.to_right).
                     remove(MainActivity.app.fragmentScanResult).commit();
         MainActivity.app.setBurgerButtonImage(MainActivity.app.BURGER);

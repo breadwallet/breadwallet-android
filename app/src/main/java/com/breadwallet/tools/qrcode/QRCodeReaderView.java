@@ -38,14 +38,14 @@ import java.io.IOException;
  * limitations under the License.
  */
 
-
 /**
  * QRCodeReaderView - Class which uses ZXING lib and let you easily integrate a QR decoder view.
  * Take some classes and made some modifications in the original ZXING - Barcode Scanner project.
  *
  * @author David L�zaro
  */
-public class QRCodeReaderView extends SurfaceView implements SurfaceHolder.Callback, Camera.PreviewCallback {
+@SuppressWarnings("ALL")
+public class QRCodeReaderView extends SurfaceView implements SurfaceHolder.Callback, Camera.PreviewCallback{
 
     public interface OnQRCodeReadListener {
 
@@ -90,7 +90,8 @@ public class QRCodeReaderView extends SurfaceView implements SurfaceHolder.Callb
             mCameraManager = new CameraManager(getContext());
             mHolder = this.getHolder();
             mHolder.addCallback(this);
-            mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);  // Need to set this flag despite it's deprecated
+            mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+            // Need to set this flag despite it's deprecated
         } else {
             Log.e(TAG, "Error: Camera not found");
             if (mOnQRCodeReadListener != null) {
@@ -140,13 +141,12 @@ public class QRCodeReaderView extends SurfaceView implements SurfaceHolder.Callb
     public void onPreviewFrame(byte[] data, Camera camera) {
 
         PlanarYUVLuminanceSource source = mCameraManager.buildLuminanceSource(data, mPreviewWidth, mPreviewHeight);
-
+        Log.e(TAG,"Inthe onPreviewFrame");
         HybridBinarizer hybBin = new HybridBinarizer(source);
         BinaryBitmap bitmap = new BinaryBitmap(hybBin);
 
         try {
             Result result = mQRCodeReader.decode(bitmap);
-
             // Notify we found a QRCode
             if (mOnQRCodeReadListener != null) {
                 // Transform resultPoints to View coordinates

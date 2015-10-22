@@ -1,12 +1,11 @@
 
 package com.breadwallet.presenter.fragments;
 
+import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,9 +16,9 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.FragmentAnimator;
-import com.breadwallet.tools.CurrencyManager;
 
 /**
  * BreadWallet
@@ -149,7 +148,7 @@ public class FragmentSettings extends Fragment {
         changePassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final FragmentManager fm = getActivity().getSupportFragmentManager();
+                final android.app.FragmentManager fm = getActivity().getFragmentManager();
                 changePasswordDialogFragment.show(fm, TAG);
             }
         });
