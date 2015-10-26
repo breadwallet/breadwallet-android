@@ -1,12 +1,12 @@
 package com.breadwallet.presenter.fragments;
 
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.app.Fragment;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.app.Fragment;
-import android.app.AlertDialog;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -102,7 +102,7 @@ public class MainFragment extends Fragment {
                                     FragmentDecoder.accessGranted = true;
                                 }
                             }, 300);
-//                            Log.e(TAG, "The address: " + address);
+                            Log.e(TAG, "The address: " + address);
                             if (address != null) {
                                 FragmentAnimator.animateScanResultFragment();
                                 FragmentScanResult.address = address;

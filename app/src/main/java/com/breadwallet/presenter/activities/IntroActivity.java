@@ -2,11 +2,11 @@
 package com.breadwallet.presenter.activities;
 
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
-import android.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -85,7 +85,7 @@ public class IntroActivity extends FragmentActivity {
 
         Log.e(TAG, "Activity created!");
         if (savedInstanceState != null) {
-            this.savedInstanceState = savedInstanceState;
+
             return;
         }
 //        KeyStoreManager.deleteKeyStoreEntry(KeyStoreManager.PHRASE_ALIAS);
@@ -121,6 +121,12 @@ public class IntroActivity extends FragmentActivity {
 
         startTheWalletIfExists();
 
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        this.savedInstanceState = outState;
     }
 
     void showRecoverNewWalletFragment() {
@@ -303,6 +309,5 @@ public class IntroActivity extends FragmentActivity {
 
         }
     }
-
 
 }

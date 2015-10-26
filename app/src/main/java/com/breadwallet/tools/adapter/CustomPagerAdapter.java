@@ -1,9 +1,9 @@
 package com.breadwallet.tools.adapter;
 
-import android.os.Handler;
-import android.support.v13.app.FragmentStatePagerAdapter;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.os.Handler;
+import android.support.v13.app.FragmentStatePagerAdapter;
 import android.util.Log;
 import android.view.View;
 
@@ -83,8 +83,10 @@ public class CustomPagerAdapter extends FragmentStatePagerAdapter {
 
                 @Override
                 public void run() {
-                    main.setVisibility(View.VISIBLE);
-                    mainQR.setVisibility(View.VISIBLE);
+                    if (main != null)
+                        main.setVisibility(View.VISIBLE);
+                    if (mainQR != null)
+                        mainQR.setVisibility(View.VISIBLE);
                     MainActivity.pageIndicator.setVisibility(View.VISIBLE);
                 }
             }, 200);
@@ -94,8 +96,10 @@ public class CustomPagerAdapter extends FragmentStatePagerAdapter {
 
                 @Override
                 public void run() {
-                    main.setVisibility(View.GONE);
-                    mainQR.setVisibility(View.GONE);
+                    if (main != null)
+                        main.setVisibility(View.GONE);
+                    if (mainQR != null)
+                        mainQR.setVisibility(View.GONE);
                     MainActivity.pageIndicator.setVisibility(View.GONE);
                 }
             }, 200);

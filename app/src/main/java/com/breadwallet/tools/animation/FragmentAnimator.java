@@ -51,12 +51,14 @@ public class FragmentAnimator {
     public static void animateDecoderFragment() {
         MainActivity.beenThroughSavedInstanceMethod = false;
         MainActivity.app.decoderFragmentOn = true;
+        MainActivity.app.activityButtonsEnable(false);
+        CustomPagerAdapter.adapter.showFragments(false);
         //Disabled inspection: <Expected resource type anim>
+
         FragmentTransaction fragmentTransaction = MainActivity.app.getFragmentManager().beginTransaction();
         fragmentTransaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_top);
         fragmentTransaction.replace(R.id.main_layout, MainActivity.app.mainFragmentDecoder);
         int temp = fragmentTransaction.commitAllowingStateLoss();
-        CustomPagerAdapter.adapter.showFragments(false);
         Log.e(TAG, String.valueOf(temp));
     }
 
@@ -231,6 +233,7 @@ public class FragmentAnimator {
                     setCustomAnimations(R.animator.from_top, R.animator.to_bottom).
                     remove(MainActivity.app.mainFragmentDecoder).commit();
         CustomPagerAdapter.adapter.showFragments(true);
+        MainActivity.app.activityButtonsEnable(true);
     }
 
     public static void hideScanResultFragment() {
