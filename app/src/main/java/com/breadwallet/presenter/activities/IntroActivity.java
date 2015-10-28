@@ -85,7 +85,6 @@ public class IntroActivity extends FragmentActivity {
 
         Log.e(TAG, "Activity created!");
         if (savedInstanceState != null) {
-
             return;
         }
 //        KeyStoreManager.deleteKeyStoreEntry(KeyStoreManager.PHRASE_ALIAS);
@@ -115,7 +114,7 @@ public class IntroActivity extends FragmentActivity {
                 onBackPressed();
             }
         });
-
+        Log.e(TAG, "Test");
         getFragmentManager().beginTransaction().add(R.id.intro_layout, introWelcomeFragment,
                 "introWelcomeFragment").commit();
 

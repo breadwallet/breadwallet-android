@@ -1,9 +1,9 @@
 package com.breadwallet.tools.animation;
 
-import android.content.Context;
-import android.os.Handler;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Context;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -57,7 +57,7 @@ public class FragmentAnimator {
 
         FragmentTransaction fragmentTransaction = MainActivity.app.getFragmentManager().beginTransaction();
         fragmentTransaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_top);
-        fragmentTransaction.replace(R.id.main_layout, MainActivity.app.mainFragmentDecoder);
+        fragmentTransaction.replace(R.id.main_layout, MainActivity.app.getFreshInstance());
         int temp = fragmentTransaction.commitAllowingStateLoss();
         Log.e(TAG, String.valueOf(temp));
     }
@@ -228,12 +228,12 @@ public class FragmentAnimator {
                 FragmentAnimator.multiplePressingAvailable = true;
             }
         }, 300);
-        if (!MainActivity.beenThroughSavedInstanceMethod)
-            MainActivity.app.getFragmentManager().beginTransaction().
-                    setCustomAnimations(R.animator.from_top, R.animator.to_bottom).
-                    remove(MainActivity.app.mainFragmentDecoder).commit();
+        MainActivity.app.getFragmentManager().beginTransaction().
+                setCustomAnimations(R.animator.from_top, R.animator.to_bottom).
+                remove(MainActivity.app.mainFragmentDecoder).commit();
         CustomPagerAdapter.adapter.showFragments(true);
         MainActivity.app.activityButtonsEnable(true);
+        MainActivity.app.mainFragmentDecoder = null;
     }
 
     public static void hideScanResultFragment() {
@@ -247,10 +247,9 @@ public class FragmentAnimator {
             }
         }, 300);
 
-        if (!MainActivity.beenThroughSavedInstanceMethod)
-            MainActivity.app.getFragmentManager().beginTransaction().
-                    setCustomAnimations(R.animator.from_left, R.animator.to_right).
-                    remove(MainActivity.app.fragmentScanResult).commit();
+        MainActivity.app.getFragmentManager().beginTransaction().
+                setCustomAnimations(R.animator.from_left, R.animator.to_right).
+                remove(MainActivity.app.fragmentScanResult).commit();
         MainActivity.app.setBurgerButtonImage(MainActivity.app.BURGER);
     }
 

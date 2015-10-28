@@ -381,18 +381,24 @@ public class MainActivity extends FragmentActivity implements Observer {
             burgerButton.setBackgroundResource(burgerButtonMap.get(item));
     }
 
-    public void activityButtonsEnable(boolean b) {
-        if (!unlocked) {
-            lockerButton.setVisibility(b ? View.VISIBLE : View.INVISIBLE);
-            lockerButton.setClickable(b);
-        } else {
-            lockerButton.setVisibility(View.INVISIBLE);
-            lockerButton.setClickable(false);
-        }
-        parallaxViewPager.setClickable(b);
-        viewFlipper.setVisibility(b ? View.VISIBLE : View.INVISIBLE);
-        burgerButton.setVisibility(b ? View.VISIBLE : View.INVISIBLE);
-        burgerButton.setClickable(b);
+    public void activityButtonsEnable(final boolean b) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (!unlocked) {
+                    lockerButton.setVisibility(b ? View.VISIBLE : View.INVISIBLE);
+                    lockerButton.setClickable(b);
+                } else {
+                    lockerButton.setVisibility(View.INVISIBLE);
+                    lockerButton.setClickable(false);
+                }
+                parallaxViewPager.setClickable(b);
+                viewFlipper.setVisibility(b ? View.VISIBLE : View.INVISIBLE);
+                burgerButton.setVisibility(b ? View.VISIBLE : View.INVISIBLE);
+                burgerButton.setClickable(b);
+            }
+        });
+
     }
 
     public void scaleView(View v, float startScaleX, float endScaleX, float startScaleY, float endScaleY) {
@@ -501,6 +507,11 @@ public class MainActivity extends FragmentActivity implements Observer {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             fingerprintManager = (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
         }
+    }
+
+    public FragmentDecoder getFreshInstance(){
+        mainFragmentDecoder = new FragmentDecoder();
+        return mainFragmentDecoder;
     }
 
 }
