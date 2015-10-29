@@ -11,6 +11,7 @@ import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
+import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
@@ -29,8 +30,10 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
@@ -56,7 +59,7 @@ import java.util.concurrent.TimeUnit;
 
 import static android.hardware.camera2.CameraCharacteristics.LENS_FACING;
 import static android.hardware.camera2.CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP;
-import static android.hardware.camera2.CameraMetadata.CONTROL_AF_STATE_ACTIVE_SCAN;
+import static android.hardware.camera2.CameraMetadata.CONTROL_AF_MODE_CONTINUOUS_VIDEO;
 import static android.hardware.camera2.CameraMetadata.LENS_FACING_FRONT;
 import static android.hardware.camera2.CaptureRequest.CONTROL_AF_MODE;
 
@@ -64,12 +67,20 @@ public class FragmentDecoder extends Fragment
         implements FragmentCompat.OnRequestPermissionsResultCallback {
     private static final int sImageFormat = ImageFormat.YUV_420_888;
 
+    public static final String CAMERA_GUIDE_RED = "red";
+    public static final String CAMERA_GUIDE = "reg";
+    public static final String TEXT_EMPTY = "";
+    public static final String TEXT_NOT_VALID_BITCOIN_ADDRESS = "not a valid bitcoin address: /n";
+    public static final String TEXT_NOT_A_BITCOIN_QR = "not a bitcoin QR code";
+
     /**
      * Conversion from screen rotation to JPEG orientation.
      */
     public static boolean accessGranted = true;
     private ImageView camera_guide_image;
+    private TextView decoderText;
     private RelativeLayout layout;
+    ImageButton flashButton;
 
     /**
      * Tag for the {@link Log}.
@@ -146,14 +157,27 @@ public class FragmentDecoder extends Fragment
                         BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
 
                         rawResult = mQrReader.decode(bitmap);
-                        if (rawResult != null)
+                        if (rawResult == null) {
+                            throw new NullPointerException("no QR code");
+                        }
+                        String decoded = rawResult.getText();
+                        String validationString = validateResult(decoded);
+                        if (validationString == TEXT_EMPTY) {
                             onQRCodeRead(rawResult.getText());
+                        } else {
+                            setCameraGuide(CAMERA_GUIDE_RED);
+                            setGuideText(validationString);
+                        }
+
                     } catch (ReaderException ignored) {
+                        setCameraGuide(CAMERA_GUIDE);
                         Log.e(TAG, "Reader shows an exception! ", ignored);
                         /* Ignored */
                     } catch (NullPointerException ex) {
+                        setCameraGuide(CAMERA_GUIDE);
                         ex.printStackTrace();
                     } catch (IllegalStateException ex) {
+                        setCameraGuide(CAMERA_GUIDE);
                         ex.printStackTrace();
                     } finally {
                         mQrReader.reset();
@@ -165,6 +189,7 @@ public class FragmentDecoder extends Fragment
                     if (rawResult != null) {
                         Log.e(TAG, "Decoding successful!");
                     } else {
+                        setCameraGuide(CAMERA_GUIDE);
                         Log.d(TAG, "No QR code found…");
                     }
                 }
@@ -207,6 +232,7 @@ public class FragmentDecoder extends Fragment
     private CaptureRequest mPreviewRequest;
     private Semaphore mCameraOpenCloseLock = new Semaphore(1);
     private int count;
+    private int flashButtonCount;
 
     /**
      * Given {@code choices} of {@code Size}s supported by a camera, chooses the smallest one whose
@@ -252,6 +278,25 @@ public class FragmentDecoder extends Fragment
         mTextureView = new AutoFitTextureView(getActivity());
         layout = (RelativeLayout) rootView.findViewById(R.id.fragment_decoder_layout);
         camera_guide_image = (ImageView) rootView.findViewById(R.id.decoder_camera_guide_image);
+        decoderText = (TextView) rootView.findViewById(R.id.decoder_text);
+        flashButton = (ImageButton) rootView.findViewById(R.id.button_flash);
+        flashButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                try {
+                    if (++flashButtonCount % 2 != 0) {
+                        mPreviewRequestBuilder.set(CaptureRequest.FLASH_MODE, CameraMetadata.FLASH_MODE_TORCH);
+                        mCaptureSession.setRepeatingRequest(mPreviewRequestBuilder.build(), null, null);
+                    } else {
+                        mPreviewRequestBuilder.set(CaptureRequest.FLASH_MODE, CameraMetadata.FLASH_MODE_OFF);
+                        mCaptureSession.setRepeatingRequest(mPreviewRequestBuilder.build(), null, null);
+                    }
+                } catch (CameraAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         layout.addView(mTextureView, 0);
         startBackgroundThread();
@@ -311,7 +356,7 @@ public class FragmentDecoder extends Fragment
                 List<Size> outputSizes = Arrays.asList(map.getOutputSizes(sImageFormat));
                 Size largest = Collections.max(outputSizes, new CompareSizesByArea());
 
-                mImageReader = ImageReader.newInstance(largest.getWidth() / 16, largest.getHeight() / 16, sImageFormat, 2);
+                mImageReader = ImageReader.newInstance(largest.getWidth() / 10, largest.getHeight() / 10, sImageFormat, 10);
                 mImageReader.setOnImageAvailableListener(mOnImageAvailableListener, mBackgroundHandler);
                 // Danger, W.R.! Attempting to use too large a preview size could exceed the camera
                 // bus' bandwidth limitation, resulting in gorgeous previews but the storage of
@@ -393,13 +438,18 @@ public class FragmentDecoder extends Fragment
      * Stops the background thread and its {@link Handler}.
      */
     private void stopBackgroundThread() {
-        mBackgroundThread.quitSafely();
+
         try {
+            mBackgroundThread.quitSafely();
             mBackgroundThread.join();
             mBackgroundThread = null;
             mBackgroundHandler = null;
         } catch (InterruptedException e) {
             e.printStackTrace();
+            mBackgroundThread = null;
+            mBackgroundHandler = null;
+        } catch (NullPointerException ex) {
+            ex.printStackTrace();
             mBackgroundThread = null;
             mBackgroundHandler = null;
         }
@@ -438,9 +488,10 @@ public class FragmentDecoder extends Fragment
                             mCaptureSession = cameraCaptureSession;
                             try {
                                 // Auto focus should be continuous for camera preview.
-                                mPreviewRequestBuilder.set(CONTROL_AF_MODE, CONTROL_AF_STATE_ACTIVE_SCAN);
+                                mPreviewRequestBuilder.set(CONTROL_AF_MODE, CONTROL_AF_MODE_CONTINUOUS_VIDEO);
                                 // Flash is automatically enabled when necessary.
-//                                mPreviewRequestBuilder.set(CONTROL_AE_MODE, CONTROL_AE_MODE_ON_AUTO_FLASH); // no need for flash now
+                                /**no need for flash now*/
+                                //mPreviewRequestBuilder.set(CONTROL_AE_MODE, CONTROL_AE_MODE_ON_AUTO_FLASH);
 
                                 // Finally, we start displaying the camera preview.
                                 mPreviewRequest = mPreviewRequestBuilder.build();
@@ -461,6 +512,7 @@ public class FragmentDecoder extends Fragment
             e.printStackTrace();
         }
     }
+
 
     /**
      * Configures the necessary {@link android.graphics.Matrix} transformation to `mTextureView`.
@@ -541,5 +593,42 @@ public class FragmentDecoder extends Fragment
         return statusBarHeight + titleBarHeight;
     }
 
+    /**
+     * Validate the qr string and return the text to be shown to the user if the address is invalid
+     * or an empty text TEXT_EMPTY
+     */
+    public String validateResult(String str) {
+        count++;
+
+        return TEXT_EMPTY;
+    }
+
+    public void setCameraGuide(final String str) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (str.equalsIgnoreCase(CAMERA_GUIDE)) {
+                    camera_guide_image.setImageResource(R.drawable.cameraguide);
+                    setGuideText(TEXT_EMPTY);
+                    Log.e(TAG, "camera_guide set: cameraguide");
+                } else if (str.equalsIgnoreCase(CAMERA_GUIDE_RED)) {
+                    camera_guide_image.setImageResource(R.drawable.cameraguide_red);
+                    Log.e(TAG, "camera_guide set: cameraguide_red ");
+                } else {
+                    throw new IllegalArgumentException("CAMERA_GUIDE and CAMERA_GUIDE_RED only");
+                }
+            }
+        });
+    }
+
+    public void setGuideText(final String str) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                decoderText.setText(str);
+            }
+        });
+
+    }
 
 }

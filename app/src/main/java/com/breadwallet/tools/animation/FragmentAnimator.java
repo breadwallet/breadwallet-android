@@ -51,6 +51,10 @@ public class FragmentAnimator {
     public static void animateDecoderFragment() {
         MainActivity.beenThroughSavedInstanceMethod = false;
         MainActivity.app.decoderFragmentOn = true;
+        InputMethodManager keyboard = (InputMethodManager) MainActivity.app.
+                getSystemService(Context.INPUT_METHOD_SERVICE);
+        keyboard.hideSoftInputFromWindow(CustomPagerAdapter.adapter.
+                mainFragment.addressEditText.getWindowToken(), 0);
         MainActivity.app.activityButtonsEnable(false);
         CustomPagerAdapter.adapter.showFragments(false);
         //Disabled inspection: <Expected resource type anim>
