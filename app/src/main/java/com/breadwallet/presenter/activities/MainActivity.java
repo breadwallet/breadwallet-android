@@ -509,9 +509,14 @@ public class MainActivity extends FragmentActivity implements Observer {
         }
     }
 
-    public FragmentDecoder getFreshInstance(){
+    public FragmentDecoder getFragmentDecoder(){
         mainFragmentDecoder = new FragmentDecoder();
         return mainFragmentDecoder;
+    }
+
+    public FragmentScanResult getFragmentScanResult(){
+        fragmentScanResult = new FragmentScanResult();
+        return fragmentScanResult;
     }
 
 }

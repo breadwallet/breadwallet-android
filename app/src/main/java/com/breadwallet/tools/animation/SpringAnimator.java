@@ -141,7 +141,7 @@ public class SpringAnimator {
      */
     public static void showBouncySlide(final View view, final int direction, final int tension) {
         SpringSystem springSystem = SpringSystem.create();
-
+        if(view == null) return;
         // Add a spring to the system.
         final Spring spring = springSystem.createSpring();
         SpringConfig config = new SpringConfig(TENSION, DAMPER);

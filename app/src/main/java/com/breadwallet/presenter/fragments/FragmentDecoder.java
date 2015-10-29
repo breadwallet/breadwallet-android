@@ -1,7 +1,6 @@
 package com.breadwallet.presenter.fragments;
 
 import android.app.Fragment;
-import android.graphics.Bitmap;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Rect;
@@ -24,7 +23,6 @@ import android.os.HandlerThread;
 import android.support.v13.app.FragmentCompat;
 import android.util.Log;
 import android.util.Size;
-import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.TextureView;
@@ -42,7 +40,6 @@ import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.qrcode.AutoFitTextureView;
 import com.breadwallet.tools.qrcode.PlanarYUVLuminanceSource;
 import com.google.zxing.BinaryBitmap;
-import com.google.zxing.LuminanceSource;
 import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
@@ -59,7 +56,7 @@ import java.util.concurrent.TimeUnit;
 
 import static android.hardware.camera2.CameraCharacteristics.LENS_FACING;
 import static android.hardware.camera2.CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP;
-import static android.hardware.camera2.CameraMetadata.CONTROL_AF_MODE_CONTINUOUS_PICTURE;
+import static android.hardware.camera2.CameraMetadata.CONTROL_AF_STATE_ACTIVE_SCAN;
 import static android.hardware.camera2.CameraMetadata.LENS_FACING_FRONT;
 import static android.hardware.camera2.CaptureRequest.CONTROL_AF_MODE;
 
@@ -70,23 +67,9 @@ public class FragmentDecoder extends Fragment
     /**
      * Conversion from screen rotation to JPEG orientation.
      */
-    private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
     public static boolean accessGranted = true;
-    private static Object mockObjectForLocking = new Object();
     private ImageView camera_guide_image;
-    private boolean processingImage = false;
     private RelativeLayout layout;
-//    private static final String MIME_TYPE = "video/avc";    // H.264 Advanced Video Coding
-//    private static final int FRAME_RATE = 5;               // 2fps
-//    private static final int IFRAME_INTERVAL = 5;           // 5 seconds between I-frames
-//    private static final long DURATION_SEC = 8;             // 8 seconds of video
-
-    static {
-        ORIENTATIONS.append(Surface.ROTATION_0, 90);
-        ORIENTATIONS.append(Surface.ROTATION_90, 0);
-        ORIENTATIONS.append(Surface.ROTATION_180, 270);
-        ORIENTATIONS.append(Surface.ROTATION_270, 180);
-    }
 
     /**
      * Tag for the {@link Log}.
@@ -95,7 +78,6 @@ public class FragmentDecoder extends Fragment
 
     private final CameraCaptureSession.CaptureCallback mCaptureCallback =
             new CameraCaptureSession.CaptureCallback() {
-
                 private void process(CaptureResult result) {
                 }
 
@@ -144,65 +126,46 @@ public class FragmentDecoder extends Fragment
     private QRCodeReader mQrReader;
     private String mCameraId;
     private AutoFitTextureView mTextureView;
-    private Object mockObjectForLocking2 = new Object();
     private final ImageReader.OnImageAvailableListener mOnImageAvailableListener =
             new ImageReader.OnImageAvailableListener() {
 
                 @Override
                 public void onImageAvailable(ImageReader reader) {
-                    synchronized (mockObjectForLocking2) {
-                        if (processingImage || reader == null) return;
+                    Log.e(TAG, "onImageAvailable: " + count++);
+                    Image img = null;
+                    img = reader.acquireLatestImage();
+                    Result rawResult = null;
+                    try {
+                        if (img == null) throw new NullPointerException("cannot be null");
+                        ByteBuffer buffer = img.getPlanes()[0].getBuffer();
+                        byte[] data = new byte[buffer.remaining()];
+                        buffer.get(data);
+                        int width = img.getWidth();
+                        int height = img.getHeight();
+                        PlanarYUVLuminanceSource source = new PlanarYUVLuminanceSource(data, width, height);
+                        BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
 
-                        Log.e(TAG, "onImageAvailable");
-                        Image img = null;
-                        Result rawResult = null;
-                        try {
-                            try {
-                                img = reader.acquireLatestImage();
-                            } catch (Exception ex) {
-                                return;
-                            }
-
-                            Log.e(TAG, "This is the img: " + img);
-                            processingImage = true;
-
-                            if (img == null) throw new NullPointerException("cannot be null");
-                            ByteBuffer buffer = img.getPlanes()[0].getBuffer();
-                            byte[] data = new byte[buffer.remaining()];
-                            buffer.get(data);
-                            int width = img.getWidth();
-                            int height = img.getHeight();
-                            Log.e("C2", data.length + " (" + width + "x" + height + ")");
-                            PlanarYUVLuminanceSource source = new PlanarYUVLuminanceSource(data, width, height);
-                            BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
-
-                            rawResult = mQrReader.decode(bitmap);
+                        rawResult = mQrReader.decode(bitmap);
+                        if (rawResult != null)
                             onQRCodeRead(rawResult.getText());
-                            mCameraDevice = null;
-                        } catch (ReaderException ignored) {
-                            Log.e(TAG, "Reader shows an exception! ", ignored);
+                    } catch (ReaderException ignored) {
+                        Log.e(TAG, "Reader shows an exception! ", ignored);
                         /* Ignored */
-                        } catch (NullPointerException ex) {
-                            ex.printStackTrace();
-                        } finally {
-                            mQrReader.reset();
-                            if (img != null)
-                                img.close();
-                            processingImage = false;
-                        }
-                        if (rawResult != null) {
-                            reader = null;
-                            try {
-                                if (mCaptureSession != null)
-                                    mCaptureSession.stopRepeating();
-                                Log.e(TAG, "stopRepeating!!!!!!!! ");
-                            } catch (CameraAccessException e) {
-                                e.printStackTrace();
-                            }
-                            Log.e("C2", "Decoding successful!");
-                        } else {
-                            Log.d("C2", "No QR code found…");
-                        }
+                    } catch (NullPointerException ex) {
+                        ex.printStackTrace();
+                    } catch (IllegalStateException ex) {
+                        ex.printStackTrace();
+                    } finally {
+                        mQrReader.reset();
+                        Log.e(TAG, "in the finally! ------------");
+                        if (img != null)
+                            img.close();
+
+                    }
+                    if (rawResult != null) {
+                        Log.e(TAG, "Decoding successful!");
+                    } else {
+                        Log.d(TAG, "No QR code found…");
                     }
                 }
 
@@ -243,6 +206,7 @@ public class FragmentDecoder extends Fragment
     private CaptureRequest.Builder mPreviewRequestBuilder;
     private CaptureRequest mPreviewRequest;
     private Semaphore mCameraOpenCloseLock = new Semaphore(1);
+    private int count;
 
     /**
      * Given {@code choices} of {@code Size}s supported by a camera, chooses the smallest one whose
@@ -277,39 +241,10 @@ public class FragmentDecoder extends Fragment
         }
     }
 
-    public static Bitmap renderBitmap(LuminanceSource source) {
-        int width = source.getWidth();
-        int height = source.getHeight();
-        byte[] data = source.getMatrix();
-
-        /*
-        if (cameraManager.isFrontFaced()) {
-            if (cameraManager.isPortraitPreview()) {
-                data = mirrorMatrixVertically(data, width, height);
-            } else {
-                data = mirrorMatrixHorizontally(data, width, height);
-            }
-        }
-        */
-
-        final int[] pixels = new int[width * height];
-
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                int pixel = 0xFF000000 | ((data[x * height + y] & 0xff) * 0x00010101);
-                pixels[x * height + y] = pixel;
-            }
-        }
-
-        final Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
-        return bitmap;
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.e(TAG, "test!   onCreateView: " + savedInstanceState);
 
         View rootView = inflater.inflate(R.layout.fragment_decoder, container, false);
         mQrReader = new QRCodeReader();
@@ -317,16 +252,16 @@ public class FragmentDecoder extends Fragment
         mTextureView = new AutoFitTextureView(getActivity());
         layout = (RelativeLayout) rootView.findViewById(R.id.fragment_decoder_layout);
         camera_guide_image = (ImageView) rootView.findViewById(R.id.decoder_camera_guide_image);
+
+        layout.addView(mTextureView, 0);
+        startBackgroundThread();
         return rootView;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        processingImage = false;
-        Log.e(TAG, "mBackgroundHandler: " + mBackgroundHandler);
-        Log.e(TAG, "mTextureView: " + mTextureView);
-        Log.e(TAG, "mBackgroundThread: " + mBackgroundThread);
+        accessGranted = true;
         new Handler().post(new Runnable() {
             @Override
             public void run() {
@@ -334,15 +269,6 @@ public class FragmentDecoder extends Fragment
                     SpringAnimator.showExpandCameraGuide(camera_guide_image);
             }
         });
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                layout.addView(mTextureView, 0);
-                startBackgroundThread();
-            }
-        }, 500);
-
 
         // When the screen is turned off and turned back on, the SurfaceTexture is already
         // available, and "onSurfaceTextureAvailable" will not be called. In that case, we can open
@@ -358,6 +284,7 @@ public class FragmentDecoder extends Fragment
 
     @Override
     public void onPause() {
+        Log.e(TAG, "onPause");
         closeCamera();
         stopBackgroundThread();
         super.onPause();
@@ -384,9 +311,8 @@ public class FragmentDecoder extends Fragment
                 List<Size> outputSizes = Arrays.asList(map.getOutputSizes(sImageFormat));
                 Size largest = Collections.max(outputSizes, new CompareSizesByArea());
 
-                mImageReader = ImageReader.newInstance(largest.getWidth(), largest.getHeight(), sImageFormat, 2);
+                mImageReader = ImageReader.newInstance(largest.getWidth() / 16, largest.getHeight() / 16, sImageFormat, 2);
                 mImageReader.setOnImageAvailableListener(mOnImageAvailableListener, mBackgroundHandler);
-
                 // Danger, W.R.! Attempting to use too large a preview size could exceed the camera
                 // bus' bandwidth limitation, resulting in gorgeous previews but the storage of
                 // garbage capture data.
@@ -399,7 +325,7 @@ public class FragmentDecoder extends Fragment
 //                    mTextureView.setAspectRatio(mPreviewSize.getWidth(), mPreviewSize.getHeight());
 //                } else {
                 mTextureView.setAspectRatio(MainActivity.screenParametersPoint.x,
-                        MainActivity.screenParametersPoint.y - getStatusBarHeight());//portrait only
+                        MainActivity.screenParametersPoint.y - getStatusBarHeight()); //portrait only
 //                }
 
                 mCameraId = cameraId;
@@ -489,6 +415,8 @@ public class FragmentDecoder extends Fragment
 
             // We configure the size of default buffer to be the size of camera preview we want.
             texture.setDefaultBufferSize(mPreviewSize.getWidth(), mPreviewSize.getHeight());
+            Log.e(TAG, "mPreviewSize.getWidth(): " + mPreviewSize.getWidth() + ", mPreviewSize.getHeight(): "
+                    + mPreviewSize.getHeight());
 
             Surface surface = new Surface(texture);
             Surface mImageSurface = mImageReader.getSurface();
@@ -497,7 +425,7 @@ public class FragmentDecoder extends Fragment
             mPreviewRequestBuilder.addTarget(surface);
 
             // Here, we create a CameraCaptureSession for camera preview.
-            mCameraDevice.createCaptureSession(Arrays.asList(surface, mImageSurface),
+            mCameraDevice.createCaptureSession(Arrays.asList(mImageSurface, surface),
                     new CameraCaptureSession.StateCallback() {
 
                         @Override
@@ -510,7 +438,7 @@ public class FragmentDecoder extends Fragment
                             mCaptureSession = cameraCaptureSession;
                             try {
                                 // Auto focus should be continuous for camera preview.
-                                mPreviewRequestBuilder.set(CONTROL_AF_MODE, CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+                                mPreviewRequestBuilder.set(CONTROL_AF_MODE, CONTROL_AF_STATE_ACTIVE_SCAN);
                                 // Flash is automatically enabled when necessary.
 //                                mPreviewRequestBuilder.set(CONTROL_AE_MODE, CONTROL_AE_MODE_ON_AUTO_FLASH); // no need for flash now
 
@@ -567,29 +495,22 @@ public class FragmentDecoder extends Fragment
 
 
     public static void onQRCodeRead(final String text) {
-        synchronized (mockObjectForLocking) {
-            if (accessGranted) {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        accessGranted = true;
+        if (accessGranted) {
+            accessGranted = false;
+            MainActivity.app.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+
+                    if (text != null) {
+                        FragmentScanResult.address = text;
+                        FragmentAnimator.hideDecoderFragment();
+                        FragmentAnimator.animateScanResultFragment();
+                    } else {
+
                     }
-                }, 300);
-                accessGranted = false;
-                if (text != null) {
-                    MainActivity.app.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            FragmentScanResult.address = text;
-                            FragmentAnimator.hideDecoderFragment();
-                            FragmentAnimator.animateScanResultFragment();
-                        }
-                    });
-
-                } else {
-
                 }
-            }
+            });
+
         }
     }
 
@@ -619,5 +540,6 @@ public class FragmentDecoder extends Fragment
         Log.e(TAG, "StatusBar Height= " + statusBarHeight + " , TitleBar Height = " + titleBarHeight);
         return statusBarHeight + titleBarHeight;
     }
+
 
 }

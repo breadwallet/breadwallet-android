@@ -1,9 +1,9 @@
 
 package com.breadwallet.presenter.fragments;
 
+import android.app.Fragment;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -138,7 +138,10 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         ((BreadWalletApp) getActivity().getApplication()).setLockerPayButton(BreadWalletApp.LOCKER_BUTTON);
     }
 
-
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
 
     private void createCustomKeyboardButtons(int y) {
 

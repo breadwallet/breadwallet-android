@@ -54,12 +54,11 @@ public class FragmentAnimator {
         MainActivity.app.activityButtonsEnable(false);
         CustomPagerAdapter.adapter.showFragments(false);
         //Disabled inspection: <Expected resource type anim>
-
+        Log.e(TAG, "MainActivity.app: " + MainActivity.app);
         FragmentTransaction fragmentTransaction = MainActivity.app.getFragmentManager().beginTransaction();
         fragmentTransaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_top);
-        fragmentTransaction.replace(R.id.main_layout, MainActivity.app.getFreshInstance());
-        int temp = fragmentTransaction.commitAllowingStateLoss();
-        Log.e(TAG, String.valueOf(temp));
+        fragmentTransaction.replace(R.id.main_layout, MainActivity.app.getFragmentDecoder());
+        int temp = fragmentTransaction.commit();
     }
 
     public static void animateScanResultFragment() {
@@ -74,14 +73,14 @@ public class FragmentAnimator {
         //Disabled inspection: <Expected resource type anim>
         FragmentTransaction fragmentTransaction = MainActivity.app.getFragmentManager().beginTransaction();
         fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
-        fragmentTransaction.replace(R.id.main_layout, MainActivity.app.fragmentScanResult);
-        int temp = fragmentTransaction.commitAllowingStateLoss();
+        fragmentTransaction.replace(R.id.main_layout, MainActivity.app.getFragmentScanResult());
+        fragmentTransaction.commit();
         CustomPagerAdapter.adapter.showFragments(false);
-        Log.e(TAG, String.valueOf(temp));
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                SpringAnimator.showBouncySlide(MainActivity.app.fragmentScanResult.getView(), SpringAnimator.TO_RIGHT, 70);
+                SpringAnimator.showBouncySlide(MainActivity.app.fragmentScanResult.getView(),
+                        SpringAnimator.TO_RIGHT, 70);
             }
         }, 200);
     }
@@ -138,7 +137,8 @@ public class FragmentAnimator {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    SpringAnimator.showBouncySlideVertical(MainActivity.app.fragmentWipeWallet.getView(), SpringAnimator.TO_RIGHT);
+                    SpringAnimator.showBouncySlideVertical(MainActivity.app.fragmentWipeWallet.getView(),
+                            SpringAnimator.TO_RIGHT);
                 }
             }, 200);
 
