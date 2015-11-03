@@ -3,9 +3,9 @@
     android:shareInterpolator="false">
 
     <objectAnimator xmlns:android="http://schemas.android.com/apk/res/android"
-        android:duration="200"
+        android:duration="@integer/slide_speed"
         android:propertyName="x"
-        android:valueFrom="1000"
+        android:valueFrom="2000"
         android:valueTo="0"
         android:valueType="floatType" />
 </set>

@@ -59,7 +59,7 @@ import java.util.concurrent.TimeUnit;
 
 import static android.hardware.camera2.CameraCharacteristics.LENS_FACING;
 import static android.hardware.camera2.CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP;
-import static android.hardware.camera2.CameraMetadata.CONTROL_AF_MODE_CONTINUOUS_VIDEO;
+import static android.hardware.camera2.CameraMetadata.CONTROL_AF_MODE_MACRO;
 import static android.hardware.camera2.CameraMetadata.LENS_FACING_FRONT;
 import static android.hardware.camera2.CaptureRequest.CONTROL_AF_MODE;
 
@@ -285,12 +285,16 @@ public class FragmentDecoder extends Fragment
             public void onClick(View v) {
 
                 try {
+                    if (mPreviewRequestBuilder == null || mCaptureSession == null) return;
+
                     if (++flashButtonCount % 2 != 0) {
                         mPreviewRequestBuilder.set(CaptureRequest.FLASH_MODE, CameraMetadata.FLASH_MODE_TORCH);
                         mCaptureSession.setRepeatingRequest(mPreviewRequestBuilder.build(), null, null);
+                        flashButton.setBackgroundResource(R.drawable.flash_on);
                     } else {
                         mPreviewRequestBuilder.set(CaptureRequest.FLASH_MODE, CameraMetadata.FLASH_MODE_OFF);
                         mCaptureSession.setRepeatingRequest(mPreviewRequestBuilder.build(), null, null);
+                        flashButton.setBackgroundResource(R.drawable.flash_off);
                     }
                 } catch (CameraAccessException e) {
                     e.printStackTrace();
@@ -488,9 +492,9 @@ public class FragmentDecoder extends Fragment
                             mCaptureSession = cameraCaptureSession;
                             try {
                                 // Auto focus should be continuous for camera preview.
-                                mPreviewRequestBuilder.set(CONTROL_AF_MODE, CONTROL_AF_MODE_CONTINUOUS_VIDEO);
+                                mPreviewRequestBuilder.set(CONTROL_AF_MODE, CONTROL_AF_MODE_MACRO);
                                 // Flash is automatically enabled when necessary.
-                                /**no need for flash now*/
+                                /**no need for flash_on now*/
                                 //mPreviewRequestBuilder.set(CONTROL_AE_MODE, CONTROL_AE_MODE_ON_AUTO_FLASH);
 
                                 // Finally, we start displaying the camera preview.

@@ -51,10 +51,6 @@ public class FragmentAnimator {
     public static void animateDecoderFragment() {
         MainActivity.beenThroughSavedInstanceMethod = false;
         MainActivity.app.decoderFragmentOn = true;
-        InputMethodManager keyboard = (InputMethodManager) MainActivity.app.
-                getSystemService(Context.INPUT_METHOD_SERVICE);
-        keyboard.hideSoftInputFromWindow(CustomPagerAdapter.adapter.
-                mainFragment.addressEditText.getWindowToken(), 0);
         MainActivity.app.activityButtonsEnable(false);
         CustomPagerAdapter.adapter.showFragments(false);
         //Disabled inspection: <Expected resource type anim>
@@ -76,6 +72,7 @@ public class FragmentAnimator {
         MainActivity.app.setBurgerButtonImage(MainActivity.app.BACK);
         //Disabled inspection: <Expected resource type anim>
         FragmentTransaction fragmentTransaction = MainActivity.app.getFragmentManager().beginTransaction();
+
         fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
         fragmentTransaction.replace(R.id.main_layout, MainActivity.app.getFragmentScanResult());
         fragmentTransaction.commit();
@@ -83,7 +80,7 @@ public class FragmentAnimator {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                SpringAnimator.showBouncySlide(MainActivity.app.fragmentScanResult.getView(),
+                SpringAnimator.showBouncySlideHorizontal(MainActivity.app.fragmentScanResult.getView(),
                         SpringAnimator.TO_RIGHT, 70);
             }
         }, 200);
@@ -100,8 +97,8 @@ public class FragmentAnimator {
             CustomPagerAdapter.adapter.showFragments(false);
             MainActivity.app.setBurgerButtonImage(context.CLOSE);
             FragmentTransaction fragmentTransaction = context.getFragmentManager().beginTransaction();
-            fragmentTransaction.setCustomAnimations(R.animator.from_top, R.animator.from_top);
-            fragmentTransaction.replace(R.id.main_layout, context.fragmentSettingsAll);
+            fragmentTransaction.setCustomAnimations(R.animator.from_top, -1);
+            fragmentTransaction.add(R.id.main_layout, context.fragmentSettingsAll);
             fragmentTransaction.commit();
 
             context.pageIndicator.setVisibility(View.GONE);
@@ -120,7 +117,7 @@ public class FragmentAnimator {
             level--;
             MainActivity.app.setBurgerButtonImage(context.BURGER);
             FragmentTransaction fragmentTransaction = context.getFragmentManager().beginTransaction();
-            fragmentTransaction.setCustomAnimations(R.animator.to_top, R.animator.to_top);
+            fragmentTransaction.setCustomAnimations(-1, R.animator.to_top);
             fragmentTransaction.remove(context.fragmentSettingsAll);
             fragmentTransaction.commit();
             CustomPagerAdapter.adapter.showFragments(true);
@@ -168,7 +165,7 @@ public class FragmentAnimator {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                SpringAnimator.showBouncySlide(to.getView(), SpringAnimator.TO_RIGHT, 20);
+                SpringAnimator.showBouncySlideHorizontal(to.getView(), SpringAnimator.TO_RIGHT, 20);
             }
         }, 200);
         previous.add(previousFragment);
@@ -190,7 +187,7 @@ public class FragmentAnimator {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                SpringAnimator.showBouncySlide(tmp.getView(), SpringAnimator.TO_LEFT, 20);
+                SpringAnimator.showBouncySlideHorizontal(tmp.getView(), SpringAnimator.TO_LEFT, 20);
             }
         }, 200);
         fragmentTransaction.commit();
@@ -225,6 +222,7 @@ public class FragmentAnimator {
     }
 
     public static void hideDecoderFragment() {
+        Log.e(TAG, "hideDecoderFragment");
         MainActivity.app.decoderFragmentOn = false;
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -256,5 +254,6 @@ public class FragmentAnimator {
                 remove(MainActivity.app.fragmentScanResult).commit();
         MainActivity.app.setBurgerButtonImage(MainActivity.app.BURGER);
     }
+
 
 }

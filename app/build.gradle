@@ -22,30 +22,50 @@ android {
     defaultConfig {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         applicationId "com.breadwallet"
-        minSdkVersion 21
+        minSdkVersion 19
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
         ndk {
             moduleName "BreadWalletCore"
-            ldLibs "log"
             cFlags "-std=c99"
+            ldLibs "log"
         }
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
     buildTypes {
         release {
             minifyEnabled false
 //            proguardFiles getDefaultProguardFiles('proguard-android.txt'), 'proguard-rules.pro'
         }
-    }
-    sourceSets {
-        main {
-            manifest.srcFile 'src/main/AndroidManifest.xml'
-            java.srcDirs = ['src/main/java', '.apt_generated']
-            aidl.srcDirs = ['src/main/aidl', '.apt_generated']
-            assets.srcDirs = ['src/main/assets']
+        debug {
+            debuggable true
+            jniDebuggable true
+        }
+
+        release {
+            debuggable false
+            jniDebuggable false
+        }
+
+        foss {
+            debuggable false
+            jniDebuggable false
         }
     }
+
+    sourceSets {
+        main {
+            jni.srcDirs = []
+            jniLibs.srcDirs = ['src/main/jni','src/main/jni/breadwallet-core/secp256k1']
+        }
+    }
+
 }
 
 dependencies {
@@ -58,8 +78,6 @@ dependencies {
     compile 'com.facebook.rebound:rebound:0.3.8' //spring animation
     compile 'org.json:json:20141113' //JSonParser google
     compile 'com.mcxiaoke.volley:library-aar:1.0.0'
-//    compile 'com.squareup.dagger:dagger:1.2.2'
-//    compile 'com.squareup.dagger:dagger-compiler:1.2.2'
 
     androidTestCompile 'com.android.support.test:runner:+'
     // Set this dependency to use JUnit 4 rules
@@ -68,4 +86,5 @@ dependencies {
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.+'
     // Set this dependency to build and run UI Automator tests
     androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.+'
+    compile 'com.android.support.test.espresso:espresso-core:2.2.1'
 }

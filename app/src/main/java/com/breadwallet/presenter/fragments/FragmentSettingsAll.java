@@ -70,7 +70,7 @@ public class FragmentSettingsAll extends Fragment {
             public void onClick(View v) {
                 if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
                     FragmentAnimator.animateSlideToLeft(app, app.fragmentSettings, fragmentSettingsAll);
-                    Log.d(TAG, "Starting:   showBouncySlide()");
+                    Log.d(TAG, "Starting:   showBouncySlideHorizontal()");
                 }
             }
         });
@@ -88,5 +88,6 @@ public class FragmentSettingsAll extends Fragment {
         super.onResume();
         MiddleViewAdapter.resetMiddleView(null);
     }
+
 
 }

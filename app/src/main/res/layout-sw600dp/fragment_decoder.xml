@@ -1,4 +1,3 @@
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/fragment_decoder_layout"
     android:layout_width="match_parent"
@@ -13,6 +12,7 @@
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
         android:src="@drawable/cameraguide" />
+
     <TextView
         android:id="@+id/decoder_text"
         android:layout_width="wrap_content"
@@ -20,9 +20,17 @@
         android:layout_above="@+id/decoder_camera_guide_image"
         android:layout_centerHorizontal="true"
         android:layout_margin="10dp"
-        android:textColor="@android:color/white"
         android:shadowColor="@color/black"
         android:text="Medium Text"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@android:color/white" />
+
+    <ImageButton
+        android:id="@+id/button_flash"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/flash_off" />
 
 </RelativeLayout>

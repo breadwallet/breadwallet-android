@@ -8,9 +8,14 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.breadwallet.presenter.activities.MainActivity;
 
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.security.InvalidAlgorithmParameterException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertPath;
 import java.security.cert.CertPathBuilder;
@@ -20,6 +25,9 @@ import java.security.cert.CertPathParameters;
 import java.security.cert.CertPathValidator;
 import java.security.cert.CertPathValidatorException;
 import java.security.cert.CertPathValidatorResult;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 
 /**
  * BreadWallet
@@ -49,6 +57,7 @@ public class AddressReader {
     public static final String TAG = AddressReader.class.getName();
 
     public static String getTheAddress(String address) {
+
         //check if it has an BIP72 request URI
         String addressToProcess = address;
         int length = addressToProcess.length();
@@ -102,6 +111,36 @@ public class AddressReader {
 //                        }
 
                         Log.e(TAG, "Response is: " + response.toString());
+                        byte[] certs = getCertificatesFromPaymentRequest(response.getBytes(),0);
+
+                        try {
+                            CertificateFactory cf = CertificateFactory.getInstance("X.509");
+                            // chain is of type X509Certificate[]
+//                            CertPath cp = cf.generateCertPath(Arrays.asList(certs));
+
+//                            CertPathValidator cpv = CertPathValidator.getInstance(CertPathValidator.getDefaultType());
+                            KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+
+                            FileInputStream fis = new FileInputStream("/system/etc/security/cacerts.bks");
+                            ks.load(fis, null);
+                            BufferedInputStream bis = new BufferedInputStream(fis);
+
+                            while (bis.available() > 0) {
+                                Certificate cert = cf.generateCertificate(bis);
+                                Log.e(TAG, "CERT: " + cert.toString());
+                            }
+
+//                            PKIXParameters params = new PKIXParameters(ks);
+//                            CertPathValidatorResult cpvr = cpv.validate(cp, params);
+                        } catch (CertificateException e) {
+                            e.printStackTrace();
+                        } catch (NoSuchAlgorithmException e) {
+                            e.printStackTrace();
+                        } catch (KeyStoreException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                         // Load CAs from an InputStream
 //                        Certificate ca;
 //                        InputStream caInput = null;
@@ -239,6 +278,5 @@ public class AddressReader {
         return null;
     }
 
-
-    private static native byte[] getCertificatesFromPaymentRequest(byte[] req);
+    private static native byte[] getCertificatesFromPaymentRequest(byte[] req, int index);
 }

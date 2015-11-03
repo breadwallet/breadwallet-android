@@ -18,6 +18,7 @@ JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_wallet
         char *last_name;
         float balance;
     };
+
     struct wallet wallet1;
     wallet1.account_number = 123;
     wallet1.balance = 52415.21;
@@ -32,4 +33,5 @@ JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_wallet
     (*env)->SetByteArrayRegion(env, arr, 0, wallet_size, raw_wallet);
     return arr;
 }
+
 

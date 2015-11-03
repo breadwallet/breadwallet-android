@@ -35,6 +35,7 @@ import com.facebook.rebound.SpringSystem;
  */
 
 public class SpringAnimator {
+    private static final int SPRING_DELAY_MS = 30;
     private static double TENSION = 600;
     private static double DAMPER = 35;
     public static final String TAG = "SpringAnimation";
@@ -139,7 +140,7 @@ public class SpringAnimator {
      * @param direction SpringAnimator.TO_LEFT or  SpringAnimator.TO_RIGHT
      * @param tension   an int value to specify the springy tension
      */
-    public static void showBouncySlide(final View view, final int direction, final int tension) {
+    public static void showBouncySlideHorizontal(final View view, final int direction, final int tension) {
         SpringSystem springSystem = SpringSystem.create();
         if(view == null) return;
         // Add a spring to the system.
@@ -152,7 +153,7 @@ public class SpringAnimator {
             public void run() {
                 spring.setEndValue(0f);
             }
-        }, 70);
+        }, SPRING_DELAY_MS);
 
         // Add a listener to observe the motion of the spring.
         spring.addListener(new SpringListener() {
@@ -200,7 +201,7 @@ public class SpringAnimator {
             public void run() {
                 spring.setEndValue(0f);
             }
-        }, 70);
+        }, 30);
 
         // Add a listener to observe the motion of the spring.
         spring.addListener(new SpringListener() {

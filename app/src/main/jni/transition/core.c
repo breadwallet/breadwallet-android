@@ -1,8 +1,25 @@
+#include <jni.h>
+//#include "breadwallet-core/BRPaymentProtocol.h"
+
 //
 // Created by Mihail Gutan on 9/24/15.
 //
-#include "core.h"
-#include "../breadwallet-core/BRPaymentProtocol.h"
+JNIEXPORT jbyteArray Java_com_breadwallet_tools_AddressReader_getCertificatesFromPaymentRequest
+        (JNIEnv *env, jobject obj, jbyteArray payment, jint index) {
+
+    jboolean b;
+    int requestLength = (*env)->GetArrayLength(env, payment);
+    char *buff[requestLength];
+    jbyte *bytePayment = (*env)->GetByteArrayElements(env, payment, &b);
+
+    uint8_t buf1[BRPaymentProtocolRequestCert(bytePayment, NULL, 0, index)];
+    BRPaymentProtocolRequestCert(payment, buf1, sizeof(buf1), index);
+//
+    jbyteArray result = buf1;
+    (*env)->ReleaseByteArrayElements(env, payment, bytePayment, 0);
+    return result;
+
+}
 
 JNIEXPORT void Java_com_breadwallet_presenter_activities_MainActivity_sendMethodCallBack
         (JNIEnv *env, jobject obj) {
@@ -11,10 +28,10 @@ JNIEXPORT void Java_com_breadwallet_presenter_activities_MainActivity_sendMethod
     if (mid == 0)
         return;
     (*env)->CallVoidMethod(env, obj, mid);
-};
+}
 
-JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_encodePhrase
-        (JNIEnv *env, jobject obj, jbyteArray seed, jbyteArray wordList) {
+//JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_encodePhrase
+//        (JNIEnv *env, jobject obj, jbyteArray seed, jbyteArray wordList) {
 //
 //    jboolean b;
 //    int wordLen = (*env)->GetArrayLength(env, wordList);
@@ -34,15 +51,5 @@ JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_encodePhrase
 //    (*env)->ReleaseByteArrayElements(env, seed, b, JNI_ABORT);
 //
 //    size_t byte_size = BRBIP39Encode(phrase,) continue later
-
-}
-
-JNIEXPORT jbyteArray Java_com_breadwallet_tools_AddressReader_getCertificatesFromPaymentRequest
-        (JNIEnv *env, jobject obj, jbyteArray certs) {
-
-    int certsLength = (*env)->GetArrayLength(env, certs);
-    char *buff[certsLength];
-
-//    BRPaymentProtocolRequestCert //TODO fix this shit please when the implementation is ready!
-
-}
+//
+//}

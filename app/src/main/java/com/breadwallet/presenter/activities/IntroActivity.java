@@ -74,9 +74,10 @@ public class IntroActivity extends FragmentActivity {
     private Bundle savedInstanceState;
 
     //loading the native library
-//    static {
-//        System.loadLibrary("BreadWalletCore");
-//    }
+    static {
+        Log.e(TAG,"loadLibrary!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        System.loadLibrary("BreadWalletCore");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +90,7 @@ public class IntroActivity extends FragmentActivity {
         }
 //        KeyStoreManager.deleteKeyStoreEntry(KeyStoreManager.PHRASE_ALIAS);
         KeyStoreManager.deleteAllKeyStoreEntries();
-        //m.generateRandomSeed(this);
+//        m.generateRandomSeed(this);
         //testSQLiteConnectivity(this);   //do some SQLite testing
         app = this;
         introWelcomeFragment = new IntroWelcomeFragment();

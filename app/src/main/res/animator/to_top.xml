@@ -2,9 +2,9 @@
 <set xmlns:android="http://schemas.android.com/apk/res/android"
     android:shareInterpolator="false">
     <objectAnimator xmlns:android="http://schemas.android.com/apk/res/android"
-        android:duration="200"
+        android:duration="@integer/slide_speed"
         android:propertyName="y"
         android:valueFrom="0"
-        android:valueTo="-1000"
+        android:valueTo="-2000"
         android:valueType="floatType" />
 </set>

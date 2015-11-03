@@ -94,7 +94,6 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
                             customKeyboardLayout.getLocationOnScreen(locations);
                             customKeyboardLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                             createCustomKeyboardButtons(locations[1]);
-                            Log.e(TAG, "Inside the global layout listener: location[1]: " + locations[1]);
 
                         }
                     }

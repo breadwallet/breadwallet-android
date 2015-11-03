@@ -110,7 +110,7 @@ public class ParallaxViewPager extends ViewPager {
 
                             @Override
                             public void run() {
-                                SpringAnimator.showBouncySlide(getRootView(), SpringAnimator.TO_RIGHT, 15);
+                                SpringAnimator.showBouncySlideHorizontal(getRootView(), SpringAnimator.TO_RIGHT, 15);
                             }
                         }, 80);
                     } else if (position == 0) {
@@ -118,7 +118,7 @@ public class ParallaxViewPager extends ViewPager {
 
                             @Override
                             public void run() {
-                                SpringAnimator.showBouncySlide(getRootView(), SpringAnimator.TO_LEFT, 15);
+                                SpringAnimator.showBouncySlideHorizontal(getRootView(), SpringAnimator.TO_LEFT, 15);
                             }
                         }, 80);
                     }

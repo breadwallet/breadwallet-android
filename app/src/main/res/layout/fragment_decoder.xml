@@ -43,7 +43,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/button_flash"
-        android:background="@drawable/flash"
+        android:background="@drawable/flash_off"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true" />
 
