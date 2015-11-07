@@ -1,20 +1,25 @@
 #include <jni.h>
-//#include "breadwallet-core/BRPaymentProtocol.h"
+#include "breadwallet-core/BRPaymentProtocol.h"
 
 //
 // Created by Mihail Gutan on 9/24/15.
 //
+
 JNIEXPORT jbyteArray Java_com_breadwallet_tools_AddressReader_getCertificatesFromPaymentRequest
         (JNIEnv *env, jobject obj, jbyteArray payment, jint index) {
 
+    struct BRPaymentProtocolRequest *nativeRequest;
     jboolean b;
     int requestLength = (*env)->GetArrayLength(env, payment);
-    char *buff[requestLength];
+    unsigned char *buff[requestLength];
     jbyte *bytePayment = (*env)->GetByteArrayElements(env, payment, &b);
+    (*env)->GetByteArrayRegion(env, payment, 0, requestLength, buff);
 
-    uint8_t buf1[BRPaymentProtocolRequestCert(bytePayment, NULL, 0, index)];
-    BRPaymentProtocolRequestCert(payment, buf1, sizeof(buf1), index);
-//
+    nativeRequest = (BRPaymentProtocolRequest *) buff;
+
+    uint8_t buf1[BRPaymentProtocolRequestCert(nativeRequest, NULL, 0, index)];
+    BRPaymentProtocolRequestCert(nativeRequest, buf1, sizeof(buf1), index);
+
     jbyteArray result = buf1;
     (*env)->ReleaseByteArrayElements(env, payment, bytePayment, 0);
     return result;

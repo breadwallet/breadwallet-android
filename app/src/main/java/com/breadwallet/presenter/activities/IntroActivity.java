@@ -75,8 +75,7 @@ public class IntroActivity extends FragmentActivity {
 
     //loading the native library
     static {
-        Log.e(TAG,"loadLibrary!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        System.loadLibrary("BreadWalletCore");
+        System.loadLibrary("core");
     }
 
     @Override

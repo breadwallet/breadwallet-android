@@ -111,7 +111,8 @@ public class AddressReader {
 //                        }
 
                         Log.e(TAG, "Response is: " + response.toString());
-                        byte[] certs = getCertificatesFromPaymentRequest(response.getBytes(),0);
+                        byte[] certs = getCertificatesFromPaymentRequest(response.getBytes(), 0);
+                        Log.e(TAG, "YAYYAYAYYAYYAY: " + certs.toString());
 
                         try {
                             CertificateFactory cf = CertificateFactory.getInstance("X.509");

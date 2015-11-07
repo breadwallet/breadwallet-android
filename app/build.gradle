@@ -22,12 +22,12 @@ android {
     defaultConfig {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         applicationId "com.breadwallet"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
         ndk {
-            moduleName "BreadWalletCore"
+            moduleName "core"
             cFlags "-std=c99"
             ldLibs "log"
         }
@@ -62,11 +62,47 @@ android {
     sourceSets {
         main {
             jni.srcDirs = []
-            jniLibs.srcDirs = ['src/main/jni','src/main/jni/breadwallet-core/secp256k1']
         }
     }
 
 }
+task buildNative(type: Exec, description: 'Compile JNI source via NDK') {
+    android.applicationVariants.all { variant ->
+        def ndkDir = "/Users/Mihail/Library/Android/android-ndk-r10e"
+        commandLine "$ndkDir/ndk-build",
+                'NDK_PROJECT_PATH=null',
+                'V=1',
+                'ndk-build NDK_DEBUG=1',
+                'NDK_LOG=1',
+                'APP_BUILD_SCRIPT=src/main/jni/Android.mk',
+                "NDK_OUT=$buildDir/intermediates/ndk/${variant.dirName}/obj",
+                "NDK_LIBS_OUT=$buildDir/intermediates/ndk/${variant.dirName}/lib"
+
+        copy {
+            from "$buildDir/intermediates/ndk/${variant.dirName}/lib"
+            into "src/main/jniLibs"
+        }
+    }
+}
+
+task cleanNative(type: Exec, description: 'Clean JNI object files') {
+    android.applicationVariants.all { variant ->
+        def ndkDir = "/Users/Mihail/Library/Android/android-ndk-r10e"
+        commandLine "$ndkDir/ndk-build",
+                'NDK_PROJECT_PATH=null',
+                'NDK_APPLICATION_MK=src/main/jni/Application.mk',
+                "NDK_OUT=$buildDir/intermediates/ndk/${variant.dirName}/obj",
+                "NDK_LIBS_OUT=$buildDir/intermediates/ndk/${variant.dirName}/lib",
+                'clean'
+    }
+}
+
+clean.dependsOn 'cleanNative'
+
+tasks.withType(JavaCompile) {
+    compileTask -> compileTask.dependsOn buildNative
+}
+
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
