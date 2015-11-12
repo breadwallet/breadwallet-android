@@ -6,15 +6,15 @@ LOCAL_SRC_FILES := ./transition/core.c
 
 LOCAL_MODULE := core
 
-LOCAL_C_INCLUDES := /Users/Mihail/Library/Android/android-ndk-r10e/platforms/android-21/arch-arm64/usr/include
+LOCAL_LDLIBS := -llog -lm
 
-LOCAL_SHARED_LIBRARIES := bread stdlib
+LOCAL_SHARED_LIBRARIES := bread
 
 LOCAL_CFLAGS := -std=c99
 
 include $(BUILD_SHARED_LIBRARY)
 
-#static module______________________________
+#second module______________________________
 
 include $(CLEAR_VARS)
 
@@ -38,11 +38,16 @@ LOCAL_SRC_FILES := \
 
 LOCAL_C_INCLUDES := \
 $(LOCAL_PATH)/breadwallet-core/secp256k1\
-$(LOCAL_PATH)/breadwallet-core\
+$(LOCAL_PATH)/breadwallet-core
 
 LOCAL_MODULE := bread
 
+LOCAL_LDLIBS := -llog -lm
+
+LOCAL_EXPORT_C_INCLUDES := \
+$(LOCAL_PATH)/breadwallet-core\
+$(LOCAL_PATH)/breadwallet-core/secp256k1
+
 LOCAL_CFLAGS := -std=c99
 
-LOCAL_EXPORT_LDLIBS := -llog
 include $(BUILD_SHARED_LIBRARY)

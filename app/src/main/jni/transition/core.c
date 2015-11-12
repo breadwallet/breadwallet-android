@@ -1,27 +1,31 @@
 #include <jni.h>
 #include "breadwallet-core/BRPaymentProtocol.h"
+//#include <android/log.h>
 
 //
 // Created by Mihail Gutan on 9/24/15.
 //
 
-JNIEXPORT jbyteArray Java_com_breadwallet_tools_AddressReader_getCertificatesFromPaymentRequest
+JNIEXPORT jbyteArray Java_com_breadwallet_tools_security_RequestHandler_getCertificatesFromPaymentRequest
         (JNIEnv *env, jobject obj, jbyteArray payment, jint index) {
 
-    struct BRPaymentProtocolRequest *nativeRequest;
-    jboolean b;
+    BRPaymentProtocolRequest *nativeRequest;
     int requestLength = (*env)->GetArrayLength(env, payment);
-    unsigned char *buff[requestLength];
-    jbyte *bytePayment = (*env)->GetByteArrayElements(env, payment, &b);
-    (*env)->GetByteArrayRegion(env, payment, 0, requestLength, buff);
+    jbyte* bytePayment = (*env)->GetByteArrayElements(env, payment, 0);
+    nativeRequest = BRPaymentProtocolRequestParse(bytePayment, requestLength);
+    BRPaymentProtocolRequestFree(nativeRequest);
+//    char buff = bytePayment;
+//    nativeRequest = (BRPaymentProtocolRequest*) buff;
 
-    nativeRequest = (BRPaymentProtocolRequest *) buff;
+//    uint8_t buf1[BRPaymentProtocolRequestCert(nativeRequest, NULL, 0, index)];
+//    BRPaymentProtocolRequestCert(nativeRequest, buf1, sizeof(buf1), index);
 
-    uint8_t buf1[BRPaymentProtocolRequestCert(nativeRequest, NULL, 0, index)];
-    BRPaymentProtocolRequestCert(nativeRequest, buf1, sizeof(buf1), index);
-
-    jbyteArray result = buf1;
-    (*env)->ReleaseByteArrayElements(env, payment, bytePayment, 0);
+//    jbyteArray result = buf1;
+    jbyte* bytesResult = (jbyte*)nativeRequest;
+    int size = sizeof(nativeRequest);
+    jbyteArray result = (*env)->NewByteArray(env, size);
+    (*env)->SetByteArrayRegion(env,result, 0, size, bytesResult);
+    (*env)->ReleaseByteArrayElements(env, payment, bytePayment, JNI_ABORT);
     return result;
 
 }

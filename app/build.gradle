@@ -15,6 +15,7 @@ android {
 
     packagingOptions {
         exclude 'LICENSE.txt'
+        exclude 'META-INF/LICENSE.txt'
 //        exclude 'app/src/main/jni/breadwallet-core' //for API 19 to work
     }
 
@@ -66,18 +67,21 @@ android {
     }
 
 }
+
 task buildNative(type: Exec, description: 'Compile JNI source via NDK') {
     android.applicationVariants.all { variant ->
-        def ndkDir = "/Users/Mihail/Library/Android/android-ndk-r10e"
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file('local.properties').newDataInputStream())
+        def ndkDir = properties.getProperty('ndk.dir')
+        println(projectDir)
         commandLine "$ndkDir/ndk-build",
                 'NDK_PROJECT_PATH=null',
                 'V=1',
                 'ndk-build NDK_DEBUG=1',
                 'NDK_LOG=1',
-                'APP_BUILD_SCRIPT=src/main/jni/Android.mk',
+                "NDK_APPLICATION_MK=$projectDir/src/main/jni/Application.mk",
                 "NDK_OUT=$buildDir/intermediates/ndk/${variant.dirName}/obj",
                 "NDK_LIBS_OUT=$buildDir/intermediates/ndk/${variant.dirName}/lib"
-
         copy {
             from "$buildDir/intermediates/ndk/${variant.dirName}/lib"
             into "src/main/jniLibs"
@@ -87,10 +91,12 @@ task buildNative(type: Exec, description: 'Compile JNI source via NDK') {
 
 task cleanNative(type: Exec, description: 'Clean JNI object files') {
     android.applicationVariants.all { variant ->
-        def ndkDir = "/Users/Mihail/Library/Android/android-ndk-r10e"
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file('local.properties').newDataInputStream())
+        def ndkDir = properties.getProperty('ndk.dir')
         commandLine "$ndkDir/ndk-build",
                 'NDK_PROJECT_PATH=null',
-                'NDK_APPLICATION_MK=src/main/jni/Application.mk',
+                "NDK_APPLICATION_MK=$projectDir/src/main/jni/Application.mk",
                 "NDK_OUT=$buildDir/intermediates/ndk/${variant.dirName}/obj",
                 "NDK_LIBS_OUT=$buildDir/intermediates/ndk/${variant.dirName}/lib",
                 'clean'
@@ -114,6 +120,7 @@ dependencies {
     compile 'com.facebook.rebound:rebound:0.3.8' //spring animation
     compile 'org.json:json:20141113' //JSonParser google
     compile 'com.mcxiaoke.volley:library-aar:1.0.0'
+    compile 'org.apache.httpcomponents:httpclient:4.5.1'
 
     androidTestCompile 'com.android.support.test:runner:+'
     // Set this dependency to use JUnit 4 rules

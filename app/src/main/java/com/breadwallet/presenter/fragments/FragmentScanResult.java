@@ -19,8 +19,8 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
-import com.breadwallet.tools.AddressReader;
 import com.breadwallet.tools.CurrencyManager;
+import com.breadwallet.tools.security.RequestHandler;
 import com.breadwallet.tools.adapter.AmountAdapter;
 import com.breadwallet.tools.adapter.CurrencyListAdapter;
 import com.breadwallet.tools.animation.SpringAnimator;
@@ -122,11 +122,9 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
     @Override
     public void onResume() {
         updateRateAndISO();
-        String result = address;
-        //Log.e(TAG, "This is the address: " + address);
-        //Log.e(TAG, "This is the result = address: " + result);
-        String cleanResult = AddressReader.getTheAddress(result);
+        String cleanResult = RequestHandler.getTheAddress(address);
         scanResult.setText("to: " + cleanResult);
+
         super.onResume();
     }
 
@@ -283,14 +281,6 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
             rate = settings.getFloat(FragmentCurrency.RATE, 1);
         }
         Log.d(TAG, "ISO: " + ISO + ", rate: " + rate);
-    }
-
-    /**
-     * Saves the y coordinate of the keyboard once it's created successfully the first time
-     */
-    private void saveKeyboardLocationInPrefs() {
-
-
     }
 
 }

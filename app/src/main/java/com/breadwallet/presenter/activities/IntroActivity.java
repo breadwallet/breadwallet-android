@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
@@ -13,7 +12,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.presenter.entities.BRTxInputEntity;
@@ -24,10 +22,8 @@ import com.breadwallet.presenter.fragments.IntroRecoverWalletFragment;
 import com.breadwallet.presenter.fragments.IntroWarningFragment;
 import com.breadwallet.presenter.fragments.IntroWelcomeFragment;
 import com.breadwallet.tools.animation.BackgroundMovingAnimator;
-import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
-import com.breadwallet.wallet.BRWalletManager;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -87,8 +83,14 @@ public class IntroActivity extends FragmentActivity {
         if (savedInstanceState != null) {
             return;
         }
-//        KeyStoreManager.deleteKeyStoreEntry(KeyStoreManager.PHRASE_ALIAS);
-        KeyStoreManager.deleteAllKeyStoreEntries();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //        KeyStoreManager.deleteKeyStoreEntry(KeyStoreManager.PHRASE_ALIAS);
+//        KeyStoreManager.deleteAllKeyStoreEntries();
 //        m.generateRandomSeed(this);
         //testSQLiteConnectivity(this);   //do some SQLite testing
         app = this;
@@ -211,25 +213,26 @@ public class IntroActivity extends FragmentActivity {
     }
 
     private void startTheWalletIfExists() {
-        final BRWalletManager m = BRWalletManager.getInstance();
-        if (!m.isPasscodeEnabled(this)) {
-            //Device passcode/password should be enabled for the app to work
-            ((BreadWalletApp) getApplication()).showDeviceNotSecuredWarning(this);
-        } else {
-            //now check if there is a wallet or should we create/restore one.
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (m.noWallet(app)) {
-                        Log.e(TAG, "should create new wallet");
-                        showRecoverNewWalletFragment();
-                    } else {
-                        Log.e(TAG, "should go to the current wallet");
-                        startMainActivity();
-                    }
-                }
-            }, 800);
-        }
+        startMainActivity(); // testing
+//        final BRWalletManager m = BRWalletManager.getInstance();
+//        if (!m.isPasscodeEnabled(this)) {
+//            //Device passcode/password should be enabled for the app to work
+//            ((BreadWalletApp) getApplication()).showDeviceNotSecuredWarning(this);
+//        } else {
+//            //now check if there is a wallet or should we create/restore one.
+//            new Handler().postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    if (m.noWallet(app)) {
+//                        Log.e(TAG, "should create new wallet");
+//                        showRecoverNewWalletFragment();
+//                    } else {
+//                        Log.e(TAG, "should go to the current wallet");
+//                        startMainActivity();
+//                    }
+//                }
+//            }, 800);
+//        }
     }
 
     public void testSQLiteConnectivity(Activity context) {
