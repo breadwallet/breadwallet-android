@@ -31,3 +31,6 @@ proguard/
 
 # Android Studio Navigation editor temp files
 .navigation/
+
+# jniLibs files
+/app/src/main/jniLibs

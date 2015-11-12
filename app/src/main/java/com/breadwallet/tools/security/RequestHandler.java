@@ -22,6 +22,7 @@ import java.security.cert.CertPathParameters;
 import java.security.cert.CertPathValidator;
 import java.security.cert.CertPathValidatorException;
 import java.security.cert.CertPathValidatorResult;
+import java.security.cert.TrustAnchor;
 import java.util.ArrayList;
 
 /**
@@ -97,7 +98,7 @@ public class RequestHandler {
 //                        byte[] certs;
 //                        try {
 //                            byte[] serializedBytes = response.getBytes();
-//                            certs = getCertificatesFromPaymentRequest(serializedBytes, 0, true);
+//                            certs = parsePaymentRequest(serializedBytes, 0, true);
 //                        } finally {
 //                            try {
 //                                bos.close();
@@ -140,7 +141,7 @@ public class RequestHandler {
 //                        InputStream caInput = null;
 //                        try {
 //                            CertificateFactory cf = CertificateFactory.getInstance("X.509");
-//                            byte[] certs = getCertificatesFromPaymentRequest(response.getBytes());
+//                            byte[] certs = parsePaymentRequest(response.getBytes());
 //                            caInput = new ByteArrayInputStream(certs);
 //                            ca = cf.generateCertificate(caInput);
 //                            System.out.println("ca=" + ((X509Certificate) ca).getSubjectDN());
@@ -248,6 +249,7 @@ public class RequestHandler {
         }
     }
 
+    public static native byte[] parsePaymentRequest(byte[] req, int index);
     public static native byte[] getCertificatesFromPaymentRequest(byte[] req, int index);
 
     public CertPathValidatorResult certificateValidation(
@@ -317,6 +319,7 @@ public class RequestHandler {
 
                 byte[] serializedBytes = getBytes(in);
                 serializedBytes = getCertificatesFromPaymentRequest(serializedBytes, 0);
+
                 Log.e(TAG, "YAYYAYAYYAYYAY: " + serializedBytes.toString());
             } catch (IOException e) {
                 e.printStackTrace();
