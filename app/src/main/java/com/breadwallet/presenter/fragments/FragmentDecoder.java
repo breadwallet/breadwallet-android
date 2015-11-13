@@ -42,6 +42,7 @@ import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.qrcode.AutoFitTextureView;
 import com.breadwallet.tools.qrcode.PlanarYUVLuminanceSource;
+import com.breadwallet.tools.security.RequestHandler;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
@@ -557,11 +558,10 @@ public class FragmentDecoder extends Fragment
             MainActivity.app.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-
                     if (text != null) {
-                        FragmentScanResult.address = text;
                         FragmentAnimator.hideDecoderFragment();
-                        FragmentAnimator.animateScanResultFragment();
+                        RequestHandler.proccessRequest(text);
+
                     } else {
 
                     }

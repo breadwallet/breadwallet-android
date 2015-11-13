@@ -1,6 +1,7 @@
 package com.breadwallet.presenter.activities;
 
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.app.Service;
 import android.content.ClipboardManager;
 import android.content.DialogInterface;
@@ -14,7 +15,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.PersistableBundle;
 import android.support.v4.app.FragmentActivity;
-import android.app.AlertDialog;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -28,8 +28,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.fragments.FragmentAbout;
@@ -130,7 +128,6 @@ public class MainActivity extends FragmentActivity implements Observer {
     public FingerprintAuthenticationDialogFragment fingerprintAuthenticationDialogFragment;
     public PasswordAuthenticationDialogFragment passwordAuthenticationDialogFragment;
     public FingerprintManager fingerprintManager;
-    public static RequestQueue queue;
 
 
 //    private native String messageFromNativeCode(String logThis);
@@ -274,7 +271,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         fingerprintAuthenticationDialogFragment = new FingerprintAuthenticationDialogFragment();
         passwordAuthenticationDialogFragment = new PasswordAuthenticationDialogFragment();
         passwordDialogFragment = new PasswordDialogFragment();
-        queue = Volley.newRequestQueue(this);
         parallaxViewPager = ((ParallaxViewPager) findViewById(R.id.main_viewpager));
         parallaxViewPager.setOverlapPercentage(0.99f).setAdapter(pagerAdapter);
         parallaxViewPager.setBackgroundResource(R.drawable.backgroundmain);

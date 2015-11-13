@@ -3,17 +3,28 @@ package com.breadwallet.tools.security;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.breadwallet.presenter.activities.MainActivity;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.Signature;
+import java.security.SignatureException;
 import java.security.cert.CertPath;
 import java.security.cert.CertPathBuilder;
 import java.security.cert.CertPathBuilderException;
@@ -21,8 +32,11 @@ import java.security.cert.CertPathBuilderResult;
 import java.security.cert.CertPathParameters;
 import java.security.cert.CertPathValidator;
 import java.security.cert.CertPathValidatorException;
-import java.security.cert.CertPathValidatorResult;
-import java.security.cert.TrustAnchor;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.PKIXCertPathValidatorResult;
+import java.security.cert.PKIXParameters;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 
 /**
@@ -51,8 +65,9 @@ import java.util.ArrayList;
  */
 public class RequestHandler {
     public static final String TAG = RequestHandler.class.getName();
+    public static String finalAddress;
 
-    public static String getTheAddress(String address) {
+    public static void proccessRequest(String address) {
 
         //check if it has an BIP72 request URI
         String addressToProcess = address;
@@ -66,7 +81,7 @@ public class RequestHandler {
                                     || addressToProcess.charAt(indx - 1) == '?' /** Non-backwards-compatible */)) {
                         int uriStartIndex = indx + 2;
                         processRequestURI(addressToProcess.substring(uriStartIndex));
-                        return null;
+                        return;
                     }
             }
         }
@@ -81,118 +96,10 @@ public class RequestHandler {
             }
         }
         if (endIndex == 0) endIndex = length - 1;
-        return addressToProcess.substring(startIndex, endIndex);
+        finalAddress = addressToProcess.substring(startIndex, endIndex);
     }
 
     private static void processRequestURI(String url) {
-
-        // Request a string response from the provided URL.
-//        Request stringRequest = new StringRequest(Request.Method.GET, URL,
-//                new Response.Listener<String>() {
-//
-//                    @Override
-//                    public void onResponse(String response) {
-//
-//                        Log.e(TAG, "Data is: " + response.toString());
-//                        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-//                        byte[] certs;
-//                        try {
-//                            byte[] serializedBytes = response.getBytes();
-//                            certs = parsePaymentRequest(serializedBytes, 0, true);
-//                        } finally {
-//                            try {
-//                                bos.close();
-//                            } catch (IOException ex) {
-//                                 ignore close exception
-//                            }
-//                        }
-//
-//                        Log.e(TAG, "YAYYAYAYYAYYAY: " + certs.toString());
-//
-//                        try {
-//                            CertificateFactory cf = CertificateFactory.getInstance("X.509");
-//                             chain is of type X509Certificate[]
-//                            CertPath cp = cf.generateCertPath(Arrays.asList(certs));
-//
-//                            CertPathValidator cpv = CertPathValidator.getInstance(CertPathValidator.getDefaultType());
-//                            KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
-//
-//                            File fis = new File("/system/etc/security/cacerts");
-//                            printFiles(fis);
-//
-//
-//                            ks.load(fis, null);
-//                            BufferedInputStream bis = new BufferedInputStream(fis);
-//
-//                            while (bis.available() > 0) {
-//                                Certificate cert = cf.generateCertificate(bis);
-//                                Log.e(TAG, "CERT: " + cert.toString());
-//                            }
-//
-//                            PKIXParameters params = new PKIXParameters(ks);
-//                            CertPathValidatorResult cpvr = cpv.validate(cp, params);
-//                        } catch (CertificateException e) {
-//                            e.printStackTrace();
-//                        } catch (KeyStoreException e) {
-//                            e.printStackTrace();
-//                        }
-        // Load CAs from an InputStream
-//                        Certificate ca;
-//                        InputStream caInput = null;
-//                        try {
-//                            CertificateFactory cf = CertificateFactory.getInstance("X.509");
-//                            byte[] certs = parsePaymentRequest(response.getBytes());
-//                            caInput = new ByteArrayInputStream(certs);
-//                            ca = cf.generateCertificate(caInput);
-//                            System.out.println("ca=" + ((X509Certificate) ca).getSubjectDN());
-//                            Certificate[] chain = null; //TODO create an array of certs from the byte[] certs
-//                            // Create a KeyStore containing our trusted CAs
-//                            String keyStoreType = KeyStore.getDefaultType();
-//                            KeyStore keyStore = KeyStore.getInstance(keyStoreType);
-//                            keyStore.load(null, null);
-//                            CertPathValidator cpv = CertPathValidator.getInstance(CertPathValidator.getDefaultType());
-//                            keyStore.setCertificateEntry("ca", ca);
-//                            PKIXParameters params = new PKIXParameters(keyStore);
-//                            CertPath cp = cf.generateCertPath(Arrays.asList(chain));
-//                            CertPathValidatorResult cpvr = cpv.validate(cp, params);
-//                            // Create a TrustManager that trusts the CAs in our KeyStore
-//                            String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
-//                            TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
-//                            tmf.init(keyStore);
-//                        } catch (CertificateException e) {
-//                            e.printStackTrace();
-//                        } catch (NoSuchAlgorithmException e) {
-//                            e.printStackTrace();
-//                        } catch (KeyStoreException e) {
-//                            e.printStackTrace();
-//                        } catch (IOException e) {
-//                            e.printStackTrace();
-//                        } catch (InvalidAlgorithmParameterException e) {
-//                            e.printStackTrace();
-//                        } catch (CertPathValidatorException e) {
-//                            e.printStackTrace();
-//                        } finally {
-//                            try {
-//                                caInput.close();
-//                            } catch (IOException e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
-
-//                    }
-//                },
-//                new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        Log.e(TAG, "Response is: That didn't work!", error);
-//                    }
-//                }) {
-//            public String getBodyContentType() {
-//                return "application/bitcoin-paymentrequest";
-//            }
-//        };
-//         Add the request to the RequestQueue.
-//        MainActivity.queue.add(stringRequest);
         String theURL = null;
         try {
             theURL = URLDecoder.decode(url, "UTF-8");
@@ -235,47 +142,106 @@ public class RequestHandler {
         return true;
     }
 
-    ///system/etc/security/cacerts/
-    public static void printFiles(File parentDir) {
+    public static native PaymentRequestEntity parsePaymentRequest(byte[] req);
 
-        ArrayList<File> inFiles = new ArrayList<>();
-        File[] files = parentDir.listFiles();
-        for (File file : files) {
-            if (file.isDirectory()) {
-                Log.e(TAG, "This one is a directory!");
-            } else {
-                Log.e(TAG, file.toString());
-            }
-        }
-    }
-
-    public static native byte[] parsePaymentRequest(byte[] req, int index);
     public static native byte[] getCertificatesFromPaymentRequest(byte[] req, int index);
 
-    public CertPathValidatorResult certificateValidation(
-            CertPath cp, CertPathParameters params, String algorithm) {
-        CertPathValidator cpv = null;
-        try {
-            cpv = CertPathValidator.getInstance(algorithm);
-        } catch (NoSuchAlgorithmException nsae) {
-            System.err.println(nsae);
-            System.exit(1);
-        }
-        // validate certification path ("cp") with specified parameters ("params")
-        try {
-            CertPathValidatorResult cpvResult = cpv.validate(cp, params);
-            return cpvResult;
-        } catch (InvalidAlgorithmParameterException iape) {
-            System.err.println("validation failed: " + iape);
-            System.exit(1);
-        } catch (CertPathValidatorException cpve) {
-            System.err.println("validation failed: " + cpve);
-            System.err.println("index of certificate that caused exception: "
-                    + cpve.getIndex());
-            System.exit(1);
-        }
-        return null;
-    }
+//    public static boolean certificateValidation(byte[] rawCerts) {
+//        if (rawCerts == null) {
+//            throw new NullPointerException("no certificates supplied");
+//        }
+//        try {
+//            String keystoreType;
+//            keystoreType = "JKS";
+//            KeyStore keyStore;
+//            File file = new File(MainActivity.class.getResource("/cacerts").getFile());
+//            InputStream is = new FileInputStream(file);
+//            try {
+//                keyStore = KeyStore.getInstance(keystoreType);
+//                keyStore.load(is, null);
+//            } catch (IOException x) {
+//                throw new KeyStoreException(x);
+//            } catch (GeneralSecurityException x) {
+//                throw new KeyStoreException(x);
+//            } finally {
+//                try {
+//                    is.close();
+//                } catch (IOException x) {
+//                    // Ignored.
+//                }
+//            }
+//            if (keyStore == null) throw new NullPointerException("keystore is null!");
+//            CertificateFactory certFact = CertificateFactory.getInstance("X.509");
+//
+//            // parse each certificate from the chain ...
+//            ArrayList<X509Certificate> certs = new ArrayList<>();
+//
+//            X509Certificate cert = (X509Certificate) certFact.generateCertificate(new ByteArrayInputStream(rawCerts));
+//            certs.add(cert);
+//
+//            // ... and generate the certification path from it.
+//            CertPath certPath = certFact.generateCertPath(certs);
+//
+//            // Retrieves the most-trusted CAs from keystore.
+//            PKIXParameters params = new PKIXParameters(keyStore);
+//            // Revocation not supported in the current version.
+//            params.setRevocationEnabled(false);
+//
+//            // Now verify the certificate chain is correct and trusted. This let's us get an identity linked pubkey.
+//            CertPathValidator validator = CertPathValidator.getInstance("PKIX");
+//            PKIXCertPathValidatorResult result = (PKIXCertPathValidatorResult) validator.validate(certPath, params);
+//            PublicKey publicKey = result.getPublicKey();
+//
+//            // OK, we got an identity, now check it was used to sign this message.
+//            Signature signature = Signature.getInstance(getPkiSignatureAlgorithm(paymentRequest));
+//            // Note that we don't use signature.initVerify(certs.get(0)) here despite it being the most obvious
+//            // way to set it up, because we don't care about the constraints specified on the certificates: any
+//            // cert that links a key to a domain name or other identity will do for us.
+//            signature.initVerify(publicKey);
+//
+//            // duplicate the payment-request but with an empty signature
+//            // then check the again serialized format of it
+//            PaymentRequest checkPaymentRequest = new PaymentRequest.Builder(paymentRequest)
+//                    .signature(ByteString.EMPTY)
+//                    .build();
+//
+//            // serialize the payment request (now with an empty signature field) and check if the signature verifies
+//            signature.update(checkPaymentRequest.toByteArray());
+//
+//            boolean isValid = signature.verify(paymentRequest.signature.toByteArray());
+//
+//            if (!isValid) {
+//                throw new PaymentRequestException("signature does not match");
+//            }
+//
+//
+//            // Signature verifies, get the names from the identity we just verified for presentation to the user.
+//            final X509Certificate cert = certs.get(0);
+//            //return new PkiVerificationData(displayName, publicKey, result.getTrustAnchor());
+//            String displayName = X509Utils.getDisplayNameFromCertificate(cert, true);
+//            return new PkiVerificationData(displayName, publicKey, result.getTrustAnchor());
+//
+//
+//        } catch (CertificateException e) {
+//            throw new PaymentRequestException("invalid certificate", e);
+//        } catch (InvalidKeyException e) {
+//            throw new PaymentRequestException("keystore not ready", e);
+//        } catch (NoSuchAlgorithmException e) {
+//            throw new RuntimeException(e);
+//        } catch (InvalidAlgorithmParameterException e) {
+//            throw new PaymentRequestException("invalid certificate", e);
+//        } catch (KeyStoreException e) {
+//            throw new RuntimeException(e);
+//        } catch (CertPathValidatorException e) {
+//            throw new PaymentRequestException("invalid certificate", e);
+//        } catch (SignatureException e) {
+//            throw new PaymentRequestException("invalid certificate", e);
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (PaymentRequestException paymentRequestException) {
+//            paymentRequestException.printStackTrace();
+//        }
+//    }
 
     public CertPath buildCertPath(CertPathParameters params, String algorithm) {
         CertPathBuilder cpb = null;
@@ -283,7 +249,6 @@ public class RequestHandler {
             cpb = CertPathBuilder.getInstance(algorithm);
         } catch (NoSuchAlgorithmException nsae) {
             System.err.println(nsae);
-            System.exit(1);
         }
         // build certification path using specified parameters ("params")
         try {
@@ -293,10 +258,8 @@ public class RequestHandler {
             return cp;
         } catch (InvalidAlgorithmParameterException iape) {
             System.err.println("build failed: " + iape);
-            System.exit(1);
         } catch (CertPathBuilderException cpbe) {
             System.err.println("build failed: " + cpbe);
-            System.exit(1);
         }
         return null;
     }
@@ -318,15 +281,16 @@ public class RequestHandler {
                     return null;
 
                 byte[] serializedBytes = getBytes(in);
-                serializedBytes = getCertificatesFromPaymentRequest(serializedBytes, 0);
-
-                Log.e(TAG, "YAYYAYAYYAYYAY: " + serializedBytes.toString());
+                PaymentRequestEntity paymentRequest = parsePaymentRequest(serializedBytes);
+                Log.e(TAG,"Signature: " + paymentRequest.signature + ", pkiType: " + paymentRequest.pkiType);
+//                byte[] result = getCertificatesFromPaymentRequest(serializedBytes, 0);
+//                certificateValidation(result);
+//                Log.e(TAG, "YAYYAYAYYAYYAY: " + result.toString());
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
                 if (urlConnection != null) urlConnection.disconnect();
             }
-
             return null;
         }
 
@@ -334,6 +298,7 @@ public class RequestHandler {
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
             //Do anything with response..
+
         }
     }
 

@@ -6,40 +6,51 @@
 // Created by Mihail Gutan on 9/24/15.
 //
 
-JNIEXPORT jbyteArray Java_com_breadwallet_tools_security_RequestHandler_parsePaymentRequest
-        (JNIEnv *env, jobject obj, jbyteArray payment, jint index) {
+JNIEXPORT jobject Java_com_breadwallet_tools_security_RequestHandler_parsePaymentRequest
+        (JNIEnv *env, jobject obj, jbyteArray payment) {
 
     BRPaymentProtocolRequest *nativeRequest;
     int requestLength = (*env)->GetArrayLength(env, payment);
     jbyte* bytePayment = (*env)->GetByteArrayElements(env, payment, 0);
     nativeRequest = BRPaymentProtocolRequestParse(bytePayment, requestLength);
-    BRPaymentProtocolRequestFree(nativeRequest);
-//    char buff = bytePayment;
-//    nativeRequest = (BRPaymentProtocolRequest*) buff;
-
-//    uint8_t buf1[BRPaymentProtocolRequestCert(nativeRequest, NULL, 0, index)];
-//    BRPaymentProtocolRequestCert(nativeRequest, buf1, sizeof(buf1), index);
 
 //    jbyteArray result = buf1;
-    jbyte* bytesResult = (jbyte*)nativeRequest;
-    int size = sizeof(nativeRequest);
+//    jbyte* bytesResult = (jbyte*)nativeRequest;
+//    int size = sizeof(nativeRequest);
+//    jbyteArray result = (*env)->NewByteArray(env, size);
+//    __android_log_write(ANDROID_LOG_ERROR, ">>>>>>MESSAGE FROM C: ", nativeRequest->pkiType);
+//    (*env)->SetByteArrayRegion(env,result, 0, size, bytesResult);
+//    (*env)->ReleaseByteArrayElements(env, payment, bytePayment, JNI_ABORT);
+//    (*env)->ReleaseByteArrayElements(env, result, bytesResult, JNI_ABORT);
+//    return result;
+
+    jbyte* bytesResult = (jbyte*) nativeRequest->signature;
+    int size = sizeof(nativeRequest->signature);
     jbyteArray result = (*env)->NewByteArray(env, size);
-    __android_log_write(ANDROID_LOG_ERROR, ">>>>>>MESSAGE FROM C: ", nativeRequest->pkiType);
     (*env)->SetByteArrayRegion(env,result, 0, size, bytesResult);
+
+    jclass clazz = (*env)->FindClass(env, "com/breadwallet/tools/security/PaymentRequestEntity");
+    jobject entity = (*env)->AllocObject(env,clazz);
+    jfieldID pkiType = (*env)->GetFieldID(env,clazz, "pkiType", "Ljava/lang/String;");
+    jmethodID mid = (*env)->GetMethodID(env, clazz, "byteSignature", "([B)V");
+
+    (*env)->SetObjectField(env,entity, pkiType, (*env)->NewStringUTF(env, nativeRequest->pkiType));
+
+    (*env)->CallVoidMethod(env, entity, mid, result);
     (*env)->ReleaseByteArrayElements(env, payment, bytePayment, JNI_ABORT);
     (*env)->ReleaseByteArrayElements(env, result, bytesResult, JNI_ABORT);
-    return result;
+    BRPaymentProtocolRequestFree(nativeRequest);
 
+    return entity;
 }
 
-jbyteArray Java_com_breadwallet_tools_security_RequestHandler_getCertificatesFromPaymentRequest
+JNIEXPORT jobject JNICALL Java_com_breadwallet_tools_security_RequestHandler_getCertificatesFromPaymentRequest
         (JNIEnv *env, jobject obj, jbyteArray payment, jint index){
     //create the BRPaymentProtocolRequest
     BRPaymentProtocolRequest *nativeRequest;
     int requestLength = (*env)->GetArrayLength(env, payment);
     jbyte* bytePayment = (*env)->GetByteArrayElements(env, payment, 0);
     nativeRequest = BRPaymentProtocolRequestParse(bytePayment, requestLength);
-
     //get certificate
     uint8_t buf[BRPaymentProtocolRequestCert(nativeRequest, NULL, 0, index)];
     BRPaymentProtocolRequestCert(nativeRequest, buf, sizeof(buf), index);
@@ -49,21 +60,21 @@ jbyteArray Java_com_breadwallet_tools_security_RequestHandler_getCertificatesFro
     jbyteArray result = (*env)->NewByteArray(env, size);
     (*env)->SetByteArrayRegion(env,result, 0, size, certJbyte);
     //release everything
-//    (*env)->ReleaseByteArrayElements(env, result, certJbyte, JNI_ABORT);
+    (*env)->ReleaseByteArrayElements(env, result, certJbyte, JNI_ABORT);
     (*env)->ReleaseByteArrayElements(env, payment, bytePayment, JNI_ABORT);
     BRPaymentProtocolRequestFree(nativeRequest);
 
     return result;
 }
 
-JNIEXPORT void Java_com_breadwallet_presenter_activities_MainActivity_sendMethodCallBack
-        (JNIEnv *env, jobject obj) {
-    jclass cls = (*env)->GetObjectClass(env, obj);
-    jmethodID mid = (*env)->GetMethodID(env, cls, "callback", "()V");
-    if (mid == 0)
-        return;
-    (*env)->CallVoidMethod(env, obj, mid);
-}
+//JNIEXPORT void Java_com_breadwallet_presenter_activities_MainActivity_sendMethodCallBack
+//        (JNIEnv *env, jobject obj) {
+//    jclass cls = (*env)->GetObjectClass(env, obj);
+//    jmethodID mid = (*env)->GetMethodID(env, cls, "callback", "()V");
+//    if (mid == 0)
+//        return;
+//    (*env)->CallVoidMethod(env, obj, mid);
+//}
 
 //JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_encodePhrase
 //        (JNIEnv *env, jobject obj, jbyteArray seed, jbyteArray wordList) {

@@ -20,7 +20,6 @@ import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.CurrencyManager;
-import com.breadwallet.tools.security.RequestHandler;
 import com.breadwallet.tools.adapter.AmountAdapter;
 import com.breadwallet.tools.adapter.CurrencyListAdapter;
 import com.breadwallet.tools.animation.SpringAnimator;
@@ -122,8 +121,8 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
     @Override
     public void onResume() {
         updateRateAndISO();
-        String cleanResult = RequestHandler.getTheAddress(address);
-        scanResult.setText("to: " + cleanResult);
+
+        scanResult.setText("to: " + address);
 
         super.onResume();
     }
