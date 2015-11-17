@@ -1,9 +1,11 @@
-package com.breadwallet.tools.security;
+package com.breadwallet.presenter.exceptions;
+
+import java.security.GeneralSecurityException;
 
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail on 11/12/15.
+ * Created by Mihail on 11/16/15.
  * Copyright (c) 2015 Mihail Gutan <mihail@breadwallet.com>
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,20 +26,24 @@ package com.breadwallet.tools.security;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+public class CertificateChainNotFound extends GeneralSecurityException {
+    public static final String TAG = CertificateChainNotFound.class.getName();
 
-public class PaymentRequestEntity {
-    public final String TAG = PaymentRequestEntity.class.getName();
-    public byte[] signature;
-    public byte[] pkiData;
-    public String pkiType;
-
-    public PaymentRequestEntity(){}
-
-    public void byteSignature(byte[] fromJNI){
-        this.signature = fromJNI;
+    public CertificateChainNotFound(){
+        super();
     }
-    public void pkiData(byte[] pkiData){
-        this.pkiData = pkiData;
+
+    public CertificateChainNotFound(String msg){
+        super(msg);
+    }
+
+    public CertificateChainNotFound(String msg, Throwable cause){
+        super(msg,cause);
+    }
+
+    public CertificateChainNotFound(Throwable cause){
+        super(cause);
     }
 
 }
+

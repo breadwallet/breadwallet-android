@@ -143,7 +143,7 @@ public class FragmentDecoder extends Fragment
 
                 @Override
                 public void onImageAvailable(ImageReader reader) {
-                    Log.e(TAG, "onImageAvailable: " + count++);
+//                    Log.e(TAG, "onImageAvailable: " + count++);
                     Image img = null;
                     img = reader.acquireLatestImage();
                     Result rawResult = null;
@@ -173,7 +173,7 @@ public class FragmentDecoder extends Fragment
 
                     } catch (ReaderException ignored) {
                         setCameraGuide(CAMERA_GUIDE);
-                        Log.e(TAG, "Reader shows an exception! ", ignored);
+//                        Log.e(TAG, "Reader shows an exception! ", ignored);
                         /* Ignored */
                     } catch (NullPointerException ex) {
                         setCameraGuide(CAMERA_GUIDE);
@@ -183,16 +183,16 @@ public class FragmentDecoder extends Fragment
                         ex.printStackTrace();
                     } finally {
                         mQrReader.reset();
-                        Log.e(TAG, "in the finally! ------------");
+//                        Log.e(TAG, "in the finally! ------------");
                         if (img != null)
                             img.close();
 
                     }
                     if (rawResult != null) {
-                        Log.e(TAG, "Decoding successful!");
+//                        Log.e(TAG, "Decoding successful!");
                     } else {
                         setCameraGuide(CAMERA_GUIDE);
-                        Log.d(TAG, "No QR code found…");
+//                        Log.d(TAG, "No QR code found…");
                     }
                 }
 
@@ -264,7 +264,7 @@ public class FragmentDecoder extends Fragment
         if (bigEnough.size() > 0) {
             return Collections.min(bigEnough, new CompareSizesByArea());
         } else {
-            Log.e(TAG, "Couldn't find any suitable preview size");
+//            Log.e(TAG, "Couldn't find any suitable preview size");
             return choices[0];
         }
     }
@@ -335,7 +335,7 @@ public class FragmentDecoder extends Fragment
 
     @Override
     public void onPause() {
-        Log.e(TAG, "onPause");
+//        Log.e(TAG, "onPause");
         closeCamera();
         stopBackgroundThread();
         super.onPause();
@@ -362,13 +362,13 @@ public class FragmentDecoder extends Fragment
                 List<Size> outputSizes = Arrays.asList(map.getOutputSizes(sImageFormat));
                 Size largest = Collections.max(outputSizes, new CompareSizesByArea());
 
-                mImageReader = ImageReader.newInstance(largest.getWidth() / 16, largest.getHeight() / 16, sImageFormat, 5);
+                mImageReader = ImageReader.newInstance(largest.getWidth() / 16, largest.getHeight() / 16, sImageFormat, 3);
                 mImageReader.setOnImageAvailableListener(mOnImageAvailableListener, mBackgroundHandler);
                 // Danger, W.R.! Attempting to use too large a preview size could exceed the camera
                 // bus' bandwidth limitation, resulting in gorgeous previews but the storage of
                 // garbage capture data.
                 mPreviewSize = chooseOptimalSize(map.getOutputSizes(SurfaceTexture.class), width, height, largest);
-                Log.e(TAG, "WIDTH: " + mPreviewSize.getWidth() + " HEIGHT: " + mPreviewSize.getHeight());
+//                Log.e(TAG, "WIDTH: " + mPreviewSize.getWidth() + " HEIGHT: " + mPreviewSize.getHeight());
                 // We fit the aspect ratio of TextureView to the size of preview we picked.
 
 //                int orientation = getResources().getConfiguration().orientation;
@@ -471,8 +471,8 @@ public class FragmentDecoder extends Fragment
 
             // We configure the size of default buffer to be the size of camera preview we want.
             texture.setDefaultBufferSize(mPreviewSize.getWidth(), mPreviewSize.getHeight());
-            Log.e(TAG, "mPreviewSize.getWidth(): " + mPreviewSize.getWidth() + ", mPreviewSize.getHeight(): "
-                    + mPreviewSize.getHeight());
+//            Log.e(TAG, "mPreviewSize.getWidth(): " + mPreviewSize.getWidth() + ", mPreviewSize.getHeight(): "
+//                    + mPreviewSize.getHeight());
 
             Surface surface = new Surface(texture);
             Surface mImageSurface = mImageReader.getSurface();
@@ -560,7 +560,7 @@ public class FragmentDecoder extends Fragment
                 public void run() {
                     if (text != null) {
                         FragmentAnimator.hideDecoderFragment();
-                        RequestHandler.proccessRequest(text);
+                        RequestHandler.processRequest(text);
 
                     } else {
 
@@ -594,7 +594,7 @@ public class FragmentDecoder extends Fragment
                 window.findViewById(Window.ID_ANDROID_CONTENT).getTop();
         int titleBarHeight = contentViewTop - statusBarHeight;
 
-        Log.e(TAG, "StatusBar Height= " + statusBarHeight + " , TitleBar Height = " + titleBarHeight);
+//        Log.e(TAG, "StatusBar Height= " + statusBarHeight + " , TitleBar Height = " + titleBarHeight);
         return statusBarHeight + titleBarHeight;
     }
 
@@ -615,10 +615,10 @@ public class FragmentDecoder extends Fragment
                 if (str.equalsIgnoreCase(CAMERA_GUIDE)) {
                     camera_guide_image.setImageResource(R.drawable.cameraguide);
                     setGuideText(TEXT_EMPTY);
-                    Log.e(TAG, "camera_guide set: cameraguide");
+//                    Log.e(TAG, "camera_guide set: cameraguide");
                 } else if (str.equalsIgnoreCase(CAMERA_GUIDE_RED)) {
                     camera_guide_image.setImageResource(R.drawable.cameraguide_red);
-                    Log.e(TAG, "camera_guide set: cameraguide_red ");
+//                    Log.e(TAG, "camera_guide set: cameraguide_red ");
                 } else {
                     throw new IllegalArgumentException("CAMERA_GUIDE and CAMERA_GUIDE_RED only");
                 }

@@ -2,42 +2,23 @@ package com.breadwallet.tools.security;
 
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.exceptions.CertificateChainNotFound;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import org.apache.commons.io.IOUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.security.GeneralSecurityException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.KeyStore;
 import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.PublicKey;
-import java.security.Signature;
-import java.security.SignatureException;
-import java.security.cert.CertPath;
-import java.security.cert.CertPathBuilder;
-import java.security.cert.CertPathBuilderException;
-import java.security.cert.CertPathBuilderResult;
-import java.security.cert.CertPathParameters;
-import java.security.cert.CertPathValidator;
-import java.security.cert.CertPathValidatorException;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.PKIXCertPathValidatorResult;
-import java.security.cert.PKIXParameters;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * BreadWallet
@@ -67,7 +48,7 @@ public class RequestHandler {
     public static final String TAG = RequestHandler.class.getName();
     public static String finalAddress;
 
-    public static void proccessRequest(String address) {
+    public static void processRequest(String address) {
 
         //check if it has an BIP72 request URI
         String addressToProcess = address;
@@ -100,13 +81,15 @@ public class RequestHandler {
     }
 
     private static void processRequestURI(String url) {
-        String theURL = null;
-        try {
-            theURL = URLDecoder.decode(url, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+        synchronized (new Object()) {
+            String theURL = null;
+            try {
+                theURL = URLDecoder.decode(url, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            new RequestTask().execute(theURL);
         }
-        new RequestTask().execute(theURL);
     }
 
     private static boolean checkTheCleanAddress(String str) {
@@ -142,134 +125,34 @@ public class RequestHandler {
         return true;
     }
 
-    public static native PaymentRequestEntity parsePaymentRequest(byte[] req);
 
-    public static native byte[] getCertificatesFromPaymentRequest(byte[] req, int index);
-
-//    public static boolean certificateValidation(byte[] rawCerts) {
-//        if (rawCerts == null) {
-//            throw new NullPointerException("no certificates supplied");
-//        }
+//    public CertPath buildCertPath(CertPathParameters params, String algorithm) {
+//        CertPathBuilder cpb = null;
 //        try {
-//            String keystoreType;
-//            keystoreType = "JKS";
-//            KeyStore keyStore;
-//            File file = new File(MainActivity.class.getResource("/cacerts").getFile());
-//            InputStream is = new FileInputStream(file);
-//            try {
-//                keyStore = KeyStore.getInstance(keystoreType);
-//                keyStore.load(is, null);
-//            } catch (IOException x) {
-//                throw new KeyStoreException(x);
-//            } catch (GeneralSecurityException x) {
-//                throw new KeyStoreException(x);
-//            } finally {
-//                try {
-//                    is.close();
-//                } catch (IOException x) {
-//                    // Ignored.
-//                }
-//            }
-//            if (keyStore == null) throw new NullPointerException("keystore is null!");
-//            CertificateFactory certFact = CertificateFactory.getInstance("X.509");
-//
-//            // parse each certificate from the chain ...
-//            ArrayList<X509Certificate> certs = new ArrayList<>();
-//
-//            X509Certificate cert = (X509Certificate) certFact.generateCertificate(new ByteArrayInputStream(rawCerts));
-//            certs.add(cert);
-//
-//            // ... and generate the certification path from it.
-//            CertPath certPath = certFact.generateCertPath(certs);
-//
-//            // Retrieves the most-trusted CAs from keystore.
-//            PKIXParameters params = new PKIXParameters(keyStore);
-//            // Revocation not supported in the current version.
-//            params.setRevocationEnabled(false);
-//
-//            // Now verify the certificate chain is correct and trusted. This let's us get an identity linked pubkey.
-//            CertPathValidator validator = CertPathValidator.getInstance("PKIX");
-//            PKIXCertPathValidatorResult result = (PKIXCertPathValidatorResult) validator.validate(certPath, params);
-//            PublicKey publicKey = result.getPublicKey();
-//
-//            // OK, we got an identity, now check it was used to sign this message.
-//            Signature signature = Signature.getInstance(getPkiSignatureAlgorithm(paymentRequest));
-//            // Note that we don't use signature.initVerify(certs.get(0)) here despite it being the most obvious
-//            // way to set it up, because we don't care about the constraints specified on the certificates: any
-//            // cert that links a key to a domain name or other identity will do for us.
-//            signature.initVerify(publicKey);
-//
-//            // duplicate the payment-request but with an empty signature
-//            // then check the again serialized format of it
-//            PaymentRequest checkPaymentRequest = new PaymentRequest.Builder(paymentRequest)
-//                    .signature(ByteString.EMPTY)
-//                    .build();
-//
-//            // serialize the payment request (now with an empty signature field) and check if the signature verifies
-//            signature.update(checkPaymentRequest.toByteArray());
-//
-//            boolean isValid = signature.verify(paymentRequest.signature.toByteArray());
-//
-//            if (!isValid) {
-//                throw new PaymentRequestException("signature does not match");
-//            }
-//
-//
-//            // Signature verifies, get the names from the identity we just verified for presentation to the user.
-//            final X509Certificate cert = certs.get(0);
-//            //return new PkiVerificationData(displayName, publicKey, result.getTrustAnchor());
-//            String displayName = X509Utils.getDisplayNameFromCertificate(cert, true);
-//            return new PkiVerificationData(displayName, publicKey, result.getTrustAnchor());
-//
-//
-//        } catch (CertificateException e) {
-//            throw new PaymentRequestException("invalid certificate", e);
-//        } catch (InvalidKeyException e) {
-//            throw new PaymentRequestException("keystore not ready", e);
-//        } catch (NoSuchAlgorithmException e) {
-//            throw new RuntimeException(e);
-//        } catch (InvalidAlgorithmParameterException e) {
-//            throw new PaymentRequestException("invalid certificate", e);
-//        } catch (KeyStoreException e) {
-//            throw new RuntimeException(e);
-//        } catch (CertPathValidatorException e) {
-//            throw new PaymentRequestException("invalid certificate", e);
-//        } catch (SignatureException e) {
-//            throw new PaymentRequestException("invalid certificate", e);
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        } catch (PaymentRequestException paymentRequestException) {
-//            paymentRequestException.printStackTrace();
+//            cpb = CertPathBuilder.getInstance(algorithm);
+//        } catch (NoSuchAlgorithmException nsae) {
+//            System.err.println(nsae);
 //        }
+//        // build certification path using specified parameters ("params")
+//        try {
+//            CertPathBuilderResult cpbResult = cpb.build(params);
+//            CertPath cp = cpbResult.getCertPath();
+//            System.out.println("build passed, path contents: " + cp);
+//            return cp;
+//        } catch (InvalidAlgorithmParameterException iape) {
+//            System.err.println("build failed: " + iape);
+//        } catch (CertPathBuilderException cpbe) {
+//            System.err.println("build failed: " + cpbe);
+//        }
+//        return null;
 //    }
-
-    public CertPath buildCertPath(CertPathParameters params, String algorithm) {
-        CertPathBuilder cpb = null;
-        try {
-            cpb = CertPathBuilder.getInstance(algorithm);
-        } catch (NoSuchAlgorithmException nsae) {
-            System.err.println(nsae);
-        }
-        // build certification path using specified parameters ("params")
-        try {
-            CertPathBuilderResult cpbResult = cpb.build(params);
-            CertPath cp = cpbResult.getCertPath();
-            System.out.println("build passed, path contents: " + cp);
-            return cp;
-        } catch (InvalidAlgorithmParameterException iape) {
-            System.err.println("build failed: " + iape);
-        } catch (CertPathBuilderException cpbe) {
-            System.err.println("build failed: " + cpbe);
-        }
-        return null;
-    }
 
     static class RequestTask extends AsyncTask<String, String, String> {
         HttpURLConnection urlConnection;
 
         @Override
         protected String doInBackground(String... uri) {
-            InputStream in = null;
+            InputStream in;
             try {
                 Log.e(TAG, "the uri: " + uri[0]);
                 URL url = new URL(uri[0]);
@@ -277,17 +160,42 @@ public class RequestHandler {
                 urlConnection.setRequestProperty("Accept", "application/bitcoin-paymentrequest");
                 urlConnection.setUseCaches(false);
                 in = urlConnection.getInputStream();
-                if (in == null)
+                if (in == null) {
+                    Log.e(TAG, "The inputStream is null!");
                     return null;
-
-                byte[] serializedBytes = getBytes(in);
+                }
+                byte[] serializedBytes = IOUtils.toByteArray(in);
+                if (serializedBytes == null || serializedBytes.length == 0) {
+                    throw new NullPointerException("bytes are null!");
+                }
                 PaymentRequestEntity paymentRequest = parsePaymentRequest(serializedBytes);
-                Log.e(TAG,"Signature: " + paymentRequest.signature + ", pkiType: " + paymentRequest.pkiType);
-//                byte[] result = getCertificatesFromPaymentRequest(serializedBytes, 0);
-//                certificateValidation(result);
-//                Log.e(TAG, "YAYYAYAYYAYYAY: " + result.toString());
+                Log.e(TAG, "Signature: " + paymentRequest.signature.length + ", pkiType: "
+                        + paymentRequest.pkiType + ", pkiData: " + paymentRequest.pkiData.length);
+
+                List<X509Certificate> certList = X509CertificateValidator.getCertificateFromBytes(serializedBytes);
+                boolean success = X509CertificateValidator.certificateValidation(certList, paymentRequest);
+                Log.e(TAG, "The certificate is valid: " + success);
             } catch (IOException e) {
+                if (e instanceof java.net.UnknownHostException) {
+                    MainActivity.app.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            MainActivity app = MainActivity.app;
+                            if (app != null) {
+                                ((BreadWalletApp) app.getApplication()).
+                                        showCustomToast(app, "No Internet Connection",
+                                                MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG);
+                            }
+                        }
+                    });
+                }
                 e.printStackTrace();
+            } catch (KeyStoreException e) {
+                e.printStackTrace();
+            } catch (CertificateChainNotFound ex) {
+                ex.printStackTrace();
+                Log.e(TAG, "No certificates!", ex);
+
             } finally {
                 if (urlConnection != null) urlConnection.disconnect();
             }
@@ -302,24 +210,8 @@ public class RequestHandler {
         }
     }
 
-    public static byte[] getBytes(InputStream is) throws IOException {
+    public static native PaymentRequestEntity parsePaymentRequest(byte[] req);
 
-        int len;
-        int size = 1024;
-        byte[] buf;
-
-        if (is instanceof ByteArrayInputStream) {
-            size = is.available();
-            buf = new byte[size];
-            len = is.read(buf, 0, size);
-        } else {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            buf = new byte[size];
-            while ((len = is.read(buf, 0, size)) != -1)
-                bos.write(buf, 0, len);
-            buf = bos.toByteArray();
-        }
-        return buf;
-    }
+    public static native byte[] getCertificatesFromPaymentRequest(byte[] req, int index);
 
 }

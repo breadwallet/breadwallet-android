@@ -2,9 +2,23 @@ package com.breadwallet.tools.security;
 
 import android.util.Log;
 
-import java.io.File;
+import com.breadwallet.presenter.exceptions.CertificateChainNotFound;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
+
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 
 /**
  * BreadWallet
@@ -32,130 +46,128 @@ import java.util.List;
  */
 public class X509CertificateValidator {
     public static final String TAG = X509CertificateValidator.class.getName();
+    public static final String PKI_X509_SHA256 = "x509+sha256";
+    public static final String PKI_X509_SHA1 = "x509+sha1";
+    public static final String PKI_NONE = "none";
     public static final String ROOT_CERTS_DIR = "/system/etc/security/cacerts";
 
 
-    public static boolean validateCertificateChain() {
-//        List<File> rootCerts = getRootCerts(ROOT_CERTS_DIR);
-//        // Load CAs from an InputStream
-//        // (could be from a resource or ByteArrayInputStream or ...)
-//        CertificateFactory cf = CertificateFactory.getInstance("X.509");
-//        // From https://www.washington.edu/itconnect/security/ca/load-der.crt
-//        InputStream caInput = new BufferedInputStream(new FileInputStream("load-der.crt"));
-//        Certificate ca;
-//        try {
-//            ca = cf.generateCertificate(caInput);
-//            System.out.println("ca=" + ((X509Certificate) ca).getSubjectDN());
-//        } finally {
-//            caInput.close();
-//        }
-//
-//        // Create a KeyStore containing our trusted CAs
-//        String keyStoreType = KeyStore.getDefaultType();
-//        KeyStore keyStore = KeyStore.getInstance(keyStoreType);
-//        keyStore.load(null, null);
-//        keyStore.setCertificateEntry("ca", ca);
-//
-//        // Create a TrustManager that trusts the CAs in our KeyStore
-//        String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
-//        TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
-//        tmf.init(keyStore);
-//
-//        // Create an SSLContext that uses our TrustManager
-//        SSLContext context = SSLContext.getInstance("TLS");
-//        context.init(null, tmf.getTrustManagers(), null);
-//
-//        // Tell the URLConnection to use a SocketFactory from our SSLContext
-//        URL url = new URL("https://certs.cac.washington.edu/CAtest/");
-//        HttpsURLConnection urlConnection =
-//                (HttpsURLConnection) url.openConnection();
-//        urlConnection.setSSLSocketFactory(context.getSocketFactory());
-//        InputStream in = urlConnection.getInputStream();
-//        copyInputStreamToOutputStream(in, System.out);
-        return false;
-    }
-
-    private static List<File> getRootCerts(String dir) {
-
-        File parentDir = new File(dir);
-        ArrayList<File> inFiles = new ArrayList<>();
-        File[] files = parentDir.listFiles();
-        for (File file : files) {
-            if (file.isDirectory()) {
-                Log.e(TAG, "This one is a directory!");
-            } else {
-                Log.e(TAG, file.toString());
-            }
+    public static boolean certificateValidation(List<X509Certificate> certList,
+                                                PaymentRequestEntity paymentRequest)
+            throws KeyStoreException, CertificateChainNotFound {
+        if (certList.size() == 0) {
+            throw new CertificateChainNotFound("no certificates supplied");
         }
-        return inFiles;
+        boolean isValid = false;
+        try {
+            Log.e(TAG, "The size of certList is: " + certList.size());
+//            // parse each certificate from the chain ...
+//            ArrayList<X509Certificate> certs = getRootCerts();
+//
+//            // ... and generate the certification path from it.
+//            CertPath certPath = certFact.generateCertPath(certs);
+//
+//            // Retrieves the most-trusted CAs from keystore.
+//            PKIXParameters params = new PKIXParameters(keyStore);
+//            // Revocation not supported in the current version.
+//            params.setRevocationEnabled(false);
+//
+//            // Now verify the certificate chain is correct and trusted. This let's us get an identity linked pubkey.
+//            CertPathValidator validator = CertPathValidator.getInstance("PKIX");
+//            PKIXCertPathValidatorResult result = (PKIXCertPathValidatorResult) validator.validate(certPath, params);
+//            PublicKey publicKey = result.getPublicKey();
+//
+//            // OK, we got an identity, now check it was used to sign this message.
+//            Signature signature = Signature.getInstance(getPkiSignatureAlgorithm(paymentRequest));
+//            // Note that we don't use signature.initVerify(certs.get(0)) here despite it being the most obvious
+//            // way to set it up, because we don't care about the constraints specified on the certificates: any
+//            // cert that links a key to a domain name or other identity will do for us.
+//            signature.initVerify(publicKey);
+
+//            // duplicate the payment-request but with an empty signature
+//            // then check the again serialized format of it
+//            PaymentRequest checkPaymentRequest = new PaymentRequest.Builder(paymentRequest)
+//                    .signature(ByteString.EMPTY)
+//                    .build();
+//
+//            // serialize the payment request (now with an empty signature field) and check if the signature verifies
+//            signature.update(checkPaymentRequest.toByteArray());
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance("X509");
+            tmf.init((KeyStore) null);
+            X509Certificate[] certListArray = new X509Certificate[certList.size()];
+            for (int i = 0; i < certList.size(); i++) {
+                certListArray[i] = certList.get(i);
+            }
+
+            TrustManager[] tms = tmf.getTrustManagers();
+            for (TrustManager m : tms) {
+                X509TrustManager xtm = (X509TrustManager) m;
+                Log.d(TAG, "checking chain with " + xtm + ", Alg: " + certListArray[0].getSigAlgName());
+                xtm.checkClientTrusted(certListArray, certListArray[0].getSigAlgName());
+            }
+            isValid = true;
+            Log.e(TAG, "chain is valid");
+
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return isValid;
     }
-//    try {
-//                            CertificateFactory cf = CertificateFactory.getInstance("X.509");
-//                             chain is of type X509Certificate[]
-//                            CertPath cp = cf.generateCertPath(Arrays.asList(certs));
-//
-//                            CertPathValidator cpv = CertPathValidator.getInstance(CertPathValidator.getDefaultType());
-//                            KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
-//
-//                            File fis = new File();
-//                            printFiles(fis);
-//
-//
-//                            ks.load(fis, null);
-//                            BufferedInputStream bis = new BufferedInputStream(fis);
-//
-//                            while (bis.available() > 0) {
-//                                Certificate cert = cf.generateCertificate(bis);
-//                                Log.e(TAG, "CERT: " + cert.toString());
-//                            }
-//
-//                            PKIXParameters params = new PKIXParameters(ks);
-//                            CertPathValidatorResult cpvr = cpv.validate(cp, params);
-//                        } catch (CertificateException e) {
-//                            e.printStackTrace();
-//                        } catch (KeyStoreException e) {
-//                            e.printStackTrace();
-//                        }
-    // Load CAs from an InputStream
-//                        Certificate ca;
-//                        InputStream caInput = null;
-//                        try {
-//                            CertificateFactory cf = CertificateFactory.getInstance("X.509");
-//                            byte[] certs = parsePaymentRequest(response.getBytes());
-//                            caInput = new ByteArrayInputStream(certs);
-//                            ca = cf.generateCertificate(caInput);
-//                            System.out.println("ca=" + ((X509Certificate) ca).getSubjectDN());
-//                            Certificate[] chain = null; //TODO create an array of certs from the byte[] certs
-//                            // Create a KeyStore containing our trusted CAs
-//                            String keyStoreType = KeyStore.getDefaultType();
-//                            KeyStore keyStore = KeyStore.getInstance(keyStoreType);
-//                            keyStore.load(null, null);
-//                            CertPathValidator cpv = CertPathValidator.getInstance(CertPathValidator.getDefaultType());
-//                            keyStore.setCertificateEntry("ca", ca);
-//                            PKIXParameters params = new PKIXParameters(keyStore);
-//                            CertPath cp = cf.generateCertPath(Arrays.asList(chain));
-//                            CertPathValidatorResult cpvr = cpv.validate(cp, params);
-//                            // Create a TrustManager that trusts the CAs in our KeyStore
-//                            String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
-//                            TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
-//                            tmf.init(keyStore);
-//                        } catch (CertificateException e) {
-//                            e.printStackTrace();
-//                        } catch (NoSuchAlgorithmException e) {
-//                            e.printStackTrace();
-//                        } catch (KeyStoreException e) {
-//                            e.printStackTrace();
-//                        } catch (IOException e) {
-//                            e.printStackTrace();
-//                        } catch (InvalidAlgorithmParameterException e) {
-//                            e.printStackTrace();
-//                        } catch (CertPathValidatorException e) {
-//                            e.printStackTrace();
-//                        } finally {
-//                            try {
-//                                caInput.close();
-//                            } catch (IOException e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
+
+    public static ArrayList<X509Certificate> getRootCerts() {
+        ArrayList<X509Certificate> certificates = new ArrayList<>();
+        try {
+            KeyStore ks = KeyStore.getInstance("AndroidCAStore");
+            ks.load(null, null);
+            Enumeration aliases = ks.aliases();
+            while (aliases.hasMoreElements()) {
+                String alias = (String) aliases.nextElement();
+                X509Certificate cert = (X509Certificate)
+                        ks.getCertificate(alias);
+                certificates.add(cert);
+                Log.d(TAG, "Subject DN: " +
+                        cert.getSubjectDN().getName());
+                Log.d(TAG, "Issuer DN: " +
+                        cert.getIssuerDN().getName());
+            }
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        }
+        return certificates;
+    }
+
+    public static List<X509Certificate> getCertificateFromBytes(byte[] rawCerts) {
+        Log.e(TAG, "This is the rawCerts.length supplied for certificates: " + rawCerts.length);
+        List<X509Certificate> theList = new ArrayList<>();
+        byte[] result;
+        int i = 0;
+        try {
+            CertificateFactory certFact = CertificateFactory.getInstance("X.509");
+            while (true) {
+                result = RequestHandler.getCertificatesFromPaymentRequest(rawCerts, i++);
+                Log.e(TAG, "The result certificate #" + i + " : " + result.length);
+                if (result.length > 0) {
+                    X509Certificate certForValidation = (X509Certificate)
+                            certFact.generateCertificate(new ByteArrayInputStream(result));
+                    theList.add(certForValidation);
+                    Log.e(TAG, "THIS IS THE CERTIFICATE NAME: " + certForValidation.getIssuerDN().toString());
+                } else {
+                    break;
+                }
+            }
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        }
+        return theList;
+
+    }
+
 }

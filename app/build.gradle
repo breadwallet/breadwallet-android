@@ -76,7 +76,7 @@ task buildNative(type: Exec, description: 'Compile JNI source via NDK') {
         println(projectDir)
         commandLine "$ndkDir/ndk-build",
                 'NDK_PROJECT_PATH=null',
-                'V=1',
+//                'V=1',
                 'ndk-build NDK_DEBUG=1',
                 'NDK_LOG=1',
                 "NDK_APPLICATION_MK=$projectDir/src/main/jni/Application.mk",
@@ -109,10 +109,14 @@ tasks.withType(JavaCompile) {
     compileTask -> compileTask.dependsOn buildNative
 }
 
+repositories{
+    mavenCentral()
+}
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile files('libs/acra-4.6.1.jar')
+    compile files('libs/commons-io-1.3.2.jar')
 //    testCompile 'junit:junit:+'
     compile 'com.android.support:appcompat-v7:23.0.1'
     compile 'com.android.support:support-v13:23.0.1'
@@ -121,6 +125,7 @@ dependencies {
     compile 'org.json:json:20141113' //JSonParser google
     compile 'com.mcxiaoke.volley:library-aar:1.0.0'
     compile 'org.apache.httpcomponents:httpclient:4.5.1'
+
 
     androidTestCompile 'com.android.support.test:runner:+'
     // Set this dependency to use JUnit 4 rules
