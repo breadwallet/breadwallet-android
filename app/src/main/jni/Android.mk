@@ -32,7 +32,6 @@ LOCAL_SRC_FILES := \
 ./breadwallet-core/BRPeer.c\
 ./breadwallet-core/BRPeerManager.c\
 ./breadwallet-core/BRSet.c\
-./breadwallet-core/BRSort.c\
 ./breadwallet-core/BRTransaction.c\
 ./breadwallet-core/BRWallet.c
 

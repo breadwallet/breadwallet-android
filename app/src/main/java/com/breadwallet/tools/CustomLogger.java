@@ -1,9 +1,11 @@
-package com.breadwallet.tools.security;
+package com.breadwallet.tools;
+
+import android.util.Log;
 
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail on 11/12/15.
+ * Created by Mihail on 11/17/15.
  * Copyright (c) 2015 Mihail Gutan <mihail@breadwallet.com>
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,20 +26,21 @@ package com.breadwallet.tools.security;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+public class CustomLogger {
+    public static final String TAG = CustomLogger.class.getName();
 
-public class PaymentRequestEntity {
-    public final String TAG = PaymentRequestEntity.class.getName();
-    public byte[] signature;
-    public byte[] pkiData;
-    public String pkiType;
-
-    public PaymentRequestEntity(){}
-
-    public void byteSignature(byte[] fromJNI){
-        this.signature = fromJNI;
-    }
-    public void pkiData(byte[] pkiData){
-        this.pkiData = pkiData;
+    public static void LogThis(String... args) {
+        StringBuilder strToLog = new StringBuilder();
+        int i = 0;
+        for (String arg : args) {
+            if (i++ % 2 == 0) {
+                strToLog.append(" | " + arg + ": ");
+            } else {
+                strToLog.append(arg);
+            }
+            if(i % 4 == 0) strToLog.append("\n");
+        }
+        Log.e(TAG, strToLog.toString());
     }
 
 }

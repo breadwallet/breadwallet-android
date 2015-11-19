@@ -2,21 +2,26 @@ package com.breadwallet.tools.security;
 
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.exceptions.CertificateChainNotFound;
+import com.breadwallet.presenter.exceptions.PaymentRequestExpiredException;
+import com.breadwallet.presenter.fragments.FragmentScanResult;
+import com.breadwallet.tools.CustomLogger;
+import com.breadwallet.tools.animation.FragmentAnimator;
 
 import org.apache.commons.io.IOUtils;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.security.KeyStoreException;
 import java.security.cert.X509Certificate;
 import java.util.List;
 
@@ -47,84 +52,102 @@ import java.util.List;
 public class RequestHandler {
     public static final String TAG = RequestHandler.class.getName();
     public static String finalAddress;
+    public static final String REQ_ADDRESS = "address";
+    public static final String REQ_PAYMENT_REQUEST = "request";
+    public static final String REQ_PAYMENT_URL = "url";
 
     public static void processRequest(String address) {
 
         //check if it has an BIP72 request URI
-        String addressToProcess = address;
-        int length = addressToProcess.length();
-        int indx;
-        for (indx = 0; indx < length; indx++) {
-            if (addressToProcess.charAt(indx) == 'r') {
-                if (indx < length - 1)
-                    if (addressToProcess.charAt(indx + 1) == '=' &&
-                            (addressToProcess.charAt(indx - 1) == '&' /** backwards-compatible */
-                                    || addressToProcess.charAt(indx - 1) == '?' /** Non-backwards-compatible */)) {
-                        int uriStartIndex = indx + 2;
-                        processRequestURI(addressToProcess.substring(uriStartIndex));
-                        return;
-                    }
+        if (!tryAndProcessRequestURL(address)) {
+            //check if it has an old type bitcoin url
+            if (!tryAndProcessBitcoinURL(address)) {
+                MainActivity app = MainActivity.app;
+                if (app != null) {
+                    ((BreadWalletApp) app.getApplication()).showCustomDialog("Warning", "invalid payment request", "close");
+                }
             }
         }
-        int startIndex = 0;
-        int endIndex = 0;
-        for (indx = 0; indx < length; indx++) {
-            if (addressToProcess.charAt(indx) == ':') {
-                if (startIndex == 0) startIndex = indx + 1;
-            }
-            if (addressToProcess.charAt(indx) == '?') {
-                if (endIndex == 0) endIndex = indx + 1;
-            }
-        }
-        if (endIndex == 0) endIndex = length - 1;
-        finalAddress = addressToProcess.substring(startIndex, endIndex);
+
     }
 
-    private static void processRequestURI(String url) {
+    private static boolean tryAndProcessRequestURL(String address) {
+
         synchronized (new Object()) {
-            String theURL = null;
-            try {
-                theURL = URLDecoder.decode(url, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
+
+            String addressToProcess = address;
+            int length = addressToProcess.length();
+            int indx;
+            for (indx = 0; indx < length; indx++) {
+                if (addressToProcess.charAt(indx) == 'r') {
+                    if (indx < length - 1)
+                        if (addressToProcess.charAt(indx + 1) == '=' &&
+                                (addressToProcess.charAt(indx - 1) == '&' /** backwards-compatible */
+                                        || addressToProcess.charAt(indx - 1) == '?' /** Non-backwards-compatible */)) {
+                            int uriStartIndex = indx + 2;
+                            String url = addressToProcess.substring(uriStartIndex);
+                            String theURL = null;
+                            try {
+                                theURL = URLDecoder.decode(url, "UTF-8");
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+                            new RequestTask().execute(theURL);
+                            return true;
+                        }
+                }
             }
-            new RequestTask().execute(theURL);
+
         }
+        return false;
     }
 
-    private static boolean checkTheCleanAddress(String str) {
+    private static boolean tryAndProcessBitcoinURL(final String str) {
         /** use the C implementation to check it */
-//        if (str == null) return false;
-//        int length = str.length();
-//        String tmp;
-//        if (length < 34) {
-//            return false;
-//        } else {
-//            tmp = str.substring(length - 34);
-//            int tmpLength = tmp.length();
-//            for (int i = 0; i < tmpLength; i++) {
-//                if (tmp.charAt(i) < 48) {
-//                    Log.e(TAG, "Bad address, char: " + tmp.charAt(i));
-//                    return "";
-//                } else {
-//                    if (tmp.charAt(i) > 57 && tmp.charAt(i) < 65) {
-//                        Log.e(TAG, "Bad address, char: " + tmp.charAt(i));
-//                        return "";
-//                    }
-//                    if (tmp.charAt(i) > 90 && tmp.charAt(i) < 61) {
-//                        Log.e(TAG, "Bad address, char: " + tmp.charAt(i));
-//                        return "";
-//                    }
-//                    if (tmp.charAt(i) > 122) {
-//                        Log.e(TAG, "Bad address, char: " + tmp.charAt(i));
-//                        return "";
-//                    }
-//                }
-//            }
-//        }
+        if (str == null) return false;
+        int length = str.length();
+        final String tmp;
+        if (length < 34 || !str.substring(0, 8).equalsIgnoreCase("bitcoin:")) {
+            return false;
+        } else {
+            tmp = str.substring(8, 8 + 34);
+            Log.e(TAG, "Address is being checked: " + tmp);
+            int tmpLength = tmp.length();
+            for (int i = 0; i < tmpLength; i++) {
+                if (tmp.charAt(i) < 48) {
+                    Log.e(TAG, "Bad address, char: " + tmp.charAt(i));
+                    return false;
+                } else {
+                    if (tmp.charAt(i) > 57 && tmp.charAt(i) < 65) {
+                        Log.e(TAG, "Bad address, char: " + tmp.charAt(i));
+                        return false;
+                    }
+                    if (tmp.charAt(i) > 90 && tmp.charAt(i) < 61) {
+                        Log.e(TAG, "Bad address, char: " + tmp.charAt(i));
+                        return false;
+                    }
+                    if (tmp.charAt(i) > 122) {
+                        Log.e(TAG, "Bad address, char: " + tmp.charAt(i));
+                        return false;
+                    }
+                }
+            }
+            //bitcoin: + address + ?amount=
+            if (str.length() > 8 + 34 + 8) {
+                if (str.substring(8 + 34, 8 + 34 + 8).equalsIgnoreCase("?amount=")) {
+                    //TODO do something with the amount
+                }
+            }
+            MainActivity.app.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    FragmentScanResult.address = tmp;
+                    FragmentAnimator.animateScanResultFragment();
+                }
+            });
+        }
         return true;
     }
-
 
 //    public CertPath buildCertPath(CertPathParameters params, String algorithm) {
 //        CertPathBuilder cpb = null;
@@ -149,6 +172,7 @@ public class RequestHandler {
 
     static class RequestTask extends AsyncTask<String, String, String> {
         HttpURLConnection urlConnection;
+        String certName = null;
 
         @Override
         protected String doInBackground(String... uri) {
@@ -158,6 +182,8 @@ public class RequestHandler {
                 URL url = new URL(uri[0]);
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestProperty("Accept", "application/bitcoin-paymentrequest");
+                urlConnection.setConnectTimeout(5000);
+                urlConnection.setReadTimeout(10000);
                 urlConnection.setUseCaches(false);
                 in = urlConnection.getInputStream();
                 if (in == null) {
@@ -169,33 +195,49 @@ public class RequestHandler {
                     throw new NullPointerException("bytes are null!");
                 }
                 PaymentRequestEntity paymentRequest = parsePaymentRequest(serializedBytes);
-                Log.e(TAG, "Signature: " + paymentRequest.signature.length + ", pkiType: "
-                        + paymentRequest.pkiType + ", pkiData: " + paymentRequest.pkiData.length);
-
+                //Logging
+                CustomLogger.LogThis("Signature", String.valueOf(paymentRequest.signature.length),
+                        "pkiType", paymentRequest.pkiType, "pkiData", String.valueOf(paymentRequest.pkiData.length));
+                CustomLogger.LogThis("network", paymentRequest.network, "time", String.valueOf(paymentRequest.time),
+                        "expires", String.valueOf(paymentRequest.expires), "memo", paymentRequest.memo,
+                        "paymentURL", paymentRequest.paymentURL, "merchantDataSize",
+                        String.valueOf(paymentRequest.merchantData.length));
+                //end logging
+                if (paymentRequest.time > paymentRequest.expires)
+                    throw new PaymentRequestExpiredException("The request is expired!");
                 List<X509Certificate> certList = X509CertificateValidator.getCertificateFromBytes(serializedBytes);
-                boolean success = X509CertificateValidator.certificateValidation(certList, paymentRequest);
-                Log.e(TAG, "The certificate is valid: " + success);
+                certName = X509CertificateValidator.certificateValidation(certList, paymentRequest);
+
             } catch (IOException e) {
+                MainActivity app = MainActivity.app;
                 if (e instanceof java.net.UnknownHostException) {
-                    MainActivity.app.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            MainActivity app = MainActivity.app;
-                            if (app != null) {
-                                ((BreadWalletApp) app.getApplication()).
-                                        showCustomToast(app, "No Internet Connection",
-                                                MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG);
-                            }
-                        }
-                    });
+                    if (app != null)
+                        ((BreadWalletApp) app.getApplication()).
+                                showCustomDialog("Attention", "unknown host", "close");
+                } else if (e instanceof FileNotFoundException) {
+                    if (app != null)
+                        ((BreadWalletApp) app.getApplication()).
+                                showCustomDialog("Warning", "invalid payment request", "close");
+                } else if (e instanceof SocketTimeoutException) {
+                    if (app != null)
+                        ((BreadWalletApp) app.getApplication()).
+                                showCustomDialog("Warning", "connection timed out", "close");
                 }
                 e.printStackTrace();
-            } catch (KeyStoreException e) {
+            } catch (Exception e) {
+                MainActivity app = MainActivity.app;
+                if (e instanceof CertificateChainNotFound) {
+                    Log.e(TAG, "No certificates!", e);
+                } else if (e instanceof PaymentRequestExpiredException) {
+                    if (app != null)
+                        ((BreadWalletApp) app.getApplication()).
+                                showCustomDialog("Warning", "payment request expired", "close");
+                } else {
+                    if (app != null)
+                        ((BreadWalletApp) app.getApplication()).
+                                showCustomDialog("Warning", "something went wrong", "close");
+                }
                 e.printStackTrace();
-            } catch (CertificateChainNotFound ex) {
-                ex.printStackTrace();
-                Log.e(TAG, "No certificates!", ex);
-
             } finally {
                 if (urlConnection != null) urlConnection.disconnect();
             }
@@ -205,13 +247,42 @@ public class RequestHandler {
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            //Do anything with response..
 
+            String cn = extractCNFromCertName(certName);
+
+            if (certName != null && cn != null) {
+                MainActivity app = MainActivity.app;
+                ((BreadWalletApp) app.getApplication()).showCustomDialog("Send bitcoin", "Sending to: " + cn, "ok");
+            }
+
+        }
+
+        private String extractCNFromCertName(String str) {
+            if (str == null || str.length() < 4) return null;
+            String cn = "CN=";
+            int index = -1;
+            int endIndex = -1;
+            for (int i = 0; i < str.length() - 3; i++) {
+                if (str.substring(i, i + 3).equalsIgnoreCase(cn)) {
+                    index = i + 3;
+                }
+                if (index != -1) {
+                    if (str.charAt(i) == ',') {
+                        endIndex = i;
+                        break;
+                    }
+
+                }
+            }
+            String cleanCN = str.substring(index, endIndex);
+            Log.e(TAG, "cleanCN: " + cleanCN);
+            return (index != -1 && endIndex != -1) ? cleanCN : null;
         }
     }
 
     public static native PaymentRequestEntity parsePaymentRequest(byte[] req);
 
     public static native byte[] getCertificatesFromPaymentRequest(byte[] req, int index);
+
 
 }

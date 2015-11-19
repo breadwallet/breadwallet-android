@@ -2,13 +2,18 @@ package com.breadwallet.tools.security;
 
 import android.util.Log;
 
+import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.exceptions.CertificateChainNotFound;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.Signature;
+import java.security.SignatureException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
@@ -52,13 +57,13 @@ public class X509CertificateValidator {
     public static final String ROOT_CERTS_DIR = "/system/etc/security/cacerts";
 
 
-    public static boolean certificateValidation(List<X509Certificate> certList,
+    public static String certificateValidation(List<X509Certificate> certList,
                                                 PaymentRequestEntity paymentRequest)
             throws KeyStoreException, CertificateChainNotFound {
         if (certList.size() == 0) {
             throw new CertificateChainNotFound("no certificates supplied");
         }
-        boolean isValid = false;
+        String result = null;
         try {
             Log.e(TAG, "The size of certList is: " + certList.size());
 //            // parse each certificate from the chain ...
@@ -98,22 +103,30 @@ public class X509CertificateValidator {
             for (int i = 0; i < certList.size(); i++) {
                 certListArray[i] = certList.get(i);
             }
-
             TrustManager[] tms = tmf.getTrustManagers();
             for (TrustManager m : tms) {
                 X509TrustManager xtm = (X509TrustManager) m;
                 Log.d(TAG, "checking chain with " + xtm + ", Alg: " + certListArray[0].getSigAlgName());
                 xtm.checkClientTrusted(certListArray, certListArray[0].getSigAlgName());
             }
-            isValid = true;
-            Log.e(TAG, "chain is valid");
+            PublicKey publicKey = certListArray[0].getPublicKey();
+            Signature signature = Signature.getInstance(certList.get(0).getSigAlgName());
+            signature.initVerify(publicKey);
+            signature.update(paymentRequest.signature);
+            signature.initVerify(publicKey);
+            result = certList.get(0).getSubjectX500Principal().getName();
+            Log.e(TAG,"result cn getName(): " + result);
 
         } catch (CertificateException e) {
             e.printStackTrace();
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
+        } catch (SignatureException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
         }
-        return isValid;
+        return result;
     }
 
     public static ArrayList<X509Certificate> getRootCerts() {

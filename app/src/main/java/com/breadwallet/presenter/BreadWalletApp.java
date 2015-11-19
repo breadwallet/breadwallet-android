@@ -196,7 +196,7 @@ public class BreadWalletApp extends Application {
             if (keyguardManager.isKeyguardSecure()) {
 //                Intent intent = keyguardManager.createConfirmDeviceCredentialIntent(CREDENTIAL_TITLE, CREDENTIAL_DESCRIPTION);
 //                context.startActivityForResult(intent, 1);
-                ((MainActivity)context).showAuthDialog();
+                ((MainActivity) context).showAuthDialog();
             } else {
                 showDeviceNotSecuredWarning(context);
             }
@@ -228,6 +228,25 @@ public class BreadWalletApp extends Application {
             isEmulator = fing.contains("vbox") || fing.contains("generic");
         }
         return isEmulator || BuildConfig.DEBUG;
+    }
+
+    public void showCustomDialog(final String title, final String message, final String buttonText) {
+        Log.e(TAG, "Showing a dialog!");
+        MainActivity.app.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                new android.app.AlertDialog.Builder(MainActivity.app)
+                        .setTitle(title)
+                        .setMessage(message)
+                        .setPositiveButton(buttonText, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+            }
+        });
     }
 
 }

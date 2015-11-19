@@ -129,39 +129,64 @@ JNIEXPORT jobject Java_com_breadwallet_tools_security_RequestHandler_parsePaymen
     jbyte *bytePayment = (*env)->GetByteArrayElements(env, payment, 0);
     nativeRequest = BRPaymentProtocolRequestParse(bytePayment, requestLength);
 
+    //testing the raw request form the top
 //    nativeRequest = BRPaymentProtocolRequestParse((const uint8_t *)req, sizeof(req) - 1);
-//    jbyteArray result = buf1;
-//    jbyte* bytesResult = (jbyte*)nativeRequest;
-//    int size = sizeof(nativeRequest);
-//    jbyteArray result = (*env)->NewByteArray(env, size);
+    //android debugging
 //    __android_log_write(ANDROID_LOG_ERROR, ">>>>>>MESSAGE FROM C: ", nativeRequest->pkiType);
-//    (*env)->SetByteArrayRegion(env,result, 0, size, bytesResult);
-//    (*env)->ReleaseByteArrayElements(env, payment, bytePayment, JNI_COMMIT);
-//    (*env)->ReleaseByteArrayElements(env, result, bytesResult, JNI_COMMIT);
-//    return result;
 
-    jbyte *bytesResult = (jbyte *) nativeRequest->signature;
-        size_t size = nativeRequest->sigLen;
-    jbyteArray result = (*env)->NewByteArray(env, size);
-    (*env)->SetByteArrayRegion(env,result, 0, size, bytesResult);
+    //signature
+    jbyte *bytesSignature = (jbyte *) nativeRequest->signature;
+    size_t bytesSignatureSize = nativeRequest->sigLen;
+    jbyteArray byteArraySignature = (*env)->NewByteArray(env, bytesSignatureSize);
+    (*env)->SetByteArrayRegion(env, byteArraySignature, 0, bytesSignatureSize, bytesSignature);
 
+    //pkiData
     jbyte *bytesPkiData = (jbyte *) nativeRequest->pkiData;
-    size_t size2 = nativeRequest->pkiLen;
-    jbyteArray result2 = (*env)->NewByteArray(env, size2);
-    (*env)->SetByteArrayRegion(env,result2, 0, size2, bytesPkiData);
+    size_t pkiDataSize = nativeRequest->pkiLen;
+    jbyteArray byteArrayPkiData = (*env)->NewByteArray(env, pkiDataSize);
+    (*env)->SetByteArrayRegion(env, byteArrayPkiData, 0, pkiDataSize, bytesPkiData);
 
-    jclass clazz = (*env)->FindClass(env, "com/breadwallet/tools/security/PaymentRequestEntity");
+    //merchantData
+    jbyte *bytesMerchantData = (jbyte *) nativeRequest->details->merchantData;
+    size_t merchantDataSize = nativeRequest->details->merchDataLen;
+    jbyteArray byteArrayMerchantData = (*env)->NewByteArray(env, merchantDataSize);
+    (*env)->SetByteArrayRegion(env, byteArrayMerchantData, 0, merchantDataSize, bytesMerchantData);
+
+    //create class
+    jclass clazz = (*env)->FindClass(env, "com/breadwallet/presenter/entities/PaymentRequestEntity");
     jobject entity = (*env)->AllocObject(env,clazz);
-    jfieldID pkiType = (*env)->GetFieldID(env,clazz, "pkiType", "Ljava/lang/String;");
-    jmethodID mid = (*env)->GetMethodID(env, clazz, "byteSignature", "([B)V");
-    jmethodID midData = (*env)->GetMethodID(env, clazz, "pkiData", "([B)V");
 
-    (*env)->SetObjectField(env,entity, pkiType, (*env)->NewStringUTF(env, nativeRequest->pkiType));
+    //fields
+    jfieldID pkiTypeField = (*env)->GetFieldID(env,clazz, "pkiType", "Ljava/lang/String;");
+    jfieldID networkField = (*env)->GetFieldID(env,clazz, "network", "Ljava/lang/String;");
+    jfieldID timeField = (*env)->GetFieldID(env,clazz, "time", "J");
+    jfieldID expiresField = (*env)->GetFieldID(env,clazz, "expires", "J");
+    jfieldID memoField = (*env)->GetFieldID(env,clazz, "memo", "Ljava/lang/String;");
+    jfieldID paymentURLField = (*env)->GetFieldID(env,clazz, "paymentURL", "Ljava/lang/String;");
 
-    (*env)->CallVoidMethod(env, entity, mid, result);
-    (*env)->CallVoidMethod(env, entity, midData, result2);
+    //methods id
+    jmethodID midByteSignature = (*env)->GetMethodID(env, clazz, "byteSignature", "([B)V");
+    jmethodID midPkiData = (*env)->GetMethodID(env, clazz, "pkiData", "([B)V");
+    jmethodID midMerchantData = (*env)->GetMethodID(env, clazz, "merchantData", "([B)V");
+
+    //set java fields
+    (*env)->SetObjectField(env,entity, pkiTypeField, (*env)->NewStringUTF(env, nativeRequest->pkiType));
+    (*env)->SetObjectField(env,entity, networkField, (*env)->NewStringUTF(env, nativeRequest->details->network));
+    (*env)->SetLongField(env,entity, timeField, nativeRequest->details->time);
+    (*env)->SetLongField(env,entity, expiresField, nativeRequest->details->expires);
+    (*env)->SetObjectField(env,entity, memoField, (*env)->NewStringUTF(env, nativeRequest->details->memo));
+    (*env)->SetObjectField(env,entity, paymentURLField, (*env)->NewStringUTF(env, nativeRequest->details->paymentURL));
+
+    //call java methods
+    (*env)->CallVoidMethod(env, entity, midByteSignature, byteArraySignature);
+    (*env)->CallVoidMethod(env, entity, midPkiData, byteArrayPkiData);
+    (*env)->CallVoidMethod(env, entity, midMerchantData, byteArrayPkiData);
+
+    //release stuff
     (*env)->ReleaseByteArrayElements(env, payment, bytePayment, JNI_COMMIT);
-    (*env)->ReleaseByteArrayElements(env, result, bytesResult, JNI_COMMIT);
+    (*env)->ReleaseByteArrayElements(env, byteArraySignature, bytesSignature, JNI_COMMIT);
+    (*env)->ReleaseByteArrayElements(env, byteArrayPkiData, bytesPkiData, JNI_COMMIT);
+    (*env)->ReleaseByteArrayElements(env, byteArrayMerchantData, bytesMerchantData, JNI_COMMIT);
     if (nativeRequest) BRPaymentProtocolRequestFree(nativeRequest);
 
     return entity;

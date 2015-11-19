@@ -59,7 +59,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
     private RelativeLayout customKeyboardLayout;
     public static TextView amountToPay;
     public static TextView amountBeforeArrow;
-    public static String address;
+    public static String address = "-";
     public static final int BITCOIN_LEFT = 1;
     public static final int BITCOIN_RIGHT = 2;
     public static int currentCurrencyPosition = BITCOIN_RIGHT;
