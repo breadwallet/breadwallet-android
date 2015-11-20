@@ -90,7 +90,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
 
     public static final String PEER_TABLE_NAME = "peerTable";
     public static final String PEER_COLUMN_ID = "_id";
-    public static final String PEER_ADDRESS = "address";
+    public static final String PEER_ADDRESS = "addresses";
     public static final String PEER_MISBEHAVIN = "misbehavin";
     public static final String PEER_PORT = "port";
     public static final String PEER_SERVICES = "services";

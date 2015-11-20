@@ -171,12 +171,22 @@ public class CurrencyManager {
     }
 
     public static String getMiddleTextExchangeString(double target, double current, String iso) {
-        double result = target * 1000000 / current;
+        double result = getExchange(target, current);
 //        Log.e(TAG, "result of the exchange rate calculation: " + result);
         DecimalFormat decimalFormat = new DecimalFormat("0.00");
         String finalResult = getFormattedCurrencyString(iso, "1") + " = " + bitcoinLowecase +
                 decimalFormat.format(result);
         return finalResult;
+    }
+
+    public static double getExchange(double target, double current) {
+        Log.e(TAG, "target: " + target + " , current: " + current);
+        return target * 1000000 / current;
+    }
+
+    public static double getExchangeFromSatoshi(double target, double current) {
+        Log.e(TAG, "target: " + target + " , current: " + current);
+        return target * current / 100000000;
     }
 
     public static String getCurrentBalanceText() {

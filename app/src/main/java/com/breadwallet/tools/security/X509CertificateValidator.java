@@ -2,7 +2,7 @@ package com.breadwallet.tools.security;
 
 import android.util.Log;
 
-import com.breadwallet.presenter.entities.PaymentRequestEntity;
+import com.breadwallet.presenter.entities.PaymentRequestCWrapper;
 import com.breadwallet.presenter.exceptions.CertificateChainNotFound;
 
 import java.io.ByteArrayInputStream;
@@ -56,9 +56,8 @@ public class X509CertificateValidator {
     public static final String PKI_NONE = "none";
     public static final String ROOT_CERTS_DIR = "/system/etc/security/cacerts";
 
-
     public static String certificateValidation(List<X509Certificate> certList,
-                                                PaymentRequestEntity paymentRequest)
+                                                PaymentRequestCWrapper paymentRequest)
             throws KeyStoreException, CertificateChainNotFound {
         if (certList.size() == 0) {
             throw new CertificateChainNotFound("no certificates supplied");
@@ -88,7 +87,7 @@ public class X509CertificateValidator {
 //            // way to set it up, because we don't care about the constraints specified on the certificates: any
 //            // cert that links a key to a domain name or other identity will do for us.
 //            signature.initVerify(publicKey);
-
+//
 //            // duplicate the payment-request but with an empty signature
 //            // then check the again serialized format of it
 //            PaymentRequest checkPaymentRequest = new PaymentRequest.Builder(paymentRequest)

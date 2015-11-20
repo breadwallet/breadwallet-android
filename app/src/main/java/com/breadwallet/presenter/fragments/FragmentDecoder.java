@@ -71,7 +71,7 @@ public class FragmentDecoder extends Fragment
     public static final String CAMERA_GUIDE_RED = "red";
     public static final String CAMERA_GUIDE = "reg";
     public static final String TEXT_EMPTY = "";
-    public static final String TEXT_NOT_VALID_BITCOIN_ADDRESS = "not a valid bitcoin address: /n";
+    public static final String TEXT_NOT_VALID_BITCOIN_ADDRESS = "not a valid bitcoin addresses: /n";
     public static final String TEXT_NOT_A_BITCOIN_QR = "not a bitcoin QR code";
 
     /**
@@ -599,7 +599,7 @@ public class FragmentDecoder extends Fragment
     }
 
     /**
-     * Validate the qr string and return the text to be shown to the user if the address is invalid
+     * Validate the qr string and return the text to be shown to the user if the addresses is invalid
      * or an empty text TEXT_EMPTY
      */
     public String validateResult(String str) {

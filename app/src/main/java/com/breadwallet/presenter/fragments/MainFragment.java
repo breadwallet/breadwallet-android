@@ -92,7 +92,7 @@ public class MainFragment extends Fragment {
                 if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
                     if (alertDialog.isShowing()) alertDialog.dismiss();
                     String address = BRClipboardManager.readFromClipboard(getActivity());
-//                    Log.e(TAG, "The address before check: " + address);
+//                    Log.e(TAG, "The addresses before check: " + addresses);
                     if (checkIfAddressIsValid(address)) {
                         if (FragmentDecoder.accessGranted) {
                             FragmentDecoder.accessGranted = false;
@@ -102,7 +102,7 @@ public class MainFragment extends Fragment {
                                     FragmentDecoder.accessGranted = true;
                                 }
                             }, 300);
-                            Log.e(TAG, "The address: " + address);
+                            Log.e(TAG, "The addresses: " + address);
                             if (address != null) {
                                 FragmentAnimator.animateScanResultFragment();
                                 FragmentScanResult.address = address;
@@ -135,19 +135,19 @@ public class MainFragment extends Fragment {
         } else {
             for (int i = 0; i < length; i++) {
                 if (str.charAt(i) < 48) {
-                    Log.e(TAG, "Bad address, char: " + str.charAt(i));
+                    Log.e(TAG, "Bad addresses, char: " + str.charAt(i));
                     return false;
                 } else {
                     if (str.charAt(i) > 57 && str.charAt(i) < 65) {
-                        Log.e(TAG, "Bad address, char: " + str.charAt(i));
+                        Log.e(TAG, "Bad addresses, char: " + str.charAt(i));
                         return false;
                     }
                     if (str.charAt(i) > 90 && str.charAt(i) < 61) {
-                        Log.e(TAG, "Bad address, char: " + str.charAt(i));
+                        Log.e(TAG, "Bad addresses, char: " + str.charAt(i));
                         return false;
                     }
                     if (str.charAt(i) > 122) {
-                        Log.e(TAG, "Bad address, char: " + str.charAt(i));
+                        Log.e(TAG, "Bad addresses, char: " + str.charAt(i));
                         return false;
                     }
                 }

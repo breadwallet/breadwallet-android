@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.entities.PaymentRequestCWrapper;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.exceptions.CertificateChainNotFound;
 import com.breadwallet.presenter.exceptions.PaymentRequestExpiredException;
@@ -15,7 +16,6 @@ import com.breadwallet.tools.animation.FragmentAnimator;
 import org.apache.commons.io.IOUtils;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
@@ -52,9 +52,10 @@ import java.util.List;
 public class RequestHandler {
     public static final String TAG = RequestHandler.class.getName();
     public static String finalAddress;
-    public static final String REQ_ADDRESS = "address";
+    public static final String REQ_ADDRESS = "addresses";
     public static final String REQ_PAYMENT_REQUEST = "request";
     public static final String REQ_PAYMENT_URL = "url";
+    public static final Object lockObject = new Object();
 
     public static void processRequest(String address) {
 
@@ -68,13 +69,11 @@ public class RequestHandler {
                 }
             }
         }
-
     }
 
     private static boolean tryAndProcessRequestURL(String address) {
 
-        synchronized (new Object()) {
-
+        synchronized (lockObject) {
             String addressToProcess = address;
             int length = addressToProcess.length();
             int indx;
@@ -115,24 +114,24 @@ public class RequestHandler {
             int tmpLength = tmp.length();
             for (int i = 0; i < tmpLength; i++) {
                 if (tmp.charAt(i) < 48) {
-                    Log.e(TAG, "Bad address, char: " + tmp.charAt(i));
+                    Log.e(TAG, "Bad addresses, char: " + tmp.charAt(i));
                     return false;
                 } else {
                     if (tmp.charAt(i) > 57 && tmp.charAt(i) < 65) {
-                        Log.e(TAG, "Bad address, char: " + tmp.charAt(i));
+                        Log.e(TAG, "Bad addresses, char: " + tmp.charAt(i));
                         return false;
                     }
                     if (tmp.charAt(i) > 90 && tmp.charAt(i) < 61) {
-                        Log.e(TAG, "Bad address, char: " + tmp.charAt(i));
+                        Log.e(TAG, "Bad addresses, char: " + tmp.charAt(i));
                         return false;
                     }
                     if (tmp.charAt(i) > 122) {
-                        Log.e(TAG, "Bad address, char: " + tmp.charAt(i));
+                        Log.e(TAG, "Bad addresses, char: " + tmp.charAt(i));
                         return false;
                     }
                 }
             }
-            //bitcoin: + address + ?amount=
+            //bitcoin: + addresses + ?amount=
             if (str.length() > 8 + 34 + 8) {
                 if (str.substring(8 + 34, 8 + 34 + 8).equalsIgnoreCase("?amount=")) {
                     //TODO do something with the amount
@@ -173,10 +172,12 @@ public class RequestHandler {
     static class RequestTask extends AsyncTask<String, String, String> {
         HttpURLConnection urlConnection;
         String certName = null;
+        PaymentRequestCWrapper paymentRequest = null;
 
         @Override
         protected String doInBackground(String... uri) {
             InputStream in;
+
             try {
                 Log.e(TAG, "the uri: " + uri[0]);
                 URL url = new URL(uri[0]);
@@ -194,21 +195,27 @@ public class RequestHandler {
                 if (serializedBytes == null || serializedBytes.length == 0) {
                     throw new NullPointerException("bytes are null!");
                 }
-                PaymentRequestEntity paymentRequest = parsePaymentRequest(serializedBytes);
+                paymentRequest = parsePaymentRequest(serializedBytes);
                 //Logging
+                StringBuilder allAddresses = new StringBuilder();
+                for (String s : paymentRequest.addresses) {
+                    allAddresses.append(s + ", ");
+                }
+
                 CustomLogger.LogThis("Signature", String.valueOf(paymentRequest.signature.length),
                         "pkiType", paymentRequest.pkiType, "pkiData", String.valueOf(paymentRequest.pkiData.length));
                 CustomLogger.LogThis("network", paymentRequest.network, "time", String.valueOf(paymentRequest.time),
                         "expires", String.valueOf(paymentRequest.expires), "memo", paymentRequest.memo,
                         "paymentURL", paymentRequest.paymentURL, "merchantDataSize",
-                        String.valueOf(paymentRequest.merchantData.length));
+                        String.valueOf(paymentRequest.merchantData.length), "addresses", allAddresses.toString(),
+                        "amount", String.valueOf(paymentRequest.amount));
                 //end logging
                 if (paymentRequest.time > paymentRequest.expires)
                     throw new PaymentRequestExpiredException("The request is expired!");
                 List<X509Certificate> certList = X509CertificateValidator.getCertificateFromBytes(serializedBytes);
                 certName = X509CertificateValidator.certificateValidation(certList, paymentRequest);
 
-            } catch (IOException e) {
+            } catch (Exception e) {
                 MainActivity app = MainActivity.app;
                 if (e instanceof java.net.UnknownHostException) {
                     if (app != null)
@@ -222,11 +229,7 @@ public class RequestHandler {
                     if (app != null)
                         ((BreadWalletApp) app.getApplication()).
                                 showCustomDialog("Warning", "connection timed out", "close");
-                }
-                e.printStackTrace();
-            } catch (Exception e) {
-                MainActivity app = MainActivity.app;
-                if (e instanceof CertificateChainNotFound) {
+                } else if (e instanceof CertificateChainNotFound) {
                     Log.e(TAG, "No certificates!", e);
                 } else if (e instanceof PaymentRequestExpiredException) {
                     if (app != null)
@@ -249,10 +252,13 @@ public class RequestHandler {
             super.onPostExecute(result);
 
             String cn = extractCNFromCertName(certName);
-
-            if (certName != null && cn != null) {
-                MainActivity app = MainActivity.app;
-                ((BreadWalletApp) app.getApplication()).showCustomDialog("Send bitcoin", "Sending to: " + cn, "ok");
+            Log.e(TAG,"paymentRequest.amount: " + paymentRequest.amount);
+            if (paymentRequest == null) return;
+            PaymentRequestEntity requestEntity = new PaymentRequestEntity(paymentRequest.addresses, paymentRequest.amount, 13, cn);
+            Log.e(TAG, "addresses: " + paymentRequest.paymentURL);
+            MainActivity app = MainActivity.app;
+            if (app != null) {
+                app.confirmPay(requestEntity);
             }
 
         }
@@ -280,7 +286,7 @@ public class RequestHandler {
         }
     }
 
-    public static native PaymentRequestEntity parsePaymentRequest(byte[] req);
+    public static native PaymentRequestCWrapper parsePaymentRequest(byte[] req);
 
     public static native byte[] getCertificatesFromPaymentRequest(byte[] req, int index);
 

@@ -3,7 +3,7 @@ package com.breadwallet.presenter.entities;
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail on 11/19/15.
+ * Created by Mihail on 11/12/15.
  * Copyright (c) 2015 Mihail Gutan <mihail@breadwallet.com>
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,19 +24,41 @@ package com.breadwallet.presenter.entities;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class PaymentRequestEntity {
-    public static final String TAG = PaymentRequestEntity.class.getName();
 
-    public String addresses[];
+public class PaymentRequestCWrapper {
+    public final String TAG = PaymentRequestCWrapper.class.getName();
+
+    //Protocol
+    boolean isPaymentRequest;
+    public byte[] signature;
+    public byte[] pkiData;
+    public String pkiType;
+
+    //Protocol Details
+    public String network;
+    public long time;
+    public long expires;
+    public String memo;
+    public String paymentURL;
+    public byte[] merchantData;
+
+    //Outputs
+    public String[] addresses;
     public long amount;
-    public double fee;
-    public String cn;
 
-    public PaymentRequestEntity(String theAddress[], long theAmount, double theFee, String theCn) {
-        addresses = theAddress;
-        amount = theAmount;
-        fee = theFee;
-        cn = theCn;
+    public PaymentRequestCWrapper() {
+    }
+
+    public void byteSignature(byte[] fromJNI) {
+        this.signature = fromJNI;
+    }
+
+    public void pkiData(byte[] pkiData) {
+        this.pkiData = pkiData;
+    }
+
+    public void merchantData(byte[] merchantData) {
+        this.merchantData = merchantData;
     }
 
 }

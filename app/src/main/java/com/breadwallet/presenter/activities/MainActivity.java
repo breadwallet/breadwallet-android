@@ -7,6 +7,7 @@ import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.hardware.fingerprint.FingerprintManager;
 import android.media.MediaPlayer;
@@ -30,6 +31,7 @@ import android.widget.ViewFlipper;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
+import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.fragments.FragmentAbout;
 import com.breadwallet.presenter.fragments.FragmentCurrency;
 import com.breadwallet.presenter.fragments.FragmentDecoder;
@@ -505,14 +507,36 @@ public class MainActivity extends FragmentActivity implements Observer {
         }
     }
 
-    public FragmentDecoder getFragmentDecoder(){
+    public FragmentDecoder getFragmentDecoder() {
         mainFragmentDecoder = new FragmentDecoder();
         return mainFragmentDecoder;
     }
 
-    public FragmentScanResult getFragmentScanResult(){
+    public FragmentScanResult getFragmentScanResult() {
         fragmentScanResult = new FragmentScanResult();
         return fragmentScanResult;
+    }
+
+    public void confirmPay(PaymentRequestEntity request) {
+        SharedPreferences settings;
+        boolean certified = false;
+        if (request.cn != null && request.cn.length() != 0) {
+            certified = true;
+        }
+        StringBuilder allAddresses = new StringBuilder();
+        for (String s : request.addresses) {
+            allAddresses.append(s + ", ");
+        }
+        String certification = certified ? "certified: " + request.cn + "\n" : "";
+
+        //DecimalFormat decimalFormat = new DecimalFormat("0.00");
+        settings = MainActivity.app.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        String iso = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
+        float rate = settings.getFloat(FragmentCurrency.RATE, 1.0f);
+        String amount = String.valueOf(CurrencyManager.getExchangeFromSatoshi(rate, new Double(request.amount)));
+        ((BreadWalletApp) getApplication()).showCustomDialog("payment info", certification + allAddresses.toString() +
+                "\n\n" + "amount " + CurrencyManager.getFormattedCurrencyString("BTC", String.valueOf(request.amount / 100))
+                + " (" + CurrencyManager.getFormattedCurrencyString(iso, amount) + ")", "send");
     }
 
 }

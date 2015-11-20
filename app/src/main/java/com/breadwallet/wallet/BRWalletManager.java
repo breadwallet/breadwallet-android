@@ -162,7 +162,7 @@ public class BRWalletManager {
     }
 
     /**
-     * queries chain.com and calls the completion block with unspent outputs for the given address
+     * queries chain.com and calls the completion block with unspent outputs for the given addresses
      */
     public void utxosForAddress(String address) {
         //?????????????????????????????

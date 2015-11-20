@@ -12,7 +12,7 @@ public final class Contents {
         // must include "http://" or "https://".
         public static final String TEXT = "TEXT_TYPE";
 
-        // An email type. Use Intent.putExtra(DATA, string) where string is the email address.
+        // An email type. Use Intent.putExtra(DATA, string) where string is the email addresses.
         public static final String EMAIL = "EMAIL_TYPE";
 
         // Use Intent.putExtra(DATA, string) where string is the phone number to call.
