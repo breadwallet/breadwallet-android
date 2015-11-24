@@ -280,10 +280,10 @@ JNIEXPORT jboolean JNICALL Java_com_breadwallet_tools_security_RequestHandler_va
     int result = BRAddressIsValid(str);
     (*env)->ReleaseStringUTFChars(env, address, str);
     __android_log_print(ANDROID_LOG_ERROR, "LOG_TAG", "This is the result : %d", result);
-//    return result ? JNI_TRUE : JNI_FALSE;
+    return result ? JNI_TRUE : JNI_FALSE;
 
     //return true for now!!!!!
-    return JNI_TRUE;
+//    return JNI_TRUE;
 }
 
 //JNIEXPORT void Java_com_breadwallet_presenter_activities_MainActivity_sendMethodCallBack

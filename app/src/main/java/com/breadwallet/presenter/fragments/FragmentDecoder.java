@@ -38,6 +38,7 @@ import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.entities.RequestObject;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.qrcode.AutoFitTextureView;
@@ -50,6 +51,7 @@ import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
 
 import java.nio.ByteBuffer;
+import java.security.InvalidAlgorithmParameterException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -71,7 +73,7 @@ public class FragmentDecoder extends Fragment
     public static final String CAMERA_GUIDE_RED = "red";
     public static final String CAMERA_GUIDE = "reg";
     public static final String TEXT_EMPTY = "";
-    public static final String TEXT_NOT_VALID_BITCOIN_ADDRESS = "not a valid bitcoin addresses: /n";
+    public static final String TEXT_NOT_VALID_BITCOIN_ADDRESS = "not a valid bitcoin addresses: \n";
     public static final String TEXT_NOT_A_BITCOIN_QR = "not a bitcoin QR code";
 
     /**
@@ -164,6 +166,7 @@ public class FragmentDecoder extends Fragment
                         }
                         String decoded = rawResult.getText();
                         String validationString = validateResult(decoded);
+                        Log.e(TAG,"validationString: " + validationString);
                         if (validationString == TEXT_EMPTY) {
                             onQRCodeRead(rawResult.getText());
                         } else {
@@ -555,12 +558,19 @@ public class FragmentDecoder extends Fragment
     public static void onQRCodeRead(final String text) {
         if (accessGranted) {
             accessGranted = false;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    accessGranted = true;
+                }
+            },500);
             MainActivity.app.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     if (text != null) {
                         FragmentAnimator.hideDecoderFragment();
                         RequestHandler.processRequest(text);
+
                     }
                 }
             });
@@ -600,9 +610,26 @@ public class FragmentDecoder extends Fragment
      * or an empty text TEXT_EMPTY
      */
     public String validateResult(String str) {
-        count++;
-
-        return TEXT_EMPTY;
+        RequestObject obj = null;
+        try {
+            obj = RequestHandler.getRequestFromString(str);
+        } catch (InvalidAlgorithmParameterException e) {
+            e.printStackTrace();
+        }
+        if(obj == null) {
+            return TEXT_NOT_A_BITCOIN_QR;
+        }
+        if(obj.r != null) {
+            return TEXT_EMPTY;
+        }
+        if(obj.address != null){
+            if(RequestHandler.validateAddress(obj.address)){
+                return TEXT_EMPTY;
+            } else {
+                return TEXT_NOT_VALID_BITCOIN_ADDRESS;
+            }
+        }
+        return TEXT_NOT_A_BITCOIN_QR;
     }
 
     public void setCameraGuide(final String str) {
