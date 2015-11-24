@@ -561,9 +561,6 @@ public class FragmentDecoder extends Fragment
                     if (text != null) {
                         FragmentAnimator.hideDecoderFragment();
                         RequestHandler.processRequest(text);
-
-                    } else {
-
                     }
                 }
             });

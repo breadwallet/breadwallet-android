@@ -527,7 +527,12 @@ public class MainActivity extends FragmentActivity implements Observer {
         for (String s : request.addresses) {
             allAddresses.append(s + ", ");
         }
-        String certification = certified ? "certified: " + request.cn + "\n" : "";
+        allAddresses.delete(allAddresses.length() - 2, allAddresses.length());
+        String certification = "";
+        if(certified){
+            certification = "certified: " + request.cn+ "\n";
+            allAddresses = new StringBuilder();
+        }
 
         //DecimalFormat decimalFormat = new DecimalFormat("0.00");
         settings = MainActivity.app.getSharedPreferences(MainActivity.PREFS_NAME, 0);

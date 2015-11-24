@@ -6,7 +6,6 @@ import android.app.Fragment;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -89,27 +88,30 @@ public class MainFragment extends Fragment {
         payAddressFromClipboardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.e(TAG, "payAddressFromClipboardButton 1");
                 if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
+                    Log.e(TAG, "payAddressFromClipboardButton 2");
                     if (alertDialog.isShowing()) alertDialog.dismiss();
                     String address = BRClipboardManager.readFromClipboard(getActivity());
 //                    Log.e(TAG, "The addresses before check: " + addresses);
                     if (checkIfAddressIsValid(address)) {
-                        if (FragmentDecoder.accessGranted) {
-                            FragmentDecoder.accessGranted = false;
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    FragmentDecoder.accessGranted = true;
-                                }
-                            }, 300);
-                            Log.e(TAG, "The addresses: " + address);
-                            if (address != null) {
-                                FragmentAnimator.animateScanResultFragment();
-                                FragmentScanResult.address = address;
-                            } else {
-                                throw new NullPointerException();
-                            }
+                        Log.e(TAG, "payAddressFromClipboardButton 3");
+//                        if (FragmentDecoder.accessGranted) {
+//                            FragmentDecoder.accessGranted = false;
+//                            new Handler().postDelayed(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    FragmentDecoder.accessGranted = true;
+//                                }
+//                            }, 300);
+                        Log.e(TAG, "The addresses: " + address);
+                        if (address != null) {
+                            FragmentAnimator.animateScanResultFragment();
+                            FragmentScanResult.address = address;
+                        } else {
+                            throw new NullPointerException();
                         }
+//                        }
                     } else {
                         alertDialog.setTitle(getResources().getString(R.string.alert));
                         alertDialog.setMessage(getResources().getString(R.string.mainfragment_clipboard_invalid_data));
@@ -130,7 +132,7 @@ public class MainFragment extends Fragment {
 
     public boolean checkIfAddressIsValid(String str) {
         int length = str.length();
-        if (length != 34) {
+        if (length < 26 || length > 35) {
             return false;
         } else {
             for (int i = 0; i < length; i++) {
@@ -166,7 +168,7 @@ public class MainFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        Log.e(TAG,"should fucking hide the softkeyboard!");
+        Log.e(TAG, "should fucking hide the softkeyboard!");
         MainActivity.app.softKeyboard.closeSoftKeyboard();
     }
 }

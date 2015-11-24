@@ -228,7 +228,8 @@ public class CurrencyManager {
         currencyFormat.setMinimumFractionDigits(AmountAdapter.digitsInserted);
         currencyFormat.setGroupingUsed(true);
         currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
-//        Log.e(TAG, "Returning the formatted string with separatorVisibility: " + currencyFormat.isDecimalSeparatorAlwaysShown());
+//        Log.e(TAG, "Returning the formatted string with separatorVisibility: " +
+// currencyFormat.isDecimalSeparatorAlwaysShown());
         return currencyFormat.format(new BigDecimal(amount).doubleValue());
     }
 

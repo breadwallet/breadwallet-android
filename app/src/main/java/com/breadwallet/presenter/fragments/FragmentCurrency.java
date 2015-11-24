@@ -85,7 +85,6 @@ public class FragmentCurrency extends Fragment {
         settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
         currencyList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         editor = settings.edit();
-
         currencyRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -204,6 +204,7 @@ public class FragmentAnimator {
      * @param delay in milliseconds
      */
     public static boolean checkTheMultipressingAvailability(int delay) {
+        Log.e(TAG,"multiplePressingAvailable: " + multiplePressingAvailable);
         synchronized (lockObject) {
             if (multiplePressingAvailable) {
                 multiplePressingAvailable = false;
@@ -254,6 +255,5 @@ public class FragmentAnimator {
                 remove(MainActivity.app.fragmentScanResult).commit();
         MainActivity.app.setBurgerButtonImage(MainActivity.app.BURGER);
     }
-
 
 }
