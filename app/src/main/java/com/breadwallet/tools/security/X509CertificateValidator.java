@@ -65,37 +65,6 @@ public class X509CertificateValidator {
         String result = null;
         try {
             Log.e(TAG, "The size of certList is: " + certList.size());
-//            // parse each certificate from the chain ...
-//            ArrayList<X509Certificate> certs = getRootCerts();
-//
-//            // ... and generate the certification path from it.
-//            CertPath certPath = certFact.generateCertPath(certs);
-//
-//            // Retrieves the most-trusted CAs from keystore.
-//            PKIXParameters params = new PKIXParameters(keyStore);
-//            // Revocation not supported in the current version.
-//            params.setRevocationEnabled(false);
-//
-//            // Now verify the certificate chain is correct and trusted. This let's us get an identity linked pubkey.
-//            CertPathValidator validator = CertPathValidator.getInstance("PKIX");
-//            PKIXCertPathValidatorResult result = (PKIXCertPathValidatorResult) validator.validate(certPath, params);
-//            PublicKey publicKey = result.getPublicKey();
-//
-//            // OK, we got an identity, now check it was used to sign this message.
-//            Signature signature = Signature.getInstance(getPkiSignatureAlgorithm(paymentRequest));
-//            // Note that we don't use signature.initVerify(certs.get(0)) here despite it being the most obvious
-//            // way to set it up, because we don't care about the constraints specified on the certificates: any
-//            // cert that links a key to a domain name or other identity will do for us.
-//            signature.initVerify(publicKey);
-//
-//            // duplicate the payment-request but with an empty signature
-//            // then check the again serialized format of it
-//            PaymentRequest checkPaymentRequest = new PaymentRequest.Builder(paymentRequest)
-//                    .signature(ByteString.EMPTY)
-//                    .build();
-//
-//            // serialize the payment request (now with an empty signature field) and check if the signature verifies
-//            signature.update(checkPaymentRequest.toByteArray());
             TrustManagerFactory tmf = TrustManagerFactory.getInstance("X509");
             tmf.init((KeyStore) null);
             X509Certificate[] certListArray = new X509Certificate[certList.size()];

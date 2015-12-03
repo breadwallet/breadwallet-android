@@ -3,9 +3,10 @@
     android:shareInterpolator="true">
 
     <objectAnimator xmlns:android="http://schemas.android.com/apk/res/android"
+        android:interpolator="@android:anim/accelerate_decelerate_interpolator"
         android:duration="@integer/slide_speed"
         android:propertyName="y"
-        android:valueFrom="-2000"
+        android:valueFrom="@integer/standard_screen_height_neg"
         android:valueTo="0"
         android:valueType="floatType" />
 

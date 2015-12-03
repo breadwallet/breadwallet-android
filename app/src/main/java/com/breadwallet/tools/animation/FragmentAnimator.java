@@ -97,10 +97,9 @@ public class FragmentAnimator {
             CustomPagerAdapter.adapter.showFragments(false);
             MainActivity.app.setBurgerButtonImage(context.CLOSE);
             FragmentTransaction fragmentTransaction = context.getFragmentManager().beginTransaction();
-            fragmentTransaction.setCustomAnimations(R.animator.from_top, -1);
+            fragmentTransaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_top);
             fragmentTransaction.add(R.id.main_layout, context.fragmentSettingsAll);
             fragmentTransaction.commit();
-
             context.pageIndicator.setVisibility(View.GONE);
             InputMethodManager keyboard = (InputMethodManager) MainActivity.app.
                     getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -112,12 +111,11 @@ public class FragmentAnimator {
                     SpringAnimator.showBouncySlideVertical(to.getView(), SpringAnimator.TO_LEFT);
                 }
             }, 200);
-
         } else if (level == 1) {
             level--;
             MainActivity.app.setBurgerButtonImage(context.BURGER);
             FragmentTransaction fragmentTransaction = context.getFragmentManager().beginTransaction();
-            fragmentTransaction.setCustomAnimations(-1, R.animator.to_top);
+            fragmentTransaction.setCustomAnimations(R.animator.from_top, R.animator.to_bottom);
             fragmentTransaction.remove(context.fragmentSettingsAll);
             fragmentTransaction.commit();
             CustomPagerAdapter.adapter.showFragments(true);
@@ -231,6 +229,7 @@ public class FragmentAnimator {
                 FragmentAnimator.multiplePressingAvailable = true;
             }
         }, 300);
+        if(MainActivity.app.mainFragmentDecoder == null) return;
         MainActivity.app.getFragmentManager().beginTransaction().
                 setCustomAnimations(R.animator.from_top, R.animator.to_bottom).
                 remove(MainActivity.app.mainFragmentDecoder).commit();

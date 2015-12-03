@@ -5,7 +5,7 @@
     <objectAnimator xmlns:android="http://schemas.android.com/apk/res/android"
         android:duration="@integer/slide_speed"
         android:propertyName="x"
-        android:valueFrom="2000"
+        android:valueFrom="@integer/standard_screen_width"
         android:valueTo="0"
         android:valueType="floatType" />
 </set>

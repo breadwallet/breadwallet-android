@@ -4,4 +4,8 @@
     <integer name="card_flip_time_full">500</integer>
     <integer name="card_flip_time_half">250</integer>
     <integer name="slide_speed">150</integer>
+    <integer name="standard_screen_width">1080</integer>
+    <integer name="standard_screen_width_neg">-1080</integer>
+    <integer name="standard_screen_height">1920</integer>
+    <integer name="standard_screen_height_neg">-1920</integer>
 </resources>

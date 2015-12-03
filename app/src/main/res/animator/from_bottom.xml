@@ -2,15 +2,11 @@
 <set xmlns:android="http://schemas.android.com/apk/res/android"
     android:shareInterpolator="false">
     <objectAnimator xmlns:android="http://schemas.android.com/apk/res/android"
+        android:interpolator="@android:anim/accelerate_decelerate_interpolator"
         android:duration="@integer/slide_speed"
         android:propertyName="y"
-        android:valueFrom="2000"
+        android:valueFrom="@integer/standard_screen_height"
         android:valueTo="0"
         android:valueType="floatType" />
 
-    <!--android:fromXDelta="0%"-->
-    <!--android:fromYDelta="100%"-->
-    <!--android:toXDelta="0%"-->
-    <!--android:toYDelta="0%" -->
-    <!--/>-->
 </set>

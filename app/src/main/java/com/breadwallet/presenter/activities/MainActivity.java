@@ -42,6 +42,7 @@ import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.presenter.fragments.FragmentWipeWallet;
 import com.breadwallet.presenter.fragments.PasswordDialogFragment;
 import com.breadwallet.tools.CurrencyManager;
+import com.breadwallet.tools.CustomLogger;
 import com.breadwallet.tools.NetworkChangeReceiver;
 import com.breadwallet.tools.SoftKeyboard;
 import com.breadwallet.tools.adapter.AmountAdapter;
@@ -149,6 +150,8 @@ public class MainActivity extends FragmentActivity implements Observer {
         Log.e(TAG, "MainActivity created!");
         initializeViews();
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
+        CustomLogger.LogThis("screen X", String.valueOf(screenParametersPoint.x), "screen Y",
+                String.valueOf(screenParametersPoint.y));
         setUpApi23();
 
         if (((BreadWalletApp) getApplication()).isEmulatorOrDebug()) {
@@ -529,8 +532,8 @@ public class MainActivity extends FragmentActivity implements Observer {
         }
         allAddresses.delete(allAddresses.length() - 2, allAddresses.length());
         String certification = "";
-        if(certified){
-            certification = "certified: " + request.cn+ "\n";
+        if (certified) {
+            certification = "certified: " + request.cn + "\n";
             allAddresses = new StringBuilder();
         }
 

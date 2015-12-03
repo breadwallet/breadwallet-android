@@ -1,6 +1,7 @@
 package com.breadwallet.presenter.fragments;
 
 import android.app.Fragment;
+import android.content.res.Resources;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Rect;
@@ -39,6 +40,7 @@ import android.widget.Toast;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.RequestObject;
+import com.breadwallet.tools.CustomLogger;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.qrcode.AutoFitTextureView;
@@ -166,7 +168,7 @@ public class FragmentDecoder extends Fragment
                         }
                         String decoded = rawResult.getText();
                         String validationString = validateResult(decoded);
-                        Log.e(TAG,"validationString: " + validationString);
+                        Log.e(TAG, "validationString: " + validationString);
                         if (validationString == TEXT_EMPTY) {
                             onQRCodeRead(rawResult.getText());
                         } else {
@@ -339,6 +341,7 @@ public class FragmentDecoder extends Fragment
     @Override
     public void onPause() {
 //        Log.e(TAG, "onPause");
+        accessGranted = true;
         closeCamera();
         stopBackgroundThread();
         super.onPause();
@@ -379,7 +382,7 @@ public class FragmentDecoder extends Fragment
 //                    mTextureView.setAspectRatio(mPreviewSize.getWidth(), mPreviewSize.getHeight());
 //                } else {
                 mTextureView.setAspectRatio(MainActivity.screenParametersPoint.x,
-                        MainActivity.screenParametersPoint.y - getStatusBarHeight()); //portrait only
+                        MainActivity.screenParametersPoint.y - getStatusBarHeight() - getBottomBar()); //portrait only
 //                }
 
                 mCameraId = cameraId;
@@ -554,21 +557,15 @@ public class FragmentDecoder extends Fragment
         mTextureView.setTransform(matrix);
     }
 
-
-    public static void onQRCodeRead(final String text) {
+    public static synchronized void onQRCodeRead(final String text) {
         if (accessGranted) {
             accessGranted = false;
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    accessGranted = true;
-                }
-            },500);
             MainActivity.app.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     if (text != null) {
                         FragmentAnimator.hideDecoderFragment();
+                        Log.e(TAG, "BEFORE processRequest");
                         RequestHandler.processRequest(text);
 
                     }
@@ -601,8 +598,21 @@ public class FragmentDecoder extends Fragment
                 window.findViewById(Window.ID_ANDROID_CONTENT).getTop();
         int titleBarHeight = contentViewTop - statusBarHeight;
 
-//        Log.e(TAG, "StatusBar Height= " + statusBarHeight + " , TitleBar Height = " + titleBarHeight);
+        Log.e(TAG, "StatusBar Height= " + statusBarHeight + " , TitleBar Height = " + titleBarHeight);
         return statusBarHeight + titleBarHeight;
+    }
+
+    public int getBottomBar() {
+        MainActivity app = MainActivity.app;
+        if (app == null) return 0;
+        Resources resources = MainActivity.app.getResources();
+        int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            CustomLogger.LogThis("bottomBar", String.valueOf(resources.getDimensionPixelSize(resourceId)));
+            return resources.getDimensionPixelSize(resourceId);
+        }
+        Log.e(TAG, "bottomBar is 0!");
+        return 0;
     }
 
     /**
@@ -616,14 +626,14 @@ public class FragmentDecoder extends Fragment
         } catch (InvalidAlgorithmParameterException e) {
             e.printStackTrace();
         }
-        if(obj == null) {
+        if (obj == null) {
             return TEXT_NOT_A_BITCOIN_QR;
         }
-        if(obj.r != null) {
+        if (obj.r != null) {
             return TEXT_EMPTY;
         }
-        if(obj.address != null){
-            if(RequestHandler.validateAddress(obj.address)){
+        if (obj.address != null) {
+            if (RequestHandler.validateAddress(obj.address)) {
                 return TEXT_EMPTY;
             } else {
                 return TEXT_NOT_VALID_BITCOIN_ADDRESS;

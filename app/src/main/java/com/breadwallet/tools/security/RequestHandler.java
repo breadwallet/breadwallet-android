@@ -53,13 +53,10 @@ import java.util.List;
  */
 public class RequestHandler {
     public static final String TAG = RequestHandler.class.getName();
-    public static String finalAddress;
-    public static final String REQ_ADDRESS = "addresses";
-    public static final String REQ_PAYMENT_REQUEST = "request";
-    public static final String REQ_PAYMENT_URL = "url";
     public static final Object lockObject = new Object();
 
-    public static void processRequest(String address) {
+    public static synchronized void processRequest(String address) {
+
         try {
             MainActivity app = MainActivity.app;
             RequestObject requestObject = getRequestFromString(address);
@@ -85,6 +82,7 @@ public class RequestHandler {
 
     public static RequestObject getRequestFromString(String str)
             throws InvalidAlgorithmParameterException {
+        Log.e(TAG,"THIS SHOULD BE CALLED ONCE!");
         RequestObject obj = new RequestObject();
         if (str.startsWith("bitcoin:")) {
             String[] parts = str.split("\\?", 2);
@@ -135,13 +133,27 @@ public class RequestHandler {
         if (length < 26 || length > 35) {
             return false;
         }
-        MainActivity.app.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                FragmentScanResult.address = str;
-                FragmentAnimator.animateScanResultFragment();
+        final String[] addresses = new String[1];
+        addresses[0] = str;
+        CustomLogger.LogThis("amount", requestObject.amount, "address", requestObject.address);
+        if (requestObject.amount != null) {
+            Double doubleAmount = Double.parseDouble(requestObject.amount) * 100000000;
+            long amount = doubleAmount.longValue();
+            PaymentRequestEntity requestEntity = new PaymentRequestEntity(addresses,
+                    amount, 13, "");
+            MainActivity app = MainActivity.app;
+            if (app != null) {
+                app.confirmPay(requestEntity);
             }
-        });
+        } else {
+            MainActivity.app.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    FragmentScanResult.address = str;
+                    FragmentAnimator.animateScanResultFragment();
+                }
+            });
+        }
         return true;
     }
 
@@ -176,7 +188,7 @@ public class RequestHandler {
                 StringBuilder allAddresses = new StringBuilder();
                 for (String s : paymentRequest.addresses) {
                     allAddresses.append(s + ", ");
-                    if(!validateAddress(s)){
+                    if (!validateAddress(s)) {
                         if (app != null)
                             ((BreadWalletApp) app.getApplication()).
                                     showCustomDialog("Attention", "invalid address\n" + s, "close");
@@ -198,7 +210,6 @@ public class RequestHandler {
                 certName = X509CertificateValidator.certificateValidation(certList, paymentRequest);
 
             } catch (Exception e) {
-
                 if (e instanceof java.net.UnknownHostException) {
                     if (app != null)
                         ((BreadWalletApp) app.getApplication()).

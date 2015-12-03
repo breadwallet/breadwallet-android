@@ -5,6 +5,6 @@
         android:duration="@integer/slide_speed"
         android:propertyName="x"
         android:valueFrom="0"
-        android:valueTo="-2000"
+        android:valueTo="@integer/standard_screen_width_neg"
         android:valueType="floatType" />
 </set>
