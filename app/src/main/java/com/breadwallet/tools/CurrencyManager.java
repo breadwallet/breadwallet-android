@@ -60,7 +60,7 @@ public class CurrencyManager {
     public static final String TAG = "CurrencyManager";
     private static Timer timer;
     private static TimerTask timerTask;
-    public static final String bitcoinLowecase = "\u0180";
+    public static final String bitcoinLowercase = "\u0180";
     private static final Handler handler = new Handler();
     public static boolean separatorNeedsToBeShown = false;
     private static CurrencyListAdapter currencyListAdapter =
@@ -171,20 +171,20 @@ public class CurrencyManager {
     }
 
     public static String getMiddleTextExchangeString(double target, double current, String iso) {
-        double result = getExchange(target, current);
+        double result = getBitsFromBitcoin(target, current);
 //        Log.e(TAG, "result of the exchange rate calculation: " + result);
         DecimalFormat decimalFormat = new DecimalFormat("0.00");
-        String finalResult = getFormattedCurrencyString(iso, "1") + " = " + bitcoinLowecase +
+        String finalResult = getFormattedCurrencyString(iso, "1") + " = " + bitcoinLowercase +
                 decimalFormat.format(result);
         return finalResult;
     }
 
-    public static double getExchange(double target, double current) {
+    public static double getBitsFromBitcoin(double target, double current) {
         Log.e(TAG, "target: " + target + " , current: " + current);
         return target * 1000000 / current;
     }
 
-    public static double getExchangeFromSatoshi(double target, double current) {
+    public static double getBitsFromSatoshi(double target, double current) {
         Log.e(TAG, "target: " + target + " , current: " + current);
         return target * current / 100000000;
     }
@@ -195,7 +195,7 @@ public class CurrencyManager {
         settings = MainActivity.app.getSharedPreferences(MainActivity.PREFS_NAME, 0);
         String iso = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
 //        float rate = settings.getFloat(FragmentCurrency.RATE, 0f);
-        String result = bitcoinLowecase + "0" + "(" + getFormattedCurrencyString(iso, "0") + ")";
+        String result = bitcoinLowercase + "0" + "(" + getFormattedCurrencyString(iso, "0") + ")";
         return result;
     }
 
@@ -210,7 +210,7 @@ public class CurrencyManager {
         Currency currency;
         if (isoCurrencyCode == "BTC") {
             decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
-            decimalFormatSymbols.setCurrencySymbol(bitcoinLowecase);
+            decimalFormatSymbols.setCurrencySymbol(bitcoinLowercase);
         } else {
             try {
                 currency = Currency.getInstance(isoCurrencyCode);
@@ -275,6 +275,5 @@ public class CurrencyManager {
 
         return currencyFormat.format(amount);
     }
-
 
 }

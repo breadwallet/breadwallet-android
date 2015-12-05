@@ -1,7 +1,6 @@
 package com.breadwallet.presenter.fragments;
 
 import android.app.Fragment;
-import android.content.res.Resources;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Rect;
@@ -40,7 +39,6 @@ import android.widget.Toast;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.RequestObject;
-import com.breadwallet.tools.CustomLogger;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.qrcode.AutoFitTextureView;
@@ -341,7 +339,6 @@ public class FragmentDecoder extends Fragment
     @Override
     public void onPause() {
 //        Log.e(TAG, "onPause");
-        accessGranted = true;
         closeCamera();
         stopBackgroundThread();
         super.onPause();
@@ -368,7 +365,7 @@ public class FragmentDecoder extends Fragment
                 List<Size> outputSizes = Arrays.asList(map.getOutputSizes(sImageFormat));
                 Size largest = Collections.max(outputSizes, new CompareSizesByArea());
 
-                mImageReader = ImageReader.newInstance(largest.getWidth() / 16, largest.getHeight() / 16, sImageFormat, 3);
+                mImageReader = ImageReader.newInstance(largest.getWidth() / 20, largest.getHeight() / 20, sImageFormat, 1);
                 mImageReader.setOnImageAvailableListener(mOnImageAvailableListener, mBackgroundHandler);
                 // Danger, W.R.! Attempting to use too large a preview size could exceed the camera
                 // bus' bandwidth limitation, resulting in gorgeous previews but the storage of
@@ -450,7 +447,6 @@ public class FragmentDecoder extends Fragment
      * Stops the background thread and its {@link Handler}.
      */
     private void stopBackgroundThread() {
-
         try {
             mBackgroundThread.quitSafely();
             mBackgroundThread.join();
@@ -489,7 +485,6 @@ public class FragmentDecoder extends Fragment
             // Here, we create a CameraCaptureSession for camera preview.
             mCameraDevice.createCaptureSession(Arrays.asList(mImageSurface, surface),
                     new CameraCaptureSession.StateCallback() {
-
                         @Override
                         public void onConfigured(CameraCaptureSession cameraCaptureSession) {
                             // The camera is already closed
@@ -603,15 +598,15 @@ public class FragmentDecoder extends Fragment
     }
 
     public int getBottomBar() {
-        MainActivity app = MainActivity.app;
-        if (app == null) return 0;
-        Resources resources = MainActivity.app.getResources();
-        int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            CustomLogger.LogThis("bottomBar", String.valueOf(resources.getDimensionPixelSize(resourceId)));
-            return resources.getDimensionPixelSize(resourceId);
-        }
-        Log.e(TAG, "bottomBar is 0!");
+//        MainActivity app = MainActivity.app;
+//        if (app == null) return 0;
+//        Resources resources = MainActivity.app.getResources();
+//        int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
+//        if (resourceId > 0) {
+//            CustomLogger.LogThis("bottomBar", String.valueOf(resources.getDimensionPixelSize(resourceId)));
+//            return resources.getDimensionPixelSize(resourceId);
+//        }
+//        Log.e(TAG, "bottomBar is 0!");
         return 0;
     }
 

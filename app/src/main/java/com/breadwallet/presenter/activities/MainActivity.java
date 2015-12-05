@@ -215,6 +215,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     protected void onResume() {
         super.onResume();
         app = this;
+        CurrencyManager.startTimer();
         MiddleViewAdapter.resetMiddleView(null);
         networkErrorBar.setVisibility(CurrencyManager.isNetworkAvailable() ? View.GONE : View.VISIBLE);
         startStopReceiver(true);
@@ -541,7 +542,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         settings = MainActivity.app.getSharedPreferences(MainActivity.PREFS_NAME, 0);
         String iso = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
         float rate = settings.getFloat(FragmentCurrency.RATE, 1.0f);
-        String amount = String.valueOf(CurrencyManager.getExchangeFromSatoshi(rate, new Double(request.amount)));
+        String amount = String.valueOf(CurrencyManager.getBitsFromSatoshi(rate, new Double(request.amount)));
         ((BreadWalletApp) getApplication()).showCustomDialog("payment info", certification + allAddresses.toString() +
                 "\n\n" + "amount " + CurrencyManager.getFormattedCurrencyString("BTC", String.valueOf(request.amount / 100))
                 + " (" + CurrencyManager.getFormattedCurrencyString(iso, amount) + ")", "send");

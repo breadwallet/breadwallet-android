@@ -82,7 +82,7 @@ public class RequestHandler {
 
     public static RequestObject getRequestFromString(String str)
             throws InvalidAlgorithmParameterException {
-        Log.e(TAG,"THIS SHOULD BE CALLED ONCE!");
+        Log.e(TAG, "THIS SHOULD BE CALLED ONCE: " + Thread.currentThread().getName());
         RequestObject obj = new RequestObject();
         if (str.startsWith("bitcoin:")) {
             String[] parts = str.split("\\?", 2);
@@ -245,8 +245,8 @@ public class RequestHandler {
             super.onPostExecute(result);
 
             String cn = extractCNFromCertName(certName);
-            Log.e(TAG, "paymentRequest.amount: " + paymentRequest.amount);
             if (paymentRequest == null) return;
+            Log.e(TAG, "paymentRequest.amount: " + paymentRequest.amount);
             PaymentRequestEntity requestEntity = new PaymentRequestEntity(paymentRequest.addresses,
                     paymentRequest.amount, 13, cn);
             MainActivity app = MainActivity.app;
