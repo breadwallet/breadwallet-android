@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.fragments.FragmentCurrency;
@@ -28,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
 import java.util.Locale;
+import java.util.Observable;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -56,7 +56,7 @@ import java.util.TimerTask;
  * THE SOFTWARE.
  */
 
-public class CurrencyManager {
+public class CurrencyManager extends Observable {
     private static CurrencyManager instance;
     public static final String TAG = "CurrencyManager";
     private Timer timer;
@@ -66,17 +66,16 @@ public class CurrencyManager {
     private final Handler handler = new Handler();
     public static boolean separatorNeedsToBeShown = false;
     private CurrencyListAdapter currencyListAdapter;
-    private Context ctx;
+    private static Context ctx;
 
-    private CurrencyManager(Context ctx){
-        this.ctx = ctx;
+    private CurrencyManager() {
         currencyListAdapter = new CurrencyListAdapter(ctx, R.layout.currency_list_item);
     }
 
-    public static synchronized CurrencyManager getInstance(Context ctx) {
-
+    public static synchronized CurrencyManager getInstance(Context context) {
+        ctx = context;
         if (instance == null) {
-            instance = new CurrencyManager(ctx);
+            instance = new CurrencyManager();
         }
         return instance;
     }
@@ -89,11 +88,10 @@ public class CurrencyManager {
     }
 
     public void setBalance(long balance) {
+        Log.e(TAG, "in the setBalance, BALANCE:  " + BALANCE);
         BALANCE = balance;
-        String tmp = getCurrentBalanceText();
-        Log.e(TAG, "In the setBalance, app: " + ctx);
-        ((BreadWalletApp) ctx.getApplicationContext()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
-
+        setChanged();
+        notifyObservers();
     }
 
     public long getBALANCE() {
@@ -196,12 +194,12 @@ public class CurrencyManager {
         }
     }
 
-    public String getMiddleTextExchangeString(long target, String iso) {
-        double result = getBitsFromBitcoin(target);
+    public String getMiddleTextExchangeString(long rate, String iso) {
 //        Log.e(TAG, "result of the exchange rate calculation: " + result);
+        double result = 1000000 / rate;
         DecimalFormat decimalFormat = new DecimalFormat("0.00");
-        String finalResult = getFormattedCurrencyString(iso, "1") + " = " + bitcoinLowercase +
-                decimalFormat.format(result);
+        String finalResult = getFormattedCurrencyString(iso, "1") + " = " +
+                getFormattedCurrencyString("BTC", String.valueOf(decimalFormat.format(result)));
         return finalResult;
     }
 
@@ -225,6 +223,7 @@ public class CurrencyManager {
         CustomLogger.LogThis("rate", String.valueOf(rate), "exchange", String.valueOf(exchange));
         String result = getFormattedCurrencyString("BTC", String.valueOf(balance)) + "(" +
                 getFormattedCurrencyString(iso, String.valueOf(exchange)) + ")";
+        Log.e(TAG, "getCurrentBalanceText: " + result);
         return result;
     }
 

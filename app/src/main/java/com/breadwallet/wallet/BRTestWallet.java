@@ -4,8 +4,8 @@ import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 
-import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.CurrencyManager;
+import com.breadwallet.tools.CustomLogger;
 import com.breadwallet.tools.WordsReader;
 import com.breadwallet.tools.security.KeyStoreManager;
 
@@ -42,18 +42,18 @@ public class BRTestWallet {
     public static final String TAG = BRTestWallet.class.getName();
     private static BRTestWallet instance;
     private byte[] walletBuff;
-    private Context ctx;
+    private static Context ctx;
 
-    private BRTestWallet(Context ctx) {
-        this.ctx = ctx;
+    private BRTestWallet() {
         /**
          * initialize the class
          */
     }
 
-    public static synchronized BRTestWallet getInstance(Context ctx) {
+    public static synchronized BRTestWallet getInstance(Context context) {
+        ctx = context;
         if (instance == null) {
-            instance = new BRTestWallet(ctx);
+            instance = new BRTestWallet();
         }
         return instance;
     }
@@ -69,6 +69,7 @@ public class BRTestWallet {
         try {
             list = WordsReader.getWordList(ctx);
             words = list.toArray(new String[list.size()]);
+//            CustomLogger.LogThis(words);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -79,7 +80,7 @@ public class BRTestWallet {
 //        String phrase = "short apple trunk riot coyote innocent zebra venture ill lava shop test";
         boolean success = KeyStoreManager.setKeyStoreString(phrase, ctx);
         Log.e(TAG, "setKeyStoreString was successful: " + success);
-        return phrase;
+        return success ? phrase : null;
     }
 
     /**
@@ -88,11 +89,13 @@ public class BRTestWallet {
 
     public void onBalanceChanged(final long balance) {
         Log.e(TAG, "THIS IS THE BALANCE FROM C: " + balance);
-        CurrencyManager.getInstance(MainActivity.app).setBalance(balance);
+        CurrencyManager.getInstance(ctx).setBalance(balance);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                CurrencyManager.getInstance(MainActivity.app).setBalance(balance);
+                long newBalance = 1435992491;
+                Log.e(TAG, "Changing balance to: " + newBalance);
+                CurrencyManager.getInstance(ctx).setBalance(newBalance);
             }
         }, 10000);
     }

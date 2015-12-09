@@ -72,7 +72,7 @@ public class KeyStoreManager {
 
     public static boolean setKeyStoreString(String strToStore, Context context) {
 
-        if(strToStore == null || strToStore.length() == 0) return false;
+        if (strToStore == null || strToStore.length() == 0) return false;
         //return the new method if the API is 23+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
             return setKeyStoreStringAPI23(PHRASE_FILENAME, strToStore, PHRASE_ALIAS, context);
@@ -414,8 +414,11 @@ public class KeyStoreManager {
             keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
             keyStore.load(null);
             Enumeration<String> aliases = keyStore.aliases();
-            while (aliases.hasMoreElements())
-                keyStore.deleteEntry(aliases.nextElement());
+            while (aliases.hasMoreElements()) {
+                String alias = aliases.nextElement();
+                Log.e(TAG,"Deleting alias: " + alias);
+                keyStore.deleteEntry(alias);
+            }
         } catch (CertificateException e) {
             e.printStackTrace();
             return false;

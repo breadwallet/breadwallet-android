@@ -14,22 +14,23 @@ JNIEXPORT jstring Java_com_breadwallet_wallet_BRTestWallet_encodeSeed(JNIEnv *en
 
     int wordsCount = (*env)->GetArrayLength(env, stringArray);
     int seedLength = (*env)->GetArrayLength(env, seed);
-    char *wordList[wordsCount];
+    const char *wordList[wordsCount];
     for (int i = 0; i < wordsCount; i++) {
         jstring string = (jstring) (*env)->GetObjectArrayElement(env, stringArray, i);
-        const char *rawString = (*env)->GetStringUTFChars(env, string, 0);
+        char *rawString = (*env)->GetStringUTFChars(env, string, 0);
         wordList[i] = rawString;
-        (*env)->ReleaseStringUTFChars(env, string, rawString);
+//        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "current string : %s", wordList[i]);
+//        (*env)->ReleaseStringUTFChars(env, string, rawString);
+//        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "current string : %s", wordList[i]);
         (*env)->DeleteLocalRef(env,string);
         // Don't forget to call `ReleaseStringUTFChars` when you're done.
     }
     jbyte *byteSeed = (*env)->GetByteArrayElements(env, seed, 0);
     char *theSeed = byteSeed;
-    int size_needed = BRBIP39Encode(NULL, 0, wordList, theSeed, seedLength);
-    char *result;
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "Need to print : %s", wordList[1]);
-//    int buf = BRBIP39Encode(result, size_needed, wordList, theSeed, seedLength);
-//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "Need to print : %d", buf);
+    char result[BRBIP39Encode(NULL, 0, wordList, theSeed, seedLength)];
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "words number : %s", wordList[83]);
+    size_t len = BRBIP39Encode(result, sizeof(result), wordList, theSeed, seedLength);
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "Need to print : %d", len);
     jstring stringPhrase = (*env)->NewStringUTF(env, result);
     return stringPhrase;
 }

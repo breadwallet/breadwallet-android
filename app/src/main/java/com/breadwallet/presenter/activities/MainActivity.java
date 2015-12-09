@@ -56,6 +56,8 @@ import com.breadwallet.tools.auth.PasswordAuthenticationDialogFragment;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * BreadWallet
@@ -82,7 +84,7 @@ import java.util.Map;
  * THE SOFTWARE.
  */
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity implements Observer{
     public static final String TAG = "MainActivity";
     public static final String PREFS_NAME = "MyPrefsFile";
     public static MainActivity app;
@@ -213,7 +215,10 @@ public class MainActivity extends FragmentActivity {
     protected void onResume() {
         super.onResume();
         app = this;
-        CurrencyManager.getInstance(this).startTimer();
+        CurrencyManager currencyManager = CurrencyManager.getInstance(this);
+        currencyManager.startTimer();
+        currencyManager.deleteObservers();
+        currencyManager.addObserver(this);
         MiddleViewAdapter.resetMiddleView(null);
         networkErrorBar.setVisibility(CurrencyManager.getInstance(this).isNetworkAvailable() ? View.GONE : View.VISIBLE);
         startStopReceiver(true);
@@ -541,4 +546,8 @@ public class MainActivity extends FragmentActivity {
                 + " (" + CurrencyManager.getInstance(this).getFormattedCurrencyString(iso, amount) + ")", "send");
     }
 
+    @Override
+    public void update(Observable observable, Object data) {
+        MiddleViewAdapter.resetMiddleView(null);
+    }
 }

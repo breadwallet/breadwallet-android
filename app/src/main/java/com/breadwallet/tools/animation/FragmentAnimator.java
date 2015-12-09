@@ -46,7 +46,7 @@ public class FragmentAnimator {
     public static boolean wipeWalletOpen = false;
     public static Stack<Fragment> previous = new Stack<>();
     private static boolean multiplePressingAvailable = true;
-    public static Object lockObject = new Object();
+    public static final Object lockObject = new Object();
 
     public static void animateDecoderFragment() {
         MainActivity.beenThroughSavedInstanceMethod = false;

@@ -22,6 +22,7 @@ import com.breadwallet.presenter.fragments.IntroRecoverWalletFragment;
 import com.breadwallet.presenter.fragments.IntroWarningFragment;
 import com.breadwallet.presenter.fragments.IntroWelcomeFragment;
 import com.breadwallet.tools.animation.BackgroundMovingAnimator;
+import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.wallet.BRTestWallet;
@@ -89,7 +90,7 @@ public class IntroActivity extends FragmentActivity {
     @Override
     protected void onResume() {
         super.onResume();
-//        KeyStoreManager.deleteAllKeyStoreEntries();
+        KeyStoreManager.deleteKeyStoreEntry("phrase");
         //testSQLiteConnectivity(this);   //do some SQLite testing
         app = this;
         introWelcomeFragment = new IntroWelcomeFragment();

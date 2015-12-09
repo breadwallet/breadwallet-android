@@ -56,14 +56,14 @@ public class CurrencyListAdapter extends ArrayAdapter<CurrencyEntity> {
 
         this.layoutResourceId = layoutResourceId;
         this.mContext = mContext;
-        MainActivity.app.getWindowManager().getDefaultDisplay().getSize(displayParameters);
+        ((Activity)mContext).getWindowManager().getDefaultDisplay().getSize(displayParameters);
         currencyListAdapter = this;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        SharedPreferences settings = MainActivity.app.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        SharedPreferences settings = mContext.getSharedPreferences(MainActivity.PREFS_NAME, 0);
         final int tmp = settings.getInt(FragmentCurrency.POSITION, 0);
         if (convertView == null) {
             // inflate the layout
