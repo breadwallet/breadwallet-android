@@ -110,7 +110,7 @@ public class BRWalletManager {
 
     public boolean setKeyStoreString(String strPhrase, String key,
                                      boolean authenticated, Context ctx) {
-        return KeyStoreManager.setKeyStoreString(PHRASE_FILENAME, strPhrase, KeyStoreManager.PHRASE_ALIAS, ctx);
+        return KeyStoreManager.setKeyStoreString(strPhrase,ctx);
     }
 
     public String getPhrase(Context ctx) {

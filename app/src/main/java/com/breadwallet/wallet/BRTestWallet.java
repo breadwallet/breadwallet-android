@@ -1,5 +1,18 @@
 package com.breadwallet.wallet;
 
+import android.content.Context;
+import android.os.Handler;
+import android.util.Log;
+
+import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.tools.CurrencyManager;
+import com.breadwallet.tools.WordsReader;
+import com.breadwallet.tools.security.KeyStoreManager;
+
+import java.io.IOException;
+import java.security.SecureRandom;
+import java.util.List;
+
 /**
  * BreadWallet
  * <p/>
@@ -24,9 +37,79 @@ package com.breadwallet.wallet;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 public class BRTestWallet {
     public static final String TAG = BRTestWallet.class.getName();
+    private static BRTestWallet instance;
+    private byte[] walletBuff;
+    private Context ctx;
+
+    private BRTestWallet(Context ctx) {
+        this.ctx = ctx;
+        /**
+         * initialize the class
+         */
+    }
+
+    public static synchronized BRTestWallet getInstance(Context ctx) {
+        if (instance == null) {
+            instance = new BRTestWallet(ctx);
+        }
+        return instance;
+    }
+
+
+    public String generateRandomSeed() {
+
+        final SecureRandom sr = new SecureRandom();
+        final byte[] keyBytes = new byte[16];
+        sr.nextBytes(keyBytes);
+        String[] words = new String[0];
+        List<String> list;
+        try {
+            list = WordsReader.getWordList(ctx);
+            words = list.toArray(new String[list.size()]);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (words.length < 2000)
+            throw new IllegalArgumentException("the list is wrong, size: " + words.length);
+        String phrase = encodeSeed(keyBytes, words);
+        Log.e(TAG, "THE COOL RESULT: " + phrase);
+//        String phrase = "short apple trunk riot coyote innocent zebra venture ill lava shop test";
+        boolean success = KeyStoreManager.setKeyStoreString(phrase, ctx);
+        Log.e(TAG, "setKeyStoreString was successful: " + success);
+        return phrase;
+    }
+
+    /**
+     * Wallet callbacks
+     */
+
+    public void onBalanceChanged(final long balance) {
+        Log.e(TAG, "THIS IS THE BALANCE FROM C: " + balance);
+        CurrencyManager.getInstance(MainActivity.app).setBalance(balance);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                CurrencyManager.getInstance(MainActivity.app).setBalance(balance);
+            }
+        }, 10000);
+    }
+
+    public void onTxAdded(byte[] tx) {
+
+    }
+
+    public void onTxUpdated(byte[] tx) {
+
+    }
+
+    public void onTxDeleted(byte[] tx) {
+
+    }
+
+    private native String encodeSeed(byte[] seed, String[] wordList);
 
     public native void initWallet();
-
 }

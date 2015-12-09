@@ -74,7 +74,6 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         // The last two arguments ensure LayoutParams are inflated
         // properly.
         final View rootView = inflater.inflate(R.layout.fragment_scan_result, container, false);
-
         scanResult = (TextView) rootView.findViewById(R.id.scan_result);
         customKeyboardLayout = (RelativeLayout) rootView.findViewById(R.id.custom_keyboard_layout);
         amountToPay = (TextView) rootView.findViewById(R.id.amount_to_pay);
@@ -256,11 +255,11 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         if (ISO == null) updateRateAndISO();
         final String btcIso = "BTC";
         if (currentCurrencyPosition == BITCOIN_RIGHT) {
-            amountToPay.setText(CurrencyManager.getFormattedCurrencyString(btcIso, bitcoinValue.toString()));
-            amountBeforeArrow.setText(CurrencyManager.getFormattedCurrencyString(ISO, otherValue.toString()));
+            amountToPay.setText(CurrencyManager.getInstance(MainActivity.app).getFormattedCurrencyString(btcIso, bitcoinValue.toString()));
+            amountBeforeArrow.setText(CurrencyManager.getInstance(MainActivity.app).getFormattedCurrencyString(ISO, otherValue.toString()));
         } else if (currentCurrencyPosition == BITCOIN_LEFT) {
-            amountToPay.setText(CurrencyManager.getFormattedCurrencyString(ISO, bitcoinValue.toString()));
-            amountBeforeArrow.setText(CurrencyManager.getFormattedCurrencyString(btcIso, otherValue.toString()));
+            amountToPay.setText(CurrencyManager.getInstance(MainActivity.app).getFormattedCurrencyString(ISO, bitcoinValue.toString()));
+            amountBeforeArrow.setText(CurrencyManager.getInstance(MainActivity.app).getFormattedCurrencyString(btcIso, otherValue.toString()));
         } else {
             throw new IllegalArgumentException("currentPosition should be BITCOIN_LEFT or BITCOIN_RIGHT");
         }

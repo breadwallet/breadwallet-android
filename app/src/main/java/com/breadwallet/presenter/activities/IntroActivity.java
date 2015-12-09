@@ -24,6 +24,7 @@ import com.breadwallet.presenter.fragments.IntroWelcomeFragment;
 import com.breadwallet.tools.animation.BackgroundMovingAnimator;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
+import com.breadwallet.wallet.BRTestWallet;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -78,7 +79,6 @@ public class IntroActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
-
         Log.e(TAG, "Activity created!");
         if (savedInstanceState != null) {
             return;
@@ -89,9 +89,7 @@ public class IntroActivity extends FragmentActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        //        KeyStoreManager.deleteKeyStoreEntry(KeyStoreManager.PHRASE_ALIAS);
 //        KeyStoreManager.deleteAllKeyStoreEntries();
-//        m.generateRandomSeed(this);
         //testSQLiteConnectivity(this);   //do some SQLite testing
         app = this;
         introWelcomeFragment = new IntroWelcomeFragment();
@@ -105,8 +103,9 @@ public class IntroActivity extends FragmentActivity {
         leftButton.setVisibility(View.GONE);
         leftButton.setClickable(false);
 
-//        final BRWalletManager m = BRWalletManager.getInstance();
-//        byte[] walletRaw = m.wallet();
+        final BRTestWallet m = BRTestWallet.getInstance(this);
+        m.generateRandomSeed();
+        m.initWallet();
 
         BackgroundMovingAnimator.animateBackgroundMoving(background); //animates the orange BW background moving.
 

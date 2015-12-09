@@ -56,8 +56,6 @@ import com.breadwallet.tools.auth.PasswordAuthenticationDialogFragment;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
 
 /**
  * BreadWallet
@@ -84,7 +82,7 @@ import java.util.Observer;
  * THE SOFTWARE.
  */
 
-public class MainActivity extends FragmentActivity implements Observer {
+public class MainActivity extends FragmentActivity {
     public static final String TAG = "MainActivity";
     public static final String PREFS_NAME = "MyPrefsFile";
     public static MainActivity app;
@@ -215,9 +213,9 @@ public class MainActivity extends FragmentActivity implements Observer {
     protected void onResume() {
         super.onResume();
         app = this;
-        CurrencyManager.startTimer();
+        CurrencyManager.getInstance(this).startTimer();
         MiddleViewAdapter.resetMiddleView(null);
-        networkErrorBar.setVisibility(CurrencyManager.isNetworkAvailable() ? View.GONE : View.VISIBLE);
+        networkErrorBar.setVisibility(CurrencyManager.getInstance(this).isNetworkAvailable() ? View.GONE : View.VISIBLE);
         startStopReceiver(true);
 
     }
@@ -233,7 +231,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     @Override
     protected void onStop() {
         super.onStop();
-        CurrencyManager.stopTimerTask();
+        CurrencyManager.getInstance(this).stopTimerTask();
 
     }
 
@@ -242,7 +240,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         super.onDestroy();
         finish();
         FragmentAnimator.level = 0;
-        CurrencyManager.stopTimerTask();
+        CurrencyManager.getInstance(this).stopTimerTask();
         Log.e(TAG, "Activity Destroyed!");
         softKeyboard.unRegisterSoftKeyboardCallback();
 
@@ -458,15 +456,10 @@ public class MainActivity extends FragmentActivity implements Observer {
     }
 
     @Override
-    public void update(Observable observable, Object data) {
-        //TODO balance observer stuff here
-    }
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             setUnlocked(true);
-            String tmp = CurrencyManager.getCurrentBalanceText();
+            String tmp = CurrencyManager.getInstance(this).getCurrentBalanceText();
             ((BreadWalletApp) getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
             softKeyboard.closeSoftKeyboard();
         } else {
@@ -542,10 +535,10 @@ public class MainActivity extends FragmentActivity implements Observer {
         settings = MainActivity.app.getSharedPreferences(MainActivity.PREFS_NAME, 0);
         String iso = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
         float rate = settings.getFloat(FragmentCurrency.RATE, 1.0f);
-        String amount = String.valueOf(CurrencyManager.getBitsFromSatoshi(rate, new Double(request.amount)));
+        String amount = String.valueOf(CurrencyManager.getInstance(this).getBitsFromSatoshi(request.amount));
         ((BreadWalletApp) getApplication()).showCustomDialog("payment info", certification + allAddresses.toString() +
-                "\n\n" + "amount " + CurrencyManager.getFormattedCurrencyString("BTC", String.valueOf(request.amount / 100))
-                + " (" + CurrencyManager.getFormattedCurrencyString(iso, amount) + ")", "send");
+                "\n\n" + "amount " + CurrencyManager.getInstance(this).getFormattedCurrencyString("BTC", String.valueOf(request.amount / 100))
+                + " (" + CurrencyManager.getInstance(this).getFormattedCurrencyString(iso, amount) + ")", "send");
     }
 
 }

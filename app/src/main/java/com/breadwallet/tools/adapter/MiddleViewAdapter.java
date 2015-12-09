@@ -1,9 +1,11 @@
 package com.breadwallet.tools.adapter;
 
+import android.util.Log;
+
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.CurrencyManager;
+import com.breadwallet.tools.animation.FragmentAnimator;
 
 /**
  * BreadWallet
@@ -33,10 +35,11 @@ public class MiddleViewAdapter {
     public static final String TAG = "MiddleViewAdapter";
 
     public static void resetMiddleView(String text) {
+        Log.e(TAG, "in the resetMiddleView");
         MainActivity app = MainActivity.app;
         if (FragmentAnimator.level == 0 || FragmentAnimator.level == 1) {
             if (MainActivity.unlocked) {
-                String tmp = CurrencyManager.getCurrentBalanceText();
+                String tmp = CurrencyManager.getInstance(MainActivity.app).getCurrentBalanceText();
                 ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
             } else {
                 ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_IMAGE, "");

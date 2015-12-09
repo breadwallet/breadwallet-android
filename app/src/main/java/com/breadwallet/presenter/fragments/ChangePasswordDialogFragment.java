@@ -123,7 +123,7 @@ public class ChangePasswordDialogFragment extends DialogFragment {
                             PassCodeManager.setPassCode(tempPassToChange);
                             tempPassToChange = "";
                             getDialog().cancel();
-                            String tmp = CurrencyManager.getCurrentBalanceText();
+                            String tmp = CurrencyManager.getInstance(getActivity()).getCurrentBalanceText();
                             ((BreadWalletApp) getActivity().getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
                             app.setUnlocked(true);
                             InputMethodManager keyboard = (InputMethodManager) MainActivity.app.

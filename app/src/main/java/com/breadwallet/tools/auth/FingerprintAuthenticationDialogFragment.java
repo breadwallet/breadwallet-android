@@ -247,7 +247,7 @@ public class FingerprintAuthenticationDialogFragment extends DialogFragment
     @Override
     public void onAuthenticated() {
             getDialog().cancel();
-            String tmp = CurrencyManager.getCurrentBalanceText();
+            String tmp = CurrencyManager.getInstance(getActivity()).getCurrentBalanceText();
             ((BreadWalletApp) getActivity().getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
             ((MainActivity) getActivity()).setUnlocked(true);
             MainActivity.app.softKeyboard.closeSoftKeyboard();

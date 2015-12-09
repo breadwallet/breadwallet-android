@@ -163,7 +163,7 @@ public class FragmentSettings extends Fragment {
 
         @Override
         protected Object doInBackground(Object[] params) {
-            fragmentCurrency.adapter = CurrencyManager.getCurrencyAdapterIfReady();
+            fragmentCurrency.adapter = CurrencyManager.getInstance(app).getCurrencyAdapterIfReady();
             return null;
         }
 

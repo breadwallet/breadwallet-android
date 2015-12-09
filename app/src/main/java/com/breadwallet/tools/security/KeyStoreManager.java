@@ -66,32 +66,35 @@ public class KeyStoreManager {
     static final String CIPHER_PROVIDER = "AndroidOpenSSL";
     public static final String PHRASE_ALIAS = "phrase";
     public static final String ANDROID_KEY_STORE = "AndroidKeyStore";
-    public static final String MIHAIL_GUTAN_X500 = "CN=Mihail Gutan";
+    public static final String BREADWALLET_X500 = "CN=Breadwallet";
+    public static final String PHRASE_FILENAME = "my_phrase";
 
-    public static boolean setKeyStoreString(String fileName, String strToStore, String alias, Context context) {
 
+    public static boolean setKeyStoreString(String strToStore, Context context) {
+
+        if(strToStore == null || strToStore.length() == 0) return false;
         //return the new method if the API is 23+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            return setKeyStoreStringAPI23(fileName, strToStore, alias, context);
+            return setKeyStoreStringAPI23(PHRASE_FILENAME, strToStore, PHRASE_ALIAS, context);
         try {
             KeyStore keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
             keyStore.load(null);
             int nBefore = keyStore.size();
 
             // Create the keys if necessary
-            if (!keyStore.containsAlias(alias)) {
+            if (!keyStore.containsAlias(PHRASE_ALIAS)) {
 
                 Calendar notBefore = Calendar.getInstance();
                 Calendar notAfter = Calendar.getInstance();
-                notAfter.add(Calendar.YEAR, 1);
+                notAfter.add(Calendar.YEAR, 99);
 
                 KeyPairGenerator generator = KeyPairGenerator.getInstance(
                         KeyProperties.KEY_ALGORITHM_RSA, ANDROID_KEY_STORE);
 
                 KeyPairGeneratorSpec spec = new KeyPairGeneratorSpec.Builder(context)
-                        .setAlias(alias)
+                        .setAlias(PHRASE_ALIAS)
                         .setKeySize(2048)
-                        .setSubject(new X500Principal(MIHAIL_GUTAN_X500))
+                        .setSubject(new X500Principal(BREADWALLET_X500))
                         .setSerialNumber(BigInteger.ONE)
                         .setStartDate(notBefore.getTime())
                         .setEndDate(notAfter.getTime())
@@ -106,7 +109,7 @@ public class KeyStoreManager {
             Log.v(TAG, "Before = " + nBefore + " After = " + nAfter);
 
             // Retrieve the keys
-            KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry) keyStore.getEntry(alias, null);
+            KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry) keyStore.getEntry(PHRASE_ALIAS, null);
             RSAPrivateKey privateKey = (RSAPrivateKey) privateKeyEntry.getPrivateKey();
             RSAPublicKey publicKey = (RSAPublicKey) privateKeyEntry.getCertificate().getPublicKey();
 
@@ -115,7 +118,7 @@ public class KeyStoreManager {
 
             // Encrypt the text
             String filesDirectory = context.getFilesDir().getAbsolutePath();
-            String encryptedDataFilePath = filesDirectory + File.separator + fileName;
+            String encryptedDataFilePath = filesDirectory + File.separator + PHRASE_FILENAME;
 
 //            Log.v(TAG, "strPhrase = " + strToStore);
 //            Log.v(TAG, "dataDirectory = " + dataDirectory);

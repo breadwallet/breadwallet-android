@@ -2,8 +2,13 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-LOCAL_SRC_FILES := ./transition/core.c
+LOCAL_SRC_FILES := \
+./transition/core.c\
+./transition/wallet.c\
+./transition/WalletCallbacks.c
 
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/transition
+$(warning $(LOCAL_PATH))
 LOCAL_MODULE := core
 
 LOCAL_LDLIBS := -llog -lm
@@ -14,7 +19,7 @@ LOCAL_CFLAGS := -std=c99
 
 include $(BUILD_SHARED_LIBRARY)
 
-#second module______________________________
+#______________________________
 
 include $(CLEAR_VARS)
 

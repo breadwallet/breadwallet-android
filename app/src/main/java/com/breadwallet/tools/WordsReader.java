@@ -58,7 +58,7 @@ public class WordsReader {
         } catch (Exception ex) {
             Log.e(TAG, "UUUps, getWordListBytes error: ", ex);
         }
-        if (wordsBytes != null) throw new NullPointerException("bytes cannot be null");
+        if (wordsBytes == null) throw new NullPointerException("bytes cannot be null");
         return wordsBytes;
     }
 

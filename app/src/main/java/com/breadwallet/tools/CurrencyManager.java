@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.fragments.FragmentCurrency;
@@ -56,24 +57,50 @@ import java.util.TimerTask;
  */
 
 public class CurrencyManager {
-    private static MainActivity app = MainActivity.app;
+    private static CurrencyManager instance;
     public static final String TAG = "CurrencyManager";
-    private static Timer timer;
-    private static TimerTask timerTask;
-    public static final String bitcoinLowercase = "\u0180";
-    private static final Handler handler = new Handler();
+    private Timer timer;
+    private long BALANCE = 0;
+    private TimerTask timerTask;
+    public final String bitcoinLowercase = "\u0180";
+    private final Handler handler = new Handler();
     public static boolean separatorNeedsToBeShown = false;
-    private static CurrencyListAdapter currencyListAdapter =
-            new CurrencyListAdapter(MainActivity.app, R.layout.currency_list_item);
+    private CurrencyListAdapter currencyListAdapter;
+    private Context ctx;
 
-    public static boolean isNetworkAvailable() {
+    private CurrencyManager(Context ctx){
+        this.ctx = ctx;
+        currencyListAdapter = new CurrencyListAdapter(ctx, R.layout.currency_list_item);
+    }
+
+    public static synchronized CurrencyManager getInstance(Context ctx) {
+
+        if (instance == null) {
+            instance = new CurrencyManager(ctx);
+        }
+        return instance;
+    }
+
+    public boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
-                = (ConnectivityManager) app.getSystemService(Context.CONNECTIVITY_SERVICE);
+                = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    public static List<CurrencyEntity> getCurrencies() {
+    public void setBalance(long balance) {
+        BALANCE = balance;
+        String tmp = getCurrentBalanceText();
+        Log.e(TAG, "In the setBalance, app: " + ctx);
+        ((BreadWalletApp) ctx.getApplicationContext()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
+
+    }
+
+    public long getBALANCE() {
+        return BALANCE;
+    }
+
+    public List<CurrencyEntity> getCurrencies() {
         List<CurrencyEntity> list = new ArrayList<>();
         if (isNetworkAvailable()) {
             try {
@@ -108,7 +135,7 @@ public class CurrencyManager {
         return list;
     }
 
-    public static class GetCurrenciesTask extends AsyncTask {
+    public class GetCurrenciesTask extends AsyncTask {
         List<CurrencyEntity> tmp;
 
         @Override
@@ -119,7 +146,6 @@ public class CurrencyManager {
 
         @Override
         protected void onPostExecute(Object o) {
-            super.onPostExecute(o);
             if (tmp.size() > 0) {
                 currencyListAdapter.clear();
                 currencyListAdapter.addAll(tmp);
@@ -131,12 +157,12 @@ public class CurrencyManager {
         }
     }
 
-    public static CurrencyListAdapter getCurrencyAdapterIfReady() {
+    public CurrencyListAdapter getCurrencyAdapterIfReady() {
         new GetCurrenciesTask().execute();
         return currencyListAdapter;
     }
 
-    public static void initializeTimerTask() {
+    public void initializeTimerTask() {
 
         timerTask = new TimerTask() {
             public void run() {
@@ -151,7 +177,7 @@ public class CurrencyManager {
         };
     }
 
-    public static void startTimer() {
+    public void startTimer() {
         //set a new Timer
         timer = new Timer();
 
@@ -162,7 +188,7 @@ public class CurrencyManager {
         timer.schedule(timerTask, 0, 60000); //
     }
 
-    public static void stopTimerTask() {
+    public void stopTimerTask() {
         //stop the timer, if it's not already null
         if (timer != null) {
             timer.cancel();
@@ -170,8 +196,8 @@ public class CurrencyManager {
         }
     }
 
-    public static String getMiddleTextExchangeString(double target, double current, String iso) {
-        double result = getBitsFromBitcoin(target, current);
+    public String getMiddleTextExchangeString(long target, String iso) {
+        double result = getBitsFromBitcoin(target);
 //        Log.e(TAG, "result of the exchange rate calculation: " + result);
         DecimalFormat decimalFormat = new DecimalFormat("0.00");
         String finalResult = getFormattedCurrencyString(iso, "1") + " = " + bitcoinLowercase +
@@ -179,27 +205,30 @@ public class CurrencyManager {
         return finalResult;
     }
 
-    public static double getBitsFromBitcoin(double target, double current) {
-        Log.e(TAG, "target: " + target + " , current: " + current);
-        return target * 1000000 / current;
+    public long getBitsFromBitcoin(long target) {
+        return target * 1000000;
     }
 
-    public static double getBitsFromSatoshi(double target, double current) {
-        Log.e(TAG, "target: " + target + " , current: " + current);
-        return target * current / 100000000;
+    public long getBitsFromSatoshi(long target) {
+        return target / 100;
     }
 
-    public static String getCurrentBalanceText() {
+    public String getCurrentBalanceText() {
         SharedPreferences settings;
 //        DecimalFormat decimalFormat = new DecimalFormat("0.00");
         settings = MainActivity.app.getSharedPreferences(MainActivity.PREFS_NAME, 0);
         String iso = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
-//        float rate = settings.getFloat(FragmentCurrency.RATE, 0f);
-        String result = bitcoinLowercase + "0" + "(" + getFormattedCurrencyString(iso, "0") + ")";
+
+        float rate = settings.getFloat(FragmentCurrency.RATE, 0f);
+        long balance = getBitsFromSatoshi(getBALANCE());
+        double exchange = (balance * rate / 1000000);
+        CustomLogger.LogThis("rate", String.valueOf(rate), "exchange", String.valueOf(exchange));
+        String result = getFormattedCurrencyString("BTC", String.valueOf(balance)) + "(" +
+                getFormattedCurrencyString(iso, String.valueOf(exchange)) + ")";
         return result;
     }
 
-    public static String getFormattedCurrencyString(String isoCurrencyCode, String amount) {
+    public String getFormattedCurrencyString(String isoCurrencyCode, String amount) {
         DecimalFormat currencyFormat;
 
         // This formats currency values as the user expects to read them (default locale).
@@ -233,7 +262,7 @@ public class CurrencyManager {
         return currencyFormat.format(new BigDecimal(amount).doubleValue());
     }
 
-    public static String getFormattedCurrencyStringForLocale(Locale locale, String isoCurrencyCode, double amount) {
+    public String getFormattedCurrencyStringForLocale(Locale locale, String isoCurrencyCode, double amount) {
         // This formats currency values as the user expects to read them (default locale).
         NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(locale);
 
@@ -251,7 +280,7 @@ public class CurrencyManager {
         return currencyFormat.format(amount);
     }
 
-    public static String getFormattedCurrencyStringFixed(Locale locale, String isoCurrencyCode, double amount) {
+    public String getFormattedCurrencyStringFixed(Locale locale, String isoCurrencyCode, double amount) {
         // This formats currency values as the user expects to read them in the supplied locale.
         NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(locale);
 
