@@ -9,7 +9,7 @@ JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRTestWallet_initWallet(JNIEnv 
     setCallbacks(env);
 }
 
-JNIEXPORT jstring Java_com_breadwallet_wallet_BRTestWallet_encodeSeed(JNIEnv *env, jobject thiz,
+JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRTestWallet_encodeSeed(JNIEnv *env, jobject thiz,
              jbyteArray seed, jobjectArray stringArray){
 
     int wordsCount = (*env)->GetArrayLength(env, stringArray);
@@ -31,8 +31,37 @@ JNIEXPORT jstring Java_com_breadwallet_wallet_BRTestWallet_encodeSeed(JNIEnv *en
 //    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "words number : %s", wordList[83]);
     size_t len = BRBIP39Encode(result, sizeof(result), wordList, theSeed, seedLength);
 //    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "Need to print : %d", len);
-    jstring stringPhrase = (*env)->NewStringUTF(env, result);
-    return stringPhrase;
+//    jstring stringPhrase = (*env)->NewStringUTF(env, result);
+    jbyte *phraseJbyte = (const jbyte *) result;
+    int size = sizeof(result);
+    jbyteArray bytePhrase = (*env)->NewByteArray(env, size);
+    (*env)->SetByteArrayRegion(env, bytePhrase, 0, size, phraseJbyte);
+    return bytePhrase;
 }
+
+JNIEXPORT jboolean Java_com_breadwallet_wallet_BRTestWallet_createWallet(JNIEnv *env, jobject thiz,
+            jobject buffer) {
+
+}
+
+JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRTestWallet_getMasterPubKey(JNIEnv *env, jobject thiz,
+             jstring phrase){
+    char *rawPhrase = (*env)->GetStringUTFChars(env, phrase, 0);
+    UInt512 key = UINT512_ZERO;
+    BRBIP39DeriveKey(key.u8, rawPhrase, NULL);
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "Priv Key : %d", sizeof(key));
+    BRMasterPubKey pubKey = BRBIP32MasterPubKey(key.u8, sizeof(key));
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "Pub Key : %d", sizeof(pubKey.fingerPrint));
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "Pub Key : %d", sizeof(pubKey.chainCode));
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "Pub Key : %d", sizeof(pubKey.pubKey));
+    size_t pubKeySize = sizeof(pubKey);
+    jbyteArray result = (*env)->NewByteArray(env, pubKeySize);
+    (*env)->SetByteArrayRegion(env, result, 0, pubKeySize, (jbyte*)&pubKey);
+
+    (*env)->ReleaseStringUTFChars(env, phrase, rawPhrase);
+    return result;
+}
+
+
 
 

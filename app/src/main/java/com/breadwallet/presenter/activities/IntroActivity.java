@@ -27,6 +27,7 @@ import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.wallet.BRTestWallet;
 
+import java.text.Normalizer;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -105,8 +106,13 @@ public class IntroActivity extends FragmentActivity {
         leftButton.setClickable(false);
 
         final BRTestWallet m = BRTestWallet.getInstance(this);
-        m.generateRandomSeed();
+        String phrase = m.generateRandomSeed();
+        if(phrase == null) throw new NullPointerException("Phrase is null!!!!");
         m.initWallet();
+        String normalizedPhrase = Normalizer.normalize(phrase , Normalizer.Form.NFKD);
+        byte[] pubKey = m.getMasterPubKey(normalizedPhrase);
+        //TODO put this pubKey into the keystore
+        Log.e(TAG, "PUB KEY length IS: " + pubKey.length);
 
         BackgroundMovingAnimator.animateBackgroundMoving(background); //animates the orange BW background moving.
 
@@ -116,7 +122,6 @@ public class IntroActivity extends FragmentActivity {
                 onBackPressed();
             }
         });
-        Log.e(TAG, "Test");
         getFragmentManager().beginTransaction().add(R.id.intro_layout, introWelcomeFragment,
                 "introWelcomeFragment").commit();
 

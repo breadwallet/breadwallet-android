@@ -31,9 +31,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.tools.CurrencyManager;
+import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.PassCodeManager;
 
@@ -168,9 +167,8 @@ public class PasswordAuthenticationDialogFragment extends DialogFragment
     @Override
     public void onAuthenticated() {
         getDialog().cancel();
-        String tmp = CurrencyManager.getInstance(getActivity()).getCurrentBalanceText();
-        ((BreadWalletApp) getActivity().getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
         ((MainActivity) getActivity()).setUnlocked(true);
+        MiddleViewAdapter.resetMiddleView(null);
         MainActivity.app.softKeyboard.closeSoftKeyboard();
         // Callback from FingerprintUiHelper. Let the activity know that authentication was
         // successful.

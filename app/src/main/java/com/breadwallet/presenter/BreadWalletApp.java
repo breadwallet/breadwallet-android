@@ -135,12 +135,12 @@ public class BreadWalletApp extends Application {
         }
     }
 
-    public int getRelativeLeft(View myView) {
-        if (myView.getParent() == myView.getRootView())
-            return myView.getLeft();
-        else
-            return myView.getLeft() + getRelativeLeft((View) myView.getParent());
-    }
+//    public int getRelativeLeft(View myView) {
+//        if (myView.getParent() == myView.getRootView())
+//            return myView.getLeft();
+//        else
+//            return myView.getLeft() + getRelativeLeft((View) myView.getParent());
+//    }
 
     public int getRelativeTop(View myView) {
         if (myView.getParent() == myView.getRootView())
@@ -162,6 +162,7 @@ public class BreadWalletApp extends Application {
                     app.viewFlipper.showNext();
                 }
                 ((TextView) app.viewFlipper.getCurrentView()).setText(text);
+                ((TextView) app.viewFlipper.getCurrentView()).setTextSize(20);
                 break;
         }
     }

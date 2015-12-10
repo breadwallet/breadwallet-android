@@ -16,15 +16,22 @@
             <RelativeLayout
                 android:id="@+id/transactions"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:background="@drawable/clickable_layout"
-                android:clickable="true">
+                android:background="@drawable/clickable_layout">
+
+                <!--<ListView-->
+                    <!--android:id="@+id/transactions_list"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:listSelector="@color/white"-->
+                    <!--android:cacheColorHint="@android:color/transparent"></ListView>-->
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:padding="20dp"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:text="no Transactions"

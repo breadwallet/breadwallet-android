@@ -75,7 +75,7 @@ public class BRTestWallet {
         }
         if (words.length < 2000)
             throw new IllegalArgumentException("the list is wrong, size: " + words.length);
-        String phrase = encodeSeed(keyBytes, words);
+        String phrase = new String(encodeSeed(keyBytes, words));
         Log.e(TAG, "THE COOL RESULT: " + phrase);
 //        String phrase = "short apple trunk riot coyote innocent zebra venture ill lava shop test";
         boolean success = KeyStoreManager.setKeyStoreString(phrase, ctx);
@@ -112,7 +112,9 @@ public class BRTestWallet {
 
     }
 
-    private native String encodeSeed(byte[] seed, String[] wordList);
+    private native byte[] encodeSeed(byte[] seed, String[] wordList);
 
     public native void initWallet();
+
+    public native byte[] getMasterPubKey(String normalizedString);
 }
