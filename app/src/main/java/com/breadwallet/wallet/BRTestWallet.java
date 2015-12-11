@@ -5,11 +5,11 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.breadwallet.tools.CurrencyManager;
-import com.breadwallet.tools.CustomLogger;
 import com.breadwallet.tools.WordsReader;
 import com.breadwallet.tools.security.KeyStoreManager;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.security.SecureRandom;
 import java.util.List;
 
@@ -45,9 +45,6 @@ public class BRTestWallet {
     private static Context ctx;
 
     private BRTestWallet() {
-        /**
-         * initialize the class
-         */
     }
 
     public static synchronized BRTestWallet getInstance(Context context) {
@@ -56,6 +53,14 @@ public class BRTestWallet {
             instance = new BRTestWallet();
         }
         return instance;
+    }
+
+    public void setWalletBuff(byte[] buff) {
+        walletBuff = buff;
+    }
+
+    public byte[] getWalletBuff() {
+        return walletBuff;
     }
 
 
@@ -114,7 +119,9 @@ public class BRTestWallet {
 
     private native byte[] encodeSeed(byte[] seed, String[] wordList);
 
-    public native void initWallet();
+    public native byte[] createWallet(ByteBuffer buffer);
+
+    public native void setCallbacks(byte[] wallet);
 
     public native byte[] getMasterPubKey(String normalizedString);
 }

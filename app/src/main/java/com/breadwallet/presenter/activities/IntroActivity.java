@@ -91,7 +91,7 @@ public class IntroActivity extends FragmentActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        KeyStoreManager.deleteKeyStoreEntry("phrase");
+//        KeyStoreManager.deleteKeyStoreEntry("phrase");
         //testSQLiteConnectivity(this);   //do some SQLite testing
         app = this;
         introWelcomeFragment = new IntroWelcomeFragment();
@@ -105,12 +105,19 @@ public class IntroActivity extends FragmentActivity {
         leftButton.setVisibility(View.GONE);
         leftButton.setClickable(false);
 
+
         final BRTestWallet m = BRTestWallet.getInstance(this);
+        Log.w(TAG,"The phrase from keystore is: " + KeyStoreManager.getKeyStoreString(this));
         String phrase = m.generateRandomSeed();
         if(phrase == null) throw new NullPointerException("Phrase is null!!!!");
-        m.initWallet();
-        String normalizedPhrase = Normalizer.normalize(phrase , Normalizer.Form.NFKD);
+        Log.w(TAG,"The phrase is: " + phrase);
+        Log.w(TAG,"The phrase from keystore after saving the new one: " + KeyStoreManager.getKeyStoreString(this));
+        String normalizedPhrase = Normalizer.normalize(phrase, Normalizer.Form.NFKD);
         byte[] pubKey = m.getMasterPubKey(normalizedPhrase);
+//        ByteBuffer buffer = ByteBuffer.wrap(pubKey);
+//        m.setWalletBuff(m.createWallet(buffer));
+//        m.setCallbacks(m.getWalletBuff());
+
         //TODO put this pubKey into the keystore
         Log.e(TAG, "PUB KEY length IS: " + pubKey.length);
 

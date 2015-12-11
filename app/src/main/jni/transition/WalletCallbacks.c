@@ -1,19 +1,25 @@
 //
 // Created by Mihail Gutan on 12/4/15.
 //
-
 #include "WalletCallbacks.h"
+
 JNIEnv *globalEnv;
 
-void setCallbacks(JNIEnv *env) {
-    //set the Wallet callbacks
+void Java_com_breadwallet_wallet_BRTestWallet_setCallbacks(JNIEnv *env,
+                                                           jobject thiz,
+                                                           jbyteArray walletBuff) {
     globalEnv = env;
+    jbyte *byteWallet= (*env)->GetByteArrayElements(env, walletBuff, 0);
+    BRWallet *wallet = byteWallet;
+    //set the Wallet callbacks
+    BRWalletSetCallbacks(wallet, NULL, &balanceChanged, &txAdded, &txUpdated, &txDeleted);
+
     int a = 10;
     int balance = 480000;
     balanceChanged(a, balance);
 }
 
-void balanceChanged(void *info, uint64_t balance){
+void balanceChanged(void *info, uint64_t balance) {
     //create class
     jclass clazz = (*globalEnv)->FindClass(globalEnv, "com/breadwallet/wallet/BRTestWallet");
     jobject entity = (*globalEnv)->AllocObject(globalEnv, clazz);
@@ -22,7 +28,7 @@ void balanceChanged(void *info, uint64_t balance){
     (*globalEnv)->CallVoidMethod(globalEnv, entity, mid, balance);
 }
 
-void txAdded(void *info, BRTransaction *tx){
+void txAdded(void *info, BRTransaction *tx) {
     //create class
     jclass clazz = (*globalEnv)->FindClass(globalEnv, "com/breadwallet/wallet/BRTestWallet");
     jobject entity = (*globalEnv)->AllocObject(globalEnv, clazz);
@@ -31,7 +37,8 @@ void txAdded(void *info, BRTransaction *tx){
 //    (*globalEnv)->CallVoidMethod(globalEnv, entity, mid, balance);
 }
 
-void txUpdated(void *info, const UInt256 txHashes[], size_t count, uint32_t blockHeight, uint32_t timestamp){
+void txUpdated(void *info, const UInt256 txHashes[], size_t count, uint32_t blockHeight,
+               uint32_t timestamp) {
     //create class
     jclass clazz = (*globalEnv)->FindClass(globalEnv, "com/breadwallet/wallet/BRTestWallet");
     jobject entity = (*globalEnv)->AllocObject(globalEnv, clazz);
@@ -41,7 +48,7 @@ void txUpdated(void *info, const UInt256 txHashes[], size_t count, uint32_t bloc
 
 }
 
-void txDeleted(void *info, UInt256 txHash){
+void txDeleted(void *info, UInt256 txHash) {
     //create class
     jclass clazz = (*globalEnv)->FindClass(globalEnv, "com/breadwallet/wallet/BRTestWallet");
     jobject entity = (*globalEnv)->AllocObject(globalEnv, clazz);

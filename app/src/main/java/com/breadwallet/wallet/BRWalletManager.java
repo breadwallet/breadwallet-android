@@ -52,7 +52,6 @@ public class BRWalletManager {
     public static final int SEED_ENTROPY_LENGTH = 128 / 8;
     public static final String SEC_ATTR_SERVICE = "org.voisine.breadwallet";
     public static final String ANDROID_KEY_STORE = "AndroidKeyStore";
-    public static final String PHRASE_FILENAME = "my_phrase";
 
     ByteBuffer masterPublicKey; // master public key used to generate wallet addresses
     byte[] wallet;
@@ -114,7 +113,7 @@ public class BRWalletManager {
     }
 
     public String getPhrase(Context ctx) {
-        return KeyStoreManager.getKeyStoreString(PHRASE_FILENAME, KeyStoreManager.PHRASE_ALIAS, ctx);
+        return KeyStoreManager.getKeyStoreString(ctx);
     }
 
     /**

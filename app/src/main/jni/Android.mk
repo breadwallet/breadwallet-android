@@ -2,13 +2,15 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
+LOCAL_C_INCLUDES := \
+$(LOCAL_PATH)/transition\
+$(LOCAL_PATH)/breadwallet-core
+
 LOCAL_SRC_FILES := \
 ./transition/core.c\
 ./transition/wallet.c\
 ./transition/WalletCallbacks.c
 
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/transition
-$(warning $(LOCAL_PATH))
 LOCAL_MODULE := core
 
 LOCAL_LDLIBS := -llog -lm
