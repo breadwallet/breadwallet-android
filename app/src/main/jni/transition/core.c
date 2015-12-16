@@ -276,10 +276,10 @@ JNIEXPORT jboolean JNICALL Java_com_breadwallet_tools_security_RequestHandler_va
     jboolean b;
     const char *str;
     str = (char *) (*env)->GetStringUTFChars(env, address, NULL);
-    __android_log_print(ANDROID_LOG_ERROR, "LOG_TAG", "Need to print : %s", str);
+//    __android_log_print(ANDROID_LOG_ERROR, "LOG_TAG", "Need to print : %s", str);
     int result = BRAddressIsValid(str);
     (*env)->ReleaseStringUTFChars(env, address, str);
-    __android_log_print(ANDROID_LOG_ERROR, "LOG_TAG", "This is the result : %d", result);
+//    __android_log_print(ANDROID_LOG_ERROR, "LOG_TAG", "This is the result : %d", result);
     return result ? JNI_TRUE : JNI_FALSE;
 
     //return true for now!!!!!

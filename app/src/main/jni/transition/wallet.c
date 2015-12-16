@@ -4,7 +4,7 @@
 
 #include "wallet.h"
 
-JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRTestWallet_encodeSeed(JNIEnv *env, jobject thiz,
+JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_encodeSeed(JNIEnv *env, jobject thiz,
                                                                          jbyteArray seed,
                                                                          jobjectArray stringArray) {
 
@@ -35,40 +35,46 @@ JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRTestWallet_encodeSeed(JNIEnv 
     return bytePhrase;
 }
 
-JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRTestWallet_createWallet(JNIEnv *env,
+JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_createWallet(JNIEnv *env,
                                                                            jobject thiz,
-                                                                           jobject buffer) {
-    jbyte *pubKeyBytes = (*env)->GetDirectBufferAddress(env, buffer);
-    BRMasterPubKey *pubKey = pubKeyBytes;
+                                                                           jbyteArray buffer) {
+    int pubKeyLength = (*env)->GetArrayLength(env, buffer);
+    jbyte *pubKeyBytes = (*env)->GetByteArrayElements(env, buffer, 0);
+    BRMasterPubKey *pubKey = (BRMasterPubKey*) pubKeyBytes;
 
-    BRTransaction *tx = BRTransactionNew();
-    char *info[20];
-//    BRWallet *wallet = BRWalletNew(tx, 0, *pubKey, NULL, &theSeed);
-//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "wallet balance : %d",
-//                        BRWalletBalance(wallet));
+//    size_t seedLen = 0;
+//    const void *seed = theSeed(NULL, NULL, 0, &seedLen);
+//    BRMasterPubKey mpk = BRBIP32MasterPubKey(seed, seedLen);
 
-//    size_t walletSize = sizeof(wallet);
-    size_t walletSize = 149;
+//    BRTransaction *tx = BRTransactionNew();
+
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "Before creating the fucking wallet");
+    BRWallet *wallet = BRWalletNew(NULL, 0, *pubKey, NULL, theSeed);
+
+    __android_log_print(ANDROID_LOG_ERROR, "Wallet created! ", "wallet balance : %d",
+                        BRWalletBalance(wallet));
+
+    size_t walletSize = sizeof(wallet);
     jbyteArray result = (*env)->NewByteArray(env, walletSize);
-//    (*env)->SetByteArrayRegion(env, result, 0, walletSize, (jbyte *) wallet);
+    (*env)->SetByteArrayRegion(env, result, 0, walletSize, (jbyte *) wallet);
     return result;
 }
 
-JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRTestWallet_getMasterPubKey(JNIEnv *env,
+JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_getMasterPubKey(JNIEnv *env,
                                                                               jobject thiz,
                                                                               jstring phrase) {
     char *rawPhrase = (*env)->GetStringUTFChars(env, phrase, 0);
     UInt512 key = UINT512_ZERO;
     BRBIP39DeriveKey(key.u8, rawPhrase, NULL);
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "Priv Key : %d",
-                        sizeof(key));
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "Priv Key : %d",
+//                        sizeof(key));
     BRMasterPubKey pubKey = BRBIP32MasterPubKey(key.u8, sizeof(key));
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "Pub Key : %d",
-                        sizeof(pubKey.fingerPrint));
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "Pub Key : %d",
-                        sizeof(pubKey.chainCode));
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "Pub Key : %d",
-                        sizeof(pubKey.pubKey));
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "Pub Key : %d",
+//                        sizeof(pubKey.fingerPrint));
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "Pub Key : %d",
+//                        sizeof(pubKey.chainCode));
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "Pub Key : %d",
+//                        sizeof(pubKey.pubKey));
     size_t pubKeySize = sizeof(pubKey);
     jbyteArray result = (*env)->NewByteArray(env, pubKeySize);
     (*env)->SetByteArrayRegion(env, result, 0, pubKeySize, (jbyte *) &pubKey);
@@ -77,8 +83,9 @@ JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRTestWallet_getMasterPubKey(JN
     return result;
 }
 
-void theSeed(void *info, const char *authPrompt, uint64_t amount, size_t *seedLen) {
-
+const void *theSeed(void *info, const char *authPrompt, uint64_t amount, size_t *seedLen) {
+    *seedLen = 0;
+    return "";
 }
 
 

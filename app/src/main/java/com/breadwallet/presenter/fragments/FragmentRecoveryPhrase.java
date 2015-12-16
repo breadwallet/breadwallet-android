@@ -41,14 +41,13 @@ import com.breadwallet.wallet.BRWalletManager;
  */
 
 public class FragmentRecoveryPhrase extends Fragment {
-
     public TextView thePhrase;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(
                 R.layout.fragment_recovery_phrase, container, false);
-        BRWalletManager m = BRWalletManager.getInstance();
+        BRWalletManager m = BRWalletManager.getInstance(getActivity());
         thePhrase = (TextView) rootView.findViewById(R.id.the_phrase);
 
         //TODO delete this code below which is for testing reasons only

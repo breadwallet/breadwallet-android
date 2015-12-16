@@ -37,8 +37,9 @@ public class MiddleViewAdapter {
     public static void resetMiddleView(String text) {
         Log.e(TAG, "in the resetMiddleView");
         MainActivity app = MainActivity.app;
+        if(app == null) return;
         if (FragmentAnimator.level == 0 || FragmentAnimator.level == 1) {
-            if (MainActivity.unlocked) {
+            if (((BreadWalletApp)app.getApplicationContext()).unlocked) {
                 String tmp = CurrencyManager.getInstance(MainActivity.app).getCurrentBalanceText();
                 ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
             } else {

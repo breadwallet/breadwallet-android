@@ -1,7 +1,8 @@
 package com.breadwallet.presenter.fragments;
 
-import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +10,10 @@ import android.widget.Button;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.IntroActivity;
+import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.wallet.BRWalletManager;
+
+import java.text.Normalizer;
 
 /**
  * BreadWallet
@@ -36,6 +40,7 @@ import com.breadwallet.wallet.BRWalletManager;
  * THE SOFTWARE.
  */
 public class IntroNewWalletFragment extends Fragment {
+    public static final String TAG = IntroNewWalletFragment.class.getName();
     public Button introGenerate;
     private BRWalletManager m;
 
@@ -44,14 +49,22 @@ public class IntroNewWalletFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         // The last two arguments ensure LayoutParams are inflated
         // properly.
-        m = BRWalletManager.getInstance();
+        m = BRWalletManager.getInstance(getActivity());
         View rootView = inflater.inflate(R.layout.intro_fragment_new_wallet, container, false);
         introGenerate = (Button) rootView.findViewById(R.id.intro_new_wallet_generate);
         introGenerate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String phrase = m.generateRandomSeed();
+                Log.w(TAG, "The phrase from keystore is: " + KeyStoreManager.getKeyStoreString(getActivity()));
+                if (phrase == null) throw new NullPointerException("Phrase is null!");
+                String normalizedPhrase = Normalizer.normalize(phrase, Normalizer.Form.NFKD);
+                byte[] pubKey = m.getMasterPubKey(normalizedPhrase);
+                m.setWalletBuff(m.createWallet(pubKey));
+                m.setCallbacks(m.getWalletBuff());
+                //TODO put this pubKey into the keystore
+                Log.e(TAG, "PUB KEY length IS: " + pubKey.length);
                 ((IntroActivity) getActivity()).showWarningFragment();
-                m.generateRandomSeed(getActivity());
             }
         });
         return rootView;

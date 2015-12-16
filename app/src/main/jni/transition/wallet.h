@@ -15,14 +15,13 @@
 #include "BRBIP32Sequence.h"
 #include "BRTransaction.h"
 
-JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRTestWallet_encodeSeed(JNIEnv *env, jobject thiz,
+JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_encodeSeed(JNIEnv *env, jobject thiz,
                jbyteArray seed, jobjectArray stringArray);
-JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRTestWallet_createWallet(JNIEnv *env, jobject thiz,
-                jobject buffer);
-JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRTestWallet_getMasterPubKey(JNIEnv *env, jobject thiz,
+JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_createWallet(JNIEnv *env, jobject thiz,
+                jbyteArray buffer);
+JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_getMasterPubKey(JNIEnv *env, jobject thiz,
                 jstring phrase);
-void theSeed(void *info, const char *authPrompt, uint64_t amount, size_t *seedLen);
-
+const void *theSeed(void *info, const char *authPrompt, uint64_t amount, size_t *seedLen);
 
 #endif //BREADWALLET_WALLET_H
 

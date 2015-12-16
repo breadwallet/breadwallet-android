@@ -5,12 +5,13 @@
 
 JNIEnv *globalEnv;
 
-void Java_com_breadwallet_wallet_BRTestWallet_setCallbacks(JNIEnv *env,
+void Java_com_breadwallet_wallet_BRWalletManager_setCallbacks(JNIEnv *env,
                                                            jobject thiz,
                                                            jbyteArray walletBuff) {
     globalEnv = env;
     jbyte *byteWallet= (*env)->GetByteArrayElements(env, walletBuff, 0);
     BRWallet *wallet = byteWallet;
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "wallet balance : %d", BRWalletBalance(wallet));
     //set the Wallet callbacks
     BRWalletSetCallbacks(wallet, NULL, &balanceChanged, &txAdded, &txUpdated, &txDeleted);
 
@@ -21,7 +22,7 @@ void Java_com_breadwallet_wallet_BRTestWallet_setCallbacks(JNIEnv *env,
 
 void balanceChanged(void *info, uint64_t balance) {
     //create class
-    jclass clazz = (*globalEnv)->FindClass(globalEnv, "com/breadwallet/wallet/BRTestWallet");
+    jclass clazz = (*globalEnv)->FindClass(globalEnv, "com/breadwallet/wallet/BRWalletManager");
     jobject entity = (*globalEnv)->AllocObject(globalEnv, clazz);
     jmethodID mid = (*globalEnv)->GetMethodID(globalEnv, clazz, "onBalanceChanged", "(J)V");
     //call java methods
@@ -30,7 +31,7 @@ void balanceChanged(void *info, uint64_t balance) {
 
 void txAdded(void *info, BRTransaction *tx) {
     //create class
-    jclass clazz = (*globalEnv)->FindClass(globalEnv, "com/breadwallet/wallet/BRTestWallet");
+    jclass clazz = (*globalEnv)->FindClass(globalEnv, "com/breadwallet/wallet/BRWalletManager");
     jobject entity = (*globalEnv)->AllocObject(globalEnv, clazz);
     jmethodID mid = (*globalEnv)->GetMethodID(globalEnv, clazz, "onTxAdded", "([B)V");
     //call java methods
@@ -40,7 +41,7 @@ void txAdded(void *info, BRTransaction *tx) {
 void txUpdated(void *info, const UInt256 txHashes[], size_t count, uint32_t blockHeight,
                uint32_t timestamp) {
     //create class
-    jclass clazz = (*globalEnv)->FindClass(globalEnv, "com/breadwallet/wallet/BRTestWallet");
+    jclass clazz = (*globalEnv)->FindClass(globalEnv, "com/breadwallet/wallet/BRWalletManager");
     jobject entity = (*globalEnv)->AllocObject(globalEnv, clazz);
     jmethodID mid = (*globalEnv)->GetMethodID(globalEnv, clazz, "onTxUpdated", "([B)V");
     //call java methods
@@ -50,7 +51,7 @@ void txUpdated(void *info, const UInt256 txHashes[], size_t count, uint32_t bloc
 
 void txDeleted(void *info, UInt256 txHash) {
     //create class
-    jclass clazz = (*globalEnv)->FindClass(globalEnv, "com/breadwallet/wallet/BRTestWallet");
+    jclass clazz = (*globalEnv)->FindClass(globalEnv, "com/breadwallet/wallet/BRWalletManager");
     jobject entity = (*globalEnv)->AllocObject(globalEnv, clazz);
     jmethodID mid = (*globalEnv)->GetMethodID(globalEnv, clazz, "onTxDeleted", "([B)V");
     //call java methods

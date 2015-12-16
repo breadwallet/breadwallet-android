@@ -62,6 +62,7 @@ public class FragmentAnimator {
     }
 
     public static void animateScanResultFragment() {
+        CustomPagerAdapter.adapter.showFragments(false);
         Log.e(TAG, "animateScanResultFragment");
         MainActivity.beenThroughSavedInstanceMethod = false;
         MainActivity.app.scanResultFragmentOn = true;
@@ -76,7 +77,6 @@ public class FragmentAnimator {
         fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
         fragmentTransaction.replace(R.id.main_layout, MainActivity.app.getFragmentScanResult());
         fragmentTransaction.commit();
-        CustomPagerAdapter.adapter.showFragments(false);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {

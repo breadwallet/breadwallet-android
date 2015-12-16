@@ -51,8 +51,7 @@ import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.adapter.ParallaxViewPager;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
-import com.breadwallet.tools.auth.FingerprintAuthenticationDialogFragment;
-import com.breadwallet.tools.auth.PasswordAuthenticationDialogFragment;
+import com.breadwallet.tools.security.KeyStoreManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -84,7 +83,7 @@ import java.util.Observer;
  * THE SOFTWARE.
  */
 
-public class MainActivity extends FragmentActivity implements Observer{
+public class MainActivity extends FragmentActivity implements Observer {
     public static final String TAG = "MainActivity";
     public static final String PREFS_NAME = "MyPrefsFile";
     public static MainActivity app;
@@ -119,7 +118,7 @@ public class MainActivity extends FragmentActivity implements Observer{
     public PasswordDialogFragment passwordDialogFragment;
     public RelativeLayout networkErrorBar;
     private NetworkChangeReceiver receiver = new NetworkChangeReceiver();
-    public static boolean unlocked = false;
+
     public static Point screenParametersPoint = new Point();
     private int middleViewPressedCount = 0;
     public static final int DEBUG = 1;
@@ -128,8 +127,6 @@ public class MainActivity extends FragmentActivity implements Observer{
     public TextView testnet;
     public SoftKeyboard softKeyboard;
     public RelativeLayout mainLayout;
-    public FingerprintAuthenticationDialogFragment fingerprintAuthenticationDialogFragment;
-    public PasswordAuthenticationDialogFragment passwordAuthenticationDialogFragment;
     public FingerprintManager fingerprintManager;
 
 
@@ -166,7 +163,7 @@ public class MainActivity extends FragmentActivity implements Observer{
         viewFlipper.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (FragmentAnimator.level == 0 && unlocked) {
+                if (FragmentAnimator.level == 0 && ((BreadWalletApp) getApplicationContext()).unlocked) {
                     if (middleViewPressedCount % 2 == 0) {
                         ((BreadWalletApp) getApplication()).showCustomToast(app, getResources().
                                 getString(R.string.middle_view_tip_first), (int) (screenParametersPoint.y * 0.7), Toast.LENGTH_LONG);
@@ -209,6 +206,14 @@ public class MainActivity extends FragmentActivity implements Observer{
         });
         scaleView(pageIndicatorLeft, 1f, PAGE_INDICATOR_SCALE_UP, 1f, PAGE_INDICATOR_SCALE_UP);
 
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                String tmp = KeyStoreManager.getKeyStoreString(app);
+                Log.e(TAG, "Accessing the keystore >>>>>>>>>> " + tmp);
+
+            }
+        }, 30 * 1000);
     }
 
     @Override
@@ -277,8 +282,6 @@ public class MainActivity extends FragmentActivity implements Observer{
         fragmentRecoveryPhrase = new FragmentRecoveryPhrase();
         fragmentWipeWallet = new FragmentWipeWallet();
         fragmentScanResult = new FragmentScanResult();
-        fingerprintAuthenticationDialogFragment = new FingerprintAuthenticationDialogFragment();
-        passwordAuthenticationDialogFragment = new PasswordAuthenticationDialogFragment();
         passwordDialogFragment = new PasswordDialogFragment();
         parallaxViewPager = ((ParallaxViewPager) findViewById(R.id.main_viewpager));
         parallaxViewPager.setOverlapPercentage(0.99f).setAdapter(pagerAdapter);
@@ -390,7 +393,7 @@ public class MainActivity extends FragmentActivity implements Observer{
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (!unlocked) {
+                if (!((BreadWalletApp)getApplicationContext()).unlocked) {
                     lockerButton.setVisibility(b ? View.VISIBLE : View.INVISIBLE);
                     lockerButton.setClickable(b);
                 } else {
@@ -433,11 +436,6 @@ public class MainActivity extends FragmentActivity implements Observer{
         }
     }
 
-    public void setUnlocked(boolean b) {
-        unlocked = b;
-        lockerButton.setVisibility(b ? View.GONE : View.VISIBLE);
-        lockerButton.setClickable(!b);
-    }
 
     public void pay(View view) {
         SpringAnimator.showAnimation(view);
@@ -463,12 +461,12 @@ public class MainActivity extends FragmentActivity implements Observer{
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
-            setUnlocked(true);
+            ((BreadWalletApp)getApplicationContext()).setUnlocked(true);
             String tmp = CurrencyManager.getInstance(this).getCurrentBalanceText();
             ((BreadWalletApp) getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
             softKeyboard.closeSoftKeyboard();
         } else {
-            setUnlocked(false);
+            ((BreadWalletApp)getApplicationContext()).setUnlocked(false);
             ((BreadWalletApp) getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_IMAGE, null);
         }
     }
@@ -480,27 +478,6 @@ public class MainActivity extends FragmentActivity implements Observer{
         boolean isShown = location[1] < 0;
         Log.e(TAG, "The keyboard is shown: " + isShown + " y location: " + location[1]);
         return isShown;
-    }
-
-    @TargetApi(Build.VERSION_CODES.M)
-    public void showAuthDialog() {
-        android.app.FragmentManager fm = getFragmentManager();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            FingerprintManager fingerprintManager = (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
-            if (fingerprintManager.hasEnrolledFingerprints()) {
-                Log.e(TAG, "Starting the fingerprint Dialog! API 23+");
-                fingerprintAuthenticationDialogFragment.setStage(
-                        FingerprintAuthenticationDialogFragment.Stage.FINGERPRINT);
-//                fingerprintAuthenticationDialogFragment.setStage(
-//                        FingerprintAuthenticationDialogFragment.Stage.PASSWORD);
-
-                fingerprintAuthenticationDialogFragment.show(fm, FingerprintAuthenticationDialogFragment.class.getName());
-                return;
-            }
-        }
-        Log.e(TAG, "Starting the password Dialog! API <23");
-        passwordAuthenticationDialogFragment.show(fm, PasswordAuthenticationDialogFragment.class.getName());
-
     }
 
     private void setUpApi23() {

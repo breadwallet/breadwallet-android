@@ -125,7 +125,7 @@ public class ChangePasswordDialogFragment extends DialogFragment {
                             getDialog().cancel();
                             String tmp = CurrencyManager.getInstance(getActivity()).getCurrentBalanceText();
                             ((BreadWalletApp) getActivity().getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
-                            app.setUnlocked(true);
+                            ((BreadWalletApp)getActivity().getApplicationContext()).setUnlocked(true);
                             InputMethodManager keyboard = (InputMethodManager) MainActivity.app.
                                     getSystemService(Context.INPUT_METHOD_SERVICE);
                             keyboard.hideSoftInputFromWindow(ok.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);

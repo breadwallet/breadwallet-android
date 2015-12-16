@@ -53,7 +53,7 @@ public class BRPeerManager {
     /**
      * void BRPeerManagerSetCallbacks(BRPeerManager *manager, void *info,
      * void (*syncStarted)(void *info),
-     * void (*syncSucceded)(void *info),
+     * void (*syncSucceeded)(void *info),
      * void (*syncFailed)(void *info, BRPeerManagerError error),
      * void (*txStatusUpdate)(void *info),
      * void (*saveBlocks)(void *info, const BRMerkleBlock blocks[], size_t count),

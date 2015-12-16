@@ -86,8 +86,12 @@ public class IntroRecoverWalletFragment extends Fragment {
         for (int i = 0; i < length; i++) {
             if (phrase.charAt(i) == ' ') count++;
         }
-        return count == 12 || count == 11 || count == 10;
+        return count == 12;
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
 }

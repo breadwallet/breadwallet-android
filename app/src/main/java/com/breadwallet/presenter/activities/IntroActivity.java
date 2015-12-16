@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.presenter.entities.BRTxInputEntity;
@@ -25,9 +27,8 @@ import com.breadwallet.tools.animation.BackgroundMovingAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
-import com.breadwallet.wallet.BRTestWallet;
+import com.breadwallet.wallet.BRWalletManager;
 
-import java.text.Normalizer;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -63,13 +64,7 @@ public class IntroActivity extends FragmentActivity {
     public static final String TAG = IntroActivity.class.getName();
     private ImageView background;
     public static IntroActivity app;
-    private IntroWelcomeFragment introWelcomeFragment;
-    private IntroNewRecoverFragment introNewRestoreFragment;
-    private IntroNewWalletFragment introNewWalletFragment;
-    private IntroWarningFragment introWarningFragment;
-    private IntroRecoverWalletFragment introRecoverWalletFragment;
     private Button leftButton;
-    private boolean backPressAvailable = false;
     private Bundle savedInstanceState;
 
     //loading the native library
@@ -85,7 +80,24 @@ public class IntroActivity extends FragmentActivity {
         if (savedInstanceState != null) {
             return;
         }
+        app = this;
 
+        leftButton = (Button) findViewById(R.id.intro_left_button);
+        leftButton.setVisibility(View.GONE);
+        leftButton.setClickable(false);
+        leftButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+        getFragmentManager().beginTransaction().add(R.id.intro_layout, new IntroWelcomeFragment(),
+                "introWelcomeFragment").commit();
+        //animates the orange BW background moving.
+        background = (ImageView) findViewById(R.id.intro_bread_wallet_image);
+        background.setScaleType(ImageView.ScaleType.MATRIX);
+        BackgroundMovingAnimator.animateBackgroundMoving(background);
+        startTheWalletIfExists();
     }
 
     @Override
@@ -94,45 +106,6 @@ public class IntroActivity extends FragmentActivity {
 //        KeyStoreManager.deleteKeyStoreEntry("phrase");
         //testSQLiteConnectivity(this);   //do some SQLite testing
         app = this;
-        introWelcomeFragment = new IntroWelcomeFragment();
-        introNewRestoreFragment = new IntroNewRecoverFragment();
-        introNewWalletFragment = new IntroNewWalletFragment();
-        introWarningFragment = new IntroWarningFragment();
-        introRecoverWalletFragment = new IntroRecoverWalletFragment();
-        leftButton = (Button) findViewById(R.id.intro_left_button);
-        background = (ImageView) findViewById(R.id.intro_bread_wallet_image);
-        background.setScaleType(ImageView.ScaleType.MATRIX);
-        leftButton.setVisibility(View.GONE);
-        leftButton.setClickable(false);
-
-
-        final BRTestWallet m = BRTestWallet.getInstance(this);
-        Log.w(TAG,"The phrase from keystore is: " + KeyStoreManager.getKeyStoreString(this));
-        String phrase = m.generateRandomSeed();
-        if(phrase == null) throw new NullPointerException("Phrase is null!!!!");
-        Log.w(TAG,"The phrase is: " + phrase);
-        Log.w(TAG,"The phrase from keystore after saving the new one: " + KeyStoreManager.getKeyStoreString(this));
-        String normalizedPhrase = Normalizer.normalize(phrase, Normalizer.Form.NFKD);
-        byte[] pubKey = m.getMasterPubKey(normalizedPhrase);
-//        ByteBuffer buffer = ByteBuffer.wrap(pubKey);
-//        m.setWalletBuff(m.createWallet(buffer));
-//        m.setCallbacks(m.getWalletBuff());
-
-        //TODO put this pubKey into the keystore
-        Log.e(TAG, "PUB KEY length IS: " + pubKey.length);
-
-        BackgroundMovingAnimator.animateBackgroundMoving(background); //animates the orange BW background moving.
-
-        leftButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-        getFragmentManager().beginTransaction().add(R.id.intro_layout, introWelcomeFragment,
-                "introWelcomeFragment").commit();
-
-        startTheWalletIfExists();
 
     }
 
@@ -143,50 +116,56 @@ public class IntroActivity extends FragmentActivity {
     }
 
     void showRecoverNewWalletFragment() {
-        if (savedInstanceState == null) {
-            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-            fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
-            fragmentTransaction.replace(introWelcomeFragment.getId(), introNewRestoreFragment);
-            fragmentTransaction.commit();
-        }
+//        if (savedInstanceState == null) {
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
+        IntroWelcomeFragment introWelcomeFragment = (IntroWelcomeFragment)getFragmentManager().
+                findFragmentByTag("introWelcomeFragment");
+        fragmentTransaction.replace(introWelcomeFragment.getId(), new IntroNewRecoverFragment(), "introNewRecoverFragment");
+        fragmentTransaction.commit();
+//        }
     }
 
     public void showNewWalletFragment() {
-        if (savedInstanceState == null) {
-            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-            fragmentTransaction.addToBackStack(null);
-            leftButton.setVisibility(View.VISIBLE);
-            leftButton.setClickable(true);
-            fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
-            fragmentTransaction.replace(introNewRestoreFragment.getId(), introNewWalletFragment);
-            fragmentTransaction.commit();
-            backPressAvailable = true;
-        }
+//        if (savedInstanceState == null) {
+        Log.e(TAG, "in showNewWalletFragment");
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        leftButton.setVisibility(View.VISIBLE);
+        leftButton.setClickable(true);
+        fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
+        IntroNewRecoverFragment introNewRecoverFragment = (IntroNewRecoverFragment)getFragmentManager().
+                findFragmentByTag("introNewRecoverFragment");
+        fragmentTransaction.replace(introNewRecoverFragment.getId(), new IntroNewWalletFragment(), "introNewWalletFragment").
+                addToBackStack(null);
+        fragmentTransaction.commit();
+//        }
     }
 
     public void showRecoverWalletFragment() {
-        if (savedInstanceState == null) {
-            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-            fragmentTransaction.addToBackStack(null);
-            leftButton.setVisibility(View.VISIBLE);
-            leftButton.setClickable(true);
-            fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
-            fragmentTransaction.replace(introNewRestoreFragment.getId(), introRecoverWalletFragment);
-            fragmentTransaction.commit();
-            backPressAvailable = true;
-        }
+//        if (savedInstanceState == null) {
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        leftButton.setVisibility(View.VISIBLE);
+        leftButton.setClickable(true);
+        fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
+        IntroNewRecoverFragment introNewRecoverFragment = (IntroNewRecoverFragment)getFragmentManager().
+                findFragmentByTag("introNewRecoverFragment");
+        fragmentTransaction.replace(introNewRecoverFragment.getId(), new IntroRecoverWalletFragment(), "introRecoverWalletFragment").
+                addToBackStack(null);
+        fragmentTransaction.commit();
+//        }
     }
 
     public void showWarningFragment() {
-        if (savedInstanceState == null) {
-            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-            fragmentTransaction.replace(introNewWalletFragment.getId(), introWarningFragment);
-            introNewWalletFragment.introGenerate.setClickable(false);
-            leftButton.setVisibility(View.GONE);
-            leftButton.setClickable(false);
-            fragmentTransaction.commit();
-            backPressAvailable = false;
-        }
+//        if (savedInstanceState == null) {
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        IntroNewWalletFragment introNewWalletFragment = (IntroNewWalletFragment)getFragmentManager().
+                findFragmentByTag("introNewWalletFragment");
+        fragmentTransaction.replace(introNewWalletFragment.getId(), new IntroWarningFragment(), "introWarningFragment");
+        introNewWalletFragment.introGenerate.setClickable(false);
+        leftButton.setVisibility(View.GONE);
+        leftButton.setClickable(false);
+        fragmentTransaction.commit();
+//        }
     }
 
     @Override
@@ -215,36 +194,42 @@ public class IntroActivity extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
-        if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
-            leftButton.setVisibility(View.GONE);
-            leftButton.setClickable(false);
-        }
-        if (backPressAvailable)
+        int backStackEntryCount = getFragmentManager().getBackStackEntryCount();
+        Log.e(TAG, "getBackStackEntryCount: " + backStackEntryCount);
+        if (backStackEntryCount > 0) {
+            if (backStackEntryCount == 1) {
+                leftButton.setVisibility(View.GONE);
+                leftButton.setClickable(false);
+            }
+            getFragmentManager().popBackStack();
+        } else {
             super.onBackPressed();
+        }
 
     }
 
     private void startTheWalletIfExists() {
-        startMainActivity(); // testing
-//        final BRWalletManager m = BRWalletManager.getInstance();
-//        if (!m.isPasscodeEnabled(this)) {
-//            //Device passcode/password should be enabled for the app to work
-//            ((BreadWalletApp) getApplication()).showDeviceNotSecuredWarning(this);
-//        } else {
-//            //now check if there is a wallet or should we create/restore one.
-//            new Handler().postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    if (m.noWallet(app)) {
-//                        Log.e(TAG, "should create new wallet");
-//                        showRecoverNewWalletFragment();
-//                    } else {
-//                        Log.e(TAG, "should go to the current wallet");
-//                        startMainActivity();
-//                    }
-//                }
-//            }, 800);
-//        }
+        final BRWalletManager m = BRWalletManager.getInstance(this);
+        if (!m.isPasscodeEnabled(this)) {
+            //Device passcode/password should be enabled for the app to work
+            ((BreadWalletApp) getApplication()).showDeviceNotSecuredWarning(this);
+        } else {
+            //TODO DELETE THIS TESTING ENTRY DELETION
+            KeyStoreManager.deleteKeyStoreEntry("phrase");
+            //now check if there is a wallet or should we create/restore one.
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (m.noWallet(app)) {
+                        Log.e(TAG, "should create new wallet");
+                        showRecoverNewWalletFragment();
+                    } else {
+                        Log.e(TAG, "should go to the current wallet");
+                        startMainActivity();
+                    }
+                }
+            }, 800);
+        }
     }
 
     public void testSQLiteConnectivity(Activity context) {

@@ -4,13 +4,15 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;
 import android.app.KeyguardManager;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Point;
+import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
 import android.os.Handler;
 import android.support.v4.BuildConfig;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Display;
@@ -25,6 +27,8 @@ import android.widget.Toast;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.TypefaceUtil;
+import com.breadwallet.tools.auth.FingerprintAuthenticationDialogFragment;
+import com.breadwallet.tools.auth.PasswordAuthenticationDialogFragment;
 
 import org.acra.ACRA;
 import org.acra.ReportField;
@@ -75,8 +79,10 @@ public class BreadWalletApp extends Application {
     public static final int BREAD_WALLET_TEXT = 1;
     public static final int LOCKER_BUTTON = 2;
     public static final int PAY_BUTTON = 3;
-    public static final String TAG = "BreadWalletApp";
+    public static final String TAG = BreadWalletApp.class.getName();
+    public static boolean unlocked = false;
     private boolean customToastAvailable = true;
+    public boolean allowKeyStoreAccess;
     private String oldMessage;
     private Toast toast;
     public static int DISPLAY_WIDTH_PX;
@@ -174,7 +180,7 @@ public class BreadWalletApp extends Application {
             case LOCKER_BUTTON:
                 if (app.lockerPayFlipper.getDisplayedChild() == 1) {
                     app.lockerPayFlipper.showPrevious();
-                    if (MainActivity.unlocked) {
+                    if (unlocked) {
                         app.lockerButton.setVisibility(View.INVISIBLE);
                     } else {
                         app.lockerButton.setVisibility(View.VISIBLE);
@@ -191,13 +197,13 @@ public class BreadWalletApp extends Application {
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP_MR1)
-    public void checkAndPromptForAuthentication(FragmentActivity context) {
+    public void checkAndPromptForAuthentication(Activity context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Activity.KEYGUARD_SERVICE);
             if (keyguardManager.isKeyguardSecure()) {
 //                Intent intent = keyguardManager.createConfirmDeviceCredentialIntent(CREDENTIAL_TITLE, CREDENTIAL_DESCRIPTION);
 //                context.startActivityForResult(intent, 1);
-                ((MainActivity) context).showAuthDialog();
+                showAuthDialog(context);
             } else {
                 showDeviceNotSecuredWarning(context);
             }
@@ -250,4 +256,56 @@ public class BreadWalletApp extends Application {
         });
     }
 
+    @TargetApi(Build.VERSION_CODES.M)
+    public void showAuthDialog(Context context) {
+        FingerprintAuthenticationDialogFragment fingerprintAuthenticationDialogFragment;
+        PasswordAuthenticationDialogFragment passwordAuthenticationDialogFragment;
+        passwordAuthenticationDialogFragment = new PasswordAuthenticationDialogFragment();
+        fingerprintAuthenticationDialogFragment = new FingerprintAuthenticationDialogFragment();
+        android.app.FragmentManager fm = ((Activity) context).getFragmentManager();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            FingerprintManager fingerprintManager = (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
+            if (fingerprintManager.hasEnrolledFingerprints()) {
+                Log.e(TAG, "Starting the fingerprint Dialog! API 23+");
+                fingerprintAuthenticationDialogFragment.setStage(
+                        FingerprintAuthenticationDialogFragment.Stage.FINGERPRINT);
+//                fingerprintAuthenticationDialogFragment.setStage(
+//                        FingerprintAuthenticationDialogFragment.Stage.PASSWORD);
+                fingerprintAuthenticationDialogFragment.show(fm, FingerprintAuthenticationDialogFragment.class.getName());
+                return;
+            }
+        }
+        Log.e(TAG, "Starting the password Dialog! API <23");
+        passwordAuthenticationDialogFragment.show(fm, PasswordAuthenticationDialogFragment.class.getName());
+
+    }
+
+    public void setUnlocked(boolean b) {
+        unlocked = b;
+        MainActivity app = MainActivity.app;
+        if (app != null) {
+            app.lockerButton.setVisibility(b ? View.GONE : View.VISIBLE);
+            app.lockerButton.setClickable(!b);
+        }
+    }
+
+    public void testAuth(Context context) {
+        try {
+            context.startActivity(new Intent("com.android.credentials.UNLOCK"));
+            Log.e(TAG, "in the testAuth");
+        } catch (ActivityNotFoundException e) {
+            Log.e(TAG, "No UNLOCK activity: " + e.getMessage(), e);
+        }
+    }
+
+    public void allowKeyStoreAccessForSeconds(int seconds){
+        allowKeyStoreAccess = true;
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                allowKeyStoreAccess = false;
+            }
+        }, seconds * 1000);
+    }
 }

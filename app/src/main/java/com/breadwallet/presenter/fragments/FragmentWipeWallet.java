@@ -60,7 +60,7 @@ public class FragmentWipeWallet extends Fragment {
         // properly.
         View rootView = inflater.inflate(
                 R.layout.fragment_wipe_wallet, container, false);
-        m = BRWalletManager.getInstance();
+        m = BRWalletManager.getInstance(getActivity());
         close = (Button) rootView.findViewById(R.id.wipe_wallet_close);
         recoveryPhraseEditText = (EditText) rootView.findViewById(R.id.editText_phrase);
         wipe = (Button) rootView.findViewById(R.id.wipe_wallet_wipe);

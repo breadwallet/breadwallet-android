@@ -74,7 +74,7 @@ public class FingerprintAuthenticationDialogFragment extends DialogFragment
         setRetainInstance(true);
         setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_Material_Light_Dialog);
         mFingerprintUiHelperBuilder = new FingerprintUiHelper.FingerprintUiHelperBuilder();
-        mInputMethodManager =  (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        mInputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
     }
 
     @Override
@@ -246,11 +246,14 @@ public class FingerprintAuthenticationDialogFragment extends DialogFragment
 
     @Override
     public void onAuthenticated() {
-            getDialog().cancel();
-            String tmp = CurrencyManager.getInstance(getActivity()).getCurrentBalanceText();
-            ((BreadWalletApp) getActivity().getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
-            ((MainActivity) getActivity()).setUnlocked(true);
-            MainActivity.app.softKeyboard.closeSoftKeyboard();
+        getDialog().cancel();
+        MainActivity app = MainActivity.app;
+        String tmp = CurrencyManager.getInstance(getActivity()).getCurrentBalanceText();
+        ((BreadWalletApp) getActivity().getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
+        ((BreadWalletApp) getActivity().getApplicationContext()).setUnlocked(true);
+        if (app != null)
+            app.softKeyboard.closeSoftKeyboard();
+        ((BreadWalletApp)getActivity().getApplicationContext()).allowKeyStoreAccessForSeconds(60);
         // Callback from FingerprintUiHelper. Let the activity know that authentication was
         // successful.
 //        mActivity.onPurchased(true /* withFingerprint */);

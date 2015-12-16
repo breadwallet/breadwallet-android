@@ -1,12 +1,12 @@
 //
 // Created by Mihail Gutan on 12/11/15.
 //
-JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRPeerManager_setCallBacks(JNIEnv *env,
-                                                                            jobject thiz,
-                                                                            jbyteArray peerManager) {
+JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_setPeerManagerCallBacks(JNIEnv *env,
+                                                                                 jobject thiz,
+                                                                                 jbyteArray peerManager) {
     jbyte *bytePeerManager = (*env)->GetByteArrayElements(env, peerManager, 0);
     BRPeerManager *peerManager = bytePeerManager;
-    BRPeerManagerSetCallbacks(peerManager, NULL, &syncStarted, &syncSucceded, &syncFailed,
+    BRPeerManagerSetCallbacks(peerManager, NULL, &syncStarted, &syncSucceeded, &syncFailed,
                               &txStatusUpdate, &saveBlocks, &savePeers, &networkIsReachable);
 
 }
@@ -15,7 +15,7 @@ void syncStarted(void *info) {
 
 }
 
-void syncSucceded(void *info) {
+void syncSucceeded(void *info) {
 
 }
 

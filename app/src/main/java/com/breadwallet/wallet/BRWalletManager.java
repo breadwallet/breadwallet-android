@@ -3,11 +3,16 @@ package com.breadwallet.wallet;
 import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.Context;
+import android.os.Handler;
 import android.util.Log;
 
+import com.breadwallet.tools.CurrencyManager;
+import com.breadwallet.tools.WordsReader;
 import com.breadwallet.tools.security.KeyStoreManager;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.security.SecureRandom;
 import java.text.NumberFormat;
 import java.util.List;
 
@@ -39,19 +44,21 @@ import java.util.List;
 public class BRWalletManager {
     public static final String TAG = BRWalletManager.class.getName();
     private static BRWalletManager instance;
+    private byte[] walletBuff;
+    private static Context ctx;
 
-    public static final long SATOSHIS = 100000000;
-    public static final long MAX_MONEY = 21000000 * SATOSHIS;
-    public static final long DEFAULT_FEE_PER_KB = 4096 * 1000 / 225; // fee required by eligius pool, which supports child-pays-for-parent
-    public static final long MAX_FEE_PER_KB = 100100 * 1000 / 225; // slightly higher than a 1000bit fee on a typical 225byte transaction
-    public static final String UNSPENT_URL_1 = "https://api.chain.com/v2/"; // + a string
-    public static final String UNSPENT_URL_2 = "/addresses/"; // + a string
-    public static final String UNSPENT_URL_3 = "/unspents?api-key-id=eed0d7697a880144bb854676f88d123f";
-    public static final String TICKER_URL = "https://bitpay.com/rates";
-    public static final String FEE_PER_KB_URL = "https://api.breadwallet.com/v1/fee-per-kb";
-    public static final int SEED_ENTROPY_LENGTH = 128 / 8;
-    public static final String SEC_ATTR_SERVICE = "org.voisine.breadwallet";
-    public static final String ANDROID_KEY_STORE = "AndroidKeyStore";
+//    public static final long SATOSHIS = 100000000;
+//    public static final long MAX_MONEY = 21000000 * SATOSHIS;
+//    public static final long DEFAULT_FEE_PER_KB = 4096 * 1000 / 225; // fee required by eligius pool, which supports child-pays-for-parent
+//    public static final long MAX_FEE_PER_KB = 100100 * 1000 / 225; // slightly higher than a 1000bit fee on a typical 225byte transaction
+//    public static final String UNSPENT_URL_1 = "https://api.chain.com/v2/"; // + a string
+//    public static final String UNSPENT_URL_2 = "/addresses/"; // + a string
+//    public static final String UNSPENT_URL_3 = "/unspents?api-key-id=eed0d7697a880144bb854676f88d123f";
+//    public static final String TICKER_URL = "https://bitpay.com/rates";
+//    public static final String FEE_PER_KB_URL = "https://api.breadwallet.com/v1/fee-per-kb";
+//    public static final int SEED_ENTROPY_LENGTH = 128 / 8;
+//    public static final String SEC_ATTR_SERVICE = "org.voisine.breadwallet";
+//    public static final String ANDROID_KEY_STORE = "AndroidKeyStore";
 
     ByteBuffer masterPublicKey; // master public key used to generate wallet addresses
     byte[] wallet;
@@ -69,26 +76,47 @@ public class BRWalletManager {
     List<String> currencyNames; // names for local currency codes
 
     private BRWalletManager() {
-        initManager();
-        /**
-         * initialize the class
-         */
     }
 
-    public void initManager() {
-//        connect();
-    }
-
-    public static synchronized BRWalletManager getInstance() {
+    public static synchronized BRWalletManager getInstance(Context context) {
+        ctx = context;
         if (instance == null) {
             instance = new BRWalletManager();
         }
         return instance;
     }
 
-//    public native byte[] connect();
+    public String generateRandomSeed() {
 
-//    public native byte[] wallet();
+        final SecureRandom sr = new SecureRandom();
+        final byte[] keyBytes = new byte[16];
+        sr.nextBytes(keyBytes);
+        String[] words = new String[0];
+        List<String> list;
+        try {
+            list = WordsReader.getWordList(ctx);
+            words = list.toArray(new String[list.size()]);
+//            CustomLogger.LogThis(words);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (words.length < 2000)
+            throw new IllegalArgumentException("the list is wrong, size: " + words.length);
+        String phrase = new String(encodeSeed(keyBytes, words));
+        Log.e(TAG, "THE COOL RESULT: " + phrase);
+//        String phrase = "short apple trunk riot coyote innocent zebra venture ill lava shop test";
+        boolean success = KeyStoreManager.setKeyStoreString(phrase, ctx);
+        Log.e(TAG, "setKeyStoreString was successful: " + success);
+        return success ? phrase : null;
+    }
+
+    public void setWalletBuff(byte[] buff) {
+        walletBuff = buff;
+    }
+
+    public byte[] getWalletBuff() {
+        return walletBuff;
+    }
 
     public static boolean setKeychainData(ByteBuffer buffer, String key, boolean authenticated) {
 
@@ -109,35 +137,12 @@ public class BRWalletManager {
 
     public boolean setKeyStoreString(String strPhrase, String key,
                                      boolean authenticated, Context ctx) {
-        return KeyStoreManager.setKeyStoreString(strPhrase,ctx);
+        return KeyStoreManager.setKeyStoreString(strPhrase, ctx);
     }
 
     public String getPhrase(Context ctx) {
         return KeyStoreManager.getKeyStoreString(ctx);
     }
-
-    /**
-     * generates a random seed, saves to keychain and returns the associated seedPhrase
-     */
-    public String generateRandomSeed(Context ctx) {
-//        final SecureRandom sr = new SecureRandom();
-//        final byte[] keyBytes = new byte[128];
-//        sr.nextBytes(keyBytes);
-//        Log.e(TAG, keyBytes.toString());
-//        byte[] wordListBytes = new byte[0];
-//        try {
-//            wordListBytes = WordsReader.getWordListBytes(IntroActivity.app);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        String phrase = encodePhrase(keyBytes, wordListBytes); //not working yet
-        String phrase = "short apple trunk riot coyote innocent zebra venture ill lava shop test";
-        boolean success = setKeyStoreString(phrase, null, true, ctx);
-        Log.e(TAG, "setKeyStoreString was successful: " + success);
-        return phrase;
-    }
-
-    private native String encodePhrase(byte[] seed, byte[] wordList);
 
     /**
      * authenticates user and returns seed
@@ -196,6 +201,7 @@ public class BRWalletManager {
      */
     public boolean noWallet(Context ctx) {
         String phrase = getPhrase(ctx);
+        if (phrase == null) return false;
 
         return phrase.length() < 10;
     }
@@ -236,5 +242,44 @@ public class BRWalletManager {
     public void updateFeePerKb() {
 
     }
+
+    /**
+     * Wallet callbacks
+     */
+
+    public void onBalanceChanged(final long balance) {
+        Log.e(TAG, "THIS IS THE BALANCE FROM C: " + balance);
+        CurrencyManager.getInstance(ctx).setBalance(balance);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                long newBalance = 1435992491;
+                Log.e(TAG, "Changing balance to: " + newBalance);
+                CurrencyManager.getInstance(ctx).setBalance(newBalance);
+            }
+        }, 10000);
+    }
+
+    public void onTxAdded(byte[] tx) {
+
+    }
+
+    public void onTxUpdated(byte[] tx) {
+
+    }
+
+    public void onTxDeleted(byte[] tx) {
+
+    }
+
+    private native byte[] encodeSeed(byte[] seed, String[] wordList);
+
+    public native byte[] createWallet(byte[] buffer);
+
+    public native void setCallbacks(byte[] wallet);
+
+    public native void setPeerManagerCallBacks(byte[] peerManager);
+
+    public native byte[] getMasterPubKey(String normalizedString);
 
 }
