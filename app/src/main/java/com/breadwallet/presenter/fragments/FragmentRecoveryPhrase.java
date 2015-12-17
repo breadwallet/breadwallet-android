@@ -1,8 +1,8 @@
 
 package com.breadwallet.presenter.fragments;
 
-import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +41,7 @@ import com.breadwallet.wallet.BRWalletManager;
  */
 
 public class FragmentRecoveryPhrase extends Fragment {
+    public static final String TAG = FragmentRecoveryPhrase.class.getName();
     public TextView thePhrase;
 
     @Override
@@ -59,6 +60,9 @@ public class FragmentRecoveryPhrase extends Fragment {
                         "copied", 300, Toast.LENGTH_SHORT);
             }
         });
+
+        final long startTime = System.currentTimeMillis();
+        //return the new method if the API is 23+
 
         thePhrase.setText(m.getPhrase(getActivity()));
         return rootView;

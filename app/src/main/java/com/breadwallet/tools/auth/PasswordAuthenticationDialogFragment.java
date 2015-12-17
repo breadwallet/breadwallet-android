@@ -173,6 +173,7 @@ public class PasswordAuthenticationDialogFragment extends DialogFragment
         MiddleViewAdapter.resetMiddleView(null);
         if (app != null)
             app.softKeyboard.closeSoftKeyboard();
+        ((BreadWalletApp)getActivity().getApplicationContext()).allowKeyStoreAccessForSeconds(60);
         // Callback from FingerprintUiHelper. Let the activity know that authentication was
         // successful.
 //        mActivity.onPurchased(true /* withFingerprint */);

@@ -3,6 +3,8 @@ package com.breadwallet.presenter;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;
+import android.app.DialogFragment;
+import android.app.Fragment;
 import android.app.KeyguardManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -26,7 +28,10 @@ import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.fragments.FragmentRecoveryPhrase;
+import com.breadwallet.presenter.fragments.FragmentSettings;
 import com.breadwallet.tools.TypefaceUtil;
+import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.auth.FingerprintAuthenticationDialogFragment;
 import com.breadwallet.tools.auth.PasswordAuthenticationDialogFragment;
 
@@ -299,13 +304,68 @@ public class BreadWalletApp extends Application {
         }
     }
 
-    public void allowKeyStoreAccessForSeconds(int seconds){
+    public void allowKeyStoreAccessForSeconds(int seconds) {
         allowKeyStoreAccess = true;
+        Log.e(TAG, "allowKeyStoreAccess is: " + allowKeyStoreAccess);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 allowKeyStoreAccess = false;
             }
         }, seconds * 1000);
+    }
+
+    public void authDialogBlockingUi(final Activity context) {
+        final long startTime = System.currentTimeMillis();
+        if (!allowKeyStoreAccess)
+            //show the pass dialog
+            checkAndPromptForAuthentication(context);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    //continuously check if the user has authenticated for a minute
+                    while (!((BreadWalletApp) context.getApplicationContext()).allowKeyStoreAccess) {
+                        try {
+                            Thread.sleep(500);
+                            Log.e(TAG, "after sleep ......");
+                            if (System.currentTimeMillis() - startTime > 60000) {
+
+                                break;
+                            }
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    //after a minute passes check if the user has authenticated
+                    if (((BreadWalletApp) context.getApplicationContext()).allowKeyStoreAccess) {
+                        Log.d(TAG, "All good, create the fragmentRecoveryPhrase");
+                        (context).runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                FragmentAnimator.animateSlideToLeft((MainActivity) context, new FragmentRecoveryPhrase(), new FragmentSettings());
+                            }
+                        });
+                    } else {
+                        //close the pass dialog if the user failed to auth.
+                        (context).runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Fragment fragment = context.getFragmentManager().findFragmentByTag(FingerprintAuthenticationDialogFragment.class.getName());
+                                if (fragment == null)
+                                    fragment = context.getFragmentManager().findFragmentByTag(PasswordAuthenticationDialogFragment.class.getName());
+                                if (fragment != null) {
+                                    if (fragment instanceof DialogFragment) {
+                                        ((DialogFragment) fragment).dismiss();
+                                    }
+                                }
+                            }
+                        });
+                    }
+                } catch (NullPointerException ex) {
+                    Log.e(TAG, "Ups... the activity is null");
+                }
+            }
+        }).start();
     }
 }

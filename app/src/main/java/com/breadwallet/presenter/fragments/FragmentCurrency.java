@@ -142,7 +142,7 @@ public class FragmentCurrency extends Fragment {
     }
 
     public void tryAndSetAdapter() {
-        adapter = CurrencyManager.getInstance(app).getCurrencyAdapterIfReady();
+        adapter = CurrencyManager.getInstance(getActivity()).getCurrencyAdapterIfReady();
         if (adapter.getCount() > 0) {
             currencyList.setAdapter(adapter);
             currencyRefresh.setVisibility(View.GONE);

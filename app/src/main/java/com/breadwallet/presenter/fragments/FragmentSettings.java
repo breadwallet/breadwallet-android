@@ -15,8 +15,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.CurrencyManager;
+import com.breadwallet.tools.adapter.CurrencyListAdapter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.FragmentAnimator;
 
@@ -86,8 +88,10 @@ public class FragmentSettings extends Fragment {
         super.onActivityCreated(savedInstanceState);
         app = MainActivity.app;
         fragmentSettings = this;
-        fragmentCurrency = app.fragmentCurrency;
+//        fragmentCurrency = app.fragmentCurrency;
         changePasswordDialogFragment = new ChangePasswordDialogFragment();
+        fragmentCurrency = (FragmentCurrency) getActivity().getFragmentManager().
+                findFragmentByTag(FragmentCurrency.class.getName());
         new ListInitiatorTask().execute();
         about = (RelativeLayout) getView().findViewById(R.id.about);
         currencyName = (TextView) getView().findViewById(R.id.three_letters_currency);
@@ -103,7 +107,7 @@ public class FragmentSettings extends Fragment {
             @Override
             public void onClick(View v) {
                 if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
-                    FragmentAnimator.pressWipeWallet(app, app.fragmentWipeWallet);
+                    FragmentAnimator.pressWipeWallet(app, new FragmentWipeWallet());
                     app.activityButtonsEnable(false);
                 }
             }
@@ -117,7 +121,7 @@ public class FragmentSettings extends Fragment {
                             .setMessage(getResources().getString(R.string.dialog_do_not_let_anyone))
                             .setPositiveButton(getResources().getString(R.string.show), new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
-                                    FragmentAnimator.animateSlideToLeft(app, app.fragmentRecoveryPhrase, fragmentSettings);
+                                    ((BreadWalletApp) getActivity().getApplicationContext()).authDialogBlockingUi(getActivity());
                                 }
                             })
                             .setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
@@ -133,7 +137,7 @@ public class FragmentSettings extends Fragment {
             @Override
             public void onClick(View v) {
                 if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
-                    FragmentAnimator.animateSlideToLeft(app, app.fragmentAbout, fragmentSettings);
+                    FragmentAnimator.animateSlideToLeft(app, new FragmentAbout(), fragmentSettings);
                 }
             }
         });
@@ -141,7 +145,7 @@ public class FragmentSettings extends Fragment {
             @Override
             public void onClick(View v) {
                 if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
-                    FragmentAnimator.animateSlideToLeft(app, app.fragmentCurrency, fragmentSettings);
+                    FragmentAnimator.animateSlideToLeft(app, new FragmentCurrency(), fragmentSettings);
                 }
             }
         });
@@ -163,7 +167,7 @@ public class FragmentSettings extends Fragment {
 
         @Override
         protected Object doInBackground(Object[] params) {
-            fragmentCurrency.adapter = CurrencyManager.getInstance(app).getCurrencyAdapterIfReady();
+            CurrencyListAdapter.currencyListAdapter = CurrencyManager.getInstance(getActivity()).getCurrencyAdapterIfReady();
             return null;
         }
 

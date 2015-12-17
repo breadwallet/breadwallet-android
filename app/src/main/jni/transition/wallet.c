@@ -3,10 +3,12 @@
 //
 
 #include "wallet.h"
+JNIEnv *globalJNIEnv;
 
 JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_encodeSeed(JNIEnv *env, jobject thiz,
                                                                          jbyteArray seed,
                                                                          jobjectArray stringArray) {
+    globalJNIEnv = env;
 
     int wordsCount = (*env)->GetArrayLength(env, stringArray);
     int seedLength = (*env)->GetArrayLength(env, seed);
@@ -51,6 +53,8 @@ JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_createWallet(JN
 //    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "Before creating the fucking wallet");
     BRWallet *wallet = BRWalletNew(NULL, 0, *pubKey, NULL, theSeed);
 
+    size_t seedSize;
+    theSeed(NULL, NULL, 50, &seedSize);
     __android_log_print(ANDROID_LOG_ERROR, "Wallet created! ", "wallet balance : %d",
                         BRWalletBalance(wallet));
 
@@ -66,15 +70,7 @@ JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_getMasterPubKey
     char *rawPhrase = (*env)->GetStringUTFChars(env, phrase, 0);
     UInt512 key = UINT512_ZERO;
     BRBIP39DeriveKey(key.u8, rawPhrase, NULL);
-//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "Priv Key : %d",
-//                        sizeof(key));
     BRMasterPubKey pubKey = BRBIP32MasterPubKey(key.u8, sizeof(key));
-//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "Pub Key : %d",
-//                        sizeof(pubKey.fingerPrint));
-//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "Pub Key : %d",
-//                        sizeof(pubKey.chainCode));
-//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "Pub Key : %d",
-//                        sizeof(pubKey.pubKey));
     size_t pubKeySize = sizeof(pubKey);
     jbyteArray result = (*env)->NewByteArray(env, pubKeySize);
     (*env)->SetByteArrayRegion(env, result, 0, pubKeySize, (jbyte *) &pubKey);
@@ -84,8 +80,17 @@ JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_getMasterPubKey
 }
 
 const void *theSeed(void *info, const char *authPrompt, uint64_t amount, size_t *seedLen) {
-    *seedLen = 0;
-    return "";
+    jclass clazz = (*globalJNIEnv)->FindClass(globalJNIEnv,
+                                     "com/breadwallet/tools/security/KeyStoreManager");
+    jmethodID midGetSeed = (*globalJNIEnv)->GetStaticMethodID(globalJNIEnv, clazz, "getSeed", "()Ljava/lang/String;");
+    //call java methods
+    jstring jStringSeed = (jstring) (*globalJNIEnv)->CallStaticObjectMethod(globalJNIEnv, clazz, midGetSeed);
+    const char *rawString = (*globalJNIEnv)->GetStringUTFChars(globalJNIEnv, jStringSeed, 0);
+    __android_log_print(ANDROID_LOG_ERROR, "Callback Worked, ", "the seed is : %s", rawString);
+
+    size_t size = sizeof(rawString);
+    *seedLen = size;
+    return rawString;
 }
 
 

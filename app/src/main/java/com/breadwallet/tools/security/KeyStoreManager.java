@@ -1,7 +1,7 @@
 package com.breadwallet.tools.security;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
+import android.app.KeyguardManager;
 import android.content.Context;
 import android.os.Build;
 import android.security.KeyPairGeneratorSpec;
@@ -10,6 +10,8 @@ import android.security.keystore.KeyProperties;
 import android.util.Log;
 
 import com.breadwallet.presenter.BreadWalletApp;
+import com.breadwallet.presenter.activities.IntroActivity;
+import com.breadwallet.presenter.activities.MainActivity;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -63,10 +65,16 @@ public class KeyStoreManager {
 
     static final String CIPHER_TYPE = "RSA/ECB/PKCS1Padding";
     static final String CIPHER_PROVIDER = "AndroidOpenSSL";
-    public static final String PHRASE_ALIAS = "phrase";
     public static final String ANDROID_KEY_STORE = "AndroidKeyStore";
     public static final String BREADWALLET_X500 = "CN=Breadwallet";
+
+    public static final String PHRASE_ALIAS = "phrase";
+    public static final String PUB_KEY_ALIAS = "pubKey";
+    public static final String WALLET_CREATION_TIME_ALIAS = "creationTime";
+
     public static final String PHRASE_FILENAME = "my_phrase";
+    public static final String PUB_KEY_FILENAME = "my_pub_key";
+    public static final String WALLET_CREATION_TIME_FILENAME = "my_creation_time";
 
     @SuppressWarnings("deprecation") // for api < 23
     public static boolean setKeyStoreString(String strToStore, Context context) {
@@ -135,7 +143,6 @@ public class KeyStoreManager {
 
     @TargetApi(Build.VERSION_CODES.M)
     public static boolean setKeyStoreStringAPI23(String fileName, String strToStore, String alias, Context context) {
-
         try {
             KeyStore keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
             keyStore.load(null);
@@ -196,31 +203,18 @@ public class KeyStoreManager {
     }
 
     public static String getKeyStoreString(final Context context) {
-
-        final long startTime = System.currentTimeMillis();
-        //return the new method if the API is 23+
-        ((BreadWalletApp) context.getApplicationContext()).checkAndPromptForAuthentication((Activity) context);
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (!((BreadWalletApp) context.getApplicationContext()).allowKeyStoreAccess) {
-                    try {
-                        Thread.sleep(500);
-                        Log.e(TAG, "after sleep ......");
-                        if (System.currentTimeMillis() - startTime > 60000) break;
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }).start();
-
-        Log.e(TAG, "after while and allowKeyStoreAccess: " + ((BreadWalletApp) context.getApplicationContext()).allowKeyStoreAccess);
-        if (!((BreadWalletApp) context.getApplicationContext()).allowKeyStoreAccess) {
+        Log.e(TAG, "after while and allowKeyStoreAccess: " +
+                ((BreadWalletApp) context.getApplicationContext()).allowKeyStoreAccess);
+//        if (!((BreadWalletApp) context.getApplicationContext()).allowKeyStoreAccess) {
+//            return null;
+//        }
+        KeyguardManager myKM = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
+        if (myKM.inKeyguardRestrictedInputMode()) {
+            Log.e(TAG, "THE SCREEN IS LOCKED!");
             return null;
+        } else {
+            Log.e(TAG, "THE SCREEN IS UNLOCKED!");
         }
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
             return getKeyStoreStringAPI23(PHRASE_FILENAME, PHRASE_ALIAS, context);
         KeyStore keyStore;
@@ -304,25 +298,6 @@ public class KeyStoreManager {
         return recoveredSecret;
     }
 
-    @TargetApi(Build.VERSION_CODES.M)
-    public static boolean createPrivateKeyAPI23(String alias) {
-        try {
-            KeyPairGenerator kpg = KeyPairGenerator.getInstance(
-                    KeyProperties.KEY_ALGORITHM_EC, ANDROID_KEY_STORE);
-            kpg.initialize(new KeyGenParameterSpec.Builder(
-                    alias,
-                    KeyProperties.PURPOSE_SIGN | KeyProperties.PURPOSE_VERIFY)
-                    .setDigests(KeyProperties.DIGEST_SHA256,
-                            KeyProperties.DIGEST_SHA512)
-                    .build());
-
-            KeyPair kp = kpg.generateKeyPair();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return true;
-    }
-
     public static boolean deleteKeyStoreEntry(String alias) {
         KeyStore keyStore;
         try {
@@ -370,6 +345,14 @@ public class KeyStoreManager {
             return false;
         }
         return true;
+    }
+
+    public static String getSeed() {
+        Context app = MainActivity.app;
+        if (app == null)
+            app = IntroActivity.app;
+        if (app == null) return null;
+        return getKeyStoreString(app);
     }
 
 }

@@ -32,15 +32,9 @@ import android.widget.ViewFlipper;
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
-import com.breadwallet.presenter.fragments.FragmentAbout;
 import com.breadwallet.presenter.fragments.FragmentCurrency;
-import com.breadwallet.presenter.fragments.FragmentDecoder;
-import com.breadwallet.presenter.fragments.FragmentRecoveryPhrase;
-import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.presenter.fragments.FragmentSettings;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
-import com.breadwallet.presenter.fragments.FragmentWipeWallet;
-import com.breadwallet.presenter.fragments.PasswordDialogFragment;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.CustomLogger;
 import com.breadwallet.tools.NetworkChangeReceiver;
@@ -97,16 +91,17 @@ public class MainActivity extends FragmentActivity implements Observer {
     public Map<String, Integer> burgerButtonMap;
     public Button burgerButton;
     public Button lockerButton;
-    public FragmentSettingsAll fragmentSettingsAll;
     public static ParallaxViewPager parallaxViewPager;
-    public FragmentSettings fragmentSettings;
-    public FragmentAbout fragmentAbout;
-    public FragmentDecoder mainFragmentDecoder;
     public ClipboardManager myClipboard;
-    public FragmentCurrency fragmentCurrency;
-    public FragmentRecoveryPhrase fragmentRecoveryPhrase;
-    public FragmentWipeWallet fragmentWipeWallet;
-    public FragmentScanResult fragmentScanResult;
+    //    public FragmentSettingsAll fragmentSettingsAll;
+//    public FragmentSettings fragmentSettings;
+//    public FragmentAbout fragmentAbout;
+//    public FragmentDecoder mainFragmentDecoder;
+//    public FragmentCurrency fragmentCurrency;
+//    public FragmentRecoveryPhrase fragmentRecoveryPhrase;
+//    public FragmentWipeWallet fragmentWipeWallet;
+//    public FragmentScanResult fragmentScanResult;
+    //    public PasswordDialogFragment passwordDialogFragment;
     private boolean doubleBackToExitPressedOnce;
     public static final int BURGER = 0;
     public static final int CLOSE = 1;
@@ -115,7 +110,6 @@ public class MainActivity extends FragmentActivity implements Observer {
     public static boolean beenThroughSavedInstanceMethod = false;
     public ViewFlipper viewFlipper;
     public ViewFlipper lockerPayFlipper;
-    public PasswordDialogFragment passwordDialogFragment;
     public RelativeLayout networkErrorBar;
     private NetworkChangeReceiver receiver = new NetworkChangeReceiver();
 
@@ -188,7 +182,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                 } else {
                     //check multi pressing availability here, because method onBackPressed does the checking as well.
                     if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
-                        FragmentAnimator.pressMenuButton(app, fragmentSettingsAll);
+                        FragmentAnimator.pressMenuButton(app, new FragmentSettingsAll());
                         Log.e(TAG, "CHECK:Should press menu");
                     }
                 }
@@ -274,15 +268,15 @@ public class MainActivity extends FragmentActivity implements Observer {
         pageIndicatorRight = (ImageView) findViewById(R.id.circle_indicator_right);
         pagerAdapter = new CustomPagerAdapter(getFragmentManager());
         burgerButtonMap = new HashMap<>();
-        fragmentSettings = new FragmentSettings();
-        fragmentSettingsAll = new FragmentSettingsAll();
-        mainFragmentDecoder = new FragmentDecoder();
-        fragmentAbout = new FragmentAbout();
-        fragmentCurrency = new FragmentCurrency();
-        fragmentRecoveryPhrase = new FragmentRecoveryPhrase();
-        fragmentWipeWallet = new FragmentWipeWallet();
-        fragmentScanResult = new FragmentScanResult();
-        passwordDialogFragment = new PasswordDialogFragment();
+//        fragmentSettings = new FragmentSettings();
+//        fragmentSettingsAll = new FragmentSettingsAll();
+//        mainFragmentDecoder = new FragmentDecoder();
+//        fragmentAbout = new FragmentAbout();
+//        fragmentCurrency = new FragmentCurrency();
+//        fragmentRecoveryPhrase = new FragmentRecoveryPhrase();
+//        fragmentWipeWallet = new FragmentWipeWallet();
+//        fragmentScanResult = new FragmentScanResult();
+//        passwordDialogFragment = new PasswordDialogFragment();
         parallaxViewPager = ((ParallaxViewPager) findViewById(R.id.main_viewpager));
         parallaxViewPager.setOverlapPercentage(0.99f).setAdapter(pagerAdapter);
         parallaxViewPager.setBackgroundResource(R.drawable.backgroundmain);
@@ -299,7 +293,7 @@ public class MainActivity extends FragmentActivity implements Observer {
             if (FragmentAnimator.level > 1 || scanResultFragmentOn || decoderFragmentOn) {
                 this.onBackPressed();
             } else if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
-                FragmentAnimator.pressMenuButton(app, fragmentSettingsAll);
+                FragmentAnimator.pressMenuButton(app, new FragmentSettingsAll());
             }
         }
         // let the system handle all other key events
@@ -311,7 +305,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
             Log.e(TAG, "onBackPressed!");
             if (FragmentAnimator.wipeWalletOpen) {
-                FragmentAnimator.pressWipeWallet(this, fragmentSettings);
+                FragmentAnimator.pressWipeWallet(this, new FragmentSettings());
                 activityButtonsEnable(true);
                 return;
             }
@@ -335,10 +329,11 @@ public class MainActivity extends FragmentActivity implements Observer {
                             getResources().getString(R.string.mainactivity_press_back_again), 140,
                             Toast.LENGTH_SHORT);
                     makeDoubleBackToExitPressedOnce(1000);
-
                     break;
                 case 1:
-                    FragmentAnimator.pressMenuButton(this, fragmentSettingsAll);
+//                    if (!decoderFragmentOn) {
+                    FragmentAnimator.pressMenuButton(this, new FragmentSettingsAll());
+//                    }
                     FragmentAnimator.hideDecoderFragment();
                     break;
                 default:
@@ -346,6 +341,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                     break;
             }
         }
+
     }
 
     /**
@@ -393,7 +389,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (!((BreadWalletApp)getApplicationContext()).unlocked) {
+                if (!((BreadWalletApp) getApplicationContext()).unlocked) {
                     lockerButton.setVisibility(b ? View.VISIBLE : View.INVISIBLE);
                     lockerButton.setClickable(b);
                 } else {
@@ -461,12 +457,12 @@ public class MainActivity extends FragmentActivity implements Observer {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
-            ((BreadWalletApp)getApplicationContext()).setUnlocked(true);
+            ((BreadWalletApp) getApplicationContext()).setUnlocked(true);
             String tmp = CurrencyManager.getInstance(this).getCurrentBalanceText();
             ((BreadWalletApp) getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
             softKeyboard.closeSoftKeyboard();
         } else {
-            ((BreadWalletApp)getApplicationContext()).setUnlocked(false);
+            ((BreadWalletApp) getApplicationContext()).setUnlocked(false);
             ((BreadWalletApp) getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_IMAGE, null);
         }
     }
@@ -486,15 +482,15 @@ public class MainActivity extends FragmentActivity implements Observer {
         }
     }
 
-    public FragmentDecoder getFragmentDecoder() {
-        mainFragmentDecoder = new FragmentDecoder();
-        return mainFragmentDecoder;
-    }
-
-    public FragmentScanResult getFragmentScanResult() {
-        fragmentScanResult = new FragmentScanResult();
-        return fragmentScanResult;
-    }
+//    public FragmentDecoder getFragmentDecoder() {
+//        mainFragmentDecoder = new FragmentDecoder();
+//        return mainFragmentDecoder;
+//    }
+//
+//    public FragmentScanResult getFragmentScanResult() {
+//        fragmentScanResult = new FragmentScanResult();
+//        return fragmentScanResult;
+//    }
 
     public void confirmPay(PaymentRequestEntity request) {
         SharedPreferences settings;

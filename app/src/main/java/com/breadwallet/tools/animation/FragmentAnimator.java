@@ -1,6 +1,7 @@
 package com.breadwallet.tools.animation;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Handler;
@@ -11,6 +12,10 @@ import android.view.inputmethod.InputMethodManager;
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.fragments.FragmentDecoder;
+import com.breadwallet.presenter.fragments.FragmentScanResult;
+import com.breadwallet.presenter.fragments.FragmentSettings;
+import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
 
 import java.util.Stack;
@@ -49,15 +54,19 @@ public class FragmentAnimator {
     public static final Object lockObject = new Object();
 
     public static void animateDecoderFragment() {
+        MainActivity app = MainActivity.app;
+        if (app == null) return;
+        if (FragmentAnimator.level > 0)
+            FragmentAnimator.pressMenuButton(app, new FragmentSettingsAll());
+        Log.e(TAG, "in the animateDecoderFragment");
         MainActivity.beenThroughSavedInstanceMethod = false;
-        MainActivity.app.decoderFragmentOn = true;
-        MainActivity.app.activityButtonsEnable(false);
+        app.decoderFragmentOn = true;
+        app.activityButtonsEnable(false);
         CustomPagerAdapter.adapter.showFragments(false);
         //Disabled inspection: <Expected resource type anim>
-        Log.e(TAG, "MainActivity.app: " + MainActivity.app);
         FragmentTransaction fragmentTransaction = MainActivity.app.getFragmentManager().beginTransaction();
         fragmentTransaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_top);
-        fragmentTransaction.replace(R.id.main_layout, MainActivity.app.getFragmentDecoder());
+        fragmentTransaction.replace(R.id.main_layout, new FragmentDecoder(), FragmentDecoder.class.getName());
         int temp = fragmentTransaction.commit();
     }
 
@@ -72,15 +81,18 @@ public class FragmentAnimator {
                 mainFragment.addressEditText.getWindowToken(), 0);
         MainActivity.app.setBurgerButtonImage(MainActivity.app.BACK);
         //Disabled inspection: <Expected resource type anim>
-        FragmentTransaction fragmentTransaction = MainActivity.app.getFragmentManager().beginTransaction();
+        final FragmentManager fragmentManager = MainActivity.app.getFragmentManager();
+        final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
-        fragmentTransaction.replace(R.id.main_layout, MainActivity.app.getFragmentScanResult());
+        fragmentTransaction.replace(R.id.main_layout, new FragmentScanResult(), FragmentScanResult.class.getName());
         fragmentTransaction.commit();
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                SpringAnimator.showBouncySlideHorizontal(MainActivity.app.fragmentScanResult.getView(),
+                FragmentScanResult fragmentScanResult = (FragmentScanResult) fragmentManager.
+                        findFragmentByTag(FragmentScanResult.class.getName());
+                SpringAnimator.showBouncySlideHorizontal(fragmentScanResult.getView(),
                         SpringAnimator.TO_RIGHT, 70);
             }
         }, 200);
@@ -92,13 +104,14 @@ public class FragmentAnimator {
     public static void pressMenuButton(final MainActivity context, final Fragment to) {
         ((BreadWalletApp) MainActivity.app.getApplication()).cancelToast();
         Log.e(TAG, "The level is: " + level);
+        FragmentManager fragmentManager = context.getFragmentManager();
         if (level == 0) {
             level++;
             CustomPagerAdapter.adapter.showFragments(false);
             MainActivity.app.setBurgerButtonImage(context.CLOSE);
-            FragmentTransaction fragmentTransaction = context.getFragmentManager().beginTransaction();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_top);
-            fragmentTransaction.add(R.id.main_layout, context.fragmentSettingsAll);
+            fragmentTransaction.add(R.id.main_layout, to, FragmentSettingsAll.class.getName());
             fragmentTransaction.commit();
             context.pageIndicator.setVisibility(View.GONE);
             InputMethodManager keyboard = (InputMethodManager) MainActivity.app.
@@ -114,9 +127,11 @@ public class FragmentAnimator {
         } else if (level == 1) {
             level--;
             MainActivity.app.setBurgerButtonImage(context.BURGER);
-            FragmentTransaction fragmentTransaction = context.getFragmentManager().beginTransaction();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.setCustomAnimations(R.animator.from_top, R.animator.to_bottom);
-            fragmentTransaction.remove(context.fragmentSettingsAll);
+            FragmentSettingsAll fragmentSettingsAll = (FragmentSettingsAll) fragmentManager.
+                    findFragmentByTag(FragmentSettingsAll.class.getName());
+            fragmentTransaction.remove(fragmentSettingsAll);
             fragmentTransaction.commit();
             CustomPagerAdapter.adapter.showFragments(true);
             context.pageIndicator.setVisibility(View.VISIBLE);
@@ -131,12 +146,12 @@ public class FragmentAnimator {
             wipeWalletOpen = true;
             FragmentTransaction fragmentTransaction = context.getFragmentManager().beginTransaction();
             fragmentTransaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_top);
-            fragmentTransaction.replace(R.id.main_layout, to);
+            fragmentTransaction.replace(R.id.main_layout, to, to.getClass().getName());
             fragmentTransaction.commit();
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    SpringAnimator.showBouncySlideVertical(MainActivity.app.fragmentWipeWallet.getView(),
+                    SpringAnimator.showBouncySlideVertical(to.getView(),
                             SpringAnimator.TO_RIGHT);
                 }
             }, 200);
@@ -145,7 +160,7 @@ public class FragmentAnimator {
             wipeWalletOpen = false;
             FragmentTransaction fragmentTransaction = context.getFragmentManager().beginTransaction();
             fragmentTransaction.setCustomAnimations(R.animator.from_top, R.animator.to_bottom);
-            fragmentTransaction.replace(R.id.main_layout, context.fragmentSettings);
+            fragmentTransaction.replace(R.id.main_layout, new FragmentSettings(), FragmentSettings.class.getName());
             fragmentTransaction.commit();
         }
     }
@@ -159,7 +174,7 @@ public class FragmentAnimator {
             context.setBurgerButtonImage(context.BACK);
         FragmentTransaction fragmentTransaction = context.getFragmentManager().beginTransaction();
         fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
-        fragmentTransaction.replace(R.id.main_layout, to);
+        fragmentTransaction.replace(R.id.main_layout, to, to.getClass().getName());
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -181,7 +196,7 @@ public class FragmentAnimator {
 //            Log.e(TAG, "The actual SettingsFragment: " + tmp);
         FragmentTransaction fragmentTransaction = context.getFragmentManager().beginTransaction();
         fragmentTransaction.setCustomAnimations(R.animator.from_left, R.animator.to_right);
-        fragmentTransaction.replace(R.id.main_layout, tmp);
+        fragmentTransaction.replace(R.id.main_layout, tmp, tmp.getClass().getName());
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -202,7 +217,7 @@ public class FragmentAnimator {
      * @param delay in milliseconds
      */
     public static boolean checkTheMultipressingAvailability(int delay) {
-        Log.e(TAG,"multiplePressingAvailable: " + multiplePressingAvailable);
+        Log.e(TAG, "multiplePressingAvailable: " + multiplePressingAvailable);
         synchronized (lockObject) {
             if (multiplePressingAvailable) {
                 multiplePressingAvailable = false;
@@ -222,26 +237,31 @@ public class FragmentAnimator {
 
     public static void hideDecoderFragment() {
         Log.e(TAG, "hideDecoderFragment");
-        MainActivity.app.decoderFragmentOn = false;
+        MainActivity app = MainActivity.app;
+        if(app == null) return;
+        app.decoderFragmentOn = false;
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 FragmentAnimator.multiplePressingAvailable = true;
             }
         }, 300);
-        if(MainActivity.app.mainFragmentDecoder == null) return;
-        MainActivity.app.getFragmentManager().beginTransaction().
-                setCustomAnimations(R.animator.from_top, R.animator.to_bottom).
-                remove(MainActivity.app.mainFragmentDecoder).commit();
+        final FragmentManager fragmentManager = app.getFragmentManager();
+        FragmentDecoder fragmentDecoder = (FragmentDecoder) fragmentManager.findFragmentByTag(FragmentDecoder.class.getName());
+        if (fragmentDecoder == null || fragmentManager == null) return;
+        fragmentManager.beginTransaction().setCustomAnimations(R.animator.from_top, R.animator.to_bottom).
+                remove(fragmentDecoder).commit();
         CustomPagerAdapter.adapter.showFragments(true);
-        MainActivity.app.activityButtonsEnable(true);
-        MainActivity.app.mainFragmentDecoder = null;
+        app.activityButtonsEnable(true);
+        Log.e(TAG, "got to the end of hideDecoderFragment");
     }
 
     public static void hideScanResultFragment() {
+        MainActivity app = MainActivity.app;
+        if (app == null) return;
         Log.e(TAG, "hideScanResultFragment");
         CustomPagerAdapter.adapter.showFragments(true);
-        MainActivity.app.scanResultFragmentOn = false;
+        app.scanResultFragmentOn = false;
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -249,10 +269,10 @@ public class FragmentAnimator {
             }
         }, 300);
 
-        MainActivity.app.getFragmentManager().beginTransaction().
+        app.getFragmentManager().beginTransaction().
                 setCustomAnimations(R.animator.from_left, R.animator.to_right).
-                remove(MainActivity.app.fragmentScanResult).commit();
-        MainActivity.app.setBurgerButtonImage(MainActivity.app.BURGER);
+                remove(new FragmentScanResult()).commit();
+        app.setBurgerButtonImage(app.BURGER);
     }
 
 }

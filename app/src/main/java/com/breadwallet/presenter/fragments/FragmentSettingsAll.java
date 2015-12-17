@@ -69,7 +69,7 @@ public class FragmentSettingsAll extends Fragment {
             @Override
             public void onClick(View v) {
                 if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
-                    FragmentAnimator.animateSlideToLeft(app, app.fragmentSettings, fragmentSettingsAll);
+                    FragmentAnimator.animateSlideToLeft(app, new FragmentSettings(), fragmentSettingsAll);
                     Log.d(TAG, "Starting:   showBouncySlideHorizontal()");
                 }
             }
