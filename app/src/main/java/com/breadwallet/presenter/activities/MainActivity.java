@@ -45,7 +45,7 @@ import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.adapter.ParallaxViewPager;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
-import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.wallet.BRWalletManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -200,11 +200,12 @@ public class MainActivity extends FragmentActivity implements Observer {
         });
         scaleView(pageIndicatorLeft, 1f, PAGE_INDICATOR_SCALE_UP, 1f, PAGE_INDICATOR_SCALE_UP);
 
+        //check the background functionality
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                String tmp = KeyStoreManager.getKeyStoreString(app);
-                Log.e(TAG, "Accessing the keystore >>>>>>>>>> " + tmp);
+                BRWalletManager m = BRWalletManager.getInstance(app);
+                Log.e(TAG, "Creating wallet from C..... : " + m.createWallet(m.getPublicKeyBuff()));
 
             }
         }, 30 * 1000);

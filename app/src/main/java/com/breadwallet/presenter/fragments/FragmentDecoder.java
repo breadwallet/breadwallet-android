@@ -354,6 +354,7 @@ public class FragmentDecoder extends Fragment
         CameraManager manager = (CameraManager) getActivity().getSystemService(getActivity().CAMERA_SERVICE);
         try {
             for (String cameraId : manager.getCameraIdList()) {
+                Log.e(TAG,"CAMERA ID : " + cameraId);
                 CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
 
                 // We don't use a front facing camera in this sample.

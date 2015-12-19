@@ -60,6 +60,7 @@ public class IntroNewWalletFragment extends Fragment {
                 if (phrase == null) throw new NullPointerException("Phrase is null!");
                 String normalizedPhrase = Normalizer.normalize(phrase, Normalizer.Form.NFKD);
                 byte[] pubKey = m.getMasterPubKey(normalizedPhrase);
+                m.setPublicKeyBuff(pubKey);
                 m.setWalletBuff(m.createWallet(pubKey));
                 m.setCallbacks(m.getWalletBuff());
                 //TODO put this pubKey into the keystore

@@ -45,6 +45,7 @@ public class BRWalletManager {
     public static final String TAG = BRWalletManager.class.getName();
     private static BRWalletManager instance;
     private byte[] walletBuff;
+    private byte[] publicKeyBuff;
     private static Context ctx;
 
 //    public static final long SATOSHIS = 100000000;
@@ -116,6 +117,14 @@ public class BRWalletManager {
 
     public byte[] getWalletBuff() {
         return walletBuff;
+    }
+
+    public byte[] getPublicKeyBuff() {
+        return publicKeyBuff;
+    }
+
+    public void setPublicKeyBuff(byte[] publicKeyBuff) {
+        this.publicKeyBuff = publicKeyBuff;
     }
 
     public static boolean setKeychainData(ByteBuffer buffer, String key, boolean authenticated) {

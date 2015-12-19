@@ -1,10 +1,14 @@
 package com.breadwallet.tools.animation;
 
+import android.Manifest;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -54,20 +58,45 @@ public class FragmentAnimator {
     public static final Object lockObject = new Object();
 
     public static void animateDecoderFragment() {
+
         MainActivity app = MainActivity.app;
         if (app == null) return;
-        if (FragmentAnimator.level > 0)
-            FragmentAnimator.pressMenuButton(app, new FragmentSettingsAll());
-        Log.e(TAG, "in the animateDecoderFragment");
-        MainActivity.beenThroughSavedInstanceMethod = false;
-        app.decoderFragmentOn = true;
-        app.activityButtonsEnable(false);
-        CustomPagerAdapter.adapter.showFragments(false);
-        //Disabled inspection: <Expected resource type anim>
-        FragmentTransaction fragmentTransaction = MainActivity.app.getFragmentManager().beginTransaction();
-        fragmentTransaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_top);
-        fragmentTransaction.replace(R.id.main_layout, new FragmentDecoder(), FragmentDecoder.class.getName());
-        int temp = fragmentTransaction.commit();
+        int CAMERA_REQUEST_ID = 2;
+        // Here, thisActivity is the current activity
+        if (ContextCompat.checkSelfPermission(app,
+                Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(app,
+                    Manifest.permission.CAMERA)) {
+                Log.e(TAG, "YES explanation!");
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+            } else {
+                Log.e(TAG, "NO explanation!");
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(app,
+                        new String[]{Manifest.permission.CAMERA},
+                        CAMERA_REQUEST_ID);
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        } else {
+            if (FragmentAnimator.level > 0)
+                FragmentAnimator.pressMenuButton(app, new FragmentSettingsAll());
+            Log.e(TAG, "in the animateDecoderFragment");
+            MainActivity.beenThroughSavedInstanceMethod = false;
+            app.decoderFragmentOn = true;
+            app.activityButtonsEnable(false);
+            CustomPagerAdapter.adapter.showFragments(false);
+            //Disabled inspection: <Expected resource type anim>
+            FragmentTransaction fragmentTransaction = MainActivity.app.getFragmentManager().beginTransaction();
+            fragmentTransaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_top);
+            fragmentTransaction.replace(R.id.main_layout, new FragmentDecoder(), FragmentDecoder.class.getName());
+            int temp = fragmentTransaction.commit();
+        }
     }
 
     public static void animateScanResultFragment() {
@@ -238,7 +267,7 @@ public class FragmentAnimator {
     public static void hideDecoderFragment() {
         Log.e(TAG, "hideDecoderFragment");
         MainActivity app = MainActivity.app;
-        if(app == null) return;
+        if (app == null) return;
         app.decoderFragmentOn = false;
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -268,11 +297,41 @@ public class FragmentAnimator {
                 FragmentAnimator.multiplePressingAvailable = true;
             }
         }, 300);
-
-        app.getFragmentManager().beginTransaction().
+        FragmentManager fragmentManager = app.getFragmentManager();
+        FragmentScanResult fragmentScanResult = (FragmentScanResult)
+                fragmentManager.findFragmentByTag(FragmentScanResult.class.getName());
+        fragmentManager.beginTransaction().
                 setCustomAnimations(R.animator.from_left, R.animator.to_right).
-                remove(new FragmentScanResult()).commit();
+                remove(fragmentScanResult).commit();
         app.setBurgerButtonImage(app.BURGER);
     }
+
+//    public static boolean requestNeededPermission(Activity app) {
+//        int CAMERA_REQUEST_ID = 2;
+//        // Here, thisActivity is the current activity
+//        if (ContextCompat.checkSelfPermission(app,
+//                Manifest.permission.READ_CONTACTS)
+//                != PackageManager.PERMISSION_GRANTED) {
+//            // Should we show an explanation?
+//            if (ActivityCompat.shouldShowRequestPermissionRationale(app,
+//                    Manifest.permission.READ_CONTACTS)) {
+//                Log.e(TAG, "YES explanation!");
+//                // Show an explanation to the user *asynchronously* -- don't block
+//                // this thread waiting for the user's response! After the user
+//                // sees the explanation, try again to request the permission.
+//            } else {
+//                Log.e(TAG, "NO explanation!");
+//                // No explanation needed, we can request the permission.
+//                ActivityCompat.requestPermissions(app,
+//                        new String[]{Manifest.permission.CAMERA},
+//                        CAMERA_REQUEST_ID);
+//                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+//                // app-defined int constant. The callback method gets the
+//                // result of the request.
+//            }
+//            return false;
+//        }
+//        return true;
+//    }
 
 }

@@ -14,6 +14,7 @@ import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.fragments.FragmentCurrency;
 import com.breadwallet.tools.adapter.AmountAdapter;
 import com.breadwallet.tools.adapter.CurrencyListAdapter;
+import com.breadwallet.tools.adapter.MiddleViewAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -98,14 +99,15 @@ public class CurrencyManager extends Observable {
         return BALANCE;
     }
 
-    public List<CurrencyEntity> getCurrencies() {
+    public List<CurrencyEntity> getCurrencies(Context context) {
         List<CurrencyEntity> list = new ArrayList<>();
         if (isNetworkAvailable()) {
             try {
                 JSONArray arr;
                 arr = JsonParser.getJSonArray("https://bitpay.com/rates");
+                Log.e(TAG,"JSONArray arr.length(): " + arr.length());
                 int length = arr.length();
-                for (int i = 1; i < length; i++) {
+                for (int i = 0; i < length; i++) {
                     CurrencyEntity tmp = new CurrencyEntity();
                     try {
                         JSONObject tmpObj = (JSONObject) arr.get(i);
@@ -113,6 +115,21 @@ public class CurrencyManager extends Observable {
                         tmp.code = tmpObj.getString("code");
                         tmp.codeAndName = tmp.code + " - " + tmp.name;
                         tmp.rate = (float) tmpObj.getDouble("rate");
+                        if (tmp.code.equals("USD")) {
+                            SharedPreferences settingsToGet = context.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+                            String theIso = settingsToGet.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
+                            Log.e(TAG,"theIso : " + theIso);
+                            if(theIso.equals("USD")){
+                                //TODO put in shared prefs
+                                Log.e(TAG,"Putting the shit in the shared preffs");
+                                SharedPreferences settings = context.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+                                SharedPreferences.Editor editor = settings.edit();
+                                editor.putString(FragmentCurrency.CURRENT_CURRENCY, tmp.code);
+                                editor.putInt(FragmentCurrency.POSITION, FragmentCurrency.lastItemsPosition);
+                                editor.putFloat(FragmentCurrency.RATE, tmp.rate);
+                                editor.commit();
+                            }
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -138,20 +155,21 @@ public class CurrencyManager extends Observable {
 
         @Override
         protected Object doInBackground(Object[] params) {
-            tmp = getCurrencies();
+            tmp = getCurrencies(ctx);
             return null;
         }
 
         @Override
         protected void onPostExecute(Object o) {
             if (tmp.size() > 0) {
+                Log.e(TAG, "inside the adapter changing shit");
                 currencyListAdapter.clear();
                 currencyListAdapter.addAll(tmp);
                 currencyListAdapter.notifyDataSetChanged();
+                MiddleViewAdapter.resetMiddleView(null);
             } else {
                 Log.e(TAG, "Adapter Not Changed, data is empty");
             }
-
         }
     }
 
@@ -183,6 +201,7 @@ public class CurrencyManager extends Observable {
         initializeTimerTask();
 
         //schedule the timer, after the first 5000ms the TimerTask will run every 10000ms
+        //TODO PUT 1 MINUTE
         timer.schedule(timerTask, 0, 60000); //
     }
 

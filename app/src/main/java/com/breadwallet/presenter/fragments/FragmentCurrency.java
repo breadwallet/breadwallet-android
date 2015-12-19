@@ -66,7 +66,7 @@ public class FragmentCurrency extends Fragment {
     public SharedPreferences settings;
     private String ISO;
     private float rate;
-    int lastItemsPosition = 0;
+    public static int lastItemsPosition = 0;
     private SharedPreferences.Editor editor;
 
     @Override

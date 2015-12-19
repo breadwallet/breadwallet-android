@@ -85,6 +85,7 @@ const void *theSeed(void *info, const char *authPrompt, uint64_t amount, size_t 
     jmethodID midGetSeed = (*globalJNIEnv)->GetStaticMethodID(globalJNIEnv, clazz, "getSeed", "()Ljava/lang/String;");
     //call java methods
     jstring jStringSeed = (jstring) (*globalJNIEnv)->CallStaticObjectMethod(globalJNIEnv, clazz, midGetSeed);
+    if(!jStringSeed) return NULL;
     const char *rawString = (*globalJNIEnv)->GetStringUTFChars(globalJNIEnv, jStringSeed, 0);
     __android_log_print(ANDROID_LOG_ERROR, "Callback Worked, ", "the seed is : %s", rawString);
 
