@@ -1,6 +1,7 @@
 package com.breadwallet.presenter.activities;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Service;
 import android.content.ClipboardManager;
@@ -8,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.hardware.fingerprint.FingerprintManager;
 import android.media.MediaPlayer;
@@ -31,6 +33,7 @@ import android.widget.ViewFlipper;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
+import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.fragments.FragmentCurrency;
 import com.breadwallet.presenter.fragments.FragmentSettings;
@@ -45,9 +48,16 @@ import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.adapter.ParallaxViewPager;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.sqlite.SQLiteManager;
+import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.wallet.BRWalletManager;
 
+import java.nio.ByteBuffer;
+import java.text.Normalizer;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -136,9 +146,11 @@ public class MainActivity extends FragmentActivity implements Observer {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         app = this;
         Log.e(TAG, "MainActivity created!");
+        setUpTheWallet();
+
+//        testSQLiteConnectivity(this);
         initializeViews();
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
         CustomLogger.LogThis("screen X", String.valueOf(screenParametersPoint.x), "screen Y",
@@ -160,11 +172,13 @@ public class MainActivity extends FragmentActivity implements Observer {
                 if (FragmentAnimator.level == 0 && ((BreadWalletApp) getApplicationContext()).unlocked) {
                     if (middleViewPressedCount % 2 == 0) {
                         ((BreadWalletApp) getApplication()).showCustomToast(app, getResources().
-                                getString(R.string.middle_view_tip_first), (int) (screenParametersPoint.y * 0.7), Toast.LENGTH_LONG);
+                                        getString(R.string.middle_view_tip_first),
+                                (int) (screenParametersPoint.y * 0.7), Toast.LENGTH_LONG);
                         middleViewPressedCount++;
                     } else {
                         ((BreadWalletApp) getApplication()).showCustomToast(app, getResources().
-                                getString(R.string.middle_view_tip_second), (int) (screenParametersPoint.y * 0.8), Toast.LENGTH_LONG);
+                                        getString(R.string.middle_view_tip_second),
+                                (int) (screenParametersPoint.y * 0.8), Toast.LENGTH_LONG);
                         middleViewPressedCount++;
                     }
                 }
@@ -200,15 +214,14 @@ public class MainActivity extends FragmentActivity implements Observer {
         });
         scaleView(pageIndicatorLeft, 1f, PAGE_INDICATOR_SCALE_UP, 1f, PAGE_INDICATOR_SCALE_UP);
 
-        //check the background functionality
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                BRWalletManager m = BRWalletManager.getInstance(app);
-                Log.e(TAG, "Creating wallet from C..... : " + m.createWallet(m.getPublicKeyBuff()));
-
-            }
-        }, 30 * 1000);
+        //check the txAdded callback functionality
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                BRWalletManager m = BRWalletManager.getInstance(app);
+//                m.testWalletCallbacks();
+//            }
+//        }, 15 * 1000);
     }
 
     @Override
@@ -457,17 +470,32 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            ((BreadWalletApp) getApplicationContext()).setUnlocked(true);
-            String tmp = CurrencyManager.getInstance(this).getCurrentBalanceText();
-            ((BreadWalletApp) getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
-            softKeyboard.closeSoftKeyboard();
-        } else {
-            ((BreadWalletApp) getApplicationContext()).setUnlocked(false);
-            ((BreadWalletApp) getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_IMAGE, null);
-        }
+        //when starting another activity that will return a result (ex: auth)
+
+//        if (resultCode == RESULT_OK) {
+//            ((BreadWalletApp) getApplicationContext()).setUnlocked(true);
+//            String tmp = CurrencyManager.getInstance(this).getCurrentBalanceText();
+//            ((BreadWalletApp) getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
+//            softKeyboard.closeSoftKeyboard();
+//        } else {
+//            ((BreadWalletApp) getApplicationContext()).setUnlocked(false);
+//            ((BreadWalletApp) getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_IMAGE, null);
+//        }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        Log.e(TAG, "********************** onActivityResult >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> " + requestCode);
+        for (int i = 0; i < permissions.length; i++) {
+            if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                Log.d("Permissions", "Permission Granted: " + permissions[i]);
+            } else if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                Log.d("Permissions", "Permission Denied: " + permissions[i]);
+            }
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+    }
 
     public boolean isSoftKeyboardShown() {
         int[] location = new int[2];
@@ -524,4 +552,65 @@ public class MainActivity extends FragmentActivity implements Observer {
     public void update(Observable observable, Object data) {
         MiddleViewAdapter.resetMiddleView(null);
     }
+
+    public void testSQLiteConnectivity(Activity context) {
+        // Test MerkleBlock Table
+//        BRMerkleBlockEntity merkleBlockEntity = new BRMerkleBlockEntity();
+//        merkleBlockEntity.setBuff();
+//
+//        MerkleBlockDataSource MBdataSource;
+//        MBdataSource = new MerkleBlockDataSource(this);
+//        MBdataSource.open();
+//        MBdataSource.createMerkleBlock(merkleBlockEntity);
+//        List<BRMerkleBlockEntity> values = MBdataSource.getAllMerkleBlocks();
+//        Iterator<BRMerkleBlockEntity> merkleBlockEntityIterator = values.iterator();
+//        while (merkleBlockEntityIterator.hasNext()) {
+//            BRMerkleBlockEntity tmp = merkleBlockEntityIterator.next();
+//            Log.e(TAG, "The merkleBlock: " + tmp.getId() + " " + tmp.getBlockHash() + " " + tmp.getFlags() +
+//                    " " + tmp.getHashes() + " " + tmp.getHeight() + " " + tmp.getMerkleRoot() + " " +
+//                    tmp.getNonce() + " " + tmp.getPrevBlock() + " " + tmp.getTarget() + " " +
+//                    tmp.getTimeStamp() + tmp.getTotalTransactions() + " " + tmp.getVersion());
+//
+//        }
+
+        // Test Transaction Table
+        byte[] pretendToBeATx = "some transaction".getBytes();
+        byte[] pretendToBeATx2 = "some other transaction".getBytes();
+        BRTransactionEntity transactionEntity = new BRTransactionEntity(pretendToBeATx);
+
+        BRTransactionEntity transactionEntity2 = new BRTransactionEntity(pretendToBeATx2);
+
+        TransactionDataSource TXdataSource = new TransactionDataSource(this);
+        TXdataSource.open();
+        TXdataSource.deleteAllTransactions();
+        TXdataSource.createTransaction(transactionEntity);
+        TXdataSource.createTransaction(transactionEntity2);
+        List<BRTransactionEntity> txValues = TXdataSource.getAllTransactions();
+        Iterator<BRTransactionEntity> transactionEntityIterator = txValues.iterator();
+        while (transactionEntityIterator.hasNext()) {
+            BRTransactionEntity transactionEntity1 = transactionEntityIterator.next();
+            Log.e(TAG, "The transaction: " + transactionEntity1.getId()
+                            + " " + new String(transactionEntity1.getBuff())
+            );
+
+        }
+    }
+
+    private void setUpTheWallet() {
+        BRWalletManager m = BRWalletManager.getInstance(this);
+        String phrase = KeyStoreManager.getKeyStoreString(this);
+//
+        String normalizedPhrase = Normalizer.normalize(phrase, Normalizer.Form.NFKD);
+        byte[] pubKey = m.getMasterPubKey(normalizedPhrase);
+        m.setPublicKeyBuff(pubKey);
+        SQLiteManager sqLiteManager = SQLiteManager.getInstance(this);
+        List<ByteBuffer> transactions = sqLiteManager.getTransactions();
+        int transactionCount = transactions == null ? 0 : transactions.size();
+        byte[] theWallet = m.createWallet(pubKey, transactions, transactionCount);
+        m.setWalletBuff(theWallet);
+        m.setCallbacks(m.getWalletBuff());
+        //TODO put this pubKey into the keystore
+        Log.e(TAG, "PUB KEY length IS: " + pubKey.length);
+    }
+
 }

@@ -35,7 +35,7 @@ public class MiddleViewAdapter {
     public static final String TAG = "MiddleViewAdapter";
 
     public static void resetMiddleView(String text) {
-        Log.e(TAG, "in the resetMiddleView");
+        Log.e(TAG, "in the resetMiddleView: " + text);
         MainActivity app = MainActivity.app;
         if(app == null) return;
         if (FragmentAnimator.level == 0 || FragmentAnimator.level == 1) {

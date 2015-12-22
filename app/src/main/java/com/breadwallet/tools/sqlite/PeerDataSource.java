@@ -44,9 +44,11 @@ public class PeerDataSource {
     private SQLiteDatabase database;
     private BRSQLiteHelper dbHelper;
     private String[] allColumns = {
-            BRSQLiteHelper.PEER_COLUMN_ID, BRSQLiteHelper.PEER_ADDRESS,
-            BRSQLiteHelper.PEER_MISBEHAVIN, BRSQLiteHelper.PEER_PORT,
-            BRSQLiteHelper.PEER_SERVICES, BRSQLiteHelper.PEER_TIME_STAMP
+            BRSQLiteHelper.PEER_COLUMN_ID,
+            BRSQLiteHelper.MB_BUFF
+//            BRSQLiteHelper.PEER_ADDRESS,
+//            BRSQLiteHelper.PEER_MISBEHAVIN, BRSQLiteHelper.PEER_PORT,
+//            BRSQLiteHelper.PEER_SERVICES, BRSQLiteHelper.PEER_TIME_STAMP
     };
 
     public PeerDataSource(Context context) {
@@ -64,11 +66,12 @@ public class PeerDataSource {
     public BRPeerEntity createPeer(BRPeerEntity peer) {
         ContentValues values = new ContentValues();
 //        values.put(BRSQLiteHelper.PEER_COLUMN_ID, peer.getId());
-        values.put(BRSQLiteHelper.PEER_ADDRESS, peer.getAddress());
-        values.put(BRSQLiteHelper.PEER_MISBEHAVIN, peer.getMisbehavin());
-        values.put(BRSQLiteHelper.PEER_PORT, peer.getPort());
-        values.put(BRSQLiteHelper.PEER_SERVICES, peer.getServices());
-        values.put(BRSQLiteHelper.PEER_TIME_STAMP, peer.getTimeStamp());
+        values.put(BRSQLiteHelper.PEER_BUFF, peer.getBuff());
+//        values.put(BRSQLiteHelper.PEER_ADDRESS, peer.getAddress());
+//        values.put(BRSQLiteHelper.PEER_MISBEHAVIN, peer.getMisbehavin());
+//        values.put(BRSQLiteHelper.PEER_PORT, peer.getPort());
+//        values.put(BRSQLiteHelper.PEER_SERVICES, peer.getServices());
+//        values.put(BRSQLiteHelper.PEER_TIME_STAMP, peer.getTimeStamp());
         database.beginTransaction();
         try {
             long insertId = database.insert(BRSQLiteHelper.PEER_TABLE_NAME, null, values);
@@ -115,13 +118,13 @@ public class PeerDataSource {
     }
 
     private BRPeerEntity cursorToPeer(Cursor cursor) {
-        BRPeerEntity peerEntity = new BRPeerEntity();
+        BRPeerEntity peerEntity = new BRPeerEntity(cursor.getBlob(1));
         peerEntity.setId(cursor.getInt(0));
-        peerEntity.setAddress(cursor.getInt(1));
-        peerEntity.setMisbehavin(cursor.getShort(2));
-        peerEntity.setPort(cursor.getShort(3));
-        peerEntity.setServices(cursor.getShort(4));
-        peerEntity.setTimeStamp(cursor.getLong(5));
+//        peerEntity.setAddress(cursor.getInt(1));
+//        peerEntity.setMisbehavin(cursor.getShort(2));
+//        peerEntity.setPort(cursor.getShort(3));
+//        peerEntity.setServices(cursor.getShort(4));
+//        peerEntity.setTimeStamp(cursor.getLong(5));
         return peerEntity;
     }
 }

@@ -15,12 +15,14 @@ import com.breadwallet.presenter.fragments.FragmentCurrency;
 import com.breadwallet.tools.adapter.AmountAdapter;
 import com.breadwallet.tools.adapter.CurrencyListAdapter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
+import com.breadwallet.tools.animation.FragmentAnimator;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
@@ -105,9 +107,9 @@ public class CurrencyManager extends Observable {
             try {
                 JSONArray arr;
                 arr = JsonParser.getJSonArray("https://bitpay.com/rates");
-                Log.e(TAG,"JSONArray arr.length(): " + arr.length());
+                Log.e(TAG, "JSONArray arr.length(): " + arr.length());
                 int length = arr.length();
-                for (int i = 0; i < length; i++) {
+                for (int i = 1; i < length; i++) {
                     CurrencyEntity tmp = new CurrencyEntity();
                     try {
                         JSONObject tmpObj = (JSONObject) arr.get(i);
@@ -118,10 +120,10 @@ public class CurrencyManager extends Observable {
                         if (tmp.code.equals("USD")) {
                             SharedPreferences settingsToGet = context.getSharedPreferences(MainActivity.PREFS_NAME, 0);
                             String theIso = settingsToGet.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
-                            Log.e(TAG,"theIso : " + theIso);
-                            if(theIso.equals("USD")){
+                            Log.e(TAG, "theIso : " + theIso);
+                            if (theIso.equals("USD")) {
                                 //TODO put in shared prefs
-                                Log.e(TAG,"Putting the shit in the shared preffs");
+                                Log.e(TAG, "Putting the shit in the shared preffs");
                                 SharedPreferences settings = context.getSharedPreferences(MainActivity.PREFS_NAME, 0);
                                 SharedPreferences.Editor editor = settings.edit();
                                 editor.putString(FragmentCurrency.CURRENT_CURRENCY, tmp.code);
@@ -166,7 +168,8 @@ public class CurrencyManager extends Observable {
                 currencyListAdapter.clear();
                 currencyListAdapter.addAll(tmp);
                 currencyListAdapter.notifyDataSetChanged();
-                MiddleViewAdapter.resetMiddleView(null);
+                if (FragmentAnimator.level <= 2)
+                    MiddleViewAdapter.resetMiddleView(null);
             } else {
                 Log.e(TAG, "Adapter Not Changed, data is empty");
             }
@@ -215,15 +218,13 @@ public class CurrencyManager extends Observable {
 
     public String getMiddleTextExchangeString(long rate, String iso) {
 //        Log.e(TAG, "result of the exchange rate calculation: " + result);
+        if (rate == 0) rate = 1;
         double result = 1000000 / rate;
         DecimalFormat decimalFormat = new DecimalFormat("0.00");
+        decimalFormat.setRoundingMode(RoundingMode.CEILING);
         String finalResult = getFormattedCurrencyString(iso, "1") + " = " +
                 getFormattedCurrencyString("BTC", String.valueOf(decimalFormat.format(result)));
         return finalResult;
-    }
-
-    public long getBitsFromBitcoin(long target) {
-        return target * 1000000;
     }
 
     public long getBitsFromSatoshi(long target) {

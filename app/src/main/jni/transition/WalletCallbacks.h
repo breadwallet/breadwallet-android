@@ -10,12 +10,16 @@
 #include "BRTransaction.h"
 #include "BRWallet.h"
 #include <android/log.h>
+#include "wallet.h"
 
 extern JNIEnv *env;
 
 void Java_com_breadwallet_wallet_BRWalletManager_setCallbacks(JNIEnv *env,
                                                               jobject thiz,
                                                               jbyteArray walletBuff);
+
+void Java_com_breadwallet_wallet_BRWalletManager_testWalletCallbacks(JNIEnv *env,
+                                                                     jobject thiz);
 
 void balanceChanged(void *info, uint64_t balance);
 

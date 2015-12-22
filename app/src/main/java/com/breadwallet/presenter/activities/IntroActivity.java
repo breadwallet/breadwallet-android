@@ -24,7 +24,6 @@ import com.breadwallet.presenter.fragments.IntroRecoverWalletFragment;
 import com.breadwallet.presenter.fragments.IntroWarningFragment;
 import com.breadwallet.presenter.fragments.IntroWelcomeFragment;
 import com.breadwallet.tools.animation.BackgroundMovingAnimator;
-import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.wallet.BRWalletManager;
@@ -215,7 +214,7 @@ public class IntroActivity extends FragmentActivity {
             ((BreadWalletApp) getApplication()).showDeviceNotSecuredWarning(this);
         } else {
             //TODO DELETE THIS TESTING ENTRY DELETION
-            KeyStoreManager.deleteKeyStoreEntry("phrase");
+//            KeyStoreManager.deleteKeyStoreEntry("phrase");
             //now check if there is a wallet or should we create/restore one.
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -232,81 +231,5 @@ public class IntroActivity extends FragmentActivity {
         }
     }
 
-    public void testSQLiteConnectivity(Activity context) {
-        // Test MerkleBlock Table
-        BRMerkleBlockEntity merkleBlockEntity = new BRMerkleBlockEntity();
-        String blockHash = "000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f";
-        merkleBlockEntity.setId(21);
-        merkleBlockEntity.setBlockHash(blockHash.getBytes());
-        merkleBlockEntity.setFlags("someFLags".getBytes());
-        merkleBlockEntity.setHashes("someHashes".getBytes());
-        merkleBlockEntity.setHeight(12312);
-        merkleBlockEntity.setMerkleRoot("merkleRoot".getBytes());
-        merkleBlockEntity.setNonce(6363);
-        merkleBlockEntity.setPrevBlock("prevBlock".getBytes());
-        merkleBlockEntity.setTarget(423423423);
-        merkleBlockEntity.setTimeStamp(423211244);
-        merkleBlockEntity.setTotalTransactions(511);
-        merkleBlockEntity.setVersion(5);
-
-        MerkleBlockDataSource MBdataSource;
-        MBdataSource = new MerkleBlockDataSource(this);
-        MBdataSource.open();
-        MBdataSource.createMerkleBlock(merkleBlockEntity);
-        List<BRMerkleBlockEntity> values = MBdataSource.getAllMerkleBlocks();
-        Iterator<BRMerkleBlockEntity> merkleBlockEntityIterator = values.iterator();
-        while (merkleBlockEntityIterator.hasNext()) {
-            BRMerkleBlockEntity tmp = merkleBlockEntityIterator.next();
-            Log.e(TAG, "The merkleBlock: " + tmp.getId() + " " + tmp.getBlockHash() + " " + tmp.getFlags() +
-                    " " + tmp.getHashes() + " " + tmp.getHeight() + " " + tmp.getMerkleRoot() + " " +
-                    tmp.getNonce() + " " + tmp.getPrevBlock() + " " + tmp.getTarget() + " " +
-                    tmp.getTimeStamp() + tmp.getTotalTransactions() + " " + tmp.getVersion());
-
-        }
-
-        // Test Transaction Table
-        BRTxInputEntity input1 = new BRTxInputEntity();
-        input1.setTxHash("somehash".getBytes());
-        input1.setId(123);
-        input1.setSequence(23123123);
-        input1.setSignatures("976sd56ds56gds5fsdfd67fsd697".getBytes());
-
-        BRTxInputEntity input2 = new BRTxInputEntity();
-        input1.setTxHash("somehash2".getBytes());
-        input1.setId(55);
-        input1.setSequence(31124124);
-        input1.setSignatures("98sdf78ds67f6sd87f68sd7".getBytes());
-
-        HashSet<BRTxInputEntity> inputs = new HashSet<>();
-        inputs.add(input1);
-        inputs.add(input2);
-
-        BRTransactionEntity transactionEntity = new BRTransactionEntity();
-        String txHash = "000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f";
-        transactionEntity.setId(98);
-        transactionEntity.setBlockHeight(123123);
-        transactionEntity.setTimeStamp(97986716);
-        transactionEntity.setLockTime(232131231);
-        transactionEntity.setTxHash(txHash.getBytes());
-        transactionEntity.setOutputs(new HashSet<BRTxOutputEntity>());
-        transactionEntity.setInputs(inputs);
-
-        TransactionDataSource TXdataSource = new TransactionDataSource(this);
-        TXdataSource.open();
-        TXdataSource.createTransaction(transactionEntity);
-        List<BRTransactionEntity> txValues = TXdataSource.getAllTransactions();
-        Iterator<BRTransactionEntity> transactionEntityIterator = txValues.iterator();
-        while (transactionEntityIterator.hasNext()) {
-            BRTransactionEntity transactionEntity1 = transactionEntityIterator.next();
-            Log.e(TAG, "The transaction: " + transactionEntity1.getId() + " " + transactionEntity1.getBlockHeight() +
-                    " " + transactionEntity1.getTimeStamp() +
-                    " " + transactionEntity1.getLockTime() + " " + transactionEntity1.getTxHash());
-            Set<BRTxInputEntity> inputsFromBytes = transactionEntity1.getInputs();
-            for (BRTxInputEntity input : inputsFromBytes) {
-                Log.e(TAG, "INPUTS: " + input.getTxHash() + " " + input.getSequence() + " " + input.getSignatures());
-            }
-
-        }
-    }
 
 }

@@ -1,7 +1,5 @@
 package com.breadwallet.presenter.entities;
 
-import java.util.HashSet;
-
 /**
  * BreadWallet
  * <p/>
@@ -28,19 +26,24 @@ import java.util.HashSet;
  */
 public class BRTransactionEntity {
     private int id;
-    private int blockHeight;
-    private int lockTime;
-    private long timeStamp;
-    private byte[] txHash = new byte[32];
-    private HashSet<BRTxInputEntity> inputs;
-    private HashSet<BRTxOutputEntity> outputs;
+    private byte[] buff;
 
-    public int getBlockHeight() {
-        return blockHeight;
+    //    private int blockHeight;
+//    private int lockTime;
+//    private long timeStamp;
+//    private byte[] txHash = new byte[32];
+//    private HashSet<BRTxInputEntity> inputs;
+//    private HashSet<BRTxOutputEntity> outputs;
+    private BRTransactionEntity(){
+
     }
 
-    public void setBlockHeight(int blockHeight) {
-        this.blockHeight = blockHeight;
+    public BRTransactionEntity(byte[] txBuff){
+        this.buff = txBuff;
+    }
+
+    public byte[] getBuff() {
+        return buff;
     }
 
     public int getId() {
@@ -51,43 +54,53 @@ public class BRTransactionEntity {
         this.id = id;
     }
 
-    public HashSet<BRTxInputEntity> getInputs() {
-        return inputs;
-    }
-
-    public void setInputs(HashSet<BRTxInputEntity> inputs) {
-        this.inputs = inputs;
-    }
-
-    public int getLockTime() {
-        return lockTime;
-    }
-
-    public void setLockTime(int lockTime) {
-        this.lockTime = lockTime;
-    }
-
-    public HashSet<BRTxOutputEntity> getOutputs() {
-        return outputs;
-    }
-
-    public void setOutputs(HashSet<BRTxOutputEntity> outputs) {
-        this.outputs = outputs;
-    }
-
-    public long getTimeStamp() {
-        return timeStamp;
-    }
-
-    public void setTimeStamp(long timeStamp) {
-        this.timeStamp = timeStamp;
-    }
-
-    public byte[] getTxHash() {
-        return txHash;
-    }
-
-    public void setTxHash(byte[] txHash) {
-        this.txHash = txHash;
-    }
+//    public int getBlockHeight() {
+//        return blockHeight;
+//    }
+//
+//    public void setBlockHeight(int blockHeight) {
+//        this.blockHeight = blockHeight;
+//    }
+//
+//
+//
+//    public HashSet<BRTxInputEntity> getInputs() {
+//        return inputs;
+//    }
+//
+//    public void setInputs(HashSet<BRTxInputEntity> inputs) {
+//        this.inputs = inputs;
+//    }
+//
+//    public int getLockTime() {
+//        return lockTime;
+//    }
+//
+//    public void setLockTime(int lockTime) {
+//        this.lockTime = lockTime;
+//    }
+//
+//    public HashSet<BRTxOutputEntity> getOutputs() {
+//        return outputs;
+//    }
+//
+//    public void setOutputs(HashSet<BRTxOutputEntity> outputs) {
+//        this.outputs = outputs;
+//    }
+//
+//    public long getTimeStamp() {
+//        return timeStamp;
+//    }
+//
+//    public void setTimeStamp(long timeStamp) {
+//        this.timeStamp = timeStamp;
+//    }
+//
+//    public byte[] getTxHash() {
+//        return txHash;
+//    }
+//
+//    public void setTxHash(byte[] txHash) {
+//        this.txHash = txHash;
+//    }
 }

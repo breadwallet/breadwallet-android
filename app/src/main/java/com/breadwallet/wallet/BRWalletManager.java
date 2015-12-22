@@ -9,6 +9,7 @@ import android.util.Log;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.WordsReader;
 import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.sqlite.SQLiteManager;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -270,7 +271,9 @@ public class BRWalletManager {
     }
 
     public void onTxAdded(byte[] tx) {
-
+        Log.e(TAG, "in the BRWalletManager - onTxAdded");
+        SQLiteManager sqLiteManager = SQLiteManager.getInstance(ctx);
+        sqLiteManager.insertTransaction(tx);
     }
 
     public void onTxUpdated(byte[] tx) {
@@ -283,12 +286,14 @@ public class BRWalletManager {
 
     private native byte[] encodeSeed(byte[] seed, String[] wordList);
 
-    public native byte[] createWallet(byte[] buffer);
+    public native byte[] createWallet(byte[] buffer, List<ByteBuffer> transactions, int transactionCount);
 
     public native void setCallbacks(byte[] wallet);
 
-    public native void setPeerManagerCallBacks(byte[] peerManager);
+    public native void setPeerManagerCallbacks(byte[] peerManager);
 
     public native byte[] getMasterPubKey(String normalizedString);
+
+    public native void testWalletCallbacks();
 
 }

@@ -1,7 +1,7 @@
 //
 // Created by Mihail Gutan on 12/11/15.
 //
-JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_setPeerManagerCallBacks(JNIEnv *env,
+JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_setPeerManagerCallbacks(JNIEnv *env,
                                                                                  jobject thiz,
                                                                                  jbyteArray peerManager) {
     jbyte *bytePeerManager = (*env)->GetByteArrayElements(env, peerManager, 0);

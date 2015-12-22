@@ -18,7 +18,7 @@
 JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_encodeSeed(JNIEnv *env, jobject thiz,
                jbyteArray seed, jobjectArray stringArray);
 JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_createWallet(JNIEnv *env, jobject thiz,
-                jbyteArray buffer);
+                jbyteArray buffer, jobjectArray transactions, size_t transactions_count);
 JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_getMasterPubKey(JNIEnv *env, jobject thiz,
                 jstring phrase);
 const void *theSeed(void *info, const char *authPrompt, uint64_t amount, size_t *seedLen);

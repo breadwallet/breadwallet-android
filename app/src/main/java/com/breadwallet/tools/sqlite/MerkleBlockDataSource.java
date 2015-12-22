@@ -43,13 +43,16 @@ public class MerkleBlockDataSource {
     // Database fields
     private SQLiteDatabase database;
     private BRSQLiteHelper dbHelper;
-    private String[] allColumns = {BRSQLiteHelper.MB_COLUMN_ID,
-            BRSQLiteHelper.MB_COLUMN_BLOCK_HASH, BRSQLiteHelper.MB_COLUMN_FLAGS,
-            BRSQLiteHelper.MB_COLUMN_HASHES, BRSQLiteHelper.MB_COLUMN_HEIGHT,
-            BRSQLiteHelper.MB_COLUMN_MERKLE_ROOT, BRSQLiteHelper.MB_COLUMN_NONCE,
-            BRSQLiteHelper.MB_COLUMN_PREV_BLOCK, BRSQLiteHelper.MB_COLUMN_TARGET,
-            BRSQLiteHelper.MB_COLUMN_TIME_STAMP, BRSQLiteHelper.MB_COLUMN_TOTAL_TRANSACTIONS,
-            BRSQLiteHelper.MB_COLUMN_VERSION};
+    private String[] allColumns = {
+            BRSQLiteHelper.MB_COLUMN_ID,
+            BRSQLiteHelper.MB_BUFF
+//            BRSQLiteHelper.MB_COLUMN_BLOCK_HASH, BRSQLiteHelper.MB_COLUMN_FLAGS,
+//            BRSQLiteHelper.MB_COLUMN_HASHES, BRSQLiteHelper.MB_COLUMN_HEIGHT,
+//            BRSQLiteHelper.MB_COLUMN_MERKLE_ROOT, BRSQLiteHelper.MB_COLUMN_NONCE,
+//            BRSQLiteHelper.MB_COLUMN_PREV_BLOCK, BRSQLiteHelper.MB_COLUMN_TARGET,
+//            BRSQLiteHelper.MB_COLUMN_TIME_STAMP, BRSQLiteHelper.MB_COLUMN_TOTAL_TRANSACTIONS,
+//            BRSQLiteHelper.MB_COLUMN_VERSION
+    };
 
     public MerkleBlockDataSource(Context context) {
         dbHelper = new BRSQLiteHelper(context);
@@ -66,17 +69,18 @@ public class MerkleBlockDataSource {
     public BRMerkleBlockEntity createMerkleBlock(BRMerkleBlockEntity merkleBlock) {
         ContentValues values = new ContentValues();
 //        values.put(BRSQLiteHelper.MB_COLUMN_ID, merkleBlock.getId());
-        values.put(BRSQLiteHelper.MB_COLUMN_BLOCK_HASH, merkleBlock.getBlockHash());
-        values.put(BRSQLiteHelper.MB_COLUMN_FLAGS, merkleBlock.getFlags());
-        values.put(BRSQLiteHelper.MB_COLUMN_HASHES, merkleBlock.getHashes());
-        values.put(BRSQLiteHelper.MB_COLUMN_HEIGHT, merkleBlock.getHeight());
-        values.put(BRSQLiteHelper.MB_COLUMN_MERKLE_ROOT, merkleBlock.getMerkleRoot());
-        values.put(BRSQLiteHelper.MB_COLUMN_NONCE, merkleBlock.getNonce());
-        values.put(BRSQLiteHelper.MB_COLUMN_PREV_BLOCK, merkleBlock.getPrevBlock());
-        values.put(BRSQLiteHelper.MB_COLUMN_TARGET, merkleBlock.getTarget());
-        values.put(BRSQLiteHelper.MB_COLUMN_TIME_STAMP, merkleBlock.getTimeStamp());
-        values.put(BRSQLiteHelper.MB_COLUMN_TOTAL_TRANSACTIONS, merkleBlock.getTotalTransactions());
-        values.put(BRSQLiteHelper.MB_COLUMN_VERSION, merkleBlock.getVersion());
+        values.put(BRSQLiteHelper.MB_BUFF,merkleBlock.getBuff());
+//        values.put(BRSQLiteHelper.MB_COLUMN_BLOCK_HASH, merkleBlock.getBlockHash());
+//        values.put(BRSQLiteHelper.MB_COLUMN_FLAGS, merkleBlock.getFlags());
+//        values.put(BRSQLiteHelper.MB_COLUMN_HASHES, merkleBlock.getHashes());
+//        values.put(BRSQLiteHelper.MB_COLUMN_HEIGHT, merkleBlock.getHeight());
+//        values.put(BRSQLiteHelper.MB_COLUMN_MERKLE_ROOT, merkleBlock.getMerkleRoot());
+//        values.put(BRSQLiteHelper.MB_COLUMN_NONCE, merkleBlock.getNonce());
+//        values.put(BRSQLiteHelper.MB_COLUMN_PREV_BLOCK, merkleBlock.getPrevBlock());
+//        values.put(BRSQLiteHelper.MB_COLUMN_TARGET, merkleBlock.getTarget());
+//        values.put(BRSQLiteHelper.MB_COLUMN_TIME_STAMP, merkleBlock.getTimeStamp());
+//        values.put(BRSQLiteHelper.MB_COLUMN_TOTAL_TRANSACTIONS, merkleBlock.getTotalTransactions());
+//        values.put(BRSQLiteHelper.MB_COLUMN_VERSION, merkleBlock.getVersion());
         database.beginTransaction();
         try {
             long insertId = database.insert(BRSQLiteHelper.MB_TABLE_NAME, null, values);
@@ -122,19 +126,20 @@ public class MerkleBlockDataSource {
     }
 
     private BRMerkleBlockEntity cursorToMerkleBlock(Cursor cursor) {
-        BRMerkleBlockEntity merkleBlockEntity = new BRMerkleBlockEntity();
+        BRMerkleBlockEntity merkleBlockEntity = new BRMerkleBlockEntity(cursor.getBlob(1));
         merkleBlockEntity.setId(cursor.getInt(0));
-        merkleBlockEntity.setBlockHash(cursor.getBlob(1));
-        merkleBlockEntity.setFlags(cursor.getBlob(2));
-        merkleBlockEntity.setHashes(cursor.getBlob(3));
-        merkleBlockEntity.setHeight(cursor.getInt(4));
-        merkleBlockEntity.setMerkleRoot(cursor.getBlob(5));
-        merkleBlockEntity.setNonce(cursor.getInt(6));
-        merkleBlockEntity.setPrevBlock(cursor.getBlob(7));
-        merkleBlockEntity.setTarget(cursor.getInt(8));
-        merkleBlockEntity.setTimeStamp(cursor.getLong(9));
-        merkleBlockEntity.setTotalTransactions(cursor.getInt(10));
-        merkleBlockEntity.setVersion(cursor.getInt(11));
+
+//        merkleBlockEntity.setBlockHash(cursor.getBlob(1));
+//        merkleBlockEntity.setFlags(cursor.getBlob(2));
+//        merkleBlockEntity.setHashes(cursor.getBlob(3));
+//        merkleBlockEntity.setHeight(cursor.getInt(4));
+//        merkleBlockEntity.setMerkleRoot(cursor.getBlob(5));
+//        merkleBlockEntity.setNonce(cursor.getInt(6));
+//        merkleBlockEntity.setPrevBlock(cursor.getBlob(7));
+//        merkleBlockEntity.setTarget(cursor.getInt(8));
+//        merkleBlockEntity.setTimeStamp(cursor.getLong(9));
+//        merkleBlockEntity.setTotalTransactions(cursor.getInt(10));
+//        merkleBlockEntity.setVersion(cursor.getInt(11));
         return merkleBlockEntity;
     }
 }

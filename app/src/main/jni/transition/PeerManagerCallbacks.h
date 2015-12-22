@@ -9,7 +9,7 @@
 #include "BRInt.h"
 #include "BRTransaction.h"
 
-JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_setPeerManagerCallBacks(JNIEnv *env,
+JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_setPeerManagerCallbacks(JNIEnv *env,
                                                                                        jobject thiz,
                                                                                        jbyteArray peerManager);
 
