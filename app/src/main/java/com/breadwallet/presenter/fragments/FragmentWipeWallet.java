@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.wallet.BRWalletManager;
 
 /**
@@ -107,7 +108,7 @@ public class FragmentWipeWallet extends Fragment {
     }
 
     private boolean phraseIsValid(String insertedPhrase) {
-        String thePhrase = m.getPhrase(getActivity());
+        String thePhrase = KeyStoreManager.getKeyStoreString(getActivity());
         if (thePhrase == null) throw new NullPointerException("Phrase is null! weird behaviour");
         Log.e(TAG,"Inserted:" +  insertedPhrase);
         Log.e(TAG,"Actual:" +  thePhrase);

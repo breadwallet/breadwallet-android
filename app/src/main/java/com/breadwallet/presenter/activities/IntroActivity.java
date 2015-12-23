@@ -1,7 +1,6 @@
 
 package com.breadwallet.presenter.activities;
 
-import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,24 +13,13 @@ import android.widget.ImageView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
-import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
-import com.breadwallet.presenter.entities.BRTransactionEntity;
-import com.breadwallet.presenter.entities.BRTxInputEntity;
-import com.breadwallet.presenter.entities.BRTxOutputEntity;
 import com.breadwallet.presenter.fragments.IntroNewRecoverFragment;
 import com.breadwallet.presenter.fragments.IntroNewWalletFragment;
 import com.breadwallet.presenter.fragments.IntroRecoverWalletFragment;
 import com.breadwallet.presenter.fragments.IntroWarningFragment;
 import com.breadwallet.presenter.fragments.IntroWelcomeFragment;
 import com.breadwallet.tools.animation.BackgroundMovingAnimator;
-import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
-import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.wallet.BRWalletManager;
-
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 
 /**
@@ -64,7 +52,6 @@ public class IntroActivity extends FragmentActivity {
     private ImageView background;
     public static IntroActivity app;
     private Button leftButton;
-    private Bundle savedInstanceState;
 
     //loading the native library
     static {
@@ -111,7 +98,6 @@ public class IntroActivity extends FragmentActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        this.savedInstanceState = outState;
     }
 
     void showRecoverNewWalletFragment() {
@@ -214,7 +200,7 @@ public class IntroActivity extends FragmentActivity {
             ((BreadWalletApp) getApplication()).showDeviceNotSecuredWarning(this);
         } else {
             //TODO DELETE THIS TESTING ENTRY DELETION
-//            KeyStoreManager.deleteKeyStoreEntry("phrase");
+            //KeyStoreManager.deleteAllKeyStoreEntries();
             //now check if there is a wallet or should we create/restore one.
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -230,6 +216,5 @@ public class IntroActivity extends FragmentActivity {
             }, 800);
         }
     }
-
 
 }

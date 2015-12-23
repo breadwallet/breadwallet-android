@@ -13,6 +13,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.tools.BRClipboardManager;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
+import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.wallet.BRWalletManager;
 
 /**
@@ -64,7 +65,7 @@ public class FragmentRecoveryPhrase extends Fragment {
         final long startTime = System.currentTimeMillis();
         //return the new method if the API is 23+
 
-        thePhrase.setText(m.getPhrase(getActivity()));
+        thePhrase.setText(KeyStoreManager.getKeyStoreString(getActivity()));
         return rootView;
     }
 

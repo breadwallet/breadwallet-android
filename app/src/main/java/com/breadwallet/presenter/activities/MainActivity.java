@@ -103,15 +103,6 @@ public class MainActivity extends FragmentActivity implements Observer {
     public Button lockerButton;
     public static ParallaxViewPager parallaxViewPager;
     public ClipboardManager myClipboard;
-    //    public FragmentSettingsAll fragmentSettingsAll;
-//    public FragmentSettings fragmentSettings;
-//    public FragmentAbout fragmentAbout;
-//    public FragmentDecoder mainFragmentDecoder;
-//    public FragmentCurrency fragmentCurrency;
-//    public FragmentRecoveryPhrase fragmentRecoveryPhrase;
-//    public FragmentWipeWallet fragmentWipeWallet;
-//    public FragmentScanResult fragmentScanResult;
-    //    public PasswordDialogFragment passwordDialogFragment;
     private boolean doubleBackToExitPressedOnce;
     public static final int BURGER = 0;
     public static final int CLOSE = 1;
@@ -122,7 +113,6 @@ public class MainActivity extends FragmentActivity implements Observer {
     public ViewFlipper lockerPayFlipper;
     public RelativeLayout networkErrorBar;
     private NetworkChangeReceiver receiver = new NetworkChangeReceiver();
-
     public static Point screenParametersPoint = new Point();
     private int middleViewPressedCount = 0;
     public static final int DEBUG = 1;
@@ -132,7 +122,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     public SoftKeyboard softKeyboard;
     public RelativeLayout mainLayout;
     public FingerprintManager fingerprintManager;
-
+    public boolean requestFragmentOn;
 
 //    private native String messageFromNativeCode(String logThis);
 
@@ -215,13 +205,17 @@ public class MainActivity extends FragmentActivity implements Observer {
         scaleView(pageIndicatorLeft, 1f, PAGE_INDICATOR_SCALE_UP, 1f, PAGE_INDICATOR_SCALE_UP);
 
         //check the txAdded callback functionality
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
 //                BRWalletManager m = BRWalletManager.getInstance(app);
 //                m.testWalletCallbacks();
-//            }
-//        }, 15 * 1000);
+//                Log.e(TAG, "the pubkey length is: " + m.getPublicKeyBuff().length);
+                Log.e(TAG, "FROM KEYSTORE PUBKEY: " + KeyStoreManager.getMasterPublicKey(app));
+                Log.e(TAG, "FROM KEYSTORE PHRASE: " + KeyStoreManager.getKeyStoreString(app));
+                Log.e(TAG, "FROM KEYSTORE CREATION TIME: " + KeyStoreManager.getWalletCreationTime(app));
+            }
+        }, 10 * 1000);
     }
 
     @Override
@@ -511,16 +505,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         }
     }
 
-//    public FragmentDecoder getFragmentDecoder() {
-//        mainFragmentDecoder = new FragmentDecoder();
-//        return mainFragmentDecoder;
-//    }
-//
-//    public FragmentScanResult getFragmentScanResult() {
-//        fragmentScanResult = new FragmentScanResult();
-//        return fragmentScanResult;
-//    }
-
     public void confirmPay(PaymentRequestEntity request) {
         SharedPreferences settings;
         boolean certified = false;
@@ -599,7 +583,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     private void setUpTheWallet() {
         BRWalletManager m = BRWalletManager.getInstance(this);
         String phrase = KeyStoreManager.getKeyStoreString(this);
-//
+        if(phrase == null) return;
         String normalizedPhrase = Normalizer.normalize(phrase, Normalizer.Form.NFKD);
         byte[] pubKey = m.getMasterPubKey(normalizedPhrase);
         m.setPublicKeyBuff(pubKey);

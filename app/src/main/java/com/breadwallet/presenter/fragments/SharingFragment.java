@@ -122,6 +122,8 @@ public class SharingFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 if(FragmentAnimator.checkTheMultipressingAvailability(300)){
+                    getDialog().cancel();
+//                    FragmentAnimator.animateRequestFragment();
                     //TODO: actions on requesting amount
                 }
             }

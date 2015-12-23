@@ -150,10 +150,6 @@ public class BRWalletManager {
         return KeyStoreManager.setKeyStoreString(strPhrase, ctx);
     }
 
-    public String getPhrase(Context ctx) {
-        return KeyStoreManager.getKeyStoreString(ctx);
-    }
-
     /**
      * authenticates user and returns seed
      */
@@ -210,10 +206,11 @@ public class BRWalletManager {
      * true if keychain is available and we know that no wallet exists on it
      */
     public boolean noWallet(Context ctx) {
-        String phrase = getPhrase(ctx);
-        if (phrase == null) return false;
+        byte[] pubkey = KeyStoreManager.getMasterPublicKey(ctx);
+        Log.e(TAG, "in the noWallet, pubkey.length: " + pubkey.length);
+        if (pubkey == null) return false;
 
-        return phrase.length() < 10;
+        return pubkey.length == 0;
     }
 
     /**

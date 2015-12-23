@@ -17,6 +17,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
@@ -78,10 +79,8 @@ public class KeyStoreManager {
     @SuppressWarnings("deprecation") // for api < 23
     public static boolean setKeyStoreString(String strToStore, Context context) {
 
-        if (strToStore == null || strToStore.length() == 0) return false;
-        //return the new method if the API is 23+
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-//            return setKeyStoreStringAPI23(PHRASE_FILENAME, strToStore, PHRASE_ALIAS, context);
+        if (strToStore == null) return false;
+        if (strToStore.length() == 0) return false;
         try {
             KeyStore keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
             keyStore.load(null);
@@ -89,8 +88,6 @@ public class KeyStoreManager {
 
             // Create the keys if necessary
             if (!keyStore.containsAlias(PHRASE_ALIAS)) {
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                    //API is < 23
                 Calendar notBefore = Calendar.getInstance();
                 Calendar notAfter = Calendar.getInstance();
                 notAfter.add(Calendar.YEAR, 99);
@@ -107,64 +104,13 @@ public class KeyStoreManager {
                 generator.initialize(spec);
                 KeyPair keyPair = generator.generateKeyPair(); // needs to be here
                 Log.v(TAG, "The keypair" + keyPair.toString());
-//
-//                } else {
-//                    //API is 23+
-////                    Calendar notBefore = Calendar.getInstance();
-////                    Calendar notAfter = Calendar.getInstance();
-////                    notAfter.add(Calendar.YEAR, 1);
-//                    KeyGenerator generator = KeyGenerator.getInstance(
-//                            KeyProperties.KEY_ALGORITHM_RSA, ANDROID_KEY_STORE);
-//
-//                    Log.e(TAG, "Android API LEVEL is 23+");
-//                    KeyGenParameterSpec spec = new KeyGenParameterSpec.Builder(
-//                            PHRASE_ALIAS, KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
-//                            .setDigests(KeyProperties.DIGEST_SHA256,
-//                                    KeyProperties.DIGEST_SHA512)
-//                            .setUserAuthenticationRequired(false)
-//                            .build();
-////                    KeyGenParameterSpec.Builder builder = new KeyGenParameterSpec.Builder(PHRASE_ALIAS,
-////                            KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT);
-////                    KeyGenParameterSpec keySpec = builder
-////                            .setKeySize(256)
-////                            .setBlockModes("CBC")
-////                            .setEncryptionPaddings("PKCS7Padding")
-////                            .setRandomizedEncryptionRequired(true)
-////                            .setUserAuthenticationRequired(false)
-////                            .build();
-////                    SecretKey key = kg.generateKey(); // needs to be here
-//                    generator.init(spec);
-//                    SecretKey secretKey = generator.generateKey();
-//
-//                    int nAfter = keyStore.size();
-//                    Log.v(TAG, "Before = " + nBefore + " After = " + nAfter);
-//                }
-//                KeyGenParameterSpec.Builder builder = new KeyGenParameterSpec.Builder(PHRASE_ALIAS,
-//                        KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT);
-//                KeyGenParameterSpec keySpec = builder
-//                        .setKeySize(256)
-//                        .setEncryptionPaddings(ENCRYPTION_PADDING)
-//                        .setRandomizedEncryptionRequired(true)
-//                        .setUserAuthenticationRequired(false)
-//                        .build();
-//
-//                KeyPairGenerator kpg = KeyPairGenerator.getInstance(
-//                        KeyProperties.KEY_ALGORITHM_RSA, ANDROID_KEY_STORE);
-//                kpg.initialize(keySpec);
-//                KeyPair kp = kpg.generateKeyPair();
             }
             int nAfter = keyStore.size();
             Log.v(TAG, "Before = " + nBefore + " After = " + nAfter);
 
             RSAPublicKey publicKey;
-            // Retrieve the keys
-//            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry) keyStore.getEntry(PHRASE_ALIAS, null);
             publicKey = (RSAPublicKey) privateKeyEntry.getCertificate().getPublicKey();
-//            } else {
-//                KeyStore.SecretKeyEntry entry = (KeyStore.SecretKeyEntry) keyStore.getEntry(PHRASE_ALIAS, null);
-//                key = entry.getSecretKey();
-//            }
 
             // Encrypt the text
             String filesDirectory = context.getFilesDir().getAbsolutePath();
@@ -182,7 +128,9 @@ public class KeyStoreManager {
             inCipher.init(Cipher.ENCRYPT_MODE, publicKey);
             CipherOutputStream cipherOutputStream = new CipherOutputStream(
                     new FileOutputStream(encryptedDataFilePath), inCipher);
-            cipherOutputStream.write(strToStore.getBytes("UTF-8"));
+            byte[] bytesToStore = strToStore.getBytes("UTF-8");
+            Log.e(TAG, "bytesToStore(phrase): length " + bytesToStore.length);
+            cipherOutputStream.write(bytesToStore);
             cipherOutputStream.close();
             return true;
         } catch (Exception e) {
@@ -190,49 +138,6 @@ public class KeyStoreManager {
         }
         return false;
     }
-//    @TargetApi(Build.VERSION_CODES.M)
-//    public static boolean setKeyStoreStringAPI23(String fileName, String strToStore, String alias, Context context) {
-//        try {
-//            KeyStore keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
-//            keyStore.load(null);
-//
-//            int nBefore = keyStore.size();
-//
-//            // Create the keys if necessary
-//            if (!keyStore.containsAlias(alias)) {
-//
-//            }
-//
-//            KeyStore.Entry entry = keyStore.getEntry(alias, null);
-//            if (!(entry instanceof KeyStore.PrivateKeyEntry)) {
-//                Log.w(TAG, "Not an instance of a PrivateKeyEntry");
-//                return false;
-//            }
-//            RSAPublicKey pub = (RSAPublicKey) ((KeyStore.PrivateKeyEntry) entry).getCertificate().getPublicKey();
-//
-//            // Encrypt the text
-////            String dataDirectory = context.getApplicationInfo().dataDir;
-//            String filesDirectory = context.getFilesDir().getAbsolutePath();
-//            String encryptedDataFilePath = filesDirectory + File.separator + fileName;
-//
-////            Log.v(TAG, "strPhrase = " + strToStore);
-////            Log.v(TAG, "dataDirectory = " + dataDirectory);
-////            Log.v(TAG, "filesDirectory = " + filesDirectory);
-////            Log.v(TAG, "encryptedDataFilePath = " + encryptedDataFilePath);
-//
-//            Cipher inCipher = Cipher.getInstance(ENCRYPTION_PADDING, CIPHER_PROVIDER);
-//            inCipher.init(Cipher.ENCRYPT_MODE, pub);
-//
-//            CipherOutputStream cipherOutputStream = new CipherOutputStream(
-//                    new FileOutputStream(encryptedDataFilePath), inCipher);
-//            cipherOutputStream.write(strToStore.getBytes("UTF-8"));
-//            cipherOutputStream.close();
-//            return true;
-//        } catch (Exception e) {
-//            Log.e(TAG, Log.getStackTraceString(e));
-//        }
-//        return true;
-//    }
 
     public static String getKeyStoreString(final Context context) {
         Log.e(TAG, "after while and allowKeyStoreAccess: " +
@@ -247,28 +152,18 @@ public class KeyStoreManager {
         } else {
             Log.e(TAG, "THE SCREEN IS UNLOCKED!");
         }
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-//            return getKeyStoreStringAPI23(PHRASE_FILENAME, PHRASE_ALIAS, context);
         KeyStore keyStore;
         String recoveredSecret = "";
         String filesDirectory = context.getFilesDir().getAbsolutePath();
         String encryptedDataFilePath = filesDirectory + File.separator + PHRASE_FILENAME;
-        PrivateKey privateKey = null;
-//        SecretKey key = null;
+        PrivateKey privateKey;
         try {
             keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
             keyStore.load(null);
-//            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            // < Android 23 M
             KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry)
                     keyStore.getEntry(PHRASE_ALIAS, null);
             privateKey = privateKeyEntry.getPrivateKey();
             if (privateKey == null) throw new RuntimeException("private key is null");
-//            } else {
-////                 >= Android 23 M
-//                KeyStore.SecretKeyEntry entry = (KeyStore.SecretKeyEntry) keyStore.getEntry(PHRASE_ALIAS, null);
-//                key = entry.getSecretKey();
-//            }
 
             Cipher outCipher;
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
@@ -297,49 +192,212 @@ public class KeyStoreManager {
         return recoveredSecret;
     }
 
-    public static String getKeyStoreStringAPI23(String fileName, String alias, Context context) {
+    public static boolean putMasterPublicKey(byte[] masterPubKey, Context context) {
 
+        Log.e(TAG, "putMasterPublicKey length: " + masterPubKey.length);
+        if (masterPubKey == null) return false;
+        if (masterPubKey.length == 0) return false;
+        try {
+            KeyStore keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
+            keyStore.load(null);
+            int nBefore = keyStore.size();
+
+            // Create the keys if necessary
+            if (!keyStore.containsAlias(PUB_KEY_ALIAS)) {
+                Calendar notBefore = Calendar.getInstance();
+                Calendar notAfter = Calendar.getInstance();
+                notAfter.add(Calendar.YEAR, 99);
+                KeyPairGenerator generator = KeyPairGenerator.getInstance(
+                        KeyProperties.KEY_ALGORITHM_RSA, ANDROID_KEY_STORE);
+                KeyPairGeneratorSpec spec = new KeyPairGeneratorSpec.Builder(context)
+                        .setAlias(PUB_KEY_ALIAS)
+                        .setKeySize(2048)
+                        .setSubject(new X500Principal(BREADWALLET_X500))
+                        .setSerialNumber(BigInteger.valueOf(2))
+                        .setEncryptionRequired().setStartDate(notBefore.getTime())
+                        .setEndDate(notAfter.getTime())
+                        .build();
+                generator.initialize(spec);
+                KeyPair keyPair = generator.generateKeyPair(); // needs to be here
+                Log.v(TAG, "The keypair" + keyPair.toString());
+            }
+            int nAfter = keyStore.size();
+            Log.v(TAG, "Before = " + nBefore + " After = " + nAfter);
+
+            RSAPublicKey publicKey;
+            KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry) keyStore.getEntry(PUB_KEY_ALIAS, null);
+            publicKey = (RSAPublicKey) privateKeyEntry.getCertificate().getPublicKey();
+
+            // Encrypt the text
+            String filesDirectory = context.getFilesDir().getAbsolutePath();
+            String encryptedDataFilePath = filesDirectory + File.separator + PUB_KEY_FILENAME;
+//            Log.v(TAG, "strPhrase = " + strToStore);
+//            Log.v(TAG, "dataDirectory = " + dataDirectory);
+//            Log.v(TAG, "filesDirectory = " + filesDirectory);
+//            Log.v(TAG, "encryptedDataFilePath = " + encryptedDataFilePath);
+            Cipher inCipher;
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                inCipher = Cipher.getInstance(ENCRYPTION_PADDING, CIPHER_PROVIDER);
+            } else {
+                inCipher = Cipher.getInstance(ENCRYPTION_PADDING);
+            }
+            inCipher.init(Cipher.ENCRYPT_MODE, publicKey);
+            CipherOutputStream cipherOutputStream = new CipherOutputStream(
+                    new FileOutputStream(encryptedDataFilePath), inCipher);
+            cipherOutputStream.write(masterPubKey);
+            cipherOutputStream.close();
+            return true;
+        } catch (Exception e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        }
+        return false;
+    }
+
+    public static byte[] getMasterPublicKey(final Context context) {
+//        if (!((BreadWalletApp) context.getApplicationContext()).allowKeyStoreAccess) {
+//            return null;
+//        }
+        byte[] result = new byte[0];
         KeyStore keyStore;
-        String recoveredSecret = "";
         String filesDirectory = context.getFilesDir().getAbsolutePath();
-        String encryptedDataFilePath = filesDirectory + File.separator + fileName;
-        PrivateKey privateKey = null;
+        String encryptedDataFilePath = filesDirectory + File.separator + PUB_KEY_FILENAME;
+        PrivateKey privateKey;
         try {
             keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
             keyStore.load(null);
-//            KeyStore.ProtectionParameter protectionParameter = new KeyStore.CallbackHandlerProtection(new CallbackHandler() {
-//                @Override
-//                public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-//                    Log.e(TAG, " inside handle callback! ***********");
-//                }
-//            });
             KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry)
-                    keyStore.getEntry(alias, null);
+                    keyStore.getEntry(PUB_KEY_ALIAS, null);
             privateKey = privateKeyEntry.getPrivateKey();
-            Cipher outCipher = Cipher.getInstance(ENCRYPTION_PADDING);
+            if (privateKey == null) throw new RuntimeException("private key is null");
 
-            if (privateKey != null) {
-                outCipher.init(Cipher.DECRYPT_MODE, privateKey);
+            Cipher outCipher;
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                outCipher = Cipher.getInstance(ENCRYPTION_PADDING, CIPHER_PROVIDER);
             } else {
-                throw new RuntimeException("private key is null");
+                outCipher = Cipher.getInstance(ENCRYPTION_PADDING);
             }
+            outCipher.init(Cipher.DECRYPT_MODE, privateKey);
+
             CipherInputStream cipherInputStream = new CipherInputStream(
                     new FileInputStream(encryptedDataFilePath), outCipher);
-            byte[] roundTrippedBytes = new byte[1000]; // TODO: dynamically resize as we get more data
+            byte[] roundTrippedBytes = new byte[1000]; //TODO: dynamically resize as we get more data
             int index = 0;
             int nextByte;
             while ((nextByte = cipherInputStream.read()) != -1) {
                 roundTrippedBytes[index] = (byte) nextByte;
                 index++;
             }
-            recoveredSecret = new String(roundTrippedBytes, 0, index, "UTF-8");
-            Log.e(TAG, "round tripped string = " + recoveredSecret);
+            if (roundTrippedBytes != null) result = roundTrippedBytes;
+//            Log.e(TAG, "round tripped bytes: " + roundTrippedBytes);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        Log.e(TAG, "recovered: " + recoveredSecret);
-        return recoveredSecret;
+        return result;
+    }
+
+    public static boolean putWalletCreationTime(long creationTime, Context context) {
+
+//        Log.e(TAG, "putWalletCreationTime: " + creationTime);
+        if (creationTime == 0) return false;
+        try {
+            KeyStore keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
+            keyStore.load(null);
+            int nBefore = keyStore.size();
+
+            // Create the keys if necessary
+            if (!keyStore.containsAlias(WALLET_CREATION_TIME_ALIAS)) {
+                Calendar notBefore = Calendar.getInstance();
+                Calendar notAfter = Calendar.getInstance();
+                notAfter.add(Calendar.YEAR, 99);
+                KeyPairGenerator generator = KeyPairGenerator.getInstance(
+                        KeyProperties.KEY_ALGORITHM_RSA, ANDROID_KEY_STORE);
+                KeyPairGeneratorSpec spec = new KeyPairGeneratorSpec.Builder(context)
+                        .setAlias(WALLET_CREATION_TIME_ALIAS)
+                        .setKeySize(2048)
+                        .setSubject(new X500Principal(BREADWALLET_X500))
+                        .setSerialNumber(BigInteger.valueOf(3))
+                        .setEncryptionRequired().setStartDate(notBefore.getTime())
+                        .setEndDate(notAfter.getTime())
+                        .build();
+                generator.initialize(spec);
+                KeyPair keyPair = generator.generateKeyPair(); // needs to be here
+//                Log.v(TAG, "The keypair" + keyPair.toString());
+            }
+            int nAfter = keyStore.size();
+//            Log.v(TAG, "Before = " + nBefore + " After = " + nAfter);
+
+            RSAPublicKey publicKey;
+            KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry)
+                    keyStore.getEntry(WALLET_CREATION_TIME_ALIAS, null);
+            publicKey = (RSAPublicKey) privateKeyEntry.getCertificate().getPublicKey();
+
+            // Encrypt the text
+            String filesDirectory = context.getFilesDir().getAbsolutePath();
+            String encryptedDataFilePath = filesDirectory + File.separator + WALLET_CREATION_TIME_FILENAME;
+//            Log.v(TAG, "strPhrase = " + strToStore);
+//            Log.v(TAG, "dataDirectory = " + dataDirectory);
+//            Log.v(TAG, "filesDirectory = " + filesDirectory);
+//            Log.v(TAG, "encryptedDataFilePath = " + encryptedDataFilePath);
+            Cipher inCipher;
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                inCipher = Cipher.getInstance(ENCRYPTION_PADDING, CIPHER_PROVIDER);
+            } else {
+                inCipher = Cipher.getInstance(ENCRYPTION_PADDING);
+            }
+            inCipher.init(Cipher.ENCRYPT_MODE, publicKey);
+            CipherOutputStream cipherOutputStream = new CipherOutputStream(
+                    new FileOutputStream(encryptedDataFilePath), inCipher);
+            cipherOutputStream.write(longToBytes(creationTime));
+            cipherOutputStream.close();
+            return true;
+        } catch (Exception e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        }
+        return false;
+    }
+
+    public static long getWalletCreationTime(final Context context) {
+//        if (!((BreadWalletApp) context.getApplicationContext()).allowKeyStoreAccess) {
+//            return null;
+//        }
+        byte[] result = new byte[0];
+        KeyStore keyStore;
+        String filesDirectory = context.getFilesDir().getAbsolutePath();
+        String encryptedDataFilePath = filesDirectory + File.separator + WALLET_CREATION_TIME_FILENAME;
+        PrivateKey privateKey;
+        try {
+            keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
+            keyStore.load(null);
+            KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry)
+                    keyStore.getEntry(WALLET_CREATION_TIME_ALIAS, null);
+            privateKey = privateKeyEntry.getPrivateKey();
+            if (privateKey == null) throw new RuntimeException("private key is null");
+
+            Cipher outCipher;
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                outCipher = Cipher.getInstance(ENCRYPTION_PADDING, CIPHER_PROVIDER);
+            } else {
+                outCipher = Cipher.getInstance(ENCRYPTION_PADDING);
+            }
+            outCipher.init(Cipher.DECRYPT_MODE, privateKey);
+
+            CipherInputStream cipherInputStream = new CipherInputStream(
+                    new FileInputStream(encryptedDataFilePath), outCipher);
+            byte[] roundTrippedBytes = new byte[64]; //TODO: dynamically resize as we get more data
+            int index = 0;
+            int nextByte;
+            while ((nextByte = cipherInputStream.read()) != -1) {
+                roundTrippedBytes[index] = (byte) nextByte;
+                index++;
+            }
+            if (roundTrippedBytes != null) result = roundTrippedBytes;
+//            Log.e(TAG, "round tripped bytes: " + roundTrippedBytes);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return bytesToLong(result);
     }
 
     public static boolean deleteKeyStoreEntry(String alias) {
@@ -397,6 +455,19 @@ public class KeyStoreManager {
             app = IntroActivity.app;
         if (app == null) return null;
         return getKeyStoreString(app);
+    }
+
+    private static byte[] longToBytes(long x) {
+        ByteBuffer buffer = ByteBuffer.allocate(Long.SIZE);
+        buffer.putLong(x);
+        return buffer.array();
+    }
+
+    private static long bytesToLong(byte[] bytes) {
+        ByteBuffer buffer = ByteBuffer.allocate(Long.SIZE);
+        buffer.put(bytes);
+        buffer.flip();
+        return buffer.getLong();
     }
 
 }

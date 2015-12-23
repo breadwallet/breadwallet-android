@@ -101,7 +101,7 @@ public class FragmentAnimator {
 
     public static void animateScanResultFragment() {
         MainActivity app = MainActivity.app;
-        if(app == null) return;
+        if (app == null) return;
         CustomPagerAdapter.adapter.showFragments(false);
         Log.e(TAG, "animateScanResultFragment");
         MainActivity.beenThroughSavedInstanceMethod = false;
@@ -128,6 +128,36 @@ public class FragmentAnimator {
             }
         }, 200);
     }
+
+//    public static void animateRequestFragment() {
+//        MainActivity app = MainActivity.app;
+//        if (app == null) return;
+//        CustomPagerAdapter.adapter.showFragments(false);
+//        Log.e(TAG, "animateScanResultFragment");
+////        MainActivity.beenThroughSavedInstanceMethod = false;
+//        app.requestFragmentOn = true;
+//        InputMethodManager keyboard = (InputMethodManager) app.
+//                getSystemService(Context.INPUT_METHOD_SERVICE);
+//        keyboard.hideSoftInputFromWindow(CustomPagerAdapter.adapter.
+//                mainFragment.addressEditText.getWindowToken(), 0);
+//        app.setBurgerButtonImage(app.BACK);
+//        //Disabled inspection: <Expected resource type anim>
+//        final FragmentManager fragmentManager = app.getFragmentManager();
+//        final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//
+//        fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
+//        fragmentTransaction.replace(R.id.main_layout, new FragmentRequest(), FragmentRequest.class.getName());
+//        fragmentTransaction.commit();
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                FragmentRequest fragmentRequest = (FragmentRequest) fragmentManager.
+//                        findFragmentByTag(FragmentRequest.class.getName());
+//                SpringAnimator.showBouncySlideHorizontal(fragmentRequest.getView(),
+//                        SpringAnimator.TO_RIGHT, 70);
+//            }
+//        }, 200);
+//    }
 
     /**
      * Animate the transition on burgerButton/MenuButton pressed
@@ -287,6 +317,8 @@ public class FragmentAnimator {
         Log.e(TAG, "got to the end of hideDecoderFragment");
     }
 
+
+
     public static void hideScanResultFragment() {
         MainActivity app = MainActivity.app;
         if (app == null) return;
@@ -307,6 +339,27 @@ public class FragmentAnimator {
                 remove(fragmentScanResult).commit();
         app.setBurgerButtonImage(app.BURGER);
     }
+
+//    public static void hideRequestFragment() {
+//        MainActivity app = MainActivity.app;
+//        if (app == null) return;
+//        Log.e(TAG, "hideRequestFragment");
+//        CustomPagerAdapter.adapter.showFragments(true);
+//        app.requestFragmentOn = false;
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                FragmentAnimator.multiplePressingAvailable = true;
+//            }
+//        }, 300);
+//        FragmentManager fragmentManager = app.getFragmentManager();
+//        FragmentRequest fragmentRequest = (FragmentRequest)
+//                fragmentManager.findFragmentByTag(FragmentRequest.class.getName());
+//        fragmentManager.beginTransaction().
+//                setCustomAnimations(R.animator.from_left, R.animator.to_right).
+//                remove(fragmentRequest).commit();
+//        app.setBurgerButtonImage(app.BURGER);
+//    }
 
 //    public static boolean requestNeededPermission(Activity app) {
 //        int CAMERA_REQUEST_ID = 2;

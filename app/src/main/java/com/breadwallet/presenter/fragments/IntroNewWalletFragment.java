@@ -13,6 +13,8 @@ import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.wallet.BRWalletManager;
 
+import java.text.Normalizer;
+
 /**
  * BreadWallet
  * <p/>
@@ -54,6 +56,11 @@ public class IntroNewWalletFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String phrase = m.generateRandomSeed();
+                KeyStoreManager.putWalletCreationTime(System.currentTimeMillis(), getActivity());
+                String normalizedPhrase = Normalizer.normalize(phrase, Normalizer.Form.NFKD);
+                byte[] pubKey = m.getMasterPubKey(normalizedPhrase);
+                m.setPublicKeyBuff(pubKey);
+                KeyStoreManager.putMasterPublicKey(pubKey, getActivity());
                 Log.w(TAG, "The phrase from keystore is: " + KeyStoreManager.getKeyStoreString(getActivity()));
                 if (phrase == null) throw new NullPointerException("Phrase is null!");
                 ((IntroActivity) getActivity()).showWarningFragment();

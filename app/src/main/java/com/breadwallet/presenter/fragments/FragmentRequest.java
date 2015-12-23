@@ -52,9 +52,8 @@ import java.math.BigDecimal;
  * THE SOFTWARE.
  */
 
-public class FragmentScanResult extends Fragment implements View.OnClickListener {
+public class FragmentRequest extends Fragment implements View.OnClickListener {
     public static final String TAG = "FragmentScanResult";
-    private TextView scanResult;
     private RelativeLayout customKeyboardLayout;
     public static TextView amountToPay;
     public static TextView amountBeforeArrow;
@@ -72,8 +71,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
                              final ViewGroup container, Bundle savedInstanceState) {
         // The last two arguments ensure LayoutParams are inflated
         // properly.
-        final View rootView = inflater.inflate(R.layout.fragment_scan_result, container, false);
-        scanResult = (TextView) rootView.findViewById(R.id.scan_result);
+        final View rootView = inflater.inflate(R.layout.fragment_request, container, false);
         customKeyboardLayout = (RelativeLayout) rootView.findViewById(R.id.custom_keyboard_layout);
         amountToPay = (TextView) rootView.findViewById(R.id.amount_to_pay);
         amountBeforeArrow = (TextView) rootView.findViewById(R.id.amount_before_arrow);
@@ -91,7 +89,6 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
                             customKeyboardLayout.getLocationOnScreen(locations);
                             customKeyboardLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                             createCustomKeyboardButtons(locations[1]);
-
                         }
                     }
                 });
@@ -119,11 +116,8 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
     @Override
     public void onResume() {
         updateRateAndISO();
-        FragmentScanResult.currentCurrencyPosition = FragmentScanResult.BITCOIN_RIGHT;
+        currentCurrencyPosition = BITCOIN_RIGHT;
         AmountAdapter.calculateAndPassValuesToFragment("0");
-
-        scanResult.setText("to: " + address);
-
         super.onResume();
     }
 
@@ -153,7 +147,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         float buttonWidth = (availableWidth - gap) / 3;
         float buttonHeight = buttonWidth;
         float spaceNeeded = buttonHeight * 4 + gap;
-//        Log.e(TAG, "space taken: " + spaceNeeded);
+        Log.e(TAG, "space taken: " + spaceNeeded);
         int keyboardLayoutY = y;
         int buttonTextSize = 45;
         Log.e(TAG, "spaceNeeded: " + spaceNeeded + ", keyboardLayoutY: " + keyboardLayoutY);

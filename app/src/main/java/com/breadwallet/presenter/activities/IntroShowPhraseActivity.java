@@ -12,6 +12,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.wallet.BRWalletManager;
 
 public class IntroShowPhraseActivity extends Activity {
@@ -42,7 +43,7 @@ public class IntroShowPhraseActivity extends Activity {
             }
         });
         writeDownLayout.setVisibility(View.GONE);
-        String phrase = m.getPhrase(this);
+        String phrase = KeyStoreManager.getKeyStoreString(this);
         if (phrase != null && phrase.length() > 1) {
             thePhrase.setText(phrase);
         } else {

@@ -163,9 +163,8 @@ public class AmountAdapter extends Observable {
         rightValue = "0";
         leftValue = "0";
         CurrencyManager.separatorNeedsToBeShown = false;
-        FragmentScanResult.currentCurrencyPosition = FragmentScanResult.BITCOIN_RIGHT;
         digitsInserted = 0;
-        calculateAndPassValuesToFragment("0");
+
     }
 
     public static void calculateAndPassValuesToFragment(String valuePassed) {
