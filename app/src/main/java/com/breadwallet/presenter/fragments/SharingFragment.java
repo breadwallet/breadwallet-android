@@ -123,7 +123,8 @@ public class SharingFragment extends DialogFragment {
             public void onClick(View v) {
                 if(FragmentAnimator.checkTheMultipressingAvailability(300)){
                     getDialog().cancel();
-//                    FragmentAnimator.animateRequestFragment();
+                    FragmentScanResult.isARequest = true;
+                    FragmentAnimator.animateScanResultFragment();
                     //TODO: actions on requesting amount
                 }
             }

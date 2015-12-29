@@ -38,6 +38,10 @@
             android:name=".presenter.activities.IntroShowPhraseActivity"
             android:label="@string/title_activity_intro_show_phrase"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".presenter.activities.RequestQRActivity"
+            android:label="@string/title_activity_request_qr"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

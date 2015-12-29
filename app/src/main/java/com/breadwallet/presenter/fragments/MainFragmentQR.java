@@ -58,7 +58,7 @@ import java.io.IOException;
  */
 
 public class MainFragmentQR extends Fragment {
-    public static final String TAG = "MainFragmentQR";
+    public static final String TAG = MainFragmentQR.class.getName();
     private ImageView qrcode;
     private static final String TEST_ADDRESS = "mhBmRiqosSHR9YnPTKc3xXcvhEcKtjet2p";
     private TextView mainAddressText;
@@ -86,7 +86,7 @@ public class MainFragmentQR extends Fragment {
         mainAddressText = (TextView) rootView.findViewById(R.id.main_address_text);
         addressLayout = (RelativeLayout) rootView.findViewById(R.id.theAddressLayout);
 
-        generateQR();
+        generateQR(TEST_ADDRESS);
         fm = getActivity().getFragmentManager();
         main_fragment_qr.setPadding(0, MainActivity.screenParametersPoint.y / 5, 0, 0);
         final BreadWalletApp breadWalletApp = (BreadWalletApp) MainActivity.app.getApplication();
@@ -97,7 +97,7 @@ public class MainFragmentQR extends Fragment {
                 if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
                     sharingFragment.setTheAddress(mainAddressText.getText().toString());
                     saveBitmapToFile();
-                    sharingFragment.show(fm, "sharingFragment");
+                    sharingFragment.show(fm, SharingFragment.class.getName());
                 }
             }
         });
@@ -128,7 +128,7 @@ public class MainFragmentQR extends Fragment {
         return rootView;
     }
 
-    private void generateQR() {
+    private void generateQR(String bitcoinURL) {
         WindowManager manager = (WindowManager) getActivity().getSystemService(getActivity().WINDOW_SERVICE);
         Display display = manager.getDefaultDisplay();
         Point point = new Point();
@@ -138,7 +138,7 @@ public class MainFragmentQR extends Fragment {
         int smallerDimension = width < height ? width : height;
         smallerDimension = smallerDimension * 3 / 4;
 
-        QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(TEST_ADDRESS,
+        QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(bitcoinURL,
                 null,
                 Contents.Type.TEXT,
                 BarcodeFormat.QR_CODE.toString(),

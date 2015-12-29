@@ -6,8 +6,8 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_setPeerManagerCallbacks
                                                                                  jbyteArray peerManager) {
     jbyte *bytePeerManager = (*env)->GetByteArrayElements(env, peerManager, 0);
     BRPeerManager *peerManager = bytePeerManager;
-    BRPeerManagerSetCallbacks(peerManager, NULL, &syncStarted, &syncSucceeded, &syncFailed,
-                              &txStatusUpdate, &saveBlocks, &savePeers, &networkIsReachable);
+    BRPeerManagerSetCallbacks(peerManager, NULL, syncStarted, syncSucceeded, syncFailed,
+                              txStatusUpdate, saveBlocks, savePeers, networkIsReachable);
 
 }
 

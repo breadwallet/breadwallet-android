@@ -22,7 +22,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
@@ -221,9 +220,19 @@ public class CurrencyManager extends Observable {
         if (rate == 0) rate = 1;
         double result = 1000000 / rate;
         DecimalFormat decimalFormat = new DecimalFormat("0.00");
-        decimalFormat.setRoundingMode(RoundingMode.CEILING);
         String finalResult = getFormattedCurrencyString(iso, "1") + " = " +
                 getFormattedCurrencyString("BTC", String.valueOf(decimalFormat.format(result)));
+        return finalResult;
+    }
+
+    public String getCurrencyAndExchange(double rate, String iso, String target) {
+        Log.e(TAG,"target: " + target);
+//        Log.e(TAG, "result of the exchange rate calculation: " + result);
+        if (rate == 0) rate = 1;
+        double exchange = (Double.parseDouble(target) * rate / 1000000);
+        DecimalFormat decimalFormat = new DecimalFormat("0.00");
+        String finalResult = getFormattedCurrencyString("BTC", target) + " = " +
+                getFormattedCurrencyString(iso, String.valueOf(decimalFormat.format(exchange)));
         return finalResult;
     }
 

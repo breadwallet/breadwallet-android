@@ -36,6 +36,7 @@ import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.fragments.FragmentCurrency;
+import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.presenter.fragments.FragmentSettings;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.tools.CurrencyManager;
@@ -90,6 +91,13 @@ import java.util.Observer;
 public class MainActivity extends FragmentActivity implements Observer {
     public static final String TAG = "MainActivity";
     public static final String PREFS_NAME = "MyPrefsFile";
+    public static final int BURGER = 0;
+    public static final int CLOSE = 1;
+    public static final int BACK = 2;
+    public static final int DEBUG = 1;
+    public static final int RELEASE = 2;
+    public static final float PAGE_INDICATOR_SCALE_UP = 1.3f;
+
     public static MainActivity app;
     public static boolean decoderFragmentOn;
     public static boolean scanResultFragmentOn;
@@ -104,10 +112,6 @@ public class MainActivity extends FragmentActivity implements Observer {
     public static ParallaxViewPager parallaxViewPager;
     public ClipboardManager myClipboard;
     private boolean doubleBackToExitPressedOnce;
-    public static final int BURGER = 0;
-    public static final int CLOSE = 1;
-    public static final int BACK = 2;
-    public static final float PAGE_INDICATOR_SCALE_UP = 1.3f;
     public static boolean beenThroughSavedInstanceMethod = false;
     public ViewFlipper viewFlipper;
     public ViewFlipper lockerPayFlipper;
@@ -115,16 +119,12 @@ public class MainActivity extends FragmentActivity implements Observer {
     private NetworkChangeReceiver receiver = new NetworkChangeReceiver();
     public static Point screenParametersPoint = new Point();
     private int middleViewPressedCount = 0;
-    public static final int DEBUG = 1;
-    public static final int RELEASE = 2;
+
     public static int MODE = RELEASE;
     public TextView testnet;
     public SoftKeyboard softKeyboard;
     public RelativeLayout mainLayout;
     public FingerprintManager fingerprintManager;
-    public boolean requestFragmentOn;
-
-//    private native String messageFromNativeCode(String logThis);
 
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
@@ -208,12 +208,12 @@ public class MainActivity extends FragmentActivity implements Observer {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-//                BRWalletManager m = BRWalletManager.getInstance(app);
-//                m.testWalletCallbacks();
+                BRWalletManager m = BRWalletManager.getInstance(app);
+                m.testWalletCallbacks();
 //                Log.e(TAG, "the pubkey length is: " + m.getPublicKeyBuff().length);
-                Log.e(TAG, "FROM KEYSTORE PUBKEY: " + KeyStoreManager.getMasterPublicKey(app));
-                Log.e(TAG, "FROM KEYSTORE PHRASE: " + KeyStoreManager.getKeyStoreString(app));
-                Log.e(TAG, "FROM KEYSTORE CREATION TIME: " + KeyStoreManager.getWalletCreationTime(app));
+//                Log.e(TAG, "FROM KEYSTORE PUBKEY: " + KeyStoreManager.getMasterPublicKey(app));
+//                Log.e(TAG, "FROM KEYSTORE PHRASE: " + KeyStoreManager.getKeyStoreString(app));
+//                Log.e(TAG, "FROM KEYSTORE CREATION TIME: " + KeyStoreManager.getWalletCreationTime(app));
             }
         }, 10 * 1000);
     }
@@ -276,15 +276,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         pageIndicatorRight = (ImageView) findViewById(R.id.circle_indicator_right);
         pagerAdapter = new CustomPagerAdapter(getFragmentManager());
         burgerButtonMap = new HashMap<>();
-//        fragmentSettings = new FragmentSettings();
-//        fragmentSettingsAll = new FragmentSettingsAll();
-//        mainFragmentDecoder = new FragmentDecoder();
-//        fragmentAbout = new FragmentAbout();
-//        fragmentCurrency = new FragmentCurrency();
-//        fragmentRecoveryPhrase = new FragmentRecoveryPhrase();
-//        fragmentWipeWallet = new FragmentWipeWallet();
-//        fragmentScanResult = new FragmentScanResult();
-//        passwordDialogFragment = new PasswordDialogFragment();
         parallaxViewPager = ((ParallaxViewPager) findViewById(R.id.main_viewpager));
         parallaxViewPager.setOverlapPercentage(0.99f).setAdapter(pagerAdapter);
         parallaxViewPager.setBackgroundResource(R.drawable.backgroundmain);
@@ -460,6 +451,19 @@ public class MainActivity extends FragmentActivity implements Observer {
             AlertDialog alert = builder.create();
             alert.show();
         }
+    }
+
+    public void request(View view) {
+        SpringAnimator.showAnimation(view);
+        Intent intent;
+        String amount = FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_RIGHT ?
+                AmountAdapter.getRightValue(): AmountAdapter.getLeftValue();
+        //TODO get the actual address
+        RequestQRActivity.THE_ADDRESS = "bitcoin:mhBmRiqosSHR9YnPTKc3xXcvhEcKtjet2p?amount=" + amount;
+        intent = new Intent(this, RequestQRActivity.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        FragmentAnimator.hideScanResultFragment();
     }
 
     @Override

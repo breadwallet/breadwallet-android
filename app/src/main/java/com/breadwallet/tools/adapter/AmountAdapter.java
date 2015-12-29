@@ -47,8 +47,14 @@ public class AmountAdapter extends Observable {
     private static String leftValue = "0";
     private static final int MAX_DIGITS_AFTER_SEPARATOR = 2;
     public static int digitsInserted = 0;
+    public static int buttonCode = BreadWalletApp.PAY_BUTTON;
 
     public static void preConditions(String tmp) {
+        if(FragmentScanResult.isARequest){
+            buttonCode = BreadWalletApp.REQUEST_BUTTON;
+        } else {
+            buttonCode = BreadWalletApp.PAY_BUTTON;
+        }
         switch (tmp) {
             case "":
                 doBackSpace();
@@ -98,7 +104,7 @@ public class AmountAdapter extends Observable {
         MainActivity app = MainActivity.app;
         if (isTextColorGrey) {
             changeTextColor(1);
-            ((BreadWalletApp) app.getApplication()).setLockerPayButton(BreadWalletApp.PAY_BUTTON);
+            ((BreadWalletApp) app.getApplication()).setLockerPayButton(buttonCode);
         }
         String amount = rightValue;
         CurrencyManager.separatorNeedsToBeShown = true;
@@ -116,7 +122,7 @@ public class AmountAdapter extends Observable {
 
         if (isTextColorGrey) {
             changeTextColor(1);
-            ((BreadWalletApp) app.getApplication()).setLockerPayButton(BreadWalletApp.PAY_BUTTON);
+            ((BreadWalletApp) app.getApplication()).setLockerPayButton(buttonCode);
         }
         if (isDigitInsertingLegal(amount)) {
 
@@ -221,6 +227,10 @@ public class AmountAdapter extends Observable {
 
     public static String getRightValue() {
         return rightValue;
+    }
+
+    public static String getLeftValue() {
+        return leftValue;
     }
 
     public static boolean isPayLegal() {

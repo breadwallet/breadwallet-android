@@ -66,6 +66,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
     private static String ISO;
     public static double rate = -1;
     static final String DOUBLE_ARROW = "\u21CB";
+    public static boolean isARequest = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -122,7 +123,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         FragmentScanResult.currentCurrencyPosition = FragmentScanResult.BITCOIN_RIGHT;
         AmountAdapter.calculateAndPassValuesToFragment("0");
 
-        scanResult.setText("to: " + address);
+        scanResult.setText(isARequest ? "" : "to: " + address);
 
         super.onResume();
     }
@@ -132,6 +133,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         super.onPause();
         AmountAdapter.resetKeyboard();
         ((BreadWalletApp) getActivity().getApplication()).setLockerPayButton(BreadWalletApp.LOCKER_BUTTON);
+        isARequest = false;
     }
 
     @Override
@@ -254,6 +256,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
 
     public static void updateBothTextValues(BigDecimal bitcoinValue, BigDecimal otherValue) {
         if (ISO == null) updateRateAndISO();
+        if(ISO == null) ISO = "USD";
         final String btcIso = "BTC";
         if (currentCurrencyPosition == BITCOIN_RIGHT) {
             amountToPay.setText(CurrencyManager.getInstance(MainActivity.app).getFormattedCurrencyString(btcIso, bitcoinValue.toString()));
@@ -268,7 +271,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
 
     public static void updateRateAndISO() {
         MainActivity app = MainActivity.app;
-        if(app == null) return;
+        if (app == null) return;
         SharedPreferences settings = MainActivity.app.getSharedPreferences(MainActivity.PREFS_NAME, 0);
 //        int position = settings.getInt(FragmentCurrency.POSITION, 0);
         if (CurrencyListAdapter.currencyListAdapter != null && !CurrencyListAdapter.currencyListAdapter.isEmpty()) {

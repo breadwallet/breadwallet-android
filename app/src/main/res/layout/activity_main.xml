@@ -62,12 +62,23 @@
             android:id="@+id/main_button_pay"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:clickable="true"
             android:gravity="center"
-            android:text="pay"
             android:onClick="pay"
+            android:text="pay"
+            android:textColor="@color/dark_blue"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/main_button_request"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="request"
+            android:onClick="request"
             android:clickable="true"
             android:textColor="@color/dark_blue"
-            android:textSize="22sp" />
+            android:textSize="16sp" />
 
     </ViewFlipper>
 

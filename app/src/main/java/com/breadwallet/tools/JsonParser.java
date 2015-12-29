@@ -77,7 +77,7 @@ public class JsonParser {
             }
             in.close();
         } catch (Exception e) {
-            throw new RuntimeException("Exception while calling URL:" + myURL, e);
+            return null;
         }
 
         return sb.toString();

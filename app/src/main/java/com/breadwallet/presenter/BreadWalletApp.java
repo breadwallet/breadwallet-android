@@ -84,6 +84,7 @@ public class BreadWalletApp extends Application {
     public static final int BREAD_WALLET_TEXT = 1;
     public static final int LOCKER_BUTTON = 2;
     public static final int PAY_BUTTON = 3;
+    public static final int REQUEST_BUTTON = 4;
     public static final String TAG = BreadWalletApp.class.getName();
     public static boolean unlocked = false;
     private boolean customToastAvailable = true;
@@ -181,23 +182,34 @@ public class BreadWalletApp extends Application {
     public void setLockerPayButton(int view) {
         MainActivity app = MainActivity.app;
         Log.e(TAG, "Flipper has # of child: " + app.lockerPayFlipper.getChildCount());
+        Log.e(TAG,"app.lockerPayFlipper: " + app.lockerPayFlipper.getDisplayedChild());
         switch (view) {
             case LOCKER_BUTTON:
                 if (app.lockerPayFlipper.getDisplayedChild() == 1) {
                     app.lockerPayFlipper.showPrevious();
-                    if (unlocked) {
-                        app.lockerButton.setVisibility(View.INVISIBLE);
-                    } else {
-                        app.lockerButton.setVisibility(View.VISIBLE);
-                    }
+
+                } else if (app.lockerPayFlipper.getDisplayedChild() == 2) {
+                    app.lockerPayFlipper.showPrevious();
+                    app.lockerPayFlipper.showPrevious();
                 }
+                app.lockerButton.setVisibility(unlocked ? View.INVISIBLE : View.VISIBLE);
                 break;
             case PAY_BUTTON:
+                if (app.lockerPayFlipper.getDisplayedChild() == 0)
+                    app.lockerPayFlipper.showNext();
+                if (app.lockerPayFlipper.getDisplayedChild() == 2)
+                    app.lockerPayFlipper.showPrevious();
+                break;
+            case REQUEST_BUTTON:
                 if (app.lockerPayFlipper.getDisplayedChild() == 0) {
+                    app.lockerPayFlipper.showNext();
+                    app.lockerPayFlipper.showNext();
+                } else if(app.lockerPayFlipper.getDisplayedChild() == 1){
                     app.lockerPayFlipper.showNext();
                 }
                 break;
         }
+        Log.e(TAG,"app.lockerPayFlipper: " + app.lockerPayFlipper.getDisplayedChild());
 
     }
 

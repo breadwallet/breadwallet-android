@@ -13,7 +13,8 @@ void Java_com_breadwallet_wallet_BRWalletManager_setCallbacks(JNIEnv *env,
     BRWallet *wallet = byteWallet;
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "setCallbacks");
     //set the Wallet callbacks
-    BRWalletSetCallbacks(wallet, NULL, &balanceChanged, &txAdded, &txUpdated, &txDeleted);
+    char *info;
+    BRWalletSetCallbacks(wallet, info, balanceChanged, txAdded, txUpdated, txDeleted);
 
     int a = 10;
     int balance = 480000;
@@ -53,16 +54,16 @@ void Java_com_breadwallet_wallet_BRWalletManager_testWalletCallbacks(JNIEnv *env
     if (!tx) r = 0;
 //    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "testWalletCallbacks 4");
 
-    if (tx) BRWalletSignTransaction(w, tx, NULL);
-//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "testWalletCallbacks 5");
-    if (tx && !BRTransactionIsSigned(tx)) r = 0;
-//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "testWalletCallbacks 6");
-
-    if (tx) BRWalletRegisterTransaction(w, tx);
-
-    if (tx && BRWalletBalance(w) + BRWalletFeeForTx(w, tx) != SATOSHIS / 2) r = 0;
-
-    BRWalletFree(w);
+    if (tx) BRWalletSignTransaction(w, tx, NULL); 
+////    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "testWalletCallbacks 5");
+//    if (tx && !BRTransactionIsSigned(tx)) r = 0;
+////    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "testWalletCallbacks 6");
+//
+//    if (tx) BRWalletRegisterTransaction(w, tx);
+//
+//    if (tx && BRWalletBalance(w) + BRWalletFeeForTx(w, tx) != SATOSHIS / 2) r = 0;
+//
+//    BRWalletFree(w);
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "testWalletCallbacks finish");
 
 }
