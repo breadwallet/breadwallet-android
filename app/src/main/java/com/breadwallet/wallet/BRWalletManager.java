@@ -257,14 +257,6 @@ public class BRWalletManager {
     public void onBalanceChanged(final long balance) {
         Log.e(TAG, "THIS IS THE BALANCE FROM C: " + balance);
         CurrencyManager.getInstance(ctx).setBalance(balance);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                long newBalance = 1435992491;
-                Log.e(TAG, "Changing balance to: " + newBalance);
-                CurrencyManager.getInstance(ctx).setBalance(newBalance);
-            }
-        }, 10000);
     }
 
     public void onTxAdded(byte[] tx) {

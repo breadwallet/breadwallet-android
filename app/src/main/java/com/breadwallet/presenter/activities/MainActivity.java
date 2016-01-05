@@ -126,6 +126,11 @@ public class MainActivity extends FragmentActivity implements Observer {
     public RelativeLayout mainLayout;
     public FingerprintManager fingerprintManager;
 
+    //loading the native library
+    static {
+        System.loadLibrary("core");
+    }
+
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
         super.onSaveInstanceState(outState, outPersistentState);
@@ -205,17 +210,12 @@ public class MainActivity extends FragmentActivity implements Observer {
         scaleView(pageIndicatorLeft, 1f, PAGE_INDICATOR_SCALE_UP, 1f, PAGE_INDICATOR_SCALE_UP);
 
         //check the txAdded callback functionality
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                BRWalletManager m = BRWalletManager.getInstance(app);
-                m.testWalletCallbacks();
-//                Log.e(TAG, "the pubkey length is: " + m.getPublicKeyBuff().length);
+        BRWalletManager m = BRWalletManager.getInstance(app);
+        m.testWalletCallbacks();
+//        Log.e(TAG, "the pubkey length is: " + m.getPublicKeyBuff().length);
 //                Log.e(TAG, "FROM KEYSTORE PUBKEY: " + KeyStoreManager.getMasterPublicKey(app));
 //                Log.e(TAG, "FROM KEYSTORE PHRASE: " + KeyStoreManager.getKeyStoreString(app));
 //                Log.e(TAG, "FROM KEYSTORE CREATION TIME: " + KeyStoreManager.getWalletCreationTime(app));
-            }
-        }, 10 * 1000);
     }
 
     @Override
@@ -457,7 +457,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         SpringAnimator.showAnimation(view);
         Intent intent;
         String amount = FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_RIGHT ?
-                AmountAdapter.getRightValue(): AmountAdapter.getLeftValue();
+                AmountAdapter.getRightValue() : AmountAdapter.getLeftValue();
         //TODO get the actual address
         RequestQRActivity.THE_ADDRESS = "bitcoin:mhBmRiqosSHR9YnPTKc3xXcvhEcKtjet2p?amount=" + amount;
         intent = new Intent(this, RequestQRActivity.class);
@@ -587,7 +587,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     private void setUpTheWallet() {
         BRWalletManager m = BRWalletManager.getInstance(this);
         String phrase = KeyStoreManager.getKeyStoreString(this);
-        if(phrase == null) return;
+        if (phrase == null) return;
         String normalizedPhrase = Normalizer.normalize(phrase, Normalizer.Form.NFKD);
         byte[] pubKey = m.getMasterPubKey(normalizedPhrase);
         m.setPublicKeyBuff(pubKey);

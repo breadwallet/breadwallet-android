@@ -79,8 +79,8 @@ JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_createWallet(JN
 }
 
 JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_getMasterPubKey(JNIEnv *env,
-                                                                              jobject thiz,
-                                                                              jstring phrase) {
+                                                                                 jobject thiz,
+                                                                                 jstring phrase) {
     char *rawPhrase = (*env)->GetStringUTFChars(env, phrase, 0);
     UInt512 key = UINT512_ZERO;
     BRBIP39DeriveKey(key.u8, rawPhrase, NULL);

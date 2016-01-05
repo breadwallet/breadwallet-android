@@ -15,27 +15,27 @@ JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRPeerManager_connect(JNIEnv *e
     BRWallet *wallet = byteWallet;
 
     //create blocks
-    BRMerkleBlock blocks[blocksCount];
+    BRMerkleBlock *blocks[blocksCount];
     for (int i = 0; i < blocksCount; i++) {
-        BRMerkleBlock block = (*env)->GetObjectArrayElement(env, blocksBuffers, i);
+        jobject block = (*env)->GetObjectArrayElement(env, blocksBuffers, i);
         jbyte *buffB = (*env)->GetDirectBufferAddress(env, block);
-        blocks[i] = buffB;
+        blocks[i] = (BRMerkleBlock*) buffB;
     }
     if (blocks == NULL){
         __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "NULL: %s", "blocks");
-        return;
+        return NULL;
     }
 
     //create peers
-    BRPeer peers[peersCount];
+    BRPeer *peers[peersCount];
     for (int i = 0; i < peersCount; i++) {
-        BRPeer peer = (*env)->GetObjectArrayElement(env, peersBuffers, i);
+        jobject peer = (*env)->GetObjectArrayElement(env, peersBuffers, i);
         jbyte *buffP = (*env)->GetDirectBufferAddress(env, peer);
-        peers[i] = buffP;
+        peers[i] = (BRPeer*) buffP;
     }
     if (peers == NULL) {
         __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "NULL: %s", "peers");
-        return;
+        return NULL;
     }
 
     BRPeerManager *peerManager = BRPeerManagerNew(wallet, earliestKeyTime,
@@ -44,7 +44,7 @@ JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRPeerManager_connect(JNIEnv *e
                                                   peersCount);
     if(peerManager == NULL) {
         __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "NULL: %s", "peerManager");
-        return;
+        return NULL;
     }
 
     int size = sizeof(peerManager);

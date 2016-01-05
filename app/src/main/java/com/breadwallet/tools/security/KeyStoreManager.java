@@ -450,6 +450,7 @@ public class KeyStoreManager {
     }
 
     public static String getSeed() {
+        Log.e(TAG,"in getSeed in KeyStoreManager");
         Context app = MainActivity.app;
         if (app == null)
             app = IntroActivity.app;

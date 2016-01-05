@@ -7,24 +7,14 @@
 
 #include "jni.h"
 #include "BRInt.h"
+#include "BRPeer.h"
+#include "BRMerkleBlock.h"
+#include "BRPeerManager.h"
 #include "BRTransaction.h"
+#include "jni.h"
 
 JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_setPeerManagerCallbacks(JNIEnv *env,
                                                                                        jobject thiz,
                                                                                        jbyteArray peerManager);
-
-void syncStarted(void *info);
-
-void syncSucceded(void *info);
-
-void syncFailed(void *info, BRPeerManagerError error);
-
-void txStatusUpdate(void *info);
-
-void saveBlocks(void *info, const BRMerkleBlock blocks[], size_t count);
-
-void savePeers(void *info, const BRPeer peers[], size_t count);
-
-int networkIsReachable(void *info);
 
 #endif //BREADWALLET_PEERMANAGERCALLBACKS_H

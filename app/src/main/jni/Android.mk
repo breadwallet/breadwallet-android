@@ -7,9 +7,11 @@ $(LOCAL_PATH)/transition\
 $(LOCAL_PATH)/breadwallet-core
 
 LOCAL_SRC_FILES := \
+./transition/WalletCallbacks.c\
 ./transition/core.c\
 ./transition/wallet.c\
-./transition/WalletCallbacks.c
+./transition/PeerManager.c\
+./transition/PeerManagerCallbacks.c
 
 LOCAL_MODULE := core
 
