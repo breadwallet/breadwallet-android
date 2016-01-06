@@ -3,7 +3,6 @@ package com.breadwallet.wallet;
 import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.Context;
-import android.os.Handler;
 import android.util.Log;
 
 import com.breadwallet.tools.CurrencyManager;
@@ -14,7 +13,6 @@ import com.breadwallet.tools.sqlite.SQLiteManager;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.security.SecureRandom;
-import java.text.NumberFormat;
 import java.util.List;
 
 /**
@@ -45,8 +43,6 @@ import java.util.List;
 public class BRWalletManager {
     public static final String TAG = BRWalletManager.class.getName();
     private static BRWalletManager instance;
-    private byte[] walletBuff;
-    private byte[] publicKeyBuff;
     private static Context ctx;
 
 //    public static final long SATOSHIS = 100000000;
@@ -62,20 +58,20 @@ public class BRWalletManager {
 //    public static final String SEC_ATTR_SERVICE = "org.voisine.breadwallet";
 //    public static final String ANDROID_KEY_STORE = "AndroidKeyStore";
 
-    ByteBuffer masterPublicKey; // master public key used to generate wallet addresses
-    byte[] wallet;
-    char[] seedPhrase;          // requesting seedPhrase will trigger authentication
-    long seedCreationTime;      // interval since reference date, 00:00:00 01/01/01 GMT
-    long secureTime;            // last known time from an ssl server connection
-    long spendingLimit;         // amount that can be spent using touch id without pin entry
-    boolean passcodeEnabled;    // true if device passcode is enabled
-    boolean didAuthenticate;    // true if the user authenticated after this was last set to false
-    NumberFormat format;        // bitcoin currency formatter
-    NumberFormat localFormat;   // local currency formatter
-    String localCurrencyCode;   // local currency ISO code
-    double localCurrencyPrice;  // exchange rate in local currency units per bitcoin
-    List<String> currencyCodes; // list of supported local currency codes
-    List<String> currencyNames; // names for local currency codes
+//    ByteBuffer masterPublicKey; // master public key used to generate wallet addresses
+//    byte[] wallet;
+//    char[] seedPhrase;          // requesting seedPhrase will trigger authentication
+//    long seedCreationTime;      // interval since reference date, 00:00:00 01/01/01 GMT
+//    long secureTime;            // last known time from an ssl server connection
+//    long spendingLimit;         // amount that can be spent using touch id without pin entry
+//    boolean passcodeEnabled;    // true if device passcode is enabled
+//    boolean didAuthenticate;    // true if the user authenticated after this was last set to false
+//    NumberFormat format;        // bitcoin currency formatter
+//    NumberFormat localFormat;   // local currency formatter
+//    String localCurrencyCode;   // local currency ISO code
+//    double localCurrencyPrice;  // exchange rate in local currency units per bitcoin
+//    List<String> currencyCodes; // list of supported local currency codes
+//    List<String> currencyNames; // names for local currency codes
 
     private BRWalletManager() {
     }
@@ -110,22 +106,6 @@ public class BRWalletManager {
         boolean success = KeyStoreManager.setKeyStoreString(phrase, ctx);
         Log.e(TAG, "setKeyStoreString was successful: " + success);
         return success ? phrase : null;
-    }
-
-    public void setWalletBuff(byte[] buff) {
-        walletBuff = buff;
-    }
-
-    public byte[] getWalletBuff() {
-        return walletBuff;
-    }
-
-    public byte[] getPublicKeyBuff() {
-        return publicKeyBuff;
-    }
-
-    public void setPublicKeyBuff(byte[] publicKeyBuff) {
-        this.publicKeyBuff = publicKeyBuff;
     }
 
     public static boolean setKeychainData(ByteBuffer buffer, String key, boolean authenticated) {
@@ -255,7 +235,7 @@ public class BRWalletManager {
      */
 
     public void onBalanceChanged(final long balance) {
-        Log.e(TAG, "THIS IS THE BALANCE FROM C: " + balance);
+        Log.e(TAG, "in the BRWalletManager - onBalanceChanged:  " + balance);
         CurrencyManager.getInstance(ctx).setBalance(balance);
     }
 
@@ -266,16 +246,16 @@ public class BRWalletManager {
     }
 
     public void onTxUpdated(byte[] tx) {
-
+        Log.e(TAG, "in the BRWalletManager - onTxUpdated");
     }
 
     public void onTxDeleted(byte[] tx) {
-
+        Log.e(TAG, "in the BRWalletManager - onTxDeleted");
     }
 
     private native byte[] encodeSeed(byte[] seed, String[] wordList);
 
-    public native byte[] createWallet(byte[] buffer, List<ByteBuffer> transactions, int transactionCount);
+    public native void createWallet(ByteBuffer transactions[], int transactionCount);
 
     public native void setCallbacks(byte[] wallet);
 

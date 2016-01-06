@@ -41,11 +41,11 @@ public class BRClipboardManager {
             int sdk = android.os.Build.VERSION.SDK_INT;
             if (sdk < android.os.Build.VERSION_CODES.HONEYCOMB) {
                 android.text.ClipboardManager clipboard = (android.text.ClipboardManager) context
-                        .getSystemService(context.CLIPBOARD_SERVICE);
+                        .getSystemService(Context.CLIPBOARD_SERVICE);
                 clipboard.setText(text);
             } else {
                 android.content.ClipboardManager clipboard = (android.content.ClipboardManager) context
-                        .getSystemService(context.CLIPBOARD_SERVICE);
+                        .getSystemService(Context.CLIPBOARD_SERVICE);
                 android.content.ClipData clip = android.content.ClipData
                         .newPlainText("message", text);
                 clipboard.setPrimaryClip(clip);
@@ -61,7 +61,7 @@ public class BRClipboardManager {
         int sdk = android.os.Build.VERSION.SDK_INT;
         if (sdk < android.os.Build.VERSION_CODES.HONEYCOMB) {
             android.text.ClipboardManager clipboard = (android.text.ClipboardManager) context
-                    .getSystemService(context.CLIPBOARD_SERVICE);
+                    .getSystemService(Context.CLIPBOARD_SERVICE);
             return clipboard.getText().toString();
         } else {
             ClipboardManager clipboard = (ClipboardManager) context

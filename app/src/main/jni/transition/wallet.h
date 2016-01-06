@@ -7,7 +7,7 @@
 
 #include "jni.h"
 #include "BRPeerManager.h"
-#include "WalletCallbacks.h"
+//#include "WalletCallbacks.h"
 #include "BRInt.h"
 #include "BRBIP39Mnemonic.h"
 #include <android/log.h>
@@ -15,14 +15,16 @@
 #include "BRBIP32Sequence.h"
 #include "BRTransaction.h"
 
+BRWallet *wallet;
+BRMasterPubKey pubKey;
+
 JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_encodeSeed(JNIEnv *env,
                                                                             jobject thiz,
                                                                             jbyteArray seed,
                                                                             jobjectArray stringArray);
 
-JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_createWallet(JNIEnv *env,
+JNIEXPORT void Java_com_breadwallet_wallet_BRWalletManager_createWallet(JNIEnv *env,
                                                                               jobject thiz,
-                                                                              jbyteArray buffer,
                                                                               jobjectArray transactions,
                                                                               size_t transactions_count);
 

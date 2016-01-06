@@ -1,9 +1,4 @@
-#include <jni.h>
-#include <stdio.h>
-#include "breadwallet-core/BRPaymentProtocol.h"
-#include "breadwallet-core/BRTransaction.h"
-#include "breadwallet-core/BRAddress.h"
-#include <android/log.h>
+#include "core.h"
 
 //
 // Created by Mihail Gutan on 9/24/15.
@@ -231,7 +226,7 @@ JNIEXPORT jobject Java_com_breadwallet_tools_security_RequestHandler_parsePaymen
     return entity;
 }
 
-JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_tools_security_RequestHandler_getCertificatesFromPaymentRequest
+JNIEXPORT jbyteArray Java_com_breadwallet_tools_security_RequestHandler_getCertificatesFromPaymentRequest
         (JNIEnv *env, jobject obj, jbyteArray payment, jint index) {
 
     //create the BRPaymentProtocolRequest
@@ -284,6 +279,10 @@ JNIEXPORT jboolean JNICALL Java_com_breadwallet_tools_security_RequestHandler_va
 
     //return true for now!!!!!
 //    return JNI_TRUE;
+}
+
+JNIEXPORT void JNICALL Java_com_breadwallet_presenter_activities_MainActivity_clearCMemory(JNIEnv *env, jobject obj){
+        BRWalletFree(wallet);
 }
 
 //JNIEXPORT void Java_com_breadwallet_presenter_activities_MainActivity_sendMethodCallBack

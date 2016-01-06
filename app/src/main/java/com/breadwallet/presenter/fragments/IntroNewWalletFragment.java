@@ -59,7 +59,6 @@ public class IntroNewWalletFragment extends Fragment {
                 KeyStoreManager.putWalletCreationTime(System.currentTimeMillis(), getActivity());
                 String normalizedPhrase = Normalizer.normalize(phrase, Normalizer.Form.NFKD);
                 byte[] pubKey = m.getMasterPubKey(normalizedPhrase);
-                m.setPublicKeyBuff(pubKey);
                 KeyStoreManager.putMasterPublicKey(pubKey, getActivity());
                 Log.w(TAG, "The phrase from keystore is: " + KeyStoreManager.getKeyStoreString(getActivity()));
                 if (phrase == null) throw new NullPointerException("Phrase is null!");

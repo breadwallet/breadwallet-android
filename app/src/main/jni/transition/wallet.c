@@ -5,6 +5,57 @@
 #include "wallet.h"
 static JavaVM *jvm;
 
+static void balanceChanged(void *info, uint64_t balance) {
+    JNIEnv *globalEnv;
+    jint rs = (*jvm)->AttachCurrentThread(jvm, &globalEnv, NULL);
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "balanceChanged");
+    //create class
+    jclass clazz = (*globalEnv)->FindClass(globalEnv, "com/breadwallet/wallet/BRWalletManager");
+    jobject entity = (*globalEnv)->AllocObject(globalEnv, clazz);
+    jmethodID mid = (*globalEnv)->GetMethodID(globalEnv, clazz, "onBalanceChanged", "(J)V");
+    //call java methods
+    (*globalEnv)->CallVoidMethod(globalEnv, entity, mid, balance);
+}
+
+static void txAdded(void *info, BRTransaction *tx) {
+    JNIEnv *globalEnv;
+    jint rs = (*jvm)->AttachCurrentThread(jvm, &globalEnv, NULL);
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "txAdded");
+//    //create class
+    jclass clazz = (*globalEnv)->FindClass(globalEnv, "com/breadwallet/wallet/BRWalletManager");
+    jobject entity = (*globalEnv)->AllocObject(globalEnv, clazz);
+    jmethodID mid = (*globalEnv)->GetMethodID(globalEnv, clazz, "onTxAdded", "([B)V");
+    //call java methods
+    jbyteArray result = (*globalEnv)->NewByteArray(globalEnv, sizeof(tx));
+    (*globalEnv)->SetByteArrayRegion(globalEnv, result, 0, sizeof(result), (jbyte *) tx);
+    (*globalEnv)->CallVoidMethod(globalEnv, entity, mid, result);
+}
+
+static void txUpdated(void *info, const UInt256 txHashes[], size_t count, uint32_t blockHeight,
+                      uint32_t timestamp) {
+    JNIEnv *globalEnv;
+    jint rs = (*jvm)->AttachCurrentThread(jvm, &globalEnv, NULL);
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "txUpdated");
+    //create class
+    jclass clazz = (*globalEnv)->FindClass(globalEnv, "com/breadwallet/wallet/BRWalletManager");
+    jobject entity = (*globalEnv)->AllocObject(globalEnv, clazz);
+    jmethodID mid = (*globalEnv)->GetMethodID(globalEnv, clazz, "onTxUpdated", "([B)V");
+    //call java methods
+    //(*globalEnv)->CallVoidMethod(globalEnv, entity, mid, balance);
+}
+
+static void txDeleted(void *info, UInt256 txHash) {
+    JNIEnv *globalEnv;
+    jint rs = (*jvm)->AttachCurrentThread(jvm, &globalEnv, NULL);
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "txDeleted");
+    //create class
+    jclass clazz = (*globalEnv)->FindClass(globalEnv, "com/breadwallet/wallet/BRWalletManager");
+    jobject entity = (*globalEnv)->AllocObject(globalEnv, clazz);
+    jmethodID mid = (*globalEnv)->GetMethodID(globalEnv, clazz, "onTxDeleted", "([B)V");
+    //call java methods
+    //(*globalEnv)->CallVoidMethod(globalEnv, entity, mid, balance);
+}
+
 JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_encodeSeed(JNIEnv *env, jobject thiz,
                                                                          jbyteArray seed,
                                                                          jobjectArray stringArray) {
@@ -36,17 +87,21 @@ JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_encodeSeed(JNIE
     return bytePhrase;
 }
 
-JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_createWallet(JNIEnv *env,
+JNIEXPORT void Java_com_breadwallet_wallet_BRWalletManager_createWallet(JNIEnv *env,
                                                                            jobject thiz,
-                                                                           jbyteArray buffer,
                                                                            jobjectArray transactions,
                                                                            size_t transactions_count) {
+    __android_log_print(ANDROID_LOG_ERROR, "Message from createWallet: ", "1");
     jint rs = (*env)->GetJavaVM(env, &jvm);
     if (rs != JNI_OK){
         __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "WARNING, GetJavaVM is not JNI_OK");
     }
-    BRTransaction *txs[transactions_count];
+    int pubKeySize = sizeof(pubKey);
+    if(pubKeySize < 10) return;
+    __android_log_print(ANDROID_LOG_ERROR, "Message from createWallet: ", "2");
+
     if (transactions_count > 0) {
+        BRTransaction *txs[transactions_count];
         for (int i = 0; i < transactions_count; i++) {
             jobject txObject = (*env)->GetObjectArrayElement(env, transactions, i);
             jbyte *buffTx = (*env)->GetDirectBufferAddress(env, txObject);
@@ -54,28 +109,25 @@ JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_createWallet(JN
             __android_log_print(ANDROID_LOG_ERROR, "Message from createWallet: ",
                                 "transaction added to array");
         }
-    }
-
-    int pubKeyLength = (*env)->GetArrayLength(env, buffer);
-    jbyte *pubKeyBytes = (*env)->GetByteArrayElements(env, buffer, 0);
-    BRMasterPubKey *pubKey = (BRMasterPubKey *) pubKeyBytes;
-    BRWallet *wallet;
-    if (transactions_count > 0) {
-        wallet = BRWalletNew(txs, transactions_count, *pubKey, NULL, theSeed);
+        wallet = BRWalletNew(txs, transactions_count, pubKey, NULL, theSeed);
+        __android_log_print(ANDROID_LOG_ERROR, "Message from createWallet: ", "3");
     } else {
-        wallet = BRWalletNew(NULL, 0, *pubKey, NULL, theSeed);
+        wallet = BRWalletNew(NULL, 0, pubKey, NULL, theSeed);
+        __android_log_print(ANDROID_LOG_ERROR, "Message from createWallet: ", "4");
     }
-    size_t seedSize;
+    BRWalletSetCallbacks(wallet, NULL, balanceChanged, txAdded, txUpdated, txDeleted);
+    __android_log_print(ANDROID_LOG_ERROR, "Message from createWallet: ", "5");
+
+//    size_t seedSize;
 //    theSeed(NULL, NULL, 50, &seedSize);
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "After calling the fucking theSeed function");
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "After calling the fucking theSeed function");
 //    __android_log_print(ANDROID_LOG_ERROR, "Wallet created! ", "wallet balance : %d",
 //                        BRWalletBalance(wallet));
-
-    size_t walletSize = sizeof(wallet);
-    jbyteArray result = (*env)->NewByteArray(env, walletSize);
-
-    (*env)->SetByteArrayRegion(env, result, 0, walletSize, (jbyte *) wallet);
-    return result;
+//    size_t walletSize = sizeof(*wallet);
+//    jbyteArray result = (*env)->NewByteArray(env, walletSize);
+//
+//    (*env)->SetByteArrayRegion(env, result, 0, walletSize, (jbyte *) wallet);
+//    return result;
 }
 
 JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_getMasterPubKey(JNIEnv *env,
@@ -84,7 +136,7 @@ JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_getMasterPubKey
     char *rawPhrase = (*env)->GetStringUTFChars(env, phrase, 0);
     UInt512 key = UINT512_ZERO;
     BRBIP39DeriveKey(key.u8, rawPhrase, NULL);
-    BRMasterPubKey pubKey = BRBIP32MasterPubKey(key.u8, sizeof(key));
+    pubKey = BRBIP32MasterPubKey(key.u8, sizeof(key));
     size_t pubKeySize = sizeof(pubKey);
     jbyteArray result = (*env)->NewByteArray(env, pubKeySize);
     (*env)->SetByteArrayRegion(env, result, 0, pubKeySize, (jbyte *) &pubKey);
@@ -108,10 +160,3 @@ const void *theSeed(void *info, const char *authPrompt, uint64_t amount, size_t 
     *seedLen = size;
     return rawString;
 }
-
-
-
-
-
-
-

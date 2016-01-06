@@ -6,7 +6,6 @@ import android.util.Log;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -51,20 +50,22 @@ public class SQLiteManager {
         return instance;
     }
 
-    public List<ByteBuffer> getTransactions(){
-        List<ByteBuffer> transactionsBuffers = new ArrayList<>();
+    public ByteBuffer[] getTransactions(){
         TransactionDataSource TXdataSource = new TransactionDataSource(ctx);
         TXdataSource.open();
         List<BRTransactionEntity> txValues = TXdataSource.getAllTransactions();
         if(txValues.size() == 0) return null;
+        ByteBuffer transArray[] = new ByteBuffer[txValues.size()];
         Iterator<BRTransactionEntity> transactionEntityIterator = txValues.iterator();
+        int i = 0;
         while (transactionEntityIterator.hasNext()) {
             BRTransactionEntity transactionEntity = transactionEntityIterator.next();
             Log.e(TAG, "The transaction: " + transactionEntity.getId()
-                            + " " + transactionEntity.getBuff());
-            transactionsBuffers.add(ByteBuffer.wrap(transactionEntity.getBuff()));
+                    + " " + transactionEntity.getBuff());
+            transArray[i++] = ByteBuffer.wrap(transactionEntity.getBuff());
         }
-        return transactionsBuffers;
+        TXdataSource.close();
+        return transArray;
     }
 
     public void insertTransaction(byte[] transaction){
@@ -72,6 +73,7 @@ public class SQLiteManager {
         TransactionDataSource TXdataSource = new TransactionDataSource(ctx);
         TXdataSource.open();
         TXdataSource.createTransaction(entity);
-        Log.e(TAG,"SQLiteManager - transaction inserted");
+        Log.e(TAG, "SQLiteManager - transaction inserted");
+        TXdataSource.close();
     }
 }

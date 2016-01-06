@@ -15,9 +15,18 @@
 
 extern JNIEnv *env;
 
-void Java_com_breadwallet_wallet_BRWalletManager_setCallbacks(JNIEnv *env,
-                                                              jobject thiz,
-                                                              jbyteArray walletBuff);
+//static void balanceChanged(void *info, uint64_t balance);
+//
+//static void txAdded(void *info, BRTransaction *tx);
+//
+//static void txUpdated(void *info, const UInt256 txHashes[], size_t count, uint32_t blockHeight,
+//                      uint32_t timestamp);
+//
+//static void txDeleted(void *info, UInt256 txHash);
+
+//void Java_com_breadwallet_wallet_BRWalletManager_setCallbacks(JNIEnv *env,
+//                                                              jobject thiz,
+//                                                              jbyteArray walletBuff);
 
 void Java_com_breadwallet_wallet_BRWalletManager_testWalletCallbacks(JNIEnv *env,
                                                                      jobject thiz);

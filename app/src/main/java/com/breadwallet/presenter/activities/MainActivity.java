@@ -49,13 +49,11 @@ import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.adapter.ParallaxViewPager;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
-import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.sqlite.SQLiteManager;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.nio.ByteBuffer;
-import java.text.Normalizer;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -250,6 +248,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        clearCMemory();
         finish();
         FragmentAnimator.level = 0;
         CurrencyManager.getInstance(this).stopTimerTask();
@@ -257,6 +256,8 @@ public class MainActivity extends FragmentActivity implements Observer {
         softKeyboard.unRegisterSoftKeyboardCallback();
 
     }
+
+    private native void clearCMemory();
 
     /**
      * Initializes all the views and components
@@ -582,23 +583,25 @@ public class MainActivity extends FragmentActivity implements Observer {
             );
 
         }
+        TXdataSource.close();
     }
 
     private void setUpTheWallet() {
+        TransactionDataSource TXdataSource = new TransactionDataSource(this);
+        TXdataSource.open();
+        TXdataSource.deleteAllTransactions();
+        TXdataSource.close();
         BRWalletManager m = BRWalletManager.getInstance(this);
-        String phrase = KeyStoreManager.getKeyStoreString(this);
-        if (phrase == null) return;
-        String normalizedPhrase = Normalizer.normalize(phrase, Normalizer.Form.NFKD);
-        byte[] pubKey = m.getMasterPubKey(normalizedPhrase);
-        m.setPublicKeyBuff(pubKey);
+//        String phrase = KeyStoreManager.getKeyStoreString(this);
+//        if (phrase == null) return;
+//        String normalizedPhrase = Normalizer.normalize(phrase, Normalizer.Form.NFKD);
+//        m.getMasterPubKey(normalizedPhrase);
         SQLiteManager sqLiteManager = SQLiteManager.getInstance(this);
-        List<ByteBuffer> transactions = sqLiteManager.getTransactions();
-        int transactionCount = transactions == null ? 0 : transactions.size();
-        byte[] theWallet = m.createWallet(pubKey, transactions, transactionCount);
-        m.setWalletBuff(theWallet);
-        m.setCallbacks(m.getWalletBuff());
+        ByteBuffer transactions[] = sqLiteManager.getTransactions();
+        int transactionCount = transactions == null ? 0 : transactions.length;
+        m.createWallet(transactions, transactionCount);
+//        m.setCallbacks(m.getWalletBuff());
         //TODO put this pubKey into the keystore
-        Log.e(TAG, "PUB KEY length IS: " + pubKey.length);
     }
 
 }
