@@ -40,10 +40,10 @@ import java.util.List;
  */
 
 public class CustomPagerAdapter extends FragmentStatePagerAdapter {
-    public static final String TAG = "MyPagerAdapter";
-    public MainFragment mainFragment;
-    public MainFragmentQR mainFragmentQR;
-    private List<Fragment> fragments;
+    private static final String TAG = "MyPagerAdapter";
+    public final MainFragment mainFragment;
+    private final MainFragmentQR mainFragmentQR;
+    private final List<Fragment> fragments;
     private View main;
     private View mainQR;
     public static CustomPagerAdapter adapter;

@@ -36,8 +36,7 @@ public class BackgroundMovingAnimator {
     private static final int RightToLeft = 1;
     private static final int LeftToRight = 2;
     private static int mDirection = RightToLeft;
-    private static RectF mDisplayRect = new RectF();
-    private static ValueAnimator mCurrentAnimator;
+    private static final RectF mDisplayRect = new RectF();
     private static final Matrix mMatrix = new Matrix();
     private static float mScaleFactor;
     private static final int DURATION = 30000;
@@ -54,7 +53,7 @@ public class BackgroundMovingAnimator {
     }
 
     private static void animate(float from, float to) {
-        mCurrentAnimator = ValueAnimator.ofFloat(from, to);
+        ValueAnimator mCurrentAnimator = ValueAnimator.ofFloat(from, to);
         mCurrentAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {

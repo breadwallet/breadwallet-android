@@ -49,8 +49,8 @@ import javax.net.ssl.X509TrustManager;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class X509CertificateValidator {
-    public static final String TAG = X509CertificateValidator.class.getName();
+class X509CertificateValidator {
+    private static final String TAG = X509CertificateValidator.class.getName();
     public static final String PKI_X509_SHA256 = "x509+sha256";
     public static final String PKI_X509_SHA1 = "x509+sha1";
     public static final String PKI_NONE = "none";
@@ -85,13 +85,7 @@ public class X509CertificateValidator {
             result = certList.get(0).getSubjectX500Principal().getName();
             Log.e(TAG,"result cn getName(): " + result);
 
-        } catch (CertificateException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (SignatureException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
+        } catch (CertificateException | InvalidKeyException | SignatureException | NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
         return result;
@@ -113,13 +107,7 @@ public class X509CertificateValidator {
                 Log.d(TAG, "Issuer DN: " +
                         cert.getIssuerDN().getName());
             }
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (CertificateException e) {
+        } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException e) {
             e.printStackTrace();
         }
         return certificates;

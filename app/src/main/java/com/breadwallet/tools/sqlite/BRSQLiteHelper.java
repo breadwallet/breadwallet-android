@@ -29,8 +29,8 @@ import android.util.Log;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class BRSQLiteHelper extends SQLiteOpenHelper {
-    public static final String TAG = BRSQLiteHelper.class.getName();
+class BRSQLiteHelper extends SQLiteOpenHelper {
+    private static final String TAG = BRSQLiteHelper.class.getName();
 
     private static final String DATABASE_NAME = "breadwallet.db";
     private static final int DATABASE_VERSION = 3;

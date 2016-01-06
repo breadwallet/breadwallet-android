@@ -24,14 +24,12 @@
             android:id="@+id/main_label_breadwallet"
             android:layout_width="180dp"
             android:layout_height="30dp"
-            android:layout_centerHorizontal="true"
             android:layout_gravity="center"
             android:background="@drawable/breadwalletupcentered" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="42dp"
-            android:layout_centerHorizontal="true"
             android:layout_gravity="center"
             android:text="settings"
             android:textColor="@color/grey"

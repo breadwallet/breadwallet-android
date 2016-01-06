@@ -6,6 +6,7 @@ import android.util.Log;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -34,7 +35,7 @@ import java.util.List;
  * THE SOFTWARE.
  */
 public class SQLiteManager {
-    public static final String TAG = SQLiteManager.class.getName();
+    private static final String TAG = SQLiteManager.class.getName();
 
     private static SQLiteManager instance;
     private static Context ctx;
@@ -61,7 +62,7 @@ public class SQLiteManager {
         while (transactionEntityIterator.hasNext()) {
             BRTransactionEntity transactionEntity = transactionEntityIterator.next();
             Log.e(TAG, "The transaction: " + transactionEntity.getId()
-                    + " " + transactionEntity.getBuff());
+                    + " " + Arrays.toString(transactionEntity.getBuff()));
             transArray[i++] = ByteBuffer.wrap(transactionEntity.getBuff());
         }
         TXdataSource.close();

@@ -91,14 +91,14 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRWalletManager_createWallet(JNIEnv *
                                                                            jobject thiz,
                                                                            jobjectArray transactions,
                                                                            size_t transactions_count) {
-    __android_log_print(ANDROID_LOG_ERROR, "Message from createWallet: ", "1");
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from createWallet: ", "1");
     jint rs = (*env)->GetJavaVM(env, &jvm);
     if (rs != JNI_OK){
         __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "WARNING, GetJavaVM is not JNI_OK");
     }
     int pubKeySize = sizeof(pubKey);
     if(pubKeySize < 10) return;
-    __android_log_print(ANDROID_LOG_ERROR, "Message from createWallet: ", "2");
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from createWallet: ", "2");
 
     if (transactions_count > 0) {
         BRTransaction *txs[transactions_count];
@@ -110,13 +110,13 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRWalletManager_createWallet(JNIEnv *
                                 "transaction added to array");
         }
         wallet = BRWalletNew(txs, transactions_count, pubKey, NULL, theSeed);
-        __android_log_print(ANDROID_LOG_ERROR, "Message from createWallet: ", "3");
+//        __android_log_print(ANDROID_LOG_ERROR, "Message from createWallet: ", "3");
     } else {
         wallet = BRWalletNew(NULL, 0, pubKey, NULL, theSeed);
-        __android_log_print(ANDROID_LOG_ERROR, "Message from createWallet: ", "4");
+//        __android_log_print(ANDROID_LOG_ERROR, "Message from createWallet: ", "4");
     }
     BRWalletSetCallbacks(wallet, NULL, balanceChanged, txAdded, txUpdated, txDeleted);
-    __android_log_print(ANDROID_LOG_ERROR, "Message from createWallet: ", "5");
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from createWallet: ", "5");
 
 //    size_t seedSize;
 //    theSeed(NULL, NULL, 50, &seedSize);

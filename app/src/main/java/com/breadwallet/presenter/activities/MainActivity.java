@@ -17,6 +17,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PersistableBundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -87,42 +88,42 @@ import java.util.Observer;
  */
 
 public class MainActivity extends FragmentActivity implements Observer {
-    public static final String TAG = "MainActivity";
+    private static final String TAG = "MainActivity";
     public static final String PREFS_NAME = "MyPrefsFile";
     public static final int BURGER = 0;
     public static final int CLOSE = 1;
     public static final int BACK = 2;
-    public static final int DEBUG = 1;
-    public static final int RELEASE = 2;
-    public static final float PAGE_INDICATOR_SCALE_UP = 1.3f;
+    private static final int DEBUG = 1;
+    private static final int RELEASE = 2;
+    private static final float PAGE_INDICATOR_SCALE_UP = 1.3f;
 
     public static MainActivity app;
     public static boolean decoderFragmentOn;
     public static boolean scanResultFragmentOn;
-    public CustomPagerAdapter pagerAdapter;
+    private CustomPagerAdapter pagerAdapter;
     public static RelativeLayout pageIndicator;
-    public ImageView pageIndicatorLeft;
-    public ImageView pageIndicatorRight;
-    public View middleView;
-    public Map<String, Integer> burgerButtonMap;
-    public Button burgerButton;
+    private ImageView pageIndicatorLeft;
+    private ImageView pageIndicatorRight;
+    private View middleView;
+    private Map<String, Integer> burgerButtonMap;
+    private Button burgerButton;
     public Button lockerButton;
-    public static ParallaxViewPager parallaxViewPager;
-    public ClipboardManager myClipboard;
+    private static ParallaxViewPager parallaxViewPager;
+    private ClipboardManager myClipboard;
     private boolean doubleBackToExitPressedOnce;
     public static boolean beenThroughSavedInstanceMethod = false;
     public ViewFlipper viewFlipper;
     public ViewFlipper lockerPayFlipper;
-    public RelativeLayout networkErrorBar;
-    private NetworkChangeReceiver receiver = new NetworkChangeReceiver();
-    public static Point screenParametersPoint = new Point();
+    private RelativeLayout networkErrorBar;
+    private final NetworkChangeReceiver receiver = new NetworkChangeReceiver();
+    public static final Point screenParametersPoint = new Point();
     private int middleViewPressedCount = 0;
 
-    public static int MODE = RELEASE;
-    public TextView testnet;
+    private static int MODE = RELEASE;
+    private TextView testnet;
     public SoftKeyboard softKeyboard;
-    public RelativeLayout mainLayout;
-    public FingerprintManager fingerprintManager;
+    private RelativeLayout mainLayout;
+    private FingerprintManager fingerprintManager;
 
     //loading the native library
     static {
@@ -188,7 +189,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                     app.onBackPressed();
                 } else {
                     //check multi pressing availability here, because method onBackPressed does the checking as well.
-                    if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
+                    if (FragmentAnimator.checkTheMultipressingAvailability()) {
                         FragmentAnimator.pressMenuButton(app, new FragmentSettingsAll());
                         Log.e(TAG, "CHECK:Should press menu");
                     }
@@ -208,8 +209,8 @@ public class MainActivity extends FragmentActivity implements Observer {
         scaleView(pageIndicatorLeft, 1f, PAGE_INDICATOR_SCALE_UP, 1f, PAGE_INDICATOR_SCALE_UP);
 
         //check the txAdded callback functionality
-        BRWalletManager m = BRWalletManager.getInstance(app);
-        m.testWalletCallbacks();
+//        BRWalletManager m = BRWalletManager.getInstance(app);
+//        m.testWalletCallbacks();
 //        Log.e(TAG, "the pubkey length is: " + m.getPublicKeyBuff().length);
 //                Log.e(TAG, "FROM KEYSTORE PUBKEY: " + KeyStoreManager.getMasterPublicKey(app));
 //                Log.e(TAG, "FROM KEYSTORE PHRASE: " + KeyStoreManager.getKeyStoreString(app));
@@ -292,7 +293,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         if (keyCode == KeyEvent.KEYCODE_MENU) {
             if (FragmentAnimator.level > 1 || scanResultFragmentOn || decoderFragmentOn) {
                 this.onBackPressed();
-            } else if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
+            } else if (FragmentAnimator.checkTheMultipressingAvailability()) {
                 FragmentAnimator.pressMenuButton(app, new FragmentSettingsAll());
             }
         }
@@ -302,7 +303,7 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     @Override
     public void onBackPressed() {
-        if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
+        if (FragmentAnimator.checkTheMultipressingAvailability()) {
             Log.e(TAG, "onBackPressed!");
             if (FragmentAnimator.wipeWalletOpen) {
                 FragmentAnimator.pressWipeWallet(this, new FragmentSettings());
@@ -328,7 +329,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                     ((BreadWalletApp) getApplicationContext()).showCustomToast(this,
                             getResources().getString(R.string.mainactivity_press_back_again), 140,
                             Toast.LENGTH_SHORT);
-                    makeDoubleBackToExitPressedOnce(1000);
+                    makeDoubleBackToExitPressedOnce();
                     break;
                 case 1:
 //                    if (!decoderFragmentOn) {
@@ -405,7 +406,7 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     }
 
-    public void scaleView(View v, float startScaleX, float endScaleX, float startScaleY, float endScaleY) {
+    private void scaleView(View v, float startScaleX, float endScaleX, float startScaleY, float endScaleY) {
         Animation anim = new ScaleAnimation(
                 startScaleX, endScaleX, // Start and end values for the X axis scaling
                 startScaleY, endScaleY, // Start and end values for the Y axis scaling
@@ -415,13 +416,13 @@ public class MainActivity extends FragmentActivity implements Observer {
         v.startAnimation(anim);
     }
 
-    private void makeDoubleBackToExitPressedOnce(int ms) {
+    private void makeDoubleBackToExitPressedOnce() {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 doubleBackToExitPressedOnce = false;
             }
-        }, ms);
+        }, 1000);
     }
 
     private void startStopReceiver(boolean b) {
@@ -483,7 +484,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         Log.e(TAG, "********************** onActivityResult >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> " + requestCode);
         for (int i = 0; i < permissions.length; i++) {
             if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
@@ -575,9 +576,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         TXdataSource.createTransaction(transactionEntity);
         TXdataSource.createTransaction(transactionEntity2);
         List<BRTransactionEntity> txValues = TXdataSource.getAllTransactions();
-        Iterator<BRTransactionEntity> transactionEntityIterator = txValues.iterator();
-        while (transactionEntityIterator.hasNext()) {
-            BRTransactionEntity transactionEntity1 = transactionEntityIterator.next();
+        for (BRTransactionEntity transactionEntity1 : txValues) {
             Log.e(TAG, "The transaction: " + transactionEntity1.getId()
                             + " " + new String(transactionEntity1.getBuff())
             );

@@ -32,7 +32,7 @@ import com.breadwallet.tools.animation.FragmentAnimator;
  * THE SOFTWARE.
  */
 public class MiddleViewAdapter {
-    public static final String TAG = "MiddleViewAdapter";
+    private static final String TAG = "MiddleViewAdapter";
 
     public static void resetMiddleView(String text) {
         Log.e(TAG, "in the resetMiddleView: " + text);

@@ -46,11 +46,11 @@ import com.breadwallet.tools.security.PassCodeManager;
 
 public class PasswordDialogFragment extends DialogFragment {
 
-    public static final String TAG = "PasswordDialogFragment";
-    public EditText passwordEditText;
-    public Button cancel;
-    public Button ok;
-    public DialogFragment dialogFragment;
+    private static final String TAG = "PasswordDialogFragment";
+    private EditText passwordEditText;
+    private Button cancel;
+    private Button ok;
+    private DialogFragment dialogFragment;
 
     public PasswordDialogFragment() {
         // Empty constructor required for DialogFragment
@@ -80,7 +80,7 @@ public class PasswordDialogFragment extends DialogFragment {
                     getDialog().cancel();
                     String tmp = CurrencyManager.getInstance(MainActivity.app).getCurrentBalanceText();
                     ((BreadWalletApp) getActivity().getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
-                    ((BreadWalletApp)getActivity().getApplicationContext()).setUnlocked(true);
+                    ((BreadWalletApp)getActivity().getApplicationContext()).setUnlocked();
                     MainActivity.app.softKeyboard.closeSoftKeyboard();
                 } else {
                     Log.d(TAG, "Not equal, the text is: " + passwordEditText.getText().toString());

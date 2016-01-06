@@ -8,8 +8,8 @@ import java.lang.reflect.Field;
 
 
 public class TypefaceUtil {
-    public static final String TAG = "TypefaceUtil";
-    public static Typeface customTypeface;
+    private static final String TAG = "TypefaceUtil";
+    private static Typeface customTypeface;
 
     /**
      * Using reflection to override default typeface

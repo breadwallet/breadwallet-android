@@ -36,7 +36,7 @@ public class BRClipboardManager {
 
     @SuppressLint("NewApi")
     @SuppressWarnings("deprecation")
-    public static boolean copyToClipboard(Context context, String text) {
+    public static void copyToClipboard(Context context, String text) {
         try {
             int sdk = android.os.Build.VERSION.SDK_INT;
             if (sdk < android.os.Build.VERSION_CODES.HONEYCOMB) {
@@ -50,9 +50,9 @@ public class BRClipboardManager {
                         .newPlainText("message", text);
                 clipboard.setPrimaryClip(clip);
             }
-            return true;
+            return;
         } catch (Exception e) {
-            return false;
+            return;
         }
     }
 
@@ -60,7 +60,7 @@ public class BRClipboardManager {
     public static String readFromClipboard(Context context) {
         int sdk = android.os.Build.VERSION.SDK_INT;
         if (sdk < android.os.Build.VERSION_CODES.HONEYCOMB) {
-            android.text.ClipboardManager clipboard = (android.text.ClipboardManager) context
+            @SuppressWarnings("deprecation") android.text.ClipboardManager clipboard = (android.text.ClipboardManager) context
                     .getSystemService(Context.CLIPBOARD_SERVICE);
             return clipboard.getText().toString();
         } else {
@@ -86,7 +86,7 @@ public class BRClipboardManager {
                 // If the contents of the clipboard wasn't a reference to a
                 // note, then
                 // this converts whatever it is to text.
-                text = coerceToText(context, item).toString();
+                text = coerceToText(item).toString();
 
                 return text;
             }
@@ -95,7 +95,7 @@ public class BRClipboardManager {
     }
 
     @SuppressLint("NewApi")
-    public static CharSequence coerceToText(Context context, ClipData.Item item) {
+    private static CharSequence coerceToText(ClipData.Item item) {
         // If this Item has an explicit textual value, simply return that.
         CharSequence text = item.getText();
         if (text != null) {

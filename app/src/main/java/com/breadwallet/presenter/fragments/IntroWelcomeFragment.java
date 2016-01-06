@@ -39,9 +39,8 @@ public class IntroWelcomeFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         // The last two arguments ensure LayoutParams are inflated
         // properly.
-        View rootView = inflater.inflate(
+        return inflater.inflate(
                 R.layout.intro_fragment_welcome, container, false);
-        return rootView;
     }
 
 }

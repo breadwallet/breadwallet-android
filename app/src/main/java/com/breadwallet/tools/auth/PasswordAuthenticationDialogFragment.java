@@ -49,7 +49,7 @@ public class PasswordAuthenticationDialogFragment extends DialogFragment
     private View mBackupContent;
     private EditText mPassword;
 
-    InputMethodManager mInputMethodManager;
+    private InputMethodManager mInputMethodManager;
 
 
     public PasswordAuthenticationDialogFragment() {
@@ -169,11 +169,11 @@ public class PasswordAuthenticationDialogFragment extends DialogFragment
     public void onAuthenticated() {
         getDialog().cancel();
         MainActivity app = MainActivity.app;
-        ((BreadWalletApp) getActivity().getApplicationContext()).setUnlocked(true);
+        ((BreadWalletApp) getActivity().getApplicationContext()).setUnlocked();
         MiddleViewAdapter.resetMiddleView(null);
         if (app != null)
             app.softKeyboard.closeSoftKeyboard();
-        ((BreadWalletApp)getActivity().getApplicationContext()).allowKeyStoreAccessForSeconds(60);
+        ((BreadWalletApp)getActivity().getApplicationContext()).allowKeyStoreAccessForSeconds();
         // Callback from FingerprintUiHelper. Let the activity know that authentication was
         // successful.
 //        mActivity.onPurchased(true /* withFingerprint */);

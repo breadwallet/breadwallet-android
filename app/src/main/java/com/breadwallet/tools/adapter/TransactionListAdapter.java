@@ -41,16 +41,16 @@ import com.breadwallet.presenter.fragments.FragmentCurrency;
  * THE SOFTWARE.
  */
 
-public class TransactionListAdapter extends ArrayAdapter<CurrencyEntity> {
+class TransactionListAdapter extends ArrayAdapter<CurrencyEntity> {
     public static final String TAG = TransactionListAdapter.class.getName();
 
-    Context mContext;
-    int layoutResourceId;
-    public TextView textViewItem;
-    public Point displayParameters = new Point();
+    private final Context mContext;
+    private final int layoutResourceId;
+    private TextView textViewItem;
+    private final Point displayParameters = new Point();
 //    public static TransactionListAdapter currencyListAdapter;
 
-    public TransactionListAdapter(Context mContext, int layoutResourceId) {
+    private TransactionListAdapter(Context mContext, int layoutResourceId) {
 
         super(mContext, layoutResourceId);
 

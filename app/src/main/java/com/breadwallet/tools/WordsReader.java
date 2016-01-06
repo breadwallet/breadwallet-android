@@ -15,8 +15,8 @@ import java.util.List;
 
 public class WordsReader {
 
-    public static final String TAG = WordsReader.class.getName();
-    public static final int WORD_LIST_SIZE = 2048;
+    private static final String TAG = WordsReader.class.getName();
+    private static final int WORD_LIST_SIZE = 2048;
 
     public static List<String> getWordList(Context context) throws IOException {
 

@@ -35,8 +35,9 @@ import com.breadwallet.presenter.activities.MainActivity;
 public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallback {
 
     @VisibleForTesting
-    static final long ERROR_TIMEOUT_MILLIS = 1600;
-    @VisibleForTesting static final long SUCCESS_DELAY_MILLIS = 1300;
+    private static final long ERROR_TIMEOUT_MILLIS = 1600;
+    @VisibleForTesting
+    private static final long SUCCESS_DELAY_MILLIS = 1300;
 
     private final FingerprintManager mFingerprintManager;
     private final ImageView mIcon;
@@ -44,7 +45,8 @@ public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallba
     private final Callback mCallback;
     private CancellationSignal mCancellationSignal;
 
-    @VisibleForTesting boolean mSelfCancelled;
+    @VisibleForTesting
+    private boolean mSelfCancelled;
 
     /**
      * Builder class for {@link FingerprintUiHelper} in which injected fields from Dagger
@@ -149,6 +151,7 @@ public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallba
     }
 
     @VisibleForTesting
+    private final
     Runnable mResetErrorTextRunnable = new Runnable() {
         @Override
         public void run() {

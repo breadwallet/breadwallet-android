@@ -48,8 +48,7 @@ import com.breadwallet.wallet.BRWalletManager;
  */
 
 public class IntroActivity extends FragmentActivity {
-    public static final String TAG = IntroActivity.class.getName();
-    private ImageView background;
+    private static final String TAG = IntroActivity.class.getName();
     public static IntroActivity app;
     private Button leftButton;
 
@@ -80,7 +79,7 @@ public class IntroActivity extends FragmentActivity {
         getFragmentManager().beginTransaction().add(R.id.intro_layout, new IntroWelcomeFragment(),
                 "introWelcomeFragment").commit();
         //animates the orange BW background moving.
-        background = (ImageView) findViewById(R.id.intro_bread_wallet_image);
+        ImageView background = (ImageView) findViewById(R.id.intro_bread_wallet_image);
         background.setScaleType(ImageView.ScaleType.MATRIX);
         BackgroundMovingAnimator.animateBackgroundMoving(background);
         startTheWalletIfExists();
@@ -100,7 +99,7 @@ public class IntroActivity extends FragmentActivity {
         super.onSaveInstanceState(outState);
     }
 
-    void showRecoverNewWalletFragment() {
+    private void showRecoverNewWalletFragment() {
 //        if (savedInstanceState == null) {
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);

@@ -29,19 +29,19 @@ import java.security.GeneralSecurityException;
 public class PaymentRequestExpiredException extends GeneralSecurityException {
     public static final String TAG = PaymentRequestExpiredException.class.getName();
 
-    public PaymentRequestExpiredException(){
+    private PaymentRequestExpiredException(){
         super();
     }
 
     public PaymentRequestExpiredException(String msg){
-        super(msg);
+        super("The request is expired!");
     }
 
-    public PaymentRequestExpiredException(String msg, Throwable cause){
+    private PaymentRequestExpiredException(String msg, Throwable cause){
         super(msg,cause);
     }
 
-    public PaymentRequestExpiredException(Throwable cause){
+    private PaymentRequestExpiredException(Throwable cause){
         super(cause);
     }
 

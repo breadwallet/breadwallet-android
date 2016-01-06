@@ -37,13 +37,13 @@ import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MerkleBlockDataSource {
-    public static final String TAG = MerkleBlockDataSource.class.getName();
+class MerkleBlockDataSource {
+    private static final String TAG = MerkleBlockDataSource.class.getName();
 
     // Database fields
     private SQLiteDatabase database;
-    private BRSQLiteHelper dbHelper;
-    private String[] allColumns = {
+    private final BRSQLiteHelper dbHelper;
+    private final String[] allColumns = {
             BRSQLiteHelper.MB_COLUMN_ID,
             BRSQLiteHelper.MB_BUFF
 //            BRSQLiteHelper.MB_COLUMN_BLOCK_HASH, BRSQLiteHelper.MB_COLUMN_FLAGS,
@@ -54,7 +54,7 @@ public class MerkleBlockDataSource {
 //            BRSQLiteHelper.MB_COLUMN_VERSION
     };
 
-    public MerkleBlockDataSource(Context context) {
+    private MerkleBlockDataSource(Context context) {
         dbHelper = new BRSQLiteHelper(context);
     }
 

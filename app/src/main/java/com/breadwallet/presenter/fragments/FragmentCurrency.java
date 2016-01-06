@@ -51,19 +51,19 @@ import com.breadwallet.tools.animation.SpringAnimator;
  */
 
 public class FragmentCurrency extends Fragment {
-    public static final String TAG = "FragmentCurrency";
+    private static final String TAG = "FragmentCurrency";
     public static final String CURRENT_CURRENCY = "currentCurrency";
     public static final String POSITION = "position";
     public static final String RATE = "rate";
 
-    public ListView currencyList;
-    public MainActivity app;
-    public Button currencyRefresh;
-    public TextView noInternetConnection;
-    public CurrencyListAdapter adapter;
-    public TextView currencyItemText;
-    public ProgressBar currencyProgressBar;
-    public SharedPreferences settings;
+    private ListView currencyList;
+    private MainActivity app;
+    private Button currencyRefresh;
+    private TextView noInternetConnection;
+    private CurrencyListAdapter adapter;
+    private TextView currencyItemText;
+    private ProgressBar currencyProgressBar;
+    private SharedPreferences settings;
     private String ISO;
     private float rate;
     public static int lastItemsPosition = 0;
@@ -104,7 +104,7 @@ public class FragmentCurrency extends Fragment {
                 editor.putString(CURRENT_CURRENCY, ISO);
                 editor.putInt(POSITION, lastItemsPosition);
                 editor.putFloat(RATE, rate);
-                editor.commit();
+                editor.apply();
                 Log.e(TAG, "rate: " + rate + ", ISO: " + ISO);
                 String finalExchangeRate = CurrencyManager.getInstance(app).getMiddleTextExchangeString((long) rate, ISO);
                 ((BreadWalletApp) getActivity().getApplication()).setTopMiddleView(
@@ -141,7 +141,7 @@ public class FragmentCurrency extends Fragment {
         super.onPause();
     }
 
-    public void tryAndSetAdapter() {
+    private void tryAndSetAdapter() {
         adapter = CurrencyManager.getInstance(getActivity()).getCurrencyAdapterIfReady();
         if (adapter.getCount() > 0) {
             currencyList.setAdapter(adapter);

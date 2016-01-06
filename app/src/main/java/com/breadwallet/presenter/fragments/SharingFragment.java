@@ -44,11 +44,7 @@ import com.breadwallet.tools.BRClipboardManager;
 
 public class SharingFragment extends DialogFragment {
 
-    public static final String TAG = "SharingFragment";
-    private TextView copyAddress;
-    private TextView sendEmail;
-    private TextView sendMessage;
-    private TextView requestAmount;
+    private static final String TAG = "SharingFragment";
     private boolean customToastAvailable = true;
     private String theAddress;
 
@@ -60,16 +56,16 @@ public class SharingFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_sharing_dialog, container);
-        copyAddress = (TextView) view.findViewById(R.id.copy_address);
-        sendEmail = (TextView) view.findViewById(R.id.send_email);
-        sendMessage = (TextView) view.findViewById(R.id.send_message);
-        requestAmount = (TextView) view.findViewById(R.id.request_amount);
+        TextView copyAddress = (TextView) view.findViewById(R.id.copy_address);
+        TextView sendEmail = (TextView) view.findViewById(R.id.send_email);
+        TextView sendMessage = (TextView) view.findViewById(R.id.send_message);
+        TextView requestAmount = (TextView) view.findViewById(R.id.request_amount);
         getDialog().setTitle(getResources().getString(R.string.dialog_receive_bitcoins));
 
         copyAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
+                if (FragmentAnimator.checkTheMultipressingAvailability()) {
                     BRClipboardManager.copyToClipboard(getActivity(), theAddress);
                     if (customToastAvailable) {
                         customToastAvailable = false;
@@ -91,7 +87,7 @@ public class SharingFragment extends DialogFragment {
         sendEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
+                if (FragmentAnimator.checkTheMultipressingAvailability()) {
                     Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                             "mailto", "", null));
                     emailIntent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.bitcoin_address));
@@ -108,7 +104,7 @@ public class SharingFragment extends DialogFragment {
         sendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
+                if (FragmentAnimator.checkTheMultipressingAvailability()) {
                     Intent sendIntent = new Intent(Intent.ACTION_VIEW);
                     sendIntent.setData(Uri.parse("sms:"));
                     sendIntent.putExtra("sms_body", getResources().getString(R.string.sharing_message) + " " + theAddress);
@@ -121,7 +117,7 @@ public class SharingFragment extends DialogFragment {
         requestAmount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(FragmentAnimator.checkTheMultipressingAvailability(300)){
+                if (FragmentAnimator.checkTheMultipressingAvailability()) {
                     getDialog().cancel();
                     FragmentScanResult.isARequest = true;
                     FragmentAnimator.animateScanResultFragment();

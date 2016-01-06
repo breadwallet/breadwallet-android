@@ -35,7 +35,7 @@ import com.breadwallet.presenter.activities.IntroActivity;
  * THE SOFTWARE.
  */
 public class IntroWarningFragment extends Fragment {
-    Button show;
+    private Button show;
 
     @Override
     public View onCreateView(LayoutInflater inflater,

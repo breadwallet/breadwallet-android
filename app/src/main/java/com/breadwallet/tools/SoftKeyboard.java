@@ -19,12 +19,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class SoftKeyboard implements View.OnFocusChangeListener {
     private static final int CLEAR_FOCUS = 0;
 
-    private ViewGroup layout;
+    private final ViewGroup layout;
     private int layoutBottom;
-    private InputMethodManager im;
-    private int[] coords;
+    private final InputMethodManager im;
+    private final int[] coords;
     private boolean isKeyboardShow;
-    private SoftKeyboardChangesThread softKeyboardThread;
+    private final SoftKeyboardChangesThread softKeyboardThread;
     private List<EditText> editTextList;
 
     private View tempView; // reference to a focused EditText
@@ -86,7 +86,7 @@ public class SoftKeyboard implements View.OnFocusChangeListener {
      */
     private void initEditTexts(ViewGroup viewgroup) {
         if (editTextList == null)
-            editTextList = new ArrayList<EditText>();
+            editTextList = new ArrayList<>();
 
         int childCount = viewgroup.getChildCount();
         for (int i = 0; i <= childCount - 1; i++) {
@@ -137,7 +137,7 @@ public class SoftKeyboard implements View.OnFocusChangeListener {
     };
 
     private class SoftKeyboardChangesThread extends Thread {
-        private AtomicBoolean started;
+        private final AtomicBoolean started;
         private SoftKeyboardChanged mCallback;
 
         public SoftKeyboardChangesThread() {

@@ -47,12 +47,9 @@ import com.breadwallet.tools.animation.FragmentAnimator;
  */
 
 public class MainFragment extends Fragment {
-    public static final String TAG = "MainFragment";
-    private Button scanQRButton;
-    private Button payAddressFromClipboardButton;
+    private static final String TAG = "MainFragment";
     public EditText addressEditText;
     private AlertDialog alertDialog;
-    private LinearLayout mainFragmentLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -67,9 +64,9 @@ public class MainFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        scanQRButton = (Button) getActivity().findViewById(R.id.main_button_scan_qr_code);
-        mainFragmentLayout = (LinearLayout) getActivity().findViewById(R.id.main_fragment);
-        payAddressFromClipboardButton = (Button)
+        Button scanQRButton = (Button) getActivity().findViewById(R.id.main_button_scan_qr_code);
+        LinearLayout mainFragmentLayout = (LinearLayout) getActivity().findViewById(R.id.main_fragment);
+        Button payAddressFromClipboardButton = (Button)
                 getActivity().findViewById(R.id.main_button_pay_address_from_clipboard);
         alertDialog = new AlertDialog.Builder(getActivity()).create();
         addressEditText = (EditText) getView().findViewById(R.id.address_edit_text);
@@ -79,7 +76,7 @@ public class MainFragment extends Fragment {
         scanQRButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
+                if (FragmentAnimator.checkTheMultipressingAvailability()) {
                     FragmentAnimator.animateDecoderFragment();
                 }
             }
@@ -89,7 +86,7 @@ public class MainFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Log.e(TAG, "payAddressFromClipboardButton 1");
-                if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
+                if (FragmentAnimator.checkTheMultipressingAvailability()) {
                     Log.e(TAG, "payAddressFromClipboardButton 2");
                     if (alertDialog.isShowing()) alertDialog.dismiss();
                     String address = BRClipboardManager.readFromClipboard(getActivity());
@@ -130,7 +127,7 @@ public class MainFragment extends Fragment {
 
     }
 
-    public boolean checkIfAddressIsValid(String str) {
+    private boolean checkIfAddressIsValid(String str) {
         int length = str.length();
         if (length < 26 || length > 35) {
             return false;

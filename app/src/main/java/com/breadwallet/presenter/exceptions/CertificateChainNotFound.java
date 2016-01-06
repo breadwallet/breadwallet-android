@@ -29,7 +29,7 @@ import java.security.GeneralSecurityException;
 public class CertificateChainNotFound extends GeneralSecurityException {
     public static final String TAG = CertificateChainNotFound.class.getName();
 
-    public CertificateChainNotFound(){
+    private CertificateChainNotFound(){
         super();
     }
 
@@ -37,11 +37,11 @@ public class CertificateChainNotFound extends GeneralSecurityException {
         super(msg);
     }
 
-    public CertificateChainNotFound(String msg, Throwable cause){
+    private CertificateChainNotFound(String msg, Throwable cause){
         super(msg,cause);
     }
 
-    public CertificateChainNotFound(Throwable cause){
+    private CertificateChainNotFound(Throwable cause){
         super(cause);
     }
 

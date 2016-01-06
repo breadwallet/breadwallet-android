@@ -21,7 +21,6 @@ import com.breadwallet.presenter.fragments.SharingFragment;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
-import com.breadwallet.tools.qrcode.Contents;
 import com.breadwallet.tools.qrcode.QRCodeEncoder;
 import com.breadwallet.tools.security.RequestHandler;
 import com.google.zxing.BarcodeFormat;
@@ -34,12 +33,7 @@ public class RequestQRActivity extends Activity {
     public static final String TAG = RequestQRActivity.class.getName();
     private ImageView qrcode;
     public static String THE_ADDRESS = "";
-    private TextView requestAddressText;
-    private TextView requestAmountText;
-    private RelativeLayout addressLayout;
-    private RelativeLayout requestActivityLayout;
-    private Button close;
-    public Bitmap bitmap;
+    private Bitmap bitmap;
     public SharingFragment sharingFragment;
 
     @Override
@@ -50,11 +44,11 @@ public class RequestQRActivity extends Activity {
 
         qrcode = (ImageView) findViewById(R.id.request_image_qr_code);
 //        sharingFragment = new SharingFragment();
-        close = (Button) findViewById(R.id.request_close);
-        requestAmountText = (TextView) findViewById(R.id.request_amount_text);
-        requestActivityLayout = (RelativeLayout) findViewById(R.id.request_activity_qr);
-        requestAddressText = (TextView) findViewById(R.id.request_address_text);
-        addressLayout = (RelativeLayout) findViewById(R.id.request_address_layout);
+        Button close = (Button) findViewById(R.id.request_close);
+        TextView requestAmountText = (TextView) findViewById(R.id.request_amount_text);
+        RelativeLayout requestActivityLayout = (RelativeLayout) findViewById(R.id.request_activity_qr);
+        TextView requestAddressText = (TextView) findViewById(R.id.request_address_text);
+        RelativeLayout addressLayout = (RelativeLayout) findViewById(R.id.request_address_layout);
 
         generateQR(THE_ADDRESS);
         String address = "";
@@ -84,7 +78,7 @@ public class RequestQRActivity extends Activity {
             @Override
             public void onClick(View view) {
                 breadWalletApp.cancelToast();
-                if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
+                if (FragmentAnimator.checkTheMultipressingAvailability()) {
 //                    sharingFragment.setTheAddress(mainAddressText.getText().toString());
 //                    sharingFragment.show(fm, SharingFragment.class.getName());
                 }
@@ -104,8 +98,6 @@ public class RequestQRActivity extends Activity {
         smallerDimension = smallerDimension * 3 / 4;
 
         QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(bitcoinURL,
-                null,
-                Contents.Type.TEXT,
                 BarcodeFormat.QR_CODE.toString(),
                 smallerDimension);
         try {

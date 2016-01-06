@@ -16,11 +16,10 @@ import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.wallet.BRWalletManager;
 
 public class IntroShowPhraseActivity extends Activity {
-    Button remindMeLater;
-    RelativeLayout writeDownLayout;
-    ImageView checkBox;
-    private TextView thePhrase;
-    boolean checked = false;
+    private Button remindMeLater;
+    private RelativeLayout writeDownLayout;
+    private ImageView checkBox;
+    private boolean checked = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +31,7 @@ public class IntroShowPhraseActivity extends Activity {
         }
 
         BRWalletManager m = BRWalletManager.getInstance(this);
-        thePhrase = (TextView) findViewById(R.id.the_phrase_at_startup);
+        TextView thePhrase = (TextView) findViewById(R.id.the_phrase_at_startup);
         remindMeLater = (Button) findViewById(R.id.remind_me_later_button);
         writeDownLayout = (RelativeLayout) findViewById(R.id.write_down_notice_layout);
         checkBox = (ImageView) findViewById(R.id.write_down_check_box);
@@ -66,7 +65,7 @@ public class IntroShowPhraseActivity extends Activity {
         });
     }
 
-    public void startMainActivity() {
+    private void startMainActivity() {
         Intent intent;
         intent = new Intent(this, MainActivity.class);
         startActivity(intent);
@@ -90,7 +89,7 @@ public class IntroShowPhraseActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    void setCheckBoxImage() {
+    private void setCheckBoxImage() {
         checkBox.setImageResource(!checked ? R.drawable.checkbox_checked : R.drawable.checkbox_empty);
         remindMeLater.setText(!checked ? getResources().getString(R.string.done) :
                 getResources().getString(R.string.remind_me_later));

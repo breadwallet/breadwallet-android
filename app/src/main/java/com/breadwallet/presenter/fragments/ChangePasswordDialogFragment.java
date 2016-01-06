@@ -48,11 +48,11 @@ import com.breadwallet.tools.security.PassCodeManager;
 
 public class ChangePasswordDialogFragment extends DialogFragment {
 
-    public static final String TAG = "PasswordDialogFragment";
-    public EditText passwordEditText;
-    public Button cancel;
-    public Button ok;
-    public DialogFragment dialogFragment;
+    private static final String TAG = "PasswordDialogFragment";
+    private EditText passwordEditText;
+    private Button cancel;
+    private Button ok;
+    private DialogFragment dialogFragment;
     private static final int AUTH_MODE_CHECK_PASS = 0;
     private static final int AUTH_MODE_NEW_PASS = 1;
     private static final int AUTH_MODE_CONFIRM_PASS = 2;
@@ -125,7 +125,7 @@ public class ChangePasswordDialogFragment extends DialogFragment {
                             getDialog().cancel();
                             String tmp = CurrencyManager.getInstance(getActivity()).getCurrentBalanceText();
                             ((BreadWalletApp) getActivity().getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
-                            ((BreadWalletApp)getActivity().getApplicationContext()).setUnlocked(true);
+                            ((BreadWalletApp)getActivity().getApplicationContext()).setUnlocked();
                             InputMethodManager keyboard = (InputMethodManager) MainActivity.app.
                                     getSystemService(Context.INPUT_METHOD_SERVICE);
                             keyboard.hideSoftInputFromWindow(ok.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);

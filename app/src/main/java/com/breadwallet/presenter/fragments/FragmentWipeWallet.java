@@ -48,11 +48,11 @@ import com.breadwallet.wallet.BRWalletManager;
  */
 
 public class FragmentWipeWallet extends Fragment {
-    public static final String TAG = FragmentWipeWallet.class.getName();
-    Button close;
-    EditText recoveryPhraseEditText;
-    Button wipe;
-    BRWalletManager m;
+    private static final String TAG = FragmentWipeWallet.class.getName();
+    private Button close;
+    private EditText recoveryPhraseEditText;
+    private Button wipe;
+    private BRWalletManager m;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -121,7 +121,7 @@ public class FragmentWipeWallet extends Fragment {
         MainActivity.app.softKeyboard.closeSoftKeyboard();
     }
 
-    public void startIntroActivity() {
+    private void startIntroActivity() {
         Intent intent;
         intent = new Intent(getActivity(), IntroActivity.class);
         startActivity(intent);

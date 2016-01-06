@@ -33,7 +33,7 @@ import java.io.IOException;
  *
  * @author dswitkin@google.com (Daniel Switkin)
  */
-public final class CameraManager {
+final class CameraManager {
 
     private static final String TAG = CameraManager.class.getSimpleName();
 
@@ -53,7 +53,7 @@ public final class CameraManager {
     // PreviewCallback references are also removed from original ZXING authors work, since We're using our own interface
     // FramingRects references are also removed from original ZXING authors work, since We're using all view size while detecting QR-Codes
 
-    public CameraManager(Context context) {
+    private CameraManager(Context context) {
         this.context = context;
         this.configManager = new CameraConfigurationManager(context);
     }

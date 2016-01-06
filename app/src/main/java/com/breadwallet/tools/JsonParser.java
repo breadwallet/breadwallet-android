@@ -35,11 +35,11 @@ import java.nio.charset.Charset;
  * THE SOFTWARE.
  */
 
-public class JsonParser {
+class JsonParser {
     public static final String TAG = "JsonParser";
 
-    public static JSONArray getJSonArray(String URL) {
-        String jsonString = callURL(URL);
+    public static JSONArray getJSonArray() {
+        String jsonString = callURL("https://bitpay.com/rates");
 //        System.out.println("\n\njsonString: " + jsonString);
         JSONArray jsonArray = null;
         try {
@@ -67,14 +67,13 @@ public class JsonParser {
                 in = new InputStreamReader(urlConn.getInputStream(),
                         Charset.defaultCharset());
                 BufferedReader bufferedReader = new BufferedReader(in);
-                if (bufferedReader != null) {
-                    int cp;
-                    while ((cp = bufferedReader.read()) != -1) {
-                        sb.append((char) cp);
-                    }
-                    bufferedReader.close();
+                int cp;
+                while ((cp = bufferedReader.read()) != -1) {
+                    sb.append((char) cp);
                 }
+                bufferedReader.close();
             }
+            assert in != null;
             in.close();
         } catch (Exception e) {
             return null;

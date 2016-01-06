@@ -59,8 +59,8 @@ public class FingerprintAuthenticationDialogFragment extends DialogFragment
 
     private FingerprintUiHelper mFingerprintUiHelper;
 
-    FingerprintUiHelper.FingerprintUiHelperBuilder mFingerprintUiHelperBuilder;
-    InputMethodManager mInputMethodManager;
+    private FingerprintUiHelper.FingerprintUiHelperBuilder mFingerprintUiHelperBuilder;
+    private InputMethodManager mInputMethodManager;
 
 
     public FingerprintAuthenticationDialogFragment() {
@@ -132,8 +132,8 @@ public class FingerprintAuthenticationDialogFragment extends DialogFragment
 //        }
     }
 
-    public void setStage(Stage stage) {
-        mStage = stage;
+    public void setStage() {
+        mStage = Stage.FINGERPRINT;
     }
 
     @Override
@@ -250,10 +250,10 @@ public class FingerprintAuthenticationDialogFragment extends DialogFragment
         MainActivity app = MainActivity.app;
         String tmp = CurrencyManager.getInstance(getActivity()).getCurrentBalanceText();
         ((BreadWalletApp) getActivity().getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
-        ((BreadWalletApp) getActivity().getApplicationContext()).setUnlocked(true);
+        ((BreadWalletApp) getActivity().getApplicationContext()).setUnlocked();
         if (app != null)
             app.softKeyboard.closeSoftKeyboard();
-        ((BreadWalletApp)getActivity().getApplicationContext()).allowKeyStoreAccessForSeconds(60);
+        ((BreadWalletApp)getActivity().getApplicationContext()).allowKeyStoreAccessForSeconds();
         // Callback from FingerprintUiHelper. Let the activity know that authentication was
         // successful.
 //        mActivity.onPurchased(true /* withFingerprint */);

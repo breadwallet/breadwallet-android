@@ -31,14 +31,13 @@ import java.nio.ByteBuffer;
 public class BRPeerManager {
     public static final String TAG = BRPeerManager.class.getName();
     private static BRPeerManager instance;
-    private static Context ctx;
     private byte[] peerManager;
 
     private BRPeerManager() {
     }
 
     public static synchronized BRPeerManager getInstance(Context context) {
-        ctx = context;
+        Context ctx = context;
         if (instance == null) {
             instance = new BRPeerManager();
         }

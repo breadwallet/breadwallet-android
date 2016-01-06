@@ -50,12 +50,12 @@ import java.util.Stack;
  */
 
 public class FragmentAnimator {
-    public static final String TAG = "FragmentAnimator";
+    private static final String TAG = "FragmentAnimator";
     public static int level = 0;
     public static boolean wipeWalletOpen = false;
-    public static Stack<Fragment> previous = new Stack<>();
+    private static final Stack<Fragment> previous = new Stack<>();
     private static boolean multiplePressingAvailable = true;
-    public static final Object lockObject = new Object();
+    private static final Object lockObject = new Object();
 
     public static void animateDecoderFragment() {
 
@@ -275,9 +275,8 @@ public class FragmentAnimator {
      * else :
      * - return false.
      *
-     * @param delay in milliseconds
      */
-    public static boolean checkTheMultipressingAvailability(int delay) {
+    public static boolean checkTheMultipressingAvailability() {
         Log.e(TAG, "multiplePressingAvailable: " + multiplePressingAvailable);
         synchronized (lockObject) {
             if (multiplePressingAvailable) {
@@ -288,7 +287,7 @@ public class FragmentAnimator {
                         multiplePressingAvailable = true;
                         Log.w(TAG, "multiplePressingAvailable is back to - true");
                     }
-                }, delay);
+                }, 300);
                 return true;
             } else {
                 return false;
@@ -309,7 +308,7 @@ public class FragmentAnimator {
         }, 300);
         final FragmentManager fragmentManager = app.getFragmentManager();
         FragmentDecoder fragmentDecoder = (FragmentDecoder) fragmentManager.findFragmentByTag(FragmentDecoder.class.getName());
-        if (fragmentDecoder == null || fragmentManager == null) return;
+        if (fragmentDecoder == null) return;
         fragmentManager.beginTransaction().setCustomAnimations(R.animator.from_top, R.animator.to_bottom).
                 remove(fragmentDecoder).commit();
         CustomPagerAdapter.adapter.showFragments(true);

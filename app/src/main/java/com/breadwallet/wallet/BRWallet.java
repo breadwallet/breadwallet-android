@@ -33,17 +33,16 @@ import java.util.List;
  */
 public class BRWallet {
     public static final String TAG = BRWallet.class.getName();
-    public ByteBuffer walletBuff;
+    private ByteBuffer walletBuff;
 
     private BRWallet() {
 
     }
 
-    public static BRWallet createFromBytes(byte[] bytes) throws IOException {
+    public static BRWallet createFromBytes(byte[] bytes) {
         final BRWallet wallet = new BRWallet();
-        final ByteBuffer buf = ByteBuffer.wrap(bytes);
 
-        wallet.walletBuff = buf;
+        wallet.walletBuff = ByteBuffer.wrap(bytes);
         // If needed: buf.order(ByteOrder.LITTLE_ENDIAN);
         // Example to convert unsigned short to a positive int
 

@@ -38,12 +38,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TransactionDataSource {
-    public static final String TAG = TransactionDataSource.class.getName();
+    private static final String TAG = TransactionDataSource.class.getName();
 
     // Database fields
     private SQLiteDatabase database;
-    private BRSQLiteHelper dbHelper;
-    private String[] allColumns = {
+    private final BRSQLiteHelper dbHelper;
+    private final String[] allColumns = {
             BRSQLiteHelper.TX_COLUMN_ID,
             BRSQLiteHelper.TX_BUFF
 //            BRSQLiteHelper.TX_BLOCK_HEIGHT, BRSQLiteHelper.TX_LOCK_TIME,

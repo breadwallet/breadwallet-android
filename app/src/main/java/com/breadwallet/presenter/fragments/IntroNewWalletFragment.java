@@ -40,7 +40,7 @@ import java.text.Normalizer;
  * THE SOFTWARE.
  */
 public class IntroNewWalletFragment extends Fragment {
-    public static final String TAG = IntroNewWalletFragment.class.getName();
+    private static final String TAG = IntroNewWalletFragment.class.getName();
     public Button introGenerate;
     private BRWalletManager m;
 

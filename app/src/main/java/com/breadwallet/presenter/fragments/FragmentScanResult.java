@@ -53,19 +53,18 @@ import java.math.BigDecimal;
  */
 
 public class FragmentScanResult extends Fragment implements View.OnClickListener {
-    public static final String TAG = "FragmentScanResult";
+    private static final String TAG = "FragmentScanResult";
     private TextView scanResult;
     private RelativeLayout customKeyboardLayout;
     public static TextView amountToPay;
-    public static TextView amountBeforeArrow;
+    private static TextView amountBeforeArrow;
     public static String address = "-";
     public static final int BITCOIN_LEFT = 1;
     public static final int BITCOIN_RIGHT = 2;
     public static int currentCurrencyPosition = BITCOIN_RIGHT;
-    private static TextView doubleArrow;
     private static String ISO;
     public static double rate = -1;
-    static final String DOUBLE_ARROW = "\u21CB";
+    private static final String DOUBLE_ARROW = "\u21CB";
     public static boolean isARequest = false;
 
     @Override
@@ -78,7 +77,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         customKeyboardLayout = (RelativeLayout) rootView.findViewById(R.id.custom_keyboard_layout);
         amountToPay = (TextView) rootView.findViewById(R.id.amount_to_pay);
         amountBeforeArrow = (TextView) rootView.findViewById(R.id.amount_before_arrow);
-        doubleArrow = (TextView) rootView.findViewById(R.id.double_arrow_text);
+        TextView doubleArrow = (TextView) rootView.findViewById(R.id.double_arrow_text);
 
         /**
          * This mess is for the custom keyboard to be created after the soft keyboard is hidden
@@ -179,6 +178,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
             b.setWidth((int) buttonWidth);
             b.setHeight((int) buttonHeight);
             b.setTextSize(buttonTextSize);
+            //noinspection deprecation
             b.setTextColor(getResources().getColor(R.color.dark_blue));
             b.setBackgroundResource(R.drawable.button_regular_blue);
             b.setOnClickListener(this);
@@ -269,7 +269,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         }
     }
 
-    public static void updateRateAndISO() {
+    private static void updateRateAndISO() {
         MainActivity app = MainActivity.app;
         if (app == null) return;
         SharedPreferences settings = MainActivity.app.getSharedPreferences(MainActivity.PREFS_NAME, 0);

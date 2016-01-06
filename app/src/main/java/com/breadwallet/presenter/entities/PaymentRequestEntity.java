@@ -27,15 +27,15 @@ package com.breadwallet.presenter.entities;
 public class PaymentRequestEntity {
     public static final String TAG = PaymentRequestEntity.class.getName();
 
-    public String addresses[];
-    public long amount;
-    public double fee;
-    public String cn;
+    public final String[] addresses;
+    public final long amount;
+    private final double fee;
+    public final String cn;
 
-    public PaymentRequestEntity(String theAddress[], long theAmount, double theFee, String theCn) {
+    public PaymentRequestEntity(String theAddress[], long theAmount, String theCn) {
         addresses = theAddress;
         amount = theAmount;
-        fee = theFee;
+        fee = (double) 13;
         cn = theCn;
     }
 

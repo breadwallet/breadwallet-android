@@ -44,17 +44,17 @@ import com.breadwallet.presenter.fragments.FragmentCurrency;
 public class CurrencyListAdapter extends ArrayAdapter<CurrencyEntity> {
     public static final String TAG = "CurrencyListAdapter";
 
-    Context mContext;
-    int layoutResourceId;
-    public TextView textViewItem;
-    public Point displayParameters = new Point();
+    private final Context mContext;
+    private final int layoutResourceId;
+    private TextView textViewItem;
+    private final Point displayParameters = new Point();
     public static CurrencyListAdapter currencyListAdapter;
 
-    public CurrencyListAdapter(Context mContext, int layoutResourceId) {
+    public CurrencyListAdapter(Context mContext) {
 
-        super(mContext, layoutResourceId);
+        super(mContext, R.layout.currency_list_item);
 
-        this.layoutResourceId = layoutResourceId;
+        this.layoutResourceId = R.layout.currency_list_item;
         this.mContext = mContext;
         ((Activity)mContext).getWindowManager().getDefaultDisplay().getSize(displayParameters);
         currencyListAdapter = this;
@@ -91,7 +91,7 @@ public class CurrencyListAdapter extends ArrayAdapter<CurrencyEntity> {
         return IGNORE_ITEM_VIEW_TYPE;
     }
 
-    public boolean isTextSizeAcceptable(TextView textView) {
+    private boolean isTextSizeAcceptable(TextView textView) {
         textView.measure(0, 0);
         int textWidth = textView.getMeasuredWidth();
         int checkMarkWidth = 76 + 20;
@@ -102,10 +102,10 @@ public class CurrencyListAdapter extends ArrayAdapter<CurrencyEntity> {
 //        Log.w(TAG, "The checkMarkWidth: " + checkMarkWidth);
 //        Log.e(TAG, "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
 
-        return (textWidth > (displayParameters.x - checkMarkWidth)) ? false : true;
+        return (textWidth <= (displayParameters.x - checkMarkWidth));
     }
 
-    public boolean normalizeTextView() {
+    private boolean normalizeTextView() {
         int count = 0;
 //        Log.d(TAG, "Normalizing the text view !!!!!!");
         while (!isTextSizeAcceptable(textViewItem)) {
@@ -115,7 +115,7 @@ public class CurrencyListAdapter extends ArrayAdapter<CurrencyEntity> {
             textViewItem.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize - 2);
             this.notifyDataSetChanged();
         }
-        return (count > 0) ? true : false;
+        return (count > 0);
     }
 
 }

@@ -14,8 +14,8 @@ import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 
 public class NetworkChangeReceiver extends BroadcastReceiver {
-    public static final String TAG = "NetworkChangeReceiver";
-    public RelativeLayout networkErrorBar;
+    private static final String TAG = "NetworkChangeReceiver";
+    private RelativeLayout networkErrorBar;
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
@@ -23,10 +23,10 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
         final ConnectivityManager connMgr = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         networkErrorBar = (RelativeLayout) app.findViewById(R.id.main_internet_status_bar);
-        final android.net.NetworkInfo wifi = connMgr
+        @SuppressWarnings("deprecation") final android.net.NetworkInfo wifi = connMgr
                 .getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
-        final android.net.NetworkInfo mobile = connMgr
+        @SuppressWarnings("deprecation") final android.net.NetworkInfo mobile = connMgr
                 .getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 
         if (!wifi.isAvailable() && !mobile.isAvailable()) {

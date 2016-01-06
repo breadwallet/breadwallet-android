@@ -26,7 +26,7 @@ import java.io.Serializable;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class BRTxOutputEntity implements Serializable {
+class BRTxOutputEntity implements Serializable {
 
     private int index;
     private char[] address;

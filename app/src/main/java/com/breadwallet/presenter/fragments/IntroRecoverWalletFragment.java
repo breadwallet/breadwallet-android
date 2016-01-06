@@ -38,8 +38,8 @@ import com.breadwallet.presenter.activities.IntroActivity;
  * THE SOFTWARE.
  */
 public class IntroRecoverWalletFragment extends Fragment {
-    public Button recoverButton;
-    public EditText editText;
+    private Button recoverButton;
+    private EditText editText;
     private AlertDialog alertDialog;
 
     @Override
@@ -79,7 +79,7 @@ public class IntroRecoverWalletFragment extends Fragment {
         return rootView;
     }
 
-    boolean validateRecoveryPhrase(String phrase) {
+    private boolean validateRecoveryPhrase(String phrase) {
         //mock test
         int count = 0;
         int length = phrase.length();

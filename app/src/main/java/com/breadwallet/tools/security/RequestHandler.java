@@ -52,8 +52,8 @@ import java.util.List;
  * THE SOFTWARE.
  */
 public class RequestHandler {
-    public static final String TAG = RequestHandler.class.getName();
-    public static final Object lockObject = new Object();
+    private static final String TAG = RequestHandler.class.getName();
+    private static final Object lockObject = new Object();
 
     public static synchronized void processRequest(String address) {
 
@@ -140,7 +140,7 @@ public class RequestHandler {
             Double doubleAmount = Double.parseDouble(requestObject.amount) * 100000000;
             long amount = doubleAmount.longValue();
             PaymentRequestEntity requestEntity = new PaymentRequestEntity(addresses,
-                    amount, 13, "");
+                    amount, "");
             MainActivity app = MainActivity.app;
             if (app != null) {
                 app.confirmPay(requestEntity);
@@ -187,7 +187,7 @@ public class RequestHandler {
                 //Logging
                 StringBuilder allAddresses = new StringBuilder();
                 for (String s : paymentRequest.addresses) {
-                    allAddresses.append(s + ", ");
+                    allAddresses.append(s).append(", ");
                     if (!validateAddress(s)) {
                         if (app != null)
                             ((BreadWalletApp) app.getApplication()).
@@ -248,7 +248,7 @@ public class RequestHandler {
             if (paymentRequest == null) return;
             Log.e(TAG, "paymentRequest.amount: " + paymentRequest.amount);
             PaymentRequestEntity requestEntity = new PaymentRequestEntity(paymentRequest.addresses,
-                    paymentRequest.amount, 13, cn);
+                    paymentRequest.amount, cn);
             MainActivity app = MainActivity.app;
             if (app != null) {
                 app.confirmPay(requestEntity);

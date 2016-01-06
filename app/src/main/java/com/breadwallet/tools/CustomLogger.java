@@ -27,14 +27,14 @@ import android.util.Log;
  * THE SOFTWARE.
  */
 public class CustomLogger {
-    public static final String TAG = CustomLogger.class.getName();
+    private static final String TAG = CustomLogger.class.getName();
 
     public static void LogThis(String... args) {
         StringBuilder strToLog = new StringBuilder();
         int i = 0;
         for (String arg : args) {
             if (i++ % 2 == 0) {
-                strToLog.append(" | " + arg + ": ");
+                strToLog.append(" | ").append(arg).append(": ");
             } else {
                 strToLog.append(arg);
             }

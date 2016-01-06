@@ -46,7 +46,7 @@ public class PaymentRequestCWrapper {
     public String[] addresses;
     public long amount;
 
-    public PaymentRequestCWrapper() {
+    private PaymentRequestCWrapper() {
     }
 
     public void byteSignature(byte[] fromJNI) {

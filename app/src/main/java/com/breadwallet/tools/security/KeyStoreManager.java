@@ -60,20 +60,20 @@ import javax.security.auth.x500.X500Principal;
  */
 
 public class KeyStoreManager {
-    public static final String TAG = KeyStoreManager.class.getName();
+    private static final String TAG = KeyStoreManager.class.getName();
 
-    static final String ENCRYPTION_PADDING = "RSA/ECB/PKCS1Padding";
-    static final String CIPHER_PROVIDER = "AndroidOpenSSL";
-    public static final String ANDROID_KEY_STORE = "AndroidKeyStore";
-    public static final String BREADWALLET_X500 = "CN=Breadwallet";
+    private static final String ENCRYPTION_PADDING = "RSA/ECB/PKCS1Padding";
+    private static final String CIPHER_PROVIDER = "AndroidOpenSSL";
+    private static final String ANDROID_KEY_STORE = "AndroidKeyStore";
+    private static final String BREADWALLET_X500 = "CN=Breadwallet";
 
     public static final String PHRASE_ALIAS = "phrase";
-    public static final String PUB_KEY_ALIAS = "pubKey";
-    public static final String WALLET_CREATION_TIME_ALIAS = "creationTime";
+    private static final String PUB_KEY_ALIAS = "pubKey";
+    private static final String WALLET_CREATION_TIME_ALIAS = "creationTime";
 
-    public static final String PHRASE_FILENAME = "my_phrase";
-    public static final String PUB_KEY_FILENAME = "my_pub_key";
-    public static final String WALLET_CREATION_TIME_FILENAME = "my_creation_time";
+    private static final String PHRASE_FILENAME = "my_phrase";
+    private static final String PUB_KEY_FILENAME = "my_pub_key";
+    private static final String WALLET_CREATION_TIME_FILENAME = "my_creation_time";
 
     @TargetApi(Build.VERSION_CODES.M)
     @SuppressWarnings("deprecation") // for api < 23
@@ -195,7 +195,6 @@ public class KeyStoreManager {
     public static boolean putMasterPublicKey(byte[] masterPubKey, Context context) {
 
         Log.e(TAG, "putMasterPublicKey length: " + masterPubKey.length);
-        if (masterPubKey == null) return false;
         if (masterPubKey.length == 0) return false;
         try {
             KeyStore keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
@@ -209,7 +208,7 @@ public class KeyStoreManager {
                 notAfter.add(Calendar.YEAR, 99);
                 KeyPairGenerator generator = KeyPairGenerator.getInstance(
                         KeyProperties.KEY_ALGORITHM_RSA, ANDROID_KEY_STORE);
-                KeyPairGeneratorSpec spec = new KeyPairGeneratorSpec.Builder(context)
+                @SuppressWarnings("deprecation") KeyPairGeneratorSpec spec = new KeyPairGeneratorSpec.Builder(context)
                         .setAlias(PUB_KEY_ALIAS)
                         .setKeySize(2048)
                         .setSubject(new X500Principal(BREADWALLET_X500))
@@ -287,7 +286,7 @@ public class KeyStoreManager {
                 roundTrippedBytes[index] = (byte) nextByte;
                 index++;
             }
-            if (roundTrippedBytes != null) result = roundTrippedBytes;
+            result = roundTrippedBytes;
 //            Log.e(TAG, "round tripped bytes: " + roundTrippedBytes);
         } catch (Exception e) {
             e.printStackTrace();
@@ -312,7 +311,7 @@ public class KeyStoreManager {
                 notAfter.add(Calendar.YEAR, 99);
                 KeyPairGenerator generator = KeyPairGenerator.getInstance(
                         KeyProperties.KEY_ALGORITHM_RSA, ANDROID_KEY_STORE);
-                KeyPairGeneratorSpec spec = new KeyPairGeneratorSpec.Builder(context)
+                @SuppressWarnings("deprecation") KeyPairGeneratorSpec spec = new KeyPairGeneratorSpec.Builder(context)
                         .setAlias(WALLET_CREATION_TIME_ALIAS)
                         .setKeySize(2048)
                         .setSubject(new X500Principal(BREADWALLET_X500))
@@ -391,7 +390,7 @@ public class KeyStoreManager {
                 roundTrippedBytes[index] = (byte) nextByte;
                 index++;
             }
-            if (roundTrippedBytes != null) result = roundTrippedBytes;
+            result = roundTrippedBytes;
 //            Log.e(TAG, "round tripped bytes: " + roundTrippedBytes);
         } catch (Exception e) {
             e.printStackTrace();
@@ -400,12 +399,12 @@ public class KeyStoreManager {
         return bytesToLong(result);
     }
 
-    public static boolean deleteKeyStoreEntry(String alias) {
+    public static boolean deleteKeyStoreEntry() {
         KeyStore keyStore;
         try {
             keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
             keyStore.load(null);
-            keyStore.deleteEntry(alias);
+            keyStore.deleteEntry(KeyStoreManager.PHRASE_ALIAS);
         } catch (CertificateException e) {
             e.printStackTrace();
             return false;

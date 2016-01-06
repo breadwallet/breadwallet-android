@@ -8,7 +8,6 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
 
-import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.fragments.FragmentCurrency;
@@ -29,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Observable;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -60,18 +60,18 @@ import java.util.TimerTask;
 
 public class CurrencyManager extends Observable {
     private static CurrencyManager instance;
-    public static final String TAG = "CurrencyManager";
+    private static final String TAG = "CurrencyManager";
     private Timer timer;
     private long BALANCE = 0;
     private TimerTask timerTask;
-    public final String bitcoinLowercase = "\u0180";
+    private final String bitcoinLowercase = "\u0180";
     private final Handler handler = new Handler();
     public static boolean separatorNeedsToBeShown = false;
-    private CurrencyListAdapter currencyListAdapter;
+    private final CurrencyListAdapter currencyListAdapter;
     private static Context ctx;
 
     private CurrencyManager() {
-        currencyListAdapter = new CurrencyListAdapter(ctx, R.layout.currency_list_item);
+        currencyListAdapter = new CurrencyListAdapter(ctx);
     }
 
     public static synchronized CurrencyManager getInstance(Context context) {
@@ -96,16 +96,16 @@ public class CurrencyManager extends Observable {
         notifyObservers();
     }
 
-    public long getBALANCE() {
+    private long getBALANCE() {
         return BALANCE;
     }
 
-    public List<CurrencyEntity> getCurrencies(Context context) {
+    private List<CurrencyEntity> getCurrencies(Context context) {
         List<CurrencyEntity> list = new ArrayList<>();
         if (isNetworkAvailable()) {
             try {
                 JSONArray arr;
-                arr = JsonParser.getJSonArray("https://bitpay.com/rates");
+                arr = JsonParser.getJSonArray();
                 Log.e(TAG, "JSONArray arr.length(): " + arr.length());
                 int length = arr.length();
                 for (int i = 1; i < length; i++) {
@@ -128,7 +128,7 @@ public class CurrencyManager extends Observable {
                                 editor.putString(FragmentCurrency.CURRENT_CURRENCY, tmp.code);
                                 editor.putInt(FragmentCurrency.POSITION, FragmentCurrency.lastItemsPosition);
                                 editor.putFloat(FragmentCurrency.RATE, tmp.rate);
-                                editor.commit();
+                                editor.apply();
                             }
                         }
                     } catch (JSONException e) {
@@ -180,7 +180,7 @@ public class CurrencyManager extends Observable {
         return currencyListAdapter;
     }
 
-    public void initializeTimerTask() {
+    private void initializeTimerTask() {
 
         timerTask = new TimerTask() {
             public void run() {
@@ -220,9 +220,8 @@ public class CurrencyManager extends Observable {
         if (rate == 0) rate = 1;
         double result = 1000000 / rate;
         DecimalFormat decimalFormat = new DecimalFormat("0.00");
-        String finalResult = getFormattedCurrencyString(iso, "1") + " = " +
+        return getFormattedCurrencyString(iso, "1") + " = " +
                 getFormattedCurrencyString("BTC", String.valueOf(decimalFormat.format(result)));
-        return finalResult;
     }
 
     public String getCurrencyAndExchange(double rate, String iso, String target) {
@@ -231,9 +230,8 @@ public class CurrencyManager extends Observable {
         if (rate == 0) rate = 1;
         double exchange = (Double.parseDouble(target) * rate / 1000000);
         DecimalFormat decimalFormat = new DecimalFormat("0.00");
-        String finalResult = getFormattedCurrencyString("BTC", target) + " = " +
+        return getFormattedCurrencyString("BTC", target) + " = " +
                 getFormattedCurrencyString(iso, String.valueOf(decimalFormat.format(exchange)));
-        return finalResult;
     }
 
     public long getBitsFromSatoshi(long target) {
@@ -265,7 +263,7 @@ public class CurrencyManager extends Observable {
         // s the currency symbol.
         DecimalFormatSymbols decimalFormatSymbols;
         Currency currency;
-        if (isoCurrencyCode == "BTC") {
+        if (Objects.equals(isoCurrencyCode, "BTC")) {
             decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
             decimalFormatSymbols.setCurrencySymbol(bitcoinLowercase);
         } else {

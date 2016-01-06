@@ -48,26 +48,18 @@ import com.breadwallet.tools.animation.FragmentAnimator;
  */
 
 public class FragmentSettings extends Fragment {
-    public static final String TAG = "FragmentSettings";
-    private RelativeLayout about;
-    private RelativeLayout localCurrency;
-    private RelativeLayout recoveryPhrase;
-    private RelativeLayout startRecoveryWallet;
-    private RelativeLayout changePassword;
+    private static final String TAG = "FragmentSettings";
     private MainActivity app;
     private FragmentSettings fragmentSettings;
     private ChangePasswordDialogFragment changePasswordDialogFragment;
-    private TextView currencyName;
-    private FragmentCurrency fragmentCurrency;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         // The last two arguments ensure LayoutParams are inflated
         // properly.
-        View rootView = inflater.inflate(
+        return inflater.inflate(
                 R.layout.fragment_settings, container, false);
-        return rootView;
     }
 
     @Override
@@ -90,23 +82,23 @@ public class FragmentSettings extends Fragment {
         fragmentSettings = this;
 //        fragmentCurrency = app.fragmentCurrency;
         changePasswordDialogFragment = new ChangePasswordDialogFragment();
-        fragmentCurrency = (FragmentCurrency) getActivity().getFragmentManager().
+        FragmentCurrency fragmentCurrency = (FragmentCurrency) getActivity().getFragmentManager().
                 findFragmentByTag(FragmentCurrency.class.getName());
         new ListInitiatorTask().execute();
-        about = (RelativeLayout) getView().findViewById(R.id.about);
-        currencyName = (TextView) getView().findViewById(R.id.three_letters_currency);
-        changePassword = (RelativeLayout) getView().findViewById(R.id.change_password);
+        RelativeLayout about = (RelativeLayout) getView().findViewById(R.id.about);
+        TextView currencyName = (TextView) getView().findViewById(R.id.three_letters_currency);
+        RelativeLayout changePassword = (RelativeLayout) getView().findViewById(R.id.change_password);
         SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
         final String tmp = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
 //        Log.e(TAG, "Tmp 3 letters: " + tmp);
         currencyName.setText(tmp);
-        localCurrency = (RelativeLayout) getView().findViewById(R.id.local_currency);
-        recoveryPhrase = (RelativeLayout) getView().findViewById(R.id.recovery_phrase);
-        startRecoveryWallet = (RelativeLayout) getView().findViewById(R.id.start_recovery_wallet);
+        RelativeLayout localCurrency = (RelativeLayout) getView().findViewById(R.id.local_currency);
+        RelativeLayout recoveryPhrase = (RelativeLayout) getView().findViewById(R.id.recovery_phrase);
+        RelativeLayout startRecoveryWallet = (RelativeLayout) getView().findViewById(R.id.start_recovery_wallet);
         startRecoveryWallet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
+                if (FragmentAnimator.checkTheMultipressingAvailability()) {
                     FragmentAnimator.pressWipeWallet(app, new FragmentWipeWallet());
                     app.activityButtonsEnable(false);
                 }
@@ -115,7 +107,7 @@ public class FragmentSettings extends Fragment {
         recoveryPhrase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
+                if (FragmentAnimator.checkTheMultipressingAvailability()) {
                     new AlertDialog.Builder(getActivity())
                             .setTitle(getResources().getString(R.string.warning))
                             .setMessage(getResources().getString(R.string.dialog_do_not_let_anyone))
@@ -136,7 +128,7 @@ public class FragmentSettings extends Fragment {
         about.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
+                if (FragmentAnimator.checkTheMultipressingAvailability()) {
                     FragmentAnimator.animateSlideToLeft(app, new FragmentAbout(), fragmentSettings);
                 }
             }
@@ -144,7 +136,7 @@ public class FragmentSettings extends Fragment {
         localCurrency.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
+                if (FragmentAnimator.checkTheMultipressingAvailability()) {
                     FragmentAnimator.animateSlideToLeft(app, new FragmentCurrency(), fragmentSettings);
                 }
             }

@@ -14,7 +14,6 @@ import android.graphics.Point;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
 import android.os.Handler;
-import android.support.v4.BuildConfig;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Display;
@@ -85,13 +84,13 @@ public class BreadWalletApp extends Application {
     public static final int LOCKER_BUTTON = 2;
     public static final int PAY_BUTTON = 3;
     public static final int REQUEST_BUTTON = 4;
-    public static final String TAG = BreadWalletApp.class.getName();
+    private static final String TAG = BreadWalletApp.class.getName();
     public static boolean unlocked = false;
     private boolean customToastAvailable = true;
     public boolean allowKeyStoreAccess;
     private String oldMessage;
     private Toast toast;
-    public static int DISPLAY_WIDTH_PX;
+    private static int DISPLAY_WIDTH_PX;
     public static int DISPLAY_HEIGHT_PX;
     public static final String CREDENTIAL_TITLE = "Insert password";
     public static final String CREDENTIAL_DESCRIPTION = "Insert your password to unlock the app.";
@@ -251,7 +250,7 @@ public class BreadWalletApp extends Application {
         if (fing != null) {
             isEmulator = fing.contains("vbox") || fing.contains("generic");
         }
-        return isEmulator || BuildConfig.DEBUG;
+        return isEmulator;
     }
 
     public void showCustomDialog(final String title, final String message, final String buttonText) {
@@ -274,7 +273,7 @@ public class BreadWalletApp extends Application {
     }
 
     @TargetApi(Build.VERSION_CODES.M)
-    public void showAuthDialog(Context context) {
+    private void showAuthDialog(Context context) {
         FingerprintAuthenticationDialogFragment fingerprintAuthenticationDialogFragment;
         PasswordAuthenticationDialogFragment passwordAuthenticationDialogFragment;
         passwordAuthenticationDialogFragment = new PasswordAuthenticationDialogFragment();
@@ -286,7 +285,7 @@ public class BreadWalletApp extends Application {
             if (fingerprintManager.hasEnrolledFingerprints()) {
                 Log.e(TAG, "Starting the fingerprint Dialog! API 23+");
                 fingerprintAuthenticationDialogFragment.setStage(
-                        FingerprintAuthenticationDialogFragment.Stage.FINGERPRINT);
+                );
 //                fingerprintAuthenticationDialogFragment.setStage(
 //                        FingerprintAuthenticationDialogFragment.Stage.PASSWORD);
                 fingerprintAuthenticationDialogFragment.show(fm, FingerprintAuthenticationDialogFragment.class.getName());
@@ -298,12 +297,12 @@ public class BreadWalletApp extends Application {
 
     }
 
-    public void setUnlocked(boolean b) {
-        unlocked = b;
+    public void setUnlocked() {
+        unlocked = true;
         MainActivity app = MainActivity.app;
         if (app != null) {
-            app.lockerButton.setVisibility(b ? View.GONE : View.VISIBLE);
-            app.lockerButton.setClickable(!b);
+            app.lockerButton.setVisibility(true ? View.GONE : View.VISIBLE);
+            app.lockerButton.setClickable(!true);
         }
     }
 
@@ -316,7 +315,7 @@ public class BreadWalletApp extends Application {
         }
     }
 
-    public void allowKeyStoreAccessForSeconds(int seconds) {
+    public void allowKeyStoreAccessForSeconds() {
         allowKeyStoreAccess = true;
         Log.e(TAG, "allowKeyStoreAccess is: " + allowKeyStoreAccess);
         new Handler().postDelayed(new Runnable() {
@@ -324,7 +323,7 @@ public class BreadWalletApp extends Application {
             public void run() {
                 allowKeyStoreAccess = false;
             }
-        }, seconds * 1000);
+        }, 60 * 1000);
     }
 
     public void authDialogBlockingUi(final Activity context) {

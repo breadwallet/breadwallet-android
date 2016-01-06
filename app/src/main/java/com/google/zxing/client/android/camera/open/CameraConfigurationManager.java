@@ -106,7 +106,7 @@ final class CameraConfigurationManager {
 
   // All references to Torch are removed from here, methods, variables...
 
-  public Point findBestPreviewSizeValue(Camera.Parameters parameters, Point screenResolution) {
+  private Point findBestPreviewSizeValue(Camera.Parameters parameters, Point screenResolution) {
 
     List<Camera.Size> rawSupportedSizes = parameters.getSupportedPreviewSizes();
     if (rawSupportedSizes == null) {

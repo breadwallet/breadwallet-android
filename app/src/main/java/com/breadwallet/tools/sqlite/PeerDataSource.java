@@ -37,13 +37,13 @@ import com.breadwallet.presenter.entities.BRPeerEntity;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PeerDataSource {
-    public static final String TAG = PeerDataSource.class.getName();
+class PeerDataSource {
+    private static final String TAG = PeerDataSource.class.getName();
 
     // Database fields
     private SQLiteDatabase database;
-    private BRSQLiteHelper dbHelper;
-    private String[] allColumns = {
+    private final BRSQLiteHelper dbHelper;
+    private final String[] allColumns = {
             BRSQLiteHelper.PEER_COLUMN_ID,
             BRSQLiteHelper.MB_BUFF
 //            BRSQLiteHelper.PEER_ADDRESS,
@@ -51,7 +51,7 @@ public class PeerDataSource {
 //            BRSQLiteHelper.PEER_SERVICES, BRSQLiteHelper.PEER_TIME_STAMP
     };
 
-    public PeerDataSource(Context context) {
+    private PeerDataSource(Context context) {
         dbHelper = new BRSQLiteHelper(context);
     }
 

@@ -33,13 +33,13 @@ import com.breadwallet.tools.adapter.AmountAdapter;
  * THE SOFTWARE.
  */
 public class BackPressCustomKeyboardOnTouchListener implements View.OnTouchListener {
-    public static final String TAG = "OnTouchListener";
-    private final int LONG_CLICK_DURATION = 500;
-    private Handler handler = new Handler();
+    private static final String TAG = "OnTouchListener";
+    private final Handler handler = new Handler();
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            int LONG_CLICK_DURATION = 500;
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {

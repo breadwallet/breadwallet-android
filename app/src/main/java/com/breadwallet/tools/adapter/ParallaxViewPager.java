@@ -47,13 +47,13 @@ import com.breadwallet.tools.animation.SpringAnimator;
 public class ParallaxViewPager extends ViewPager {
     public static final String TAG = "ParallaxViewPager";
 
-    public static final int FIT_WIDTH = 0;
-    public static final int FIT_HEIGHT = 1;
+    private static final int FIT_WIDTH = 0;
+    private static final int FIT_HEIGHT = 1;
     public static final float OVERLAP_FULL = 1f;
-    public static final float OVERLAP_HALF = 0.5f;
+    private static final float OVERLAP_HALF = 0.5f;
     public static final float OVERLAP_QUARTER = 0.25f;
     private static final float CORRECTION_PERCENTAGE = 0.01f;
-    public Bitmap bitmap;
+    private Bitmap bitmap;
     private Rect source, destination;
     private int scaleType;
     private int chunkWidth;
@@ -80,6 +80,7 @@ public class ParallaxViewPager extends ViewPager {
         overlap = OVERLAP_HALF;
 
 
+        //noinspection deprecation
         setOnPageChangeListener(new OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {

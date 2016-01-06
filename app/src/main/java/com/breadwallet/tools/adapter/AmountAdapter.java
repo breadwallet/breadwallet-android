@@ -12,6 +12,7 @@ import com.breadwallet.tools.CurrencyManager;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.Objects;
 import java.util.Observable;
 
 /**
@@ -40,14 +41,14 @@ import java.util.Observable;
  */
 public class AmountAdapter extends Observable {
     private static final String TAG = "AmountAdapter";
-    public static boolean comaHasBeenInserted = false;
+    private static boolean comaHasBeenInserted = false;
     private static final int DIGITS_LIMIT = 12;
     private static boolean isTextColorGrey = true;
     private static String rightValue = "0";
     private static String leftValue = "0";
     private static final int MAX_DIGITS_AFTER_SEPARATOR = 2;
     public static int digitsInserted = 0;
-    public static int buttonCode = BreadWalletApp.PAY_BUTTON;
+    private static int buttonCode = BreadWalletApp.PAY_BUTTON;
 
     public static void preConditions(String tmp) {
         if(FragmentScanResult.isARequest){
@@ -68,7 +69,7 @@ public class AmountAdapter extends Observable {
         }
     }
 
-    public static void doBackSpace() {
+    private static void doBackSpace() {
         MainActivity app = MainActivity.app;
         String amount = rightValue;
         Log.d(TAG, "digitsInserted: " + digitsInserted);
@@ -87,7 +88,7 @@ public class AmountAdapter extends Observable {
             }
         }
         if (length > 1) {
-            if (rightValue.length() == 3 && rightValue.substring(0, 2) == "0.") {
+            if (rightValue.length() == 3 && Objects.equals(rightValue.substring(0, 2), "0.")) {
                 calculateAndPassValuesToFragment(rightValue.substring(0, length - 2));
             } else {
                 calculateAndPassValuesToFragment(rightValue.substring(0, length - 1));
@@ -100,7 +101,7 @@ public class AmountAdapter extends Observable {
 
     }
 
-    public static void insertSeparator() {
+    private static void insertSeparator() {
         MainActivity app = MainActivity.app;
         if (isTextColorGrey) {
             changeTextColor(1);
@@ -114,7 +115,7 @@ public class AmountAdapter extends Observable {
         }
     }
 
-    public static void insertDigit(String tmp) {
+    private static void insertDigit(String tmp) {
         MainActivity app = MainActivity.app;
         String amount = rightValue;
 //        Log.e(TAG, "The text before inserting digits: " + amount);
@@ -143,10 +144,7 @@ public class AmountAdapter extends Observable {
     private static boolean isDigitInsertingLegal(String text) {
 //        Log.e(TAG, "Testing isDigitInsertingLegal, text: " + text);
         if (text.length() < DIGITS_LIMIT) {
-            if (comaHasBeenInserted) {
-                return digitsInserted < MAX_DIGITS_AFTER_SEPARATOR;
-            }
-            return true;
+            return !comaHasBeenInserted || digitsInserted < MAX_DIGITS_AFTER_SEPARATOR;
         }
         return false;
     }
@@ -154,11 +152,12 @@ public class AmountAdapter extends Observable {
     /**
      * Sets the textColor of the amount TextView to black or grey
      *
-     * @patam color the color of the textView: 1 Black, 2 Grey.
+     * @param color the color of the textView: 1 Black, 2 Grey.
      */
     private static void changeTextColor(int color) {
         Activity context = MainActivity.app;
         isTextColorGrey = color == 1 ? false : true;
+        //noinspection deprecation
         FragmentScanResult.amountToPay.setTextColor((color == 1) ? context.getResources().getColor(R.color.black)
                 : context.getResources().getColor(android.R.color.darker_gray));
     }

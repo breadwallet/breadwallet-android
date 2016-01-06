@@ -35,8 +35,8 @@ import com.breadwallet.presenter.activities.IntroActivity;
  * THE SOFTWARE.
  */
 public class IntroNewRecoverFragment extends Fragment {
-    Button newWallet;
-    Button recoverWallet;
+    private Button newWallet;
+    private Button recoverWallet;
 
     @Override
     public View onCreateView(LayoutInflater inflater,

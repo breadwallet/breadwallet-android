@@ -41,7 +41,7 @@ import java.util.List;
  */
 
 public class BRWalletManager {
-    public static final String TAG = BRWalletManager.class.getName();
+    private static final String TAG = BRWalletManager.class.getName();
     private static BRWalletManager instance;
     private static Context ctx;
 
@@ -163,7 +163,7 @@ public class BRWalletManager {
      * a signed transaction that will sweep the balance into wallet (doesn't publish the tx)
      */
     public boolean sweepPrivateKey() {
-        return KeyStoreManager.deleteKeyStoreEntry(KeyStoreManager.PHRASE_ALIAS);
+        return KeyStoreManager.deleteKeyStoreEntry();
     }
 
     public long amountForString(String string) {
@@ -188,9 +188,8 @@ public class BRWalletManager {
     public boolean noWallet(Context ctx) {
         byte[] pubkey = KeyStoreManager.getMasterPublicKey(ctx);
         Log.e(TAG, "in the noWallet, pubkey.length: " + pubkey.length);
-        if (pubkey == null) return false;
+        return pubkey != null && pubkey.length == 0;
 
-        return pubkey.length == 0;
     }
 
     /**

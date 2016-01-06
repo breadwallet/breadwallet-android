@@ -39,10 +39,8 @@ import com.breadwallet.tools.animation.FragmentAnimator;
  */
 
 public class FragmentSettingsAll extends Fragment {
-    public static final String TAG = "MainFragmentSettings";
+    private static final String TAG = "MainFragmentSettings";
 
-    private RelativeLayout settings;
-    private RelativeLayout importPrivateKeys;
     private MainActivity app;
     private FragmentSettingsAll fragmentSettingsAll;
 
@@ -54,13 +52,13 @@ public class FragmentSettingsAll extends Fragment {
         final View rootView = inflater.inflate(
                 R.layout.fragment_settings_all, container, false);
         app = MainActivity.app;
-        importPrivateKeys = (RelativeLayout) rootView.findViewById(R.id.import_private_key);
+        RelativeLayout importPrivateKeys = (RelativeLayout) rootView.findViewById(R.id.import_private_key);
         fragmentSettingsAll = this;
-        settings = (RelativeLayout) rootView.findViewById(R.id.settings);
+        RelativeLayout settings = (RelativeLayout) rootView.findViewById(R.id.settings);
         importPrivateKeys.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
+                if (FragmentAnimator.checkTheMultipressingAvailability()) {
                     FragmentAnimator.animateDecoderFragment();
                 }
             }
@@ -68,7 +66,7 @@ public class FragmentSettingsAll extends Fragment {
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (FragmentAnimator.checkTheMultipressingAvailability(300)) {
+                if (FragmentAnimator.checkTheMultipressingAvailability()) {
                     FragmentAnimator.animateSlideToLeft(app, new FragmentSettings(), fragmentSettingsAll);
                     Log.d(TAG, "Starting:   showBouncySlideHorizontal()");
                 }

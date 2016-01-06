@@ -33,7 +33,7 @@ import java.io.StreamCorruptedException;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class ReadWriteBytes {
+class ReadWriteBytes {
 
     public static Object readBytes(byte[] bytes) {
         ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
@@ -43,8 +43,6 @@ public class ReadWriteBytes {
             in = new ObjectInputStream(bis);
             o = in.readObject();
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (StreamCorruptedException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();

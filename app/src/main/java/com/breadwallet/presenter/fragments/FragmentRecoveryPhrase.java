@@ -43,7 +43,7 @@ import com.breadwallet.wallet.BRWalletManager;
 
 public class FragmentRecoveryPhrase extends Fragment {
     public static final String TAG = FragmentRecoveryPhrase.class.getName();
-    public TextView thePhrase;
+    private TextView thePhrase;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
