@@ -71,7 +71,7 @@ import static android.hardware.camera2.CaptureRequest.CONTROL_AF_MODE;
 public class FragmentDecoder extends Fragment
         implements FragmentCompat.OnRequestPermissionsResultCallback {
     private static final int sImageFormat = ImageFormat.YUV_420_888;
-
+    //TODO find the bug behind the qrcode reader M on a real device
     private static final String CAMERA_GUIDE_RED = "red";
     private static final String CAMERA_GUIDE = "reg";
     private static final String TEXT_EMPTY = "";

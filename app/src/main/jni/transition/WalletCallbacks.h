@@ -1,17 +1,11 @@
 //
 // Created by Mihail Gutan on 12/4/15.
 //
-
+#include "jni.h"
 #ifndef BREADWALLET_WALLETCALLBACKS_H
 #define BREADWALLET_WALLETCALLBACKS_H
 
-#include "jni.h"
-#include "BRInt.h"
-#include "BRTransaction.h"
-#include "BRWallet.h"
-#include <android/log.h>
-#include "wallet.h"
-#include "BRPeerManager.h"
+
 
 extern JNIEnv *env;
 

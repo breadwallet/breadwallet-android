@@ -113,7 +113,7 @@ public class FragmentSettings extends Fragment {
                             .setMessage(getResources().getString(R.string.dialog_do_not_let_anyone))
                             .setPositiveButton(getResources().getString(R.string.show), new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
-                                    ((BreadWalletApp) getActivity().getApplicationContext()).authDialogBlockingUi(getActivity());
+                                    ((BreadWalletApp) getActivity().getApplicationContext()).authDialogBlockingUi(getActivity(), BreadWalletApp.AUTH_FOR_PHRASE);
                                 }
                             })
                             .setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {

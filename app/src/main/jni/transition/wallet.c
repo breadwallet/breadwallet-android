@@ -3,7 +3,16 @@
 //
 
 #include "wallet.h"
+#include "BRPeerManager.h"
+//#include "WalletCallbacks.h"
+#include "BRBIP39Mnemonic.h"
+#include <android/log.h>
+#include "BRBIP32Sequence.h"
+#include "BRTransaction.h"
+
 static JavaVM *jvm;
+BRWallet *wallet;
+static BRMasterPubKey pubKey;
 
 static void balanceChanged(void *info, uint64_t balance) {
     JNIEnv *globalEnv;

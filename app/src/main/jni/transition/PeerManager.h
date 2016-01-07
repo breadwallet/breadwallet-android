@@ -1,17 +1,9 @@
 //
 // Created by Mihail Gutan on 12/11/15.
 //
-
+#include "jni.h"
 #ifndef BREADWALLET_PEERMANAGER_H
 
-#include "jni.h"
-#include "BRPeerManager.h"
-#include "BRPeer.h"
-#include "WalletCallbacks.h"
-#include "BRInt.h"
-#include <android/log.h>
-#include "BRMerkleBlock.h"
-#include "BRWallet.h"
 
 #define BREADWALLET_PEERMANAGER_H
 

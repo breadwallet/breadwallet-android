@@ -56,7 +56,6 @@ import com.breadwallet.wallet.BRWalletManager;
 
 import java.nio.ByteBuffer;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
@@ -108,6 +107,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     private Map<String, Integer> burgerButtonMap;
     private Button burgerButton;
     public Button lockerButton;
+    public TextView pay;
     private static ParallaxViewPager parallaxViewPager;
     private ClipboardManager myClipboard;
     private boolean doubleBackToExitPressedOnce;
@@ -160,6 +160,13 @@ public class MainActivity extends FragmentActivity implements Observer {
         InputMethodManager im = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
         softKeyboard = new SoftKeyboard(mainLayout, im);
 
+        pay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((BreadWalletApp) getApplicationContext()).authDialogBlockingUi(app, BreadWalletApp.AUTH_FOR_PAY);
+            }
+        });
+
         viewFlipper.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -178,6 +185,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                 }
             }
         });
+
 
         burgerButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -202,7 +210,7 @@ public class MainActivity extends FragmentActivity implements Observer {
             public void onClick(View v) {
                 SpringAnimator.showAnimation(lockerButton);
 //                passwordDialogFragment.show(fm, TAG);
-                ((BreadWalletApp) getApplication()).checkAndPromptForAuthentication(app);
+                ((BreadWalletApp) getApplication()).checkAndPromptForAuthentication(app, BreadWalletApp.AUTH_FOR_GENERAL);
 
             }
         });
@@ -265,6 +273,7 @@ public class MainActivity extends FragmentActivity implements Observer {
      */
 
     private void initializeViews() {
+        pay = (TextView) findViewById(R.id.main_button_pay);
         mainLayout = (RelativeLayout) findViewById(R.id.main_layout);
         testnet = (TextView) findViewById(R.id.testnet);
         networkErrorBar = (RelativeLayout) findViewById(R.id.main_internet_status_bar);
@@ -434,25 +443,22 @@ public class MainActivity extends FragmentActivity implements Observer {
     }
 
 
-    public void pay(View view) {
-        SpringAnimator.showAnimation(view);
+    public void pay() {
+        SpringAnimator.showAnimation(pay.getRootView());
         final MediaPlayer mp = MediaPlayer.create(this, R.raw.coinflip);
         mp.start();
-        ((BreadWalletApp) getApplication()).checkAndPromptForAuthentication(this);
-        if (AmountAdapter.isPayLegal()) {
-            //TODO implement pay method
-        } else {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("insufficient funds")
-                    .setCancelable(false)
-                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.cancel();
-                        }
-                    });
-            AlertDialog alert = builder.create();
-            alert.show();
-        }
+        String amount = FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_RIGHT ?
+                AmountAdapter.getRightValue() : AmountAdapter.getLeftValue();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("insufficient funds to send: " + amount)
+                .setCancelable(false)
+                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     public void request(View view) {

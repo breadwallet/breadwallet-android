@@ -84,6 +84,9 @@ public class BreadWalletApp extends Application {
     public static final int LOCKER_BUTTON = 2;
     public static final int PAY_BUTTON = 3;
     public static final int REQUEST_BUTTON = 4;
+    public static final int AUTH_FOR_PHRASE = 11;
+    public static final int AUTH_FOR_PAY = 12;
+    public static final int AUTH_FOR_GENERAL = 13;
     private static final String TAG = BreadWalletApp.class.getName();
     public static boolean unlocked = false;
     private boolean customToastAvailable = true;
@@ -181,7 +184,7 @@ public class BreadWalletApp extends Application {
     public void setLockerPayButton(int view) {
         MainActivity app = MainActivity.app;
         Log.e(TAG, "Flipper has # of child: " + app.lockerPayFlipper.getChildCount());
-        Log.e(TAG,"app.lockerPayFlipper: " + app.lockerPayFlipper.getDisplayedChild());
+        Log.e(TAG, "app.lockerPayFlipper: " + app.lockerPayFlipper.getDisplayedChild());
         switch (view) {
             case LOCKER_BUTTON:
                 if (app.lockerPayFlipper.getDisplayedChild() == 1) {
@@ -203,28 +206,42 @@ public class BreadWalletApp extends Application {
                 if (app.lockerPayFlipper.getDisplayedChild() == 0) {
                     app.lockerPayFlipper.showNext();
                     app.lockerPayFlipper.showNext();
-                } else if(app.lockerPayFlipper.getDisplayedChild() == 1){
+                } else if (app.lockerPayFlipper.getDisplayedChild() == 1) {
                     app.lockerPayFlipper.showNext();
                 }
                 break;
         }
-        Log.e(TAG,"app.lockerPayFlipper: " + app.lockerPayFlipper.getDisplayedChild());
+        Log.e(TAG, "app.lockerPayFlipper: " + app.lockerPayFlipper.getDisplayedChild());
 
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP_MR1)
-    public void checkAndPromptForAuthentication(Activity context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Activity.KEYGUARD_SERVICE);
-            if (keyguardManager.isKeyguardSecure()) {
+    public void checkAndPromptForAuthentication(Activity context, int mode) {
+        KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Activity.KEYGUARD_SERVICE);
+        if (keyguardManager.isKeyguardSecure()) {
 //                Intent intent = keyguardManager.createConfirmDeviceCredentialIntent(CREDENTIAL_TITLE, CREDENTIAL_DESCRIPTION);
 //                context.startActivityForResult(intent, 1);
-                showAuthDialog(context);
-            } else {
-                showDeviceNotSecuredWarning(context);
+            FingerprintAuthenticationDialogFragment fingerprintAuthenticationDialogFragment
+                    = new FingerprintAuthenticationDialogFragment();
+            PasswordAuthenticationDialogFragment passwordAuthenticationDialogFragment
+                    = new PasswordAuthenticationDialogFragment();
+            android.app.FragmentManager fm = context.getFragmentManager();
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && mode != AUTH_FOR_PHRASE) {
+                FingerprintManager fingerprintManager = (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
+                if (fingerprintManager.hasEnrolledFingerprints()) {
+                    Log.e(TAG, "Starting the fingerprint Dialog! API 23+");
+                    fingerprintAuthenticationDialogFragment.setStage();
+//                fingerprintAuthenticationDialogFragment.setStage(
+//                        FingerprintAuthenticationDialogFragment.Stage.PASSWORD);
+                    fingerprintAuthenticationDialogFragment.show(fm, FingerprintAuthenticationDialogFragment.class.getName());
+                    return;
+                }
             }
+            Log.e(TAG, "Starting the password Dialog! API <23");
+            passwordAuthenticationDialogFragment.show(fm, PasswordAuthenticationDialogFragment.class.getName());
         } else {
-            showCustomToast(context, "Ups! api level lower then 21", 300, Toast.LENGTH_SHORT);
+            showDeviceNotSecuredWarning(context);
         }
 
     }
@@ -272,31 +289,6 @@ public class BreadWalletApp extends Application {
         });
     }
 
-    @TargetApi(Build.VERSION_CODES.M)
-    private void showAuthDialog(Context context) {
-        FingerprintAuthenticationDialogFragment fingerprintAuthenticationDialogFragment;
-        PasswordAuthenticationDialogFragment passwordAuthenticationDialogFragment;
-        passwordAuthenticationDialogFragment = new PasswordAuthenticationDialogFragment();
-        fingerprintAuthenticationDialogFragment = new FingerprintAuthenticationDialogFragment();
-        android.app.FragmentManager fm = ((Activity) context).getFragmentManager();
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            FingerprintManager fingerprintManager = (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
-            if (fingerprintManager.hasEnrolledFingerprints()) {
-                Log.e(TAG, "Starting the fingerprint Dialog! API 23+");
-                fingerprintAuthenticationDialogFragment.setStage(
-                );
-//                fingerprintAuthenticationDialogFragment.setStage(
-//                        FingerprintAuthenticationDialogFragment.Stage.PASSWORD);
-                fingerprintAuthenticationDialogFragment.show(fm, FingerprintAuthenticationDialogFragment.class.getName());
-                return;
-            }
-        }
-        Log.e(TAG, "Starting the password Dialog! API <23");
-        passwordAuthenticationDialogFragment.show(fm, PasswordAuthenticationDialogFragment.class.getName());
-
-    }
-
     public void setUnlocked() {
         unlocked = true;
         MainActivity app = MainActivity.app;
@@ -323,14 +315,14 @@ public class BreadWalletApp extends Application {
             public void run() {
                 allowKeyStoreAccess = false;
             }
-        }, 60 * 1000);
+        }, 2 * 1000);
     }
 
-    public void authDialogBlockingUi(final Activity context) {
+    public void authDialogBlockingUi(final Activity context, final int mode) {
         final long startTime = System.currentTimeMillis();
         if (!allowKeyStoreAccess)
             //show the pass dialog
-            checkAndPromptForAuthentication(context);
+            checkAndPromptForAuthentication(context, mode);
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -354,7 +346,19 @@ public class BreadWalletApp extends Application {
                         (context).runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                FragmentAnimator.animateSlideToLeft((MainActivity) context, new FragmentRecoveryPhrase(), new FragmentSettings());
+                                switch (mode) {
+                                    case AUTH_FOR_PHRASE:
+                                        FragmentAnimator.animateSlideToLeft((MainActivity) context, new FragmentRecoveryPhrase(), new FragmentSettings());
+                                        break;
+                                    case AUTH_FOR_PAY:
+                                        MainActivity app = MainActivity.app;
+                                        if (app != null)
+                                            app.pay();
+                                    case AUTH_FOR_GENERAL:
+
+                                        break;
+                                }
+
                             }
                         });
                     } else {
@@ -362,14 +366,25 @@ public class BreadWalletApp extends Application {
                         (context).runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Fragment fragment = context.getFragmentManager().findFragmentByTag(FingerprintAuthenticationDialogFragment.class.getName());
-                                if (fragment == null)
-                                    fragment = context.getFragmentManager().findFragmentByTag(PasswordAuthenticationDialogFragment.class.getName());
-                                if (fragment != null) {
-                                    if (fragment instanceof DialogFragment) {
-                                        ((DialogFragment) fragment).dismiss();
-                                    }
+                                switch (mode) {
+                                    case AUTH_FOR_PHRASE:
+                                        Fragment fragment = context.getFragmentManager().findFragmentByTag(FingerprintAuthenticationDialogFragment.class.getName());
+                                        if (fragment == null)
+                                            fragment = context.getFragmentManager().findFragmentByTag(PasswordAuthenticationDialogFragment.class.getName());
+                                        if (fragment != null) {
+                                            if (fragment instanceof DialogFragment) {
+                                                ((DialogFragment) fragment).dismiss();
+                                            }
+                                        }
+                                        break;
+                                    case AUTH_FOR_PAY:
+                                        Log.e(TAG, "UPS CANNOT PAY, AUTH REJECTED");
+                                        break;
+                                    case AUTH_FOR_GENERAL:
+
+                                        break;
                                 }
+
                             }
                         });
                     }

@@ -62,7 +62,6 @@
             android:layout_height="match_parent"
             android:clickable="true"
             android:gravity="center"
-            android:onClick="pay"
             android:text="pay"
             android:textColor="@color/dark_blue"
             android:textSize="16sp" />

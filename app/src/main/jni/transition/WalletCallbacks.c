@@ -2,6 +2,12 @@
 // Created by Mihail Gutan on 12/4/15.
 //
 #include "WalletCallbacks.h"
+#include "BRInt.h"
+#include "BRTransaction.h"
+#include "BRWallet.h"
+#include <android/log.h>
+#include "wallet.h"
+#include "BRPeerManager.h"
 //void Java_com_breadwallet_wallet_BRWalletManager_setCallbacks(JNIEnv *env,
 //                                                              jobject thiz,
 //                                                              jbyteArray walletBuff) {

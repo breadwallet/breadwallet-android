@@ -232,11 +232,4 @@ public class AmountAdapter extends Observable {
         return leftValue;
     }
 
-    public static boolean isPayLegal() {
-        //Return false for now every time.
-
-        //TODO implement this check
-        return false;
-    }
-
 }

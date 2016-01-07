@@ -1,22 +1,14 @@
 //
 // Created by Mihail Gutan on 12/4/15.
 //
-
+#include "jni.h"
+#include "BRInt.h"
+#include "BRWallet.h"
 #ifndef BREADWALLET_WALLET_H
 #define BREADWALLET_WALLET_H
 
-#include "jni.h"
-#include "BRPeerManager.h"
-//#include "WalletCallbacks.h"
-#include "BRInt.h"
-#include "BRBIP39Mnemonic.h"
-#include <android/log.h>
-#include "BRWallet.h"
-#include "BRBIP32Sequence.h"
-#include "BRTransaction.h"
 
-BRWallet *wallet;
-BRMasterPubKey pubKey;
+extern BRWallet *wallet;
 
 JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_encodeSeed(JNIEnv *env,
                                                                             jobject thiz,

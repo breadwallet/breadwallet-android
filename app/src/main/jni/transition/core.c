@@ -1,4 +1,11 @@
 #include "core.h"
+#include "wallet.h"
+#include <stdio.h>
+#include "breadwallet-core/BRPaymentProtocol.h"
+#include "breadwallet-core/BRTransaction.h"
+#include "breadwallet-core/BRAddress.h"
+#include "breadwallet-core/BRWallet.h"
+#include <android/log.h>
 
 //
 // Created by Mihail Gutan on 9/24/15.

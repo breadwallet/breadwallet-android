@@ -1,13 +1,7 @@
 //
 // Created by Mihail Gutan on 9/24/15.
 //
-#include <jni.h>
-#include "wallet.h"
-#include <stdio.h>
-#include "breadwallet-core/BRPaymentProtocol.h"
-#include "breadwallet-core/BRTransaction.h"
-#include "breadwallet-core/BRAddress.h"
-#include <android/log.h>
+#include "jni.h"
 
 #ifndef BREADWALLET_CORE_H
 #define BREADWALLET_CORE_H

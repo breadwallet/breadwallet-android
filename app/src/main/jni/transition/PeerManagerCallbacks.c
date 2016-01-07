@@ -2,6 +2,11 @@
 // Created by Mihail Gutan on 12/11/15.
 //
 #include "PeerManagerCallbacks.h"
+#include "BRInt.h"
+#include "BRPeer.h"
+#include "BRMerkleBlock.h"
+#include "BRPeerManager.h"
+#include "BRTransaction.h"
 
 void syncStarted(void *info) {
 
