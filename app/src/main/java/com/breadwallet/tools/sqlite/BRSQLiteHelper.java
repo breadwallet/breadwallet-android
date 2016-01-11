@@ -33,13 +33,14 @@ class BRSQLiteHelper extends SQLiteOpenHelper {
     private static final String TAG = BRSQLiteHelper.class.getName();
 
     private static final String DATABASE_NAME = "breadwallet.db";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 
     /**
      * MerkleBlock table
      */
     public static final String MB_TABLE_NAME = "merkleBlockTable";
     public static final String MB_BUFF = "merkleBlockBuff";
+
     public static final String MB_COLUMN_ID = "_id";
 //    public static final String MB_COLUMN_BLOCK_HASH = "blockHash";
 //    public static final String MB_COLUMN_FLAGS = "flags";
@@ -75,6 +76,8 @@ class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String TX_TABLE_NAME = "transactionTable";
     public static final String TX_COLUMN_ID = "_id";
     public static final String TX_BUFF = "transactionBuff";
+    public static final String TX_BLOCK_HEIGHT = "transactionBlockHeight";
+    public static final String TX_TIME_STAMP = "transactionTimeStamp";
 //    public static final String TX_BLOCK_HEIGHT = "blockHeight";
 //    public static final String TX_LOCK_TIME = "lockTime";
 //    public static final String TX_TIME_STAMP = "timeStamp";
@@ -82,7 +85,9 @@ class BRSQLiteHelper extends SQLiteOpenHelper {
 
     private static final String TX_DATABASE_CREATE = "create table " + TX_TABLE_NAME + "(" +
             TX_COLUMN_ID + " integer primary key autoincrement, " +
-            TX_BUFF + " blob );";
+            TX_BUFF + " blob, " +
+            TX_BLOCK_HEIGHT + " integer, " +
+            TX_TIME_STAMP + " integer );";
 //            TX_BLOCK_HEIGHT + " integer, " +
 //            TX_LOCK_TIME + " integer, " +
 //            TX_TIME_STAMP + " integer, " +

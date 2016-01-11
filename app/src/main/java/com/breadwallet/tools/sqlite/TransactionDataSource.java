@@ -45,9 +45,9 @@ public class TransactionDataSource {
     private final BRSQLiteHelper dbHelper;
     private final String[] allColumns = {
             BRSQLiteHelper.TX_COLUMN_ID,
-            BRSQLiteHelper.TX_BUFF
-//            BRSQLiteHelper.TX_BLOCK_HEIGHT, BRSQLiteHelper.TX_LOCK_TIME,
-//            BRSQLiteHelper.TX_TIME_STAMP, BRSQLiteHelper.TX_HASH
+            BRSQLiteHelper.TX_BUFF,
+            BRSQLiteHelper.TX_BLOCK_HEIGHT,
+            BRSQLiteHelper.TX_TIME_STAMP
     };
 
     public TransactionDataSource(Context context) {
@@ -66,6 +66,8 @@ public class TransactionDataSource {
         ContentValues values = new ContentValues();
 //        values.put(BRSQLiteHelper.TX_COLUMN_ID, transactionEntity.getId());
         values.put(BRSQLiteHelper.TX_BUFF, transactionEntity.getBuff());
+        values.put(BRSQLiteHelper.TX_BLOCK_HEIGHT,transactionEntity.getBlockheight());
+        values.put(BRSQLiteHelper.TX_TIME_STAMP,transactionEntity.getTimestamp());
 //        values.put(BRSQLiteHelper.TX_BLOCK_HEIGHT, transactionEntity.getBlockHeight());
 //        values.put(BRSQLiteHelper.TX_LOCK_TIME, transactionEntity.getLockTime());
 //        values.put(BRSQLiteHelper.TX_TIME_STAMP, transactionEntity.getTimeStamp());
@@ -142,7 +144,7 @@ public class TransactionDataSource {
     }
 
     private BRTransactionEntity cursorToTransaction(Cursor cursor) {
-        BRTransactionEntity transactionEntity = new BRTransactionEntity(cursor.getBlob(1));
+        BRTransactionEntity transactionEntity = new BRTransactionEntity(cursor.getBlob(1), cursor.getLong(2), cursor.getLong(3));
         transactionEntity.setId(cursor.getInt(0));
 //        transactionEntity.setBlockHeight(cursor.getInt(1));
 //        transactionEntity.setLockTime(cursor.getInt(2));

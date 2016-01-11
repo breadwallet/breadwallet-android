@@ -54,7 +54,6 @@ import com.breadwallet.tools.sqlite.SQLiteManager;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.wallet.BRWalletManager;
 
-import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -142,6 +141,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         setContentView(R.layout.activity_main);
         app = this;
         Log.e(TAG, "MainActivity created!");
+
         setUpTheWallet();
 
 //        testSQLiteConnectivity(this);
@@ -217,8 +217,14 @@ public class MainActivity extends FragmentActivity implements Observer {
         scaleView(pageIndicatorLeft, 1f, PAGE_INDICATOR_SCALE_UP, 1f, PAGE_INDICATOR_SCALE_UP);
 
         //check the txAdded callback functionality
-//        BRWalletManager m = BRWalletManager.getInstance(app);
-//        m.testWalletCallbacks();
+        BRWalletManager m = BRWalletManager.getInstance(app);
+        m.testWalletCallbacks();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                BRWalletManager.getInstance(app).testTransactionAdding();
+            }
+        },10000);
 //        Log.e(TAG, "the pubkey length is: " + m.getPublicKeyBuff().length);
 //                Log.e(TAG, "FROM KEYSTORE PUBKEY: " + KeyStoreManager.getMasterPublicKey(app));
 //                Log.e(TAG, "FROM KEYSTORE PHRASE: " + KeyStoreManager.getKeyStoreString(app));
@@ -265,8 +271,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         softKeyboard.unRegisterSoftKeyboardCallback();
 
     }
-
-    private native void clearCMemory();
 
     /**
      * Initializes all the views and components
@@ -572,9 +576,9 @@ public class MainActivity extends FragmentActivity implements Observer {
         // Test Transaction Table
         byte[] pretendToBeATx = "some transaction".getBytes();
         byte[] pretendToBeATx2 = "some other transaction".getBytes();
-        BRTransactionEntity transactionEntity = new BRTransactionEntity(pretendToBeATx);
+        BRTransactionEntity transactionEntity = new BRTransactionEntity(pretendToBeATx, 2, 4);
 
-        BRTransactionEntity transactionEntity2 = new BRTransactionEntity(pretendToBeATx2);
+        BRTransactionEntity transactionEntity2 = new BRTransactionEntity(pretendToBeATx2, 53, 542);
 
         TransactionDataSource TXdataSource = new TransactionDataSource(this);
         TXdataSource.open();
@@ -592,21 +596,32 @@ public class MainActivity extends FragmentActivity implements Observer {
     }
 
     private void setUpTheWallet() {
-        TransactionDataSource TXdataSource = new TransactionDataSource(this);
-        TXdataSource.open();
-        TXdataSource.deleteAllTransactions();
-        TXdataSource.close();
+        //TODO deleting all txs for testing only
+//        TransactionDataSource TXdataSource = new TransactionDataSource(this);
+//        TXdataSource.open();
+//        TXdataSource.deleteAllTransactions();
+//        TXdataSource.close();
+
         BRWalletManager m = BRWalletManager.getInstance(this);
 //        String phrase = KeyStoreManager.getKeyStoreString(this);
 //        if (phrase == null) return;
 //        String normalizedPhrase = Normalizer.normalize(phrase, Normalizer.Form.NFKD);
 //        m.getMasterPubKey(normalizedPhrase);
         SQLiteManager sqLiteManager = SQLiteManager.getInstance(this);
-        ByteBuffer transactions[] = sqLiteManager.getTransactions();
-        int transactionCount = transactions == null ? 0 : transactions.length;
-        m.createWallet(transactions, transactionCount);
-//        m.setCallbacks(m.getWalletBuff());
-        //TODO put this pubKey into the keystore
+        List<BRTransactionEntity> transactions = sqLiteManager.getTransactions();
+        int transactionCount = transactions.size();
+
+        Log.e(TAG, "setUpTheWallet: number of transactions from sqlite: " + transactions.size() +
+                " transactionCount: " + transactionCount);
+        if (transactionCount > 0) {
+            m.createTxArrayWithCount(transactionCount);
+            for (BRTransactionEntity entity : transactions) {
+                m.putTransaction(entity.getBuff());
+            }
+        }
+        m.createWallet(transactionCount);
     }
+
+    private native void clearCMemory();
 
 }

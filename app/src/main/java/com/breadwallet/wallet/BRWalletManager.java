@@ -238,10 +238,10 @@ public class BRWalletManager {
         CurrencyManager.getInstance(ctx).setBalance(balance);
     }
 
-    public void onTxAdded(byte[] tx) {
-        Log.e(TAG, "in the BRWalletManager - onTxAdded");
+    public void onTxAdded(byte[] tx, long blockheight, long timestamp) {
+        Log.e(TAG, "in the BRWalletManager - onTxAdded: " + tx.length + " " + blockheight + " " + timestamp);
         SQLiteManager sqLiteManager = SQLiteManager.getInstance(ctx);
-        sqLiteManager.insertTransaction(tx);
+        sqLiteManager.insertTransaction(tx, blockheight, timestamp);
     }
 
     public void onTxUpdated(byte[] tx) {
@@ -254,7 +254,12 @@ public class BRWalletManager {
 
     private native byte[] encodeSeed(byte[] seed, String[] wordList);
 
-    public native void createWallet(ByteBuffer transactions[], int transactionCount);
+//    public native void createWallet(ByteBuffer transactions[], int transactionCount);
+    public native void createWallet(int transactionCount);
+
+    public native void putTransaction(byte[] transaction);
+
+    public native void createTxArrayWithCount(int count);
 
     public native void setCallbacks(byte[] wallet);
 
@@ -263,5 +268,7 @@ public class BRWalletManager {
     public native byte[] getMasterPubKey(String normalizedString);
 
     public native void testWalletCallbacks();
+
+    public native void testTransactionAdding();
 
 }

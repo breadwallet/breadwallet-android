@@ -28,6 +28,25 @@ public class BRTransactionEntity {
     private int id;
     private byte[] buff;
 
+    public long getBlockheight() {
+        return blockheight;
+    }
+
+    public void setBlockheight(long blockheight) {
+        this.blockheight = blockheight;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    private long blockheight;
+    private long timestamp;
+
     //    private int blockHeight;
 //    private int lockTime;
 //    private long timeStamp;
@@ -38,7 +57,9 @@ public class BRTransactionEntity {
 
     }
 
-    public BRTransactionEntity(byte[] txBuff){
+    public BRTransactionEntity(byte[] txBuff,long blockheight, long timestamp){
+        this.blockheight = blockheight;
+        this.timestamp = timestamp;
         this.buff = txBuff;
     }
 

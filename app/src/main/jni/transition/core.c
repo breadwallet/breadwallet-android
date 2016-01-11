@@ -254,9 +254,8 @@ JNIEXPORT jbyteArray Java_com_breadwallet_tools_security_RequestHandler_getCerti
 
     //convert it to jbyteArray
     jbyte *certJbyte = (const jbyte *) buf;
-    int size = sizeof(buf);
-    jbyteArray result = (*env)->NewByteArray(env, size);
-    (*env)->SetByteArrayRegion(env, result, 0, size, certJbyte);
+    jbyteArray result = (*env)->NewByteArray(env, length);
+    (*env)->SetByteArrayRegion(env, result, 0, length, certJbyte);
     //release everything
     (*env)->ReleaseByteArrayElements(env, result, certJbyte, JNI_COMMIT);
     (*env)->ReleaseByteArrayElements(env, payment, bytePayment, JNI_COMMIT);
@@ -290,6 +289,7 @@ JNIEXPORT jboolean JNICALL Java_com_breadwallet_tools_security_RequestHandler_va
 
 JNIEXPORT void JNICALL Java_com_breadwallet_presenter_activities_MainActivity_clearCMemory(JNIEnv *env, jobject obj){
         BRWalletFree(wallet);
+    __android_log_print(ANDROID_LOG_ERROR, "Wallet Freed: ", "BRWalletFree(wallet)");
 }
 
 //JNIEXPORT void Java_com_breadwallet_presenter_activities_MainActivity_sendMethodCallBack

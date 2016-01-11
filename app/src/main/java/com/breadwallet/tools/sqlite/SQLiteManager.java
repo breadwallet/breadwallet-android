@@ -5,9 +5,6 @@ import android.util.Log;
 
 import com.breadwallet.presenter.entities.BRTransactionEntity;
 
-import java.nio.ByteBuffer;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -51,26 +48,29 @@ public class SQLiteManager {
         return instance;
     }
 
-    public ByteBuffer[] getTransactions(){
+    public List<BRTransactionEntity> getTransactions() {
         TransactionDataSource TXdataSource = new TransactionDataSource(ctx);
         TXdataSource.open();
         List<BRTransactionEntity> txValues = TXdataSource.getAllTransactions();
-        if(txValues.size() == 0) return null;
-        ByteBuffer transArray[] = new ByteBuffer[txValues.size()];
-        Iterator<BRTransactionEntity> transactionEntityIterator = txValues.iterator();
-        int i = 0;
-        while (transactionEntityIterator.hasNext()) {
-            BRTransactionEntity transactionEntity = transactionEntityIterator.next();
-            Log.e(TAG, "The transaction: " + transactionEntity.getId()
-                    + " " + Arrays.toString(transactionEntity.getBuff()));
-            transArray[i++] = ByteBuffer.wrap(transactionEntity.getBuff());
-        }
+//        ByteBuffer transArray[] = new ByteBuffer[txValues.size()];
+//        Iterator<BRTransactionEntity> transactionEntityIterator = txValues.iterator();
+//        int i = 0;
+//        while (transactionEntityIterator.hasNext()) {
+//            BRTransactionEntity transactionEntity = transactionEntityIterator.next();
+//            ByteBuffer buffer = ByteBuffer.wrap(transactionEntity.getBuff());
+//            Log.e(TAG, "The transaction: " + transactionEntity.getId()
+//                    + " " + buffer.array().length);
+//            Log.e(TAG, "The buffer limit: " + buffer.limit());
+//
+//            transArray[i++] = buffer;
+//
+//        }
         TXdataSource.close();
-        return transArray;
+        return txValues;
     }
 
-    public void insertTransaction(byte[] transaction){
-        BRTransactionEntity entity = new BRTransactionEntity(transaction);
+    public void insertTransaction(byte[] transaction, long blockheight, long timestamp) {
+        BRTransactionEntity entity = new BRTransactionEntity(transaction, blockheight, timestamp);
         TransactionDataSource TXdataSource = new TransactionDataSource(ctx);
         TXdataSource.open();
         TXdataSource.createTransaction(entity);

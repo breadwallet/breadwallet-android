@@ -24,6 +24,8 @@ extern JNIEnv *env;
 
 void Java_com_breadwallet_wallet_BRWalletManager_testWalletCallbacks(JNIEnv *env,
                                                                      jobject thiz);
+void Java_com_breadwallet_wallet_BRWalletManager_testTransactionAdding(JNIEnv *env,
+                                                                       jobject thiz);
 //
 //void balanceChanged(void *info, uint64_t balance);
 //
