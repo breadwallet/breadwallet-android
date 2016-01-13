@@ -51,6 +51,7 @@ public class IntroActivity extends FragmentActivity {
     private static final String TAG = IntroActivity.class.getName();
     public static IntroActivity app;
     private Button leftButton;
+    private Bundle savedInstanceState;
 
     //loading the native library
     static {
@@ -76,79 +77,89 @@ public class IntroActivity extends FragmentActivity {
                 onBackPressed();
             }
         });
-        getFragmentManager().beginTransaction().add(R.id.intro_layout, new IntroWelcomeFragment(),
-                "introWelcomeFragment").commit();
+
         //animates the orange BW background moving.
         ImageView background = (ImageView) findViewById(R.id.intro_bread_wallet_image);
         background.setScaleType(ImageView.ScaleType.MATRIX);
         BackgroundMovingAnimator.animateBackgroundMoving(background);
+        getFragmentManager().beginTransaction().add(R.id.intro_layout, new IntroWelcomeFragment(),
+                IntroWelcomeFragment.class.getName()).commit();
         startTheWalletIfExists();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-//        KeyStoreManager.deleteKeyStoreEntry("phrase");
         //testSQLiteConnectivity(this);   //do some SQLite testing
+        Log.e(TAG, "IntroActivity  - onResume!!!!!!!!!");
         app = this;
 
     }
 
+//    @Override
+//    protected void onResumeFragments() {
+//        super.onResumeFragments();
+//
+//    }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        this.savedInstanceState = outState;
+
     }
 
     private void showRecoverNewWalletFragment() {
 //        if (savedInstanceState == null) {
-        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
-        IntroWelcomeFragment introWelcomeFragment = (IntroWelcomeFragment)getFragmentManager().
-                findFragmentByTag("introWelcomeFragment");
-        fragmentTransaction.replace(introWelcomeFragment.getId(), new IntroNewRecoverFragment(), "introNewRecoverFragment");
-        fragmentTransaction.commit();
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
+            IntroWelcomeFragment introWelcomeFragment = (IntroWelcomeFragment) getFragmentManager().
+                    findFragmentByTag(IntroWelcomeFragment.class.getName());
+            fragmentTransaction.replace(introWelcomeFragment.getId(), new IntroNewRecoverFragment(), IntroNewRecoverFragment.class.getName());
+            fragmentTransaction.commitAllowingStateLoss();
+            Log.e(TAG, "after showRecoverNewWalletFragment");
 //        }
     }
 
     public void showNewWalletFragment() {
 //        if (savedInstanceState == null) {
-        Log.e(TAG, "in showNewWalletFragment");
-        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        leftButton.setVisibility(View.VISIBLE);
-        leftButton.setClickable(true);
-        fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
-        IntroNewRecoverFragment introNewRecoverFragment = (IntroNewRecoverFragment)getFragmentManager().
-                findFragmentByTag("introNewRecoverFragment");
-        fragmentTransaction.replace(introNewRecoverFragment.getId(), new IntroNewWalletFragment(), "introNewWalletFragment").
-                addToBackStack(null);
-        fragmentTransaction.commit();
+            Log.e(TAG, "in showNewWalletFragment");
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            leftButton.setVisibility(View.VISIBLE);
+            leftButton.setClickable(true);
+            fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
+            IntroNewRecoverFragment introNewRecoverFragment = (IntroNewRecoverFragment) getFragmentManager().
+                    findFragmentByTag(IntroNewRecoverFragment.class.getName());
+            fragmentTransaction.replace(introNewRecoverFragment.getId(), new IntroNewWalletFragment(), IntroNewWalletFragment.class.getName()).
+                    addToBackStack(null);
+            fragmentTransaction.commitAllowingStateLoss();
 //        }
     }
 
     public void showRecoverWalletFragment() {
 //        if (savedInstanceState == null) {
-        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        leftButton.setVisibility(View.VISIBLE);
-        leftButton.setClickable(true);
-        fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
-        IntroNewRecoverFragment introNewRecoverFragment = (IntroNewRecoverFragment)getFragmentManager().
-                findFragmentByTag("introNewRecoverFragment");
-        fragmentTransaction.replace(introNewRecoverFragment.getId(), new IntroRecoverWalletFragment(), "introRecoverWalletFragment").
-                addToBackStack(null);
-        fragmentTransaction.commit();
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            leftButton.setVisibility(View.VISIBLE);
+            leftButton.setClickable(true);
+            fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
+            IntroNewRecoverFragment introNewRecoverFragment = (IntroNewRecoverFragment) getFragmentManager().
+                    findFragmentByTag(IntroNewRecoverFragment.class.getName());
+            fragmentTransaction.replace(introNewRecoverFragment.getId(), new IntroRecoverWalletFragment(), IntroRecoverWalletFragment.class.getName()).
+                    addToBackStack(null);
+            fragmentTransaction.commitAllowingStateLoss();
 //        }
     }
 
     public void showWarningFragment() {
 //        if (savedInstanceState == null) {
-        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        IntroNewWalletFragment introNewWalletFragment = (IntroNewWalletFragment)getFragmentManager().
-                findFragmentByTag("introNewWalletFragment");
-        fragmentTransaction.replace(introNewWalletFragment.getId(), new IntroWarningFragment(), "introWarningFragment");
-        introNewWalletFragment.introGenerate.setClickable(false);
-        leftButton.setVisibility(View.GONE);
-        leftButton.setClickable(false);
-        fragmentTransaction.commit();
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            IntroNewWalletFragment introNewWalletFragment = (IntroNewWalletFragment) getFragmentManager().
+                    findFragmentByTag(IntroNewWalletFragment.class.getName());
+            fragmentTransaction.replace(introNewWalletFragment.getId(), new IntroWarningFragment(), IntroWarningFragment.class.getName());
+            introNewWalletFragment.introGenerate.setClickable(false);
+            leftButton.setVisibility(View.GONE);
+            leftButton.setClickable(false);
+            fragmentTransaction.commitAllowingStateLoss();
 //        }
     }
 

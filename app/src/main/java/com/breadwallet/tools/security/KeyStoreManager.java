@@ -12,6 +12,8 @@ import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
 
+import org.apache.commons.io.IOUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -279,14 +281,23 @@ public class KeyStoreManager {
 
             CipherInputStream cipherInputStream = new CipherInputStream(
                     new FileInputStream(encryptedDataFilePath), outCipher);
-            byte[] roundTrippedBytes = new byte[1000]; //TODO: dynamically resize as we get more data
-            int index = 0;
-            int nextByte;
-            while ((nextByte = cipherInputStream.read()) != -1) {
-                roundTrippedBytes[index] = (byte) nextByte;
-                index++;
-            }
-            result = roundTrippedBytes;
+            result = IOUtils.toByteArray(cipherInputStream);
+
+
+            //TODO USE BELOW IF NEEDED TO GET RID OF THE COMMONS IO LIB
+//            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+//
+//            int nRead;
+//            byte[] data = new byte[16384];
+//
+//            while ((nRead = is.read(data, 0, data.length)) != -1) {
+//                buffer.write(data, 0, nRead);
+//            }
+//
+//            buffer.flush();
+//
+//            return buffer.toByteArray();
+
 //            Log.e(TAG, "round tripped bytes: " + roundTrippedBytes);
         } catch (Exception e) {
             e.printStackTrace();
@@ -449,12 +460,15 @@ public class KeyStoreManager {
     }
 
     public static String getSeed() {
-        Log.e(TAG,"in getSeed in KeyStoreManager");
+        String denied = "none";
+        Log.e(TAG, "in getSeed in KeyStoreManager");
         Context app = MainActivity.app;
         if (app == null)
             app = IntroActivity.app;
-        if (app == null) return null;
-        return getKeyStoreString(app);
+        if (app == null) return denied;
+        String result = getKeyStoreString(app);
+
+        return result == null ? denied : result;
     }
 
     private static byte[] longToBytes(long x) {

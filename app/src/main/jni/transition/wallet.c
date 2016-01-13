@@ -122,24 +122,43 @@ JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_encodeSeed(JNIE
 
 JNIEXPORT void Java_com_breadwallet_wallet_BRWalletManager_createWallet(JNIEnv *env,
                                                                         jobject thiz,
-                                                                        size_t txCount) {
+                                                                        size_t txCount,
+                                                                        jbyteArray bytePubKey,
+                                                                        int r) {
+    if(r){
+        int pkLength = (*env)->GetArrayLength(env, bytePubKey);
+        jbyte *bytePk = (*env)->GetByteArrayElements(env, bytePubKey, 0);
+        pubKey = *(BRMasterPubKey *)bytePk;
+    }
+
+    if(wallet) BRWalletFree(wallet);
     jint rs = (*env)->GetJavaVM(env, &jvm);
     if (rs != JNI_OK){
         __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "WARNING, GetJavaVM is not JNI_OK");
     }
     int pubKeySize = sizeof(pubKey);
-    if(pubKeySize < 10) {
+    if(pubKeySize < 5) {
         __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "WARNING, pubKey is corrupt!");
         return;
     }
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "Pubkey: %s", pubKey.pubKey);
+
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "txCount: %d", txCount);
     if (txCount > 0) {
+        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "CREATING WALLET FROM TXS");
         wallet = BRWalletNew(transactions, txCount, pubKey, NULL, theSeed);
     } else {
+        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "CREATING EMPTY WALLET");
         wallet = BRWalletNew(NULL, 0, pubKey, NULL, theSeed);
     }
     BRWalletSetCallbacks(wallet, NULL, balanceChanged, txAdded, txUpdated, txDeleted);
 
+    BRAddress addr[20];
+
+    BRWalletUnusedAddrs(wallet, &addr, 20, 1);
+    for (int i = 0; i < 20; i++){
+        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "BRAddress: %s", &addr[i].s);
+    }
     //create class
     jclass clazz = (*env)->FindClass(env, "com/breadwallet/wallet/BRWalletManager");
     jobject entity = (*env)->AllocObject(env, clazz);
@@ -204,8 +223,8 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRWalletManager_createWallet(JNIEnv *
 }
 
 JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_getMasterPubKey(JNIEnv *env,
-                                                                                 jobject thiz,
-                                                                                 jstring phrase) {
+                                                                                  jobject thiz,
+                                                                                  jstring phrase) {
     char *rawPhrase = (*env)->GetStringUTFChars(env, phrase, 0);
     UInt512 key = UINT512_ZERO;
     BRBIP39DeriveKey(key.u8, rawPhrase, NULL);
@@ -224,13 +243,15 @@ JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_putTransaction(
     int txLength = (*env)->GetArrayLength(env, transaction);
     jbyte *byteTx = (*env)->GetByteArrayElements(env, transaction, 0);
     BRTransaction *tmpTx = BRTransactionParse(byteTx, txLength);
-
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "adding a transaction: blockhight: %d, "
+            "transactionCounter: %d", tmpTx->blockHeight, transactionsCounter);
     transactions[transactionsCounter++] = tmpTx;
 }
 
 JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_createTxArrayWithCount(JNIEnv *env,
                                                                                 jobject thiz,
                                                                                 size_t txCount){
+
     transactions = calloc(txCount, sizeof(*transactions));
 
     // need to call free(transactions);
@@ -244,10 +265,10 @@ const void *theSeed(void *info, const char *authPrompt, uint64_t amount, size_t 
     jmethodID midGetSeed = (*env)->GetStaticMethodID(env, clazz, "getSeed", "()Ljava/lang/String;");
     //call java methods
     jstring jStringSeed = (jstring) (*env)->CallStaticObjectMethod(env, clazz, midGetSeed);
-    if(!jStringSeed) return NULL;
     const char *rawString = (*env)->GetStringUTFChars(env, jStringSeed, 0);
-
-    size_t size = sizeof(rawString);
-    *seedLen = size;
-    return rawString;
+    int r = strcmp(rawString, "none");
+    size_t theSize = (*env)->GetStringUTFLength(env, jStringSeed);
+    *seedLen = r != 0 ? theSize : 0;
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "r = %d", r);
+    return r != 0 ? rawString : "";
 }

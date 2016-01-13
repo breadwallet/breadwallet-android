@@ -188,6 +188,7 @@ public class BRWalletManager {
     public boolean noWallet(Context ctx) {
         byte[] pubkey = KeyStoreManager.getMasterPublicKey(ctx);
         Log.e(TAG, "in the noWallet, pubkey.length: " + pubkey.length);
+        Log.e(TAG, "in the noWallet, pubkey: " + pubkey);
         return pubkey != null && pubkey.length == 0;
 
     }
@@ -255,7 +256,7 @@ public class BRWalletManager {
     private native byte[] encodeSeed(byte[] seed, String[] wordList);
 
 //    public native void createWallet(ByteBuffer transactions[], int transactionCount);
-    public native void createWallet(int transactionCount);
+    public native void createWallet(int transactionCount, byte[] pubkey, int r);
 
     public native void putTransaction(byte[] transaction);
 

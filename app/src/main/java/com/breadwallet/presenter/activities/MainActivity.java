@@ -50,6 +50,7 @@ import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.adapter.ParallaxViewPager;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.sqlite.SQLiteManager;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.wallet.BRWalletManager;
@@ -224,7 +225,7 @@ public class MainActivity extends FragmentActivity implements Observer {
             public void run() {
                 BRWalletManager.getInstance(app).testTransactionAdding();
             }
-        },10000);
+        }, 10000);
 //        Log.e(TAG, "the pubkey length is: " + m.getPublicKeyBuff().length);
 //                Log.e(TAG, "FROM KEYSTORE PUBKEY: " + KeyStoreManager.getMasterPublicKey(app));
 //                Log.e(TAG, "FROM KEYSTORE PHRASE: " + KeyStoreManager.getKeyStoreString(app));
@@ -263,7 +264,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        clearCMemory();
+//        clearCMemory();
         finish();
         FragmentAnimator.level = 0;
         CurrencyManager.getInstance(this).stopTimerTask();
@@ -616,10 +617,14 @@ public class MainActivity extends FragmentActivity implements Observer {
         if (transactionCount > 0) {
             m.createTxArrayWithCount(transactionCount);
             for (BRTransactionEntity entity : transactions) {
+                Log.e(TAG, "-------m.putTransaction------: " + transactionCount);
                 m.putTransaction(entity.getBuff());
             }
         }
-        m.createWallet(transactionCount);
+        byte[] pubkey = KeyStoreManager.getMasterPublicKey(this);
+        int r = pubkey.length == 0? 0 : 1;
+
+        m.createWallet(transactionCount, pubkey, r);
     }
 
     private native void clearCMemory();
