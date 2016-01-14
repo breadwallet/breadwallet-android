@@ -1,17 +1,21 @@
 package com.breadwallet.presenter.fragments;
 
-import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.FragmentAnimator;
+import com.breadwallet.wallet.BRWalletManager;
 
 /**
  * BreadWallet
@@ -43,18 +47,25 @@ public class FragmentSettingsAll extends Fragment {
 
     private MainActivity app;
     private FragmentSettingsAll fragmentSettingsAll;
+//    private RelativeLayout relativeLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         // The last two arguments ensure LayoutParams are inflated
         // properly.
-        final View rootView = inflater.inflate(
-                R.layout.fragment_settings_all, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_settings_all, container, false);
         app = MainActivity.app;
-        RelativeLayout importPrivateKeys = (RelativeLayout) rootView.findViewById(R.id.import_private_key);
         fragmentSettingsAll = this;
+
+        RelativeLayout importPrivateKeys = (RelativeLayout) rootView.findViewById(R.id.import_private_key);
         RelativeLayout settings = (RelativeLayout) rootView.findViewById(R.id.settings);
+//        relativeLayout = (RelativeLayout) rootView.findViewById(R.id.transactions);
+        TextView noTransactions = (TextView) rootView.findViewById(R.id.text_no_transactions);
+        ListView transactionList = (ListView) rootView.findViewById(R.id.transactions_list);
+        TransactionListItem[] transactionObjects = BRWalletManager.getInstance(getActivity()).getTransactions();
+
+
         importPrivateKeys.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

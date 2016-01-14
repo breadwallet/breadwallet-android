@@ -3,8 +3,11 @@ package com.breadwallet.wallet;
 import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.breadwallet.presenter.entities.TransactionListItem;
+import com.breadwallet.presenter.fragments.MainFragmentQR;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.WordsReader;
 import com.breadwallet.tools.security.KeyStoreManager;
@@ -230,6 +233,14 @@ public class BRWalletManager {
 
     }
 
+    public void refreshAddress() {
+        MainFragmentQR.receiveAddress = getReceiveAddress();
+        SharedPreferences.Editor editor = ctx.getSharedPreferences(MainFragmentQR.RECEIVE_ADDRESS_PREFS, Context.MODE_PRIVATE).edit();
+        editor.putString(MainFragmentQR.RECEIVE_ADDRESS, MainFragmentQR.receiveAddress);
+        editor.commit();
+        Log.e(TAG, "AFTER PUTTING IN PREFS receiveAddress: " + MainFragmentQR.receiveAddress);
+    }
+
     /**
      * Wallet callbacks
      */
@@ -237,6 +248,8 @@ public class BRWalletManager {
     public void onBalanceChanged(final long balance) {
         Log.e(TAG, "in the BRWalletManager - onBalanceChanged:  " + balance);
         CurrencyManager.getInstance(ctx).setBalance(balance);
+        //TODO check this when Aaron fixes the bug
+        refreshAddress();
     }
 
     public void onTxAdded(byte[] tx, long blockheight, long timestamp) {
@@ -255,7 +268,7 @@ public class BRWalletManager {
 
     private native byte[] encodeSeed(byte[] seed, String[] wordList);
 
-//    public native void createWallet(ByteBuffer transactions[], int transactionCount);
+    //    public native void createWallet(ByteBuffer transactions[], int transactionCount);
     public native void createWallet(int transactionCount, byte[] pubkey, int r);
 
     public native void putTransaction(byte[] transaction);
@@ -271,5 +284,9 @@ public class BRWalletManager {
     public native void testWalletCallbacks();
 
     public native void testTransactionAdding();
+
+    public native String getReceiveAddress();
+
+    public native TransactionListItem[] getTransactions();
 
 }

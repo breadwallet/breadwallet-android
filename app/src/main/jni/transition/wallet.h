@@ -32,6 +32,14 @@ JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_createTxArrayWi
                                                                                         jobject thiz,
                                                                                         size_t txCount);
 
+JNIEXPORT jstring Java_com_breadwallet_wallet_BRWalletManager_getReceiveAddress(JNIEnv *env,
+                                                                                        jobject thiz);
+
+JNIEXPORT jobjectArray Java_com_breadwallet_wallet_BRWalletManager_getTransactions(JNIEnv *env,
+                                                                                jobject thiz);
+
+
+
 const void *theSeed(void *info, const char *authPrompt, uint64_t amount, size_t *seedLen);
 
 #endif //BREADWALLET_WALLET_H

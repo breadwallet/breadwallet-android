@@ -38,7 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:gravity="center"
-            android:text="mhBmRiqosSHR9YnPTKc3xXcvhEcKtjet2p"
+            android:text="none"
             android:textSize="16sp" />
     </RelativeLayout>
 </RelativeLayout>
