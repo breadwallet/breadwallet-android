@@ -42,7 +42,7 @@ import com.breadwallet.presenter.fragments.FragmentCurrency;
  */
 
 public class CurrencyListAdapter extends ArrayAdapter<CurrencyEntity> {
-    public static final String TAG = "CurrencyListAdapter";
+    public static final String TAG = CurrencyListAdapter.class.getName();
 
     private final Context mContext;
     private final int layoutResourceId;

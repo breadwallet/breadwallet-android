@@ -9,4 +9,5 @@
     <dimen name="transaction_item_margin">10dp</dimen>
     <dimen name="pager_indicator_shadow_padding">2dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="separator_height">1px</dimen>
 </resources>

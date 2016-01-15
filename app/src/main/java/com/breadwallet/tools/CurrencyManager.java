@@ -163,7 +163,7 @@ public class CurrencyManager extends Observable {
         @Override
         protected void onPostExecute(Object o) {
             if (tmp.size() > 0) {
-                Log.e(TAG, "inside the adapter changing shit");
+//                Log.e(TAG, "inside the adapter changing shit");
                 currencyListAdapter.clear();
                 currencyListAdapter.addAll(tmp);
                 currencyListAdapter.notifyDataSetChanged();

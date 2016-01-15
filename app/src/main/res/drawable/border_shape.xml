@@ -7,7 +7,7 @@
         android:bottomLeftRadius="0dp" />
 
     <solid android:color="@color/white_trans"/>
-    <stroke
-        android:width="1px"
-        android:color="@color/grey" />
+    <!--<stroke-->
+        <!--android:width="1px"-->
+        <!--android:color="@color/grey" />-->
 </shape>

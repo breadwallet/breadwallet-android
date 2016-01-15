@@ -1,5 +1,7 @@
 package com.breadwallet.presenter.entities;
 
+import android.util.Log;
+
 import com.breadwallet.tools.CustomLogger;
 
 /**
@@ -28,10 +30,15 @@ import com.breadwallet.tools.CustomLogger;
  */
 public class TransactionListItem {
     public static final String TAG = TransactionListItem.class.getName();
-    final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
+    final protected static char[] hexArray = "0123456789abcdef".toCharArray();
     private long timeStamp;
     private long blockHeight;
     private String hexId;
+    private long sent;
+    private long received;
+    private long fee;
+    private String to;
+    private String from;
 
     private TransactionListItem() {
     }
@@ -41,8 +48,14 @@ public class TransactionListItem {
         this.timeStamp = timeStamp;
         this.blockHeight = blockHeight;
         this.hexId = bytesToHex(hash);
+        this.sent = sent;
+        this.received = received;
+        this.fee = fee;
+        this.to = to;
+        this.from = from;
+        Log.e(TAG, "TransactionListItem CONSTRUCTOR!!!!!!!!! NEXT");
         CustomLogger.LogThis("timeStamp", String.valueOf(timeStamp), "blockHeight", String.valueOf(blockHeight),
-                "hash", String.valueOf(hash), "sent", String.valueOf(sent), "received", String.valueOf(received),
+                "hash", hexId, "sent", String.valueOf(sent), "received", String.valueOf(received),
                 "fee", String.valueOf(fee), "to", to, "from", from);
     }
 
@@ -54,6 +67,46 @@ public class TransactionListItem {
             hexChars[j * 2 + 1] = hexArray[v & 0x0F];
         }
         return new String(hexChars);
+    }
+
+    public long getBlockHeight() {
+        return blockHeight;
+    }
+
+    public long getFee() {
+        return fee;
+    }
+
+    public String getFrom() {
+        return from;
+    }
+
+    public static char[] getHexArray() {
+        return hexArray;
+    }
+
+    public String getHexId() {
+        return hexId;
+    }
+
+    public long getReceived() {
+        return received;
+    }
+
+    public long getSent() {
+        return sent;
+    }
+
+    public static String getTAG() {
+        return TAG;
+    }
+
+    public long getTimeStamp() {
+        return timeStamp;
+    }
+
+    public String getTo() {
+        return to;
     }
 
 }

@@ -137,9 +137,9 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRWalletManager_createWallet(JNIEnv *
         __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "WARNING, pubKey is corrupt!");
         return;
     }
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "Pubkey: %s", pubKey.pubKey);
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "Pubkey: %s", pubKey.pubKey);
 
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "txCount: %d", txCount);
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "txCount: %d", txCount);
     if (txCount > 0) {
         __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "CREATING WALLET FROM TXS");
         wallet = BRWalletNew(transactions, txCount, pubKey, NULL, theSeed);
@@ -220,16 +220,60 @@ JNIEXPORT jobjectArray Java_com_breadwallet_wallet_BRWalletManager_getTransactio
 
     //Find the class and populate the array of objects of this class
     jclass txClass = (*env)->FindClass(env, "com/breadwallet/presenter/entities/TransactionListItem");
-    jobjectArray transactionObjects = (*env)->NewObjectArray(env, txCount, txClass, nullptr);
+    jobjectArray transactionObjects = (*env)->NewObjectArray(env, txCount, txClass, 0);
     for (int i = 0; i < txCount; ++i) {
-        //long timeStamp, long blockHeight, byte[] hash, long sent, long received, long fee, String to, String from
 
         jmethodID txObjMid = (*env)->GetMethodID(env, txClass, "<init>", "(JJ[BJJJLjava/lang/String;Ljava/lang/String;)V");
 
+        //typedef struct {
+        //    UInt256 txHash;
+        //    uint32_t version;
+        //    size_t inCount;
+        //    BRTxInput *inputs;
+        //    size_t outCount;
+        //    BRTxOutput *outputs;
+        //    uint32_t lockTime;
+        //    uint32_t blockHeight;
+        //    uint32_t timestamp; // time interval since unix epoch
+        //} BRTransaction;
+
         //TODO populate the constructor
-        jobject txObject = (*env)->NewObject(env, txClass, txObjMid,a,b,c,d);
+        jlong JtimeStamp = transactions[i]->timestamp;
+        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "transactions[i]->timestamp: %d", transactions[i]->timestamp);
+
+        jlong JblockHeight = transactions[i]->blockHeight;
+        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "transactions[i]->blockHeight: %d", transactions[i]->blockHeight);
+
+        jbyteArray JtxHash = (*env)->NewByteArray(env,sizeof(transactions[i]->txHash));
+        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "uint256_hex_encode(transactions[i]->txHash)h: %s",
+                            uint256_hex_encode(transactions[i]->txHash));
+        (*env)->SetByteArrayRegion(env, JtxHash, 0, sizeof(transactions[i]->txHash), &transactions[i]->txHash);
+
+        jlong Jsent = (jlong) BRWalletAmountSentByTx(wallet, transactions[i]);
+        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "BRWalletAmountSentByTx(wallet, transactions[i]): %d",
+         BRWalletAmountSentByTx(wallet, transactions[i]));
+
+        jlong Jreceived = (jlong) BRWalletAmountReceivedFromTx(wallet, transactions[i]);
+        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "BRWalletAmountReceivedFromTx(wallet, transactions[i]): %d",
+        BRWalletAmountReceivedFromTx(wallet, transactions[i]));
+
+        jlong Jfee = (jlong) BRWalletFeeForTx(wallet, transactions[i]);
+        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "BRWalletFeeForTx(wallet, transactions[i]): %d",
+                BRWalletFeeForTx(wallet, transactions[i]));
+
+        jstring Jto = (*env)->NewStringUTF(env, transactions[i]->outputs[0].address);
+        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "transactions[i]->outputs[0].address: %s",
+                            transactions[i]->outputs[0].address);
+
+        jstring Jfrom = (*env)->NewStringUTF(env, transactions[i]->inputs[0].address);
+        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "transactions[i]->inputs[0].address: %s",
+                            transactions[i]->inputs[0].address);
+        //long timeStamp, long blockHeight, byte[] hash, long sent, long received, long fee, String to, String from
+
+        jobject txObject = (*env)->NewObject(env, txClass, txObjMid, JtimeStamp, JblockHeight, JtxHash, Jsent, Jreceived, Jfee, Jto, Jfrom);
         (*env)->SetObjectArrayElement(env,transactionObjects, i, txObject);
     }
+    return transactionObjects;
 }
 
 const void *theSeed(void *info, const char *authPrompt, uint64_t amount, size_t *seedLen) {

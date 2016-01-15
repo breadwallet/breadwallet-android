@@ -6,43 +6,60 @@
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:nestedScrollingEnabled="false">
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <RelativeLayout
+            <LinearLayout
                 android:id="@+id/transactions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/clickable_layout">
+                android:background="@drawable/clickable_layout"
+                android:orientation="vertical">
 
-                <ListView
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/separator_height"
+                    android:background="@color/grey" />
+
+                <LinearLayout
+                    android:orientation="vertical"
                     android:id="@+id/transactions_list"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:listSelector="@color/white"
-                    android:cacheColorHint="@android:color/transparent"></ListView>
+                    android:cacheColorHint="@android:color/transparent"
+                    android:listSelector="@color/white"/>
 
                 <TextView
                     android:id="@+id/text_no_transactions"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="20dp"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
                     android:text="no Transactions"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/light_grey" />
-            </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/separator_height"
+                    android:background="@color/grey" />
+            </LinearLayout>
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/separator_height"
+                android:layout_marginTop="30dp"
+                android:background="@color/grey" />
 
             <RelativeLayout
                 android:id="@+id/import_private_key"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_marginTop="40dp"
                 android:background="@drawable/clickable_layout"
                 android:clickable="true">
 
@@ -68,6 +85,12 @@
 
 
             </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/separator_height"
+                android:layout_marginLeft="20dp"
+                android:background="@color/grey" />
 
             <RelativeLayout
                 android:id="@+id/rescan_blockchain"
@@ -98,6 +121,11 @@
                     android:textColor="@color/dark_blue" />
             </RelativeLayout>
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/separator_height"
+                android:background="@color/grey" />
+
             <TextView
                 android:id="@+id/rescan_instructions"
                 android:layout_width="wrap_content"
@@ -110,10 +138,16 @@
                 android:textSize="18sp" />
 
             <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/separator_height"
+                android:layout_marginTop="30dp"
+                android:background="@color/grey" />
+
+            <RelativeLayout
                 android:id="@+id/settings"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_marginTop="30dp"
+                android:layout_marginBottom="30dp"
                 android:background="@drawable/clickable_layout"
                 android:clickable="true">
 
@@ -136,6 +170,11 @@
                     android:background="@drawable/chevron" />
 
             </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/separator_height"
+                android:background="@color/grey" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

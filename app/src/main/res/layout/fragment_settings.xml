@@ -17,10 +17,17 @@
                 android:layout_height="match_parent">
 
                 <RelativeLayout
+                    android:id="@+id/settings_line_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/separator_height"
+                    android:layout_marginTop="30dp"
+                    android:background="@color/grey" />
+
+                <RelativeLayout
                     android:id="@+id/about"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:layout_marginTop="30dp"
+                    android:layout_below="@id/settings_line_1"
                     android:background="@drawable/clickable_layout"
                     android:clickable="true">
 
@@ -46,10 +53,18 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:id="@+id/settings_line_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/separator_height"
+                    android:layout_below="@id/about"
+                    android:layout_marginLeft="20dp"
+                    android:background="@color/grey" />
+
+                <RelativeLayout
                     android:id="@+id/recovery_phrase"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:layout_below="@+id/about"
+                    android:layout_below="@+id/settings_line_2"
                     android:background="@drawable/clickable_layout"
                     android:clickable="true">
 
@@ -74,11 +89,25 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:id="@+id/settings_line_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/separator_height"
+                    android:layout_below="@id/recovery_phrase"
+                    android:background="@color/grey" />
+
+                <RelativeLayout
+                    android:id="@+id/settings_line_4"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/separator_height"
+                    android:layout_below="@id/settings_line_3"
+                    android:layout_marginTop="30dp"
+                    android:background="@color/grey" />
+
+                <RelativeLayout
                     android:id="@+id/local_currency"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:layout_below="@+id/recovery_phrase"
-                    android:layout_marginTop="30dp"
+                    android:layout_below="@+id/settings_line_4"
                     android:background="@drawable/clickable_layout"
                     android:clickable="true">
 
@@ -113,11 +142,26 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:id="@+id/settings_line_5"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/separator_height"
+                    android:layout_below="@id/local_currency"
+                    android:background="@color/grey" />
+
+
+                <RelativeLayout
+                    android:id="@+id/settings_line_6"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/separator_height"
+                    android:layout_below="@id/settings_line_5"
+                    android:layout_marginTop="30dp"
+                    android:background="@color/grey" />
+
+                <RelativeLayout
                     android:id="@+id/change_password"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:layout_below="@+id/local_currency"
-                    android:layout_marginTop="30dp"
+                    android:layout_below="@+id/settings_line_6"
                     android:background="@drawable/clickable_layout"
                     android:clickable="true">
 
@@ -133,10 +177,18 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:id="@+id/settings_line_7"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/separator_height"
+                    android:layout_below="@id/change_password"
+                    android:layout_marginLeft="20dp"
+                    android:background="@color/grey" />
+
+                <RelativeLayout
                     android:id="@+id/start_recovery_wallet"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:layout_below="@+id/change_password"
+                    android:layout_below="@+id/settings_line_7"
                     android:background="@drawable/clickable_layout"
                     android:clickable="true">
 
@@ -150,7 +202,15 @@
                         android:textColor="@color/red" />
 
                 </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/settings_line_8"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/separator_height"
+                    android:layout_below="@id/start_recovery_wallet"
+                    android:background="@color/grey" />
             </RelativeLayout>
+
         </LinearLayout>
 
     </ScrollView>

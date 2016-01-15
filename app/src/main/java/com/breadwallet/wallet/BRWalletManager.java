@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.breadwallet.presenter.entities.TransactionListItem;
+import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.presenter.fragments.MainFragmentQR;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.WordsReader;
@@ -250,6 +251,7 @@ public class BRWalletManager {
         CurrencyManager.getInstance(ctx).setBalance(balance);
         //TODO check this when Aaron fixes the bug
         refreshAddress();
+        FragmentSettingsAll.refreshTransactions(ctx);
     }
 
     public void onTxAdded(byte[] tx, long blockheight, long timestamp) {
