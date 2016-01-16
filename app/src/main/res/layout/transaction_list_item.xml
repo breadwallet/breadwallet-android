@@ -1,19 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/transaction_list_item_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:id="@+id/transaction_list_item_layout">
+    android:layout_height="wrap_content">
 
-    <Button
+    <TextView
         android:id="@+id/transaction_sent_received_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_margin="20dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="15dp"
         android:clickable="false"
-        android:background="@drawable/sent_received"
+        android:includeFontPadding="false"
+        android:padding="0px"
         android:text="sent/received"
-        android:textSize="15sp" />
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/transaction_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/transaction_sent_received_label"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="15dp"
+        android:clickable="false"
+        android:text="some date"
+        android:textColor="@color/grey"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/transaction_amount_bits"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/transaction_sent_received_label"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="40dp"
+        android:layout_marginBottom="15dp"
+        android:textColor="@color/dark_grey"
+        android:clickable="false"
+        android:textStyle="bold"
+        android:text="some bits"
+        android:textSize="13sp" />
+    <TextView
+        android:id="@+id/transaction_amount_dollars"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/transaction_amount_bits"
+        android:layout_alignBaseline="@+id/transaction_amount_bits"
+        android:textColor="@color/grey"
+        android:clickable="false"
+        android:layout_marginRight="10dp"
+        android:text="some dollars"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/transaction_amount_bits_total"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/transaction_date"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="40dp"
+        android:layout_marginBottom="15dp"
+        android:textColor="@color/dark_grey"
+        android:clickable="false"
+        android:textStyle="bold"
+        android:text="some total bits"
+        android:textSize="13sp" />
+    <TextView
+        android:id="@+id/transaction_amount_dollars_total"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/transaction_amount_bits_total"
+        android:layout_alignBaseline="@+id/transaction_amount_bits_total"
+        android:textColor="@color/grey"
+        android:clickable="false"
+        android:layout_marginRight="10dp"
+        android:text="some total dollars"
+        android:textSize="13sp" />
 
 </RelativeLayout>

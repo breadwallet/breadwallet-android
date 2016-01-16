@@ -268,7 +268,7 @@ JNIEXPORT jobjectArray Java_com_breadwallet_wallet_BRWalletManager_getTransactio
         jstring Jfrom = (*env)->NewStringUTF(env, transactions[i]->inputs[0].address);
         __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "transactions[i]->inputs[0].address: %s",
                             transactions[i]->inputs[0].address);
-        //long timeStamp, long blockHeight, byte[] hash, long sent, long received, long fee, String to, String from
+        //long timeStamp, long blockHeight, byte[] hash, long sent, long received, long fee, String to, String fromvector
 
         jobject txObject = (*env)->NewObject(env, txClass, txObjMid, JtimeStamp, JblockHeight, JtxHash, Jsent, Jreceived, Jfee, Jto, Jfrom);
         (*env)->SetObjectArrayElement(env,transactionObjects, i, txObject);

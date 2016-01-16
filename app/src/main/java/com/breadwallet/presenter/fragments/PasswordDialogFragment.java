@@ -80,7 +80,7 @@ public class PasswordDialogFragment extends DialogFragment {
                     getDialog().cancel();
                     String tmp = CurrencyManager.getInstance(MainActivity.app).getCurrentBalanceText();
                     ((BreadWalletApp) getActivity().getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
-                    ((BreadWalletApp)getActivity().getApplicationContext()).setUnlocked();
+                    ((BreadWalletApp)getActivity().getApplicationContext()).setUnlocked(true);
                     MainActivity.app.softKeyboard.closeSoftKeyboard();
                 } else {
                     Log.d(TAG, "Not equal, the text is: " + passwordEditText.getText().toString());

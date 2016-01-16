@@ -6,10 +6,8 @@ import android.app.Application;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.KeyguardManager;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Point;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
@@ -29,6 +27,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.fragments.FragmentRecoveryPhrase;
 import com.breadwallet.presenter.fragments.FragmentSettings;
+import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.tools.TypefaceUtil;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.auth.FingerprintAuthenticationDialogFragment;
@@ -289,21 +288,14 @@ public class BreadWalletApp extends Application {
         });
     }
 
-    public void setUnlocked() {
-        unlocked = true;
+    public void setUnlocked(boolean b) {
+        unlocked = b;
+        if (FragmentSettingsAll.transactionList != null)
+            FragmentSettingsAll.transactionList.setVisibility(b ? View.VISIBLE : View.GONE);
         MainActivity app = MainActivity.app;
         if (app != null) {
-            app.lockerButton.setVisibility(true ? View.GONE : View.VISIBLE);
-            app.lockerButton.setClickable(!true);
-        }
-    }
-
-    public void testAuth(Context context) {
-        try {
-            context.startActivity(new Intent("com.android.credentials.UNLOCK"));
-            Log.e(TAG, "in the testAuth");
-        } catch (ActivityNotFoundException e) {
-            Log.e(TAG, "No UNLOCK activity: " + e.getMessage(), e);
+            app.lockerButton.setVisibility(b ? View.GONE : View.VISIBLE);
+            app.lockerButton.setClickable(!b);
         }
     }
 
@@ -333,7 +325,6 @@ public class BreadWalletApp extends Application {
                             Thread.sleep(500);
                             Log.e(TAG, "after sleep ......");
                             if (System.currentTimeMillis() - startTime > 60000) {
-
                                 break;
                             }
                         } catch (InterruptedException e) {
@@ -366,6 +357,7 @@ public class BreadWalletApp extends Application {
                         (context).runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                allowKeyStoreAccess = true;
                                 switch (mode) {
                                     case AUTH_FOR_PHRASE:
                                         Fragment fragment = context.getFragmentManager().findFragmentByTag(FingerprintAuthenticationDialogFragment.class.getName());

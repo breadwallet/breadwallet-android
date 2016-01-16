@@ -33,6 +33,7 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.PassCodeManager;
@@ -87,6 +88,7 @@ public class PasswordAuthenticationDialogFragment extends DialogFragment
         mCancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ((BreadWalletApp)getActivity().getApplicationContext()).allowKeyStoreAccess = true;
                 dismiss();
             }
         });
@@ -169,7 +171,9 @@ public class PasswordAuthenticationDialogFragment extends DialogFragment
     public void onAuthenticated() {
         getDialog().cancel();
         MainActivity app = MainActivity.app;
-        ((BreadWalletApp) getActivity().getApplicationContext()).setUnlocked();
+
+        ((BreadWalletApp) getActivity().getApplicationContext()).setUnlocked(true);
+        FragmentSettingsAll.refreshUI(getActivity());
         MiddleViewAdapter.resetMiddleView(null);
         if (app != null)
             app.softKeyboard.closeSoftKeyboard();

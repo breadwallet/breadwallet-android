@@ -251,7 +251,8 @@ public class BRWalletManager {
         CurrencyManager.getInstance(ctx).setBalance(balance);
         //TODO check this when Aaron fixes the bug
         refreshAddress();
-        FragmentSettingsAll.refreshTransactions(ctx);
+        if (ctx != null)
+            FragmentSettingsAll.refreshTransactions(ctx);
     }
 
     public void onTxAdded(byte[] tx, long blockheight, long timestamp) {

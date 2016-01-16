@@ -250,7 +250,7 @@ public class FingerprintAuthenticationDialogFragment extends DialogFragment
         MainActivity app = MainActivity.app;
         String tmp = CurrencyManager.getInstance(getActivity()).getCurrentBalanceText();
         ((BreadWalletApp) getActivity().getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
-        ((BreadWalletApp) getActivity().getApplicationContext()).setUnlocked();
+        ((BreadWalletApp) getActivity().getApplicationContext()).setUnlocked(true);
         if (app != null)
             app.softKeyboard.closeSoftKeyboard();
         ((BreadWalletApp)getActivity().getApplicationContext()).allowKeyStoreAccessForSeconds();

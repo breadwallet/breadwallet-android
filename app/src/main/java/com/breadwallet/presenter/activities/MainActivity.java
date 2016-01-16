@@ -4,7 +4,9 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -103,7 +105,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     public static RelativeLayout pageIndicator;
     private ImageView pageIndicatorLeft;
     private ImageView pageIndicatorRight;
-    private View middleView;
+    //    private View middleView;
     private Map<String, Integer> burgerButtonMap;
     private Button burgerButton;
     public Button lockerButton;
@@ -118,6 +120,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     private final NetworkChangeReceiver receiver = new NetworkChangeReceiver();
     public static final Point screenParametersPoint = new Point();
     private int middleViewPressedCount = 0;
+    private BroadcastReceiver mPowerKeyReceiver = null;
 
     private static int MODE = RELEASE;
     private TextView testnet;
@@ -125,6 +128,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     private RelativeLayout mainLayout;
     private FingerprintManager fingerprintManager;
 
+    //TODO Test everything with the KILL ACTIVITY feature in the developer settings
     //loading the native library
     static {
         System.loadLibrary("core");
@@ -144,7 +148,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         Log.e(TAG, "MainActivity created!");
 
         setUpTheWallet();
-
+        registBroadcastReceiver();
 //        testSQLiteConnectivity(this);
         initializeViews();
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
@@ -270,6 +274,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         CurrencyManager.getInstance(this).stopTimerTask();
         Log.e(TAG, "Activity Destroyed!");
         softKeyboard.unRegisterSoftKeyboardCallback();
+        unregisterReceiver();
 
     }
 
@@ -288,7 +293,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         lockerButton = (Button) findViewById(R.id.main_button_locker);
         pageIndicator = (RelativeLayout) findViewById(R.id.main_pager_indicator);
         pageIndicatorLeft = (ImageView) findViewById(R.id.circle_indicator_left);
-        middleView = findViewById(R.id.main_label_breadwallet);
+//        middleView = findViewById(R.id.main_label_breadwallet);
         pageIndicatorRight = (ImageView) findViewById(R.id.circle_indicator_right);
         pagerAdapter = new CustomPagerAdapter(getFragmentManager());
         burgerButtonMap = new HashMap<>();
@@ -622,9 +627,45 @@ public class MainActivity extends FragmentActivity implements Observer {
             }
         }
         byte[] pubkey = KeyStoreManager.getMasterPublicKey(this);
-        int r = pubkey.length == 0? 0 : 1;
+        int r = pubkey.length == 0 ? 0 : 1;
 
         m.createWallet(transactionCount, pubkey, r);
+    }
+
+    private void registBroadcastReceiver() {
+        final IntentFilter theFilter = new IntentFilter();
+        /** System Defined Broadcast */
+        theFilter.addAction(Intent.ACTION_SCREEN_ON);
+        theFilter.addAction(Intent.ACTION_SCREEN_OFF);
+
+        mPowerKeyReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String strAction = intent.getAction();
+
+                if (strAction.equals(Intent.ACTION_SCREEN_OFF)) {
+                    ((BreadWalletApp) getApplicationContext()).setUnlocked(false);
+                    Log.e(TAG, ">>>>>>>>onReceive>>>>>>>>> the screen is locked!");
+                }
+            }
+        };
+
+        getApplicationContext().registerReceiver(mPowerKeyReceiver, theFilter);
+    }
+
+    private void unregisterReceiver() {
+        int apiLevel = Build.VERSION.SDK_INT;
+
+        if (apiLevel >= 7) {
+            try {
+                getApplicationContext().unregisterReceiver(mPowerKeyReceiver);
+            } catch (IllegalArgumentException e) {
+                mPowerKeyReceiver = null;
+            }
+        } else {
+            getApplicationContext().unregisterReceiver(mPowerKeyReceiver);
+            mPowerKeyReceiver = null;
+        }
     }
 
     private native void clearCMemory();

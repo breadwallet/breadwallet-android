@@ -14,7 +14,7 @@ import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 
 public class NetworkChangeReceiver extends BroadcastReceiver {
-    private static final String TAG = "NetworkChangeReceiver";
+    private static final String TAG = NetworkChangeReceiver.class.getName();
     private RelativeLayout networkErrorBar;
 
     @Override

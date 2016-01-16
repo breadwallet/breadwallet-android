@@ -37,20 +37,22 @@ public class MiddleViewAdapter {
     public static void resetMiddleView(String text) {
         Log.e(TAG, "in the resetMiddleView: " + text);
         MainActivity app = MainActivity.app;
-        if(app == null) return;
+        if (app == null) return;
         if (FragmentAnimator.level == 0 || FragmentAnimator.level == 1) {
-            if (((BreadWalletApp)app.getApplicationContext()).unlocked) {
+            if (((BreadWalletApp) app.getApplicationContext()).unlocked) {
                 String tmp = CurrencyManager.getInstance(MainActivity.app).getCurrentBalanceText();
                 ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
             } else {
                 ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_IMAGE, "");
             }
         } else if (FragmentAnimator.level == 2) {
-            String tmp = "settings";
-            ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
+            if (text == null) {
+                ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, "settings");
+            } else if(text.equals("transaction details")){
+                ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, text);
+            }
         } else if (text != null) {
-            ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT,
-                    text);
+            ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, text);
         } else {
             ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_IMAGE, "");
         }

@@ -48,7 +48,7 @@ import com.breadwallet.tools.animation.FragmentAnimator;
  */
 
 public class FragmentSettings extends Fragment {
-    private static final String TAG = "FragmentSettings";
+    private static final String TAG = FragmentSettings.class.getName();
     private MainActivity app;
     private FragmentSettings fragmentSettings;
     private ChangePasswordDialogFragment changePasswordDialogFragment;
