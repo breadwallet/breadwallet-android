@@ -2,19 +2,20 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="120dp">
+    android:paddingTop="90dp">
 
     <RelativeLayout
         android:id="@+id/local_currency"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        >
 
         <ListView
             android:id="@+id/currency_list_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:cacheColorHint="@android:color/transparent"
-            android:listSelector="@color/white"></ListView>
+            android:listSelector="@color/white"
+            android:cacheColorHint="@android:color/transparent"></ListView>
 
         <TextView
             android:id="@+id/noInternetConnectionText"
@@ -22,8 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="272dp"
-            android:textSize="28sp"
+            android:layout_marginTop="136dp"
             android:text="No Internet Connection"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/grey"
@@ -45,8 +45,8 @@
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true" />
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
 
     </RelativeLayout>
 </LinearLayout>

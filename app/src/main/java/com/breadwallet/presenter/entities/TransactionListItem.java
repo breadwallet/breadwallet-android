@@ -39,12 +39,13 @@ public class TransactionListItem {
     private long fee;
     private String to;
     private String from;
+    private long balanceAfterTx;
 
     private TransactionListItem() {
     }
 
     public TransactionListItem(long timeStamp, long blockHeight, byte[] hash, long sent,
-                               long received, long fee, String to, String from) {
+                               long received, long fee, String to, String from, long balanceAfterTx) {
         this.timeStamp = timeStamp;
         this.blockHeight = blockHeight;
         this.hexId = bytesToHex(hash);
@@ -53,6 +54,7 @@ public class TransactionListItem {
         this.fee = fee;
         this.to = to;
         this.from = from;
+        this.balanceAfterTx = balanceAfterTx;
         Log.e(TAG, "TransactionListItem CONSTRUCTOR!!!!!!!!! NEXT");
         CustomLogger.LogThis("timeStamp", String.valueOf(timeStamp), "blockHeight", String.valueOf(blockHeight),
                 "hash", hexId, "sent", String.valueOf(sent), "received", String.valueOf(received),
@@ -107,6 +109,10 @@ public class TransactionListItem {
 
     public String getTo() {
         return to;
+    }
+
+    public long getBalanceAfterTx(){
+        return balanceAfterTx;
     }
 
 }

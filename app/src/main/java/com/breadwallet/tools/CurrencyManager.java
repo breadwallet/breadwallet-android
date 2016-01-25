@@ -96,7 +96,7 @@ public class CurrencyManager extends Observable {
         notifyObservers();
     }
 
-    private long getBALANCE() {
+    public long getBALANCE() {
         return BALANCE;
     }
 
@@ -117,8 +117,7 @@ public class CurrencyManager extends Observable {
                         tmp.codeAndName = tmp.code + " - " + tmp.name;
                         tmp.rate = (float) tmpObj.getDouble("rate");
                         if (tmp.code.equals("USD")) {
-                            SharedPreferences settingsToGet = context.getSharedPreferences(MainActivity.PREFS_NAME, 0);
-                            String theIso = settingsToGet.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
+                            String theIso = getISOFromPrefs();
                             Log.e(TAG, "theIso : " + theIso);
                             if (theIso.equals("USD")) {
                                 //TODO put in shared prefs
@@ -224,8 +223,8 @@ public class CurrencyManager extends Observable {
                 getFormattedCurrencyString("BTC", String.valueOf(decimalFormat.format(result)));
     }
 
-    public String getCurrencyAndExchange(double rate, String iso, String target) {
-        Log.e(TAG,"target: " + target);
+    public String getBitsAndExchangeString(double rate, String iso, String target) {
+        Log.e(TAG, "target: " + target);
 //        Log.e(TAG, "result of the exchange rate calculation: " + result);
         if (rate == 0) rate = 1;
         double exchange = (Double.parseDouble(target) * rate / 1000000);
@@ -234,17 +233,20 @@ public class CurrencyManager extends Observable {
                 getFormattedCurrencyString(iso, String.valueOf(decimalFormat.format(exchange)));
     }
 
+    public String getExchangeForAmount(double rate, String iso, String target) {
+        if (rate == 0) rate = 1;
+        double exchange = (Double.parseDouble(target) * rate / 1000000);
+        DecimalFormat decimalFormat = new DecimalFormat("0.00");
+        return getFormattedCurrencyString(iso, String.valueOf(decimalFormat.format(exchange)));
+    }
+
     public long getBitsFromSatoshi(long target) {
         return target / 100;
     }
 
     public String getCurrentBalanceText() {
-        SharedPreferences settings;
-//        DecimalFormat decimalFormat = new DecimalFormat("0.00");
-        settings = MainActivity.app.getSharedPreferences(MainActivity.PREFS_NAME, 0);
-        String iso = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
-
-        float rate = settings.getFloat(FragmentCurrency.RATE, 0f);
+        String iso = getISOFromPrefs();
+        double rate = getRateFromPrefs();
         long balance = getBitsFromSatoshi(getBALANCE());
         double exchange = (balance * rate / 1000000);
         CustomLogger.LogThis("rate", String.valueOf(rate), "exchange", String.valueOf(exchange));
@@ -329,6 +331,18 @@ public class CurrencyManager extends Observable {
         ((java.text.DecimalFormat) currencyFormat).setDecimalFormatSymbols(decimalFormatSymbols);
 
         return currencyFormat.format(amount);
+    }
+
+    public String getISOFromPrefs() {
+        SharedPreferences settings = MainActivity.app.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        String iso = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
+        return iso;
+    }
+
+    public double getRateFromPrefs() {
+        SharedPreferences settings = MainActivity.app.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        float rate = settings.getFloat(FragmentCurrency.RATE, 0f);
+        return rate;
     }
 
 }

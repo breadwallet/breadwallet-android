@@ -11,14 +11,21 @@
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/separator_height"
+                android:layout_marginTop="70dp"
+                android:background="@color/grey" />
 
             <RelativeLayout
                 android:id="@+id/about"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="30dp"
-                android:layout_marginTop="70dp"
+
                 android:background="@drawable/clickable_layout"
                 android:clickable="false">
 
@@ -80,7 +87,6 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/about5"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginBottom="30dp"
                     android:text="bitpay.com/rates"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/dark_grey" />
@@ -88,6 +94,11 @@
 
             </RelativeLayout>
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/separator_height"
+                android:layout_marginBottom="30dp"
+                android:background="@color/grey" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

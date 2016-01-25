@@ -1,3 +1,6 @@
+
+#define BITCOIN_TEST_NO_MAIN = 1;
+
 #include "core.h"
 #include "wallet.h"
 #include <stdio.h>
@@ -283,13 +286,15 @@ JNIEXPORT jboolean JNICALL Java_com_breadwallet_tools_security_RequestHandler_va
 //    __android_log_print(ANDROID_LOG_ERROR, "LOG_TAG", "This is the result : %d", result);
     return result ? JNI_TRUE : JNI_FALSE;
 
-    //return true for now!!!!!
-//    return JNI_TRUE;
 }
 
 JNIEXPORT void JNICALL Java_com_breadwallet_presenter_activities_MainActivity_clearCMemory(JNIEnv *env, jobject obj){
-        BRWalletFree(wallet);
+        BRWalletFree(_wallet);
     __android_log_print(ANDROID_LOG_ERROR, "Wallet Freed: ", "BRWalletFree(wallet)");
+}
+
+JNIEXPORT void JNICALL Java_com_breadwallet_presenter_activities_MainActivity_cTests(JNIEnv *env, jobject obj){
+    __android_log_print(ANDROID_LOG_ERROR, "Core Tests: ", "%d", BRRunTests());
 }
 
 //JNIEXPORT void Java_com_breadwallet_presenter_activities_MainActivity_sendMethodCallBack

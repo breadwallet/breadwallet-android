@@ -2,31 +2,32 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.breadwallet.presenter.activities.IntroShowPhraseActivity"
-    android:background="@drawable/backgroundmain_cropped">
+    android:background="@drawable/backgroundmain_cropped"
+    tools:context="com.breadwallet.presenter.activities.IntroShowPhraseActivity">
 
     <ImageView
         android:id="@+id/main_label_breadwallet"
-        android:layout_marginTop="60dp"
-        android:layout_width="240dp"
-        android:layout_height="40dp"
+        android:layout_width="120dp"
+        android:layout_height="20dp"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
+        android:layout_marginTop="30dp"
         android:background="@drawable/breadwalletupcentered" />
 
+
     <TextView
-        android:layout_below="@+id/main_label_breadwallet"
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/main_label_breadwallet"
         android:layout_centerHorizontal="true"
-        android:layout_marginLeft="32dp"
-        android:layout_marginRight="32dp"
-        android:layout_marginTop="72dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="36dp"
         android:gravity="center"
         android:text="@string/dialog_recovery_phrase_warning"
         android:textColor="@color/dark_grey"
-        android:textSize="30sp"
+        android:textSize="18sp"
         android:textStyle="bold" />
 
     <TextView
@@ -46,9 +47,10 @@
         android:layout_width="match_parent"
         android:layout_height="120dp"
         android:layout_marginTop="40dp"
-        android:layout_below="@+id/textView1"
         android:background="@drawable/clickable_layout"
-        android:clickable="false">
+        android:clickable="false"
+        android:layout_below="@+id/textView1"
+        android:layout_alignParentStart="true">
 
         <TextView
             android:id="@+id/the_phrase_at_startup"
@@ -69,6 +71,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_marginTop="40dp"
         android:layout_alignParentEnd="true"
         android:background="@android:color/transparent"
         android:padding="20dp"
@@ -76,22 +79,21 @@
         android:textColor="@color/dark_blue" />
 
     <RelativeLayout
+        android:id="@+id/write_down_notice_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
-        android:id="@+id/write_down_notice_layout"
         android:layout_below="@+id/relativeLayout"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp">
+        android:layout_marginTop="10dp">
 
         <TextView
             android:id="@+id/i_wrote_it_down_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
             android:layout_marginTop="20dp"
             android:text="I wrote it down: "
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="16sp" />
 
         <ImageView
             android:id="@+id/write_down_check_box"

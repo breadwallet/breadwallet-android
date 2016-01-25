@@ -24,5 +24,8 @@ jbyteArray Java_com_breadwallet_tools_security_RequestHandler_getCertificatesFro
 JNIEXPORT void JNICALL Java_com_breadwallet_presenter_activities_MainActivity_clearCMemory(
         JNIEnv *env, jobject obj);
 
+JNIEXPORT void JNICALL Java_com_breadwallet_presenter_activities_MainActivity_cTests(JNIEnv *env,
+                                                                                     jobject obj);
+
 
 #endif //BREADWALLET_CORE_H

@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.fragments.FragmentSettings;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.animation.FragmentAnimator;
 
@@ -32,24 +33,25 @@ import com.breadwallet.tools.animation.FragmentAnimator;
  * THE SOFTWARE.
  */
 public class MiddleViewAdapter {
-    private static final String TAG = "MiddleViewAdapter";
+    private static final String TAG = MiddleViewAdapter.class.getName();
 
     public static void resetMiddleView(String text) {
         Log.e(TAG, "in the resetMiddleView: " + text);
         MainActivity app = MainActivity.app;
         if (app == null) return;
         if (FragmentAnimator.level == 0 || FragmentAnimator.level == 1) {
-            if (((BreadWalletApp) app.getApplicationContext()).unlocked) {
+            if (BreadWalletApp.unlocked) {
                 String tmp = CurrencyManager.getInstance(MainActivity.app).getCurrentBalanceText();
                 ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
             } else {
                 ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_IMAGE, "");
             }
         } else if (FragmentAnimator.level == 2) {
-            if (text == null) {
+            FragmentSettings myFragment = (FragmentSettings)app.getFragmentManager().findFragmentByTag(FragmentSettings.class.getName());
+            if (myFragment != null && myFragment.isVisible()) {
                 ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, "settings");
-            } else if(text.equals("transaction details")){
-                ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, text);
+            } else {
+                ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, "transaction details");
             }
         } else if (text != null) {
             ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, text);

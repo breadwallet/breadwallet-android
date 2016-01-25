@@ -89,7 +89,7 @@ import java.util.Observer;
  */
 
 public class MainActivity extends FragmentActivity implements Observer {
-    private static final String TAG = "MainActivity";
+    private static final String TAG = MainActivity.class.getName();
     public static final String PREFS_NAME = "MyPrefsFile";
     public static final int BURGER = 0;
     public static final int CLOSE = 1;
@@ -147,8 +147,11 @@ public class MainActivity extends FragmentActivity implements Observer {
         app = this;
         Log.e(TAG, "MainActivity created!");
 
+        //TODO delete the core testing
+        cTests();
+
         setUpTheWallet();
-        registBroadcastReceiver();
+        registerScreenLockReceiver();
 //        testSQLiteConnectivity(this);
         initializeViews();
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
@@ -175,7 +178,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         viewFlipper.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (FragmentAnimator.level == 0 && ((BreadWalletApp) getApplicationContext()).unlocked) {
+                if (FragmentAnimator.level == 0 && BreadWalletApp.unlocked) {
                     if (middleViewPressedCount % 2 == 0) {
                         ((BreadWalletApp) getApplication()).showCustomToast(app, getResources().
                                         getString(R.string.middle_view_tip_first),
@@ -190,7 +193,6 @@ public class MainActivity extends FragmentActivity implements Observer {
                 }
             }
         });
-
 
         burgerButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -223,7 +225,7 @@ public class MainActivity extends FragmentActivity implements Observer {
 
         //check the txAdded callback functionality
         BRWalletManager m = BRWalletManager.getInstance(app);
-        m.testWalletCallbacks();
+//        m.testWalletCallbacks();
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -234,6 +236,13 @@ public class MainActivity extends FragmentActivity implements Observer {
 //                Log.e(TAG, "FROM KEYSTORE PUBKEY: " + KeyStoreManager.getMasterPublicKey(app));
 //                Log.e(TAG, "FROM KEYSTORE PHRASE: " + KeyStoreManager.getKeyStoreString(app));
 //                Log.e(TAG, "FROM KEYSTORE CREATION TIME: " + KeyStoreManager.getWalletCreationTime(app));
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();  // Always call the superclass method first
+        app = this;
+        // Activity being restarted from stopped state
     }
 
     @Override
@@ -274,7 +283,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         CurrencyManager.getInstance(this).stopTimerTask();
         Log.e(TAG, "Activity Destroyed!");
         softKeyboard.unRegisterSoftKeyboardCallback();
-        unregisterReceiver();
+        unregisterScreenLockReceiver();
 
     }
 
@@ -603,10 +612,10 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     private void setUpTheWallet() {
         //TODO deleting all txs for testing only
-//        TransactionDataSource TXdataSource = new TransactionDataSource(this);
-//        TXdataSource.open();
-//        TXdataSource.deleteAllTransactions();
-//        TXdataSource.close();
+        TransactionDataSource TXdataSource = new TransactionDataSource(this);g
+        TXdataSource.open();
+        TXdataSource.deleteAllTransactions();
+        TXdataSource.close();
 
         BRWalletManager m = BRWalletManager.getInstance(this);
 //        String phrase = KeyStoreManager.getKeyStoreString(this);
@@ -632,7 +641,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         m.createWallet(transactionCount, pubkey, r);
     }
 
-    private void registBroadcastReceiver() {
+    private void registerScreenLockReceiver() {
         final IntentFilter theFilter = new IntentFilter();
         /** System Defined Broadcast */
         theFilter.addAction(Intent.ACTION_SCREEN_ON);
@@ -653,7 +662,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         getApplicationContext().registerReceiver(mPowerKeyReceiver, theFilter);
     }
 
-    private void unregisterReceiver() {
+    private void unregisterScreenLockReceiver() {
         int apiLevel = Build.VERSION.SDK_INT;
 
         if (apiLevel >= 7) {
@@ -669,5 +678,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     }
 
     private native void clearCMemory();
+
+    private native void cTests();
 
 }

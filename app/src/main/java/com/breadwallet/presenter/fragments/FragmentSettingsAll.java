@@ -16,13 +16,14 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.TransactionListItem;
+import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Random;
+import java.util.Locale;
 
 /**
  * BreadWallet
@@ -118,12 +119,11 @@ public class FragmentSettingsAll extends Fragment {
     }
 
     public static void refreshTransactions(Context ctx) {
-        Log.e(TAG, "REFRESH TRANSACTIONS: 1");
         //TODO put back the original method
         transactionObjects = BRWalletManager.getInstance(ctx).getTransactions();
 //        transactionObjects = new TransactionListItem[0];
 //            transactionObjects = getTestTransactions();
-        Log.e(TAG, "REFRESH TRANSACTIONS: " + transactionObjects);
+        Log.e(TAG, "REFRESH TRANSACTIONS: " + transactionObjects.length);
         refreshUI(ctx);
     }
 
@@ -131,7 +131,7 @@ public class FragmentSettingsAll extends Fragment {
         TransactionListItem[] transactionListItems = new TransactionListItem[10];
         for (int i = 0; i < transactionListItems.length; i++) {
             transactionListItems[i] = new TransactionListItem(i * 81, i * 23, "something".getBytes(),
-                    i * 4, i * 9, i * 17, "some address", "some other address");
+                    i * 4, i * 9, i * 17, "some address", "some other address", 31312);
         }
         return transactionListItems;
     }
@@ -139,7 +139,7 @@ public class FragmentSettingsAll extends Fragment {
     public static void refreshUI(Context ctx) {
         if (transactionList == null || transactionHistory == null) return;
         Log.e(TAG, "transactionObjects: " + transactionObjects);
-        if (!((BreadWalletApp) ctx.getApplicationContext()).unlocked) {
+        if (!BreadWalletApp.unlocked) {
             transactionList.setVisibility(View.GONE);
             transactionHistory.setVisibility(View.VISIBLE);
             Log.e(TAG, "inside, NO auth");
@@ -149,7 +149,7 @@ public class FragmentSettingsAll extends Fragment {
             Log.e(TAG, "inside, YES auth");
         }
         if (transactionObjects.length == 0) {
-            if (((BreadWalletApp) ctx.getApplicationContext()).unlocked) {
+            if (BreadWalletApp.unlocked) {
                 noTransactions.setVisibility(View.VISIBLE);
             } else {
                 noTransactions.setVisibility(View.GONE);
@@ -182,53 +182,62 @@ public class FragmentSettingsAll extends Fragment {
         return line;
     }
 
-    public static View getViewFromTransactionObject(TransactionListItem item) {
-        MainActivity app = MainActivity.app;
-        if (app == null) return null;
-        LayoutInflater inflater = (LayoutInflater) app.getApplicationContext().getSystemService
-                (Context.LAYOUT_INFLATER_SERVICE);
-        final RelativeLayout tmpLayout = (RelativeLayout) inflater.inflate(R.layout.transaction_list_item, null);
-        tmpLayout.setBackgroundResource(R.drawable.clickable_layout);
-        tmpLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.e(TAG, "clicked: " + ((TextView) tmpLayout.findViewById(R.id.transaction_date)).getText().toString());
-                if (FragmentAnimator.checkTheMultipressingAvailability()) {
-                    MainActivity app = MainActivity.app;
-                    if (app == null) return;
-                    FragmentSettingsAll fragmentSettingsAll = (FragmentSettingsAll) app.
-                            getFragmentManager().findFragmentByTag(FragmentSettingsAll.class.getName());
-                    FragmentAnimator.animateSlideToLeft(app, new FragmentTransactionExpanded(), fragmentSettingsAll);
-                    Log.d(TAG, "Starting:   showBouncySlideHorizontal()");
-                }
-            }
-        });
+    public static View getViewFromTransactionObject(final TransactionListItem item) {
+        final MainActivity app = MainActivity.app;
+        if (app == null || item == null) return null;
+        CurrencyManager m = CurrencyManager.getInstance(app);
+        LayoutInflater inflater = (LayoutInflater) app.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final LinearLayout tmpLayout = (LinearLayout) inflater.inflate(R.layout.transaction_list_item, null);
         TextView sentReceivedTextView = (TextView) tmpLayout.findViewById(R.id.transaction_sent_received_label);
         TextView dateTextView = (TextView) tmpLayout.findViewById(R.id.transaction_date);
         TextView bitsTextView = (TextView) tmpLayout.findViewById(R.id.transaction_amount_bits);
         TextView dollarsTextView = (TextView) tmpLayout.findViewById(R.id.transaction_amount_dollars);
         TextView bitsTotalTextView = (TextView) tmpLayout.findViewById(R.id.transaction_amount_bits_total);
         TextView dollarsTotalTextView = (TextView) tmpLayout.findViewById(R.id.transaction_amount_dollars_total);
+        tmpLayout.setBackgroundResource(R.drawable.clickable_layout);
 
-        Random r = new Random();
-        int i = r.nextInt();
-        if (i % 2 == 0) {
-            sentReceivedTextView.setBackgroundResource(R.drawable.received_label);
-            sentReceivedTextView.setText("received");
-            sentReceivedTextView.setTextColor(Color.parseColor("#00BF00"));
-        } else {
-            sentReceivedTextView.setBackgroundResource(R.drawable.sent_label);
-            sentReceivedTextView.setText("sent");
-            sentReceivedTextView.setTextColor(Color.parseColor("#FF5454"));
-        }
+        tmpLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e(TAG, "clicked: " + ((TextView) tmpLayout.findViewById(R.id.transaction_date)).getText().toString());
+                if (FragmentAnimator.checkTheMultipressingAvailability()) {
+                    FragmentSettingsAll fragmentSettingsAll = (FragmentSettingsAll) app.
+                            getFragmentManager().findFragmentByTag(FragmentSettingsAll.class.getName());
+                    FragmentTransactionExpanded fragmentTransactionExpanded = new FragmentTransactionExpanded();
+                    fragmentTransactionExpanded.setCurrentObject(item);
+                    FragmentAnimator.animateSlideToLeft(app, fragmentTransactionExpanded, fragmentSettingsAll);
+                }
+            }
+        });
+
+        boolean received = item.getSent() == 0;
+
+        sentReceivedTextView.setBackgroundResource(received ? R.drawable.received_label : R.drawable.sent_label);
+        sentReceivedTextView.setText(received ? "received" : "sent");
+        sentReceivedTextView.setTextColor(Color.parseColor(received ? "#00BF00" : "#FF5454"));
+
         dateTextView.setText(getFormattedDateFromLong(System.currentTimeMillis()));
 
+        long bitsAmount = m.getBitsFromSatoshi(received ? item.getReceived() : item.getSent() - item.getReceived());
+        bitsTextView.setText(m.getFormattedCurrencyString("BTC", String.valueOf(bitsAmount)));
+        dollarsTextView.setText(String.format("(%s)", m.getExchangeForAmount(m.getRateFromPrefs(), m.getISOFromPrefs(), String.valueOf(bitsAmount))));
+
+        long bitsAfterTx = m.getBitsFromSatoshi(item.getBalanceAfterTx());
+        bitsTotalTextView.setText(m.getFormattedCurrencyString("BTC", String.valueOf(bitsAfterTx)));
+        dollarsTotalTextView.setText(String.format("(%s)", m.getExchangeForAmount(m.getRateFromPrefs(), m.getISOFromPrefs(), String.valueOf(bitsAfterTx))));
 
         return tmpLayout;
     }
 
-    private static String getFormattedDateFromLong(long time) {
-        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd@ha");
+    public static String getFormattedDateFromLong(long time) {
+        MainActivity app = MainActivity.app;
+        SimpleDateFormat sdf;
+        if (app != null) {
+            Locale current = app.getResources().getConfiguration().locale;
+            sdf = new SimpleDateFormat("MM/dd@ha", current);
+        } else {
+            sdf = new SimpleDateFormat("MM/dd@ha");
+        }
         Date resultDate = new Date(time);
         return sdf.format(resultDate);
     }

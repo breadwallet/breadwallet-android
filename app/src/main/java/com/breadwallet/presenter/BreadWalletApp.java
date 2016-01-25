@@ -96,6 +96,7 @@ public class BreadWalletApp extends Application {
     public static int DISPLAY_HEIGHT_PX;
     public static final String CREDENTIAL_TITLE = "Insert password";
     public static final String CREDENTIAL_DESCRIPTION = "Insert your password to unlock the app.";
+    public static boolean canceled = false;
 
 
     @Override
@@ -311,6 +312,7 @@ public class BreadWalletApp extends Application {
     }
 
     public void authDialogBlockingUi(final Activity context, final int mode) {
+        canceled = false;
         final long startTime = System.currentTimeMillis();
         if (!allowKeyStoreAccess)
             //show the pass dialog
@@ -320,7 +322,7 @@ public class BreadWalletApp extends Application {
             public void run() {
                 try {
                     //continuously check if the user has authenticated for a minute
-                    while (!((BreadWalletApp) context.getApplicationContext()).allowKeyStoreAccess) {
+                    while (!canceled) {
                         try {
                             Thread.sleep(500);
                             Log.e(TAG, "after sleep ......");
@@ -357,7 +359,6 @@ public class BreadWalletApp extends Application {
                         (context).runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                allowKeyStoreAccess = true;
                                 switch (mode) {
                                     case AUTH_FOR_PHRASE:
                                         Fragment fragment = context.getFragmentManager().findFragmentByTag(FingerprintAuthenticationDialogFragment.class.getName());

@@ -42,7 +42,8 @@ LOCAL_SRC_FILES := \
 ./breadwallet-core/BRPeerManager.c\
 ./breadwallet-core/BRSet.c\
 ./breadwallet-core/BRTransaction.c\
-./breadwallet-core/BRWallet.c
+./breadwallet-core/BRWallet.c\
+./breadwallet-core/test.c
 
 LOCAL_C_INCLUDES := \
 $(LOCAL_PATH)/breadwallet-core/secp256k1\

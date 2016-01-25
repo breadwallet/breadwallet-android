@@ -3,7 +3,9 @@
     android:id="@+id/main_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:windowSoftInputMode="adjustPan|adjustResize"
+   >
 
     <TextView
         android:id="@+id/main_text_send_money"
@@ -41,12 +43,36 @@
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="20dp"
         android:background="#00000000"
         android:text="The address"
         android:textAlignment="gravity"
         android:textColor="@color/grey" />
+
+    <TextView
+        android:id="@+id/confirmation_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:textAppearance="@android:style/TextAppearance.Material.Body2"
+        android:textColor="?android:attr/colorAccent"
+        android:text="@string/purchase_done"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/encrypted_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:textAppearance="@android:style/TextAppearance.Material.Body2"
+        android:textColor="?android:attr/colorAccent"
+        android:text="@string/purchase_done"
+        android:visibility="gone"/>
 
 </LinearLayout>

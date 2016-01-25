@@ -59,7 +59,7 @@ public class RequestQRActivity extends Activity {
             SharedPreferences settings = getSharedPreferences(MainActivity.PREFS_NAME, 0);
             final String iso = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
             final float rate = settings.getFloat(FragmentCurrency.RATE, 1);
-            amount = CurrencyManager.getInstance(this).getCurrencyAndExchange(rate, iso, obj.amount);
+            amount = CurrencyManager.getInstance(this).getBitsAndExchangeString(rate, iso, obj.amount);
         } catch (InvalidAlgorithmParameterException e) {
             e.printStackTrace();
         }

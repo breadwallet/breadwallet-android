@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:paddingTop="90dp">
 
     <TextView
@@ -23,8 +24,7 @@
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView"
-        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
         android:layout_marginTop="60dp"
         android:text="please write it down"
         android:textAppearance="?android:attr/textAppearanceLarge"
@@ -33,12 +33,16 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
+        android:layout_height="@dimen/separator_height"
+        android:layout_marginTop="50dp"
+        android:background="@color/grey" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="30dp"
-        android:padding="10dp"
-        android:layout_marginTop="220dp"
         android:background="@drawable/clickable_layout"
-        android:clickable="false">
+        android:clickable="false"
+        android:padding="10dp">
 
         <TextView
             android:id="@+id/the_phrase"
@@ -54,4 +58,9 @@
             android:textSize="22sp" />
     </RelativeLayout>
 
-</RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/separator_height"
+        android:background="@color/grey" />
+
+</LinearLayout>

@@ -141,7 +141,7 @@ public class FragmentCurrency extends Fragment {
         super.onPause();
     }
 
-    private void tryAndSetAdapter() {
+    private synchronized void tryAndSetAdapter() {
         adapter = CurrencyManager.getInstance(getActivity()).getCurrencyAdapterIfReady();
         if (adapter.getCount() > 0) {
             currencyList.setAdapter(adapter);

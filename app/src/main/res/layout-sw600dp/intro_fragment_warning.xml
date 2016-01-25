@@ -10,11 +10,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="20dp"
         android:text="WARNING"
         android:textAlignment="center"
         android:textColor="@color/white"
-        android:textSize="42sp" />
+        android:textSize="35sp" />
 
     <ImageView
         android:id="@+id/intro_warning_no_eye"
@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/intro_warning_text1"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="10dp"
         android:gravity="center"
         android:src="@drawable/no_eye" />
 
@@ -30,14 +30,13 @@
         android:id="@+id/intro_warning_text2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
         android:layout_below="@id/intro_warning_no_eye"
         android:layout_centerHorizontal="true"
         android:gravity="center"
-        android:padding="40dp"
+        android:padding="20dp"
         android:text="DO NOT let anyone see your recovery phrase or they can spend your bitcoins."
         android:textColor="@color/white"
-        android:textSize="32sp" />
+        android:textSize="20sp" />
 
     <ImageView
         android:id="@+id/intro_warning_no_key"
@@ -45,7 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/intro_warning_text2"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:gravity="center"
         android:src="@drawable/no_key" />
 
@@ -57,10 +56,10 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
         android:gravity="center"
-        android:padding="40dp"
+        android:padding="20dp"
         android:text="NEVER type your recovery phrase into password managers or elsewhere. Other devices may be infected."
         android:textColor="@color/white"
-        android:textSize="32sp" />
+        android:textSize="20sp" />
 
     <Button
         android:id="@+id/intro_warning_show_button"
@@ -68,8 +67,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:textSize="24sp"
-        android:padding="40dp"
+        android:textSize="16sp"
+        android:padding="20dp"
         android:background="@android:color/transparent"
         android:text="show"
         android:textColor="@color/white" />

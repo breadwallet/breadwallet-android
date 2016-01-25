@@ -88,7 +88,7 @@ public class PasswordAuthenticationDialogFragment extends DialogFragment
         mCancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((BreadWalletApp)getActivity().getApplicationContext()).allowKeyStoreAccess = true;
+                BreadWalletApp.canceled = true;
                 dismiss();
             }
         });
@@ -169,6 +169,7 @@ public class PasswordAuthenticationDialogFragment extends DialogFragment
 
     @Override
     public void onAuthenticated() {
+        BreadWalletApp.canceled = true;
         getDialog().cancel();
         MainActivity app = MainActivity.app;
 

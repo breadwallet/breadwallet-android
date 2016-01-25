@@ -59,6 +59,13 @@ public class IntroActivity extends FragmentActivity {
     }
 
     @Override
+    protected void onRestart() {
+        super.onRestart();  // Always call the superclass method first
+        app = this;
+        // Activity being restarted from stopped state
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);

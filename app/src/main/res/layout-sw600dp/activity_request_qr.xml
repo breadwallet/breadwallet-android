@@ -1,44 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/main_fragment_qr"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/request_activity_qr"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    >
+    android:background="@drawable/backgroundmain_cropped"
+    tools:context="com.breadwallet.presenter.activities.RequestQRActivity">
+
+    <Button
+        android:id="@+id/request_close"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentStart="true"
+        android:background="@drawable/x" />
 
     <TextView
-        android:id="@+id/main_text_receive_money"
+        android:layout_marginTop="50dp"
+        android:id="@+id/request_amount_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:text="receive money:"
-        android:textSize="24sp" />
+        android:textSize="20sp" />
 
     <ImageView
-        android:id="@+id/main_image_qr_code"
+        android:id="@+id/request_image_qr_code"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/main_text_receive_money"
+        android:layout_below="@+id/request_amount_text"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="15dp" />
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/theAddressLayout"
+        android:id="@+id/request_address_layout"
         android:layout_marginTop="5dp"
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:layout_below="@+id/main_image_qr_code"
+        android:layout_below="@+id/request_image_qr_code"
         android:orientation="vertical">
 
         <TextView
             android:padding="15dp"
-            android:id="@+id/main_address_text"
+            android:id="@+id/request_address_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:gravity="center"
-            android:text="none"
             android:textSize="16sp" />
     </RelativeLayout>
+
+
 </RelativeLayout>

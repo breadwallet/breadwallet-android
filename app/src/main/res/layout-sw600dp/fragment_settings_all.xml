@@ -2,39 +2,83 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingTop="120dp">
+    android:paddingTop="90dp">
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:nestedScrollingEnabled="false">
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <RelativeLayout
+            <LinearLayout
                 android:id="@+id/transactions"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="wrap_content"
                 android:background="@drawable/clickable_layout"
-                android:clickable="true">
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/separator_height"
+                    android:background="@color/grey" />
+
+                <LinearLayout
+                    android:id="@+id/transactions_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:cacheColorHint="@android:color/transparent"
+                    android:listSelector="@color/white"
+                    android:orientation="vertical" />
 
                 <TextView
+                    android:id="@+id/text_no_transactions"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
+                    android:padding="20dp"
+                    android:layout_gravity="center"
                     android:text="no Transactions"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/light_grey" />
-            </RelativeLayout>
+
+                <LinearLayout
+                    android:id="@+id/layout_transaction_history"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/clickable_layout"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:padding="10dp"
+                        android:text="transaction history"
+                        android:textAlignment="center"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/dark_blue" />
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/separator_height"
+                    android:background="@color/grey" />
+            </LinearLayout>
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/separator_height"
+                android:layout_marginTop="30dp"
+                android:background="@color/grey" />
 
             <RelativeLayout
                 android:id="@+id/import_private_key"
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:layout_marginTop="40dp"
+                android:layout_height="50dp"
                 android:background="@drawable/clickable_layout"
                 android:clickable="true">
 
@@ -44,16 +88,15 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="40dp"
+                    android:layout_marginLeft="20dp"
                     android:background="@drawable/cameraguidebluesmall" />
 
                 <TextView
                     android:id="@+id/text_import_private_key"
                     android:layout_width="wrap_content"
-                    android:textSize="32sp"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="40dp"
+                    android:layout_marginLeft="20dp"
                     android:layout_toEndOf="@+id/camera_guide"
                     android:text="import private key"
                     android:textAppearance="?android:attr/textAppearanceLarge"
@@ -63,9 +106,15 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/separator_height"
+                android:layout_marginLeft="20dp"
+                android:background="@color/grey" />
+
+            <RelativeLayout
                 android:id="@+id/rescan_blockchain"
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
+                android:layout_height="50dp"
                 android:background="@drawable/clickable_layout"
                 android:clickable="true">
 
@@ -76,7 +125,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="40dp"
+                    android:layout_marginLeft="20dp"
                     android:background="@drawable/rescan" />
 
                 <TextView
@@ -84,30 +133,39 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="40dp"
-                    android:textSize="32sp"
+                    android:layout_marginLeft="20dp"
                     android:layout_toEndOf="@+id/rescan_image"
                     android:text="rescan blockchain"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/dark_blue" />
             </RelativeLayout>
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/separator_height"
+                android:background="@color/grey" />
+
             <TextView
                 android:id="@+id/rescan_instructions"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="40dp"
-                android:layout_marginRight="40dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="10dp"
                 android:text="@string/settingsall_rescan_instructions"
                 android:textColor="@color/grey"
-                android:textSize="27sp" />
+                android:textSize="18sp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/separator_height"
+                android:layout_marginTop="30dp"
+                android:background="@color/grey" />
 
             <RelativeLayout
                 android:id="@+id/settings"
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:layout_marginTop="30dp"
+                android:layout_height="50dp"
                 android:background="@drawable/clickable_layout"
                 android:clickable="true">
 
@@ -115,22 +173,27 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="40dp"
-
+                    android:layout_marginLeft="20dp"
                     android:text="settings"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/grey"
-                    android:textSize="32sp" />
+                    android:textSize="28sp" />
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginRight="40dp"
+                    android:layout_marginRight="20dp"
                     android:background="@drawable/chevron" />
 
             </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/separator_height"
+                android:layout_marginBottom="30dp"
+                android:background="@color/grey" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

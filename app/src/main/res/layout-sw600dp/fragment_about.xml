@@ -3,7 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="120dp">
+    android:paddingTop="90dp">
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
@@ -11,14 +11,21 @@
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/separator_height"
+                android:layout_marginTop="70dp"
+                android:background="@color/grey" />
 
             <RelativeLayout
                 android:id="@+id/about"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="30dp"
-                android:layout_marginTop="70dp"
+
                 android:background="@drawable/clickable_layout"
                 android:clickable="false">
 
@@ -28,14 +35,12 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="40dp"
-                    android:textSize="28sp"
                     android:text="breadwallet v 1.0 (testnet)"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/dark_grey" />
 
                 <TextView
                     android:id="@+id/about2"
-                    android:textSize="28sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/about1"
@@ -46,7 +51,6 @@
 
                 <TextView
                     android:id="@+id/about3"
-                    android:textSize="28sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/about2"
@@ -58,7 +62,6 @@
 
                 <TextView
                     android:id="@+id/about4"
-                    android:textSize="28sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/about3"
@@ -69,7 +72,6 @@
 
                 <TextView
                     android:id="@+id/about5"
-                    android:textSize="28sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/about4"
@@ -81,12 +83,10 @@
 
                 <TextView
                     android:id="@+id/about6"
-                    android:textSize="28sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/about5"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginBottom="30dp"
                     android:text="bitpay.com/rates"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/dark_grey" />
@@ -94,6 +94,11 @@
 
             </RelativeLayout>
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/separator_height"
+                android:layout_marginBottom="30dp"
+                android:background="@color/grey" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

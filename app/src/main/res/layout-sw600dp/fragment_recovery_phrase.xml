@@ -1,43 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="120dp">
+    android:orientation="vertical"
+    android:paddingTop="90dp">
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginLeft="32dp"
-        android:layout_marginRight="32dp"
-        android:layout_marginTop="72dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="36dp"
         android:gravity="center"
         android:text="@string/dialog_recovery_phrase_warning"
         android:textColor="@color/dark_grey"
-        android:textSize="28sp"
+        android:textSize="18sp"
         android:textStyle="bold" />
 
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="120dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="60dp"
         android:text="please write it down"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/grey"
-        android:textSize="28sp" />
+        android:textSize="16sp" />
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="160dp"
-        android:layout_marginBottom="60dp"
-        android:layout_marginTop="400dp"
+        android:layout_height="@dimen/separator_height"
+        android:layout_marginTop="50dp"
+        android:background="@color/grey" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="@drawable/clickable_layout"
-        android:clickable="false">
+        android:clickable="false"
+        android:padding="10dp">
 
         <TextView
             android:id="@+id/the_phrase"
@@ -50,7 +55,12 @@
             android:paddingRight="30dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/dark_grey"
-            android:textSize="28sp" />
+            android:textSize="22sp" />
     </RelativeLayout>
 
-</RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/separator_height"
+        android:background="@color/grey" />
+
+</LinearLayout>
