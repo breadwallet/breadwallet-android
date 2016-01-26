@@ -36,6 +36,8 @@ import android.widget.ViewFlipper;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
+import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
+import com.breadwallet.presenter.entities.BRPeerEntity;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.fragments.FragmentCurrency;
@@ -55,6 +57,7 @@ import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.sqlite.SQLiteManager;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
+import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.util.HashMap;
@@ -612,33 +615,63 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     private void setUpTheWallet() {
         //TODO deleting all txs for testing only
-        TransactionDataSource TXdataSource = new TransactionDataSource(this);g
+        TransactionDataSource TXdataSource = new TransactionDataSource(this);
         TXdataSource.open();
         TXdataSource.deleteAllTransactions();
         TXdataSource.close();
 
         BRWalletManager m = BRWalletManager.getInstance(this);
+        BRPeerManager pm = BRPeerManager.getInstance(this);
+
 //        String phrase = KeyStoreManager.getKeyStoreString(this);
 //        if (phrase == null) return;
 //        String normalizedPhrase = Normalizer.normalize(phrase, Normalizer.Form.NFKD);
 //        m.getMasterPubKey(normalizedPhrase);
         SQLiteManager sqLiteManager = SQLiteManager.getInstance(this);
-        List<BRTransactionEntity> transactions = sqLiteManager.getTransactions();
-        int transactionCount = transactions.size();
 
-        Log.e(TAG, "setUpTheWallet: number of transactions from sqlite: " + transactions.size() +
-                " transactionCount: " + transactionCount);
-        if (transactionCount > 0) {
-            m.createTxArrayWithCount(transactionCount);
+        List<BRTransactionEntity> transactions = sqLiteManager.getTransactions();
+        List<BRMerkleBlockEntity> blocks = sqLiteManager.getBlocks();
+        List<BRPeerEntity> peers = sqLiteManager.getPeers();
+
+        int transactionsCount = transactions.size();
+        int blocksCount = blocks.size();
+        int peersCount = peers.size();
+
+        CustomLogger.LogThis("setUpTheWallet: number of transactions from sqlite: ",
+                String.valueOf(transactions.size()),
+                " transactionCount: ", String.valueOf(transactionsCount), " blocksCount: ",
+                String.valueOf(blocksCount), " peersCount: ", String.valueOf(peersCount));
+
+        if (transactionsCount > 0) {
+            m.createTxArrayWithCount(transactionsCount);
             for (BRTransactionEntity entity : transactions) {
-                Log.e(TAG, "-------m.putTransaction------: " + transactionCount);
                 m.putTransaction(entity.getBuff());
             }
         }
+
+        if (blocksCount > 0) {
+            pm.createBlockArrayWithCount(blocksCount);
+            for (BRMerkleBlockEntity entity : blocks) {
+                pm.putBlock(entity.getBuff());
+            }
+        }
+
+        if (peersCount > 0) {
+            pm.createPeerArrayWithCount(peersCount);
+            for (BRPeerEntity entity : peers) {
+                pm.putPeer(entity.getAddress(), entity.getPort(), entity.getTimeStamp());
+            }
+        }
+
         byte[] pubkey = KeyStoreManager.getMasterPublicKey(this);
         int r = pubkey.length == 0 ? 0 : 1;
 
-        m.createWallet(transactionCount, pubkey, r);
+        m.createWallet(transactionsCount, pubkey, r);
+
+        long earliestKeyTime = KeyStoreManager.getWalletCreationTime(this);
+
+        pm.connect(earliestKeyTime, blocksCount, peersCount);
+
     }
 
     private void registerScreenLockReceiver() {

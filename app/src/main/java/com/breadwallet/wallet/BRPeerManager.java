@@ -2,7 +2,7 @@ package com.breadwallet.wallet;
 
 import android.content.Context;
 
-import java.nio.ByteBuffer;
+import com.breadwallet.tools.sqlite.SQLiteManager;
 
 /**
  * BreadWallet
@@ -32,22 +32,28 @@ public class BRPeerManager {
     public static final String TAG = BRPeerManager.class.getName();
     private static BRPeerManager instance;
     private byte[] peerManager;
+    private static Context ctx;
 
     private BRPeerManager() {
     }
 
     public static synchronized BRPeerManager getInstance(Context context) {
-        Context ctx = context;
+        ctx = context;
         if (instance == null) {
             instance = new BRPeerManager();
         }
         return instance;
     }
 
-    public native byte[] connect(byte[] wallet, long earliestKeyTime, ByteBuffer[] blocks, ByteBuffer[] peers);
+    public native void connect(long earliestKeyTime, long blockCount, long peerCount);
 
-    public native void setCallBacks(byte[] peerManager);
+    public native void putPeer(byte[] peerAddress, byte[] peerPort, byte[] peerTimeStamp);
 
+    public native void createPeerArrayWithCount(int count);
+
+    public native void putBlock(byte[] block);
+
+    public native void createBlockArrayWithCount(int count);
 
     /**
      * void BRPeerManagerSetCallbacks(BRPeerManager *manager, void *info,
@@ -76,12 +82,12 @@ public class BRPeerManager {
 
     }
 
-    public void saveBlocks() {
-
+    public void saveBlocks(byte[] block) {
+        SQLiteManager.getInstance(ctx).insertMerkleBlock(block);
     }
 
-    public void savePeers() {
-
+    public void savePeers(byte[] peerAddress, byte[] peerPort, byte[] peerTimeStamp) {
+        SQLiteManager.getInstance(ctx).insertPeer(peerAddress, peerPort, peerTimeStamp);
     }
 
     public void networkIsReachable() {

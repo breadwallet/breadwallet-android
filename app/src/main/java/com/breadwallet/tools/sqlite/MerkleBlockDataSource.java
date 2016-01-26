@@ -54,7 +54,11 @@ class MerkleBlockDataSource {
 //            BRSQLiteHelper.MB_COLUMN_VERSION
     };
 
-    private MerkleBlockDataSource(Context context) {
+    private MerkleBlockDataSource(){
+        dbHelper = null;
+    }
+
+    public MerkleBlockDataSource(Context context) {
         dbHelper = new BRSQLiteHelper(context);
     }
 

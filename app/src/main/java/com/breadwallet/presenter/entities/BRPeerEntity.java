@@ -27,7 +27,9 @@ package com.breadwallet.presenter.entities;
 public class BRPeerEntity {
 
     private int id;
-    private byte[] buff;
+    private byte[] address;
+    private byte[] port;
+    private byte[] timeStamp;
 //    private int address;
 //    private short misbehavin;
 //    private short port;
@@ -38,8 +40,10 @@ public class BRPeerEntity {
 
     }
 
-    public BRPeerEntity(byte[] peerBuff){
-        this.buff = peerBuff;
+    public BRPeerEntity(byte[] address, byte[] port, byte[] timeStamp){
+        this.address = address;
+        this.port = port;
+        this.timeStamp = timeStamp;
     }
 
     public int getId() {
@@ -50,8 +54,16 @@ public class BRPeerEntity {
         this.id = id;
     }
 
-    public byte[] getBuff() {
-        return buff;
+    public byte[] getPort() {
+        return port;
+    }
+
+    public byte[] getTimeStamp() {
+        return timeStamp;
+    }
+
+    public byte[] getAddress() {
+        return address;
     }
 
 //    public int getAddress() {

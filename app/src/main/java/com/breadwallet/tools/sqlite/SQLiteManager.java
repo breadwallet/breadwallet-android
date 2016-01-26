@@ -3,6 +3,8 @@ package com.breadwallet.tools.sqlite;
 import android.content.Context;
 import android.util.Log;
 
+import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
+import com.breadwallet.presenter.entities.BRPeerEntity;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
 
 import java.util.List;
@@ -52,19 +54,6 @@ public class SQLiteManager {
         TransactionDataSource TXdataSource = new TransactionDataSource(ctx);
         TXdataSource.open();
         List<BRTransactionEntity> txValues = TXdataSource.getAllTransactions();
-//        ByteBuffer transArray[] = new ByteBuffer[txValues.size()];
-//        Iterator<BRTransactionEntity> transactionEntityIterator = txValues.iterator();
-//        int i = 0;
-//        while (transactionEntityIterator.hasNext()) {
-//            BRTransactionEntity transactionEntity = transactionEntityIterator.next();
-//            ByteBuffer buffer = ByteBuffer.wrap(transactionEntity.getBuff());
-//            Log.e(TAG, "The transaction: " + transactionEntity.getId()
-//                    + " " + buffer.array().length);
-//            Log.e(TAG, "The buffer limit: " + buffer.limit());
-//
-//            transArray[i++] = buffer;
-//
-//        }
         TXdataSource.close();
         return txValues;
     }
@@ -77,4 +66,39 @@ public class SQLiteManager {
         Log.e(TAG, "SQLiteManager - transaction inserted");
         TXdataSource.close();
     }
+
+    public List<BRMerkleBlockEntity> getBlocks() {
+        MerkleBlockDataSource BKdataSource = new MerkleBlockDataSource(ctx);
+        BKdataSource.open();
+        List<BRMerkleBlockEntity> BkValues = BKdataSource.getAllMerkleBlocks();
+        BKdataSource.close();
+        return BkValues;
+    }
+
+    public void insertMerkleBlock(byte[] merkleBlock) {
+        BRMerkleBlockEntity entity = new BRMerkleBlockEntity(merkleBlock);
+        MerkleBlockDataSource BKdataSource = new MerkleBlockDataSource(ctx);
+        BKdataSource.open();
+        BKdataSource.createMerkleBlock(entity);
+        Log.e(TAG, "SQLiteManager - merkleBlock inserted");
+        BKdataSource.close();
+    }
+
+    public List<BRPeerEntity> getPeers() {
+        PeerDataSource PRdataSource = new PeerDataSource(ctx);
+        PRdataSource.open();
+        List<BRPeerEntity> PRValues = PRdataSource.getAllPeers();
+        PRdataSource.close();
+        return PRValues;
+    }
+
+    public void insertPeer(byte[] peerAddress, byte[] peerPort, byte[] peerTimeStamp) {
+        BRPeerEntity entity = new BRPeerEntity(peerAddress, peerPort, peerTimeStamp);
+        PeerDataSource PRdataSource = new PeerDataSource(ctx);
+        PRdataSource.open();
+        PRdataSource.createPeer(entity);
+        Log.e(TAG, "SQLiteManager - peer inserted");
+        PRdataSource.close();
+    }
+
 }

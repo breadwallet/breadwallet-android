@@ -33,7 +33,7 @@ class BRSQLiteHelper extends SQLiteOpenHelper {
     private static final String TAG = BRSQLiteHelper.class.getName();
 
     private static final String DATABASE_NAME = "breadwallet.db";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 6;
 
     /**
      * MerkleBlock table
@@ -99,7 +99,9 @@ class BRSQLiteHelper extends SQLiteOpenHelper {
 
     public static final String PEER_TABLE_NAME = "peerTable";
     public static final String PEER_COLUMN_ID = "_id";
-    public static final String PEER_BUFF = "peerBuff";
+    public static final String PEER_ADDRESS = "peerAddress";
+    public static final String PEER_PORT = "peerPort";
+    public static final String PEER_TIMESTAMP = "peerTimestamp";
 //    public static final String PEER_ADDRESS = "addresses";
 //    public static final String PEER_MISBEHAVIN = "misbehavin";
 //    public static final String PEER_PORT = "port";
@@ -108,7 +110,10 @@ class BRSQLiteHelper extends SQLiteOpenHelper {
 
     private static final String PEER_DATABASE_CREATE = "create table " + PEER_TABLE_NAME + "(" +
             PEER_COLUMN_ID + " integer primary key autoincrement, " +
-            PEER_BUFF + " blob );";
+            PEER_ADDRESS + " blob," +
+            PEER_PORT + " blob," +
+            PEER_TIMESTAMP + " blob );";
+
 //            PEER_ADDRESS + " integer, " +
 //            PEER_MISBEHAVIN + " integer, " +
 //            PEER_PORT + " integer, " +

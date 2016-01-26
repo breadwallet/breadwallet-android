@@ -50,6 +50,10 @@ public class TransactionDataSource {
             BRSQLiteHelper.TX_TIME_STAMP
     };
 
+    private TransactionDataSource() {
+        dbHelper = null;
+    }
+
     public TransactionDataSource(Context context) {
         dbHelper = new BRSQLiteHelper(context);
     }
@@ -66,13 +70,13 @@ public class TransactionDataSource {
         ContentValues values = new ContentValues();
 //        values.put(BRSQLiteHelper.TX_COLUMN_ID, transactionEntity.getId());
         values.put(BRSQLiteHelper.TX_BUFF, transactionEntity.getBuff());
-        values.put(BRSQLiteHelper.TX_BLOCK_HEIGHT,transactionEntity.getBlockheight());
-        values.put(BRSQLiteHelper.TX_TIME_STAMP,transactionEntity.getTimestamp());
+        values.put(BRSQLiteHelper.TX_BLOCK_HEIGHT, transactionEntity.getBlockheight());
+        values.put(BRSQLiteHelper.TX_TIME_STAMP, transactionEntity.getTimestamp());
 //        values.put(BRSQLiteHelper.TX_BLOCK_HEIGHT, transactionEntity.getBlockHeight());
 //        values.put(BRSQLiteHelper.TX_LOCK_TIME, transactionEntity.getLockTime());
 //        values.put(BRSQLiteHelper.TX_TIME_STAMP, transactionEntity.getTimeStamp());
 //        values.put(BRSQLiteHelper.TX_HASH, transactionEntity.getTxHash());
-
+//
 //        for (BRTxInputEntity input : transactionEntity.getInputs()) {
 //            ContentValues inputValues = new ContentValues();
 //            inputValues.put(BRSQLiteHelper.IN_INDEX, input.getIndex());
@@ -80,7 +84,7 @@ public class TransactionDataSource {
 //            inputValues.put(BRSQLiteHelper.IN_PREV_OUT_TX_HASH, input.getPrevOutTxHash());
 //            inputValues.put(BRSQLiteHelper.IN_SEQUENCE, input.getSequence());
 //            inputValues.put(BRSQLiteHelper.IN_SIGNATURE, input.getSignatures());
-
+//
 //            database.insert(BRSQLiteHelper.IN_TABLE_NAME, null, values);
 //        }
 //
@@ -122,7 +126,7 @@ public class TransactionDataSource {
                 + " = " + id, null);
     }
 
-    public void deleteAllTransactions(){
+    public void deleteAllTransactions() {
         database.delete(BRSQLiteHelper.TX_TABLE_NAME, BRSQLiteHelper.TX_COLUMN_ID + " <> -1", null);
     }
 

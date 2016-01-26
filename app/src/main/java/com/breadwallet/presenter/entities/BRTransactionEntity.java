@@ -47,12 +47,13 @@ public class BRTransactionEntity {
     private long blockheight;
     private long timestamp;
 
-    //    private int blockHeight;
+//    private int blockHeight;
 //    private int lockTime;
 //    private long timeStamp;
 //    private byte[] txHash = new byte[32];
 //    private HashSet<BRTxInputEntity> inputs;
 //    private HashSet<BRTxOutputEntity> outputs;
+
     private BRTransactionEntity(){
 
     }

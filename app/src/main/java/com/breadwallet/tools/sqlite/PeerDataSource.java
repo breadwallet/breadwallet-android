@@ -45,13 +45,19 @@ class PeerDataSource {
     private final BRSQLiteHelper dbHelper;
     private final String[] allColumns = {
             BRSQLiteHelper.PEER_COLUMN_ID,
-            BRSQLiteHelper.MB_BUFF
+            BRSQLiteHelper.PEER_ADDRESS,
+            BRSQLiteHelper.PEER_PORT,
+            BRSQLiteHelper.PEER_TIMESTAMP
 //            BRSQLiteHelper.PEER_ADDRESS,
 //            BRSQLiteHelper.PEER_MISBEHAVIN, BRSQLiteHelper.PEER_PORT,
 //            BRSQLiteHelper.PEER_SERVICES, BRSQLiteHelper.PEER_TIME_STAMP
     };
 
-    private PeerDataSource(Context context) {
+    private PeerDataSource(){
+        dbHelper = null;
+    }
+
+    public PeerDataSource(Context context) {
         dbHelper = new BRSQLiteHelper(context);
     }
 
@@ -66,7 +72,9 @@ class PeerDataSource {
     public BRPeerEntity createPeer(BRPeerEntity peer) {
         ContentValues values = new ContentValues();
 //        values.put(BRSQLiteHelper.PEER_COLUMN_ID, peer.getId());
-        values.put(BRSQLiteHelper.PEER_BUFF, peer.getBuff());
+        values.put(BRSQLiteHelper.PEER_ADDRESS, peer.getAddress());
+        values.put(BRSQLiteHelper.PEER_PORT, peer.getPort());
+        values.put(BRSQLiteHelper.PEER_TIMESTAMP, peer.getTimeStamp());
 //        values.put(BRSQLiteHelper.PEER_ADDRESS, peer.getAddress());
 //        values.put(BRSQLiteHelper.PEER_MISBEHAVIN, peer.getMisbehavin());
 //        values.put(BRSQLiteHelper.PEER_PORT, peer.getPort());
@@ -118,7 +126,7 @@ class PeerDataSource {
     }
 
     private BRPeerEntity cursorToPeer(Cursor cursor) {
-        BRPeerEntity peerEntity = new BRPeerEntity(cursor.getBlob(1));
+        BRPeerEntity peerEntity = new BRPeerEntity(cursor.getBlob(1), cursor.getBlob(2), cursor.getBlob(3));
         peerEntity.setId(cursor.getInt(0));
 //        peerEntity.setAddress(cursor.getInt(1));
 //        peerEntity.setMisbehavin(cursor.getShort(2));

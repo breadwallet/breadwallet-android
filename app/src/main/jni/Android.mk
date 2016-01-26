@@ -10,8 +10,7 @@ LOCAL_SRC_FILES := \
 ./transition/WalletCallbacks.c\
 ./transition/core.c\
 ./transition/wallet.c\
-./transition/PeerManager.c\
-./transition/PeerManagerCallbacks.c
+./transition/PeerManager.c
 
 LOCAL_MODULE := core
 
