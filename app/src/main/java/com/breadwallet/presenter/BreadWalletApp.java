@@ -258,6 +258,12 @@ public class BreadWalletApp extends Application {
                     }
                 })
                 .setIcon(android.R.drawable.ic_dialog_alert)
+                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        context.finish();
+                    }
+                })
                 .show();
     }
 

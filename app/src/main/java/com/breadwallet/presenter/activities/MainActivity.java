@@ -29,6 +29,7 @@ import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,6 +45,7 @@ import com.breadwallet.presenter.fragments.FragmentCurrency;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.presenter.fragments.FragmentSettings;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
+import com.breadwallet.presenter.fragments.MainFragmentQR;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.CustomLogger;
 import com.breadwallet.tools.NetworkChangeReceiver;
@@ -65,6 +67,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Random;
 
 /**
  * BreadWallet
@@ -108,11 +111,12 @@ public class MainActivity extends FragmentActivity implements Observer {
     public static RelativeLayout pageIndicator;
     private ImageView pageIndicatorLeft;
     private ImageView pageIndicatorRight;
-    //    private View middleView;
     private Map<String, Integer> burgerButtonMap;
     private Button burgerButton;
     public Button lockerButton;
     public TextView pay;
+    public ProgressBar syncProgressBar;
+    public TextView syncProgressText;
     private static ParallaxViewPager parallaxViewPager;
     private ClipboardManager myClipboard;
     private boolean doubleBackToExitPressedOnce;
@@ -148,19 +152,59 @@ public class MainActivity extends FragmentActivity implements Observer {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         app = this;
+        initializeViews();
+
         Log.e(TAG, "MainActivity created!");
 
         //TODO delete the core testing
-        cTests();
+//        cTests();
 
         setUpTheWallet();
         registerScreenLockReceiver();
 //        testSQLiteConnectivity(this);
-        initializeViews();
+
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
         CustomLogger.LogThis("screen X", String.valueOf(screenParametersPoint.x), "screen Y",
                 String.valueOf(screenParametersPoint.y));
         setUpApi23();
+
+
+        // Start lengthy operation in a background thread
+        new Thread(new Runnable() {
+            int mProgressStatus = 0;
+
+            public void run() {
+                while (mProgressStatus < 100) {
+                    Random r = new Random();
+                    try {
+                        Thread.sleep(r.nextInt(500));
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    mProgressStatus += 2;
+
+                    // Update the progress bar
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            syncProgressBar.setProgress(mProgressStatus);
+                            //TODO use resource string with place holders, everywhere
+                            syncProgressText.setText(String.valueOf(mProgressStatus) + "%");
+                        }
+                    });
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mProgressStatus >= 100) {
+                            syncProgressBar.setVisibility(View.INVISIBLE);
+                            syncProgressText.setVisibility(View.INVISIBLE);
+                        }
+                    }
+                });
+
+            }
+        }).start();
 
         if (((BreadWalletApp) getApplication()).isEmulatorOrDebug()) {
             MODE = DEBUG;
@@ -305,6 +349,8 @@ public class MainActivity extends FragmentActivity implements Observer {
         lockerButton = (Button) findViewById(R.id.main_button_locker);
         pageIndicator = (RelativeLayout) findViewById(R.id.main_pager_indicator);
         pageIndicatorLeft = (ImageView) findViewById(R.id.circle_indicator_left);
+        syncProgressBar = (ProgressBar) findViewById(R.id.sync_progress_bar);
+        syncProgressText = (TextView) findViewById(R.id.sync_progress_text);
 //        middleView = findViewById(R.id.main_label_breadwallet);
         pageIndicatorRight = (ImageView) findViewById(R.id.circle_indicator_right);
         pagerAdapter = new CustomPagerAdapter(getFragmentManager());
@@ -489,7 +535,9 @@ public class MainActivity extends FragmentActivity implements Observer {
         String amount = FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_RIGHT ?
                 AmountAdapter.getRightValue() : AmountAdapter.getLeftValue();
         //TODO get the actual address
-        RequestQRActivity.THE_ADDRESS = "bitcoin:mhBmRiqosSHR9YnPTKc3xXcvhEcKtjet2p?amount=" + amount;
+        SharedPreferences prefs = getSharedPreferences(MainFragmentQR.RECEIVE_ADDRESS_PREFS, Context.MODE_PRIVATE);
+        String requestAddrs = prefs.getString(MainFragmentQR.RECEIVE_ADDRESS, null);
+        RequestQRActivity.THE_ADDRESS = "bitcoin:" + requestAddrs + "?amount=" + amount;
         intent = new Intent(this, RequestQRActivity.class);
         startActivity(intent);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
@@ -649,6 +697,7 @@ public class MainActivity extends FragmentActivity implements Observer {
             }
         }
 
+
         if (blocksCount > 0) {
             pm.createBlockArrayWithCount(blocksCount);
             for (BRMerkleBlockEntity entity : blocks) {
@@ -662,6 +711,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                 pm.putPeer(entity.getAddress(), entity.getPort(), entity.getTimeStamp());
             }
         }
+
 
         byte[] pubkey = KeyStoreManager.getMasterPublicKey(this);
         int r = pubkey.length == 0 ? 0 : 1;

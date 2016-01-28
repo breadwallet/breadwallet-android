@@ -51,7 +51,7 @@ import java.util.Locale;
  */
 
 public class FragmentSettingsAll extends Fragment {
-    private static final String TAG = "MainFragmentSettings";
+    private static final String TAG = FragmentSettingsAll.class.getName();
     private static TransactionListItem[] transactionObjects;
     public static LinearLayout transactionList;
     public static LinearLayout transactionHistory;
@@ -78,10 +78,12 @@ public class FragmentSettingsAll extends Fragment {
                         authDialogBlockingUi(getActivity(), BreadWalletApp.AUTH_FOR_GENERAL);
             }
         });
+        Log.e(TAG, "FRAGMENT_SETTINGS_ALL 1");
+        refreshTransactions(getActivity());
         if (transactionObjects != null) {
             if (transactionObjects.length == 0) transactionObjects = null;
-            refreshTransactions(getActivity());
         }
+        Log.e(TAG, "FRAGMENT_SETTINGS_ALL 2");
         importPrivateKeys.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -123,8 +125,9 @@ public class FragmentSettingsAll extends Fragment {
         transactionObjects = BRWalletManager.getInstance(ctx).getTransactions();
 //        transactionObjects = new TransactionListItem[0];
 //            transactionObjects = getTestTransactions();
-        Log.e(TAG, "REFRESH TRANSACTIONS: " + transactionObjects.length);
-        refreshUI(ctx);
+//        Log.e(TAG, "REFRESH TRANSACTIONS: " + transactionObjects.length);
+        if (ctx != null && ctx instanceof MainActivity)
+            refreshUI(ctx);
     }
 
     private static TransactionListItem[] getTestTransactions() {
@@ -137,8 +140,8 @@ public class FragmentSettingsAll extends Fragment {
     }
 
     public static void refreshUI(Context ctx) {
-        if (transactionList == null || transactionHistory == null) return;
-        Log.e(TAG, "transactionObjects: " + transactionObjects);
+        if (transactionList == null || transactionHistory == null)
+            return;
         if (!BreadWalletApp.unlocked) {
             transactionList.setVisibility(View.GONE);
             transactionHistory.setVisibility(View.VISIBLE);
@@ -148,7 +151,7 @@ public class FragmentSettingsAll extends Fragment {
             transactionHistory.setVisibility(View.GONE);
             Log.e(TAG, "inside, YES auth");
         }
-        if (transactionObjects.length == 0) {
+        if (transactionObjects == null) {
             if (BreadWalletApp.unlocked) {
                 noTransactions.setVisibility(View.VISIBLE);
             } else {
@@ -183,6 +186,7 @@ public class FragmentSettingsAll extends Fragment {
     }
 
     public static View getViewFromTransactionObject(final TransactionListItem item) {
+        //TODO FIX THE BUG ,,does not go more then 10 000 000 bits"
         final MainActivity app = MainActivity.app;
         if (app == null || item == null) return null;
         CurrencyManager m = CurrencyManager.getInstance(app);

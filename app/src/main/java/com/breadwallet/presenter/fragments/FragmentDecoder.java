@@ -94,6 +94,7 @@ public class FragmentDecoder extends Fragment
     private final CameraCaptureSession.CaptureCallback mCaptureCallback =
             new CameraCaptureSession.CaptureCallback() {
                 private void process(CaptureResult result) {
+
                 }
 
                 @Override

@@ -238,7 +238,7 @@ public class BRWalletManager {
         MainFragmentQR.receiveAddress = getReceiveAddress();
         SharedPreferences.Editor editor = ctx.getSharedPreferences(MainFragmentQR.RECEIVE_ADDRESS_PREFS, Context.MODE_PRIVATE).edit();
         editor.putString(MainFragmentQR.RECEIVE_ADDRESS, MainFragmentQR.receiveAddress);
-        editor.commit();
+        editor.apply();
         Log.e(TAG, "AFTER PUTTING IN PREFS receiveAddress: " + MainFragmentQR.receiveAddress);
     }
 

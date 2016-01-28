@@ -88,7 +88,7 @@ public class MainFragmentQR extends Fragment {
         if (receiveAddress == null) {
             BRWalletManager.getInstance(getActivity()).refreshAddress();
         }
-
+        //TODO refresh the address once used
         qrcode = (ImageView) rootView.findViewById(R.id.main_image_qr_code);
         sharingFragment = new SharingFragment();
         RelativeLayout main_fragment_qr = (RelativeLayout) rootView.findViewById(R.id.main_fragment_qr);
@@ -146,7 +146,7 @@ public class MainFragmentQR extends Fragment {
     }
 
     private void generateQR() {
-        WindowManager manager = (WindowManager) getActivity().getSystemService(getActivity().WINDOW_SERVICE);
+        WindowManager manager = (WindowManager) getActivity().getSystemService(Context.WINDOW_SERVICE);
         Display display = manager.getDefaultDisplay();
         Point point = new Point();
         display.getSize(point);
@@ -156,7 +156,7 @@ public class MainFragmentQR extends Fragment {
         smallerDimension = smallerDimension * 3 / 4;
 
         Log.e(TAG, "@@@@@@@@@@@receiveAddress: " + receiveAddress);
-        if (receiveAddress.length() < 5 || receiveAddress == null)
+        if (receiveAddress.length() < 5)
             throw new NullPointerException("receiveAddress cannot be null or it's corrupted!");
         mainAddressText.setText(receiveAddress);
         QRCodeEncoder qrCodeEncoder = new QRCodeEncoder("bitcoin:" + receiveAddress,
@@ -197,7 +197,6 @@ public class MainFragmentQR extends Fragment {
             }
         }
     }
-
 
     @Override
     public void onResume() {

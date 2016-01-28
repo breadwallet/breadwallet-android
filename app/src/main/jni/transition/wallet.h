@@ -1,6 +1,7 @@
 //
 // Created by Mihail Gutan on 12/4/15.
 //
+//extern int BITCOIN_TESTNET = 1;
 #include "jni.h"
 #include "BRInt.h"
 #include "BRWallet.h"
@@ -9,7 +10,6 @@
 
 
 extern BRWallet *_wallet;
-extern int BITCOIN_TESTNET;
 
 JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_encodeSeed(JNIEnv *env,
                                                                             jobject thiz,

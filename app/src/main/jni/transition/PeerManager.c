@@ -17,6 +17,7 @@ static BRPeer *_peers;
 static size_t _blocksCounter = 0;
 static size_t _peersCounter = 0;
 
+
 static void syncStarted(void *info) {
 
 }
@@ -37,13 +38,11 @@ static void txRejected(void *info, int rescanRecommended) {
 
 }
 
-static void saveBlocks(void *info, const BRMerkleBlock blocks[], size_t count) {
+static void saveBlocks(void *info, BRMerkleBlock *blocks[], size_t count) {
     JNIEnv *globalEnv;
     jint rs = (*_jvm)->AttachCurrentThread(_jvm, &globalEnv, NULL);
 
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "saveBlocks");
-//    __android_log_print(ANDROID_LOG_ERROR, "Message from createWallet: ",
-//                        ">>>>>>>>>>>>tx->version before: %d", tx->version);
 
     //create class
     jclass clazz = (*globalEnv)->FindClass(globalEnv, "com/breadwallet/wallet/BRPeerManager");
@@ -76,13 +75,6 @@ static void savePeers(void *info, const BRPeer peers[], size_t count) {
     //call java methods
 
     for (int i = 0; i < count; i++) {
-        typedef struct {
-            UInt128 address; // IPv6 address of peer
-            uint16_t port; // port number for peer connection
-            uint64_t services; // bitcoin network services supported by peer
-            uint64_t timestamp; // timestamp reported by peer
-            uint8_t flags; // scratch variable
-        } BRPeer;
 
         jbyteArray peerAddress = (*globalEnv)->NewByteArray(globalEnv, sizeof(peers[i].address));
         (*globalEnv)->SetByteArrayRegion(globalEnv, peerAddress, 0, sizeof(peers[i].address), (jbyte *) &peers[i].address);
@@ -120,14 +112,13 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_connect(JNIEnv *env, jo
                                                   blocksCount, peersCount == 0 ? NULL : _peers,
                                                   peersCount);
     if (peerManager == NULL) {
-        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "NULL: %s", "peerManager");
+        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "NULL: ", "peerManager");
         return;
     }
-//
+
     BRPeerManagerSetCallbacks(peerManager, NULL, syncStarted, syncSucceeded, syncFailed,
                               txStatusUpdate, txRejected, saveBlocks, savePeers,
                               networkIsReachable);
-
 }
 
 //Call multiple times with all the blocks from the DB

@@ -79,47 +79,33 @@ void Java_com_breadwallet_wallet_BRWalletManager_testWalletCallbacks(JNIEnv *env
 
 void Java_com_breadwallet_wallet_BRWalletManager_testTransactionAdding(JNIEnv *env,
                                                                      jobject thiz) {
-//    BRWallet *w;
-//    int walletLength = (*env)->GetArrayLength(env, wallet);
-//    jbyte *byteWallet = (*env)->GetByteArrayElements(env, wallet, 0);
-//    w = (BRWallet*) byteWallet;
-//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", ">>>>>> testTransactionAdding >>>>>>>>>>");
-    int r = 1;
-    const UInt256 secret = uint256_hex_decode("0000000000000000000000000000000000000000000000000000000000000101");
+    const UInt256 secret = uint256_hex_decode("0000000000000000000000000000000000000000000000000000000000000001");
     BRKey k;
     BRAddress addr, recvAddr = BRWalletReceiveAddress(_wallet);
     BRTransaction *tx;
+
     BRKeySetSecret(&k, &secret, 1);
     BRKeyAddress(&k, addr.s, sizeof(addr));
 
     tx = BRWalletCreateTransaction(_wallet, 0, addr.s);
-    if (tx) r = 0;
-    tx = BRWalletCreateTransaction(_wallet, 43252352, addr.s);
-    if (tx) r = 0;
-//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", ">>>>>> testTransactionAdding >>>>>>>>>> 2");
+
+    tx = BRWalletCreateTransaction(_wallet, SATOSHIS, addr.s);
+
     uint8_t inScript[BRAddressScriptPubKey(NULL, 0, addr.s)];
     size_t inScriptLen = BRAddressScriptPubKey(inScript, sizeof(inScript), addr.s);
     uint8_t outScript[BRAddressScriptPubKey(NULL, 0, recvAddr.s)];
     size_t outScriptLen = BRAddressScriptPubKey(outScript, sizeof(outScript), recvAddr.s);
+
     tx = BRTransactionNew();
-//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", ">>>>>> testTransactionAdding >>>>>>>>>> 3");
     BRTransactionAddInput(tx, UINT256_ZERO, 0, inScript, inScriptLen, NULL, 0, TXIN_SEQUENCE);
-    BRTransactionAddOutput(tx, 43252352, outScript, outScriptLen);
-//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", ">>>>>> testTransactionAdding >>>>>>>>>> 4");
+    BRTransactionAddOutput(tx, SATOSHIS, outScript, outScriptLen);
+    BRWalletRegisterTransaction(_wallet, tx); // test adding unsigned tx
+
     BRTransactionSign(tx, &k, 1);
     BRWalletRegisterTransaction(_wallet, tx);
-//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", ">>>>>> testTransactionAdding >>>>>>>>>> 5");
-    tx = BRWalletCreateTransaction(_wallet, 756756, addr.s);
-//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", ">>>>>> testTransactionAdding >>>>>>>>>> 6");
-    tx = BRWalletCreateTransaction(_wallet, 3453534, addr.s);
-    if (tx) BRWalletSignTransaction(_wallet, tx, NULL);
-//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", ">>>>>> testTransactionAdding >>>>>>>>>> 7");
-    if (tx && ! BRTransactionIsSigned(tx)) r = 0;
-    if (tx) BRWalletRegisterTransaction(_wallet, tx);
-    if (tx && BRWalletBalance(_wallet) + BRWalletFeeForTx(_wallet, tx) != SATOSHIS/2) r = 0;
-//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", ">>>>>> testTransactionAdding >>>>>>>>>> 8");
-    printf("\n");
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "TRANSACTION CREATED, BRTransactionIsSigned: %d", BRTransactionIsSigned(tx));
-    if (tx) BRTransactionFree(tx);
+
+    __android_log_print(ANDROID_LOG_ERROR, "****IMPORTANT****: ", "the tx sign is: %d", BRTransactionIsSigned(tx));
+
+    BRWalletFree(_wallet);
 
 }
