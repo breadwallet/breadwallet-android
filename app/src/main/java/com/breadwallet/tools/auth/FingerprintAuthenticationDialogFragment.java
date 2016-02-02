@@ -36,6 +36,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.CurrencyManager;
+import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.PassCodeManager;
 
@@ -249,8 +250,9 @@ public class FingerprintAuthenticationDialogFragment extends DialogFragment
         getDialog().cancel();
         MainActivity app = MainActivity.app;
         String tmp = CurrencyManager.getInstance(getActivity()).getCurrentBalanceText();
-        ((BreadWalletApp) getActivity().getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
-        ((BreadWalletApp) getActivity().getApplicationContext()).setUnlocked(true);
+//        ((BreadWalletApp) getActivity().getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
+        MiddleViewAdapter.resetMiddleView(getActivity(),tmp);
+                ((BreadWalletApp) getActivity().getApplicationContext()).setUnlocked(true);
         if (app != null)
             app.softKeyboard.closeSoftKeyboard();
         ((BreadWalletApp)getActivity().getApplicationContext()).allowKeyStoreAccessForSeconds();

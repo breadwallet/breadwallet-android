@@ -1,5 +1,6 @@
 package com.breadwallet.tools;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
@@ -59,8 +60,9 @@ import java.util.TimerTask;
  */
 
 public class CurrencyManager extends Observable {
+    private static final String TAG = CurrencyManager.class.getName();
+
     private static CurrencyManager instance;
-    private static final String TAG = "CurrencyManager";
     private Timer timer;
     private long BALANCE = 0;
     private TimerTask timerTask;
@@ -82,9 +84,9 @@ public class CurrencyManager extends Observable {
         return instance;
     }
 
-    public boolean isNetworkAvailable() {
+    public boolean isNetworkAvailable(Context context) {
         ConnectivityManager connectivityManager
-                = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
+                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
@@ -102,7 +104,7 @@ public class CurrencyManager extends Observable {
 
     private List<CurrencyEntity> getCurrencies(Context context) {
         List<CurrencyEntity> list = new ArrayList<>();
-        if (isNetworkAvailable()) {
+        if (isNetworkAvailable(context)) {
             try {
                 JSONArray arr;
                 arr = JsonParser.getJSonArray();
@@ -167,7 +169,7 @@ public class CurrencyManager extends Observable {
                 currencyListAdapter.addAll(tmp);
                 currencyListAdapter.notifyDataSetChanged();
                 if (FragmentAnimator.level <= 2)
-                    MiddleViewAdapter.resetMiddleView(null);
+                    MiddleViewAdapter.resetMiddleView((Activity) ctx, null);
             } else {
                 Log.e(TAG, "Adapter Not Changed, data is empty");
             }

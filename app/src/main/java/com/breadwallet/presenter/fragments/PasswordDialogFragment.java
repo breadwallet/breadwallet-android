@@ -26,10 +26,10 @@ package com.breadwallet.presenter.fragments;
  */
 
 import android.annotation.TargetApi;
+import android.app.DialogFragment;
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
-import android.app.DialogFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,16 +40,15 @@ import android.widget.EditText;
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.CurrencyManager;
+import com.breadwallet.tools.adapter.MiddleViewAdapter;
+import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.PassCodeManager;
 
 public class PasswordDialogFragment extends DialogFragment {
 
-    private static final String TAG = "PasswordDialogFragment";
+    private static final String TAG = PasswordDialogFragment.class.getName();
     private EditText passwordEditText;
-    private Button cancel;
-    private Button ok;
     private DialogFragment dialogFragment;
 
     public PasswordDialogFragment() {
@@ -63,8 +62,8 @@ public class PasswordDialogFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.fragment_password_dialog, container);
         dialogFragment = this;
         passwordEditText = (EditText) view.findViewById(R.id.edit_password);
-        cancel = (Button) view.findViewById(R.id.button_password_cancel);
-        ok = (Button) view.findViewById(R.id.button_password_ok);
+        Button cancel = (Button) view.findViewById(R.id.button_password_cancel);
+        Button ok = (Button) view.findViewById(R.id.button_password_ok);
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -79,11 +78,12 @@ public class PasswordDialogFragment extends DialogFragment {
                 if (PassCodeManager.checkAuth(passwordEditText.getText().toString())) {
                     getDialog().cancel();
                     String tmp = CurrencyManager.getInstance(MainActivity.app).getCurrentBalanceText();
-                    ((BreadWalletApp) getActivity().getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
-                    ((BreadWalletApp)getActivity().getApplicationContext()).setUnlocked(true);
+//                    ((BreadWalletApp) getActivity().getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
+                    MiddleViewAdapter.resetMiddleView(getActivity(), tmp);
+                    ((BreadWalletApp) getActivity().getApplicationContext()).setUnlocked(true);
                     MainActivity.app.softKeyboard.closeSoftKeyboard();
                 } else {
-                    Log.d(TAG, "Not equal, the text is: " + passwordEditText.getText().toString());
+//                    Log.d(TAG, "Not equal, the text is: " + passwordEditText.getText().toString());
                     SpringAnimator.showAnimation(dialogFragment.getView());
                     passwordEditText.setText("");
                 }
@@ -100,7 +100,7 @@ public class PasswordDialogFragment extends DialogFragment {
                 new Runnable() {
                     public void run() {
                         InputMethodManager inputMethodManager = (InputMethodManager)
-                                getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
+                                getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                         inputMethodManager.toggleSoftInputFromWindow(passwordEditText.getApplicationWindowToken(),
                                 InputMethodManager.SHOW_FORCED, 0);
                         passwordEditText.requestFocus();

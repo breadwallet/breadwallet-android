@@ -62,8 +62,7 @@ android {
 
     sourceSets {
         main {
-            jni.srcDirs = ['src/main/none']
-            jniLibs.srcDirs = ['src/main/jniLibs']
+            jni.srcDirs = []
         }
     }
 
@@ -76,7 +75,7 @@ task buildNative(type: Exec, description: 'Compile JNI source via NDK') {
         def ndkDir = properties.getProperty('ndk.dir')
         println(projectDir)
         commandLine "$ndkDir/ndk-build",
-                'NDK_PROJECT_PATH=$projectDir',
+                'NDK_PROJECT_PATH=null',
 //                'V=1',
                 'ndk-build NDK_DEBUG=1', // NDK_DEBUG=1
                 'NDK_LOG=1',
@@ -96,6 +95,7 @@ task cleanNative(type: Exec, description: 'Clean JNI object files') {
         properties.load(project.rootProject.file('local.properties').newDataInputStream())
         def ndkDir = properties.getProperty('ndk.dir')
         commandLine "$ndkDir/ndk-build",
+                'NDK_PROJECT_PATH=null',
                 "NDK_APPLICATION_MK=$projectDir/src/main/jni/Application.mk",
                 "NDK_OUT=$buildDir/intermediates/ndk/${variant.dirName}/obj",
                 "NDK_LIBS_OUT=$buildDir/intermediates/ndk/${variant.dirName}/lib",

@@ -47,6 +47,6 @@ public class FragmentAbout extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        MiddleViewAdapter.resetMiddleView(null);
+        MiddleViewAdapter.resetMiddleView(getActivity(),null);
     }
 }

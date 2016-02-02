@@ -88,4 +88,24 @@
     <string name="request_permission">This sample needs camera permission.</string>
     <string name="camera_error">This device doesn\'t support Camera2 API.</string>
     <string name="title_activity_request_qr">RequestQRActivity</string>
+
+    <string name="fragmentdecoder_not_valid_bitcoin_address">not a valid bitcoin addresses: \n</string>
+    <string name="fragmentdecoder_not_a_bitcoin_qr_code">not a bitcoin QR code</string>
+    <string name="failed">failed</string>
+    <string name="copied">copied</string>
+    <string name="to">to: </string>
+    <string name="attention">Attention</string>
+    <string name="wipewallet_not_valid_phrase">This is not a valid phrase!</string>
+    <string name="sharingfragment_at_this_address">at this address:\n%1$s</string>
+    <string name="middle_view_settings">settings</string>
+    <string name="middle_view_transaction_details">transaction details</string>
+    <string name="password_need_auth">need authentication</string>
+    <string name="invalid_address">invalid address</string>
+    <string name="invalid_address_with_holder">invalid address\nn%1$s</string>
+    <string name="close">close</string>
+    <string name="invalid_payment_request">invalid payment request</string>
+    <string name="unknown_host">unknown host</string>
+    <string name="connection_timed_out">connection timed out</string>
+    <string name="payment_request_expired">payment request expired</string>
+    <string name="something_went_wrong">something went wrong</string>
 </resources>

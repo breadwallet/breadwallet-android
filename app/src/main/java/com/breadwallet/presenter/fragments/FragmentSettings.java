@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,14 +64,14 @@ public class FragmentSettings extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.e(TAG, "In onResume");
-        MiddleViewAdapter.resetMiddleView(null);
+//        Log.e(TAG, "In onResume");
+        MiddleViewAdapter.resetMiddleView(getActivity(),null);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        Log.e(TAG, "In onPause");
+//        Log.e(TAG, "In onPause");
     }
 
     @Override
@@ -118,7 +117,7 @@ public class FragmentSettings extends Fragment {
                             })
                             .setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
-                                    Log.d(TAG, "Canceled the view of the phrase!");
+//                                    Log.d(TAG, "Canceled the view of the phrase!");
                                 }
                             })
                             .show();

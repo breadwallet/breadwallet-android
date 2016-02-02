@@ -1,7 +1,6 @@
 package com.breadwallet.tools.adapter;
 
 import android.app.Activity;
-import android.util.Log;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
@@ -40,7 +39,7 @@ import java.util.Observable;
  * THE SOFTWARE.
  */
 public class AmountAdapter extends Observable {
-    private static final String TAG = "AmountAdapter";
+    private static final String TAG = AmountAdapter.class.getName();
     private static boolean comaHasBeenInserted = false;
     private static final int DIGITS_LIMIT = 12;
     private static boolean isTextColorGrey = true;
@@ -72,7 +71,7 @@ public class AmountAdapter extends Observable {
     private static void doBackSpace() {
         MainActivity app = MainActivity.app;
         String amount = rightValue;
-        Log.d(TAG, "digitsInserted: " + digitsInserted);
+//        Log.d(TAG, "digitsInserted: " + digitsInserted);
         int length = amount.length();
         if (comaHasBeenInserted) {
             if (digitsInserted > 0) {
@@ -156,7 +155,7 @@ public class AmountAdapter extends Observable {
      */
     private static void changeTextColor(int color) {
         Activity context = MainActivity.app;
-        isTextColorGrey = color == 1 ? false : true;
+        isTextColorGrey = color != 1;
         //noinspection deprecation
         FragmentScanResult.amountToPay.setTextColor((color == 1) ? context.getResources().getColor(R.color.black)
                 : context.getResources().getColor(android.R.color.darker_gray));
@@ -173,7 +172,7 @@ public class AmountAdapter extends Observable {
     }
 
     public static void calculateAndPassValuesToFragment(String valuePassed) {
-        Log.d(TAG, "This is the value passed: " + valuePassed);
+//        Log.d(TAG, "This is the value passed: " + valuePassed);
         rightValue = valuePassed;
         try {
             BigDecimal rightValueObject = new BigDecimal(valuePassed);
@@ -209,13 +208,13 @@ public class AmountAdapter extends Observable {
         leftValue = tmp;
 //        Log.d(TAG, "rightValue: " + rightValue + "  leftValue: " + leftValue);
         if (rightValue.contains(".")) {
-            Log.d(TAG, "Contains!: " + rightValue);
+//            Log.d(TAG, "Contains!: " + rightValue);
             digitsInserted = rightValue.length() - rightValue.indexOf(".") - 1;
 //            Log.d(TAG, "Testing digitsInserted: " + digitsInserted);
             comaHasBeenInserted = true;
             CurrencyManager.separatorNeedsToBeShown = true;
         } else {
-            Log.d(TAG, "Does not contain!");
+//            Log.d(TAG, "Does not contain!");
             comaHasBeenInserted = false;
             digitsInserted = 0;
             CurrencyManager.separatorNeedsToBeShown = false;

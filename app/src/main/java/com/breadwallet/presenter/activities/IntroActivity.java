@@ -69,7 +69,6 @@ public class IntroActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
-        Log.e(TAG, "Activity created!");
         if (savedInstanceState != null) {
             return;
         }
@@ -98,7 +97,6 @@ public class IntroActivity extends FragmentActivity {
     protected void onResume() {
         super.onResume();
         //testSQLiteConnectivity(this);   //do some SQLite testing
-        Log.e(TAG, "IntroActivity  - onResume!!!!!!!!!");
         app = this;
 
     }
@@ -124,13 +122,13 @@ public class IntroActivity extends FragmentActivity {
                     findFragmentByTag(IntroWelcomeFragment.class.getName());
             fragmentTransaction.replace(introWelcomeFragment.getId(), new IntroNewRecoverFragment(), IntroNewRecoverFragment.class.getName());
             fragmentTransaction.commitAllowingStateLoss();
-            Log.e(TAG, "after showRecoverNewWalletFragment");
+//            Log.e(TAG, "after showRecoverNewWalletFragment");
 //        }
     }
 
     public void showNewWalletFragment() {
 //        if (savedInstanceState == null) {
-            Log.e(TAG, "in showNewWalletFragment");
+//            Log.e(TAG, "in showNewWalletFragment");
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
             leftButton.setVisibility(View.VISIBLE);
             leftButton.setClickable(true);
@@ -197,7 +195,7 @@ public class IntroActivity extends FragmentActivity {
     @Override
     public void onBackPressed() {
         int backStackEntryCount = getFragmentManager().getBackStackEntryCount();
-        Log.e(TAG, "getBackStackEntryCount: " + backStackEntryCount);
+//        Log.e(TAG, "getBackStackEntryCount: " + backStackEntryCount);
         if (backStackEntryCount > 0) {
             if (backStackEntryCount == 1) {
                 leftButton.setVisibility(View.GONE);

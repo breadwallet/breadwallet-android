@@ -25,7 +25,7 @@ package com.breadwallet.presenter.entities;
  * THE SOFTWARE.
  */
 public class CurrencyEntity {
-    public static final String TAG = "CurrencyEntity";
+    public static final String TAG = CurrencyEntity.class.getName();
     public String codeAndName;
     public String name;
     public String code;

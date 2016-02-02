@@ -1,8 +1,10 @@
 package com.breadwallet.tools.security;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.PaymentRequestCWrapper;
@@ -55,14 +57,14 @@ public class RequestHandler {
     private static final String TAG = RequestHandler.class.getName();
     private static final Object lockObject = new Object();
 
-    public static synchronized void processRequest(String address) {
+    public static synchronized void processRequest(Activity app,String address) {
 
         try {
-            MainActivity app = MainActivity.app;
             RequestObject requestObject = getRequestFromString(address);
             if (requestObject == null) {
                 if (app != null) {
-                    ((BreadWalletApp) app.getApplication()).showCustomDialog("Warning", "invalid address", "close");
+                        ((BreadWalletApp) app.getApplication()).showCustomDialog(app.getString(R.string.warning),
+                                app.getString(R.string.invalid_address), app.getString(R.string.close));
                 }
                 return;
             }
@@ -72,7 +74,8 @@ public class RequestHandler {
                 tryAndProcessBitcoinURL(requestObject);
             } else {
                 if (app != null) {
-                    ((BreadWalletApp) app.getApplication()).showCustomDialog("Warning", "invalid payment request", "close");
+                    ((BreadWalletApp) app.getApplication()).showCustomDialog(app.getString(R.string.warning),
+                            app.getString(R.string.invalid_payment_request), app.getString(R.string.close));
                 }
             }
         } catch (InvalidAlgorithmParameterException e) {
@@ -82,12 +85,13 @@ public class RequestHandler {
 
     public static RequestObject getRequestFromString(String str)
             throws InvalidAlgorithmParameterException {
-        Log.e(TAG, "THIS SHOULD BE CALLED ONCE: " + Thread.currentThread().getName());
+//        Log.e(TAG,"TEMP STRING: " + str);
+//        Log.e(TAG, "THIS SHOULD BE CALLED ONCE: " + Thread.currentThread().getName());
         RequestObject obj = new RequestObject();
         if (str.startsWith("bitcoin:")) {
             String[] parts = str.split("\\?", 2);
             String address = parts[0].substring(8);
-            Log.e(TAG, "Address: " + address);
+//            Log.e(TAG, "Address: " + address);
             obj.address = address;
             if (parts.length == 1) return obj;
             String[] params = parts[1].split("&");
@@ -108,6 +112,7 @@ public class RequestHandler {
                 }
             }
         }
+        Log.e(TAG,"obj.address: " + obj.address);
         return obj;
     }
 
@@ -135,7 +140,7 @@ public class RequestHandler {
         }
         final String[] addresses = new String[1];
         addresses[0] = str;
-        CustomLogger.LogThis("amount", requestObject.amount, "address", requestObject.address);
+//        CustomLogger.LogThis("amount", requestObject.amount, "address", requestObject.address);
         if (requestObject.amount != null) {
             Double doubleAmount = Double.parseDouble(requestObject.amount) * 100000000;
             long amount = doubleAmount.longValue();
@@ -176,7 +181,7 @@ public class RequestHandler {
                 urlConnection.setUseCaches(false);
                 in = urlConnection.getInputStream();
                 if (in == null) {
-                    Log.e(TAG, "The inputStream is null!");
+//                    Log.e(TAG, "The inputStream is null!");
                     return null;
                 }
                 byte[] serializedBytes = IOUtils.toByteArray(in);
@@ -191,18 +196,20 @@ public class RequestHandler {
                     if (!validateAddress(s)) {
                         if (app != null)
                             ((BreadWalletApp) app.getApplication()).
-                                    showCustomDialog("Attention", "invalid address\n" + s, "close");
+                                    showCustomDialog(app.getString(R.string.attention),
+                                            String.format(app.getString(R.string.invalid_address_with_holder), s),
+                                            app.getString(R.string.close));
                     }
                 }
                 allAddresses.delete(allAddresses.length() - 2, allAddresses.length());
 
-                CustomLogger.LogThis("Signature", String.valueOf(paymentRequest.signature.length),
-                        "pkiType", paymentRequest.pkiType, "pkiData", String.valueOf(paymentRequest.pkiData.length));
-                CustomLogger.LogThis("network", paymentRequest.network, "time", String.valueOf(paymentRequest.time),
-                        "expires", String.valueOf(paymentRequest.expires), "memo", paymentRequest.memo,
-                        "paymentURL", paymentRequest.paymentURL, "merchantDataSize",
-                        String.valueOf(paymentRequest.merchantData.length), "addresses", allAddresses.toString(),
-                        "amount", String.valueOf(paymentRequest.amount));
+//                CustomLogger.LogThis("Signature", String.valueOf(paymentRequest.signature.length),
+//                        "pkiType", paymentRequest.pkiType, "pkiData", String.valueOf(paymentRequest.pkiData.length));
+//                CustomLogger.LogThis("network", paymentRequest.network, "time", String.valueOf(paymentRequest.time),
+//                        "expires", String.valueOf(paymentRequest.expires), "memo", paymentRequest.memo,
+//                        "paymentURL", paymentRequest.paymentURL, "merchantDataSize",
+//                        String.valueOf(paymentRequest.merchantData.length), "addresses", allAddresses.toString(),
+//                        "amount", String.valueOf(paymentRequest.amount));
                 //end logging
                 if (paymentRequest.time > paymentRequest.expires)
                     throw new PaymentRequestExpiredException("The request is expired!");
@@ -213,25 +220,25 @@ public class RequestHandler {
                 if (e instanceof java.net.UnknownHostException) {
                     if (app != null)
                         ((BreadWalletApp) app.getApplication()).
-                                showCustomDialog("Attention", "unknown host", "close");
+                                showCustomDialog(app.getString(R.string.attention), app.getString(R.string.unknown_host), app.getString(R.string.close));
                 } else if (e instanceof FileNotFoundException) {
                     if (app != null)
                         ((BreadWalletApp) app.getApplication()).
-                                showCustomDialog("Warning", "invalid payment request", "close");
+                                showCustomDialog(app.getString(R.string.warning), app.getString(R.string.invalid_payment_request), app.getString(R.string.close));
                 } else if (e instanceof SocketTimeoutException) {
                     if (app != null)
                         ((BreadWalletApp) app.getApplication()).
-                                showCustomDialog("Warning", "connection timed out", "close");
+                                showCustomDialog(app.getString(R.string.warning), app.getString(R.string.connection_timed_out), app.getString(R.string.close));
                 } else if (e instanceof CertificateChainNotFound) {
                     Log.e(TAG, "No certificates!", e);
                 } else if (e instanceof PaymentRequestExpiredException) {
                     if (app != null)
                         ((BreadWalletApp) app.getApplication()).
-                                showCustomDialog("Warning", "payment request expired", "close");
+                                showCustomDialog(app.getString(R.string.warning), app.getString(R.string.payment_request_expired), app.getString(R.string.close));
                 } else {
                     if (app != null)
                         ((BreadWalletApp) app.getApplication()).
-                                showCustomDialog("Warning", "something went wrong", "close");
+                                showCustomDialog(app.getString(R.string.warning), app.getString(R.string.something_went_wrong), app.getString(R.string.close));
                 }
                 e.printStackTrace();
             } finally {
@@ -246,7 +253,7 @@ public class RequestHandler {
 
             String cn = extractCNFromCertName(certName);
             if (paymentRequest == null) return;
-            Log.e(TAG, "paymentRequest.amount: " + paymentRequest.amount);
+//            Log.e(TAG, "paymentRequest.amount: " + paymentRequest.amount);
             PaymentRequestEntity requestEntity = new PaymentRequestEntity(paymentRequest.addresses,
                     paymentRequest.amount, cn);
             MainActivity app = MainActivity.app;
@@ -274,7 +281,7 @@ public class RequestHandler {
                 }
             }
             String cleanCN = str.substring(index, endIndex);
-            Log.e(TAG, "cleanCN: " + cleanCN);
+//            Log.e(TAG, "cleanCN: " + cleanCN);
             return (index != -1 && endIndex != -1) ? cleanCN : null;
         }
 

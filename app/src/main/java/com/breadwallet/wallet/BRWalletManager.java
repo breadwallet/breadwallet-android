@@ -17,6 +17,7 @@ import com.breadwallet.tools.sqlite.SQLiteManager;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.security.SecureRandom;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -105,7 +106,6 @@ public class BRWalletManager {
         if (words.length < 2000)
             throw new IllegalArgumentException("the list is wrong, size: " + words.length);
         String phrase = new String(encodeSeed(keyBytes, words));
-        Log.e(TAG, "THE COOL RESULT: " + phrase);
 //        String phrase = "short apple trunk riot coyote innocent zebra venture ill lava shop test";
         boolean success = KeyStoreManager.setKeyStoreString(phrase, ctx);
         Log.e(TAG, "setKeyStoreString was successful: " + success);
@@ -192,8 +192,8 @@ public class BRWalletManager {
     public boolean noWallet(Context ctx) {
         byte[] pubkey = KeyStoreManager.getMasterPublicKey(ctx);
         Log.e(TAG, "in the noWallet, pubkey.length: " + pubkey.length);
-        Log.e(TAG, "in the noWallet, pubkey: " + pubkey);
-        return pubkey != null && pubkey.length == 0;
+//        Log.e(TAG, "in the noWallet, pubkey: " + pubkey);
+        return pubkey.length == 0;
 
     }
 
@@ -230,23 +230,27 @@ public class BRWalletManager {
         return keyguardManager.isKeyguardSecure();
     }
 
-    public void updateFeePerKb() {
-
-    }
-
     public void refreshAddress() {
-        MainFragmentQR.receiveAddress = getReceiveAddress();
-        SharedPreferences.Editor editor = ctx.getSharedPreferences(MainFragmentQR.RECEIVE_ADDRESS_PREFS, Context.MODE_PRIVATE).edit();
-        editor.putString(MainFragmentQR.RECEIVE_ADDRESS, MainFragmentQR.receiveAddress);
-        editor.apply();
-        Log.e(TAG, "AFTER PUTTING IN PREFS receiveAddress: " + MainFragmentQR.receiveAddress);
+        if (ctx != null) {
+            String tmpAddr = getReceiveAddress();
+            MainFragmentQR.receiveAddress = tmpAddr;
+            SharedPreferences.Editor editor = ctx.getSharedPreferences(MainFragmentQR.RECEIVE_ADDRESS_PREFS, Context.MODE_PRIVATE).edit();
+            editor.putString(MainFragmentQR.RECEIVE_ADDRESS, MainFragmentQR.receiveAddress);
+            editor.apply();
+            MainFragmentQR mainFragmentQR = (MainFragmentQR) ((Activity) ctx).getFragmentManager().findFragmentByTag(MainFragmentQR.class.getName());
+            if (mainFragmentQR != null) {
+                mainFragmentQR.refreshAddress(tmpAddr);
+            }
+        } else {
+            throw new NullPointerException("Cannot be null");
+        }
     }
 
     /**
      * Wallet callbacks
      */
 
-    public void onBalanceChanged(final long balance) {
+    public void onBalanceChanged(long balance) {
         Log.e(TAG, "in the BRWalletManager - onBalanceChanged:  " + balance);
         CurrencyManager.getInstance(ctx).setBalance(balance);
         //TODO check this when Aaron fixes the bug
@@ -257,6 +261,9 @@ public class BRWalletManager {
 
     public void onTxAdded(byte[] tx, long blockheight, long timestamp) {
         Log.e(TAG, "in the BRWalletManager - onTxAdded: " + tx.length + " " + blockheight + " " + timestamp);
+//        for (byte b : tx) {
+//            System.out.println(Integer.toBinaryString(b & 255 | 256).substring(1));
+//        }
         SQLiteManager sqLiteManager = SQLiteManager.getInstance(ctx);
         sqLiteManager.insertTransaction(tx, blockheight, timestamp);
     }
@@ -286,7 +293,7 @@ public class BRWalletManager {
 
     public native void testWalletCallbacks();
 
-    public native void testTransactionAdding();
+    public native void testTransactionAdding(long amount);
 
     public native String getReceiveAddress();
 

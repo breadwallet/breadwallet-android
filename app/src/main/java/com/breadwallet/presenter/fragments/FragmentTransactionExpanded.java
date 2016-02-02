@@ -4,7 +4,6 @@ package com.breadwallet.presenter.fragments;
 import android.app.Fragment;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,16 +42,6 @@ import com.breadwallet.tools.adapter.MiddleViewAdapter;
 
 public class FragmentTransactionExpanded extends Fragment {
     private static final String TAG = FragmentTransactionExpanded.class.getName();
-    private TextView hashText;
-    private TextView statusText;
-    private TextView amountText;
-    private TextView exchangeText;
-    private TextView fromText;
-    private TextView fromDescription;
-    private TextView toText;
-    private TextView toDescription;
-    private TextView toAmountText;
-    private TextView toExchangeText;
     private TransactionListItem item;
 
 
@@ -68,16 +57,16 @@ public class FragmentTransactionExpanded extends Fragment {
             rootView = inflater.inflate(R.layout.transaction_item_expanded_sent, container, false);
         }
 
-        hashText = (TextView) rootView.findViewById(R.id.tx_hash_text);
-        statusText = (TextView) rootView.findViewById(R.id.tx_status_text);
-        amountText = (TextView) rootView.findViewById(R.id.tx_amount_text);
-        exchangeText = (TextView) rootView.findViewById(R.id.tx_exchange_text);
-        fromText = (TextView) rootView.findViewById(R.id.tx_from_text);
-        fromDescription = (TextView) rootView.findViewById(R.id.tx_from_description);
-        toText = (TextView) rootView.findViewById(R.id.tx_to_text);
-        toDescription = (TextView) rootView.findViewById(R.id.tx_to_description);
-        toAmountText = (TextView) rootView.findViewById(R.id.tx_to_amount_text);
-        toExchangeText = (TextView) rootView.findViewById(R.id.tx_to_exchange_text);
+        TextView hashText = (TextView) rootView.findViewById(R.id.tx_hash_text);
+        TextView statusText = (TextView) rootView.findViewById(R.id.tx_status_text);
+        TextView amountText = (TextView) rootView.findViewById(R.id.tx_amount_text);
+        TextView exchangeText = (TextView) rootView.findViewById(R.id.tx_exchange_text);
+        TextView fromText = (TextView) rootView.findViewById(R.id.tx_from_text);
+        TextView fromDescription = (TextView) rootView.findViewById(R.id.tx_from_description);
+        TextView toText = (TextView) rootView.findViewById(R.id.tx_to_text);
+        TextView toDescription = (TextView) rootView.findViewById(R.id.tx_to_description);
+        TextView toAmountText = (TextView) rootView.findViewById(R.id.tx_to_amount_text);
+        TextView toExchangeText = (TextView) rootView.findViewById(R.id.tx_to_exchange_text);
 
         if (item != null) {
             CurrencyManager m = CurrencyManager.getInstance(getActivity());
@@ -106,14 +95,12 @@ public class FragmentTransactionExpanded extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.e(TAG, "In onResume");
-        MiddleViewAdapter.resetMiddleView(null);
+        MiddleViewAdapter.resetMiddleView(getActivity(),null);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        Log.e(TAG, "In onPause");
     }
 
     public void setCurrentObject(TransactionListItem item) {

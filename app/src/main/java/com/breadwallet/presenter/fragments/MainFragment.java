@@ -47,7 +47,7 @@ import com.breadwallet.tools.animation.FragmentAnimator;
  */
 
 public class MainFragment extends Fragment {
-    private static final String TAG = "MainFragment";
+    private static final String TAG = MainFragment.class.getName();
     public EditText addressEditText;
     private AlertDialog alertDialog;
 
@@ -85,23 +85,10 @@ public class MainFragment extends Fragment {
         payAddressFromClipboardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.e(TAG, "payAddressFromClipboardButton 1");
                 if (FragmentAnimator.checkTheMultipressingAvailability()) {
-                    Log.e(TAG, "payAddressFromClipboardButton 2");
                     if (alertDialog.isShowing()) alertDialog.dismiss();
                     String address = BRClipboardManager.readFromClipboard(getActivity());
-//                    Log.e(TAG, "The addresses before check: " + addresses);
                     if (checkIfAddressIsValid(address)) {
-                        Log.e(TAG, "payAddressFromClipboardButton 3");
-//                        if (FragmentDecoder.accessGranted) {
-//                            FragmentDecoder.accessGranted = false;
-//                            new Handler().postDelayed(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    FragmentDecoder.accessGranted = true;
-//                                }
-//                            }, 300);
-                        Log.e(TAG, "The addresses: " + address);
                         if (address != null) {
                             FragmentAnimator.animateScanResultFragment();
                             FragmentScanResult.address = address;
@@ -159,13 +146,12 @@ public class MainFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        MiddleViewAdapter.resetMiddleView(null);
+        MiddleViewAdapter.resetMiddleView(getActivity(),null);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        Log.e(TAG, "should fucking hide the softkeyboard!");
         MainActivity.app.softKeyboard.closeSoftKeyboard();
     }
 }

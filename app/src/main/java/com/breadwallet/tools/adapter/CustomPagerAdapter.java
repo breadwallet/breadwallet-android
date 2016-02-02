@@ -4,7 +4,6 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Handler;
 import android.support.v13.app.FragmentStatePagerAdapter;
-import android.util.Log;
 import android.view.View;
 
 import com.breadwallet.presenter.activities.MainActivity;
@@ -40,7 +39,7 @@ import java.util.List;
  */
 
 public class CustomPagerAdapter extends FragmentStatePagerAdapter {
-    private static final String TAG = "MyPagerAdapter";
+    private static final String TAG = CustomPagerAdapter.class.getName();
     public final MainFragment mainFragment;
     private final MainFragmentQR mainFragmentQR;
     private final List<Fragment> fragments;
@@ -75,7 +74,7 @@ public class CustomPagerAdapter extends FragmentStatePagerAdapter {
      * @param b parameter that specifies to show or to hide the fragments
      */
     public void showFragments(boolean b) {
-        Log.w(TAG, "Warning showFragments called with variable: " + b);
+//        Log.w(TAG, "Warning showFragments called with variable: " + b);
         if (main == null) main = mainFragment.getView();
         if (mainQR == null) mainQR = mainFragmentQR.getView();
         if (b) {

@@ -35,7 +35,6 @@ import com.breadwallet.presenter.activities.IntroActivity;
  * THE SOFTWARE.
  */
 public class IntroWarningFragment extends Fragment {
-    private Button show;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -44,11 +43,11 @@ public class IntroWarningFragment extends Fragment {
         // properly.
         View rootView = inflater.inflate(
                 R.layout.intro_fragment_warning, container, false);
-        show = (Button) rootView.findViewById(R.id.intro_warning_show_button);
+        Button show = (Button) rootView.findViewById(R.id.intro_warning_show_button);
         show.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((IntroActivity)getActivity()).startIntroShowPhrase();
+                ((IntroActivity) getActivity()).startIntroShowPhrase();
                 getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
         });

@@ -1,7 +1,6 @@
 package com.breadwallet.tools.listeners;
 
 import android.os.Handler;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -33,7 +32,7 @@ import com.breadwallet.tools.adapter.AmountAdapter;
  * THE SOFTWARE.
  */
 public class BackPressCustomKeyboardOnTouchListener implements View.OnTouchListener {
-    private static final String TAG = "OnTouchListener";
+    private static final String TAG = BackPressCustomKeyboardOnTouchListener.class.getName();
     private final Handler handler = new Handler();
 
     @Override
@@ -44,7 +43,6 @@ public class BackPressCustomKeyboardOnTouchListener implements View.OnTouchListe
                 @Override
                 public void run() {
                     AmountAdapter.resetKeyboard();
-                    Log.e(TAG, "AmountAdapter.resetKeyboard()");
                 }
             }, LONG_CLICK_DURATION);
         } else if (event.getAction() == MotionEvent.ACTION_UP) {

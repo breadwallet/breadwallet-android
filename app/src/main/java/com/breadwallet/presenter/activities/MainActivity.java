@@ -45,7 +45,6 @@ import com.breadwallet.presenter.fragments.FragmentCurrency;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.presenter.fragments.FragmentSettings;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
-import com.breadwallet.presenter.fragments.MainFragmentQR;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.CustomLogger;
 import com.breadwallet.tools.NetworkChangeReceiver;
@@ -135,6 +134,8 @@ public class MainActivity extends FragmentActivity implements Observer {
     private RelativeLayout mainLayout;
     private FingerprintManager fingerprintManager;
 
+    private boolean deleteTxs = false;
+
     //TODO Test everything with the KILL ACTIVITY feature in the developer settings
     //loading the native library
     static {
@@ -159,6 +160,15 @@ public class MainActivity extends FragmentActivity implements Observer {
         //TODO delete the core testing
 //        cTests();
 
+//        deleteTxs = true;
+//        testTxAdding(5);
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                BRWalletManager.getInstance(app).testTransactionAdding(34643634);
+//            }
+//        }, 10000);
+
         setUpTheWallet();
         registerScreenLockReceiver();
 //        testSQLiteConnectivity(this);
@@ -167,7 +177,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         CustomLogger.LogThis("screen X", String.valueOf(screenParametersPoint.x), "screen Y",
                 String.valueOf(screenParametersPoint.y));
         setUpApi23();
-
 
         // Start lengthy operation in a background thread
         new Thread(new Runnable() {
@@ -271,14 +280,9 @@ public class MainActivity extends FragmentActivity implements Observer {
         scaleView(pageIndicatorLeft, 1f, PAGE_INDICATOR_SCALE_UP, 1f, PAGE_INDICATOR_SCALE_UP);
 
         //check the txAdded callback functionality
-        BRWalletManager m = BRWalletManager.getInstance(app);
+//        BRWalletManager m = BRWalletManager.getInstance(app);
 //        m.testWalletCallbacks();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                BRWalletManager.getInstance(app).testTransactionAdding();
-            }
-        }, 10000);
+
 //        Log.e(TAG, "the pubkey length is: " + m.getPublicKeyBuff().length);
 //                Log.e(TAG, "FROM KEYSTORE PUBKEY: " + KeyStoreManager.getMasterPublicKey(app));
 //                Log.e(TAG, "FROM KEYSTORE PHRASE: " + KeyStoreManager.getKeyStoreString(app));
@@ -300,8 +304,8 @@ public class MainActivity extends FragmentActivity implements Observer {
         currencyManager.startTimer();
         currencyManager.deleteObservers();
         currencyManager.addObserver(this);
-        MiddleViewAdapter.resetMiddleView(null);
-        networkErrorBar.setVisibility(CurrencyManager.getInstance(this).isNetworkAvailable() ? View.GONE : View.VISIBLE);
+        MiddleViewAdapter.resetMiddleView(this, null);
+        networkErrorBar.setVisibility(CurrencyManager.getInstance(this).isNetworkAvailable(this) ? View.GONE : View.VISIBLE);
         startStopReceiver(true);
 
     }
@@ -467,7 +471,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (!((BreadWalletApp) getApplicationContext()).unlocked) {
+                if (!BreadWalletApp.unlocked) {
                     lockerButton.setVisibility(b ? View.VISIBLE : View.INVISIBLE);
                     lockerButton.setClickable(b);
                 } else {
@@ -532,12 +536,6 @@ public class MainActivity extends FragmentActivity implements Observer {
     public void request(View view) {
         SpringAnimator.showAnimation(view);
         Intent intent;
-        String amount = FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_RIGHT ?
-                AmountAdapter.getRightValue() : AmountAdapter.getLeftValue();
-        //TODO get the actual address
-        SharedPreferences prefs = getSharedPreferences(MainFragmentQR.RECEIVE_ADDRESS_PREFS, Context.MODE_PRIVATE);
-        String requestAddrs = prefs.getString(MainFragmentQR.RECEIVE_ADDRESS, null);
-        RequestQRActivity.THE_ADDRESS = "bitcoin:" + requestAddrs + "?amount=" + amount;
         intent = new Intent(this, RequestQRActivity.class);
         startActivity(intent);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
@@ -616,7 +614,7 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     @Override
     public void update(Observable observable, Object data) {
-        MiddleViewAdapter.resetMiddleView(null);
+        MiddleViewAdapter.resetMiddleView(this,null);
     }
 
     public void testSQLiteConnectivity(Activity context) {
@@ -652,21 +650,23 @@ public class MainActivity extends FragmentActivity implements Observer {
         TXdataSource.createTransaction(transactionEntity);
         TXdataSource.createTransaction(transactionEntity2);
         List<BRTransactionEntity> txValues = TXdataSource.getAllTransactions();
-        for (BRTransactionEntity transactionEntity1 : txValues) {
-            Log.e(TAG, "The transaction: " + transactionEntity1.getId()
-                            + " " + new String(transactionEntity1.getBuff())
-            );
+//        for (BRTransactionEntity transactionEntity1 : txValues) {
+//            Log.e(TAG, "The transaction: " + transactionEntity1.getId()
+//                            + " " + new String(transactionEntity1.getBuff())
+//            );
 
-        }
+//        }
         TXdataSource.close();
     }
 
     private void setUpTheWallet() {
         //TODO deleting all txs for testing only
-        TransactionDataSource TXdataSource = new TransactionDataSource(this);
-        TXdataSource.open();
-        TXdataSource.deleteAllTransactions();
-        TXdataSource.close();
+        if (deleteTxs) {
+            TransactionDataSource TXdataSource = new TransactionDataSource(this);
+            TXdataSource.open();
+            TXdataSource.deleteAllTransactions();
+            TXdataSource.close();
+        }
 
         BRWalletManager m = BRWalletManager.getInstance(this);
         BRPeerManager pm = BRPeerManager.getInstance(this);
@@ -685,10 +685,10 @@ public class MainActivity extends FragmentActivity implements Observer {
         int blocksCount = blocks.size();
         int peersCount = peers.size();
 
-        CustomLogger.LogThis("setUpTheWallet: number of transactions from sqlite: ",
-                String.valueOf(transactions.size()),
-                " transactionCount: ", String.valueOf(transactionsCount), " blocksCount: ",
-                String.valueOf(blocksCount), " peersCount: ", String.valueOf(peersCount));
+//        CustomLogger.LogThis("setUpTheWallet: number of transactions from sqlite: ",
+//                String.valueOf(transactions.size()),
+//                " transactionCount: ", String.valueOf(transactionsCount), " blocksCount: ",
+//                String.valueOf(blocksCount), " peersCount: ", String.valueOf(peersCount));
 
         if (transactionsCount > 0) {
             m.createTxArrayWithCount(transactionsCount);
@@ -696,7 +696,6 @@ public class MainActivity extends FragmentActivity implements Observer {
                 m.putTransaction(entity.getBuff());
             }
         }
-
 
         if (blocksCount > 0) {
             pm.createBlockArrayWithCount(blocksCount);
@@ -711,7 +710,6 @@ public class MainActivity extends FragmentActivity implements Observer {
                 pm.putPeer(entity.getAddress(), entity.getPort(), entity.getTimeStamp());
             }
         }
-
 
         byte[] pubkey = KeyStoreManager.getMasterPublicKey(this);
         int r = pubkey.length == 0 ? 0 : 1;
@@ -757,6 +755,19 @@ public class MainActivity extends FragmentActivity implements Observer {
         } else {
             getApplicationContext().unregisterReceiver(mPowerKeyReceiver);
             mPowerKeyReceiver = null;
+        }
+    }
+
+    private void testTxAdding(final int number) {
+        for (int i = 1; i <= number; i++) {
+            final int finalVar = i;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    BRWalletManager.getInstance(app).testTransactionAdding(finalVar * 100);
+                    BRWalletManager.getInstance(app).testTransactionAdding(1000000000);
+                }
+            }, 10000 + finalVar * 1000);
         }
     }
 

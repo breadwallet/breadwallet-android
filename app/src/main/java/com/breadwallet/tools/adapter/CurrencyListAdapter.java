@@ -95,13 +95,6 @@ public class CurrencyListAdapter extends ArrayAdapter<CurrencyEntity> {
         textView.measure(0, 0);
         int textWidth = textView.getMeasuredWidth();
         int checkMarkWidth = 76 + 20;
-//        Log.e(TAG, "______________________________________");
-//        Log.w(TAG, "The pointer x: " + displayParameters.x);
-//        Log.w(TAG, "The pointer y: " + displayParameters.y);
-//        Log.w(TAG, "The text width: " + textWidth);
-//        Log.w(TAG, "The checkMarkWidth: " + checkMarkWidth);
-//        Log.e(TAG, "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
-
         return (textWidth <= (displayParameters.x - checkMarkWidth));
     }
 

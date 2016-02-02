@@ -36,7 +36,7 @@ import java.nio.charset.Charset;
  */
 
 class JsonParser {
-    public static final String TAG = "JsonParser";
+    public static final String TAG = JsonParser.class.getName();
 
     public static JSONArray getJSonArray() {
         String jsonString = callURL("https://bitpay.com/rates");

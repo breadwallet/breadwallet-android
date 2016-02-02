@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.tools.security.KeyStoreManager;
-import com.breadwallet.wallet.BRWalletManager;
 
 public class IntroShowPhraseActivity extends Activity {
     private Button remindMeLater;
@@ -30,7 +29,6 @@ public class IntroShowPhraseActivity extends Activity {
             return;
         }
 
-        BRWalletManager m = BRWalletManager.getInstance(this);
         TextView thePhrase = (TextView) findViewById(R.id.the_phrase_at_startup);
         remindMeLater = (Button) findViewById(R.id.remind_me_later_button);
         writeDownLayout = (RelativeLayout) findViewById(R.id.write_down_notice_layout);

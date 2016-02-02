@@ -25,7 +25,7 @@ package com.breadwallet.tools.security;
  * THE SOFTWARE.
  */
 public class PassCodeManager {
-    public static final String TAG = "PassCodeManager";
+    public static final String TAG = PassCodeManager.class.getName();
     private static char[] PASS_CODE = {'1', '2', '3', '4'};
 
     public static boolean checkAuth(String pass) {

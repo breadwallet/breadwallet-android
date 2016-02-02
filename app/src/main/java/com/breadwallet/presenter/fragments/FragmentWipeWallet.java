@@ -1,12 +1,11 @@
 
 package com.breadwallet.presenter.fragments;
 
+import android.app.AlertDialog;
+import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.app.Fragment;
-import android.app.AlertDialog;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -91,8 +90,8 @@ public class FragmentWipeWallet extends Fragment {
                     getActivity().finish();
                 } else {
                     new AlertDialog.Builder(getActivity())
-                            .setTitle("Attention")
-                            .setMessage("This is not a valid phrase!")
+                            .setTitle(getString(R.string.attention))
+                            .setMessage(getString(R.string.wipewallet_not_valid_phrase))
                             .setNegativeButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.cancel();
@@ -110,8 +109,8 @@ public class FragmentWipeWallet extends Fragment {
     private boolean phraseIsValid(String insertedPhrase) {
         String thePhrase = KeyStoreManager.getKeyStoreString(getActivity());
         if (thePhrase == null) throw new NullPointerException("Phrase is null! weird behaviour");
-        Log.e(TAG,"Inserted:" +  insertedPhrase);
-        Log.e(TAG,"Actual:" +  thePhrase);
+//        Log.e(TAG,"Inserted:" +  insertedPhrase);
+//        Log.e(TAG,"Actual:" +  thePhrase);
         return insertedPhrase.equalsIgnoreCase(thePhrase);
     }
 

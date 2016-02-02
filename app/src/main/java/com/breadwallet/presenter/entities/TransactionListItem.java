@@ -1,9 +1,5 @@
 package com.breadwallet.presenter.entities;
 
-import android.util.Log;
-
-import com.breadwallet.tools.CustomLogger;
-
 /**
  * BreadWallet
  * <p/>
@@ -55,10 +51,10 @@ public class TransactionListItem {
         this.to = to;
         this.from = from;
         this.balanceAfterTx = balanceAfterTx;
-        Log.e(TAG, "TransactionListItem CONSTRUCTOR!!!!!!!!! NEXT");
-        CustomLogger.LogThis("timeStamp", String.valueOf(timeStamp), "blockHeight", String.valueOf(blockHeight),
-                "hash", hexId, "sent", String.valueOf(sent), "received", String.valueOf(received),
-                "fee", String.valueOf(fee), "to", to, "from", from);
+//        Log.e(TAG, "TransactionListItem CONSTRUCTOR!");
+//        CustomLogger.LogThis("timeStamp", String.valueOf(timeStamp), "blockHeight", String.valueOf(blockHeight),
+//                "hash", hexId, "sent", String.valueOf(sent), "received", String.valueOf(received),
+//                "fee", String.valueOf(fee), "to", to, "from", from);
     }
 
     private static String bytesToHex(byte[] bytes) {

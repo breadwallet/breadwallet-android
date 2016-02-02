@@ -78,7 +78,7 @@ void Java_com_breadwallet_wallet_BRWalletManager_testWalletCallbacks(JNIEnv *env
 }
 
 void Java_com_breadwallet_wallet_BRWalletManager_testTransactionAdding(JNIEnv *env,
-                                                                     jobject thiz) {
+                                                                     jobject thiz, jlong amount) {
     const UInt256 secret = uint256_hex_decode("0000000000000000000000000000000000000000000000000000000000000001");
     BRKey k;
     BRAddress addr, recvAddr = BRWalletReceiveAddress(_wallet);
@@ -89,7 +89,7 @@ void Java_com_breadwallet_wallet_BRWalletManager_testTransactionAdding(JNIEnv *e
 
     tx = BRWalletCreateTransaction(_wallet, 0, addr.s);
 
-    tx = BRWalletCreateTransaction(_wallet, SATOSHIS, addr.s);
+    tx = BRWalletCreateTransaction(_wallet, amount, addr.s);
 
     uint8_t inScript[BRAddressScriptPubKey(NULL, 0, addr.s)];
     size_t inScriptLen = BRAddressScriptPubKey(inScript, sizeof(inScript), addr.s);
@@ -98,7 +98,7 @@ void Java_com_breadwallet_wallet_BRWalletManager_testTransactionAdding(JNIEnv *e
 
     tx = BRTransactionNew();
     BRTransactionAddInput(tx, UINT256_ZERO, 0, inScript, inScriptLen, NULL, 0, TXIN_SEQUENCE);
-    BRTransactionAddOutput(tx, SATOSHIS, outScript, outScriptLen);
+    BRTransactionAddOutput(tx, amount, outScript, outScriptLen);
     BRWalletRegisterTransaction(_wallet, tx); // test adding unsigned tx
 
     BRTransactionSign(tx, &k, 1);
@@ -106,6 +106,6 @@ void Java_com_breadwallet_wallet_BRWalletManager_testTransactionAdding(JNIEnv *e
 
     __android_log_print(ANDROID_LOG_ERROR, "****IMPORTANT****: ", "the tx sign is: %d", BRTransactionIsSigned(tx));
 
-    BRWalletFree(_wallet);
+//    BRWalletFree(_wallet);
 
 }

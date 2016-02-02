@@ -58,7 +58,7 @@ public class FragmentRecoveryPhrase extends Fragment {
             public void onClick(View v) {
                 BRClipboardManager.copyToClipboard(getActivity(),thePhrase.getText().toString());
                 ((BreadWalletApp)getActivity().getApplication()).showCustomToast(getActivity(),
-                        "copied", 300, Toast.LENGTH_SHORT);
+                        getString(R.string.copied), 300, Toast.LENGTH_SHORT);
             }
         });
 
@@ -72,6 +72,6 @@ public class FragmentRecoveryPhrase extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        MiddleViewAdapter.resetMiddleView(null);
+        MiddleViewAdapter.resetMiddleView(getActivity(),null);
     }
 }

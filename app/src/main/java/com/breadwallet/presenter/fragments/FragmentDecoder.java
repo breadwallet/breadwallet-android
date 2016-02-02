@@ -1,6 +1,8 @@
 package com.breadwallet.presenter.fragments;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Rect;
@@ -75,8 +77,6 @@ public class FragmentDecoder extends Fragment
     private static final String CAMERA_GUIDE_RED = "red";
     private static final String CAMERA_GUIDE = "reg";
     private static final String TEXT_EMPTY = "";
-    private static final String TEXT_NOT_VALID_BITCOIN_ADDRESS = "not a valid bitcoin addresses: \n";
-    private static final String TEXT_NOT_A_BITCOIN_QR = "not a bitcoin QR code";
 
     /**
      * Conversion from screen rotation to JPEG orientation.
@@ -168,9 +168,9 @@ public class FragmentDecoder extends Fragment
                         }
                         String decoded = rawResult.getText();
                         String validationString = validateResult(decoded);
-                        Log.e(TAG, "validationString: " + validationString);
+//                        Log.e(TAG, "validationString: " + validationString);
                         if (Objects.equals(validationString, TEXT_EMPTY)) {
-                            onQRCodeRead(rawResult.getText());
+                            onQRCodeRead(getActivity(),rawResult.getText());
                         } else {
                             setCameraGuide(CAMERA_GUIDE_RED);
                             setGuideText(validationString);
@@ -350,13 +350,14 @@ public class FragmentDecoder extends Fragment
      * @param height The height of available size for camera preview
      */
     private void setUpCameraOutputs(int width, int height) {
-        CameraManager manager = (CameraManager) getActivity().getSystemService(getActivity().CAMERA_SERVICE);
+        CameraManager manager = (CameraManager) getActivity().getSystemService(Context.CAMERA_SERVICE);
         try {
             for (String cameraId : manager.getCameraIdList()) {
-                Log.e(TAG,"CAMERA ID : " + cameraId);
+//                Log.e(TAG,"CAMERA ID : " + cameraId);
                 CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
 
                 // We don't use a front facing camera in this sample.
+
                 if (characteristics.get(LENS_FACING) == LENS_FACING_FRONT) continue;
 
                 StreamConfigurationMap map = characteristics.get(SCALER_STREAM_CONFIGURATION_MAP);
@@ -396,7 +397,7 @@ public class FragmentDecoder extends Fragment
     private void openCamera(int width, int height) {
         setUpCameraOutputs(width, height);
         configureTransform(width, height);
-        CameraManager manager = (CameraManager) getActivity().getSystemService(getActivity().CAMERA_SERVICE);
+        CameraManager manager = (CameraManager) getActivity().getSystemService(Context.CAMERA_SERVICE);
         try {
             if (!mCameraOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
                 throw new RuntimeException("Time out waiting to lock camera opening.");
@@ -484,7 +485,7 @@ public class FragmentDecoder extends Fragment
                         @Override
                         public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
                             // The camera is already closed
-                            Log.e(TAG, "onConfigured");
+//                            Log.e(TAG, "onConfigured");
                             if (mCameraDevice == null) return;
 
                             // When the session is ready, we start displaying the preview.
@@ -507,7 +508,8 @@ public class FragmentDecoder extends Fragment
 
                         @Override
                         public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
-                            Toast.makeText(getActivity(), "Failed", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.failed),
+                                    Toast.LENGTH_SHORT).show();
                         }
                     }, null
             );
@@ -548,16 +550,16 @@ public class FragmentDecoder extends Fragment
         mTextureView.setTransform(matrix);
     }
 
-    private static synchronized void onQRCodeRead(final String text) {
+    private static synchronized void onQRCodeRead(final Activity app,final String text) {
         if (accessGranted) {
             accessGranted = false;
-            MainActivity.app.runOnUiThread(new Runnable() {
+            app.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     if (text != null) {
                         FragmentAnimator.hideDecoderFragment();
-                        Log.e(TAG, "BEFORE processRequest");
-                        RequestHandler.processRequest(text);
+//                        Log.e(TAG, "BEFORE processRequest");
+                        RequestHandler.processRequest(app,text);
 
                     }
                 }
@@ -589,7 +591,7 @@ public class FragmentDecoder extends Fragment
                 window.findViewById(Window.ID_ANDROID_CONTENT).getTop();
         int titleBarHeight = contentViewTop - statusBarHeight;
 
-        Log.e(TAG, "StatusBar Height= " + statusBarHeight + " , TitleBar Height = " + titleBarHeight);
+//        Log.e(TAG, "StatusBar Height= " + statusBarHeight + " , TitleBar Height = " + titleBarHeight);
         return statusBarHeight + titleBarHeight;
     }
 
@@ -618,7 +620,7 @@ public class FragmentDecoder extends Fragment
             e.printStackTrace();
         }
         if (obj == null) {
-            return TEXT_NOT_A_BITCOIN_QR;
+            return getActivity().getResources().getString(R.string.fragmentdecoder_not_a_bitcoin_qr_code);
         }
         if (obj.r != null) {
             return TEXT_EMPTY;
@@ -627,10 +629,10 @@ public class FragmentDecoder extends Fragment
             if (RequestHandler.validateAddress(obj.address)) {
                 return TEXT_EMPTY;
             } else {
-                return TEXT_NOT_VALID_BITCOIN_ADDRESS;
+                return getActivity().getResources().getString(R.string.fragmentdecoder_not_valid_bitcoin_address);
             }
         }
-        return TEXT_NOT_A_BITCOIN_QR;
+        return getActivity().getResources().getString(R.string.fragmentdecoder_not_a_bitcoin_qr_code);
     }
 
     private void setCameraGuide(final String str) {

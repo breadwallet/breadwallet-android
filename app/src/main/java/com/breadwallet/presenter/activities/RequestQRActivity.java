@@ -1,6 +1,7 @@
 package com.breadwallet.presenter.activities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Point;
@@ -17,9 +18,10 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.entities.RequestObject;
 import com.breadwallet.presenter.fragments.FragmentCurrency;
-import com.breadwallet.presenter.fragments.SharingFragment;
+import com.breadwallet.presenter.fragments.FragmentScanResult;
+import com.breadwallet.presenter.fragments.MainFragmentQR;
 import com.breadwallet.tools.CurrencyManager;
-import com.breadwallet.tools.animation.FragmentAnimator;
+import com.breadwallet.tools.adapter.AmountAdapter;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.qrcode.QRCodeEncoder;
 import com.breadwallet.tools.security.RequestHandler;
@@ -33,8 +35,6 @@ public class RequestQRActivity extends Activity {
     public static final String TAG = RequestQRActivity.class.getName();
     private ImageView qrcode;
     public static String THE_ADDRESS = "";
-    private Bitmap bitmap;
-    public SharingFragment sharingFragment;
 
     @Override
 
@@ -42,13 +42,19 @@ public class RequestQRActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_request_qr);
 
+
+        String tmpAmount = FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_RIGHT ?
+                AmountAdapter.getRightValue() : AmountAdapter.getLeftValue();
+        //TODO get the actual address
+        SharedPreferences prefs = getSharedPreferences(MainFragmentQR.RECEIVE_ADDRESS_PREFS, Context.MODE_PRIVATE);
+        String requestAddrs = prefs.getString(MainFragmentQR.RECEIVE_ADDRESS, "");
+        RequestQRActivity.THE_ADDRESS = "bitcoin:" + requestAddrs + "?amount=" + tmpAmount;
         qrcode = (ImageView) findViewById(R.id.request_image_qr_code);
-//        sharingFragment = new SharingFragment();
         Button close = (Button) findViewById(R.id.request_close);
         TextView requestAmountText = (TextView) findViewById(R.id.request_amount_text);
-        RelativeLayout requestActivityLayout = (RelativeLayout) findViewById(R.id.request_activity_qr);
         TextView requestAddressText = (TextView) findViewById(R.id.request_address_text);
         RelativeLayout addressLayout = (RelativeLayout) findViewById(R.id.request_address_layout);
+//        Log.e(TAG,"THE_ADDRESS: " + THE_ADDRESS);
 
         generateQR(THE_ADDRESS);
         String address = "";
@@ -78,10 +84,10 @@ public class RequestQRActivity extends Activity {
             @Override
             public void onClick(View view) {
                 breadWalletApp.cancelToast();
-                if (FragmentAnimator.checkTheMultipressingAvailability()) {
+//                if (FragmentAnimator.checkTheMultipressingAvailability()) {
 //                    sharingFragment.setTheAddress(mainAddressText.getText().toString());
 //                    sharingFragment.show(fm, SharingFragment.class.getName());
-                }
+//                }
             }
         });
 
@@ -101,7 +107,7 @@ public class RequestQRActivity extends Activity {
                 BarcodeFormat.QR_CODE.toString(),
                 smallerDimension);
         try {
-            bitmap = qrCodeEncoder.encodeAsBitmap();
+            Bitmap bitmap = qrCodeEncoder.encodeAsBitmap();
             qrcode.setImageBitmap(bitmap);
 
         } catch (WriterException e) {

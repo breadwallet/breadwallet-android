@@ -1,10 +1,10 @@
 package com.breadwallet.presenter.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,12 +78,10 @@ public class FragmentSettingsAll extends Fragment {
                         authDialogBlockingUi(getActivity(), BreadWalletApp.AUTH_FOR_GENERAL);
             }
         });
-        Log.e(TAG, "FRAGMENT_SETTINGS_ALL 1");
         refreshTransactions(getActivity());
         if (transactionObjects != null) {
             if (transactionObjects.length == 0) transactionObjects = null;
         }
-        Log.e(TAG, "FRAGMENT_SETTINGS_ALL 2");
         importPrivateKeys.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -101,7 +99,6 @@ public class FragmentSettingsAll extends Fragment {
                     FragmentSettingsAll fragmentSettingsAll = (FragmentSettingsAll) getActivity().
                             getFragmentManager().findFragmentByTag(FragmentSettingsAll.class.getName());
                     FragmentAnimator.animateSlideToLeft(app, new FragmentSettings(), fragmentSettingsAll);
-                    Log.d(TAG, "Starting:   showBouncySlideHorizontal()");
                 }
             }
         });
@@ -116,8 +113,8 @@ public class FragmentSettingsAll extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        MiddleViewAdapter.resetMiddleView(null);
-        refreshUI(getActivity());
+        MiddleViewAdapter.resetMiddleView(getActivity(),null);
+//        refreshTransactions(getActivity());
     }
 
     public static void refreshTransactions(Context ctx) {
@@ -145,11 +142,11 @@ public class FragmentSettingsAll extends Fragment {
         if (!BreadWalletApp.unlocked) {
             transactionList.setVisibility(View.GONE);
             transactionHistory.setVisibility(View.VISIBLE);
-            Log.e(TAG, "inside, NO auth");
+//            Log.e(TAG, "inside, NO auth");
         } else {
             transactionList.setVisibility(View.VISIBLE);
             transactionHistory.setVisibility(View.GONE);
-            Log.e(TAG, "inside, YES auth");
+//            Log.e(TAG, "inside, YES auth");
         }
         if (transactionObjects == null) {
             if (BreadWalletApp.unlocked) {
@@ -203,7 +200,7 @@ public class FragmentSettingsAll extends Fragment {
         tmpLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e(TAG, "clicked: " + ((TextView) tmpLayout.findViewById(R.id.transaction_date)).getText().toString());
+//                Log.e(TAG, "clicked: " + ((TextView) tmpLayout.findViewById(R.id.transaction_date)).getText().toString());
                 if (FragmentAnimator.checkTheMultipressingAvailability()) {
                     FragmentSettingsAll fragmentSettingsAll = (FragmentSettingsAll) app.
                             getFragmentManager().findFragmentByTag(FragmentSettingsAll.class.getName());
@@ -215,7 +212,8 @@ public class FragmentSettingsAll extends Fragment {
         });
 
         boolean received = item.getSent() == 0;
-
+//        CustomLogger.LogThis("TX getReceived", String.valueOf(item.getReceived()), "TX getSent", String.valueOf(item.getSent()),
+//                "TX getBalanceAfterTx", String.valueOf(item.getBalanceAfterTx()));
         sentReceivedTextView.setBackgroundResource(received ? R.drawable.received_label : R.drawable.sent_label);
         sentReceivedTextView.setText(received ? "received" : "sent");
         sentReceivedTextView.setTextColor(Color.parseColor(received ? "#00BF00" : "#FF5454"));
@@ -225,7 +223,6 @@ public class FragmentSettingsAll extends Fragment {
         long bitsAmount = m.getBitsFromSatoshi(received ? item.getReceived() : item.getSent() - item.getReceived());
         bitsTextView.setText(m.getFormattedCurrencyString("BTC", String.valueOf(bitsAmount)));
         dollarsTextView.setText(String.format("(%s)", m.getExchangeForAmount(m.getRateFromPrefs(), m.getISOFromPrefs(), String.valueOf(bitsAmount))));
-
         long bitsAfterTx = m.getBitsFromSatoshi(item.getBalanceAfterTx());
         bitsTotalTextView.setText(m.getFormattedCurrencyString("BTC", String.valueOf(bitsAfterTx)));
         dollarsTotalTextView.setText(String.format("(%s)", m.getExchangeForAmount(m.getRateFromPrefs(), m.getISOFromPrefs(), String.valueOf(bitsAfterTx))));
@@ -233,6 +230,7 @@ public class FragmentSettingsAll extends Fragment {
         return tmpLayout;
     }
 
+    @SuppressLint("SimpleDateFormat")
     public static String getFormattedDateFromLong(long time) {
         MainActivity app = MainActivity.app;
         SimpleDateFormat sdf;
@@ -245,30 +243,5 @@ public class FragmentSettingsAll extends Fragment {
         Date resultDate = new Date(time);
         return sdf.format(resultDate);
     }
-
-//    private void setListViewHeightBasedOnChildren(ListView listView) {
-//        ListAdapter listAdapter = listView.getAdapter();
-//        if (listAdapter == null) {
-//            return;
-//        }
-//
-//        int totalHeight = 0;
-//        for (int i = 0; i < listAdapter.getCount(); i++) {
-//            View listItem = listAdapter.getView(i, null, listView);
-//            if (listItem != null) {
-//                listItem.measure(
-//                        View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-//                        View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-//            }
-//
-//            totalHeight += listItem.getMeasuredHeight();
-//        }
-//
-//        ViewGroup.LayoutParams params = listView.getLayoutParams();
-//        params.height = totalHeight
-//                + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
-//        listView.setLayoutParams(params);
-//        listView.requestLayout();
-//    }
 
 }

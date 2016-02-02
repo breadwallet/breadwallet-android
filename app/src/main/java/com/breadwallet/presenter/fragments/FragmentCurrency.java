@@ -1,11 +1,10 @@
 
 package com.breadwallet.presenter.fragments;
 
+import android.app.Fragment;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +50,7 @@ import com.breadwallet.tools.animation.SpringAnimator;
  */
 
 public class FragmentCurrency extends Fragment {
-    private static final String TAG = "FragmentCurrency";
+    private static final String TAG = FragmentCurrency.class.getName();
     public static final String CURRENT_CURRENCY = "currentCurrency";
     public static final String POSITION = "position";
     public static final String RATE = "rate";
@@ -105,10 +104,12 @@ public class FragmentCurrency extends Fragment {
                 editor.putInt(POSITION, lastItemsPosition);
                 editor.putFloat(RATE, rate);
                 editor.apply();
-                Log.e(TAG, "rate: " + rate + ", ISO: " + ISO);
+//                Log.e(TAG, "rate: " + rate + ", ISO: " + ISO);
                 String finalExchangeRate = CurrencyManager.getInstance(app).getMiddleTextExchangeString((long) rate, ISO);
-                ((BreadWalletApp) getActivity().getApplication()).setTopMiddleView(
-                        BreadWalletApp.BREAD_WALLET_TEXT, finalExchangeRate);
+
+//                ((BreadWalletApp) getActivity().getApplication()).setTopMiddleView(
+//                        BreadWalletApp.BREAD_WALLET_TEXT, finalExchangeRate);
+                MiddleViewAdapter.resetMiddleView(getActivity(),finalExchangeRate);
                 adapter.notifyDataSetChanged();
 
             }
@@ -126,7 +127,7 @@ public class FragmentCurrency extends Fragment {
         tmpRate = (adapter != null && !adapter.isEmpty()) ?
                 adapter.getItem(settings.getInt(POSITION, 0)).rate : settings.getFloat(FragmentCurrency.RATE, 1);
         String readyText = CurrencyManager.getInstance(app).getMiddleTextExchangeString((long) tmpRate, iso);
-        MiddleViewAdapter.resetMiddleView(readyText);
+        MiddleViewAdapter.resetMiddleView(getActivity(),readyText);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -150,7 +151,7 @@ public class FragmentCurrency extends Fragment {
             currencyProgressBar.setVisibility(View.GONE);
         } else {
             ((BreadWalletApp) app.getApplicationContext()).showCustomToast(getActivity(),
-                    getResources().getString(R.string.no_internet_connection), 500, Toast.LENGTH_SHORT);
+                    getString(R.string.no_internet_connection), 500, Toast.LENGTH_SHORT);
             currencyRefresh.setVisibility(View.VISIBLE);
             noInternetConnection.setVisibility(View.VISIBLE);
             currencyProgressBar.setVisibility(View.GONE);

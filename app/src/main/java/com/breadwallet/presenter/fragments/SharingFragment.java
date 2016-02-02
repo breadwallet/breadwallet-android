@@ -25,11 +25,11 @@ package com.breadwallet.presenter.fragments;
  * THE SOFTWARE.
  */
 
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,12 +39,12 @@ import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
-import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.BRClipboardManager;
+import com.breadwallet.tools.animation.FragmentAnimator;
 
 public class SharingFragment extends DialogFragment {
 
-    private static final String TAG = "SharingFragment";
+    private static final String TAG = SharingFragment.class.getName();
     private boolean customToastAvailable = true;
     private String theAddress;
 
@@ -62,7 +62,7 @@ public class SharingFragment extends DialogFragment {
         TextView requestAmount = (TextView) view.findViewById(R.id.request_amount);
         TextView sharingAddress = (TextView) view.findViewById(R.id.sharing_address);
         getDialog().setTitle(getResources().getString(R.string.dialog_receive_bitcoins));
-        sharingAddress.setText("at this address:\n" + theAddress);
+        sharingAddress.setText(String.format(getString(R.string.sharingfragment_at_this_address), theAddress));
 
         copyAddress.setOnClickListener(new View.OnClickListener() {
             @Override

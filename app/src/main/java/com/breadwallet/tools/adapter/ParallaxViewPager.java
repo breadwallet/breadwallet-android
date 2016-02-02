@@ -11,7 +11,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
-import android.util.Log;
 
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
@@ -45,7 +44,7 @@ import com.breadwallet.tools.animation.SpringAnimator;
 
 @SuppressLint("NewApi")
 public class ParallaxViewPager extends ViewPager {
-    public static final String TAG = "ParallaxViewPager";
+    public static final String TAG = ParallaxViewPager.class.getName();
 
     private static final int FIT_WIDTH = 0;
     private static final int FIT_HEIGHT = 1;
@@ -148,7 +147,7 @@ public class ParallaxViewPager extends ViewPager {
 
     private void calculateParallaxParameters() {
         if (bitmap.getWidth() < getWidth() && bitmap.getWidth() < bitmap.getHeight() && scaleType == FIT_HEIGHT) {
-            Log.w(ParallaxViewPager.class.getName(), "Invalid bitmap bounds for the current device, parallax effect will not work.");
+//            Log.w(ParallaxViewPager.class.getName(), "Invalid bitmap bounds for the current device, parallax effect will not work.");
         }
 
 

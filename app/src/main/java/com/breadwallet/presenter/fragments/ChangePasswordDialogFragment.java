@@ -42,13 +42,14 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
+import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.security.PassCodeManager;
 
 public class ChangePasswordDialogFragment extends DialogFragment {
 
-    private static final String TAG = "PasswordDialogFragment";
+    private static final String TAG = ChangePasswordDialogFragment.class.getName();
     private EditText passwordEditText;
     private Button cancel;
     private Button ok;
@@ -86,32 +87,27 @@ public class ChangePasswordDialogFragment extends DialogFragment {
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity app = MainActivity.app;
-                Log.e(TAG, "clicked: " + currentMode);
+//                Log.e(TAG, "clicked: " + currentMode);
                 switch (currentMode) {
                     case AUTH_MODE_CHECK_PASS:
                         if (PassCodeManager.checkAuth(passwordEditText.getText().toString())) {
                             currentMode = AUTH_MODE_NEW_PASS;
                             getDialog().setTitle(getResources().getString(R.string.chose_a_new_passcode));
                             passwordEditText.setText("");
-                            Log.e(TAG, "-----1-----");
                         } else {
                             Log.d(TAG, "Not equal, the text is: " + passwordEditText.getText().toString());
                             SpringAnimator.showAnimation(dialogFragment.getView());
                             passwordEditText.setText("");
-                            Log.e(TAG, "-----2-----");
                         }
                         break;
                     case AUTH_MODE_NEW_PASS:
                         String pass = passwordEditText.getText().toString();
                         if (pass.length() > 3 && pass.length() < 12) {
-                            Log.e(TAG, "-----3-----");
                             tempPassToChange = pass;
                             currentMode = AUTH_MODE_CONFIRM_PASS;
                             getDialog().setTitle(getResources().getString(R.string.verify_passcode));
                             passwordEditText.setText("");
                         } else {
-                            Log.e(TAG, "-----4-----");
                             SpringAnimator.showAnimation(dialogFragment.getView());
                             passwordEditText.setText("");
                         }
@@ -119,19 +115,17 @@ public class ChangePasswordDialogFragment extends DialogFragment {
                     case AUTH_MODE_CONFIRM_PASS:
                         String passToCheck = passwordEditText.getText().toString();
                         if (passToCheck.equals(tempPassToChange)) {
-                            Log.e(TAG, "-----5-----");
                             PassCodeManager.setPassCode(tempPassToChange);
                             tempPassToChange = "";
                             getDialog().cancel();
                             String tmp = CurrencyManager.getInstance(getActivity()).getCurrentBalanceText();
-                            ((BreadWalletApp) getActivity().getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
-                            ((BreadWalletApp)getActivity().getApplicationContext()).setUnlocked(true);
+                            MiddleViewAdapter.resetMiddleView(getActivity(),tmp);
+                                    ((BreadWalletApp) getActivity().getApplicationContext()).setUnlocked(true);
                             InputMethodManager keyboard = (InputMethodManager) MainActivity.app.
                                     getSystemService(Context.INPUT_METHOD_SERVICE);
                             keyboard.hideSoftInputFromWindow(ok.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
                             currentMode = AUTH_MODE_CHECK_PASS;
                         } else {
-                            Log.e(TAG, "-----6-----");
                             SpringAnimator.showAnimation(dialogFragment.getView());
                             passwordEditText.setText("");
                             currentMode = AUTH_MODE_NEW_PASS;
@@ -153,7 +147,7 @@ public class ChangePasswordDialogFragment extends DialogFragment {
         passwordEditText.post(
                 new Runnable() {
                     public void run() {
-                        InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
+                        InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                         inputMethodManager.toggleSoftInputFromWindow(passwordEditText.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0);
                         passwordEditText.requestFocus();
                     }

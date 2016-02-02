@@ -61,7 +61,6 @@ public class IntroNewWalletFragment extends Fragment {
                 byte[] pubKey = m.getMasterPubKey(normalizedPhrase);
                 KeyStoreManager.putMasterPublicKey(pubKey, getActivity());
                 Log.w(TAG, "The phrase from keystore is: " + KeyStoreManager.getKeyStoreString(getActivity()));
-                if (phrase == null) throw new NullPointerException("Phrase is null!");
                 ((IntroActivity) getActivity()).showWarningFragment();
             }
         });

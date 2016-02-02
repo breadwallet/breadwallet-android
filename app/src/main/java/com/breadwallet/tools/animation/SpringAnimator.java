@@ -35,10 +35,11 @@ import com.facebook.rebound.SpringSystem;
  */
 
 public class SpringAnimator {
+    private static final String TAG = SpringAnimator.class.getName();
+
     private static final int SPRING_DELAY_MS = 30;
     private static final double TENSION = 600;
     private static final double DAMPER = 35;
-    private static final String TAG = "SpringAnimation";
     public static final int TO_LEFT = -1;
     public static final int TO_RIGHT = 1;
 

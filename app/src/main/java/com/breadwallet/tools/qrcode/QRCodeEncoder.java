@@ -18,10 +18,10 @@ import java.util.HashSet;
 import java.util.Map;
 
 public final class QRCodeEncoder {
+    private static final String TAG = QRCodeEncoder.class.getName();
+
     private static final int WHITE = 0xFFFFFFFF;
     private static final int BLACK = 0xFF000000;
-    private static final String TAG = "QRCodeEncoder";
-
     private int dimension = Integer.MIN_VALUE;
     private String contents = null;
     private String displayContents = null;

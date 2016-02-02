@@ -43,15 +43,8 @@ import com.breadwallet.tools.security.PassCodeManager;
  */
 public class PasswordAuthenticationDialogFragment extends DialogFragment
         implements TextView.OnEditorActionListener, FingerprintUiHelper.Callback {
-
-    private Button mCancelButton;
-    private Button mSecondDialogButton;
-    private View mFingerprintContent;
-    private View mBackupContent;
     private EditText mPassword;
-
     private InputMethodManager mInputMethodManager;
-
 
     public PasswordAuthenticationDialogFragment() {
     }
@@ -68,12 +61,12 @@ public class PasswordAuthenticationDialogFragment extends DialogFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        getDialog().setTitle("need authentication");
+        getDialog().setTitle(getString(R.string.password_need_auth));
         View v = inflater.inflate(R.layout.fingerprint_dialog_container, container, false);
-        mCancelButton = (Button) v.findViewById(R.id.cancel_button);
-        mSecondDialogButton = (Button) v.findViewById(R.id.second_dialog_button);
-        mFingerprintContent = v.findViewById(R.id.fingerprint_container);
-        mBackupContent = v.findViewById(R.id.backup_container);
+        Button mCancelButton = (Button) v.findViewById(R.id.cancel_button);
+        Button mSecondDialogButton = (Button) v.findViewById(R.id.second_dialog_button);
+        View mFingerprintContent = v.findViewById(R.id.fingerprint_container);
+        View mBackupContent = v.findViewById(R.id.backup_container);
         mPassword = (EditText) v.findViewById(R.id.password);
         mPassword.setOnEditorActionListener(this);
         mPassword.postDelayed(mShowKeyboardRunnable, 500);
@@ -175,7 +168,7 @@ public class PasswordAuthenticationDialogFragment extends DialogFragment
 
         ((BreadWalletApp) getActivity().getApplicationContext()).setUnlocked(true);
         FragmentSettingsAll.refreshUI(getActivity());
-        MiddleViewAdapter.resetMiddleView(null);
+        MiddleViewAdapter.resetMiddleView(getActivity(),null);
         if (app != null)
             app.softKeyboard.closeSoftKeyboard();
         ((BreadWalletApp)getActivity().getApplicationContext()).allowKeyStoreAccessForSeconds();

@@ -84,7 +84,8 @@ public class MainFragmentQR extends Fragment {
 
         SharedPreferences prefs = getActivity().getSharedPreferences(RECEIVE_ADDRESS_PREFS, Context.MODE_PRIVATE);
         receiveAddress = prefs.getString(RECEIVE_ADDRESS, null);
-        Log.e(TAG,"FROM PREFS receiveAddress: " + receiveAddress);
+
+//        Log.e(TAG,"FROM PREFS receiveAddress: " + receiveAddress);
         if (receiveAddress == null) {
             BRWalletManager.getInstance(getActivity()).refreshAddress();
         }
@@ -105,7 +106,7 @@ public class MainFragmentQR extends Fragment {
                 breadWalletApp.cancelToast();
                 if (FragmentAnimator.checkTheMultipressingAvailability()) {
                     sharingFragment.setTheAddress(finalReceiveAddress);
-//                    saveBitmapToFile();
+                    saveBitmapToFile();
                     sharingFragment.show(fm, SharingFragment.class.getName());
                 }
             }
@@ -119,7 +120,7 @@ public class MainFragmentQR extends Fragment {
                             firstToastY = BreadWalletApp.DISPLAY_HEIGHT_PX - breadWalletApp.getRelativeTop(mainAddressText) + 400;
                         breadWalletApp.showCustomToast(MainActivity.app,
                                 getResources().getString(R.string.toast_qr_tip), firstToastY, Toast.LENGTH_LONG);
-                        Log.e(TAG, "Toast show nr: " + count);
+//                        Log.e(TAG, "Toast show nr: " + count);
                         count++;
                     } else if (count == 1) {
                         if (secondToastY == -1)
@@ -127,7 +128,7 @@ public class MainFragmentQR extends Fragment {
                         breadWalletApp.showCustomToast(MainActivity.app,
                                 getResources().getString(R.string.toast_address_tip),
                                 secondToastY, Toast.LENGTH_LONG);
-                        Log.e(TAG, "Toast show nr: " + count);
+//                        Log.e(TAG, "Toast show nr: " + count);
                         count--;
                     }
                 }
@@ -155,7 +156,7 @@ public class MainFragmentQR extends Fragment {
         int smallerDimension = width < height ? width : height;
         smallerDimension = smallerDimension * 3 / 4;
 
-        Log.e(TAG, "@@@@@@@@@@@receiveAddress: " + receiveAddress);
+//        Log.e(TAG, "@@@@@@@@@@@receiveAddress: " + receiveAddress);
         if (receiveAddress.length() < 5)
             throw new NullPointerException("receiveAddress cannot be null or it's corrupted!");
         mainAddressText.setText(receiveAddress);
@@ -201,7 +202,20 @@ public class MainFragmentQR extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        MiddleViewAdapter.resetMiddleView(null);
+        MiddleViewAdapter.resetMiddleView(getActivity(),null);
+        SharedPreferences prefs = getActivity().getSharedPreferences(RECEIVE_ADDRESS_PREFS, Context.MODE_PRIVATE);
+
+        refreshAddress(prefs.getString(RECEIVE_ADDRESS, null));
     }
+
+    public void refreshAddress(String address){
+        receiveAddress = address;
+//        Log.e(TAG, "FROM PREFS receiveAddress: " + receiveAddress);
+        if (receiveAddress == null) {
+            BRWalletManager.getInstance(getActivity()).refreshAddress();
+        }
+        generateQR();
+    }
+
 
 }

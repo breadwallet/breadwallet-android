@@ -50,7 +50,7 @@ import java.util.Stack;
  */
 
 public class FragmentAnimator {
-    private static final String TAG = "FragmentAnimator";
+    private static final String TAG = FragmentAnimator.class.getName();
     public static int level = 0;
     public static boolean wipeWalletOpen = false;
     private static final Stack<Fragment> previous = new Stack<>();
@@ -69,12 +69,12 @@ public class FragmentAnimator {
             // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(app,
                     Manifest.permission.CAMERA)) {
-                Log.e(TAG, "YES explanation!");
+//                Log.e(TAG, "YES explanation!");
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
             } else {
-                Log.e(TAG, "NO explanation!");
+//                Log.e(TAG, "NO explanation!");
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(app,
                         new String[]{Manifest.permission.CAMERA},
@@ -86,7 +86,7 @@ public class FragmentAnimator {
         } else {
             if (FragmentAnimator.level > 0)
                 FragmentAnimator.pressMenuButton(app, new FragmentSettingsAll());
-            Log.e(TAG, "in the animateDecoderFragment");
+//            Log.e(TAG, "in the animateDecoderFragment");
             MainActivity.beenThroughSavedInstanceMethod = false;
             MainActivity.decoderFragmentOn = true;
             app.activityButtonsEnable(false);
@@ -103,7 +103,7 @@ public class FragmentAnimator {
         MainActivity app = MainActivity.app;
         if (app == null) return;
         CustomPagerAdapter.adapter.showFragments(false);
-        Log.e(TAG, "animateScanResultFragment");
+//        Log.e(TAG, "animateScanResultFragment");
         MainActivity.beenThroughSavedInstanceMethod = false;
         MainActivity.scanResultFragmentOn = true;
         InputMethodManager keyboard = (InputMethodManager) app.
@@ -129,42 +129,13 @@ public class FragmentAnimator {
         }, 200);
     }
 
-//    public static void animateRequestFragment() {
-//        MainActivity app = MainActivity.app;
-//        if (app == null) return;
-//        CustomPagerAdapter.adapter.showFragments(false);
-//        Log.e(TAG, "animateScanResultFragment");
-////        MainActivity.beenThroughSavedInstanceMethod = false;
-//        app.requestFragmentOn = true;
-//        InputMethodManager keyboard = (InputMethodManager) app.
-//                getSystemService(Context.INPUT_METHOD_SERVICE);
-//        keyboard.hideSoftInputFromWindow(CustomPagerAdapter.adapter.
-//                mainFragment.addressEditText.getWindowToken(), 0);
-//        app.setBurgerButtonImage(app.BACK);
-//        //Disabled inspection: <Expected resource type anim>
-//        final FragmentManager fragmentManager = app.getFragmentManager();
-//        final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//
-//        fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
-//        fragmentTransaction.replace(R.id.main_layout, new FragmentRequest(), FragmentRequest.class.getName());
-//        fragmentTransaction.commit();
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                FragmentRequest fragmentRequest = (FragmentRequest) fragmentManager.
-//                        findFragmentByTag(FragmentRequest.class.getName());
-//                SpringAnimator.showBouncySlideHorizontal(fragmentRequest.getView(),
-//                        SpringAnimator.TO_RIGHT, 70);
-//            }
-//        }, 200);
-//    }
 
     /**
      * Animate the transition on burgerButton/MenuButton pressed
      */
     public static void pressMenuButton(final MainActivity context, final Fragment to) {
         ((BreadWalletApp) context.getApplication()).cancelToast();
-        Log.e(TAG, "The level is: " + level);
+//        Log.e(TAG, "The level is: " + level);
         FragmentManager fragmentManager = context.getFragmentManager();
         if (level == 0) {
             level++;
@@ -244,7 +215,7 @@ public class FragmentAnimator {
         }, 200);
         previous.add(previousFragment);
         fragmentTransaction.commit();
-        Log.e(TAG, "The level is: " + level);
+//        Log.e(TAG, "The level is: " + level);
     }
 
     public static void animateSlideToRight(MainActivity context) {
@@ -265,7 +236,7 @@ public class FragmentAnimator {
             }
         }, 200);
         fragmentTransaction.commit();
-        Log.e(TAG, "The level is: " + level);
+//        Log.e(TAG, "The level is: " + level);
     }
 
 
@@ -277,7 +248,7 @@ public class FragmentAnimator {
      *
      */
     public static boolean checkTheMultipressingAvailability() {
-        Log.e(TAG, "multiplePressingAvailable: " + multiplePressingAvailable);
+//        Log.e(TAG, "multiplePressingAvailable: " + multiplePressingAvailable);
         synchronized (lockObject) {
             if (multiplePressingAvailable) {
                 multiplePressingAvailable = false;
@@ -296,7 +267,7 @@ public class FragmentAnimator {
     }
 
     public static void hideDecoderFragment() {
-        Log.e(TAG, "hideDecoderFragment");
+//        Log.e(TAG, "hideDecoderFragment");
         MainActivity app = MainActivity.app;
         if (app == null) return;
         MainActivity.decoderFragmentOn = false;
@@ -313,7 +284,7 @@ public class FragmentAnimator {
                 remove(fragmentDecoder).commit();
         CustomPagerAdapter.adapter.showFragments(true);
         app.activityButtonsEnable(true);
-        Log.e(TAG, "got to the end of hideDecoderFragment");
+//        Log.e(TAG, "got to the end of hideDecoderFragment");
     }
 
 
@@ -321,7 +292,7 @@ public class FragmentAnimator {
     public static void hideScanResultFragment() {
         MainActivity app = MainActivity.app;
         if (app == null) return;
-        Log.e(TAG, "hideScanResultFragment");
+//        Log.e(TAG, "hideScanResultFragment");
         CustomPagerAdapter.adapter.showFragments(true);
         MainActivity.scanResultFragmentOn = false;
         new Handler().postDelayed(new Runnable() {

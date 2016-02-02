@@ -53,7 +53,7 @@ import java.math.BigDecimal;
  */
 
 public class FragmentScanResult extends Fragment implements View.OnClickListener {
-    private static final String TAG = "FragmentScanResult";
+    private static final String TAG = FragmentScanResult.class.getName();
     private TextView scanResult;
     private RelativeLayout customKeyboardLayout;
     public static TextView amountToPay;
@@ -122,7 +122,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         FragmentScanResult.currentCurrencyPosition = FragmentScanResult.BITCOIN_RIGHT;
         AmountAdapter.calculateAndPassValuesToFragment("0");
 
-        scanResult.setText(isARequest ? "" : "to: " + address);
+        scanResult.setText(isARequest ? "" : getString(R.string.to) + address);
 
         super.onResume();
     }
@@ -145,9 +145,9 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         int availableWidth = MainActivity.screenParametersPoint.x;
         int availableHeight = MainActivity.screenParametersPoint.y;
         int spaceNeededForRest = availableHeight / 14;
-        Log.e(TAG, "screenParametersPoint.x: " + availableWidth + " screenParametersPoint.y: " + availableHeight);
-        Log.e(TAG, "AvailableWidth: " + availableWidth + ", availableHeight: " + availableHeight +
-                ", spaceNeededForRest: " + spaceNeededForRest);
+//        Log.e(TAG, "screenParametersPoint.x: " + availableWidth + " screenParametersPoint.y: " + availableHeight);
+//        Log.e(TAG, "AvailableWidth: " + availableWidth + ", availableHeight: " + availableHeight +
+//                ", spaceNeededForRest: " + spaceNeededForRest);
         float gapRate = 0.2f;
         float gap = (availableWidth * gapRate);
         float interButtonGap = gap / 5;
@@ -155,24 +155,23 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         float buttonHeight = buttonWidth;
         float spaceNeeded = buttonHeight * 4 + gap;
 //        Log.e(TAG, "space taken: " + spaceNeeded);
-        int keyboardLayoutY = y;
         int buttonTextSize = 45;
-        Log.e(TAG, "spaceNeeded: " + spaceNeeded + ", keyboardLayoutY: " + keyboardLayoutY);
-        Log.e(TAG, String.format("gap:%f interButtonGap:%f spaceNeeded:%f spaceNeededForRest:%d keyboardLayoutY:%d",
-                gap, interButtonGap, spaceNeeded, spaceNeededForRest, keyboardLayoutY));
-        if (spaceNeeded > (availableHeight - (spaceNeededForRest + keyboardLayoutY))) {
-            Log.e(TAG, "More Space needed! buttonHeight: " + buttonHeight);
-            buttonHeight = ((availableHeight - (spaceNeededForRest + keyboardLayoutY)) - gap) / 4;
+//        Log.e(TAG, "spaceNeeded: " + spaceNeeded + ", keyboardLayoutY: " + y);
+//        Log.e(TAG, String.format("gap:%f interButtonGap:%f spaceNeeded:%f spaceNeededForRest:%d keyboardLayoutY:%d",
+//                gap, interButtonGap, spaceNeeded, spaceNeededForRest, y));
+        if (spaceNeeded > (availableHeight - (spaceNeededForRest + y))) {
+//            Log.e(TAG, "More Space needed! buttonHeight: " + buttonHeight);
+            buttonHeight = ((availableHeight - (spaceNeededForRest + y)) - gap) / 4;
             buttonTextSize = (int) ((buttonHeight / 9));
         }
         int minimumHeight = (int) (buttonHeight * 4 + interButtonGap * 4);
-        Log.d(TAG, "The gap: " + gap + ", The buttonHeight: " + buttonHeight + ", buttonWidth: " + buttonWidth);
+//        Log.d(TAG, "The gap: " + gap + ", The buttonHeight: " + buttonHeight + ", buttonWidth: " + buttonWidth);
         if (customKeyboardLayout == null) {
             customKeyboardLayout = (RelativeLayout) getActivity().findViewById(R.id.custom_keyboard_layout);
         }
         customKeyboardLayout.setMinimumHeight(minimumHeight);
         int childCount = 12;
-        Log.e(TAG, "Button params: width " + buttonWidth + " height " + buttonHeight);
+//        Log.e(TAG, "Button params: width " + buttonWidth + " height " + buttonHeight);
         for (int i = 0; i < childCount; i++) {
             Button b = new Button(getActivity());
             b.setWidth((int) buttonWidth);

@@ -2,9 +2,9 @@
 // Created by Mihail Gutan on 12/4/15.
 //
 #include "jni.h"
+
 #ifndef BREADWALLET_WALLETCALLBACKS_H
 #define BREADWALLET_WALLETCALLBACKS_H
-
 
 
 extern JNIEnv *env;
@@ -24,8 +24,10 @@ extern JNIEnv *env;
 
 void Java_com_breadwallet_wallet_BRWalletManager_testWalletCallbacks(JNIEnv *env,
                                                                      jobject thiz);
+
 void Java_com_breadwallet_wallet_BRWalletManager_testTransactionAdding(JNIEnv *env,
-                                                                       jobject thiz);
+                                                                       jobject thiz,
+                                                                       jlong amount);
 //
 //void balanceChanged(void *info, uint64_t balance);
 //

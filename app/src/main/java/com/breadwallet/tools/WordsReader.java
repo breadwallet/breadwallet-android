@@ -21,7 +21,7 @@ public class WordsReader {
     public static List<String> getWordList(Context context) throws IOException {
 
         String languageCode = context.getString(R.string.lang);
-        Log.e(TAG, "The language is: " + languageCode);
+//        Log.e(TAG, "The language is: " + languageCode);
         String fileName = "words/" + languageCode + "-BIP39Words.txt";
         List<String> wordList = new ArrayList<>();
         BufferedReader reader = null;
@@ -37,6 +37,7 @@ public class WordsReader {
             ex.printStackTrace();
 
         } finally {
+            assert reader != null;
             reader.close();
         }
         if (wordList.size() != WORD_LIST_SIZE)
@@ -46,7 +47,7 @@ public class WordsReader {
 
     public static byte[] getWordListBytes(Context context) throws IOException {
         String languageCode = context.getString(R.string.lang);
-        Log.e(TAG, "The language is: " + languageCode);
+//        Log.e(TAG, "The language is: " + languageCode);
         String fileName = "words/" + languageCode + "-BIP39Words.txt";
         byte[] wordsBytes = null;
         try {
