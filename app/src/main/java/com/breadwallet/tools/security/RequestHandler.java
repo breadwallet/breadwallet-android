@@ -13,7 +13,6 @@ import com.breadwallet.presenter.entities.RequestObject;
 import com.breadwallet.presenter.exceptions.CertificateChainNotFound;
 import com.breadwallet.presenter.exceptions.PaymentRequestExpiredException;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
-import com.breadwallet.tools.CustomLogger;
 import com.breadwallet.tools.animation.FragmentAnimator;
 
 import org.apache.commons.io.IOUtils;
@@ -57,14 +56,14 @@ public class RequestHandler {
     private static final String TAG = RequestHandler.class.getName();
     private static final Object lockObject = new Object();
 
-    public static synchronized void processRequest(Activity app,String address) {
+    public static synchronized void processRequest(Activity app, String address) {
 
         try {
             RequestObject requestObject = getRequestFromString(address);
             if (requestObject == null) {
                 if (app != null) {
-                        ((BreadWalletApp) app.getApplication()).showCustomDialog(app.getString(R.string.warning),
-                                app.getString(R.string.invalid_address), app.getString(R.string.close));
+                    ((BreadWalletApp) app.getApplication()).showCustomDialog(app.getString(R.string.warning),
+                            app.getString(R.string.invalid_address), app.getString(R.string.close));
                 }
                 return;
             }
@@ -90,9 +89,7 @@ public class RequestHandler {
         RequestObject obj = new RequestObject();
         if (str.startsWith("bitcoin:")) {
             String[] parts = str.split("\\?", 2);
-            String address = parts[0].substring(8);
-//            Log.e(TAG, "Address: " + address);
-            obj.address = address;
+            obj.address = parts[0].substring(8);
             if (parts.length == 1) return obj;
             String[] params = parts[1].split("&");
             for (String s : params) {
@@ -101,18 +98,23 @@ public class RequestHandler {
                     throw new InvalidAlgorithmParameterException();
                 if (keyValue[0].equals("amount")) {
                     obj.amount = keyValue[1];
+                    Log.e(TAG, "amount: " + obj.amount);
                 } else if (keyValue[0].equals("label")) {
                     obj.label = keyValue[1];
+                    Log.e(TAG, "label: " + obj.label);
                 } else if (keyValue[0].equals("message")) {
                     obj.message = keyValue[1].replace("%20", " ");
+                    Log.e(TAG, "message: " + obj.message);
                 } else if (keyValue[0].startsWith("req")) {
                     obj.req = keyValue[1];
+                    Log.e(TAG, "req: " + obj.req);
                 } else if (keyValue[0].startsWith("r")) {
                     obj.r = keyValue[1];
+                    Log.e(TAG, "r: " + obj.r);
                 }
             }
         }
-        Log.e(TAG,"obj.address: " + obj.address);
+        Log.e(TAG, "obj.address: " + obj.address);
         return obj;
     }
 

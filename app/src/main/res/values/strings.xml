@@ -108,4 +108,5 @@
     <string name="connection_timed_out">connection timed out</string>
     <string name="payment_request_expired">payment request expired</string>
     <string name="something_went_wrong">something went wrong</string>
+    <string name="more">more…</string>
 </resources>

@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -113,7 +114,7 @@ public class FragmentSettingsAll extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        MiddleViewAdapter.resetMiddleView(getActivity(),null);
+        MiddleViewAdapter.resetMiddleView(getActivity(), null);
 //        refreshTransactions(getActivity());
     }
 
@@ -160,16 +161,44 @@ public class FragmentSettingsAll extends Fragment {
         transactionList.removeAllViews();
 
         transactionList.addView(getSeparationLine(0, ctx));
-        for (int i = 0; i < transactionObjects.length; i++) {
+
+        int limit = transactionObjects.length > 5 ? 5 : transactionObjects.length;
+
+        for (int i = 0; i < limit; i++) {
             View tmpView = getViewFromTransactionObject(transactionObjects[i]);
             if (tmpView != null)
                 transactionList.addView(tmpView);
             if (i != transactionObjects.length - 1)
                 transactionList.addView(getSeparationLine(1, ctx));
         }
+        Log.e(TAG, "before limit > 5");
+        if (transactionObjects.length > 5) {
+            Log.e(TAG, "limit > 5");
+            transactionList.addView(getSeparationLine(0, ctx));
+            transactionList.addView(getMore(ctx));
+        }
+//        transactionList.addView(getSeparationLine(0, ctx));
 
-        transactionList.addView(getSeparationLine(0, ctx));
+    }
 
+    public static LinearLayout getMore(final Context context) {
+        LayoutInflater inflater = (LayoutInflater) context.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LinearLayout more = (LinearLayout) inflater.inflate(R.layout.transaction_list_item_more, null);
+        more.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                transactionList.removeView(v);
+                for (int i = 5; i < transactionObjects.length; i++) {
+                    View tmpView = getViewFromTransactionObject(transactionObjects[i]);
+                    if (tmpView != null)
+                        transactionList.addView(tmpView);
+                    if (i != transactionObjects.length - 1)
+                        transactionList.addView(getSeparationLine(1, context));
+                }
+                transactionList.addView(getSeparationLine(0, context));
+            }
+        });
+        return more;
     }
 
     public static RelativeLayout getSeparationLine(int MODE, Context ctx) {

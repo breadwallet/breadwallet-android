@@ -18,10 +18,8 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.entities.RequestObject;
 import com.breadwallet.presenter.fragments.FragmentCurrency;
-import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.presenter.fragments.MainFragmentQR;
 import com.breadwallet.tools.CurrencyManager;
-import com.breadwallet.tools.adapter.AmountAdapter;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.qrcode.QRCodeEncoder;
 import com.breadwallet.tools.security.RequestHandler;
@@ -35,7 +33,7 @@ public class RequestQRActivity extends Activity {
     public static final String TAG = RequestQRActivity.class.getName();
     private ImageView qrcode;
     public static String THE_ADDRESS = "";
-
+    public static String tmpAmount = "0";
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +41,7 @@ public class RequestQRActivity extends Activity {
         setContentView(R.layout.activity_request_qr);
 
 
-        String tmpAmount = FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_RIGHT ?
-                AmountAdapter.getRightValue() : AmountAdapter.getLeftValue();
+
         //TODO get the actual address
         SharedPreferences prefs = getSharedPreferences(MainFragmentQR.RECEIVE_ADDRESS_PREFS, Context.MODE_PRIVATE);
         String requestAddrs = prefs.getString(MainFragmentQR.RECEIVE_ADDRESS, "");

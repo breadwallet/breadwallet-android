@@ -536,6 +536,9 @@ public class MainActivity extends FragmentActivity implements Observer {
     public void request(View view) {
         SpringAnimator.showAnimation(view);
         Intent intent;
+        RequestQRActivity.tmpAmount = FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_RIGHT ?
+                AmountAdapter.getRightValue() : AmountAdapter.getLeftValue();
+
         intent = new Intent(this, RequestQRActivity.class);
         startActivity(intent);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
