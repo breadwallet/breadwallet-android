@@ -35,7 +35,7 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
                 public void run() {
                     networkErrorBar.setVisibility(View.VISIBLE);
                     ((BreadWalletApp) app.getApplication()).showCustomToast(app, app.getString(R.string.no_internet_connection),
-                            500, Toast.LENGTH_SHORT);
+                            500, Toast.LENGTH_SHORT,0);
                 }
             });
 

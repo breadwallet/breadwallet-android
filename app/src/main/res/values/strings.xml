@@ -109,4 +109,6 @@
     <string name="payment_request_expired">payment request expired</string>
     <string name="something_went_wrong">something went wrong</string>
     <string name="more">more…</string>
+    <string name="sent">sent: %1$s</string>
+    <string name="received">received: %1$s</string>
 </resources>

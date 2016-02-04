@@ -94,8 +94,8 @@ public class BreadWalletApp extends Application {
     private Toast toast;
     private static int DISPLAY_WIDTH_PX;
     public static int DISPLAY_HEIGHT_PX;
-    public static final String CREDENTIAL_TITLE = "Insert password";
-    public static final String CREDENTIAL_DESCRIPTION = "Insert your password to unlock the app.";
+    //    public static final String CREDENTIAL_TITLE = "Insert password";
+//    public static final String CREDENTIAL_DESCRIPTION = "Insert your password to unlock the app.";
     public static boolean canceled = false;
 
 
@@ -119,8 +119,9 @@ public class BreadWalletApp extends Application {
      * @param message the message to be shown in the custom toast
      */
 
-    public void showCustomToast(Activity app, String message, int yOffSet, int duration) {
+    public void showCustomToast(Activity app, String message, int yOffSet, int duration, int color) {
         if (toast == null) toast = new Toast(getApplicationContext());
+
         if (customToastAvailable || !oldMessage.equals(message)) {
             oldMessage = message;
             customToastAvailable = false;
@@ -133,6 +134,9 @@ public class BreadWalletApp extends Application {
             LayoutInflater inflater = app.getLayoutInflater();
             View layout = inflater.inflate(R.layout.toast,
                     (ViewGroup) app.findViewById(R.id.toast_layout_root));
+            if (color == 1) {
+                layout.setBackgroundResource(R.drawable.toast_layout_black);
+            }
             TextView text = (TextView) layout.findViewById(R.id.toast_text);
             text.setText(message);
             toast.setGravity(Gravity.BOTTOM, 0, yOffSet);

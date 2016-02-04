@@ -151,7 +151,7 @@ public class FragmentCurrency extends Fragment {
             currencyProgressBar.setVisibility(View.GONE);
         } else {
             ((BreadWalletApp) app.getApplicationContext()).showCustomToast(getActivity(),
-                    getString(R.string.no_internet_connection), 500, Toast.LENGTH_SHORT);
+                    getString(R.string.no_internet_connection), 500, Toast.LENGTH_SHORT,0);
             currencyRefresh.setVisibility(View.VISIBLE);
             noInternetConnection.setVisibility(View.VISIBLE);
             currencyProgressBar.setVisibility(View.GONE);

@@ -66,7 +66,7 @@ public class CurrencyManager extends Observable {
     private Timer timer;
     private long BALANCE = 0;
     private TimerTask timerTask;
-    private final String bitcoinLowercase = "\u0180";
+    public final String bitcoinLowercase = "\u0180";
     private final Handler handler = new Handler();
     public static boolean separatorNeedsToBeShown = false;
     private final CurrencyListAdapter currencyListAdapter;
@@ -93,6 +93,7 @@ public class CurrencyManager extends Observable {
 
     public void setBalance(long balance) {
         Log.e(TAG, "in the setBalance, BALANCE:  " + BALANCE);
+
         BALANCE = balance;
         setChanged();
         notifyObservers();

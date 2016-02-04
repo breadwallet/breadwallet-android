@@ -5,7 +5,11 @@ import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.breadwallet.R;
+import com.breadwallet.presenter.BreadWalletApp;
+import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.presenter.fragments.MainFragmentQR;
@@ -17,7 +21,6 @@ import com.breadwallet.tools.sqlite.SQLiteManager;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.security.SecureRandom;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -259,11 +262,25 @@ public class BRWalletManager {
             FragmentSettingsAll.refreshTransactions(ctx);
     }
 
-    public void onTxAdded(byte[] tx, long blockheight, long timestamp) {
+    public void onTxAdded(byte[] tx, long blockheight, long timestamp, long amount) {
+        Log.e(TAG, "amount on the txAdded:" + amount);
         Log.e(TAG, "in the BRWalletManager - onTxAdded: " + tx.length + " " + blockheight + " " + timestamp);
 //        for (byte b : tx) {
 //            System.out.println(Integer.toBinaryString(b & 255 | 256).substring(1));
 //        }
+        if (ctx == null) ctx = MainActivity.app;
+        if (ctx != null) {
+            CurrencyManager m = CurrencyManager.getInstance(ctx);
+            if (amount > 0) {
+                ((BreadWalletApp) ctx.getApplicationContext()).showCustomToast((Activity) ctx,
+                        String.format(ctx.getString(R.string.received), m.getBitsFromSatoshi(amount) + m.bitcoinLowercase),
+                        BreadWalletApp.DISPLAY_HEIGHT_PX / 2, Toast.LENGTH_LONG, 1);
+            } else {
+                ((BreadWalletApp) ctx.getApplicationContext()).showCustomToast((Activity) ctx,
+                        String.format(ctx.getString(R.string.sent), m.getBitsFromSatoshi(amount * -1) + m.bitcoinLowercase),
+                        BreadWalletApp.DISPLAY_HEIGHT_PX / 2, Toast.LENGTH_LONG, 1);
+            }
+        }
         SQLiteManager sqLiteManager = SQLiteManager.getInstance(ctx);
         sqLiteManager.insertTransaction(tx, blockheight, timestamp);
     }

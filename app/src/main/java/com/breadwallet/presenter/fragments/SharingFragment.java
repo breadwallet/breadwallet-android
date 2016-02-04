@@ -78,7 +78,7 @@ public class SharingFragment extends DialogFragment {
                             }
                         }, 2000);
                         ((BreadWalletApp) getActivity().getApplicationContext()).
-                                showCustomToast(getActivity(), getResources().getString(R.string.toast_address_copied), 360, Toast.LENGTH_SHORT);
+                                showCustomToast(getActivity(), getResources().getString(R.string.toast_address_copied), 360, Toast.LENGTH_SHORT,0);
                         getDialog().cancel();
                     }
                 }

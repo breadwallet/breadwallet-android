@@ -119,7 +119,7 @@ public class MainFragmentQR extends Fragment {
                         if (firstToastY == -1)
                             firstToastY = BreadWalletApp.DISPLAY_HEIGHT_PX - breadWalletApp.getRelativeTop(mainAddressText) + 400;
                         breadWalletApp.showCustomToast(MainActivity.app,
-                                getResources().getString(R.string.toast_qr_tip), firstToastY, Toast.LENGTH_LONG);
+                                getResources().getString(R.string.toast_qr_tip), firstToastY, Toast.LENGTH_LONG,0);
 //                        Log.e(TAG, "Toast show nr: " + count);
                         count++;
                     } else if (count == 1) {
@@ -127,7 +127,7 @@ public class MainFragmentQR extends Fragment {
                             secondToastY = BreadWalletApp.DISPLAY_HEIGHT_PX - breadWalletApp.getRelativeTop(mainAddressText);
                         breadWalletApp.showCustomToast(MainActivity.app,
                                 getResources().getString(R.string.toast_address_tip),
-                                secondToastY, Toast.LENGTH_LONG);
+                                secondToastY, Toast.LENGTH_LONG,0);
 //                        Log.e(TAG, "Toast show nr: " + count);
                         count--;
                     }

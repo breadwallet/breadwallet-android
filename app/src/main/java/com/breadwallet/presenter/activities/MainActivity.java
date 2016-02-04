@@ -160,8 +160,8 @@ public class MainActivity extends FragmentActivity implements Observer {
         //TODO delete the core testing
 //        cTests();
 
-//        deleteTxs = true;
-//        testTxAdding(5);
+        deleteTxs = true;
+        testTxAdding(6);
 //        new Handler().postDelayed(new Runnable() {
 //            @Override
 //            public void run() {
@@ -238,12 +238,12 @@ public class MainActivity extends FragmentActivity implements Observer {
                     if (middleViewPressedCount % 2 == 0) {
                         ((BreadWalletApp) getApplication()).showCustomToast(app, getResources().
                                         getString(R.string.middle_view_tip_first),
-                                (int) (screenParametersPoint.y * 0.7), Toast.LENGTH_LONG);
+                                (int) (screenParametersPoint.y * 0.7), Toast.LENGTH_LONG, 0);
                         middleViewPressedCount++;
                     } else {
                         ((BreadWalletApp) getApplication()).showCustomToast(app, getResources().
                                         getString(R.string.middle_view_tip_second),
-                                (int) (screenParametersPoint.y * 0.8), Toast.LENGTH_LONG);
+                                (int) (screenParametersPoint.y * 0.8), Toast.LENGTH_LONG, 0);
                         middleViewPressedCount++;
                     }
                 }
@@ -409,7 +409,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                     this.doubleBackToExitPressedOnce = true;
                     ((BreadWalletApp) getApplicationContext()).showCustomToast(this,
                             getResources().getString(R.string.mainactivity_press_back_again), 140,
-                            Toast.LENGTH_SHORT);
+                            Toast.LENGTH_SHORT, 0);
                     makeDoubleBackToExitPressedOnce();
                     break;
                 case 1:
@@ -617,7 +617,7 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     @Override
     public void update(Observable observable, Object data) {
-        MiddleViewAdapter.resetMiddleView(this,null);
+        MiddleViewAdapter.resetMiddleView(this, null);
     }
 
     public void testSQLiteConnectivity(Activity context) {

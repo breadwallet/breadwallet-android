@@ -163,13 +163,15 @@ public class FragmentSettingsAll extends Fragment {
         transactionList.addView(getSeparationLine(0, ctx));
 
         int limit = transactionObjects.length > 5 ? 5 : transactionObjects.length;
+        Log.e(TAG, "transactionObjects.length: " + transactionObjects.length);
 
         for (int i = 0; i < limit; i++) {
             View tmpView = getViewFromTransactionObject(transactionObjects[i]);
-            if (tmpView != null)
+            if (tmpView != null) {
                 transactionList.addView(tmpView);
-            if (i != transactionObjects.length - 1)
-                transactionList.addView(getSeparationLine(1, ctx));
+                if (i != transactionObjects.length - 1)
+                    transactionList.addView(getSeparationLine(1, ctx));
+            }
         }
         Log.e(TAG, "before limit > 5");
         if (transactionObjects.length > 5) {
