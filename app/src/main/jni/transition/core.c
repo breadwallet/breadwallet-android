@@ -10,6 +10,8 @@
 #include "breadwallet-core/BRWallet.h"
 #include <android/log.h>
 
+//TODO make sure to free() everything
+
 //
 // Created by Mihail Gutan on 9/24/15.
 //

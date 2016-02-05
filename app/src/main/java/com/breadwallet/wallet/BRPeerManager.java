@@ -1,6 +1,7 @@
 package com.breadwallet.wallet;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.breadwallet.tools.sqlite.SQLiteManager;
 
@@ -31,7 +32,7 @@ import com.breadwallet.tools.sqlite.SQLiteManager;
 public class BRPeerManager {
     public static final String TAG = BRPeerManager.class.getName();
     private static BRPeerManager instance;
-    private byte[] peerManager;
+//    private byte[] peerManager;
     private static Context ctx;
 
     private BRPeerManager() {
@@ -67,31 +68,33 @@ public class BRPeerManager {
      */
 
     public void syncStarted() {
-
+        Log.e(TAG, "syncStarted");
     }
 
     public void syncSucceded() {
-
+        Log.e(TAG, "syncSucceded");
     }
 
     public void syncFailed() {
-
+        Log.e(TAG, "syncFailed");
     }
 
     public void txStatusUpdate() {
-
+        Log.e(TAG, "txStatusUpdate");
     }
 
     public void saveBlocks(byte[] block) {
+        Log.e(TAG, "saveBlocks");
         SQLiteManager.getInstance(ctx).insertMerkleBlock(block);
     }
 
     public void savePeers(byte[] peerAddress, byte[] peerPort, byte[] peerTimeStamp) {
+        Log.e(TAG, "savePeers");
         SQLiteManager.getInstance(ctx).insertPeer(peerAddress, peerPort, peerTimeStamp);
     }
 
     public void networkIsReachable() {
-
+        Log.e(TAG, "networkIsReachable");
     }
 
 }

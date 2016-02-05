@@ -18,31 +18,78 @@ static size_t _blocksCounter = 0;
 static size_t _peersCounter = 0;
 
 
+static jobject getPeerManagerInstance() {
+    JNIEnv *env;
+    jint rs = (*_jvm)->AttachCurrentThread(_jvm, &env, NULL);
+
+    jclass clazz = (*env)->FindClass(env, "com/breadwallet/wallet/BRPeerManager");
+    jfieldID instanceFid = (*env)->GetStaticFieldID(env, clazz, "instance",
+                                                    "Lcom/breadwallet/wallet/BRPeerManager;");
+
+    jobject instance;
+    if (instanceFid == NULL) {
+        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ",
+                            "instanceFid is null!!!! returning ");
+        return NULL;
+    }
+    instance = (*env)->GetStaticObjectField(env, clazz, instanceFid);
+    if (instance == NULL) {
+        instance = (*env)->AllocObject(env, clazz);
+        (*env)->SetObjectField(env, clazz, instanceFid, instance);
+    }
+
+    return instance;
+}
+
 static void syncStarted(void *info) {
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "syncStarted: info - %s",info );
+    JNIEnv *globalEnv;
+    jint rs = (*_jvm)->AttachCurrentThread(_jvm, &globalEnv, NULL);
+    jobject instance = getPeerManagerInstance();
+    jclass clazz = (*globalEnv)->FindClass(globalEnv, "com/breadwallet/wallet/BRPeerManager");
+    jmethodID mid = (*globalEnv)->GetMethodID(globalEnv, clazz, "syncStarted", "()V");
+//    uint64_t walletBalance = BRWalletBalance(wallet);
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ",
+//                        "BRWalletBalance(wallet): %d", BRWalletBalance(wallet));
+    //call java methods
+    (*globalEnv)->CallVoidMethod(globalEnv, instance, mid);
 
 }
 
 static void syncSucceeded(void *info) {
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "syncSucceeded: info - %s",info );
+    JNIEnv *globalEnv;
+    jint rs = (*_jvm)->AttachCurrentThread(_jvm, &globalEnv, NULL);
 
 }
 
 static void syncFailed(void *info, int error) {
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "syncFailed: info - %s",info );
+    JNIEnv *globalEnv;
+    jint rs = (*_jvm)->AttachCurrentThread(_jvm, &globalEnv, NULL);
 
 }
 
 static void txStatusUpdate(void *info) {
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "txStatusUpdate: info - %s",info );
+    JNIEnv *globalEnv;
+    jint rs = (*_jvm)->AttachCurrentThread(_jvm, &globalEnv, NULL);
 
 }
 
 static void txRejected(void *info, int rescanRecommended) {
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ",
+                        "txRejected: info - %s , rescanRecommended - %d", info, rescanRecommended );
+    JNIEnv *globalEnv;
+    jint rs = (*_jvm)->AttachCurrentThread(_jvm, &globalEnv, NULL);
 
 }
 
 static void saveBlocks(void *info, BRMerkleBlock *blocks[], size_t count) {
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "saveBlocks");
+
     JNIEnv *globalEnv;
     jint rs = (*_jvm)->AttachCurrentThread(_jvm, &globalEnv, NULL);
-
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "saveBlocks");
 
     //create class
     jclass clazz = (*globalEnv)->FindClass(globalEnv, "com/breadwallet/wallet/BRPeerManager");
@@ -61,12 +108,9 @@ static void saveBlocks(void *info, BRMerkleBlock *blocks[], size_t count) {
 }
 
 static void savePeers(void *info, const BRPeer peers[], size_t count) {
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "savePeers");
     JNIEnv *globalEnv;
     jint rs = (*_jvm)->AttachCurrentThread(_jvm, &globalEnv, NULL);
-
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "savePeers");
-//    __android_log_print(ANDROID_LOG_ERROR, "Message from createWallet: ",
-//                        ">>>>>>>>>>>>tx->version before: %d", tx->version);
 
     //create class
     jclass clazz = (*globalEnv)->FindClass(globalEnv, "com/breadwallet/wallet/BRPeerManager");
@@ -119,6 +163,7 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_connect(JNIEnv *env, jo
     BRPeerManagerSetCallbacks(peerManager, NULL, syncStarted, syncSucceeded, syncFailed,
                               txStatusUpdate, txRejected, saveBlocks, savePeers,
                               networkIsReachable);
+    BRPeerManagerConnect(peerManager);
 }
 
 //Call multiple times with all the blocks from the DB

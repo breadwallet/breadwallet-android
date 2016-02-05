@@ -45,7 +45,7 @@ public class RequestQRActivity extends Activity {
         //TODO get the actual address
         SharedPreferences prefs = getSharedPreferences(MainFragmentQR.RECEIVE_ADDRESS_PREFS, Context.MODE_PRIVATE);
         String requestAddrs = prefs.getString(MainFragmentQR.RECEIVE_ADDRESS, "");
-        RequestQRActivity.THE_ADDRESS = "bitcoin:" + requestAddrs + "?amount=" + tmpAmount;
+        THE_ADDRESS = "bitcoin:" + requestAddrs + "?amount=" + tmpAmount;
         qrcode = (ImageView) findViewById(R.id.request_image_qr_code);
         Button close = (Button) findViewById(R.id.request_close);
         TextView requestAmountText = (TextView) findViewById(R.id.request_amount_text);

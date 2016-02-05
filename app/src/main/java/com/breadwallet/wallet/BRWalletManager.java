@@ -234,16 +234,17 @@ public class BRWalletManager {
     }
 
     public void refreshAddress() {
+        Log.e(TAG,"refreshAddress: " + ctx);
+        if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) {
-            String tmpAddr = getReceiveAddress();
-            MainFragmentQR.receiveAddress = tmpAddr;
-            SharedPreferences.Editor editor = ctx.getSharedPreferences(MainFragmentQR.RECEIVE_ADDRESS_PREFS, Context.MODE_PRIVATE).edit();
-            editor.putString(MainFragmentQR.RECEIVE_ADDRESS, MainFragmentQR.receiveAddress);
-            editor.apply();
             MainFragmentQR mainFragmentQR = (MainFragmentQR) ((Activity) ctx).getFragmentManager().findFragmentByTag(MainFragmentQR.class.getName());
-            if (mainFragmentQR != null) {
-                mainFragmentQR.refreshAddress(tmpAddr);
-            }
+            if (mainFragmentQR == null) return;
+            String tmpAddr = getReceiveAddress();
+            SharedPreferences.Editor editor = ctx.getSharedPreferences(MainFragmentQR.RECEIVE_ADDRESS_PREFS, Context.MODE_PRIVATE).edit();
+            editor.putString(MainFragmentQR.RECEIVE_ADDRESS, tmpAddr);
+            Log.e(TAG,"REFRESHING THE ADDRESS: " + tmpAddr);
+            editor.commit();
+            mainFragmentQR.refreshAddress();
         } else {
             throw new NullPointerException("Cannot be null");
         }
@@ -255,11 +256,11 @@ public class BRWalletManager {
 
     public void onBalanceChanged(long balance) {
         Log.e(TAG, "in the BRWalletManager - onBalanceChanged:  " + balance);
+        if (ctx == null) ctx = MainActivity.app;
         CurrencyManager.getInstance(ctx).setBalance(balance);
         //TODO check this when Aaron fixes the bug
         refreshAddress();
-        if (ctx != null)
-            FragmentSettingsAll.refreshTransactions(ctx);
+        FragmentSettingsAll.refreshTransactions(ctx);
     }
 
     public void onTxAdded(byte[] tx, long blockheight, long timestamp, long amount) {

@@ -16,6 +16,29 @@ static BRMasterPubKey _pubKey;
 static BRTransaction **_transactions;
 static size_t _transactionsCounter = 0;
 
+static jobject getWalletInstance() {
+    JNIEnv *env;
+    jint rs = (*_jvm)->AttachCurrentThread(_jvm, &env, NULL);
+
+    jclass clazz = (*env)->FindClass(env, "com/breadwallet/wallet/BRWalletManager");
+    jfieldID instanceFid = (*env)->GetStaticFieldID(env, clazz, "instance",
+                                                    "Lcom/breadwallet/wallet/BRWalletManager;");
+
+    jobject instance;
+    if (instanceFid == NULL) {
+        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ",
+                            "instanceFid is null!!!! returning ");
+        return NULL;
+    }
+    instance = (*env)->GetStaticObjectField(env, clazz, instanceFid);
+    if (instance == NULL) {
+        instance = (*env)->AllocObject(env, clazz);
+        (*env)->SetObjectField(env, clazz, instanceFid, instance);
+    }
+
+    return instance;
+}
+
 static void balanceChanged(void *info, uint64_t balance) {
 //    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ",
 //                        "balanceChanged: %d", balance);
@@ -23,7 +46,7 @@ static void balanceChanged(void *info, uint64_t balance) {
     jint rs = (*_jvm)->AttachCurrentThread(_jvm, &globalEnv, NULL);
     //create class
     jclass clazz = (*globalEnv)->FindClass(globalEnv, "com/breadwallet/wallet/BRWalletManager");
-    jobject entity = (*globalEnv)->AllocObject(globalEnv, clazz);
+    jobject entity = getWalletInstance();
     jmethodID mid = (*globalEnv)->GetMethodID(globalEnv, clazz, "onBalanceChanged", "(J)V");
 //    uint64_t walletBalance = BRWalletBalance(wallet);
 //    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ",
@@ -42,7 +65,7 @@ static void txAdded(void *info, BRTransaction *tx) {
 //                        "******TX ADDED CALLBACK******: %d", BRTransactionIsSigned(tx));
     //create class
     jclass clazz = (*globalEnv)->FindClass(globalEnv, "com/breadwallet/wallet/BRWalletManager");
-    jobject entity = (*globalEnv)->AllocObject(globalEnv, clazz);
+    jobject entity = getWalletInstance();
     jmethodID mid = (*globalEnv)->GetMethodID(globalEnv, clazz, "onTxAdded", "([BJJJ)V");
     //call java methods
     __android_log_print(ANDROID_LOG_ERROR, "******TX ADDED CALLBACK AFTER PARSE******: ", "BRWalletAmountReceivedFromTx: %d, ",
@@ -87,7 +110,7 @@ static void txUpdated(void *info, const UInt256 txHashes[], size_t count, uint32
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "txUpdated");
     //create class
     jclass clazz = (*globalEnv)->FindClass(globalEnv, "com/breadwallet/wallet/BRWalletManager");
-    jobject entity = (*globalEnv)->AllocObject(globalEnv, clazz);
+    jobject entity = getWalletInstance();
     jmethodID mid = (*globalEnv)->GetMethodID(globalEnv, clazz, "onTxUpdated", "([B)V");
     //call java methods
     //(*globalEnv)->CallVoidMethod(globalEnv, entity, mid, balance);
@@ -100,7 +123,7 @@ static void txDeleted(void *info, UInt256 txHash) {
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "txDeleted");
     //create class
     jclass clazz = (*globalEnv)->FindClass(globalEnv, "com/breadwallet/wallet/BRWalletManager");
-    jobject entity = (*globalEnv)->AllocObject(globalEnv, clazz);
+    jobject entity = getWalletInstance();
     jmethodID mid = (*globalEnv)->GetMethodID(globalEnv, clazz, "onTxDeleted", "([B)V");
     //call java methods
     //(*globalEnv)->CallVoidMethod(globalEnv, entity, mid, balance);
@@ -174,7 +197,7 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRWalletManager_createWallet(JNIEnv *
 //    }
     //create class
     jclass clazz = (*env)->FindClass(env, "com/breadwallet/wallet/BRWalletManager");
-    jobject entity = (*env)->AllocObject(env, clazz);
+    jobject entity = getWalletInstance();
     jmethodID mid = (*env)->GetMethodID(env, clazz, "onBalanceChanged", "(J)V");
     //call java methods
     (*env)->CallVoidMethod(env, entity, mid, BRWalletBalance(_wallet));
@@ -354,6 +377,8 @@ const void *theSeed(void *info, const char *authPrompt, uint64_t amount, size_t 
     return r != 0 ? rawString : "";
 }
 
+
+//TODO delete this testing method
 void printBits(unsigned int num){
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "\n\n");
     while (num) {

@@ -160,8 +160,8 @@ public class MainActivity extends FragmentActivity implements Observer {
         //TODO delete the core testing
 //        cTests();
 
-        deleteTxs = true;
-        testTxAdding(6);
+//        deleteTxs = true;
+//        testTxAdding(6);
 //        new Handler().postDelayed(new Runnable() {
 //            @Override
 //            public void run() {

@@ -70,7 +70,7 @@ public class MainFragmentQR extends Fragment {
     private int firstToastY = -1;
     private int secondToastY = -1;
     public static File qrCodeImageFile;
-    public static String receiveAddress;
+    private String receiveAddress;
     public static final String RECEIVE_ADDRESS_PREFS = "ReceiveAddress";
     public static final String RECEIVE_ADDRESS = "address";
 
@@ -88,6 +88,7 @@ public class MainFragmentQR extends Fragment {
 //        Log.e(TAG,"FROM PREFS receiveAddress: " + receiveAddress);
         if (receiveAddress == null) {
             BRWalletManager.getInstance(getActivity()).refreshAddress();
+
         }
         //TODO refresh the address once used
         qrcode = (ImageView) rootView.findViewById(R.id.main_image_qr_code);
@@ -156,7 +157,6 @@ public class MainFragmentQR extends Fragment {
         int smallerDimension = width < height ? width : height;
         smallerDimension = smallerDimension * 3 / 4;
 
-//        Log.e(TAG, "@@@@@@@@@@@receiveAddress: " + receiveAddress);
         if (receiveAddress.length() < 5)
             throw new NullPointerException("receiveAddress cannot be null or it's corrupted!");
         mainAddressText.setText(receiveAddress);
@@ -203,17 +203,14 @@ public class MainFragmentQR extends Fragment {
     public void onResume() {
         super.onResume();
         MiddleViewAdapter.resetMiddleView(getActivity(),null);
-        SharedPreferences prefs = getActivity().getSharedPreferences(RECEIVE_ADDRESS_PREFS, Context.MODE_PRIVATE);
 
-        refreshAddress(prefs.getString(RECEIVE_ADDRESS, null));
+        refreshAddress();
     }
 
-    public void refreshAddress(String address){
-        receiveAddress = address;
+    public void refreshAddress(){
+        SharedPreferences prefs = getActivity().getSharedPreferences(RECEIVE_ADDRESS_PREFS, Context.MODE_PRIVATE);
+        receiveAddress = prefs.getString(RECEIVE_ADDRESS, null);
 //        Log.e(TAG, "FROM PREFS receiveAddress: " + receiveAddress);
-        if (receiveAddress == null) {
-            BRWalletManager.getInstance(getActivity()).refreshAddress();
-        }
         generateQR();
     }
 
