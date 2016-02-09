@@ -317,4 +317,6 @@ public class BRWalletManager {
 
     public native TransactionListItem[] getTransactions();
 
+    public native void pay(String addressHolder, long amountHolder);
+
 }

@@ -5,6 +5,7 @@
 #include "jni.h"
 #include "BRInt.h"
 #include "BRWallet.h"
+
 #ifndef BREADWALLET_WALLET_H
 #define BREADWALLET_WALLET_H
 
@@ -17,14 +18,15 @@ JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_encodeSeed(JNIE
                                                                             jobjectArray stringArray);
 
 JNIEXPORT void Java_com_breadwallet_wallet_BRWalletManager_createWallet(JNIEnv *env,
-                                                                              jobject thiz,
-                                                                              size_t txCount,
-                                                                              jbyteArray bytePubKey,
-                                                                              int r);
+                                                                        jobject thiz,
+                                                                        size_t txCount,
+                                                                        jbyteArray bytePubKey,
+                                                                        int r);
 
 JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_getMasterPubKey(JNIEnv *env,
                                                                                  jobject thiz,
                                                                                  jstring phrase);
+
 JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_putTransaction(JNIEnv *env,
                                                                                 jobject thiz,
                                                                                 jbyteArray transaction);
@@ -34,10 +36,13 @@ JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_createTxArrayWi
                                                                                         size_t txCount);
 
 JNIEXPORT jstring Java_com_breadwallet_wallet_BRWalletManager_getReceiveAddress(JNIEnv *env,
-                                                                                        jobject thiz);
+                                                                                jobject thiz);
 
 JNIEXPORT jobjectArray Java_com_breadwallet_wallet_BRWalletManager_getTransactions(JNIEnv *env,
-                                                                                jobject thiz);
+                                                                                   jobject thiz);
+
+JNIEXPORT void Java_com_breadwallet_wallet_BRWalletManager_pay(JNIEnv *env, jobject thiz,
+                                                               jstring address, jlong amount);
 
 const void *theSeed(void *info, const char *authPrompt, uint64_t amount, size_t *seedLen);
 

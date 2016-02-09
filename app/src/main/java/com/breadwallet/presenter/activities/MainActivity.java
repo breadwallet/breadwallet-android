@@ -127,6 +127,8 @@ public class MainActivity extends FragmentActivity implements Observer {
     public static final Point screenParametersPoint = new Point();
     private int middleViewPressedCount = 0;
     private BroadcastReceiver mPowerKeyReceiver = null;
+    private String amountHolder;
+    private String addressHolder;
 
     private static int MODE = RELEASE;
     private TextView testnet;
@@ -154,7 +156,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         setContentView(R.layout.activity_main);
         app = this;
         initializeViews();
-
         Log.e(TAG, "MainActivity created!");
 
         //TODO delete the core testing
@@ -227,7 +228,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         pay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((BreadWalletApp) getApplicationContext()).authDialogBlockingUi(app, BreadWalletApp.AUTH_FOR_PAY);
+                pay(0);
             }
         });
 
@@ -300,6 +301,8 @@ public class MainActivity extends FragmentActivity implements Observer {
     protected void onResume() {
         super.onResume();
         app = this;
+        amountHolder = null;
+        addressHolder = null;
         CurrencyManager currencyManager = CurrencyManager.getInstance(this);
         currencyManager.startTimer();
         currencyManager.deleteObservers();
@@ -515,22 +518,42 @@ public class MainActivity extends FragmentActivity implements Observer {
     }
 
 
-    public void pay() {
+    public void pay(int auth) {
+        if (auth == 1) {
+            if (addressHolder == null || amountHolder == null) return;
+            if (Long.valueOf(amountHolder) <= 0 || addressHolder.length() < 30) return;
+            BRWalletManager walletManager = BRWalletManager.getInstance(this);
+            walletManager.pay(addressHolder, Long.valueOf(amountHolder) * 100);
+            final MediaPlayer mp = MediaPlayer.create(this, R.raw.coinflip);
+            mp.start();
+            FragmentAnimator.hideScanResultFragment();
+            return;
+        }
         SpringAnimator.showAnimation(pay.getRootView());
-        final MediaPlayer mp = MediaPlayer.create(this, R.raw.coinflip);
-        mp.start();
-        String amount = FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_RIGHT ?
+
+        amountHolder = FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_RIGHT ?
                 AmountAdapter.getRightValue() : AmountAdapter.getLeftValue();
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("insufficient funds to send: " + amount)
-                .setCancelable(false)
-                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-        AlertDialog alert = builder.create();
-        alert.show();
+        addressHolder = FragmentScanResult.address;
+        if (addressHolder == null) return;
+        if (addressHolder.length() < 20) return;
+        if (Long.valueOf(amountHolder) <= 0) return;
+        Log.e(TAG, "*********Sending: " + amountHolder + " to: " + addressHolder);
+
+        if (Long.valueOf(amountHolder) < CurrencyManager.getInstance(this).getBALANCE()) {
+            confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, Long.valueOf(amountHolder), null));
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("insufficient funds to send: " + amountHolder)
+                    .setCancelable(false)
+                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
+
     }
 
     public void request(View view) {
@@ -606,13 +629,33 @@ public class MainActivity extends FragmentActivity implements Observer {
         }
 
         //DecimalFormat decimalFormat = new DecimalFormat("0.00");
-        settings = MainActivity.app.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        settings = getSharedPreferences(MainActivity.PREFS_NAME, 0);
         String iso = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
         float rate = settings.getFloat(FragmentCurrency.RATE, 1.0f);
-        String amount = String.valueOf(CurrencyManager.getInstance(this).getBitsFromSatoshi(request.amount));
-        ((BreadWalletApp) getApplication()).showCustomDialog("payment info", certification + allAddresses.toString() +
-                "\n\n" + "amount " + CurrencyManager.getInstance(this).getFormattedCurrencyString("BTC", String.valueOf(request.amount / 100))
-                + " (" + CurrencyManager.getInstance(this).getFormattedCurrencyString(iso, amount) + ")", "send");
+        String amount = String.valueOf(request.amount);
+        CurrencyManager m = CurrencyManager.getInstance(this);
+        final String message = certification + allAddresses.toString() + "\n\n" + "amount: " + m.getFormattedCurrencyString("BTC", String.valueOf(request.amount))
+                + " (" + m.getExchangeForAmount(rate, iso, amount) + ")";
+
+//        ((BreadWalletApp) getApplication()).showCustomDialog("payment info", certification + allAddresses.toString() +
+//                "\n\n" + "amount " + CurrencyManager.getInstance(this).getFormattedCurrencyString("BTC", String.valueOf(request.amount / 100))
+//                + " (" + CurrencyManager.getInstance(this).getFormattedCurrencyString(iso, amount) + ")", "send");
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                new android.app.AlertDialog.Builder(app)
+                        .setTitle("payment info")
+                        .setMessage(message)
+                        .setPositiveButton("send", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                ((BreadWalletApp) getApplicationContext()).authDialogBlockingUi(app, BreadWalletApp.AUTH_FOR_PAY);
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+            }
+        });
     }
 
     @Override

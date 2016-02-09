@@ -111,4 +111,8 @@
     <string name="more">more…</string>
     <string name="sent">sent: %1$s</string>
     <string name="received">received: %1$s</string>
+    <string name="wallet_address">wallet address</string>
+    <string name="payment_address">payment address</string>
+    <string name="spent_address">spent address</string>
+    <string name="bitcoin_network_fee">bitcoin network fee</string>
 </resources>

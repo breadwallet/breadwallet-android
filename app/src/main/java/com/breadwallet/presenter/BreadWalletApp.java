@@ -356,7 +356,7 @@ public class BreadWalletApp extends Application {
                                     case AUTH_FOR_PAY:
                                         MainActivity app = MainActivity.app;
                                         if (app != null)
-                                            app.pay();
+                                            app.pay(1);
                                     case AUTH_FOR_GENERAL:
 
                                         break;

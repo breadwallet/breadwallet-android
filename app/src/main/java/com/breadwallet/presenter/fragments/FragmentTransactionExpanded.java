@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
@@ -44,48 +46,77 @@ public class FragmentTransactionExpanded extends Fragment {
     private static final String TAG = FragmentTransactionExpanded.class.getName();
     private TransactionListItem item;
 
-
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         // The last two arguments ensure LayoutParams are inflated
         // properly.
-        View rootView = null;
-        if (item.getSent() == 0) {
+        if (item == null) return null;
+        boolean received = item.getSent() == 0;
+        View rootView;
+        if (received) {
             rootView = inflater.inflate(R.layout.transaction_item_expanded_received, container, false);
         } else {
             rootView = inflater.inflate(R.layout.transaction_item_expanded_sent, container, false);
         }
-
         TextView hashText = (TextView) rootView.findViewById(R.id.tx_hash_text);
         TextView statusText = (TextView) rootView.findViewById(R.id.tx_status_text);
         TextView amountText = (TextView) rootView.findViewById(R.id.tx_amount_text);
         TextView exchangeText = (TextView) rootView.findViewById(R.id.tx_exchange_text);
-        TextView fromText = (TextView) rootView.findViewById(R.id.tx_from_text);
-        TextView fromDescription = (TextView) rootView.findViewById(R.id.tx_from_description);
-        TextView toText = (TextView) rootView.findViewById(R.id.tx_to_text);
-        TextView toDescription = (TextView) rootView.findViewById(R.id.tx_to_description);
-        TextView toAmountText = (TextView) rootView.findViewById(R.id.tx_to_amount_text);
-        TextView toExchangeText = (TextView) rootView.findViewById(R.id.tx_to_exchange_text);
-
-        if (item != null) {
+//        TextView fromText = (TextView) rootView.findViewById(R.id.tx_from_text);
+//        TextView fromDescription = (TextView) rootView.findViewById(R.id.tx_from_description);
+//        TextView toText = (TextView) rootView.findViewById(R.id.tx_to_text);
+//        TextView toDescription = (TextView) rootView.findViewById(R.id.tx_to_description);
+//        TextView toAmountText = (TextView) rootView.findViewById(R.id.tx_to_amount_text);
+//        TextView toExchangeText = (TextView) rootView.findViewById(R.id.tx_to_exchange_text);
+        LinearLayout generalTxFrom = (LinearLayout) rootView.findViewById(R.id.general_tx_from_layout);
+        LinearLayout generalTxTo = (LinearLayout) rootView.findViewById(R.id.general_tx_to_layout);
+        if (received) {
             CurrencyManager m = CurrencyManager.getInstance(getActivity());
             SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
             final double rate = settings.getFloat(FragmentCurrency.RATE, 0);
             final String iso = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
-            long amount = item.getSent() == 0 ? item.getReceived() : item.getSent() - item.getReceived();
+            long amount = item.getReceived();
 
             hashText.setText(item.getHexId());
             statusText.setText(String.format("confirmed in block #%d\n%s", item.getBlockHeight(),
                     FragmentSettingsAll.getFormattedDateFromLong(item.getTimeStamp())));
             amountText.setText(m.getFormattedCurrencyString("BTC", String.valueOf(m.getBitsFromSatoshi(amount))));
             exchangeText.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, String.valueOf(amount))));
-            fromText.setText(item.getFrom());
-//            fromDescription.setText("spent address");//TODO ask Aaron what here
-            toText.setText(item.getTo());
-//            toDescription.setText("wallet address"); //TODO ask Aaron what here
-            toAmountText.setText(m.getFormattedCurrencyString("BTC", String.valueOf(m.getBitsFromSatoshi(amount))));
-            toExchangeText.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, String.valueOf(amount))));
+
+            String fromAddresses[] = item.getFrom();
+            setReceivedFromAddresses(generalTxFrom, fromAddresses);
+
+            String toAddresses[] = item.getTo();
+            setReceivedToAddresses(generalTxTo, toAddresses, item.getOutAmounts());
+//            toAmountText.setText(m.getFormattedCurrencyString("BTC", String.valueOf(m.getBitsFromSatoshi(amount))));
+//            toExchangeText.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, String.valueOf(amount))));
+        } else {
+            TextView toFeeAmountText = (TextView) rootView.findViewById(R.id.tx_to_fee_amount_text);
+            TextView toFeeExchangeText = (TextView) rootView.findViewById(R.id.tx_to_fee_exchange_text);
+
+            CurrencyManager m = CurrencyManager.getInstance(getActivity());
+            SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
+            final double rate = settings.getFloat(FragmentCurrency.RATE, 0);
+            final String iso = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
+            long amount = (item.getSent() - item.getReceived() + item.getFee()) * -1;
+            long fee = item.getFee() * -1;
+
+            hashText.setText(item.getHexId());
+            statusText.setText(String.format("confirmed in block #%d\n%s", item.getBlockHeight(),
+                    FragmentSettingsAll.getFormattedDateFromLong(item.getTimeStamp())));
+            amountText.setText(m.getFormattedCurrencyString("BTC", String.valueOf(m.getBitsFromSatoshi(amount))));
+            exchangeText.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, String.valueOf(amount))));
+            String fromAddresses[] = item.getFrom();
+            long[] outAmounts = item.getOutAmounts();
+            setSentFromAddresses(generalTxFrom, fromAddresses);
+            String toAddresses[] = item.getTo();
+            setSentToAddresses(generalTxTo, toAddresses, outAmounts);
+//            toDescription.setText(getString(R.string.payment_address));
+//            toAmountText.setText(m.getFormattedCurrencyString("BTC", String.valueOf(m.getBitsFromSatoshi(amount))));
+//            toExchangeText.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, String.valueOf(amount))));
+            toFeeAmountText.setText(m.getFormattedCurrencyString("BTC", String.valueOf(m.getBitsFromSatoshi(fee))));
+            toFeeExchangeText.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, String.valueOf(fee))));
 
         }
 
@@ -95,7 +126,7 @@ public class FragmentTransactionExpanded extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        MiddleViewAdapter.resetMiddleView(getActivity(),null);
+        MiddleViewAdapter.resetMiddleView(getActivity(), null);
     }
 
     @Override
@@ -107,5 +138,92 @@ public class FragmentTransactionExpanded extends Fragment {
         this.item = item;
     }
 
+    private void setReceivedFromAddresses(LinearLayout view, String[] addresses) {
+        view.addView(FragmentSettingsAll.getSeparationLine(0, getActivity()));
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        for (String address : addresses) {
+            LinearLayout addressBlock = (LinearLayout) inflater.inflate(R.layout.
+                    transaction_received_from_addresses, null);
+            TextView txFrom = (TextView) addressBlock.findViewById(R.id.tx_from_text);
+            TextView txFromDescription = (TextView) addressBlock.findViewById(R.id.tx_from_description);
+            txFrom.setText(address);
+            txFromDescription.setText(getString(R.string.spent_address));
+            view.addView(addressBlock);
+            view.addView(FragmentSettingsAll.getSeparationLine(0, getActivity()));
+        }
+    }
+
+    private void setSentFromAddresses(LinearLayout view, String[] addresses) {
+        view.addView(FragmentSettingsAll.getSeparationLine(0, getActivity()));
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        for (String address : addresses) {
+            RelativeLayout addressBlock = (RelativeLayout) inflater.inflate(R.layout.
+                    transaction_sent_from_addresses, null);
+            TextView txFrom = (TextView) addressBlock.findViewById(R.id.tx_from_text);
+            TextView txFromDescription = (TextView) addressBlock.findViewById(R.id.tx_from_description);
+            txFrom.setText(address);
+            txFromDescription.setText(getString(R.string.wallet_address));
+            view.addView(addressBlock);
+            view.addView(FragmentSettingsAll.getSeparationLine(0, getActivity()));
+        }
+    }
+
+    private void setReceivedToAddresses(LinearLayout view, String[] addresses, long[] amounts) {
+        view.addView(FragmentSettingsAll.getSeparationLine(0, getActivity()));
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        for (int i = 0; i < addresses.length; i++) {
+            RelativeLayout addressBlock = (RelativeLayout) inflater.inflate(R.layout.
+                    transaction_received_to_addresses, null);
+            CurrencyManager m = CurrencyManager.getInstance(getActivity());
+            SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
+            final double rate = settings.getFloat(FragmentCurrency.RATE, 0);
+            final String iso = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
+
+//            amountText.setText(m.getFormattedCurrencyString("BTC", String.valueOf(m.getBitsFromSatoshi(amount))));
+//            exchangeText.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, String.valueOf(amount))));
+
+            TextView txTo = (TextView) addressBlock.findViewById(R.id.tx_to_text);
+            TextView txToDescription = (TextView) addressBlock.findViewById(R.id.tx_to_description);
+            TextView txToAmount = (TextView) addressBlock.findViewById(R.id.tx_to_amount_text);
+            TextView txToExchange = (TextView) addressBlock.findViewById(R.id.tx_to_exchange_text);
+
+            txTo.setText(addresses[i]);
+            txToDescription.setText(getString(R.string.wallet_address));
+            txToAmount.setText(m.getFormattedCurrencyString("BTC", String.valueOf(m.getBitsFromSatoshi(amounts[i]))));
+            txToExchange.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, String.valueOf(amounts[i]))));
+
+            view.addView(addressBlock);
+            view.addView(FragmentSettingsAll.getSeparationLine(0, getActivity()));
+        }
+    }
+
+    private void setSentToAddresses(LinearLayout view, String[] addresses, long[] amounts) {
+        view.addView(FragmentSettingsAll.getSeparationLine(0, getActivity()));
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        for (int i = 0; i < addresses.length; i++) {
+            RelativeLayout addressBlock = (RelativeLayout) inflater.inflate(R.layout.
+                    transaction_sent_to_addresses, null);
+            CurrencyManager m = CurrencyManager.getInstance(getActivity());
+            SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
+            final double rate = settings.getFloat(FragmentCurrency.RATE, 0);
+            final String iso = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
+
+//            amountText.setText(m.getFormattedCurrencyString("BTC", String.valueOf(m.getBitsFromSatoshi(amount))));
+//            exchangeText.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, String.valueOf(amount))));
+
+            TextView txTo = (TextView) addressBlock.findViewById(R.id.tx_to_text);
+            TextView txToDescription = (TextView) addressBlock.findViewById(R.id.tx_to_description);
+            TextView txToAmount = (TextView) addressBlock.findViewById(R.id.tx_to_amount_text);
+            TextView txToExchange = (TextView) addressBlock.findViewById(R.id.tx_to_exchange_text);
+
+            txTo.setText(addresses[i]);
+            txToDescription.setText(getString(R.string.payment_address));
+            txToAmount.setText(m.getFormattedCurrencyString("BTC", String.valueOf(m.getBitsFromSatoshi(-amounts[i]))));
+            txToExchange.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, String.valueOf(-amounts[i]))));
+
+            view.addView(addressBlock);
+            view.addView(FragmentSettingsAll.getSeparationLine(0, getActivity()));
+        }
+    }
 
 }

@@ -40,9 +40,7 @@ public class RequestQRActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_request_qr);
 
-
-
-        //TODO get the actual address
+        //TODO make sure the address changes on txAdded
         SharedPreferences prefs = getSharedPreferences(MainFragmentQR.RECEIVE_ADDRESS_PREFS, Context.MODE_PRIVATE);
         String requestAddrs = prefs.getString(MainFragmentQR.RECEIVE_ADDRESS, "");
         THE_ADDRESS = "bitcoin:" + requestAddrs + "?amount=" + tmpAmount;

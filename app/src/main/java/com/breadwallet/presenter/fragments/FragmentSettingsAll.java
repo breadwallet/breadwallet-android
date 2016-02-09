@@ -20,11 +20,11 @@ import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.FragmentAnimator;
-import com.breadwallet.wallet.BRWalletManager;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Random;
 
 /**
  * BreadWallet
@@ -119,8 +119,8 @@ public class FragmentSettingsAll extends Fragment {
     }
 
     public static void refreshTransactions(Context ctx) {
-        //TODO put back the original method
-        transactionObjects = BRWalletManager.getInstance(ctx).getTransactions();
+//        transactionObjects = BRWalletManager.getInstance(ctx).getTransactions();
+        transactionObjects = getTestTransactions(); //TODO this is a test
 //        transactionObjects = new TransactionListItem[0];
 //            transactionObjects = getTestTransactions();
 //        Log.e(TAG, "REFRESH TRANSACTIONS: " + transactionObjects.length);
@@ -129,11 +129,13 @@ public class FragmentSettingsAll extends Fragment {
     }
 
     private static TransactionListItem[] getTestTransactions() {
-        TransactionListItem[] transactionListItems = new TransactionListItem[10];
-        for (int i = 0; i < transactionListItems.length; i++) {
-            transactionListItems[i] = new TransactionListItem(i * 81, i * 23, "something".getBytes(),
-                    i * 4, i * 9, i * 17, "some address", "some other address", 31312);
-        }
+        TransactionListItem[] transactionListItems = new TransactionListItem[4];
+        Random random = new Random();
+        transactionListItems[0] = new TransactionListItem(System.currentTimeMillis(), random.nextInt(), "something".getBytes(),
+                50000, 13000, 500,
+                new String[]{"1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "14CCXMopCcQH1fgeqjcn4sBdqk3fTW2adi"},
+                new String[]{"3AckDd1ot9rSiRUCfazd7yufVbCorerWjV", "3HPF1x3g34oeiakfmrUb8Ej6mbWSj8CpZc"},
+                99999, new long[]{312312, 5435262});
         return transactionListItems;
     }
 
@@ -251,9 +253,9 @@ public class FragmentSettingsAll extends Fragment {
 
         dateTextView.setText(getFormattedDateFromLong(System.currentTimeMillis()));
 
-        long bitsAmount = m.getBitsFromSatoshi(received ? item.getReceived() : item.getSent() - item.getReceived());
+        long bitsAmount = m.getBitsFromSatoshi(received ? item.getReceived() : (item.getSent() - item.getReceived()) * -1);
         bitsTextView.setText(m.getFormattedCurrencyString("BTC", String.valueOf(bitsAmount)));
-        dollarsTextView.setText(String.format("(%s)", m.getExchangeForAmount(m.getRateFromPrefs(), m.getISOFromPrefs(), String.valueOf(bitsAmount))));
+        dollarsTextView.setText(String.format("(%s)", m.getExchangeForAmount(m.getRateFromPrefs(), m.getISOFromPrefs(), String.valueOf(gbitsAmount))));
         long bitsAfterTx = m.getBitsFromSatoshi(item.getBalanceAfterTx());
         bitsTotalTextView.setText(m.getFormattedCurrencyString("BTC", String.valueOf(bitsAfterTx)));
         dollarsTotalTextView.setText(String.format("(%s)", m.getExchangeForAmount(m.getRateFromPrefs(), m.getISOFromPrefs(), String.valueOf(bitsAfterTx))));
