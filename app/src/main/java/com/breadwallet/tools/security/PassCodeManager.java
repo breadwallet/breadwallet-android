@@ -1,5 +1,7 @@
 package com.breadwallet.tools.security;
 
+import android.content.Context;
+
 /**
  * BreadWallet
  * <p/>
@@ -25,25 +27,24 @@ package com.breadwallet.tools.security;
  * THE SOFTWARE.
  */
 public class PassCodeManager {
+    private static PassCodeManager instance;
     public static final String TAG = PassCodeManager.class.getName();
-    private static char[] PASS_CODE = {'1', '2', '3', '4'};
 
-    public static boolean checkAuth(String pass) {
-        if (pass.length() == PASS_CODE.length) {
-            int pos = 0;
-            for (char c : PASS_CODE) {
-                if (c != pass.charAt(pos++)) return false;
-            }
-        } else {
-            return false;
-        }
-        return true;
+    private PassCodeManager() {
     }
 
-    public static void setPassCode(String pass) {
-        PASS_CODE = new char[pass.length()];
-        for (int i = 0; i < pass.length(); i++) {
-            PASS_CODE[i] = pass.charAt(i);
-        }
+    public static PassCodeManager getInstance() {
+        if (instance == null)
+            instance = new PassCodeManager();
+        return instance;
+    }
+
+    public boolean checkAuth(CharSequence passcode, Context context) {
+
+        return passcode.equals(KeyStoreManager.getPassCode(context));
+    }
+
+    public void setPassCode(String pass, Context context) {
+        KeyStoreManager.putPassCode(pass, context);
     }
 }

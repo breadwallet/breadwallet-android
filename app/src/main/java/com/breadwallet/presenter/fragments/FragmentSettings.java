@@ -50,50 +50,32 @@ public class FragmentSettings extends Fragment {
     private static final String TAG = FragmentSettings.class.getName();
     private MainActivity app;
     private FragmentSettings fragmentSettings;
-    private ChangePasswordDialogFragment changePasswordDialogFragment;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         // The last two arguments ensure LayoutParams are inflated
         // properly.
-        return inflater.inflate(
+
+        View rootView = inflater.inflate(
                 R.layout.fragment_settings, container, false);
-    }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-//        Log.e(TAG, "In onResume");
-        MiddleViewAdapter.resetMiddleView(getActivity(),null);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-//        Log.e(TAG, "In onPause");
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
         app = MainActivity.app;
         fragmentSettings = this;
 //        fragmentCurrency = app.fragmentCurrency;
-        changePasswordDialogFragment = new ChangePasswordDialogFragment();
         FragmentCurrency fragmentCurrency = (FragmentCurrency) getActivity().getFragmentManager().
                 findFragmentByTag(FragmentCurrency.class.getName());
         new ListInitiatorTask().execute();
-        RelativeLayout about = (RelativeLayout) getView().findViewById(R.id.about);
-        TextView currencyName = (TextView) getView().findViewById(R.id.three_letters_currency);
-        RelativeLayout changePassword = (RelativeLayout) getView().findViewById(R.id.change_password);
+        RelativeLayout about = (RelativeLayout) rootView.findViewById(R.id.about);
+        TextView currencyName = (TextView) rootView.findViewById(R.id.three_letters_currency);
+        RelativeLayout changePassword = (RelativeLayout) rootView.findViewById(R.id.change_password);
         SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
         final String tmp = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
 //        Log.e(TAG, "Tmp 3 letters: " + tmp);
         currencyName.setText(tmp);
-        RelativeLayout localCurrency = (RelativeLayout) getView().findViewById(R.id.local_currency);
-        RelativeLayout recoveryPhrase = (RelativeLayout) getView().findViewById(R.id.recovery_phrase);
-        RelativeLayout startRecoveryWallet = (RelativeLayout) getView().findViewById(R.id.start_recovery_wallet);
+        RelativeLayout localCurrency = (RelativeLayout) rootView.findViewById(R.id.local_currency);
+        RelativeLayout recoveryPhrase = (RelativeLayout) rootView.findViewById(R.id.recovery_phrase);
+        RelativeLayout startRecoveryWallet = (RelativeLayout) rootView.findViewById(R.id.start_recovery_wallet);
         startRecoveryWallet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -144,9 +126,30 @@ public class FragmentSettings extends Fragment {
             @Override
             public void onClick(View v) {
                 final android.app.FragmentManager fm = getActivity().getFragmentManager();
-                changePasswordDialogFragment.show(fm, TAG);
+                new ChangePasswordDialogFragment().show(fm, ChangePasswordDialogFragment.class.getName());
             }
         });
+
+        return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+//        Log.e(TAG, "In onResume");
+        MiddleViewAdapter.resetMiddleView(getActivity(), null);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+//        Log.e(TAG, "In onPause");
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
     }
 
     private class ListInitiatorTask extends AsyncTask {

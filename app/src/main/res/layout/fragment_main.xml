@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:windowSoftInputMode="adjustPan|adjustResize"
-   >
+    android:windowSoftInputMode="adjustPan|adjustResize">
 
     <TextView
         android:id="@+id/main_text_send_money"
@@ -13,66 +12,45 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="send money:"
-        android:textSize="24sp" />
+        android:textSize="@dimen/text_size" />
 
     <Button
         android:id="@+id/main_button_scan_qr_code"
-        android:layout_width="270dp"
-        android:layout_height="60dp"
+        android:layout_width="240dp"
+        android:layout_height="50dp"
         android:layout_gravity="center"
         android:layout_marginTop="32dp"
         android:background="@drawable/button_regular_blue"
         android:src="@drawable/cameraguide_blue_small"
-        android:text="scan QR code"
+        android:text="@string/scan_qr_code"
+        android:textAllCaps="false"
         android:textColor="@color/dark_blue"
-        android:textSize="20sp" />
+        android:textSize="16sp" />
 
     <Button
         android:id="@+id/main_button_pay_address_from_clipboard"
-        android:layout_width="270dp"
-        android:layout_height="60dp"
+        android:layout_width="240dp"
+        android:layout_height="50dp"
         android:layout_gravity="center"
         android:layout_marginTop="50dp"
         android:background="@drawable/button_regular_blue"
-        android:text="pay address from clipboard "
+        android:text="@string/pay_address_from_clipboard"
+        android:textAllCaps="false"
         android:textColor="@color/dark_blue"
-        android:textSize="20sp" />
+        android:textSize="16sp" />
 
     <EditText
         android:id="@+id/address_edit_text"
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
+        android:layout_marginTop="20dp"
         android:background="#00000000"
         android:text="The address"
         android:textAlignment="gravity"
-        android:textColor="@color/grey" />
-
-    <TextView
-        android:id="@+id/confirmation_message"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:textAppearance="@android:style/TextAppearance.Material.Body2"
-        android:textColor="?android:attr/colorAccent"
-        android:text="@string/purchase_done"
-        android:visibility="gone"/>
-
-    <TextView
-        android:id="@+id/encrypted_message"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:textAppearance="@android:style/TextAppearance.Material.Body2"
-        android:textColor="?android:attr/colorAccent"
-        android:text="@string/purchase_done"
-        android:visibility="gone"/>
+        android:textColor="@color/grey"
+        android:textSize="@dimen/text_size" />
 
 </LinearLayout>

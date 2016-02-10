@@ -134,7 +134,7 @@ static void savePeers(void *info, const BRPeer peers[], size_t count) {
 }
 
 static int networkIsReachable(void *info) {
-
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "networkIsReachable");
 }
 
 JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_connect(JNIEnv *env, jobject thiz,
@@ -224,7 +224,3 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_createPeerArrayWithCoun
     _peers = calloc(prCount, sizeof(BRPeer));
     // need to call free();
 }
-
-
-
-

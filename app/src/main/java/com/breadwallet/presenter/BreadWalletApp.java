@@ -5,11 +5,11 @@ import android.app.Activity;
 import android.app.Application;
 import android.app.DialogFragment;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Point;
-import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.fragments.ChangePasswordDialogFragment;
 import com.breadwallet.presenter.fragments.FragmentRecoveryPhrase;
 import com.breadwallet.presenter.fragments.FragmentSettings;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
@@ -225,25 +226,29 @@ public class BreadWalletApp extends Application {
         if (keyguardManager.isKeyguardSecure()) {
 //                Intent intent = keyguardManager.createConfirmDeviceCredentialIntent(CREDENTIAL_TITLE, CREDENTIAL_DESCRIPTION);
 //                context.startActivityForResult(intent, 1);
-            FingerprintAuthenticationDialogFragment fingerprintAuthenticationDialogFragment
-                    = new FingerprintAuthenticationDialogFragment();
-            PasswordAuthenticationDialogFragment passwordAuthenticationDialogFragment
-                    = new PasswordAuthenticationDialogFragment();
-            android.app.FragmentManager fm = context.getFragmentManager();
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && mode != AUTH_FOR_PHRASE) {
-                FingerprintManager fingerprintManager = (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
-                if (fingerprintManager.hasEnrolledFingerprints()) {
-                    Log.e(TAG, "Starting the fingerprint Dialog! API 23+");
-                    fingerprintAuthenticationDialogFragment.setStage();
-//                fingerprintAuthenticationDialogFragment.setStage(
-//                        FingerprintAuthenticationDialogFragment.Stage.PASSWORD);
-                    fingerprintAuthenticationDialogFragment.show(fm, FingerprintAuthenticationDialogFragment.class.getName());
-                    return;
-                }
-            }
-            Log.e(TAG, "Starting the password Dialog! API <23");
-            passwordAuthenticationDialogFragment.show(fm, PasswordAuthenticationDialogFragment.class.getName());
+            ChangePasswordDialogFragment changePasswordDialogFragment = new ChangePasswordDialogFragment();
+            changePasswordDialogFragment.setVerifyOnlyTrue();
+            FragmentManager fm = context.getFragmentManager();
+            changePasswordDialogFragment.show(fm, ChangePasswordDialogFragment.class.getName());
+//            FingerprintAuthenticationDialogFragment fingerprintAuthenticationDialogFragment
+//                    = new FingerprintAuthenticationDialogFragment();
+//            PasswordAuthenticationDialogFragment passwordAuthenticationDialogFragment
+//                    = new PasswordAuthenticationDialogFragment();
+//            android.app.FragmentManager fm = context.getFragmentManager();
+//
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && mode != AUTH_FOR_PHRASE) {
+//                FingerprintManager fingerprintManager = (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
+//                if (fingerprintManager.hasEnrolledFingerprints()) {
+//                    Log.e(TAG, "Starting the fingerprint Dialog! API 23+");
+//                    fingerprintAuthenticationDialogFragment.setStage();
+////                fingerprintAuthenticationDialogFragment.setStage(
+////                        FingerprintAuthenticationDialogFragment.Stage.PASSWORD);
+//                    fingerprintAuthenticationDialogFragment.show(fm, FingerprintAuthenticationDialogFragment.class.getName());
+//                    return;
+//                }
+//            }
+//            Log.e(TAG, "Starting the password Dialog! API <23");
+//            passwordAuthenticationDialogFragment.show(fm, PasswordAuthenticationDialogFragment.class.getName());
         } else {
             showDeviceNotSecuredWarning(context);
         }
@@ -312,7 +317,6 @@ public class BreadWalletApp extends Application {
 
     public void allowKeyStoreAccessForSeconds() {
         allowKeyStoreAccess = true;
-        Log.e(TAG, "allowKeyStoreAccess is: " + allowKeyStoreAccess);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {

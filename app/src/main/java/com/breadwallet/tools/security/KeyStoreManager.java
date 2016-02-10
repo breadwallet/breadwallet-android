@@ -72,10 +72,12 @@ public class KeyStoreManager {
     public static final String PHRASE_ALIAS = "phrase";
     private static final String PUB_KEY_ALIAS = "pubKey";
     private static final String WALLET_CREATION_TIME_ALIAS = "creationTime";
+    private static final String PASS_CODE_ALIAS = "passCode";
 
     private static final String PHRASE_FILENAME = "my_phrase";
     private static final String PUB_KEY_FILENAME = "my_pub_key";
     private static final String WALLET_CREATION_TIME_FILENAME = "my_creation_time";
+    private static final String PASS_CODE_FILENAME = "my_pass_code";
 
     @TargetApi(Build.VERSION_CODES.M)
     @SuppressWarnings("deprecation") // for api < 23
@@ -457,6 +459,115 @@ public class KeyStoreManager {
             return false;
         }
         return true;
+    }
+    public static boolean putPassCode(String passcode, Context context) {
+
+        if (passcode == null) return false;
+        if (passcode.length() == 0) return false;
+        try {
+            KeyStore keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
+            keyStore.load(null);
+            int nBefore = keyStore.size();
+
+            // Create the keys if necessary
+            if (!keyStore.containsAlias(PASS_CODE_ALIAS)) {
+                Calendar notBefore = Calendar.getInstance();
+                Calendar notAfter = Calendar.getInstance();
+                notAfter.add(Calendar.YEAR, 99);
+                KeyPairGenerator generator = KeyPairGenerator.getInstance(
+                        KeyProperties.KEY_ALGORITHM_RSA, ANDROID_KEY_STORE);
+                KeyPairGeneratorSpec spec = new KeyPairGeneratorSpec.Builder(context)
+                        .setAlias(PASS_CODE_ALIAS)
+                        .setKeySize(2048)
+                        .setSubject(new X500Principal(BREADWALLET_X500))
+                        .setSerialNumber(new BigInteger("5"))
+                        .setEncryptionRequired().setStartDate(notBefore.getTime())
+                        .setEndDate(notAfter.getTime())
+                        .build();
+                generator.initialize(spec);
+                KeyPair keyPair = generator.generateKeyPair(); // needs to be here
+//                Log.v(TAG, "The keypair" + keyPair.toString());
+            }
+            int nAfter = keyStore.size();
+//            Log.v(TAG, "Before = " + nBefore + " After = " + nAfter);
+
+            RSAPublicKey publicKey;
+            KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry) keyStore.getEntry(PASS_CODE_ALIAS, null);
+            publicKey = (RSAPublicKey) privateKeyEntry.getCertificate().getPublicKey();
+
+            // Encrypt the text
+            String filesDirectory = context.getFilesDir().getAbsolutePath();
+            String encryptedDataFilePath = filesDirectory + File.separator + PASS_CODE_FILENAME;
+//            Log.v(TAG, "strPhrase = " + strToStore);
+//            Log.v(TAG, "dataDirectory = " + dataDirectory);
+//            Log.v(TAG, "filesDirectory = " + filesDirectory);
+//            Log.v(TAG, "encryptedDataFilePath = " + encryptedDataFilePath);
+            Cipher inCipher;
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                inCipher = Cipher.getInstance(ENCRYPTION_PADDING, CIPHER_PROVIDER);
+            } else {
+                inCipher = Cipher.getInstance(ENCRYPTION_PADDING);
+            }
+            inCipher.init(Cipher.ENCRYPT_MODE, publicKey);
+            CipherOutputStream cipherOutputStream = new CipherOutputStream(
+                    new FileOutputStream(encryptedDataFilePath), inCipher);
+            byte[] bytesToStore = passcode.getBytes("UTF-8");
+            Log.e(TAG, "bytesToStore(phrase): length " + bytesToStore.length);
+            cipherOutputStream.write(bytesToStore);
+            cipherOutputStream.close();
+            return true;
+        } catch (Exception e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        }
+        return false;
+    }
+
+    public static String getPassCode(final Context context) {
+        KeyguardManager myKM = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
+        if (myKM.inKeyguardRestrictedInputMode()) {
+            Log.e(TAG, "THE SCREEN IS LOCKED!");
+            return null;
+        } else {
+            Log.e(TAG, "THE SCREEN IS UNLOCKED!");
+        }
+        KeyStore keyStore;
+        String recoveredSecret = "";
+        String filesDirectory = context.getFilesDir().getAbsolutePath();
+        String encryptedDataFilePath = filesDirectory + File.separator + PASS_CODE_FILENAME;
+        PrivateKey privateKey;
+        try {
+            keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
+            keyStore.load(null);
+            KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry)
+                    keyStore.getEntry(PASS_CODE_ALIAS, null);
+            privateKey = privateKeyEntry.getPrivateKey();
+            if (privateKey == null) throw new RuntimeException("private key is null");
+
+            Cipher outCipher;
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                outCipher = Cipher.getInstance(ENCRYPTION_PADDING, CIPHER_PROVIDER);
+            } else {
+                outCipher = Cipher.getInstance(ENCRYPTION_PADDING);
+            }
+            outCipher.init(Cipher.DECRYPT_MODE, privateKey);
+
+            CipherInputStream cipherInputStream = new CipherInputStream(
+                    new FileInputStream(encryptedDataFilePath), outCipher);
+            byte[] roundTrippedBytes = new byte[8]; //TODO: dynamically resize as we get more data
+            int index = 0;
+            int nextByte;
+            while ((nextByte = cipherInputStream.read()) != -1) {
+                roundTrippedBytes[index] = (byte) nextByte;
+                index++;
+            }
+            recoveredSecret = new String(roundTrippedBytes, 0, index, "UTF-8");
+            Log.e(TAG, "****>>>>>> the PASSCODE FROM KEYSTORE = " + recoveredSecret);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Log.e(TAG, "recovered: " + recoveredSecret);
+        return recoveredSecret;
     }
 
     public static String getSeed() {

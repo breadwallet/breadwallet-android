@@ -3,6 +3,7 @@ package com.breadwallet.presenter.activities;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.FragmentManager;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.ClipboardManager;
@@ -41,6 +42,7 @@ import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
 import com.breadwallet.presenter.entities.BRPeerEntity;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
+import com.breadwallet.presenter.fragments.ChangePasswordDialogFragment;
 import com.breadwallet.presenter.fragments.FragmentCurrency;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.presenter.fragments.FragmentSettings;
@@ -96,6 +98,7 @@ import java.util.Random;
 public class MainActivity extends FragmentActivity implements Observer {
     private static final String TAG = MainActivity.class.getName();
     public static final String PREFS_NAME = "MyPrefsFile";
+    public static final String IS_FIRST_TIME = "firstTime";
     public static final int BURGER = 0;
     public static final int CLOSE = 1;
     public static final int BACK = 2;
@@ -161,14 +164,16 @@ public class MainActivity extends FragmentActivity implements Observer {
         //TODO delete the core testing
 //        cTests();
 
-//        deleteTxs = true;
-//        testTxAdding(6);
+        deleteTxs = true;
+        testTxAdding(2);
 //        new Handler().postDelayed(new Runnable() {
 //            @Override
 //            public void run() {
 //                BRWalletManager.getInstance(app).testTransactionAdding(34643634);
 //            }
 //        }, 10000);
+
+        askForPasscode();
 
         setUpTheWallet();
         registerScreenLockReceiver();
@@ -645,9 +650,9 @@ public class MainActivity extends FragmentActivity implements Observer {
             @Override
             public void run() {
                 new android.app.AlertDialog.Builder(app)
-                        .setTitle("payment info")
+                        .setTitle(getString(R.string.payment_info))
                         .setMessage(message)
-                        .setPositiveButton("send", new DialogInterface.OnClickListener() {
+                        .setPositiveButton(getString(R.string.send), new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 ((BreadWalletApp) getApplicationContext()).authDialogBlockingUi(app, BreadWalletApp.AUTH_FOR_PAY);
                             }
@@ -715,7 +720,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         }
 
         BRWalletManager m = BRWalletManager.getInstance(this);
-        BRPeerManager pm = BRPeerManager.getInstance(this);
+        final BRPeerManager pm = BRPeerManager.getInstance(this);
 
 //        String phrase = KeyStoreManager.getKeyStoreString(this);
 //        if (phrase == null) return;
@@ -728,8 +733,8 @@ public class MainActivity extends FragmentActivity implements Observer {
         List<BRPeerEntity> peers = sqLiteManager.getPeers();
 
         int transactionsCount = transactions.size();
-        int blocksCount = blocks.size();
-        int peersCount = peers.size();
+        final int blocksCount = blocks.size();
+        final int peersCount = peers.size();
 
 //        CustomLogger.LogThis("setUpTheWallet: number of transactions from sqlite: ",
 //                String.valueOf(transactions.size()),
@@ -762,9 +767,15 @@ public class MainActivity extends FragmentActivity implements Observer {
 
         m.createWallet(transactionsCount, pubkey, r);
 
-        long earliestKeyTime = KeyStoreManager.getWalletCreationTime(this);
+        final long earliestKeyTime = KeyStoreManager.getWalletCreationTime(this);
 
-        pm.connect(earliestKeyTime, blocksCount, peersCount);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                pm.connect(earliestKeyTime, blocksCount, peersCount);
+            }
+        }).start();
+
 
     }
 
@@ -815,6 +826,22 @@ public class MainActivity extends FragmentActivity implements Observer {
                 }
             }, 10000 + finalVar * 1000);
         }
+    }
+
+    private void askForPasscode() {
+        SharedPreferences settings = getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        String isFirstTime = settings.getString(IS_FIRST_TIME, "YES");
+
+        if (isFirstTime.equalsIgnoreCase("YES")) {
+            final FragmentManager fm = getFragmentManager();
+            ChangePasswordDialogFragment changePasswordDialogFragment = new ChangePasswordDialogFragment();
+            changePasswordDialogFragment.setFirstTimeTrue();
+            changePasswordDialogFragment.show(fm, ChangePasswordDialogFragment.class.getName());
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(IS_FIRST_TIME, "NO");
+            editor.apply();
+        }
+
     }
 
     private native void clearCMemory();

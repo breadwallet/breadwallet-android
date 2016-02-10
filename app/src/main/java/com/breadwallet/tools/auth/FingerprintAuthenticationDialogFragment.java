@@ -202,7 +202,7 @@ public class FingerprintAuthenticationDialogFragment extends DialogFragment
         mPassword.setText("");
         // Assume the password is always correct.
         // In the real world situation, the password needs to be verified in the server side.
-        return PassCodeManager.checkAuth(password);
+        return PassCodeManager.getInstance().checkAuth(password, getActivity());
     }
 
     private final Runnable mShowKeyboardRunnable = new Runnable() {

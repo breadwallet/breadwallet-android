@@ -42,7 +42,8 @@
                     android:layout_gravity="center"
                     android:text="no Transactions"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@color/light_grey" />
+                    android:textColor="@color/light_grey"
+                    android:textSize="@dimen/text_size" />
 
                 <LinearLayout
                     android:id="@+id/layout_transaction_history"
@@ -59,7 +60,8 @@
                         android:text="transaction history"
                         android:textAlignment="center"
                         android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:textColor="@color/dark_blue" />
+                        android:textColor="@color/dark_blue"
+                        android:textSize="@dimen/text_size" />
                 </LinearLayout>
 
                 <RelativeLayout
@@ -100,7 +102,8 @@
                     android:layout_toEndOf="@+id/camera_guide"
                     android:text="import private key"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@color/dark_blue" />
+                    android:textColor="@color/dark_blue"
+                    android:textSize="@dimen/text_size" />
 
 
             </RelativeLayout>
@@ -137,7 +140,8 @@
                     android:layout_toEndOf="@+id/rescan_image"
                     android:text="rescan blockchain"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@color/dark_blue" />
+                    android:textColor="@color/dark_blue"
+                    android:textSize="@dimen/text_size" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -154,7 +158,7 @@
                 android:layout_marginTop="10dp"
                 android:text="@string/settingsall_rescan_instructions"
                 android:textColor="@color/grey"
-                android:textSize="18sp" />
+                android:textSize="16sp" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -177,7 +181,7 @@
                     android:text="settings"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/grey"
-                    android:textSize="28sp" />
+                    android:textSize="@dimen/text_size" />
 
                 <ImageView
                     android:layout_width="wrap_content"

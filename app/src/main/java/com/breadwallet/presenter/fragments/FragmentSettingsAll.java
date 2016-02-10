@@ -20,6 +20,7 @@ import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.FragmentAnimator;
+import com.breadwallet.wallet.BRWalletManager;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -119,8 +120,8 @@ public class FragmentSettingsAll extends Fragment {
     }
 
     public static void refreshTransactions(Context ctx) {
-//        transactionObjects = BRWalletManager.getInstance(ctx).getTransactions();
-        transactionObjects = getTestTransactions(); //TODO this is a test
+        transactionObjects = BRWalletManager.getInstance(ctx).getTransactions();
+//        transactionObjects = getTestTransactions(); //TODO this is a test
 //        transactionObjects = new TransactionListItem[0];
 //            transactionObjects = getTestTransactions();
 //        Log.e(TAG, "REFRESH TRANSACTIONS: " + transactionObjects.length);
@@ -255,7 +256,7 @@ public class FragmentSettingsAll extends Fragment {
 
         long bitsAmount = m.getBitsFromSatoshi(received ? item.getReceived() : (item.getSent() - item.getReceived()) * -1);
         bitsTextView.setText(m.getFormattedCurrencyString("BTC", String.valueOf(bitsAmount)));
-        dollarsTextView.setText(String.format("(%s)", m.getExchangeForAmount(m.getRateFromPrefs(), m.getISOFromPrefs(), String.valueOf(gbitsAmount))));
+        dollarsTextView.setText(String.format("(%s)", m.getExchangeForAmount(m.getRateFromPrefs(), m.getISOFromPrefs(), String.valueOf(bitsAmount))));
         long bitsAfterTx = m.getBitsFromSatoshi(item.getBalanceAfterTx());
         bitsTotalTextView.setText(m.getFormattedCurrencyString("BTC", String.valueOf(bitsAfterTx)));
         dollarsTotalTextView.setText(String.format("(%s)", m.getExchangeForAmount(m.getRateFromPrefs(), m.getISOFromPrefs(), String.valueOf(bitsAfterTx))));

@@ -110,9 +110,19 @@
     <string name="something_went_wrong">something went wrong</string>
     <string name="more">more…</string>
     <string name="sent">sent: %1$s</string>
+    <string name="send">send</string>
     <string name="received">received: %1$s</string>
     <string name="wallet_address">wallet address</string>
     <string name="payment_address">payment address</string>
     <string name="spent_address">spent address</string>
     <string name="bitcoin_network_fee">bitcoin network fee</string>
+    <string name="payment_info">payment info</string>
+    <string name="pay_address_from_clipboard">pay address from clipboard</string>
+    <string name="scan_qr_code">scan QR code</string>
+    <string name="request_an_amount">request an amount</string>
+    <string name="send_address_as_email">send address as email</string>
+    <string name="send_address_as_message">send address as message</string>
+    <string name="copy_address_to_clipboard">copy address to clipboard</string>
+    <string name="chose_a_passcode">chose a passcode</string>
+    <string name="enter_passcode">enter passcode</string>
 </resources>

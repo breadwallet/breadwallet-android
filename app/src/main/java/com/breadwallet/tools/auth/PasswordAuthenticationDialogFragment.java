@@ -141,7 +141,7 @@ public class PasswordAuthenticationDialogFragment extends DialogFragment
         mPassword.setText("");
         // Assume the password is always correct.
         // In the real world situation, the password needs to be verified in the server side.
-        return PassCodeManager.checkAuth(password);
+        return PassCodeManager.getInstance().checkAuth(password, getActivity());
     }
 
     private final Runnable mShowKeyboardRunnable = new Runnable() {
@@ -168,10 +168,10 @@ public class PasswordAuthenticationDialogFragment extends DialogFragment
 
         ((BreadWalletApp) getActivity().getApplicationContext()).setUnlocked(true);
         FragmentSettingsAll.refreshUI(getActivity());
-        MiddleViewAdapter.resetMiddleView(getActivity(),null);
+        MiddleViewAdapter.resetMiddleView(getActivity(), null);
         if (app != null)
             app.softKeyboard.closeSoftKeyboard();
-        ((BreadWalletApp)getActivity().getApplicationContext()).allowKeyStoreAccessForSeconds();
+        ((BreadWalletApp) getActivity().getApplicationContext()).allowKeyStoreAccessForSeconds();
         // Callback from FingerprintUiHelper. Let the activity know that authentication was
         // successful.
 //        mActivity.onPurchased(true /* withFingerprint */);
