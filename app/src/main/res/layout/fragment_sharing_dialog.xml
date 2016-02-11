@@ -6,15 +6,28 @@
     android:orientation="vertical">
 
     <TextView
+        android:layout_marginTop="10dp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="at this address:"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/grey"
+        android:textSize="16sp" />
+
+    <TextView
+        android:layout_marginTop="10dp"
         android:id="@+id/sharing_address"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
         android:gravity="center"
         android:text=""
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/grey"
-        android:textSize="14sp" />
+        android:textSize="10sp" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -37,6 +50,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/separator_height"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:background="@color/grey" />
 
     <TextView
@@ -55,6 +70,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/separator_height"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:background="@color/grey" />
 
     <TextView
@@ -73,6 +90,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/separator_height"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:background="@color/grey" />
 
     <TextView

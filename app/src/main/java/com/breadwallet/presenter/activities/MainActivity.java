@@ -42,7 +42,7 @@ import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
 import com.breadwallet.presenter.entities.BRPeerEntity;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
-import com.breadwallet.presenter.fragments.ChangePasswordDialogFragment;
+import com.breadwallet.presenter.fragments.PasswordDialogFragment;
 import com.breadwallet.presenter.fragments.FragmentCurrency;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.presenter.fragments.FragmentSettings;
@@ -534,7 +534,6 @@ public class MainActivity extends FragmentActivity implements Observer {
             FragmentAnimator.hideScanResultFragment();
             return;
         }
-        SpringAnimator.showAnimation(pay.getRootView());
 
         amountHolder = FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_RIGHT ?
                 AmountAdapter.getRightValue() : AmountAdapter.getLeftValue();
@@ -831,12 +830,12 @@ public class MainActivity extends FragmentActivity implements Observer {
     private void askForPasscode() {
         SharedPreferences settings = getSharedPreferences(MainActivity.PREFS_NAME, 0);
         String isFirstTime = settings.getString(IS_FIRST_TIME, "YES");
-
+//        isFirstTime = "YES";
         if (isFirstTime.equalsIgnoreCase("YES")) {
             final FragmentManager fm = getFragmentManager();
-            ChangePasswordDialogFragment changePasswordDialogFragment = new ChangePasswordDialogFragment();
-            changePasswordDialogFragment.setFirstTimeTrue();
-            changePasswordDialogFragment.show(fm, ChangePasswordDialogFragment.class.getName());
+            PasswordDialogFragment passwordDialogFragment = new PasswordDialogFragment();
+            passwordDialogFragment.setFirstTimeTrue();
+            passwordDialogFragment.show(fm, PasswordDialogFragment.class.getName());
             SharedPreferences.Editor editor = settings.edit();
             editor.putString(IS_FIRST_TIME, "NO");
             editor.apply();

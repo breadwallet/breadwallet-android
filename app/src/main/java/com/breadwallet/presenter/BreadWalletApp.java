@@ -25,7 +25,7 @@ import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.presenter.fragments.ChangePasswordDialogFragment;
+import com.breadwallet.presenter.fragments.PasswordDialogFragment;
 import com.breadwallet.presenter.fragments.FragmentRecoveryPhrase;
 import com.breadwallet.presenter.fragments.FragmentSettings;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
@@ -226,10 +226,10 @@ public class BreadWalletApp extends Application {
         if (keyguardManager.isKeyguardSecure()) {
 //                Intent intent = keyguardManager.createConfirmDeviceCredentialIntent(CREDENTIAL_TITLE, CREDENTIAL_DESCRIPTION);
 //                context.startActivityForResult(intent, 1);
-            ChangePasswordDialogFragment changePasswordDialogFragment = new ChangePasswordDialogFragment();
-            changePasswordDialogFragment.setVerifyOnlyTrue();
+            PasswordDialogFragment passwordDialogFragment = new PasswordDialogFragment();
+            passwordDialogFragment.setVerifyOnlyTrue();
             FragmentManager fm = context.getFragmentManager();
-            changePasswordDialogFragment.show(fm, ChangePasswordDialogFragment.class.getName());
+            passwordDialogFragment.show(fm, PasswordDialogFragment.class.getName());
 //            FingerprintAuthenticationDialogFragment fingerprintAuthenticationDialogFragment
 //                    = new FingerprintAuthenticationDialogFragment();
 //            PasswordAuthenticationDialogFragment passwordAuthenticationDialogFragment

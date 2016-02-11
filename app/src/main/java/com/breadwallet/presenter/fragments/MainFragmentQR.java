@@ -1,6 +1,7 @@
 
 package com.breadwallet.presenter.fragments;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
@@ -82,20 +83,26 @@ public class MainFragmentQR extends Fragment {
         final View rootView = inflater.inflate(
                 R.layout.fragment_qr_main, container, false);
 
+
+        return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         SharedPreferences prefs = getActivity().getSharedPreferences(RECEIVE_ADDRESS_PREFS, Context.MODE_PRIVATE);
         receiveAddress = prefs.getString(RECEIVE_ADDRESS, null);
 
 //        Log.e(TAG,"FROM PREFS receiveAddress: " + receiveAddress);
         if (receiveAddress == null) {
             BRWalletManager.getInstance(getActivity()).refreshAddress();
-
         }
         //TODO refresh the address once used
-        qrcode = (ImageView) rootView.findViewById(R.id.main_image_qr_code);
+        qrcode = (ImageView) getActivity().findViewById(R.id.main_image_qr_code);
         sharingFragment = new SharingFragment();
-        RelativeLayout main_fragment_qr = (RelativeLayout) rootView.findViewById(R.id.main_fragment_qr);
-        mainAddressText = (TextView) rootView.findViewById(R.id.main_address_text);
-        RelativeLayout addressLayout = (RelativeLayout) rootView.findViewById(R.id.theAddressLayout);
+        RelativeLayout main_fragment_qr = (RelativeLayout) getActivity().findViewById(R.id.main_fragment_qr);
+        mainAddressText = (TextView) getActivity().findViewById(R.id.main_address_text);
+        RelativeLayout addressLayout = (RelativeLayout) getActivity().findViewById(R.id.theAddressLayout);
         generateQR();
         fm = getActivity().getFragmentManager();
         main_fragment_qr.setPadding(0, MainActivity.screenParametersPoint.y / 5, 0, 0);
@@ -120,7 +127,7 @@ public class MainFragmentQR extends Fragment {
                         if (firstToastY == -1)
                             firstToastY = BreadWalletApp.DISPLAY_HEIGHT_PX - breadWalletApp.getRelativeTop(mainAddressText) + 400;
                         breadWalletApp.showCustomToast(MainActivity.app,
-                                getResources().getString(R.string.toast_qr_tip), firstToastY, Toast.LENGTH_LONG,0);
+                                getResources().getString(R.string.toast_qr_tip), firstToastY, Toast.LENGTH_LONG, 0);
 //                        Log.e(TAG, "Toast show nr: " + count);
                         count++;
                     } else if (count == 1) {
@@ -128,7 +135,7 @@ public class MainFragmentQR extends Fragment {
                             secondToastY = BreadWalletApp.DISPLAY_HEIGHT_PX - breadWalletApp.getRelativeTop(mainAddressText);
                         breadWalletApp.showCustomToast(MainActivity.app,
                                 getResources().getString(R.string.toast_address_tip),
-                                secondToastY, Toast.LENGTH_LONG,0);
+                                secondToastY, Toast.LENGTH_LONG, 0);
 //                        Log.e(TAG, "Toast show nr: " + count);
                         count--;
                     }
@@ -144,11 +151,13 @@ public class MainFragmentQR extends Fragment {
 //                mainAddressText.setText(receiveAddress + " ----");
 //            }
 //        }, 10000);
-        return rootView;
     }
 
     private void generateQR() {
-        WindowManager manager = (WindowManager) getActivity().getSystemService(Context.WINDOW_SERVICE);
+        Activity activity = getActivity();
+        if(activity == null) return;
+
+        WindowManager manager = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
         Display display = manager.getDefaultDisplay();
         Point point = new Point();
         display.getSize(point);
@@ -159,7 +168,9 @@ public class MainFragmentQR extends Fragment {
 
         if (receiveAddress.length() < 5)
             throw new NullPointerException("receiveAddress cannot be null or it's corrupted!");
+        Log.e(TAG, "Before setting the address: " + mainAddressText.getText());
         mainAddressText.setText(receiveAddress);
+        Log.e(TAG, "After setting the address: " + mainAddressText.getText());
         QRCodeEncoder qrCodeEncoder = new QRCodeEncoder("bitcoin:" + receiveAddress,
                 BarcodeFormat.QR_CODE.toString(),
                 smallerDimension);
@@ -202,17 +213,20 @@ public class MainFragmentQR extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        MiddleViewAdapter.resetMiddleView(getActivity(),null);
+        MiddleViewAdapter.resetMiddleView(getActivity(), null);
 
-        refreshAddress();
+        refreshAddress(null);
     }
 
-    public void refreshAddress(){
-        SharedPreferences prefs = getActivity().getSharedPreferences(RECEIVE_ADDRESS_PREFS, Context.MODE_PRIVATE);
-        receiveAddress = prefs.getString(RECEIVE_ADDRESS, null);
+    public void refreshAddress(String str) {
+        if (str != null) {
+            receiveAddress = str;
+        } else {
+            SharedPreferences prefs = getActivity().getSharedPreferences(RECEIVE_ADDRESS_PREFS, Context.MODE_PRIVATE);
+            receiveAddress = prefs.getString(RECEIVE_ADDRESS, null);
+        }
 //        Log.e(TAG, "FROM PREFS receiveAddress: " + receiveAddress);
         generateQR();
     }
-
 
 }

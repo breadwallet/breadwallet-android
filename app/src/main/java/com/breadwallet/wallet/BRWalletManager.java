@@ -15,6 +15,7 @@ import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.presenter.fragments.MainFragmentQR;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.WordsReader;
+import com.breadwallet.tools.adapter.CustomPagerAdapter;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.sqlite.SQLiteManager;
 
@@ -234,17 +235,16 @@ public class BRWalletManager {
     }
 
     public void refreshAddress() {
-        Log.e(TAG,"refreshAddress: " + ctx);
+        Log.e(TAG, "refreshAddress: " + ctx);
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) {
-            MainFragmentQR mainFragmentQR = (MainFragmentQR) ((Activity) ctx).getFragmentManager().findFragmentByTag(MainFragmentQR.class.getName());
-            if (mainFragmentQR == null) return;
+            MainFragmentQR mainFragmentQR = CustomPagerAdapter.adapter == null? null : CustomPagerAdapter.adapter.mainFragmentQR;
             String tmpAddr = getReceiveAddress();
             SharedPreferences.Editor editor = ctx.getSharedPreferences(MainFragmentQR.RECEIVE_ADDRESS_PREFS, Context.MODE_PRIVATE).edit();
             editor.putString(MainFragmentQR.RECEIVE_ADDRESS, tmpAddr);
-            Log.e(TAG,"REFRESHING THE ADDRESS: " + tmpAddr);
-            editor.commit();
-            mainFragmentQR.refreshAddress();
+            editor.apply();
+            if (mainFragmentQR == null) return;
+            mainFragmentQR.refreshAddress(tmpAddr);
         } else {
             throw new NullPointerException("Cannot be null");
         }

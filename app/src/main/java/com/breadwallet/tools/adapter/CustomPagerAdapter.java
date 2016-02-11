@@ -41,7 +41,7 @@ import java.util.List;
 public class CustomPagerAdapter extends FragmentStatePagerAdapter {
     private static final String TAG = CustomPagerAdapter.class.getName();
     public final MainFragment mainFragment;
-    private final MainFragmentQR mainFragmentQR;
+    public final MainFragmentQR mainFragmentQR;
     private final List<Fragment> fragments;
     private View main;
     private View mainQR;

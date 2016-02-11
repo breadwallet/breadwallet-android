@@ -33,9 +33,10 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="40dp"
-                    android:text="breadwallet v 1.0 (testnet)"
+                    android:text="breadwallet v 1.0"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@color/dark_grey" />
+                    android:textColor="@color/dark_grey"
+                    android:textSize="@dimen/text_size" />
 
                 <TextView
                     android:id="@+id/about2"
@@ -45,7 +46,8 @@
                     android:layout_centerHorizontal="true"
                     android:text="copyright \u00A9 2015 Mihail Gutan"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@color/dark_grey" />
+                    android:textColor="@color/dark_grey"
+                    android:textSize="@dimen/text_size" />
 
                 <TextView
                     android:id="@+id/about3"
@@ -56,7 +58,8 @@
                     android:layout_marginTop="20dp"
                     android:text="this app is open source"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@color/dark_grey" />
+                    android:textColor="@color/dark_grey"
+                    android:textSize="@dimen/text_size" />
 
                 <TextView
                     android:id="@+id/about4"
@@ -66,7 +69,8 @@
                     android:layout_centerHorizontal="true"
                     android:autoLink="web"
                     android:text="breadwallet.com"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textSize="@dimen/text_size" />
 
                 <TextView
                     android:id="@+id/about5"
@@ -77,7 +81,8 @@
                     android:layout_marginTop="20dp"
                     android:text="exchange rate data provided by"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@color/dark_grey" />
+                    android:textColor="@color/dark_grey"
+                    android:textSize="@dimen/text_size" />
 
                 <TextView
                     android:id="@+id/about6"
@@ -85,10 +90,11 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/about5"
                     android:layout_centerHorizontal="true"
-                    android:text="bitpay.com/rates"
                     android:layout_marginBottom="30dp"
+                    android:text="bitpay.com/rates"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@color/dark_grey" />
+                    android:textColor="@color/dark_grey"
+                    android:textSize="@dimen/text_size" />
 
 
             </RelativeLayout>

@@ -1,10 +1,8 @@
 package com.breadwallet.presenter.fragments;
 
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -56,20 +54,15 @@ public class MainFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_main, container, false);
-    }
+        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        Button scanQRButton = (Button) getActivity().findViewById(R.id.main_button_scan_qr_code);
-        LinearLayout mainFragmentLayout = (LinearLayout) getActivity().findViewById(R.id.main_fragment);
+        Button scanQRButton = (Button) rootView.findViewById(R.id.main_button_scan_qr_code);
+        LinearLayout mainFragmentLayout = (LinearLayout) rootView.findViewById(R.id.main_fragment);
         Button payAddressFromClipboardButton = (Button)
-                getActivity().findViewById(R.id.main_button_pay_address_from_clipboard);
+                rootView.findViewById(R.id.main_button_pay_address_from_clipboard);
+        addressEditText = (EditText) rootView.findViewById(R.id.address_edit_text);
+
         alertDialog = new AlertDialog.Builder(getActivity()).create();
-        addressEditText = (EditText) getView().findViewById(R.id.address_edit_text);
         addressEditText.setGravity(Gravity.CENTER_HORIZONTAL);
 
         mainFragmentLayout.setPadding(0, MainActivity.screenParametersPoint.y / 5, 0, 0);
@@ -95,7 +88,6 @@ public class MainFragment extends Fragment {
                         } else {
                             throw new NullPointerException();
                         }
-//                        }
                     } else {
                         alertDialog.setTitle(getResources().getString(R.string.alert));
                         alertDialog.setMessage(getResources().getString(R.string.mainfragment_clipboard_invalid_data));
@@ -111,7 +103,7 @@ public class MainFragment extends Fragment {
             }
 
         });
-
+        return rootView;
     }
 
     private boolean checkIfAddressIsValid(String str) {
@@ -146,7 +138,7 @@ public class MainFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        MiddleViewAdapter.resetMiddleView(getActivity(),null);
+        MiddleViewAdapter.resetMiddleView(getActivity(), null);
     }
 
     @Override

@@ -126,7 +126,7 @@ public class FragmentSettings extends Fragment {
             @Override
             public void onClick(View v) {
                 final android.app.FragmentManager fm = getActivity().getFragmentManager();
-                new ChangePasswordDialogFragment().show(fm, ChangePasswordDialogFragment.class.getName());
+                new PasswordDialogFragment().show(fm, PasswordDialogFragment.class.getName());
             }
         });
 

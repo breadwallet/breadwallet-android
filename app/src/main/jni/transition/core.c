@@ -1,5 +1,5 @@
 
-#define BITCOIN_TEST_NO_MAIN = 1;
+//#define BITCOIN_TEST 1
 
 #include "core.h"
 #include "wallet.h"

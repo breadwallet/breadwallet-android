@@ -62,7 +62,9 @@ public class SharingFragment extends DialogFragment {
         TextView requestAmount = (TextView) view.findViewById(R.id.request_amount);
         TextView sharingAddress = (TextView) view.findViewById(R.id.sharing_address);
         getDialog().setTitle(getResources().getString(R.string.dialog_receive_bitcoins));
-        sharingAddress.setText(String.format(getString(R.string.sharingfragment_at_this_address), theAddress));
+        sharingAddress.setText(theAddress);
+
+        getDialog().getWindow().setBackgroundDrawableResource(R.drawable.rounded_dialog);
 
         copyAddress.setOnClickListener(new View.OnClickListener() {
             @Override
