@@ -42,13 +42,12 @@ import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
 import com.breadwallet.presenter.entities.BRPeerEntity;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
-import com.breadwallet.presenter.fragments.PasswordDialogFragment;
 import com.breadwallet.presenter.fragments.FragmentCurrency;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.presenter.fragments.FragmentSettings;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
+import com.breadwallet.presenter.fragments.PasswordDialogFragment;
 import com.breadwallet.tools.CurrencyManager;
-import com.breadwallet.tools.CustomLogger;
 import com.breadwallet.tools.NetworkChangeReceiver;
 import com.breadwallet.tools.SoftKeyboard;
 import com.breadwallet.tools.adapter.AmountAdapter;
@@ -138,6 +137,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     public SoftKeyboard softKeyboard;
     private RelativeLayout mainLayout;
     private FingerprintManager fingerprintManager;
+    private int tipsCount;
 
     private boolean deleteTxs = false;
 
@@ -163,6 +163,7 @@ public class MainActivity extends FragmentActivity implements Observer {
 
         //TODO delete the core testing
 //        cTests();
+        printPhoneSpecs();
 
         deleteTxs = true;
         testTxAdding(2);
@@ -173,6 +174,7 @@ public class MainActivity extends FragmentActivity implements Observer {
 //            }
 //        }, 10000);
 
+
         askForPasscode();
 
         setUpTheWallet();
@@ -180,8 +182,7 @@ public class MainActivity extends FragmentActivity implements Observer {
 //        testSQLiteConnectivity(this);
 
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
-        CustomLogger.LogThis("screen X", String.valueOf(screenParametersPoint.x), "screen Y",
-                String.valueOf(screenParametersPoint.y));
+
         setUpApi23();
 
         // Start lengthy operation in a background thread
@@ -293,6 +294,7 @@ public class MainActivity extends FragmentActivity implements Observer {
 //                Log.e(TAG, "FROM KEYSTORE PUBKEY: " + KeyStoreManager.getMasterPublicKey(app));
 //                Log.e(TAG, "FROM KEYSTORE PHRASE: " + KeyStoreManager.getKeyStoreString(app));
 //                Log.e(TAG, "FROM KEYSTORE CREATION TIME: " + KeyStoreManager.getWalletCreationTime(app));
+//        createInvisibleLayoutTips();
     }
 
     @Override
@@ -323,7 +325,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         super.onPause();
         Log.e(TAG, "Activity onPause");
         startStopReceiver(false);
-
     }
 
     @Override
@@ -836,9 +837,7 @@ public class MainActivity extends FragmentActivity implements Observer {
             PasswordDialogFragment passwordDialogFragment = new PasswordDialogFragment();
             passwordDialogFragment.setFirstTimeTrue();
             passwordDialogFragment.show(fm, PasswordDialogFragment.class.getName());
-            SharedPreferences.Editor editor = settings.edit();
-            editor.putString(IS_FIRST_TIME, "NO");
-            editor.apply();
+
         }
 
     }
@@ -847,4 +846,71 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     private native void cTests();
 
+//    private void createInvisibleLayoutTips() {
+//        // Creating a new RelativeLayout
+//        final RelativeLayout mask = new RelativeLayout(this);
+//
+//        // Defining the RelativeLayout layout parameters.
+//        // In this case I want to fill its parent
+//        RelativeLayout.LayoutParams rlp = new RelativeLayout.LayoutParams(
+//                RelativeLayout.LayoutParams.MATCH_PARENT,
+//                RelativeLayout.LayoutParams.MATCH_PARENT);
+//
+//        // Adding the TextView to the RelativeLayout as a child
+//        mask.setLayoutParams(rlp);
+//        int position = 0;  // position of the tab you want
+////        CustomPagerAdapter.adapter.getItem()
+//        showTip();
+//
+//        mask.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (tipsCount >= 6) {
+//                    mainLayout.removeView(mask);
+//                }
+//                showTip();
+//            }
+//        });
+//        mainLayout.addView(mask);
+//
+//    }
+//
+//    private void showTip() {
+//        if (tipsCount == 0)
+//            ((BreadWalletApp) getApplicationContext()).showCustomToast(this, getString(R.string.middle_view_tip_first),
+//                    MainActivity.screenParametersPoint.y / 5, Toast.LENGTH_LONG, 0);
+//        if (tipsCount == 1)
+//            ((BreadWalletApp) getApplicationContext()).showCustomToast(this, getString(R.string.middle_view_tip_second),
+//                    MainActivity.screenParametersPoint.y / 4, Toast.LENGTH_LONG, 0);
+//        if (tipsCount == 2)
+//            ((BreadWalletApp) getApplicationContext()).showCustomToast(this, getString(R.string.toast_qr_tip),
+//                    MainActivity.screenParametersPoint.y / 3, Toast.LENGTH_LONG, 0);
+//        if (tipsCount == 3)
+//            ((BreadWalletApp) getApplicationContext()).showCustomToast(this, getString(R.string.toast_address_tip),
+//                    MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
+//        if (tipsCount == 4)
+//            ((BreadWalletApp) getApplicationContext()).showCustomToast(this, getString(R.string.scan_qr_code_tip),
+//                    MainActivity.screenParametersPoint.y, Toast.LENGTH_LONG, 0);
+//        if (tipsCount == 5)
+//            ((BreadWalletApp) getApplicationContext()).showCustomToast(this, getString(R.string.clipboard_tip),
+//                    MainActivity.screenParametersPoint.y / 5, Toast.LENGTH_LONG, 0);
+//        tipsCount++;
+//    }
+
+    private void printPhoneSpecs() {
+        String specsTag = "PHONE SPECS";
+        Log.e(specsTag, "");
+        Log.e(specsTag, "***************************PHONE SPECS***************************");
+
+        Log.e(specsTag, "* screen X: " + screenParametersPoint.x + " , screen Y: " + screenParametersPoint.y);
+
+        Log.e(specsTag, "* Build.CPU_ABI: " + Build.CPU_ABI);
+
+        Runtime rt = Runtime.getRuntime();
+        long maxMemory = rt.maxMemory();
+        Log.e(specsTag, "* maxMemory:" + Long.toString(maxMemory));
+
+        Log.e(specsTag, "----------------------------PHONE SPECS----------------------------");
+        Log.e(specsTag, "");
+    }
 }

@@ -197,6 +197,8 @@ public final class QRCodeEncoder {
         BitMatrix result = writer.encode(contents, format, dimension, dimension, hints);
         int width = result.getWidth();
         int height = result.getHeight();
+        Log.e(TAG,"width: "  + width);
+        Log.e(TAG,"height: "  + height);
         int[] pixels = new int[width * height];
         // All are 0, or black, by default
         for (int y = 0; y < height; y++) {

@@ -89,6 +89,7 @@ public class RequestQRActivity extends Activity {
     }
 
     private void generateQR(String bitcoinURL) {
+        if(qrcode == null) return;
         WindowManager manager = (WindowManager) getSystemService(WINDOW_SERVICE);
         Display display = manager.getDefaultDisplay();
         Point point = new Point();
@@ -96,7 +97,7 @@ public class RequestQRActivity extends Activity {
         int width = point.x;
         int height = point.y;
         int smallerDimension = width < height ? width : height;
-        smallerDimension = smallerDimension * 3 / 4;
+        smallerDimension = smallerDimension /10;
 
         QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(bitcoinURL,
                 BarcodeFormat.QR_CODE.toString(),

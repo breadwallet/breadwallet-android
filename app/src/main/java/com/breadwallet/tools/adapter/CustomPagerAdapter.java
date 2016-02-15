@@ -3,7 +3,7 @@ package com.breadwallet.tools.adapter;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Handler;
-import android.support.v13.app.FragmentStatePagerAdapter;
+import android.support.v13.app.FragmentPagerAdapter;
 import android.view.View;
 
 import com.breadwallet.presenter.activities.MainActivity;
@@ -38,7 +38,7 @@ import java.util.List;
  * THE SOFTWARE.
  */
 
-public class CustomPagerAdapter extends FragmentStatePagerAdapter {
+public class CustomPagerAdapter extends FragmentPagerAdapter {
     private static final String TAG = CustomPagerAdapter.class.getName();
     public final MainFragment mainFragment;
     public final MainFragmentQR mainFragmentQR;
@@ -56,7 +56,18 @@ public class CustomPagerAdapter extends FragmentStatePagerAdapter {
         fragments.add(mainFragment);
         fragments.add(mainFragmentQR);
         adapter = this;
+
     }
+
+    public void swipe(int leftRight){
+        if(leftRight == 0){
+//            this.
+        } else {
+
+        }
+    }
+
+//    on
 
     @Override
     public int getCount() {
@@ -67,6 +78,7 @@ public class CustomPagerAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         return fragments.get(position);
     }
+
 
     /**
      * Show the fragments or hide, which is specified by the boolean parameter b
@@ -105,5 +117,6 @@ public class CustomPagerAdapter extends FragmentStatePagerAdapter {
 
         }
     }
+
 }
 

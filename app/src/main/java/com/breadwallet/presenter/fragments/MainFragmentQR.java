@@ -155,7 +155,7 @@ public class MainFragmentQR extends Fragment {
 
     private void generateQR() {
         Activity activity = getActivity();
-        if(activity == null) return;
+        if(activity == null || qrcode == null) return;
 
         WindowManager manager = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
         Display display = manager.getDefaultDisplay();
