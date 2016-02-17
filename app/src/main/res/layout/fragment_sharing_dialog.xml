@@ -110,6 +110,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/separator_height"
-        android:background="@color/grey" />
+        android:background="@color/grey"
+        android:layout_marginBottom="5dp"/>
 
 </LinearLayout>

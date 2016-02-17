@@ -80,11 +80,9 @@ public class MainFragmentQR extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         // The last two arguments ensure LayoutParams are inflated
         // properly.
-        final View rootView = inflater.inflate(
+
+        return inflater.inflate(
                 R.layout.fragment_qr_main, container, false);
-
-
-        return rootView;
     }
 
     @Override
@@ -108,13 +106,13 @@ public class MainFragmentQR extends Fragment {
         fm = getActivity().getFragmentManager();
         main_fragment_qr.setPadding(0, MainActivity.screenParametersPoint.y / 5, 0, 0);
         final BreadWalletApp breadWalletApp = (BreadWalletApp) MainActivity.app.getApplication();
-        final String finalReceiveAddress = receiveAddress;
         addressLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 breadWalletApp.cancelToast();
                 if (FragmentAnimator.checkTheMultipressingAvailability()) {
-                    sharingFragment.setTheAddress(finalReceiveAddress);
+                    Log.e(TAG,"finalReceiveAddress: " + receiveAddress);
+                    sharingFragment.setTheAddress(receiveAddress);
                     saveBitmapToFile();
                     sharingFragment.show(fm, SharingFragment.class.getName());
                 }
@@ -155,6 +153,7 @@ public class MainFragmentQR extends Fragment {
     }
 
     private void generateQR() {
+        Log.e(TAG,"generateQR: " + receiveAddress);
         Activity activity = getActivity();
         if (activity == null || qrcode == null) return;
 

@@ -19,7 +19,7 @@ LOCAL_LDLIBS := -llog -lm
 LOCAL_SHARED_LIBRARIES := bread
 
 #//TODO take out the  -DBITCOIN_TESTNET=1 from flags (TESTING)
-LOCAL_CFLAGS := -std=c99
+LOCAL_CFLAGS := -std=c99 -DBITCOIN_TESTNET=1
 
 include $(BUILD_SHARED_LIBRARY)
 
@@ -57,6 +57,6 @@ LOCAL_EXPORT_C_INCLUDES := \
 $(LOCAL_PATH)/breadwallet-core\
 $(LOCAL_PATH)/breadwallet-core/secp256k1
 
-LOCAL_CFLAGS := -std=c99
+LOCAL_CFLAGS := -std=c99 -DBITCOIN_TESTNET=1
 
 include $(BUILD_SHARED_LIBRARY)
