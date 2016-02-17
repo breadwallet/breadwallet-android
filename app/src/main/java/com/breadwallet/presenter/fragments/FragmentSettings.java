@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.adapter.CurrencyListAdapter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
@@ -94,7 +95,7 @@ public class FragmentSettings extends Fragment {
                             .setMessage(getResources().getString(R.string.dialog_do_not_let_anyone))
                             .setPositiveButton(getResources().getString(R.string.show), new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
-                                    ((BreadWalletApp) getActivity().getApplicationContext()).authDialogBlockingUi(getActivity(), BreadWalletApp.AUTH_FOR_PHRASE);
+                                    ((BreadWalletApp) getActivity().getApplicationContext()).promptForAuthentication(getActivity(), BRConstants.AUTH_FOR_PHRASE, null);
                                 }
                             })
                             .setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {

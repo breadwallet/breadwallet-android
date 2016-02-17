@@ -26,10 +26,14 @@ package com.breadwallet.tools;
  */
 public class BRConstants {
 
-
     /** RequestQRActivity*/
     public static final String INTENT_EXTRA_REQUEST_AMOUNT = "request_amount";
     public static final String INTENT_EXTRA_REQUEST_ADDRESS = "request_address";
+
+    /** Auth modes*/
+    public static final int AUTH_FOR_PHRASE = 11;
+    public static final int AUTH_FOR_PAY = 12;
+    public static final int AUTH_FOR_GENERAL = 13;
 
     private BRConstants(){}
 

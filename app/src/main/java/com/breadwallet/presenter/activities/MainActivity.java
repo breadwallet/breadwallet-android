@@ -15,7 +15,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.hardware.fingerprint.FingerprintManager;
-import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -236,7 +235,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         pay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pay(0);
+                pay();
             }
         });
 
@@ -282,7 +281,7 @@ public class MainActivity extends FragmentActivity implements Observer {
             public void onClick(View v) {
                 SpringAnimator.showAnimation(lockerButton);
 //                passwordDialogFragment.show(fm, TAG);
-                ((BreadWalletApp) getApplication()).checkAndPromptForAuthentication(app, BreadWalletApp.AUTH_FOR_GENERAL);
+                ((BreadWalletApp) getApplication()).promptForAuthentication(app, BRConstants.AUTH_FOR_GENERAL, null);
 
             }
         });
@@ -528,18 +527,17 @@ public class MainActivity extends FragmentActivity implements Observer {
     }
 
 
-    public void pay(int auth) {
-        Log.e(TAG, "pay: " + auth);
-        if (auth == 1) {
-            if (addressHolder == null || amountHolder == null) return;
-            if (Long.valueOf(amountHolder) <= 0 || addressHolder.length() < 30) return;
-            BRWalletManager walletManager = BRWalletManager.getInstance(this);
-            walletManager.pay(addressHolder, Long.valueOf(amountHolder) * 100);
-            final MediaPlayer mp = MediaPlayer.create(this, R.raw.coinflip);
-            mp.start();
-            FragmentAnimator.hideScanResultFragment();
-            return;
-        }
+    public void pay() {
+//        if (auth == 1) {
+//            if (addressHolder == null || amountHolder == null) return;
+//            if (Long.valueOf(amountHolder) <= 0 || addressHolder.length() < 30) return;
+//            BRWalletManager walletManager = BRWalletManager.getInstance(this);
+//            walletManager.pay(addressHolder, Long.valueOf(amountHolder) * 100);
+//            final MediaPlayer mp = MediaPlayer.create(this, R.raw.coinflip);
+//            mp.start();
+//            FragmentAnimator.hideScanResultFragment();
+//            return;
+//        }
 
         amountHolder = FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_RIGHT ?
                 AmountAdapter.getRightValue() : AmountAdapter.getLeftValue();
@@ -626,7 +624,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         }
     }
 
-    public void confirmPay(PaymentRequestEntity request) {
+    public void confirmPay(final PaymentRequestEntity request) {
         SharedPreferences settings;
         boolean certified = false;
         if (request.cn != null && request.cn.length() != 0) {
@@ -664,7 +662,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                         .setMessage(message)
                         .setPositiveButton(getString(R.string.send), new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                ((BreadWalletApp) getApplicationContext()).authDialogBlockingUi(app, BreadWalletApp.AUTH_FOR_PAY);
+                                ((BreadWalletApp) getApplicationContext()).promptForAuthentication(app, BRConstants.AUTH_FOR_PAY, request);
                             }
                         })
                         .setIcon(android.R.drawable.ic_dialog_alert)

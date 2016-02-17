@@ -29,6 +29,7 @@ import android.annotation.TargetApi;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
@@ -45,11 +46,15 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.entities.PaymentRequestEntity;
+import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
+import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.PassCodeManager;
+import com.breadwallet.wallet.BRWalletManager;
 
 public class PasswordDialogFragment extends DialogFragment {
 
@@ -69,7 +74,9 @@ public class PasswordDialogFragment extends DialogFragment {
     private TextView digit_2;
     private TextView digit_3;
     private TextView digit_4;
+    private PaymentRequestEntity request;
 
+    private int mode = -1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -169,7 +176,7 @@ public class PasswordDialogFragment extends DialogFragment {
                 getSystemService(Context.INPUT_METHOD_SERVICE);
         keyboard.hideSoftInputFromWindow(CustomPagerAdapter.adapter.
                 mainFragment.addressEditText.getWindowToken(), 0);
-        BreadWalletApp.canceled = true;
+//        BreadWalletApp.canceled = true;
     }
 
     public void setFirstTimeTrue() {
@@ -220,7 +227,7 @@ public class PasswordDialogFragment extends DialogFragment {
             }
         } else if (verifyOnly) {
             if (passCodeManager.checkAuth(s.toString(), getActivity())) {
-                BreadWalletApp.canceled = true;
+//                BreadWalletApp.canceled = true;
                 getDialog().cancel();
                 MainActivity app = (MainActivity) getActivity();
 
@@ -231,6 +238,17 @@ public class PasswordDialogFragment extends DialogFragment {
                 ((BreadWalletApp) getActivity().getApplicationContext()).allowKeyStoreAccessForSeconds();
                 getDialog().dismiss();
                 passcodeEditText.setText("");
+                Log.e(TAG, "mode: " + mode + " request: " + request);
+                if (mode == BRConstants.AUTH_FOR_PHRASE) {
+                    FragmentAnimator.animateSlideToLeft((MainActivity) getActivity(), new FragmentRecoveryPhrase(), new FragmentSettings());
+                } else if (mode == BRConstants.AUTH_FOR_PAY && request != null) {
+                    //TODO make sure you get the payment right for all addresses and check for nulls
+                    BRWalletManager walletManager = BRWalletManager.getInstance(getActivity());
+                    walletManager.pay(request.addresses[0], request.amount * 100);
+                    final MediaPlayer mp = MediaPlayer.create(getActivity(), R.raw.coinflip);
+                    mp.start();
+                    FragmentAnimator.hideScanResultFragment();
+                }
             } else {
                 SpringAnimator.showAnimation(dialogFragment.getView());
                 passcodeEditText.setText("");
@@ -283,6 +301,14 @@ public class PasswordDialogFragment extends DialogFragment {
             }
         }
         return false;
+    }
+
+    public void setPaymentRequestEntity(PaymentRequestEntity requestEntity) {
+        request = requestEntity;
+    }
+
+    public void setMode(int mode) {
+        this.mode = mode;
     }
 
     private void addRemoveDigit(int digits) {

@@ -17,6 +17,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.TransactionListItem;
+import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.FragmentAnimator;
@@ -77,7 +78,7 @@ public class FragmentSettingsAll extends Fragment {
             @Override
             public void onClick(View v) {
                 ((BreadWalletApp) getActivity().getApplicationContext()).
-                        authDialogBlockingUi(getActivity(), BreadWalletApp.AUTH_FOR_GENERAL);
+                        promptForAuthentication(getActivity(), BRConstants.AUTH_FOR_GENERAL, null);
             }
         });
         refreshTransactions(getActivity());
