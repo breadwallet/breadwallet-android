@@ -85,6 +85,7 @@ public class MainFragment extends Fragment {
                         if (address != null) {
                             FragmentAnimator.animateScanResultFragment();
                             FragmentScanResult.address = address;
+
                         } else {
                             throw new NullPointerException();
                         }

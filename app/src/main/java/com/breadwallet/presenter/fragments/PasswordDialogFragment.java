@@ -169,6 +169,7 @@ public class PasswordDialogFragment extends DialogFragment {
                 getSystemService(Context.INPUT_METHOD_SERVICE);
         keyboard.hideSoftInputFromWindow(CustomPagerAdapter.adapter.
                 mainFragment.addressEditText.getWindowToken(), 0);
+        BreadWalletApp.canceled = true;
     }
 
     public void setFirstTimeTrue() {

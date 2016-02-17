@@ -46,7 +46,9 @@ import com.breadwallet.presenter.fragments.FragmentCurrency;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.presenter.fragments.FragmentSettings;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
+import com.breadwallet.presenter.fragments.MainFragmentQR;
 import com.breadwallet.presenter.fragments.PasswordDialogFragment;
+import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.NetworkChangeReceiver;
 import com.breadwallet.tools.SoftKeyboard;
@@ -315,7 +317,9 @@ public class MainActivity extends FragmentActivity implements Observer {
         currencyManager.deleteObservers();
         currencyManager.addObserver(this);
         MiddleViewAdapter.resetMiddleView(this, null);
-        networkErrorBar.setVisibility(CurrencyManager.getInstance(this).isNetworkAvailable(this) ? View.GONE : View.VISIBLE);
+        boolean isNetworkAvailable = CurrencyManager.getInstance(this).isNetworkAvailable(this);
+        Log.e(TAG, "isNetworkAvailable: " + isNetworkAvailable);
+        networkErrorBar.setVisibility(isNetworkAvailable ? View.GONE : View.VISIBLE);
         startStopReceiver(true);
 
     }
@@ -525,6 +529,7 @@ public class MainActivity extends FragmentActivity implements Observer {
 
 
     public void pay(int auth) {
+        Log.e(TAG, "pay: " + auth);
         if (auth == 1) {
             if (addressHolder == null || amountHolder == null) return;
             if (Long.valueOf(amountHolder) <= 0 || addressHolder.length() < 30) return;
@@ -564,10 +569,15 @@ public class MainActivity extends FragmentActivity implements Observer {
     public void request(View view) {
         SpringAnimator.showAnimation(view);
         Intent intent;
-        RequestQRActivity.tmpAmount = FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_RIGHT ?
+        String tempAmount = FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_RIGHT ?
                 AmountAdapter.getRightValue() : AmountAdapter.getLeftValue();
+        //TODO make sure the address changes on txAdded
+        SharedPreferences prefs = getSharedPreferences(MainFragmentQR.RECEIVE_ADDRESS_PREFS, Context.MODE_PRIVATE);
+        String testTemp = prefs.getString(MainFragmentQR.RECEIVE_ADDRESS, "");
 
         intent = new Intent(this, RequestQRActivity.class);
+        intent.putExtra(BRConstants.INTENT_EXTRA_REQUEST_AMOUNT, tempAmount);
+        intent.putExtra(BRConstants.INTENT_EXTRA_REQUEST_ADDRESS, testTemp);
         startActivity(intent);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         FragmentAnimator.hideScanResultFragment();
@@ -769,13 +779,13 @@ public class MainActivity extends FragmentActivity implements Observer {
 
         final long earliestKeyTime = KeyStoreManager.getWalletCreationTime(this);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                pm.connect(earliestKeyTime, blocksCount, peersCount);
-            }
-        }).start();
-
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                pm.connect(earliestKeyTime, blocksCount, peersCount);
+//            }
+//        }).start();
+        pm.connect(earliestKeyTime, blocksCount, peersCount);
 
     }
 

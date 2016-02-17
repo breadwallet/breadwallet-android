@@ -50,7 +50,7 @@ public class AmountAdapter extends Observable {
     private static int buttonCode = BreadWalletApp.PAY_BUTTON;
 
     public static void preConditions(String tmp) {
-        if(FragmentScanResult.isARequest){
+        if (FragmentScanResult.isARequest) {
             buttonCode = BreadWalletApp.REQUEST_BUTTON;
         } else {
             buttonCode = BreadWalletApp.PAY_BUTTON;
@@ -183,11 +183,21 @@ public class AmountAdapter extends Observable {
             } else {
                 if (FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_RIGHT) {
                     //from bits to other currency using rate
-                    leftValueObject = rate.multiply(rightValueObject.divide(new BigDecimal("1000000")));
+                    if (rate.intValue() > 1) {
+                        leftValueObject = rate.multiply(rightValueObject.divide(new BigDecimal("1000000")));
+                    } else {
+                        leftValueObject = new BigDecimal("0");
+                    }
+
                 } else if (FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_LEFT) {
                     //from other currency to bits using rate
-                    leftValueObject = rightValueObject.multiply(new BigDecimal("1000000")).
-                            divide(rate, RoundingMode.CEILING);
+                    if (rate.intValue() > 1) {
+                        leftValueObject = rightValueObject.multiply(new BigDecimal("1000000")).
+                                divide(rate, RoundingMode.CEILING);
+                    } else {
+                        leftValueObject = new BigDecimal("0");
+                    }
+
                 } else {
                     throw new IllegalArgumentException("currentCurrencyPosition should be BITCOIN_LEFT or BITCOIN_RIGHT");
                 }

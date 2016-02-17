@@ -20,7 +20,6 @@ import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.adapter.AmountAdapter;
-import com.breadwallet.tools.adapter.CurrencyListAdapter;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.listeners.BackPressCustomKeyboardOnTouchListener;
 
@@ -271,14 +270,14 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
     private static void updateRateAndISO() {
         MainActivity app = MainActivity.app;
         if (app == null) return;
-        SharedPreferences settings = MainActivity.app.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+//        SharedPreferences settings = app.getSharedPreferences(MainActivity.PREFS_NAME, 0);
 //        int position = settings.getInt(FragmentCurrency.POSITION, 0);
-        if (CurrencyListAdapter.currencyListAdapter != null && !CurrencyListAdapter.currencyListAdapter.isEmpty()) {
+//        if (CurrencyListAdapter.currencyListAdapter != null && !CurrencyListAdapter.currencyListAdapter.isEmpty()) {
 //            CurrencyEntity currencyItem = CurrencyListAdapter.currencyListAdapter.getItem(position);
             SharedPreferences settingsToGet = app.getSharedPreferences(MainActivity.PREFS_NAME, 0);
             ISO = settingsToGet.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
-            rate = settings.getFloat(FragmentCurrency.RATE, 1);
-        }
+            rate = settingsToGet.getFloat(FragmentCurrency.RATE, 1);
+//        }
 //        if (ISO == null)
 //            ISO = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
 //        if (rate <= 0) {

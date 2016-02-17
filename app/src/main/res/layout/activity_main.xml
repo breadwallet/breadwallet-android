@@ -103,7 +103,7 @@
         android:id="@+id/main_internet_status_bar"
         android:layout_width="match_parent"
         android:layout_height="20dp"
-        android:layout_below="@+id/middle_view_flipper"
+        android:layout_below="@+id/sync_progress_bar"
         android:layout_centerHorizontal="true"
         android:background="@color/red"
         android:orientation="horizontal"
@@ -115,7 +115,7 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:layout_gravity="center"
-            android:text="No internet connection"
+            android:text="@string/no_internet_connection"
             android:textColor="@android:color/white" />
 
     </RelativeLayout>

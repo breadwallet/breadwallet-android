@@ -25,10 +25,10 @@ import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.presenter.fragments.PasswordDialogFragment;
 import com.breadwallet.presenter.fragments.FragmentRecoveryPhrase;
 import com.breadwallet.presenter.fragments.FragmentSettings;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
+import com.breadwallet.presenter.fragments.PasswordDialogFragment;
 import com.breadwallet.tools.TypefaceUtil;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.auth.FingerprintAuthenticationDialogFragment;
@@ -95,9 +95,10 @@ public class BreadWalletApp extends Application {
     private Toast toast;
     private static int DISPLAY_WIDTH_PX;
     public static int DISPLAY_HEIGHT_PX;
+    public static boolean canceled = false;
     //    public static final String CREDENTIAL_TITLE = "Insert password";
 //    public static final String CREDENTIAL_DESCRIPTION = "Insert your password to unlock the app.";
-    public static boolean canceled = false;
+//    public static boolean canceled = false;
 
 
     @Override
@@ -326,79 +327,90 @@ public class BreadWalletApp extends Application {
     }
 
     public void authDialogBlockingUi(final Activity context, final int mode) {
-        canceled = false;
-        final long startTime = System.currentTimeMillis();
+
         if (!allowKeyStoreAccess)
             //show the pass dialog
             checkAndPromptForAuthentication(context, mode);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    //continuously check if the user has authenticated for a minute
-                    while (!canceled) {
-                        try {
-                            Thread.sleep(500);
-                            Log.e(TAG, "after sleep ......");
-                            if (System.currentTimeMillis() - startTime > 60000) {
-                                break;
-                            }
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+        new AuthThread(context, mode).start();
+    }
+
+    class AuthThread extends Thread {
+        private Activity ctx;
+        private int mode;
+        final long startTime;
+
+        public AuthThread(Activity ctx, int mode) {
+            this.ctx = ctx;
+            this.mode = mode;
+            startTime = System.currentTimeMillis();
+        }
+
+        @Override
+        public void run() {
+            canceled = false;
+            try {
+                //continuously check if the user has authenticated for a minute
+                while (!canceled) {
+                    try {
+                        Thread.sleep(500);
+                        Log.e(TAG, "after sleep ......");
+                        if (System.currentTimeMillis() - startTime > 60000) {
+                            break;
                         }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                    //after a minute passes check if the user has authenticated
-                    if (((BreadWalletApp) context.getApplicationContext()).allowKeyStoreAccess) {
-                        Log.d(TAG, "All good, create the fragmentRecoveryPhrase");
-                        (context).runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                switch (mode) {
-                                    case AUTH_FOR_PHRASE:
-                                        FragmentAnimator.animateSlideToLeft((MainActivity) context, new FragmentRecoveryPhrase(), new FragmentSettings());
-                                        break;
-                                    case AUTH_FOR_PAY:
-                                        MainActivity app = MainActivity.app;
-                                        if (app != null)
-                                            app.pay(1);
-                                    case AUTH_FOR_GENERAL:
-
-                                        break;
-                                }
-
-                            }
-                        });
-                    } else {
-                        //close the pass dialog if the user failed to auth.
-                        (context).runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                switch (mode) {
-                                    case AUTH_FOR_PHRASE:
-                                        Fragment fragment = context.getFragmentManager().findFragmentByTag(FingerprintAuthenticationDialogFragment.class.getName());
-                                        if (fragment == null)
-                                            fragment = context.getFragmentManager().findFragmentByTag(PasswordAuthenticationDialogFragment.class.getName());
-                                        if (fragment != null) {
-                                            if (fragment instanceof DialogFragment) {
-                                                ((DialogFragment) fragment).dismiss();
-                                            }
-                                        }
-                                        break;
-                                    case AUTH_FOR_PAY:
-                                        Log.e(TAG, "UPS CANNOT PAY, AUTH REJECTED");
-                                        break;
-                                    case AUTH_FOR_GENERAL:
-
-                                        break;
-                                }
-
-                            }
-                        });
-                    }
-                } catch (NullPointerException ex) {
-                    Log.e(TAG, "Ups... the activity is null");
                 }
+                //after a minute passes check if the user has authenticated
+                if (((BreadWalletApp) ctx.getApplicationContext()).allowKeyStoreAccess) {
+                    Log.d(TAG, "All good, create the fragmentRecoveryPhrase");
+                    ctx.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            switch (mode) {
+                                case AUTH_FOR_PHRASE:
+                                    FragmentAnimator.animateSlideToLeft((MainActivity) ctx, new FragmentRecoveryPhrase(), new FragmentSettings());
+                                    break;
+                                case AUTH_FOR_PAY:
+                                    ((MainActivity)ctx).pay(1);
+                                case AUTH_FOR_GENERAL:
+
+                                    break;
+                            }
+
+                        }
+                    });
+                } else {
+                    //close the pass dialog if the user failed to auth.
+                    (ctx).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            switch (mode) {
+                                case AUTH_FOR_PHRASE:
+                                    Fragment fragment = ctx.getFragmentManager().findFragmentByTag(FingerprintAuthenticationDialogFragment.class.getName());
+                                    if (fragment == null)
+                                        fragment = ctx.getFragmentManager().findFragmentByTag(PasswordAuthenticationDialogFragment.class.getName());
+                                    if (fragment != null) {
+                                        if (fragment instanceof DialogFragment) {
+                                            ((DialogFragment) fragment).dismiss();
+                                        }
+                                    }
+                                    break;
+                                case AUTH_FOR_PAY:
+                                    Log.e(TAG, "UPS CANNOT PAY, AUTH REJECTED");
+                                    break;
+                                case AUTH_FOR_GENERAL:
+
+                                    break;
+                            }
+
+                        }
+                    });
+                }
+            } catch (NullPointerException ex) {
+                Log.e(TAG, "Ups... the activity is null");
             }
-        }).start();
+
+        }
     }
 }

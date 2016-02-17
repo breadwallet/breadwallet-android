@@ -91,12 +91,13 @@ public class MainFragmentQR extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         SharedPreferences prefs = getActivity().getSharedPreferences(RECEIVE_ADDRESS_PREFS, Context.MODE_PRIVATE);
-        receiveAddress = prefs.getString(RECEIVE_ADDRESS, null);
+
 
 //        Log.e(TAG,"FROM PREFS receiveAddress: " + receiveAddress);
-        if (receiveAddress == null) {
-            BRWalletManager.getInstance(getActivity()).refreshAddress();
-        }
+//        if (receiveAddress == null) {
+        BRWalletManager.getInstance(getActivity()).refreshAddress();
+        receiveAddress = prefs.getString(RECEIVE_ADDRESS, null);
+//        }
         //TODO refresh the address once used
         qrcode = (ImageView) getActivity().findViewById(R.id.main_image_qr_code);
         sharingFragment = new SharingFragment();
@@ -155,7 +156,7 @@ public class MainFragmentQR extends Fragment {
 
     private void generateQR() {
         Activity activity = getActivity();
-        if(activity == null || qrcode == null) return;
+        if (activity == null || qrcode == null) return;
 
         WindowManager manager = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
         Display display = manager.getDefaultDisplay();
