@@ -10,7 +10,6 @@
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
-    <uses-feature android:name="android.hardware." />
 
     <application
         android:name=".presenter.BreadWalletApp"
@@ -19,7 +18,6 @@
         android:label="@string/app_name"
         android:largeHeap="true"
         android:theme="@style/AppTheme"
-        android:debuggable="true"
         android:windowSoftInputMode="adjustResize">
         <activity
             android:name=".presenter.activities.IntroActivity"

@@ -28,7 +28,6 @@ package com.breadwallet.presenter.fragments;
 import android.annotation.TargetApi;
 import android.app.DialogFragment;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
@@ -204,10 +203,6 @@ public class PasswordDialogFragment extends DialogFragment {
                     String passToCheck = s.toString();
                     if (passToCheck.equals(tempPassToChange)) {
                         passCodeManager.setPassCode(tempPassToChange, getActivity());
-                        SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
-                        SharedPreferences.Editor editor = settings.edit();
-                        editor.putString(MainActivity.IS_FIRST_TIME, "NO");
-                        editor.apply();
                         tempPassToChange = "";
                         getDialog().cancel();
                         String tmp = CurrencyManager.getInstance(getActivity()).getCurrentBalanceText();

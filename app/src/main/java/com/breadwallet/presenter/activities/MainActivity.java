@@ -98,7 +98,6 @@ import java.util.Random;
 public class MainActivity extends FragmentActivity implements Observer {
     private static final String TAG = MainActivity.class.getName();
     public static final String PREFS_NAME = "MyPrefsFile";
-    public static final String IS_FIRST_TIME = "firstTime";
     public static final int BURGER = 0;
     public static final int CLOSE = 1;
     public static final int BACK = 2;
@@ -837,17 +836,14 @@ public class MainActivity extends FragmentActivity implements Observer {
     }
 
     private void askForPasscode() {
-        SharedPreferences settings = getSharedPreferences(MainActivity.PREFS_NAME, 0);
-        String isFirstTime = settings.getString(IS_FIRST_TIME, "YES");
-//        isFirstTime = "YES";
-        if (isFirstTime.equalsIgnoreCase("YES")) {
+        String pass = KeyStoreManager.getPassCode(this);
+        if (pass == null || pass.isEmpty()) {
             final FragmentManager fm = getFragmentManager();
             PasswordDialogFragment passwordDialogFragment = new PasswordDialogFragment();
             passwordDialogFragment.setFirstTimeTrue();
             passwordDialogFragment.show(fm, PasswordDialogFragment.class.getName());
 
         }
-
     }
 
     private native void clearCMemory();

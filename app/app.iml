@@ -94,8 +94,8 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" scope="TEST" name="uiautomator-v18-2.1.1" level="project" />
     <orderEntry type="library" exported="" name="espresso-idling-resource-2.2.1" level="project" />
-    <orderEntry type="library" exported="" name="javax.annotation-api-1.2" level="project" />
     <orderEntry type="library" exported="" name="javawriter-2.1.1" level="project" />
+    <orderEntry type="library" exported="" name="javax.annotation-api-1.2" level="project" />
     <orderEntry type="library" exported="" name="support-v4-23.0.1" level="project" />
     <orderEntry type="library" exported="" name="espresso-core-2.2.1" level="project" />
     <orderEntry type="library" exported="" name="design-23.0.1" level="project" />

@@ -565,8 +565,8 @@ public class KeyStoreManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         Log.e(TAG, "recovered: " + recoveredSecret);
+
         return recoveredSecret;
     }
 
