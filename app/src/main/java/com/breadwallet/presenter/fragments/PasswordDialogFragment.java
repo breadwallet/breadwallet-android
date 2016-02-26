@@ -171,10 +171,13 @@ public class PasswordDialogFragment extends DialogFragment {
     @Override
     public void onPause() {
         super.onPause();
-        InputMethodManager keyboard = (InputMethodManager) MainActivity.app.
+
+        InputMethodManager keyboard = (InputMethodManager) getActivity().
                 getSystemService(Context.INPUT_METHOD_SERVICE);
-        keyboard.hideSoftInputFromWindow(CustomPagerAdapter.adapter.
-                mainFragment.addressEditText.getWindowToken(), 0);
+        EditText editText = CustomPagerAdapter.adapter.
+                mainFragment.addressEditText;
+        if (CustomPagerAdapter.adapter != null && editText != null)
+            keyboard.hideSoftInputFromWindow(editText.getWindowToken(), 0);
 //        BreadWalletApp.canceled = true;
     }
 

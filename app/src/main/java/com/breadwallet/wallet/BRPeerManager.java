@@ -2,7 +2,9 @@ package com.breadwallet.wallet;
 
 import android.content.Context;
 import android.util.Log;
+import android.view.View;
 
+import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.sqlite.SQLiteManager;
 
 /**
@@ -32,7 +34,8 @@ import com.breadwallet.tools.sqlite.SQLiteManager;
 public class BRPeerManager {
     public static final String TAG = BRPeerManager.class.getName();
     private static BRPeerManager instance;
-//    private byte[] peerManager;
+    private SyncProgressTask syncTask;
+    //    private byte[] peerManager;
     private static Context ctx;
 
     private BRPeerManager() {
@@ -56,6 +59,8 @@ public class BRPeerManager {
 
     public native void createBlockArrayWithCount(int count);
 
+    public native double syncProgress();
+
     /**
      * void BRPeerManagerSetCallbacks(BRPeerManager *manager, void *info,
      * void (*syncStarted)(void *info),
@@ -69,10 +74,15 @@ public class BRPeerManager {
 
     public void syncStarted() {
         Log.e(TAG, "syncStarted");
+        if (syncTask == null) {
+            syncTask = new SyncProgressTask();
+            syncTask.start();
+        }
+
     }
 
     public void syncSucceded() {
-        Log.e(TAG, "syncSucceded");
+        Log.e(TAG, "syncSucceeded");
     }
 
     public void syncFailed() {
@@ -96,5 +106,59 @@ public class BRPeerManager {
     public void networkIsReachable() {
         Log.e(TAG, "networkIsReachable");
     }
+
+    private class SyncProgressTask extends Thread {
+
+        public boolean running = true;
+        public double progressStatus = 0;
+
+        @Override
+        public void run() {
+            final MainActivity app = MainActivity.app;
+            if (app != null) {
+                app.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressStatus = syncProgress();
+                        app.syncProgressText.setVisibility(View.VISIBLE);
+                        app.syncProgressBar.setVisibility(View.VISIBLE);
+                        app.syncProgressBar.setProgress((int) (progressStatus * 100));
+                        app.syncProgressText.setText(String.valueOf(progressStatus * 100) + "%");
+                    }
+                });
+
+                while (running) {
+                    app.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressStatus = syncProgress();
+                            app.syncProgressBar.setProgress((int) (progressStatus * 100));
+                            app.syncProgressText.setText(String.valueOf(progressStatus * 100) + "%");
+
+                        }
+                    });
+                    if (progressStatus >= 1) {
+                        app.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressStatus = 0;
+                                app.syncProgressText.setVisibility(View.GONE);
+                                app.syncProgressBar.setVisibility(View.GONE);
+                            }
+                        });
+                        running = false;
+                    }
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+
+        }
+    }
+
 
 }

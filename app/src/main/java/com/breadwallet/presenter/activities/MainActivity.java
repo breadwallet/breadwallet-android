@@ -6,7 +6,6 @@ import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.app.Service;
 import android.content.BroadcastReceiver;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -108,7 +107,6 @@ public class MainActivity extends FragmentActivity implements Observer {
     public static MainActivity app;
     public static boolean decoderFragmentOn;
     public static boolean scanResultFragmentOn;
-    private CustomPagerAdapter pagerAdapter;
     public static RelativeLayout pageIndicator;
     private ImageView pageIndicatorLeft;
     private ImageView pageIndicatorRight;
@@ -119,7 +117,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     public ProgressBar syncProgressBar;
     public TextView syncProgressText;
     private static ParallaxViewPager parallaxViewPager;
-    private ClipboardManager myClipboard;
+    //    private ClipboardManager myClipboard;
     private boolean doubleBackToExitPressedOnce;
     public static boolean beenThroughSavedInstanceMethod = false;
     public ViewFlipper viewFlipper;
@@ -137,15 +135,15 @@ public class MainActivity extends FragmentActivity implements Observer {
     public SoftKeyboard softKeyboard;
     private RelativeLayout mainLayout;
     private FingerprintManager fingerprintManager;
-    private int tipsCount;
+//    private int tipsCount;
 
     private boolean deleteTxs = false;
 
     //TODO Test everything with the KILL ACTIVITY feature in the developer settings
     //loading the native library
-    static {
-        System.loadLibrary("core");
-    }
+//    static {
+//        System.loadLibrary("core");
+//    }
 
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
@@ -174,8 +172,6 @@ public class MainActivity extends FragmentActivity implements Observer {
 //            }
 //        }, 10000);
 
-
-        askForPasscode();
 
         setUpTheWallet();
         registerScreenLockReceiver();
@@ -319,6 +315,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         Log.e(TAG, "isNetworkAvailable: " + isNetworkAvailable);
         networkErrorBar.setVisibility(isNetworkAvailable ? View.GONE : View.VISIBLE);
         startStopReceiver(true);
+        askForPasscode();
 
     }
 
@@ -368,7 +365,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         syncProgressText = (TextView) findViewById(R.id.sync_progress_text);
 //        middleView = findViewById(R.id.main_label_breadwallet);
         pageIndicatorRight = (ImageView) findViewById(R.id.circle_indicator_right);
-        pagerAdapter = new CustomPagerAdapter(getFragmentManager());
+        CustomPagerAdapter pagerAdapter = new CustomPagerAdapter(getFragmentManager());
         burgerButtonMap = new HashMap<>();
         parallaxViewPager = ((ParallaxViewPager) findViewById(R.id.main_viewpager));
         parallaxViewPager.setOverlapPercentage(0.99f).setAdapter(pagerAdapter);
@@ -376,7 +373,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         burgerButtonMap.put("burger", R.drawable.burger);
         burgerButtonMap.put("close", R.drawable.x);
         burgerButtonMap.put("back", R.drawable.navigationback);
-        myClipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+//        myClipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
 
     }
 
@@ -775,7 +772,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         m.createWallet(transactionsCount, pubkey, r);
 
         final long earliestKeyTime = KeyStoreManager.getWalletCreationTime(this);
-
+        Log.e(TAG,"earliestKeyTime from keystore: " + earliestKeyTime);
 //        new Thread(new Runnable() {
 //            @Override
 //            public void run() {
@@ -837,12 +834,9 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     private void askForPasscode() {
         String pass = KeyStoreManager.getPassCode(this);
+        Log.e(TAG, "PASSCODE: " + pass);
         if (pass == null || pass.isEmpty()) {
-            final FragmentManager fm = getFragmentManager();
-            PasswordDialogFragment passwordDialogFragment = new PasswordDialogFragment();
-            passwordDialogFragment.setFirstTimeTrue();
-            passwordDialogFragment.show(fm, PasswordDialogFragment.class.getName());
-
+            new PassCodeTask().start();
         }
     }
 
@@ -900,6 +894,46 @@ public class MainActivity extends FragmentActivity implements Observer {
 //                    MainActivity.screenParametersPoint.y / 5, Toast.LENGTH_LONG, 0);
 //        tipsCount++;
 //    }
+
+    private class PassCodeTask extends Thread {
+        PasswordDialogFragment passwordDialogFragment;
+        String pass = "";
+
+        @Override
+        public void run() {
+            super.run();
+
+            final FragmentManager fm = getFragmentManager();
+            passwordDialogFragment = new PasswordDialogFragment();
+            passwordDialogFragment.setFirstTimeTrue();
+            passwordDialogFragment.show(fm, PasswordDialogFragment.class.getName());
+            while (pass.isEmpty()) {
+                Log.e(TAG, "in the while");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        pass = KeyStoreManager.getPassCode(getApplicationContext());
+                        Log.e(TAG, "in the run of the UI");
+                        if (!passwordDialogFragment.isAdded()) {
+                            Log.e(TAG, "in the !passwordDialogFragment.isAdded()");
+                            passwordDialogFragment = new PasswordDialogFragment();
+                            passwordDialogFragment.setFirstTimeTrue();
+                            passwordDialogFragment.show(fm, PasswordDialogFragment.class.getName());
+                        }
+                    }
+                });
+
+
+                try {
+                    Thread.sleep(400);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+
+    }
 
     private void printPhoneSpecs() {
         String specsTag = "PHONE SPECS";

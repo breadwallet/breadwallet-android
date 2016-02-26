@@ -56,7 +56,7 @@ public class IntroNewWalletFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String phrase = m.generateRandomSeed();
-                KeyStoreManager.putWalletCreationTime(System.currentTimeMillis(), getActivity());
+                KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis()/1000), getActivity());
                 String normalizedPhrase = Normalizer.normalize(phrase, Normalizer.Form.NFKD);
                 byte[] pubKey = m.getMasterPubKey(normalizedPhrase);
                 KeyStoreManager.putMasterPublicKey(pubKey, getActivity());

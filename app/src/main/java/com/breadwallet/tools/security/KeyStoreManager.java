@@ -308,7 +308,7 @@ public class KeyStoreManager {
         return result;
     }
 
-    public static boolean putWalletCreationTime(long creationTime, Context context) {
+    public static boolean putWalletCreationTime(int creationTime, Context context) {
 
 //        Log.e(TAG, "putWalletCreationTime: " + creationTime);
         if (creationTime == 0) return false;
@@ -360,7 +360,7 @@ public class KeyStoreManager {
             inCipher.init(Cipher.ENCRYPT_MODE, publicKey);
             CipherOutputStream cipherOutputStream = new CipherOutputStream(
                     new FileOutputStream(encryptedDataFilePath), inCipher);
-            cipherOutputStream.write(longToBytes(creationTime));
+            cipherOutputStream.write(ByteBuffer.allocate(4).putInt(creationTime).array());
             cipherOutputStream.close();
             return true;
         } catch (Exception e) {
@@ -396,7 +396,7 @@ public class KeyStoreManager {
 
             CipherInputStream cipherInputStream = new CipherInputStream(
                     new FileInputStream(encryptedDataFilePath), outCipher);
-            byte[] roundTrippedBytes = new byte[64]; //TODO: dynamically resize as we get more data
+            byte[] roundTrippedBytes = new byte[4]; //TODO: dynamically resize as we get more data
             int index = 0;
             int nextByte;
             while ((nextByte = cipherInputStream.read()) != -1) {
@@ -409,7 +409,7 @@ public class KeyStoreManager {
             e.printStackTrace();
         }
 
-        return bytesToLong(result);
+        return ByteBuffer.wrap(result).getInt();
     }
 
     public static boolean deleteKeyStoreEntry() {
@@ -460,12 +460,14 @@ public class KeyStoreManager {
         }
         return true;
     }
+
     public static boolean putPassCode(String passcode, Context context) {
 
         if (passcode == null) return false;
         if (passcode.length() == 0) return false;
+        KeyStore keyStore = null;
         try {
-            KeyStore keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
+            keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
             keyStore.load(null);
             int nBefore = keyStore.size();
 
@@ -480,7 +482,7 @@ public class KeyStoreManager {
                         .setAlias(PASS_CODE_ALIAS)
                         .setKeySize(2048)
                         .setSubject(new X500Principal(BREADWALLET_X500))
-                        .setSerialNumber(new BigInteger("5"))
+                        .setSerialNumber(BigInteger.valueOf(5))
                         .setEncryptionRequired().setStartDate(notBefore.getTime())
                         .setEndDate(notAfter.getTime())
                         .build();
@@ -518,6 +520,12 @@ public class KeyStoreManager {
             return true;
         } catch (Exception e) {
             Log.e(TAG, Log.getStackTraceString(e));
+            if (keyStore != null)
+                try {
+                    keyStore.deleteEntry(PASS_CODE_ALIAS);
+                } catch (KeyStoreException e1) {
+                    e1.printStackTrace();
+                }
         }
         return false;
     }
@@ -553,7 +561,7 @@ public class KeyStoreManager {
 
             CipherInputStream cipherInputStream = new CipherInputStream(
                     new FileInputStream(encryptedDataFilePath), outCipher);
-            byte[] roundTrippedBytes = new byte[8]; //TODO: dynamically resize as we get more data
+            byte[] roundTrippedBytes = new byte[4]; //TODO: dynamically resize as we get more data
             int index = 0;
             int nextByte;
             while ((nextByte = cipherInputStream.read()) != -1) {
@@ -582,17 +590,17 @@ public class KeyStoreManager {
         return result == null ? denied : result;
     }
 
-    private static byte[] longToBytes(long x) {
-        ByteBuffer buffer = ByteBuffer.allocate(Long.SIZE);
-        buffer.putLong(x);
+    private static byte[] intToBytes(int x) {
+        ByteBuffer buffer = ByteBuffer.allocate(Integer.SIZE);
+        buffer.putInt(x);
         return buffer.array();
     }
 
-    private static long bytesToLong(byte[] bytes) {
-        ByteBuffer buffer = ByteBuffer.allocate(Long.SIZE);
+    private static int bytesToInt(byte[] bytes) {
+        ByteBuffer buffer = ByteBuffer.allocate(Integer.SIZE);
         buffer.put(bytes);
         buffer.flip();
-        return buffer.getLong();
+        return buffer.getInt();
     }
 
 }

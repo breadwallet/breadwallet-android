@@ -59,13 +59,13 @@ public class CustomPagerAdapter extends FragmentPagerAdapter {
 
     }
 
-    public void swipe(int leftRight){
-        if(leftRight == 0){
-//            this.
-        } else {
-
-        }
-    }
+//    public void swipe(int leftRight){
+//        if(leftRight == 0){
+////            this.
+//        } else {
+//
+//        }
+//    }
 
 //    on
 

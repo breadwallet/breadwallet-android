@@ -10,7 +10,7 @@
 #define BREADWALLET_PEERMANAGER_H
 
 JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_connect(JNIEnv *env, jobject thiz,
-                                                                 jlong earliestKeyTime,
+                                                                 jint earliestKeyTime,
                                                                  jlong blocksCount,
                                                                  jlong peersCount);
 
@@ -32,6 +32,8 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_putPeer(JNIEnv *env,
 JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_createPeerArrayWithCount(JNIEnv *env,
                                                                                         jobject thiz,
                                                                                         size_t prCount);
+JNIEXPORT jdouble Java_com_breadwallet_wallet_BRPeerManager_syncProgress(JNIEnv *env,
+                                                                         jobject thiz);
 
 
 #endif //BREADWALLET_PEERMANAGER_H

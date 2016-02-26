@@ -77,7 +77,7 @@ static void txAdded(void *info, BRTransaction *tx) {
 
 //    __android_log_print(ANDROID_LOG_ERROR, "******TX ADDED CALLBACK AFTER PARSE******: ", "BRWalletAmountReceivedFromTx: %d, ",
 //                        BRWalletAmountReceivedFromTx(_wallet, tmpTx));
-
+//
 //    int i =0;
 //    __android_log_print(ANDROID_LOG_ERROR, "FROM C: START OF BYTE PRINTING","");
 //    while (i < len)
@@ -190,11 +190,11 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRWalletManager_createWallet(JNIEnv *
                             "CREATING WALLET FROM TXS - txCount: %d", txCount);
         _wallet = BRWalletNew(_transactions, txCount, _pubKey, NULL, theSeed);
     } else {
-        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "CREATING EMPTY WALLET");
+        __android_log_print(ANDROID_LOG_INFO, "Message from C: ", "CREATING EMPTY WALLET");
         _wallet = BRWalletNew(NULL, 0, _pubKey, NULL, theSeed);
     }
     BRWalletSetCallbacks(_wallet, NULL, balanceChanged, txAdded, txUpdated, txDeleted);
-    free(_transactions);
+//    free(_transactions);
 
 //    __android_log_print(ANDROID_LOG_ERROR, "WALLET CREATED:Tx count from the wallet is: ", "%d", BRWalletTransactions(_wallet, NULL, 0));
 //    BRAddress addr[20];
@@ -358,13 +358,16 @@ JNIEXPORT jobjectArray Java_com_breadwallet_wallet_BRWalletManager_getTransactio
 
 
         int outCountTemp = transactions_sqlite[i]->outCount;
-        jlongArray JoutAmounts = (*env)->NewLongArray(env,outCountTemp);
+        jlongArray JoutAmounts = (*env)->NewLongArray(env, outCountTemp);
 
-        jobjectArray JtoAddresses = (*env)->NewObjectArray(env,outCountTemp,(*env)->FindClass(env,"java/lang/String"),0);
+        jobjectArray JtoAddresses = (*env)->NewObjectArray(env, outCountTemp, (*env)->FindClass(env,
+                                                                                                "java/lang/String"),
+                                                           0);
         for (int j = 0; j < outCountTemp; j++) {
-            jstring str = (*env)->NewStringUTF(env,transactions_sqlite[i]->outputs[j].address);
-            (*env)->SetObjectArrayElement(env,JtoAddresses,j,str);
-            (*env)->SetLongArrayRegion(env,JoutAmounts,j,1,(const jlong*) &transactions_sqlite[i]->outputs[j].amount);
+            jstring str = (*env)->NewStringUTF(env, transactions_sqlite[i]->outputs[j].address);
+            (*env)->SetObjectArrayElement(env, JtoAddresses, j, str);
+            (*env)->SetLongArrayRegion(env, JoutAmounts, j, 1,
+                                       (const jlong *) &transactions_sqlite[i]->outputs[j].amount);
         }
 //        jstring Jto = (*env)->NewStringUTF(env, transactions_sqlite[i]->outputs[0].address);
 
@@ -379,10 +382,13 @@ JNIEXPORT jobjectArray Java_com_breadwallet_wallet_BRWalletManager_getTransactio
 //            env->SetLongArrayElement(jLongArray, i, (jlong) cLong);
 //        }
         int inCountTemp = transactions_sqlite[i]->inCount;
-        jobjectArray JfromAddresses = (*env)->NewObjectArray(env,inCountTemp,(*env)->FindClass(env,"java/lang/String"),0);
+        jobjectArray JfromAddresses = (*env)->NewObjectArray(env, inCountTemp,
+                                                             (*env)->FindClass(env,
+                                                                               "java/lang/String"),
+                                                             0);
         for (int j = 0; j < inCountTemp; j++) {
-            jstring str = (*env)->NewStringUTF(env,transactions_sqlite[i]->inputs[j].address);
-            (*env)->SetObjectArrayElement(env,JfromAddresses,j,str);
+            jstring str = (*env)->NewStringUTF(env, transactions_sqlite[i]->inputs[j].address);
+            (*env)->SetObjectArrayElement(env, JfromAddresses, j, str);
         }
 
 //      jstring Jfrom = (*env)->NewStringUTF(env, transactions_sqlite[i]->inputs[0].address);
@@ -395,7 +401,8 @@ JNIEXPORT jobjectArray Java_com_breadwallet_wallet_BRWalletManager_getTransactio
 //        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "call Constructor with i: %d", i);
 
         jobject txObject = (*env)->NewObject(env, txClass, txObjMid, JtimeStamp, JblockHeight,
-                                             JtxHash, Jsent, Jreceived, Jfee, JtoAddresses, JfromAddresses,
+                                             JtxHash, Jsent, Jreceived, Jfee, JtoAddresses,
+                                             JfromAddresses,
                                              JbalanceAfterTx, JoutAmounts);
         (*env)->SetObjectArrayElement(env, transactionObjects, txCount - 1 - i, txObject);
     }
