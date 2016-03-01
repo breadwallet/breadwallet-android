@@ -779,7 +779,7 @@ public class MainActivity extends FragmentActivity implements Observer {
 //                pm.connect(earliestKeyTime, blocksCount, peersCount);
 //            }
 //        }).start();
-        pm.connect(earliestKeyTime, blocksCount, peersCount);
+//        pm.connect(earliestKeyTime, blocksCount, peersCount);
 
     }
 

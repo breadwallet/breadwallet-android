@@ -16,64 +16,65 @@ static BRMasterPubKey _pubKey;
 static BRTransaction **_transactions;
 static size_t _transactionsCounter = 0;
 
-static jobject getWalletInstance() {
-    JNIEnv *env;
-    jint rs = (*_jvm)->AttachCurrentThread(_jvm, &env, NULL);
-
-    jclass clazz = (*env)->FindClass(env, "com/breadwallet/wallet/BRWalletManager");
-    jfieldID instanceFid = (*env)->GetStaticFieldID(env, clazz, "instance",
-                                                    "Lcom/breadwallet/wallet/BRWalletManager;");
-
-    jobject instance;
-    if (instanceFid == NULL) {
-        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ",
-                            "instanceFid is null!!!! returning ");
-        return NULL;
-    }
-    instance = (*env)->GetStaticObjectField(env, clazz, instanceFid);
-    if (instance == NULL) {
-        instance = (*env)->AllocObject(env, clazz);
-        (*env)->SetObjectField(env, clazz, instanceFid, instance);
-    }
-
-    return instance;
-}
+//static jobject getWalletInstance() {
+//    JNIEnv *env;
+//    jint rs = (*_jvm)->AttachCurrentThread(_jvm, &env, NULL);
+//
+//    jclass clazz = (*env)->FindClass(env, "com/breadwallet/wallet/BRWalletManager");
+//    jfieldID instanceFid = (*env)->GetStaticFieldID(env, clazz, "instance",
+//                                                    "Lcom/breadwallet/wallet/BRWalletManager;");
+//
+//    jobject instance;
+//    if (instanceFid == NULL) {
+//        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ",
+//                            "instanceFid is null!!!! returning ");
+//        return NULL;
+//    }
+//    instance = (*env)->GetStaticObjectField(env, clazz, instanceFid);
+//    if (instance == NULL) {
+//        instance = (*env)->AllocObject(env, clazz);
+//        (*env)->SetObjectField(env, clazz, instanceFid, instance);
+//    }
+//
+//    (*_jvm)->DetachCurrentThread(_jvm);
+//    return instance;
+//}
 
 static void balanceChanged(void *info, uint64_t balance) {
-//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ",
-//                        "balanceChanged: %d", balance);
-    JNIEnv *globalEnv;
-    jint rs = (*_jvm)->AttachCurrentThread(_jvm, &globalEnv, NULL);
-    //create class
-    jclass clazz = (*globalEnv)->FindClass(globalEnv, "com/breadwallet/wallet/BRWalletManager");
-    jobject entity = getWalletInstance();
-    jmethodID mid = (*globalEnv)->GetMethodID(globalEnv, clazz, "onBalanceChanged", "(J)V");
-//    uint64_t walletBalance = BRWalletBalance(wallet);
-//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ",
-//                        "BRWalletBalance(wallet): %d", BRWalletBalance(wallet));
-    //call java methods
-    (*globalEnv)->CallVoidMethod(globalEnv, entity, mid, balance);
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ",
+                        "balanceChanged: %d", balance);
+//    JNIEnv *globalEnv;
+//    jint rs = (*_jvm)->AttachCurrentThread(_jvm, &globalEnv, NULL);
+//    //create class
+//    jclass clazz = (*globalEnv)->FindClass(globalEnv, "com/breadwallet/wallet/BRWalletManager");
+//    jobject entity = getWalletInstance();
+//    jmethodID mid = (*globalEnv)->GetMethodID(globalEnv, clazz, "onBalanceChanged", "(J)V");
+////    uint64_t walletBalance = BRWalletBalance(wallet);
+////    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ",
+////                        "BRWalletBalance(wallet): %d", BRWalletBalance(wallet));
+//    //call java methods
+//    (*globalEnv)->CallVoidMethod(globalEnv, entity, mid, balance);
 }
 
 static void txAdded(void *info, BRTransaction *tx) {
-    JNIEnv *globalEnv;
-    jint rs = (*_jvm)->AttachCurrentThread(_jvm, &globalEnv, NULL);
+//    JNIEnv *globalEnv;
+//    jint rs = (*_jvm)->AttachCurrentThread(_jvm, &globalEnv, NULL);
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "txAdded");
-//    __android_log_print(ANDROID_LOG_ERROR, "Message from createWallet: ",
-//                        ">>>>>>>>>>>>tx->version before: %d", tx->version);
-//    __android_log_print(ANDROID_LOG_ERROR, "Message from createWallet: ",
-//                        "******TX ADDED CALLBACK******: %d", BRTransactionIsSigned(tx));
-    //create class
-    jclass clazz = (*globalEnv)->FindClass(globalEnv, "com/breadwallet/wallet/BRWalletManager");
-    jobject entity = getWalletInstance();
-    jmethodID mid = (*globalEnv)->GetMethodID(globalEnv, clazz, "onTxAdded", "([BJJJ)V");
-    //call java methods
-    __android_log_print(ANDROID_LOG_ERROR, "******TX ADDED CALLBACK AFTER PARSE******: ",
-                        "BRWalletAmountReceivedFromTx: %d, ",
-                        BRWalletAmountReceivedFromTx(_wallet, tx));
-
-    uint8_t buf[BRTransactionSerialize(tx, NULL, 0)];
-    size_t len = BRTransactionSerialize(tx, buf, sizeof(buf));
+////    __android_log_print(ANDROID_LOG_ERROR, "Message from createWallet: ",
+////                        ">>>>>>>>>>>>tx->version before: %d", tx->version);
+////    __android_log_print(ANDROID_LOG_ERROR, "Message from createWallet: ",
+////                        "******TX ADDED CALLBACK******: %d", BRTransactionIsSigned(tx));
+//    //create class
+//    jclass clazz = (*globalEnv)->FindClass(globalEnv, "com/breadwallet/wallet/BRWalletManager");
+//    jobject entity = getWalletInstance();
+//    jmethodID mid = (*globalEnv)->GetMethodID(globalEnv, clazz, "onTxAdded", "([BJJJ)V");
+//    //call java methods
+//    __android_log_print(ANDROID_LOG_ERROR, "******TX ADDED CALLBACK AFTER PARSE******: ",
+//                        "BRWalletAmountReceivedFromTx: %d, ",
+//                        BRWalletAmountReceivedFromTx(_wallet, tx));
+//
+//    uint8_t buf[BRTransactionSerialize(tx, NULL, 0)];
+//    size_t len = BRTransactionSerialize(tx, buf, sizeof(buf));
 
 //    __android_log_print(ANDROID_LOG_ERROR, "******TX ADDED CALLBACK AFTER PARSE******: ", "BRWalletAmountReceivedFromTx: %d, ",
 //                        BRWalletAmountReceivedFromTx(_wallet, tmpTx));
@@ -87,50 +88,52 @@ static void txAdded(void *info, BRTransaction *tx) {
 //        i++;
 //    }
 //    __android_log_print(ANDROID_LOG_ERROR, "FROM C: END OF BYTE PRINTING","");
-    uint64_t fee = BRWalletFeeForTx(_wallet, tx) == -1 ? 0 : BRWalletFeeForTx(_wallet, tx);
-    jlong amount;
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "fee: %d", fee);
-    if (BRWalletAmountSentByTx(_wallet, tx) == 0) {
-        amount = BRWalletAmountReceivedFromTx(_wallet, tx);
-    } else {
-        amount = (BRWalletAmountSentByTx(_wallet, tx) - BRWalletAmountReceivedFromTx(_wallet, tx) -
-                  fee) * -1;
-    }
-
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ",
-                        "blockHeight: %d, timestamp: %d bytes: %d",
-                        tx->blockHeight, tx->timestamp, len);
-    jbyteArray result = (*globalEnv)->NewByteArray(globalEnv, len);
-    (*globalEnv)->SetByteArrayRegion(globalEnv, result, 0, len, buf);
-    (*globalEnv)->CallVoidMethod(globalEnv, entity, mid, result, (jlong) tx->blockHeight,
-                                 (jlong) tx->timestamp, amount);
+//    uint64_t fee = BRWalletFeeForTx(_wallet, tx) == -1 ? 0 : BRWalletFeeForTx(_wallet, tx);
+//    jlong amount;
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "fee: %d", fee);
+//    if (BRWalletAmountSentByTx(_wallet, tx) == 0) {
+//        amount = BRWalletAmountReceivedFromTx(_wallet, tx);
+//    } else {
+//        amount = (BRWalletAmountSentByTx(_wallet, tx) - BRWalletAmountReceivedFromTx(_wallet, tx) -
+//                  fee) * -1;
+//    }
+//
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ",
+//                        "blockHeight: %d, timestamp: %d bytes: %d",
+//                        tx->blockHeight, tx->timestamp, len);
+//    jbyteArray result = (*globalEnv)->NewByteArray(globalEnv, len);
+//    (*globalEnv)->SetByteArrayRegion(globalEnv, result, 0, len, buf);
+//    (*globalEnv)->CallVoidMethod(globalEnv, entity, mid, result, (jlong) tx->blockHeight,
+//                                 (jlong) tx->timestamp, amount);
 }
 
 static void txUpdated(void *info, const UInt256 txHashes[], size_t count, uint32_t blockHeight,
                       uint32_t timestamp) {
-    //TODO method broken, finish method!
-    JNIEnv *globalEnv;
-    jint rs = (*_jvm)->AttachCurrentThread(_jvm, &globalEnv, NULL);
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "txUpdated");
-    //create class
-    jclass clazz = (*globalEnv)->FindClass(globalEnv, "com/breadwallet/wallet/BRWalletManager");
-    jobject entity = getWalletInstance();
-    jmethodID mid = (*globalEnv)->GetMethodID(globalEnv, clazz, "onTxUpdated", "([B)V");
-    //call java methods
-    //(*globalEnv)->CallVoidMethod(globalEnv, entity, mid, balance);
+//    //TODO method broken, finish method!
+//    JNIEnv *globalEnv;
+//    jint rs = (*_jvm)->AttachCurrentThread(_jvm, &globalEnv, NULL);
+//
+//    //create class
+//    jclass clazz = (*globalEnv)->FindClass(globalEnv, "com/breadwallet/wallet/BRWalletManager");
+//    jobject entity = getWalletInstance();
+//    jmethodID mid = (*globalEnv)->GetMethodID(globalEnv, clazz, "onTxUpdated", "([B)V");
+//    //call java methods
+//    //(*globalEnv)->CallVoidMethod(globalEnv, entity, mid, balance);
 }
 
 static void txDeleted(void *info, UInt256 txHash) {
-    //TODO method broken, finish method!
-    JNIEnv *globalEnv;
-    jint rs = (*_jvm)->AttachCurrentThread(_jvm, &globalEnv, NULL);
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "txDeleted");
-    //create class
-    jclass clazz = (*globalEnv)->FindClass(globalEnv, "com/breadwallet/wallet/BRWalletManager");
-    jobject entity = getWalletInstance();
-    jmethodID mid = (*globalEnv)->GetMethodID(globalEnv, clazz, "onTxDeleted", "([B)V");
-    //call java methods
-    //(*globalEnv)->CallVoidMethod(globalEnv, entity, mid, balance);
+//    //TODO method broken, finish method!
+//    JNIEnv *globalEnv;
+//    jint rs = (*_jvm)->AttachCurrentThread(_jvm, &globalEnv, NULL);
+//
+//    //create class
+//    jclass clazz = (*globalEnv)->FindClass(globalEnv, "com/breadwallet/wallet/BRWalletManager");
+//    jobject entity = getWalletInstance();
+//    jmethodID mid = (*globalEnv)->GetMethodID(globalEnv, clazz, "onTxDeleted", "([B)V");
+//    //call java methods
+//    //(*globalEnv)->CallVoidMethod(globalEnv, entity, mid, balance);
 }
 
 JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_encodeSeed(JNIEnv *env,
@@ -204,7 +207,7 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRWalletManager_createWallet(JNIEnv *
 //    }
     //create class
     jclass clazz = (*env)->FindClass(env, "com/breadwallet/wallet/BRWalletManager");
-    jobject entity = getWalletInstance();
+    jobject entity = thiz;
     jmethodID mid = (*env)->GetMethodID(env, clazz, "onBalanceChanged", "(J)V");
     //call java methods
     (*env)->CallVoidMethod(env, entity, mid, BRWalletBalance(_wallet));
@@ -232,9 +235,9 @@ JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_getMasterPubKey
 JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_putTransaction(JNIEnv *env,
                                                                                 jobject thiz,
                                                                                 jbyteArray transaction) {
-    int txLength = (*env)->GetArrayLength(env, transaction);
-    jbyte *byteTx = (*env)->GetByteArrayElements(env, transaction, 0);
-    BRTransaction *tmpTx = BRTransactionParse((uint8_t *) byteTx, txLength);
+//    int txLength = (*env)->GetArrayLength(env, transaction);
+//    jbyte *byteTx = (*env)->GetByteArrayElements(env, transaction, 0);
+//    BRTransaction *tmpTx = BRTransactionParse((uint8_t *) byteTx, txLength);
 
 //    int i = 0;
 //    __android_log_print(ANDROID_LOG_ERROR, "FROM C: START OF BYTE PRINTING","");
@@ -250,21 +253,21 @@ JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_putTransaction(
 //    __android_log_print(ANDROID_LOG_ERROR, "******TX ADDED CALLBACK AFTER PARSE FROM SQLite******: ",
 //                        "BRWalletAmountReceivedFromTx: %d, ", BRWalletAmountReceivedFromTx(_wallet, tmpTx));
 
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ",
-                        "BRWalletTransactionIsValid(_wallet, tmpTx): %d",
-                        BRWalletTransactionIsValid(_wallet, tmpTx));
-//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "BRWalletBalanceAfterTx(_wallet, tmpTx): %d",
-//                        BRWalletBalanceAfterTx(_wallet, tmpTx));
-//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "BRWalletAmountSentByTx(_wallet, tmpTx): %d",
-//                        BRWalletAmountSentByTx(_wallet, tmpTx));
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ",
-                        "uint256_hex_encode(tmpTx->txHash): %s",
-                        uint256_hex_encode(tmpTx->txHash));
-//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "BRWalletAmountReceivedFromTx(_wallet, tmpTx): %d",
-//                        BRWalletAmountReceivedFromTx(_wallet, tmpTx));
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "_transactionsCounter: %d",
-                        _transactionsCounter);
-    _transactions[_transactionsCounter++] = tmpTx;
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ",
+//                        "BRWalletTransactionIsValid(_wallet, tmpTx): %d",
+//                        BRWalletTransactionIsValid(_wallet, tmpTx));
+////    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "BRWalletBalanceAfterTx(_wallet, tmpTx): %d",
+////                        BRWalletBalanceAfterTx(_wallet, tmpTx));
+////    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "BRWalletAmountSentByTx(_wallet, tmpTx): %d",
+////                        BRWalletAmountSentByTx(_wallet, tmpTx));
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ",
+//                        "uint256_hex_encode(tmpTx->txHash): %s",
+//                        uint256_hex_encode(tmpTx->txHash));
+////    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "BRWalletAmountReceivedFromTx(_wallet, tmpTx): %d",
+////                        BRWalletAmountReceivedFromTx(_wallet, tmpTx));
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "_transactionsCounter: %d",
+//                        _transactionsCounter);
+//    _transactions[_transactionsCounter++] = tmpTx;
 }
 
 JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_createTxArrayWithCount(JNIEnv *env,
@@ -272,9 +275,9 @@ JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_createTxArrayWi
                                                                                         size_t txCount) {
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "createTxArrayWithCount: %d",
                         txCount);
-
-    _transactions = calloc(txCount, sizeof(BRTransaction));
-    _transactionsCounter = 0;
+//
+//    _transactions = calloc(txCount, sizeof(BRTransaction));
+//    _transactionsCounter = 0;
 
     // need to call free(transactions);
 }
@@ -422,6 +425,7 @@ const void *theSeed(void *info, const char *authPrompt, uint64_t amount, size_t 
     size_t theSize = (*env)->GetStringUTFLength(env, jStringSeed);
     *seedLen = r != 0 ? theSize : 0;
 //    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "r = %d", r);
+    (*_jvm)->DetachCurrentThread(_jvm);
     return r != 0 ? rawString : "";
 }
 
