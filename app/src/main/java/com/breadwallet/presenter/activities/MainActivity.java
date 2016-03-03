@@ -164,7 +164,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         printPhoneSpecs();
 
         deleteTxs = true;
-        testTxAdding(2);
+//        testTxAdding(2);
 //        new Handler().postDelayed(new Runnable() {
 //            @Override
 //            public void run() {
@@ -779,7 +779,7 @@ public class MainActivity extends FragmentActivity implements Observer {
 //                pm.connect(earliestKeyTime, blocksCount, peersCount);
 //            }
 //        }).start();
-//        pm.connect(earliestKeyTime, blocksCount, peersCount);
+        pm.connect(earliestKeyTime, blocksCount, peersCount);
 
     }
 
@@ -857,7 +857,7 @@ public class MainActivity extends FragmentActivity implements Observer {
 //        // Adding the TextView to the RelativeLayout as a child
 //        mask.setLayoutParams(rlp);
 //        int position = 0;  // position of the tab you want
-////        CustomPagerAdapter.adapter.getItem()
+//        CustomPagerAdapter.adapter.getItem()
 //        showTip();
 //
 //        mask.setOnClickListener(new View.OnClickListener() {

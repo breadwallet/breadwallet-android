@@ -97,7 +97,9 @@ static void syncFailed(void *info, int error) {
 }
 
 static void txStatusUpdate(void *info) {
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "txStatusUpdate");
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "txStatusUpdate: # of tx: %d",
+                        BRWalletTransactions(_wallet, NULL, 0) );
+
 //    JNIEnv *globalEnv;
 //    jint rs = (*_jvm)->AttachCurrentThread(_jvm, &globalEnv, NULL);
 //    updateEnv();
