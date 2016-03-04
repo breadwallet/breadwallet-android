@@ -127,4 +127,5 @@
     <string name="enter_passcode">enter passcode</string>
     <string name="scan_qr_code_tip">Scan someone else\'s QR code to get their bitcoin address. You can send a payment to anyone with an address.</string>
     <string name="clipboard_tip">Bitcoin addresses can also be copied to the clipboard. A bitcoin address always starts with \'1\' or \'3\'.</string>
+    <string name="recover_button">recover</string>
 </resources>

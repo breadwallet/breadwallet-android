@@ -182,41 +182,41 @@ public class MainActivity extends FragmentActivity implements Observer {
         setUpApi23();
 
         // Start lengthy operation in a background thread
-        new Thread(new Runnable() {
-            int mProgressStatus = 0;
-
-            public void run() {
-                while (mProgressStatus < 100) {
-                    Random r = new Random();
-                    try {
-                        Thread.sleep(r.nextInt(500));
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    mProgressStatus += 2;
-
-                    // Update the progress bar
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            syncProgressBar.setProgress(mProgressStatus);
-                            //TODO use resource string with place holders, everywhere
-                            syncProgressText.setText(String.valueOf(mProgressStatus) + "%");
-                        }
-                    });
-                }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (mProgressStatus >= 100) {
-                            syncProgressBar.setVisibility(View.INVISIBLE);
-                            syncProgressText.setVisibility(View.INVISIBLE);
-                        }
-                    }
-                });
-
-            }
-        }).start();
+//        new Thread(new Runnable() {
+//            int mProgressStatus = 0;
+//
+//            public void run() {
+//                while (mProgressStatus < 100) {
+//                    Random r = new Random();
+//                    try {
+//                        Thread.sleep(r.nextInt(500));
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                    mProgressStatus += 2;
+//
+//                    // Update the progress bar
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            syncProgressBar.setProgress(mProgressStatus);
+//                            //TODO use resource string with place holders, everywhere
+//                            syncProgressText.setText(String.valueOf(mProgressStatus) + "%");
+//                        }
+//                    });
+//                }
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        if (mProgressStatus >= 100) {
+//                            syncProgressBar.setVisibility(View.INVISIBLE);
+//                            syncProgressText.setVisibility(View.INVISIBLE);
+//                        }
+//                    }
+//                });
+//
+//            }
+//        }).start();
 
         if (((BreadWalletApp) getApplication()).isEmulatorOrDebug()) {
             MODE = DEBUG;

@@ -548,6 +548,7 @@ public class KeyStoreManager {
             keyStore.load(null);
             KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry)
                     keyStore.getEntry(PASS_CODE_ALIAS, null);
+
             privateKey = privateKeyEntry.getPrivateKey();
             if (privateKey == null) throw new RuntimeException("private key is null");
 

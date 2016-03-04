@@ -25,11 +25,9 @@ package com.breadwallet.presenter.fragments;
  * THE SOFTWARE.
  */
 
-import android.annotation.TargetApi;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.media.MediaPlayer;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -84,7 +82,6 @@ public class PasswordDialogFragment extends DialogFragment {
 
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -310,6 +307,7 @@ public class PasswordDialogFragment extends DialogFragment {
     }
 
     private void addRemoveDigit(int digits) {
+        if(digit_1 == null) return;
         digit_1.setText(digits >= 1 ? "*" : "-");
         digit_2.setText(digits >= 2 ? "*" : "-");
         digit_3.setText(digits >= 3 ? "*" : "-");
@@ -318,6 +316,7 @@ public class PasswordDialogFragment extends DialogFragment {
     }
 
     private void clearDigits() {
+        if(digit_1 == null) return;
         digit_1.setText("-");
         digit_2.setText("-");
         digit_3.setText("-");

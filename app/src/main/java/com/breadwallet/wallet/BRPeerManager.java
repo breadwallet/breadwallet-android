@@ -35,7 +35,6 @@ public class BRPeerManager {
     public static final String TAG = BRPeerManager.class.getName();
     private static BRPeerManager instance;
     private SyncProgressTask syncTask;
-    //    private byte[] peerManager;
     private static Context ctx;
 
     private BRPeerManager() {
@@ -72,7 +71,7 @@ public class BRPeerManager {
      * int (*networkIsReachable)(void *info))
      */
 
-    public void syncStarted() {
+    public synchronized void syncStarted() {
         Log.e(TAG, "syncStarted");
         if (syncTask == null) {
             syncTask = new SyncProgressTask();
@@ -81,29 +80,31 @@ public class BRPeerManager {
 
     }
 
-    public void syncSucceded() {
+    public synchronized void syncSucceded() {
         Log.e(TAG, "syncSucceeded");
     }
 
-    public void syncFailed() {
+    public synchronized void syncFailed() {
         Log.e(TAG, "syncFailed");
+        syncTask.progressStatus = 999;
+        syncTask = null;
     }
 
-    public void txStatusUpdate() {
+    public synchronized void txStatusUpdate() {
         Log.e(TAG, "txStatusUpdate");
     }
 
-    public void saveBlocks(byte[] block) {
+    public synchronized void saveBlocks(byte[] block) {
         Log.e(TAG, "saveBlocks");
         SQLiteManager.getInstance(ctx).insertMerkleBlock(block);
     }
 
-    public void savePeers(byte[] peerAddress, byte[] peerPort, byte[] peerTimeStamp) {
+    public synchronized void savePeers(byte[] peerAddress, byte[] peerPort, byte[] peerTimeStamp) {
         Log.e(TAG, "savePeers");
         SQLiteManager.getInstance(ctx).insertPeer(peerAddress, peerPort, peerTimeStamp);
     }
 
-    public void networkIsReachable() {
+    public synchronized void networkIsReachable() {
         Log.e(TAG, "networkIsReachable");
     }
 
@@ -115,6 +116,7 @@ public class BRPeerManager {
         @Override
         public void run() {
             final MainActivity app = MainActivity.app;
+            progressStatus = 0;
             if (app != null) {
                 app.runOnUiThread(new Runnable() {
                     @Override
@@ -155,7 +157,6 @@ public class BRPeerManager {
                     }
                 }
             }
-
 
         }
     }

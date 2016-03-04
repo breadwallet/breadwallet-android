@@ -290,6 +290,34 @@ JNIEXPORT jboolean JNICALL Java_com_breadwallet_tools_security_RequestHandler_va
 
 }
 
+
+JNIEXPORT jboolean JNICALL Java_com_breadwallet_presenter_fragments_IntroRecoverWalletFragment_validateRecoveryPhrase
+        (JNIEnv *env, jobject obj, jobjectArray stringArray, jstring jPhrase) {
+
+
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "validateRecoveryPhrase: %s" , jPhrase);
+    int wordsCount = (*env)->GetArrayLength(env, stringArray);
+    const char *wordList[wordsCount];
+    for (int i = 0; i < wordsCount; i++) {
+        jstring string = (jstring) (*env)->GetObjectArrayElement(env, stringArray, i);
+        char *rawString = (*env)->GetStringUTFChars(env, string, 0);
+        wordList[i] = rawString;
+        (*env)->DeleteLocalRef(env, string);
+        // Don't forget to call `ReleaseStringUTFChars` when you're done.
+    }
+
+    const char *str;
+    str = (char *) (*env)->GetStringUTFChars(env, jPhrase, NULL);
+
+    jboolean b;
+//    int BRBIP39PhraseIsValid(const char *wordList[], const char *phrase);
+    int result = BRBIP39PhraseIsValid(wordList, str);
+
+//    __android_log_print(ANDROID_LOG_ERROR, "LOG_TAG", "This is the result : %d", result);
+    return result ? JNI_TRUE : JNI_FALSE;
+
+}
+
 JNIEXPORT void JNICALL Java_com_breadwallet_presenter_activities_MainActivity_clearCMemory(JNIEnv *env, jobject obj){
         BRWalletFree(_wallet);
     __android_log_print(ANDROID_LOG_ERROR, "Wallet Freed: ", "BRWalletFree(wallet)");
@@ -299,35 +327,3 @@ JNIEXPORT void JNICALL Java_com_breadwallet_presenter_activities_MainActivity_cT
     __android_log_print(ANDROID_LOG_ERROR, "Core Tests: ", "%d", BRRunTests());
 }
 
-//JNIEXPORT void Java_com_breadwallet_presenter_activities_MainActivity_sendMethodCallBack
-//        (JNIEnv *env, jobject obj) {
-//    jclass cls = (*env)->GetObjectClass(env, obj);
-//    jmethodID mid = (*env)->GetMethodID(env, cls, "callback", "()V");
-//    if (mid == 0)
-//        return;
-//    (*env)->CallVoidMethod(env, obj, mid);
-//}
-
-//JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_encodePhrase
-//        (JNIEnv *env, jobject obj, jbyteArray seed, jbyteArray wordList) {
-//
-//    jboolean b;
-//    int wordLen = (*env)->GetArrayLength(env, wordList);
-//    int seedLen = (*env)->GetArrayLength(env, seed);
-//    char *buff[wordLen];
-//    char seed_buff[seedLen];
-//
-//    char *phrase[seedLen]; // wrong ! check later
-//
-//    jbyte *byte1 = (*env)->GetByteArrayElements(env, wordList, &b);
-//    buff = (char *) byte1;
-//    (*env)->ReleaseByteArrayElements(env, wordList, b, JNI_COMMIT);
-//
-//
-//    jbyte *seed_byte = (*env)->GetByteArrayElements(env, wordList, &b);
-//    seed_buff = seed_byte;
-//    (*env)->ReleaseByteArrayElements(env, seed, b, JNI_COMMIT);
-//
-//    size_t byte_size = BRBIP39Encode(phrase,) continue later
-//
-//}
