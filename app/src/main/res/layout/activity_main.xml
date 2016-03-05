@@ -38,6 +38,7 @@
 
     <ProgressBar
         android:id="@+id/sync_progress_bar"
+        android:visibility="gone"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="2dp"
@@ -46,6 +47,7 @@
 
     <TextView
         android:id="@+id/sync_progress_text"
+        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"

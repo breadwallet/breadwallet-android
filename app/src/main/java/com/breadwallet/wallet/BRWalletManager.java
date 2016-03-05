@@ -234,7 +234,7 @@ public class BRWalletManager {
         return keyguardManager.isKeyguardSecure();
     }
 
-    public void refreshAddress() {
+    public static void refreshAddress() {
         Log.e(TAG, "refreshAddress: " + ctx);
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) {
@@ -254,16 +254,23 @@ public class BRWalletManager {
      * Wallet callbacks
      */
 
-    public void onBalanceChanged(long balance) {
+    public static void onBalanceChanged(final long balance) {
+
         Log.e(TAG, "in the BRWalletManager - onBalanceChanged:  " + balance);
         if (ctx == null) ctx = MainActivity.app;
-        CurrencyManager.getInstance(ctx).setBalance(balance);
-        //TODO check this when Aaron fixes the bug
-        refreshAddress();
-        FragmentSettingsAll.refreshTransactions(ctx);
+        ((Activity)ctx).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                CurrencyManager.getInstance(ctx).setBalance(balance);
+                //TODO check this when Aaron fixes the bug
+                refreshAddress();
+                FragmentSettingsAll.refreshTransactions(ctx);
+            }
+        });
+
     }
 
-    public void onTxAdded(byte[] tx, long blockheight, long timestamp, long amount) {
+    public static void onTxAdded(byte[] tx, long blockheight, long timestamp, final long amount) {
         Log.e(TAG, "amount on the txAdded:" + amount);
         Log.e(TAG, "in the BRWalletManager - onTxAdded: " + tx.length + " " + blockheight + " " + timestamp);
 //        for (byte b : tx) {
@@ -271,26 +278,32 @@ public class BRWalletManager {
 //        }
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) {
-            CurrencyManager m = CurrencyManager.getInstance(ctx);
-            if (amount > 0) {
-                ((BreadWalletApp) ctx.getApplicationContext()).showCustomToast((Activity) ctx,
-                        String.format(ctx.getString(R.string.received), m.getBitsFromSatoshi(amount) + m.bitcoinLowercase),
-                        BreadWalletApp.DISPLAY_HEIGHT_PX / 2, Toast.LENGTH_LONG, 1);
-            } else {
-                ((BreadWalletApp) ctx.getApplicationContext()).showCustomToast((Activity) ctx,
-                        String.format(ctx.getString(R.string.sent), m.getBitsFromSatoshi(amount * -1) + m.bitcoinLowercase),
-                        BreadWalletApp.DISPLAY_HEIGHT_PX / 2, Toast.LENGTH_LONG, 1);
-            }
+            ((Activity)ctx).runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    CurrencyManager m = CurrencyManager.getInstance(ctx);
+                    if (amount > 0) {
+                        ((BreadWalletApp) ctx.getApplicationContext()).showCustomToast((Activity) ctx,
+                                String.format(ctx.getString(R.string.received), m.getBitsFromSatoshi(amount) + m.bitcoinLowercase),
+                                BreadWalletApp.DISPLAY_HEIGHT_PX / 2, Toast.LENGTH_LONG, 1);
+                    } else {
+                        ((BreadWalletApp) ctx.getApplicationContext()).showCustomToast((Activity) ctx,
+                                String.format(ctx.getString(R.string.sent), m.getBitsFromSatoshi(amount * -1) + m.bitcoinLowercase),
+                                BreadWalletApp.DISPLAY_HEIGHT_PX / 2, Toast.LENGTH_LONG, 1);
+                    }
+                }
+            });
+
         }
         SQLiteManager sqLiteManager = SQLiteManager.getInstance(ctx);
         sqLiteManager.insertTransaction(tx, blockheight, timestamp);
     }
 
-    public void onTxUpdated(byte[] tx) {
+    public static void onTxUpdated(byte[] tx) {
         Log.e(TAG, "in the BRWalletManager - onTxUpdated");
     }
 
-    public void onTxDeleted(byte[] tx) {
+    public static void onTxDeleted(byte[] tx) {
         Log.e(TAG, "in the BRWalletManager - onTxDeleted");
     }
 
@@ -313,7 +326,7 @@ public class BRWalletManager {
 
     public native void testTransactionAdding(long amount);
 
-    public native String getReceiveAddress();
+    public static native String getReceiveAddress();
 
     public native TransactionListItem[] getTransactions();
 

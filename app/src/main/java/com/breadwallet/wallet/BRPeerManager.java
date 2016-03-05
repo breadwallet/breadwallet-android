@@ -7,6 +7,8 @@ import android.view.View;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.sqlite.SQLiteManager;
 
+import java.text.DecimalFormat;
+
 /**
  * BreadWallet
  * <p/>
@@ -34,10 +36,11 @@ import com.breadwallet.tools.sqlite.SQLiteManager;
 public class BRPeerManager {
     public static final String TAG = BRPeerManager.class.getName();
     private static BRPeerManager instance;
-    private SyncProgressTask syncTask;
+    private static SyncProgressTask syncTask;
     private static Context ctx;
 
     private BRPeerManager() {
+        syncTask = new SyncProgressTask();
     }
 
     public static synchronized BRPeerManager getInstance(Context context) {
@@ -71,40 +74,63 @@ public class BRPeerManager {
      * int (*networkIsReachable)(void *info))
      */
 
-    public synchronized void syncStarted() {
+    public static synchronized void syncStarted() {
         Log.e(TAG, "syncStarted");
-        if (syncTask == null) {
-            syncTask = new SyncProgressTask();
-            syncTask.start();
+        try {
+            if (syncTask != null) {
+                if (!syncTask.isAlive()) {
+                    syncTask.start();
+                }
+
+            }
+        } catch (IllegalThreadStateException ex) {
+            ex.printStackTrace();
         }
 
     }
 
-    public synchronized void syncSucceded() {
+    public static synchronized void syncSucceded() {
         Log.e(TAG, "syncSucceeded");
+        try {
+            if (syncTask != null) {
+                syncTask.interrupt();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
-    public synchronized void syncFailed() {
+    public static synchronized void syncFailed() {
         Log.e(TAG, "syncFailed");
-        syncTask.progressStatus = 999;
-        syncTask = null;
+        try {
+            if (syncTask != null) {
+                syncTask.interrupt();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
     }
 
-    public synchronized void txStatusUpdate() {
+    public static synchronized void txStatusUpdate() {
         Log.e(TAG, "txStatusUpdate");
     }
 
-    public synchronized void saveBlocks(byte[] block) {
+    public static synchronized void txRejected(int rescanRecommended) {
+        Log.e(TAG, "txStatusUpdate");
+    }
+
+    public static synchronized void saveBlocks(byte[] block) {
         Log.e(TAG, "saveBlocks");
         SQLiteManager.getInstance(ctx).insertMerkleBlock(block);
     }
 
-    public synchronized void savePeers(byte[] peerAddress, byte[] peerPort, byte[] peerTimeStamp) {
+    public static synchronized void savePeers(byte[] peerAddress, byte[] peerPort, byte[] peerTimeStamp) {
         Log.e(TAG, "savePeers");
         SQLiteManager.getInstance(ctx).insertPeer(peerAddress, peerPort, peerTimeStamp);
     }
 
-    public synchronized void networkIsReachable() {
+    public static synchronized void networkIsReachable() {
         Log.e(TAG, "networkIsReachable");
     }
 
@@ -125,7 +151,7 @@ public class BRPeerManager {
                         app.syncProgressText.setVisibility(View.VISIBLE);
                         app.syncProgressBar.setVisibility(View.VISIBLE);
                         app.syncProgressBar.setProgress((int) (progressStatus * 100));
-                        app.syncProgressText.setText(String.valueOf(progressStatus * 100) + "%");
+                        app.syncProgressText.setText(new DecimalFormat("#.##").format(progressStatus * 100) + "%");
                     }
                 });
 
@@ -135,7 +161,7 @@ public class BRPeerManager {
                         public void run() {
                             progressStatus = syncProgress();
                             app.syncProgressBar.setProgress((int) (progressStatus * 100));
-                            app.syncProgressText.setText(String.valueOf(progressStatus * 100) + "%");
+                            app.syncProgressText.setText(new DecimalFormat("#.##").format(progressStatus * 100) + "%");
 
                         }
                     });
@@ -160,6 +186,5 @@ public class BRPeerManager {
 
         }
     }
-
 
 }
