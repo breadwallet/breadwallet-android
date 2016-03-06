@@ -3,11 +3,12 @@
 //
 #include "jni.h"
 #include "BRInt.h"
+#include "BRPeerManager.h"
 
 #ifndef BREADWALLET_PEERMANAGER_H
-
-
 #define BREADWALLET_PEERMANAGER_H
+
+extern BRPeerManager *_peerManager;
 
 JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_connect(JNIEnv *env, jobject thiz,
                                                                  jint earliestKeyTime,

@@ -2,7 +2,6 @@
 // Created by Mihail Gutan on 12/11/15.
 //
 #include "PeerManager.h"
-#include "BRPeerManager.h"
 #include "BRPeer.h"
 #include "WalletCallbacks.h"
 #include "BRInt.h"
@@ -13,7 +12,7 @@
 #include <pthread.h>
 
 static BRMerkleBlock **_blocks;
-static BRPeerManager *_peerManager;
+BRPeerManager *_peerManager;
 static JavaVM *_jvm;
 static BRPeer *_peers;
 static size_t _blocksCounter = 0;
@@ -38,12 +37,9 @@ static void syncStarted(void *info) {
     pthread_mutex_lock(&_lock);
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "syncStarted");
     JNIEnv *globalEnv = getEnv();
-//
+
     jmethodID mid = (*globalEnv)->GetStaticMethodID(globalEnv, _peerManagerClass, "syncStarted", "()V");
-////    uint64_t walletBalance = BRWalletBalance(wallet);
-////    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ",
-////                        "BRWalletBalance(wallet): %d", BRWalletBalance(wallet));
-//    //call java methods
+    //call java methods
     (*globalEnv)->CallStaticVoidMethod(globalEnv, _peerManagerClass, mid);
 
     pthread_mutex_unlock(&_lock);
@@ -57,12 +53,9 @@ static void syncSucceded(void *info) {
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "syncSucceded: # of tx: %d",
                         BRWalletTransactions(_wallet, NULL, 0) );
     JNIEnv *globalEnv = getEnv();
-//
+
     jmethodID mid = (*globalEnv)->GetStaticMethodID(globalEnv, _peerManagerClass, "syncSucceded", "()V");
-////    uint64_t walletBalance = BRWalletBalance(wallet);
-////    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ",
-////                        "BRWalletBalance(wallet): %d", BRWalletBalance(wallet));
-//    //call java methods
+    //call java methods
     (*globalEnv)->CallStaticVoidMethod(globalEnv, _peerManagerClass, mid);
 
     pthread_mutex_unlock(&_lock);
@@ -75,12 +68,9 @@ static void syncFailed(void *info, int error) {
     pthread_mutex_lock(&_lock);
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "syncFailed");
     JNIEnv *globalEnv = getEnv();
-//
+
     jmethodID mid = (*globalEnv)->GetStaticMethodID(globalEnv, _peerManagerClass, "syncFailed", "()V");
-////    uint64_t walletBalance = BRWalletBalance(wallet);
-////    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ",
-////                        "BRWalletBalance(wallet): %d", BRWalletBalance(wallet));
-//    //call java methods
+    //call java methods
     (*globalEnv)->CallStaticVoidMethod(globalEnv, _peerManagerClass, mid);
 
     pthread_mutex_unlock(&_lock);
@@ -92,29 +82,24 @@ static void txStatusUpdate(void *info) {
     pthread_mutex_lock(&_lock);
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "txStatusUpdate");
     JNIEnv *globalEnv = getEnv();
-//
+
     jmethodID mid = (*globalEnv)->GetStaticMethodID(globalEnv, _peerManagerClass, "txStatusUpdate", "()V");
-////    uint64_t walletBalance = BRWalletBalance(wallet);
-////    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ",
-////                        "BRWalletBalance(wallet): %d", BRWalletBalance(wallet));
-//    //call java methods
+    //call java methods
     (*globalEnv)->CallStaticVoidMethod(globalEnv, _peerManagerClass, mid);
 
     pthread_mutex_unlock(&_lock);
 
     (*_jvm)->DetachCurrentThread(_jvm);
+
 }
 
 static void txRejected(void *info, int rescanRecommended) {
     pthread_mutex_lock(&_lock);
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "txRejected");
     JNIEnv *globalEnv = getEnv();
-//
+
     jmethodID mid = (*globalEnv)->GetStaticMethodID(globalEnv, _peerManagerClass, "txRejected", "(I)V");
-////    uint64_t walletBalance = BRWalletBalance(wallet);
-////    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ",
-////                        "BRWalletBalance(wallet): %d", BRWalletBalance(wallet));
-//    //call java methods
+    //call java methods
     (*globalEnv)->CallStaticVoidMethod(globalEnv, _peerManagerClass, mid, rescanRecommended);
 
     pthread_mutex_unlock(&_lock);

@@ -907,7 +907,7 @@ public class MainActivity extends FragmentActivity implements Observer {
             passwordDialogFragment = new PasswordDialogFragment();
             passwordDialogFragment.setFirstTimeTrue();
             passwordDialogFragment.show(fm, PasswordDialogFragment.class.getName());
-            while (pass.isEmpty()) {
+            while (pass != null && pass.isEmpty()) {
                 Log.e(TAG, "in the while");
                 runOnUiThread(new Runnable() {
                     @Override

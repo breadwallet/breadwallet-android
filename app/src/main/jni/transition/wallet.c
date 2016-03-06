@@ -3,6 +3,7 @@
 //
 
 #include "wallet.h"
+#include "PeerManager.h"
 #include "BRPeerManager.h"
 //#include "WalletCallbacks.h"
 #include "BRBIP39Mnemonic.h"
@@ -27,6 +28,15 @@ static JNIEnv* getEnv() {
         }
     }
     return env;
+}
+
+//callback for tx publishing
+void callback(void *info, int error){
+    if(error){
+        __android_log_print(ANDROID_LOG_ERROR, "Message from callback: ", "publishing Failed!");
+    } else {
+        __android_log_print(ANDROID_LOG_ERROR, "Message from callback: ", "publishing Succeeded!");
+    }
 }
 
 static void balanceChanged(void *info, uint64_t balance) {
@@ -404,8 +414,15 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRWalletManager_pay(JNIEnv *env, jobj
     char *rawAddress = (*env)->GetStringUTFChars(env, address, 0);
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "SENDING: address %s , amount %d",
                         rawAddress, amount);
-}
 
+    const char *addr;
+    addr = (char *) (*env)->GetStringUTFChars(env, address, NULL);
+
+    BRTransaction *tx = BRWalletCreateTransaction(_wallet, (uint64_t) amount, addr);
+    int sign_result = BRWalletSignTransaction(_wallet, tx, NULL);
+    BRPeerManagerPublishTx(_peerManager, tx, NULL, callback);
+
+}
 
 //TODO delete this testing method
 void printBits(unsigned int num) {
