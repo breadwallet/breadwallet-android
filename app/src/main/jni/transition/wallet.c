@@ -40,7 +40,7 @@ void callback(void *info, int error){
 }
 
 static void balanceChanged(void *info, uint64_t balance) {
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "balanceChanged: %d", balance);
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "balanceChanged: %d", (int) balance);
     JNIEnv *globalEnv = getEnv();
 
     jmethodID mid = (*globalEnv)->GetStaticMethodID(globalEnv, _walletManagerClass, "onBalanceChanged", "(J)V");
@@ -60,12 +60,12 @@ static void txAdded(void *info, BRTransaction *tx) {
     //call java methods
     __android_log_print(ANDROID_LOG_ERROR, "******TX ADDED CALLBACK AFTER PARSE******: ",
                         "BRWalletAmountReceivedFromTx: %d, ",
-                        BRWalletAmountReceivedFromTx(_wallet, tx));
+                        (int) BRWalletAmountReceivedFromTx(_wallet, tx));
     uint8_t buf[BRTransactionSerialize(tx, NULL, 0)];
     size_t len = BRTransactionSerialize(tx, buf, sizeof(buf));
     uint64_t fee = BRWalletFeeForTx(_wallet, tx) == -1 ? 0 : BRWalletFeeForTx(_wallet, tx);
     jlong amount;
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "fee: %d", fee);
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "fee: %d", (int) fee);
     if (BRWalletAmountSentByTx(_wallet, tx) == 0) {
         amount = BRWalletAmountReceivedFromTx(_wallet, tx);
     } else {
@@ -287,14 +287,14 @@ JNIEXPORT jobjectArray Java_com_breadwallet_wallet_BRWalletManager_getTransactio
                                                                                    jobject thiz) {
 
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "getTransactions: BRTxs - %d",
-                        BRWalletTransactions(_wallet, NULL, 0));
+                        (int) BRWalletTransactions(_wallet, NULL, 0));
     if (_wallet == NULL) return NULL;
     if (BRWalletTransactions(_wallet, NULL, 0) == 0) return NULL;
 //    __android_log_print(ANDROID_LOG_ERROR, "***LOLOLOLOLOLOLO*********: ", "BRWalletTransactions(_wallet, NULL, 0): %d", BRWalletTransactions(_wallet, NULL, 0));
     //Retrieve the txs array
     BRTransaction *transactions_sqlite[BRWalletTransactions(_wallet, NULL, 0)];
     size_t temp = sizeof(transactions_sqlite) / sizeof(*transactions_sqlite);
-    __android_log_print(ANDROID_LOG_ERROR, "THIS IS THE TEMP: ", "temp: %d", temp);
+    __android_log_print(ANDROID_LOG_ERROR, "THIS IS THE TEMP: ", "temp: %d", (int) temp);
 
     size_t txCount = BRWalletTransactions(_wallet, transactions_sqlite, temp);
 
@@ -332,7 +332,7 @@ JNIEXPORT jobjectArray Java_com_breadwallet_wallet_BRWalletManager_getTransactio
         jlong Jreceived = (jlong) BRWalletAmountReceivedFromTx(_wallet, transactions_sqlite[i]);
         __android_log_print(ANDROID_LOG_ERROR, "Message from C: ",
                             "BRWalletAmountReceivedFromTx(): %d",
-                            BRWalletAmountReceivedFromTx(_wallet, transactions_sqlite[i]));
+                            (int) BRWalletAmountReceivedFromTx(_wallet, transactions_sqlite[i]));
 
         jlong Jfee = (jlong) BRWalletFeeForTx(_wallet, transactions_sqlite[i]);
 //        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "BRWalletFeeForTx(wallet, transactions_sqlite[i]): %d",
@@ -413,7 +413,7 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRWalletManager_pay(JNIEnv *env, jobj
                                                                jstring address, jlong amount) {
     char *rawAddress = (*env)->GetStringUTFChars(env, address, 0);
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "SENDING: address %s , amount %d",
-                        rawAddress, amount);
+                        rawAddress, (int) amount);
 
     const char *addr;
     addr = (char *) (*env)->GetStringUTFChars(env, address, NULL);

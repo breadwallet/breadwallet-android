@@ -51,7 +51,7 @@ static void syncSucceded(void *info) {
 
     pthread_mutex_lock(&_lock);
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "syncSucceded: # of tx: %d",
-                        BRWalletTransactions(_wallet, NULL, 0) );
+                        (int) BRWalletTransactions(_wallet, NULL, 0) );
     JNIEnv *globalEnv = getEnv();
 
     jmethodID mid = (*globalEnv)->GetStaticMethodID(globalEnv, _peerManagerClass, "syncSucceded", "()V");
@@ -165,7 +165,7 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_connect(JNIEnv *env, jo
     }
 
     if (_wallet == NULL) {
-        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "NULL: %s", "blocks");
+        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "NULL: blocks");
         return;
     }
 
@@ -174,11 +174,11 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_connect(JNIEnv *env, jo
                                                   blocksCount, peersCount == 0 ? NULL : _peers,
                                                   peersCount);
     //TESTING ONLY
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "earliestKeyTime: %d",  earliestKeyTime);
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "earliestKeyTime: %d",  (int) earliestKeyTime);
 //    _peerManager = BRPeerManagerNew(_wallet, (uint32_t) earliestKeyTime, NULL,0, NULL, 0);
 
     if (_peerManager == NULL) {
-        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "NULL: ", "_peerManager");
+        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "NULL: _peerManager");
         return;
     }
 

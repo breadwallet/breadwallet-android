@@ -295,7 +295,7 @@ JNIEXPORT jboolean JNICALL Java_com_breadwallet_presenter_fragments_IntroRecover
         (JNIEnv *env, jobject obj, jobjectArray stringArray, jstring jPhrase) {
 
 
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "validateRecoveryPhrase: %s" , jPhrase);
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "validateRecoveryPhrase: %s" , (char *) jPhrase);
     int wordsCount = (*env)->GetArrayLength(env, stringArray);
     const char *wordList[wordsCount];
     for (int i = 0; i < wordsCount; i++) {

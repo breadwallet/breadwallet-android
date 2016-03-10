@@ -102,7 +102,7 @@ void Java_com_breadwallet_wallet_BRWalletManager_testTransactionAdding(JNIEnv *e
     BRWalletRegisterTransaction(_wallet, tx); // test adding unsigned tx
 
     BRTransactionSign(tx, &k, 1);
-    __android_log_print(ANDROID_LOG_ERROR, "****IMPORTANT****: ", "the tx sign is: %d", BRTransactionIsSigned(tx));
+    __android_log_print(ANDROID_LOG_ERROR, "****IMPORTANT****: ", "the tx sign is: %d", (int) BRTransactionIsSigned(tx));
     BRWalletRegisterTransaction(_wallet, tx);
 
 //    BRWalletFree(_wallet);

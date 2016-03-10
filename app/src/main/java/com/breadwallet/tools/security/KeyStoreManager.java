@@ -418,6 +418,9 @@ public class KeyStoreManager {
             keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
             keyStore.load(null);
             keyStore.deleteEntry(KeyStoreManager.PHRASE_ALIAS);
+            keyStore.deleteEntry(KeyStoreManager.PUB_KEY_ALIAS);
+            keyStore.deleteEntry(KeyStoreManager.WALLET_CREATION_TIME_ALIAS);
+            keyStore.deleteEntry(KeyStoreManager.PASS_CODE_ALIAS);
         } catch (CertificateException e) {
             e.printStackTrace();
             return false;
