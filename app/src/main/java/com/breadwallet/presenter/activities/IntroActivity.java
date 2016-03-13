@@ -117,12 +117,12 @@ public class IntroActivity extends FragmentActivity {
 
     private void showRecoverNewWalletFragment() {
 //        if (savedInstanceState == null) {
-            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-            fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
-            IntroWelcomeFragment introWelcomeFragment = (IntroWelcomeFragment) getFragmentManager().
-                    findFragmentByTag(IntroWelcomeFragment.class.getName());
-            fragmentTransaction.replace(introWelcomeFragment.getId(), new IntroNewRecoverFragment(), IntroNewRecoverFragment.class.getName());
-            fragmentTransaction.commitAllowingStateLoss();
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
+        IntroWelcomeFragment introWelcomeFragment = (IntroWelcomeFragment) getFragmentManager().
+                findFragmentByTag(IntroWelcomeFragment.class.getName());
+        fragmentTransaction.replace(introWelcomeFragment.getId(), new IntroNewRecoverFragment(), IntroNewRecoverFragment.class.getName());
+        fragmentTransaction.commitAllowingStateLoss();
 //            Log.e(TAG, "after showRecoverNewWalletFragment");
 //        }
     }
@@ -130,42 +130,42 @@ public class IntroActivity extends FragmentActivity {
     public void showNewWalletFragment() {
 //        if (savedInstanceState == null) {
 //            Log.e(TAG, "in showNewWalletFragment");
-            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-            leftButton.setVisibility(View.VISIBLE);
-            leftButton.setClickable(true);
-            fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
-            IntroNewRecoverFragment introNewRecoverFragment = (IntroNewRecoverFragment) getFragmentManager().
-                    findFragmentByTag(IntroNewRecoverFragment.class.getName());
-            fragmentTransaction.replace(introNewRecoverFragment.getId(), new IntroNewWalletFragment(), IntroNewWalletFragment.class.getName()).
-                    addToBackStack(null);
-            fragmentTransaction.commitAllowingStateLoss();
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        leftButton.setVisibility(View.VISIBLE);
+        leftButton.setClickable(true);
+        fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
+        IntroNewRecoverFragment introNewRecoverFragment = (IntroNewRecoverFragment) getFragmentManager().
+                findFragmentByTag(IntroNewRecoverFragment.class.getName());
+        fragmentTransaction.replace(introNewRecoverFragment.getId(), new IntroNewWalletFragment(), IntroNewWalletFragment.class.getName()).
+                addToBackStack(null);
+        fragmentTransaction.commitAllowingStateLoss();
 //        }
     }
 
     public void showRecoverWalletFragment() {
 //        if (savedInstanceState == null) {
-            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-            leftButton.setVisibility(View.VISIBLE);
-            leftButton.setClickable(true);
-            fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
-            IntroNewRecoverFragment introNewRecoverFragment = (IntroNewRecoverFragment) getFragmentManager().
-                    findFragmentByTag(IntroNewRecoverFragment.class.getName());
-            fragmentTransaction.replace(introNewRecoverFragment.getId(), new IntroRecoverWalletFragment(), IntroRecoverWalletFragment.class.getName()).
-                    addToBackStack(null);
-            fragmentTransaction.commitAllowingStateLoss();
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        leftButton.setVisibility(View.VISIBLE);
+        leftButton.setClickable(true);
+        fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
+        IntroNewRecoverFragment introNewRecoverFragment = (IntroNewRecoverFragment) getFragmentManager().
+                findFragmentByTag(IntroNewRecoverFragment.class.getName());
+        fragmentTransaction.replace(introNewRecoverFragment.getId(), new IntroRecoverWalletFragment(), IntroRecoverWalletFragment.class.getName()).
+                addToBackStack(null);
+        fragmentTransaction.commitAllowingStateLoss();
 //        }
     }
 
     public void showWarningFragment() {
 //        if (savedInstanceState == null) {
-            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-            IntroNewWalletFragment introNewWalletFragment = (IntroNewWalletFragment) getFragmentManager().
-                    findFragmentByTag(IntroNewWalletFragment.class.getName());
-            fragmentTransaction.replace(introNewWalletFragment.getId(), new IntroWarningFragment(), IntroWarningFragment.class.getName());
-            introNewWalletFragment.introGenerate.setClickable(false);
-            leftButton.setVisibility(View.GONE);
-            leftButton.setClickable(false);
-            fragmentTransaction.commitAllowingStateLoss();
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        IntroNewWalletFragment introNewWalletFragment = (IntroNewWalletFragment) getFragmentManager().
+                findFragmentByTag(IntroNewWalletFragment.class.getName());
+        fragmentTransaction.replace(introNewWalletFragment.getId(), new IntroWarningFragment(), IntroWarningFragment.class.getName());
+        introNewWalletFragment.introGenerate.setClickable(false);
+        leftButton.setVisibility(View.GONE);
+        leftButton.setClickable(false);
+        fragmentTransaction.commitAllowingStateLoss();
 //        }
     }
 
@@ -215,8 +215,7 @@ public class IntroActivity extends FragmentActivity {
             //Device passcode/password should be enabled for the app to work
             ((BreadWalletApp) getApplication()).showDeviceNotSecuredWarning(this);
         } else {
-            //TODO DELETE THIS TESTING ENTRY DELETION
-            //KeyStoreManager.deleteAllKeyStoreEntries();
+
             //now check if there is a wallet or should we create/restore one.
             new Handler().postDelayed(new Runnable() {
                 @Override

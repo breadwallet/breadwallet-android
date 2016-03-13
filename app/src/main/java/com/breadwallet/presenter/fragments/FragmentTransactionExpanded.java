@@ -219,7 +219,7 @@ public class FragmentTransactionExpanded extends Fragment {
             txTo.setText(addresses[i]);
             txToDescription.setText(getString(R.string.payment_address));
             txToAmount.setText(m.getFormattedCurrencyString("BTC", String.valueOf(m.getBitsFromSatoshi(-amounts[i]))));
-            txToExchange.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, String.valueOf(-amounts[i]))));
+            txToExchange.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, String.valueOf(m.getBitsFromSatoshi(-amounts[i])))));
 
             view.addView(addressBlock);
             view.addView(FragmentSettingsAll.getSeparationLine(0, getActivity()));

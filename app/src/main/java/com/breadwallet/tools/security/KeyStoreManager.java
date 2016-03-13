@@ -12,8 +12,6 @@ import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
 
-import org.apache.commons.io.IOUtils;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -196,10 +194,10 @@ public class KeyStoreManager {
         return recoveredSecret;
     }
 
-    public static boolean putMasterPublicKey(byte[] masterPubKey, Context context) {
+    public static boolean putMasterPublicKey(String masterPubKey, Context context) {
 
-        Log.e(TAG, "putMasterPublicKey length: " + masterPubKey.length);
-        if (masterPubKey.length == 0) return false;
+        if (masterPubKey == null) return false;
+        if (masterPubKey.length() == 0) return false;
         try {
             KeyStore keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
             keyStore.load(null);
@@ -212,11 +210,11 @@ public class KeyStoreManager {
                 notAfter.add(Calendar.YEAR, 99);
                 KeyPairGenerator generator = KeyPairGenerator.getInstance(
                         KeyProperties.KEY_ALGORITHM_RSA, ANDROID_KEY_STORE);
-                @SuppressWarnings("deprecation") KeyPairGeneratorSpec spec = new KeyPairGeneratorSpec.Builder(context)
+                KeyPairGeneratorSpec spec = new KeyPairGeneratorSpec.Builder(context)
                         .setAlias(PUB_KEY_ALIAS)
                         .setKeySize(2048)
                         .setSubject(new X500Principal(BREADWALLET_X500))
-                        .setSerialNumber(BigInteger.valueOf(2))
+                        .setSerialNumber(new BigInteger("6"))
                         .setEncryptionRequired().setStartDate(notBefore.getTime())
                         .setEndDate(notAfter.getTime())
                         .build();
@@ -247,7 +245,9 @@ public class KeyStoreManager {
             inCipher.init(Cipher.ENCRYPT_MODE, publicKey);
             CipherOutputStream cipherOutputStream = new CipherOutputStream(
                     new FileOutputStream(encryptedDataFilePath), inCipher);
-            cipherOutputStream.write(masterPubKey);
+            byte[] bytesToStore = masterPubKey.getBytes("UTF-8");
+            Log.e(TAG, "bytesToStore(phrase): length " + bytesToStore.length);
+            cipherOutputStream.write(bytesToStore);
             cipherOutputStream.close();
             return true;
         } catch (Exception e) {
@@ -256,12 +256,9 @@ public class KeyStoreManager {
         return false;
     }
 
-    public static byte[] getMasterPublicKey(final Context context) {
-//        if (!((BreadWalletApp) context.getApplicationContext()).allowKeyStoreAccess) {
-//            return null;
-//        }
-        byte[] result = new byte[0];
+    public static String getMasterPublicKey(final Context context) {
         KeyStore keyStore;
+        String recoveredSecret = "";
         String filesDirectory = context.getFilesDir().getAbsolutePath();
         String encryptedDataFilePath = filesDirectory + File.separator + PUB_KEY_FILENAME;
         PrivateKey privateKey;
@@ -283,29 +280,21 @@ public class KeyStoreManager {
 
             CipherInputStream cipherInputStream = new CipherInputStream(
                     new FileInputStream(encryptedDataFilePath), outCipher);
-            result = IOUtils.toByteArray(cipherInputStream);
-
-
-            //TODO USE BELOW IF NEEDED TO GET RID OF THE COMMONS IO LIB
-//            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-//
-//            int nRead;
-//            byte[] data = new byte[16384];
-//
-//            while ((nRead = is.read(data, 0, data.length)) != -1) {
-//                buffer.write(data, 0, nRead);
-//            }
-//
-//            buffer.flush();
-//
-//            return buffer.toByteArray();
-
-//            Log.e(TAG, "round tripped bytes: " + roundTrippedBytes);
+            byte[] roundTrippedBytes = new byte[200]; //TODO: dynamically resize as we get more data
+            int index = 0;
+            int nextByte;
+            while ((nextByte = cipherInputStream.read()) != -1) {
+                roundTrippedBytes[index] = (byte) nextByte;
+                index++;
+            }
+            recoveredSecret = new String(roundTrippedBytes, 0, index, "UTF-8");
+            Log.e(TAG, "round tripped string = " + recoveredSecret);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return result;
+        Log.e(TAG, "recovered: " + recoveredSecret);
+        return recoveredSecret;
     }
 
     public static boolean putWalletCreationTime(int creationTime, Context context) {

@@ -61,7 +61,7 @@ public class BRPeerManager {
 
     public native void createBlockArrayWithCount(int count);
 
-    public native double syncProgress();
+    public native static double syncProgress();
 
     /**
      * void BRPeerManagerSetCallbacks(BRPeerManager *manager, void *info,
@@ -78,12 +78,12 @@ public class BRPeerManager {
         Log.e(TAG, "syncStarted");
         try {
             if (syncTask != null) {
-                if (!syncTask.isAlive()) {
-                    syncTask.start();
-                }
-
+                syncTask.interrupt();
             }
+            syncTask = new SyncProgressTask();
+            syncTask.start();
         } catch (IllegalThreadStateException ex) {
+
             ex.printStackTrace();
         }
 
@@ -134,7 +134,7 @@ public class BRPeerManager {
         Log.e(TAG, "networkIsReachable");
     }
 
-    private class SyncProgressTask extends Thread {
+    private static class SyncProgressTask extends Thread {
 
         public boolean running = true;
         public double progressStatus = 0;

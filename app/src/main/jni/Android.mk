@@ -2,26 +2,41 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
+LOCAL_MODULE := core
+
+LOCAL_CFLAGS := -std=c99 #-DBITCOIN_TESTNET=1
+
+LOCAL_LDLIBS := -llog -lm
+
+LOCAL_SHARED_LIBRARIES := bread
+
 LOCAL_SRC_FILES := \
 ./transition/WalletCallbacks.c\
 ./transition/core.c\
 ./transition/wallet.c\
 ./transition/PeerManager.c
 
-LOCAL_MODULE := core
-
-LOCAL_LDLIBS := -llog -lm
-
-LOCAL_SHARED_LIBRARIES := bread
-
 #//TODO take out the  -DBITCOIN_TESTNET=1 from flags (TESTING)
-LOCAL_CFLAGS := -std=c99 #-DBITCOIN_TESTNET=1
 
 include $(BUILD_SHARED_LIBRARY)
 
 #______________________________
 
 include $(CLEAR_VARS)
+
+LOCAL_MODULE := bread
+
+LOCAL_CFLAGS := -std=c99 #-DBITCOIN_TESTNET=1
+
+LOCAL_C_INCLUDES := \
+$(LOCAL_PATH)/breadwallet-core/secp256k1\
+$(LOCAL_PATH)/breadwallet-core
+
+LOCAL_LDLIBS := -llog -lm
+
+LOCAL_EXPORT_C_INCLUDES := \
+$(LOCAL_PATH)/breadwallet-core\
+$(LOCAL_PATH)/breadwallet-core/secp256k1
 
 LOCAL_SRC_FILES := \
 ./breadwallet-core/BRAddress.c\
@@ -40,19 +55,5 @@ LOCAL_SRC_FILES := \
 ./breadwallet-core/BRTransaction.c\
 ./breadwallet-core/BRWallet.c\
 ./breadwallet-core/test.c
-
-LOCAL_C_INCLUDES := \
-$(LOCAL_PATH)/breadwallet-core/secp256k1\
-$(LOCAL_PATH)/breadwallet-core
-
-LOCAL_MODULE := bread
-
-LOCAL_LDLIBS := -llog -lm
-
-LOCAL_EXPORT_C_INCLUDES := \
-$(LOCAL_PATH)/breadwallet-core\
-$(LOCAL_PATH)/breadwallet-core/secp256k1
-
-LOCAL_CFLAGS := -std=c99 #-DBITCOIN_TESTNET=1
 
 include $(BUILD_SHARED_LIBRARY)

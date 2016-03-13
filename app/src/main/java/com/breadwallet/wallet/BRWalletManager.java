@@ -109,7 +109,7 @@ public class BRWalletManager {
         }
         if (words.length < 2000)
             throw new IllegalArgumentException("the list is wrong, size: " + words.length);
-        String phrase = new String(encodeSeed(keyBytes, words));
+        String phrase = encodeSeed(keyBytes, words);
 //        String phrase = "short apple trunk riot coyote innocent zebra venture ill lava shop test";
         boolean success = KeyStoreManager.setKeyStoreString(phrase, ctx);
         Log.e(TAG, "setKeyStoreString was successful: " + success);
@@ -194,10 +194,10 @@ public class BRWalletManager {
      * true if keychain is available and we know that no wallet exists on it
      */
     public boolean noWallet(Context ctx) {
-        byte[] pubkey = KeyStoreManager.getMasterPublicKey(ctx);
-        Log.e(TAG, "in the noWallet, pubkey.length: " + pubkey.length);
+        String pubkey = KeyStoreManager.getMasterPublicKey(ctx);
+        Log.e(TAG, "in the noWallet, pubkey.length(): " + pubkey.length());
 //        Log.e(TAG, "in the noWallet, pubkey: " + pubkey);
-        return pubkey.length == 0;
+        return pubkey.length() == 0;
 
     }
 
@@ -307,10 +307,10 @@ public class BRWalletManager {
         Log.e(TAG, "in the BRWalletManager - onTxDeleted");
     }
 
-    private native byte[] encodeSeed(byte[] seed, String[] wordList);
+    private native String encodeSeed(byte[] seed, String[] wordList);
 
     //    public native void createWallet(ByteBuffer transactions[], int transactionCount);
-    public native void createWallet(int transactionCount, byte[] pubkey, int r);
+    public native void createWallet(int transactionCount, String pubkey, int r);
 
     public native void putTransaction(byte[] transaction);
 
@@ -320,7 +320,7 @@ public class BRWalletManager {
 
     public native void setPeerManagerCallbacks(byte[] peerManager);
 
-    public native byte[] getMasterPubKey(String normalizedString);
+    public native String getMasterPubKey(String normalizedString);
 
     public native void testWalletCallbacks();
 

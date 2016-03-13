@@ -67,7 +67,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Random;
 
 /**
  * BreadWallet
@@ -155,9 +154,11 @@ public class MainActivity extends FragmentActivity implements Observer {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Log.e(TAG, "MainActivity created!");
+
         app = this;
         initializeViews();
-        Log.e(TAG, "MainActivity created!");
 
         //TODO delete the core testing
 //        cTests();
@@ -766,10 +767,10 @@ public class MainActivity extends FragmentActivity implements Observer {
             }
         }
 
-        byte[] pubkey = KeyStoreManager.getMasterPublicKey(this);
-        int r = pubkey.length == 0 ? 0 : 1;
+        String pubkeyEncoded = KeyStoreManager.getMasterPublicKey(this);
+        int r = pubkeyEncoded.length() == 0 ? 0 : 1;
 
-        m.createWallet(transactionsCount, pubkey, r);
+        m.createWallet(transactionsCount, pubkeyEncoded, r);
 
         final long earliestKeyTime = KeyStoreManager.getWalletCreationTime(this);
         Log.e(TAG,"earliestKeyTime from keystore: " + earliestKeyTime);

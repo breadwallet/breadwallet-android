@@ -44,6 +44,7 @@ static void syncStarted(void *info) {
 
     pthread_mutex_unlock(&_lock);
 
+
     //TODO destroy the _lock
 }
 
@@ -73,6 +74,8 @@ static void syncFailed(void *info, int error) {
     //call java methods
     (*globalEnv)->CallStaticVoidMethod(globalEnv, _peerManagerClass, mid);
 
+    (*_jvm)->DetachCurrentThread(_jvm);
+
     pthread_mutex_unlock(&_lock);
 
 }
@@ -87,9 +90,9 @@ static void txStatusUpdate(void *info) {
     //call java methods
     (*globalEnv)->CallStaticVoidMethod(globalEnv, _peerManagerClass, mid);
 
-    pthread_mutex_unlock(&_lock);
-
     (*_jvm)->DetachCurrentThread(_jvm);
+
+    pthread_mutex_unlock(&_lock);
 
 }
 
@@ -101,6 +104,8 @@ static void txRejected(void *info, int rescanRecommended) {
     jmethodID mid = (*globalEnv)->GetStaticMethodID(globalEnv, _peerManagerClass, "txRejected", "(I)V");
     //call java methods
     (*globalEnv)->CallStaticVoidMethod(globalEnv, _peerManagerClass, mid, rescanRecommended);
+
+    (*_jvm)->DetachCurrentThread(_jvm);
 
     pthread_mutex_unlock(&_lock);
 }

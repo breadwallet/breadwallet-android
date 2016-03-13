@@ -42,16 +42,13 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+            debuggable false
+            jniDebuggable false
 //            proguardFiles getDefaultProguardFiles('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
             debuggable true
             jniDebuggable true
-        }
-
-        release {
-            debuggable false
-            jniDebuggable false
         }
 
         foss {
