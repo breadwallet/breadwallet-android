@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.sqlite.SQLiteManager;
 
 import java.text.DecimalFormat;
@@ -93,7 +94,7 @@ public class BRPeerManager {
         Log.e(TAG, "syncSucceeded");
         try {
             if (syncTask != null) {
-                syncTask.interrupt();
+                syncTask.setRunning(false);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -104,7 +105,7 @@ public class BRPeerManager {
         Log.e(TAG, "syncFailed");
         try {
             if (syncTask != null) {
-                syncTask.interrupt();
+                syncTask.setRunning(false);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -130,17 +131,23 @@ public class BRPeerManager {
         SQLiteManager.getInstance(ctx).insertPeer(peerAddress, peerPort, peerTimeStamp);
     }
 
-    public static synchronized void networkIsReachable() {
+    public static synchronized boolean networkIsReachable() {
         Log.e(TAG, "networkIsReachable");
+        return ctx != null && CurrencyManager.getInstance(ctx).isNetworkAvailable(ctx);
     }
 
     private static class SyncProgressTask extends Thread {
 
         public boolean running = true;
         public double progressStatus = 0;
-        public SyncProgressTask(){
+
+        public SyncProgressTask() {
             progressStatus = 0;
             running = true;
+        }
+
+        public void setRunning(boolean b) {
+            running = b;
         }
 
         @Override
@@ -169,23 +176,33 @@ public class BRPeerManager {
 
                         }
                     });
-                    if (progressStatus >= 1) {
-                        app.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                progressStatus = 0;
-                                app.syncProgressText.setVisibility(View.GONE);
-                                app.syncProgressBar.setVisibility(View.GONE);
-                            }
-                        });
-                        running = false;
-                    }
+//                    if (progressStatus >= 1) {
+//                        app.runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                progressStatus = 0;
+//                                app.syncProgressText.setVisibility(View.GONE);
+//                                app.syncProgressBar.setVisibility(View.GONE);
+//                            }
+//                        });
+//                        running = false;
+//                    }
                     try {
                         Thread.sleep(500);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
+
+                app.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressStatus = 0;
+                        app.syncProgressText.setVisibility(View.GONE);
+                        app.syncProgressBar.setVisibility(View.GONE);
+                    }
+                });
+
             }
 
         }

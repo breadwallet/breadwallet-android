@@ -27,7 +27,6 @@ import com.breadwallet.wallet.BRWalletManager;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Random;
 
 /**
  * BreadWallet
@@ -71,6 +70,7 @@ public class FragmentSettingsAll extends Fragment {
 
         RelativeLayout importPrivateKeys = (RelativeLayout) rootView.findViewById(R.id.import_private_key);
         RelativeLayout settings = (RelativeLayout) rootView.findViewById(R.id.settings);
+        RelativeLayout rescan = (RelativeLayout) rootView.findViewById(R.id.rescan_blockchain);
         noTransactions = (TextView) rootView.findViewById(R.id.text_no_transactions);
         transactionHistory = (LinearLayout) rootView.findViewById(R.id.layout_transaction_history);
         transactionList = (LinearLayout) rootView.findViewById(R.id.transactions_list);
@@ -91,6 +91,14 @@ public class FragmentSettingsAll extends Fragment {
             public void onClick(View view) {
                 if (FragmentAnimator.checkTheMultipressingAvailability()) {
                     FragmentAnimator.animateDecoderFragment();
+                }
+            }
+        });
+        rescan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (FragmentAnimator.checkTheMultipressingAvailability()) {
+//                    BRWalletManager.getInstance(getActivity()).rescan();
                 }
             }
         });
@@ -129,17 +137,6 @@ public class FragmentSettingsAll extends Fragment {
 //        Log.e(TAG, "REFRESH TRANSACTIONS: " + transactionObjects.length);
         if (ctx != null && ctx instanceof MainActivity)
             refreshUI(ctx);
-    }
-
-    private static TransactionListItem[] getTestTransactions() {
-        TransactionListItem[] transactionListItems = new TransactionListItem[4];
-        Random random = new Random();
-        transactionListItems[0] = new TransactionListItem(System.currentTimeMillis(), random.nextInt(), "something".getBytes(),
-                50000, 13000, 500,
-                new String[]{"1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "14CCXMopCcQH1fgeqjcn4sBdqk3fTW2adi"},
-                new String[]{"3AckDd1ot9rSiRUCfazd7yufVbCorerWjV", "3HPF1x3g34oeiakfmrUb8Ej6mbWSj8CpZc"},
-                99999, new long[]{312312, 5435262});
-        return transactionListItems;
     }
 
     public static void refreshUI(Context ctx) {

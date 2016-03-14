@@ -332,4 +332,6 @@ public class BRWalletManager {
 
     public native void pay(String addressHolder, long amountHolder);
 
+    public native void rescan();
+
 }

@@ -544,11 +544,24 @@ public class MainActivity extends FragmentActivity implements Observer {
         if (Long.valueOf(amountHolder) <= 0) return;
         Log.e(TAG, "*********Sending: " + amountHolder + " to: " + addressHolder);
 
-        if (Long.valueOf(amountHolder) < CurrencyManager.getInstance(this).getBALANCE()) {
-            confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, Long.valueOf(amountHolder), null));
+        if (CurrencyManager.getInstance(this).isNetworkAvailable(this)) {
+            if (Long.valueOf(amountHolder) < CurrencyManager.getInstance(this).getBALANCE()) {
+                confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, Long.valueOf(amountHolder), null));
+            } else {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("insufficient funds to send: " + amountHolder)
+                        .setCancelable(false)
+                        .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
         } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("insufficient funds to send: " + amountHolder)
+            builder.setMessage("No internet connection!")
                     .setCancelable(false)
                     .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
@@ -773,7 +786,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         m.createWallet(transactionsCount, pubkeyEncoded, r);
 
         final long earliestKeyTime = KeyStoreManager.getWalletCreationTime(this);
-        Log.e(TAG,"earliestKeyTime from keystore: " + earliestKeyTime);
+        Log.e(TAG, "earliestKeyTime from keystore: " + earliestKeyTime);
 //        new Thread(new Runnable() {
 //            @Override
 //            public void run() {

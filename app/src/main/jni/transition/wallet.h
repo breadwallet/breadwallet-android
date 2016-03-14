@@ -31,6 +31,8 @@ JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_putTransaction(
                                                                                 jobject thiz,
                                                                                 jbyteArray transaction);
 
+JNIEXPORT void Java_com_breadwallet_wallet_BRWalletManager_rescan(JNIEnv *env, jobject thiz);
+
 JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_createTxArrayWithCount(JNIEnv *env,
                                                                                         jobject thiz,
                                                                                         size_t txCount);

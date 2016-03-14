@@ -152,7 +152,13 @@ static void savePeers(void *info, const BRPeer peers[], size_t count) {
 
 static int networkIsReachable(void *info) {
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "networkIsReachable");
-    return 1;
+    JNIEnv *globalEnv = getEnv();
+
+    jmethodID mid = (*globalEnv)->GetStaticMethodID(globalEnv, _peerManagerClass, "networkIsReachable", "()Z");
+    //call java methods
+    jboolean isNetworkOn = (*globalEnv)->CallStaticBooleanMethod(globalEnv, _peerManagerClass, mid);
+
+    return isNetworkOn == JNI_TRUE ? 1 : 0;
 }
 
 JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_connect(JNIEnv *env, jobject thiz,

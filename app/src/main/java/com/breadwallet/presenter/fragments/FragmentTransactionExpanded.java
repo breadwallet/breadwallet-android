@@ -154,10 +154,12 @@ public class FragmentTransactionExpanded extends Fragment {
                     transaction_received_from_addresses, null);
             TextView txFrom = (TextView) addressBlock.findViewById(R.id.tx_from_text);
             TextView txFromDescription = (TextView) addressBlock.findViewById(R.id.tx_from_description);
-            txFrom.setText(address);
-            txFromDescription.setText(getString(R.string.spent_address));
-            view.addView(addressBlock);
-            view.addView(FragmentSettingsAll.getSeparationLine(0, getActivity()));
+            if (address != null && !address.isEmpty()) {
+                txFrom.setText(address);
+                txFromDescription.setText(getString(R.string.spent_address));
+                view.addView(addressBlock);
+                view.addView(FragmentSettingsAll.getSeparationLine(0, getActivity()));
+            }
         }
     }
 
@@ -169,10 +171,12 @@ public class FragmentTransactionExpanded extends Fragment {
                     transaction_sent_from_addresses, null);
             TextView txFrom = (TextView) addressBlock.findViewById(R.id.tx_from_text);
             TextView txFromDescription = (TextView) addressBlock.findViewById(R.id.tx_from_description);
-            txFrom.setText(address);
-            txFromDescription.setText(getString(R.string.wallet_address));
-            view.addView(addressBlock);
-            view.addView(FragmentSettingsAll.getSeparationLine(0, getActivity()));
+            if (address != null && !address.isEmpty()) {
+                txFrom.setText(address);
+                txFromDescription.setText(getString(R.string.wallet_address));
+                view.addView(addressBlock);
+                view.addView(FragmentSettingsAll.getSeparationLine(0, getActivity()));
+            }
         }
     }
 
@@ -195,13 +199,15 @@ public class FragmentTransactionExpanded extends Fragment {
             TextView txToAmount = (TextView) addressBlock.findViewById(R.id.tx_to_amount_text);
             TextView txToExchange = (TextView) addressBlock.findViewById(R.id.tx_to_exchange_text);
 
-            txTo.setText(addresses[i]);
-            txToDescription.setText(getString(R.string.wallet_address));
-            txToAmount.setText(m.getFormattedCurrencyString("BTC", String.valueOf(m.getBitsFromSatoshi(amounts[i]))));
-            txToExchange.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, String.valueOf(m.getBitsFromSatoshi(amounts[i])))));
+            if (addresses[i] != null && !addresses[i].isEmpty()) {
+                txTo.setText(addresses[i]);
+                txToDescription.setText(getString(R.string.wallet_address));
+                txToAmount.setText(m.getFormattedCurrencyString("BTC", String.valueOf(m.getBitsFromSatoshi(amounts[i]))));
+                txToExchange.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, String.valueOf(m.getBitsFromSatoshi(amounts[i])))));
 
-            view.addView(addressBlock);
-            view.addView(FragmentSettingsAll.getSeparationLine(0, getActivity()));
+                view.addView(addressBlock);
+                view.addView(FragmentSettingsAll.getSeparationLine(0, getActivity()));
+            }
         }
     }
 
@@ -224,13 +230,15 @@ public class FragmentTransactionExpanded extends Fragment {
             TextView txToAmount = (TextView) addressBlock.findViewById(R.id.tx_to_amount_text);
             TextView txToExchange = (TextView) addressBlock.findViewById(R.id.tx_to_exchange_text);
 
-            txTo.setText(addresses[i]);
-            txToDescription.setText(getString(R.string.payment_address));
-            txToAmount.setText("-" + m.getFormattedCurrencyString("BTC", String.valueOf(m.getBitsFromSatoshi(amounts[i]))));
-            txToExchange.setText("-" + String.format("(%s)", m.getExchangeForAmount(rate, iso, String.valueOf(m.getBitsFromSatoshi(amounts[i])))));
+            if (addresses[i] != null && !addresses[i].isEmpty()) {
+                txTo.setText(addresses[i]);
+                txToDescription.setText(getString(R.string.payment_address));
+                txToAmount.setText(String.format("-%s",  m.getFormattedCurrencyString("BTC", String.valueOf(m.getBitsFromSatoshi(amounts[i])))));
+                txToExchange.setText(String.format("(-%s)", m.getExchangeForAmount(rate, iso, String.valueOf(m.getBitsFromSatoshi(amounts[i])))));
 
-            view.addView(addressBlock);
-            view.addView(FragmentSettingsAll.getSeparationLine(0, getActivity()));
+                view.addView(addressBlock);
+                view.addView(FragmentSettingsAll.getSeparationLine(0, getActivity()));
+            }
         }
     }
 
