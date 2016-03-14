@@ -138,6 +138,10 @@ public class BRPeerManager {
 
         public boolean running = true;
         public double progressStatus = 0;
+        public SyncProgressTask(){
+            progressStatus = 0;
+            running = true;
+        }
 
         @Override
         public void run() {

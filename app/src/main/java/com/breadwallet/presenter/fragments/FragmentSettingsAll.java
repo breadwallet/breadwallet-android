@@ -19,6 +19,7 @@ import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.CurrencyManager;
+import com.breadwallet.tools.CustomLogger;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.wallet.BRWalletManager;
@@ -247,8 +248,8 @@ public class FragmentSettingsAll extends Fragment {
         });
 
         boolean received = item.getSent() == 0;
-//        CustomLogger.LogThis("TX getReceived", String.valueOf(item.getReceived()), "TX getSent", String.valueOf(item.getSent()),
-//                "TX getBalanceAfterTx", String.valueOf(item.getBalanceAfterTx()));
+        CustomLogger.LogThis("TX getReceived", String.valueOf(item.getReceived()), "TX getSent", String.valueOf(item.getSent()),
+                "TX getBalanceAfterTx", String.valueOf(item.getBalanceAfterTx()));
         sentReceivedTextView.setBackgroundResource(received ? R.drawable.received_label : R.drawable.sent_label);
         sentReceivedTextView.setText(received ? "received" : "sent");
         sentReceivedTextView.setTextColor(Color.parseColor(received ? "#00BF00" : "#FF5454"));
@@ -256,6 +257,7 @@ public class FragmentSettingsAll extends Fragment {
         dateTextView.setText(getFormattedDateFromLong(System.currentTimeMillis()));
 
         long bitsAmount = m.getBitsFromSatoshi(received ? item.getReceived() : (item.getSent() - item.getReceived()) * -1);
+
         bitsTextView.setText(m.getFormattedCurrencyString("BTC", String.valueOf(bitsAmount)));
         dollarsTextView.setText(String.format("(%s)", m.getExchangeForAmount(m.getRateFromPrefs(), m.getISOFromPrefs(), String.valueOf(bitsAmount))));
         long bitsAfterTx = m.getBitsFromSatoshi(item.getBalanceAfterTx());
