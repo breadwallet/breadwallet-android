@@ -14,6 +14,7 @@ import com.breadwallet.presenter.exceptions.CertificateChainNotFound;
 import com.breadwallet.presenter.exceptions.PaymentRequestExpiredException;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.tools.animation.FragmentAnimator;
+import com.breadwallet.wallet.BRWalletManager;
 
 import org.apache.commons.io.IOUtils;
 
@@ -195,7 +196,7 @@ public class RequestHandler {
                 StringBuilder allAddresses = new StringBuilder();
                 for (String s : paymentRequest.addresses) {
                     allAddresses.append(s).append(", ");
-                    if (!validateAddress(s)) {
+                    if (!BRWalletManager.getInstance(app).validateAddress(s)) {
                         if (app != null)
                             ((BreadWalletApp) app.getApplication()).
                                     showCustomDialog(app.getString(R.string.attention),
@@ -292,7 +293,5 @@ public class RequestHandler {
     public static native PaymentRequestCWrapper parsePaymentRequest(byte[] req);
 
     public static native byte[] getCertificatesFromPaymentRequest(byte[] req, int index);
-
-    public static native boolean validateAddress(String address);
 
 }

@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +17,7 @@ import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.BRClipboardManager;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.FragmentAnimator;
+import com.breadwallet.wallet.BRWalletManager;
 
 /**
  * BreadWallet
@@ -83,9 +83,21 @@ public class MainFragment extends Fragment {
                     String address = BRClipboardManager.readFromClipboard(getActivity());
                     if (checkIfAddressIsValid(address)) {
                         if (address != null) {
-                            FragmentAnimator.animateScanResultFragment();
-                            FragmentScanResult.address = address;
-
+                            BRWalletManager m = BRWalletManager.getInstance(getActivity());
+                            if (!m.addressContainedInWallet(address)) {
+                                FragmentAnimator.animateScanResultFragment();
+                                FragmentScanResult.address = address;
+                            } else {
+                                alertDialog.setTitle(getResources().getString(R.string.alert));
+                                alertDialog.setMessage(getResources().getString(R.string.address_already_in_your_wallet));
+                                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getResources().getString(R.string.ok),
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                            }
+                                        });
+                                alertDialog.show();
+                            }
                         } else {
                             throw new NullPointerException();
                         }
@@ -108,32 +120,9 @@ public class MainFragment extends Fragment {
     }
 
     private boolean checkIfAddressIsValid(String str) {
-        int length = str.length();
-        if (length < 26 || length > 35) {
-            return false;
-        } else {
-            for (int i = 0; i < length; i++) {
-                if (str.charAt(i) < 48) {
-                    Log.e(TAG, "Bad addresses, char: " + str.charAt(i));
-                    return false;
-                } else {
-                    if (str.charAt(i) > 57 && str.charAt(i) < 65) {
-                        Log.e(TAG, "Bad addresses, char: " + str.charAt(i));
-                        return false;
-                    }
-                    if (str.charAt(i) > 90 && str.charAt(i) < 61) {
-                        Log.e(TAG, "Bad addresses, char: " + str.charAt(i));
-                        return false;
-                    }
-                    if (str.charAt(i) > 122) {
-                        Log.e(TAG, "Bad addresses, char: " + str.charAt(i));
-                        return false;
-                    }
-                }
+        BRWalletManager m = BRWalletManager.getInstance(getActivity());
 
-            }
-        }
-        return true;
+        return m.validateAddress(str);
     }
 
     @Override

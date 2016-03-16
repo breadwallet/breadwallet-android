@@ -38,6 +38,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="20dp"
                         android:text="about"
+                        android:textSize="@dimen/text_size"
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:textColor="@color/grey" />
 
@@ -76,6 +77,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="20dp"
                         android:text="recovery phrase"
+                        android:textSize="@dimen/text_size"
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:textColor="@color/grey" />
 
@@ -116,6 +118,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="20dp"
+                        android:textSize="@dimen/text_size"
                         android:text="local currency"
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:textColor="@color/grey" />
@@ -171,6 +174,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="20dp"
                         android:text="change passcode"
+                        android:textSize="@dimen/text_size"
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:textColor="@color/dark_blue" />
 
@@ -197,6 +201,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="20dp"
+                        android:textSize="@dimen/text_size"
                         android:text="start/recovery another wallet"
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:textColor="@color/red" />

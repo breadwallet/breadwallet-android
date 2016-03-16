@@ -121,6 +121,8 @@ class PeerDataSource {
             cursor.moveToNext();
         }
         // make sure to close the cursor
+
+        Log.e(TAG,"peers: " + peers.size());
         cursor.close();
         return peers;
     }

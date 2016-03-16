@@ -85,7 +85,7 @@ public class BRWalletManager {
     private BRWalletManager() {
     }
 
-    public static synchronized BRWalletManager getInstance(Context context) {
+    public static BRWalletManager getInstance(Context context) {
         ctx = context;
         if (instance == null) {
             instance = new BRWalletManager();
@@ -109,11 +109,12 @@ public class BRWalletManager {
         }
         if (words.length < 2000)
             throw new IllegalArgumentException("the list is wrong, size: " + words.length);
-        String phrase = encodeSeed(keyBytes, words);
+        byte[] phrase = encodeSeed(keyBytes, words);
+        String strPhrase = new String(phrase);
 //        String phrase = "short apple trunk riot coyote innocent zebra venture ill lava shop test";
-        boolean success = KeyStoreManager.setKeyStoreString(phrase, ctx);
+        boolean success = KeyStoreManager.setKeyStoreString(strPhrase, ctx);
         Log.e(TAG, "setKeyStoreString was successful: " + success);
-        return success ? phrase : null;
+        return success ? strPhrase : null;
     }
 
     public static boolean setKeychainData(ByteBuffer buffer, String key, boolean authenticated) {
@@ -307,7 +308,7 @@ public class BRWalletManager {
         Log.e(TAG, "in the BRWalletManager - onTxDeleted");
     }
 
-    private native String encodeSeed(byte[] seed, String[] wordList);
+    private native byte[] encodeSeed(byte[] seed, String[] wordList);
 
     //    public native void createWallet(ByteBuffer transactions[], int transactionCount);
     public native void createWallet(int transactionCount, String pubkey, int r);
@@ -333,5 +334,9 @@ public class BRWalletManager {
     public native void pay(String addressHolder, long amountHolder);
 
     public native void rescan();
+
+    public native boolean validateAddress(String address);
+
+    public native boolean addressContainedInWallet(String address);
 
 }

@@ -47,6 +47,7 @@ import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.qrcode.AutoFitTextureView;
 import com.breadwallet.tools.qrcode.PlanarYUVLuminanceSource;
 import com.breadwallet.tools.security.RequestHandler;
+import com.breadwallet.wallet.BRWalletManager;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
@@ -626,7 +627,7 @@ public class FragmentDecoder extends Fragment
             return TEXT_EMPTY;
         }
         if (obj.address != null) {
-            if (RequestHandler.validateAddress(obj.address)) {
+            if (BRWalletManager.getInstance(getActivity()).validateAddress(obj.address)) {
                 return TEXT_EMPTY;
             } else {
                 return getActivity().getResources().getString(R.string.fragmentdecoder_not_valid_bitcoin_address);

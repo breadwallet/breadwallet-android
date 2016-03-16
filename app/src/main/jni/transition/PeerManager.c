@@ -17,7 +17,6 @@ static JavaVM *_jvm;
 static BRPeer *_peers;
 static size_t _blocksCounter = 0;
 static size_t _peersCounter = 0;
-static pthread_mutex_t _lock;
 static jclass _peerManagerClass;
 
 static JNIEnv* getEnv() {
@@ -34,7 +33,6 @@ static JNIEnv* getEnv() {
 
 
 static void syncStarted(void *info) {
-    pthread_mutex_lock(&_lock);
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "syncStarted");
     JNIEnv *globalEnv = getEnv();
 
@@ -42,15 +40,11 @@ static void syncStarted(void *info) {
     //call java methods
     (*globalEnv)->CallStaticVoidMethod(globalEnv, _peerManagerClass, mid);
 
-    pthread_mutex_unlock(&_lock);
-
-
     //TODO destroy the _lock
 }
 
 static void syncSucceded(void *info) {
 
-    pthread_mutex_lock(&_lock);
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "syncSucceded: # of tx: %d",
                         (int) BRWalletTransactions(_wallet, NULL, 0) );
     JNIEnv *globalEnv = getEnv();
@@ -59,14 +53,12 @@ static void syncSucceded(void *info) {
     //call java methods
     (*globalEnv)->CallStaticVoidMethod(globalEnv, _peerManagerClass, mid);
 
-    pthread_mutex_unlock(&_lock);
 
 }
 
 static void syncFailed(void *info, int error) {
 
 
-    pthread_mutex_lock(&_lock);
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "syncFailed");
     JNIEnv *globalEnv = getEnv();
 
@@ -76,13 +68,11 @@ static void syncFailed(void *info, int error) {
 
     (*_jvm)->DetachCurrentThread(_jvm);
 
-    pthread_mutex_unlock(&_lock);
 
 }
 
 static void txStatusUpdate(void *info) {
 
-    pthread_mutex_lock(&_lock);
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "txStatusUpdate");
     JNIEnv *globalEnv = getEnv();
 
@@ -92,12 +82,9 @@ static void txStatusUpdate(void *info) {
 
     (*_jvm)->DetachCurrentThread(_jvm);
 
-    pthread_mutex_unlock(&_lock);
-
 }
 
 static void txRejected(void *info, int rescanRecommended) {
-    pthread_mutex_lock(&_lock);
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "txRejected");
     JNIEnv *globalEnv = getEnv();
 
@@ -106,8 +93,6 @@ static void txRejected(void *info, int rescanRecommended) {
     (*globalEnv)->CallStaticVoidMethod(globalEnv, _peerManagerClass, mid, rescanRecommended);
 
     (*_jvm)->DetachCurrentThread(_jvm);
-
-    pthread_mutex_unlock(&_lock);
 }
 
 static void saveBlocks(void *info, BRMerkleBlock *blocks[], size_t count) {
@@ -115,8 +100,8 @@ static void saveBlocks(void *info, BRMerkleBlock *blocks[], size_t count) {
 
 //    JNIEnv *globalEnv = getEnv();
 //    jmethodID mid = (*globalEnv)->GetStaticMethodID(globalEnv, _peerManagerClass, "saveBlocks", "([B)V");
-////    //call java methods
-////
+//    //call java methods
+//
 //    for (int i = 0; i < count; i++) {
 //        uint8_t buf[BRMerkleBlockSerialize(blocks[i], NULL, 0)];
 //        size_t len = BRMerkleBlockSerialize(blocks[i], buf, sizeof(buf));
@@ -124,17 +109,18 @@ static void saveBlocks(void *info, BRMerkleBlock *blocks[], size_t count) {
 //        (*globalEnv)->SetByteArrayRegion(globalEnv, result, 0, len, (jbyte *) buf);
 //        (*globalEnv)->CallStaticVoidMethod(globalEnv, _peerManagerClass, mid, result);
 //    }
+//    (*_jvm)->DetachCurrentThread(_jvm);
 
 }
 
 static void savePeers(void *info, const BRPeer peers[], size_t count) {
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "savePeers");
-//
+
 //    JNIEnv *globalEnv = getEnv();
 //
 //    jmethodID mid = (*globalEnv)->GetStaticMethodID(globalEnv, _peerManagerClass, "savePeers", "([B[B[B)V");
-////    //call java methods
-////
+//    //call java methods
+//
 //    for (int i = 0; i < count; i++) {
 //
 //        jbyteArray peerAddress = (*globalEnv)->NewByteArray(globalEnv, sizeof(peers[i].address));
@@ -148,6 +134,7 @@ static void savePeers(void *info, const BRPeer peers[], size_t count) {
 //
 //        (*globalEnv)->CallStaticVoidMethod(globalEnv, _peerManagerClass, mid, peerAddress, peerPort, peerTimeStamp);
 //    }
+//    (*_jvm)->DetachCurrentThread(_jvm);
 }
 
 static int networkIsReachable(void *info) {
@@ -163,9 +150,8 @@ static int networkIsReachable(void *info) {
 
 JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_connect(JNIEnv *env, jobject thiz,
                                                                  jint earliestKeyTime,
-                                                                 jlong blocksCount,
-                                                                 jlong peersCount) {
-    pthread_mutex_init(&_lock, NULL);
+                                                                 int blocksCount,
+                                                                 int peersCount) {
     jint rs = (*env)->GetJavaVM(env, &_jvm);
 
     jclass walletManagerCLass = (*env)->FindClass(env,"com/breadwallet/wallet/BRPeerManager");
@@ -179,6 +165,9 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_connect(JNIEnv *env, jo
         __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "NULL: blocks");
         return;
     }
+
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "blocksCount: %d", blocksCount);
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "peersCount: %d", peersCount);
 
     _peerManager = BRPeerManagerNew(_wallet,  (uint32_t) earliestKeyTime,
                                                   blocksCount == 0 ? NULL : _blocks,

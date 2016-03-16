@@ -24,8 +24,5 @@ JNIEXPORT void JNICALL Java_com_breadwallet_presenter_activities_MainActivity_cl
 JNIEXPORT void JNICALL Java_com_breadwallet_presenter_activities_MainActivity_cTests(JNIEnv *env,
                                                                                      jobject obj);
 
-JNIEXPORT jboolean JNICALL Java_com_breadwallet_tools_security_RequestHandler_validateAddress
-        (JNIEnv *env, jobject obj, jstring address);
-
 
 #endif //BREADWALLET_CORE_H

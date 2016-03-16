@@ -269,27 +269,6 @@ JNIEXPORT jbyteArray Java_com_breadwallet_tools_security_RequestHandler_getCerti
     return result;
 }
 
-JNIEXPORT jboolean JNICALL Java_com_breadwallet_tools_security_RequestHandler_validateAddress
-        (JNIEnv *env, jobject obj, jstring address) {
-//    jbyte *byte_address = (*env)->GetByteArrayElements(env, address, NULL);
-//    jsize size = (*env)->GetArrayLength(env, address);
-
-//    for (int i = 0; i < size; ++i) {
-//        printf("bytes[%d] = %x\n", i, ((const unsigned char *) byte_address)[i]);
-//        __android_log_print(ANDROID_LOG_DEBUG, "From C:>>>>", charString[i]);
-//    __android_log_print(ANDROID_LOG_DEBUG, "LOG_TAG", "Need to print : %s", charString);
-//    }
-    jboolean b;
-    const char *str;
-    str = (char *) (*env)->GetStringUTFChars(env, address, NULL);
-//    __android_log_print(ANDROID_LOG_ERROR, "LOG_TAG", "Need to print : %s", str);
-    int result = BRAddressIsValid(str);
-    (*env)->ReleaseStringUTFChars(env, address, str);
-//    __android_log_print(ANDROID_LOG_ERROR, "LOG_TAG", "This is the result : %d", result);
-    return result ? JNI_TRUE : JNI_FALSE;
-
-}
-
 
 JNIEXPORT jboolean JNICALL Java_com_breadwallet_presenter_fragments_IntroRecoverWalletFragment_validateRecoveryPhrase
         (JNIEnv *env, jobject obj, jobjectArray stringArray, jstring jPhrase) {

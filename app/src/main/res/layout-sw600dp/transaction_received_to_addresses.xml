@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tx_to_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/tx_to_label"
+    android:background="@drawable/clickable_layout"
+    android:clickable="true">
+
+    <TextView
+        android:id="@+id/tx_to_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/transaction_item_margin"
+        android:layout_marginTop="@dimen/transaction_item_margin"
+        android:singleLine="true"
+        android:text="--------------------------"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/grey"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/tx_to_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tx_to_text"
+        android:layout_marginBottom="@dimen/transaction_item_margin"
+        android:layout_marginLeft="@dimen/transaction_item_margin"
+        android:text="wallet address"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/grey"
+        android:textSize="10sp" />
+
+    <TextView
+        android:id="@+id/tx_to_amount_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/tx_to_text"
+        android:layout_marginLeft="@dimen/transaction_item_margin"
+        android:layout_marginRight="@dimen/transaction_item_margin"
+        android:text="\u0180--------"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/green_text"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tx_to_exchange_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tx_to_text"
+        android:layout_marginLeft="@dimen/transaction_item_margin"
+        android:layout_toStartOf="@id/tx_to_amount_text"
+        android:text="($-----)"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/green_text"
+        android:textSize="13sp" />
+
+</RelativeLayout>

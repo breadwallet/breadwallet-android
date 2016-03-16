@@ -52,7 +52,7 @@ public class BRPeerManager {
         return instance;
     }
 
-    public native void connect(long earliestKeyTime, long blockCount, long peerCount);
+    public native void connect(long earliestKeyTime, int blockCount, int peerCount);
 
     public native void putPeer(byte[] peerAddress, byte[] peerPort, byte[] peerTimeStamp);
 

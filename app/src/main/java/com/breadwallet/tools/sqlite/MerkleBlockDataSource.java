@@ -124,6 +124,7 @@ class MerkleBlockDataSource {
             merkleBlocks.add(merkleBlockEntity);
             cursor.moveToNext();
         }
+        Log.e(TAG,"merkleBlocks: " + merkleBlocks.size());
         // make sure to close the cursor
         cursor.close();
         return merkleBlocks;

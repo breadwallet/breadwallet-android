@@ -43,13 +43,20 @@
         android:textSize="16sp" />
 
     <RelativeLayout
+        android:id="@+id/activity_intro_line1"
+        android:layout_below="@id/textView1"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/separator_height"
+        android:layout_marginTop="40dp"
+        android:background="@color/grey" />
+
+    <RelativeLayout
         android:id="@+id/relativeLayout"
         android:layout_width="match_parent"
         android:layout_height="120dp"
-        android:layout_marginTop="40dp"
         android:background="@drawable/clickable_layout"
         android:clickable="false"
-        android:layout_below="@+id/textView1"
+        android:layout_below="@+id/activity_intro_line1"
         android:layout_alignParentStart="true">
 
         <TextView
@@ -65,6 +72,13 @@
             android:textColor="@color/dark_grey"
             android:textSize="20sp" />
     </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/activity_intro_line2"
+        android:layout_below="@id/relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/separator_height"
+        android:background="@color/grey" />
 
     <Button
         android:id="@+id/remind_me_later_button"

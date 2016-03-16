@@ -6,16 +6,33 @@
     android:orientation="vertical">
 
     <TextView
+        android:layout_marginTop="10dp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="at this address:"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/grey"
+        android:textSize="16sp" />
+
+    <TextView
+        android:layout_marginTop="10dp"
         android:id="@+id/sharing_address"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
         android:gravity="center"
         android:text=""
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/grey"
-        android:textSize="14sp" />
+        android:textSize="10sp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/separator_height"
+        android:background="@color/grey" />
 
     <TextView
         android:id="@+id/copy_address"
@@ -25,9 +42,17 @@
         android:clickable="true"
         android:gravity="center"
         android:padding="10dp"
-        android:text="copy address to clipboard"
+        android:text="@string/copy_address_to_clipboard"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/dark_blue" />
+        android:textColor="@color/dark_blue"
+        android:textSize="16sp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/separator_height"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@color/grey" />
 
     <TextView
         android:id="@+id/send_message"
@@ -37,9 +62,17 @@
         android:clickable="true"
         android:gravity="center"
         android:padding="10dp"
-        android:text="send address as message"
+        android:text="@string/send_address_as_message"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/dark_blue" />
+        android:textColor="@color/dark_blue"
+        android:textSize="16sp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/separator_height"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@color/grey" />
 
     <TextView
         android:id="@+id/send_email"
@@ -49,9 +82,17 @@
         android:clickable="true"
         android:gravity="center"
         android:padding="10dp"
-        android:text="send address as email"
+        android:text="@string/send_address_as_email"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/dark_blue" />
+        android:textColor="@color/dark_blue"
+        android:textSize="16sp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/separator_height"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@color/grey" />
 
     <TextView
         android:id="@+id/request_amount"
@@ -61,9 +102,15 @@
         android:clickable="true"
         android:gravity="center"
         android:padding="10dp"
-        android:text="request an amount"
+        android:text="@string/request_an_amount"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/dark_blue" />
+        android:textColor="@color/dark_blue"
+        android:textSize="16sp" />
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/separator_height"
+        android:background="@color/grey"
+        android:layout_marginBottom="5dp"/>
 
 </LinearLayout>

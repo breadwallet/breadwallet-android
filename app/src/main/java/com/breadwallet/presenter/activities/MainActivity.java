@@ -164,7 +164,7 @@ public class MainActivity extends FragmentActivity implements Observer {
 //        cTests();
         printPhoneSpecs();
 
-        deleteTxs = true;
+//        deleteTxs = true;
 //        testTxAdding(2);
 //        new Handler().postDelayed(new Runnable() {
 //            @Override
@@ -546,6 +546,7 @@ public class MainActivity extends FragmentActivity implements Observer {
 
         if (CurrencyManager.getInstance(this).isNetworkAvailable(this)) {
             if (Long.valueOf(amountHolder) < CurrencyManager.getInstance(this).getBALANCE()) {
+
                 confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, Long.valueOf(amountHolder), null));
             } else {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -686,47 +687,47 @@ public class MainActivity extends FragmentActivity implements Observer {
         MiddleViewAdapter.resetMiddleView(this, null);
     }
 
-    public void testSQLiteConnectivity(Activity context) {
-        // Test MerkleBlock Table
-//        BRMerkleBlockEntity merkleBlockEntity = new BRMerkleBlockEntity();
-//        merkleBlockEntity.setBuff();
+//    public void testSQLiteConnectivity(Activity context) {
+//        // Test MerkleBlock Table
+////        BRMerkleBlockEntity merkleBlockEntity = new BRMerkleBlockEntity();
+////        merkleBlockEntity.setBuff();
+////
+////        MerkleBlockDataSource MBdataSource;
+////        MBdataSource = new MerkleBlockDataSource(this);
+////        MBdataSource.open();
+////        MBdataSource.createMerkleBlock(merkleBlockEntity);
+////        List<BRMerkleBlockEntity> values = MBdataSource.getAllMerkleBlocks();
+////        Iterator<BRMerkleBlockEntity> merkleBlockEntityIterator = values.iterator();
+////        while (merkleBlockEntityIterator.hasNext()) {
+////            BRMerkleBlockEntity tmp = merkleBlockEntityIterator.next();
+////            Log.e(TAG, "The merkleBlock: " + tmp.getId() + " " + tmp.getBlockHash() + " " + tmp.getFlags() +
+////                    " " + tmp.getHashes() + " " + tmp.getHeight() + " " + tmp.getMerkleRoot() + " " +
+////                    tmp.getNonce() + " " + tmp.getPrevBlock() + " " + tmp.getTarget() + " " +
+////                    tmp.getTimeStamp() + tmp.getTotalTransactions() + " " + tmp.getVersion());
+////
+////        }
 //
-//        MerkleBlockDataSource MBdataSource;
-//        MBdataSource = new MerkleBlockDataSource(this);
-//        MBdataSource.open();
-//        MBdataSource.createMerkleBlock(merkleBlockEntity);
-//        List<BRMerkleBlockEntity> values = MBdataSource.getAllMerkleBlocks();
-//        Iterator<BRMerkleBlockEntity> merkleBlockEntityIterator = values.iterator();
-//        while (merkleBlockEntityIterator.hasNext()) {
-//            BRMerkleBlockEntity tmp = merkleBlockEntityIterator.next();
-//            Log.e(TAG, "The merkleBlock: " + tmp.getId() + " " + tmp.getBlockHash() + " " + tmp.getFlags() +
-//                    " " + tmp.getHashes() + " " + tmp.getHeight() + " " + tmp.getMerkleRoot() + " " +
-//                    tmp.getNonce() + " " + tmp.getPrevBlock() + " " + tmp.getTarget() + " " +
-//                    tmp.getTimeStamp() + tmp.getTotalTransactions() + " " + tmp.getVersion());
+//        // Test Transaction Table
+//        byte[] pretendToBeATx = "some transaction".getBytes();
+//        byte[] pretendToBeATx2 = "some other transaction".getBytes();
+//        BRTransactionEntity transactionEntity = new BRTransactionEntity(pretendToBeATx, 2, 4);
 //
-//        }
-
-        // Test Transaction Table
-        byte[] pretendToBeATx = "some transaction".getBytes();
-        byte[] pretendToBeATx2 = "some other transaction".getBytes();
-        BRTransactionEntity transactionEntity = new BRTransactionEntity(pretendToBeATx, 2, 4);
-
-        BRTransactionEntity transactionEntity2 = new BRTransactionEntity(pretendToBeATx2, 53, 542);
-
-        TransactionDataSource TXdataSource = new TransactionDataSource(this);
-        TXdataSource.open();
-        TXdataSource.deleteAllTransactions();
-        TXdataSource.createTransaction(transactionEntity);
-        TXdataSource.createTransaction(transactionEntity2);
-        List<BRTransactionEntity> txValues = TXdataSource.getAllTransactions();
-//        for (BRTransactionEntity transactionEntity1 : txValues) {
-//            Log.e(TAG, "The transaction: " + transactionEntity1.getId()
-//                            + " " + new String(transactionEntity1.getBuff())
-//            );
-
-//        }
-        TXdataSource.close();
-    }
+//        BRTransactionEntity transactionEntity2 = new BRTransactionEntity(pretendToBeATx2, 53, 542);
+//
+//        TransactionDataSource TXdataSource = new TransactionDataSource(this);
+//        TXdataSource.open();
+//        TXdataSource.deleteAllTransactions();
+//        TXdataSource.createTransaction(transactionEntity);
+//        TXdataSource.createTransaction(transactionEntity2);
+//        List<BRTransactionEntity> txValues = TXdataSource.getAllTransactions();
+////        for (BRTransactionEntity transactionEntity1 : txValues) {
+////            Log.e(TAG, "The transaction: " + transactionEntity1.getId()
+////                            + " " + new String(transactionEntity1.getBuff())
+////            );
+//
+////        }
+//        TXdataSource.close();
+//    }
 
     private void setUpTheWallet() {
         //TODO deleting all txs for testing only
@@ -744,13 +745,14 @@ public class MainActivity extends FragmentActivity implements Observer {
 //        if (phrase == null) return;
 //        String normalizedPhrase = Normalizer.normalize(phrase, Normalizer.Form.NFKD);
 //        m.getMasterPubKey(normalizedPhrase);
+
         SQLiteManager sqLiteManager = SQLiteManager.getInstance(this);
 
         List<BRTransactionEntity> transactions = sqLiteManager.getTransactions();
         List<BRMerkleBlockEntity> blocks = sqLiteManager.getBlocks();
         List<BRPeerEntity> peers = sqLiteManager.getPeers();
 
-        int transactionsCount = transactions.size();
+        final int transactionsCount = transactions.size();
         final int blocksCount = blocks.size();
         final int peersCount = peers.size();
 
@@ -786,7 +788,8 @@ public class MainActivity extends FragmentActivity implements Observer {
         m.createWallet(transactionsCount, pubkeyEncoded, r);
 
         final long earliestKeyTime = KeyStoreManager.getWalletCreationTime(this);
-        Log.e(TAG, "earliestKeyTime from keystore: " + earliestKeyTime);
+        Log.e(TAG, "blocksCount before connecting: " + blocksCount);
+        Log.e(TAG, "peersCount before connecting: " + peersCount);
 //        new Thread(new Runnable() {
 //            @Override
 //            public void run() {

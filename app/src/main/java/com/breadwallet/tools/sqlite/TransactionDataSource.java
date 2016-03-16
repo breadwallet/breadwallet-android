@@ -143,6 +143,8 @@ public class TransactionDataSource {
             cursor.moveToNext();
         }
         // make sure to close the cursor
+
+        Log.e(TAG,"transactions: " + transactions.size());
         cursor.close();
         return transactions;
     }

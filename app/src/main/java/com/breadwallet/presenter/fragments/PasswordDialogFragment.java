@@ -238,8 +238,15 @@ public class PasswordDialogFragment extends DialogFragment {
                     FragmentAnimator.animateSlideToLeft((MainActivity) getActivity(), new FragmentRecoveryPhrase(), new FragmentSettings());
                 } else if (mode == BRConstants.AUTH_FOR_PAY && request != null) {
                     //TODO make sure you get the payment right for all addresses and check for nulls
-                    BRWalletManager walletManager = BRWalletManager.getInstance(getActivity());
-                    walletManager.pay(request.addresses[0], request.amount * 100);
+
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            BRWalletManager walletManager = BRWalletManager.getInstance(getActivity());
+                            walletManager.pay(request.addresses[0], request.amount * 100);
+                        }
+                    }).start();
+
                     final MediaPlayer mp = MediaPlayer.create(getActivity(), R.raw.coinflip);
                     mp.start();
                     FragmentAnimator.hideScanResultFragment();
@@ -307,7 +314,7 @@ public class PasswordDialogFragment extends DialogFragment {
     }
 
     private void addRemoveDigit(int digits) {
-        if(digit_1 == null) return;
+        if (digit_1 == null) return;
         digit_1.setText(digits >= 1 ? "*" : "-");
         digit_2.setText(digits >= 2 ? "*" : "-");
         digit_3.setText(digits >= 3 ? "*" : "-");
@@ -316,7 +323,7 @@ public class PasswordDialogFragment extends DialogFragment {
     }
 
     private void clearDigits() {
-        if(digit_1 == null) return;
+        if (digit_1 == null) return;
         digit_1.setText("-");
         digit_2.setText("-");
         digit_3.setText("-");
