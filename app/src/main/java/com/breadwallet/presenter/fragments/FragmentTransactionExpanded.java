@@ -78,7 +78,7 @@ public class FragmentTransactionExpanded extends Fragment {
             final double rate = settings.getFloat(FragmentCurrency.RATE, 0);
             final String iso = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
             long amount = item.getReceived();
-            Log.e(TAG, "Tx Detail!!!! amount: " + amount);
+            Log.e(TAG, "Tx Detail received!!!! amount: " + amount  + " item.getBlockHeight(): " + item.getBlockHeight() );
 
             hashText.setText(item.getHexId());
             statusText.setText(String.format("confirmed in block #%d\n%s", item.getBlockHeight(),
@@ -108,7 +108,8 @@ public class FragmentTransactionExpanded extends Fragment {
 
             long amount = tempSent - tempReceived;
 
-            Log.e(TAG, "Tx Detail sent!!!! amount: " + amount + " tempFee: " + tempFee + " tempSent: " + tempSent);
+            Log.e(TAG, "Tx Detail sent!!!! amount: " + amount + " tempFee: " + tempFee + " tempSent: "
+                    + tempSent + " item.getBlockHeight(): " + item.getBlockHeight() );
 
             hashText.setText(item.getHexId());
             statusText.setText(String.format("confirmed in block #%d\n%s", item.getBlockHeight(),

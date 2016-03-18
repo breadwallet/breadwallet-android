@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,7 @@ import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.CustomLogger;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.FragmentAnimator;
+import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.text.SimpleDateFormat;
@@ -59,6 +61,9 @@ public class FragmentSettingsAll extends Fragment {
     public static LinearLayout transactionList;
     public static LinearLayout transactionHistory;
     public static TextView noTransactions;
+    private static int unconfirmedColor;
+    private static int sentColor;
+    private static int receivedColor;
 
     //    private RelativeLayout relativeLayout;
     //RED FF5454 GREEN 00BF00 BLUE 0080FF
@@ -74,6 +79,10 @@ public class FragmentSettingsAll extends Fragment {
         noTransactions = (TextView) rootView.findViewById(R.id.text_no_transactions);
         transactionHistory = (LinearLayout) rootView.findViewById(R.id.layout_transaction_history);
         transactionList = (LinearLayout) rootView.findViewById(R.id.transactions_list);
+
+        unconfirmedColor = ContextCompat.getColor(getActivity(), R.color.white);
+        sentColor = Color.parseColor("#FF5454");
+        receivedColor = Color.parseColor("#00BF00");
 
         transactionHistory.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,7 +107,7 @@ public class FragmentSettingsAll extends Fragment {
             @Override
             public void onClick(View v) {
                 if (FragmentAnimator.checkTheMultipressingAvailability()) {
-//                    BRWalletManager.getInstance(getActivity()).rescan();
+                    BRWalletManager.getInstance(getActivity()).rescan();
                 }
             }
         });
@@ -131,6 +140,7 @@ public class FragmentSettingsAll extends Fragment {
 
     public static void refreshTransactions(Context ctx) {
         transactionObjects = BRWalletManager.getInstance(ctx).getTransactions();
+
 //        transactionObjects = getTestTransactions(); //TODO this is a test
 //        transactionObjects = new TransactionListItem[0];
 //            transactionObjects = getTestTransactions();
@@ -175,9 +185,7 @@ public class FragmentSettingsAll extends Fragment {
                     transactionList.addView(getSeparationLine(1, ctx));
             }
         }
-        Log.e(TAG, "before limit > 5");
         if (transactionObjects.length > 5) {
-            Log.e(TAG, "limit > 5");
             transactionList.addView(getSeparationLine(0, ctx));
             transactionList.addView(getMore(ctx));
         }
@@ -247,9 +255,18 @@ public class FragmentSettingsAll extends Fragment {
         boolean received = item.getSent() == 0;
         CustomLogger.LogThis("TX getReceived", String.valueOf(item.getReceived()), "TX getSent", String.valueOf(item.getSent()),
                 "TX getBalanceAfterTx", String.valueOf(item.getBalanceAfterTx()));
-        sentReceivedTextView.setBackgroundResource(received ? R.drawable.received_label : R.drawable.sent_label);
-        sentReceivedTextView.setText(received ? "received" : "sent");
-        sentReceivedTextView.setTextColor(Color.parseColor(received ? "#00BF00" : "#FF5454"));
+        if (item.getBlockHeight() + 5 < BRPeerManager.getLastBlockFromPrefs()) {
+            sentReceivedTextView.setBackgroundResource(received ? R.drawable.received_label : R.drawable.sent_label);
+            sentReceivedTextView.setText(received ? "received" : "sent");
+            sentReceivedTextView.setTextColor(received ? receivedColor : sentColor);
+        } else {
+            sentReceivedTextView.setBackgroundResource(R.drawable.unconfirmed_label);
+            int lastBlock = BRPeerManager.getLastBlockFromPrefs();
+            int confirms = lastBlock - item.getBlockHeight();
+            Log.e(TAG, "item.getBlockHeight(): " + item.getBlockHeight() + ", confirms: " + confirms + ", lastBlock: " + lastBlock);
+            sentReceivedTextView.setText(String.format("%d confirmations", confirms >= 0 && confirms < 6 ? confirms : -1));
+            sentReceivedTextView.setTextColor(unconfirmedColor);
+        }
 
         dateTextView.setText(getFormattedDateFromLong(System.currentTimeMillis()));
 
@@ -258,6 +275,7 @@ public class FragmentSettingsAll extends Fragment {
         bitsTextView.setText(m.getFormattedCurrencyString("BTC", String.valueOf(bitsAmount)));
         dollarsTextView.setText(String.format("(%s)", m.getExchangeForAmount(m.getRateFromPrefs(), m.getISOFromPrefs(), String.valueOf(bitsAmount))));
         long bitsAfterTx = m.getBitsFromSatoshi(item.getBalanceAfterTx());
+
         bitsTotalTextView.setText(m.getFormattedCurrencyString("BTC", String.valueOf(bitsAfterTx)));
         dollarsTotalTextView.setText(String.format("(%s)", m.getExchangeForAmount(m.getRateFromPrefs(), m.getISOFromPrefs(), String.valueOf(bitsAfterTx))));
 

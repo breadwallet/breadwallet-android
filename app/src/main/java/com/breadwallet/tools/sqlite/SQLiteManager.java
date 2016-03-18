@@ -58,7 +58,7 @@ public class SQLiteManager {
         return txValues;
     }
 
-    public void insertTransaction(byte[] transaction, long blockheight, long timestamp) {
+    public void insertTransaction(byte[] transaction, int blockheight, long timestamp) {
         BRTransactionEntity entity = new BRTransactionEntity(transaction, blockheight, timestamp);
         TransactionDataSource TXdataSource = new TransactionDataSource(ctx);
         TXdataSource.open();

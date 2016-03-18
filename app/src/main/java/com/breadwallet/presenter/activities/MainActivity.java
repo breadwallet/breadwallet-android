@@ -1,7 +1,6 @@
 package com.breadwallet.presenter.activities;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.app.Service;
@@ -134,9 +133,10 @@ public class MainActivity extends FragmentActivity implements Observer {
     public SoftKeyboard softKeyboard;
     private RelativeLayout mainLayout;
     private FingerprintManager fingerprintManager;
+
+    public static boolean appInBackground = false;
 //    private int tipsCount;
 
-    private boolean deleteTxs = false;
 
     //TODO Test everything with the KILL ACTIVITY feature in the developer settings
     //loading the native library
@@ -304,6 +304,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     @Override
     protected void onResume() {
         super.onResume();
+        appInBackground = false;
         app = this;
         amountHolder = null;
         addressHolder = null;
@@ -323,6 +324,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     @Override
     protected void onPause() {
         super.onPause();
+        appInBackground = true;
         Log.e(TAG, "Activity onPause");
         startStopReceiver(false);
     }
@@ -731,6 +733,7 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     private void setUpTheWallet() {
         //TODO deleting all txs for testing only
+        boolean deleteTxs = false;
         if (deleteTxs) {
             TransactionDataSource TXdataSource = new TransactionDataSource(this);
             TXdataSource.open();
@@ -755,6 +758,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         final int transactionsCount = transactions.size();
         final int blocksCount = blocks.size();
         final int peersCount = peers.size();
+
 
 //        CustomLogger.LogThis("setUpTheWallet: number of transactions from sqlite: ",
 //                String.valueOf(transactions.size()),

@@ -35,6 +35,9 @@ public class BRConstants {
     public static final int AUTH_FOR_PAY = 12;
     public static final int AUTH_FOR_GENERAL = 13;
 
+    /** BlockHeight prefs*/
+    public static final String BLOCK_HEIGHT = "blockHeight";
+
     private BRConstants(){}
 
 

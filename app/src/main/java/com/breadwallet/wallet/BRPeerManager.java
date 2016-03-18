@@ -1,11 +1,16 @@
 package com.breadwallet.wallet;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.View;
 
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.fragments.FragmentSettingsAll;
+import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.CurrencyManager;
+import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.sqlite.SQLiteManager;
 
 import java.text.DecimalFormat;
@@ -64,6 +69,8 @@ public class BRPeerManager {
 
     public native static double syncProgress();
 
+    private native static int getCurrentBlockHeight();
+
     /**
      * void BRPeerManagerSetCallbacks(BRPeerManager *manager, void *info,
      * void (*syncStarted)(void *info),
@@ -76,6 +83,9 @@ public class BRPeerManager {
      */
 
     public static synchronized void syncStarted() {
+
+        if (ctx == null) ctx = MainActivity.app;
+        if (ctx != null) MiddleViewAdapter.setSyncing((Activity) ctx, true);
         Log.e(TAG, "syncStarted");
         try {
             if (syncTask != null) {
@@ -84,14 +94,16 @@ public class BRPeerManager {
             syncTask = new SyncProgressTask();
             syncTask.start();
         } catch (IllegalThreadStateException ex) {
-
             ex.printStackTrace();
         }
 
     }
 
     public static synchronized void syncSucceded() {
+        if (ctx == null) ctx = MainActivity.app;
+        if (ctx != null) MiddleViewAdapter.setSyncing((Activity) ctx, false);
         Log.e(TAG, "syncSucceeded");
+        saveLastBlockHeight();
         try {
             if (syncTask != null) {
                 syncTask.setRunning(false);
@@ -102,6 +114,9 @@ public class BRPeerManager {
     }
 
     public static synchronized void syncFailed() {
+        if (ctx == null) ctx = MainActivity.app;
+        if (ctx != null) MiddleViewAdapter.setSyncing((Activity) ctx, false);
+
         Log.e(TAG, "syncFailed");
         try {
             if (syncTask != null) {
@@ -115,6 +130,8 @@ public class BRPeerManager {
 
     public static synchronized void txStatusUpdate() {
         Log.e(TAG, "txStatusUpdate");
+        saveLastBlockHeight();
+
     }
 
     public static synchronized void txRejected(int rescanRecommended) {
@@ -132,8 +149,50 @@ public class BRPeerManager {
     }
 
     public static synchronized boolean networkIsReachable() {
+
         Log.e(TAG, "networkIsReachable");
         return ctx != null && CurrencyManager.getInstance(ctx).isNetworkAvailable(ctx);
+    }
+
+    public static void saveLastBlockHeight() {
+        Log.e(TAG, "saveLastBlockHeight");
+        MainActivity app = MainActivity.app;
+        if (app != null) {
+            int blockHeight = getCurrentBlockHeight();
+            Log.e(TAG, "saveLastBlockHeight: blockHeight: " + blockHeight);
+            if (blockHeight <= 0) return;
+            SharedPreferences prefs = app.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
+            int blockHeightFromPrefs = prefs.getInt(BRConstants.BLOCK_HEIGHT, 0);
+            Log.e(TAG, "saveLastBlockHeight: blockHeightFromPrefs: " + blockHeightFromPrefs);
+            if (blockHeight > blockHeightFromPrefs) {
+                SharedPreferences prefs2 = app.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = prefs2.edit();
+                editor.putInt(BRConstants.BLOCK_HEIGHT, blockHeight);
+                editor.apply();
+                if (ctx == null) ctx = MainActivity.app;
+                ((Activity) ctx).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        FragmentSettingsAll.refreshTransactions(ctx);
+                    }
+                });
+
+            }
+        }
+    }
+
+    public static int getLastBlockFromPrefs() {
+        Log.e(TAG, "getLastBlockFromPrefs");
+        MainActivity app = MainActivity.app;
+        int blockHeight = 0;
+        if (app != null) {
+            SharedPreferences prefs = app.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
+            blockHeight = prefs.getInt(BRConstants.BLOCK_HEIGHT, 0);
+
+
+        }
+        Log.e(TAG, "getLastBlockFromPrefs: blockHeight: " + blockHeight);
+        return blockHeight;
     }
 
     private static class SyncProgressTask extends Thread {

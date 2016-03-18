@@ -109,7 +109,7 @@ public class CurrencyManager extends Observable {
             try {
                 JSONArray arr;
                 arr = JsonParser.getJSonArray();
-                Log.e(TAG, "JSONArray arr.length(): " + arr.length());
+//                Log.e(TAG, "JSONArray arr.length(): " + arr.length());
                 int length = arr.length();
                 for (int i = 1; i < length; i++) {
                     CurrencyEntity tmp = new CurrencyEntity();
@@ -121,10 +121,10 @@ public class CurrencyManager extends Observable {
                         tmp.rate = (float) tmpObj.getDouble("rate");
                         if (tmp.code.equals("USD")) {
                             String theIso = getISOFromPrefs();
-                            Log.e(TAG, "theIso : " + theIso);
+//                            Log.e(TAG, "theIso : " + theIso);
                             if (theIso.equals("USD")) {
                                 //TODO put in shared prefs
-                                Log.e(TAG, "Putting the shit in the shared preffs");
+//                                Log.e(TAG, "Putting the shit in the shared preffs");
                                 SharedPreferences settings = context.getSharedPreferences(MainActivity.PREFS_NAME, 0);
                                 SharedPreferences.Editor editor = settings.edit();
                                 editor.putString(FragmentCurrency.CURRENT_CURRENCY, tmp.code);
@@ -252,10 +252,10 @@ public class CurrencyManager extends Observable {
         double rate = getRateFromPrefs();
         long balance = getBitsFromSatoshi(getBALANCE());
         double exchange = (balance * rate / 1000000);
-        CustomLogger.LogThis("rate", String.valueOf(rate), "exchange", String.valueOf(exchange));
+//        CustomLogger.LogThis("rate", String.valueOf(rate), "exchange", String.valueOf(exchange));
         String result = getFormattedCurrencyString("BTC", String.valueOf(balance)) + "(" +
                 getFormattedCurrencyString(iso, String.valueOf(exchange)) + ")";
-        Log.e(TAG, "getCurrentBalanceText: " + result);
+//        Log.e(TAG, "getCurrentBalanceText: " + result);
         return result;
     }
 

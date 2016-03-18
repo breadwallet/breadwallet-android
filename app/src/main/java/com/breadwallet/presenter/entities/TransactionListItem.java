@@ -28,7 +28,7 @@ public class TransactionListItem {
     public static final String TAG = TransactionListItem.class.getName();
     final protected static char[] hexArray = "0123456789abcdef".toCharArray();
     private long timeStamp;
-    private long blockHeight;
+    private int blockHeight;
     private String hexId;
     private long sent;
     private long received;
@@ -42,7 +42,7 @@ public class TransactionListItem {
 
     }
 
-    public TransactionListItem(long timeStamp, long blockHeight, byte[] hash, long sent,
+    public TransactionListItem(long timeStamp, int blockHeight, byte[] hash, long sent,
                                long received, long fee, String to[], String from[],
                                long balanceAfterTx, long[] outAmounts) {
         this.timeStamp = timeStamp;
@@ -71,7 +71,7 @@ public class TransactionListItem {
         return new String(hexChars);
     }
 
-    public long getBlockHeight() {
+    public int getBlockHeight() {
         return blockHeight;
     }
 

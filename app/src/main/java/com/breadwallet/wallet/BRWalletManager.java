@@ -54,6 +54,7 @@ public class BRWalletManager {
     private static BRWalletManager instance;
     private static Context ctx;
 
+
 //    public static final long SATOSHIS = 100000000;
 //    public static final long MAX_MONEY = 21000000 * SATOSHIS;
 //    public static final long DEFAULT_FEE_PER_KB = 4096 * 1000 / 225; // fee required by eligius pool, which supports child-pays-for-parent
@@ -117,55 +118,11 @@ public class BRWalletManager {
         return success ? strPhrase : null;
     }
 
-    public static boolean setKeychainData(ByteBuffer buffer, String key, boolean authenticated) {
-
-        return true;
-    }
-
-    public ByteBuffer getKeychainData(String key) {
-        return null;
-    }
-
-    public static boolean setKeychainInt(long i, String key, boolean authenticated) {
-        return false;
-    }
-
-    public long getKeychainInt(String key) {
-        return 0;
-    }
-
     public boolean setKeyStoreString(String strPhrase, String key,
                                      boolean authenticated, Context ctx) {
         return KeyStoreManager.setKeyStoreString(strPhrase, ctx);
     }
 
-    /**
-     * authenticates user and returns seed
-     */
-    public ByteBuffer seedWithPrompt(String authPrompt, long amount) {
-        return null;
-    }
-
-    /**
-     * authenticates user and returns seedPhrase
-     */
-    public String seedPhraseWithPrompt(String authPrompt) {
-        return null;
-    }
-
-    /**
-     * prompts the user to set or change wallet pin and returns true if the pin was successfully set
-     */
-    public boolean setPin() {
-        return false;
-    }
-
-    /**
-     * queries chain.com and calls the completion block with unspent outputs for the given addresses
-     */
-    public void utxosForAddress(String address) {
-        //?????????????????????????????
-    }
 
     /**
      * given a private key, queries chain.com for unspent outputs and calls the completion block with
@@ -173,22 +130,6 @@ public class BRWalletManager {
      */
     public boolean sweepPrivateKey() {
         return KeyStoreManager.deleteKeyStoreEntry();
-    }
-
-    public long amountForString(String string) {
-        return 0;
-    }
-
-    public String stringForAmount(long amount) {
-        return null;
-    }
-
-    public long amountForLocalCurrencyString(String string) {
-        return 0;
-    }
-
-    public String localCurrencyStringForAmount(long amount) {
-        return null;
     }
 
     /**
@@ -202,30 +143,6 @@ public class BRWalletManager {
 
     }
 
-    /**
-     * master public key used to generate wallet addresses
-     */
-    public ByteBuffer masterPublicKey() {
-        return null;
-    }
-
-    /**
-     * requesting seedPhrase will trigger authentication
-     */
-    public String seedPhrase() {
-        return null;
-    }
-
-    public void setSeedPhrase(char[] seedPhrase) {
-
-    }
-
-    /**
-     * interval since refrence date, 00:00:00 01/01/01 GMT
-     */
-    public long seedCreationTime() {
-        return 0;
-    }
 
     /**
      * true if device passcode is enabled
@@ -271,9 +188,9 @@ public class BRWalletManager {
 
     }
 
-    public static void onTxAdded(byte[] tx, long blockheight, long timestamp, final long amount) {
+    public static void onTxAdded(byte[] tx, int blockHeight, long timestamp, final long amount) {
         Log.e(TAG, "amount on the txAdded:" + amount);
-        Log.e(TAG, "in the BRWalletManager - onTxAdded: " + tx.length + " " + blockheight + " " + timestamp);
+        Log.e(TAG, "in the BRWalletManager - onTxAdded: " + tx.length + " " + blockHeight + " " + timestamp);
 //        for (byte b : tx) {
 //            System.out.println(Integer.toBinaryString(b & 255 | 256).substring(1));
 //        }
@@ -297,10 +214,11 @@ public class BRWalletManager {
 
         }
         SQLiteManager sqLiteManager = SQLiteManager.getInstance(ctx);
-        sqLiteManager.insertTransaction(tx, blockheight, timestamp);
+        sqLiteManager.insertTransaction(tx, blockHeight, timestamp);
     }
 
-    public static void onTxUpdated(byte[] tx) {
+    public static void onTxUpdated(int blockHeight) {
+
         Log.e(TAG, "in the BRWalletManager - onTxUpdated");
     }
 

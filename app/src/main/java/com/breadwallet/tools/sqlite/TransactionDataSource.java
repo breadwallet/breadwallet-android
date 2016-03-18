@@ -150,7 +150,7 @@ public class TransactionDataSource {
     }
 
     private BRTransactionEntity cursorToTransaction(Cursor cursor) {
-        BRTransactionEntity transactionEntity = new BRTransactionEntity(cursor.getBlob(1), cursor.getLong(2), cursor.getLong(3));
+        BRTransactionEntity transactionEntity = new BRTransactionEntity(cursor.getBlob(1), cursor.getInt(2), cursor.getLong(3));
         transactionEntity.setId(cursor.getInt(0));
 //        transactionEntity.setBlockHeight(cursor.getInt(1));
 //        transactionEntity.setLockTime(cursor.getInt(2));

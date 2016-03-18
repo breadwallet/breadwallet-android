@@ -95,6 +95,13 @@ static void txRejected(void *info, int rescanRecommended) {
     (*_jvm)->DetachCurrentThread(_jvm);
 }
 
+
+JNIEXPORT void Java_com_breadwallet_wallet_BRWalletManager_rescan(JNIEnv *env, jobject thiz) {
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "rescan");
+    if(_peerManager)
+        BRPeerManagerRescan(_peerManager);
+}
+
 static void saveBlocks(void *info, BRMerkleBlock *blocks[], size_t count) {
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "saveBlocks");
 
@@ -253,4 +260,10 @@ JNIEXPORT jdouble Java_com_breadwallet_wallet_BRPeerManager_syncProgress(JNIEnv 
 
     return (jdouble) BRPeerManagerSyncProgress(_peerManager);
     // need to call free();
+}
+
+JNIEXPORT jint Java_com_breadwallet_wallet_BRPeerManager_getCurrentBlockHeight(JNIEnv *env,
+                                                                         jobject thiz) {
+    return (jint) BRPeerManagerLastBlockHeight(_peerManager);
+
 }

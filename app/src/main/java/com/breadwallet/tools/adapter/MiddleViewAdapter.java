@@ -1,7 +1,6 @@
 package com.breadwallet.tools.adapter;
 
 import android.app.Activity;
-import android.util.Log;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
@@ -36,9 +35,15 @@ import com.breadwallet.tools.animation.FragmentAnimator;
  */
 public class MiddleViewAdapter {
     private static final String TAG = MiddleViewAdapter.class.getName();
+    private static boolean syncing = false;
 
     public static void resetMiddleView(Activity app, String text) {
-        Log.e(TAG, "in the resetMiddleView: " + text);
+//        Log.e(TAG, "in the resetMiddleView: " + text);
+        if(syncing){
+            ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, app.getString(R.string.syncing));
+            return;
+        }
+
         if(text != null){
             ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, text);
             return;
@@ -60,5 +65,19 @@ public class MiddleViewAdapter {
         } else {
             ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_IMAGE, "");
         }
+    }
+
+    public static void setSyncing(Activity app, final boolean b) {
+        if (app == null) app = MainActivity.app;
+        final Activity finalApp = app;
+        if(app == null) return;
+        app.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                syncing = b;
+                resetMiddleView(finalApp, null);
+            }
+        });
+
     }
 }
