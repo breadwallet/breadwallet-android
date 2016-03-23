@@ -263,4 +263,6 @@ public class BRWalletManager {
 
     public native boolean addressContainedInWallet(String address);
 
+    public native long getMinOutputAmount();
+
 }

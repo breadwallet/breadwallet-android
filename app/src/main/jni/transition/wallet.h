@@ -42,6 +42,9 @@ JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRWalletManager_validateA
 JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRWalletManager_addressContainedInWallet
         (JNIEnv *env, jobject obj, jstring address);
 
+JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_getMinOutputAmount
+        (JNIEnv *env, jobject obj);
+
 JNIEXPORT jstring Java_com_breadwallet_wallet_BRWalletManager_getReceiveAddress(JNIEnv *env,
                                                                                 jobject thiz);
 

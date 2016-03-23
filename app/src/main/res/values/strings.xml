@@ -130,4 +130,5 @@
     <string name="recover_button">recover</string>
     <string name="address_already_in_your_wallet">address already in your wallet!</string>
     <string name="syncing">syncing...</string>
+    <string name="payment_failed">couldn\'t make payment</string>
 </resources>

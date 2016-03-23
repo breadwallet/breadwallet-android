@@ -20,8 +20,11 @@ import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
@@ -133,6 +136,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     public SoftKeyboard softKeyboard;
     private RelativeLayout mainLayout;
     private FingerprintManager fingerprintManager;
+    private ToastBlockShowTask toastBlockShowTask;
 
     public static boolean appInBackground = false;
 //    private int tipsCount;
@@ -176,48 +180,10 @@ public class MainActivity extends FragmentActivity implements Observer {
 
         setUpTheWallet();
         registerScreenLockReceiver();
-//        testSQLiteConnectivity(this);
 
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
 
         setUpApi23();
-
-        // Start lengthy operation in a background thread
-//        new Thread(new Runnable() {
-//            int mProgressStatus = 0;
-//
-//            public void run() {
-//                while (mProgressStatus < 100) {
-//                    Random r = new Random();
-//                    try {
-//                        Thread.sleep(r.nextInt(500));
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                    mProgressStatus += 2;
-//
-//                    // Update the progress bar
-//                    runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            syncProgressBar.setProgress(mProgressStatus);
-//                            //TODO use resource string with place holders, everywhere
-//                            syncProgressText.setText(String.valueOf(mProgressStatus) + "%");
-//                        }
-//                    });
-//                }
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        if (mProgressStatus >= 100) {
-//                            syncProgressBar.setVisibility(View.INVISIBLE);
-//                            syncProgressText.setVisibility(View.INVISIBLE);
-//                        }
-//                    }
-//                });
-//
-//            }
-//        }).start();
 
         if (((BreadWalletApp) getApplication()).isEmulatorOrDebug()) {
             MODE = DEBUG;
@@ -238,6 +204,14 @@ public class MainActivity extends FragmentActivity implements Observer {
         viewFlipper.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (MiddleViewAdapter.getSyncing()) {
+                    if (toastBlockShowTask != null) {
+                        toastBlockShowTask.interrupt();
+                    }
+                    toastBlockShowTask = new ToastBlockShowTask();
+                    toastBlockShowTask.start();
+                    return;
+                }
                 if (FragmentAnimator.level == 0 && BreadWalletApp.unlocked) {
                     if (middleViewPressedCount % 2 == 0) {
                         ((BreadWalletApp) getApplication()).showCustomToast(app, getResources().
@@ -531,18 +505,19 @@ public class MainActivity extends FragmentActivity implements Observer {
         amountHolder = FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_RIGHT ?
                 AmountAdapter.getRightValue() : AmountAdapter.getLeftValue();
         addressHolder = FragmentScanResult.address;
+        Double amountAsDouble = Double.parseDouble(amountHolder);
         if (addressHolder == null) return;
         if (addressHolder.length() < 20) return;
-        if (Long.valueOf(amountHolder) <= 0) return;
+        if (amountAsDouble <= 0) return;
         Log.e(TAG, "*********Sending: " + amountHolder + " to: " + addressHolder);
 
         if (CurrencyManager.getInstance(this).isNetworkAvailable(this)) {
-            if (Long.valueOf(amountHolder) < CurrencyManager.getInstance(this).getBALANCE()) {
+            if (amountAsDouble < CurrencyManager.getInstance(this).getBALANCE()) {
 
-                confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, Long.valueOf(amountHolder), null));
+                confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, Math.round(amountAsDouble), null));
             } else {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage("insufficient funds to send: " + amountHolder)
+                builder.setMessage(String.format("insufficient funds to send: ƀ%d",Math.round(amountAsDouble)))
                         .setCancelable(false)
                         .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
@@ -656,6 +631,27 @@ public class MainActivity extends FragmentActivity implements Observer {
 //        ((BreadWalletApp) getApplication()).showCustomDialog("payment info", certification + allAddresses.toString() +
 //                "\n\n" + "amount " + CurrencyManager.getInstance(this).getFormattedCurrencyString("BTC", String.valueOf(request.amount / 100))
 //                + " (" + CurrencyManager.getInstance(this).getFormattedCurrencyString(iso, amount) + ")", "send");
+        long minOutput = BRWalletManager.getInstance(this).getMinOutputAmount() / 100;
+        if(request.amount < minOutput){
+            final String bitcoinMinMessage = String.format("bitcoin payments can't be less than ƀ%d", minOutput);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    new android.app.AlertDialog.Builder(app)
+                            .setTitle(getString(R.string.payment_failed))
+                            .setMessage(bitcoinMinMessage)
+                            .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                   dialog.dismiss();
+                                }
+                            })
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
+                }
+            });
+
+            return;
+        }
 
         runOnUiThread(new Runnable() {
             @Override
@@ -923,6 +919,11 @@ public class MainActivity extends FragmentActivity implements Observer {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                         pass = KeyStoreManager.getPassCode(getApplicationContext());
                         Log.e(TAG, "in the run of the UI");
                         if (!passwordDialogFragment.isAdded()) {
@@ -935,11 +936,6 @@ public class MainActivity extends FragmentActivity implements Observer {
                 });
 
 
-                try {
-                    Thread.sleep(400);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
             }
 
         }
@@ -958,8 +954,59 @@ public class MainActivity extends FragmentActivity implements Observer {
         Runtime rt = Runtime.getRuntime();
         long maxMemory = rt.maxMemory();
         Log.e(specsTag, "* maxMemory:" + Long.toString(maxMemory));
-
         Log.e(specsTag, "----------------------------PHONE SPECS----------------------------");
         Log.e(specsTag, "");
+    }
+
+    private class ToastBlockShowTask extends Thread {
+        private Toast blocksToast;
+        private TextView text;
+        private View layout;
+        private String currBlock;
+        private String latestBlockKnown;
+        private String formattedBlockInfo;
+        private LayoutInflater inflater;
+
+        @Override
+        public void run() {
+
+            if (MainActivity.appInBackground || app == null) return;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    blocksToast = new Toast(app);
+                    inflater = app.getLayoutInflater();
+                    layout = inflater.inflate(R.layout.toast,
+                            (ViewGroup) app.findViewById(R.id.toast_layout_root));
+                    text = (TextView) layout.findViewById(R.id.toast_text);
+                    currBlock = String.valueOf(BRPeerManager.getCurrentBlockHeight());
+                    latestBlockKnown = String.valueOf(BRPeerManager.getLastBlockFromPrefs());
+                    formattedBlockInfo = String.format("block #%s from %s", currBlock, latestBlockKnown);
+                    text.setText(formattedBlockInfo);
+                    blocksToast.setGravity(Gravity.TOP, 0, MainActivity.screenParametersPoint.y / 8);
+                    blocksToast.setDuration(Toast.LENGTH_LONG);
+                    blocksToast.setView(layout);
+                    blocksToast.show();
+                }
+            });
+
+            while (true) {
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        currBlock = String.valueOf(BRPeerManager.getCurrentBlockHeight());
+                        formattedBlockInfo = String.format("block #%s from %s", currBlock, latestBlockKnown);
+                        text.setText(formattedBlockInfo);
+                    }
+                });
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
     }
 }

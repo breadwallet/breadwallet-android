@@ -80,4 +80,8 @@ public class MiddleViewAdapter {
         });
 
     }
+
+    public static boolean getSyncing(){
+        return syncing;
+    }
 }

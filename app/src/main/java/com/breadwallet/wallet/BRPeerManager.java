@@ -69,7 +69,7 @@ public class BRPeerManager {
 
     public native static double syncProgress();
 
-    private native static int getCurrentBlockHeight();
+    public native static int getCurrentBlockHeight();
 
     /**
      * void BRPeerManagerSetCallbacks(BRPeerManager *manager, void *info,
@@ -144,12 +144,12 @@ public class BRPeerManager {
 
     public static synchronized void saveBlocks(byte[] block) {
         Log.e(TAG, "saveBlocks");
-        SQLiteManager.getInstance(ctx).insertMerkleBlock(block);
+//        SQLiteManager.getInstance(ctx).insertMerkleBlock(block);
     }
 
     public static synchronized void savePeers(byte[] peerAddress, byte[] peerPort, byte[] peerTimeStamp) {
         Log.e(TAG, "savePeers");
-        SQLiteManager.getInstance(ctx).insertPeer(peerAddress, peerPort, peerTimeStamp);
+//        SQLiteManager.getInstance(ctx).insertPeer(peerAddress, peerPort, peerTimeStamp);
     }
 
     public static synchronized boolean networkIsReachable() {
