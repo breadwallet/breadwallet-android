@@ -39,7 +39,6 @@ public class TransactionListItem {
     private long outAmounts[];
 
     private TransactionListItem() {
-
     }
 
     public TransactionListItem(long timeStamp, int blockHeight, byte[] hash, long sent,
@@ -61,7 +60,7 @@ public class TransactionListItem {
 //                "fee", String.valueOf(fee), "to", to, "from", from);
     }
 
-    private static String bytesToHex(byte[] bytes) {
+    public static String bytesToHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
         for (int j = 0; j < bytes.length; j++) {
             int v = bytes[j] & 0xFF;

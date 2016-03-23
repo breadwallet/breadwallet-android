@@ -188,9 +188,11 @@ public class PasswordDialogFragment extends DialogFragment {
         firstTime = false;
     }
 
+
     private boolean validatePassCode(CharSequence s) {
         PassCodeManager passCodeManager = PassCodeManager.getInstance();
 
+        //Set and confirm the new passcode
         if (firstTime) {
             switch (currentMode) {
                 case AUTH_MODE_NEW_PASS:
@@ -220,6 +222,7 @@ public class PasswordDialogFragment extends DialogFragment {
                     }
                     break;
             }
+        // verify the passcode
         } else if (verifyOnly) {
             if (passCodeManager.checkAuth(s.toString(), getActivity())) {
 //                BreadWalletApp.canceled = true;

@@ -129,6 +129,10 @@ public class BRPeerManager {
     }
 
     public static synchronized void txStatusUpdate() {
+        if(syncProgress() >= 1){
+            if (ctx == null) ctx = MainActivity.app;
+            if (ctx != null) MiddleViewAdapter.setSyncing((Activity) ctx, false);
+        }
         Log.e(TAG, "txStatusUpdate");
         saveLastBlockHeight();
 

@@ -410,6 +410,7 @@ public class KeyStoreManager {
             keyStore.deleteEntry(KeyStoreManager.PUB_KEY_ALIAS);
             keyStore.deleteEntry(KeyStoreManager.WALLET_CREATION_TIME_ALIAS);
             keyStore.deleteEntry(KeyStoreManager.PASS_CODE_ALIAS);
+
         } catch (CertificateException e) {
             e.printStackTrace();
             return false;

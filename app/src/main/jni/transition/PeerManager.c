@@ -105,43 +105,47 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRWalletManager_rescan(JNIEnv *env, j
 static void saveBlocks(void *info, BRMerkleBlock *blocks[], size_t count) {
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "saveBlocks");
 
-//    JNIEnv *globalEnv = getEnv();
-//    jmethodID mid = (*globalEnv)->GetStaticMethodID(globalEnv, _peerManagerClass, "saveBlocks", "([B)V");
-//    //call java methods
-//
-//    for (int i = 0; i < count; i++) {
-//        uint8_t buf[BRMerkleBlockSerialize(blocks[i], NULL, 0)];
-//        size_t len = BRMerkleBlockSerialize(blocks[i], buf, sizeof(buf));
-//        jbyteArray result = (*globalEnv)->NewByteArray(globalEnv, len);
-//        (*globalEnv)->SetByteArrayRegion(globalEnv, result, 0, len, (jbyte *) buf);
-//        (*globalEnv)->CallStaticVoidMethod(globalEnv, _peerManagerClass, mid, result);
-//    }
-//    (*_jvm)->DetachCurrentThread(_jvm);
+    JNIEnv *env = getEnv();
+    jmethodID mid = (*env)->GetStaticMethodID(env, _peerManagerClass, "saveBlocks", "([B)V");
+    //call java methods
+
+    for (int i = 0; i < count; i++) {
+        uint8_t buf[BRMerkleBlockSerialize(blocks[i], NULL, 0)];
+        size_t len = BRMerkleBlockSerialize(blocks[i], buf, sizeof(buf));
+        jbyteArray result = (*env)->NewByteArray(env, len);
+        (*env)->SetByteArrayRegion(env, result, 0, len, (jbyte *) buf);
+        (*env)->CallStaticVoidMethod(env, _peerManagerClass, mid, result);
+        (*env)->DeleteLocalRef(env, result);
+    }
+    (*_jvm)->DetachCurrentThread(_jvm);
 
 }
 
 static void savePeers(void *info, const BRPeer peers[], size_t count) {
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "savePeers");
 
-//    JNIEnv *globalEnv = getEnv();
-//
-//    jmethodID mid = (*globalEnv)->GetStaticMethodID(globalEnv, _peerManagerClass, "savePeers", "([B[B[B)V");
-//    //call java methods
-//
-//    for (int i = 0; i < count; i++) {
-//
-//        jbyteArray peerAddress = (*globalEnv)->NewByteArray(globalEnv, sizeof(peers[i].address));
-//        (*globalEnv)->SetByteArrayRegion(globalEnv, peerAddress, 0, sizeof(peers[i].address), (jbyte *) &peers[i].address);
-//
-//        jbyteArray peerPort = (*globalEnv)->NewByteArray(globalEnv, sizeof(peers[i].port));
-//        (*globalEnv)->SetByteArrayRegion(globalEnv, peerPort, 0, sizeof(peers[i].port), (jbyte *) &peers[i].port);
-//
-//        jbyteArray peerTimeStamp = (*globalEnv)->NewByteArray(globalEnv, sizeof(peers[i].timestamp));
-//        (*globalEnv)->SetByteArrayRegion(globalEnv, peerTimeStamp, 0, sizeof(peers[i].timestamp), (jbyte *) &peers[i].timestamp);
-//
-//        (*globalEnv)->CallStaticVoidMethod(globalEnv, _peerManagerClass, mid, peerAddress, peerPort, peerTimeStamp);
-//    }
-//    (*_jvm)->DetachCurrentThread(_jvm);
+    JNIEnv *env = getEnv();
+
+    jmethodID mid = (*env)->GetStaticMethodID(env, _peerManagerClass, "savePeers", "([B[B[B)V");
+    //call java methods
+
+    for (int i = 0; i < count; i++) {
+
+        jbyteArray peerAddress = (*env)->NewByteArray(env, sizeof(peers[i].address));
+        (*env)->SetByteArrayRegion(env, peerAddress, 0, sizeof(peers[i].address), (jbyte *) &peers[i].address);
+
+        jbyteArray peerPort = (*env)->NewByteArray(env, sizeof(peers[i].port));
+        (*env)->SetByteArrayRegion(env, peerPort, 0, sizeof(peers[i].port), (jbyte *) &peers[i].port);
+
+        jbyteArray peerTimeStamp = (*env)->NewByteArray(env, sizeof(peers[i].timestamp));
+        (*env)->SetByteArrayRegion(env, peerTimeStamp, 0, sizeof(peers[i].timestamp), (jbyte *) &peers[i].timestamp);
+
+        (*env)->CallStaticVoidMethod(env, _peerManagerClass, mid, peerAddress, peerPort, peerTimeStamp);
+        (*env)->DeleteLocalRef(env, peerAddress);
+        (*env)->DeleteLocalRef(env, peerPort);
+        (*env)->DeleteLocalRef(env, peerTimeStamp);
+    }
+    (*_jvm)->DetachCurrentThread(_jvm);
 }
 
 static int networkIsReachable(void *info) {
@@ -201,7 +205,7 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_putBlock(JNIEnv *env,
                                                                   jbyteArray block) {
     int bkLength = (*env)->GetArrayLength(env, block);
     jbyte *byteBk = (*env)->GetByteArrayElements(env, block, 0);
-    BRMerkleBlock *tmpBk = BRMerkleBlockParse(byteBk, bkLength);
+    BRMerkleBlock *tmpBk = BRMerkleBlockParse((const uint8_t *) byteBk, bkLength);
 //    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "adding a block: blockhight: %d, "
 //            "transactionCounter: %d", tmpTx->blockHeight, _transactionsCounter);
     _blocks[_blocksCounter++] = tmpBk;

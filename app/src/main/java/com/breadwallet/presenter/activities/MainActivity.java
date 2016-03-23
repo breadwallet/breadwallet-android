@@ -527,16 +527,6 @@ public class MainActivity extends FragmentActivity implements Observer {
 
 
     public void pay() {
-//        if (auth == 1) {
-//            if (addressHolder == null || amountHolder == null) return;
-//            if (Long.valueOf(amountHolder) <= 0 || addressHolder.length() < 30) return;
-//            BRWalletManager walletManager = BRWalletManager.getInstance(this);
-//            walletManager.pay(addressHolder, Long.valueOf(amountHolder) * 100);
-//            final MediaPlayer mp = MediaPlayer.create(this, R.raw.coinflip);
-//            mp.start();
-//            FragmentAnimator.hideScanResultFragment();
-//            return;
-//        }
 
         amountHolder = FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_RIGHT ?
                 AmountAdapter.getRightValue() : AmountAdapter.getLeftValue();

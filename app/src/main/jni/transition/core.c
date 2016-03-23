@@ -140,9 +140,9 @@ JNIEXPORT jobject Java_com_breadwallet_tools_security_RequestHandler_parsePaymen
     int requestLength = (*env)->GetArrayLength(env, payment);
     jbyte *bytePayment = (*env)->GetByteArrayElements(env, payment, 0);
     if (!TEST_REQ){
-        nativeRequest = BRPaymentProtocolRequestParse(bytePayment, requestLength);
+        nativeRequest = BRPaymentProtocolRequestParse((const uint8_t *) bytePayment, (size_t) requestLength);
     } else {
-        nativeRequest = BRPaymentProtocolRequestParse((const uint8_t *) req, sizeof(req) - 1);
+        nativeRequest = BRPaymentProtocolRequestParse((const uint8_t *) req, (size_t) sizeof(req) - 1);
     }
 
     //testing the raw request form the top
@@ -155,8 +155,7 @@ JNIEXPORT jobject Java_com_breadwallet_tools_security_RequestHandler_parsePaymen
     int singleAddressLength = sizeof(nativeRequest->details->outputs[0].address);
 //    char addresses[(singleAddressLength + 2) * outputsLength];
 
-    jobjectArray stringArray;
-    stringArray = (jobjectArray) (*env)->NewObjectArray(env, outputsLength,
+    jobjectArray stringArray = (jobjectArray) (*env)->NewObjectArray(env, outputsLength,
                                                         (*env)->FindClass(env, "java/lang/String"),
                                                         (*env)->NewStringUTF(env, ""));
     if (outputsLength > 0) {
@@ -174,20 +173,20 @@ JNIEXPORT jobject Java_com_breadwallet_tools_security_RequestHandler_parsePaymen
     //signature
     jbyte *bytesSignature = (jbyte *) nativeRequest->signature;
     size_t bytesSignatureSize = nativeRequest->sigLen;
-    jbyteArray byteArraySignature = (*env)->NewByteArray(env, bytesSignatureSize);
-    (*env)->SetByteArrayRegion(env, byteArraySignature, 0, bytesSignatureSize, bytesSignature);
+    jbyteArray byteArraySignature = (*env)->NewByteArray(env, (jsize) bytesSignatureSize);
+    (*env)->SetByteArrayRegion(env, byteArraySignature, 0, (jsize) bytesSignatureSize, bytesSignature);
 
     //pkiData
     jbyte *bytesPkiData = (jbyte *) nativeRequest->pkiData;
     size_t pkiDataSize = nativeRequest->pkiLen;
-    jbyteArray byteArrayPkiData = (*env)->NewByteArray(env, pkiDataSize);
-    (*env)->SetByteArrayRegion(env, byteArrayPkiData, 0, pkiDataSize, bytesPkiData);
+    jbyteArray byteArrayPkiData = (*env)->NewByteArray(env, (jsize) pkiDataSize);
+    (*env)->SetByteArrayRegion(env, byteArrayPkiData, 0, (jsize) pkiDataSize, bytesPkiData);
 
     //merchantData
     jbyte *bytesMerchantData = (jbyte *) nativeRequest->details->merchantData;
     size_t merchantDataSize = nativeRequest->details->merchDataLen;
-    jbyteArray byteArrayMerchantData = (*env)->NewByteArray(env, merchantDataSize);
-    (*env)->SetByteArrayRegion(env, byteArrayMerchantData, 0, merchantDataSize, bytesMerchantData);
+    jbyteArray byteArrayMerchantData = (*env)->NewByteArray(env, (jsize) merchantDataSize);
+    (*env)->SetByteArrayRegion(env, byteArrayMerchantData, 0, (jsize) merchantDataSize, bytesMerchantData);
 
     //create class
     jclass clazz = (*env)->FindClass(env,
@@ -246,19 +245,19 @@ JNIEXPORT jbyteArray Java_com_breadwallet_tools_security_RequestHandler_getCerti
     int requestLength = (*env)->GetArrayLength(env, payment);
     jbyte *bytePayment = (*env)->GetByteArrayElements(env, payment, 0);
     if (!TEST_REQ) {
-        nativeRequest = BRPaymentProtocolRequestParse(bytePayment, requestLength);
+        nativeRequest = BRPaymentProtocolRequestParse((const uint8_t *) bytePayment, (size_t) requestLength);
     } else {
-        nativeRequest = BRPaymentProtocolRequestParse((const uint8_t *) req, sizeof(req) - 1);
+        nativeRequest = BRPaymentProtocolRequestParse((const uint8_t *) req, (size_t) sizeof(req) - 1);
     }
     //testing the raw request example!!!!!!
 
     //get certificate
-    uint8_t *buf[BRPaymentProtocolRequestCert(nativeRequest, NULL, 0, index)];
-    size_t length = BRPaymentProtocolRequestCert(nativeRequest, buf, sizeof(buf), index);
+    uint8_t *buf[BRPaymentProtocolRequestCert(nativeRequest, NULL, 0, (size_t) index)];
+    size_t length = BRPaymentProtocolRequestCert(nativeRequest, buf,(size_t) sizeof(buf),(size_t) index);
 //    __android_log_write(ANDROID_LOG_DEBUG, ">>>>>>MESSAGE FROM C: ", (char *) length);
 
     //convert it to jbyteArray
-    jbyte *certJbyte = (const jbyte *) buf;
+    const jbyte *certJbyte = (const jbyte *) buf;
     jbyteArray result = (*env)->NewByteArray(env, length);
     (*env)->SetByteArrayRegion(env, result, 0, length, certJbyte);
     //release everything

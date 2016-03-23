@@ -10,6 +10,7 @@ import android.widget.Toast;
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.presenter.fragments.MainFragmentQR;
@@ -189,7 +190,7 @@ public class BRWalletManager {
     }
 
     public static void onTxAdded(byte[] tx, int blockHeight, long timestamp, final long amount) {
-        Log.e(TAG, "amount on the txAdded:" + amount);
+//        Log.e(TAG, "amount on the txAdded:" + amount);
         Log.e(TAG, "in the BRWalletManager - onTxAdded: " + tx.length + " " + blockHeight + " " + timestamp);
 //        for (byte b : tx) {
 //            System.out.println(Integer.toBinaryString(b & 255 | 256).substring(1));
@@ -218,11 +219,16 @@ public class BRWalletManager {
     }
 
     public static void onTxUpdated(int blockHeight) {
-
+        //TODO ask Aaron how to update tx
         Log.e(TAG, "in the BRWalletManager - onTxUpdated");
     }
 
-    public static void onTxDeleted(byte[] tx) {
+    public static void onTxDeleted() {
+        //TODO ask Aaron how to delete tx
+//        SQLiteManager sqLiteManager = SQLiteManager.getInstance(ctx);
+//        List<BRTransactionEntity> txList = sqLiteManager.getTransactions();
+
+
         Log.e(TAG, "in the BRWalletManager - onTxDeleted");
     }
 
