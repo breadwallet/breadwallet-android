@@ -188,7 +188,6 @@ public class PasswordDialogFragment extends DialogFragment {
         firstTime = false;
     }
 
-
     private boolean validatePassCode(CharSequence s) {
         PassCodeManager passCodeManager = PassCodeManager.getInstance();
 
@@ -245,8 +244,12 @@ public class PasswordDialogFragment extends DialogFragment {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            BRWalletManager walletManager = BRWalletManager.getInstance(getActivity());
-                            walletManager.pay(request.addresses[0], request.amount * 100);
+                            try {
+                                BRWalletManager walletManager = BRWalletManager.getInstance(getActivity());
+                                walletManager.pay(request.addresses[0], request.amount * 100);
+                            } catch (Exception e){
+                                e.printStackTrace();
+                            }
                         }
                     }).start();
 

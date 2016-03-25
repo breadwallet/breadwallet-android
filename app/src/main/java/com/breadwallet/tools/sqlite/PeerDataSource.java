@@ -108,6 +108,10 @@ class PeerDataSource {
                 + " = " + id, null);
     }
 
+    public void deleteAllPeers() {
+        database.delete(BRSQLiteHelper.PEER_TABLE_NAME, BRSQLiteHelper.PEER_COLUMN_ID + " <> -1", null);
+    }
+
     public List<BRPeerEntity> getAllPeers() {
         List<BRPeerEntity> peers = new ArrayList<>();
 

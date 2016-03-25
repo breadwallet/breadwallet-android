@@ -105,6 +105,10 @@ class MerkleBlockDataSource {
         return null;
     }
 
+    public void deleteAllBlocks() {
+        database.delete(BRSQLiteHelper.MB_TABLE_NAME, BRSQLiteHelper.MB_COLUMN_ID + " <> -1", null);
+    }
+
     public void deleteMerkleBlock(BRMerkleBlockEntity merkleBlock) {
         long id = merkleBlock.getId();
         Log.e(TAG, "MerkleBlock deleted with id: " + id);

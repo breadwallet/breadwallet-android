@@ -2,7 +2,6 @@ package com.breadwallet.presenter.activities;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
-import android.app.FragmentManager;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -20,11 +19,8 @@ import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
@@ -47,7 +43,6 @@ import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.presenter.fragments.FragmentSettings;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.presenter.fragments.MainFragmentQR;
-import com.breadwallet.presenter.fragments.PasswordDialogFragment;
 import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.NetworkChangeReceiver;
@@ -61,6 +56,8 @@ import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.sqlite.SQLiteManager;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
+import com.breadwallet.tools.threads.PassCodeTask;
+import com.breadwallet.tools.threads.ToastBlockShowTask;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 
@@ -137,6 +134,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     private RelativeLayout mainLayout;
     private FingerprintManager fingerprintManager;
     private ToastBlockShowTask toastBlockShowTask;
+    private int runCount = 0;
 
     public static boolean appInBackground = false;
 //    private int tipsCount;
@@ -207,8 +205,9 @@ public class MainActivity extends FragmentActivity implements Observer {
                 if (MiddleViewAdapter.getSyncing()) {
                     if (toastBlockShowTask != null) {
                         toastBlockShowTask.interrupt();
+                        toastBlockShowTask = null;
                     }
-                    toastBlockShowTask = new ToastBlockShowTask();
+                    toastBlockShowTask = new ToastBlockShowTask(app);
                     toastBlockShowTask.start();
                     return;
                 }
@@ -512,12 +511,13 @@ public class MainActivity extends FragmentActivity implements Observer {
         Log.e(TAG, "*********Sending: " + amountHolder + " to: " + addressHolder);
 
         if (CurrencyManager.getInstance(this).isNetworkAvailable(this)) {
-            if (amountAsDouble < CurrencyManager.getInstance(this).getBALANCE()) {
+            long feeForTx = CurrencyManager.getInstance(this).getBitsFromSatoshi((int) BRWalletManager.getInstance(this).feeForTransaction(addressHolder, Math.round(amountAsDouble)));
+            if (amountAsDouble + feeForTx < CurrencyManager.getInstance(this).getBALANCE()) {
 
                 confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, Math.round(amountAsDouble), null));
             } else {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage(String.format("insufficient funds to send: ƀ%d",Math.round(amountAsDouble)))
+                builder.setMessage(String.format("insufficient funds to send: ƀ%d", Math.round(amountAsDouble)))
                         .setCancelable(false)
                         .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
@@ -632,7 +632,7 @@ public class MainActivity extends FragmentActivity implements Observer {
 //                "\n\n" + "amount " + CurrencyManager.getInstance(this).getFormattedCurrencyString("BTC", String.valueOf(request.amount / 100))
 //                + " (" + CurrencyManager.getInstance(this).getFormattedCurrencyString(iso, amount) + ")", "send");
         long minOutput = BRWalletManager.getInstance(this).getMinOutputAmount() / 100;
-        if(request.amount < minOutput){
+        if (request.amount < minOutput) {
             final String bitcoinMinMessage = String.format("bitcoin payments can't be less than ƀ%d", minOutput);
             runOnUiThread(new Runnable() {
                 @Override
@@ -642,7 +642,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                             .setMessage(bitcoinMinMessage)
                             .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
-                                   dialog.dismiss();
+                                    dialog.dismiss();
                                 }
                             })
                             .setIcon(android.R.drawable.ic_dialog_alert)
@@ -777,16 +777,20 @@ public class MainActivity extends FragmentActivity implements Observer {
 
         m.createWallet(transactionsCount, pubkeyEncoded, r);
 
-        final long earliestKeyTime = KeyStoreManager.getWalletCreationTime(this);
+        long earliestKeyTime = KeyStoreManager.getWalletCreationTime(this);
         Log.e(TAG, "blocksCount before connecting: " + blocksCount);
         Log.e(TAG, "peersCount before connecting: " + peersCount);
+        Log.e(TAG, "earliestKeyTime before connecting: " + earliestKeyTime);
 //        new Thread(new Runnable() {
 //            @Override
 //            public void run() {
 //                pm.connect(earliestKeyTime, blocksCount, peersCount);
 //            }
 //        }).start();
-        pm.connect(earliestKeyTime, blocksCount, peersCount);
+        //TODO take this test off.
+//        earliestKeyTime = 1457215961;
+
+        pm.createAndConnect(earliestKeyTime > 0 ? earliestKeyTime : 0, blocksCount, peersCount);
 
     }
 
@@ -843,7 +847,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         String pass = KeyStoreManager.getPassCode(this);
         Log.e(TAG, "PASSCODE: " + pass);
         if (pass == null || pass.isEmpty()) {
-            new PassCodeTask().start();
+            new PassCodeTask(this).start();
         }
     }
 
@@ -902,45 +906,7 @@ public class MainActivity extends FragmentActivity implements Observer {
 //        tipsCount++;
 //    }
 
-    private class PassCodeTask extends Thread {
-        PasswordDialogFragment passwordDialogFragment;
-        String pass = "";
 
-        @Override
-        public void run() {
-            super.run();
-
-            final FragmentManager fm = getFragmentManager();
-            passwordDialogFragment = new PasswordDialogFragment();
-            passwordDialogFragment.setFirstTimeTrue();
-            passwordDialogFragment.show(fm, PasswordDialogFragment.class.getName());
-            while (pass != null && pass.isEmpty()) {
-                Log.e(TAG, "in the while");
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        pass = KeyStoreManager.getPassCode(getApplicationContext());
-                        Log.e(TAG, "in the run of the UI");
-                        if (!passwordDialogFragment.isAdded()) {
-                            Log.e(TAG, "in the !passwordDialogFragment.isAdded()");
-                            passwordDialogFragment = new PasswordDialogFragment();
-                            passwordDialogFragment.setFirstTimeTrue();
-                            passwordDialogFragment.show(fm, PasswordDialogFragment.class.getName());
-                        }
-                    }
-                });
-
-
-            }
-
-        }
-
-    }
 
     private void printPhoneSpecs() {
         String specsTag = "PHONE SPECS";
@@ -958,55 +924,4 @@ public class MainActivity extends FragmentActivity implements Observer {
         Log.e(specsTag, "");
     }
 
-    private class ToastBlockShowTask extends Thread {
-        private Toast blocksToast;
-        private TextView text;
-        private View layout;
-        private String currBlock;
-        private String latestBlockKnown;
-        private String formattedBlockInfo;
-        private LayoutInflater inflater;
-
-        @Override
-        public void run() {
-
-            if (MainActivity.appInBackground || app == null) return;
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    blocksToast = new Toast(app);
-                    inflater = app.getLayoutInflater();
-                    layout = inflater.inflate(R.layout.toast,
-                            (ViewGroup) app.findViewById(R.id.toast_layout_root));
-                    text = (TextView) layout.findViewById(R.id.toast_text);
-                    currBlock = String.valueOf(BRPeerManager.getCurrentBlockHeight());
-                    latestBlockKnown = String.valueOf(BRPeerManager.getLastBlockFromPrefs());
-                    formattedBlockInfo = String.format("block #%s from %s", currBlock, latestBlockKnown);
-                    text.setText(formattedBlockInfo);
-                    blocksToast.setGravity(Gravity.TOP, 0, MainActivity.screenParametersPoint.y / 8);
-                    blocksToast.setDuration(Toast.LENGTH_LONG);
-                    blocksToast.setView(layout);
-                    blocksToast.show();
-                }
-            });
-
-            while (true) {
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        currBlock = String.valueOf(BRPeerManager.getCurrentBlockHeight());
-                        formattedBlockInfo = String.format("block #%s from %s", currBlock, latestBlockKnown);
-                        text.setText(formattedBlockInfo);
-                    }
-                });
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-    }
 }

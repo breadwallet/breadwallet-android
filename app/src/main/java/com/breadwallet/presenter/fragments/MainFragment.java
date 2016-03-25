@@ -47,11 +47,10 @@ import com.breadwallet.wallet.BRWalletManager;
 public class MainFragment extends Fragment {
     private static final String TAG = MainFragment.class.getName();
     public EditText addressEditText;
-    private AlertDialog alertDialog;
+//    private AlertDialog alertDialog;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
@@ -62,7 +61,6 @@ public class MainFragment extends Fragment {
                 rootView.findViewById(R.id.main_button_pay_address_from_clipboard);
         addressEditText = (EditText) rootView.findViewById(R.id.address_edit_text);
 
-        alertDialog = new AlertDialog.Builder(getActivity()).create();
         addressEditText.setGravity(Gravity.CENTER_HORIZONTAL);
 
         mainFragmentLayout.setPadding(0, MainActivity.screenParametersPoint.y / 5, 0, 0);
@@ -78,39 +76,64 @@ public class MainFragment extends Fragment {
         payAddressFromClipboardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                AlertDialog alert = null;
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
                 if (FragmentAnimator.checkTheMultipressingAvailability()) {
-                    if (alertDialog.isShowing()) alertDialog.dismiss();
-                    String address = BRClipboardManager.readFromClipboard(getActivity());
+                    final String address = BRClipboardManager.readFromClipboard(getActivity());
                     if (checkIfAddressIsValid(address)) {
                         if (address != null) {
                             BRWalletManager m = BRWalletManager.getInstance(getActivity());
-                            if (!m.addressContainedInWallet(address)) {
-                                FragmentAnimator.animateScanResultFragment();
-                                FragmentScanResult.address = address;
-                            } else {
-                                alertDialog.setTitle(getResources().getString(R.string.alert));
-                                alertDialog.setMessage(getResources().getString(R.string.address_already_in_your_wallet));
-                                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getResources().getString(R.string.ok),
+                            if (m.addressContainedInWallet(address)) {
+
+                                builder.setTitle(getResources().getString(R.string.alert));
+                                builder.setMessage(getResources().getString(R.string.address_already_in_your_wallet));
+                                builder.setNeutralButton(getResources().getString(R.string.ok),
                                         new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int which) {
                                                 dialog.dismiss();
                                             }
                                         });
-                                alertDialog.show();
+                                alert = builder.create();
+                                alert.show();
+                            } else if (m.addressIsUsed(address)) {
+                                builder.setTitle(getResources().getString(R.string.warning));
+
+                                builder.setMessage(getResources().getString(R.string.address_already_used));
+                                builder.setPositiveButton(getResources().getString(R.string.ignore),
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                                FragmentAnimator.animateScanResultFragment();
+                                                FragmentScanResult.address = address;
+                                            }
+                                        });
+                                builder.setNegativeButton(getResources().getString(R.string.cancel),
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                            }
+                                        });
+                                alert = builder.create();
+                                alert.show();
+                            } else {
+                                FragmentAnimator.animateScanResultFragment();
+                                FragmentScanResult.address = address;
                             }
                         } else {
                             throw new NullPointerException();
                         }
                     } else {
-                        alertDialog.setTitle(getResources().getString(R.string.alert));
-                        alertDialog.setMessage(getResources().getString(R.string.mainfragment_clipboard_invalid_data));
-                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getResources().getString(R.string.ok),
+                        builder.setTitle(getResources().getString(R.string.alert));
+                        builder.setMessage(getResources().getString(R.string.mainfragment_clipboard_invalid_data));
+                        builder.setNeutralButton(getResources().getString(R.string.ok),
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.dismiss();
                                     }
                                 });
-                        alertDialog.show();
+                        alert = builder.create();
+                        alert.show();
                     }
                 }
             }

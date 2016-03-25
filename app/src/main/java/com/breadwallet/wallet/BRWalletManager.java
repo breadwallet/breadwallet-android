@@ -17,6 +17,7 @@ import com.breadwallet.presenter.fragments.MainFragmentQR;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.WordsReader;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
+import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.sqlite.SQLiteManager;
 
@@ -196,7 +197,7 @@ public class BRWalletManager {
 //            System.out.println(Integer.toBinaryString(b & 255 | 256).substring(1));
 //        }
         if (ctx == null) ctx = MainActivity.app;
-        if (ctx != null) {
+        if (ctx != null && !MiddleViewAdapter.getSyncing()) {
             ((Activity)ctx).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -262,6 +263,10 @@ public class BRWalletManager {
     public native boolean validateAddress(String address);
 
     public native boolean addressContainedInWallet(String address);
+
+    public native boolean addressIsUsed(String address);
+
+    public native int feeForTransaction(String addressHolder, long amountHolder);
 
     public native long getMinOutputAmount();
 

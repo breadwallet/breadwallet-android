@@ -83,7 +83,7 @@ public class IntroRecoverWalletFragment extends Fragment {
                     if(!success) throw new NullPointerException("Something went wrong when set the phrase into the KeyStore");
                     BRWalletManager m;
                     m = BRWalletManager.getInstance(getActivity());
-                    KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), getActivity());
+//                    KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), getActivity());
 
                     String pubKey = m.getMasterPubKey(normalizedPhrase);
                     KeyStoreManager.putMasterPublicKey(pubKey, getActivity());

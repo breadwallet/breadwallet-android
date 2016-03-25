@@ -11,7 +11,7 @@ import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
-import com.breadwallet.tools.sqlite.SQLiteManager;
+import com.breadwallet.tools.security.KeyStoreManager;
 
 import java.text.DecimalFormat;
 
@@ -57,7 +57,9 @@ public class BRPeerManager {
         return instance;
     }
 
-    public native void connect(long earliestKeyTime, int blockCount, int peerCount);
+    public native void createAndConnect(long earliestKeyTime, int blockCount, int peerCount);
+
+    public native void connect();
 
     public native void putPeer(byte[] peerAddress, byte[] peerPort, byte[] peerTimeStamp);
 
@@ -70,6 +72,8 @@ public class BRPeerManager {
     public native static double syncProgress();
 
     public native static int getCurrentBlockHeight();
+
+    public native static int getEstimatedBlockHeight();
 
     /**
      * void BRPeerManagerSetCallbacks(BRPeerManager *manager, void *info,
@@ -102,11 +106,16 @@ public class BRPeerManager {
     public static synchronized void syncSucceded() {
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) MiddleViewAdapter.setSyncing((Activity) ctx, false);
+        if(KeyStoreManager.getWalletCreationTime(ctx) == 0){
+            Log.e(TAG, "getWalletCreationTime() is 0 ! setting the new walletCreationTime in the keystore!");
+            KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis()/1000), ctx);
+        }
         Log.e(TAG, "syncSucceeded");
-        saveLastBlockHeight();
+//        saveLastBlockHeight();
         try {
             if (syncTask != null) {
                 syncTask.setRunning(false);
+                syncTask.interrupt();
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -121,6 +130,7 @@ public class BRPeerManager {
         try {
             if (syncTask != null) {
                 syncTask.setRunning(false);
+                syncTask.interrupt();
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -129,12 +139,12 @@ public class BRPeerManager {
     }
 
     public static synchronized void txStatusUpdate() {
-        if(syncProgress() >= 1){
-            if (ctx == null) ctx = MainActivity.app;
-            if (ctx != null) MiddleViewAdapter.setSyncing((Activity) ctx, false);
-        }
+//        if (syncProgress() >= 1) {
+//            if (ctx == null) ctx = MainActivity.app;
+//            if (ctx != null) MiddleViewAdapter.setSyncing((Activity) ctx, false);
+//        }
         Log.e(TAG, "txStatusUpdate");
-        saveLastBlockHeight();
+//        saveLastBlockHeight();
 
     }
 
@@ -158,46 +168,46 @@ public class BRPeerManager {
         return ctx != null && CurrencyManager.getInstance(ctx).isNetworkAvailable(ctx);
     }
 
-    public static void saveLastBlockHeight() {
-        Log.e(TAG, "saveLastBlockHeight");
-        MainActivity app = MainActivity.app;
-        if (app != null) {
-            int blockHeight = getCurrentBlockHeight();
-            Log.e(TAG, "saveLastBlockHeight: blockHeight: " + blockHeight);
-            if (blockHeight <= 0) return;
-            SharedPreferences prefs = app.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
-            int blockHeightFromPrefs = prefs.getInt(BRConstants.BLOCK_HEIGHT, 0);
-            Log.e(TAG, "saveLastBlockHeight: blockHeightFromPrefs: " + blockHeightFromPrefs);
-            if (blockHeight > blockHeightFromPrefs) {
-                SharedPreferences prefs2 = app.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = prefs2.edit();
-                editor.putInt(BRConstants.BLOCK_HEIGHT, blockHeight);
-                editor.apply();
-                if (ctx == null) ctx = MainActivity.app;
-                ((Activity) ctx).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        FragmentSettingsAll.refreshTransactions(ctx);
-                    }
-                });
+//    public static void saveLastBlockHeight() {
+//        Log.e(TAG, "saveLastBlockHeight");
+//        MainActivity app = MainActivity.app;
+//        if (app != null) {
+//            int blockHeight = getCurrentBlockHeight();
+//            Log.e(TAG, "saveLastBlockHeight: blockHeight: " + blockHeight);
+//            if (blockHeight <= 0) return;
+//            SharedPreferences prefs = app.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
+//            int blockHeightFromPrefs = prefs.getInt(BRConstants.BLOCK_HEIGHT, 0);
+//            Log.e(TAG, "saveLastBlockHeight: blockHeightFromPrefs: " + blockHeightFromPrefs);
+//            if (blockHeight > blockHeightFromPrefs && blockHeight < Integer.MAX_VALUE) {
+//                SharedPreferences prefs2 = app.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
+//                SharedPreferences.Editor editor = prefs2.edit();
+//                editor.putInt(BRConstants.BLOCK_HEIGHT, blockHeight);
+//                editor.apply();
+//                if (ctx == null) ctx = MainActivity.app;
+//                ((Activity) ctx).runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        FragmentSettingsAll.refreshTransactions(ctx);
+//                    }
+//                });
+//
+//            }
+//        }
+//    }
 
-            }
-        }
-    }
-
-    public static int getLastBlockFromPrefs() {
-        Log.e(TAG, "getLastBlockFromPrefs");
-        MainActivity app = MainActivity.app;
-        int blockHeight = 0;
-        if (app != null) {
-            SharedPreferences prefs = app.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
-            blockHeight = prefs.getInt(BRConstants.BLOCK_HEIGHT, 0);
-
-
-        }
-        Log.e(TAG, "getLastBlockFromPrefs: blockHeight: " + blockHeight);
-        return blockHeight;
-    }
+//    public static int getLastBlockFromPrefs() {
+//        Log.e(TAG, "getLastBlockFromPrefs");
+//        MainActivity app = MainActivity.app;
+//        int blockHeightFromPrefs = 0;
+//        int blockHeight = getCurrentBlockHeight();
+//        if (app != null) {
+//            SharedPreferences prefs = app.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
+//            blockHeightFromPrefs = prefs.getInt(BRConstants.BLOCK_HEIGHT, 0);
+//
+//        }
+//        Log.e(TAG, "getLastBlockFromPrefs: blockHeight: " + blockHeight);
+//        return blockHeight < Integer.MAX_VALUE && blockHeight > blockHeightFromPrefs ? blockHeight : blockHeightFromPrefs;
+//    }
 
     private static class SyncProgressTask extends Thread {
 
@@ -230,6 +240,7 @@ public class BRPeerManager {
                 });
 
                 while (running) {
+//                    Log.e(TAG,"SyncProgressTask.run()...");
                     app.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

@@ -19,6 +19,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.sqlite.SQLiteManager;
 import com.breadwallet.wallet.BRWalletManager;
 
 /**
@@ -86,6 +87,10 @@ public class FragmentWipeWallet extends Fragment {
             public void onClick(View v) {
                 if (phraseIsValid(recoveryPhraseEditText.getText().toString())) {
                     m.sweepPrivateKey();
+                    SQLiteManager sqLiteManager = SQLiteManager.getInstance(getActivity());
+                    sqLiteManager.deleteTransactions();
+                    sqLiteManager.deleteBlocks();
+                    sqLiteManager.deletePeers();
                     startIntroActivity();
                     getActivity().finish();
                 } else {

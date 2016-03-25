@@ -131,4 +131,6 @@
     <string name="address_already_in_your_wallet">address already in your wallet!</string>
     <string name="syncing">syncing...</string>
     <string name="payment_failed">couldn\'t make payment</string>
+    <string name="address_already_used">ADDRESS ALREADY USED\nbitcoin addresses are intended for single use only\nre-use reduces privacy for both you and the recipient and can result in loss if the recipient doesn\'t directly control the address</string>
+    <string name="ignore">ignore</string>
 </resources>

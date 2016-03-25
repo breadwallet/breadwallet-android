@@ -4,6 +4,7 @@
 #include "PeerManager.h"
 #include "BRPeer.h"
 #include "WalletCallbacks.h"
+#include "BRBIP39Mnemonic.h"
 #include "BRInt.h"
 #include <android/log.h>
 #include "BRMerkleBlock.h"
@@ -159,7 +160,7 @@ static int networkIsReachable(void *info) {
     return isNetworkOn == JNI_TRUE ? 1 : 0;
 }
 
-JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_connect(JNIEnv *env, jobject thiz,
+JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_createAndConnect(JNIEnv *env, jobject thiz,
                                                                  jint earliestKeyTime,
                                                                  int blocksCount,
                                                                  int peersCount) {
@@ -180,7 +181,7 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_connect(JNIEnv *env, jo
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "blocksCount: %d", blocksCount);
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "peersCount: %d", peersCount);
 
-    _peerManager = BRPeerManagerNew(_wallet,  (uint32_t) earliestKeyTime,
+    _peerManager = BRPeerManagerNew(_wallet,  earliestKeyTime != 0? (uint32_t) earliestKeyTime : BIP39_CREATION_TIME,
                                                   blocksCount == 0 ? NULL : _blocks,
                                                   blocksCount, peersCount == 0 ? NULL : _peers,
                                                   peersCount);
@@ -198,6 +199,11 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_connect(JNIEnv *env, jo
                               networkIsReachable);
     BRPeerManagerConnect(_peerManager);
 }
+
+JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_connect(JNIEnv *env, jobject thiz) {
+    if(_peerManager) BRPeerManagerConnect(_peerManager);
+}
+
 
 //Call multiple times with all the blocks from the DB
 JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_putBlock(JNIEnv *env,
@@ -268,6 +274,25 @@ JNIEXPORT jdouble Java_com_breadwallet_wallet_BRPeerManager_syncProgress(JNIEnv 
 
 JNIEXPORT jint Java_com_breadwallet_wallet_BRPeerManager_getCurrentBlockHeight(JNIEnv *env,
                                                                          jobject thiz) {
-    return (jint) BRPeerManagerLastBlockHeight(_peerManager);
+     return (jint) BRPeerManagerLastBlockHeight(_peerManager);
 
 }
+
+JNIEXPORT jint Java_com_breadwallet_wallet_BRPeerManager_getEstimatedBlockHeight(JNIEnv *env,
+                                                                               jobject thiz) {
+//    int estimatedBlockHeight = BRPeerManagerEstimatedBlockHeight(_peerManager);
+//    int lastBlockHeight = BRPeerManagerLastBlockHeight(_peerManager);
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "estimatedBlockHeight: %d, "
+//            "lastBlockHeight: %d", estimatedBlockHeight, lastBlockHeight);
+//    int result = 0;
+//    if(estimatedBlockHeight >= INT32_MAX){
+//        result = lastBlockHeight;
+//    } else {
+//        result = estimatedBlockHeight;
+//    }
+//
+//    return (jint) result;
+    return (jint) BRPeerManagerEstimatedBlockHeight(_peerManager);
+}
+
+

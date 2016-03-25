@@ -255,13 +255,13 @@ public class FragmentSettingsAll extends Fragment {
         boolean received = item.getSent() == 0;
         CustomLogger.LogThis("TX getReceived", String.valueOf(item.getReceived()), "TX getSent", String.valueOf(item.getSent()),
                 "TX getBalanceAfterTx", String.valueOf(item.getBalanceAfterTx()));
-        if (item.getBlockHeight() + 5 < BRPeerManager.getLastBlockFromPrefs()) {
+        if (item.getBlockHeight() + 5 < BRPeerManager.getEstimatedBlockHeight()) {
             sentReceivedTextView.setBackgroundResource(received ? R.drawable.received_label : R.drawable.sent_label);
             sentReceivedTextView.setText(received ? "received" : "sent");
             sentReceivedTextView.setTextColor(received ? receivedColor : sentColor);
         } else {
             sentReceivedTextView.setBackgroundResource(R.drawable.unconfirmed_label);
-            int lastBlock = BRPeerManager.getLastBlockFromPrefs();
+            int lastBlock = BRPeerManager.getEstimatedBlockHeight();
             int confirms = lastBlock - item.getBlockHeight();
             Log.e(TAG, "item.getBlockHeight(): " + item.getBlockHeight() + ", confirms: " + confirms + ", lastBlock: " + lastBlock);
             sentReceivedTextView.setText(String.format("%d confirmations", confirms >= 0 && confirms < 6 ? confirms : -1));

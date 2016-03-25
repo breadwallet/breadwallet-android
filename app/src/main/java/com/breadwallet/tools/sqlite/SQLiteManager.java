@@ -58,6 +58,13 @@ public class SQLiteManager {
         return txValues;
     }
 
+    public void deleteTransactions(){
+        TransactionDataSource TXdataSource = new TransactionDataSource(ctx);
+        TXdataSource.open();
+        TXdataSource.deleteAllTransactions();
+        TXdataSource.close();
+    }
+
     public void insertTransaction(byte[] transaction, int blockheight, long timestamp) {
         BRTransactionEntity entity = new BRTransactionEntity(transaction, blockheight, timestamp);
         TransactionDataSource TXdataSource = new TransactionDataSource(ctx);
@@ -75,6 +82,13 @@ public class SQLiteManager {
         return BkValues;
     }
 
+    public void deleteBlocks() {
+        MerkleBlockDataSource BKdataSource = new MerkleBlockDataSource(ctx);
+        BKdataSource.open();
+       BKdataSource.deleteAllBlocks();
+        BKdataSource.close();
+    }
+
     public void insertMerkleBlock(byte[] merkleBlock) {
         BRMerkleBlockEntity entity = new BRMerkleBlockEntity(merkleBlock);
         MerkleBlockDataSource BKdataSource = new MerkleBlockDataSource(ctx);
@@ -90,6 +104,13 @@ public class SQLiteManager {
         List<BRPeerEntity> PRValues = PRdataSource.getAllPeers();
         PRdataSource.close();
         return PRValues;
+    }
+
+    public void deletePeers() {
+        PeerDataSource BKdataSource = new PeerDataSource(ctx);
+        BKdataSource.open();
+        BKdataSource.deleteAllPeers();
+        BKdataSource.close();
     }
 
     public void insertPeer(byte[] peerAddress, byte[] peerPort, byte[] peerTimeStamp) {

@@ -252,14 +252,14 @@ JNIEXPORT jbyteArray Java_com_breadwallet_tools_security_RequestHandler_getCerti
     //testing the raw request example!!!!!!
 
     //get certificate
-    uint8_t *buf[BRPaymentProtocolRequestCert(nativeRequest, NULL, 0, (size_t) index)];
+    uint8_t buf[BRPaymentProtocolRequestCert(nativeRequest, NULL, 0, (size_t) index)];
     size_t length = BRPaymentProtocolRequestCert(nativeRequest, buf,(size_t) sizeof(buf),(size_t) index);
 //    __android_log_write(ANDROID_LOG_DEBUG, ">>>>>>MESSAGE FROM C: ", (char *) length);
 
     //convert it to jbyteArray
-    const jbyte *certJbyte = (const jbyte *) buf;
+    jbyte *certJbyte = (const jbyte *) buf;
     jbyteArray result = (*env)->NewByteArray(env, length);
-    (*env)->SetByteArrayRegion(env, result, 0, length, certJbyte);
+    (*env)->SetByteArrayRegion(env, result, 0, length, (const jbyte *)certJbyte);
     //release everything
     (*env)->ReleaseByteArrayElements(env, result, certJbyte, JNI_COMMIT);
     (*env)->ReleaseByteArrayElements(env, payment, bytePayment, JNI_COMMIT);

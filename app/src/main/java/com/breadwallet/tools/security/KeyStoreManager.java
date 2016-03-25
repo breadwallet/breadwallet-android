@@ -393,12 +393,13 @@ public class KeyStoreManager {
                 index++;
             }
             result = roundTrippedBytes;
+            Log.e(TAG,"PRINTING BYTES result.length: " + result.length);
 //            Log.e(TAG, "round tripped bytes: " + roundTrippedBytes);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return ByteBuffer.wrap(result).getInt();
+        return result.length != 0? ByteBuffer.wrap(result).getInt(): 0;
     }
 
     public static boolean deleteKeyStoreEntry() {

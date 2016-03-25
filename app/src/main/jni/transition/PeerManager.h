@@ -10,10 +10,12 @@
 
 extern BRPeerManager *_peerManager;
 
-JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_connect(JNIEnv *env, jobject thiz,
+JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_createAndConnect(JNIEnv *env, jobject thiz,
                                                                  jint earliestKeyTime,
                                                                  int blocksCount,
                                                                  int peersCount);
+
+JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_connect(JNIEnv *env, jobject thiz);
 
 JNIEXPORT void Java_com_breadwallet_wallet_BRWalletManager_rescan(JNIEnv *env, jobject thiz);
 
@@ -40,6 +42,9 @@ JNIEXPORT jdouble Java_com_breadwallet_wallet_BRPeerManager_syncProgress(JNIEnv 
 
 JNIEXPORT jint Java_com_breadwallet_wallet_BRPeerManager_getCurrentBlockHeight(JNIEnv *env,
                                                                                jobject thiz);
+
+JNIEXPORT jint Java_com_breadwallet_wallet_BRPeerManager_getEstimatedBlockHeight(JNIEnv *env,
+                                                                                 jobject thiz);
 
 
 #endif //BREADWALLET_PEERMANAGER_H
