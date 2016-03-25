@@ -60,7 +60,6 @@ public class MainFragment extends Fragment {
         Button payAddressFromClipboardButton = (Button)
                 rootView.findViewById(R.id.main_button_pay_address_from_clipboard);
         addressEditText = (EditText) rootView.findViewById(R.id.address_edit_text);
-
         addressEditText.setGravity(Gravity.CENTER_HORIZONTAL);
 
         mainFragmentLayout.setPadding(0, MainActivity.screenParametersPoint.y / 5, 0, 0);

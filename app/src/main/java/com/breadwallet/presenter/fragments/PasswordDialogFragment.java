@@ -62,8 +62,8 @@ public class PasswordDialogFragment extends DialogFragment {
     private static final int AUTH_MODE_CHECK_PASS = 0;
     private static final int AUTH_MODE_NEW_PASS = 1;
     private static final int AUTH_MODE_CONFIRM_PASS = 2;
-    private static int currentMode = AUTH_MODE_CHECK_PASS;
-    private static String tempPassToChange;
+    private int currentMode = AUTH_MODE_CHECK_PASS;
+    private String tempPassToChange;
     private boolean firstTime = false; // if false then change;
     private boolean verifyOnly = false;
     private TextView title;
@@ -221,7 +221,7 @@ public class PasswordDialogFragment extends DialogFragment {
                     }
                     break;
             }
-        // verify the passcode
+            // verify the passcode
         } else if (verifyOnly) {
             if (passCodeManager.checkAuth(s.toString(), getActivity())) {
 //                BreadWalletApp.canceled = true;
@@ -241,17 +241,17 @@ public class PasswordDialogFragment extends DialogFragment {
                 } else if (mode == BRConstants.AUTH_FOR_PAY && request != null) {
                     //TODO make sure you get the payment right for all addresses and check for nulls
 
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                BRWalletManager walletManager = BRWalletManager.getInstance(getActivity());
-                                walletManager.pay(request.addresses[0], request.amount * 100);
-                            } catch (Exception e){
-                                e.printStackTrace();
-                            }
-                        }
-                    }).start();
+//                    new Thread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            try {
+                    BRWalletManager walletManager = BRWalletManager.getInstance(getActivity());
+                    walletManager.pay(request.addresses[0], request.amount * 100);
+//                            } catch (Exception e){
+//                                e.printStackTrace();
+//                            }
+//                        }
+//                    }).start();
 
                     final MediaPlayer mp = MediaPlayer.create(getActivity(), R.raw.coinflip);
                     mp.start();

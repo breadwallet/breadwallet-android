@@ -2,8 +2,10 @@ package com.breadwallet.tools.threads;
 
 import android.app.Activity;
 import android.app.FragmentManager;
+import android.util.Log;
 
 import com.breadwallet.presenter.fragments.PasswordDialogFragment;
+import com.breadwallet.tools.security.KeyStoreManager;
 
 /**
  * BreadWallet
@@ -44,37 +46,24 @@ public class PassCodeTask extends Thread {
         super.run();
         if (activity == null) return;
         final FragmentManager fm = activity.getFragmentManager();
-        if (passwordDialogFragment == null) {
-            passwordDialogFragment = new PasswordDialogFragment();
-            passwordDialogFragment.setFirstTimeTrue();
-            passwordDialogFragment.show(fm, PasswordDialogFragment.class.getName());
+        while (pass != null && pass.isEmpty()) {
+            Log.e(TAG, "in the while: " + getName());
+            if (passwordDialogFragment == null || (passwordDialogFragment != null && !passwordDialogFragment.isVisible())) {
+                Log.e(TAG,"starting new password dialog!!!");
+                passwordDialogFragment = new PasswordDialogFragment();
+                passwordDialogFragment.setFirstTimeTrue();
+                passwordDialogFragment.show(fm, PasswordDialogFragment.class.getName());
+            }
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            pass = KeyStoreManager.getPassCode(activity);
+            Log.e(TAG, ">>>>>>>>>>>>*&*&*&*&*&*&*>>>>>>>> pass: " + pass);
+
         }
-//        while (pass != null && pass.isEmpty()) {
-//            Log.e(TAG, "in the while");
-////
-////            activity.runOnUiThread(new Runnable() {
-////                @Override
-////                public void run() {
-//            long currTime = System.currentTimeMillis();
-//            Log.e(TAG, "in the run of the UI before getPassCode");
-//            Log.e(TAG, "in the run of the UI after get passcode: " + (System.currentTimeMillis() - currTime));
-//            Log.e(TAG, "pass: " + pass);
-//            if (passwordDialogFragment == null || (passwordDialogFragment != null && !passwordDialogFragment.isVisible())) {
-//                Log.e(TAG,"starting new password dialog!!!");
-//                passwordDialogFragment = new PasswordDialogFragment();
-//                passwordDialogFragment.setFirstTimeTrue();
-//                passwordDialogFragment.show(fm, PasswordDialogFragment.class.getName());
-//            }
-////                }
-////            });
-//            try {
-//                Thread.sleep(500);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//            pass = KeyStoreManager.getPassCode(activity);
-//
-//        }
+        if(passwordDialogFragment!= null) passwordDialogFragment.dismiss();
 
     }
 

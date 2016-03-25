@@ -85,7 +85,7 @@ public class IntroRecoverWalletFragment extends Fragment {
                     m = BRWalletManager.getInstance(getActivity());
 //                    KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), getActivity());
 
-                    String pubKey = m.getMasterPubKey(normalizedPhrase);
+                    String pubKey = m.getMasterPubKey(normalizedPhrase.toLowerCase());
                     KeyStoreManager.putMasterPublicKey(pubKey, getActivity());
                     Log.w(TAG, "The phrase from keystore is: " + KeyStoreManager.getKeyStoreString(getActivity()));
                     ((IntroActivity) getActivity()).startMainActivity();

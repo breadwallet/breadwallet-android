@@ -203,12 +203,7 @@ public class MainActivity extends FragmentActivity implements Observer {
             @Override
             public void onClick(View v) {
                 if (MiddleViewAdapter.getSyncing()) {
-                    if (toastBlockShowTask != null) {
-                        toastBlockShowTask.interrupt();
-                        toastBlockShowTask = null;
-                    }
-                    toastBlockShowTask = new ToastBlockShowTask(app);
-                    toastBlockShowTask.start();
+                    ToastBlockShowTask.getInstance(app).startOneToast();
                     return;
                 }
                 if (FragmentAnimator.level == 0 && BreadWalletApp.unlocked) {

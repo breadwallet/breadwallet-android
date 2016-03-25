@@ -1,6 +1,7 @@
 package com.breadwallet.tools.threads;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,51 +37,72 @@ import com.breadwallet.wallet.BRPeerManager;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class ToastBlockShowTask extends Thread {
+public class ToastBlockShowTask {
     public static final String TAG = ToastBlockShowTask.class.getName();
-    private static Toast blocksToast;
-    private TextView text;
-    private View layout;
-    private String currBlock;
-    private String latestBlockKnown;
-    private String formattedBlockInfo;
-    private LayoutInflater inflater;
+    private static ToastBlockShowTask toastBlockShowTask;
     private Activity activity;
+    private ToastThread toastThread;
 
-    public ToastBlockShowTask(Activity activity) {
+    private ToastBlockShowTask(Activity activity) {
         this.activity = activity;
     }
 
-    @Override
-    public void run() {
-
-        if (MainActivity.appInBackground || activity == null) {
-            interrupt();
-            return;
+    public static ToastBlockShowTask getInstance(Activity activity) {
+        if (toastBlockShowTask == null) {
+            toastBlockShowTask = new ToastBlockShowTask(activity);
         }
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (blocksToast == null) {
-                    blocksToast = new Toast(activity);
-                    inflater = activity.getLayoutInflater();
-                    layout = inflater.inflate(R.layout.toast,
-                            (ViewGroup) activity.findViewById(R.id.toast_layout_root));
-                    text = (TextView) layout.findViewById(R.id.toast_text);
-                    currBlock = String.valueOf(BRPeerManager.getCurrentBlockHeight());
-                    latestBlockKnown = String.valueOf(BRPeerManager.getEstimatedBlockHeight());
-                    formattedBlockInfo = String.format("block #%s of %s", currBlock, latestBlockKnown);
-                    text.setText(formattedBlockInfo);
-                    blocksToast.setGravity(Gravity.TOP, 0, MainActivity.screenParametersPoint.y / 8);
-                    blocksToast.setDuration(Toast.LENGTH_LONG);
-                    blocksToast.setView(layout);
-                    blocksToast.show();
-                }
-            }
-        });
+        return toastBlockShowTask;
+    }
 
-        while (blocksToast != null && text != null) {
-            if (blocksToast.getView().isShown()) {
+
+    public void startOneToast() {
+        if (toastThread != null) toastThread.interrupt();
+        toastThread = new ToastThread();
+        toastThread.start();
+    }
+
+    private class ToastThread extends Thread {
+        private Toast blocksToast;
+        private TextView text;
+        private View layout;
+        private String currBlock;
+        private String latestBlockKnown;
+        private String formattedBlockInfo;
+        private LayoutInflater inflater;
+        private int timePeriod = 0;
+        private int interval = 500;
+
+        @Override
+        public void run() {
+            if (MainActivity.appInBackground || activity == null) {
+                interrupt();
+                return;
+            }
+            if (blocksToast == null || !blocksToast.getView().isShown()) {
+                Runnable runnable = new Runnable() {
+                    public void run() {
+                        blocksToast = new Toast(activity);
+                        inflater = activity.getLayoutInflater();
+                        layout = inflater.inflate(R.layout.toast,
+                                (ViewGroup) activity.findViewById(R.id.toast_layout_root));
+                        text = (TextView) layout.findViewById(R.id.toast_text);
+                        currBlock = String.valueOf(BRPeerManager.getCurrentBlockHeight());
+                        latestBlockKnown = String.valueOf(BRPeerManager.getEstimatedBlockHeight());
+                        formattedBlockInfo = String.format("block #%s of %s", currBlock, latestBlockKnown);
+                        text.setText(formattedBlockInfo);
+                        blocksToast.setGravity(Gravity.TOP, 0, MainActivity.screenParametersPoint.y / 8);
+                        blocksToast.setDuration(Toast.LENGTH_LONG);
+                        blocksToast.setView(layout);
+                        blocksToast.show();
+                    }
+                };
+                activity.runOnUiThread(runnable);
+            } else {
+                return;
+            }
+            while ((timePeriod += interval) < 5000) {
+
+                Log.e(TAG, "in the while: " + getName());
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -90,11 +112,11 @@ public class ToastBlockShowTask extends Thread {
                         text.setText(formattedBlockInfo);
                     }
                 });
-            }
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                try {
+                    Thread.sleep(interval);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
