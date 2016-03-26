@@ -148,7 +148,6 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        super.onSaveInstanceState(outState, outPersistentState);
         beenThroughSavedInstanceMethod = true;
     }
 

@@ -48,7 +48,6 @@
         android:layout_marginRight="10dp"
         android:layout_marginTop="20dp"
         android:background="#00000000"
-        android:text="The address"
         android:textAlignment="gravity"
         android:textColor="@color/grey"
         android:textSize="@dimen/text_size" />

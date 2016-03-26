@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
@@ -108,6 +109,7 @@ public class FragmentSettingsAll extends Fragment {
             public void onClick(View v) {
                 if (FragmentAnimator.checkTheMultipressingAvailability()) {
                     //TODO broken, fix then use!
+                    ((BreadWalletApp) getActivity().getApplication()).showCustomToast(getActivity(), "MIKE, STOP WORKING, GO GRAB SOME FUN", MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
 //                    BRWalletManager.getInstance(getActivity()).rescan();
                 }
             }
@@ -256,20 +258,25 @@ public class FragmentSettingsAll extends Fragment {
         boolean received = item.getSent() == 0;
         CustomLogger.LogThis("TX getReceived", String.valueOf(item.getReceived()), "TX getSent", String.valueOf(item.getSent()),
                 "TX getBalanceAfterTx", String.valueOf(item.getBalanceAfterTx()));
-        if (item.getBlockHeight() + 5 < BRPeerManager.getEstimatedBlockHeight()) {
+        int blockHeight = item.getBlockHeight();
+        int estimatedBlockHeight = BRPeerManager.getEstimatedBlockHeight();
+        if (blockHeight != Integer.MAX_VALUE && blockHeight + 5 < estimatedBlockHeight) {
             sentReceivedTextView.setBackgroundResource(received ? R.drawable.received_label : R.drawable.sent_label);
             sentReceivedTextView.setText(received ? "received" : "sent");
             sentReceivedTextView.setTextColor(received ? receivedColor : sentColor);
         } else {
             sentReceivedTextView.setBackgroundResource(R.drawable.unconfirmed_label);
-            int lastBlock = BRPeerManager.getEstimatedBlockHeight();
-            int confirms = lastBlock - item.getBlockHeight();
-            Log.e(TAG, "item.getBlockHeight(): " + item.getBlockHeight() + ", confirms: " + confirms + ", lastBlock: " + lastBlock);
-            sentReceivedTextView.setText(String.format("%d confirmations", confirms >= 0 && confirms < 6 ? confirms : -1));
             sentReceivedTextView.setTextColor(unconfirmedColor);
+
+            int confirms = blockHeight == Integer.MAX_VALUE ? 0 : estimatedBlockHeight - blockHeight;
+            Log.e(TAG, "item.getBlockHeight(): " + blockHeight + ", confirms: " + confirms + ", lastBlock: " + estimatedBlockHeight);
+            sentReceivedTextView.setText(String.format("%d confirmations", confirms >= 0 && confirms < 6 ? confirms : -1));
+
         }
 
-        dateTextView.setText(getFormattedDateFromLong(System.currentTimeMillis()));
+        long itemTimeStamp = item.getTimeStamp();
+        Log.e(TAG, "item.getTimeStamp(): " + itemTimeStamp);
+        dateTextView.setText(itemTimeStamp != 0 ? getFormattedDateFromLong(itemTimeStamp * 1000) : "");
 
         long bitsAmount = m.getBitsFromSatoshi(received ? item.getReceived() : (item.getSent() - item.getReceived()) * -1);
 

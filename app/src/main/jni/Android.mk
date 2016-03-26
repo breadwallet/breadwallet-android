@@ -4,7 +4,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := core
 
-LOCAL_CFLAGS := -std=c99 #-DBITCOIN_TESTNET=1
+LOCAL_CFLAGS := -std=c99 -DBITCOIN_TESTNET=1
 
 LOCAL_LDLIBS := -llog -lm
 
@@ -26,7 +26,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := bread
 
-LOCAL_CFLAGS := -std=c99 #-DBITCOIN_TESTNET=1
+LOCAL_CFLAGS := -std=c99 -DBITCOIN_TESTNET=1
 
 LOCAL_C_INCLUDES := \
 $(LOCAL_PATH)/breadwallet-core/secp256k1\

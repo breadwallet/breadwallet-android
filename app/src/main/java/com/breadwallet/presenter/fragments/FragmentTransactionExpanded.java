@@ -78,11 +78,16 @@ public class FragmentTransactionExpanded extends Fragment {
             final double rate = settings.getFloat(FragmentCurrency.RATE, 0);
             final String iso = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
             long amount = item.getReceived();
-            Log.e(TAG, "Tx Detail received!!!! amount: " + amount  + " item.getBlockHeight(): " + item.getBlockHeight() );
+            Log.e(TAG, "Tx Detail received!!!! amount: " + amount + " item.getBlockHeight(): " + item.getBlockHeight());
 
             hashText.setText(item.getHexId());
-            statusText.setText(String.format("confirmed in block #%d\n%s", item.getBlockHeight(),
-                    FragmentSettingsAll.getFormattedDateFromLong(item.getTimeStamp())));
+            int blockHeight = item.getBlockHeight();
+            if (blockHeight == Integer.MAX_VALUE) {
+                statusText.setText(R.string.verified_waiting);
+            } else {
+                statusText.setText(String.format("confirmed in block #%d\n%s", blockHeight + 1,
+                        FragmentSettingsAll.getFormattedDateFromLong(item.getTimeStamp())));
+            }
             amountText.setText(m.getFormattedCurrencyString("BTC", String.valueOf(m.getBitsFromSatoshi(amount))));
             exchangeText.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, String.valueOf(m.getBitsFromSatoshi(amount)))));
 
@@ -109,7 +114,7 @@ public class FragmentTransactionExpanded extends Fragment {
             long amount = tempSent - tempReceived;
 
             Log.e(TAG, "Tx Detail sent!!!! amount: " + amount + " tempFee: " + tempFee + " tempSent: "
-                    + tempSent + " item.getBlockHeight(): " + item.getBlockHeight() );
+                    + tempSent + " item.getBlockHeight(): " + item.getBlockHeight());
 
             hashText.setText(item.getHexId());
             statusText.setText(String.format("confirmed in block #%d\n%s", item.getBlockHeight(),
@@ -234,7 +239,7 @@ public class FragmentTransactionExpanded extends Fragment {
             if (addresses[i] != null && !addresses[i].isEmpty()) {
                 txTo.setText(addresses[i]);
                 txToDescription.setText(getString(R.string.payment_address));
-                txToAmount.setText(String.format("-%s",  m.getFormattedCurrencyString("BTC", String.valueOf(m.getBitsFromSatoshi(amounts[i])))));
+                txToAmount.setText(String.format("-%s", m.getFormattedCurrencyString("BTC", String.valueOf(m.getBitsFromSatoshi(amounts[i])))));
                 txToExchange.setText(String.format("(-%s)", m.getExchangeForAmount(rate, iso, String.valueOf(m.getBitsFromSatoshi(amounts[i])))));
 
                 view.addView(addressBlock);

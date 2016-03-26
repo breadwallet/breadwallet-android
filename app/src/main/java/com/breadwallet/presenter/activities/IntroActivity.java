@@ -110,7 +110,6 @@ public class IntroActivity extends FragmentActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
         this.savedInstanceState = outState;
 
     }

@@ -61,6 +61,12 @@ public class MainFragment extends Fragment {
                 rootView.findViewById(R.id.main_button_pay_address_from_clipboard);
         addressEditText = (EditText) rootView.findViewById(R.id.address_edit_text);
         addressEditText.setGravity(Gravity.CENTER_HORIZONTAL);
+        addressEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addressEditText.setText(BRClipboardManager.readFromClipboard(getActivity()));
+            }
+        });
 
         mainFragmentLayout.setPadding(0, MainActivity.screenParametersPoint.y / 5, 0, 0);
         scanQRButton.setOnClickListener(new View.OnClickListener() {
@@ -79,11 +85,15 @@ public class MainFragment extends Fragment {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
                 if (FragmentAnimator.checkTheMultipressingAvailability()) {
-                    final String address = BRClipboardManager.readFromClipboard(getActivity());
-                    if (checkIfAddressIsValid(address)) {
-                        if (address != null) {
+                    String tempAddress = BRClipboardManager.readFromClipboard(getActivity());
+                    if (!addressEditText.getText().toString().isEmpty()) {
+                        tempAddress = addressEditText.getText().toString();
+                    }
+                    final String finalAddress = tempAddress;
+                    if (checkIfAddressIsValid(finalAddress)) {
+                        if (finalAddress != null) {
                             BRWalletManager m = BRWalletManager.getInstance(getActivity());
-                            if (m.addressContainedInWallet(address)) {
+                            if (m.addressContainedInWallet(finalAddress)) {
 
                                 builder.setTitle(getResources().getString(R.string.alert));
                                 builder.setMessage(getResources().getString(R.string.address_already_in_your_wallet));
@@ -95,7 +105,7 @@ public class MainFragment extends Fragment {
                                         });
                                 alert = builder.create();
                                 alert.show();
-                            } else if (m.addressIsUsed(address)) {
+                            } else if (m.addressIsUsed(finalAddress)) {
                                 builder.setTitle(getResources().getString(R.string.warning));
 
                                 builder.setMessage(getResources().getString(R.string.address_already_used));
@@ -104,7 +114,7 @@ public class MainFragment extends Fragment {
                                             public void onClick(DialogInterface dialog, int which) {
                                                 dialog.dismiss();
                                                 FragmentAnimator.animateScanResultFragment();
-                                                FragmentScanResult.address = address;
+                                                FragmentScanResult.address = finalAddress;
                                             }
                                         });
                                 builder.setNegativeButton(getResources().getString(R.string.cancel),
@@ -117,7 +127,7 @@ public class MainFragment extends Fragment {
                                 alert.show();
                             } else {
                                 FragmentAnimator.animateScanResultFragment();
-                                FragmentScanResult.address = address;
+                                FragmentScanResult.address = finalAddress;
                             }
                         } else {
                             throw new NullPointerException();
@@ -133,6 +143,8 @@ public class MainFragment extends Fragment {
                                 });
                         alert = builder.create();
                         alert.show();
+                        BRClipboardManager.copyToClipboard(getActivity(), "");
+                        addressEditText.setText("");
                     }
                 }
             }

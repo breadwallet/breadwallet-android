@@ -165,11 +165,12 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_createAndConnect(JNIEnv
                                                                  int peersCount) {
     jint rs = (*env)->GetJavaVM(env, &_jvm);
 
-    jclass walletManagerCLass = (*env)->FindClass(env,"com/breadwallet/wallet/BRPeerManager");
+    jclass walletManagerCLass = (*env)->FindClass(env, "com/breadwallet/wallet/BRPeerManager");
     _peerManagerClass = (jclass) (*env)->NewGlobalRef(env, (jobject) walletManagerCLass);
 
-    if (rs != JNI_OK){
-        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "WARNING, GetJavaVM is not JNI_OK");
+    if (rs != JNI_OK) {
+        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ",
+                            "WARNING, GetJavaVM is not JNI_OK");
     }
 
     if (_wallet == NULL) {
@@ -180,10 +181,13 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_createAndConnect(JNIEnv
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "blocksCount: %d", blocksCount);
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "peersCount: %d", peersCount);
 
-    _peerManager = BRPeerManagerNew(_wallet,  earliestKeyTime != 0? (uint32_t) earliestKeyTime : BIP39_CREATION_TIME,
-                                                  blocksCount == 0 ? NULL : _blocks,
-                                                  blocksCount, peersCount == 0 ? NULL : _peers,
-                                                  peersCount);
+    if (!_peerManager) {
+        _peerManager = BRPeerManagerNew(_wallet, earliestKeyTime != 0 ? (uint32_t) earliestKeyTime
+                                                                  : BIP39_CREATION_TIME,
+                                    blocksCount == 0 ? NULL : _blocks,
+                                    blocksCount, peersCount == 0 ? NULL : _peers,
+                                    peersCount);
+    }
     //TESTING ONLY
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "earliestKeyTime: %d",  (int) earliestKeyTime);
 //    _peerManager = BRPeerManagerNew(_wallet, (uint32_t) earliestKeyTime, NULL,0, NULL, 0);
