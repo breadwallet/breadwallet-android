@@ -50,12 +50,12 @@
         android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
+        android:layout_marginStart="20dp"
         android:layout_above="@+id/sync_progress_bar"
         android:layout_marginBottom="15dp"
         android:textSize="13sp"
         android:layout_toEndOf="@+id/middle_view_flipper"
-        android:text="45.3%"
+        android:text="0.00%"
         android:textColor="@color/light_grey" />
 
     <Button

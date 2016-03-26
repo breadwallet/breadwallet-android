@@ -572,12 +572,26 @@ public class MainActivity extends FragmentActivity implements Observer {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         Log.e(TAG, "********************** onActivityResult >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> " + requestCode);
-        for (int i = 0; i < permissions.length; i++) {
-            if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                Log.d("Permissions", "Permission Granted: " + permissions[i]);
-            } else if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
-                Log.d("Permissions", "Permission Denied: " + permissions[i]);
+        switch (requestCode) {
+            case BRConstants.CAMERA_REQUEST_ID: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    FragmentAnimator.animateDecoderFragment();
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
             }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 

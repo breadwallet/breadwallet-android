@@ -48,8 +48,14 @@ public class PassCodeTask extends Thread {
         final FragmentManager fm = activity.getFragmentManager();
         while (pass != null && pass.isEmpty()) {
             Log.e(TAG, "in the while: " + getName());
-            if (passwordDialogFragment == null || (passwordDialogFragment != null && !passwordDialogFragment.isVisible())) {
+            if (passwordDialogFragment == null) {
                 Log.e(TAG,"starting new password dialog!!!");
+                passwordDialogFragment = new PasswordDialogFragment();
+                passwordDialogFragment.setFirstTimeTrue();
+                passwordDialogFragment.show(fm, PasswordDialogFragment.class.getName());
+            }
+            if(passwordDialogFragment!=null && !passwordDialogFragment.isVisible()){
+                passwordDialogFragment.dismiss();
                 passwordDialogFragment = new PasswordDialogFragment();
                 passwordDialogFragment.setFirstTimeTrue();
                 passwordDialogFragment.show(fm, PasswordDialogFragment.class.getName());

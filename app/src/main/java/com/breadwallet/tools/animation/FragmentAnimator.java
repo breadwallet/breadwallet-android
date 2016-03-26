@@ -12,6 +12,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
@@ -20,6 +21,7 @@ import com.breadwallet.presenter.fragments.FragmentDecoder;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.presenter.fragments.FragmentSettings;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
+import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
 
 import java.util.Stack;
@@ -61,7 +63,7 @@ public class FragmentAnimator {
 
         MainActivity app = MainActivity.app;
         if (app == null) return;
-        int CAMERA_REQUEST_ID = 34;
+
         // Here, thisActivity is the current activity
         if (ContextCompat.checkSelfPermission(app,
                 Manifest.permission.CAMERA)
@@ -69,16 +71,17 @@ public class FragmentAnimator {
             // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(app,
                     Manifest.permission.CAMERA)) {
-//                Log.e(TAG, "YES explanation!");
+                Log.e(TAG, "YES explanation!");
+                ((BreadWalletApp) app.getApplication()).showCustomToast(app, "You refused the permission for the Camera use!", MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
             } else {
-//                Log.e(TAG, "NO explanation!");
+                Log.e(TAG, "NO explanation!");
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(app,
                         new String[]{Manifest.permission.CAMERA},
-                        CAMERA_REQUEST_ID);
+                        BRConstants.CAMERA_REQUEST_ID);
                 // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
                 // app-defined int constant. The callback method gets the
                 // result of the request.
@@ -245,7 +248,6 @@ public class FragmentAnimator {
      * - make it unavailable for delay milliseconds and return true,
      * else :
      * - return false.
-     *
      */
     public static boolean checkTheMultipressingAvailability() {
 //        Log.e(TAG, "multiplePressingAvailable: " + multiplePressingAvailable);
@@ -286,7 +288,6 @@ public class FragmentAnimator {
         app.activityButtonsEnable(true);
 //        Log.e(TAG, "got to the end of hideDecoderFragment");
     }
-
 
 
     public static void hideScanResultFragment() {

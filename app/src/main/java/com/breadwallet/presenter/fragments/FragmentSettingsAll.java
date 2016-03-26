@@ -107,7 +107,8 @@ public class FragmentSettingsAll extends Fragment {
             @Override
             public void onClick(View v) {
                 if (FragmentAnimator.checkTheMultipressingAvailability()) {
-                    BRWalletManager.getInstance(getActivity()).rescan();
+                    //TODO broken, fix then use!
+//                    BRWalletManager.getInstance(getActivity()).rescan();
                 }
             }
         });

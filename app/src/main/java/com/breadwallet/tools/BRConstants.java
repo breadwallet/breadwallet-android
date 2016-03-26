@@ -38,6 +38,9 @@ public class BRConstants {
     /** BlockHeight prefs*/
     public static final String BLOCK_HEIGHT = "blockHeight";
 
+    /** Permissions*/
+    public static final int CAMERA_REQUEST_ID = 34;
+
     private BRConstants(){}
 
 

@@ -25,6 +25,7 @@ package com.breadwallet.presenter.fragments;
  * THE SOFTWARE.
  */
 
+import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.media.MediaPlayer;
@@ -155,14 +156,17 @@ public class PasswordDialogFragment extends DialogFragment {
     public void onResume() {
         super.onResume();
         passcodeEditText.setText("");
-        passcodeEditText.post(
-                new Runnable() {
-                    public void run() {
-                        InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                        inputMethodManager.toggleSoftInputFromWindow(passcodeEditText.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0);
-                        passcodeEditText.requestFocus();
-                    }
-                });
+        final Activity app = getActivity();
+        if(app != null) {
+            passcodeEditText.post(
+                    new Runnable() {
+                        public void run() {
+                            InputMethodManager inputMethodManager = (InputMethodManager) app.getSystemService(Context.INPUT_METHOD_SERVICE);
+                            inputMethodManager.toggleSoftInputFromWindow(passcodeEditText.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0);
+                            passcodeEditText.requestFocus();
+                        }
+                    });
+        }
     }
 
     @Override
