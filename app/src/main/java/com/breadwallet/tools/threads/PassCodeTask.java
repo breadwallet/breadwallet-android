@@ -70,7 +70,13 @@ public class PassCodeTask extends Thread {
             Log.e(TAG, ">>>>>>>>>>>>*&*&*&*&*&*&*>>>>>>>> pass: " + pass);
 
         }
-        if (passwordDialogFragment != null) passwordDialogFragment.dismiss();
+        if (passwordDialogFragment != null) {
+            try {
+                passwordDialogFragment.dismiss();
+            } catch (IllegalStateException ex){
+                ex.printStackTrace();
+            }
+        }
         if (activity != null)
             ((BreadWalletApp) activity.getApplication()).hideKeyboard(activity);
 

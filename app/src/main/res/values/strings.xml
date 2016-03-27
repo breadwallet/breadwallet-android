@@ -134,4 +134,8 @@
     <string name="address_already_used">ADDRESS ALREADY USED\nbitcoin addresses are intended for single use only\nre-use reduces privacy for both you and the recipient and can result in loss if the recipient doesn\'t directly control the address</string>
     <string name="ignore">ignore</string>
     <string name="verified_waiting">verified, waiting for confirmation</string>
+    <string name="you_received_bitcoin">you received bitcoin!</string>
+    <string name="write_down_phrase">next, write down your recovery phrase\n\nif you ever lose your phone, you will need it to recover your wallet</string>
+    <string name="show_phrase">show phrase</string>
+    <string name="do_it_later">do it later</string>
 </resources>

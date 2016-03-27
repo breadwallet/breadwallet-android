@@ -2,16 +2,14 @@ package com.breadwallet.wallet;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.View;
 
 import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.presenter.fragments.FragmentSettingsAll;
-import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.sqlite.SQLiteManager;
 
 import java.text.DecimalFormat;
 
@@ -87,55 +85,22 @@ public class BRPeerManager {
      */
 
     public static synchronized void syncStarted() {
-
-        if (ctx == null) ctx = MainActivity.app;
-        if (ctx != null) MiddleViewAdapter.setSyncing((Activity) ctx, true);
         Log.e(TAG, "syncStarted");
-        try {
-            if (syncTask != null) {
-                syncTask.interrupt();
-            }
-            syncTask = new SyncProgressTask();
-            syncTask.start();
-        } catch (IllegalThreadStateException ex) {
-            ex.printStackTrace();
-        }
-
+        startSyncingProgressThread();
     }
 
     public static synchronized void syncSucceded() {
+        Log.e(TAG, "syncSucceeded");
         if (ctx == null) ctx = MainActivity.app;
-        if (ctx != null) MiddleViewAdapter.setSyncing((Activity) ctx, false);
         if(KeyStoreManager.getWalletCreationTime(ctx) == 0){
             Log.e(TAG, "getWalletCreationTime() is 0 ! setting the new walletCreationTime in the keystore!");
             KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis()/1000), ctx);
         }
-        Log.e(TAG, "syncSucceeded");
-//        saveLastBlockHeight();
-        try {
-            if (syncTask != null) {
-                syncTask.setRunning(false);
-                syncTask.interrupt();
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        stopSyncingProgressThread();
     }
 
     public static synchronized void syncFailed() {
-        if (ctx == null) ctx = MainActivity.app;
-        if (ctx != null) MiddleViewAdapter.setSyncing((Activity) ctx, false);
-
-        Log.e(TAG, "syncFailed");
-        try {
-            if (syncTask != null) {
-                syncTask.setRunning(false);
-                syncTask.interrupt();
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
+        stopSyncingProgressThread();
     }
 
     public static synchronized void txStatusUpdate() {
@@ -163,7 +128,6 @@ public class BRPeerManager {
     }
 
     public static synchronized boolean networkIsReachable() {
-
         Log.e(TAG, "networkIsReachable");
         return ctx != null && CurrencyManager.getInstance(ctx).isNetworkAvailable(ctx);
     }
@@ -194,7 +158,7 @@ public class BRPeerManager {
 //            }
 //        }
 //    }
-
+//
 //    public static int getLastBlockFromPrefs() {
 //        Log.e(TAG, "getLastBlockFromPrefs");
 //        MainActivity app = MainActivity.app;
@@ -208,6 +172,34 @@ public class BRPeerManager {
 //        Log.e(TAG, "getLastBlockFromPrefs: blockHeight: " + blockHeight);
 //        return blockHeight < Integer.MAX_VALUE && blockHeight > blockHeightFromPrefs ? blockHeight : blockHeightFromPrefs;
 //    }
+
+    public static void startSyncingProgressThread(){
+        if (ctx == null) ctx = MainActivity.app;
+        if (ctx != null) MiddleViewAdapter.setSyncing((Activity) ctx, true);
+
+        try {
+            if (syncTask != null) {
+                syncTask.interrupt();
+            }
+            syncTask = new SyncProgressTask();
+            syncTask.start();
+        } catch (IllegalThreadStateException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void stopSyncingProgressThread(){
+        if (ctx == null) ctx = MainActivity.app;
+        if (ctx != null) MiddleViewAdapter.setSyncing((Activity) ctx, false);
+        try {
+            if (syncTask != null) {
+                syncTask.setRunning(false);
+                syncTask.interrupt();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 
     private static class SyncProgressTask extends Thread {
 

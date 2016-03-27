@@ -156,8 +156,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Log.e(TAG, "MainActivity created!");
-
         app = this;
         initializeViews();
 
@@ -285,6 +283,11 @@ public class MainActivity extends FragmentActivity implements Observer {
         networkErrorBar.setVisibility(isNetworkAvailable ? View.GONE : View.VISIBLE);
         startStopReceiver(true);
         askForPasscode();
+        double currentSyncProgress = BRPeerManager.syncProgress();
+        if (currentSyncProgress > 0 && currentSyncProgress < 1) {
+            Log.e(TAG, "Worked! restarted the syncing!");
+            BRPeerManager.startSyncingProgressThread();
+        }
 
     }
 
@@ -391,9 +394,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                     makeDoubleBackToExitPressedOnce();
                     break;
                 case 1:
-//                    if (!decoderFragmentOn) {
                     FragmentAnimator.pressMenuButton(this, new FragmentSettingsAll());
-//                    }
                     FragmentAnimator.hideDecoderFragment();
                     break;
                 default:
@@ -544,7 +545,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         Intent intent;
         String tempAmount = FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_RIGHT ?
                 AmountAdapter.getRightValue() : AmountAdapter.getLeftValue();
-        //TODO make sure the address changes on txAdded
         SharedPreferences prefs = getSharedPreferences(MainFragmentQR.RECEIVE_ADDRESS_PREFS, Context.MODE_PRIVATE);
         String testTemp = prefs.getString(MainFragmentQR.RECEIVE_ADDRESS, "");
 

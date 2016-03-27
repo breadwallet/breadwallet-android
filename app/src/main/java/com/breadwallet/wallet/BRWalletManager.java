@@ -1,16 +1,19 @@
 package com.breadwallet.wallet;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.KeyguardManager;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
+import com.breadwallet.presenter.activities.IntroShowPhraseActivity;
 import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.presenter.fragments.MainFragmentQR;
@@ -22,7 +25,6 @@ import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.sqlite.SQLiteManager;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.security.SecureRandom;
 import java.util.List;
 
@@ -53,6 +55,7 @@ import java.util.List;
 
 public class BRWalletManager {
     private static final String TAG = BRWalletManager.class.getName();
+    public static final String ASKED_TO_WRITE_PHRASE = "phraseWrittenDown";
     private static BRWalletManager instance;
     private static Context ctx;
 
@@ -158,7 +161,7 @@ public class BRWalletManager {
         Log.e(TAG, "refreshAddress: " + ctx);
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) {
-            MainFragmentQR mainFragmentQR = CustomPagerAdapter.adapter == null? null : CustomPagerAdapter.adapter.mainFragmentQR;
+            MainFragmentQR mainFragmentQR = CustomPagerAdapter.adapter == null ? null : CustomPagerAdapter.adapter.mainFragmentQR;
             String tmpAddr = getReceiveAddress();
             SharedPreferences.Editor editor = ctx.getSharedPreferences(MainFragmentQR.RECEIVE_ADDRESS_PREFS, Context.MODE_PRIVATE).edit();
             editor.putString(MainFragmentQR.RECEIVE_ADDRESS, tmpAddr);
@@ -170,6 +173,46 @@ public class BRWalletManager {
         }
     }
 
+    private static void showWritePhraseDialog() {
+
+
+        if (ctx == null) ctx = MainActivity.app;
+        if (ctx != null) {
+            ((Activity) ctx).runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    SharedPreferences prefs = ctx.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
+                    boolean phraseWroteDown = prefs.getBoolean(ASKED_TO_WRITE_PHRASE, false);
+                    if (phraseWroteDown) return;
+                    AlertDialog alert;
+                    AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+                    builder.setTitle(ctx.getString(R.string.you_received_bitcoin));
+
+                    builder.setMessage(ctx.getString(R.string.write_down_phrase));
+                    builder.setPositiveButton(ctx.getString(R.string.show_phrase),
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                    Intent intent;
+                                    intent = new Intent(ctx, IntroShowPhraseActivity.class);
+                                    ctx.startActivity(intent);
+                                }
+                            });
+                    builder.setNegativeButton(ctx.getString(R.string.do_it_later),
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    alert = builder.create();
+                    alert.show();
+                }
+            });
+
+        }
+
+    }
+
     /**
      * Wallet callbacks
      */
@@ -178,7 +221,7 @@ public class BRWalletManager {
 
         Log.e(TAG, "in the BRWalletManager - onBalanceChanged:  " + balance);
         if (ctx == null) ctx = MainActivity.app;
-        ((Activity)ctx).runOnUiThread(new Runnable() {
+        ((Activity) ctx).runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 CurrencyManager.getInstance(ctx).setBalance(balance);
@@ -198,11 +241,12 @@ public class BRWalletManager {
 //        }
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null && !MiddleViewAdapter.getSyncing()) {
-            ((Activity)ctx).runOnUiThread(new Runnable() {
+            ((Activity) ctx).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     CurrencyManager m = CurrencyManager.getInstance(ctx);
                     if (amount > 0) {
+                        showWritePhraseDialog();
                         ((BreadWalletApp) ctx.getApplicationContext()).showCustomToast((Activity) ctx,
                                 String.format(ctx.getString(R.string.received), m.getBitsFromSatoshi(amount) + m.bitcoinLowercase),
                                 BreadWalletApp.DISPLAY_HEIGHT_PX / 2, Toast.LENGTH_LONG, 1);

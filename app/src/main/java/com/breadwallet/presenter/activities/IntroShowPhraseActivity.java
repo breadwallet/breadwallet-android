@@ -1,7 +1,9 @@
 package com.breadwallet.presenter.activities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MenuItem;
@@ -13,12 +15,14 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.wallet.BRWalletManager;
 
 public class IntroShowPhraseActivity extends Activity {
     private Button remindMeLater;
     private RelativeLayout writeDownLayout;
     private ImageView checkBox;
     private boolean checked = false;
+    public static final String PHRASE_SAVED = "phraseSaved";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,10 +61,17 @@ public class IntroShowPhraseActivity extends Activity {
         remindMeLater.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                SharedPreferences prefs = getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putBoolean(BRWalletManager.ASKED_TO_WRITE_PHRASE, true);
+                editor.apply();
                 startMainActivity();
-                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
     }
 
     private void startMainActivity() {
@@ -70,6 +81,7 @@ public class IntroShowPhraseActivity extends Activity {
         if (!IntroShowPhraseActivity.this.isDestroyed()) {
             finish();
         }
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
     @Override
@@ -89,8 +101,11 @@ public class IntroShowPhraseActivity extends Activity {
 
     private void setCheckBoxImage() {
         checkBox.setImageResource(!checked ? R.drawable.checkbox_checked : R.drawable.checkbox_empty);
-        remindMeLater.setText(!checked ? getResources().getString(R.string.done) :
-                getResources().getString(R.string.remind_me_later));
+        remindMeLater.setText(!checked ? getResources().getString(R.string.done) : getResources().getString(R.string.remind_me_later));
         checked = !checked;
+        SharedPreferences prefs = getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(PHRASE_SAVED, checked);
+        editor.apply();
     }
 }

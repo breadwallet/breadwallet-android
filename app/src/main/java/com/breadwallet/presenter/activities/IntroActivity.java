@@ -68,11 +68,8 @@ public class IntroActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_intro);
-        if (savedInstanceState != null) {
-            return;
-        }
+
         app = this;
 
         leftButton = (Button) findViewById(R.id.intro_left_button);
@@ -101,12 +98,6 @@ public class IntroActivity extends FragmentActivity {
         app = this;
 
     }
-
-//    @Override
-//    protected void onResumeFragments() {
-//        super.onResumeFragments();
-//
-//    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {

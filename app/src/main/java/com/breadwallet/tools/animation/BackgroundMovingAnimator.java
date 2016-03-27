@@ -88,7 +88,9 @@ public class BackgroundMovingAnimator {
         mMatrix.mapRect(mDisplayRect);
     }
 
-    public static void animateBackgroundMoving(final ImageView theBackground) {
+    public static void animateBackgroundMoving(ImageView theBackground) {
+        if (background != null)
+            background.clearAnimation();
         background = theBackground;
         background.post(new Runnable() {
             @Override
