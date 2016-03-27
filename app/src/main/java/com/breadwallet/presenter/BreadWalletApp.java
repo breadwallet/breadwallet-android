@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -321,5 +322,17 @@ public class BreadWalletApp extends Application {
                 allowKeyStoreAccess = false;
             }
         }, 2 * 1000);
+    }
+
+    public void hideKeyboard(Activity act){
+        Activity activity = act;
+        if (activity == null) activity = MainActivity.app;
+        if (activity != null) {
+            View view = activity.getCurrentFocus();
+            if (view != null) {
+                InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+        }
     }
 }

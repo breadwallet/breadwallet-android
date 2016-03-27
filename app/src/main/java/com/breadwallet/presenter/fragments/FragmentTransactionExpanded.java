@@ -96,8 +96,6 @@ public class FragmentTransactionExpanded extends Fragment {
 
             String toAddresses[] = item.getTo();
             setReceivedToAddresses(generalTxTo, toAddresses, item.getOutAmounts());
-//            toAmountText.setText(m.getFormattedCurrencyString("BTC", String.valueOf(m.getBitsFromSatoshi(amount))));
-//            toExchangeText.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, String.valueOf(amount))));
         } else {
             TextView toFeeAmountText = (TextView) rootView.findViewById(R.id.tx_to_fee_amount_text);
             TextView toFeeExchangeText = (TextView) rootView.findViewById(R.id.tx_to_fee_exchange_text);

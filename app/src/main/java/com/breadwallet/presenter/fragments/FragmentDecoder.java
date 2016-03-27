@@ -33,6 +33,7 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -40,6 +41,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.RequestObject;
 import com.breadwallet.tools.animation.FragmentAnimator;
@@ -323,6 +325,7 @@ public class FragmentDecoder extends Fragment
                     SpringAnimator.showExpandCameraGuide(camera_guide_image);
             }
         });
+        ((BreadWalletApp)getActivity().getApplication()).hideKeyboard(getActivity());
 
         // When the screen is turned off and turned back on, the SurfaceTexture is already
         // available, and "onSurfaceTextureAvailable" will not be called. In that case, we can open

@@ -503,10 +503,13 @@ public class MainActivity extends FragmentActivity implements Observer {
         if (addressHolder.length() < 20) return;
         if (amountAsDouble <= 0) return;
         Log.e(TAG, "*********Sending: " + amountHolder + " to: " + addressHolder);
+        CurrencyManager cm = CurrencyManager.getInstance(this);
 
-        if (CurrencyManager.getInstance(this).isNetworkAvailable(this)) {
-            long feeForTx = CurrencyManager.getInstance(this).getBitsFromSatoshi((int) BRWalletManager.getInstance(this).feeForTransaction(addressHolder, Math.round(amountAsDouble)));
-            if (amountAsDouble + feeForTx < CurrencyManager.getInstance(this).getBALANCE()) {
+        if (cm.isNetworkAvailable(this)) {
+            long feeForTx = cm.getBitsFromSatoshi(BRWalletManager.getInstance(this).feeForTransaction(addressHolder, Math.round(amountAsDouble)));
+            Log.e(TAG, "pay >>>> feeForTx: " + feeForTx + ", amountAsDouble: " + amountAsDouble +
+                    ", CurrencyManager.getInstance(this).getBALANCE(): " + cm.getBitsFromSatoshi(cm.getBALANCE()));
+            if (amountAsDouble + feeForTx < cm.getBALANCE()) {
 
                 confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, Math.round(amountAsDouble), null));
             } else {
@@ -913,7 +916,6 @@ public class MainActivity extends FragmentActivity implements Observer {
 //                    MainActivity.screenParametersPoint.y / 5, Toast.LENGTH_LONG, 0);
 //        tipsCount++;
 //    }
-
 
 
     private void printPhoneSpecs() {

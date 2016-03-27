@@ -254,7 +254,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
 
     public static void updateBothTextValues(BigDecimal bitcoinValue, BigDecimal otherValue) {
         if (ISO == null) updateRateAndISO();
-        if(ISO == null) ISO = "USD";
+        if (ISO == null) ISO = "USD";
         final String btcIso = "BTC";
         if (currentCurrencyPosition == BITCOIN_RIGHT) {
             amountToPay.setText(CurrencyManager.getInstance(MainActivity.app).getFormattedCurrencyString(btcIso, bitcoinValue.toString()));
@@ -274,9 +274,9 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
 //        int position = settings.getInt(FragmentCurrency.POSITION, 0);
 //        if (CurrencyListAdapter.currencyListAdapter != null && !CurrencyListAdapter.currencyListAdapter.isEmpty()) {
 //            CurrencyEntity currencyItem = CurrencyListAdapter.currencyListAdapter.getItem(position);
-            SharedPreferences settingsToGet = app.getSharedPreferences(MainActivity.PREFS_NAME, 0);
-            ISO = settingsToGet.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
-            rate = settingsToGet.getFloat(FragmentCurrency.RATE, 1);
+        SharedPreferences settingsToGet = app.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        ISO = settingsToGet.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
+        rate = settingsToGet.getFloat(FragmentCurrency.RATE, 1);
 //        }
 //        if (ISO == null)
 //            ISO = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");

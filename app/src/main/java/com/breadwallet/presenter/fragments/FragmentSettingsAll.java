@@ -276,7 +276,7 @@ public class FragmentSettingsAll extends Fragment {
 
         long itemTimeStamp = item.getTimeStamp();
         Log.e(TAG, "item.getTimeStamp(): " + itemTimeStamp);
-        dateTextView.setText(itemTimeStamp != 0 ? getFormattedDateFromLong(itemTimeStamp * 1000) : "");
+        dateTextView.setText(itemTimeStamp != 0 ? getFormattedDateFromLong(itemTimeStamp * 1000) : getFormattedDateFromLong(System.currentTimeMillis()));
 
         long bitsAmount = m.getBitsFromSatoshi(received ? item.getReceived() : (item.getSent() - item.getReceived()) * -1);
 

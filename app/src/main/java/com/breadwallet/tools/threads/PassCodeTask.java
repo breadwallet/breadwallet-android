@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.util.Log;
 
+import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.fragments.PasswordDialogFragment;
 import com.breadwallet.tools.security.KeyStoreManager;
 
@@ -49,12 +50,12 @@ public class PassCodeTask extends Thread {
         while (pass != null && pass.isEmpty()) {
             Log.e(TAG, "in the while: " + getName());
             if (passwordDialogFragment == null) {
-                Log.e(TAG,"starting new password dialog!!!");
+                Log.e(TAG, "starting new password dialog!!!");
                 passwordDialogFragment = new PasswordDialogFragment();
                 passwordDialogFragment.setFirstTimeTrue();
                 passwordDialogFragment.show(fm, PasswordDialogFragment.class.getName());
             }
-            if(passwordDialogFragment!=null && !passwordDialogFragment.isVisible()){
+            if (passwordDialogFragment != null && !passwordDialogFragment.isVisible()) {
                 passwordDialogFragment.dismiss();
                 passwordDialogFragment = new PasswordDialogFragment();
                 passwordDialogFragment.setFirstTimeTrue();
@@ -69,7 +70,9 @@ public class PassCodeTask extends Thread {
             Log.e(TAG, ">>>>>>>>>>>>*&*&*&*&*&*&*>>>>>>>> pass: " + pass);
 
         }
-        if(passwordDialogFragment!= null) passwordDialogFragment.dismiss();
+        if (passwordDialogFragment != null) passwordDialogFragment.dismiss();
+        if (activity != null)
+            ((BreadWalletApp) activity.getApplication()).hideKeyboard(activity);
 
     }
 

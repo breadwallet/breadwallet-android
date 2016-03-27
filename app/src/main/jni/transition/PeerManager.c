@@ -160,9 +160,9 @@ static int networkIsReachable(void *info) {
 }
 
 JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_createAndConnect(JNIEnv *env, jobject thiz,
-                                                                 jint earliestKeyTime,
-                                                                 int blocksCount,
-                                                                 int peersCount) {
+                                                                          jint earliestKeyTime,
+                                                                          jint blocksCount,
+                                                                          jint peersCount) {
     jint rs = (*env)->GetJavaVM(env, &_jvm);
 
     jclass walletManagerCLass = (*env)->FindClass(env, "com/breadwallet/wallet/BRPeerManager");
@@ -182,11 +182,14 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_createAndConnect(JNIEnv
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "peersCount: %d", peersCount);
 
     if (!_peerManager) {
-        _peerManager = BRPeerManagerNew(_wallet, earliestKeyTime != 0 ? (uint32_t) earliestKeyTime
+        _peerManager = BRPeerManagerNew(_wallet, earliestKeyTime != 0 ? earliestKeyTime
                                                                   : BIP39_CREATION_TIME,
                                     blocksCount == 0 ? NULL : _blocks,
                                     blocksCount, peersCount == 0 ? NULL : _peers,
                                     peersCount);
+        BRPeerManagerSetCallbacks(_peerManager, NULL, syncStarted, syncSucceded, syncFailed,
+                                  txStatusUpdate, txRejected, saveBlocks, savePeers,
+                                  networkIsReachable);
     }
     //TESTING ONLY
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "earliestKeyTime: %d",  (int) earliestKeyTime);
@@ -197,10 +200,8 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_createAndConnect(JNIEnv
         return;
     }
 
-    BRPeerManagerSetCallbacks(_peerManager, NULL, syncStarted, syncSucceded, syncFailed,
-                              txStatusUpdate, txRejected, saveBlocks, savePeers,
-                              networkIsReachable);
-    BRPeerManagerConnect(_peerManager);
+    if(!BRPeerMangerIsConnected(_peerManager))
+        BRPeerManagerConnect(_peerManager);
 }
 
 JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_connect(JNIEnv *env, jobject thiz) {
