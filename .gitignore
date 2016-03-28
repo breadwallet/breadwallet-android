@@ -32,7 +32,6 @@ proguard/
 *.log
 
 # Android Studio
-.idea
 *.iml
 *.keystore
 gradle.properties
@@ -44,6 +43,8 @@ gradle.properties
 *.ipr
 *~
 *.swp
+/.idea/workspace.xml
+/.idea/libraries
 #.idea/workspace.xml - remove # and delete .idea if it better suit your needs.
 .navigation/
 
