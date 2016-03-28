@@ -36,7 +36,6 @@ proguard/
 *.iml
 *.keystore
 gradle.properties
-app/libs
 /*/local.properties
 /*/out
 /*/*/build
