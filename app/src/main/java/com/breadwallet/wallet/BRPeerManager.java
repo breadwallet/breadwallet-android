@@ -63,7 +63,7 @@ public class BRPeerManager {
 
     public native void createPeerArrayWithCount(int count);
 
-    public native void putBlock(byte[] block);
+    public native void putBlock(byte[] block, int blockHeight);
 
     public native void createBlockArrayWithCount(int count);
 
@@ -117,14 +117,14 @@ public class BRPeerManager {
         Log.e(TAG, "txStatusUpdate");
     }
 
-    public static synchronized void saveBlocks(byte[] block) {
+    public static synchronized void saveBlocks(byte[] block, int blockHeight) {
         Log.e(TAG, "saveBlocks");
-//        SQLiteManager.getInstance(ctx).insertMerkleBlock(block);
+        SQLiteManager.getInstance(ctx).insertMerkleBlock(block, blockHeight);
     }
 
     public static synchronized void savePeers(byte[] peerAddress, byte[] peerPort, byte[] peerTimeStamp) {
         Log.e(TAG, "savePeers");
-//        SQLiteManager.getInstance(ctx).insertPeer(peerAddress, peerPort, peerTimeStamp);
+        SQLiteManager.getInstance(ctx).insertPeer(peerAddress, peerPort, peerTimeStamp);
     }
 
     public static synchronized boolean networkIsReachable() {

@@ -103,18 +103,18 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRWalletManager_rescan(JNIEnv *env, j
 }
 
 static void saveBlocks(void *info, BRMerkleBlock *blocks[], size_t count) {
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "saveBlocks");
 
     JNIEnv *env = getEnv();
-    jmethodID mid = (*env)->GetStaticMethodID(env, _peerManagerClass, "saveBlocks", "([B)V");
+    jmethodID mid = (*env)->GetStaticMethodID(env, _peerManagerClass, "saveBlocks", "([BI)V");
     //call java methods
 
     for (int i = 0; i < count; i++) {
+        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "block: %d", blocks[i]->height);
         uint8_t buf[BRMerkleBlockSerialize(blocks[i], NULL, 0)];
         size_t len = BRMerkleBlockSerialize(blocks[i], buf, sizeof(buf));
         jbyteArray result = (*env)->NewByteArray(env, len);
         (*env)->SetByteArrayRegion(env, result, 0, len, (jbyte *) buf);
-        (*env)->CallStaticVoidMethod(env, _peerManagerClass, mid, result);
+        (*env)->CallStaticVoidMethod(env, _peerManagerClass, mid, result, blocks[i]->height);
         (*env)->DeleteLocalRef(env, result);
     }
     (*_jvm)->DetachCurrentThread(_jvm);
@@ -212,12 +212,14 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_connect(JNIEnv *env, jo
 //Call multiple times with all the blocks from the DB
 JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_putBlock(JNIEnv *env,
                                                                   jobject thiz,
-                                                                  jbyteArray block) {
+                                                                  jbyteArray block,
+                                                                  int blockHeight) {
     int bkLength = (*env)->GetArrayLength(env, block);
     jbyte *byteBk = (*env)->GetByteArrayElements(env, block, 0);
     BRMerkleBlock *tmpBk = BRMerkleBlockParse((const uint8_t *) byteBk, bkLength);
-//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "adding a block: blockhight: %d, "
-//            "transactionCounter: %d", tmpTx->blockHeight, _transactionsCounter);
+    tmpBk->height = blockHeight;
+
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "adding a block: blockhight: %d", tmpBk->height);
     _blocks[_blocksCounter++] = tmpBk;
 }
 

@@ -45,7 +45,8 @@ class MerkleBlockDataSource {
     private final BRSQLiteHelper dbHelper;
     private final String[] allColumns = {
             BRSQLiteHelper.MB_COLUMN_ID,
-            BRSQLiteHelper.MB_BUFF
+            BRSQLiteHelper.MB_BUFF,
+            BRSQLiteHelper.MB_HEIGHT
 //            BRSQLiteHelper.MB_COLUMN_BLOCK_HASH, BRSQLiteHelper.MB_COLUMN_FLAGS,
 //            BRSQLiteHelper.MB_COLUMN_HASHES, BRSQLiteHelper.MB_COLUMN_HEIGHT,
 //            BRSQLiteHelper.MB_COLUMN_MERKLE_ROOT, BRSQLiteHelper.MB_COLUMN_NONCE,
@@ -74,6 +75,7 @@ class MerkleBlockDataSource {
         ContentValues values = new ContentValues();
 //        values.put(BRSQLiteHelper.MB_COLUMN_ID, merkleBlock.getId());
         values.put(BRSQLiteHelper.MB_BUFF,merkleBlock.getBuff());
+        values.put(BRSQLiteHelper.MB_HEIGHT, merkleBlock.getBlockHeight());
 //        values.put(BRSQLiteHelper.MB_COLUMN_BLOCK_HASH, merkleBlock.getBlockHash());
 //        values.put(BRSQLiteHelper.MB_COLUMN_FLAGS, merkleBlock.getFlags());
 //        values.put(BRSQLiteHelper.MB_COLUMN_HASHES, merkleBlock.getHashes());
@@ -135,7 +137,7 @@ class MerkleBlockDataSource {
     }
 
     private BRMerkleBlockEntity cursorToMerkleBlock(Cursor cursor) {
-        BRMerkleBlockEntity merkleBlockEntity = new BRMerkleBlockEntity(cursor.getBlob(1));
+        BRMerkleBlockEntity merkleBlockEntity = new BRMerkleBlockEntity(cursor.getBlob(1), cursor.getInt(2));
         merkleBlockEntity.setId(cursor.getInt(0));
 
 //        merkleBlockEntity.setBlockHash(cursor.getBlob(1));

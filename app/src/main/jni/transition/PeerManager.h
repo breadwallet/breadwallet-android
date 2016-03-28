@@ -20,8 +20,9 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_connect(JNIEnv *env, jo
 JNIEXPORT void Java_com_breadwallet_wallet_BRWalletManager_rescan(JNIEnv *env, jobject thiz);
 
 JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_putBlock(JNIEnv *env,
-                                                                        jobject thiz,
-                                                                        jbyteArray block);
+                                                                  jobject thiz,
+                                                                  jbyteArray block,
+                                                                  int blockHeight);
 
 JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_createBlockArrayWithCount(
         JNIEnv *env,

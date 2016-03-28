@@ -28,6 +28,7 @@ public class BRMerkleBlockEntity {
 
     private long id;
     private byte[] buff;
+    private int blockHeight;
 //    private byte[] blockHash = new byte[32];
 //    private byte[] flags = new byte[32];
 //    private byte[] hashes = new byte[32];
@@ -44,8 +45,9 @@ public class BRMerkleBlockEntity {
 
     }
 
-    public BRMerkleBlockEntity(byte[] merkleBlockBuff){
+    public BRMerkleBlockEntity(byte[] merkleBlockBuff, int blockHeight){
         this.buff = merkleBlockBuff;
+        this.blockHeight = blockHeight;
     }
 
     public long getId() {
@@ -60,6 +62,13 @@ public class BRMerkleBlockEntity {
         return buff;
     }
 
+    public int getBlockHeight() {
+        return blockHeight;
+    }
+
+    public void setBlockHeight(int blockHeight) {
+        this.blockHeight = blockHeight;
+    }
 //    public byte[] getBlockHash() {
 //        return blockHash;
 //    }

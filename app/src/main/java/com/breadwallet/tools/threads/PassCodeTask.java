@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.util.Log;
 
-import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.fragments.PasswordDialogFragment;
 import com.breadwallet.tools.security.KeyStoreManager;
 
@@ -77,8 +76,8 @@ public class PassCodeTask extends Thread {
                 ex.printStackTrace();
             }
         }
-        if (activity != null)
-            ((BreadWalletApp) activity.getApplication()).hideKeyboard(activity);
+//        if (activity != null)
+//            ((BreadWalletApp) activity.getApplication()).hideKeyboard(activity);
 
     }
 

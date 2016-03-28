@@ -772,7 +772,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         if (blocksCount > 0) {
             pm.createBlockArrayWithCount(blocksCount);
             for (BRMerkleBlockEntity entity : blocks) {
-                pm.putBlock(entity.getBuff());
+                pm.putBlock(entity.getBuff(), entity.getBlockHeight());
             }
         }
 

@@ -89,8 +89,8 @@ public class SQLiteManager {
         BKdataSource.close();
     }
 
-    public void insertMerkleBlock(byte[] merkleBlock) {
-        BRMerkleBlockEntity entity = new BRMerkleBlockEntity(merkleBlock);
+    public void insertMerkleBlock(byte[] merkleBlock, int blockHeight) {
+        BRMerkleBlockEntity entity = new BRMerkleBlockEntity(merkleBlock,blockHeight);
         MerkleBlockDataSource BKdataSource = new MerkleBlockDataSource(ctx);
         BKdataSource.open();
         BKdataSource.createMerkleBlock(entity);
