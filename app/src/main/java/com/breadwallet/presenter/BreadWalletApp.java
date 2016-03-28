@@ -71,8 +71,8 @@ import org.acra.annotation.ReportsCrashes;
                 ReportField.STACK_TRACE
         },
         mode = ReportingInteractionMode.TOAST,
-        resToastText = R.string.crash_toast_text
-)
+        resToastText = R.string.crash_toast_text,
+        formKey = "Test Phone")
 public class BreadWalletApp extends Application {
     public static final int BREAD_WALLET_IMAGE = 0;
     public static final int BREAD_WALLET_TEXT = 1;
