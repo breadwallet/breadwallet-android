@@ -765,7 +765,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         if (transactionsCount > 0) {
             m.createTxArrayWithCount(transactionsCount);
             for (BRTransactionEntity entity : transactions) {
-                m.putTransaction(entity.getBuff());
+                m.putTransaction(entity.getBuff(), entity.getBlockheight(),entity.getTimestamp());
             }
         }
 

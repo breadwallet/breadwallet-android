@@ -282,7 +282,7 @@ public class BRWalletManager {
     //    public native void createWallet(ByteBuffer transactions[], int transactionCount);
     public native void createWallet(int transactionCount, String pubkey, int r);
 
-    public native void putTransaction(byte[] transaction);
+    public native void putTransaction(byte[] transaction, long blockHeight, long timeStamp);
 
     public native void createTxArrayWithCount(int count);
 

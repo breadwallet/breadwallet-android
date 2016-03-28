@@ -1,0 +1,3 @@
+[submodule "app/src/main/jni/breadwallet-core"]
+	path = app/src/main/jni/breadwallet-core
+	url = git@github.com:breadwallet/breadwallet-core.git

@@ -19,6 +19,7 @@ static BRPeer *_peers;
 static size_t _blocksCounter = 0;
 static size_t _peersCounter = 0;
 static jclass _peerManagerClass;
+static size_t _managerNewCounter = 0;
 
 static JNIEnv* getEnv() {
     JNIEnv *env;
@@ -106,6 +107,11 @@ static void saveBlocks(void *info, BRMerkleBlock *blocks[], size_t count) {
 
     JNIEnv *env = getEnv();
     jmethodID mid = (*env)->GetStaticMethodID(env, _peerManagerClass, "saveBlocks", "([BI)V");
+    if(count > 1){
+        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "deleting %d blocks", count);
+        jmethodID delete_mid = (*env)->GetStaticMethodID(env, _peerManagerClass, "deleteBlocks", "()V");
+        (*env)->CallStaticVoidMethod(env, _peerManagerClass, delete_mid);
+    }
     //call java methods
 
     for (int i = 0; i < count; i++) {
@@ -182,6 +188,7 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_createAndConnect(JNIEnv
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "peersCount: %d", peersCount);
 
     if (!_peerManager) {
+        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "BRPeerManagerNew called: %d", ++_managerNewCounter);
         _peerManager = BRPeerManagerNew(_wallet, earliestKeyTime != 0 ? earliestKeyTime
                                                                   : BIP39_CREATION_TIME,
                                     blocksCount == 0 ? NULL : _blocks,

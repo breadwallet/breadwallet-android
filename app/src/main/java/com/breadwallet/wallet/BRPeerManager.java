@@ -92,10 +92,11 @@ public class BRPeerManager {
     public static synchronized void syncSucceded() {
         Log.e(TAG, "syncSucceeded");
         if (ctx == null) ctx = MainActivity.app;
-        if(KeyStoreManager.getWalletCreationTime(ctx) == 0){
-            Log.e(TAG, "getWalletCreationTime() is 0 ! setting the new walletCreationTime in the keystore!");
-            KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis()/1000), ctx);
-        }
+        if (ctx != null)
+            if (KeyStoreManager.getWalletCreationTime(ctx) == 0) {
+                Log.e(TAG, "getWalletCreationTime() is 0 ! setting the new walletCreationTime in the keystore!");
+                KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), ctx);
+            }
         stopSyncingProgressThread();
     }
 
@@ -119,17 +120,27 @@ public class BRPeerManager {
 
     public static synchronized void saveBlocks(byte[] block, int blockHeight) {
         Log.e(TAG, "saveBlocks");
-        SQLiteManager.getInstance(ctx).insertMerkleBlock(block, blockHeight);
+        if (ctx == null) ctx = MainActivity.app;
+        if (ctx != null)
+            SQLiteManager.getInstance(ctx).insertMerkleBlock(block, blockHeight);
     }
 
     public static synchronized void savePeers(byte[] peerAddress, byte[] peerPort, byte[] peerTimeStamp) {
         Log.e(TAG, "savePeers");
-        SQLiteManager.getInstance(ctx).insertPeer(peerAddress, peerPort, peerTimeStamp);
+        if (ctx == null) ctx = MainActivity.app;
+        if (ctx != null)
+            SQLiteManager.getInstance(ctx).insertPeer(peerAddress, peerPort, peerTimeStamp);
     }
 
     public static synchronized boolean networkIsReachable() {
         Log.e(TAG, "networkIsReachable");
         return ctx != null && CurrencyManager.getInstance(ctx).isNetworkAvailable(ctx);
+    }
+
+    public static synchronized void deleteBlocks() {
+        if (ctx == null) ctx = MainActivity.app;
+        if (ctx != null)
+            SQLiteManager.getInstance(ctx).deleteBlocks();
     }
 
 //    public static void saveLastBlockHeight() {
@@ -173,7 +184,7 @@ public class BRPeerManager {
 //        return blockHeight < Integer.MAX_VALUE && blockHeight > blockHeightFromPrefs ? blockHeight : blockHeightFromPrefs;
 //    }
 
-    public static void startSyncingProgressThread(){
+    public static void startSyncingProgressThread() {
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) MiddleViewAdapter.setSyncing((Activity) ctx, true);
 
@@ -188,7 +199,7 @@ public class BRPeerManager {
         }
     }
 
-    public static void stopSyncingProgressThread(){
+    public static void stopSyncingProgressThread() {
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) MiddleViewAdapter.setSyncing((Activity) ctx, false);
         try {

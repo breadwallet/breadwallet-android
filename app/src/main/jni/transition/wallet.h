@@ -29,7 +29,9 @@ JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_getMasterPubKey
 
 JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_putTransaction(JNIEnv *env,
                                                                                 jobject thiz,
-                                                                                jbyteArray transaction);
+                                                                                jbyteArray transaction,
+                                                                                jlong blockHeight,
+                                                                                jlong timeStamp);
 
 
 JNIEXPORT void Java_com_breadwallet_wallet_BRWalletManager_createTxArrayWithCount(JNIEnv *env,
