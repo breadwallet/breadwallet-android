@@ -247,16 +247,19 @@ public class CurrencyManager extends Observable {
         return target / 100;
     }
 
+    public long getSatoshisFromBits(long target){
+        return target * 100;
+    }
+
     public String getCurrentBalanceText() {
         String iso = getISOFromPrefs();
         double rate = getRateFromPrefs();
         long balance = getBitsFromSatoshi(getBALANCE());
         double exchange = (balance * rate / 1000000);
 //        CustomLogger.LogThis("rate", String.valueOf(rate), "exchange", String.valueOf(exchange));
-        String result = getFormattedCurrencyString("BTC", String.valueOf(balance)) + "(" +
+        //        Log.e(TAG, "getCurrentBalanceText: " + result);
+        return getFormattedCurrencyString("BTC", String.valueOf(balance)) + "(" +
                 getFormattedCurrencyString(iso, String.valueOf(exchange)) + ")";
-//        Log.e(TAG, "getCurrentBalanceText: " + result);
-        return result;
     }
 
     public String getFormattedCurrencyString(String isoCurrencyCode, String amount) {

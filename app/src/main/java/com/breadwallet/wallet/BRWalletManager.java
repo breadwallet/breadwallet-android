@@ -233,7 +233,7 @@ public class BRWalletManager {
 
     }
 
-    public static void onTxAdded(byte[] tx, int blockHeight, long timestamp, final long amount) {
+    public static void onTxAdded(byte[] tx, int blockHeight, long timestamp, final long amount, byte[] hash) {
 //        Log.e(TAG, "amount on the txAdded:" + amount);
         Log.e(TAG, "in the BRWalletManager - onTxAdded: " + tx.length + " " + blockHeight + " " + timestamp);
 //        for (byte b : tx) {
@@ -260,10 +260,14 @@ public class BRWalletManager {
 
         }
         SQLiteManager sqLiteManager = SQLiteManager.getInstance(ctx);
-        sqLiteManager.insertTransaction(tx, blockHeight, timestamp);
+        sqLiteManager.insertTransaction(tx, blockHeight, timestamp, hash);
     }
 
-    public static void onTxUpdated(int blockHeight) {
+    public static void onTxUpdated(byte[] hash, int blockHeight) {
+//        if (ctx == null) ctx = MainActivity.app;
+//        if (ctx != null) {
+//            SQLiteManager.getInstance(ctx).updateTxByHash(hash, blockHeight);
+//        }
         //TODO ask Aaron how to update tx
         Log.e(TAG, "in the BRWalletManager - onTxUpdated");
     }

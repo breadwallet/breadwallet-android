@@ -2,7 +2,6 @@ package com.breadwallet.tools.threads;
 
 import android.app.Activity;
 import android.app.FragmentManager;
-import android.util.Log;
 
 import com.breadwallet.presenter.fragments.PasswordDialogFragment;
 import com.breadwallet.tools.security.KeyStoreManager;
@@ -46,10 +45,15 @@ public class PassCodeTask extends Thread {
         super.run();
         if (activity == null) return;
         final FragmentManager fm = activity.getFragmentManager();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         while (pass != null && pass.isEmpty()) {
-            Log.e(TAG, "in the while: " + getName());
+//            Log.e(TAG, "in the while: " + getName());
             if (passwordDialogFragment == null) {
-                Log.e(TAG, "starting new password dialog!!!");
+//                Log.e(TAG, "starting new password dialog!!!");
                 passwordDialogFragment = new PasswordDialogFragment();
                 passwordDialogFragment.setFirstTimeTrue();
                 passwordDialogFragment.show(fm, PasswordDialogFragment.class.getName());
@@ -66,7 +70,7 @@ public class PassCodeTask extends Thread {
                 e.printStackTrace();
             }
             pass = KeyStoreManager.getPassCode(activity);
-            Log.e(TAG, ">>>>>>>>>>>>*&*&*&*&*&*&*>>>>>>>> pass: " + pass);
+//            Log.e(TAG, ">>>>>>>>>>>>*&*&*&*&*&*&*>>>>>>>> pass: " + pass);
 
         }
         if (passwordDialogFragment != null) {

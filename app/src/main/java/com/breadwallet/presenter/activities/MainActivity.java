@@ -288,6 +288,9 @@ public class MainActivity extends FragmentActivity implements Observer {
             Log.e(TAG, "Worked! restarted the syncing!");
             BRPeerManager.startSyncingProgressThread();
         }
+//        else {
+//            BRPeerManager.stopSyncingProgressThread();
+//        }
 
     }
 
@@ -507,10 +510,10 @@ public class MainActivity extends FragmentActivity implements Observer {
         CurrencyManager cm = CurrencyManager.getInstance(this);
 
         if (cm.isNetworkAvailable(this)) {
-            long feeForTx = cm.getBitsFromSatoshi(BRWalletManager.getInstance(this).feeForTransaction(addressHolder, Math.round(amountAsDouble)));
+            long feeForTx = cm.getBitsFromSatoshi(BRWalletManager.getInstance(this).feeForTransaction(addressHolder, cm.getSatoshisFromBits(Math.round(amountAsDouble))));
             Log.e(TAG, "pay >>>> feeForTx: " + feeForTx + ", amountAsDouble: " + amountAsDouble +
                     ", CurrencyManager.getInstance(this).getBALANCE(): " + cm.getBitsFromSatoshi(cm.getBALANCE()));
-            if (amountAsDouble + feeForTx < cm.getBALANCE()) {
+            if (feeForTx != 0 && amountAsDouble + feeForTx < cm.getBALANCE()) {
 
                 confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, Math.round(amountAsDouble), null));
             } else {
@@ -765,7 +768,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         if (transactionsCount > 0) {
             m.createTxArrayWithCount(transactionsCount);
             for (BRTransactionEntity entity : transactions) {
-                m.putTransaction(entity.getBuff(), entity.getBlockheight(),entity.getTimestamp());
+                m.putTransaction(entity.getBuff(), entity.getBlockheight(), entity.getTimestamp());
             }
         }
 
@@ -799,7 +802,7 @@ public class MainActivity extends FragmentActivity implements Observer {
 //            }
 //        }).start();
         //TODO take this test off.
-//        earliestKeyTime = 1457215961;
+//        earliestKeyTime = 1456796244;
 
         pm.createAndConnect(earliestKeyTime > 0 ? earliestKeyTime : 0, blocksCount, peersCount);
 

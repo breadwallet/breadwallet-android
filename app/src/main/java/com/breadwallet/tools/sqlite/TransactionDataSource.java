@@ -34,6 +34,7 @@ import android.util.Log;
 
 import com.breadwallet.presenter.entities.BRTransactionEntity;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -120,10 +121,11 @@ public class TransactionDataSource {
     }
 
     public void deleteTransaction(BRTransactionEntity transaction) {
-        long id = transaction.getId();
-        Log.e(TAG, "transaction deleted with id: " + id);
+        byte[] id = transaction.getTxHash();
+        String strHash = new String(id, StandardCharsets.UTF_8);
+        Log.e(TAG, "transaction deleted with id: " + strHash);
         database.delete(BRSQLiteHelper.TX_TABLE_NAME, BRSQLiteHelper.TX_COLUMN_ID
-                + " = " + id, null);
+                + " = " + strHash, null);
     }
 
     public void deleteAllTransactions() {
@@ -144,14 +146,14 @@ public class TransactionDataSource {
         }
         // make sure to close the cursor
 
-        Log.e(TAG,"transactions: " + transactions.size());
+        Log.e(TAG, "transactions: " + transactions.size());
         cursor.close();
         return transactions;
     }
 
     private BRTransactionEntity cursorToTransaction(Cursor cursor) {
-        BRTransactionEntity transactionEntity = new BRTransactionEntity(cursor.getBlob(1), cursor.getInt(2), cursor.getLong(3));
-        transactionEntity.setId(cursor.getInt(0));
+        BRTransactionEntity transactionEntity = new BRTransactionEntity(cursor.getBlob(1), cursor.getInt(2), cursor.getLong(3), cursor.getBlob(0));
+        transactionEntity.setTxHash(cursor.getBlob(0));
 //        transactionEntity.setBlockHeight(cursor.getInt(1));
 //        transactionEntity.setLockTime(cursor.getInt(2));
 //        transactionEntity.setTimeStamp(cursor.getInt(3));
@@ -159,4 +161,15 @@ public class TransactionDataSource {
         return transactionEntity;
     }
 
+    public void updateTxBlockHeight(byte[] hash, int blockHeight) {
+        String strHash = new String(hash, StandardCharsets.UTF_8);
+        Log.e(TAG, "transaction deleted with id: " + strHash);
+//        database.delete(BRSQLiteHelper.TX_TABLE_NAME, BRSQLiteHelper.TX_COLUMN_ID
+//                + " = " + strHash, null);
+        String strFilter = "_id=" + strHash;
+        ContentValues args = new ContentValues();
+        args.put(BRSQLiteHelper.TX_BLOCK_HEIGHT, blockHeight);
+
+        database.update(BRSQLiteHelper.TX_TABLE_NAME, args, strFilter, null);
+    }
 }

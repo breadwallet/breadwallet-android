@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
@@ -109,8 +108,7 @@ public class FragmentSettingsAll extends Fragment {
             public void onClick(View v) {
                 if (FragmentAnimator.checkTheMultipressingAvailability()) {
                     //TODO broken, fix then use!
-                    ((BreadWalletApp) getActivity().getApplication()).showCustomToast(getActivity(), "MIKE, STOP WORKING, GO GRAB SOME FUN", MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
-//                    BRWalletManager.getInstance(getActivity()).rescan();
+                    BRWalletManager.getInstance(getActivity()).rescan();
                 }
             }
         });

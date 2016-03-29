@@ -25,10 +25,14 @@ package com.breadwallet.presenter.entities;
  * THE SOFTWARE.
  */
 public class BRTransactionEntity {
-    private int id;
     private byte[] buff;
     private int blockheight;
     private long timestamp;
+    private byte[] txHash;
+
+    private BRTransactionEntity(){
+
+    }
 
     public long getBlockheight() {
         return blockheight;
@@ -46,7 +50,13 @@ public class BRTransactionEntity {
         this.timestamp = timestamp;
     }
 
+    public byte[] getTxHash() {
+        return txHash;
+    }
 
+    public void setTxHash(byte[] txHash) {
+        this.txHash = txHash;
+    }
 
 //    private int blockHeight;
 //    private int lockTime;
@@ -55,27 +65,18 @@ public class BRTransactionEntity {
 //    private HashSet<BRTxInputEntity> inputs;
 //    private HashSet<BRTxOutputEntity> outputs;
 
-    private BRTransactionEntity(){
-
-    }
-
-    public BRTransactionEntity(byte[] txBuff,int blockheight, long timestamp){
+    public BRTransactionEntity(byte[] txBuff,int blockheight, long timestamp, byte[] txHash){
         this.blockheight = blockheight;
         this.timestamp = timestamp;
         this.buff = txBuff;
+        this.txHash = txHash;
     }
 
     public byte[] getBuff() {
         return buff;
     }
 
-    public int getId() {
-        return id;
-    }
 
-    public void setId(int id) {
-        this.id = id;
-    }
 
 //    public int getBlockHeight() {
 //        return blockHeight;

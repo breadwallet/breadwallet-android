@@ -58,15 +58,15 @@ public class SQLiteManager {
         return txValues;
     }
 
-    public void deleteTransactions(){
+    public void deleteTransactions() {
         TransactionDataSource TXdataSource = new TransactionDataSource(ctx);
         TXdataSource.open();
         TXdataSource.deleteAllTransactions();
         TXdataSource.close();
     }
 
-    public void insertTransaction(byte[] transaction, int blockheight, long timestamp) {
-        BRTransactionEntity entity = new BRTransactionEntity(transaction, blockheight, timestamp);
+    public void insertTransaction(byte[] transaction, int blockheight, long timestamp, byte[] txHash) {
+        BRTransactionEntity entity = new BRTransactionEntity(transaction, blockheight, timestamp, txHash);
         TransactionDataSource TXdataSource = new TransactionDataSource(ctx);
         TXdataSource.open();
         TXdataSource.createTransaction(entity);
@@ -85,12 +85,12 @@ public class SQLiteManager {
     public void deleteBlocks() {
         MerkleBlockDataSource BKdataSource = new MerkleBlockDataSource(ctx);
         BKdataSource.open();
-       BKdataSource.deleteAllBlocks();
+        BKdataSource.deleteAllBlocks();
         BKdataSource.close();
     }
 
     public void insertMerkleBlock(byte[] merkleBlock, int blockHeight) {
-        BRMerkleBlockEntity entity = new BRMerkleBlockEntity(merkleBlock,blockHeight);
+        BRMerkleBlockEntity entity = new BRMerkleBlockEntity(merkleBlock, blockHeight);
         MerkleBlockDataSource BKdataSource = new MerkleBlockDataSource(ctx);
         BKdataSource.open();
         BKdataSource.createMerkleBlock(entity);
@@ -122,4 +122,11 @@ public class SQLiteManager {
         PRdataSource.close();
     }
 
+    public void updateTxByHash(byte[] hash, int blockHeight) {
+        TransactionDataSource TXdataSource = new TransactionDataSource(ctx);
+        TXdataSource.open();
+        TXdataSource.updateTxBlockHeight(hash, blockHeight);
+        Log.e(TAG, "SQLiteManager - transaction inserted");
+        TXdataSource.close();
+    }
 }
