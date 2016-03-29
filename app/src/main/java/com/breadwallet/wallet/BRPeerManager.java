@@ -143,6 +143,12 @@ public class BRPeerManager {
             SQLiteManager.getInstance(ctx).deleteBlocks();
     }
 
+    public static synchronized void deletePeers() {
+        if (ctx == null) ctx = MainActivity.app;
+        if (ctx != null)
+            SQLiteManager.getInstance(ctx).deletePeers();
+    }
+
 //    public static void saveLastBlockHeight() {
 //        Log.e(TAG, "saveLastBlockHeight");
 //        MainActivity app = MainActivity.app;

@@ -100,10 +100,8 @@ public class BRWalletManager {
     }
 
     public String generateRandomSeed() {
-
-        final SecureRandom sr = new SecureRandom();
-        final byte[] keyBytes = new byte[16];
-        sr.nextBytes(keyBytes);
+        SecureRandom sr = new SecureRandom();
+        byte[] keyBytes = sr.generateSeed(16);
         String[] words = new String[0];
         List<String> list;
         try {

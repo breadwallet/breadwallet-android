@@ -393,7 +393,7 @@ public class KeyStoreManager {
                 index++;
             }
             result = roundTrippedBytes;
-            Log.e(TAG,"PRINTING BYTES result.length: " + result.length);
+            Log.e(TAG, "PRINTING BYTES result.length: " + result.length);
 //            Log.e(TAG, "round tripped bytes: " + roundTrippedBytes);
         } catch (Exception e) {
             e.printStackTrace();
@@ -572,6 +572,18 @@ public class KeyStoreManager {
 
         return recoveredSecret;
     }
+
+//    public byte[] generateEntropy(){
+//        KeyStore keyStore = null;
+//        try {
+//            keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
+//            keyStore.load(null);
+//        } catch (KeyStoreException | CertificateException | IOException | NoSuchAlgorithmException e) {
+//            e.printStackTrace();
+//        }
+//        keyStore.
+//
+//    }
 
     public static String getSeed() {
         String denied = "none";
