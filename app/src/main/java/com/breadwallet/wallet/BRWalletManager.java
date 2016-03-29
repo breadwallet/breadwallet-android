@@ -231,7 +231,7 @@ public class BRWalletManager {
 
     }
 
-    public static void onTxAdded(byte[] tx, int blockHeight, long timestamp, final long amount, byte[] hash) {
+    public static void onTxAdded(byte[] tx, int blockHeight, long timestamp, final long amount, String hash) {
 //        Log.e(TAG, "amount on the txAdded:" + amount);
         Log.e(TAG, "in the BRWalletManager - onTxAdded: " + tx.length + " " + blockHeight + " " + timestamp);
 //        for (byte b : tx) {
@@ -261,19 +261,23 @@ public class BRWalletManager {
         sqLiteManager.insertTransaction(tx, blockHeight, timestamp, hash);
     }
 
-    public static void onTxUpdated(byte[] hash, int blockHeight) {
-//        if (ctx == null) ctx = MainActivity.app;
-//        if (ctx != null) {
-//            SQLiteManager.getInstance(ctx).updateTxByHash(hash, blockHeight);
-//        }
+    public static void onTxUpdated(String hash, int blockHeight) {
+        if (ctx == null) ctx = MainActivity.app;
+        if (ctx != null) {
+            SQLiteManager.getInstance(ctx).updateTxByHash(hash, blockHeight);
+        }
         //TODO ask Aaron how to update tx
         Log.e(TAG, "in the BRWalletManager - onTxUpdated");
     }
 
-    public static void onTxDeleted() {
+    public static void onTxDeleted(String hash) {
         //TODO ask Aaron how to delete tx
 //        SQLiteManager sqLiteManager = SQLiteManager.getInstance(ctx);
 //        List<BRTransactionEntity> txList = sqLiteManager.getTransactions();
+        if (ctx == null) ctx = MainActivity.app;
+        if (ctx != null) {
+            SQLiteManager.getInstance(ctx).deleteTxByHash(hash);
+        }
 
 
         Log.e(TAG, "in the BRWalletManager - onTxDeleted");
@@ -302,7 +306,7 @@ public class BRWalletManager {
 
     public native TransactionListItem[] getTransactions();
 
-    public native void pay(String addressHolder, long amountHolder);
+    public native void pay(String addressHolder, long amountHolder, String strSeed);
 
     public native void rescan();
 

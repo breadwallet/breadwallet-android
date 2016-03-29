@@ -33,7 +33,7 @@ class BRSQLiteHelper extends SQLiteOpenHelper {
     private static final String TAG = BRSQLiteHelper.class.getName();
 
     private static final String DATABASE_NAME = "breadwallet.db";
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 10;
 
     /**
      * MerkleBlock table
@@ -86,7 +86,7 @@ class BRSQLiteHelper extends SQLiteOpenHelper {
 //    public static final String TX_HASH = "txHash";
 
     private static final String TX_DATABASE_CREATE = "create table " + TX_TABLE_NAME + "(" +
-            TX_COLUMN_ID + " blob, " +
+            TX_COLUMN_ID + " text, " +
             TX_BUFF + " blob, " +
             TX_BLOCK_HEIGHT + " integer, " +
             TX_TIME_STAMP + " integer );";

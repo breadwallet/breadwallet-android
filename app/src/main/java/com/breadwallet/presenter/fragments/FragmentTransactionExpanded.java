@@ -85,7 +85,7 @@ public class FragmentTransactionExpanded extends Fragment {
             if (blockHeight == Integer.MAX_VALUE) {
                 statusText.setText(R.string.verified_waiting);
             } else {
-                statusText.setText(String.format("confirmed in block #%d\n%s", blockHeight + 1,
+                statusText.setText(String.format("confirmed in block #%d\n%s", blockHeight,
                         FragmentSettingsAll.getFormattedDateFromLong(item.getTimeStamp())));
             }
             amountText.setText(m.getFormattedCurrencyString("BTC", String.valueOf(m.getBitsFromSatoshi(amount))));

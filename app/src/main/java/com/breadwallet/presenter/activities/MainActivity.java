@@ -21,6 +21,7 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
@@ -156,6 +157,9 @@ public class MainActivity extends FragmentActivity implements Observer {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE);
+
         app = this;
         initializeViews();
 
@@ -288,6 +292,7 @@ public class MainActivity extends FragmentActivity implements Observer {
             Log.e(TAG, "Worked! restarted the syncing!");
             BRPeerManager.startSyncingProgressThread();
         }
+
 //        else {
 //            BRPeerManager.stopSyncingProgressThread();
 //        }

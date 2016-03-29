@@ -28,7 +28,7 @@ public class BRTransactionEntity {
     private byte[] buff;
     private int blockheight;
     private long timestamp;
-    private byte[] txHash;
+    private String txHash;
 
     private BRTransactionEntity(){
 
@@ -50,11 +50,11 @@ public class BRTransactionEntity {
         this.timestamp = timestamp;
     }
 
-    public byte[] getTxHash() {
+    public String getTxHash() {
         return txHash;
     }
 
-    public void setTxHash(byte[] txHash) {
+    public void setTxHash(String txHash) {
         this.txHash = txHash;
     }
 
@@ -65,7 +65,7 @@ public class BRTransactionEntity {
 //    private HashSet<BRTxInputEntity> inputs;
 //    private HashSet<BRTxOutputEntity> outputs;
 
-    public BRTransactionEntity(byte[] txBuff,int blockheight, long timestamp, byte[] txHash){
+    public BRTransactionEntity(byte[] txBuff, int blockheight, long timestamp, String txHash) {
         this.blockheight = blockheight;
         this.timestamp = timestamp;
         this.buff = txBuff;

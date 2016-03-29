@@ -6,9 +6,9 @@ import android.util.Log;
 import android.view.View;
 
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
-import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.sqlite.SQLiteManager;
 
 import java.text.DecimalFormat;
@@ -93,11 +93,11 @@ public class BRPeerManager {
         Log.e(TAG, "syncSucceeded");
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null)
-            if (KeyStoreManager.getWalletCreationTime(ctx) == 0) {
-                Log.e(TAG, "getWalletCreationTime() is 0 ! setting the new walletCreationTime in the keystore!");
-                KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), ctx);
-            }
-        stopSyncingProgressThread();
+//            if (KeyStoreManager.getWalletCreationTime(ctx) == 0) {
+//                Log.e(TAG, "getWalletCreationTime() is 0 ! setting the new walletCreationTime in the keystore!");
+//                KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), ctx);
+//            }
+            stopSyncingProgressThread();
     }
 
     public static synchronized void syncFailed() {
@@ -105,12 +105,14 @@ public class BRPeerManager {
     }
 
     public static synchronized void txStatusUpdate() {
+        Log.e(TAG, "txStatusUpdate");
+        if (ctx == null) ctx = MainActivity.app;
+        if (ctx != null)
+            FragmentSettingsAll.refreshTransactions(ctx);
 //        if (syncProgress() >= 1) {
 //            if (ctx == null) ctx = MainActivity.app;
 //            if (ctx != null) MiddleViewAdapter.setSyncing((Activity) ctx, false);
 //        }
-        Log.e(TAG, "txStatusUpdate");
-//        saveLastBlockHeight();
 
     }
 

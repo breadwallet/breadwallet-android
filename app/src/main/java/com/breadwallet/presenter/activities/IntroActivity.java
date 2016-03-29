@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 
@@ -71,6 +72,9 @@ public class IntroActivity extends FragmentActivity {
         setContentView(R.layout.activity_intro);
 
         app = this;
+
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE);
 
         leftButton = (Button) findViewById(R.id.intro_left_button);
         leftButton.setVisibility(View.GONE);

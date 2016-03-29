@@ -41,6 +41,9 @@ public class RequestQRActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_request_qr);
 
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE);
+
         String requestAddrs = getIntent().getExtras().getString(BRConstants.INTENT_EXTRA_REQUEST_ADDRESS);
         String requestAmount = getIntent().getExtras().getString(BRConstants.INTENT_EXTRA_REQUEST_AMOUNT);
 

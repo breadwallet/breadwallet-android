@@ -51,6 +51,7 @@ import com.breadwallet.tools.adapter.CustomPagerAdapter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PassCodeManager;
 import com.breadwallet.wallet.BRWalletManager;
 
@@ -157,7 +158,7 @@ public class PasswordDialogFragment extends DialogFragment {
         super.onResume();
         passcodeEditText.setText("");
         final Activity app = getActivity();
-        if(app != null) {
+        if (app != null) {
             passcodeEditText.post(
                     new Runnable() {
                         public void run() {
@@ -250,7 +251,12 @@ public class PasswordDialogFragment extends DialogFragment {
 //                        public void run() {
 //                            try {
                     BRWalletManager walletManager = BRWalletManager.getInstance(getActivity());
-                    walletManager.pay(request.addresses[0], request.amount * 100);
+                    String seed = KeyStoreManager.getSeed();
+                    if (seed != null && !seed.isEmpty()) {
+                        walletManager.pay(request.addresses[0], request.amount * 100, seed);
+                    }
+                    seed = null;
+                    System.gc();
 //                            } catch (Exception e){
 //                                e.printStackTrace();
 //                            }

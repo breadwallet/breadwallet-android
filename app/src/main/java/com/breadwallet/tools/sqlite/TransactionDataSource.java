@@ -34,7 +34,6 @@ import android.util.Log;
 
 import com.breadwallet.presenter.entities.BRTransactionEntity;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,7 +68,7 @@ public class TransactionDataSource {
 
     public BRTransactionEntity createTransaction(BRTransactionEntity transactionEntity) {
         ContentValues values = new ContentValues();
-//        values.put(BRSQLiteHelper.TX_COLUMN_ID, transactionEntity.getId());
+        values.put(BRSQLiteHelper.TX_COLUMN_ID, transactionEntity.getTxHash());
         values.put(BRSQLiteHelper.TX_BUFF, transactionEntity.getBuff());
         values.put(BRSQLiteHelper.TX_BLOCK_HEIGHT, transactionEntity.getBlockheight());
         values.put(BRSQLiteHelper.TX_TIME_STAMP, transactionEntity.getTimestamp());
@@ -100,10 +99,9 @@ public class TransactionDataSource {
 
         database.beginTransaction();
         try {
-            long insertId = database.insert(BRSQLiteHelper.TX_TABLE_NAME, null, values);
+            database.insert(BRSQLiteHelper.TX_TABLE_NAME, null, values);
             Cursor cursor = database.query(BRSQLiteHelper.TX_TABLE_NAME,
-                    allColumns, BRSQLiteHelper.TX_COLUMN_ID + " = " + insertId, null,
-                    null, null, null);
+                    allColumns, null, null, null, null, null);
             cursor.moveToFirst();
             BRTransactionEntity transactionEntity1 = cursorToTransaction(cursor);
             cursor.close();
@@ -121,15 +119,14 @@ public class TransactionDataSource {
     }
 
     public void deleteTransaction(BRTransactionEntity transaction) {
-        byte[] id = transaction.getTxHash();
-        String strHash = new String(id, StandardCharsets.UTF_8);
+        String strHash = transaction.getTxHash();
         Log.e(TAG, "transaction deleted with id: " + strHash);
         database.delete(BRSQLiteHelper.TX_TABLE_NAME, BRSQLiteHelper.TX_COLUMN_ID
-                + " = " + strHash, null);
+                + " = \'" + strHash + "\'", null);
     }
 
     public void deleteAllTransactions() {
-        database.delete(BRSQLiteHelper.TX_TABLE_NAME, BRSQLiteHelper.TX_COLUMN_ID + " <> -1", null);
+        database.delete(BRSQLiteHelper.TX_TABLE_NAME, BRSQLiteHelper.TX_COLUMN_ID + " <> \'1\'", null);
     }
 
     public List<BRTransactionEntity> getAllTransactions() {
@@ -152,24 +149,27 @@ public class TransactionDataSource {
     }
 
     private BRTransactionEntity cursorToTransaction(Cursor cursor) {
-        BRTransactionEntity transactionEntity = new BRTransactionEntity(cursor.getBlob(1), cursor.getInt(2), cursor.getLong(3), cursor.getBlob(0));
-        transactionEntity.setTxHash(cursor.getBlob(0));
-//        transactionEntity.setBlockHeight(cursor.getInt(1));
+        //        transactionEntity.setBlockHeight(cursor.getInt(1));
 //        transactionEntity.setLockTime(cursor.getInt(2));
 //        transactionEntity.setTimeStamp(cursor.getInt(3));
 //        transactionEntity.setTxHash(cursor.getBlob(4));
-        return transactionEntity;
+        return new BRTransactionEntity(cursor.getBlob(1), cursor.getInt(2), cursor.getLong(3), cursor.getString(0));
     }
 
-    public void updateTxBlockHeight(byte[] hash, int blockHeight) {
-        String strHash = new String(hash, StandardCharsets.UTF_8);
-        Log.e(TAG, "transaction deleted with id: " + strHash);
+    public void updateTxBlockHeight(String hash, int blockHeight) {
+        Log.e(TAG, "transaction deleted with id: " + hash);
 //        database.delete(BRSQLiteHelper.TX_TABLE_NAME, BRSQLiteHelper.TX_COLUMN_ID
 //                + " = " + strHash, null);
-        String strFilter = "_id=" + strHash;
+        String strFilter = "_id=\'" + hash + "\'";
         ContentValues args = new ContentValues();
         args.put(BRSQLiteHelper.TX_BLOCK_HEIGHT, blockHeight);
 
         database.update(BRSQLiteHelper.TX_TABLE_NAME, args, strFilter, null);
+    }
+
+    public void deleteTxByHash(String hash) {
+        Log.e(TAG, "transaction deleted with id: " + hash);
+        database.delete(BRSQLiteHelper.TX_TABLE_NAME, BRSQLiteHelper.TX_COLUMN_ID
+                + " = \'" + hash + "\'", null);
     }
 }

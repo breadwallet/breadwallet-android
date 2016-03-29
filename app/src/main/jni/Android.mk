@@ -11,7 +11,6 @@ LOCAL_LDLIBS := -llog -lm
 LOCAL_SHARED_LIBRARIES := bread
 
 LOCAL_SRC_FILES := \
-./transition/WalletCallbacks.c\
 ./transition/core.c\
 ./transition/wallet.c\
 ./transition/PeerManager.c

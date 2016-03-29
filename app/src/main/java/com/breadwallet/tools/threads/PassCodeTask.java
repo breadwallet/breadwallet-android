@@ -52,21 +52,22 @@ public class PassCodeTask extends Thread {
         }
         while (pass != null && pass.isEmpty()) {
 //            Log.e(TAG, "in the while: " + getName());
-            if (passwordDialogFragment == null) {
-//                Log.e(TAG, "starting new password dialog!!!");
-                passwordDialogFragment = new PasswordDialogFragment();
-                passwordDialogFragment.setFirstTimeTrue();
-                passwordDialogFragment.show(fm, PasswordDialogFragment.class.getName());
-            }
-            if (passwordDialogFragment != null && !passwordDialogFragment.isVisible()) {
-                passwordDialogFragment.dismiss();
-                passwordDialogFragment = new PasswordDialogFragment();
-                passwordDialogFragment.setFirstTimeTrue();
-                passwordDialogFragment.show(fm, PasswordDialogFragment.class.getName());
-            }
             try {
+                if (passwordDialogFragment == null) {
+//                Log.e(TAG, "starting new password dialog!!!");
+                    passwordDialogFragment = new PasswordDialogFragment();
+                    passwordDialogFragment.setFirstTimeTrue();
+                    passwordDialogFragment.show(fm, PasswordDialogFragment.class.getName());
+                }
+                if (passwordDialogFragment != null && !passwordDialogFragment.isVisible()) {
+                    passwordDialogFragment.dismiss();
+                    passwordDialogFragment = new PasswordDialogFragment();
+                    passwordDialogFragment.setFirstTimeTrue();
+                    passwordDialogFragment.show(fm, PasswordDialogFragment.class.getName());
+                }
+
                 Thread.sleep(500);
-            } catch (InterruptedException e) {
+            } catch (InterruptedException | NullPointerException e) {
                 e.printStackTrace();
             }
             pass = KeyStoreManager.getPassCode(activity);
@@ -76,7 +77,7 @@ public class PassCodeTask extends Thread {
         if (passwordDialogFragment != null) {
             try {
                 passwordDialogFragment.dismiss();
-            } catch (IllegalStateException ex){
+            } catch (IllegalStateException ex) {
                 ex.printStackTrace();
             }
         }

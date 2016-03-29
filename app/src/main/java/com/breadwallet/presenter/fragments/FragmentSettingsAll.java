@@ -139,15 +139,23 @@ public class FragmentSettingsAll extends Fragment {
 //        refreshTransactions(getActivity());
     }
 
-    public static void refreshTransactions(Context ctx) {
+    public static void refreshTransactions(final Context ctx) {
         transactionObjects = BRWalletManager.getInstance(ctx).getTransactions();
 
 //        transactionObjects = getTestTransactions(); //TODO this is a test
 //        transactionObjects = new TransactionListItem[0];
 //            transactionObjects = getTestTransactions();
 //        Log.e(TAG, "REFRESH TRANSACTIONS: " + transactionObjects.length);
-        if (ctx != null && ctx instanceof MainActivity)
-            refreshUI(ctx);
+        if (ctx != null && ctx instanceof MainActivity){
+            ((MainActivity) ctx).runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    refreshUI(ctx);
+                }
+            });
+        }
+
+
     }
 
     public static void refreshUI(Context ctx) {
@@ -268,7 +276,7 @@ public class FragmentSettingsAll extends Fragment {
 
             int confirms = blockHeight == Integer.MAX_VALUE ? 0 : estimatedBlockHeight - blockHeight;
             Log.e(TAG, "item.getBlockHeight(): " + blockHeight + ", confirms: " + confirms + ", lastBlock: " + estimatedBlockHeight);
-            sentReceivedTextView.setText(String.format("%d confirmations", confirms >= 0 && confirms < 6 ? confirms : -1));
+            sentReceivedTextView.setText(String.format("%d confirmations", confirms >= 0 && confirms < 5 ? confirms + 1 : -1));
 
         }
 

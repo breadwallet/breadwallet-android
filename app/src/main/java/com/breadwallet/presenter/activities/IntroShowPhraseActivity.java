@@ -6,8 +6,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -18,6 +20,7 @@ import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.wallet.BRWalletManager;
 
 public class IntroShowPhraseActivity extends Activity {
+    private static final String TAG = IntroShowPhraseActivity.class.getName();
     private Button remindMeLater;
     private RelativeLayout writeDownLayout;
     private ImageView checkBox;
@@ -29,10 +32,6 @@ public class IntroShowPhraseActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro_show_phrase);
 
-        if (savedInstanceState != null) {
-            return;
-        }
-
         TextView thePhrase = (TextView) findViewById(R.id.the_phrase_at_startup);
         remindMeLater = (Button) findViewById(R.id.remind_me_later_button);
         writeDownLayout = (RelativeLayout) findViewById(R.id.write_down_notice_layout);
@@ -43,6 +42,11 @@ public class IntroShowPhraseActivity extends Activity {
                 setCheckBoxImage();
             }
         });
+
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE);
+
+        Log.e(TAG, "IntroShowPhraseActivity onCreate()");
         writeDownLayout.setVisibility(View.GONE);
         String phrase = KeyStoreManager.getKeyStoreString(this);
         if (phrase != null && phrase.length() > 1) {
@@ -68,6 +72,16 @@ public class IntroShowPhraseActivity extends Activity {
                 startMainActivity();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 
     @Override

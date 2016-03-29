@@ -3,7 +3,6 @@
 //
 #include "PeerManager.h"
 #include "BRPeer.h"
-#include "WalletCallbacks.h"
 #include "BRBIP39Mnemonic.h"
 #include "BRInt.h"
 #include <android/log.h>
@@ -107,7 +106,7 @@ static void saveBlocks(void *info, BRMerkleBlock *blocks[], size_t count) {
 
     JNIEnv *env = getEnv();
     jmethodID mid = (*env)->GetStaticMethodID(env, _peerManagerClass, "saveBlocks", "([BI)V");
-    if(count > 1){
+    if(count != 1){
         __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "deleting %d blocks", count);
         jmethodID delete_mid = (*env)->GetStaticMethodID(env, _peerManagerClass, "deleteBlocks", "()V");
         (*env)->CallStaticVoidMethod(env, _peerManagerClass, delete_mid);
@@ -134,7 +133,7 @@ static void savePeers(void *info, const BRPeer peers[], size_t count) {
 
     jmethodID mid = (*env)->GetStaticMethodID(env, _peerManagerClass, "savePeers", "([B[B[B)V");
     //call java methods
-    if(count > 1){
+    if(count != 1){
         __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "deleting %d peers", count);
         jmethodID delete_mid = (*env)->GetStaticMethodID(env, _peerManagerClass, "deletePeers", "()V");
         (*env)->CallStaticVoidMethod(env, _peerManagerClass, delete_mid);

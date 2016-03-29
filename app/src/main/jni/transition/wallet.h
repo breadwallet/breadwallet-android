@@ -60,7 +60,8 @@ JNIEXPORT jobjectArray Java_com_breadwallet_wallet_BRWalletManager_getTransactio
                                                                                    jobject thiz);
 
 JNIEXPORT void Java_com_breadwallet_wallet_BRWalletManager_pay(JNIEnv *env, jobject thiz,
-                                                               jstring address, jlong amount);
+                                                               jstring address, jlong amount,
+                                                               jstring strSeed);
 
 const void *theSeed(void *info, const char *authPrompt, uint64_t amount, size_t *seedLen);
 

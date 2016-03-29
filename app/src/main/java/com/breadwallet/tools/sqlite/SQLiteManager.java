@@ -65,7 +65,7 @@ public class SQLiteManager {
         TXdataSource.close();
     }
 
-    public void insertTransaction(byte[] transaction, int blockheight, long timestamp, byte[] txHash) {
+    public void insertTransaction(byte[] transaction, int blockheight, long timestamp, String txHash) {
         BRTransactionEntity entity = new BRTransactionEntity(transaction, blockheight, timestamp, txHash);
         TransactionDataSource TXdataSource = new TransactionDataSource(ctx);
         TXdataSource.open();
@@ -122,10 +122,19 @@ public class SQLiteManager {
         PRdataSource.close();
     }
 
-    public void updateTxByHash(byte[] hash, int blockHeight) {
+    public void updateTxByHash(String hash, int blockHeight) {
         TransactionDataSource TXdataSource = new TransactionDataSource(ctx);
         TXdataSource.open();
         TXdataSource.updateTxBlockHeight(hash, blockHeight);
+        Log.e(TAG, "SQLiteManager - transaction inserted");
+        TXdataSource.close();
+    }
+
+
+    public void deleteTxByHash(String hash) {
+        TransactionDataSource TXdataSource = new TransactionDataSource(ctx);
+        TXdataSource.open();
+        TXdataSource.deleteTxByHash(hash);
         Log.e(TAG, "SQLiteManager - transaction inserted");
         TXdataSource.close();
     }
