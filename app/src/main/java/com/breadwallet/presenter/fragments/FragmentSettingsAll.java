@@ -273,10 +273,9 @@ public class FragmentSettingsAll extends Fragment {
         } else {
             sentReceivedTextView.setBackgroundResource(R.drawable.unconfirmed_label);
             sentReceivedTextView.setTextColor(unconfirmedColor);
-
-            int confirms = blockHeight == Integer.MAX_VALUE ? 0 : estimatedBlockHeight - blockHeight;
+            int confirms = blockHeight == Integer.MAX_VALUE ? 0 : estimatedBlockHeight - blockHeight + 1;
             Log.e(TAG, "item.getBlockHeight(): " + blockHeight + ", confirms: " + confirms + ", lastBlock: " + estimatedBlockHeight);
-            sentReceivedTextView.setText(String.format("%d confirmations", confirms >= 0 && confirms < 5 ? confirms + 1 : -1));
+            sentReceivedTextView.setText(String.format("%d confirmations", confirms >= 0 && confirms <= 5 ? confirms : -1));
 
         }
 
