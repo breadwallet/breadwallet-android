@@ -121,11 +121,10 @@ public class BRWalletManager {
         return success ? strPhrase : null;
     }
 
-    public boolean setKeyStoreString(String strPhrase, String key,
-                                     boolean authenticated, Context ctx) {
-        return KeyStoreManager.setKeyStoreString(strPhrase, ctx);
-    }
-
+//    public boolean setKeyStoreString(String strPhrase, String key,
+//                                     boolean authenticated, Context ctx) {
+//        return KeyStoreManager.setKeyStoreString(strPhrase, ctx);
+//    }
 
     /**
      * given a private key, queries chain.com for unspent outputs and calls the completion block with

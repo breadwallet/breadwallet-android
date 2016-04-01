@@ -87,7 +87,7 @@ public class IntroRecoverWalletFragment extends Fragment {
 
                     String pubKey = m.getMasterPubKey(normalizedPhrase.toLowerCase());
                     KeyStoreManager.putMasterPublicKey(pubKey, getActivity());
-                    Log.w(TAG, "The phrase from keystore is: " + KeyStoreManager.getKeyStoreString(getActivity()));
+//                    Log.w(TAG, "The phrase from keystore is: " + KeyStoreManager.getKeyStoreString(getActivity()));
                     ((IntroActivity) getActivity()).startMainActivity();
                     getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 } else {

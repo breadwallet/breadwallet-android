@@ -3,7 +3,6 @@ package com.breadwallet.presenter.fragments;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,11 +59,12 @@ public class IntroNewWalletFragment extends Fragment {
                     @Override
                     public void run() {
                         String phrase = m.generateRandomSeed();
-                        KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), getActivity());
+                        if (phrase == null) throw new NullPointerException("Cannot be null!");
+                        KeyStoreManager.putWalletCreationTime(String.valueOf((System.currentTimeMillis() / 1000)), getActivity());
                         String normalizedPhrase = Normalizer.normalize(phrase, Normalizer.Form.NFKD);
                         String pubKey = m.getMasterPubKey(normalizedPhrase);
                         KeyStoreManager.putMasterPublicKey(pubKey, getActivity());
-                        Log.w(TAG, "The phrase from keystore is: " + KeyStoreManager.getKeyStoreString(getActivity()));
+//                        Log.w(TAG, "The phrase from keystore is: " + KeyStoreManager.getKeyStoreString(getActivity()));
                         ((IntroActivity) getActivity()).showWarningFragment();
                     }
                 });

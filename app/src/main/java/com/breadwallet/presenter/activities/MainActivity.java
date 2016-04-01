@@ -566,6 +566,19 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == KeyStoreManager.REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS) {
+            // Challenge completed, proceed with using cipher
+            if (resultCode == RESULT_OK) {
+                Log.e(TAG,"Auth for phrase was accepted");
+//                if (tryEncrypt()) {
+//                    showPurchaseConfirmation();
+//                }
+            } else {
+                Log.e(TAG,"Auth for phrase was rejected");
+                // The user canceled or didnât complete the lock screen
+                // operation. Go to error/cancellation flow.
+            }
+        }
         //when starting another activity that will return a result (ex: auth)
 
 //        if (resultCode == RESULT_OK) {
@@ -795,8 +808,8 @@ public class MainActivity extends FragmentActivity implements Observer {
         int r = pubkeyEncoded.length() == 0 ? 0 : 1;
 
         m.createWallet(transactionsCount, pubkeyEncoded, r);
-
-        long earliestKeyTime = KeyStoreManager.getWalletCreationTime(this);
+        String walletTimeString = KeyStoreManager.getWalletCreationTime(this);
+        long earliestKeyTime = !walletTimeString.isEmpty()? Long.valueOf(walletTimeString) : 0;
         Log.e(TAG, "blocksCount before connecting: " + blocksCount);
         Log.e(TAG, "peersCount before connecting: " + peersCount);
         Log.e(TAG, "earliestKeyTime before connecting: " + earliestKeyTime);
@@ -863,11 +876,19 @@ public class MainActivity extends FragmentActivity implements Observer {
     }
 
     private void askForPasscode() {
-        String pass = KeyStoreManager.getPassCode(this);
-        Log.e(TAG, "PASSCODE: " + pass);
-        if (pass == null || pass.isEmpty()) {
-            new PassCodeTask(this).start();
-        }
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (app != null) {
+                    String pass = KeyStoreManager.getPassCode(app);
+                    Log.e(TAG, "PASSCODE: " + pass);
+                    if (pass == null || pass.isEmpty()) {
+                        new PassCodeTask(app).start();
+                    }
+                }
+            }
+        }, 1000);
+
     }
 
     private native void clearCMemory();
