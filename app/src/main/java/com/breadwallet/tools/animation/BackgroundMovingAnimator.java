@@ -71,10 +71,10 @@ public class BackgroundMovingAnimator {
         mCurrentAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                if (mDirection == RightToLeft)
-                    mDirection = LeftToRight;
-                else
-                    mDirection = RightToLeft;
+//                if (mDirection == RightToLeft)
+                mDirection = LeftToRight;
+//                else
+//                    mDirection = RightToLeft;
 
                 animate();
             }
@@ -92,6 +92,7 @@ public class BackgroundMovingAnimator {
         if (background != null)
             background.clearAnimation();
         background = theBackground;
+        background.clearAnimation();
         background.post(new Runnable() {
             @Override
             public void run() {

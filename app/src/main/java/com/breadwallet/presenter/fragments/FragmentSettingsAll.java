@@ -146,7 +146,7 @@ public class FragmentSettingsAll extends Fragment {
 //        transactionObjects = new TransactionListItem[0];
 //            transactionObjects = getTestTransactions();
 //        Log.e(TAG, "REFRESH TRANSACTIONS: " + transactionObjects.length);
-        if (ctx != null && ctx instanceof MainActivity){
+        if (ctx != null && ctx instanceof MainActivity) {
             ((MainActivity) ctx).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -273,10 +273,13 @@ public class FragmentSettingsAll extends Fragment {
         } else {
             sentReceivedTextView.setBackgroundResource(R.drawable.unconfirmed_label);
             sentReceivedTextView.setTextColor(unconfirmedColor);
-            int confirms = blockHeight == Integer.MAX_VALUE ? 0 : estimatedBlockHeight - blockHeight + 1;
-            Log.e(TAG, "item.getBlockHeight(): " + blockHeight + ", confirms: " + confirms + ", lastBlock: " + estimatedBlockHeight);
-            sentReceivedTextView.setText(String.format("%d confirmations", confirms >= 0 && confirms <= 5 ? confirms : -1));
-
+            if (!BRWalletManager.getInstance(app).transactionIsVerified(item.getHexId())) {
+                sentReceivedTextView.setText(R.string.unverified);
+            } else {
+                int confirms = blockHeight == Integer.MAX_VALUE ? 0 : estimatedBlockHeight - blockHeight + 1;
+                Log.e(TAG, "item.getBlockHeight(): " + blockHeight + ", confirms: " + confirms + ", lastBlock: " + estimatedBlockHeight);
+                sentReceivedTextView.setText(String.format("%d confirmations", confirms >= 0 && confirms <= 5 ? confirms : -1));
+            }
         }
 
         long itemTimeStamp = item.getTimeStamp();

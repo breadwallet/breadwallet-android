@@ -209,12 +209,11 @@ public class KeyStoreManager {
                 index++;
             }
             recoveredSecret = new String(roundTrippedBytes, 0, index, "UTF-8");
-            Log.e(TAG, "round tripped string = " + recoveredSecret);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        Log.e(TAG, "recovered: " + recoveredSecret);
+        Log.e(TAG, "recovered phrase: " + recoveredSecret);
         return recoveredSecret;
     }
 
@@ -307,12 +306,11 @@ public class KeyStoreManager {
                 index++;
             }
             recoveredSecret = new String(roundTrippedBytes, 0, index, "UTF-8");
-            Log.e(TAG, "round tripped string = " + recoveredSecret);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        Log.e(TAG, "recovered: " + recoveredSecret);
+        Log.e(TAG, "recovered pubKey: " + recoveredSecret);
         return recoveredSecret;
     }
 
@@ -408,8 +406,7 @@ public class KeyStoreManager {
                 index++;
             }
             recoveredSecret = new String(roundTrippedBytes, 0, index, "UTF-8");
-
-
+            Log.e(TAG, "recovered walletCreationTime: " + recoveredSecret);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -514,7 +511,6 @@ public class KeyStoreManager {
                 index++;
             }
             recoveredSecret = new String(roundTrippedBytes, 0, index, "UTF-8");
-            Log.e(TAG, "round tripped string = " + recoveredSecret);
         } catch (Exception e) {
             e.printStackTrace();
         }

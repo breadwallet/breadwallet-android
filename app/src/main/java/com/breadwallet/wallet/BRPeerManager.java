@@ -73,6 +73,8 @@ public class BRPeerManager {
 
     public native static int getEstimatedBlockHeight();
 
+    public native boolean isCreated();
+
     /**
      * void BRPeerManagerSetCallbacks(BRPeerManager *manager, void *info,
      * void (*syncStarted)(void *info),
@@ -140,12 +142,14 @@ public class BRPeerManager {
     }
 
     public static synchronized void deleteBlocks() {
+        Log.e(TAG, "deleteBlocks");
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null)
             SQLiteManager.getInstance(ctx).deleteBlocks();
     }
 
     public static synchronized void deletePeers() {
+        Log.e(TAG, "deletePeers");
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null)
             SQLiteManager.getInstance(ctx).deletePeers();
@@ -246,18 +250,18 @@ public class BRPeerManager {
                         app.syncProgressText.setVisibility(View.VISIBLE);
                         app.syncProgressBar.setVisibility(View.VISIBLE);
                         app.syncProgressBar.setProgress((int) (progressStatus * 100));
-                        app.syncProgressText.setText(new DecimalFormat("#.##").format(progressStatus * 100) + "%");
+                        app.syncProgressText.setText(String.format("%s%%", new DecimalFormat("#.##").format(progressStatus * 100)));
                     }
                 });
 
                 while (running) {
-//                    Log.e(TAG,"SyncProgressTask.run()...");
+                    Log.e(TAG, "SyncProgressTask.run()...");
                     app.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             progressStatus = syncProgress();
                             app.syncProgressBar.setProgress((int) (progressStatus * 100));
-                            app.syncProgressText.setText(new DecimalFormat("#.##").format(progressStatus * 100) + "%");
+                            app.syncProgressText.setText(String.format("%s%%", new DecimalFormat("#.##").format(progressStatus * 100)));
 
                         }
                     });
@@ -277,6 +281,7 @@ public class BRPeerManager {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+//                    if (progressStatus >= 1) running = false;
                 }
 
                 app.runOnUiThread(new Runnable() {
@@ -285,6 +290,7 @@ public class BRPeerManager {
                         progressStatus = 0;
                         app.syncProgressText.setVisibility(View.GONE);
                         app.syncProgressBar.setVisibility(View.GONE);
+                        MiddleViewAdapter.setSyncing(app, false);
                     }
                 });
 

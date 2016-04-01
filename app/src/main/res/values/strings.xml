@@ -138,4 +138,6 @@
     <string name="write_down_phrase">next, write down your recovery phrase\n\nif you ever lose your phone, you will need it to recover your wallet</string>
     <string name="show_phrase">show phrase</string>
     <string name="do_it_later">do it later</string>
+    <string name="unverified">unverified</string>
+    <string name="unverified_by_peers">unverified by at least 3 peers</string>
 </resources>

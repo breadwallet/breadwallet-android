@@ -17,6 +17,7 @@ import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
+import com.breadwallet.wallet.BRWalletManager;
 
 /**
  * BreadWallet
@@ -70,24 +71,29 @@ public class FragmentTransactionExpanded extends Fragment {
 //        TextView toDescription = (TextView) rootView.findViewById(R.id.tx_to_description);
 //        TextView toAmountText = (TextView) rootView.findViewById(R.id.tx_to_amount_text);
 //        TextView toExchangeText = (TextView) rootView.findViewById(R.id.tx_to_exchange_text);
+
         LinearLayout generalTxFrom = (LinearLayout) rootView.findViewById(R.id.general_tx_from_layout);
         LinearLayout generalTxTo = (LinearLayout) rootView.findViewById(R.id.general_tx_to_layout);
+        CurrencyManager m = CurrencyManager.getInstance(getActivity());
+        SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        final double rate = settings.getFloat(FragmentCurrency.RATE, 0);
+        final String iso = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
+        int blockHeight = item.getBlockHeight();
+        if (!BRWalletManager.getInstance(getActivity()).transactionIsVerified(item.getHexId())) {
+            statusText.setText(R.string.unverified_by_peers);
+        } else if (blockHeight == Integer.MAX_VALUE) {
+            statusText.setText(R.string.verified_waiting);
+        } else {
+            statusText.setText(String.format("confirmed in block #%d\n%s", blockHeight,
+                    FragmentSettingsAll.getFormattedDateFromLong(item.getTimeStamp())));
+        }
+
         if (received) {
-            CurrencyManager m = CurrencyManager.getInstance(getActivity());
-            SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
-            final double rate = settings.getFloat(FragmentCurrency.RATE, 0);
-            final String iso = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
+
             long amount = item.getReceived();
             Log.e(TAG, "Tx Detail received!!!! amount: " + amount + " item.getBlockHeight(): " + item.getBlockHeight());
 
             hashText.setText(item.getHexId());
-            int blockHeight = item.getBlockHeight();
-            if (blockHeight == Integer.MAX_VALUE) {
-                statusText.setText(R.string.verified_waiting);
-            } else {
-                statusText.setText(String.format("confirmed in block #%d\n%s", blockHeight,
-                        FragmentSettingsAll.getFormattedDateFromLong(item.getTimeStamp())));
-            }
             amountText.setText(m.getFormattedCurrencyString("BTC", String.valueOf(m.getBitsFromSatoshi(amount))));
             exchangeText.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, String.valueOf(m.getBitsFromSatoshi(amount)))));
 
@@ -100,11 +106,6 @@ public class FragmentTransactionExpanded extends Fragment {
             TextView toFeeAmountText = (TextView) rootView.findViewById(R.id.tx_to_fee_amount_text);
             TextView toFeeExchangeText = (TextView) rootView.findViewById(R.id.tx_to_fee_exchange_text);
 
-            CurrencyManager m = CurrencyManager.getInstance(getActivity());
-            SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
-            final double rate = settings.getFloat(FragmentCurrency.RATE, 0);
-            final String iso = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
-
             long tempReceived = m.getBitsFromSatoshi(item.getReceived());
             long tempSent = m.getBitsFromSatoshi(item.getSent());
             long tempFee = m.getBitsFromSatoshi(item.getFee());
@@ -115,8 +116,9 @@ public class FragmentTransactionExpanded extends Fragment {
                     + tempSent + " item.getBlockHeight(): " + item.getBlockHeight());
 
             hashText.setText(item.getHexId());
-            statusText.setText(String.format("confirmed in block #%d\n%s", item.getBlockHeight(),
-                    FragmentSettingsAll.getFormattedDateFromLong(item.getTimeStamp())));
+
+//            statusText.setText(String.format("confirmed in block #%d\n%s", item.getBlockHeight(),
+//                    FragmentSettingsAll.getFormattedDateFromLong(item.getTimeStamp())));
             amountText.setText(String.format("-%s", m.getFormattedCurrencyString("BTC", String.valueOf(amount))));
             exchangeText.setText(String.format("(-%s)", m.getExchangeForAmount(rate, iso, String.valueOf(amount))));
             String fromAddresses[] = item.getFrom();

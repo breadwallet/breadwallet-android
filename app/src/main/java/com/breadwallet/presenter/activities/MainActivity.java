@@ -136,6 +136,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     private FingerprintManager fingerprintManager;
     private ToastBlockShowTask toastBlockShowTask;
     private int runCount = 0;
+    boolean deleteTxs = false;
 
     public static boolean appInBackground = false;
 //    private int tipsCount;
@@ -166,7 +167,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         //TODO delete the core testing
 //        cTests();
         printPhoneSpecs();
-
 //        deleteTxs = true;
 //        testTxAdding(2);
 //        new Handler().postDelayed(new Runnable() {
@@ -176,8 +176,8 @@ public class MainActivity extends FragmentActivity implements Observer {
 //            }
 //        }, 10000);
 
-
         setUpTheWallet();
+
         registerScreenLockReceiver();
 
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
@@ -286,12 +286,13 @@ public class MainActivity extends FragmentActivity implements Observer {
         Log.e(TAG, "isNetworkAvailable: " + isNetworkAvailable);
         networkErrorBar.setVisibility(isNetworkAvailable ? View.GONE : View.VISIBLE);
         startStopReceiver(true);
-        askForPasscode();
         double currentSyncProgress = BRPeerManager.syncProgress();
         if (currentSyncProgress > 0 && currentSyncProgress < 1) {
             Log.e(TAG, "Worked! restarted the syncing!");
             BRPeerManager.startSyncingProgressThread();
         }
+        askForPasscode();
+
 
 //        else {
 //            BRPeerManager.stopSyncingProgressThread();
@@ -566,15 +567,15 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == KeyStoreManager.REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS) {
+        if (requestCode == 1) {
             // Challenge completed, proceed with using cipher
             if (resultCode == RESULT_OK) {
-                Log.e(TAG,"Auth for phrase was accepted");
+                Log.e(TAG, "Auth for phrase was accepted");
 //                if (tryEncrypt()) {
 //                    showPurchaseConfirmation();
 //                }
             } else {
-                Log.e(TAG,"Auth for phrase was rejected");
+                Log.e(TAG, "Auth for phrase was rejected");
                 // The user canceled or didnât complete the lock screen
                 // operation. Go to error/cancellation flow.
             }
@@ -751,7 +752,6 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     private void setUpTheWallet() {
         //TODO deleting all txs for testing only
-        boolean deleteTxs = false;
         if (deleteTxs) {
             TransactionDataSource TXdataSource = new TransactionDataSource(this);
             TXdataSource.open();
@@ -761,6 +761,7 @@ public class MainActivity extends FragmentActivity implements Observer {
 
         BRWalletManager m = BRWalletManager.getInstance(this);
         final BRPeerManager pm = BRPeerManager.getInstance(this);
+
 
 //        String phrase = KeyStoreManager.getKeyStoreString(this);
 //        if (phrase == null) return;
@@ -783,46 +784,52 @@ public class MainActivity extends FragmentActivity implements Observer {
 //                " transactionCount: ", String.valueOf(transactionsCount), " blocksCount: ",
 //                String.valueOf(blocksCount), " peersCount: ", String.valueOf(peersCount));
 
-        if (transactionsCount > 0) {
-            m.createTxArrayWithCount(transactionsCount);
-            for (BRTransactionEntity entity : transactions) {
-                m.putTransaction(entity.getBuff(), entity.getBlockheight(), entity.getTimestamp());
+        if (!m.isCreated()) {
+
+            if (transactionsCount > 0) {
+                m.createTxArrayWithCount(transactionsCount);
+                for (BRTransactionEntity entity : transactions) {
+                    m.putTransaction(entity.getBuff(), entity.getBlockheight(), entity.getTimestamp());
+                }
             }
+
+            String pubkeyEncoded = KeyStoreManager.getMasterPublicKey(this);
+            int r = pubkeyEncoded.length() == 0 ? 0 : 1;
+            m.createWallet(transactionsCount, pubkeyEncoded, r);
+
         }
 
-        if (blocksCount > 0) {
-            pm.createBlockArrayWithCount(blocksCount);
-            for (BRMerkleBlockEntity entity : blocks) {
-                pm.putBlock(entity.getBuff(), entity.getBlockHeight());
+        if (!pm.isCreated()) {
+            if (blocksCount > 0) {
+                pm.createBlockArrayWithCount(blocksCount);
+                for (BRMerkleBlockEntity entity : blocks) {
+                    pm.putBlock(entity.getBuff(), entity.getBlockHeight());
+                }
             }
-        }
 
-        if (peersCount > 0) {
-            pm.createPeerArrayWithCount(peersCount);
-            for (BRPeerEntity entity : peers) {
-                pm.putPeer(entity.getAddress(), entity.getPort(), entity.getTimeStamp());
+            if (peersCount > 0) {
+                pm.createPeerArrayWithCount(peersCount);
+                for (BRPeerEntity entity : peers) {
+                    pm.putPeer(entity.getAddress(), entity.getPort(), entity.getTimeStamp());
+                }
             }
-        }
 
-        String pubkeyEncoded = KeyStoreManager.getMasterPublicKey(this);
-        int r = pubkeyEncoded.length() == 0 ? 0 : 1;
+            Log.e(TAG, "blocksCount before connecting: " + blocksCount);
+            Log.e(TAG, "peersCount before connecting: " + peersCount);
 
-        m.createWallet(transactionsCount, pubkeyEncoded, r);
-        String walletTimeString = KeyStoreManager.getWalletCreationTime(this);
-        long earliestKeyTime = !walletTimeString.isEmpty()? Long.valueOf(walletTimeString) : 0;
-        Log.e(TAG, "blocksCount before connecting: " + blocksCount);
-        Log.e(TAG, "peersCount before connecting: " + peersCount);
-        Log.e(TAG, "earliestKeyTime before connecting: " + earliestKeyTime);
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                pm.connect(earliestKeyTime, blocksCount, peersCount);
-//            }
-//        }).start();
-        //TODO take this test off.
+            //TODO take this test off.
 //        earliestKeyTime = 1456796244;
+            String walletTimeString = KeyStoreManager.getWalletCreationTime(this);
+            final long earliestKeyTime = !walletTimeString.isEmpty() ? Long.valueOf(walletTimeString) : 0;
+            Log.e(TAG, "earliestKeyTime before connecting: " + earliestKeyTime);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    pm.createAndConnect(earliestKeyTime > 0 ? earliestKeyTime : 0, blocksCount, peersCount);
+                }
+            }).start();
 
-        pm.createAndConnect(earliestKeyTime > 0 ? earliestKeyTime : 0, blocksCount, peersCount);
+        }
 
     }
 
@@ -862,32 +869,19 @@ public class MainActivity extends FragmentActivity implements Observer {
         }
     }
 
-    private void testTxAdding(final int number) {
-        for (int i = 1; i <= number; i++) {
-            final int finalVar = i;
-            new Handler().postDelayed(new Runnable() {
+    private void askForPasscode() {
+        final String pass = KeyStoreManager.getPassCode(app);
+        if (pass == null || pass.isEmpty()) {
+            new Handler().post(new Runnable() {
                 @Override
                 public void run() {
-                    BRWalletManager.getInstance(app).testTransactionAdding(finalVar * 100);
-                    BRWalletManager.getInstance(app).testTransactionAdding(1000000000);
-                }
-            }, 10000 + finalVar * 1000);
-        }
-    }
-
-    private void askForPasscode() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (app != null) {
-                    String pass = KeyStoreManager.getPassCode(app);
-                    Log.e(TAG, "PASSCODE: " + pass);
-                    if (pass == null || pass.isEmpty()) {
+                    if (app != null) {
+                        Log.e(TAG, "PASSCODE: " + pass);
                         new PassCodeTask(app).start();
                     }
                 }
-            }
-        }, 1000);
+            });
+        }
 
     }
 

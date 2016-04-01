@@ -319,4 +319,8 @@ public class BRWalletManager {
 
     public native long getMinOutputAmount();
 
+    public native boolean isCreated();
+
+    public native boolean transactionIsVerified(String txHash);
+
 }
