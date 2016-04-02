@@ -255,7 +255,6 @@ public class BRPeerManager {
                 });
 
                 while (running) {
-                    Log.e(TAG, "SyncProgressTask.run()...");
                     app.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

@@ -231,11 +231,7 @@ public class BRWalletManager {
     }
 
     public static void onTxAdded(byte[] tx, int blockHeight, long timestamp, final long amount, String hash) {
-//        Log.e(TAG, "amount on the txAdded:" + amount);
         Log.e(TAG, "in the BRWalletManager - onTxAdded: " + tx.length + " " + blockHeight + " " + timestamp);
-//        for (byte b : tx) {
-//            System.out.println(Integer.toBinaryString(b & 255 | 256).substring(1));
-//        }
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null && !MiddleViewAdapter.getSyncing()) {
             ((Activity) ctx).runOnUiThread(new Runnable() {
@@ -305,7 +301,7 @@ public class BRWalletManager {
 
     public native TransactionListItem[] getTransactions();
 
-    public native void pay(String addressHolder, long amountHolder, String strSeed);
+    public native boolean pay(String addressHolder, long amountHolder, String strSeed);
 
     public native void rescan();
 
@@ -319,8 +315,12 @@ public class BRWalletManager {
 
     public native long getMinOutputAmount();
 
+    public native long getMaxOutputAmount();
+
     public native boolean isCreated();
 
     public native boolean transactionIsVerified(String txHash);
+
+    public native boolean tryTransaction(String addressHolder, long amountHolder);
 
 }

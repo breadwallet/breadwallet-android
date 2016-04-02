@@ -40,6 +40,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
@@ -246,22 +247,18 @@ public class PasswordDialogFragment extends DialogFragment {
                 } else if (mode == BRConstants.AUTH_FOR_PAY && request != null) {
                     //TODO make sure you get the payment right for all addresses and check for nulls
 
-//                    new Thread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            try {
                     BRWalletManager walletManager = BRWalletManager.getInstance(getActivity());
                     String seed = KeyStoreManager.getSeed();
                     if (seed != null && !seed.isEmpty()) {
-                        walletManager.pay(request.addresses[0], request.amount * 100, seed);
+                        boolean success = walletManager.pay(request.addresses[0], request.amount * 100, seed);
+                        if (!success) {
+                            ((BreadWalletApp) getActivity().getApplication()).showCustomToast(getActivity(),
+                                    "Failed to send", MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
+                            return false;
+                        }
                     }
                     seed = null;
                     System.gc();
-//                            } catch (Exception e){
-//                                e.printStackTrace();
-//                            }
-//                        }
-//                    }).start();
 
                     final MediaPlayer mp = MediaPlayer.create(getActivity(), R.raw.coinflip);
                     mp.start();

@@ -209,20 +209,21 @@ public class IntroActivity extends FragmentActivity {
             //Device passcode/password should be enabled for the app to work
             ((BreadWalletApp) getApplication()).showDeviceNotSecuredWarning(this);
         } else {
+            if (m.noWallet(app)) {
 
-            //now check if there is a wallet or should we create/restore one.
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (m.noWallet(app)) {
+                //now check if there is a wallet or should we create/restore one.
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
                         Log.e(TAG, "should create new wallet");
                         showRecoverNewWalletFragment();
-                    } else {
-                        Log.e(TAG, "should go to the current wallet");
-                        startMainActivity();
                     }
-                }
-            }, 800);
+                }, 800);
+            } else {
+                Log.e(TAG, "should go to the current wallet");
+                startMainActivity();
+            }
+
         }
     }
 

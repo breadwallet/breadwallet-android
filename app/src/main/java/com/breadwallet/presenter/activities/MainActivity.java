@@ -508,7 +508,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         amountHolder = FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_RIGHT ?
                 AmountAdapter.getRightValue() : AmountAdapter.getLeftValue();
         addressHolder = FragmentScanResult.address;
-        Double amountAsDouble = Double.parseDouble(amountHolder);
+        final Double amountAsDouble = Double.parseDouble(amountHolder);
         if (addressHolder == null) return;
         if (addressHolder.length() < 20) return;
         if (amountAsDouble <= 0) return;
@@ -516,7 +516,33 @@ public class MainActivity extends FragmentActivity implements Observer {
         CurrencyManager cm = CurrencyManager.getInstance(this);
 
         if (cm.isNetworkAvailable(this)) {
-            long feeForTx = cm.getBitsFromSatoshi(BRWalletManager.getInstance(this).feeForTransaction(addressHolder, cm.getSatoshisFromBits(Math.round(amountAsDouble))));
+            BRWalletManager m = BRWalletManager.getInstance(this);
+            boolean txPossible = m.tryTransaction(addressHolder, cm.getSatoshisFromBits(Math.round(amountAsDouble)));
+            if (!txPossible && amountAsDouble <= cm.getBitsFromSatoshi(cm.getBALANCE()) && amountAsDouble > 0) {
+                final double maxAmountDouble = cm.getBitsFromSatoshi(m.getMaxOutputAmount()); //TODO use core
+                Log.e(TAG,"maxAmountDouble: " + maxAmountDouble);
+                final double amountToReduce = amountAsDouble - maxAmountDouble;
+                String strToReduce = String.valueOf(amountToReduce);
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage(String.format("reduce payment amount by\n%s?", amountToReduce))
+                        .setTitle("insufficient funds for bitcoin network fee")
+                        .setCancelable(false)
+                        .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        })
+                        .setPositiveButton(strToReduce, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, Math.round(amountAsDouble - amountToReduce), null));
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+                return;
+            }
+            long feeForTx = cm.getBitsFromSatoshi(m.feeForTransaction(addressHolder, cm.getSatoshisFromBits(Math.round(amountAsDouble))));
             Log.e(TAG, "pay >>>> feeForTx: " + feeForTx + ", amountAsDouble: " + amountAsDouble +
                     ", CurrencyManager.getInstance(this).getBALANCE(): " + cm.getBitsFromSatoshi(cm.getBALANCE()));
             if (feeForTx != 0 && amountAsDouble + feeForTx < cm.getBALANCE()) {

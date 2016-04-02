@@ -37,7 +37,7 @@ public class BackgroundMovingAnimator {
     private static final int LeftToRight = 2;
     private static int mDirection = RightToLeft;
     private static final RectF mDisplayRect = new RectF();
-    private static final Matrix mMatrix = new Matrix();
+    private static Matrix mMatrix = new Matrix();
     private static float mScaleFactor;
     private static final int DURATION = 30000;
     private static ImageView background;
@@ -76,7 +76,7 @@ public class BackgroundMovingAnimator {
 //                else
 //                    mDirection = RightToLeft;
 
-                animate();
+//                animate();
             }
         });
         mCurrentAnimator.start();
@@ -89,10 +89,9 @@ public class BackgroundMovingAnimator {
     }
 
     public static void animateBackgroundMoving(ImageView theBackground) {
-        if (background != null)
-            background.clearAnimation();
         background = theBackground;
         background.clearAnimation();
+        mMatrix = new Matrix();
         background.post(new Runnable() {
             @Override
             public void run() {

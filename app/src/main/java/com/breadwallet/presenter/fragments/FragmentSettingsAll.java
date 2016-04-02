@@ -108,7 +108,13 @@ public class FragmentSettingsAll extends Fragment {
             public void onClick(View v) {
                 if (FragmentAnimator.checkTheMultipressingAvailability()) {
                     //TODO broken, fix then use!
-                    BRWalletManager.getInstance(getActivity()).rescan();
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            BRWalletManager.getInstance(getActivity()).rescan();
+                        }
+                    }).start();
+
                 }
             }
         });
@@ -266,7 +272,12 @@ public class FragmentSettingsAll extends Fragment {
                 "TX getBalanceAfterTx", String.valueOf(item.getBalanceAfterTx()));
         int blockHeight = item.getBlockHeight();
         int estimatedBlockHeight = BRPeerManager.getEstimatedBlockHeight();
-        if (blockHeight != Integer.MAX_VALUE && blockHeight + 5 < estimatedBlockHeight) {
+
+        if(item.getSent() > 0 && item.getSent() == item.getReceived()){
+            sentReceivedTextView.setBackgroundResource(R.drawable.unconfirmed_label);
+            sentReceivedTextView.setText("moved");
+            sentReceivedTextView.setTextColor(unconfirmedColor);
+        }  else if (blockHeight != Integer.MAX_VALUE && blockHeight + 5 < estimatedBlockHeight) {
             sentReceivedTextView.setBackgroundResource(received ? R.drawable.received_label : R.drawable.sent_label);
             sentReceivedTextView.setText(received ? "received" : "sent");
             sentReceivedTextView.setTextColor(received ? receivedColor : sentColor);

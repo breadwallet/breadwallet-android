@@ -478,13 +478,13 @@ public class KeyStoreManager {
     }
 
     public static String getPassCode(final Context context) {
-        KeyguardManager myKM = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
-        if (myKM.inKeyguardRestrictedInputMode()) {
-            Log.e(TAG, "THE SCREEN IS LOCKED!");
-            return null;
-        } else {
-            Log.e(TAG, "THE SCREEN IS UNLOCKED!");
-        }
+//        KeyguardManager myKM = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
+//        if (myKM.inKeyguardRestrictedInputMode()) {
+//            Log.e(TAG, "THE SCREEN IS LOCKED!");
+//            return null;
+//        } else {
+//            Log.e(TAG, "THE SCREEN IS UNLOCKED!");
+//        }
         KeyStore keyStore;
         String recoveredSecret = "";
         String filesDirectory = context.getFilesDir().getAbsolutePath();

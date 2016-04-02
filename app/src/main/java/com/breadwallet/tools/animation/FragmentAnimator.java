@@ -72,7 +72,7 @@ public class FragmentAnimator {
             if (ActivityCompat.shouldShowRequestPermissionRationale(app,
                     Manifest.permission.CAMERA)) {
                 Log.e(TAG, "YES explanation!");
-                ((BreadWalletApp) app.getApplication()).showCustomToast(app, "You refused the permission for the Camera use!", MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
+                ((BreadWalletApp) app.getApplication()).showCustomToast(app, "Please go to Settings > apps > Breadwallet and turn on the camera permission", MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
