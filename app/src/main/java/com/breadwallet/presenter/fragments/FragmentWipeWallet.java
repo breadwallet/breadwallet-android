@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -66,6 +67,7 @@ public class FragmentWipeWallet extends Fragment {
         recoveryPhraseEditText = (EditText) rootView.findViewById(R.id.editText_phrase);
         wipe = (Button) rootView.findViewById(R.id.wipe_wallet_wipe);
         recoveryPhraseEditText.setText("");
+        recoveryPhraseEditText.setSingleLine();
         recoveryPhraseEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) ||
@@ -113,10 +115,19 @@ public class FragmentWipeWallet extends Fragment {
 
     private boolean phraseIsValid(String insertedPhrase) {
         String thePhrase = KeyStoreManager.getKeyStoreString(getActivity());
+
         if (thePhrase == null) throw new NullPointerException("Phrase is null! weird behaviour");
+        Log.e(TAG,"thePhrase: " + thePhrase);
+        Log.e(TAG,"insertedPhrase: " + insertedPhrase);
+        String trimmedPhrase = thePhrase.trim();
+        String trimmedInsertedPhrase = insertedPhrase.trim();
+        Log.e(TAG,"trimmedPhrase: " + trimmedPhrase);
+        Log.e(TAG,"trimmedInsertedPhrase: " + trimmedInsertedPhrase);
+
+
 //        Log.e(TAG,"Inserted:" +  insertedPhrase);
 //        Log.e(TAG,"Actual:" +  thePhrase);
-        return insertedPhrase.equalsIgnoreCase(thePhrase);
+        return trimmedInsertedPhrase.equalsIgnoreCase(trimmedPhrase);
     }
 
     @Override

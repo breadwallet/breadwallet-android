@@ -93,10 +93,9 @@ public class MainFragmentQR extends Fragment {
 
 //        Log.e(TAG,"FROM PREFS receiveAddress: " + receiveAddress);
 //        if (receiveAddress == null) {
-        BRWalletManager.getInstance(getActivity()).refreshAddress();
+        BRWalletManager.refreshAddress();
         receiveAddress = prefs.getString(RECEIVE_ADDRESS, null);
 //        }
-        //TODO refresh the address once used
         qrcode = (ImageView) getActivity().findViewById(R.id.main_image_qr_code);
         sharingFragment = new SharingFragment();
         RelativeLayout main_fragment_qr = (RelativeLayout) getActivity().findViewById(R.id.main_fragment_qr);
@@ -111,7 +110,7 @@ public class MainFragmentQR extends Fragment {
             public void onClick(View view) {
                 breadWalletApp.cancelToast();
                 if (FragmentAnimator.checkTheMultipressingAvailability()) {
-                    Log.e(TAG,"finalReceiveAddress: " + receiveAddress);
+                    Log.e(TAG, "finalReceiveAddress: " + receiveAddress);
                     sharingFragment.setTheAddress(receiveAddress);
                     saveBitmapToFile();
                     sharingFragment.show(fm, SharingFragment.class.getName());
@@ -142,18 +141,10 @@ public class MainFragmentQR extends Fragment {
 
             }
         });
-//        //TODO testing only
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                receiveAddress = BRWalletManager.getInstance(getActivity()).getReceiveAddress();
-//                mainAddressText.setText(receiveAddress + " ----");
-//            }
-//        }, 10000);
     }
 
     private void generateQR() {
-        Log.e(TAG,"generateQR: " + receiveAddress);
+        Log.e(TAG, "generateQR: " + receiveAddress);
         Activity activity = getActivity();
         if (activity == null || qrcode == null) return;
 

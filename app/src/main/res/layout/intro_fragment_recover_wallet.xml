@@ -24,6 +24,7 @@
         android:background="@color/white_trans"
         android:textColor="@color/wallet_orange"
         android:layout_marginTop="20dp"
+        android:textSize="22sp"
         android:layout_margin="16dp"
         android:gravity="top"/>
 

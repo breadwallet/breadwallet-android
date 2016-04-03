@@ -76,11 +76,15 @@ public class IntroRecoverWalletFragment extends Fragment {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                String phraseToCheck = editText.getText().toString();
-                if (words.length > 1000 && validateRecoveryPhrase(words, phraseToCheck)) {
+                String phraseToCheck = editText.getText().toString().trim();
+                Log.e(TAG, "phraseToCheck: |" + phraseToCheck + "|");
+                if (words.length != 2048)
+                    throw new IllegalArgumentException("words.length is not 2048");
+                if (validateRecoveryPhrase(words, phraseToCheck)) {
                     String normalizedPhrase = Normalizer.normalize(phraseToCheck, Normalizer.Form.NFKD);
                     boolean success = KeyStoreManager.setKeyStoreString(normalizedPhrase, getActivity());
-                    if(!success) throw new NullPointerException("Something went wrong when set the phrase into the KeyStore");
+                    if (!success)
+                        throw new NullPointerException("Something went wrong when set the phrase into the KeyStore");
                     BRWalletManager m;
                     m = BRWalletManager.getInstance(getActivity());
 //                    KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), getActivity());

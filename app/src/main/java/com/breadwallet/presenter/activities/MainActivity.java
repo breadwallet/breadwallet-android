@@ -56,7 +56,6 @@ import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.sqlite.SQLiteManager;
-import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.tools.threads.PassCodeTask;
 import com.breadwallet.tools.threads.ToastBlockShowTask;
 import com.breadwallet.wallet.BRPeerManager;
@@ -139,14 +138,6 @@ public class MainActivity extends FragmentActivity implements Observer {
     boolean deleteTxs = false;
 
     public static boolean appInBackground = false;
-//    private int tipsCount;
-
-
-    //TODO Test everything with the KILL ACTIVITY feature in the developer settings
-    //loading the native library
-//    static {
-//        System.loadLibrary("core");
-//    }
 
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
@@ -164,17 +155,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         app = this;
         initializeViews();
 
-        //TODO delete the core testing
-//        cTests();
         printPhoneSpecs();
-//        deleteTxs = true;
-//        testTxAdding(2);
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                BRWalletManager.getInstance(app).testTransactionAdding(34643634);
-//            }
-//        }, 10000);
 
         setUpTheWallet();
 
@@ -519,8 +500,8 @@ public class MainActivity extends FragmentActivity implements Observer {
             BRWalletManager m = BRWalletManager.getInstance(this);
             boolean txPossible = m.tryTransaction(addressHolder, cm.getSatoshisFromBits(Math.round(amountAsDouble)));
             if (!txPossible && amountAsDouble <= cm.getBitsFromSatoshi(cm.getBALANCE()) && amountAsDouble > 0) {
-                final double maxAmountDouble = cm.getBitsFromSatoshi(m.getMaxOutputAmount()); //TODO use core
-                Log.e(TAG,"maxAmountDouble: " + maxAmountDouble);
+                final double maxAmountDouble = cm.getBitsFromSatoshi(m.getMaxOutputAmount());
+                Log.e(TAG, "maxAmountDouble: " + maxAmountDouble);
                 final double amountToReduce = amountAsDouble - maxAmountDouble;
                 String strToReduce = String.valueOf(amountToReduce);
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -777,13 +758,6 @@ public class MainActivity extends FragmentActivity implements Observer {
 //    }
 
     private void setUpTheWallet() {
-        //TODO deleting all txs for testing only
-        if (deleteTxs) {
-            TransactionDataSource TXdataSource = new TransactionDataSource(this);
-            TXdataSource.open();
-            TXdataSource.deleteAllTransactions();
-            TXdataSource.close();
-        }
 
         BRWalletManager m = BRWalletManager.getInstance(this);
         final BRPeerManager pm = BRPeerManager.getInstance(this);
@@ -843,7 +817,6 @@ public class MainActivity extends FragmentActivity implements Observer {
             Log.e(TAG, "blocksCount before connecting: " + blocksCount);
             Log.e(TAG, "peersCount before connecting: " + peersCount);
 
-            //TODO take this test off.
 //        earliestKeyTime = 1456796244;
             String walletTimeString = KeyStoreManager.getWalletCreationTime(this);
             final long earliestKeyTime = !walletTimeString.isEmpty() ? Long.valueOf(walletTimeString) : 0;

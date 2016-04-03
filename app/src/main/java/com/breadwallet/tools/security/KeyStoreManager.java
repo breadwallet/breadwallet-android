@@ -5,7 +5,6 @@ import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.security.keystore.KeyGenParameterSpec;
-import android.security.keystore.KeyInfo;
 import android.security.keystore.KeyProperties;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.util.Log;
@@ -29,7 +28,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.Enumeration;
 
 import javax.crypto.Cipher;
@@ -38,7 +36,6 @@ import javax.crypto.CipherOutputStream;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.IvParameterSpec;
 
 /**
@@ -93,10 +90,10 @@ public class KeyStoreManager {
 
     public static boolean setKeyStoreString(String strToStore, Context context) {
         //TODO CHECK FOR FINGERPRINT SET!!! CANNOT WORK WITHOUT IT
+        //TODO refactor the String to byte[] or char[]
         if (strToStore == null) return false;
         if (strToStore.length() == 0) return false;
 
-        Log.e(TAG, strToStore);
         try {
             KeyStore keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
             keyStore.load(null);
@@ -123,15 +120,11 @@ public class KeyStoreManager {
             }
 
             int nAfter = keyStore.size();
-            Log.v(TAG, "Before = " + nBefore + " After = " + nAfter);
 
             String filesDirectory = context.getFilesDir().getAbsolutePath();
             String encryptedDataFilePath = filesDirectory + File.separator + PHRASE_FILENAME;
 
             SecretKey secret = (SecretKey) keyStore.getKey(PHRASE_ALIAS, null);
-//            String algorithm = KeyProperties.KEY_ALGORITHM_AES + "/" + KeyProperties.BLOCK_MODE_CBC + "/"
-//                    + KeyProperties.ENCRYPTION_PADDING_PKCS7;
-//            Log.e(TAG, "algorithm: " + algorithm);
             Cipher inCipher = Cipher.getInstance(CIPHER_ALGORITHM);
             inCipher.init(Cipher.ENCRYPT_MODE, secret);
             byte[] iv = inCipher.getIV();
@@ -152,11 +145,7 @@ public class KeyStoreManager {
             Log.e(TAG, Log.getStackTraceString(e));
             showAuthenticationScreen(context);
         } catch (IOException | CertificateException | NoSuchAlgorithmException | InvalidKeyException
-                | NoSuchPaddingException | KeyStoreException | UnrecoverableKeyException e) {
-            e.printStackTrace();
-        } catch (InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
-        } catch (NoSuchProviderException e) {
+                | NoSuchPaddingException | KeyStoreException | UnrecoverableKeyException | InvalidAlgorithmParameterException | NoSuchProviderException e) {
             e.printStackTrace();
         }
         return false;
@@ -182,16 +171,16 @@ public class KeyStoreManager {
             SecretKey secretKey = (SecretKey)
                     keyStore.getKey(PHRASE_ALIAS, null);
             if (secretKey == null) throw new RuntimeException("secretKey is null");
-            SecretKeyFactory factory = SecretKeyFactory.getInstance(secretKey.getAlgorithm(), ANDROID_KEY_STORE);
-            KeyInfo keyInfo;
-            try {
-                keyInfo = (KeyInfo) factory.getKeySpec(secretKey, KeyInfo.class);
-                Log.e(TAG, "keyInfo.isUserAuthenticationRequirementEnforcedBySecureHardware(): " + keyInfo.isUserAuthenticationRequirementEnforcedBySecureHardware());
-                Log.e(TAG, "keyInfo.isInsideSecureHardware(): " + keyInfo.isInsideSecureHardware());
-                Log.e(TAG, "keyInfo.isUserAuthenticationRequired(): " + keyInfo.isUserAuthenticationRequired());
-            } catch (InvalidKeySpecException e) {
-                Log.e(TAG, "keyInfo is not created, invalid SecretKey");
-            }
+//            SecretKeyFactory factory = SecretKeyFactory.getInstance(secretKey.getAlgorithm(), ANDROID_KEY_STORE);
+//            KeyInfo keyInfo;
+//            try {
+//                keyInfo = (KeyInfo) factory.getKeySpec(secretKey, KeyInfo.class);
+////                Log.e(TAG, "keyInfo.isUserAuthenticationRequirementEnforcedBySecureHardware(): " + keyInfo.isUserAuthenticationRequirementEnforcedBySecureHardware());
+////                Log.e(TAG, "keyInfo.isInsideSecureHardware(): " + keyInfo.isInsideSecureHardware());
+////                Log.e(TAG, "keyInfo.isUserAuthenticationRequired(): " + keyInfo.isUserAuthenticationRequired());
+//            } catch (InvalidKeySpecException e) {
+//                Log.e(TAG, "keyInfo is not created, invalid SecretKey");
+//            }
 
             String path = filesDirectory + File.separator + PHRASE_IV;
             byte[] iv = readBytesFromFile(path);
@@ -201,7 +190,7 @@ public class KeyStoreManager {
 
             CipherInputStream cipherInputStream = new CipherInputStream(
                     new FileInputStream(encryptedDataFilePath), outCipher);
-            byte[] roundTrippedBytes = new byte[256]; //TODO: dynamically resize as we get more data
+            byte[] roundTrippedBytes = new byte[256];
             int index = 0;
             int nextByte;
             while ((nextByte = cipherInputStream.read()) != -1) {
@@ -213,7 +202,7 @@ public class KeyStoreManager {
             e.printStackTrace();
         }
 
-        Log.e(TAG, "recovered phrase: " + recoveredSecret);
+//        Log.e(TAG, "recovered phrase: " + recoveredSecret);
         return recoveredSecret;
     }
 
@@ -227,9 +216,6 @@ public class KeyStoreManager {
             int nBefore = keyStore.size();
             // Create the keys if necessary
             if (!keyStore.containsAlias(PUB_KEY_ALIAS)) {
-//                Calendar notBefore = Calendar.getInstance();
-//                Calendar notAfter = Calendar.getInstance();
-//                notAfter.add(Calendar.YEAR, 99);
                 KeyGenerator generator = KeyGenerator.getInstance(
                         KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEY_STORE);
                 KeyGenParameterSpec spec = new KeyGenParameterSpec.Builder(PUB_KEY_ALIAS, KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
@@ -243,15 +229,10 @@ public class KeyStoreManager {
                 generator.generateKey();
             }
             int nAfter = keyStore.size();
-            Log.v(TAG, "Before = " + nBefore + " After = " + nAfter);
 
 //            // Encrypt the text
             String filesDirectory = context.getFilesDir().getAbsolutePath();
             String encryptedDataFilePath = filesDirectory + File.separator + PUB_KEY_FILENAME;
-//            Log.v(TAG, "strPhrase = " + strToStore);
-//            Log.v(TAG, "dataDirectory = " + dataDirectory);
-//            Log.v(TAG, "filesDirectory = " + filesDirectory);
-//            Log.v(TAG, "encryptedDataFilePath = " + encryptedDataFilePath);
             SecretKey secret = (SecretKey) keyStore.getKey(PUB_KEY_ALIAS, null);
             Cipher inCipher;
             inCipher = Cipher.getInstance(CIPHER_ALGORITHM);
@@ -298,7 +279,7 @@ public class KeyStoreManager {
 
             CipherInputStream cipherInputStream = new CipherInputStream(
                     new FileInputStream(encryptedDataFilePath), outCipher);
-            byte[] roundTrippedBytes = new byte[256]; //TODO: dynamically resize as we get more data
+            byte[] roundTrippedBytes = new byte[256];
             int index = 0;
             int nextByte;
             while ((nextByte = cipherInputStream.read()) != -1) {
@@ -310,7 +291,7 @@ public class KeyStoreManager {
             e.printStackTrace();
         }
 
-        Log.e(TAG, "recovered pubKey: " + recoveredSecret);
+//        Log.e(TAG, "recovered pubKey: " + recoveredSecret);
         return recoveredSecret;
     }
 
@@ -340,15 +321,10 @@ public class KeyStoreManager {
                 generator.generateKey(); // needs to be here
             }
             int nAfter = keyStore.size();
-            Log.v(TAG, "Before = " + nBefore + " After = " + nAfter);
 
 //            // Encrypt the text
             String filesDirectory = context.getFilesDir().getAbsolutePath();
             String encryptedDataFilePath = filesDirectory + File.separator + WALLET_CREATION_TIME_FILENAME;
-////            Log.v(TAG, "strPhrase = " + strToStore);
-////            Log.v(TAG, "dataDirectory = " + dataDirectory);
-////            Log.v(TAG, "filesDirectory = " + filesDirectory);
-////            Log.v(TAG, "encryptedDataFilePath = " + encryptedDataFilePath);
             SecretKey secret = (SecretKey) keyStore.getKey(WALLET_CREATION_TIME_ALIAS, null);
             Cipher inCipher;
             inCipher = Cipher.getInstance(CIPHER_ALGORITHM);
@@ -398,7 +374,7 @@ public class KeyStoreManager {
 
             CipherInputStream cipherInputStream = new CipherInputStream(
                     new FileInputStream(encryptedDataFilePath), outCipher);
-            byte[] roundTrippedBytes = new byte[16]; //TODO: dynamically resize as we get more data
+            byte[] roundTrippedBytes = new byte[16];
             int index = 0;
             int nextByte;
             while ((nextByte = cipherInputStream.read()) != -1) {
@@ -406,7 +382,7 @@ public class KeyStoreManager {
                 index++;
             }
             recoveredSecret = new String(roundTrippedBytes, 0, index, "UTF-8");
-            Log.e(TAG, "recovered walletCreationTime: " + recoveredSecret);
+//            Log.e(TAG, "recovered walletCreationTime: " + recoveredSecret);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -441,15 +417,10 @@ public class KeyStoreManager {
                 generator.generateKey(); // needs to be here
             }
             int nAfter = keyStore.size();
-            Log.v(TAG, "Before = " + nBefore + " After = " + nAfter);
 
 //            // Encrypt the text
             String filesDirectory = context.getFilesDir().getAbsolutePath();
             String encryptedDataFilePath = filesDirectory + File.separator + PASS_CODE_FILENAME;
-////            Log.v(TAG, "strPhrase = " + strToStore);
-////            Log.v(TAG, "dataDirectory = " + dataDirectory);
-////            Log.v(TAG, "filesDirectory = " + filesDirectory);
-////            Log.v(TAG, "encryptedDataFilePath = " + encryptedDataFilePath);
             SecretKey secret = (SecretKey) keyStore.getKey(PASS_CODE_ALIAS, null);
             Cipher inCipher;
             inCipher = Cipher.getInstance(CIPHER_ALGORITHM);
@@ -461,7 +432,6 @@ public class KeyStoreManager {
             CipherOutputStream cipherOutputStream = new CipherOutputStream(
                     new FileOutputStream(encryptedDataFilePath), inCipher);
             byte[] bytesToStore = passcode.getBytes("UTF-8");
-            Log.e(TAG, "bytesToStore(phrase): length " + bytesToStore.length);
             cipherOutputStream.write(bytesToStore);
             cipherOutputStream.close();
             return true;
@@ -503,7 +473,7 @@ public class KeyStoreManager {
 
             CipherInputStream cipherInputStream = new CipherInputStream(
                     new FileInputStream(encryptedDataFilePath), outCipher);
-            byte[] roundTrippedBytes = new byte[4]; //TODO: dynamically resize as we get more data
+            byte[] roundTrippedBytes = new byte[4];
             int index = 0;
             int nextByte;
             while ((nextByte = cipherInputStream.read()) != -1) {
@@ -515,7 +485,6 @@ public class KeyStoreManager {
             e.printStackTrace();
         }
 
-        Log.e(TAG, "recovered passcode: " + recoveredSecret);
         return recoveredSecret;
     }
 
@@ -624,8 +593,8 @@ public class KeyStoreManager {
     }
 
     public static String getSeed() {
-        String denied = "none";
         Log.e(TAG, "in getSeed in KeyStoreManager");
+        String denied = "none";
         Context app = MainActivity.app;
         if (app == null)
             app = IntroActivity.app;

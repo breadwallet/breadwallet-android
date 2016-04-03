@@ -125,7 +125,6 @@ public class SharingFragment extends DialogFragment {
                     getDialog().cancel();
                     FragmentScanResult.isARequest = true;
                     FragmentAnimator.animateScanResultFragment();
-                    //TODO: actions on requesting amount
                 }
             }
         });

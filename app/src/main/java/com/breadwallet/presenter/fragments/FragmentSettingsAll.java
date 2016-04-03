@@ -107,7 +107,6 @@ public class FragmentSettingsAll extends Fragment {
             @Override
             public void onClick(View v) {
                 if (FragmentAnimator.checkTheMultipressingAvailability()) {
-                    //TODO broken, fix then use!
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -148,10 +147,6 @@ public class FragmentSettingsAll extends Fragment {
     public static void refreshTransactions(final Context ctx) {
         transactionObjects = BRWalletManager.getInstance(ctx).getTransactions();
 
-//        transactionObjects = getTestTransactions(); //TODO this is a test
-//        transactionObjects = new TransactionListItem[0];
-//            transactionObjects = getTestTransactions();
-//        Log.e(TAG, "REFRESH TRANSACTIONS: " + transactionObjects.length);
         if (ctx != null && ctx instanceof MainActivity) {
             ((MainActivity) ctx).runOnUiThread(new Runnable() {
                 @Override

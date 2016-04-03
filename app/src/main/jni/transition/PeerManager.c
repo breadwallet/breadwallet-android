@@ -41,7 +41,6 @@ static void syncStarted(void *info) {
     //call java methods
     (*globalEnv)->CallStaticVoidMethod(globalEnv, _peerManagerClass, mid);
 
-    //TODO destroy the _lock
 }
 
 static void syncSucceded(void *info) {

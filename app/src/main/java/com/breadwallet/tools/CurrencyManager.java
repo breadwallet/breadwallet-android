@@ -123,7 +123,6 @@ public class CurrencyManager extends Observable {
                             String theIso = getISOFromPrefs();
 //                            Log.e(TAG, "theIso : " + theIso);
                             if (theIso.equals("USD")) {
-                                //TODO put in shared prefs
 //                                Log.e(TAG, "Putting the shit in the shared preffs");
                                 SharedPreferences settings = context.getSharedPreferences(MainActivity.PREFS_NAME, 0);
                                 SharedPreferences.Editor editor = settings.edit();
@@ -205,7 +204,6 @@ public class CurrencyManager extends Observable {
         initializeTimerTask();
 
         //schedule the timer, after the first 5000ms the TimerTask will run every 10000ms
-        //TODO PUT 1 MINUTE
         timer.schedule(timerTask, 0, 60000); //
     }
 

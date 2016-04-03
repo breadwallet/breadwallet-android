@@ -222,7 +222,6 @@ public class BRWalletManager {
             @Override
             public void run() {
                 CurrencyManager.getInstance(ctx).setBalance(balance);
-                //TODO check this when Aaron fixes the bug
                 refreshAddress();
                 FragmentSettingsAll.refreshTransactions(ctx);
             }
@@ -261,14 +260,10 @@ public class BRWalletManager {
         if (ctx != null) {
             SQLiteManager.getInstance(ctx).updateTxByHash(hash, blockHeight);
         }
-        //TODO ask Aaron how to update tx
         Log.e(TAG, "in the BRWalletManager - onTxUpdated");
     }
 
     public static void onTxDeleted(String hash) {
-        //TODO ask Aaron how to delete tx
-//        SQLiteManager sqLiteManager = SQLiteManager.getInstance(ctx);
-//        List<BRTransactionEntity> txList = sqLiteManager.getTransactions();
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) {
             SQLiteManager.getInstance(ctx).deleteTxByHash(hash);
