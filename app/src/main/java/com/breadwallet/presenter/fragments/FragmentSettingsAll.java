@@ -267,12 +267,14 @@ public class FragmentSettingsAll extends Fragment {
                 "TX getBalanceAfterTx", String.valueOf(item.getBalanceAfterTx()));
         int blockHeight = item.getBlockHeight();
         int estimatedBlockHeight = BRPeerManager.getEstimatedBlockHeight();
+        int confirms = blockHeight == Integer.MAX_VALUE ? 0 : estimatedBlockHeight - blockHeight + 1;
+        Log.e(TAG,"confirms: " + confirms);
 
         if(item.getSent() > 0 && item.getSent() == item.getReceived()){
             sentReceivedTextView.setBackgroundResource(R.drawable.unconfirmed_label);
-            sentReceivedTextView.setText("moved");
+            sentReceivedTextView.setText(R.string.moved);
             sentReceivedTextView.setTextColor(unconfirmedColor);
-        }  else if (blockHeight != Integer.MAX_VALUE && blockHeight + 5 < estimatedBlockHeight) {
+        }  else if (blockHeight != Integer.MAX_VALUE && confirms >= 6) {
             sentReceivedTextView.setBackgroundResource(received ? R.drawable.received_label : R.drawable.sent_label);
             sentReceivedTextView.setText(received ? "received" : "sent");
             sentReceivedTextView.setTextColor(received ? receivedColor : sentColor);
@@ -282,7 +284,7 @@ public class FragmentSettingsAll extends Fragment {
             if (!BRWalletManager.getInstance(app).transactionIsVerified(item.getHexId())) {
                 sentReceivedTextView.setText(R.string.unverified);
             } else {
-                int confirms = blockHeight == Integer.MAX_VALUE ? 0 : estimatedBlockHeight - blockHeight + 1;
+
                 Log.e(TAG, "item.getBlockHeight(): " + blockHeight + ", confirms: " + confirms + ", lastBlock: " + estimatedBlockHeight);
                 sentReceivedTextView.setText(String.format("%d confirmations", confirms >= 0 && confirms <= 5 ? confirms : -1));
             }

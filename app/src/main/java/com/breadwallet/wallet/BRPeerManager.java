@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.View;
 
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.entities.BlockEntity;
+import com.breadwallet.presenter.entities.PeerEntity;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
@@ -91,7 +93,7 @@ public class BRPeerManager {
         startSyncingProgressThread();
     }
 
-    public static synchronized void syncSucceded() {
+    public static synchronized void syncSucceeded() {
         Log.e(TAG, "syncSucceeded");
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null)
@@ -122,18 +124,37 @@ public class BRPeerManager {
         Log.e(TAG, "txStatusUpdate");
     }
 
-    public static synchronized void saveBlocks(byte[] block, int blockHeight) {
-        Log.e(TAG, "saveBlocks");
+    public static synchronized void saveBlocks(final BlockEntity[] blockEntities) {
+        Log.e(TAG, "saveBlocks: " + blockEntities.length);
+
         if (ctx == null) ctx = MainActivity.app;
-        if (ctx != null)
-            SQLiteManager.getInstance(ctx).insertMerkleBlock(block, blockHeight);
+        if (ctx != null) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    for (int i = 0; i < blockEntities.length; i++) {
+                        SQLiteManager.getInstance(ctx).insertMerkleBlock(blockEntities[i].getBlockBytes(), blockEntities[i].getBlockHeight());
+                    }
+                }
+            }).start();
+        }
+
     }
 
-    public static synchronized void savePeers(byte[] peerAddress, byte[] peerPort, byte[] peerTimeStamp) {
+    public static synchronized void savePeers(final PeerEntity[] peerEntities) {
         Log.e(TAG, "savePeers");
         if (ctx == null) ctx = MainActivity.app;
-        if (ctx != null)
-            SQLiteManager.getInstance(ctx).insertPeer(peerAddress, peerPort, peerTimeStamp);
+        if (ctx != null) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    for (int i = 0; i < peerEntities.length; i++) {
+                        SQLiteManager.getInstance(ctx).insertPeer(peerEntities[i].getPeerAddress(), peerEntities[i].getPeerPort(), peerEntities[i].getPeerTimeStamp());
+                    }
+                }
+            }).start();
+        }
+
     }
 
     public static synchronized boolean networkIsReachable() {
@@ -144,15 +165,29 @@ public class BRPeerManager {
     public static synchronized void deleteBlocks() {
         Log.e(TAG, "deleteBlocks");
         if (ctx == null) ctx = MainActivity.app;
-        if (ctx != null)
-            SQLiteManager.getInstance(ctx).deleteBlocks();
+        if (ctx != null) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    SQLiteManager.getInstance(ctx).deleteBlocks();
+                }
+            }).start();
+
+        }
     }
 
     public static synchronized void deletePeers() {
         Log.e(TAG, "deletePeers");
         if (ctx == null) ctx = MainActivity.app;
-        if (ctx != null)
-            SQLiteManager.getInstance(ctx).deletePeers();
+        if (ctx != null) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    SQLiteManager.getInstance(ctx).deletePeers();
+                }
+            }).start();
+
+        }
     }
 
 //    public static void saveLastBlockHeight() {

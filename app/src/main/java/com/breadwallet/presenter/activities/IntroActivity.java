@@ -86,10 +86,7 @@ public class IntroActivity extends FragmentActivity {
             }
         });
 
-        //animates the orange BW background moving.
-        ImageView background = (ImageView) findViewById(R.id.intro_bread_wallet_image);
-        background.setScaleType(ImageView.ScaleType.MATRIX);
-        BackgroundMovingAnimator.animateBackgroundMoving(background);
+
         getFragmentManager().beginTransaction().add(R.id.intro_layout, new IntroWelcomeFragment(),
                 IntroWelcomeFragment.class.getName()).commit();
         startTheWalletIfExists();
@@ -100,6 +97,10 @@ public class IntroActivity extends FragmentActivity {
         super.onResume();
         //testSQLiteConnectivity(this);   //do some SQLite testing
         app = this;
+        //animates the orange BW background moving.
+        ImageView background = (ImageView) findViewById(R.id.intro_bread_wallet_image);
+        background.setScaleType(ImageView.ScaleType.MATRIX);
+        BackgroundMovingAnimator.animateBackgroundMoving(background);
 
     }
 

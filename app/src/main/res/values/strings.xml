@@ -140,4 +140,5 @@
     <string name="do_it_later">do it later</string>
     <string name="unverified">unverified</string>
     <string name="unverified_by_peers">not verified by at least 3 peers</string>
+    <string name="moved">moved</string>
 </resources>

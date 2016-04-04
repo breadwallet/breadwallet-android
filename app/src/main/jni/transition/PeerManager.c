@@ -19,6 +19,24 @@ static size_t _blocksCounter = 0;
 static size_t _peersCounter = 0;
 static jclass _peerManagerClass;
 static size_t _managerNewCounter = 0;
+static jclass _blockClass;
+static jclass _peerClass;
+static JNIEnv *_env;
+
+JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved){
+
+    if ((*vm)->GetEnv(vm, &_env, JNI_VERSION_1_6) != JNI_OK) {
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "syncStarted");
+       return -1;
+    }
+
+    jclass tmpBlockClass = (*_env)->FindClass(_env, "com/breadwallet/presenter/entities/BlockEntity");
+    _blockClass = (jclass)(*_env)->NewGlobalRef(_env, tmpBlockClass);
+    jclass tmpPeerClass = (*_env)->FindClass(_env, "com/breadwallet/presenter/entities/PeerEntity");
+    _peerClass = (jclass)(*_env)->NewGlobalRef(_env, tmpPeerClass);
+
+    return JNI_VERSION_1_6;
+}
 
 static JNIEnv* getEnv() {
     JNIEnv *env;
@@ -43,21 +61,19 @@ static void syncStarted(void *info) {
 
 }
 
-static void syncSucceded(void *info) {
+static void syncSucceeded(void *info) {
 
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "syncSucceded: # of tx: %d",
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "syncSucceeded: # of tx: %d",
                         (int) BRWalletTransactions(_wallet, NULL, 0) );
     JNIEnv *globalEnv = getEnv();
 
-    jmethodID mid = (*globalEnv)->GetStaticMethodID(globalEnv, _peerManagerClass, "syncSucceded", "()V");
+    jmethodID mid = (*globalEnv)->GetStaticMethodID(globalEnv, _peerManagerClass, "syncSucceeded", "()V");
     //call java methods
     (*globalEnv)->CallStaticVoidMethod(globalEnv, _peerManagerClass, mid);
-
 
 }
 
 static void syncFailed(void *info, int error) {
-
 
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "syncFailed");
     JNIEnv *globalEnv = getEnv();
@@ -65,8 +81,6 @@ static void syncFailed(void *info, int error) {
     jmethodID mid = (*globalEnv)->GetStaticMethodID(globalEnv, _peerManagerClass, "syncFailed", "()V");
     //call java methods
     (*globalEnv)->CallStaticVoidMethod(globalEnv, _peerManagerClass, mid);
-
-
 
 }
 
@@ -95,16 +109,11 @@ static void txRejected(void *info, int rescanRecommended) {
 }
 
 
-JNIEXPORT void Java_com_breadwallet_wallet_BRWalletManager_rescan(JNIEnv *env, jobject thiz) {
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "rescan");
-    if(_peerManager)
-        BRPeerManagerRescan(_peerManager);
-}
-
 static void saveBlocks(void *info, BRMerkleBlock *blocks[], size_t count) {
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "saveBlocks");
 
     JNIEnv *env = getEnv();
-    jmethodID mid = (*env)->GetStaticMethodID(env, _peerManagerClass, "saveBlocks", "([BI)V");
+    jmethodID mid = (*env)->GetStaticMethodID(env, _peerManagerClass, "saveBlocks", "([Lcom/breadwallet/presenter/entities/BlockEntity;)V");
     if(count != 1){
         __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "deleting %d blocks", count);
         jmethodID delete_mid = (*env)->GetStaticMethodID(env, _peerManagerClass, "deleteBlocks", "()V");
@@ -112,15 +121,28 @@ static void saveBlocks(void *info, BRMerkleBlock *blocks[], size_t count) {
     }
     //call java methods
 
+    //Find the class and populate the array of objects of this class
+
+    jobjectArray blocksObjects = (*env)->NewObjectArray(env, count, _blockClass, 0);
+
     for (int i = 0; i < count; i++) {
-        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "block: %d", blocks[i]->height);
+
+        jmethodID blockObjMid = (*env)->GetMethodID(env, _blockClass, "<init>", "([BI)V");
+
         uint8_t buf[BRMerkleBlockSerialize(blocks[i], NULL, 0)];
         size_t len = BRMerkleBlockSerialize(blocks[i], buf, sizeof(buf));
         jbyteArray result = (*env)->NewByteArray(env, len);
         (*env)->SetByteArrayRegion(env, result, 0, len, (jbyte *) buf);
-        (*env)->CallStaticVoidMethod(env, _peerManagerClass, mid, result, blocks[i]->height);
+
+        jobject blockObject = (*env)->NewObject(env, _blockClass, blockObjMid, result, blocks[i]->height);
+        (*env)->SetObjectArrayElement(env, blocksObjects, i, blockObject);
+
         (*env)->DeleteLocalRef(env, result);
+        (*env)->DeleteLocalRef(env, blockObject);
     }
+
+    (*env)->CallStaticVoidMethod(env, _peerManagerClass, mid, blocksObjects);
+
     (*_jvm)->DetachCurrentThread(_jvm);
 
 }
@@ -130,7 +152,7 @@ static void savePeers(void *info, const BRPeer peers[], size_t count) {
 
     JNIEnv *env = getEnv();
 
-    jmethodID mid = (*env)->GetStaticMethodID(env, _peerManagerClass, "savePeers", "([B[B[B)V");
+    jmethodID mid = (*env)->GetStaticMethodID(env, _peerManagerClass, "savePeers", "([Lcom/breadwallet/presenter/entities/PeerEntity;)V");
     //call java methods
     if(count != 1){
         __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "deleting %d peers", count);
@@ -138,7 +160,11 @@ static void savePeers(void *info, const BRPeer peers[], size_t count) {
         (*env)->CallStaticVoidMethod(env, _peerManagerClass, delete_mid);
     }
 
+    jobjectArray peersObjects = (*env)->NewObjectArray(env, count, _peerClass, 0);
+
     for (int i = 0; i < count; i++) {
+
+        jmethodID peerObjMid = (*env)->GetMethodID(env, _peerClass, "<init>", "([B[B[B)V");
 
         jbyteArray peerAddress = (*env)->NewByteArray(env, sizeof(peers[i].address));
         (*env)->SetByteArrayRegion(env, peerAddress, 0, sizeof(peers[i].address), (jbyte *) &peers[i].address);
@@ -149,12 +175,23 @@ static void savePeers(void *info, const BRPeer peers[], size_t count) {
         jbyteArray peerTimeStamp = (*env)->NewByteArray(env, sizeof(peers[i].timestamp));
         (*env)->SetByteArrayRegion(env, peerTimeStamp, 0, sizeof(peers[i].timestamp), (jbyte *) &peers[i].timestamp);
 
-        (*env)->CallStaticVoidMethod(env, _peerManagerClass, mid, peerAddress, peerPort, peerTimeStamp);
+//        (*env)->CallStaticVoidMethod(env, _peerManagerClass, mid, peerAddress, peerPort, peerTimeStamp);
+        jobject peerObject = (*env)->NewObject(env, _peerClass, peerObjMid, peerAddress, peerPort, peerTimeStamp);
+        (*env)->SetObjectArrayElement(env, peersObjects, i, peerObject);
+
         (*env)->DeleteLocalRef(env, peerAddress);
         (*env)->DeleteLocalRef(env, peerPort);
         (*env)->DeleteLocalRef(env, peerTimeStamp);
     }
+    (*env)->CallStaticVoidMethod(env, _peerManagerClass, mid, peersObjects);
+
     (*_jvm)->DetachCurrentThread(_jvm);
+}
+
+JNIEXPORT void Java_com_breadwallet_wallet_BRWalletManager_rescan(JNIEnv *env, jobject thiz) {
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "rescan");
+    if(_peerManager)
+        BRPeerManagerRescan(_peerManager);
 }
 
 static int networkIsReachable(void *info) {
@@ -197,7 +234,7 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_createAndConnect(JNIEnv
                                     blocksCount == 0 ? NULL : _blocks,
                                     blocksCount, peersCount == 0 ? NULL : _peers,
                                     peersCount);
-        BRPeerManagerSetCallbacks(_peerManager, NULL, syncStarted, syncSucceded, syncFailed,
+        BRPeerManagerSetCallbacks(_peerManager, NULL, syncStarted, syncSucceeded, syncFailed,
                                   txStatusUpdate, txRejected, saveBlocks, savePeers,
                                   networkIsReachable);
     }

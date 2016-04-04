@@ -82,10 +82,10 @@
                     android:id="@+id/tx_status_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="@dimen/transaction_item_margin"
-                    android:text="confirmed in block #??????\n-/-@--"
+                    android:gravity="right"
                     android:textAlignment="viewEnd"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/grey"
@@ -181,9 +181,9 @@
                 android:textSize="15sp" />
 
             <!--<RelativeLayout-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="@dimen/separator_height"-->
-                <!--android:background="@color/grey" />-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="@dimen/separator_height"-->
+            <!--android:background="@color/grey" />-->
 
             <LinearLayout
                 android:id="@+id/general_tx_to_layout"
@@ -194,11 +194,10 @@
             </LinearLayout>
 
 
-
             <!--<RelativeLayout-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="@dimen/separator_height"-->
-                <!--android:background="@color/grey" />-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="@dimen/separator_height"-->
+            <!--android:background="@color/grey" />-->
 
         </LinearLayout>
     </LinearLayout>

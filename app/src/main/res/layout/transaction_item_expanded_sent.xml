@@ -85,8 +85,8 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="@dimen/transaction_item_margin"
-                    android:text="confirmed in block #??????\n-/-@--"
                     android:textAlignment="viewEnd"
+                    android:gravity="right"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/grey"
                     android:textSize="13sp" />
