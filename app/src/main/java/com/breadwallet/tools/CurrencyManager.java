@@ -16,6 +16,7 @@ import com.breadwallet.tools.adapter.AmountAdapter;
 import com.breadwallet.tools.adapter.CurrencyListAdapter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.FragmentAnimator;
+import com.breadwallet.wallet.BRWalletManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -237,6 +238,11 @@ public class CurrencyManager extends Observable {
     public String getExchangeForAmount(double rate, String iso, String target) {
         if (rate == 0) rate = 1;
         double exchange = (Double.parseDouble(target) * rate / 1000000);
+        if (ctx != null) {
+            long exchangeFromCore = BRWalletManager.getInstance(ctx).localAmount(new Double(target).longValue(),rate);
+            Log.e(TAG,"exchange: " + exchange);
+            Log.e(TAG,"exchangeFromCore: " + exchangeFromCore);
+        }
         DecimalFormat decimalFormat = new DecimalFormat("0.00");
         return getFormattedCurrencyString(iso, String.valueOf(decimalFormat.format(exchange)));
     }
@@ -245,7 +251,7 @@ public class CurrencyManager extends Observable {
         return target / 100;
     }
 
-    public long getSatoshisFromBits(long target){
+    public long getSatoshisFromBits(long target) {
         return target * 100;
     }
 

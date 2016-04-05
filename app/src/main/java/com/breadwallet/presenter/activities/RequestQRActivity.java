@@ -1,6 +1,7 @@
 package com.breadwallet.presenter.activities;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Point;
@@ -26,6 +27,7 @@ import com.breadwallet.tools.security.RequestHandler;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 
+import java.math.BigDecimal;
 import java.security.InvalidAlgorithmParameterException;
 
 public class RequestQRActivity extends Activity {
@@ -67,16 +69,23 @@ public class RequestQRActivity extends Activity {
             SharedPreferences settings = getSharedPreferences(MainActivity.PREFS_NAME, 0);
             final String iso = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
             final float rate = settings.getFloat(FragmentCurrency.RATE, 1);
-            amount = CurrencyManager.getInstance(this).getBitsAndExchangeString(rate, iso, obj.amount);
+            amount = CurrencyManager.getInstance(this).getBitsAndExchangeString(rate, iso,
+                    String.valueOf(new BigDecimal(obj.amount).multiply(new BigDecimal("1000000"))));
         } catch (InvalidAlgorithmParameterException e) {
             e.printStackTrace();
         }
+        final Intent intent = new Intent(this, MainActivity.class);
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SpringAnimator.showAnimation(v);
                 onBackPressed();
-                finish();
+
+                startActivity(intent);
+                if (!RequestQRActivity.this.isDestroyed()) {
+                    finish();
+                }
+
             }
         });
         requestAddressText.setText(address);

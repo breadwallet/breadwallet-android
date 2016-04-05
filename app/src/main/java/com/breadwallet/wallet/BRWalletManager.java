@@ -318,4 +318,8 @@ public class BRWalletManager {
 
     public native boolean tryTransaction(String addressHolder, long amountHolder);
 
+    public native long localAmount(long amount, double price);
+
+    public native long bitcoinAmount(long localAmount, double price);
+
 }

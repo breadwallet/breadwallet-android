@@ -61,6 +61,7 @@ import com.breadwallet.tools.threads.ToastBlockShowTask;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -125,8 +126,8 @@ public class MainActivity extends FragmentActivity implements Observer {
     public static final Point screenParametersPoint = new Point();
     private int middleViewPressedCount = 0;
     private BroadcastReceiver mPowerKeyReceiver = null;
-    private String amountHolder;
-    private String addressHolder;
+//    private String amountHolder;
+//    private String addressHolder;
 
     private static int MODE = RELEASE;
     private TextView testnet;
@@ -177,7 +178,10 @@ public class MainActivity extends FragmentActivity implements Observer {
         pay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pay();
+                String amountHolder = FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_RIGHT ?
+                        AmountAdapter.getRightValue() : AmountAdapter.getLeftValue();
+                String addressHolder = FragmentScanResult.address;
+                pay(addressHolder, amountHolder);
             }
         });
 
@@ -256,8 +260,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         super.onResume();
         appInBackground = false;
         app = this;
-        amountHolder = null;
-        addressHolder = null;
         CurrencyManager currencyManager = CurrencyManager.getInstance(this);
         currencyManager.startTimer();
         currencyManager.deleteObservers();
@@ -484,14 +486,11 @@ public class MainActivity extends FragmentActivity implements Observer {
     }
 
 
-    public void pay() {
+    public void pay(final String addressHolder, String amountHolder) {
 
-        amountHolder = FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_RIGHT ?
-                AmountAdapter.getRightValue() : AmountAdapter.getLeftValue();
-        addressHolder = FragmentScanResult.address;
-        final Double amountAsDouble = Double.parseDouble(amountHolder);
-        if (addressHolder == null) return;
+        if (addressHolder == null || amountHolder == null) return;
         if (addressHolder.length() < 20) return;
+        final Double amountAsDouble = Double.parseDouble(amountHolder);
         if (amountAsDouble <= 0) return;
         Log.e(TAG, "*********Sending: " + amountHolder + " to: " + addressHolder);
         CurrencyManager cm = CurrencyManager.getInstance(this);
@@ -526,7 +525,7 @@ public class MainActivity extends FragmentActivity implements Observer {
             long feeForTx = cm.getBitsFromSatoshi(m.feeForTransaction(addressHolder, cm.getSatoshisFromBits(Math.round(amountAsDouble))));
             Log.e(TAG, "pay >>>> feeForTx: " + feeForTx + ", amountAsDouble: " + amountAsDouble +
                     ", CurrencyManager.getInstance(this).getBALANCE(): " + cm.getBitsFromSatoshi(cm.getBALANCE()));
-            if (feeForTx != 0 && amountAsDouble + feeForTx < cm.getBALANCE()) {
+            if (feeForTx != 0 && amountAsDouble + feeForTx < cm.getBitsFromSatoshi(cm.getBALANCE())) {
 
                 confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, Math.round(amountAsDouble), null));
             } else {
@@ -561,11 +560,13 @@ public class MainActivity extends FragmentActivity implements Observer {
         Intent intent;
         String tempAmount = FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_RIGHT ?
                 AmountAdapter.getRightValue() : AmountAdapter.getLeftValue();
+
+        String strAmount = String.valueOf(new BigDecimal(tempAmount).divide(new BigDecimal("1000000")));
         SharedPreferences prefs = getSharedPreferences(MainFragmentQR.RECEIVE_ADDRESS_PREFS, Context.MODE_PRIVATE);
         String testTemp = prefs.getString(MainFragmentQR.RECEIVE_ADDRESS, "");
 
         intent = new Intent(this, RequestQRActivity.class);
-        intent.putExtra(BRConstants.INTENT_EXTRA_REQUEST_AMOUNT, tempAmount);
+        intent.putExtra(BRConstants.INTENT_EXTRA_REQUEST_AMOUNT, strAmount);
         intent.putExtra(BRConstants.INTENT_EXTRA_REQUEST_ADDRESS, testTemp);
         startActivity(intent);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
@@ -583,7 +584,7 @@ public class MainActivity extends FragmentActivity implements Observer {
 //                }
             } else {
                 Log.e(TAG, "Auth for phrase was rejected");
-                // The user canceled or didnât complete the lock screen
+
                 // operation. Go to error/cancellation flow.
             }
         }

@@ -23,20 +23,16 @@ static jclass _blockClass;
 static jclass _peerClass;
 static JNIEnv *_env;
 
-JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved){
+//JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved){
+//
+//    if ((*vm)->GetEnv(vm, &_env, JNI_VERSION_1_6) != JNI_OK) {
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "syncStarted");
+//       return -1;
+//    }
 
-    if ((*vm)->GetEnv(vm, &_env, JNI_VERSION_1_6) != JNI_OK) {
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "syncStarted");
-       return -1;
-    }
 
-    jclass tmpBlockClass = (*_env)->FindClass(_env, "com/breadwallet/presenter/entities/BlockEntity");
-    _blockClass = (jclass)(*_env)->NewGlobalRef(_env, tmpBlockClass);
-    jclass tmpPeerClass = (*_env)->FindClass(_env, "com/breadwallet/presenter/entities/PeerEntity");
-    _peerClass = (jclass)(*_env)->NewGlobalRef(_env, tmpPeerClass);
-
-    return JNI_VERSION_1_6;
-}
+//    return JNI_VERSION_1_6;
+//}
 
 static JNIEnv* getEnv() {
     JNIEnv *env;
@@ -182,6 +178,7 @@ static void savePeers(void *info, const BRPeer peers[], size_t count) {
         (*env)->DeleteLocalRef(env, peerAddress);
         (*env)->DeleteLocalRef(env, peerPort);
         (*env)->DeleteLocalRef(env, peerTimeStamp);
+        (*env)->DeleteLocalRef(env, peerObject);
     }
     (*env)->CallStaticVoidMethod(env, _peerManagerClass, mid, peersObjects);
 
@@ -213,6 +210,11 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_createAndConnect(JNIEnv
 
     jclass walletManagerCLass = (*env)->FindClass(env, "com/breadwallet/wallet/BRPeerManager");
     _peerManagerClass = (jclass) (*env)->NewGlobalRef(env, (jobject) walletManagerCLass);
+
+    jclass tmpBlockClass = (*env)->FindClass(env, "com/breadwallet/presenter/entities/BlockEntity");
+    _blockClass = (jclass)(*env)->NewGlobalRef(env, (jobject) tmpBlockClass);
+    jclass tmpPeerClass = (*env)->FindClass(env, "com/breadwallet/presenter/entities/PeerEntity");
+    _peerClass = (jclass)(*env)->NewGlobalRef(env, (jobject) tmpPeerClass);
 
     if (rs != JNI_OK) {
         __android_log_print(ANDROID_LOG_ERROR, "Message from C: ",

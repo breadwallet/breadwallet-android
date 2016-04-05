@@ -1,6 +1,5 @@
 package com.breadwallet.presenter.fragments;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.graphics.ImageFormat;
@@ -68,7 +67,7 @@ import java.util.concurrent.TimeUnit;
 
 import static android.hardware.camera2.CameraCharacteristics.LENS_FACING;
 import static android.hardware.camera2.CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP;
-import static android.hardware.camera2.CameraMetadata.CONTROL_AF_STATE_ACTIVE_SCAN;
+import static android.hardware.camera2.CameraMetadata.CONTROL_AF_MODE_CONTINUOUS_PICTURE;
 import static android.hardware.camera2.CameraMetadata.LENS_FACING_FRONT;
 import static android.hardware.camera2.CaptureRequest.CONTROL_AF_MODE;
 
@@ -78,6 +77,8 @@ public class FragmentDecoder extends Fragment
     private static final String CAMERA_GUIDE_RED = "red";
     private static final String CAMERA_GUIDE = "reg";
     private static final String TEXT_EMPTY = "";
+
+    private boolean useImageAvailable = true;
 
     /**
      * Conversion from screen rotation to JPEG orientation.
@@ -149,6 +150,20 @@ public class FragmentDecoder extends Fragment
                 @Override
                 public void onImageAvailable(ImageReader reader) {
 //                    Log.e(TAG, "onImageAvailable: " + count++);
+//                    if (!useImageAvailable) {
+//                        return;
+//                    } else {
+//                        useImageAvailable = false;
+//                        new Handler().postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                useImageAvailable = true;
+//                            }
+//                        }, 300);
+//                    }
+
+//                    Log.e(TAG, "onImageAvailable after the check ");
+
                     Image img = null;
                     img = reader.acquireLatestImage();
                     Result rawResult = null;
@@ -171,7 +186,7 @@ public class FragmentDecoder extends Fragment
                         String validationString = validateResult(decoded);
 //                        Log.e(TAG, "validationString: " + validationString);
                         if (Objects.equals(validationString, TEXT_EMPTY)) {
-                            onQRCodeRead(getActivity(),rawResult.getText());
+                            onQRCodeRead((MainActivity) getActivity(), rawResult.getText());
                         } else {
                             setCameraGuide(CAMERA_GUIDE_RED);
                             setGuideText(validationString);
@@ -323,7 +338,7 @@ public class FragmentDecoder extends Fragment
                     SpringAnimator.showExpandCameraGuide(camera_guide_image);
             }
         });
-        ((BreadWalletApp)getActivity().getApplication()).hideKeyboard(getActivity());
+        ((BreadWalletApp) getActivity().getApplication()).hideKeyboard(getActivity());
 
         // When the screen is turned off and turned back on, the SurfaceTexture is already
         // available, and "onSurfaceTextureAvailable" will not be called. In that case, we can open
@@ -494,7 +509,7 @@ public class FragmentDecoder extends Fragment
                             mCaptureSession = cameraCaptureSession;
                             try {
                                 // Auto focus should be continuous for camera preview.
-                                mPreviewRequestBuilder.set(CONTROL_AF_MODE, CONTROL_AF_STATE_ACTIVE_SCAN);
+                                mPreviewRequestBuilder.set(CONTROL_AF_MODE, CONTROL_AF_MODE_CONTINUOUS_PICTURE);
                                 // Flash is automatically enabled when necessary.
                                 /**no need for flash_on now*/
                                 //mPreviewRequestBuilder.set(CONTROL_AE_MODE, CONTROL_AE_MODE_ON_AUTO_FLASH);
@@ -552,7 +567,7 @@ public class FragmentDecoder extends Fragment
         mTextureView.setTransform(matrix);
     }
 
-    private static synchronized void onQRCodeRead(final Activity app,final String text) {
+    private static synchronized void onQRCodeRead(final MainActivity app, final String text) {
         if (accessGranted) {
             accessGranted = false;
             app.runOnUiThread(new Runnable() {
@@ -560,8 +575,8 @@ public class FragmentDecoder extends Fragment
                 public void run() {
                     if (text != null) {
                         FragmentAnimator.hideDecoderFragment();
-//                        Log.e(TAG, "BEFORE processRequest");
-                        RequestHandler.processRequest(app,text);
+                        Log.e(TAG, "BEFORE processRequest");
+                        RequestHandler.processRequest(app, text);
 
                     }
                 }
@@ -664,5 +679,6 @@ public class FragmentDecoder extends Fragment
         });
 
     }
+
 
 }

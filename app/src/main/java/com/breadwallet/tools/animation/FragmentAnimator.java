@@ -302,9 +302,11 @@ public class FragmentAnimator {
                 FragmentAnimator.multiplePressingAvailable = true;
             }
         }, 300);
+
         FragmentManager fragmentManager = app.getFragmentManager();
         FragmentScanResult fragmentScanResult = (FragmentScanResult)
                 fragmentManager.findFragmentByTag(FragmentScanResult.class.getName());
+        if (fragmentScanResult == null) return;
         fragmentManager.beginTransaction().
                 setCustomAnimations(R.animator.from_left, R.animator.to_right).
                 remove(fragmentScanResult).commit();

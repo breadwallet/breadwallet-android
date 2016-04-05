@@ -1,6 +1,7 @@
 package com.breadwallet.tools.security;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -57,7 +58,7 @@ public class RequestHandler {
     private static final String TAG = RequestHandler.class.getName();
     private static final Object lockObject = new Object();
 
-    public static synchronized void processRequest(Activity app, String address) {
+    public static synchronized void processRequest(MainActivity app, String address) {
 
         try {
             RequestObject requestObject = getRequestFromString(address);
@@ -71,7 +72,7 @@ public class RequestHandler {
             if (requestObject.r != null) {
                 tryAndProcessRequestURL(requestObject);
             } else if (requestObject.address != null) {
-                tryAndProcessBitcoinURL(requestObject);
+                tryAndProcessBitcoinURL(requestObject, app);
             } else {
                 if (app != null) {
                     ((BreadWalletApp) app.getApplication()).showCustomDialog(app.getString(R.string.warning),
@@ -133,25 +134,28 @@ public class RequestHandler {
 
     }
 
-    private static boolean tryAndProcessBitcoinURL(RequestObject requestObject) {
+    private static boolean tryAndProcessBitcoinURL(RequestObject requestObject, MainActivity app) {
         /** use the C implementation to check it */
         final String str = requestObject.address;
         if (str == null) return false;
-        int length = str.length();
-        if (length < 26 || length > 35) {
+        if (!BRWalletManager.getInstance(app).validateAddress(str.trim())) {
+            Log.e(TAG, "WRONG ADDRESS");
             return false;
         }
         final String[] addresses = new String[1];
         addresses[0] = str;
 //        CustomLogger.LogThis("amount", requestObject.amount, "address", requestObject.address);
         if (requestObject.amount != null) {
-            Double doubleAmount = Double.parseDouble(requestObject.amount) * 100000000;
+
+            Double doubleAmount = Double.parseDouble(requestObject.amount ) * 1000000;
             long amount = doubleAmount.longValue();
             PaymentRequestEntity requestEntity = new PaymentRequestEntity(addresses,
                     amount, "");
-            MainActivity app = MainActivity.app;
+            Log.e(TAG, "requestEntity.amount: " + requestEntity.amount);
+            Log.e(TAG, "requestEntity.addresses[0]: " + requestEntity.addresses[0]);
+            String strAmount = String.valueOf(requestEntity.amount );
             if (app != null) {
-                app.confirmPay(requestEntity);
+                app.pay(requestEntity.addresses[0], strAmount);
             }
         } else {
             MainActivity.app.runOnUiThread(new Runnable() {

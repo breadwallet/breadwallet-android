@@ -24,6 +24,7 @@
     <item name="black_trans" type="color">#b54a2500</item>
     <item name="red_text" type="color">#FF5454</item>
     <item name="green_text" type="color">#00BF00</item>
+    <item name="pink" type="color">#68fda8aa</item>
 
     //fingerprint
     <color name="warning_color">#f4511e</color>

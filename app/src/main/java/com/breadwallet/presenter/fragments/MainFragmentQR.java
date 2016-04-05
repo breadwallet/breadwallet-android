@@ -95,6 +95,7 @@ public class MainFragmentQR extends Fragment {
 //        if (receiveAddress == null) {
         BRWalletManager.refreshAddress();
         receiveAddress = prefs.getString(RECEIVE_ADDRESS, null);
+
 //        }
         qrcode = (ImageView) getActivity().findViewById(R.id.main_image_qr_code);
         sharingFragment = new SharingFragment();

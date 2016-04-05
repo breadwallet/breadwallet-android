@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.BRClipboardManager;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
@@ -55,7 +57,7 @@ public class MainFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        Button scanQRButton = (Button) rootView.findViewById(R.id.main_button_scan_qr_code);
+        final Button scanQRButton = (Button) rootView.findViewById(R.id.main_button_scan_qr_code);
         LinearLayout mainFragmentLayout = (LinearLayout) rootView.findViewById(R.id.main_fragment);
         Button payAddressFromClipboardButton = (Button)
                 rootView.findViewById(R.id.main_button_pay_address_from_clipboard);
@@ -65,6 +67,14 @@ public class MainFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 addressEditText.setText(BRClipboardManager.readFromClipboard(getActivity()));
+            }
+        });
+
+        rootView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((BreadWalletApp) getActivity().getApplication()).hideKeyboard(getActivity());
+                addressEditText.clearFocus();
             }
         });
 
@@ -89,6 +99,7 @@ public class MainFragment extends Fragment {
                     if (!addressEditText.getText().toString().isEmpty()) {
                         tempAddress = addressEditText.getText().toString();
                     }
+                    Log.e(TAG, "tempAddress: " + tempAddress);
                     final String finalAddress = tempAddress;
                     if (checkIfAddressIsValid(finalAddress)) {
                         if (finalAddress != null) {
@@ -105,6 +116,8 @@ public class MainFragment extends Fragment {
                                         });
                                 alert = builder.create();
                                 alert.show();
+                                BRClipboardManager.copyToClipboard(getActivity(), "");
+                                addressEditText.setText("");
                             } else if (m.addressIsUsed(finalAddress)) {
                                 builder.setTitle(getResources().getString(R.string.warning));
 
@@ -156,7 +169,7 @@ public class MainFragment extends Fragment {
     private boolean checkIfAddressIsValid(String str) {
         BRWalletManager m = BRWalletManager.getInstance(getActivity());
 
-        return m.validateAddress(str);
+        return m.validateAddress(str.trim());
     }
 
     @Override
