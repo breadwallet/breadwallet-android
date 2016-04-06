@@ -7,9 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.IntroActivity;
+import com.breadwallet.tools.animation.BackgroundMovingAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.wallet.BRWalletManager;
 
@@ -50,7 +52,7 @@ public class IntroNewWalletFragment extends Fragment {
         // The last two arguments ensure LayoutParams are inflated
         // properly.
         m = BRWalletManager.getInstance(getActivity());
-        View rootView = inflater.inflate(R.layout.intro_fragment_new_wallet, container, false);
+        final View rootView = inflater.inflate(R.layout.intro_fragment_new_wallet, container, false);
         introGenerate = (Button) rootView.findViewById(R.id.intro_new_wallet_generate);
         introGenerate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,6 +68,9 @@ public class IntroNewWalletFragment extends Fragment {
                         KeyStoreManager.putMasterPublicKey(pubKey, getActivity());
 //                        Log.w(TAG, "The phrase from keystore is: " + KeyStoreManager.getKeyStoreString(getActivity()));
                         ((IntroActivity) getActivity()).showWarningFragment();
+                        ImageView background = (ImageView) getActivity().findViewById(R.id.intro_bread_wallet_image);
+                        background.setScaleType(ImageView.ScaleType.MATRIX);
+                        BackgroundMovingAnimator.animateBackgroundMoving(background);
                     }
                 });
 

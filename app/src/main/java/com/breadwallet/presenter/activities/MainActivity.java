@@ -199,7 +199,8 @@ public class MainActivity extends FragmentActivity implements Observer {
             @Override
             public void onClick(View v) {
 
-                if (MiddleViewAdapter.getSyncing()) {
+
+                if (MiddleViewAdapter.getSyncing() && FragmentAnimator.level == 0) {
                     hideAllBubbles();
                     if (middleBubbleBlocks.getVisibility() == View.VISIBLE) {
                         middleBubbleBlocks.setVisibility(View.GONE);
@@ -583,7 +584,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                 final double amountToReduce = amountAsDouble - maxAmountDouble;
                 String strToReduce = String.valueOf(amountToReduce);
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage(String.format("reduce payment amount by\n%s?", amountToReduce))
+                builder.setMessage(String.format("reduce payment amount by ƀ%s to accommodate the bitcoin network fee?", amountToReduce))
                         .setTitle("insufficient funds for bitcoin network fee")
                         .setCancelable(false)
                         .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
@@ -592,7 +593,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                                 dialog.cancel();
                             }
                         })
-                        .setPositiveButton(strToReduce, new DialogInterface.OnClickListener() {
+                        .setPositiveButton("confirm", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, Math.round(amountAsDouble - amountToReduce), null));
                             }
@@ -975,6 +976,11 @@ public class MainActivity extends FragmentActivity implements Observer {
         if (qrBubble1 != null)
             qrBubble1.setVisibility(View.GONE);
 
+    }
+
+    public void showHideSyncProgressViews(boolean b) {
+        syncProgressBar.setVisibility(b ? View.VISIBLE : View.GONE);
+        syncProgressText.setVisibility(b ? View.VISIBLE : View.GONE);
     }
 
     private native void clearCMemory();

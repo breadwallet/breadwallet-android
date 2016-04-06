@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
@@ -58,7 +59,7 @@ public class MainFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         final Button scanQRButton = (Button) rootView.findViewById(R.id.main_button_scan_qr_code);
-        LinearLayout mainFragmentLayout = (LinearLayout) rootView.findViewById(R.id.main_fragment);
+        RelativeLayout mainFragmentLayout = (RelativeLayout) rootView.findViewById(R.id.main_fragment);
         Button payAddressFromClipboardButton = (Button)
                 rootView.findViewById(R.id.main_button_pay_address_from_clipboard);
         addressEditText = (EditText) rootView.findViewById(R.id.address_edit_text);
@@ -67,6 +68,10 @@ public class MainFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 addressEditText.setText(BRClipboardManager.readFromClipboard(getActivity()));
+                MainActivity app = MainActivity.app;
+                if(app != null){
+                    app.hideAllBubbles();
+                }
             }
         });
 

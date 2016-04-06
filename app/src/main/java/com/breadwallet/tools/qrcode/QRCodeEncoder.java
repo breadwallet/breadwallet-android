@@ -197,8 +197,8 @@ public final class QRCodeEncoder {
         BitMatrix result = writer.encode(contents, format, dimension, dimension, hints);
         int width = result.getWidth();
         int height = result.getHeight();
-        Log.e(TAG,"width: "  + width);
-        Log.e(TAG,"height: "  + height);
+        Log.e(TAG, "width: " + width);
+        Log.e(TAG, "height: " + height);
         int[] pixels = new int[width * height];
         // All are 0, or black, by default
         for (int y = 0; y < height; y++) {
@@ -211,25 +211,33 @@ public final class QRCodeEncoder {
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
         bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
         Log.e(TAG, "The Bitmap pixels: " + bitmap.getWidth() + "  " + bitmap.getHeight());
-        return bitmap;
+        Bitmap croppedResult = Bitmap.createBitmap(bitmap, 80, 80, bitmap.getWidth() - 160, bitmap.getHeight() - 160);
+        bitmap = null;
+        return croppedResult;
     }
 
     private static String guessAppropriateEncoding(CharSequence contents) {
         // Very crude at the moment
         for (int i = 0; i < contents.length(); i++) {
-            if (contents.charAt(i) > 0xFF) { return "UTF-8"; }
+            if (contents.charAt(i) > 0xFF) {
+                return "UTF-8";
+            }
         }
         return null;
     }
 
     private static String trim(String s) {
-        if (s == null) { return null; }
+        if (s == null) {
+            return null;
+        }
         String result = s.trim();
         return result.length() == 0 ? null : result;
     }
 
     private static String escapeMECARD(String input) {
-        if (input == null || (input.indexOf(':') < 0 && input.indexOf(';') < 0)) { return input; }
+        if (input == null || (input.indexOf(':') < 0 && input.indexOf(';') < 0)) {
+            return input;
+        }
         int length = input.length();
         StringBuilder result = new StringBuilder(length);
         for (int i = 0; i < length; i++) {

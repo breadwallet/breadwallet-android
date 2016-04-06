@@ -23,7 +23,7 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
         networkErrorBar = (RelativeLayout) app.findViewById(R.id.main_internet_status_bar);
         final ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
         boolean isConnected = connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
-        BRPeerManager.getInstance(context).connect();
+        BRPeerManager.getInstance(app).connect();
         if (!isConnected) {
             app.runOnUiThread(new Runnable() {
                 @Override

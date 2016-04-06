@@ -328,10 +328,10 @@ public class PasswordDialogFragment extends DialogFragment {
 
     private void addRemoveDigit(int digits) {
         if (digit_1 == null) return;
-        digit_1.setText(digits >= 1 ? "*" : "-");
-        digit_2.setText(digits >= 2 ? "*" : "-");
-        digit_3.setText(digits >= 3 ? "*" : "-");
-        digit_4.setText(digits >= 4 ? "*" : "-");
+        digit_1.setText(digits >= 1 ? "\u2022" : "-");
+        digit_2.setText(digits >= 2 ? "\u2022" : "-");
+        digit_3.setText(digits >= 3 ? "\u2022" : "-");
+        digit_4.setText(digits >= 4 ? "\u2022" : "-");
 
     }
 

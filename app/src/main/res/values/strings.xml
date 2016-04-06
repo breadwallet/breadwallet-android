@@ -141,4 +141,18 @@
     <string name="unverified">unverified</string>
     <string name="unverified_by_peers">not verified by at least 3 peers</string>
     <string name="moved">moved</string>
+    <string name="receive_money">receive money:</string>
+    <string name="warning_text1">DO NOT let anyone see your recovery phrase or they can spend your bitcoins.</string>
+    <string name="warning_text2">NEVER type your recovery phrase into password managers or elsewhere. Other devices may be infected.</string>
+    <string name="send_money">send money:</string>
+    <string name="new_wallet">new wallet</string>
+    <string name="recover_wallet">recover wallet</string>
+    <string name="wipe">wipe</string>
+    <string name="generate_recovery_phrase">generate recovery phrase</string>
+    <string name="request">request</string>
+    <string name="pay">pay</string>
+    <string name="at_this_address">at this address:</string>
+    <string name="generate_phrase_text1">start a new wallet by generating a wallet recovery phrase</string>
+    <string name="generate_phrase_text2">if you ever lose your phone, you will need this phrase to recover your wallet</string>
+    <string name="i_wrote_it_down">I wrote it down:</string>
 </resources>

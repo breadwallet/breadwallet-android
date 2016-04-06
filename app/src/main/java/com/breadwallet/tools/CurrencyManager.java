@@ -142,14 +142,6 @@ public class CurrencyManager extends Observable {
                 e.printStackTrace();
             }
         }
-        if (list.size() > 0) {
-            CurrencyEntity test = new CurrencyEntity();
-            test.name = "testing text extra long text mega long text oh my god that's a long text";
-            test.code = "TES";
-            test.codeAndName = test.code + " - " + test.name;
-            test.rate = 0.999f;
-            list.add(test);
-        }
         return list;
     }
 

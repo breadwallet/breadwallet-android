@@ -44,7 +44,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/about1"
                     android:layout_centerHorizontal="true"
-                    android:text="copyright \u00A9 2015 Mihail Gutan"
+                    android:text="copyright \u00A9 2015 breadwallet llc"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/dark_grey"
                     android:textSize="@dimen/text_size" />

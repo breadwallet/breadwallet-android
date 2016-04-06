@@ -86,9 +86,9 @@
             android:layout_height="match_parent"
             android:clickable="true"
             android:gravity="center"
-            android:text="pay"
+            android:text="@string/pay"
             android:textColor="@color/dark_blue"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/main_button_request"
@@ -96,10 +96,11 @@
             android:layout_height="match_parent"
             android:clickable="true"
             android:gravity="center"
+            android:layout_marginEnd="10dp"
             android:onClick="request"
-            android:text="request"
+            android:text="@string/request"
             android:textColor="@color/dark_blue"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
 
     </ViewFlipper>
 
@@ -203,7 +204,7 @@
         app:arrowHeight="10dp"
         app:arrowLocation="top"
         app:arrowPosition="200dp"
-        app:arrowWidth="10dp"
+        app:arrowWidth="14dp"
         app:bubbleColor="@color/wallet_orange" />
 
     <com.breadwallet.presenter.bubbleview.BubbleTextVew
@@ -225,7 +226,7 @@
         app:arrowHeight="10dp"
         app:arrowLocation="top"
         app:arrowPosition="160dp"
-        app:arrowWidth="10dp"
+        app:arrowWidth="14dp"
         app:bubbleColor="@color/wallet_orange" />
 
     <com.breadwallet.presenter.bubbleview.BubbleTextVew
@@ -246,7 +247,7 @@
         app:arrowHeight="10dp"
         app:arrowLocation="top"
         app:arrowPosition="100dp"
-        app:arrowWidth="10dp"
+        app:arrowWidth="14dp"
         app:bubbleColor="@color/wallet_orange" />
 
 </RelativeLayout>

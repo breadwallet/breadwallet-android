@@ -34,6 +34,9 @@ public class RequestQRActivity extends Activity {
 
     public static final String TAG = RequestQRActivity.class.getName();
     private ImageView qrcode;
+    public boolean activityIsInBackground = false;
+    public static RequestQRActivity requestApp;
+    public Button close;
 
     //    public static String THE_ADDRESS = "";
 //    public static String tmpAmount = "0";
@@ -42,6 +45,7 @@ public class RequestQRActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_request_qr);
+        requestApp = this;
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
                 WindowManager.LayoutParams.FLAG_SECURE);
@@ -54,7 +58,7 @@ public class RequestQRActivity extends Activity {
 
         String finalAddress = "bitcoin:" + requestAddrs + "?amount=" + requestAmount;
         qrcode = (ImageView) findViewById(R.id.request_image_qr_code);
-        Button close = (Button) findViewById(R.id.request_close);
+        close = (Button) findViewById(R.id.request_close);
         TextView requestAmountText = (TextView) findViewById(R.id.request_amount_text);
         TextView requestAddressText = (TextView) findViewById(R.id.request_address_text);
         RelativeLayout addressLayout = (RelativeLayout) findViewById(R.id.request_address_layout);
@@ -127,4 +131,16 @@ public class RequestQRActivity extends Activity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        activityIsInBackground = false;
+        requestApp = this;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        activityIsInBackground = true;
+    }
 }

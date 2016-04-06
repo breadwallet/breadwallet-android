@@ -43,13 +43,13 @@ public class BRPeerManager {
     public static final String TAG = BRPeerManager.class.getName();
     private static BRPeerManager instance;
     private static SyncProgressTask syncTask;
-    private static Context ctx;
+    private static Activity ctx;
 
     private BRPeerManager() {
         syncTask = new SyncProgressTask();
     }
 
-    public static synchronized BRPeerManager getInstance(Context context) {
+    public static synchronized BRPeerManager getInstance(Activity context) {
         ctx = context;
         if (instance == null) {
             instance = new BRPeerManager();
@@ -233,7 +233,15 @@ public class BRPeerManager {
 
     public static void startSyncingProgressThread() {
         if (ctx == null) ctx = MainActivity.app;
-        if (ctx != null) MiddleViewAdapter.setSyncing((Activity) ctx, true);
+        if (ctx != null) {
+            MiddleViewAdapter.setSyncing(ctx, true);
+            ctx.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ((MainActivity) ctx).showHideSyncProgressViews(true);
+                }
+            });
+        }
 
         try {
             if (syncTask != null) {
@@ -248,7 +256,16 @@ public class BRPeerManager {
 
     public static void stopSyncingProgressThread() {
         if (ctx == null) ctx = MainActivity.app;
-        if (ctx != null) MiddleViewAdapter.setSyncing((Activity) ctx, false);
+        if (ctx != null) {
+            MiddleViewAdapter.setSyncing(ctx, false);
+            ctx.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ((MainActivity) ctx).showHideSyncProgressViews(false);
+                }
+            });
+        }
+
         try {
             if (syncTask != null) {
                 syncTask.setRunning(false);
@@ -282,8 +299,7 @@ public class BRPeerManager {
                     @Override
                     public void run() {
                         progressStatus = syncProgress();
-                        app.syncProgressText.setVisibility(View.VISIBLE);
-                        app.syncProgressBar.setVisibility(View.VISIBLE);
+                        app.showHideSyncProgressViews(true);
                         app.syncProgressBar.setProgress((int) (progressStatus * 100));
                         app.syncProgressText.setText(String.format("%s%%", new DecimalFormat("#.##").format(progressStatus * 100)));
                     }
@@ -299,17 +315,6 @@ public class BRPeerManager {
 
                         }
                     });
-//                    if (progressStatus >= 1) {
-//                        app.runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                progressStatus = 0;
-//                                app.syncProgressText.setVisibility(View.GONE);
-//                                app.syncProgressBar.setVisibility(View.GONE);
-//                            }
-//                        });
-//                        running = false;
-//                    }
                     try {
                         Thread.sleep(500);
                     } catch (InterruptedException e) {
@@ -322,8 +327,7 @@ public class BRPeerManager {
                     @Override
                     public void run() {
                         progressStatus = 0;
-                        app.syncProgressText.setVisibility(View.GONE);
-                        app.syncProgressBar.setVisibility(View.GONE);
+                        app.showHideSyncProgressViews(false);
                         MiddleViewAdapter.setSyncing(app, false);
                     }
                 });
@@ -332,5 +336,4 @@ public class BRPeerManager {
 
         }
     }
-
 }

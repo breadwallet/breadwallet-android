@@ -37,7 +37,6 @@ JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_putTransaction(
 JNIEXPORT void Java_com_breadwallet_wallet_BRWalletManager_createTxArrayWithCount(JNIEnv *env,
                                                                                   jobject thiz,
                                                                                   int txCount);
-
 JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRWalletManager_validateAddress
         (JNIEnv *env, jobject obj, jstring address);
 
@@ -66,8 +65,8 @@ JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRWalletManager_tryTransa
         (JNIEnv *env, jobject obj, jstring address, jlong amount);
 
 JNIEXPORT jboolean Java_com_breadwallet_wallet_BRWalletManager_pay(JNIEnv *env, jobject thiz,
-                                                               jstring address, jlong amount,
-                                                               jstring strSeed);
+                                                                   jstring address, jlong amount,
+                                                                   jstring strSeed);
 
 JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRWalletManager_transactionIsVerified
         (JNIEnv *env, jobject obj, jstring txHash);

@@ -20,7 +20,6 @@
                     android:id="@+id/settings_line_1"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/separator_height"
-                    android:layout_marginTop="30dp"
                     android:background="@color/grey" />
 
                 <RelativeLayout

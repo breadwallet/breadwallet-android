@@ -15,7 +15,8 @@
             android:layout_width="220dp"
             android:layout_height="wrap_content"
             android:background="@drawable/button_white"
-            android:text="new wallet"
+            android:textAllCaps="false"
+            android:text="@string/new_wallet"
             android:textColor="@color/white"
             android:textSize="20sp" />
 
@@ -24,10 +25,11 @@
             android:layout_width="220dp"
             android:layout_height="wrap_content"
             android:layout_below="@+id/intro_new_wallet"
+            android:textAllCaps="false"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="60dp"
             android:background="@drawable/button_white"
-            android:text="recover wallet"
+            android:text="@string/recover_wallet"
             android:textColor="@color/white"
             android:textSize="20sp" />
     </RelativeLayout>

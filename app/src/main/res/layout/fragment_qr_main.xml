@@ -6,83 +6,90 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/main_text_receive_money"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:text="receive money:"
-        android:textSize="@dimen/text_size" />
 
-    <ImageView
-        android:id="@+id/main_image_qr_code"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/main_text_receive_money"
+    <RelativeLayout
+        android:id="@+id/qr_page_layout"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="15dp" />
+        android:layout_centerVertical="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/main_text_receive_money"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:text="@string/receive_money"
+            android:textSize="@dimen/text_size" />
+
+        <ImageView
+            android:id="@+id/main_image_qr_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/main_text_receive_money"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="15dp" />
+
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/theAddressLayout"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_below="@+id/main_image_qr_code"
+            android:layout_marginTop="5dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/main_address_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:padding="15dp"
+                android:textSize="14sp" />
+        </RelativeLayout>
+    </RelativeLayout>
 
     <com.breadwallet.presenter.bubbleview.BubbleTextVew
-        android:layout_marginTop="30dp"
-        android:layout_centerInParent="true"
         android:id="@+id/qr_bubble1"
-        android:visibility="gone"
-        android:layout_alignBaseline="@+id/main_image_qr_code"
         android:layout_width="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
         android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
         android:layout_margin="10dp"
+        android:gravity="center"
         android:padding="10dp"
+        android:text="@string/toast_qr_tip"
         android:textColor="@android:color/white"
         android:textSize="16sp"
+        android:visibility="gone"
         app:angle="8dp"
         app:arrowHeight="10dp"
         app:arrowLocation="top"
-        app:arrowPosition="100dp"
-        android:text="@string/toast_qr_tip"
-        app:arrowWidth="10dp"
+        app:arrowPosition="160dp"
+        app:arrowWidth="14dp"
         app:bubbleColor="@color/wallet_orange" />
 
     <com.breadwallet.presenter.bubbleview.BubbleTextVew
-        android:layout_marginTop="160dp"
-        android:layout_centerInParent="true"
         android:id="@+id/qr_bubble2"
-        android:visibility="gone"
-        android:layout_alignBaseline="@+id/main_image_qr_code"
         android:layout_width="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:text="@string/toast_address_tip"
         android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="50dp"
+        android:layout_gravity="center"
+        android:layout_margin="10dp"
+        android:gravity="center"
         android:padding="10dp"
+        android:text="@string/toast_address_tip"
         android:textColor="@android:color/white"
         android:textSize="16sp"
+        android:visibility="gone"
         app:angle="8dp"
         app:arrowHeight="10dp"
         app:arrowLocation="bottom"
-        app:arrowPosition="100dp"
-        app:arrowWidth="10dp"
+        app:arrowPosition="160dp"
+        app:arrowWidth="14dp"
         app:bubbleColor="@color/wallet_orange" />
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/theAddressLayout"
-        android:layout_marginTop="5dp"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_below="@+id/main_image_qr_code"
-        android:orientation="vertical">
-
-        <TextView
-            android:padding="15dp"
-            android:id="@+id/main_address_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:gravity="center"
-            android:text="none"
-            android:textSize="14sp" />
-    </RelativeLayout>
 </RelativeLayout>

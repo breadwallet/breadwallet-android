@@ -14,6 +14,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.IntroShowPhraseActivity;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.activities.RequestQRActivity;
 import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.presenter.fragments.MainFragmentQR;
@@ -231,6 +232,20 @@ public class BRWalletManager {
 
     public static void onTxAdded(byte[] tx, int blockHeight, long timestamp, final long amount, String hash) {
         Log.e(TAG, "in the BRWalletManager - onTxAdded: " + tx.length + " " + blockHeight + " " + timestamp);
+        final RequestQRActivity requestApp = RequestQRActivity.requestApp;
+        if(requestApp != null && !requestApp.activityIsInBackground){
+            requestApp.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    requestApp.close.performClick();
+                }
+            });
+        }
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null && !MiddleViewAdapter.getSyncing()) {
             ((Activity) ctx).runOnUiThread(new Runnable() {
@@ -251,26 +266,25 @@ public class BRWalletManager {
             });
 
         }
+
         SQLiteManager sqLiteManager = SQLiteManager.getInstance(ctx);
         sqLiteManager.insertTransaction(tx, blockHeight, timestamp, hash);
     }
 
     public static void onTxUpdated(String hash, int blockHeight) {
+        Log.e(TAG, "in the BRWalletManager - onTxUpdated");
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) {
             SQLiteManager.getInstance(ctx).updateTxByHash(hash, blockHeight);
         }
-        Log.e(TAG, "in the BRWalletManager - onTxUpdated");
     }
 
     public static void onTxDeleted(String hash) {
+        Log.e(TAG, "in the BRWalletManager - onTxDeleted");
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) {
             SQLiteManager.getInstance(ctx).deleteTxByHash(hash);
         }
-
-
-        Log.e(TAG, "in the BRWalletManager - onTxDeleted");
     }
 
     private native byte[] encodeSeed(byte[] seed, String[] wordList);

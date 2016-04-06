@@ -110,25 +110,15 @@ public class ParallaxViewPager extends ViewPager {
                 }
 
                 MainActivity.app.setPagerIndicator(position);
-                if (FragmentAnimator.level == 0) {
-                    if (position == 1) {
-                        new Handler().postDelayed(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                SpringAnimator.showBouncySlideHorizontal(getRootView(), SpringAnimator.TO_RIGHT, 15);
-                            }
-                        }, 80);
-                    } else if (position == 0) {
-                        new Handler().postDelayed(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                SpringAnimator.showBouncySlideHorizontal(getRootView(), SpringAnimator.TO_LEFT, 15);
-                            }
-                        }, 80);
-                    }
-                }
+//                if (FragmentAnimator.level == 0) {
+//                    new Handler().postDelayed(new Runnable() {
+//
+//                        @Override
+//                        public void run() {
+//                            SpringAnimator.showBouncySlideHorizontal(CustomPagerAdapter.adapter.getItem(position).getView(), position == 1 ? SpringAnimator.TO_RIGHT : SpringAnimator.TO_LEFT, 15);
+//                        }
+//                    }, 80);
+//                }
 
 //                Log.e("AdapterParalax", "Showing animation!!!!!");
             }
