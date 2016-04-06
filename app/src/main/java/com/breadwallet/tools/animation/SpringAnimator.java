@@ -134,6 +134,60 @@ public class SpringAnimator {
     }
 
     /**
+     * Shows the springy bubble animation on views
+     */
+    public static void showBubbleAnimation(final View view) {
+        if (view != null) {
+            SpringSystem springSystem = SpringSystem.create();
+
+            // Add a spring to the system.
+            final Spring spring = springSystem.createSpring();
+            SpringConfig config = new SpringConfig(500, DAMPER);
+            spring.setSpringConfig(config);
+            spring.setEndValue(1f);
+//            new Handler().postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    spring.setEndValue(0);
+//                }
+//            }, 100);
+
+            // Add a listener to observe the motion of the spring.
+            spring.addListener(new SpringListener() {
+
+                @Override
+                public void onSpringUpdate(Spring spring) {
+                    // You can observe the updates in the spring
+                    // state by asking its current value in onSpringUpdate.
+
+                    float value = (float) spring.getCurrentValue();
+                    float scale = 0.5f + (value * 0.5f);
+                    view.setScaleX(scale);
+                    view.setScaleY(scale);
+                }
+
+                @Override
+                public void onSpringAtRest(Spring spring) {
+                }
+
+                @Override
+                public void onSpringActivate(Spring spring) {
+                }
+
+                @Override
+                public void onSpringEndStateChange(Spring spring) {
+                }
+            });
+        } else {
+            Log.e(TAG, "The view is null cannot show bouncy animaion!");
+        }
+        // Set the spring in motion; moving from 0 to 1
+
+    }
+
+
+
+    /**
      * Uses the Facebook Spring animation to show a bouncy animation on
      * the view that is given as a parameter
      *

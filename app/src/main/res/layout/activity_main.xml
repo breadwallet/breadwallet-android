@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_layout"
     android:layout_width="match_parent"
@@ -38,25 +39,26 @@
 
     <ProgressBar
         android:id="@+id/sync_progress_bar"
-        android:visibility="gone"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:layout_below="@+id/main_button_burger"
-        android:progressDrawable="@drawable/progress_blue" />
+        android:progressDrawable="@drawable/progress_blue"
+         />
 
     <TextView
+
         android:id="@+id/sync_progress_text"
-        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
         android:layout_above="@+id/sync_progress_bar"
         android:layout_marginBottom="15dp"
-        android:textSize="13sp"
+        android:layout_marginStart="20dp"
         android:layout_toEndOf="@+id/middle_view_flipper"
         android:text="0.00%"
-        android:textColor="@color/light_grey" />
+        android:textColor="@color/light_grey"
+        android:textSize="13sp"
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/main_button_burger"
@@ -111,10 +113,17 @@
         android:orientation="horizontal"
         android:visibility="gone">
 
+        <RelativeLayout
+            android:id="@+id/network_bar_line"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/separator_height"
+            android:background="@color/grey" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
+            android:layout_below="@+id/network_bar_line"
             android:layout_centerHorizontal="true"
             android:layout_gravity="center"
             android:foregroundGravity="center"
@@ -172,5 +181,72 @@
         android:text="testnet"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="@color/dark_red" />
+
+
+    <com.breadwallet.presenter.bubbleview.BubbleTextVew
+        android:layout_marginTop="10dp"
+        android:id="@+id/middle_bubble_tip1"
+        android:visibility="gone"
+        android:layout_below="@+id/middle_view_flipper"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_margin="10dp"
+        android:layout_centerInParent="true"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="@string/middle_view_tip_first"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        app:angle="8dp"
+        android:foregroundGravity="center"
+        app:arrowHeight="10dp"
+        app:arrowLocation="top"
+        app:arrowPosition="200dp"
+        app:arrowWidth="10dp"
+        app:bubbleColor="@color/wallet_orange" />
+
+    <com.breadwallet.presenter.bubbleview.BubbleTextVew
+        android:layout_marginTop="10dp"
+        android:layout_centerInParent="true"
+        android:id="@+id/middle_bubble_tip2"
+        android:visibility="gone"
+        android:layout_below="@+id/middle_view_flipper"
+        android:layout_width="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="@string/middle_view_tip_second"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        app:angle="8dp"
+        app:arrowHeight="10dp"
+        app:arrowLocation="top"
+        app:arrowPosition="160dp"
+        app:arrowWidth="10dp"
+        app:bubbleColor="@color/wallet_orange" />
+
+    <com.breadwallet.presenter.bubbleview.BubbleTextVew
+        android:layout_marginTop="10dp"
+        android:layout_centerInParent="true"
+        android:id="@+id/middle_bubble_blocks"
+        android:visibility="gone"
+        android:layout_below="@+id/middle_view_flipper"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_margin="10dp"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        app:angle="8dp"
+        app:arrowHeight="10dp"
+        app:arrowLocation="top"
+        app:arrowPosition="100dp"
+        app:arrowWidth="10dp"
+        app:bubbleColor="@color/wallet_orange" />
 
 </RelativeLayout>

@@ -150,6 +150,13 @@ public class BreadWalletApp extends Application {
         }
     }
 
+    public boolean isToastShown(){
+        if(toast != null){
+            return toast.getView().isShown();
+        }
+        return false;
+    }
+
 //    public int getRelativeLeft(View myView) {
 //        if (myView.getParent() == myView.getRootView())
 //            return myView.getLeft();

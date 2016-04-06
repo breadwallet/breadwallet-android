@@ -123,8 +123,6 @@ public class FragmentWipeWallet extends Fragment {
         String trimmedInsertedPhrase = insertedPhrase.trim();
         Log.e(TAG,"trimmedPhrase: " + trimmedPhrase);
         Log.e(TAG,"trimmedInsertedPhrase: " + trimmedInsertedPhrase);
-
-
 //        Log.e(TAG,"Inserted:" +  insertedPhrase);
 //        Log.e(TAG,"Actual:" +  thePhrase);
         return trimmedInsertedPhrase.equalsIgnoreCase(trimmedPhrase);

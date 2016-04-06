@@ -75,6 +75,10 @@ public class MainFragment extends Fragment {
             public void onClick(View v) {
                 ((BreadWalletApp) getActivity().getApplication()).hideKeyboard(getActivity());
                 addressEditText.clearFocus();
+                MainActivity app = MainActivity.app;
+                if(app != null){
+                    app.hideAllBubbles();
+                }
             }
         });
 

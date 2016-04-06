@@ -2,13 +2,18 @@
 package com.breadwallet.presenter.activities;
 
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 
@@ -21,6 +26,8 @@ import com.breadwallet.presenter.fragments.IntroWarningFragment;
 import com.breadwallet.presenter.fragments.IntroWelcomeFragment;
 import com.breadwallet.tools.animation.BackgroundMovingAnimator;
 import com.breadwallet.wallet.BRWalletManager;
+
+import java.util.List;
 
 
 /**
@@ -52,7 +59,6 @@ public class IntroActivity extends FragmentActivity {
     private static final String TAG = IntroActivity.class.getName();
     public static IntroActivity app;
     private Button leftButton;
-    private Bundle savedInstanceState;
 
     //loading the native library
     static {
@@ -86,7 +92,6 @@ public class IntroActivity extends FragmentActivity {
             }
         });
 
-
         getFragmentManager().beginTransaction().add(R.id.intro_layout, new IntroWelcomeFragment(),
                 IntroWelcomeFragment.class.getName()).commit();
         startTheWalletIfExists();
@@ -106,25 +111,19 @@ public class IntroActivity extends FragmentActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        this.savedInstanceState = outState;
 
     }
 
     private void showRecoverNewWalletFragment() {
-//        if (savedInstanceState == null) {
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
         IntroWelcomeFragment introWelcomeFragment = (IntroWelcomeFragment) getFragmentManager().
                 findFragmentByTag(IntroWelcomeFragment.class.getName());
         fragmentTransaction.replace(introWelcomeFragment.getId(), new IntroNewRecoverFragment(), IntroNewRecoverFragment.class.getName());
         fragmentTransaction.commitAllowingStateLoss();
-//            Log.e(TAG, "after showRecoverNewWalletFragment");
-//        }
     }
 
     public void showNewWalletFragment() {
-//        if (savedInstanceState == null) {
-//            Log.e(TAG, "in showNewWalletFragment");
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         leftButton.setVisibility(View.VISIBLE);
         leftButton.setClickable(true);
@@ -134,11 +133,9 @@ public class IntroActivity extends FragmentActivity {
         fragmentTransaction.replace(introNewRecoverFragment.getId(), new IntroNewWalletFragment(), IntroNewWalletFragment.class.getName()).
                 addToBackStack(null);
         fragmentTransaction.commitAllowingStateLoss();
-//        }
     }
 
     public void showRecoverWalletFragment() {
-//        if (savedInstanceState == null) {
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         leftButton.setVisibility(View.VISIBLE);
         leftButton.setClickable(true);
@@ -148,11 +145,9 @@ public class IntroActivity extends FragmentActivity {
         fragmentTransaction.replace(introNewRecoverFragment.getId(), new IntroRecoverWalletFragment(), IntroRecoverWalletFragment.class.getName()).
                 addToBackStack(null);
         fragmentTransaction.commitAllowingStateLoss();
-//        }
     }
 
     public void showWarningFragment() {
-//        if (savedInstanceState == null) {
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         IntroNewWalletFragment introNewWalletFragment = (IntroNewWalletFragment) getFragmentManager().
                 findFragmentByTag(IntroNewWalletFragment.class.getName());
@@ -161,7 +156,6 @@ public class IntroActivity extends FragmentActivity {
         leftButton.setVisibility(View.GONE);
         leftButton.setClickable(false);
         fragmentTransaction.commitAllowingStateLoss();
-//        }
     }
 
     @Override
@@ -191,7 +185,6 @@ public class IntroActivity extends FragmentActivity {
     @Override
     public void onBackPressed() {
         int backStackEntryCount = getFragmentManager().getBackStackEntryCount();
-//        Log.e(TAG, "getBackStackEntryCount: " + backStackEntryCount);
         if (backStackEntryCount > 0) {
             if (backStackEntryCount == 1) {
                 leftButton.setVisibility(View.GONE);
@@ -211,7 +204,6 @@ public class IntroActivity extends FragmentActivity {
             ((BreadWalletApp) getApplication()).showDeviceNotSecuredWarning(this);
         } else {
             if (m.noWallet(app)) {
-
                 //now check if there is a wallet or should we create/restore one.
                 new Handler().postDelayed(new Runnable() {
                     @Override
@@ -226,6 +218,25 @@ public class IntroActivity extends FragmentActivity {
             }
 
         }
+    }
+
+    public boolean isUsingCustomInputMethod() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+        List<InputMethodInfo> mInputMethodProperties = imm.getEnabledInputMethodList();
+        final int N = mInputMethodProperties.size();
+        for (int i = 0; i < N; i++) {
+            InputMethodInfo imi = mInputMethodProperties.get(i);
+            if (imi.getId().equals(
+                    Settings.Secure.getString(getContentResolver(),
+                            Settings.Secure.DEFAULT_INPUT_METHOD))) {
+                if ((imi.getServiceInfo().applicationInfo.flags &
+                        ApplicationInfo.FLAG_SYSTEM) == 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 }

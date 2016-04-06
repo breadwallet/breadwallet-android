@@ -24,8 +24,10 @@ import android.widget.Toast;
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.bubbleview.BubbleTextVew;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.FragmentAnimator;
+import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.qrcode.QRCodeEncoder;
 import com.breadwallet.wallet.BRWalletManager;
 import com.google.zxing.BarcodeFormat;
@@ -34,6 +36,7 @@ import com.google.zxing.WriterException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.logging.Handler;
 
 /**
  * BreadWallet
@@ -67,22 +70,32 @@ public class MainFragmentQR extends Fragment {
     private Bitmap bitmap;
     private SharingFragment sharingFragment;
     private FragmentManager fm;
-    private int count;
-    private int firstToastY = -1;
-    private int secondToastY = -1;
     public static File qrCodeImageFile;
     private String receiveAddress;
     public static final String RECEIVE_ADDRESS_PREFS = "ReceiveAddress";
     public static final String RECEIVE_ADDRESS = "address";
+    private int bubbleState = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         // The last two arguments ensure LayoutParams are inflated
         // properly.
-
-        return inflater.inflate(
-                R.layout.fragment_qr_main, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_qr_main, container, false);
+        final MainActivity app = MainActivity.app;
+        if (app != null) {
+            app.qrBubble1 = (BubbleTextVew) rootView.findViewById(R.id.qr_bubble1);
+            app.qrBubble2 = (BubbleTextVew) rootView.findViewById(R.id.qr_bubble2);
+        }
+        rootView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (app != null) {
+                    app.hideAllBubbles();
+                }
+            }
+        });
+        return rootView;
     }
 
     @Override
@@ -99,7 +112,7 @@ public class MainFragmentQR extends Fragment {
 //        }
         qrcode = (ImageView) getActivity().findViewById(R.id.main_image_qr_code);
         sharingFragment = new SharingFragment();
-        RelativeLayout main_fragment_qr = (RelativeLayout) getActivity().findViewById(R.id.main_fragment_qr);
+        final RelativeLayout main_fragment_qr = (RelativeLayout) getActivity().findViewById(R.id.main_fragment_qr);
         mainAddressText = (TextView) getActivity().findViewById(R.id.main_address_text);
         RelativeLayout addressLayout = (RelativeLayout) getActivity().findViewById(R.id.theAddressLayout);
         generateQR();
@@ -111,6 +124,8 @@ public class MainFragmentQR extends Fragment {
             public void onClick(View view) {
                 breadWalletApp.cancelToast();
                 if (FragmentAnimator.checkTheMultipressingAvailability()) {
+                    MainActivity app = MainActivity.app;
+                    if (app != null) app.hideAllBubbles();
                     Log.e(TAG, "finalReceiveAddress: " + receiveAddress);
                     sharingFragment.setTheAddress(receiveAddress);
                     saveBitmapToFile();
@@ -122,22 +137,26 @@ public class MainFragmentQR extends Fragment {
             @Override
             public void onClick(View v) {
                 if (FragmentAnimator.checkTheMultipressingAvailability()) {
-                    if (count == 0) {
-                        if (firstToastY == -1)
-                            firstToastY = BreadWalletApp.DISPLAY_HEIGHT_PX - breadWalletApp.getRelativeTop(mainAddressText) + 400;
-                        breadWalletApp.showCustomToast(MainActivity.app,
-                                getResources().getString(R.string.toast_qr_tip), firstToastY, Toast.LENGTH_LONG, 0);
-//                        Log.e(TAG, "Toast show nr: " + count);
-                        count++;
-                    } else if (count == 1) {
-                        if (secondToastY == -1)
-                            secondToastY = BreadWalletApp.DISPLAY_HEIGHT_PX - breadWalletApp.getRelativeTop(mainAddressText);
-                        breadWalletApp.showCustomToast(MainActivity.app,
-                                getResources().getString(R.string.toast_address_tip),
-                                secondToastY, Toast.LENGTH_LONG, 0);
-//                        Log.e(TAG, "Toast show nr: " + count);
-                        count--;
+                    MainActivity app = MainActivity.app;
+                    if (app != null) {
+                        app.hideAllBubbles();
+                        if (bubbleState == 0) {
+                            ((MainActivity) getActivity()).hideAllBubbles();
+                            app.qrBubble1.setVisibility(View.VISIBLE);
+                            app.qrBubble2.setVisibility(View.GONE);
+                            SpringAnimator.showBubbleAnimation(app.qrBubble1);
+                            bubbleState++;
+                        } else if (bubbleState == 1) {
+                            app.qrBubble1.setVisibility(View.GONE);
+                            app.qrBubble2.setVisibility(View.VISIBLE);
+                            SpringAnimator.showBubbleAnimation(app.qrBubble2);
+                            bubbleState++;
+                        } else {
+                            app.hideAllBubbles();
+                            bubbleState = 0;
+                        }
                     }
+
                 }
 
             }
@@ -206,7 +225,6 @@ public class MainFragmentQR extends Fragment {
     public void onResume() {
         super.onResume();
         MiddleViewAdapter.resetMiddleView(getActivity(), null);
-
         refreshAddress(null);
     }
 

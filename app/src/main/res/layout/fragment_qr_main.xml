@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_fragment_qr"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/main_text_receive_money"
@@ -22,6 +22,50 @@
         android:layout_below="@+id/main_text_receive_money"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="15dp" />
+
+    <com.breadwallet.presenter.bubbleview.BubbleTextVew
+        android:layout_marginTop="30dp"
+        android:layout_centerInParent="true"
+        android:id="@+id/qr_bubble1"
+        android:visibility="gone"
+        android:layout_alignBaseline="@+id/main_image_qr_code"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:padding="10dp"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        app:angle="8dp"
+        app:arrowHeight="10dp"
+        app:arrowLocation="top"
+        app:arrowPosition="100dp"
+        android:text="@string/toast_qr_tip"
+        app:arrowWidth="10dp"
+        app:bubbleColor="@color/wallet_orange" />
+
+    <com.breadwallet.presenter.bubbleview.BubbleTextVew
+        android:layout_marginTop="160dp"
+        android:layout_centerInParent="true"
+        android:id="@+id/qr_bubble2"
+        android:visibility="gone"
+        android:layout_alignBaseline="@+id/main_image_qr_code"
+        android:layout_width="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="@string/toast_address_tip"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        app:angle="8dp"
+        app:arrowHeight="10dp"
+        app:arrowLocation="bottom"
+        app:arrowPosition="100dp"
+        app:arrowWidth="10dp"
+        app:bubbleColor="@color/wallet_orange" />
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/theAddressLayout"

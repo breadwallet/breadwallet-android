@@ -35,6 +35,7 @@ import android.widget.ViewFlipper;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
+import com.breadwallet.presenter.bubbleview.BubbleTextVew;
 import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
 import com.breadwallet.presenter.entities.BRPeerEntity;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
@@ -47,6 +48,7 @@ import com.breadwallet.presenter.fragments.MainFragmentQR;
 import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.NetworkChangeReceiver;
+import com.breadwallet.tools.security.RootUtil;
 import com.breadwallet.tools.SoftKeyboard;
 import com.breadwallet.tools.adapter.AmountAdapter;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
@@ -124,7 +126,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     private RelativeLayout networkErrorBar;
     private final NetworkChangeReceiver receiver = new NetworkChangeReceiver();
     public static final Point screenParametersPoint = new Point();
-    private int middleViewPressedCount = 0;
+    private int middleViewState = 0;
     private BroadcastReceiver mPowerKeyReceiver = null;
 //    private String amountHolder;
 //    private String addressHolder;
@@ -137,6 +139,11 @@ public class MainActivity extends FragmentActivity implements Observer {
     private ToastBlockShowTask toastBlockShowTask;
     private int runCount = 0;
     boolean deleteTxs = false;
+    private BubbleTextVew middleBubble1;
+    private BubbleTextVew middleBubble2;
+    private BubbleTextVew middleBubbleBlocks;
+    public BubbleTextVew qrBubble1;
+    public BubbleTextVew qrBubble2;
 
     public static boolean appInBackground = false;
 
@@ -164,6 +171,8 @@ public class MainActivity extends FragmentActivity implements Observer {
 
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
 
+        checkDeviceRooted();
+
         setUpApi23();
 
         if (((BreadWalletApp) getApplication()).isEmulatorOrDebug()) {
@@ -178,6 +187,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         pay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                hideAllBubbles();
                 String amountHolder = FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_RIGHT ?
                         AmountAdapter.getRightValue() : AmountAdapter.getLeftValue();
                 String addressHolder = FragmentScanResult.address;
@@ -188,29 +198,79 @@ public class MainActivity extends FragmentActivity implements Observer {
         viewFlipper.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if (MiddleViewAdapter.getSyncing()) {
-                    ToastBlockShowTask.getInstance(app).startOneToast();
+                    hideAllBubbles();
+                    if (middleBubbleBlocks.getVisibility() == View.VISIBLE) {
+                        middleBubbleBlocks.setVisibility(View.GONE);
+                        return;
+                    }
+//                    ToastBlockShowTask.getInstance(app).startOneToast();
+                    middleBubbleBlocks.setVisibility(View.VISIBLE);
+                    SpringAnimator.showBubbleAnimation(middleBubbleBlocks);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            while (middleBubbleBlocks.getVisibility() == View.VISIBLE) {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        String currBlock = String.valueOf(BRPeerManager.getCurrentBlockHeight());
+                                        String latestBlockKnown = String.valueOf(BRPeerManager.getEstimatedBlockHeight());
+                                        String formattedBlockInfo = String.format("block #%s of %s", currBlock, latestBlockKnown);
+                                        middleBubbleBlocks.setText(formattedBlockInfo);
+                                    }
+                                });
+                                try {
+                                    Thread.sleep(500);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }).start();
                     return;
                 }
                 if (FragmentAnimator.level == 0 && BreadWalletApp.unlocked) {
-                    if (middleViewPressedCount % 2 == 0) {
-                        ((BreadWalletApp) getApplication()).showCustomToast(app, getResources().
-                                        getString(R.string.middle_view_tip_first),
-                                (int) (screenParametersPoint.y * 0.7), Toast.LENGTH_LONG, 0);
-                        middleViewPressedCount++;
+                    hideAllBubbles();
+                    if (middleViewState == 0) {
+                        middleBubble2.setVisibility(View.GONE);
+                        middleBubble1.setVisibility(View.VISIBLE);
+                        SpringAnimator.showBubbleAnimation(middleBubble1);
+                        middleViewState++;
+                    } else if (middleViewState == 1) {
+                        middleBubble2.setVisibility(View.VISIBLE);
+                        SpringAnimator.showBubbleAnimation(middleBubble2);
+                        middleBubble1.setVisibility(View.GONE);
+                        middleViewState++;
                     } else {
-                        ((BreadWalletApp) getApplication()).showCustomToast(app, getResources().
-                                        getString(R.string.middle_view_tip_second),
-                                (int) (screenParametersPoint.y * 0.8), Toast.LENGTH_LONG, 0);
-                        middleViewPressedCount++;
+                        hideAllBubbles();
+                        middleViewState = 0;
                     }
+
                 }
+//                    if (middleViewState == 0) {
+//                        ((BreadWalletApp) getApplication()).showCustomToast(app, getResources().
+//                                        getString(R.string.middle_view_tip_first),
+//                                (int) (screenParametersPoint.y * 0.7), Toast.LENGTH_LONG, 0);
+//                        middleViewState++;
+//                    } else if(middleViewState == 1){
+//                        ((BreadWalletApp) getApplication()).showCustomToast(app, getResources().
+//                                        getString(R.string.middle_view_tip_second),
+//                                (int) (screenParametersPoint.y * 0.8), Toast.LENGTH_LONG, 0);
+//                        middleViewState++;
+//                    } else {
+//                        ((BreadWalletApp) getApplication()).cancelToast();
+//                        middleViewState = 0;
+//                    }
+//                }
             }
         });
 
         burgerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                hideAllBubbles();
                 Log.d(TAG, "Testing burger button_regular_blue! should work");
                 SpringAnimator.showAnimation(burgerButton);
                 if (FragmentAnimator.level > 1 || scanResultFragmentOn || decoderFragmentOn) {
@@ -248,6 +308,24 @@ public class MainActivity extends FragmentActivity implements Observer {
 //        createInvisibleLayoutTips();
     }
 
+    private void checkDeviceRooted() {
+        boolean hasBitcoin = CurrencyManager.getInstance(this).getBALANCE() > 0;
+        if (RootUtil.isDeviceRooted()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("DEVICE SECURITY COMPROMISED")
+                    .setMessage("Any \'jailbreak\' app can access any other app\'s keychain data (and steal your bitcoins)." + (hasBitcoin ? "\nWipe this wallet immediately and restore on a secure device." : ""))
+                    .setCancelable(false)
+                    .setNegativeButton(getString(R.string.ok_button), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
+    }
+
     @Override
     protected void onRestart() {
         super.onRestart();  // Always call the superclass method first
@@ -259,6 +337,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     protected void onResume() {
         super.onResume();
         appInBackground = false;
+        middleViewState = 0;
         app = this;
         CurrencyManager currencyManager = CurrencyManager.getInstance(this);
         currencyManager.startTimer();
@@ -276,10 +355,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         }
         askForPasscode();
 
-
-//        else {
-//            BRPeerManager.stopSyncingProgressThread();
-//        }
 
     }
 
@@ -301,7 +376,6 @@ public class MainActivity extends FragmentActivity implements Observer {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-//        clearCMemory();
         finish();
         FragmentAnimator.level = 0;
         CurrencyManager.getInstance(this).stopTimerTask();
@@ -338,6 +412,11 @@ public class MainActivity extends FragmentActivity implements Observer {
         burgerButtonMap.put("burger", R.drawable.burger);
         burgerButtonMap.put("close", R.drawable.x);
         burgerButtonMap.put("back", R.drawable.navigationback);
+        middleBubble1 = (BubbleTextVew) findViewById(R.id.middle_bubble_tip1);
+        middleBubble2 = (BubbleTextVew) findViewById(R.id.middle_bubble_tip2);
+        middleBubbleBlocks = (BubbleTextVew) findViewById(R.id.middle_bubble_blocks);
+        qrBubble1 = (BubbleTextVew) findViewById(R.id.qr_bubble1);
+        qrBubble2 = (BubbleTextVew) findViewById(R.id.qr_bubble2);
 //        myClipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
 
     }
@@ -779,7 +858,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         final int blocksCount = blocks.size();
         final int peersCount = peers.size();
 
-
 //        CustomLogger.LogThis("setUpTheWallet: number of transactions from sqlite: ",
 //                String.valueOf(transactions.size()),
 //                " transactionCount: ", String.valueOf(transactionsCount), " blocksCount: ",
@@ -882,6 +960,20 @@ public class MainActivity extends FragmentActivity implements Observer {
                 }
             });
         }
+
+    }
+
+    public void hideAllBubbles() {
+        if (middleBubble1 != null)
+            middleBubble1.setVisibility(View.GONE);
+        if (middleBubble2 != null)
+            middleBubble2.setVisibility(View.GONE);
+        if (middleBubbleBlocks != null)
+            middleBubbleBlocks.setVisibility(View.GONE);
+        if (qrBubble2 != null)
+            qrBubble2.setVisibility(View.GONE);
+        if (qrBubble1 != null)
+            qrBubble1.setVisibility(View.GONE);
 
     }
 

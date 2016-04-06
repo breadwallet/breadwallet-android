@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
@@ -99,7 +100,9 @@ public class FragmentSettingsAll extends Fragment {
             @Override
             public void onClick(View view) {
                 if (FragmentAnimator.checkTheMultipressingAvailability()) {
-                    FragmentAnimator.animateDecoderFragment();
+//                    FragmentAnimator.animateDecoderFragment();
+                    ((BreadWalletApp) getActivity().getApplication()).showCustomToast(getActivity(), "Not available for beta version",
+                            MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
                 }
             }
         });
@@ -268,13 +271,13 @@ public class FragmentSettingsAll extends Fragment {
         int blockHeight = item.getBlockHeight();
         int estimatedBlockHeight = BRPeerManager.getEstimatedBlockHeight();
         int confirms = blockHeight == Integer.MAX_VALUE ? 0 : estimatedBlockHeight - blockHeight + 1;
-        Log.e(TAG,"confirms: " + confirms);
+        Log.e(TAG, "confirms: " + confirms);
 
-        if(item.getSent() > 0 && item.getSent() == item.getReceived()){
+        if (item.getSent() > 0 && item.getSent() == item.getReceived()) {
             sentReceivedTextView.setBackgroundResource(R.drawable.unconfirmed_label);
             sentReceivedTextView.setText(R.string.moved);
             sentReceivedTextView.setTextColor(unconfirmedColor);
-        }  else if (blockHeight != Integer.MAX_VALUE && confirms >= 6) {
+        } else if (blockHeight != Integer.MAX_VALUE && confirms >= 6) {
             sentReceivedTextView.setBackgroundResource(received ? R.drawable.received_label : R.drawable.sent_label);
             sentReceivedTextView.setText(received ? "received" : "sent");
             sentReceivedTextView.setTextColor(received ? receivedColor : sentColor);
