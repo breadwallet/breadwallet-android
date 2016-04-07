@@ -142,7 +142,7 @@ public class SpringAnimator {
 
             // Add a spring to the system.
             final Spring spring = springSystem.createSpring();
-            SpringConfig config = new SpringConfig(500, DAMPER);
+            SpringConfig config = new SpringConfig(600, 20);
             spring.setSpringConfig(config);
             spring.setEndValue(1f);
 //            new Handler().postDelayed(new Runnable() {

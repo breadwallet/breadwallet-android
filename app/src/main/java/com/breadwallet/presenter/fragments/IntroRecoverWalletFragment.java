@@ -5,11 +5,14 @@ import android.app.Fragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.IntroActivity;
@@ -61,6 +64,15 @@ public class IntroRecoverWalletFragment extends Fragment {
         recoverButton = (Button) rootView.findViewById(R.id.recover_button);
         editText = (EditText) rootView.findViewById(R.id.recover_wallet_edit_text);
         editText.setText("");
+        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) ||
+                        (actionId == EditorInfo.IME_ACTION_DONE)) {
+                    recoverButton.performClick();
+                }
+                return false;
+            }
+        });
         alertDialog = new AlertDialog.Builder(getActivity()).create();
         recoverButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,7 +92,7 @@ public class IntroRecoverWalletFragment extends Fragment {
                 Log.e(TAG, "phraseToCheck: |" + phraseToCheck + "|");
                 if (words.length != 2048)
                     throw new IllegalArgumentException("words.length is not 2048");
-                if (validateRecoveryPhrase(words, phraseToCheck)) {
+                if (validateRecoveryPhrase(words, phraseToCheck.toLowerCase())) {
                     String normalizedPhrase = Normalizer.normalize(phraseToCheck, Normalizer.Form.NFKD);
                     boolean success = KeyStoreManager.setKeyStoreString(normalizedPhrase, getActivity());
                     if (!success)

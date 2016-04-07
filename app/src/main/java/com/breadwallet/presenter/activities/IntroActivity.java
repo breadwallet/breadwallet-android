@@ -16,6 +16,7 @@ import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
@@ -79,8 +80,9 @@ public class IntroActivity extends FragmentActivity {
 
         app = this;
 
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE);
+        //TODO put that back
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+//                WindowManager.LayoutParams.FLAG_SECURE);
 
         leftButton = (Button) findViewById(R.id.intro_left_button);
         leftButton.setVisibility(View.GONE);
@@ -95,6 +97,8 @@ public class IntroActivity extends FragmentActivity {
         getFragmentManager().beginTransaction().add(R.id.intro_layout, new IntroWelcomeFragment(),
                 IntroWelcomeFragment.class.getName()).commit();
         startTheWalletIfExists();
+        if (isUsingCustomInputMethod())
+            ((BreadWalletApp) getApplication()).showCustomToast(this, "CUSTOM INPUT TYPE!", 300, Toast.LENGTH_LONG, 0);
     }
 
     @Override

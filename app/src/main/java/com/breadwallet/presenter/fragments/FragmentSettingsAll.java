@@ -237,7 +237,6 @@ public class FragmentSettingsAll extends Fragment {
     }
 
     public static View getViewFromTransactionObject(final TransactionListItem item) {
-        //TODO FIX THE BUG ,,does not go more then 10 000 000 bits"
         final MainActivity app = MainActivity.app;
         if (app == null || item == null) return null;
         CurrencyManager m = CurrencyManager.getInstance(app);

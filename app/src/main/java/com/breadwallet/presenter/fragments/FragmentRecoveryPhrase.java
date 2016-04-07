@@ -53,17 +53,17 @@ public class FragmentRecoveryPhrase extends Fragment {
         BRWalletManager m = BRWalletManager.getInstance(getActivity());
         thePhrase = (TextView) rootView.findViewById(R.id.the_phrase);
 
-        //TODO delete this code below which is for testing reasons only
-        thePhrase.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                BRClipboardManager.copyToClipboard(getActivity(),thePhrase.getText().toString());
-                ((BreadWalletApp)getActivity().getApplication()).showCustomToast(getActivity(),
-                        getString(R.string.copied), 300, Toast.LENGTH_SHORT,0);
-            }
-        });
+//        //TODO delete this code below which is for testing reasons only
+//        thePhrase.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                BRClipboardManager.copyToClipboard(getActivity(),thePhrase.getText().toString());
+//                ((BreadWalletApp)getActivity().getApplication()).showCustomToast(getActivity(),
+//                        getString(R.string.copied), 300, Toast.LENGTH_SHORT,0);
+//            }
+//        });
 
-        final long startTime = System.currentTimeMillis();
+//        final long startTime = System.currentTimeMillis();
         //return the new method if the API is 23+
 
         thePhrase.setText(KeyStoreManager.getKeyStoreString(getActivity()));

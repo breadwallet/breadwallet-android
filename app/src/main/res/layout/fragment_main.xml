@@ -8,10 +8,10 @@
 
     <TextView
         android:id="@+id/main_text_send_money"
-        android:layout_above="@+id/scan_clipboard_buttons_layout"
-        android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/scan_clipboard_buttons_layout"
+        android:layout_centerHorizontal="true"
         android:layout_gravity="center"
         android:layout_marginBottom="10dp"
         android:text="@string/send_money"
@@ -19,13 +19,14 @@
 
     <LinearLayout
         android:id="@+id/scan_clipboard_buttons_layout"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
         android:layout_gravity="center"
         android:gravity="center"
         android:orientation="vertical">
+
         <Button
             android:id="@+id/main_button_scan_qr_code"
             android:layout_width="240dp"
@@ -33,6 +34,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
             android:background="@drawable/button_regular_blue"
+            android:shadowColor="@android:color/transparent"
             android:src="@drawable/cameraguide_blue_small"
             android:text="@string/scan_qr_code"
             android:textAllCaps="false"
@@ -46,6 +48,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="50dp"
             android:background="@drawable/button_regular_blue"
+            android:shadowColor="@android:color/transparent"
             android:text="@string/pay_address_from_clipboard"
             android:textAllCaps="false"
             android:textColor="@color/dark_blue"
@@ -53,10 +56,10 @@
     </LinearLayout>
 
     <EditText
-        android:layout_below="@+id/scan_clipboard_buttons_layout"
         android:id="@+id/address_edit_text"
         android:layout_width="match_parent"
         android:layout_height="100dp"
+        android:layout_below="@+id/scan_clipboard_buttons_layout"
         android:layout_gravity="center_horizontal"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
