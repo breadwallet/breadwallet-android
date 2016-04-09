@@ -45,8 +45,9 @@ public class BackgroundMovingAnimator {
     private static void animate() {
         updateDisplayRect();
         if (mDirection == RightToLeft) {
-            animate(mDisplayRect.left, mDisplayRect.left -
-                    (mDisplayRect.right - background.getWidth()));
+//            animate(mDisplayRect.left, mDisplayRect.left -
+//                    (mDisplayRect.right - background.getWidth()));
+            animate(mDisplayRect.left, 0.0f);  // BUG: XXX animates past background bounds
         } else {
             animate(mDisplayRect.left, 0.0f);
         }
