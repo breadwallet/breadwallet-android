@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.hardware.fingerprint.FingerprintManager;
@@ -16,6 +17,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PersistableBundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -24,6 +26,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
+import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -144,6 +147,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     private BubbleTextVew middleBubbleBlocks;
     public BubbleTextVew qrBubble1;
     public BubbleTextVew qrBubble2;
+    private ToastUpdater toastUpdater;
 
     public static boolean appInBackground = false;
 
@@ -174,6 +178,23 @@ public class MainActivity extends FragmentActivity implements Observer {
         checkDeviceRooted();
 
         setUpApi23();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (isUsingCustomInputMethod())
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ((BreadWalletApp) getApplication()).showCustomToast(app, "CUSTOM INPUT TYPE!", 300, Toast.LENGTH_LONG, 0);
+                        }
+                    });
+            }
+        }).start();
+
+        //TOOD take off
+//        String phrase = new String(KeyStoreManager.getKeyStorePhrase(this));
+//        Log.e(TAG, "phrase fresh: " + phrase);
 
         if (((BreadWalletApp) getApplication()).isEmulatorOrDebug()) {
             MODE = DEBUG;
@@ -209,27 +230,14 @@ public class MainActivity extends FragmentActivity implements Observer {
 //                    ToastBlockShowTask.getInstance(app).startOneToast();
                     middleBubbleBlocks.setVisibility(View.VISIBLE);
                     SpringAnimator.showBubbleAnimation(middleBubbleBlocks);
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            while (middleBubbleBlocks.getVisibility() == View.VISIBLE) {
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        String currBlock = String.valueOf(BRPeerManager.getCurrentBlockHeight());
-                                        String latestBlockKnown = String.valueOf(BRPeerManager.getEstimatedBlockHeight());
-                                        String formattedBlockInfo = String.format("block #%s of %s", currBlock, latestBlockKnown);
-                                        middleBubbleBlocks.setText(formattedBlockInfo);
-                                    }
-                                });
-                                try {
-                                    Thread.sleep(500);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                    }).start();
+
+                    if (toastUpdater != null) {
+                        toastUpdater.interrupt();
+                        toastUpdater = null;
+                    }
+                    toastUpdater = new ToastUpdater();
+                    toastUpdater.start();
+
                     return;
                 }
                 if (FragmentAnimator.level == 0 && BreadWalletApp.unlocked) {
@@ -578,6 +586,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         if (cm.isNetworkAvailable(this)) {
             BRWalletManager m = BRWalletManager.getInstance(this);
             boolean txPossible = m.tryTransaction(addressHolder, cm.getSatoshisFromBits(Math.round(amountAsDouble)));
+            double feeForTx = cm.getBitsFromSatoshi(m.feeForTransaction(addressHolder, cm.getSatoshisFromBits(Math.round(amountAsDouble))));
             if (!txPossible && amountAsDouble <= cm.getBitsFromSatoshi(cm.getBALANCE()) && amountAsDouble > 0) {
                 final double maxAmountDouble = cm.getBitsFromSatoshi(m.getMaxOutputAmount());
                 Log.e(TAG, "maxAmountDouble: " + maxAmountDouble);
@@ -602,7 +611,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                 alert.show();
                 return;
             }
-            long feeForTx = cm.getBitsFromSatoshi(m.feeForTransaction(addressHolder, cm.getSatoshisFromBits(Math.round(amountAsDouble))));
+
             Log.e(TAG, "pay >>>> feeForTx: " + feeForTx + ", amountAsDouble: " + amountAsDouble +
                     ", CurrencyManager.getInstance(this).getBALANCE(): " + cm.getBitsFromSatoshi(cm.getBALANCE()));
             if (feeForTx != 0 && amountAsDouble + feeForTx < cm.getBitsFromSatoshi(cm.getBALANCE())) {
@@ -640,7 +649,12 @@ public class MainActivity extends FragmentActivity implements Observer {
         Intent intent;
         String tempAmount = FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_RIGHT ?
                 AmountAdapter.getRightValue() : AmountAdapter.getLeftValue();
-
+        BRWalletManager m = BRWalletManager.getInstance(this);
+        double minAmount = CurrencyManager.getInstance(this).getBitsFromSatoshi(m.getMinOutputAmount());
+        if (Double.valueOf(tempAmount) < minAmount) {
+            ((BreadWalletApp) getApplication()).showCustomDialog(getString(R.string.warning), "The amount cannot be less than ƀ" + minAmount, getString(R.string.ok));
+            return;
+        }
         String strAmount = String.valueOf(new BigDecimal(tempAmount).divide(new BigDecimal("1000000")));
         SharedPreferences prefs = getSharedPreferences(MainFragmentQR.RECEIVE_ADDRESS_PREFS, Context.MODE_PRIVATE);
         String testTemp = prefs.getString(MainFragmentQR.RECEIVE_ADDRESS, "");
@@ -745,16 +759,21 @@ public class MainActivity extends FragmentActivity implements Observer {
         String iso = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
         float rate = settings.getFloat(FragmentCurrency.RATE, 1.0f);
         String amount = String.valueOf(request.amount);
-        CurrencyManager m = CurrencyManager.getInstance(this);
-        final String message = certification + allAddresses.toString() + "\n\n" + "amount: " + m.getFormattedCurrencyString("BTC", String.valueOf(request.amount))
-                + " (" + m.getExchangeForAmount(rate, iso, amount) + ")";
+        CurrencyManager cm = CurrencyManager.getInstance(this);
+        BRWalletManager m = BRWalletManager.getInstance(this);
+        final double feeForTx = cm.getBitsFromSatoshi(m.feeForTransaction(request.addresses[0], cm.getSatoshisFromBits(request.amount)));
+        final double total = Long.valueOf(amount) + feeForTx;
+        final String message = certification + allAddresses.toString() + "\n\n" + "amount: " + cm.getFormattedCurrencyString("BTC", String.valueOf(request.amount))
+                + " (" + cm.getExchangeForAmount(rate, iso, amount) + ")" + "\nnetwork fee: +" + cm.getFormattedCurrencyString("BTC", String.valueOf(feeForTx))
+                + " (" + cm.getExchangeForAmount(rate, iso, String.valueOf(feeForTx)) + ")" + "\ntotal: +" + cm.getFormattedCurrencyString("BTC", String.valueOf(total))
+                + " (" + cm.getExchangeForAmount(rate, iso, String.valueOf(total)) + ")";
 
 //        ((BreadWalletApp) getApplication()).showCustomDialog("payment info", certification + allAddresses.toString() +
 //                "\n\n" + "amount " + CurrencyManager.getInstance(this).getFormattedCurrencyString("BTC", String.valueOf(request.amount / 100))
 //                + " (" + CurrencyManager.getInstance(this).getFormattedCurrencyString(iso, amount) + ")", "send");
-        long minOutput = BRWalletManager.getInstance(this).getMinOutputAmount() / 100;
+        double minOutput = BRWalletManager.getInstance(this).getMinOutputAmount() / 100d;
         if (request.amount < minOutput) {
-            final String bitcoinMinMessage = String.format("bitcoin payments can't be less than ƀ%d", minOutput);
+            final String bitcoinMinMessage = String.format("bitcoin payments can't be less than ƀ%.2f", minOutput);
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -843,7 +862,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         BRWalletManager m = BRWalletManager.getInstance(this);
         final BRPeerManager pm = BRPeerManager.getInstance(this);
 
-
 //        String phrase = KeyStoreManager.getKeyStoreString(this);
 //        if (phrase == null) return;
 //        String normalizedPhrase = Normalizer.normalize(phrase, Normalizer.Form.NFKD);
@@ -855,7 +873,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         List<BRMerkleBlockEntity> blocks = sqLiteManager.getBlocks();
         List<BRPeerEntity> peers = sqLiteManager.getPeers();
 
-        final int transactionsCount = transactions.size();
+        int transactionsCount = transactions.size();
         final int blocksCount = blocks.size();
         final int peersCount = peers.size();
 
@@ -873,8 +891,8 @@ public class MainActivity extends FragmentActivity implements Observer {
                 }
             }
 
-            String pubkeyEncoded = KeyStoreManager.getMasterPublicKey(this);
-            int r = pubkeyEncoded.length() == 0 ? 0 : 1;
+            byte[] pubkeyEncoded = KeyStoreManager.getMasterPublicKey(this);
+            int r = pubkeyEncoded == null || pubkeyEncoded.length == 0 ? 0 : 1;
             m.createWallet(transactionsCount, pubkeyEncoded, r);
 
         }
@@ -897,9 +915,10 @@ public class MainActivity extends FragmentActivity implements Observer {
             Log.e(TAG, "blocksCount before connecting: " + blocksCount);
             Log.e(TAG, "peersCount before connecting: " + peersCount);
 
-//        earliestKeyTime = 1456796244;
-            String walletTimeString = KeyStoreManager.getWalletCreationTime(this);
-            final long earliestKeyTime = !walletTimeString.isEmpty() ? Long.valueOf(walletTimeString) : 0;
+            int walletTimeString = KeyStoreManager.getWalletCreationTime(this);
+            final int earliestKeyTime = walletTimeString != 0 ? walletTimeString : 0;
+            //TODO take offs
+//            final long tempTime = 1454736431;
             Log.e(TAG, "earliestKeyTime before connecting: " + earliestKeyTime);
             new Thread(new Runnable() {
                 @Override
@@ -909,7 +928,6 @@ public class MainActivity extends FragmentActivity implements Observer {
             }).start();
 
         }
-
     }
 
     private void registerScreenLockReceiver() {
@@ -949,8 +967,8 @@ public class MainActivity extends FragmentActivity implements Observer {
     }
 
     private void askForPasscode() {
-        final String pass = KeyStoreManager.getPassCode(app);
-        if (pass == null || pass.isEmpty()) {
+        final int pass = KeyStoreManager.getPassCode(app);
+        if (pass == 0) {
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
@@ -1053,6 +1071,46 @@ public class MainActivity extends FragmentActivity implements Observer {
         Log.e(specsTag, "* maxMemory:" + Long.toString(maxMemory));
         Log.e(specsTag, "----------------------------PHONE SPECS----------------------------");
         Log.e(specsTag, "");
+    }
+
+    public class ToastUpdater extends Thread {
+        public void run() {
+            while (middleBubbleBlocks.getVisibility() == View.VISIBLE) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        String currBlock = String.valueOf(BRPeerManager.getCurrentBlockHeight());
+                        String latestBlockKnown = String.valueOf(BRPeerManager.getEstimatedBlockHeight());
+                        String formattedBlockInfo = String.format("block #%s of %s", currBlock, latestBlockKnown);
+                        middleBubbleBlocks.setText(formattedBlockInfo);
+                    }
+                });
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public boolean isUsingCustomInputMethod() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+        List<InputMethodInfo> mInputMethodProperties = imm.getEnabledInputMethodList();
+        final int N = mInputMethodProperties.size();
+        for (int i = 0; i < N; i++) {
+            InputMethodInfo imi = mInputMethodProperties.get(i);
+            if (imi.getId().equals(
+                    Settings.Secure.getString(getContentResolver(),
+                            Settings.Secure.DEFAULT_INPUT_METHOD))) {
+                if ((imi.getServiceInfo().applicationInfo.flags &
+                        ApplicationInfo.FLAG_SYSTEM) == 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 }

@@ -19,6 +19,7 @@ import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.presenter.fragments.MainFragmentQR;
 import com.breadwallet.tools.CurrencyManager;
+import com.breadwallet.tools.TypesConverter;
 import com.breadwallet.tools.WordsReader;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
@@ -117,7 +118,7 @@ public class BRWalletManager {
         byte[] phrase = encodeSeed(keyBytes, words);
         String strPhrase = new String(phrase);
 //        String phrase = "short apple trunk riot coyote innocent zebra venture ill lava shop test";
-        boolean success = KeyStoreManager.setKeyStoreString(strPhrase, ctx);
+        boolean success = KeyStoreManager.putKeyStorePhrase(strPhrase, ctx);
         Log.e(TAG, "setKeyStoreString was successful: " + success);
         return success ? strPhrase : null;
     }
@@ -132,6 +133,7 @@ public class BRWalletManager {
      * a signed transaction that will sweep the balance into wallet (doesn't publish the tx)
      */
     public boolean sweepPrivateKey() {
+        freeEverything();
         return KeyStoreManager.deleteKeyStoreEntry();
     }
 
@@ -139,13 +141,12 @@ public class BRWalletManager {
      * true if keychain is available and we know that no wallet exists on it
      */
     public boolean noWallet(Context ctx) {
-        String pubkey = KeyStoreManager.getMasterPublicKey(ctx);
-        Log.e(TAG, "in the noWallet, pubkey.length(): " + pubkey.length());
+        byte[] pubkey = KeyStoreManager.getMasterPublicKey(ctx);
+//        Log.e(TAG, "in the noWallet, pubkey.length(): " + pubkey.length);
 //        Log.e(TAG, "in the noWallet, pubkey: " + pubkey);
-        return pubkey.length() == 0;
+        return pubkey == null || pubkey.length == 0;
 
     }
-
 
     /**
      * true if device passcode is enabled
@@ -231,20 +232,15 @@ public class BRWalletManager {
     }
 
     public static void onTxAdded(byte[] tx, int blockHeight, long timestamp, final long amount, String hash) {
-        Log.e(TAG, "in the BRWalletManager - onTxAdded: " + tx.length + " " + blockHeight + " " + timestamp);
+        Log.e(TAG, "in the BRWalletManager - onTxAdded: " + tx.length + " " + blockHeight + " " + timestamp + " " + amount);
         final RequestQRActivity requestApp = RequestQRActivity.requestApp;
-        if(requestApp != null && !requestApp.activityIsInBackground){
+        if (requestApp != null && !requestApp.activityIsInBackground) {
             requestApp.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     requestApp.close.performClick();
                 }
             });
-        }
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null && !MiddleViewAdapter.getSyncing()) {
@@ -290,7 +286,7 @@ public class BRWalletManager {
     private native byte[] encodeSeed(byte[] seed, String[] wordList);
 
     //    public native void createWallet(ByteBuffer transactions[], int transactionCount);
-    public native void createWallet(int transactionCount, String pubkey, int r);
+    public native void createWallet(int transactionCount, byte[] pubkey, int r);
 
     public native void putTransaction(byte[] transaction, long blockHeight, long timeStamp);
 
@@ -300,7 +296,7 @@ public class BRWalletManager {
 
     public native void setPeerManagerCallbacks(byte[] peerManager);
 
-    public native String getMasterPubKey(String normalizedString);
+    public native byte[] getMasterPubKey(String normalizedString);
 
     public native void testWalletCallbacks();
 
@@ -322,7 +318,7 @@ public class BRWalletManager {
 
     public native int feeForTransaction(String addressHolder, long amountHolder);
 
-    public native long getMinOutputAmount();
+    public native double getMinOutputAmount();
 
     public native long getMaxOutputAmount();
 
@@ -335,5 +331,7 @@ public class BRWalletManager {
     public native long localAmount(long amount, double price);
 
     public native long bitcoinAmount(long localAmount, double price);
+
+    public native void freeEverything();
 
 }

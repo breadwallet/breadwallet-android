@@ -46,6 +46,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:gravity="center"
+                android:textColor="@color/dark_blue"
                 android:padding="15dp"
                 android:textSize="14sp" />
         </RelativeLayout>

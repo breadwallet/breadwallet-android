@@ -41,10 +41,10 @@ public class PassCodeManager {
 
     public boolean checkAuth(CharSequence passcode, Context context) {
 
-        return passcode.equals(KeyStoreManager.getPassCode(context));
+        return passcode.equals(String.valueOf(KeyStoreManager.getPassCode(context)));
     }
 
     public void setPassCode(String pass, Context context) {
-        KeyStoreManager.putPassCode(pass, context);
+        KeyStoreManager.putPassCode(Integer.valueOf(pass), context);
     }
 }

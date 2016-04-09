@@ -33,7 +33,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="40dp"
-                    android:text="breadwallet v 1.0"
+                    android:text="breadwallet v0.6"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/dark_grey"
                     android:textSize="@dimen/text_size" />
@@ -44,7 +44,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/about1"
                     android:layout_centerHorizontal="true"
-                    android:text="copyright \u00A9 2015 breadwallet llc"
+                    android:text="copyright \u00A9 2016 breadwallet llc"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/dark_grey"
                     android:textSize="@dimen/text_size" />

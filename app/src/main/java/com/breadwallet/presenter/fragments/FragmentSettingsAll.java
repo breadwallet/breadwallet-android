@@ -296,11 +296,11 @@ public class FragmentSettingsAll extends Fragment {
         Log.e(TAG, "item.getTimeStamp(): " + itemTimeStamp);
         dateTextView.setText(itemTimeStamp != 0 ? getFormattedDateFromLong(itemTimeStamp * 1000) : getFormattedDateFromLong(System.currentTimeMillis()));
 
-        long bitsAmount = m.getBitsFromSatoshi(received ? item.getReceived() : (item.getSent() - item.getReceived()) * -1);
+        double bitsAmount = m.getBitsFromSatoshi(received ? item.getReceived() : (item.getSent() - item.getReceived()) * -1);
 
         bitsTextView.setText(m.getFormattedCurrencyString("BTC", String.valueOf(bitsAmount)));
         dollarsTextView.setText(String.format("(%s)", m.getExchangeForAmount(m.getRateFromPrefs(), m.getISOFromPrefs(), String.valueOf(bitsAmount))));
-        long bitsAfterTx = m.getBitsFromSatoshi(item.getBalanceAfterTx());
+        double bitsAfterTx = m.getBitsFromSatoshi(item.getBalanceAfterTx());
 
         bitsTotalTextView.setText(m.getFormattedCurrencyString("BTC", String.valueOf(bitsAfterTx)));
         dollarsTotalTextView.setText(String.format("(%s)", m.getExchangeForAmount(m.getRateFromPrefs(), m.getISOFromPrefs(), String.valueOf(bitsAfterTx))));

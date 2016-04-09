@@ -16,12 +16,14 @@
             android:layout_height="wrap_content"
             android:background="@drawable/button_white"
             android:textAllCaps="false"
+            android:stateListAnimator="@null"
             android:text="@string/new_wallet"
             android:textColor="@color/white"
             android:textSize="20sp" />
 
         <Button
             android:id="@+id/intro_recover_wallet"
+            android:stateListAnimator="@null"
             android:layout_width="220dp"
             android:layout_height="wrap_content"
             android:layout_below="@+id/intro_new_wallet"

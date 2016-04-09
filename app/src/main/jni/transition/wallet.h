@@ -11,6 +11,7 @@
 
 
 extern BRWallet *_wallet;
+extern jclass _walletManagerClass;
 
 JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_encodeSeed(JNIEnv *env,
                                                                             jobject thiz,
@@ -24,15 +25,14 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRWalletManager_createWallet(JNIEnv *
                                                                         int r);
 
 JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_getMasterPubKey(JNIEnv *env,
-                                                                                 jobject thiz,
-                                                                                 jstring phrase);
+                                                                              jobject thiz,
+                                                                              jstring phrase);
 
-JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_putTransaction(JNIEnv *env,
+JNIEXPORT void Java_com_breadwallet_wallet_BRWalletManager_putTransaction(JNIEnv *env,
                                                                                 jobject thiz,
                                                                                 jbyteArray transaction,
                                                                                 jlong blockHeight,
                                                                                 jlong timeStamp);
-
 
 JNIEXPORT void Java_com_breadwallet_wallet_BRWalletManager_createTxArrayWithCount(JNIEnv *env,
                                                                                   jobject thiz,
@@ -43,8 +43,8 @@ JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRWalletManager_validateA
 JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRWalletManager_addressContainedInWallet
         (JNIEnv *env, jobject obj, jstring address);
 
-JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_getMinOutputAmount
-        (JNIEnv *env, jobject obj);
+JNIEXPORT jdouble JNICALL Java_com_breadwallet_wallet_BRWalletManager_getMinOutputAmount
+        (JNIEnv *env, jobject obj) ;
 
 JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRWalletManager_addressIsUsed
         (JNIEnv *env, jobject obj, jstring address);
@@ -65,7 +65,8 @@ JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRWalletManager_tryTransa
         (JNIEnv *env, jobject obj, jstring address, jlong amount);
 
 JNIEXPORT jboolean Java_com_breadwallet_wallet_BRWalletManager_pay(JNIEnv *env, jobject thiz,
-                                                                   jstring address, jlong amount,
+                                                                   jstring address,
+                                                                   jlong amount,
                                                                    jstring strSeed);
 
 JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRWalletManager_transactionIsVerified
@@ -74,7 +75,17 @@ JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRWalletManager_transacti
 JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_getMaxOutputAmount
         (JNIEnv *env, jobject obj);
 
-const void *theSeed(void *info, const char *authPrompt, uint64_t amount, size_t *seedLen);
+JNIEXPORT jlong Java_com_breadwallet_wallet_BRWalletManager_localAmount(JNIEnv *env, jobject thiz,
+                                                                        jlong amount,
+                                                                        double price);
+
+JNIEXPORT jlong Java_com_breadwallet_wallet_BRWalletManager_bitcoinAmount(JNIEnv *env, jobject thiz,
+                                                                          jlong localAmount,
+                                                                          double price);
+
+        JNIEXPORT void Java_com_breadwallet_wallet_BRWalletManager_freeEverything(JNIEnv *env, jobject thiz);
+
+//const void *theSeed(void *info, const char *authPrompt, uint64_t amount, size_t *seedLen);
 
 #endif //BREADWALLET_WALLET_H
 

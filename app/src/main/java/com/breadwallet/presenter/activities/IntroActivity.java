@@ -26,6 +26,7 @@ import com.breadwallet.presenter.fragments.IntroRecoverWalletFragment;
 import com.breadwallet.presenter.fragments.IntroWarningFragment;
 import com.breadwallet.presenter.fragments.IntroWelcomeFragment;
 import com.breadwallet.tools.animation.BackgroundMovingAnimator;
+import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.util.List;
@@ -77,12 +78,7 @@ public class IntroActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
-
         app = this;
-
-        //TODO put that back
-//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
-//                WindowManager.LayoutParams.FLAG_SECURE);
 
         leftButton = (Button) findViewById(R.id.intro_left_button);
         leftButton.setVisibility(View.GONE);
@@ -97,8 +93,7 @@ public class IntroActivity extends FragmentActivity {
         getFragmentManager().beginTransaction().add(R.id.intro_layout, new IntroWelcomeFragment(),
                 IntroWelcomeFragment.class.getName()).commit();
         startTheWalletIfExists();
-        if (isUsingCustomInputMethod())
-            ((BreadWalletApp) getApplication()).showCustomToast(this, "CUSTOM INPUT TYPE!", 300, Toast.LENGTH_LONG, 0);
+
     }
 
     @Override
@@ -224,23 +219,6 @@ public class IntroActivity extends FragmentActivity {
         }
     }
 
-    public boolean isUsingCustomInputMethod() {
-        InputMethodManager imm = (InputMethodManager) getSystemService(
-                Context.INPUT_METHOD_SERVICE);
-        List<InputMethodInfo> mInputMethodProperties = imm.getEnabledInputMethodList();
-        final int N = mInputMethodProperties.size();
-        for (int i = 0; i < N; i++) {
-            InputMethodInfo imi = mInputMethodProperties.get(i);
-            if (imi.getId().equals(
-                    Settings.Secure.getString(getContentResolver(),
-                            Settings.Secure.DEFAULT_INPUT_METHOD))) {
-                if ((imi.getServiceInfo().applicationInfo.flags &
-                        ApplicationInfo.FLAG_SYSTEM) == 0) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+
 
 }

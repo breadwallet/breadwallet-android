@@ -6,16 +6,18 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.tools.BRClipboardManager;
+import com.breadwallet.tools.TypesConverter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.wallet.BRWalletManager;
+
+import java.nio.CharBuffer;
 
 /**
  * BreadWallet
@@ -54,19 +56,18 @@ public class FragmentRecoveryPhrase extends Fragment {
         thePhrase = (TextView) rootView.findViewById(R.id.the_phrase);
 
 //        //TODO delete this code below which is for testing reasons only
-//        thePhrase.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                BRClipboardManager.copyToClipboard(getActivity(),thePhrase.getText().toString());
-//                ((BreadWalletApp)getActivity().getApplication()).showCustomToast(getActivity(),
-//                        getString(R.string.copied), 300, Toast.LENGTH_SHORT,0);
-//            }
-//        });
+        thePhrase.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BRClipboardManager.copyToClipboard(getActivity(),thePhrase.getText().toString());
+                ((BreadWalletApp)getActivity().getApplication()).showCustomToast(getActivity(),
+                        getString(R.string.copied), 300, Toast.LENGTH_SHORT,0);
+            }
+        });
 
 //        final long startTime = System.currentTimeMillis();
         //return the new method if the API is 23+
-
-        thePhrase.setText(KeyStoreManager.getKeyStoreString(getActivity()));
+        thePhrase.setText(KeyStoreManager.getKeyStorePhrase(getActivity()));
         return rootView;
     }
 

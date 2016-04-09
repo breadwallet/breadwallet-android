@@ -71,12 +71,12 @@ public class BackgroundMovingAnimator {
         mCurrentAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-//                if (mDirection == RightToLeft)
-                mDirection = LeftToRight;
-//                else
-//                    mDirection = RightToLeft;
-
-//                animate();
+                if (mDirection == RightToLeft)
+                    mDirection = LeftToRight;
+                else
+                    mDirection = RightToLeft;
+//
+                animate();
             }
         });
         mCurrentAnimator.start();
@@ -90,8 +90,6 @@ public class BackgroundMovingAnimator {
 
     public static void animateBackgroundMoving(ImageView theBackground) {
         background = theBackground;
-        background.clearAnimation();
-        mMatrix = new Matrix();
         background.post(new Runnable() {
             @Override
             public void run() {

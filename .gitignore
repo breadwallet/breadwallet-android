@@ -46,6 +46,8 @@ gradle.properties
 /.idea/workspace.xml
 /.idea/libraries
 /.idea/vcs.xml
+/.idea/gradle.xml
+/.idea/encodings.xml
 #.idea/workspace.xml - remove # and delete .idea if it better suit your needs.
 .navigation/
 

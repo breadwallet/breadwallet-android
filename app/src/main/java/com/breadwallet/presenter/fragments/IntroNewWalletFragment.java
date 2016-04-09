@@ -3,6 +3,7 @@ package com.breadwallet.presenter.fragments;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,15 +63,13 @@ public class IntroNewWalletFragment extends Fragment {
                     public void run() {
                         String phrase = m.generateRandomSeed();
                         if (phrase == null) throw new NullPointerException("Cannot be null!");
-                        KeyStoreManager.putWalletCreationTime(String.valueOf((System.currentTimeMillis() / 1000)), getActivity());
+                        KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), getActivity());
                         String normalizedPhrase = Normalizer.normalize(phrase, Normalizer.Form.NFKD);
-                        String pubKey = m.getMasterPubKey(normalizedPhrase);
+                        byte[] pubKey = m.getMasterPubKey(normalizedPhrase);
                         KeyStoreManager.putMasterPublicKey(pubKey, getActivity());
 //                        Log.w(TAG, "The phrase from keystore is: " + KeyStoreManager.getKeyStoreString(getActivity()));
                         ((IntroActivity) getActivity()).showWarningFragment();
-                        ImageView background = (ImageView) getActivity().findViewById(R.id.intro_bread_wallet_image);
-                        background.setScaleType(ImageView.ScaleType.MATRIX);
-                        BackgroundMovingAnimator.animateBackgroundMoving(background);
+
                     }
                 });
 
@@ -79,4 +78,11 @@ public class IntroNewWalletFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        ImageView background = (ImageView) getActivity().findViewById(R.id.intro_bread_wallet_image);
+        background.setScaleType(ImageView.ScaleType.MATRIX);
+        BackgroundMovingAnimator.animateBackgroundMoving(background);
+    }
 }

@@ -151,7 +151,7 @@ static void savePeers(void *info, const BRPeer peers[], size_t count) {
     jmethodID mid = (*env)->GetStaticMethodID(env, _peerManagerClass, "savePeers", "([Lcom/breadwallet/presenter/entities/PeerEntity;)V");
     //call java methods
     if(count != 1){
-        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "deleting %d peers", count);
+//        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "deleting %d peers", count);
         jmethodID delete_mid = (*env)->GetStaticMethodID(env, _peerManagerClass, "deletePeers", "()V");
         (*env)->CallStaticVoidMethod(env, _peerManagerClass, delete_mid);
     }
@@ -203,9 +203,12 @@ static int networkIsReachable(void *info) {
 }
 
 JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_createAndConnect(JNIEnv *env, jobject thiz,
-                                                                          jint earliestKeyTime,
-                                                                          jint blocksCount,
-                                                                          jint peersCount) {
+                                                                          int earliestKeyTime,
+                                                                          int blocksCount,
+                                                                          int peersCount) {
+
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "blocksCount: %d", blocksCount);
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "peersCount: %d", peersCount);
     jint rs = (*env)->GetJavaVM(env, &_jvm);
 
     jclass walletManagerCLass = (*env)->FindClass(env, "com/breadwallet/wallet/BRPeerManager");
@@ -226,8 +229,6 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_createAndConnect(JNIEnv
         return;
     }
 
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "blocksCount: %d", blocksCount);
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "peersCount: %d", peersCount);
 
     if (!_peerManager) {
         __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "BRPeerManagerNew called: %d", ++_managerNewCounter);
@@ -275,6 +276,7 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_putBlock(JNIEnv *env,
 JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_createBlockArrayWithCount(JNIEnv *env,
                                                                                    jobject thiz,
                                                                                    size_t bkCount) {
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "block array created with count: %d", bkCount);
     _blocks = calloc(bkCount, sizeof(BRMerkleBlock));
     // need to call free();
 }
@@ -315,6 +317,7 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_putPeer(JNIEnv *env,
 JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_createPeerArrayWithCount(JNIEnv *env,
                                                                                   jobject thiz,
                                                                                   size_t prCount) {
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "peer array created with count: %d",prCount);
     _peers = calloc(prCount, sizeof(BRPeer));
     // need to call free();
 }
@@ -343,18 +346,6 @@ JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRPeerManager_isCreated
 
 JNIEXPORT jint Java_com_breadwallet_wallet_BRPeerManager_getEstimatedBlockHeight(JNIEnv *env,
                                                                                jobject thiz) {
-//    int estimatedBlockHeight = BRPeerManagerEstimatedBlockHeight(_peerManager);
-//    int lastBlockHeight = BRPeerManagerLastBlockHeight(_peerManager);
-//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "estimatedBlockHeight: %d, "
-//            "lastBlockHeight: %d", estimatedBlockHeight, lastBlockHeight);
-//    int result = 0;
-//    if(estimatedBlockHeight >= INT32_MAX){
-//        result = lastBlockHeight;
-//    } else {
-//        result = estimatedBlockHeight;
-//    }
-//
-//    return (jint) result;
     return (jint) BRPeerManagerEstimatedBlockHeight(_peerManager);
 }
 

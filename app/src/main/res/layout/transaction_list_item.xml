@@ -54,7 +54,7 @@
             android:clickable="false"
             android:text="some dollars"
             android:textColor="@color/grey"
-            android:textSize="13sp" />
+            android:textSize="14sp" />
 
 
         <com.breadwallet.tools.AutoResizeTextView
@@ -83,7 +83,7 @@
             android:clickable="false"
             android:text="some bits"
             android:textColor="@color/dark_grey"
-            android:textSize="13sp"
+            android:textSize="14sp"
             android:textStyle="bold" />
 
         <com.breadwallet.tools.AutoResizeTextView

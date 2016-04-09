@@ -42,6 +42,7 @@
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="2dp"
+        android:visibility="gone"
         android:layout_below="@+id/main_button_burger"
         android:progressDrawable="@drawable/progress_blue"
          />

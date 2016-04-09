@@ -29,13 +29,11 @@ public class PaymentRequestEntity {
 
     public final String[] addresses;
     public final long amount;
-    private final double fee;
     public final String cn;
 
     public PaymentRequestEntity(String theAddress[], long theAmount, String theCn) {
         addresses = theAddress;
         amount = theAmount;
-        fee = (double) 13;
         cn = theCn;
     }
 

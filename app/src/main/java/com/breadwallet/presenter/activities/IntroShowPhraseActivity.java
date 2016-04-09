@@ -48,7 +48,7 @@ public class IntroShowPhraseActivity extends Activity {
 
         Log.e(TAG, "IntroShowPhraseActivity onCreate()");
         writeDownLayout.setVisibility(View.GONE);
-        String phrase = KeyStoreManager.getKeyStoreString(this);
+        String phrase = KeyStoreManager.getKeyStorePhrase(this);
         if (phrase != null && phrase.length() > 1) {
             thePhrase.setText(phrase);
         } else {

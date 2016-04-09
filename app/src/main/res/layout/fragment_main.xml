@@ -38,6 +38,7 @@
             android:src="@drawable/cameraguide_blue_small"
             android:text="@string/scan_qr_code"
             android:textAllCaps="false"
+            android:stateListAnimator="@null"
             android:textColor="@color/dark_blue"
             android:textSize="16sp" />
 
@@ -46,6 +47,7 @@
             android:layout_width="240dp"
             android:layout_height="50dp"
             android:layout_gravity="center"
+            android:stateListAnimator="@null"
             android:layout_marginTop="50dp"
             android:background="@drawable/button_regular_blue"
             android:shadowColor="@android:color/transparent"

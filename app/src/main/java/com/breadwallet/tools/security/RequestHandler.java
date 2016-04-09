@@ -149,13 +149,13 @@ public class RequestHandler {
 
             Double doubleAmount = Double.parseDouble(requestObject.amount ) * 1000000;
             long amount = doubleAmount.longValue();
-            PaymentRequestEntity requestEntity = new PaymentRequestEntity(addresses,
-                    amount, "");
-            Log.e(TAG, "requestEntity.amount: " + requestEntity.amount);
-            Log.e(TAG, "requestEntity.addresses[0]: " + requestEntity.addresses[0]);
-            String strAmount = String.valueOf(requestEntity.amount );
+//            PaymentRequestEntity requestEntity = new PaymentRequestEntity(addresses,
+//                    amount, null);
+            Log.e(TAG, "requestEntity.amount: " + amount);
+            Log.e(TAG, "requestEntity.addresses[0]: " + addresses[0]);
+            String strAmount = String.valueOf(amount);
             if (app != null) {
-                app.pay(requestEntity.addresses[0], strAmount);
+                app.pay(addresses[0], strAmount);
             }
         } else {
             MainActivity.app.runOnUiThread(new Runnable() {

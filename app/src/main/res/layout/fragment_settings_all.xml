@@ -3,6 +3,10 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingTop="90dp">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/separator_height"
+        android:background="@color/grey" />
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
@@ -40,7 +44,7 @@
                     android:layout_height="wrap_content"
                     android:padding="20dp"
                     android:layout_gravity="center"
-                    android:text="no Transactions"
+                    android:text="@string/no_transactions"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/light_grey"
                     android:textSize="@dimen/text_size" />

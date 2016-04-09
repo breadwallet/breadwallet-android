@@ -11,7 +11,7 @@
 extern BRPeerManager *_peerManager;
 
 JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_createAndConnect(JNIEnv *env, jobject thiz,
-                                                                          jint earliestKeyTime,
+                                                                          int earliestKeyTime,
                                                                           int blocksCount,
                                                                           int peersCount);
 

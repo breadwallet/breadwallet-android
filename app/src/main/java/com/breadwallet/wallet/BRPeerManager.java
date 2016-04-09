@@ -88,27 +88,23 @@ public class BRPeerManager {
      * int (*networkIsReachable)(void *info))
      */
 
-    public static synchronized void syncStarted() {
+    public static void syncStarted() {
         Log.e(TAG, "syncStarted");
         startSyncingProgressThread();
     }
 
-    public static synchronized void syncSucceeded() {
+    public static void syncSucceeded() {
         Log.e(TAG, "syncSucceeded");
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null)
-//            if (KeyStoreManager.getWalletCreationTime(ctx) == 0) {
-//                Log.e(TAG, "getWalletCreationTime() is 0 ! setting the new walletCreationTime in the keystore!");
-//                KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), ctx);
-//            }
             stopSyncingProgressThread();
     }
 
-    public static synchronized void syncFailed() {
+    public static void syncFailed() {
         stopSyncingProgressThread();
     }
 
-    public static synchronized void txStatusUpdate() {
+    public static void txStatusUpdate() {
         Log.e(TAG, "txStatusUpdate");
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null)
@@ -120,11 +116,11 @@ public class BRPeerManager {
 
     }
 
-    public static synchronized void txRejected(int rescanRecommended) {
+    public static void txRejected(int rescanRecommended) {
         Log.e(TAG, "txStatusUpdate");
     }
 
-    public static synchronized void saveBlocks(final BlockEntity[] blockEntities) {
+    public static void saveBlocks(final BlockEntity[] blockEntities) {
         Log.e(TAG, "saveBlocks: " + blockEntities.length);
 
         if (ctx == null) ctx = MainActivity.app;
@@ -132,8 +128,8 @@ public class BRPeerManager {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    for (int i = 0; i < blockEntities.length; i++) {
-                        SQLiteManager.getInstance(ctx).insertMerkleBlock(blockEntities[i].getBlockBytes(), blockEntities[i].getBlockHeight());
+                    for (BlockEntity blockEntity : blockEntities) {
+                        SQLiteManager.getInstance(ctx).insertMerkleBlock(blockEntity.getBlockBytes(), blockEntity.getBlockHeight());
                     }
                 }
             }).start();
@@ -141,7 +137,7 @@ public class BRPeerManager {
 
     }
 
-    public static synchronized void savePeers(final PeerEntity[] peerEntities) {
+    public static  void savePeers(final PeerEntity[] peerEntities) {
         Log.e(TAG, "savePeers");
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) {
@@ -157,12 +153,12 @@ public class BRPeerManager {
 
     }
 
-    public static synchronized boolean networkIsReachable() {
+    public static  boolean networkIsReachable() {
         Log.e(TAG, "networkIsReachable");
         return ctx != null && CurrencyManager.getInstance(ctx).isNetworkAvailable(ctx);
     }
 
-    public static synchronized void deleteBlocks() {
+    public static  void deleteBlocks() {
         Log.e(TAG, "deleteBlocks");
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) {
@@ -176,7 +172,7 @@ public class BRPeerManager {
         }
     }
 
-    public static synchronized void deletePeers() {
+    public static  void deletePeers() {
         Log.e(TAG, "deletePeers");
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) {
@@ -242,7 +238,6 @@ public class BRPeerManager {
                 }
             });
         }
-
         try {
             if (syncTask != null) {
                 syncTask.interrupt();
@@ -320,6 +315,7 @@ public class BRPeerManager {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+//                    Log.e(TAG,"sync task run ...");
 //                    if (progressStatus >= 1) running = false;
                 }
 

@@ -4,10 +4,11 @@
 #include "core.h"
 #include "wallet.h"
 #include <stdio.h>
-#include "breadwallet-core/BRPaymentProtocol.h"
-#include "breadwallet-core/BRTransaction.h"
-#include "breadwallet-core/BRAddress.h"
-#include "breadwallet-core/BRWallet.h"
+#include "BRPaymentProtocol.h"
+#include "BRTransaction.h"
+#include "BRAddress.h"
+#include "BRWallet.h"
+#include "BRBIP39Mnemonic.h"
 #include <android/log.h>
 
 //TODO make sure to free() everything
@@ -152,10 +153,8 @@ JNIEXPORT jobject Java_com_breadwallet_tools_security_RequestHandler_parsePaymen
     //read amount and addresses from outputs
     uint64_t outputsLength = nativeRequest->details->outputsCount;
     uint64_t total_amount = 0;
-    int singleAddressLength = sizeof(nativeRequest->details->outputs[0].address);
-//    char addresses[(singleAddressLength + 2) * outputsLength];
 
-    jobjectArray stringArray = (jobjectArray) (*env)->NewObjectArray(env, outputsLength,
+    jobjectArray stringArray = (jobjectArray) (*env)->NewObjectArray(env, (jsize) outputsLength,
                                                         (*env)->FindClass(env, "java/lang/String"),
                                                         (*env)->NewStringUTF(env, ""));
     if (outputsLength > 0) {
@@ -257,9 +256,9 @@ JNIEXPORT jbyteArray Java_com_breadwallet_tools_security_RequestHandler_getCerti
 //    __android_log_write(ANDROID_LOG_DEBUG, ">>>>>>MESSAGE FROM C: ", (char *) length);
 
     //convert it to jbyteArray
-    jbyte *certJbyte = (const jbyte *) buf;
-    jbyteArray result = (*env)->NewByteArray(env, length);
-    (*env)->SetByteArrayRegion(env, result, 0, length, (const jbyte *)certJbyte);
+    jbyte *certJbyte = (jbyte *) buf;
+    jbyteArray result = (*env)->NewByteArray(env, (jsize) length);
+    (*env)->SetByteArrayRegion(env, result, 0, (jsize) length, (const jbyte *)certJbyte);
     //release everything
     (*env)->ReleaseByteArrayElements(env, result, certJbyte, JNI_COMMIT);
     (*env)->ReleaseByteArrayElements(env, payment, bytePayment, JNI_COMMIT);
@@ -270,26 +269,31 @@ JNIEXPORT jbyteArray Java_com_breadwallet_tools_security_RequestHandler_getCerti
 
 
 JNIEXPORT jboolean JNICALL Java_com_breadwallet_presenter_fragments_IntroRecoverWalletFragment_validateRecoveryPhrase
-        (JNIEnv *env, jobject obj, jobjectArray stringArray, jstring jPhrase) {
+        (JNIEnv *env, jobject obj, jobjectArray stringArray, jcharArray jPhrase) {
 
 
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "validateRecoveryPhrase: %s" , (char *) jPhrase);
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "validateRecoveryPhrase");
     int wordsCount = (*env)->GetArrayLength(env, stringArray);
     const char *wordList[wordsCount];
     for (int i = 0; i < wordsCount; i++) {
         jstring string = (jstring) (*env)->GetObjectArrayElement(env, stringArray, i);
-        char *rawString = (*env)->GetStringUTFChars(env, string, 0);
+        const char *rawString = (*env)->GetStringUTFChars(env, string, 0);
         wordList[i] = rawString;
         (*env)->DeleteLocalRef(env, string);
         // Don't forget to call `ReleaseStringUTFChars` when you're done.
     }
 
-    const char *str;
-    str = (char *) (*env)->GetStringUTFChars(env, jPhrase, NULL);
+    jchar *phraseCharPointer = (*env)->GetCharArrayElements(env, jPhrase, 0);
+    jint phraseSize = (*env)->GetArrayLength(env, jPhrase);
+    char rawPhrase[phraseSize];
+    for(int i = 0; i < phraseSize; i++)
+        rawPhrase[i] = (char)phraseCharPointer[i];
 
-    jboolean b;
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "theSeed: address %s", rawPhrase);
+
+
 //    int BRBIP39PhraseIsValid(const char *wordList[], const char *phrase);
-    int result = BRBIP39PhraseIsValid(wordList, str);
+    int result = BRBIP39PhraseIsValid(wordList, rawPhrase);
 
 //    __android_log_print(ANDROID_LOG_ERROR, "LOG_TAG", "This is the result : %d", result);
     return result ? JNI_TRUE : JNI_FALSE;
@@ -302,7 +306,7 @@ JNIEXPORT void JNICALL Java_com_breadwallet_presenter_activities_MainActivity_cl
 }
 
 JNIEXPORT void JNICALL Java_com_breadwallet_presenter_activities_MainActivity_cTests(JNIEnv *env, jobject obj){
-    int result = BRRunTests();
-    __android_log_print(ANDROID_LOG_ERROR, "Core Tests: ", "%d", result);
+//    int result = BRRunTests();
+//    __android_log_print(ANDROID_LOG_ERROR, "Core Tests: ", "%d", result);
 }
 

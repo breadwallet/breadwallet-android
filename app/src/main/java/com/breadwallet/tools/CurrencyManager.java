@@ -86,6 +86,7 @@ public class CurrencyManager extends Observable {
     }
 
     public boolean isNetworkAvailable(Context context) {
+        if(context == null) return false;
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
@@ -239,7 +240,7 @@ public class CurrencyManager extends Observable {
         return getFormattedCurrencyString(iso, String.valueOf(decimalFormat.format(exchange)));
     }
 
-    public long getBitsFromSatoshi(long target) {
+    public double getBitsFromSatoshi(double target) {
         return target / 100;
     }
 
@@ -250,11 +251,11 @@ public class CurrencyManager extends Observable {
     public String getCurrentBalanceText() {
         String iso = getISOFromPrefs();
         double rate = getRateFromPrefs();
-        long balance = getBitsFromSatoshi(getBALANCE());
+        double balance = getBitsFromSatoshi(getBALANCE());
         double exchange = (balance * rate / 1000000);
 //        CustomLogger.LogThis("rate", String.valueOf(rate), "exchange", String.valueOf(exchange));
         //        Log.e(TAG, "getCurrentBalanceText: " + result);
-        return getFormattedCurrencyString("BTC", String.valueOf(balance)) + "(" +
+        return getFormattedCurrencyString("BTC", String.valueOf(balance)) + " (" +
                 getFormattedCurrencyString(iso, String.valueOf(exchange)) + ")";
     }
 

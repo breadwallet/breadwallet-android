@@ -1,14 +1,18 @@
 package com.breadwallet.presenter.fragments;
 
 import android.app.Fragment;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.IntroActivity;
+import com.breadwallet.tools.animation.BackgroundMovingAnimator;
 
 /**
  * BreadWallet
@@ -59,7 +63,18 @@ public class IntroNewRecoverFragment extends Fragment {
                 ((IntroActivity) getActivity()).showRecoverWalletFragment();
             }
         });
+        SharedPreferences prefs = getActivity().getSharedPreferences(MainFragmentQR.RECEIVE_ADDRESS_PREFS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(MainFragmentQR.RECEIVE_ADDRESS, null);
+        editor.apply();
         return rootView;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        ImageView background = (ImageView) getActivity().findViewById(R.id.intro_bread_wallet_image);
+        background.setScaleType(ImageView.ScaleType.MATRIX);
+        BackgroundMovingAnimator.animateBackgroundMoving(background);
+    }
 }

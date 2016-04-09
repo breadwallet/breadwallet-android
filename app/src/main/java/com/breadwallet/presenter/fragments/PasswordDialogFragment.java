@@ -48,6 +48,7 @@ import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.CurrencyManager;
+import com.breadwallet.tools.TypesConverter;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.FragmentAnimator;
@@ -120,7 +121,7 @@ public class PasswordDialogFragment extends DialogFragment {
             }
         });
 
-        title.setText(getResources().getString(R.string.insert_old_passcode));
+        title.setText(getResources().getString(R.string.enter_old_passcode));
         getDialog().getWindow().setBackgroundDrawableResource(R.drawable.rounded_dialog);
 
         if (firstTime) {
@@ -247,7 +248,7 @@ public class PasswordDialogFragment extends DialogFragment {
                 } else if (mode == BRConstants.AUTH_FOR_PAY && request != null) {
 
                     BRWalletManager walletManager = BRWalletManager.getInstance(getActivity());
-                    String seed = KeyStoreManager.getSeed();
+                    String seed = KeyStoreManager.getKeyStorePhrase(getActivity());
                     if (seed != null && !seed.isEmpty()) {
                         boolean success = walletManager.pay(request.addresses[0], request.amount * 100, seed);
                         if (!success) {
@@ -255,6 +256,8 @@ public class PasswordDialogFragment extends DialogFragment {
                                     "Failed to send", MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
                             return false;
                         }
+                    } else {
+                        throw new Error("seed is gone!");
                     }
                     seed = null;
                     System.gc();

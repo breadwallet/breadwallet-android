@@ -106,11 +106,11 @@ public class FragmentTransactionExpanded extends Fragment {
             TextView toFeeAmountText = (TextView) rootView.findViewById(R.id.tx_to_fee_amount_text);
             TextView toFeeExchangeText = (TextView) rootView.findViewById(R.id.tx_to_fee_exchange_text);
 
-            long tempReceived = m.getBitsFromSatoshi(item.getReceived());
-            long tempSent = m.getBitsFromSatoshi(item.getSent());
-            long tempFee = m.getBitsFromSatoshi(item.getFee());
+            double tempReceived = m.getBitsFromSatoshi(item.getReceived());
+            double tempSent = m.getBitsFromSatoshi(item.getSent());
+            double tempFee = m.getBitsFromSatoshi(item.getFee());
 
-            long amount = tempSent - tempReceived;
+            double amount = tempSent - tempReceived;
 
             Log.e(TAG, "Tx Detail sent!!!! amount: " + amount + " tempFee: " + tempFee + " tempSent: "
                     + tempSent + " item.getBlockHeight(): " + item.getBlockHeight());
