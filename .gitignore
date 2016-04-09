@@ -1,5 +1,5 @@
-/app/Todos
-/app/src/main/jni/transition/testingStuff.c
+app/Todos
+app/src/main/jni/transition/testingStuff.c
 # Built application files
 *.apk
 *.ap_
@@ -17,7 +17,8 @@ gen/
 # Gradle files
 .gradle/
 build/
-/*/build/
+build.gradle
+*/build/
 
 # Local configuration file (sdk path, etc)
 local.properties
@@ -35,24 +36,25 @@ proguard/
 *.iml
 *.keystore
 gradle.properties
-/*/local.properties
-/*/out
-/*/*/build
-/*/*/production
+*/local.properties
+*/out
+*/*/build
+*/*/production
 *.iws
 *.ipr
 *~
 *.swp
-/.idea/workspace.xml
-/.idea/libraries
-/.idea/vcs.xml
-/.idea/gradle.xml
-/.idea/encodings.xml
+.idea/workspace.xml
+.idea/libraries
+.idea/vcs.xml
+.idea/gradle.xml
+.idea/encodings.xml
+.idea/misc.xml
 #.idea/workspace.xml - remove # and delete .idea if it better suit your needs.
 .navigation/
 
 # jniLibs files
-/app/src/main/jniLibs
+app/src/main/jniLibs
 
 #NDK
 obj/

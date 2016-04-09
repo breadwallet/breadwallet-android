@@ -15,12 +15,8 @@
     <application
         android:name=".presenter.BreadWalletApp"
         android:allowBackup="true"
-<<<<<<< HEAD
-        android:icon="@mipmap/icon80"
-=======
         android:debuggable="true"
         android:icon="@mipmap/ic_launcher"
->>>>>>> 568c56725e946d9d69be6e3991ed712e6e179b6c
         android:label="@string/app_name"
         android:largeHeap="true"
         android:theme="@style/AppTheme"
