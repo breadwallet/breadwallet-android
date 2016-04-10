@@ -314,12 +314,12 @@ public class FragmentSettingsAll extends Fragment {
         SimpleDateFormat sdf;
         if (app != null) {
             Locale current = app.getResources().getConfiguration().locale;
-            sdf = new SimpleDateFormat("MM/dd@ha", current);
+            sdf = new SimpleDateFormat("M/d@ha", current);
         } else {
-            sdf = new SimpleDateFormat("MM/dd@ha");
+            sdf = new SimpleDateFormat("M/d@ha");
         }
         Date resultDate = new Date(time);
-        return sdf.format(resultDate);
+        return sdf.format(resultDate).toLowerCase();
     }
 
 }
