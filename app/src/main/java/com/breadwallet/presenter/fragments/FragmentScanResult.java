@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.graphics.Typeface;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
@@ -161,7 +162,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         if (spaceNeeded > (availableHeight - (spaceNeededForRest + y))) {
 //            Log.e(TAG, "More Space needed! buttonHeight: " + buttonHeight);
             buttonHeight = ((availableHeight - (spaceNeededForRest + y)) - gap) / 4;
-            buttonTextSize = (int) ((buttonHeight / 9));
+            buttonTextSize = (int) ((buttonHeight / 7));
         }
         int minimumHeight = (int) (buttonHeight * 4 + interButtonGap * 4);
 //        Log.d(TAG, "The gap: " + gap + ", The buttonHeight: " + buttonHeight + ", buttonWidth: " + buttonWidth);
@@ -176,6 +177,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
             b.setWidth((int) buttonWidth);
             b.setHeight((int) buttonHeight);
             b.setTextSize(buttonTextSize);
+            b.setTypeface(Typeface.create("sans-serif-thin", Typeface.NORMAL));
             //noinspection deprecation
             b.setTextColor(getResources().getColor(R.color.dark_blue));
             b.setBackgroundResource(R.drawable.button_regular_blue);
@@ -238,7 +240,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
                     imageB.setOnTouchListener(new BackPressCustomKeyboardOnTouchListener());
                     imageB.setId(R.id.keyboard_back_button);
                     imageB.setBackgroundColor(android.R.color.transparent);
-                    imageB.setX(interButtonGap / 2 + interButtonGap * 3 + buttonWidth * 2 + (buttonWidth / 4));
+                    imageB.setX(interButtonGap / 2 + interButtonGap * 3 + buttonWidth * 2 + (buttonWidth / 32));
                     imageB.setY(buttonHeight * 3 + interButtonGap * 3 + (buttonHeight / 4));
                     break;
             }
