@@ -77,7 +77,7 @@ public class CurrencyManager extends Observable {
         currencyListAdapter = new CurrencyListAdapter(ctx);
     }
 
-    public static synchronized CurrencyManager getInstance(Context context) {
+    public static CurrencyManager getInstance(Context context) {
         ctx = context;
         if (instance == null) {
             instance = new CurrencyManager();

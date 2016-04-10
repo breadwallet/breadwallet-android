@@ -40,30 +40,54 @@ public class MiddleViewAdapter {
     public static void resetMiddleView(Activity app, String text) {
 //        Log.e(TAG, "in the resetMiddleView: " + text);
         if(syncing){
-            ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, app.getString(R.string.syncing));
-            return;
+            try {
+                ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, app.getString(R.string.syncing));
+            } catch (NullPointerException ex){
+                ex.printStackTrace();
+            }
+                return;
         }
 
         if(text != null){
-            ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, text);
+            try {
+                ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, text);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             return;
         }
         if (FragmentAnimator.level == 0 || FragmentAnimator.level == 1) {
             if (BreadWalletApp.unlocked) {
-                String tmp = CurrencyManager.getInstance(MainActivity.app).getCurrentBalanceText();
-                ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
+                try {
+                    String tmp = CurrencyManager.getInstance(MainActivity.app).getCurrentBalanceText();
+                    ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             } else {
-                ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_IMAGE, "");
+                try {
+                    ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_IMAGE, "");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         } else if (FragmentAnimator.level == 2) {
-            FragmentSettings myFragment = (FragmentSettings)app.getFragmentManager().findFragmentByTag(FragmentSettings.class.getName());
-            if (myFragment != null && myFragment.isVisible()) {
-                ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, app.getString(R.string.middle_view_settings));
-            } else {
-                ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, app.getString(R.string.middle_view_transaction_details));
+            try {
+                FragmentSettings myFragment = (FragmentSettings)app.getFragmentManager().findFragmentByTag(FragmentSettings.class.getName());
+                if (myFragment != null && myFragment.isVisible()) {
+                    ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, app.getString(R.string.middle_view_settings));
+                } else {
+                    ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, app.getString(R.string.middle_view_transaction_details));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         } else {
-            ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_IMAGE, "");
+            try {
+                ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_IMAGE, "");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

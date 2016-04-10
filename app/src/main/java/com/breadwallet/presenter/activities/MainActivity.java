@@ -284,7 +284,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                 SpringAnimator.showAnimation(burgerButton);
                 if (FragmentAnimator.level > 1 || scanResultFragmentOn || decoderFragmentOn) {
                     Log.e(TAG, "CHECK:Should press back!");
-                    app.onBackPressed();
+                    onBackPressed();
                 } else {
                     //check multi pressing availability here, because method onBackPressed does the checking as well.
                     if (FragmentAnimator.checkTheMultipressingAvailability()) {

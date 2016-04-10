@@ -174,7 +174,6 @@ public class BRWalletManager {
 
     private static void showWritePhraseDialog() {
 
-
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) {
             ((Activity) ctx).runOnUiThread(new Runnable() {

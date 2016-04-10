@@ -49,7 +49,7 @@ public class BRPeerManager {
         syncTask = new SyncProgressTask();
     }
 
-    public static synchronized BRPeerManager getInstance(Activity context) {
+    public static  BRPeerManager getInstance(Activity context) {
         ctx = context;
         if (instance == null) {
             instance = new BRPeerManager();
@@ -57,7 +57,7 @@ public class BRPeerManager {
         return instance;
     }
 
-    public native void createAndConnect(long earliestKeyTime, int blockCount, int peerCount);
+    public native void createAndConnect(int earliestKeyTime, int blockCount, int peerCount);
 
     public native void connect();
 
