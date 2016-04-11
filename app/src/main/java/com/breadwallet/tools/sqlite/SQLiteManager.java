@@ -44,7 +44,7 @@ public class SQLiteManager {
     private SQLiteManager() {
     }
 
-    public static synchronized SQLiteManager getInstance(Context context) {
+    public static SQLiteManager getInstance(Context context) {
         ctx = context;
         if (instance == null) {
             instance = new SQLiteManager();

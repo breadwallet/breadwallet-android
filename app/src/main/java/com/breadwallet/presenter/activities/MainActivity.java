@@ -1001,8 +1001,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         syncProgressText.setVisibility(b ? View.VISIBLE : View.GONE);
     }
 
-    private native void clearCMemory();
-
     private native void cTests();
 
 //    private void createInvisibleLayoutTips() {

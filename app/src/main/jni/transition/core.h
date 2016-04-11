@@ -21,9 +21,6 @@ JNIEXPORT jboolean JNICALL Java_com_breadwallet_presenter_fragments_IntroRecover
 jbyteArray Java_com_breadwallet_tools_security_RequestHandler_getCertificatesFromPaymentRequest
         (JNIEnv *env, jobject obj, jbyteArray payment, jint index);
 
-JNIEXPORT void JNICALL Java_com_breadwallet_presenter_activities_MainActivity_clearCMemory(
-        JNIEnv *env, jobject obj);
-
 JNIEXPORT void JNICALL Java_com_breadwallet_presenter_activities_MainActivity_cTests(JNIEnv *env,
                                                                                      jobject obj);
 

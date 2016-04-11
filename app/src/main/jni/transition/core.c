@@ -269,8 +269,7 @@ JNIEXPORT jbyteArray Java_com_breadwallet_tools_security_RequestHandler_getCerti
 
 
 JNIEXPORT jboolean JNICALL Java_com_breadwallet_presenter_fragments_IntroRecoverWalletFragment_validateRecoveryPhrase
-        (JNIEnv *env, jobject obj, jobjectArray stringArray, jcharArray jPhrase) {
-
+        (JNIEnv *env, jobject obj, jobjectArray stringArray, jstring jPhrase) {
 
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "validateRecoveryPhrase");
     int wordsCount = (*env)->GetArrayLength(env, stringArray);
@@ -283,26 +282,15 @@ JNIEXPORT jboolean JNICALL Java_com_breadwallet_presenter_fragments_IntroRecover
         // Don't forget to call `ReleaseStringUTFChars` when you're done.
     }
 
-    jchar *phraseCharPointer = (*env)->GetCharArrayElements(env, jPhrase, 0);
-    jint phraseSize = (*env)->GetArrayLength(env, jPhrase);
-    char rawPhrase[phraseSize];
-    for(int i = 0; i < phraseSize; i++)
-        rawPhrase[i] = (char)phraseCharPointer[i];
-
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "theSeed: address %s", rawPhrase);
-
+    const char *str;
+    str = (char *) (*env)->GetStringUTFChars(env, jPhrase, NULL);
 
 //    int BRBIP39PhraseIsValid(const char *wordList[], const char *phrase);
-    int result = BRBIP39PhraseIsValid(wordList, rawPhrase);
+    int result = BRBIP39PhraseIsValid(wordList, str);
 
 //    __android_log_print(ANDROID_LOG_ERROR, "LOG_TAG", "This is the result : %d", result);
     return result ? JNI_TRUE : JNI_FALSE;
 
-}
-
-JNIEXPORT void JNICALL Java_com_breadwallet_presenter_activities_MainActivity_clearCMemory(JNIEnv *env, jobject obj){
-        BRWalletFree(_wallet);
-    __android_log_print(ANDROID_LOG_ERROR, "Wallet Freed: ", "BRWalletFree(wallet)");
 }
 
 JNIEXPORT void JNICALL Java_com_breadwallet_presenter_activities_MainActivity_cTests(JNIEnv *env, jobject obj){

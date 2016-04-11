@@ -83,7 +83,7 @@ JNIEXPORT jlong Java_com_breadwallet_wallet_BRWalletManager_bitcoinAmount(JNIEnv
                                                                           jlong localAmount,
                                                                           double price);
 
-        JNIEXPORT void Java_com_breadwallet_wallet_BRWalletManager_freeEverything(JNIEnv *env, jobject thiz);
+JNIEXPORT void Java_com_breadwallet_wallet_BRWalletManager_walletFreeEverything(JNIEnv *env, jobject thiz);
 
 //const void *theSeed(void *info, const char *authPrompt, uint64_t amount, size_t *seedLen);
 

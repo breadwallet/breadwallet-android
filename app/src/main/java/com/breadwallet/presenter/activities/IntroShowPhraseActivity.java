@@ -43,6 +43,8 @@ public class IntroShowPhraseActivity extends Activity {
             }
         });
 
+        remindMeLater.setVisibility(View.VISIBLE);
+
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
                 WindowManager.LayoutParams.FLAG_SECURE);
 
@@ -65,11 +67,18 @@ public class IntroShowPhraseActivity extends Activity {
         remindMeLater.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                remindMeLater.setVisibility(View.GONE);
                 SharedPreferences prefs = getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putBoolean(BRWalletManager.ASKED_TO_WRITE_PHRASE, true);
                 editor.apply();
                 startMainActivity();
+
+                try {
+                    finish();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
     }

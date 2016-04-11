@@ -77,6 +77,8 @@ public class BRPeerManager {
 
     public native boolean isCreated();
 
+    public native void peerManagerFreeEverything();
+
     /**
      * void BRPeerManagerSetCallbacks(BRPeerManager *manager, void *info,
      * void (*syncStarted)(void *info),

@@ -73,8 +73,5 @@ public class IntroNewRecoverFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        ImageView background = (ImageView) getActivity().findViewById(R.id.intro_bread_wallet_image);
-        background.setScaleType(ImageView.ScaleType.MATRIX);
-        BackgroundMovingAnimator.animateBackgroundMoving(background);
     }
 }

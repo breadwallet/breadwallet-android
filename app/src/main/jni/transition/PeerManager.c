@@ -13,7 +13,7 @@
 
 static BRMerkleBlock **_blocks;
 BRPeerManager *_peerManager;
-static JavaVM *_jvm;
+static JavaVM *_jvmPM;
 static BRPeer *_peers;
 static size_t _blocksCounter = 0;
 static size_t _peersCounter = 0;
@@ -21,24 +21,12 @@ static jclass _peerManagerClass;
 static size_t _managerNewCounter = 0;
 static jclass _blockClass;
 static jclass _peerClass;
-static JNIEnv *_env;
-
-//JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved){
-//
-//    if ((*vm)->GetEnv(vm, &_env, JNI_VERSION_1_6) != JNI_OK) {
-//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "syncStarted");
-//       return -1;
-//    }
-
-
-//    return JNI_VERSION_1_6;
-//}
 
 static JNIEnv* getEnv() {
     JNIEnv *env;
-    int status = (*_jvm)->GetEnv(_jvm,(void**)&env, JNI_VERSION_1_6);
+    int status = (*_jvmPM)->GetEnv(_jvmPM,(void**)&env, JNI_VERSION_1_6);
     if(status < 0) {
-        status = (*_jvm)->AttachCurrentThread(_jvm, &env, NULL);
+        status = (*_jvmPM)->AttachCurrentThread(_jvmPM, &env, NULL);
         if(status < 0) {
             return NULL;
         }
@@ -89,7 +77,7 @@ static void txStatusUpdate(void *info) {
     //call java methods
     (*globalEnv)->CallStaticVoidMethod(globalEnv, _peerManagerClass, mid);
 
-    (*_jvm)->DetachCurrentThread(_jvm);
+    (*_jvmPM)->DetachCurrentThread(_jvmPM);
 
 }
 
@@ -101,7 +89,7 @@ static void txRejected(void *info, int rescanRecommended) {
     //call java methods
     (*globalEnv)->CallStaticVoidMethod(globalEnv, _peerManagerClass, mid, rescanRecommended);
 
-    (*_jvm)->DetachCurrentThread(_jvm);
+    (*_jvmPM)->DetachCurrentThread(_jvmPM);
 }
 
 
@@ -139,7 +127,7 @@ static void saveBlocks(void *info, BRMerkleBlock *blocks[], size_t count) {
 
     (*env)->CallStaticVoidMethod(env, _peerManagerClass, mid, blocksObjects);
 
-    (*_jvm)->DetachCurrentThread(_jvm);
+    (*_jvmPM)->DetachCurrentThread(_jvmPM);
 
 }
 
@@ -182,7 +170,7 @@ static void savePeers(void *info, const BRPeer peers[], size_t count) {
     }
     (*env)->CallStaticVoidMethod(env, _peerManagerClass, mid, peersObjects);
 
-    (*_jvm)->DetachCurrentThread(_jvm);
+    (*_jvmPM)->DetachCurrentThread(_jvmPM);
 }
 
 JNIEXPORT void Java_com_breadwallet_wallet_BRWalletManager_rescan(JNIEnv *env, jobject thiz) {
@@ -209,7 +197,7 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_createAndConnect(JNIEnv
 
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "blocksCount: %d", blocksCount);
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "peersCount: %d", peersCount);
-    jint rs = (*env)->GetJavaVM(env, &_jvm);
+    jint rs = (*env)->GetJavaVM(env, &_jvmPM);
 
     jclass walletManagerCLass = (*env)->FindClass(env, "com/breadwallet/wallet/BRPeerManager");
     _peerManagerClass = (jclass) (*env)->NewGlobalRef(env, (jobject) walletManagerCLass);
@@ -232,7 +220,7 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_createAndConnect(JNIEnv
 
     if (!_peerManager) {
         __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "BRPeerManagerNew called: %d", ++_managerNewCounter);
-        _peerManager = BRPeerManagerNew(_wallet, earliestKeyTime != 0 ? earliestKeyTime
+        _peerManager = BRPeerManagerNew(_wallet, earliestKeyTime > BIP39_CREATION_TIME ? earliestKeyTime
                                                                   : BIP39_CREATION_TIME,
                                     blocksCount == 0 ? NULL : _blocks,
                                     blocksCount, peersCount == 0 ? NULL : _peers,
@@ -250,7 +238,7 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_createAndConnect(JNIEnv
         return;
     }
 
-    if(!BRPeerMangerIsConnected(_peerManager))
+    if(!BRPeerManagerIsConnected(_peerManager))
         BRPeerManagerConnect(_peerManager);
 }
 
@@ -324,6 +312,7 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_createPeerArrayWithCoun
 
 JNIEXPORT jdouble Java_com_breadwallet_wallet_BRPeerManager_syncProgress(JNIEnv *env,
                                                                       jobject thiz) {
+
     if (_peerManager == NULL) return 4;
 
     return (jdouble) BRPeerManagerSyncProgress(_peerManager);
@@ -338,7 +327,7 @@ JNIEXPORT jint Java_com_breadwallet_wallet_BRPeerManager_getCurrentBlockHeight(J
 
 JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRPeerManager_isCreated
         (JNIEnv *env, jobject obj) {
-
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "isCreated");
     int result = _peerManager;
     return result ? JNI_TRUE : JNI_FALSE;
 
@@ -346,7 +335,29 @@ JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRPeerManager_isCreated
 
 JNIEXPORT jint Java_com_breadwallet_wallet_BRPeerManager_getEstimatedBlockHeight(JNIEnv *env,
                                                                                jobject thiz) {
+    if(!_peerManager) return 0;
     return (jint) BRPeerManagerEstimatedBlockHeight(_peerManager);
+}
+
+JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_peerManagerFreeEverything(JNIEnv *env, jobject thiz) {
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "peerManagerFreeEverything");
+    if(_peerManager){
+        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "peerManagerFreeEverything 1");
+        BRPeerManagerDisconnect(_peerManager);
+        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "peerManagerFreeEverything 2");
+        BRPeerManagerFree(_peerManager);
+        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "peerManagerFreeEverything 3");
+    }
+    if(_blocks)
+        free(_blocks);
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "peerManagerFreeEverything 4");
+    if(_peers)
+        free(_peers);
+    JNIEnv *tempEnv = getEnv();
+    (*tempEnv)->DeleteGlobalRef(env, _peerManagerClass);
+    (*tempEnv)->DeleteGlobalRef(env, _blockClass);
+    (*tempEnv)->DeleteGlobalRef(env, _peerClass);
+
 }
 
 

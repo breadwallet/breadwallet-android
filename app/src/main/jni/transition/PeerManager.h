@@ -51,5 +51,8 @@ JNIEXPORT jint Java_com_breadwallet_wallet_BRPeerManager_getCurrentBlockHeight(J
 JNIEXPORT jint Java_com_breadwallet_wallet_BRPeerManager_getEstimatedBlockHeight(JNIEnv *env,
                                                                                  jobject thiz);
 
+JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_peerManagerFreeEverything(JNIEnv *env,
+                                                                                     jobject thiz);
+
 
 #endif //BREADWALLET_PEERMANAGER_H

@@ -19,7 +19,6 @@ import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.presenter.fragments.MainFragmentQR;
 import com.breadwallet.tools.CurrencyManager;
-import com.breadwallet.tools.TypesConverter;
 import com.breadwallet.tools.WordsReader;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
@@ -133,7 +132,6 @@ public class BRWalletManager {
      * a signed transaction that will sweep the balance into wallet (doesn't publish the tx)
      */
     public boolean sweepPrivateKey() {
-        freeEverything();
         return KeyStoreManager.deleteKeyStoreEntry();
     }
 
@@ -170,6 +168,16 @@ public class BRWalletManager {
         } else {
             throw new NullPointerException("Cannot be null");
         }
+    }
+
+    public void wipeWallet(Activity activity){
+        sweepPrivateKey();
+        walletFreeEverything();
+        BRPeerManager.getInstance(activity).peerManagerFreeEverything();
+        SQLiteManager sqLiteManager = SQLiteManager.getInstance(activity);
+        sqLiteManager.deleteTransactions();
+        sqLiteManager.deleteBlocks();
+        sqLiteManager.deletePeers();
     }
 
     private static void showWritePhraseDialog() {
@@ -331,6 +339,6 @@ public class BRWalletManager {
 
     public native long bitcoinAmount(long localAmount, double price);
 
-    public native void freeEverything();
+    public native void walletFreeEverything();
 
 }

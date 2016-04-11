@@ -2,21 +2,14 @@
 package com.breadwallet.presenter.activities;
 
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
@@ -28,8 +21,6 @@ import com.breadwallet.presenter.fragments.IntroWelcomeFragment;
 import com.breadwallet.tools.animation.BackgroundMovingAnimator;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
-
-import java.util.List;
 
 
 /**
@@ -113,7 +104,7 @@ public class IntroActivity extends FragmentActivity {
 
     }
 
-    private void showRecoverNewWalletFragment() {
+    private void showNewRecoverWalletFragment() {
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
         IntroWelcomeFragment introWelcomeFragment = (IntroWelcomeFragment) getFragmentManager().
@@ -208,7 +199,7 @@ public class IntroActivity extends FragmentActivity {
                     @Override
                     public void run() {
                         Log.e(TAG, "should create new wallet");
-                        showRecoverNewWalletFragment();
+                        showNewRecoverWalletFragment();
                     }
                 }, 800);
             } else {
@@ -218,7 +209,5 @@ public class IntroActivity extends FragmentActivity {
 
         }
     }
-
-
 
 }
