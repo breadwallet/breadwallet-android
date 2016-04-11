@@ -322,7 +322,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         if (RootUtil.isDeviceRooted()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("DEVICE SECURITY COMPROMISED")
-                    .setMessage("Any \'jailbreak\' app can access any other app\'s keychain data (and steal your bitcoins)." + (hasBitcoin ? "\nWipe this wallet immediately and restore on a secure device." : ""))
+                    .setMessage("On a \'rooted\' device, any app can access any other app\'s keystore data (and steal your bitcoins)." + (hasBitcoin ? "\nWipe this wallet immediately and restore on a secure device." : ""))
                     .setCancelable(false)
                     .setNegativeButton(getString(R.string.ok_button), new DialogInterface.OnClickListener() {
                         @Override

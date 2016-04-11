@@ -148,7 +148,9 @@ public class FragmentSettingsAll extends Fragment {
     }
 
     public static void refreshTransactions(final Context ctx) {
-        transactionObjects = BRWalletManager.getInstance(ctx).getTransactions();
+        TransactionListItem[] txs = BRWalletManager.getInstance(ctx).getTransactions();
+        if (txs != null)
+            transactionObjects = txs;
 
         if (ctx != null && ctx instanceof MainActivity) {
             ((MainActivity) ctx).runOnUiThread(new Runnable() {

@@ -172,8 +172,8 @@ public class BRWalletManager {
 
     public void wipeWallet(Activity activity){
         sweepPrivateKey();
-        walletFreeEverything();
         BRPeerManager.getInstance(activity).peerManagerFreeEverything();
+        walletFreeEverything();
         SQLiteManager sqLiteManager = SQLiteManager.getInstance(activity);
         sqLiteManager.deleteTransactions();
         sqLiteManager.deleteBlocks();

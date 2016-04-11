@@ -59,12 +59,16 @@ static void syncSucceeded(void *info) {
 
 static void syncFailed(void *info, int error) {
 
+    if(!_peerManager) return;
+
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "syncFailed");
     JNIEnv *globalEnv = getEnv();
 
     jmethodID mid = (*globalEnv)->GetStaticMethodID(globalEnv, _peerManagerClass, "syncFailed", "()V");
     //call java methods
     (*globalEnv)->CallStaticVoidMethod(globalEnv, _peerManagerClass, mid);
+
+    (*_jvmPM)->DetachCurrentThread(_jvmPM);
 
 }
 
@@ -327,7 +331,7 @@ JNIEXPORT jint Java_com_breadwallet_wallet_BRPeerManager_getCurrentBlockHeight(J
 
 JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRPeerManager_isCreated
         (JNIEnv *env, jobject obj) {
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "isCreated");
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "peerManager isCreated %s", _peerManager ? "yes" : "no");
     int result = _peerManager;
     return result ? JNI_TRUE : JNI_FALSE;
 
@@ -354,9 +358,12 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_peerManagerFreeEverythi
     if(_peers)
         free(_peers);
     JNIEnv *tempEnv = getEnv();
-    (*tempEnv)->DeleteGlobalRef(env, _peerManagerClass);
-    (*tempEnv)->DeleteGlobalRef(env, _blockClass);
-    (*tempEnv)->DeleteGlobalRef(env, _peerClass);
+    _peerManager = NULL;
+
+
+//    (*tempEnv)->DeleteGlobalRef(env, _peerManagerClass);
+//    (*tempEnv)->DeleteGlobalRef(env, _blockClass);
+//    (*tempEnv)->DeleteGlobalRef(env, _peerClass);
 
 }
 

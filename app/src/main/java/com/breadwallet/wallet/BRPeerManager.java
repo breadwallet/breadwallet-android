@@ -119,7 +119,7 @@ public class BRPeerManager {
     }
 
     public static void txRejected(int rescanRecommended) {
-        Log.e(TAG, "txStatusUpdate");
+        Log.e(TAG, "txRejected");
     }
 
     public static void saveBlocks(final BlockEntity[] blockEntities) {
