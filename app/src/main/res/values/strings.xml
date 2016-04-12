@@ -109,9 +109,9 @@
     <string name="payment_request_expired">payment request expired</string>
     <string name="something_went_wrong">something went wrong</string>
     <string name="more">more…</string>
-    <string name="sent">sent: %1$s</string>
+    <string name="sent">sent: %s</string>
     <string name="send">send</string>
-    <string name="received">received: %1$s</string>
+    <string name="received">received: %s</string>
     <string name="wallet_address">wallet address</string>
     <string name="payment_address">payment address</string>
     <string name="spent_address">spent address</string>

@@ -19,6 +19,14 @@ android {
 //        exclude 'app/src/main/jni/breadwallet-core' //for API 19 to work
     }
 
+//    signingConfigs {
+//        release {
+//            storeFile file("myreleasekey.keystore")
+//            storePassword "password"
+//            keyAlias "MyReleaseKey"
+//            keyPassword "password"
+//        }
+//    }
 
     defaultConfig {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -26,12 +34,7 @@ android {
         minSdkVersion 23
         targetSdkVersion 23
         versionCode 1
-        versionName "1.0"
-//        ndk {
-//            moduleName "core"
-//            cFlags "-std=c99 -DBITCOIN_TESTNET=1"
-//            ldLibs "log"
-//        }
+        versionName "0.6"
     }
 
     compileOptions {
@@ -44,7 +47,7 @@ android {
             minifyEnabled false
             debuggable false
             jniDebuggable false
-//            proguardFiles getDefaultProguardFiles('proguard-android.txt'), 'proguard-rules.pro'
+
         }
         debug {
             debuggable true

@@ -269,16 +269,17 @@ public class BRWalletManager {
                 @Override
                 public void run() {
                     CurrencyManager m = CurrencyManager.getInstance(ctx);
-                    if (amount > 0) {
+//                    if (amount > 0) {
 //                        showWritePhraseDialog();
-                        ((BreadWalletApp) ctx.getApplicationContext()).showCustomToast((Activity) ctx,
-                                String.format(ctx.getString(R.string.received), m.getBitsFromSatoshi(amount) + m.bitcoinLowercase),
-                                BreadWalletApp.DISPLAY_HEIGHT_PX / 2, Toast.LENGTH_LONG, 1);
-                    } else {
-                        ((BreadWalletApp) ctx.getApplicationContext()).showCustomToast((Activity) ctx,
-                                String.format(ctx.getString(R.string.sent), m.getBitsFromSatoshi(amount * -1) + m.bitcoinLowercase),
-                                BreadWalletApp.DISPLAY_HEIGHT_PX / 2, Toast.LENGTH_LONG, 1);
-                    }
+                    double absAmount = amount > 0 ? amount : amount * -1;
+                    String strToShow = String.format(ctx.getString(amount > 0 ? R.string.received : R.string.sent), m.bitcoinLowercase + m.getBitsFromSatoshi(absAmount) + " ("+m.getExchangeForAmount(m.getRateFromPrefs(), m.getISOFromPrefs(), String.valueOf(m.getBitsFromSatoshi(absAmount))) + ")");
+                    ((BreadWalletApp) ctx.getApplicationContext()).showCustomToast((Activity) ctx, strToShow,
+                            BreadWalletApp.DISPLAY_HEIGHT_PX / 2, Toast.LENGTH_LONG, 1);
+//                    } else {
+//                        ((BreadWalletApp) ctx.getApplicationContext()).showCustomToast((Activity) ctx,
+//                                String.format(ctx.getString(R.string.sent), m.bitcoinLowercase + m.getBitsFromSatoshi(amount)),
+//                                BreadWalletApp.DISPLAY_HEIGHT_PX / 2, Toast.LENGTH_LONG, 1);
+//                    }
                 }
             });
 

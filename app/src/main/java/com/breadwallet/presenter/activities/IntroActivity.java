@@ -61,6 +61,7 @@ public class IntroActivity extends FragmentActivity {
     private static final String TAG = IntroActivity.class.getName();
     public static IntroActivity app;
     private Button leftButton;
+    private String canary;
 
     //loading the native library
     static {
@@ -79,8 +80,9 @@ public class IntroActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
         app = this;
-        String canary = KeyStoreManager.getKeyStoreCanary(this, BRConstants.INTRO_CHECK_REQUEST_CODE);
-        if(canary == null || canary.isEmpty()){
+        canary = KeyStoreManager.getKeyStoreCanary(this, BRConstants.CANARY_REQUEST_CODE);
+        if(canary.equals("none")) return;
+        if(canary.isEmpty()){
             KeyStoreManager.resetWalletKeyStore();
             SharedPreferences prefs = getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = prefs.edit();
@@ -183,11 +185,33 @@ public class IntroActivity extends FragmentActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        BRWalletManager m = BRWalletManager.getInstance(this);
-        if (requestCode == 1) {
+        if (requestCode == BRConstants.CANARY_REQUEST_CODE) {
             // Challenge completed, proceed with using cipher
             if (resultCode == RESULT_OK) {
+                if(canary.isEmpty()){
+                    KeyStoreManager.resetWalletKeyStore();
+                    SharedPreferences prefs = getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.clear();
+                    editor.apply();
+                }
+
+                leftButton = (Button) findViewById(R.id.intro_left_button);
+                leftButton.setVisibility(View.GONE);
+                leftButton.setClickable(false);
+                leftButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onBackPressed();
+                    }
+                });
+
+                getFragmentManager().beginTransaction().add(R.id.intro_layout, new IntroWelcomeFragment(),
+                        IntroWelcomeFragment.class.getName()).commit();
+                startTheWalletIfExists();
+
             } else {
+                canary = KeyStoreManager.getKeyStoreCanary(this, BRConstants.CANARY_REQUEST_CODE);
                 Log.e(TAG, "Auth for phrase was rejected");
             }
         }

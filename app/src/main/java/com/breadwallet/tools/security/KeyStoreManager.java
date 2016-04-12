@@ -118,7 +118,7 @@ public class KeyStoreManager {
                         .setKeySize(256)
                         .setUserAuthenticationRequired(true)
                         .setUserAuthenticationValidityDurationSeconds(AUTH_DURATION_SEC)
-                        .setRandomizedEncryptionRequired(true)
+                        .setRandomizedEncryptionRequired(false)
                                 // Require that the user has unlocked in the last 30 seconds
 //                    .setUserAuthenticationValidityDurationSeconds(-1)
                         .setEncryptionPaddings(PADDING)
@@ -240,8 +240,8 @@ public class KeyStoreManager {
                         .setBlockModes(BLOCK_MODE)
                         .setKeySize(256)
                         .setUserAuthenticationRequired(true)
-                        .setUserAuthenticationValidityDurationSeconds(AUTH_DURATION_SEC)
-                        .setRandomizedEncryptionRequired(true)
+                        .setUserAuthenticationValidityDurationSeconds(Integer.MAX_VALUE)
+                        .setRandomizedEncryptionRequired(false)
                                 // Require that the user has unlocked in the last 30 seconds
 //                    .setUserAuthenticationValidityDurationSeconds(-1)
                         .setEncryptionPaddings(PADDING)
@@ -321,6 +321,7 @@ public class KeyStoreManager {
             Log.e(TAG, Log.getStackTraceString(e));
             Log.e(TAG, "showAuthenticationScreen");
             showAuthenticationScreen(context, requestCode);
+            return "none";
         } catch (IOException | CertificateException | NoSuchAlgorithmException | UnrecoverableKeyException |
                 InvalidAlgorithmParameterException | NoSuchPaddingException |  KeyStoreException | InvalidKeyException | NullPointerException e) {
             e.printStackTrace();
