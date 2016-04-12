@@ -581,9 +581,12 @@ public class MainActivity extends FragmentActivity implements Observer {
         }
     }
 
-
     public void pay(final String addressHolder, String amountHolder) {
-
+        String canary = KeyStoreManager.getKeyStoreCanary(this, BRConstants.CANARY_REQUEST_CODE);
+        if(canary.equals("noauth")) {
+            KeyStoreManager.showAuthenticationScreen(this, 0);
+            return;
+        }
         if (addressHolder == null || amountHolder == null) return;
         if (addressHolder.length() < 20) return;
         final Double amountAsDouble = Double.parseDouble(amountHolder);

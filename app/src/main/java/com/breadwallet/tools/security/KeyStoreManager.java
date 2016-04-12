@@ -88,14 +88,14 @@ public class KeyStoreManager {
     private static final String PUB_KEY_ALIAS = "pubKey";
     private static final String WALLET_CREATION_TIME_ALIAS = "creationTime";
     private static final String PASS_CODE_ALIAS = "passCode";
-
     private static final String PHRASE_FILENAME = "my_phrase";
     private static final String CANARY_FILENAME = "my_canary";
     private static final String PUB_KEY_FILENAME = "my_pub_key";
     private static final String WALLET_CREATION_TIME_FILENAME = "my_creation_time";
     private static final String PASS_CODE_FILENAME = "my_pass_code";
 
-    private static final int AUTH_DURATION_SEC = 300;
+    private static final int AUTH_DURATION_SEC = 15;
+//    private static final int CANARY_AUTH_DURATION_SEC = Integer.MAX_VALUE;
 
     public static boolean putKeyStorePhrase(String strToStore, Context context, int requestCode) {
         if (strToStore == null) return false;
@@ -119,8 +119,6 @@ public class KeyStoreManager {
                         .setUserAuthenticationRequired(true)
                         .setUserAuthenticationValidityDurationSeconds(AUTH_DURATION_SEC)
                         .setRandomizedEncryptionRequired(false)
-                                // Require that the user has unlocked in the last 30 seconds
-//                    .setUserAuthenticationValidityDurationSeconds(-1)
                         .setEncryptionPaddings(PADDING)
                         .build());
                 SecretKey key = keyGenerator.generateKey();
@@ -240,10 +238,8 @@ public class KeyStoreManager {
                         .setBlockModes(BLOCK_MODE)
                         .setKeySize(256)
                         .setUserAuthenticationRequired(true)
-                        .setUserAuthenticationValidityDurationSeconds(Integer.MAX_VALUE)
+                        .setUserAuthenticationValidityDurationSeconds(AUTH_DURATION_SEC)
                         .setRandomizedEncryptionRequired(false)
-                                // Require that the user has unlocked in the last 30 seconds
-//                    .setUserAuthenticationValidityDurationSeconds(-1)
                         .setEncryptionPaddings(PADDING)
                         .build());
                 SecretKey key = keyGenerator.generateKey();
@@ -320,8 +316,7 @@ public class KeyStoreManager {
         } catch (UserNotAuthenticatedException e) {
             Log.e(TAG, Log.getStackTraceString(e));
             Log.e(TAG, "showAuthenticationScreen");
-            showAuthenticationScreen(context, requestCode);
-            return "none";
+            return "noauth";
         } catch (IOException | CertificateException | NoSuchAlgorithmException | UnrecoverableKeyException |
                 InvalidAlgorithmParameterException | NoSuchPaddingException |  KeyStoreException | InvalidKeyException | NullPointerException e) {
             e.printStackTrace();
@@ -660,7 +655,7 @@ public class KeyStoreManager {
 //        return true;
 //    }
 
-    private static void showAuthenticationScreen(Context context, int requestCode) {
+    public static void showAuthenticationScreen(Context context, int requestCode) {
         // Create the Confirm Credentials screen. You can customize the title and description. Or
         // we will provide a generic one for you if you leave it null
         KeyguardManager mKeyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
@@ -668,6 +663,8 @@ public class KeyStoreManager {
         Intent intent = mKeyguardManager.createConfirmDeviceCredentialIntent("Authentication required", "The phone has been unlocked for a too long");
         if (intent != null) {
             ((Activity) context).startActivityForResult(intent, requestCode);
+        } else {
+            Log.e(TAG,"NO PASS SETUP");
         }
     }
 

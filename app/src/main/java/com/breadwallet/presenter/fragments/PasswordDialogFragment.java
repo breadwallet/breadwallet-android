@@ -246,7 +246,6 @@ public class PasswordDialogFragment extends DialogFragment {
                 if (mode == BRConstants.AUTH_FOR_PHRASE) {
                     FragmentAnimator.animateSlideToLeft((MainActivity) getActivity(), new FragmentRecoveryPhrase(), new FragmentSettings());
                 } else if (mode == BRConstants.AUTH_FOR_PAY && request != null) {
-
                     BRWalletManager walletManager = BRWalletManager.getInstance(getActivity());
                     String seed = KeyStoreManager.getKeyStorePhrase(getActivity(), BRConstants.PAY_REQUEST_CODE);
                     if (seed != null && !seed.isEmpty()) {
