@@ -20,6 +20,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
@@ -76,25 +78,26 @@ public class KeyStoreManager {
     private static final String ANDROID_KEY_STORE = "AndroidKeyStore";
 
     private static final String PHRASE_IV = "ivphrase";
+    private static final String CANARY_IV = "ivcanary";
     private static final String PUB_KEY_IV = "ivpubkey";
     private static final String TIME_IV = "ivtime";
     private static final String PASS_CODE_IV = "ivpasscode";
 
     public static final String PHRASE_ALIAS = "phrase";
+    public static final String CANARY_ALIAS = "canary";
     private static final String PUB_KEY_ALIAS = "pubKey";
     private static final String WALLET_CREATION_TIME_ALIAS = "creationTime";
     private static final String PASS_CODE_ALIAS = "passCode";
 
     private static final String PHRASE_FILENAME = "my_phrase";
+    private static final String CANARY_FILENAME = "my_canary";
     private static final String PUB_KEY_FILENAME = "my_pub_key";
     private static final String WALLET_CREATION_TIME_FILENAME = "my_creation_time";
     private static final String PASS_CODE_FILENAME = "my_pass_code";
 
-    public static final int REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS = 1;
+    private static final int AUTH_DURATION_SEC = 300;
 
-    public static boolean putKeyStorePhrase(String strToStore, Context context) {
-        //TODO CHECK FOR FINGERPRINT SET!!! CANNOT WORK WITHOUT IT
-        //TODO refactor the String to byte[] or char[]
+    public static boolean putKeyStorePhrase(String strToStore, Context context, int requestCode) {
         if (strToStore == null) return false;
         if (strToStore.length() == 0) return false;
 
@@ -113,8 +116,9 @@ public class KeyStoreManager {
                         KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
                         .setBlockModes(BLOCK_MODE)
                         .setKeySize(256)
-                        .setUserAuthenticationRequired(false)
-                        .setRandomizedEncryptionRequired(false)
+                        .setUserAuthenticationRequired(true)
+                        .setUserAuthenticationValidityDurationSeconds(AUTH_DURATION_SEC)
+                        .setRandomizedEncryptionRequired(true)
                                 // Require that the user has unlocked in the last 30 seconds
 //                    .setUserAuthenticationValidityDurationSeconds(-1)
                         .setEncryptionPaddings(PADDING)
@@ -147,16 +151,15 @@ public class KeyStoreManager {
             return true;
         } catch (UserNotAuthenticatedException e) {
             Log.e(TAG, Log.getStackTraceString(e));
-            showAuthenticationScreen(context);
-        } catch (IOException | CertificateException | NoSuchAlgorithmException | InvalidKeyException
-                | NoSuchPaddingException | KeyStoreException | UnrecoverableKeyException | InvalidAlgorithmParameterException | NoSuchProviderException e) {
+            Log.e(TAG, "showAuthenticationScreen");
+            showAuthenticationScreen(context, requestCode);
+        } catch (CertificateException | NoSuchAlgorithmException | InvalidKeyException | NullPointerException | NoSuchPaddingException | KeyStoreException | UnrecoverableKeyException | InvalidAlgorithmParameterException | NoSuchProviderException | IOException e) {
             e.printStackTrace();
         }
         return false;
     }
 
-
-    public static String getKeyStorePhrase(final Context context) {
+    public static String getKeyStorePhrase(final Context context, int requestCode) {
 
         KeyguardManager myKM = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
         if (myKM.inKeyguardRestrictedInputMode()) {
@@ -193,15 +196,133 @@ public class KeyStoreManager {
 
             CipherInputStream cipherInputStream = new CipherInputStream(
                     new FileInputStream(encryptedDataFilePath), outCipher);
-            byte[] roundTrippedBytes = new byte[256];
-            int index = 0;
-            int nextByte;
-            while ((nextByte = cipherInputStream.read()) != -1) {
-                roundTrippedBytes[index] = (byte) nextByte;
-                index++;
+            byte[] result = IOUtils.toByteArray(cipherInputStream);
+//            byte[] roundTrippedBytes = new byte[256];
+//            int index = 0;
+//            int nextByte;
+//            while ((nextByte = cipherInputStream.read()) != -1) {
+//                roundTrippedBytes[index] = (byte) nextByte;
+//                index++;
+//            }
+            recoveredSecret = new String(result, "UTF-8");
+        } catch (UserNotAuthenticatedException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+            Log.e(TAG, "showAuthenticationScreen");
+            showAuthenticationScreen(context, requestCode);
+        } catch (IOException | CertificateException | NoSuchAlgorithmException | UnrecoverableKeyException | NullPointerException |
+                InvalidAlgorithmParameterException | NoSuchPaddingException | KeyStoreException | InvalidKeyException e) {
+            e.printStackTrace();
+        }
+
+
+        return recoveredSecret;
+    }
+
+    public static boolean putKeyStoreCanary(String strToStore, Context context, int requestCode) {
+        //TODO CHECK FOR FINGERPRINT SET!!! CANNOT WORK WITHOUT IT
+        //TODO refactor the String to byte[] or char[]
+        if (strToStore == null) return false;
+        if (strToStore.length() == 0) return false;
+
+        try {
+            KeyStore keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
+            keyStore.load(null);
+            int nBefore = keyStore.size();
+            // Create the keys if necessary
+            if (!keyStore.containsAlias(CANARY_ALIAS)) {
+                KeyGenerator keyGenerator = KeyGenerator.getInstance(
+                        KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEY_STORE);
+
+                // Set the alias of the entry in Android KeyStore where the key will appear
+                // and the constrains (purposes) in the constructor of the Builder
+                keyGenerator.init(new KeyGenParameterSpec.Builder(CANARY_ALIAS,
+                        KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
+                        .setBlockModes(BLOCK_MODE)
+                        .setKeySize(256)
+                        .setUserAuthenticationRequired(true)
+                        .setUserAuthenticationValidityDurationSeconds(AUTH_DURATION_SEC)
+                        .setRandomizedEncryptionRequired(true)
+                                // Require that the user has unlocked in the last 30 seconds
+//                    .setUserAuthenticationValidityDurationSeconds(-1)
+                        .setEncryptionPaddings(PADDING)
+                        .build());
+                SecretKey key = keyGenerator.generateKey();
+
             }
-            recoveredSecret = new String(roundTrippedBytes, 0, index, "UTF-8");
-        } catch (Exception e) {
+
+            int nAfter = keyStore.size();
+
+            String filesDirectory = context.getFilesDir().getAbsolutePath();
+            String encryptedDataFilePath = filesDirectory + File.separator + CANARY_FILENAME;
+
+            SecretKey secret = (SecretKey) keyStore.getKey(CANARY_ALIAS, null);
+            Cipher inCipher = Cipher.getInstance(CIPHER_ALGORITHM);
+            inCipher.init(Cipher.ENCRYPT_MODE, secret);
+            byte[] iv = inCipher.getIV();
+            String path = filesDirectory + File.separator + CANARY_IV;
+            boolean success = writeBytesToFile(path, iv);
+            if (!success) throw new NullPointerException("FAILED TO WRITE BYTES TO FILE");
+            CipherOutputStream cipherOutputStream = new CipherOutputStream(
+                    new FileOutputStream(encryptedDataFilePath), inCipher);
+            byte[] strBytes = strToStore.getBytes("UTF-8");
+            cipherOutputStream.write(strBytes);
+            try {
+                cipherOutputStream.close();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            return true;
+        } catch (UserNotAuthenticatedException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+            Log.e(TAG, "showAuthenticationScreen");
+            showAuthenticationScreen(context, requestCode);
+        } catch (CertificateException | NoSuchAlgorithmException | InvalidKeyException | NoSuchPaddingException | KeyStoreException | UnrecoverableKeyException | InvalidAlgorithmParameterException | NoSuchProviderException | IOException | NullPointerException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static String getKeyStoreCanary(final Context context, int requestCode) {
+
+//        KeyguardManager myKM = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
+//        if (myKM.inKeyguardRestrictedInputMode()) {
+//            Log.e(TAG, "THE SCREEN IS LOCKED!");
+//            return null;
+//        } else {
+//            Log.e(TAG, "THE SCREEN IS UNLOCKED!");
+//        }
+        KeyStore keyStore;
+        String recoveredSecret = "";
+        String filesDirectory = context.getFilesDir().getAbsolutePath();
+        String encryptedDataFilePath = filesDirectory + File.separator + CANARY_FILENAME;
+        try {
+            keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
+            keyStore.load(null);
+            SecretKey secretKey = (SecretKey)
+                    keyStore.getKey(CANARY_ALIAS, null);
+            if (secretKey == null) throw new NullPointerException("secretKey is null");
+            String path = filesDirectory + File.separator + CANARY_IV;
+            byte[] iv = readBytesFromFile(path);
+            Cipher outCipher;
+            outCipher = Cipher.getInstance(CIPHER_ALGORITHM);
+            outCipher.init(Cipher.DECRYPT_MODE, secretKey, new IvParameterSpec(iv));
+
+            CipherInputStream cipherInputStream = new CipherInputStream(
+                    new FileInputStream(encryptedDataFilePath), outCipher);
+            byte[] result = IOUtils.toByteArray(cipherInputStream);
+//            int index = 0;
+//            int nextByte;
+//            while ((nextByte = cipherInputStream.read()) != -1) {
+//                roundTrippedBytes[index] = (byte) nextByte;
+//                index++;
+//            }
+            recoveredSecret = new String(result, "UTF-8");
+        } catch (UserNotAuthenticatedException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+            Log.e(TAG, "showAuthenticationScreen");
+            showAuthenticationScreen(context, requestCode);
+        } catch (IOException | CertificateException | NoSuchAlgorithmException | UnrecoverableKeyException |
+                InvalidAlgorithmParameterException | NoSuchPaddingException |  KeyStoreException | InvalidKeyException | NullPointerException e) {
             e.printStackTrace();
         }
 
@@ -281,21 +402,17 @@ public class KeyStoreManager {
 
             CipherInputStream cipherInputStream = new CipherInputStream(
                     new FileInputStream(encryptedDataFilePath), outCipher);
-            byte[] roundTrippedBytes = new byte[256];
-            int index = 0;
-            int nextByte;
-            while ((nextByte = cipherInputStream.read()) != -1) {
-                roundTrippedBytes[index] = (byte) nextByte;
-                index++;
-            }
-            ByteBuffer bf = ByteBuffer.wrap(roundTrippedBytes, 0, index);
-            recoveredSecret = trimBytes(bf.array());
-            //TODO test the result recoveredSecret
+            recoveredSecret = IOUtils.toByteArray(cipherInputStream);
+//            int index = 0;
+//            int nextByte;
+//            while ((nextByte = cipherInputStream.read()) != -1) {
+//                roundTrippedBytes[index] = (byte) nextByte;
+//                index++;
+//            }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        Log.e(TAG, "recovered pubKey: " + recoveredSecret);
         return recoveredSecret;
     }
 
@@ -376,15 +493,15 @@ public class KeyStoreManager {
 
             CipherInputStream cipherInputStream = new CipherInputStream(
                     new FileInputStream(encryptedDataFilePath), outCipher);
-            byte[] roundTrippedBytes = new byte[4];
-            int index = 0;
-            int nextByte;
-            while ((nextByte = cipherInputStream.read()) != -1) {
-                roundTrippedBytes[index] = (byte) nextByte;
-                index++;
-            }
-            ByteBuffer bf = ByteBuffer.wrap(roundTrippedBytes, 0, index);
-            recoveredSecret = TypesConverter.bytesToInt(trimBytes(bf.array()));
+            byte[] result = IOUtils.toByteArray(cipherInputStream);
+//            byte[] roundTrippedBytes = new byte[4];
+//            int index = 0;
+//            int nextByte;
+//            while ((nextByte = cipherInputStream.read()) != -1) {
+//                roundTrippedBytes[index] = (byte) nextByte;
+//                index++;
+//            }
+            recoveredSecret = TypesConverter.bytesToInt(result);
             Log.e(TAG, "recovered walletCreationTime: " + recoveredSecret);
         } catch (Exception e) {
             e.printStackTrace();
@@ -474,16 +591,16 @@ public class KeyStoreManager {
 
             CipherInputStream cipherInputStream = new CipherInputStream(
                     new FileInputStream(encryptedDataFilePath), outCipher);
-            byte[] roundTrippedBytes = new byte[4];
-            int index = 0;
-            int nextByte;
-            while ((nextByte = cipherInputStream.read()) != -1) {
-                roundTrippedBytes[index] = (byte) nextByte;
-                index++;
-            }
-            ByteBuffer bf = ByteBuffer.wrap(roundTrippedBytes, 0, index);
-            recoveredSecret = TypesConverter.bytesToInt(trimBytes(bf.array()));
-            Log.e(TAG, "recovered passcode: " + recoveredSecret);
+            byte[] result = IOUtils.toByteArray(cipherInputStream);
+//            byte[] roundTrippedBytes = new byte[4];
+//            int index = 0;
+//            int nextByte;
+//            while ((nextByte = cipherInputStream.read()) != -1) {
+//                roundTrippedBytes[index] = (byte) nextByte;
+//                index++;
+//            }
+            recoveredSecret = TypesConverter.bytesToInt(result);
+//            Log.e(TAG, "recovered passcode: " + recoveredSecret);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -491,16 +608,16 @@ public class KeyStoreManager {
         return recoveredSecret;
     }
 
-    public static boolean deleteKeyStoreEntry() {
+    public static boolean resetWalletKeyStore() {
         KeyStore keyStore;
         try {
             keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
             keyStore.load(null);
-            keyStore.deleteEntry(KeyStoreManager.PHRASE_ALIAS);
-            keyStore.deleteEntry(KeyStoreManager.PUB_KEY_ALIAS);
-            keyStore.deleteEntry(KeyStoreManager.WALLET_CREATION_TIME_ALIAS);
-            keyStore.deleteEntry(KeyStoreManager.PASS_CODE_ALIAS);
-
+            keyStore.deleteEntry(PHRASE_ALIAS);
+            keyStore.deleteEntry(PUB_KEY_ALIAS);
+            keyStore.deleteEntry(WALLET_CREATION_TIME_ALIAS);
+            keyStore.deleteEntry(PASS_CODE_ALIAS);
+            keyStore.deleteEntry(CANARY_ALIAS);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
             return false;
@@ -516,40 +633,40 @@ public class KeyStoreManager {
         return true;
     }
 
-    public static boolean deleteAllKeyStoreEntries() {
-        KeyStore keyStore;
-        try {
-            keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
-            keyStore.load(null);
-            Enumeration<String> aliases = keyStore.aliases();
-            while (aliases.hasMoreElements()) {
-                String alias = aliases.nextElement();
-                Log.e(TAG, "Deleting alias: " + alias);
-                keyStore.deleteEntry(alias);
-            }
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            return false;
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-            return false;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        } catch (java.security.cert.CertificateException e) {
-            e.printStackTrace();
-        }
-        return true;
-    }
+//    public static boolean deleteAllKeyStoreEntries() {
+//        KeyStore keyStore;
+//        try {
+//            keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
+//            keyStore.load(null);
+//            Enumeration<String> aliases = keyStore.aliases();
+//            while (aliases.hasMoreElements()) {
+//                String alias = aliases.nextElement();
+//                Log.e(TAG, "Deleting alias: " + alias);
+//                keyStore.deleteEntry(alias);
+//            }
+//        } catch (NoSuchAlgorithmException e) {
+//            e.printStackTrace();
+//            return false;
+//        } catch (KeyStoreException e) {
+//            e.printStackTrace();
+//            return false;
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return false;
+//        } catch (java.security.cert.CertificateException e) {
+//            e.printStackTrace();
+//        }
+//        return true;
+//    }
 
-    private static void showAuthenticationScreen(Context context) {
+    private static void showAuthenticationScreen(Context context, int requestCode) {
         // Create the Confirm Credentials screen. You can customize the title and description. Or
         // we will provide a generic one for you if you leave it null
         KeyguardManager mKeyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
 
-        Intent intent = mKeyguardManager.createConfirmDeviceCredentialIntent(null, null);
+        Intent intent = mKeyguardManager.createConfirmDeviceCredentialIntent("Authentication required", "The phone has been unlocked for a too long");
         if (intent != null) {
-            ((Activity) context).startActivityForResult(intent, REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS);
+            ((Activity) context).startActivityForResult(intent, requestCode);
         }
     }
 
@@ -566,7 +683,6 @@ public class KeyStoreManager {
     }
 
     public static boolean writeBytesToFile(String path, byte[] data) {
-
 
         FileOutputStream fos = null;
 
@@ -594,29 +710,6 @@ public class KeyStoreManager {
         }
         return false;
     }
-
-    static byte[] trimBytes(byte[] bytes)
-    {
-        int i = bytes.length - 1;
-        while (i >= 0 && bytes[i] == 0)
-        {
-            --i;
-        }
-
-        return Arrays.copyOf(bytes, i + 1);
-    }
-
-//    public static String getSeed() {
-//        Log.e(TAG, "in getSeed in KeyStoreManager");
-//        String denied = "none";
-//        Context app = MainActivity.app;
-//        if (app == null)
-//            app = IntroActivity.app;
-//        if (app == null) return denied;
-//        String result = getKeyStoreString(app);
-//
-//        return result == null ? denied : result;
-//    }
 
 
 }

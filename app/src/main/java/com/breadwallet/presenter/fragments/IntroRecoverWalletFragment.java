@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.IntroActivity;
+import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.TypesConverter;
 import com.breadwallet.tools.WordsReader;
 import com.breadwallet.tools.security.KeyStoreManager;
@@ -82,44 +83,36 @@ public class IntroRecoverWalletFragment extends Fragment {
                 if (alertDialog.isShowing()) {
                     alertDialog.dismiss();
                 }
-                String[] words = new String[0];
-                List<String> list;
-                try {
-                    list = WordsReader.getWordList(getActivity());
-                    words = list.toArray(new String[list.size()]);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-//                int length = editText.length();
-//                char[] result= new char[length + 1];
-//                editText.getText().getChars(0, length, result, 0);
-//                result[length] = '\0';
-//                char[] phraseToCheck = TypesConverter.lowerCaseCharArray(result);
-                String phraseToCheck = editText.getText().toString().trim();
-                if (words.length != 2048)
-                    throw new IllegalArgumentException("words.length is not 2048");
-                if (validateRecoveryPhrase(words, phraseToCheck)) {
-                    String normalizedPhrase = Normalizer.normalize(phraseToCheck, Normalizer.Form.NFKD);
-                    boolean success = KeyStoreManager.putKeyStorePhrase(normalizedPhrase, getActivity());
+
+                String phraseToCheck = editText.getText().toString().trim().toLowerCase();
+                String normalizedPhrase = Normalizer.normalize(phraseToCheck, Normalizer.Form.NFKD) ;
+                String terminatedPhrase = normalizedPhrase + '\0';
+
+                if (BRWalletManager.getInstance(getActivity()).validatePhrase(getActivity(), phraseToCheck)) {
+
+                    boolean success = KeyStoreManager.putKeyStorePhrase(terminatedPhrase, getActivity(), 0);
+                    boolean success2 = false;
+                    if (success)
+                        success2 = KeyStoreManager.putKeyStoreCanary(BRConstants.CANARY_STRING, getActivity(), 0);
 //                    CharSequence sequence = CharBuffer.wrap(phraseToCheck);
 //                    char[] normalizedPhrase = Normalizer.normalize(sequence, Normalizer.Form.NFKD).toCharArray();
-                    if (!success)
-                        throw new NullPointerException("Something went wrong when set the phrase into the KeyStore");
+                    if (!success || !success2)
+                        return;
                     BRWalletManager m;
                     m = BRWalletManager.getInstance(getActivity());
 //                    KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), getActivity());
 
-                    byte[] pubKey = m.getMasterPubKey(normalizedPhrase.toLowerCase());
+                    byte[] pubKey = m.getMasterPubKey(terminatedPhrase);
                     KeyStoreManager.putMasterPublicKey(pubKey, getActivity());
 //                    Log.w(TAG, "The phrase from keystore is: " + KeyStoreManager.getKeyStoreString(getActivity()));
                     IntroActivity introActivity = (IntroActivity) getActivity();
                     getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                     introActivity.startMainActivity();
-                    if(!introActivity.isDestroyed()) introActivity.finish();
+                    if (!introActivity.isDestroyed()) introActivity.finish();
                 } else {
                     alertDialog.setTitle(getResources().getString(R.string.alert));
                     //don't use
-                    alertDialog.setMessage("\"" + new String(phraseToCheck) + "\" - " +
+                    alertDialog.setMessage("\"" + new String(normalizedPhrase) + "\" - " +
                             getResources().getString(R.string.dialog_recovery_phrase_invalid));
                     alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getResources().getString(R.string.ok),
                             new DialogInterface.OnClickListener() {
@@ -134,7 +127,6 @@ public class IntroRecoverWalletFragment extends Fragment {
         return rootView;
     }
 
-    private native boolean validateRecoveryPhrase(String[] words, String phrase);
 
     @Override
     public void onResume() {

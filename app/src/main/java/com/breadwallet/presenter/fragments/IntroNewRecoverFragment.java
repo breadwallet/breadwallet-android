@@ -12,6 +12,7 @@ import android.widget.ImageView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.IntroActivity;
+import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.animation.BackgroundMovingAnimator;
 
 /**
@@ -63,9 +64,9 @@ public class IntroNewRecoverFragment extends Fragment {
                 ((IntroActivity) getActivity()).showRecoverWalletFragment();
             }
         });
-        SharedPreferences prefs = getActivity().getSharedPreferences(MainFragmentQR.RECEIVE_ADDRESS_PREFS, Context.MODE_PRIVATE);
+        SharedPreferences prefs = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(MainFragmentQR.RECEIVE_ADDRESS, null);
+        editor.putString(MainActivity.PREFS_NAME, null);
         editor.apply();
         return rootView;
     }

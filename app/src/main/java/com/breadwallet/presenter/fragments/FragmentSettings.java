@@ -90,6 +90,7 @@ public class FragmentSettings extends Fragment {
             @Override
             public void onClick(View v) {
                 if (FragmentAnimator.checkTheMultipressingAvailability()) {
+
                     new AlertDialog.Builder(getActivity())
                             .setTitle(getResources().getString(R.string.warning))
                             .setMessage(getResources().getString(R.string.dialog_do_not_let_anyone))
@@ -100,6 +101,7 @@ public class FragmentSettings extends Fragment {
                             })
                             .setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
 //                                    Log.d(TAG, "Canceled the view of the phrase!");
                                 }
                             })

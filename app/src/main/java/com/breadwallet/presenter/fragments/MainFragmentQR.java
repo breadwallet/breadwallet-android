@@ -72,8 +72,6 @@ public class MainFragmentQR extends Fragment {
     private FragmentManager fm;
     public static File qrCodeImageFile;
     private String receiveAddress;
-    public static final String RECEIVE_ADDRESS_PREFS = "ReceiveAddress";
-    public static final String RECEIVE_ADDRESS = "address";
     private int bubbleState = 0;
 
     @Override
@@ -101,13 +99,13 @@ public class MainFragmentQR extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        SharedPreferences prefs = getActivity().getSharedPreferences(RECEIVE_ADDRESS_PREFS, Context.MODE_PRIVATE);
+        SharedPreferences prefs = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
 
 
 //        Log.e(TAG,"FROM PREFS receiveAddress: " + receiveAddress);
 //        if (receiveAddress == null) {
         BRWalletManager.refreshAddress();
-        receiveAddress = prefs.getString(RECEIVE_ADDRESS, null);
+        receiveAddress = prefs.getString(MainActivity.PREFS_NAME, null);
 
 //        }
         qrcode = (ImageView) getActivity().findViewById(R.id.main_image_qr_code);
@@ -232,8 +230,8 @@ public class MainFragmentQR extends Fragment {
         if (str != null) {
             receiveAddress = str;
         } else {
-            SharedPreferences prefs = getActivity().getSharedPreferences(RECEIVE_ADDRESS_PREFS, Context.MODE_PRIVATE);
-            receiveAddress = prefs.getString(RECEIVE_ADDRESS, null);
+            SharedPreferences prefs = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
+            receiveAddress = prefs.getString(MainActivity.PREFS_NAME, null);
         }
 //        Log.e(TAG, "FROM PREFS receiveAddress: " + receiveAddress);
         generateQR();

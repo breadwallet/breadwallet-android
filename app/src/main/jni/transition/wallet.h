@@ -85,6 +85,9 @@ JNIEXPORT jlong Java_com_breadwallet_wallet_BRWalletManager_bitcoinAmount(JNIEnv
 
 JNIEXPORT void Java_com_breadwallet_wallet_BRWalletManager_walletFreeEverything(JNIEnv *env, jobject thiz);
 
+JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRWalletManager_validateRecoveryPhrase
+        (JNIEnv *env, jobject obj, jobjectArray stringArray, jstring jPhrase);
+
 //const void *theSeed(void *info, const char *authPrompt, uint64_t amount, size_t *seedLen);
 
 #endif //BREADWALLET_WALLET_H

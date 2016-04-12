@@ -11,8 +11,6 @@
 #include "BRBIP39Mnemonic.h"
 #include <android/log.h>
 
-//TODO make sure to free() everything
-
 //
 // Created by Mihail Gutan on 9/24/15.
 //
@@ -268,30 +266,7 @@ JNIEXPORT jbyteArray Java_com_breadwallet_tools_security_RequestHandler_getCerti
 }
 
 
-JNIEXPORT jboolean JNICALL Java_com_breadwallet_presenter_fragments_IntroRecoverWalletFragment_validateRecoveryPhrase
-        (JNIEnv *env, jobject obj, jobjectArray stringArray, jstring jPhrase) {
 
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "validateRecoveryPhrase");
-    int wordsCount = (*env)->GetArrayLength(env, stringArray);
-    const char *wordList[wordsCount];
-    for (int i = 0; i < wordsCount; i++) {
-        jstring string = (jstring) (*env)->GetObjectArrayElement(env, stringArray, i);
-        const char *rawString = (*env)->GetStringUTFChars(env, string, 0);
-        wordList[i] = rawString;
-        (*env)->DeleteLocalRef(env, string);
-        // Don't forget to call `ReleaseStringUTFChars` when you're done.
-    }
-
-    const char *str;
-    str = (char *) (*env)->GetStringUTFChars(env, jPhrase, NULL);
-
-//    int BRBIP39PhraseIsValid(const char *wordList[], const char *phrase);
-    int result = BRBIP39PhraseIsValid(wordList, str);
-
-//    __android_log_print(ANDROID_LOG_ERROR, "LOG_TAG", "This is the result : %d", result);
-    return result ? JNI_TRUE : JNI_FALSE;
-
-}
 
 JNIEXPORT void JNICALL Java_com_breadwallet_presenter_activities_MainActivity_cTests(JNIEnv *env, jobject obj){
 //    int result = BRRunTests();

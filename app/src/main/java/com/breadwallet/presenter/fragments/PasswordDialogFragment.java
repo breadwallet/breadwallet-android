@@ -248,7 +248,7 @@ public class PasswordDialogFragment extends DialogFragment {
                 } else if (mode == BRConstants.AUTH_FOR_PAY && request != null) {
 
                     BRWalletManager walletManager = BRWalletManager.getInstance(getActivity());
-                    String seed = KeyStoreManager.getKeyStorePhrase(getActivity());
+                    String seed = KeyStoreManager.getKeyStorePhrase(getActivity(), BRConstants.PAY_REQUEST_CODE);
                     if (seed != null && !seed.isEmpty()) {
                         boolean success = walletManager.pay(request.addresses[0], request.amount * 100, seed);
                         if (!success) {
@@ -257,10 +257,9 @@ public class PasswordDialogFragment extends DialogFragment {
                             return false;
                         }
                     } else {
-                        throw new Error("seed is gone!");
+                        return false;
                     }
                     seed = null;
-                    System.gc();
 
                     final MediaPlayer mp = MediaPlayer.create(getActivity(), R.raw.coinflip);
                     mp.start();

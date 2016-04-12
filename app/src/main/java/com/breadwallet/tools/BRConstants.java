@@ -41,6 +41,13 @@ public class BRConstants {
     /** Permissions*/
     public static final int CAMERA_REQUEST_ID = 34;
 
+    /** Request codes*/
+    public static final int RECOVERY_PHRASE_REQUEST_CODE = 11;
+    public static final int PAY_REQUEST_CODE = 12;
+    public static final int INTRO_CHECK_REQUEST_CODE = 13;
+    public static final String CANARY_STRING = "canary";
+
+
     private BRConstants(){}
 
 

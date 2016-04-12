@@ -12,6 +12,7 @@ import android.widget.ImageView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.IntroActivity;
+import com.breadwallet.presenter.activities.IntroShowPhraseActivity;
 import com.breadwallet.tools.animation.BackgroundMovingAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.wallet.BRWalletManager;
@@ -62,10 +63,11 @@ public class IntroNewWalletFragment extends Fragment {
                     @Override
                     public void run() {
                         String phrase = m.generateRandomSeed();
-                        if (phrase == null) throw new NullPointerException("Cannot be null!");
+                        IntroShowPhraseActivity.phrase = phrase;
+                        if (phrase == null) return;
                         KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), getActivity());
-                        String normalizedPhrase = Normalizer.normalize(phrase, Normalizer.Form.NFKD);
-                        byte[] pubKey = m.getMasterPubKey(normalizedPhrase);
+                        Log.e(TAG,"normalizedPhrase: " + phrase);
+                        byte[] pubKey = m.getMasterPubKey(phrase);
                         KeyStoreManager.putMasterPublicKey(pubKey, getActivity());
 //                        Log.w(TAG, "The phrase from keystore is: " + KeyStoreManager.getKeyStoreString(getActivity()));
                         ((IntroActivity) getActivity()).showWarningFragment();

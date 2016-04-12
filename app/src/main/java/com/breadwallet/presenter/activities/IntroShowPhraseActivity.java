@@ -26,6 +26,7 @@ public class IntroShowPhraseActivity extends Activity {
     private ImageView checkBox;
     private boolean checked = false;
     public static final String PHRASE_SAVED = "phraseSaved";
+    public static String phrase = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,10 +51,12 @@ public class IntroShowPhraseActivity extends Activity {
 
         Log.e(TAG, "IntroShowPhraseActivity onCreate()");
         writeDownLayout.setVisibility(View.GONE);
-        String phrase = KeyStoreManager.getKeyStorePhrase(this);
+
         if (phrase != null && phrase.length() > 1) {
             thePhrase.setText(phrase);
+            phrase = null;
         } else {
+            phrase = null;
             throw new RuntimeException("Failed to retrieve the phrase!");
         }
 

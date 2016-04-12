@@ -156,4 +156,5 @@
     <string name="generate_phrase_text2">if you ever lose your phone, you will need this phrase to recover your wallet</string>
     <string name="i_wrote_it_down">I wrote it down:</string>
     <string name="no_transactions">no transactions</string>
+    <string name="recovery_phrase">recovery phrase:</string>
 </resources>

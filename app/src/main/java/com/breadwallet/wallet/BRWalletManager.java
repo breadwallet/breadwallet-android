@@ -18,6 +18,7 @@ import com.breadwallet.presenter.activities.RequestQRActivity;
 import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.presenter.fragments.MainFragmentQR;
+import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.WordsReader;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
@@ -26,6 +27,7 @@ import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.sqlite.SQLiteManager;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.security.SecureRandom;
 import java.util.List;
 
@@ -102,7 +104,7 @@ public class BRWalletManager {
 
     public String generateRandomSeed() {
         SecureRandom sr = new SecureRandom();
-        byte[] keyBytes = sr.generateSeed(16);
+
         String[] words = new String[0];
         List<String> list;
         try {
@@ -112,14 +114,25 @@ public class BRWalletManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        byte[] keyBytes = sr.generateSeed(16);
         if (words.length < 2000)
             throw new IllegalArgumentException("the list is wrong, size: " + words.length);
         byte[] phrase = encodeSeed(keyBytes, words);
-        String strPhrase = new String(phrase);
+        String strPhrase = null;
+        try {
+            strPhrase = new String(phrase, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return null;
+        }
 //        String phrase = "short apple trunk riot coyote innocent zebra venture ill lava shop test";
-        boolean success = KeyStoreManager.putKeyStorePhrase(strPhrase, ctx);
+        boolean success = KeyStoreManager.putKeyStorePhrase(strPhrase, ctx, 0);
+        boolean success2 = false;
+        if (success)
+            success2 = KeyStoreManager.putKeyStoreCanary(BRConstants.CANARY_STRING, ctx, 0);
+        phrase = null;
         Log.e(TAG, "setKeyStoreString was successful: " + success);
-        return success ? strPhrase : null;
+        return success && success2 ? strPhrase : null;
     }
 
 //    public boolean setKeyStoreString(String strPhrase, String key,
@@ -132,7 +145,7 @@ public class BRWalletManager {
      * a signed transaction that will sweep the balance into wallet (doesn't publish the tx)
      */
     public boolean sweepPrivateKey() {
-        return KeyStoreManager.deleteKeyStoreEntry();
+        return KeyStoreManager.resetWalletKeyStore();
     }
 
     /**
@@ -160,8 +173,8 @@ public class BRWalletManager {
         if (ctx != null) {
             MainFragmentQR mainFragmentQR = CustomPagerAdapter.adapter == null ? null : CustomPagerAdapter.adapter.mainFragmentQR;
             String tmpAddr = getReceiveAddress();
-            SharedPreferences.Editor editor = ctx.getSharedPreferences(MainFragmentQR.RECEIVE_ADDRESS_PREFS, Context.MODE_PRIVATE).edit();
-            editor.putString(MainFragmentQR.RECEIVE_ADDRESS, tmpAddr);
+            SharedPreferences.Editor editor = ctx.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE).edit();
+            editor.putString(MainActivity.PREFS_NAME, tmpAddr);
             editor.apply();
             if (mainFragmentQR == null) return;
             mainFragmentQR.refreshAddress(tmpAddr);
@@ -170,7 +183,7 @@ public class BRWalletManager {
         }
     }
 
-    public void wipeWallet(Activity activity){
+    public void wipeWallet(Activity activity) {
         sweepPrivateKey();
         BRPeerManager.getInstance(activity).peerManagerFreeEverything();
         walletFreeEverything();
@@ -251,12 +264,13 @@ public class BRWalletManager {
         }
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null && !MiddleViewAdapter.getSyncing()) {
+
             ((Activity) ctx).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     CurrencyManager m = CurrencyManager.getInstance(ctx);
                     if (amount > 0) {
-                        showWritePhraseDialog();
+//                        showWritePhraseDialog();
                         ((BreadWalletApp) ctx.getApplicationContext()).showCustomToast((Activity) ctx,
                                 String.format(ctx.getString(R.string.received), m.getBitsFromSatoshi(amount) + m.bitcoinLowercase),
                                 BreadWalletApp.DISPLAY_HEIGHT_PX / 2, Toast.LENGTH_LONG, 1);
@@ -288,6 +302,20 @@ public class BRWalletManager {
         if (ctx != null) {
             SQLiteManager.getInstance(ctx).deleteTxByHash(hash);
         }
+    }
+
+    public boolean validatePhrase(Activity activity, String phrase) {
+        String[] words = new String[0];
+        List<String> list;
+        try {
+            list = WordsReader.getWordList(activity);
+            words = list.toArray(new String[list.size()]);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (words.length != 2048)
+            throw new IllegalArgumentException("words.length is not 2048");
+        return validateRecoveryPhrase(words, phrase);
     }
 
     private native byte[] encodeSeed(byte[] seed, String[] wordList);
@@ -340,5 +368,7 @@ public class BRWalletManager {
     public native long bitcoinAmount(long localAmount, double price);
 
     public native void walletFreeEverything();
+
+    private native boolean validateRecoveryPhrase(String[] words, String phrase);
 
 }

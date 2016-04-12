@@ -67,6 +67,7 @@ import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.math.BigDecimal;
+import java.security.spec.KeySpec;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -131,6 +132,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     public static final Point screenParametersPoint = new Point();
     private int middleViewState = 0;
     private BroadcastReceiver mPowerKeyReceiver = null;
+    private int middleBubbleBlocksCount = 0;
 //    private String amountHolder;
 //    private String addressHolder;
 
@@ -164,6 +166,14 @@ public class MainActivity extends FragmentActivity implements Observer {
 //        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
 //                WindowManager.LayoutParams.FLAG_SECURE);
 
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                String phrase = KeyStoreManager.getKeyStorePhrase(app);
+//                Log.e(TAG, "phrase: " + phrase);
+//            }
+//        }, 30000);
+
         app = this;
         initializeViews();
 
@@ -176,8 +186,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
 
         checkDeviceRooted();
-
-        setUpApi23();
 
         new Thread(new Runnable() {
             @Override
@@ -223,21 +231,20 @@ public class MainActivity extends FragmentActivity implements Observer {
 
                 if (MiddleViewAdapter.getSyncing() && FragmentAnimator.level == 0) {
                     hideAllBubbles();
-                    if (middleBubbleBlocks.getVisibility() == View.VISIBLE) {
-                        middleBubbleBlocks.setVisibility(View.GONE);
-                        return;
-                    }
-//                    ToastBlockShowTask.getInstance(app).startOneToast();
-                    middleBubbleBlocks.setVisibility(View.VISIBLE);
-                    SpringAnimator.showBubbleAnimation(middleBubbleBlocks);
-
-                    if (toastUpdater != null) {
-                        toastUpdater.interrupt();
+                    if (middleBubbleBlocksCount == 0) {
+                        middleBubbleBlocksCount = 1;
+                        middleBubbleBlocks.setVisibility(View.VISIBLE);
+                        SpringAnimator.showBubbleAnimation(middleBubbleBlocks);
+                        if (toastUpdater != null) {
+                            toastUpdater.interrupt();
+                        }
                         toastUpdater = null;
+                        toastUpdater = new ToastUpdater();
+                        toastUpdater.start();
+                    } else {
+                        middleBubbleBlocksCount = 0;
+                        middleBubbleBlocks.setVisibility(View.GONE);
                     }
-                    toastUpdater = new ToastUpdater();
-                    toastUpdater.start();
-
                     return;
                 }
                 if (FragmentAnimator.level == 0 && BreadWalletApp.unlocked) {
@@ -347,6 +354,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         super.onResume();
         appInBackground = false;
         middleViewState = 0;
+        middleBubbleBlocksCount = 0;
         app = this;
         CurrencyManager currencyManager = CurrencyManager.getInstance(this);
         currencyManager.startTimer();
@@ -656,8 +664,8 @@ public class MainActivity extends FragmentActivity implements Observer {
             return;
         }
         String strAmount = String.valueOf(new BigDecimal(tempAmount).divide(new BigDecimal("1000000")));
-        SharedPreferences prefs = getSharedPreferences(MainFragmentQR.RECEIVE_ADDRESS_PREFS, Context.MODE_PRIVATE);
-        String testTemp = prefs.getString(MainFragmentQR.RECEIVE_ADDRESS, "");
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        String testTemp = prefs.getString(PREFS_NAME, "");
 
         intent = new Intent(this, RequestQRActivity.class);
         intent.putExtra(BRConstants.INTENT_EXTRA_REQUEST_AMOUNT, strAmount);
@@ -729,12 +737,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         boolean isShown = location[1] < 0;
         Log.e(TAG, "The keyboard is shown: " + isShown + " y location: " + location[1]);
         return isShown;
-    }
-
-    private void setUpApi23() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            fingerprintManager = (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
-        }
     }
 
     public void confirmPay(final PaymentRequestEntity request) {
@@ -1001,7 +1003,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         syncProgressText.setVisibility(b ? View.VISIBLE : View.GONE);
     }
 
-    private native void cTests();
+//    private native void cTests();
 
 //    private void createInvisibleLayoutTips() {
 //        // Creating a new RelativeLayout

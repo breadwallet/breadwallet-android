@@ -2,7 +2,9 @@
 package com.breadwallet.presenter.activities;
 
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
@@ -18,9 +20,16 @@ import com.breadwallet.presenter.fragments.IntroNewWalletFragment;
 import com.breadwallet.presenter.fragments.IntroRecoverWalletFragment;
 import com.breadwallet.presenter.fragments.IntroWarningFragment;
 import com.breadwallet.presenter.fragments.IntroWelcomeFragment;
+import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.animation.BackgroundMovingAnimator;
-import com.breadwallet.wallet.BRPeerManager;
+import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.wallet.BRWalletManager;
+
+import java.io.IOException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 
 
 /**
@@ -70,6 +79,14 @@ public class IntroActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
         app = this;
+        String canary = KeyStoreManager.getKeyStoreCanary(this, BRConstants.INTRO_CHECK_REQUEST_CODE);
+        if(canary == null || canary.isEmpty()){
+            KeyStoreManager.resetWalletKeyStore();
+            SharedPreferences prefs = getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.clear();
+            editor.apply();
+        }
 
         leftButton = (Button) findViewById(R.id.intro_left_button);
         leftButton.setVisibility(View.GONE);
@@ -137,7 +154,7 @@ public class IntroActivity extends FragmentActivity {
         fragmentTransaction.commitAllowingStateLoss();
     }
 
-    public void showWarningFragment() {
+    public void showWarningFragment( ) {
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         IntroNewWalletFragment introNewWalletFragment = (IntroNewWalletFragment) getFragmentManager().
                 findFragmentByTag(IntroNewWalletFragment.class.getName());
@@ -161,6 +178,20 @@ public class IntroActivity extends FragmentActivity {
         if (!IntroActivity.this.isDestroyed()) {
             finish();
         }
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        BRWalletManager m = BRWalletManager.getInstance(this);
+        if (requestCode == 1) {
+            // Challenge completed, proceed with using cipher
+            if (resultCode == RESULT_OK) {
+            } else {
+                Log.e(TAG, "Auth for phrase was rejected");
+            }
+        }
+        //when starting another activity that will return a result (ex: auth)
     }
 
     public void startIntroShowPhrase() {

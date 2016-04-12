@@ -56,7 +56,6 @@
         android:layout_marginBottom="15dp"
         android:layout_marginStart="20dp"
         android:layout_toEndOf="@+id/middle_view_flipper"
-        android:text="0.00%"
         android:textColor="@color/light_grey"
         android:textSize="13sp"
         android:visibility="gone" />

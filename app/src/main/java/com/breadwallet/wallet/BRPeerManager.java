@@ -298,7 +298,7 @@ public class BRPeerManager {
                         progressStatus = syncProgress();
                         app.showHideSyncProgressViews(true);
                         app.syncProgressBar.setProgress((int) (progressStatus * 100));
-                        app.syncProgressText.setText(String.format("%s%%", new DecimalFormat("#.##").format(progressStatus * 100)));
+                        app.syncProgressText.setText(String.format("%s%%", new DecimalFormat("#.#").format(progressStatus * 100)));
                     }
                 });
 
@@ -308,7 +308,7 @@ public class BRPeerManager {
                         public void run() {
                             progressStatus = syncProgress();
                             app.syncProgressBar.setProgress((int) (progressStatus * 100));
-                            app.syncProgressText.setText(String.format("%s%%", new DecimalFormat("#.##").format(progressStatus * 100)));
+                            app.syncProgressText.setText(String.format("%s%%", new DecimalFormat("#.#").format(progressStatus * 100)));
 
                         }
                     });

@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.IntroActivity;
+import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.TypesConverter;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.sqlite.SQLiteManager;
@@ -26,6 +28,8 @@ import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.nio.CharBuffer;
+import java.text.Normalizer;
+import java.util.Arrays;
 
 /**
  * BreadWallet
@@ -92,9 +96,15 @@ public class FragmentWipeWallet extends Fragment {
         wipe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!allowWipeButtonPress) return;
+                if (!allowWipeButtonPress) return;
                 allowWipeButtonPress = false;
-                if (phraseIsValid(recoveryPhraseEditText.getText().toString())) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        allowWipeButtonPress = true;
+                    }
+                },500);
+                if (phraseIsValid(recoveryPhraseEditText.getText().toString().trim().toLowerCase())) {
                     m.wipeWallet(getActivity());
                     startIntroActivity();
                 } else {
@@ -116,18 +126,16 @@ public class FragmentWipeWallet extends Fragment {
     }
 
     private boolean phraseIsValid(String insertedPhrase) {
-        String thePhrase = KeyStoreManager.getKeyStorePhrase(getActivity());
+        String normalizedPhrase = Normalizer.normalize(insertedPhrase.trim(), Normalizer.Form.NFKD);
 
-        if (thePhrase == null) throw new NullPointerException("Phrase is null! weird behaviour");
-//        Log.e(TAG, "thePhrase: " + thePhrase);
-//        Log.e(TAG, "insertedPhrase: " + insertedPhrase);
-        String trimmedPhrase = thePhrase.trim();
-        String trimmedInsertedPhrase = insertedPhrase.trim();
-//        Log.e(TAG, "trimmedPhrase: " + trimmedPhrase);
-//        Log.e(TAG, "trimmedInsertedPhrase: " + trimmedInsertedPhrase);
-//        Log.e(TAG,"Inserted:" +  insertedPhrase);
-//        Log.e(TAG,"Actual:" +  thePhrase);
-        return trimmedInsertedPhrase.equalsIgnoreCase(trimmedPhrase);
+        if (!BRWalletManager.getInstance(getActivity()).validatePhrase(getActivity(), normalizedPhrase))
+            return false;
+        String nullTerminatedPhrase = normalizedPhrase+ '\0';
+        Log.e(TAG,"nullTerminatedPhrase: " + nullTerminatedPhrase);
+        byte[] pubKey = m.getMasterPubKey(nullTerminatedPhrase);
+        byte[] pubKeyFromKeyStore = KeyStoreManager.getMasterPublicKey(getActivity());
+        return Arrays.equals(pubKey, pubKeyFromKeyStore);
+
     }
 
     @Override
@@ -140,6 +148,9 @@ public class FragmentWipeWallet extends Fragment {
     public void onResume() {
         super.onResume();
         allowWipeButtonPress = true;
+        MainActivity app = MainActivity.app;
+        if (app != null)
+            app.activityButtonsEnable(false);
     }
 
     private void startIntroActivity() {

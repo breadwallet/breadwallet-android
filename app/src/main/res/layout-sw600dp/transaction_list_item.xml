@@ -29,7 +29,8 @@
             android:id="@+id/transaction_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
+            android:layout_marginBottom="13dp"
+            android:layout_marginTop="5dp"
             android:clickable="false"
             android:text="some date"
             android:textColor="@color/grey"
@@ -54,13 +55,14 @@
             android:clickable="false"
             android:text="some dollars"
             android:textColor="@color/grey"
-            android:textSize="13sp" />
+            android:textSize="17sp" />
 
 
         <com.breadwallet.tools.AutoResizeTextView
             android:id="@+id/transaction_amount_dollars_total"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
             android:clickable="false"
             android:text="some total dollars"
             android:textColor="@color/grey"
@@ -83,18 +85,18 @@
             android:clickable="false"
             android:text="some bits"
             android:textColor="@color/dark_grey"
-            android:textSize="13sp"
+            android:textSize="17sp"
             android:textStyle="bold" />
 
         <com.breadwallet.tools.AutoResizeTextView
             android:id="@+id/transaction_amount_bits_total"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
             android:clickable="false"
             android:text="some total bits"
             android:textColor="@color/dark_grey"
-            android:textSize="13sp"
-            android:textStyle="bold" />
+            android:textSize="13sp" />
 
     </LinearLayout>
 
