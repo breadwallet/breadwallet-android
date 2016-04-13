@@ -602,7 +602,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                 final double maxAmountDouble = cm.getBitsFromSatoshi(m.getMaxOutputAmount());
                 Log.e(TAG, "maxAmountDouble: " + maxAmountDouble);
                 final double amountToReduce = amountAsDouble - maxAmountDouble;
-                String strToReduce = String.valueOf(amountToReduce);
+//                String strToReduce = String.valueOf(amountToReduce);
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage(String.format("reduce payment amount by ƀ%s to accommodate the bitcoin network fee?", amountToReduce))
                         .setTitle("insufficient funds for bitcoin network fee")

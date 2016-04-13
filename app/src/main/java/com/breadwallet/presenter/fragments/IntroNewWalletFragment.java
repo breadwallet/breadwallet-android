@@ -66,10 +66,8 @@ public class IntroNewWalletFragment extends Fragment {
                         IntroShowPhraseActivity.phrase = phrase;
                         if (phrase == null) return;
                         KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), getActivity());
-                        Log.e(TAG,"normalizedPhrase: " + phrase);
                         byte[] pubKey = m.getMasterPubKey(phrase);
                         KeyStoreManager.putMasterPublicKey(pubKey, getActivity());
-//                        Log.w(TAG, "The phrase from keystore is: " + KeyStoreManager.getKeyStoreString(getActivity()));
                         ((IntroActivity) getActivity()).showWarningFragment();
 
                     }

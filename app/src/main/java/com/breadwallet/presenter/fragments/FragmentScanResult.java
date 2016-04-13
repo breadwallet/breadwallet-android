@@ -145,33 +145,23 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         int availableWidth = MainActivity.screenParametersPoint.x;
         int availableHeight = MainActivity.screenParametersPoint.y;
         int spaceNeededForRest = availableHeight / 14;
-//        Log.e(TAG, "screenParametersPoint.x: " + availableWidth + " screenParametersPoint.y: " + availableHeight);
-//        Log.e(TAG, "AvailableWidth: " + availableWidth + ", availableHeight: " + availableHeight +
-//                ", spaceNeededForRest: " + spaceNeededForRest);
         float gapRate = 0.2f;
         float gap = (availableWidth * gapRate);
         float interButtonGap = gap / 5;
         float buttonWidth = (availableWidth - gap) / 3;
         float buttonHeight = buttonWidth;
         float spaceNeeded = buttonHeight * 4 + gap;
-//        Log.e(TAG, "space taken: " + spaceNeeded);
         int buttonTextSize = 45;
-//        Log.e(TAG, "spaceNeeded: " + spaceNeeded + ", keyboardLayoutY: " + y);
-//        Log.e(TAG, String.format("gap:%f interButtonGap:%f spaceNeeded:%f spaceNeededForRest:%d keyboardLayoutY:%d",
-//                gap, interButtonGap, spaceNeeded, spaceNeededForRest, y));
         if (spaceNeeded > (availableHeight - (spaceNeededForRest + y))) {
-//            Log.e(TAG, "More Space needed! buttonHeight: " + buttonHeight);
             buttonHeight = ((availableHeight - (spaceNeededForRest + y)) - gap) / 4;
             buttonTextSize = (int) ((buttonHeight / 7));
         }
         int minimumHeight = (int) (buttonHeight * 4 + interButtonGap * 4);
-//        Log.d(TAG, "The gap: " + gap + ", The buttonHeight: " + buttonHeight + ", buttonWidth: " + buttonWidth);
         if (customKeyboardLayout == null) {
             customKeyboardLayout = (RelativeLayout) getActivity().findViewById(R.id.custom_keyboard_layout);
         }
         customKeyboardLayout.setMinimumHeight(minimumHeight);
         int childCount = 12;
-//        Log.e(TAG, "Button params: width " + buttonWidth + " height " + buttonHeight);
         for (int i = 0; i < childCount; i++) {
             Button b = new Button(getActivity());
             b.setWidth((int) buttonWidth);
@@ -239,7 +229,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
                     imageB.setLongClickable(true);
                     imageB.setOnTouchListener(new BackPressCustomKeyboardOnTouchListener());
                     imageB.setId(R.id.keyboard_back_button);
-                    imageB.setBackgroundColor(android.R.color.transparent);
+                    imageB.setBackgroundColor(getResources().getColor(android.R.color.transparent));
                     imageB.setX(interButtonGap / 2 + interButtonGap * 3 + buttonWidth * 2 + (buttonWidth / 32));
                     imageB.setY(buttonHeight * 3 + interButtonGap * 3 + (buttonHeight / 4));
                     break;

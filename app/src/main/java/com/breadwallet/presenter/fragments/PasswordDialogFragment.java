@@ -277,7 +277,6 @@ public class PasswordDialogFragment extends DialogFragment {
                         title.setText(getResources().getString(R.string.chose_a_new_passcode));
                         passcodeEditText.setText("");
                     } else {
-                        Log.d(TAG, "Not equal, the text is: " + passcodeEditText.getText().toString());
                         SpringAnimator.showAnimation(dialogFragment.getView());
                         passcodeEditText.setText("");
                     }

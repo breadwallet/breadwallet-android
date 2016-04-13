@@ -177,9 +177,7 @@ public class MainFragmentQR extends Fragment {
 
         if (receiveAddress.length() < 5)
             throw new NullPointerException("receiveAddress cannot be null or it's corrupted!");
-        Log.e(TAG, "Before setting the address: " + mainAddressText.getText());
         mainAddressText.setText(receiveAddress);
-        Log.e(TAG, "After setting the address: " + mainAddressText.getText());
         QRCodeEncoder qrCodeEncoder = new QRCodeEncoder("bitcoin:" + receiveAddress,
                 BarcodeFormat.QR_CODE.toString(),
                 smallerDimension);
@@ -233,7 +231,6 @@ public class MainFragmentQR extends Fragment {
             SharedPreferences prefs = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
             receiveAddress = prefs.getString(MainActivity.PREFS_NAME, null);
         }
-//        Log.e(TAG, "FROM PREFS receiveAddress: " + receiveAddress);
         generateQR();
     }
 

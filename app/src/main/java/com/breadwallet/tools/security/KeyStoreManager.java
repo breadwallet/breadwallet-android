@@ -296,7 +296,7 @@ public class KeyStoreManager {
             keyStore.load(null);
             SecretKey secretKey = (SecretKey)
                     keyStore.getKey(CANARY_ALIAS, null);
-            if (secretKey == null) throw new NullPointerException("secretKey is null");
+            if (secretKey == null) return "none";
             String path = filesDirectory + File.separator + CANARY_IV;
             byte[] iv = readBytesFromFile(path);
             Cipher outCipher;
@@ -315,10 +315,11 @@ public class KeyStoreManager {
             recoveredSecret = new String(result, "UTF-8");
         } catch (UserNotAuthenticatedException e) {
             Log.e(TAG, Log.getStackTraceString(e));
-            Log.e(TAG, "showAuthenticationScreen");
-            return "noauth";
-        } catch (IOException | CertificateException | NoSuchAlgorithmException | UnrecoverableKeyException |
-                InvalidAlgorithmParameterException | NoSuchPaddingException |  KeyStoreException | InvalidKeyException | NullPointerException e) {
+        } catch(UnrecoverableKeyException e){
+            e.printStackTrace();
+            return "none";
+        }catch (IOException | CertificateException | NoSuchAlgorithmException |
+                InvalidAlgorithmParameterException | NoSuchPaddingException |  KeyStoreException | InvalidKeyException e) {
             e.printStackTrace();
         }
 
