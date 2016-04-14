@@ -157,4 +157,5 @@
     <string name="i_wrote_it_down">I wrote it down:</string>
     <string name="no_transactions">no transactions</string>
     <string name="recovery_phrase">recovery phrase:</string>
+    <string name="refresh">refresh</string>
 </resources>

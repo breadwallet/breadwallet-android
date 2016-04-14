@@ -8,7 +8,7 @@ android {
         // set to true to turn off analysis progress reporting by lint
         quiet false
         // if true, stop the gradle build if errors are found
-        abortOnError true
+        abortOnError false
         // if true, only report errors
         ignoreWarnings false
     }
@@ -16,7 +16,6 @@ android {
     packagingOptions {
         exclude 'LICENSE.txt'
         exclude 'META-INF/LICENSE.txt'
-//        exclude 'app/src/main/jni/breadwallet-core' //for API 19 to work
     }
 
 //    signingConfigs {
@@ -137,6 +136,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.3.0'
     compile 'com.android.support:support-v13:23.3.0'
     compile 'com.google.zxing:core:3.2.1'
+    compile 'com.android.support:multidex:1.0.1'
     compile 'com.facebook.rebound:rebound:0.3.8'
     compile 'com.mcxiaoke.volley:library:1.0.19'
     compile 'com.android.support.test.espresso:espresso-core:2.2.2'

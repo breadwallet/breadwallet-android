@@ -68,9 +68,15 @@ import com.breadwallet.wallet.BRWalletManager;
 
 import java.math.BigDecimal;
 import java.security.spec.KeySpec;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -604,7 +610,14 @@ public class MainActivity extends FragmentActivity implements Observer {
                 final double amountToReduce = amountAsDouble - maxAmountDouble;
 //                String strToReduce = String.valueOf(amountToReduce);
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage(String.format("reduce payment amount by ƀ%s to accommodate the bitcoin network fee?", amountToReduce))
+
+                DecimalFormat currencyFormat;
+                currencyFormat = (DecimalFormat) DecimalFormat.getInstance();
+                currencyFormat.setMaximumFractionDigits(2);
+                currencyFormat.setMinimumFractionDigits(0);
+                currencyFormat.setGroupingUsed(true);
+
+                builder.setMessage(String.format("reduce payment amount by ƀ%s to accommodate the bitcoin network fee?", currencyFormat.format(amountToReduce)))
                         .setTitle("insufficient funds for bitcoin network fee")
                         .setCancelable(false)
                         .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
@@ -867,7 +880,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                         finish();
                     }
                 },3500);
-
+                return;
             }
             m.createWallet(transactionsCount, pubkeyEncoded);
 

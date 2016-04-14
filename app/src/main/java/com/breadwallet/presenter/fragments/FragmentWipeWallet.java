@@ -22,6 +22,7 @@ import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.TypesConverter;
+import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.sqlite.SQLiteManager;
 import com.breadwallet.wallet.BRPeerManager;
@@ -103,10 +104,11 @@ public class FragmentWipeWallet extends Fragment {
                     public void run() {
                         allowWipeButtonPress = true;
                     }
-                },500);
+                }, 500);
                 if (phraseIsValid(recoveryPhraseEditText.getText().toString().trim().toLowerCase())) {
                     m.wipeWallet(getActivity());
                     startIntroActivity();
+                    FragmentAnimator.resetFragmentAnimator();
                 } else {
                     new AlertDialog.Builder(getActivity())
                             .setTitle(getString(R.string.attention))
@@ -127,14 +129,12 @@ public class FragmentWipeWallet extends Fragment {
 
     private boolean phraseIsValid(String insertedPhrase) {
         String normalizedPhrase = Normalizer.normalize(insertedPhrase.trim(), Normalizer.Form.NFKD);
-
         if (!BRWalletManager.getInstance(getActivity()).validatePhrase(getActivity(), normalizedPhrase))
             return false;
-        String nullTerminatedPhrase = normalizedPhrase+ '\0';
+        String nullTerminatedPhrase = normalizedPhrase + '\0';
         byte[] pubKey = m.getMasterPubKey(nullTerminatedPhrase);
         byte[] pubKeyFromKeyStore = KeyStoreManager.getMasterPublicKey(getActivity());
         return Arrays.equals(pubKey, pubKeyFromKeyStore);
-
     }
 
     @Override
@@ -153,11 +153,18 @@ public class FragmentWipeWallet extends Fragment {
     }
 
     private void startIntroActivity() {
-        Intent intent;
-        intent = new Intent(getActivity(), IntroActivity.class);
-        startActivity(intent);
-        if (!getActivity().isDestroyed()) {
-            getActivity().finish();
-        }
+
+        Intent i = getActivity().getBaseContext().getPackageManager()
+                .getLaunchIntentForPackage(getActivity().getBaseContext().getPackageName());
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(i);
+
+
+//        Intent intent;
+//        intent = new Intent(getActivity(), IntroActivity.class);
+//        startActivity(intent);
+//        if (!getActivity().isDestroyed()) {
+//            getActivity().finish();
+//        }
     }
 }

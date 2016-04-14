@@ -32,7 +32,7 @@ proguard/
 *.log
 
 # Android Studio
-*.iml
+#*.iml
 *.keystore
 gradle.properties
 */local.properties

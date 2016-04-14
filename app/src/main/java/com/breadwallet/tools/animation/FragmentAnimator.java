@@ -55,7 +55,7 @@ public class FragmentAnimator {
     private static final String TAG = FragmentAnimator.class.getName();
     public static int level = 0;
     public static boolean wipeWalletOpen = false;
-    private static final Stack<Fragment> previous = new Stack<>();
+    private static Stack<Fragment> previous = new Stack<>();
     private static boolean multiplePressingAvailable = true;
     private static final Object lockObject = new Object();
 
@@ -313,53 +313,11 @@ public class FragmentAnimator {
         app.setBurgerButtonImage(MainActivity.BURGER);
     }
 
-//    public static void hideRequestFragment() {
-//        MainActivity app = MainActivity.app;
-//        if (app == null) return;
-//        Log.e(TAG, "hideRequestFragment");
-//        CustomPagerAdapter.adapter.showFragments(true);
-//        app.requestFragmentOn = false;
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                FragmentAnimator.multiplePressingAvailable = true;
-//            }
-//        }, 300);
-//        FragmentManager fragmentManager = app.getFragmentManager();
-//        FragmentRequest fragmentRequest = (FragmentRequest)
-//                fragmentManager.findFragmentByTag(FragmentRequest.class.getName());
-//        fragmentManager.beginTransaction().
-//                setCustomAnimations(R.animator.from_left, R.animator.to_right).
-//                remove(fragmentRequest).commit();
-//        app.setBurgerButtonImage(app.BURGER);
-//    }
-
-//    public static boolean requestNeededPermission(Activity app) {
-//        int CAMERA_REQUEST_ID = 2;
-//        // Here, thisActivity is the current activity
-//        if (ContextCompat.checkSelfPermission(app,
-//                Manifest.permission.READ_CONTACTS)
-//                != PackageManager.PERMISSION_GRANTED) {
-//            // Should we show an explanation?
-//            if (ActivityCompat.shouldShowRequestPermissionRationale(app,
-//                    Manifest.permission.READ_CONTACTS)) {
-//                Log.e(TAG, "YES explanation!");
-//                // Show an explanation to the user *asynchronously* -- don't block
-//                // this thread waiting for the user's response! After the user
-//                // sees the explanation, try again to request the permission.
-//            } else {
-//                Log.e(TAG, "NO explanation!");
-//                // No explanation needed, we can request the permission.
-//                ActivityCompat.requestPermissions(app,
-//                        new String[]{Manifest.permission.CAMERA},
-//                        CAMERA_REQUEST_ID);
-//                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-//                // app-defined int constant. The callback method gets the
-//                // result of the request.
-//            }
-//            return false;
-//        }
-//        return true;
-//    }
+    public static void resetFragmentAnimator(){
+        level = 0;
+        wipeWalletOpen = false;
+        previous.clear();
+        multiplePressingAvailable = true;
+    }
 
 }

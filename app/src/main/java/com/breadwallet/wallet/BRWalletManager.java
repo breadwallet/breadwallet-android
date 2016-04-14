@@ -62,35 +62,6 @@ public class BRWalletManager {
     private static BRWalletManager instance;
     private static Context ctx;
 
-
-//    public static final long SATOSHIS = 100000000;
-//    public static final long MAX_MONEY = 21000000 * SATOSHIS;
-//    public static final long DEFAULT_FEE_PER_KB = 4096 * 1000 / 225; // fee required by eligius pool, which supports child-pays-for-parent
-//    public static final long MAX_FEE_PER_KB = 100100 * 1000 / 225; // slightly higher than a 1000bit fee on a typical 225byte transaction
-//    public static final String UNSPENT_URL_1 = "https://api.chain.com/v2/"; // + a string
-//    public static final String UNSPENT_URL_2 = "/addresses/"; // + a string
-//    public static final String UNSPENT_URL_3 = "/unspents?api-key-id=eed0d7697a880144bb854676f88d123f";
-//    public static final String TICKER_URL = "https://bitpay.com/rates";
-//    public static final String FEE_PER_KB_URL = "https://api.breadwallet.com/v1/fee-per-kb";
-//    public static final int SEED_ENTROPY_LENGTH = 128 / 8;
-//    public static final String SEC_ATTR_SERVICE = "org.voisine.breadwallet";
-//    public static final String ANDROID_KEY_STORE = "AndroidKeyStore";
-
-//    ByteBuffer masterPublicKey; // master public key used to generate wallet addresses
-//    byte[] wallet;
-//    char[] seedPhrase;          // requesting seedPhrase will trigger authentication
-//    long seedCreationTime;      // interval since reference date, 00:00:00 01/01/01 GMT
-//    long secureTime;            // last known time from an ssl server connection
-//    long spendingLimit;         // amount that can be spent using touch id without pin entry
-//    boolean passcodeEnabled;    // true if device passcode is enabled
-//    boolean didAuthenticate;    // true if the user authenticated after this was last set to false
-//    NumberFormat format;        // bitcoin currency formatter
-//    NumberFormat localFormat;   // local currency formatter
-//    String localCurrencyCode;   // local currency ISO code
-//    double localCurrencyPrice;  // exchange rate in local currency units per bitcoin
-//    List<String> currencyCodes; // list of supported local currency codes
-//    List<String> currencyNames; // names for local currency codes
-
     private BRWalletManager() {
     }
 
@@ -110,7 +81,6 @@ public class BRWalletManager {
         try {
             list = WordsReader.getWordList(ctx);
             words = list.toArray(new String[list.size()]);
-//            CustomLogger.LogThis(words);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -118,6 +88,8 @@ public class BRWalletManager {
         if (words.length < 2000)
             throw new IllegalArgumentException("the list is wrong, size: " + words.length);
         byte[] phrase = encodeSeed(keyBytes, words);
+        if (phrase == null || phrase.length == 0)
+            throw new NullPointerException("failed to encodeSeed");
         String strPhrase = null;
         try {
             strPhrase = new String(phrase, "UTF-8");
@@ -272,7 +244,7 @@ public class BRWalletManager {
 //                    if (amount > 0) {
 //                        showWritePhraseDialog();
                     double absAmount = amount > 0 ? amount : amount * -1;
-                    String strToShow = String.format(ctx.getString(amount > 0 ? R.string.received : R.string.sent), m.bitcoinLowercase + m.getBitsFromSatoshi(absAmount) + " ("+m.getExchangeForAmount(m.getRateFromPrefs(), m.getISOFromPrefs(), String.valueOf(m.getBitsFromSatoshi(absAmount))) + ")");
+                    String strToShow = String.format(ctx.getString(amount > 0 ? R.string.received : R.string.sent), m.bitcoinLowercase + m.getBitsFromSatoshi(absAmount) + " (" + m.getExchangeForAmount(m.getRateFromPrefs(), m.getISOFromPrefs(), String.valueOf(m.getBitsFromSatoshi(absAmount))) + ")");
                     ((BreadWalletApp) ctx.getApplicationContext()).showCustomToast((Activity) ctx, strToShow,
                             BreadWalletApp.DISPLAY_HEIGHT_PX / 2, Toast.LENGTH_LONG, 1);
 //                    } else {
@@ -321,7 +293,6 @@ public class BRWalletManager {
 
     private native byte[] encodeSeed(byte[] seed, String[] wordList);
 
-    //    public native void createWallet(ByteBuffer transactions[], int transactionCount);
     public native void createWallet(int transactionCount, byte[] pubkey);
 
     public native void putTransaction(byte[] transaction, long blockHeight, long timeStamp);

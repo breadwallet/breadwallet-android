@@ -146,8 +146,8 @@ public class BRPeerManager {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    for (int i = 0; i < peerEntities.length; i++) {
-                        SQLiteManager.getInstance(ctx).insertPeer(peerEntities[i].getPeerAddress(), peerEntities[i].getPeerPort(), peerEntities[i].getPeerTimeStamp());
+                    for (PeerEntity peerEntity : peerEntities) {
+                        SQLiteManager.getInstance(ctx).insertPeer(peerEntity.getPeerAddress(), peerEntity.getPeerPort(), peerEntity.getPeerTimeStamp());
                     }
                 }
             }).start();
