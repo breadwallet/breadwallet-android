@@ -32,7 +32,7 @@ proguard/
 *.log
 
 # Android Studio
-#*.iml
+*.iml
 *.keystore
 gradle.properties
 */local.properties
@@ -43,13 +43,17 @@ gradle.properties
 *.ipr
 *~
 *.swp
+.idea/.name
 .idea/workspace.xml
 .idea/libraries
 .idea/vcs.xml
 .idea/gradle.xml
 .idea/encodings.xml
 .idea/misc.xml
-#.idea/workspace.xml - remove # and delete .idea if it better suit your needs.
+.idea/modules.xml
+.idea/compiler.xml
+.idea/runConfigurations.xml
+.idea/copyright/profiles_settings.xml
 .navigation/
 
 # jniLibs files
