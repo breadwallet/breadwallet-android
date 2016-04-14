@@ -26,7 +26,7 @@ import java.nio.CharBuffer;
  * BreadWallet
  * <p/>
  * Created by Mihail on 7/22/15.
- * Copyright (c) 2015 Mihail Gutan <mihail@breadwallet.com>
+ * Copyright (c) 2016 Mihail Gutan <mihail@breadwallet.com>
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal

@@ -34,8 +34,8 @@ import java.util.List;
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail on 9/22/15.
- * Copyright (c) 2015 Mihail Gutan <mihail@breadwallet.com>
+ * Created by Mihail Gutan on 9/22/15.
+ * Copyright (c) 2016 breadwallet llc <mihail@breadwallet.com>
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -322,7 +322,7 @@ public class BRWalletManager {
     private native byte[] encodeSeed(byte[] seed, String[] wordList);
 
     //    public native void createWallet(ByteBuffer transactions[], int transactionCount);
-    public native void createWallet(int transactionCount, byte[] pubkey, int r);
+    public native void createWallet(int transactionCount, byte[] pubkey);
 
     public native void putTransaction(byte[] transaction, long blockHeight, long timeStamp);
 

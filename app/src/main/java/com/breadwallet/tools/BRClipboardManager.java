@@ -10,8 +10,8 @@ import android.net.Uri;
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail on 7/14/15.
- * Copyright (c) 2015 Mihail Gutan <mihail@breadwallet.com>
+ * Created by Mihail Gutan on 7/14/15.
+ * Copyright (c) 2016 breadwallet llc <mihail@breadwallet.com>
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,6 @@ import android.net.Uri;
 public class BRClipboardManager {
 
     @SuppressLint("NewApi")
-    @SuppressWarnings("deprecation")
     public static void copyToClipboard(Context context, String text) {
         try {
             int sdk = android.os.Build.VERSION.SDK_INT;
@@ -50,9 +49,8 @@ public class BRClipboardManager {
                         .newPlainText("message", text);
                 clipboard.setPrimaryClip(clip);
             }
-            return;
         } catch (Exception e) {
-            return;
+            e.printStackTrace();
         }
     }
 
@@ -60,7 +58,7 @@ public class BRClipboardManager {
     public static String readFromClipboard(Context context) {
         int sdk = android.os.Build.VERSION.SDK_INT;
         if (sdk < android.os.Build.VERSION_CODES.HONEYCOMB) {
-            @SuppressWarnings("deprecation") android.text.ClipboardManager clipboard = (android.text.ClipboardManager) context
+            android.text.ClipboardManager clipboard = (android.text.ClipboardManager) context
                     .getSystemService(Context.CLIPBOARD_SERVICE);
             return clipboard.getText().toString();
         } else {

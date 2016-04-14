@@ -17,6 +17,8 @@ import android.graphics.drawable.Drawable;
 /**
  * Created by lgp on 2015/3/24.
  */
+
+
 public class BubbleDrawable extends Drawable {
     private RectF mRect;
     private Path mPath = new Path();

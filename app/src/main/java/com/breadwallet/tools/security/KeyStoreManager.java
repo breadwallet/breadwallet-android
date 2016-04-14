@@ -47,8 +47,8 @@ import javax.crypto.spec.IvParameterSpec;
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail on 9/29/15.
- * Copyright (c) 2015 Mihail Gutan <mihail@breadwallet.com>
+ * Created by Mihail Gutan on 9/29/15.
+ * Copyright (c) 2016 breadwallet llc <mihail@breadwallet.com>
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -322,7 +322,6 @@ public class KeyStoreManager {
                 InvalidAlgorithmParameterException | NoSuchPaddingException |  KeyStoreException | InvalidKeyException e) {
             e.printStackTrace();
         }
-
 
         return recoveredSecret;
     }
@@ -660,8 +659,7 @@ public class KeyStoreManager {
         // Create the Confirm Credentials screen. You can customize the title and description. Or
         // we will provide a generic one for you if you leave it null
         KeyguardManager mKeyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
-
-        Intent intent = mKeyguardManager.createConfirmDeviceCredentialIntent("Authentication required", "The phone has been unlocked for a too long");
+        Intent intent = mKeyguardManager.createConfirmDeviceCredentialIntent("Authentication required", "The phone has been unlocked for too long");
         if (intent != null) {
             ((Activity) context).startActivityForResult(intent, requestCode);
         } else {

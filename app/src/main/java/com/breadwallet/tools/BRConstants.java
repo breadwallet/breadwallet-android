@@ -3,8 +3,8 @@ package com.breadwallet.tools;
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail on 2/16/16.
- * Copyright (c) 2016 Mihail Gutan <mihail@breadwallet.com>
+ * Created by Mihail Gutan on 2/16/16.
+ * Copyright (c) 2016 breadwallet llc <mihail@breadwallet.com>
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -44,8 +44,11 @@ public class BRConstants {
     /** Request codes*/
     public static final int RECOVERY_PHRASE_REQUEST_CODE = 11;
     public static final int PAY_REQUEST_CODE = 12;
-//    public static final int INTRO_CHECK_REQUEST_CODE = 13;
-    public static final int CANARY_REQUEST_CODE = 14;
+    public static final int PUT_PHRASE_NEW_WALLET_REQUEST_CODE = 14;
+    public static final int PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE = 15;
+
+    public static final int CANARY_REQUEST_CODE = 13;
+
     public static final String CANARY_STRING = "canary";
 
     private BRConstants(){}

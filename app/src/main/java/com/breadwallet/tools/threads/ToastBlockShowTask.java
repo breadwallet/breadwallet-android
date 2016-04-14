@@ -16,8 +16,8 @@ import com.breadwallet.wallet.BRPeerManager;
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail on 3/24/16.
- * Copyright (c) 2016 Mihail Gutan <mihail@breadwallet.com>
+ * Created by Mihail Gutan on 3/24/16.
+ * Copyright (c) 2016 breadwallet llc <mihail@breadwallet.com>
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal

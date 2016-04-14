@@ -3,8 +3,8 @@ package com.breadwallet.presenter.entities;
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail on 1/13/16.
- * Copyright (c) 2016 Mihail Gutan <mihail@breadwallet.com>
+ * Created by Mihail Gutan on 1/13/16.
+ * Copyright (c) 2016 breadwallet llc <mihail@breadwallet.com>
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal

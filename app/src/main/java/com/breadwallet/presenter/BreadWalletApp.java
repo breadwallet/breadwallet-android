@@ -27,7 +27,6 @@ import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.presenter.fragments.PasswordDialogFragment;
-import com.breadwallet.tools.TypefaceUtil;
 
 import org.acra.ACRA;
 import org.acra.ReportField;
@@ -37,8 +36,8 @@ import org.acra.annotation.ReportsCrashes;
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail on 7/22/15.
- * Copyright (c) 2015 Mihail Gutan <mihail@breadwallet.com>
+ * Created by Mihail Gutan on 7/22/15.
+ * Copyright (c) 2016 breadwallet llc <mihail@breadwallet.com>
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
