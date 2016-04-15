@@ -23,7 +23,6 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodInfo;
@@ -47,7 +46,6 @@ import com.breadwallet.presenter.fragments.FragmentCurrency;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.presenter.fragments.FragmentSettings;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
-import com.breadwallet.presenter.fragments.MainFragmentQR;
 import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.NetworkChangeReceiver;
@@ -67,16 +65,10 @@ import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.math.BigDecimal;
-import java.security.spec.KeySpec;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
-import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -169,23 +161,20 @@ public class MainActivity extends FragmentActivity implements Observer {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
-//                WindowManager.LayoutParams.FLAG_SECURE);
-
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                String phrase = KeyStoreManager.getKeyStorePhrase(app);
-//                Log.e(TAG, "phrase: " + phrase);
-//            }
-//        }, 30000);
+        //loading the native library
+        System.loadLibrary("core");
 
         app = this;
         initializeViews();
 
         printPhoneSpecs();
 
-        setUpTheWallet();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                setUpTheWallet();
+            }
+        }).start();
 
         registerScreenLockReceiver();
 
@@ -313,7 +302,8 @@ public class MainActivity extends FragmentActivity implements Observer {
             public void onClick(View v) {
                 SpringAnimator.showAnimation(lockerButton);
 //                passwordDialogFragment.show(fm, TAG);
-                ((BreadWalletApp) getApplication()).promptForAuthentication(app, BRConstants.AUTH_FOR_GENERAL, null);
+                if (KeyStoreManager.getPassCode(app) != 0)
+                    ((BreadWalletApp) getApplication()).promptForAuthentication(app, BRConstants.AUTH_FOR_GENERAL, null);
 
             }
         });
@@ -588,11 +578,6 @@ public class MainActivity extends FragmentActivity implements Observer {
     }
 
     public void pay(final String addressHolder, String amountHolder) {
-        String canary = KeyStoreManager.getKeyStoreCanary(this, BRConstants.CANARY_REQUEST_CODE);
-        if(canary.equals("noauth")) {
-            KeyStoreManager.showAuthenticationScreen(this, 0);
-            return;
-        }
         if (addressHolder == null || amountHolder == null) return;
         if (addressHolder.length() < 20) return;
         final Double amountAsDouble = Double.parseDouble(amountHolder);
@@ -611,13 +596,8 @@ public class MainActivity extends FragmentActivity implements Observer {
 //                String strToReduce = String.valueOf(amountToReduce);
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-                DecimalFormat currencyFormat;
-                currencyFormat = (DecimalFormat) DecimalFormat.getInstance();
-                currencyFormat.setMaximumFractionDigits(2);
-                currencyFormat.setMinimumFractionDigits(0);
-                currencyFormat.setGroupingUsed(true);
 
-                builder.setMessage(String.format("reduce payment amount by ƀ%s to accommodate the bitcoin network fee?", currencyFormat.format(amountToReduce)))
+                builder.setMessage(String.format("reduce payment amount by %s to accommodate the bitcoin network fee?", cm.getFormattedCurrencyString("BTC", String.valueOf(amountToReduce))))
                         .setTitle("insufficient funds for bitcoin network fee")
                         .setCancelable(false)
                         .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
@@ -643,7 +623,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                 confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, Math.round(amountAsDouble), null));
             } else {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage(String.format("insufficient funds to send: ƀ%d", Math.round(amountAsDouble)))
+                builder.setMessage(String.format(Locale.getDefault(), "insufficient funds to send: %s", cm.getFormattedCurrencyString("BTC", String.valueOf(amountAsDouble))))
                         .setCancelable(false)
                         .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
@@ -783,7 +763,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         final double total = Long.valueOf(amount) + feeForTx;
         final String message = certification + allAddresses.toString() + "\n\n" + "amount: " + cm.getFormattedCurrencyString("BTC", String.valueOf(request.amount))
                 + " (" + cm.getExchangeForAmount(rate, iso, amount) + ")" + "\nnetwork fee: +" + cm.getFormattedCurrencyString("BTC", String.valueOf(feeForTx))
-                + " (" + cm.getExchangeForAmount(rate, iso, String.valueOf(feeForTx)) + ")" + "\ntotal: +" + cm.getFormattedCurrencyString("BTC", String.valueOf(total))
+                + " (" + cm.getExchangeForAmount(rate, iso, String.valueOf(feeForTx)) + ")" + "\ntotal: " + cm.getFormattedCurrencyString("BTC", String.valueOf(total))
                 + " (" + cm.getExchangeForAmount(rate, iso, String.valueOf(total)) + ")";
 
 //        ((BreadWalletApp) getApplication()).showCustomDialog("payment info", certification + allAddresses.toString() +
@@ -834,7 +814,6 @@ public class MainActivity extends FragmentActivity implements Observer {
     }
 
 
-
     private void setUpTheWallet() {
 
         BRWalletManager m = BRWalletManager.getInstance(this);
@@ -872,14 +851,21 @@ public class MainActivity extends FragmentActivity implements Observer {
             byte[] pubkeyEncoded = KeyStoreManager.getMasterPublicKey(this);
 //            pubkeyEncoded = null;
             //todo TEST THAT
-            if(pubkeyEncoded == null || pubkeyEncoded.length == 0){
-                ((BreadWalletApp)getApplication()).showCustomToast(this, "The KeyStore is temporary unavailable, please try again later", screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
-                new Handler().postDelayed(new Runnable() {
+            if (pubkeyEncoded == null || pubkeyEncoded.length == 0) {
+                ((BreadWalletApp) getApplication()).showCustomToast(this, "The KeyStore is temporary unavailable, please try again later",
+                        screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
+                runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        finish();
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                finish();
+                            }
+                        }, 3500);
                     }
-                },3500);
+                });
+
                 return;
             }
             m.createWallet(transactionsCount, pubkeyEncoded);
@@ -909,12 +895,7 @@ public class MainActivity extends FragmentActivity implements Observer {
             //TODO take offs
 //            final long tempTime = 1454736431;
             Log.e(TAG, "earliestKeyTime before connecting: " + earliestKeyTime);
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    pm.createAndConnect(earliestKeyTime > 0 ? earliestKeyTime : 0, blocksCount, peersCount);
-                }
-            }).start();
+            pm.createAndConnect(earliestKeyTime > 0 ? earliestKeyTime : 0, blocksCount, peersCount);
 
         }
     }

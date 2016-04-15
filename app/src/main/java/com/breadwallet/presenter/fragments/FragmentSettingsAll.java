@@ -113,7 +113,7 @@ public class FragmentSettingsAll extends Fragment {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            BRWalletManager.getInstance(getActivity()).rescan();
+                            BRPeerManager.getInstance(getActivity()).rescan();
                         }
                     }).start();
 

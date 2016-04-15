@@ -154,17 +154,11 @@ public class FragmentWipeWallet extends Fragment {
 
     private void startIntroActivity() {
 
-        Intent i = getActivity().getBaseContext().getPackageManager()
-                .getLaunchIntentForPackage(getActivity().getBaseContext().getPackageName());
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(i);
-
-
-//        Intent intent;
-//        intent = new Intent(getActivity(), IntroActivity.class);
-//        startActivity(intent);
-//        if (!getActivity().isDestroyed()) {
-//            getActivity().finish();
-//        }
+        Intent intent;
+        intent = new Intent(getActivity(), IntroActivity.class);
+        startActivity(intent);
+        if (!getActivity().isDestroyed()) {
+            getActivity().finish();
+        }
     }
 }

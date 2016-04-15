@@ -1,6 +1,8 @@
 package com.breadwallet.presenter.fragments;
 
 import android.app.Fragment;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -13,6 +15,7 @@ import android.widget.ImageView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.IntroShowPhraseActivity;
+import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.animation.BackgroundMovingAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.wallet.BRWalletManager;
@@ -62,11 +65,16 @@ public class IntroNewWalletFragment extends Fragment {
                 new Handler().post(new Runnable() {
                     @Override
                     public void run() {
+                        BRWalletManager.getInstance(getActivity()).wipeWallet(getActivity());
                         String phrase = m.generateRandomSeed();
                         IntroShowPhraseActivity.phrase = phrase;
                         if (phrase == null) return;
+
                         KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), getActivity());
                         byte[] pubKey = m.getMasterPubKey(phrase);
+                        SharedPreferences.Editor editor = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE).edit();
+                        editor.clear();
+                        editor.apply();
                         KeyStoreManager.putMasterPublicKey(pubKey, getActivity());
                         ((IntroActivity) getActivity()).showWarningFragment();
 

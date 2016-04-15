@@ -145,6 +145,7 @@ public class BRWalletManager {
         if (ctx != null) {
             MainFragmentQR mainFragmentQR = CustomPagerAdapter.adapter == null ? null : CustomPagerAdapter.adapter.mainFragmentQR;
             String tmpAddr = getReceiveAddress();
+            if (tmpAddr == null || tmpAddr.isEmpty()) return;
             SharedPreferences.Editor editor = ctx.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE).edit();
             editor.putString(MainActivity.PREFS_NAME, tmpAddr);
             editor.apply();
@@ -157,6 +158,7 @@ public class BRWalletManager {
 
     public void wipeWallet(Activity activity) {
         sweepPrivateKey();
+        BRPeerManager.saveStuffRunning = false;
         BRPeerManager.getInstance(activity).peerManagerFreeEverything();
         walletFreeEverything();
         SQLiteManager sqLiteManager = SQLiteManager.getInstance(activity);
@@ -244,7 +246,10 @@ public class BRWalletManager {
 //                    if (amount > 0) {
 //                        showWritePhraseDialog();
                     double absAmount = amount > 0 ? amount : amount * -1;
-                    String strToShow = String.format(ctx.getString(amount > 0 ? R.string.received : R.string.sent), m.bitcoinLowercase + m.getBitsFromSatoshi(absAmount) + " (" + m.getExchangeForAmount(m.getRateFromPrefs(), m.getISOFromPrefs(), String.valueOf(m.getBitsFromSatoshi(absAmount))) + ")");
+                    CurrencyManager cm = CurrencyManager.getInstance(ctx);
+                    String strToShow = String.format(ctx.getString(amount > 0 ? R.string.received : R.string.sent),
+                            cm.getFormattedCurrencyString("BTC", String.valueOf(cm.getBitsFromSatoshi(absAmount))) + " (" +
+                                    m.getExchangeForAmount(m.getRateFromPrefs(), m.getISOFromPrefs(), String.valueOf(m.getBitsFromSatoshi(absAmount))) + ")");
                     ((BreadWalletApp) ctx.getApplicationContext()).showCustomToast((Activity) ctx, strToShow,
                             BreadWalletApp.DISPLAY_HEIGHT_PX / 2, Toast.LENGTH_LONG, 1);
 //                    } else {
@@ -314,8 +319,6 @@ public class BRWalletManager {
     public native TransactionListItem[] getTransactions();
 
     public native boolean pay(String addressHolder, long amountHolder, String strSeed);
-
-    public native void rescan();
 
     public native boolean validateAddress(String address);
 

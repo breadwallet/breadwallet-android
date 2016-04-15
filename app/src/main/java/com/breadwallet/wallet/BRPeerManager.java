@@ -44,12 +44,13 @@ public class BRPeerManager {
     private static BRPeerManager instance;
     private static SyncProgressTask syncTask;
     private static Activity ctx;
+    public static boolean saveStuffRunning = false;
 
     private BRPeerManager() {
         syncTask = new SyncProgressTask();
     }
 
-    public static  BRPeerManager getInstance(Activity context) {
+    public static BRPeerManager getInstance(Activity context) {
         ctx = context;
         if (instance == null) {
             instance = new BRPeerManager();
@@ -78,6 +79,8 @@ public class BRPeerManager {
     public native boolean isCreated();
 
     public native void peerManagerFreeEverything();
+
+    public native void rescan();
 
     /**
      * void BRPeerManagerSetCallbacks(BRPeerManager *manager, void *info,
@@ -125,12 +128,14 @@ public class BRPeerManager {
     public static void saveBlocks(final BlockEntity[] blockEntities) {
         Log.e(TAG, "saveBlocks: " + blockEntities.length);
 
+        saveStuffRunning = true;
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     for (BlockEntity blockEntity : blockEntities) {
+                        if (ctx == null || !saveStuffRunning) break;
                         SQLiteManager.getInstance(ctx).insertMerkleBlock(blockEntity.getBlockBytes(), blockEntity.getBlockHeight());
                     }
                 }
@@ -139,14 +144,16 @@ public class BRPeerManager {
 
     }
 
-    public static  void savePeers(final PeerEntity[] peerEntities) {
+    public static void savePeers(final PeerEntity[] peerEntities) {
         Log.e(TAG, "savePeers");
+        saveStuffRunning = true;
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     for (PeerEntity peerEntity : peerEntities) {
+                        if (ctx == null || !saveStuffRunning) break;
                         SQLiteManager.getInstance(ctx).insertPeer(peerEntity.getPeerAddress(), peerEntity.getPeerPort(), peerEntity.getPeerTimeStamp());
                     }
                 }
@@ -155,12 +162,12 @@ public class BRPeerManager {
 
     }
 
-    public static  boolean networkIsReachable() {
+    public static boolean networkIsReachable() {
         Log.e(TAG, "networkIsReachable");
         return ctx != null && CurrencyManager.getInstance(ctx).isNetworkAvailable(ctx);
     }
 
-    public static  void deleteBlocks() {
+    public static void deleteBlocks() {
         Log.e(TAG, "deleteBlocks");
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) {
@@ -174,7 +181,7 @@ public class BRPeerManager {
         }
     }
 
-    public static  void deletePeers() {
+    public static void deletePeers() {
         Log.e(TAG, "deletePeers");
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) {

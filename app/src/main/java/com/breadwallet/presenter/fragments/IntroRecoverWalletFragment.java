@@ -2,7 +2,9 @@ package com.breadwallet.presenter.fragments;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -16,6 +18,7 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.IntroActivity;
+import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.TypesConverter;
 import com.breadwallet.tools.WordsReader;
@@ -85,10 +88,12 @@ public class IntroRecoverWalletFragment extends Fragment {
                 }
 
                 String phraseToCheck = editText.getText().toString().trim().toLowerCase();
-                String normalizedPhrase = Normalizer.normalize(phraseToCheck, Normalizer.Form.NFKD) ;
+                String normalizedPhrase = Normalizer.normalize(phraseToCheck, Normalizer.Form.NFKD);
                 String terminatedPhrase = normalizedPhrase + '\0';
 
                 if (BRWalletManager.getInstance(getActivity()).validatePhrase(getActivity(), phraseToCheck)) {
+
+                    BRWalletManager.getInstance(getActivity()).wipeWallet(getActivity());
 
                     boolean success = KeyStoreManager.putKeyStorePhrase(terminatedPhrase, getActivity(), 0);
                     boolean success2 = false;
@@ -98,6 +103,9 @@ public class IntroRecoverWalletFragment extends Fragment {
 //                    char[] normalizedPhrase = Normalizer.normalize(sequence, Normalizer.Form.NFKD).toCharArray();
                     if (!success || !success2)
                         return;
+                    SharedPreferences.Editor editor = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE).edit();
+                    editor.clear();
+                    editor.apply();
                     BRWalletManager m;
                     m = BRWalletManager.getInstance(getActivity());
 //                    KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), getActivity());
@@ -112,7 +120,7 @@ public class IntroRecoverWalletFragment extends Fragment {
                 } else {
                     alertDialog.setTitle(getResources().getString(R.string.alert));
                     //don't use
-                    alertDialog.setMessage("\"" + new String(normalizedPhrase) + "\" - " +
+                    alertDialog.setMessage("\"" + normalizedPhrase + "\" - " +
                             getResources().getString(R.string.dialog_recovery_phrase_invalid));
                     alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getResources().getString(R.string.ok),
                             new DialogInterface.OnClickListener() {
