@@ -60,12 +60,12 @@ public class BRWalletManager {
     private static final String TAG = BRWalletManager.class.getName();
     public static final String ASKED_TO_WRITE_PHRASE = "phraseWrittenDown";
     private static BRWalletManager instance;
-    private static Context ctx;
+    private static Activity ctx;
 
     private BRWalletManager() {
     }
 
-    public static BRWalletManager getInstance(Context context) {
+    public static BRWalletManager getInstance(Activity context) {
         ctx = context;
         if (instance == null) {
             instance = new BRWalletManager();
@@ -73,7 +73,7 @@ public class BRWalletManager {
         return instance;
     }
 
-    public String generateRandomSeed() {
+    public boolean generateRandomSeed() {
         SecureRandom sr = new SecureRandom();
 
         String[] words = new String[0];
@@ -87,6 +87,7 @@ public class BRWalletManager {
         byte[] keyBytes = sr.generateSeed(16);
         if (words.length < 2000)
             throw new IllegalArgumentException("the list is wrong, size: " + words.length);
+        if(keyBytes.length == 0) throw new NullPointerException("failed to create the seed");
         byte[] phrase = encodeSeed(keyBytes, words);
         if (phrase == null || phrase.length == 0)
             throw new NullPointerException("failed to encodeSeed");
@@ -95,16 +96,21 @@ public class BRWalletManager {
             strPhrase = new String(phrase, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-            return null;
+            throw new NullPointerException("failed to create the phrase");
         }
-//        String phrase = "short apple trunk riot coyote innocent zebra venture ill lava shop test";
-        boolean success = KeyStoreManager.putKeyStorePhrase(strPhrase, ctx, 0);
+        boolean success = KeyStoreManager.putKeyStorePhrase(strPhrase, ctx, BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE);
         boolean success2 = false;
         if (success)
-            success2 = KeyStoreManager.putKeyStoreCanary(BRConstants.CANARY_STRING, ctx, 0);
+            success2 = KeyStoreManager.putKeyStoreCanary(BRConstants.CANARY_STRING, ctx, BRConstants.PUT_CANARY_REQUEST_CODE);
+        IntroShowPhraseActivity.phrase = strPhrase;
+        KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), ctx);
+        byte[] pubKey = BRWalletManager.getInstance(ctx).getMasterPubKey(strPhrase);
+        KeyStoreManager.putMasterPublicKey(pubKey, ctx);
+
         phrase = null;
         Log.e(TAG, "setKeyStoreString was successful: " + success);
-        return success && success2 ? strPhrase : null;
+        return success && success2;
+
     }
 
 //    public boolean setKeyStoreString(String strPhrase, String key,
@@ -123,7 +129,7 @@ public class BRWalletManager {
     /**
      * true if keychain is available and we know that no wallet exists on it
      */
-    public boolean noWallet(Context ctx) {
+    public boolean noWallet(Activity ctx) {
         byte[] pubkey = KeyStoreManager.getMasterPublicKey(ctx);
 //        Log.e(TAG, "in the noWallet, pubkey.length(): " + pubkey.length);
 //        Log.e(TAG, "in the noWallet, pubkey: " + pubkey);
@@ -134,7 +140,7 @@ public class BRWalletManager {
     /**
      * true if device passcode is enabled
      */
-    public boolean isPasscodeEnabled(Context ctx) {
+    public boolean isPasscodeEnabled(Activity ctx) {
         KeyguardManager keyguardManager = (KeyguardManager) ctx.getSystemService(Activity.KEYGUARD_SERVICE);
         return keyguardManager.isKeyguardSecure();
     }
@@ -165,13 +171,16 @@ public class BRWalletManager {
         sqLiteManager.deleteTransactions();
         sqLiteManager.deleteBlocks();
         sqLiteManager.deletePeers();
+        SharedPreferences.Editor editor = activity.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE).edit();
+        editor.clear();
+        editor.apply();
     }
 
     private static void showWritePhraseDialog() {
 
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) {
-            ((Activity) ctx).runOnUiThread(new Runnable() {
+            ctx.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     SharedPreferences prefs = ctx.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
@@ -214,7 +223,7 @@ public class BRWalletManager {
 
         Log.e(TAG, "in the BRWalletManager - onBalanceChanged:  " + balance);
         if (ctx == null) ctx = MainActivity.app;
-        ((Activity) ctx).runOnUiThread(new Runnable() {
+        ctx.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 CurrencyManager.getInstance(ctx).setBalance(balance);
@@ -239,7 +248,7 @@ public class BRWalletManager {
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null && !MiddleViewAdapter.getSyncing()) {
 
-            ((Activity) ctx).runOnUiThread(new Runnable() {
+            ctx.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     CurrencyManager m = CurrencyManager.getInstance(ctx);

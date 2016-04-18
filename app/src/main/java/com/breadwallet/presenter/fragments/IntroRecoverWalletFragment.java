@@ -103,9 +103,6 @@ public class IntroRecoverWalletFragment extends Fragment {
 //                    char[] normalizedPhrase = Normalizer.normalize(sequence, Normalizer.Form.NFKD).toCharArray();
                     if (!success || !success2)
                         return;
-                    SharedPreferences.Editor editor = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE).edit();
-                    editor.clear();
-                    editor.apply();
                     BRWalletManager m;
                     m = BRWalletManager.getInstance(getActivity());
 //                    KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), getActivity());

@@ -1,6 +1,7 @@
 package com.breadwallet.presenter.fragments;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Color;
@@ -147,13 +148,13 @@ public class FragmentSettingsAll extends Fragment {
 //        refreshTransactions(getActivity());
     }
 
-    public static void refreshTransactions(final Context ctx) {
+    public static void refreshTransactions(final Activity ctx) {
         TransactionListItem[] txs = BRWalletManager.getInstance(ctx).getTransactions();
         if (txs != null)
             transactionObjects = txs;
 
         if (ctx != null && ctx instanceof MainActivity) {
-            ((MainActivity) ctx).runOnUiThread(new Runnable() {
+            ctx.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     refreshUI(ctx);
@@ -164,7 +165,7 @@ public class FragmentSettingsAll extends Fragment {
 
     }
 
-    public static void refreshUI(Context ctx) {
+    public static void refreshUI(Activity ctx) {
         if (transactionList == null || transactionHistory == null)
             return;
         if (!BreadWalletApp.unlocked) {
@@ -208,7 +209,7 @@ public class FragmentSettingsAll extends Fragment {
 
     }
 
-    public static LinearLayout getMore(final Context context) {
+    public static LinearLayout getMore(final Activity context) {
         LayoutInflater inflater = (LayoutInflater) context.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout more = (LinearLayout) inflater.inflate(R.layout.transaction_list_item_more, null);
         more.setOnClickListener(new View.OnClickListener() {
@@ -228,11 +229,11 @@ public class FragmentSettingsAll extends Fragment {
         return more;
     }
 
-    public static RelativeLayout getSeparationLine(int MODE, Context ctx) {
+    public static RelativeLayout getSeparationLine(int MODE, Activity ctx) {
         //0 - regular , 1 - with left padding
         RelativeLayout line = new RelativeLayout(ctx);
         line.setMinimumHeight(1);
-        line.setBackgroundColor(R.color.grey);
+        line.setBackgroundColor(ctx.getColor(R.color.grey));
         if (MODE == 1)
             line.setPadding(40, 0, 0, 0);
         return line;

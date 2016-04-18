@@ -18,22 +18,13 @@ android {
         exclude 'META-INF/LICENSE.txt'
     }
 
-//    signingConfigs {
-//        release {
-//            storeFile file("myreleasekey.keystore")
-//            storePassword "password"
-//            keyAlias "MyReleaseKey"
-//            keyPassword "password"
-//        }
-//    }
-
     defaultConfig {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         applicationId "com.breadwallet"
         minSdkVersion 23
         targetSdkVersion 23
-        versionCode 1
-        versionName "0.6"
+        versionCode 2
+        versionName "0.6.1"
     }
 
     compileOptions {
@@ -73,6 +64,7 @@ task buildNative(type: Exec, description: 'Compile JNI source via NDK') {
         properties.load(project.rootProject.file('local.properties').newDataInputStream())
         def ndkDir = properties.getProperty('ndk.dir')
         println(projectDir)
+        delete 'src/main/jniLibs'
         commandLine "$ndkDir/ndk-build",
                 'NDK_PROJECT_PATH=null',
                 'V=1',

@@ -69,9 +69,9 @@ public class FragmentRecoveryPhrase extends Fragment {
 //        });
 
 //        final long startTime = System.currentTimeMillis();
-        //return the new method if the API is 23+
         String phrase = KeyStoreManager.getKeyStorePhrase(getActivity(), BRConstants.RECOVERY_PHRASE_REQUEST_CODE);
         if(phrase == null || phrase.isEmpty()) getActivity().onBackPressed();
+
         thePhrase.setText(phrase);
         return rootView;
     }

@@ -15,7 +15,7 @@ LOCAL_SRC_FILES := \
 ./transition/wallet.c\
 ./transition/PeerManager.c
 
-#//TODO -DBITCOIN_TESTNET=1 (TESTING)
+//TODO -DBITCOIN_TESTNET=1 (TESTING)
 
 include $(BUILD_SHARED_LIBRARY)
 

@@ -1,5 +1,6 @@
 package com.breadwallet.tools.security;
 
+import android.app.Activity;
 import android.content.Context;
 
 /**
@@ -39,12 +40,12 @@ public class PassCodeManager {
         return instance;
     }
 
-    public boolean checkAuth(CharSequence passcode, Context context) {
+    public boolean checkAuth(CharSequence passcode, Activity context) {
 
         return passcode.equals(String.valueOf(KeyStoreManager.getPassCode(context)));
     }
 
-    public void setPassCode(String pass, Context context) {
+    public void setPassCode(String pass, Activity context) {
         KeyStoreManager.putPassCode(Integer.valueOf(pass), context);
     }
 }

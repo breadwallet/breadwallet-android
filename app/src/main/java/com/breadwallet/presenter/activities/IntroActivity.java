@@ -23,13 +23,8 @@ import com.breadwallet.presenter.fragments.IntroWelcomeFragment;
 import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.animation.BackgroundMovingAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.wallet.BRWalletManager;
-
-import java.io.IOException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
 
 
 /**
@@ -80,7 +75,7 @@ public class IntroActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
         app = this;
-        canary = KeyStoreManager.getKeyStoreCanary(this, BRConstants.CANARY_REQUEST_CODE);
+        canary = KeyStoreManager.getKeyStoreCanary(this, BRConstants.PUT_CANARY_REQUEST_CODE);
         if(canary.equals("none")){
             KeyStoreManager.resetWalletKeyStore();
             SharedPreferences prefs = getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
@@ -184,36 +179,14 @@ public class IntroActivity extends FragmentActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (requestCode == BRConstants.CANARY_REQUEST_CODE) {
-//            // Challenge completed, proceed with using cipher
-//            if (resultCode == RESULT_OK) {
-//                if(canary.isEmpty()){
-//                    KeyStoreManager.resetWalletKeyStore();
-//                    SharedPreferences prefs = getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
-//                    SharedPreferences.Editor editor = prefs.edit();
-//                    editor.clear();
-//                    editor.apply();
-//                }
-//
-//                leftButton = (Button) findViewById(R.id.intro_left_button);
-//                leftButton.setVisibility(View.GONE);
-//                leftButton.setClickable(false);
-//                leftButton.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        onBackPressed();
-//                    }
-//                });
-//
-//                getFragmentManager().beginTransaction().add(R.id.intro_layout, new IntroWelcomeFragment(),
-//                        IntroWelcomeFragment.class.getName()).commit();
-//                startTheWalletIfExists();
-//
-//            } else {
-//                canary = KeyStoreManager.getKeyStoreCanary(this, BRConstants.CANARY_REQUEST_CODE);
-//                Log.e(TAG, "Auth for phrase was rejected");
-//            }
-//        }
+        if (requestCode == BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE) {
+            // Challenge completed, proceed with using cipher
+            if (resultCode == RESULT_OK) {
+                PostAuthenticationProcessor.getInstance().onCreateWalletAuth(this);
+            } else {
+                KeyStoreManager.showAuthenticationScreen(this, requestCode);
+            }
+        }
         //when starting another activity that will return a result (ex: auth)
     }
 

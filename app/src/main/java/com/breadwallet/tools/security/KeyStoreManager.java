@@ -94,10 +94,10 @@ public class KeyStoreManager {
     private static final String WALLET_CREATION_TIME_FILENAME = "my_creation_time";
     private static final String PASS_CODE_FILENAME = "my_pass_code";
 
-    private static final int AUTH_DURATION_SEC = 300;
+    private static final int AUTH_DURATION_SEC = 300;//TODO make 300
 //    private static final int CANARY_AUTH_DURATION_SEC = Integer.MAX_VALUE;
 
-    public static boolean putKeyStorePhrase(String strToStore, Context context, int requestCode) {
+    public static boolean putKeyStorePhrase(String strToStore, Activity context, int requestCode) {
         if (strToStore == null) return false;
         if (strToStore.length() == 0) return false;
 
@@ -151,13 +151,15 @@ public class KeyStoreManager {
             Log.e(TAG, Log.getStackTraceString(e));
             Log.e(TAG, "showAuthenticationScreen");
             showAuthenticationScreen(context, requestCode);
-        } catch (CertificateException | NoSuchAlgorithmException | InvalidKeyException | NullPointerException | NoSuchPaddingException | KeyStoreException | UnrecoverableKeyException | InvalidAlgorithmParameterException | NoSuchProviderException | IOException e) {
+        } catch (CertificateException | NoSuchAlgorithmException | InvalidKeyException | NullPointerException
+                | NoSuchPaddingException | KeyStoreException | UnrecoverableKeyException |
+                InvalidAlgorithmParameterException | NoSuchProviderException | IOException e) {
             e.printStackTrace();
         }
         return false;
     }
 
-    public static String getKeyStorePhrase(final Context context, int requestCode) {
+    public static String getKeyStorePhrase(final Activity context, int requestCode) {
 
         KeyguardManager myKM = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
         if (myKM.inKeyguardRestrictedInputMode()) {
@@ -216,9 +218,7 @@ public class KeyStoreManager {
         return recoveredSecret;
     }
 
-    public static boolean putKeyStoreCanary(String strToStore, Context context, int requestCode) {
-        //TODO CHECK FOR FINGERPRINT SET!!! CANNOT WORK WITHOUT IT
-        //TODO refactor the String to byte[] or char[]
+    public static boolean putKeyStoreCanary(String strToStore, Activity context, int requestCode) {
         if (strToStore == null) return false;
         if (strToStore.length() == 0) return false;
 
@@ -278,7 +278,7 @@ public class KeyStoreManager {
         return false;
     }
 
-    public static String getKeyStoreCanary(final Context context, int requestCode) {
+    public static String getKeyStoreCanary(final Activity context, int requestCode) {
 
 //        KeyguardManager myKM = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
 //        if (myKM.inKeyguardRestrictedInputMode()) {
@@ -326,7 +326,7 @@ public class KeyStoreManager {
         return recoveredSecret;
     }
 
-    public static boolean putMasterPublicKey(byte[] masterPubKey, Context context) {
+    public static boolean putMasterPublicKey(byte[] masterPubKey, Activity context) {
 
         if (masterPubKey == null) return false;
         if (masterPubKey.length == 0) return false;
@@ -377,7 +377,7 @@ public class KeyStoreManager {
         return false;
     }
 
-    public static byte[] getMasterPublicKey(final Context context) {
+    public static byte[] getMasterPublicKey(final Activity context) {
         KeyStore keyStore;
         byte[] recoveredSecret = null;
         String filesDirectory = context.getFilesDir().getAbsolutePath();
@@ -412,7 +412,7 @@ public class KeyStoreManager {
         return recoveredSecret;
     }
 
-    public static boolean putWalletCreationTime(int creationTime, Context context) {
+    public static boolean putWalletCreationTime(int creationTime, Activity context) {
         KeyStore keyStore = null;
         try {
             keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
@@ -467,7 +467,7 @@ public class KeyStoreManager {
 
     }
 
-    public static int getWalletCreationTime(final Context context) {
+    public static int getWalletCreationTime(final Activity context) {
 //        if (!((BreadWalletApp) context.getApplicationContext()).allowKeyStoreAccess) {
 //            return null;
 //        }
@@ -506,7 +506,7 @@ public class KeyStoreManager {
     }
 
 
-    public static boolean putPassCode(int passcode, Context context) {
+    public static boolean putPassCode(int passcode, Activity context) {
 
         KeyStore keyStore = null;
         try {
@@ -561,7 +561,7 @@ public class KeyStoreManager {
         return false;
     }
 
-    public static int getPassCode(final Context context) {
+    public static int getPassCode(final Activity context) {
 //        KeyguardManager myKM = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
 //        if (myKM.inKeyguardRestrictedInputMode()) {
 //            Log.e(TAG, "THE SCREEN IS LOCKED!");
@@ -655,7 +655,7 @@ public class KeyStoreManager {
 //        return true;
 //    }
 
-    public static void showAuthenticationScreen(Context context, int requestCode) {
+    public static void showAuthenticationScreen(Activity context, int requestCode) {
         // Create the Confirm Credentials screen. You can customize the title and description. Or
         // we will provide a generic one for you if you leave it null
         KeyguardManager mKeyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);

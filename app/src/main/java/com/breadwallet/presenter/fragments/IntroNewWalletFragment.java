@@ -66,18 +66,9 @@ public class IntroNewWalletFragment extends Fragment {
                     @Override
                     public void run() {
                         BRWalletManager.getInstance(getActivity()).wipeWallet(getActivity());
-                        String phrase = m.generateRandomSeed();
-                        IntroShowPhraseActivity.phrase = phrase;
-                        if (phrase == null) return;
-
-                        KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), getActivity());
-                        byte[] pubKey = m.getMasterPubKey(phrase);
-                        SharedPreferences.Editor editor = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE).edit();
-                        editor.clear();
-                        editor.apply();
-                        KeyStoreManager.putMasterPublicKey(pubKey, getActivity());
-                        ((IntroActivity) getActivity()).showWarningFragment();
-
+                        boolean success = m.generateRandomSeed();
+                        if (success)
+                            ((IntroActivity) getActivity()).showWarningFragment();
                     }
                 });
 

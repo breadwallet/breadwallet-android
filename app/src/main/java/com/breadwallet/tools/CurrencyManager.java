@@ -71,13 +71,13 @@ public class CurrencyManager extends Observable {
     private final Handler handler = new Handler();
     public static boolean separatorNeedsToBeShown = false;
     private final CurrencyListAdapter currencyListAdapter;
-    private static Context ctx;
+    private static Activity ctx;
 
     private CurrencyManager() {
         currencyListAdapter = new CurrencyListAdapter(ctx);
     }
 
-    public static CurrencyManager getInstance(Context context) {
+    public static CurrencyManager getInstance(Activity context) {
         ctx = context;
         if (instance == null) {
             instance = new CurrencyManager();
@@ -85,7 +85,7 @@ public class CurrencyManager extends Observable {
         return instance;
     }
 
-    public boolean isNetworkAvailable(Context context) {
+    public boolean isNetworkAvailable(Activity context) {
         if(context == null) return false;
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -105,7 +105,7 @@ public class CurrencyManager extends Observable {
         return BALANCE;
     }
 
-    private List<CurrencyEntity> getCurrencies(Context context) {
+    private List<CurrencyEntity> getCurrencies(Activity context) {
         List<CurrencyEntity> list = new ArrayList<>();
         if (isNetworkAvailable(context)) {
             try {

@@ -892,7 +892,7 @@ public class MainActivity extends FragmentActivity implements Observer {
 
             int walletTimeString = KeyStoreManager.getWalletCreationTime(this);
             final int earliestKeyTime = walletTimeString != 0 ? walletTimeString : 0;
-            //TODO take offs
+            //TODO take off
 //            final long tempTime = 1454736431;
             Log.e(TAG, "earliestKeyTime before connecting: " + earliestKeyTime);
             pm.createAndConnect(earliestKeyTime > 0 ? earliestKeyTime : 0, blocksCount, peersCount);

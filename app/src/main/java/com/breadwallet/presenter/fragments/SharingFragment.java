@@ -26,6 +26,7 @@ package com.breadwallet.presenter.fragments;
  */
 
 import android.app.DialogFragment;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -80,7 +81,7 @@ public class SharingFragment extends DialogFragment {
                             }
                         }, 2000);
                         ((BreadWalletApp) getActivity().getApplicationContext()).
-                                showCustomToast(getActivity(), getResources().getString(R.string.toast_address_copied), 360, Toast.LENGTH_SHORT,0);
+                                showCustomToast(getActivity(), getResources().getString(R.string.toast_address_copied), 360, Toast.LENGTH_SHORT, 0);
                         getDialog().cancel();
                     }
                 }
@@ -109,11 +110,15 @@ public class SharingFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 if (FragmentAnimator.checkTheMultipressingAvailability()) {
+
+                    if (theAddress == null || theAddress.isEmpty()) return;
                     Intent sendIntent = new Intent(Intent.ACTION_VIEW);
                     sendIntent.setData(Uri.parse("sms:"));
                     sendIntent.putExtra("sms_body", getResources().getString(R.string.sharing_message) + " " + theAddress);
+                    sendIntent.putExtra("exit_on_sent", true);
                     startActivity(sendIntent);
                     getDialog().cancel();
+
                 }
             }
         });
