@@ -295,4 +295,3 @@ JNIEXPORT void JNICALL Java_com_breadwallet_presenter_activities_MainActivity_cT
 //    int result = BRRunTests();
 //    __android_log_print(ANDROID_LOG_ERROR, "Core Tests: ", "%d", result);
 }
-

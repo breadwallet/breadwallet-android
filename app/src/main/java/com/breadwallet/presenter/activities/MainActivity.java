@@ -158,7 +158,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         setContentView(R.layout.activity_main);
 
         //loading the native library
-        System.loadLibrary("core");
 
         app = this;
         initializeViews();
@@ -800,21 +799,14 @@ public class MainActivity extends FragmentActivity implements Observer {
 
         SQLiteManager sqLiteManager = SQLiteManager.getInstance(this);
 
-        List<BRTransactionEntity> transactions = sqLiteManager.getTransactions();
-        List<BRMerkleBlockEntity> blocks = sqLiteManager.getBlocks();
-        List<BRPeerEntity> peers = sqLiteManager.getPeers();
-
-        int transactionsCount = transactions.size();
-        final int blocksCount = blocks.size();
-        final int peersCount = peers.size();
-
 //        CustomLogger.LogThis("setUpTheWallet: number of transactions from sqlite: ",
 //                String.valueOf(transactions.size()),
 //                " transactionCount: ", String.valueOf(transactionsCount), " blocksCount: ",
 //                String.valueOf(blocksCount), " peersCount: ", String.valueOf(peersCount));
 
         if (!m.isCreated()) {
-
+            List<BRTransactionEntity> transactions = sqLiteManager.getTransactions();
+            int transactionsCount = transactions.size();
             if (transactionsCount > 0) {
                 m.createTxArrayWithCount(transactionsCount);
                 for (BRTransactionEntity entity : transactions) {
@@ -852,6 +844,10 @@ public class MainActivity extends FragmentActivity implements Observer {
         }
 
         if (!pm.isCreated()) {
+            List<BRMerkleBlockEntity> blocks = sqLiteManager.getBlocks();
+            List<BRPeerEntity> peers = sqLiteManager.getPeers();
+            final int blocksCount = blocks.size();
+            final int peersCount = peers.size();
             if (blocksCount > 0) {
                 pm.createBlockArrayWithCount(blocksCount);
                 for (BRMerkleBlockEntity entity : blocks) {

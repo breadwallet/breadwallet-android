@@ -114,5 +114,3 @@ JNIEXPORT jstring Java_com_breadwallet_wallet_BRWalletManager_getFirstAddress(JN
 //const void *theSeed(void *info, const char *authPrompt, uint64_t amount, size_t *seedLen);
 
 #endif //BREADWALLET_WALLET_H
-
-

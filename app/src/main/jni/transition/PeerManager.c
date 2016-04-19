@@ -132,7 +132,7 @@ static void saveBlocks(void *info, BRMerkleBlock *blocks[], size_t count) {
     if(!env) return;
     jmethodID mid = (*env)->GetStaticMethodID(env, _peerManagerClass, "saveBlocks", "([Lcom/breadwallet/presenter/entities/BlockEntity;)V");
     if(count != 1){
-        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "deleting %d blocks", count);
+        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "deleting %zu blocks", count);
         jmethodID delete_mid = (*env)->GetStaticMethodID(env, _peerManagerClass, "deleteBlocks", "()V");
         (*env)->CallStaticVoidMethod(env, _peerManagerClass, delete_mid);
     }
@@ -253,7 +253,7 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_createAndConnect(JNIEnv
     }
 
     if (!_peerManager) {
-        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "BRPeerManagerNew called: %d", ++_managerNewCounter);
+        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "BRPeerManagerNew called: %zu", ++_managerNewCounter);
         _peerManager = BRPeerManagerNew(_wallet, earliestKeyTime > BIP39_CREATION_TIME ? earliestKeyTime
                                                                   : BIP39_CREATION_TIME,
                                     blocksCount == 0 || !_blocks ? NULL : _blocks,
@@ -302,7 +302,7 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_putBlock(JNIEnv *env,
 JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_createBlockArrayWithCount(JNIEnv *env,
                                                                                    jobject thiz,
                                                                                    size_t bkCount) {
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "block array created with count: %d", bkCount);
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "block array created with count: %zu", bkCount);
     _blocks = calloc(bkCount, sizeof(BRMerkleBlock));
     // need to call free();
 }
@@ -317,13 +317,13 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_putPeer(JNIEnv *env,
         __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", " >>>>>>  _peers is NULL");
         return;
     }
-    int addrLength = (*env)->GetArrayLength(env, peerAddress);
+//    int addrLength = (*env)->GetArrayLength(env, peerAddress);
     jbyte *byteAddr = (*env)->GetByteArrayElements(env, peerAddress, 0);
 
-    int portLength = (*env)->GetArrayLength(env, peerPort);
+//    int portLength = (*env)->GetArrayLength(env, peerPort);
     jbyte *bytePort = (*env)->GetByteArrayElements(env, peerPort, 0);
 
-    int stampLength = (*env)->GetArrayLength(env, peerTimeStamp);
+//    int stampLength = (*env)->GetArrayLength(env, peerTimeStamp);
     jbyte *byteStamp = (*env)->GetByteArrayElements(env, peerTimeStamp, 0);
 
     BRPeer tmpPr;
@@ -347,7 +347,7 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_putPeer(JNIEnv *env,
 JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_createPeerArrayWithCount(JNIEnv *env,
                                                                                   jobject thiz,
                                                                                   size_t prCount) {
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "peer array created with count: %d",prCount);
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "peer array created with count: %zu",prCount);
     _peers = calloc(prCount, sizeof(BRPeer));
     // need to call free();
 }
@@ -372,8 +372,7 @@ JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRPeerManager_isCreated
         (JNIEnv *env, jobject obj) {
 
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "peerManager isCreated %s", _peerManager ? "yes" : "no");
-    int result = _peerManager;
-    return result ? JNI_TRUE : JNI_FALSE;
+    return _peerManager ? JNI_TRUE : JNI_FALSE;
 
 }
 
@@ -395,5 +394,3 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_peerManagerFreeEverythi
     _peerManager = NULL;
 
 }
-
-
