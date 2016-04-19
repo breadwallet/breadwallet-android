@@ -7,6 +7,8 @@ import android.util.Log;
 import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
 import com.breadwallet.presenter.entities.BRPeerEntity;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
+import com.breadwallet.presenter.entities.BlockEntity;
+import com.breadwallet.presenter.entities.PeerEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -138,8 +140,7 @@ public class SQLiteManager {
         }
     }
 
-    public void insertMerkleBlock(byte[] merkleBlock, int blockHeight) {
-        BRMerkleBlockEntity entity = new BRMerkleBlockEntity(merkleBlock, blockHeight);
+    public void insertMerkleBlocks(BlockEntity[] blockEntities) {
         MerkleBlockDataSource BKdataSource = null;
 
         Log.e(TAG, "SQLiteManager - merkleBlock inserted");
@@ -147,7 +148,7 @@ public class SQLiteManager {
         try {
             BKdataSource = new MerkleBlockDataSource(ctx);
             BKdataSource.open();
-            BKdataSource.createMerkleBlock(entity);
+            BKdataSource.putMerkleBlocks(blockEntities);
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -188,10 +189,9 @@ public class SQLiteManager {
         }
     }
 
-    public void insertPeer(byte[] peerAddress, byte[] peerPort, byte[] peerTimeStamp) {
+    public void insertPeer(PeerEntity[] peerEntities) {
 
 
-        BRPeerEntity entity = new BRPeerEntity(peerAddress, peerPort, peerTimeStamp);
         PeerDataSource PRdataSource = null;
 
         Log.e(TAG, "SQLiteManager - peer inserted");
@@ -199,7 +199,7 @@ public class SQLiteManager {
         try {
             PRdataSource = new PeerDataSource(ctx);
             PRdataSource.open();
-            PRdataSource.createPeer(entity);
+            PRdataSource.putPeers(peerEntities);
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {

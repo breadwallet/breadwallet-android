@@ -33,6 +33,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
+import com.breadwallet.presenter.entities.BlockEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +56,7 @@ class MerkleBlockDataSource {
 //            BRSQLiteHelper.MB_COLUMN_VERSION
     };
 
-    private MerkleBlockDataSource(){
+    private MerkleBlockDataSource() {
         dbHelper = null;
     }
 
@@ -64,47 +65,35 @@ class MerkleBlockDataSource {
     }
 
     public void open() throws SQLException {
-        database = dbHelper.getWritableDatabase();
+        if (dbHelper != null) {
+            database = dbHelper.getWritableDatabase();
+        }
     }
 
     public void close() {
-        dbHelper.close();
+        if (dbHelper != null) {
+            dbHelper.close();
+        }
     }
 
-    public BRMerkleBlockEntity createMerkleBlock(BRMerkleBlockEntity merkleBlock) {
-        ContentValues values = new ContentValues();
-//        values.put(BRSQLiteHelper.MB_COLUMN_ID, merkleBlock.getId());
-        values.put(BRSQLiteHelper.MB_BUFF,merkleBlock.getBuff());
-        values.put(BRSQLiteHelper.MB_HEIGHT, merkleBlock.getBlockHeight());
-//        values.put(BRSQLiteHelper.MB_COLUMN_BLOCK_HASH, merkleBlock.getBlockHash());
-//        values.put(BRSQLiteHelper.MB_COLUMN_FLAGS, merkleBlock.getFlags());
-//        values.put(BRSQLiteHelper.MB_COLUMN_HASHES, merkleBlock.getHashes());
-//        values.put(BRSQLiteHelper.MB_COLUMN_HEIGHT, merkleBlock.getHeight());
-//        values.put(BRSQLiteHelper.MB_COLUMN_MERKLE_ROOT, merkleBlock.getMerkleRoot());
-//        values.put(BRSQLiteHelper.MB_COLUMN_NONCE, merkleBlock.getNonce());
-//        values.put(BRSQLiteHelper.MB_COLUMN_PREV_BLOCK, merkleBlock.getPrevBlock());
-//        values.put(BRSQLiteHelper.MB_COLUMN_TARGET, merkleBlock.getTarget());
-//        values.put(BRSQLiteHelper.MB_COLUMN_TIME_STAMP, merkleBlock.getTimeStamp());
-//        values.put(BRSQLiteHelper.MB_COLUMN_TOTAL_TRANSACTIONS, merkleBlock.getTotalTransactions());
-//        values.put(BRSQLiteHelper.MB_COLUMN_VERSION, merkleBlock.getVersion());
+    public void putMerkleBlocks(BlockEntity[] blockEntities) {
+
         database.beginTransaction();
         try {
-            long insertId = database.insert(BRSQLiteHelper.MB_TABLE_NAME, null, values);
-            Cursor cursor = database.query(BRSQLiteHelper.MB_TABLE_NAME,
-                    allColumns, BRSQLiteHelper.MB_COLUMN_ID + " = " + insertId, null,
-                    null, null, null);
-            cursor.moveToFirst();
-            BRMerkleBlockEntity newMerkleBlock = cursorToMerkleBlock(cursor);
-            cursor.close();
+            for (BlockEntity b : blockEntities) {
+                Log.e(TAG,"sqlite block saved: " + b.getBlockHeight());
+                ContentValues values = new ContentValues();
+                values.put(BRSQLiteHelper.MB_BUFF, b.getBlockBytes());
+                values.put(BRSQLiteHelper.MB_HEIGHT, b.getBlockHeight());
+                database.insert(BRSQLiteHelper.MB_TABLE_NAME, null, values);
+            }
             database.setTransactionSuccessful();
-            return newMerkleBlock;
         } catch (Exception ex) {
             Log.e(TAG, "Error inserting into SQLite", ex);
             //Error in between database transaction
         } finally {
             database.endTransaction();
         }
-        return null;
     }
 
     public void deleteAllBlocks() {
@@ -130,7 +119,7 @@ class MerkleBlockDataSource {
             merkleBlocks.add(merkleBlockEntity);
             cursor.moveToNext();
         }
-        Log.e(TAG,"merkleBlocks: " + merkleBlocks.size());
+        Log.e(TAG, "merkleBlocks: " + merkleBlocks.size());
         // make sure to close the cursor
         cursor.close();
         return merkleBlocks;

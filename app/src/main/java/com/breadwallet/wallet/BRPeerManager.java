@@ -1,9 +1,7 @@
 package com.breadwallet.wallet;
 
 import android.app.Activity;
-import android.content.Context;
 import android.util.Log;
-import android.view.View;
 
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.BlockEntity;
@@ -134,10 +132,7 @@ public class BRPeerManager {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    for (BlockEntity blockEntity : blockEntities) {
-                        if (ctx == null || !saveStuffRunning) break;
-                        SQLiteManager.getInstance(ctx).insertMerkleBlock(blockEntity.getBlockBytes(), blockEntity.getBlockHeight());
-                    }
+                    SQLiteManager.getInstance(ctx).insertMerkleBlocks(blockEntities);
                 }
             }).start();
         }
@@ -152,10 +147,7 @@ public class BRPeerManager {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    for (PeerEntity peerEntity : peerEntities) {
-                        if (ctx == null || !saveStuffRunning) break;
-                        SQLiteManager.getInstance(ctx).insertPeer(peerEntity.getPeerAddress(), peerEntity.getPeerPort(), peerEntity.getPeerTimeStamp());
-                    }
+                    SQLiteManager.getInstance(ctx).insertPeer(peerEntities);
                 }
             }).start();
         }

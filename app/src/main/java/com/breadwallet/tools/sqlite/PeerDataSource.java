@@ -33,8 +33,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.breadwallet.presenter.entities.BRPeerEntity;
+import com.breadwallet.presenter.entities.BlockEntity;
+import com.breadwallet.presenter.entities.PeerEntity;
+import com.breadwallet.tools.TypesConverter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 class PeerDataSource {
@@ -53,7 +57,7 @@ class PeerDataSource {
 //            BRSQLiteHelper.PEER_SERVICES, BRSQLiteHelper.PEER_TIME_STAMP
     };
 
-    private PeerDataSource(){
+    private PeerDataSource() {
         dbHelper = null;
     }
 
@@ -69,35 +73,25 @@ class PeerDataSource {
         dbHelper.close();
     }
 
-    public BRPeerEntity createPeer(BRPeerEntity peer) {
-        ContentValues values = new ContentValues();
-//        values.put(BRSQLiteHelper.PEER_COLUMN_ID, peer.getId());
-        values.put(BRSQLiteHelper.PEER_ADDRESS, peer.getAddress());
-        values.put(BRSQLiteHelper.PEER_PORT, peer.getPort());
-        values.put(BRSQLiteHelper.PEER_TIMESTAMP, peer.getTimeStamp());
-//        values.put(BRSQLiteHelper.PEER_ADDRESS, peer.getAddress());
-//        values.put(BRSQLiteHelper.PEER_MISBEHAVIN, peer.getMisbehavin());
-//        values.put(BRSQLiteHelper.PEER_PORT, peer.getPort());
-//        values.put(BRSQLiteHelper.PEER_SERVICES, peer.getServices());
-//        values.put(BRSQLiteHelper.PEER_TIME_STAMP, peer.getTimeStamp());
+    public void putPeers(PeerEntity[] peerEntities) {
         database.beginTransaction();
         try {
-            long insertId = database.insert(BRSQLiteHelper.PEER_TABLE_NAME, null, values);
-            Cursor cursor = database.query(BRSQLiteHelper.PEER_TABLE_NAME,
-                    allColumns, BRSQLiteHelper.PEER_COLUMN_ID + " = " + insertId, null,
-                    null, null, null);
-            cursor.moveToFirst();
-            BRPeerEntity peerEntity = cursorToPeer(cursor);
-            cursor.close();
+            for (PeerEntity p : peerEntities) {
+                Log.e(TAG,"sqlite peer saved: " + Arrays.toString(p.getPeerTimeStamp()));
+                ContentValues values = new ContentValues();
+                values.put(BRSQLiteHelper.PEER_ADDRESS, p.getPeerAddress());
+                values.put(BRSQLiteHelper.PEER_PORT, p.getPeerPort());
+                values.put(BRSQLiteHelper.PEER_TIMESTAMP, p.getPeerTimeStamp());
+                database.insert(BRSQLiteHelper.PEER_TABLE_NAME, null, values);
+            }
+
             database.setTransactionSuccessful();
-            return peerEntity;
         } catch (Exception ex) {
             Log.e(TAG, "Error inserting into SQLite", ex);
             //Error in between database transaction
         } finally {
             database.endTransaction();
         }
-        return null;
 
     }
 
@@ -126,7 +120,7 @@ class PeerDataSource {
         }
         // make sure to close the cursor
 
-        Log.e(TAG,"peers: " + peers.size());
+        Log.e(TAG, "peers: " + peers.size());
         cursor.close();
         return peers;
     }

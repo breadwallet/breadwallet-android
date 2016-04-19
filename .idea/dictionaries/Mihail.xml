@@ -2,6 +2,8 @@
   <dictionary name="Mihail">
     <words>
       <w>bitcoin</w>
+      <w>merkle</w>
+      <w>sqlite</w>
     </words>
   </dictionary>
 </component>
