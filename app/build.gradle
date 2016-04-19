@@ -23,8 +23,8 @@ android {
         applicationId "com.breadwallet"
         minSdkVersion 23
         targetSdkVersion 23
-        versionCode 3
-        versionName "0.6.1"
+        versionCode 4
+        versionName "0.6-beta4"
     }
 
     compileOptions {
