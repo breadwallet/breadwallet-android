@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,14 +20,10 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.tools.TypesConverter;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
-import com.breadwallet.tools.sqlite.SQLiteManager;
-import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 
-import java.nio.CharBuffer;
 import java.text.Normalizer;
 import java.util.Arrays;
 
@@ -106,7 +101,8 @@ public class FragmentWipeWallet extends Fragment {
                     }
                 }, 500);
                 if (phraseIsValid(recoveryPhraseEditText.getText().toString().trim().toLowerCase())) {
-                    m.wipeWallet(getActivity());
+                    m.wipeKeyStore();
+                    m.wipeWalletButKeystore(getActivity());
                     startIntroActivity();
                     FragmentAnimator.resetFragmentAnimator();
                 } else {

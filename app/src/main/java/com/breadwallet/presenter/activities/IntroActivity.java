@@ -75,13 +75,24 @@ public class IntroActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
         app = this;
+
         canary = KeyStoreManager.getKeyStoreCanary(this, BRConstants.PUT_CANARY_REQUEST_CODE);
-        if(canary.equals("none")){
-            KeyStoreManager.resetWalletKeyStore();
-            SharedPreferences prefs = getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.clear();
-            editor.apply();
+        byte[] masterPubKey = KeyStoreManager.getMasterPublicKey(this);
+        boolean isFirstAddressCorrect = false;
+        if (masterPubKey != null && masterPubKey.length != 0) {
+            isFirstAddressCorrect = checkFirstAddress(masterPubKey);
+        }
+        Log.e(TAG, "isFirstAddressCorrect: " + isFirstAddressCorrect);
+        if (!isFirstAddressCorrect) {
+            Log.e(TAG, "CLEARING THE WALLET");
+            BRWalletManager.getInstance(this).wipeWalletButKeystore(this);
+        }
+
+        if (canary.equals("none")) {
+            BRWalletManager m = BRWalletManager.getInstance(this);
+            m.wipeWalletButKeystore(this);
+            m.wipeKeyStore();
+
         }
 
         leftButton = (Button) findViewById(R.id.intro_left_button);
@@ -98,6 +109,15 @@ public class IntroActivity extends FragmentActivity {
                 IntroWelcomeFragment.class.getName()).commit();
         startTheWalletIfExists();
 
+    }
+
+    private boolean checkFirstAddress(byte[] mpk) {
+        SharedPreferences prefs = getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
+        String addressFromPrefs = prefs.getString(BRConstants.FIRST_ADDRESS, "");
+        String generatedAddress = BRWalletManager.getFirstAddress(mpk);
+        Log.e(TAG, "addressFromPrefs: " + addressFromPrefs);
+        Log.e(TAG, "generatedAddress: " + generatedAddress);
+        return addressFromPrefs.equals(generatedAddress);
     }
 
     @Override
@@ -150,7 +170,7 @@ public class IntroActivity extends FragmentActivity {
         fragmentTransaction.commitAllowingStateLoss();
     }
 
-    public void showWarningFragment( ) {
+    public void showWarningFragment() {
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         IntroNewWalletFragment introNewWalletFragment = (IntroNewWalletFragment) getFragmentManager().
                 findFragmentByTag(IntroNewWalletFragment.class.getName());

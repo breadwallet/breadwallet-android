@@ -2,9 +2,7 @@ package com.breadwallet.presenter.fragments;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -18,17 +16,11 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.IntroActivity;
-import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.BRConstants;
-import com.breadwallet.tools.TypesConverter;
-import com.breadwallet.tools.WordsReader;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.wallet.BRWalletManager;
 
-import java.io.IOException;
-import java.nio.CharBuffer;
 import java.text.Normalizer;
-import java.util.List;
 
 /**
  * BreadWallet
@@ -93,7 +85,9 @@ public class IntroRecoverWalletFragment extends Fragment {
 
                 if (BRWalletManager.getInstance(getActivity()).validatePhrase(getActivity(), phraseToCheck)) {
 
-                    BRWalletManager.getInstance(getActivity()).wipeWallet(getActivity());
+                    BRWalletManager m = BRWalletManager.getInstance(getActivity());
+                    m.wipeWalletButKeystore(getActivity());
+                    m.wipeKeyStore();
 
                     boolean success = KeyStoreManager.putKeyStorePhrase(terminatedPhrase, getActivity(), 0);
                     boolean success2 = false;
@@ -103,8 +97,6 @@ public class IntroRecoverWalletFragment extends Fragment {
 //                    char[] normalizedPhrase = Normalizer.normalize(sequence, Normalizer.Form.NFKD).toCharArray();
                     if (!success || !success2)
                         return;
-                    BRWalletManager m;
-                    m = BRWalletManager.getInstance(getActivity());
 //                    KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), getActivity());
 
                     byte[] pubKey = m.getMasterPubKey(terminatedPhrase);

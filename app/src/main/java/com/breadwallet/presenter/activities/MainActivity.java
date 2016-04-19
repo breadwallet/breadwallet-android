@@ -120,7 +120,6 @@ public class MainActivity extends FragmentActivity implements Observer {
     public ProgressBar syncProgressBar;
     public TextView syncProgressText;
     private static ParallaxViewPager parallaxViewPager;
-    //    private ClipboardManager myClipboard;
     private boolean doubleBackToExitPressedOnce;
     public static boolean beenThroughSavedInstanceMethod = false;
     public ViewFlipper viewFlipper;
@@ -131,9 +130,6 @@ public class MainActivity extends FragmentActivity implements Observer {
     private int middleViewState = 0;
     private BroadcastReceiver mPowerKeyReceiver = null;
     private int middleBubbleBlocksCount = 0;
-//    private String amountHolder;
-//    private String addressHolder;
-
     private static int MODE = RELEASE;
     private TextView testnet;
     public SoftKeyboard softKeyboard;
@@ -195,10 +191,6 @@ public class MainActivity extends FragmentActivity implements Observer {
             }
         }).start();
 
-        //TOOD take off
-//        String phrase = new String(KeyStoreManager.getKeyStorePhrase(this));
-//        Log.e(TAG, "phrase fresh: " + phrase);
-
         if (((BreadWalletApp) getApplication()).isEmulatorOrDebug()) {
             MODE = DEBUG;
             Log.e(TAG, "DEBUG MODE!!!!!!");
@@ -222,7 +214,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         viewFlipper.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
 
                 if (MiddleViewAdapter.getSyncing() && FragmentAnimator.level == 0) {
                     hideAllBubbles();
@@ -260,21 +251,6 @@ public class MainActivity extends FragmentActivity implements Observer {
                     }
 
                 }
-//                    if (middleViewState == 0) {
-//                        ((BreadWalletApp) getApplication()).showCustomToast(app, getResources().
-//                                        getString(R.string.middle_view_tip_first),
-//                                (int) (screenParametersPoint.y * 0.7), Toast.LENGTH_LONG, 0);
-//                        middleViewState++;
-//                    } else if(middleViewState == 1){
-//                        ((BreadWalletApp) getApplication()).showCustomToast(app, getResources().
-//                                        getString(R.string.middle_view_tip_second),
-//                                (int) (screenParametersPoint.y * 0.8), Toast.LENGTH_LONG, 0);
-//                        middleViewState++;
-//                    } else {
-//                        ((BreadWalletApp) getApplication()).cancelToast();
-//                        middleViewState = 0;
-//                    }
-//                }
             }
         });
 
@@ -312,7 +288,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         //check the txAdded callback functionality
 //        BRWalletManager m = BRWalletManager.getInstance(app);
 //        m.testWalletCallbacks();
-
 //        Log.e(TAG, "the pubkey length is: " + m.getPublicKeyBuff().length);
 //                Log.e(TAG, "FROM KEYSTORE PUBKEY: " + KeyStoreManager.getMasterPublicKey(app));
 //                Log.e(TAG, "FROM KEYSTORE PHRASE: " + KeyStoreManager.getKeyStoreString(app));
@@ -325,7 +300,8 @@ public class MainActivity extends FragmentActivity implements Observer {
         if (RootUtil.isDeviceRooted()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("DEVICE SECURITY COMPROMISED")
-                    .setMessage("On a \'rooted\' device, any app can access any other app\'s keystore data (and steal your bitcoins)." + (hasBitcoin ? "\nWipe this wallet immediately and restore on a secure device." : ""))
+                    .setMessage("On a \'rooted\' device, any app can access any other app\'s keystore data (and steal your bitcoins)."
+                            + (hasBitcoin ? "\nWipe this wallet immediately and restore on a secure device." : ""))
                     .setCancelable(false)
                     .setNegativeButton(getString(R.string.ok_button), new DialogInterface.OnClickListener() {
                         @Override
@@ -367,8 +343,6 @@ public class MainActivity extends FragmentActivity implements Observer {
             BRPeerManager.startSyncingProgressThread();
         }
         askForPasscode();
-
-
     }
 
     @Override
@@ -868,8 +842,13 @@ public class MainActivity extends FragmentActivity implements Observer {
 
                 return;
             }
+            //Save the first address for future check
             m.createWallet(transactionsCount, pubkeyEncoded);
-
+            String firstAddress = BRWalletManager.getFirstAddress(pubkeyEncoded);
+            SharedPreferences prefs = getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString(BRConstants.FIRST_ADDRESS, firstAddress);
+            editor.apply();
         }
 
         if (!pm.isCreated()) {
@@ -953,6 +932,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     }
 
     public void hideAllBubbles() {
+
         if (middleBubble1 != null)
             middleBubble1.setVisibility(View.GONE);
         if (middleBubble2 != null)
@@ -972,7 +952,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     }
 
 //    private native void cTests();
-
+//
 //    private void createInvisibleLayoutTips() {
 //        // Creating a new RelativeLayout
 //        final RelativeLayout mask = new RelativeLayout(this);
@@ -1023,7 +1003,6 @@ public class MainActivity extends FragmentActivity implements Observer {
 //                    MainActivity.screenParametersPoint.y / 5, Toast.LENGTH_LONG, 0);
 //        tipsCount++;
 //    }
-
 
     private void printPhoneSpecs() {
         String specsTag = "PHONE SPECS";

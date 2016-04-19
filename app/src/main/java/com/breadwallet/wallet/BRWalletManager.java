@@ -122,7 +122,7 @@ public class BRWalletManager {
      * given a private key, queries chain.com for unspent outputs and calls the completion block with
      * a signed transaction that will sweep the balance into wallet (doesn't publish the tx)
      */
-    public boolean sweepPrivateKey() {
+    public boolean wipeKeyStore() {
         return KeyStoreManager.resetWalletKeyStore();
     }
 
@@ -162,8 +162,7 @@ public class BRWalletManager {
         }
     }
 
-    public void wipeWallet(Activity activity) {
-        sweepPrivateKey();
+    public void wipeWalletButKeystore(Activity activity) {
         BRPeerManager.saveStuffRunning = false;
         BRPeerManager.getInstance(activity).peerManagerFreeEverything();
         walletFreeEverything();
@@ -354,5 +353,7 @@ public class BRWalletManager {
     public native void walletFreeEverything();
 
     private native boolean validateRecoveryPhrase(String[] words, String phrase);
+
+    public native static  String getFirstAddress(byte[] mpk);
 
 }

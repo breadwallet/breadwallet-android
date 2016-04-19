@@ -60,6 +60,7 @@ public class BRConstants {
 
 
     public static final String CANARY_STRING = "canary";
+    public static final String FIRST_ADDRESS = "firstAddress";
 
     private BRConstants() {
     }

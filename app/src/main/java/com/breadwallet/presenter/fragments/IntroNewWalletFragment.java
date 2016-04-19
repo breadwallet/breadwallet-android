@@ -1,26 +1,16 @@
 package com.breadwallet.presenter.fragments;
 
 import android.app.Fragment;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.IntroActivity;
-import com.breadwallet.presenter.activities.IntroShowPhraseActivity;
-import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.tools.animation.BackgroundMovingAnimator;
-import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.wallet.BRWalletManager;
-
-import java.text.Normalizer;
 
 /**
  * BreadWallet
@@ -65,7 +55,9 @@ public class IntroNewWalletFragment extends Fragment {
                 new Handler().post(new Runnable() {
                     @Override
                     public void run() {
-                        BRWalletManager.getInstance(getActivity()).wipeWallet(getActivity());
+                        BRWalletManager m = BRWalletManager.getInstance(getActivity());
+                        m.wipeWalletButKeystore(getActivity());
+                        m.wipeKeyStore();
                         boolean success = m.generateRandomSeed();
                         if (success)
                             ((IntroActivity) getActivity()).showWarningFragment();
