@@ -569,7 +569,6 @@ public class MainActivity extends FragmentActivity implements Observer {
 //                String strToReduce = String.valueOf(amountToReduce);
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-
                 builder.setMessage(String.format("reduce payment amount by %s to accommodate the bitcoin network fee?", cm.getFormattedCurrencyString("BTC", String.valueOf(amountToReduce))))
                         .setTitle("insufficient funds for bitcoin network fee")
                         .setCancelable(false)
