@@ -78,8 +78,8 @@ JNIEXPORT jstring Java_com_breadwallet_wallet_BRWalletManager_getReceiveAddress(
 JNIEXPORT jobjectArray Java_com_breadwallet_wallet_BRWalletManager_getTransactions(JNIEnv *env,
                                                                                    jobject thiz);
 
-JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRWalletManager_tryTransaction
-        (JNIEnv *env, jobject obj, jstring address, jlong amount);
+JNIEXPORT jobject JNICALL Java_com_breadwallet_wallet_BRWalletManager_tryTransaction
+        (JNIEnv *env, jobject obj, jstring jAddress, jlong jAmount);
 
 JNIEXPORT jboolean Java_com_breadwallet_wallet_BRWalletManager_pay(JNIEnv *env, jobject thiz,
                                                                    jstring address,
@@ -111,6 +111,9 @@ JNIEXPORT jstring Java_com_breadwallet_wallet_BRWalletManager_getFirstAddress(JN
                                                                          jobject thiz,
                                                                          jbyteArray bytePubKey);
 
-//const void *theSeed(void *info, const char *authPrompt, uint64_t amount, size_t *seedLen);
+JNIEXPORT jboolean Java_com_breadwallet_wallet_BRWalletManager_publishSerializedTransaction(JNIEnv *env,
+                                                                                jobject thiz,
+                                                                                jbyteArray serializedTransaction,
+                                                                                jstring phrase);
 
 #endif //BREADWALLET_WALLET_H

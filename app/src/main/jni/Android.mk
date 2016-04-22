@@ -4,7 +4,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := core
 
-LOCAL_CFLAGS := -std=c99 -DBITCOIN_TESTNET=0 -g -Wno-trigraphs -Wmissing-field-initializers -Wno-missing-prototypes -Werror=return-type -Wdocumentation -Wunreachable-code-aggressive -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wunused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wconditional-uninitialized -Wno-unknown-pragmas -pedantic -Wshadow -Wfour-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wassign-enum -Wno-shorten-64-to-32 -Wpointer-sign -Wnewline-eof -Wdeprecated-declarations -Wno-sign-conversion
+LOCAL_CFLAGS := -std=c99 -DBITCOIN_TESTNET=1 -g -Wno-trigraphs -Wmissing-field-initializers -Wno-missing-prototypes -Werror=return-type -Wdocumentation -Wunreachable-code-aggressive -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wunused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wconditional-uninitialized -Wno-unknown-pragmas -pedantic -Wshadow -Wfour-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wassign-enum -Wno-shorten-64-to-32 -Wpointer-sign -Wnewline-eof -Wdeprecated-declarations -Wno-sign-conversion
 
 LOCAL_LDLIBS := -llog -lm
 
@@ -25,7 +25,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := bread
 
-LOCAL_CFLAGS := -std=c99 -DBITCOIN_TESTNET=0 -g -Wno-trigraphs -Wmissing-field-initializers -Wno-missing-prototypes -Werror=return-type -Wdocumentation -Wunreachable-code-aggressive -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wunused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wconditional-uninitialized -Wno-unknown-pragmas -pedantic -Wshadow -Wfour-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wassign-enum -Wno-shorten-64-to-32 -Wpointer-sign -Wnewline-eof -Wdeprecated-declarations -Wno-sign-conversion
+LOCAL_CFLAGS := -std=c99 -DBITCOIN_TESTNET=1 -g -Wno-trigraphs -Wmissing-field-initializers -Wno-missing-prototypes -Werror=return-type -Wdocumentation -Wunreachable-code-aggressive -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wunused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wconditional-uninitialized -Wno-unknown-pragmas -pedantic -Wshadow -Wfour-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wassign-enum -Wno-shorten-64-to-32 -Wpointer-sign -Wnewline-eof -Wdeprecated-declarations -Wno-sign-conversion
 LOCAL_C_INCLUDES := \
 $(LOCAL_PATH)/breadwallet-core/secp256k1\
 $(LOCAL_PATH)/breadwallet-core

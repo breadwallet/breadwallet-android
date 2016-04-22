@@ -94,7 +94,7 @@ public class KeyStoreManager {
     private static final String WALLET_CREATION_TIME_FILENAME = "my_creation_time";
     private static final String PASS_CODE_FILENAME = "my_pass_code";
 
-    private static final int AUTH_DURATION_SEC = 300;//TODO make 300
+    private static final int AUTH_DURATION_SEC = 5;//TODO make 300
 //    private static final int CANARY_AUTH_DURATION_SEC = Integer.MAX_VALUE;
 
     public static boolean putKeyStorePhrase(String strToStore, Activity context, int requestCode) {
@@ -315,6 +315,8 @@ public class KeyStoreManager {
             recoveredSecret = new String(result, "UTF-8");
         } catch (UserNotAuthenticatedException e) {
             Log.e(TAG, Log.getStackTraceString(e));
+            showAuthenticationScreen(context, requestCode);
+            return "noauth";
         } catch(UnrecoverableKeyException e){
             e.printStackTrace();
             return "none";

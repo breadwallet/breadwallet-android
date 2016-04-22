@@ -111,17 +111,17 @@ static void txStatusUpdate(void *info) {
 
 }
 
-static void txRejected(void *info, int rescanRecommended) {
-    if(!_peerManager) return;
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "txRejected");
-    JNIEnv *globalEnv = getEnv();
-    if(!globalEnv) return;
-    jmethodID mid = (*globalEnv)->GetStaticMethodID(globalEnv, _peerManagerClass, "txRejected", "(I)V");
-    //call java methods
-    (*globalEnv)->CallStaticVoidMethod(globalEnv, _peerManagerClass, mid, rescanRecommended);
-
-    (*_jvmPM)->DetachCurrentThread(_jvmPM);
-}
+//static void txRejected(void *info, int rescanRecommended) {
+//    if(!_peerManager) return;
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "txRejected");
+//    JNIEnv *globalEnv = getEnv();
+//    if(!globalEnv) return;
+//    jmethodID mid = (*globalEnv)->GetStaticMethodID(globalEnv, _peerManagerClass, "txRejected", "(I)V");
+//    //call java methods
+//    (*globalEnv)->CallStaticVoidMethod(globalEnv, _peerManagerClass, mid, rescanRecommended);
+//
+//    (*_jvmPM)->DetachCurrentThread(_jvmPM);
+//}
 
 
 static void saveBlocks(void *info, BRMerkleBlock *blocks[], size_t count) {
@@ -260,7 +260,7 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_createAndConnect(JNIEnv
                                     blocksCount, peersCount == 0 || !_peers ? NULL : _peers,
                                     peersCount);
         BRPeerManagerSetCallbacks(_peerManager, NULL, syncStarted, syncSucceeded, syncFailed,
-                                  txStatusUpdate, txRejected, saveBlocks, savePeers,
+                                  txStatusUpdate, saveBlocks, savePeers,
                                   networkIsReachable);
     }
     //TESTING ONLY
@@ -303,7 +303,7 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_createBlockArrayWithCou
                                                                                    jobject thiz,
                                                                                    size_t bkCount) {
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "block array created with count: %zu", bkCount);
-    _blocks = calloc(bkCount, sizeof(BRMerkleBlock));
+    _blocks = calloc(bkCount, sizeof(*_blocks));
     // need to call free();
 }
 
@@ -386,11 +386,17 @@ JNIEXPORT void Java_com_breadwallet_wallet_BRPeerManager_peerManagerFreeEverythi
     if(_peerManager){
         BRPeerManagerDisconnect(_peerManager);
         BRPeerManagerFree(_peerManager);
+
     }
-    if(_blocks)
+    if(_blocks){
         free(_blocks);
-    if(_peers != NULL)
+        _blocks = NULL;
+    }
+
+    if(_peers != NULL){
         free(_peers);
+        _peers = NULL;
+    }
     _peerManager = NULL;
 
 }

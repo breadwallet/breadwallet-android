@@ -71,11 +71,12 @@ task buildNative(type: Exec, description: 'Compile JNI source via NDK') {
                 'NDK_LOG=1',
                 "NDK_APPLICATION_MK=$projectDir/src/main/jni/Application.mk",
                 "NDK_OUT=$buildDir/intermediates/ndk/${variant.dirName}/obj",
-                "NDK_LIBS_OUT=$projectDir/src/main/jniLibs"
-//        copy {
-//            from "$buildDir/intermediates/ndk/${variant.dirName}/lib"
-//            into "src/main/jniLibs"
-//        }
+                "NDK_LIBS_OUT=$buildDir/intermediates/ndk/${variant.dirName}/lib"
+        delete 'src/main/jniLibs'
+        copy {
+            from "$buildDir/intermediates/ndk/${variant.dirName}/lib"
+            into "src/main/jniLibs"
+        }
     }
 }
 
@@ -90,7 +91,7 @@ task cleanNative(type: Exec, description: 'Clean JNI object files') {
                 'ndk-build NDK_DEBUG=1',
                 "NDK_APPLICATION_MK=$projectDir/src/main/jni/Application.mk",
                 "NDK_OUT=$buildDir/intermediates/ndk/${variant.dirName}/obj",
-                "NDK_LIBS_OUT=$projectDir/src/main/jniLibs",
+                "NDK_LIBS_OUT=$buildDir/intermediates/ndk/${variant.dirName}/lib",
                 'clean'
     }
 }

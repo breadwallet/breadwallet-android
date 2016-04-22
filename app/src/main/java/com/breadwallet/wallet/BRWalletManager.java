@@ -15,6 +15,7 @@ import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.IntroShowPhraseActivity;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.activities.RequestQRActivity;
+import com.breadwallet.presenter.entities.TmpTxObject;
 import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.presenter.fragments.MainFragmentQR;
@@ -101,7 +102,7 @@ public class BRWalletManager {
         boolean success = KeyStoreManager.putKeyStorePhrase(strPhrase, ctx, BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE);
         boolean success2 = false;
         if (success)
-            success2 = KeyStoreManager.putKeyStoreCanary(BRConstants.CANARY_STRING, ctx, BRConstants.PUT_CANARY_REQUEST_CODE);
+            success2 = KeyStoreManager.putKeyStoreCanary(BRConstants.CANARY_STRING, ctx, 0);
         IntroShowPhraseActivity.phrase = strPhrase;
         KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), ctx);
         byte[] pubKey = BRWalletManager.getInstance(ctx).getMasterPubKey(strPhrase);
@@ -344,7 +345,7 @@ public class BRWalletManager {
 
     public native boolean transactionIsVerified(String txHash);
 
-    public native boolean tryTransaction(String addressHolder, long amountHolder);
+    public native byte[] tryTransaction(String addressHolder, long amountHolder);
 
     public native long localAmount(long amount, double price);
 
@@ -355,5 +356,7 @@ public class BRWalletManager {
     private native boolean validateRecoveryPhrase(String[] words, String phrase);
 
     public native static  String getFirstAddress(byte[] mpk);
+
+    public native boolean publishSerializedTransaction(byte[] serializedTransaction, String phrase);
 
 }

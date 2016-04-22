@@ -20,6 +20,7 @@ import android.os.PersistableBundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
+import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -49,6 +50,7 @@ import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.NetworkChangeReceiver;
+import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.security.RootUtil;
 import com.breadwallet.tools.SoftKeyboard;
 import com.breadwallet.tools.adapter.AmountAdapter;
@@ -556,18 +558,19 @@ public class MainActivity extends FragmentActivity implements Observer {
         final Double amountAsDouble = Double.parseDouble(amountHolder);
         if (amountAsDouble <= 0) return;
         Log.e(TAG, "*********Sending: " + amountHolder + " to: " + addressHolder);
-        CurrencyManager cm = CurrencyManager.getInstance(this);
+        final CurrencyManager cm = CurrencyManager.getInstance(this);
 
         if (cm.isNetworkAvailable(this)) {
-            BRWalletManager m = BRWalletManager.getInstance(this);
-            boolean txPossible = m.tryTransaction(addressHolder, cm.getSatoshisFromBits(Math.round(amountAsDouble)));
+            final BRWalletManager m = BRWalletManager.getInstance(this);
+            byte[] tmpTx = m.tryTransaction(addressHolder, cm.getSatoshisFromBits(Math.round(amountAsDouble)));
             double feeForTx = cm.getBitsFromSatoshi(m.feeForTransaction(addressHolder, cm.getSatoshisFromBits(Math.round(amountAsDouble))));
-            if (!txPossible && amountAsDouble <= cm.getBitsFromSatoshi(cm.getBALANCE()) && amountAsDouble > 0) {
+            if (tmpTx == null && amountAsDouble <= cm.getBitsFromSatoshi(cm.getBALANCE()) && amountAsDouble > 0) {
+
                 final double maxAmountDouble = cm.getBitsFromSatoshi(m.getMaxOutputAmount());
                 Log.e(TAG, "maxAmountDouble: " + maxAmountDouble);
                 final double amountToReduce = amountAsDouble - maxAmountDouble;
 //                String strToReduce = String.valueOf(amountToReduce);
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
                 builder.setMessage(String.format("reduce payment amount by %s to accommodate the bitcoin network fee?", cm.getFormattedCurrencyString("BTC", String.valueOf(amountToReduce))))
                         .setTitle("insufficient funds for bitcoin network fee")
@@ -580,14 +583,20 @@ public class MainActivity extends FragmentActivity implements Observer {
                         })
                         .setPositiveButton("confirm", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, Math.round(amountAsDouble - amountToReduce), null));
+                                byte[] tmpTx2 = m.tryTransaction(addressHolder, cm.getSatoshisFromBits(Math.round(amountAsDouble)));
+                                if (tmpTx2 != null) {
+                                    PostAuthenticationProcessor.getInstance().setTmpTx(tmpTx2);
+                                    confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, Math.round(amountAsDouble - amountToReduce), null));
+                                } else {
+                                    Log.e(TAG,"tmpTxObject2 is null!!!");
+                                }
                             }
                         });
                 AlertDialog alert = builder.create();
                 alert.show();
                 return;
             }
-
+            PostAuthenticationProcessor.getInstance().setTmpTx(tmpTx);
             Log.e(TAG, "pay >>>> feeForTx: " + feeForTx + ", amountAsDouble: " + amountAsDouble +
                     ", CurrencyManager.getInstance(this).getBALANCE(): " + cm.getBitsFromSatoshi(cm.getBALANCE()));
             if (feeForTx != 0 && amountAsDouble + feeForTx < cm.getBitsFromSatoshi(cm.getBALANCE())) {
@@ -645,30 +654,23 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1) {
-            // Challenge completed, proceed with using cipher
-            if (resultCode == RESULT_OK) {
-                Log.e(TAG, "Auth for phrase was accepted");
-//                if (tryEncrypt()) {
-//                    showPurchaseConfirmation();
-//                }
-            } else {
-                Log.e(TAG, "Auth for phrase was rejected");
+        switch (requestCode) {
+            case BRConstants.SHOW_PHRASE_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    PostAuthenticationProcessor.getInstance().onShowPhraseAuth(this);
+                } else {
+                    KeyStoreManager.showAuthenticationScreen(this, requestCode);
+                }
+                break;
 
-                // operation. Go to error/cancellation flow.
-            }
+            case BRConstants.PAY_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    PostAuthenticationProcessor.getInstance().onPublishTxAuth(this);
+                } else {
+                    KeyStoreManager.showAuthenticationScreen(this, requestCode);
+                }
+                break;
         }
-        //when starting another activity that will return a result (ex: auth)
-
-//        if (resultCode == RESULT_OK) {
-//            ((BreadWalletApp) getApplicationContext()).setUnlocked(true);
-//            String tmp = CurrencyManager.getInstance(this).getCurrentBalanceText();
-//            ((BreadWalletApp) getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
-//            softKeyboard.closeSoftKeyboard();
-//        } else {
-//            ((BreadWalletApp) getApplicationContext()).setUnlocked(false);
-//            ((BreadWalletApp) getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_IMAGE, null);
-//        }
     }
 
     @Override
@@ -1021,6 +1023,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
                         String currBlock = String.valueOf(BRPeerManager.getCurrentBlockHeight());
                         String latestBlockKnown = String.valueOf(BRPeerManager.getEstimatedBlockHeight());
                         String formattedBlockInfo = String.format("block #%s of %s", currBlock, latestBlockKnown);

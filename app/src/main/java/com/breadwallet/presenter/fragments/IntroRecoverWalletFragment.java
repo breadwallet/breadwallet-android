@@ -18,6 +18,7 @@ import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.text.Normalizer;
@@ -89,19 +90,19 @@ public class IntroRecoverWalletFragment extends Fragment {
                     m.wipeWalletButKeystore(getActivity());
                     m.wipeKeyStore();
 
-                    boolean success = KeyStoreManager.putKeyStorePhrase(terminatedPhrase, getActivity(), 0);
+                    boolean success = KeyStoreManager.putKeyStorePhrase(terminatedPhrase, getActivity(), BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE);
                     boolean success2 = false;
                     if (success)
                         success2 = KeyStoreManager.putKeyStoreCanary(BRConstants.CANARY_STRING, getActivity(), 0);
 //                    CharSequence sequence = CharBuffer.wrap(phraseToCheck);
 //                    char[] normalizedPhrase = Normalizer.normalize(sequence, Normalizer.Form.NFKD).toCharArray();
-                    if (!success || !success2)
+                    if (!success || !success2){
+                        PostAuthenticationProcessor.getInstance().setPhraseForKeyStore(terminatedPhrase);
                         return;
-//                    KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), getActivity());
+                    }
 
                     byte[] pubKey = m.getMasterPubKey(terminatedPhrase);
                     KeyStoreManager.putMasterPublicKey(pubKey, getActivity());
-//                    Log.w(TAG, "The phrase from keystore is: " + KeyStoreManager.getKeyStoreString(getActivity()));
                     IntroActivity introActivity = (IntroActivity) getActivity();
                     getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                     introActivity.startMainActivity();

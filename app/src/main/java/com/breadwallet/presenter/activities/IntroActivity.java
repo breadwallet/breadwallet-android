@@ -76,7 +76,19 @@ public class IntroActivity extends FragmentActivity {
         setContentView(R.layout.activity_intro);
         app = this;
 
-        canary = KeyStoreManager.getKeyStoreCanary(this, BRConstants.PUT_CANARY_REQUEST_CODE);
+
+        leftButton = (Button) findViewById(R.id.intro_left_button);
+        leftButton.setVisibility(View.GONE);
+        leftButton.setClickable(false);
+        leftButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
+        canary = KeyStoreManager.getKeyStoreCanary(this, BRConstants.CANARY_REQUEST_CODE);
+        if(canary.equals("noauth")) return;
         byte[] masterPubKey = KeyStoreManager.getMasterPublicKey(this);
         boolean isFirstAddressCorrect = false;
         if (masterPubKey != null && masterPubKey.length != 0) {
@@ -94,24 +106,13 @@ public class IntroActivity extends FragmentActivity {
             m.wipeKeyStore();
 
         }
-
-        leftButton = (Button) findViewById(R.id.intro_left_button);
-        leftButton.setVisibility(View.GONE);
-        leftButton.setClickable(false);
-        leftButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-
         getFragmentManager().beginTransaction().add(R.id.intro_layout, new IntroWelcomeFragment(),
                 IntroWelcomeFragment.class.getName()).commit();
         startTheWalletIfExists();
 
     }
 
-    private boolean checkFirstAddress(byte[] mpk) {
+    public boolean checkFirstAddress(byte[] mpk) {
         SharedPreferences prefs = getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
         String addressFromPrefs = prefs.getString(BRConstants.FIRST_ADDRESS, "");
         String generatedAddress = BRWalletManager.getFirstAddress(mpk);
@@ -199,14 +200,32 @@ public class IntroActivity extends FragmentActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE) {
-            // Challenge completed, proceed with using cipher
-            if (resultCode == RESULT_OK) {
-                PostAuthenticationProcessor.getInstance().onCreateWalletAuth(this);
-            } else {
-                KeyStoreManager.showAuthenticationScreen(this, requestCode);
-            }
+        switch (requestCode){
+            case BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    PostAuthenticationProcessor.getInstance().onCreateWalletAuth(this);
+                } else {
+                    KeyStoreManager.showAuthenticationScreen(this, requestCode);
+                }
+                break;
+            case BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    PostAuthenticationProcessor.getInstance().onRecoverWalletAuth(this);
+                } else {
+                    KeyStoreManager.showAuthenticationScreen(this, requestCode);
+                }
+                break;
+
+            case BRConstants.CANARY_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    PostAuthenticationProcessor.getInstance().onCanaryCheckAuth(this);
+                } else {
+                    KeyStoreManager.showAuthenticationScreen(this, requestCode);
+                }
+                break;
+
         }
+
         //when starting another activity that will return a result (ex: auth)
     }
 
@@ -234,7 +253,7 @@ public class IntroActivity extends FragmentActivity {
 
     }
 
-    private void startTheWalletIfExists() {
+    public  void startTheWalletIfExists() {
         final BRWalletManager m = BRWalletManager.getInstance(this);
         if (!m.isPasscodeEnabled(this)) {
             //Device passcode/password should be enabled for the app to work

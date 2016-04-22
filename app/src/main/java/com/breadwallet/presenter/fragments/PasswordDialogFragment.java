@@ -55,6 +55,7 @@ import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PassCodeManager;
+import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.wallet.BRWalletManager;
 
 public class PasswordDialogFragment extends DialogFragment {

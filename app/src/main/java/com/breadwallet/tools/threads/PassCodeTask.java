@@ -44,6 +44,8 @@ public class PassCodeTask extends Thread {
     @Override
     public void run() {
         super.run();
+        android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+
         if (activity == null) return;
         final FragmentManager fm = activity.getFragmentManager();
 
@@ -51,6 +53,7 @@ public class PassCodeTask extends Thread {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
                     Log.e(TAG, "PassCodeTask, while, run...");
                     if (passwordDialogFragment == null) {
                         passwordDialogFragment = new PasswordDialogFragment();

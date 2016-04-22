@@ -15,12 +15,9 @@ import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.BRClipboardManager;
 import com.breadwallet.tools.BRConstants;
-import com.breadwallet.tools.TypesConverter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.wallet.BRWalletManager;
-
-import java.nio.CharBuffer;
 
 /**
  * BreadWallet
@@ -55,23 +52,20 @@ public class FragmentRecoveryPhrase extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(
                 R.layout.fragment_recovery_phrase, container, false);
-        BRWalletManager m = BRWalletManager.getInstance(getActivity());
         thePhrase = (TextView) rootView.findViewById(R.id.the_phrase);
 
 //        //TODO delete this code below which is for testing reasons only
-//        thePhrase.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                BRClipboardManager.copyToClipboard(getActivity(),thePhrase.getText().toString());
-//                ((BreadWalletApp)getActivity().getApplication()).showCustomToast(getActivity(),
-//                        getString(R.string.copied), 300, Toast.LENGTH_SHORT,0);
-//            }
-//        });
+        thePhrase.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BRClipboardManager.copyToClipboard(getActivity(), thePhrase.getText().toString());
+                ((BreadWalletApp) getActivity().getApplication()).showCustomToast(getActivity(),
+                        getString(R.string.copied), 300, Toast.LENGTH_SHORT, 0);
+            }
+        });
 
-//        final long startTime = System.currentTimeMillis();
-        String phrase = KeyStoreManager.getKeyStorePhrase(getActivity(), BRConstants.RECOVERY_PHRASE_REQUEST_CODE);
-        if(phrase == null || phrase.isEmpty()) getActivity().onBackPressed();
-
+        String phrase = KeyStoreManager.getKeyStorePhrase(getActivity(), BRConstants.SHOW_PHRASE_REQUEST_CODE);
+        if (phrase == null || phrase.isEmpty()) getActivity().onBackPressed();
         thePhrase.setText(phrase);
         return rootView;
     }
@@ -80,9 +74,9 @@ public class FragmentRecoveryPhrase extends Fragment {
     public void onResume() {
         super.onResume();
         Activity app = getActivity();
-        if(app == null) app = MainActivity.app;
-        if(app!=null)
-            ((BreadWalletApp)app.getApplication()).hideKeyboard(app);
-        MiddleViewAdapter.resetMiddleView(getActivity(),null);
+        if (app == null) app = MainActivity.app;
+        if (app != null)
+            ((BreadWalletApp) app.getApplication()).hideKeyboard(app);
+        MiddleViewAdapter.resetMiddleView(getActivity(), null);
     }
 }
