@@ -67,7 +67,7 @@ task buildNative(type: Exec, description: 'Compile JNI source via NDK') {
         commandLine "$ndkDir/ndk-build",
                 'NDK_PROJECT_PATH=null',
                 'V=1',
-                'ndk-build NDK_DEBUG=1', // NDK_DEBUG=1
+                'NDK_DEBUG=1', // NDK_DEBUG=1
                 'NDK_LOG=1',
                 "NDK_APPLICATION_MK=$projectDir/src/main/jni/Application.mk",
                 "NDK_OUT=$buildDir/intermediates/ndk/${variant.dirName}/obj",
@@ -88,7 +88,7 @@ task cleanNative(type: Exec, description: 'Clean JNI object files') {
         def ndkDir = properties.getProperty('ndk.dir')
         commandLine "$ndkDir/ndk-build",
                 'NDK_PROJECT_PATH=null',
-                'ndk-build NDK_DEBUG=1',
+                'NDK_DEBUG=1',
                 "NDK_APPLICATION_MK=$projectDir/src/main/jni/Application.mk",
                 "NDK_OUT=$buildDir/intermediates/ndk/${variant.dirName}/obj",
                 "NDK_LIBS_OUT=$buildDir/intermediates/ndk/${variant.dirName}/lib",

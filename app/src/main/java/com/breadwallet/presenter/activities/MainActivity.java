@@ -588,7 +588,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                                     PostAuthenticationProcessor.getInstance().setTmpTx(tmpTx2);
                                     confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, Math.round(amountAsDouble - amountToReduce), null));
                                 } else {
-                                    Log.e(TAG,"tmpTxObject2 is null!!!");
+                                    Log.e(TAG, "tmpTxObject2 is null!!!");
                                 }
                             }
                         });
@@ -872,7 +872,7 @@ public class MainActivity extends FragmentActivity implements Observer {
 //            final long tempTime = 1454736431;
             Log.e(TAG, "earliestKeyTime before connecting: " + earliestKeyTime);
             pm.createAndConnect(earliestKeyTime > 0 ? earliestKeyTime : 0, blocksCount, peersCount);
-
+            Log.e(TAG, "some");
         }
     }
 
