@@ -1,105 +1,55 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.model.application'
 
-android {
-    compileSdkVersion 23
-    buildToolsVersion '23.0.3'
+model {
+    android {
+        compileSdkVersion = 23
+        buildToolsVersion = '23.0.3'
 
-    lintOptions {
-        // set to true to turn off analysis progress reporting by lint
-        quiet false
-        // if true, stop the gradle build if errors are found
-        abortOnError false
-        // if true, only report errors
-        ignoreWarnings false
-    }
-
-    packagingOptions {
-        exclude 'LICENSE.txt'
-        exclude 'META-INF/LICENSE.txt'
-    }
-
-    defaultConfig {
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        applicationId "com.breadwallet"
-        minSdkVersion 23
-        targetSdkVersion 23
-        versionCode 4
-        versionName "0.6-beta4"
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
-    }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            debuggable false
-            jniDebuggable false
-
+        defaultConfig {
+            testInstrumentationRunner = 'android.support.test.runner.AndroidJUnitRunner'
+            applicationId = 'com.breadwallet'
+            minSdkVersion.apiLevel = 23
+            targetSdkVersion.apiLevel = 23
+            versionCode = 4
+            versionName = "0.6-beta4"
         }
-        debug {
-            debuggable true
-            jniDebuggable true
+        ndk {
+            moduleName = "core"
+            toolchainVersion = "4.9"
+//            // Note that CFlags has a capital C, which is inconsistent with
+//            // the naming convention of other properties.  This is a
+//            // technical limitation that will be resolved
+            CFlags.addAll(['-std=c99','-g','-DBITCOIN_TESTNET=0','-I' + file('src/main/secp/secp256k1/include'), '-I' + file('src/main/secp/secp256k1') ,'-I' + file('src/main/secp'), '-I' + file('src/main/jni/breadwallet-core')])
+//                           '-Wno-trigraphs', '-Wmissing','-field-initializers', '-Wno-missing-prototypes', '-Werror=return-type', '-Wdocumentation', '-Wunreachable-code-aggressive', '-Wno-missing-braces', '-Wparentheses', '-Wswitch', '-Wno-unused-function', '-Wunused-label', '-Wno-unused-parameter', '-Wunused-variable', '-Wunused-value', '-Wempty-body', '-Wconditional-uninitialized', '-Wno-unknown-pragmas', '-pedantic', '-Wshadow', '-Wfour-char-constants', '-Wno-conversion', '-Wconstant-conversion', '-Wint-conversion', '-Wbool-conversion ', '-Wenum-conversion', '-Wassign-enum', '-Wno-shorten-64-to-32', '-Wpointer-sign', '-Wnewline-eof', '-Wdeprecated-declarations', '-Wno-sign-conversion'])
+//            ldFlags.add("-L/custom/lib/path")
+            ldLibs.addAll(['android','log'])
+//            stl = 'gnustl_static'
         }
 
-        foss {
-            debuggable false
-            jniDebuggable false
+        lintOptions.with {
+            // set to true to turn off analysis progress reporting by lint
+            quiet = false
+            // if true, stop the gradle build if errors are found
+            abortOnError = false
+            // if true, only report errors
+            ignoreWarnings = false
         }
-    }
 
-    sourceSets {
-        main {
-            jni.srcDirs = []
+
+        buildTypes {
+            release {
+                minifyEnabled = false
+                debuggable = false
+
+            }
+            debug {
+                debuggable = true
+            }
+
         }
+
     }
 
-}
-
-task buildNative(type: Exec, description: 'Compile JNI source via NDK') {
-    android.applicationVariants.all { variant ->
-        Properties properties = new Properties()
-        properties.load(project.rootProject.file('local.properties').newDataInputStream())
-        def ndkDir = properties.getProperty('ndk.dir')
-        println(projectDir)
-        commandLine "$ndkDir/ndk-build",
-                'NDK_PROJECT_PATH=null',
-                'V=1',
-                'NDK_DEBUG=1', // NDK_DEBUG=1
-                'NDK_LOG=1',
-                "NDK_APPLICATION_MK=$projectDir/src/main/jni/Application.mk",
-                "NDK_OUT=$buildDir/intermediates/ndk/${variant.dirName}/obj",
-                "NDK_LIBS_OUT=$buildDir/intermediates/ndk/${variant.dirName}/lib"
-        delete 'src/main/jniLibs'
-        copy {
-            from "$buildDir/intermediates/ndk/${variant.dirName}/lib"
-            into "src/main/jniLibs"
-        }
-    }
-}
-
-task cleanNative(type: Exec, description: 'Clean JNI object files') {
-    android.applicationVariants.all { variant ->
-        Properties properties = new Properties()
-        properties.load(project.rootProject.file('local.properties').newDataInputStream())
-
-        def ndkDir = properties.getProperty('ndk.dir')
-        commandLine "$ndkDir/ndk-build",
-                'NDK_PROJECT_PATH=null',
-                'NDK_DEBUG=1',
-                "NDK_APPLICATION_MK=$projectDir/src/main/jni/Application.mk",
-                "NDK_OUT=$buildDir/intermediates/ndk/${variant.dirName}/obj",
-                "NDK_LIBS_OUT=$buildDir/intermediates/ndk/${variant.dirName}/lib",
-                'clean'
-    }
-}
-
-clean.dependsOn 'cleanNative'
-
-tasks.withType(JavaCompile) {
-    compileTask -> compileTask.dependsOn buildNative
 }
 
 repositories {
@@ -107,7 +57,7 @@ repositories {
 }
 
 dependencies {
-//    compile fileTree(dir: 'libs', include: ['*.jar'])
+    //    compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile 'com.android.support.test:runner:0.4.1'
     // Set this dependency to use JUnit 4 rules
     androidTestCompile 'com.android.support.test:rules:0.4.1'
@@ -115,7 +65,6 @@ dependencies {
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'
     // Set this dependency to build and run UI Automator tests
     androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.1'
-
     androidTestCompile 'com.android.support:appcompat-v7:23.3.0'
     androidTestCompile 'com.android.support:support-v13:23.3.0'
     androidTestCompile 'com.google.zxing:core:3.2.1'
@@ -123,11 +72,11 @@ dependencies {
     androidTestCompile 'com.mcxiaoke.volley:library:1.0.19'
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
     androidTestCompile 'com.android.support:design:23.3.0'
-    androidTestCompile ('ch.acra:acra:4.5.0'){
+    androidTestCompile('ch.acra:acra:4.5.0') {
         exclude group: 'org.json', module: 'json'
     }
     androidTestCompile 'org.apache.directory.studio:org.apache.commons.io:2.4'
-//
+    //
     compile 'com.android.support:appcompat-v7:23.3.0'
     compile 'com.android.support:support-v13:23.3.0'
     compile 'com.google.zxing:core:3.2.1'
@@ -135,7 +84,7 @@ dependencies {
     compile 'com.mcxiaoke.volley:library:1.0.19'
     compile 'com.android.support.test.espresso:espresso-core:2.2.2'
     compile 'com.android.support:design:23.3.0'
-    compile ('ch.acra:acra:4.5.0'){
+    compile('ch.acra:acra:4.5.0') {
         exclude group: 'org.json', module: 'json'
     }
     compile 'org.apache.directory.studio:org.apache.commons.io:2.4'

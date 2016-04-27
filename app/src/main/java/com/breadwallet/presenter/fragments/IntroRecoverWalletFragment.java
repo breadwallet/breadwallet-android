@@ -82,7 +82,6 @@ public class IntroRecoverWalletFragment extends Fragment {
 
                 String phraseToCheck = editText.getText().toString().trim().toLowerCase();
                 String normalizedPhrase = Normalizer.normalize(phraseToCheck, Normalizer.Form.NFKD);
-                String terminatedPhrase = normalizedPhrase + '\0';
 
                 if (BRWalletManager.getInstance(getActivity()).validatePhrase(getActivity(), phraseToCheck)) {
 
@@ -90,18 +89,18 @@ public class IntroRecoverWalletFragment extends Fragment {
                     m.wipeWalletButKeystore(getActivity());
                     m.wipeKeyStore();
 
-                    boolean success = KeyStoreManager.putKeyStorePhrase(terminatedPhrase, getActivity(), BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE);
+                    boolean success = KeyStoreManager.putKeyStorePhrase(normalizedPhrase, getActivity(), BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE);
                     boolean success2 = false;
                     if (success)
                         success2 = KeyStoreManager.putKeyStoreCanary(BRConstants.CANARY_STRING, getActivity(), 0);
 //                    CharSequence sequence = CharBuffer.wrap(phraseToCheck);
 //                    char[] normalizedPhrase = Normalizer.normalize(sequence, Normalizer.Form.NFKD).toCharArray();
                     if (!success || !success2){
-                        PostAuthenticationProcessor.getInstance().setPhraseForKeyStore(terminatedPhrase);
+                        PostAuthenticationProcessor.getInstance().setPhraseForKeyStore(normalizedPhrase);
                         return;
                     }
 
-                    byte[] pubKey = m.getMasterPubKey(terminatedPhrase);
+                    byte[] pubKey = m.getMasterPubKey(normalizedPhrase);
                     KeyStoreManager.putMasterPublicKey(pubKey, getActivity());
                     IntroActivity introActivity = (IntroActivity) getActivity();
                     getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);

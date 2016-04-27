@@ -94,7 +94,7 @@ public class KeyStoreManager {
     private static final String WALLET_CREATION_TIME_FILENAME = "my_creation_time";
     private static final String PASS_CODE_FILENAME = "my_pass_code";
 
-    private static final int AUTH_DURATION_SEC = 300;//TODO make 300
+    private static final int AUTH_DURATION_SEC = 300; //TODO make 300
 //    private static final int CANARY_AUTH_DURATION_SEC = Integer.MAX_VALUE;
 
     public static boolean putKeyStorePhrase(String strToStore, Activity context, int requestCode) {
@@ -317,11 +317,11 @@ public class KeyStoreManager {
             Log.e(TAG, Log.getStackTraceString(e));
             showAuthenticationScreen(context, requestCode);
             return "noauth";
-        } catch(UnrecoverableKeyException e){
+        } catch (UnrecoverableKeyException e) {
             e.printStackTrace();
             return "none";
-        }catch (IOException | CertificateException | NoSuchAlgorithmException |
-                InvalidAlgorithmParameterException | NoSuchPaddingException |  KeyStoreException | InvalidKeyException e) {
+        } catch (IOException | CertificateException | NoSuchAlgorithmException |
+                InvalidAlgorithmParameterException | NoSuchPaddingException | KeyStoreException | InvalidKeyException e) {
             e.printStackTrace();
         }
 
@@ -410,7 +410,7 @@ public class KeyStoreManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        Log.e(TAG, "recoveredSecret: " + Arrays.toString(recoveredSecret));
         return recoveredSecret;
     }
 
@@ -665,7 +665,7 @@ public class KeyStoreManager {
         if (intent != null) {
             ((Activity) context).startActivityForResult(intent, requestCode);
         } else {
-            Log.e(TAG,"NO PASS SETUP");
+            Log.e(TAG, "NO PASS SETUP");
         }
     }
 

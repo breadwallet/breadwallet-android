@@ -57,7 +57,5 @@ gradle.properties
 .navigation/
 
 # jniLibs files
-app/src/main/jniLibs
-
 #NDK
 obj/

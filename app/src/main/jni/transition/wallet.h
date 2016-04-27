@@ -31,7 +31,7 @@
 extern BRWallet *_wallet;
 extern jclass _walletManagerClass;
 
-JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_encodeSeed(JNIEnv *env,
+JNIEXPORT jstring Java_com_breadwallet_wallet_BRWalletManager_encodeSeed(JNIEnv *env,
                                                                             jobject thiz,
                                                                             jbyteArray seed,
                                                                             jobjectArray stringArray);

@@ -127,8 +127,7 @@ public class FragmentWipeWallet extends Fragment {
         String normalizedPhrase = Normalizer.normalize(insertedPhrase.trim(), Normalizer.Form.NFKD);
         if (!BRWalletManager.getInstance(getActivity()).validatePhrase(getActivity(), normalizedPhrase))
             return false;
-        String nullTerminatedPhrase = normalizedPhrase + '\0';
-        byte[] pubKey = m.getMasterPubKey(nullTerminatedPhrase);
+        byte[] pubKey = m.getMasterPubKey(normalizedPhrase);
         byte[] pubKeyFromKeyStore = KeyStoreManager.getMasterPublicKey(getActivity());
         return Arrays.equals(pubKey, pubKeyFromKeyStore);
     }

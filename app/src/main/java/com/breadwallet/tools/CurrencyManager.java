@@ -232,9 +232,9 @@ public class CurrencyManager extends Observable {
         if (rate == 0) rate = 1;
         double exchange = (Double.parseDouble(target) * rate / 1000000);
         if (ctx != null) {
-            long exchangeFromCore = BRWalletManager.getInstance(ctx).localAmount(new Double(target).longValue(),rate);
+//            long exchangeFromCore = BRWalletManager.getInstance(ctx).localAmount(new Double(target).longValue(),rate);
             Log.e(TAG,"exchange: " + exchange);
-            Log.e(TAG,"exchangeFromCore: " + exchangeFromCore);
+//            Log.e(TAG,"exchangeFromCore: " + exchangeFromCore);
         }
         DecimalFormat decimalFormat = new DecimalFormat("0.00");
         return getFormattedCurrencyString(iso, String.valueOf(decimalFormat.format(exchange)));

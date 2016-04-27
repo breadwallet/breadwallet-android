@@ -88,17 +88,10 @@ public class BRWalletManager {
         byte[] keyBytes = sr.generateSeed(16);
         if (words.length < 2000)
             throw new IllegalArgumentException("the list is wrong, size: " + words.length);
-        if(keyBytes.length == 0) throw new NullPointerException("failed to create the seed");
-        byte[] phrase = encodeSeed(keyBytes, words);
-        if (phrase == null || phrase.length == 0)
+        if (keyBytes.length == 0) throw new NullPointerException("failed to create the seed");
+        String strPhrase = encodeSeed(keyBytes, words);
+        if (strPhrase == null || strPhrase.length() == 0)
             throw new NullPointerException("failed to encodeSeed");
-        String strPhrase = null;
-        try {
-            strPhrase = new String(phrase, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            throw new NullPointerException("failed to create the phrase");
-        }
         boolean success = KeyStoreManager.putKeyStorePhrase(strPhrase, ctx, BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE);
         boolean success2 = false;
         if (success)
@@ -107,8 +100,7 @@ public class BRWalletManager {
         KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), ctx);
         byte[] pubKey = BRWalletManager.getInstance(ctx).getMasterPubKey(strPhrase);
         KeyStoreManager.putMasterPublicKey(pubKey, ctx);
-
-        phrase = null;
+        strPhrase = null;
         Log.e(TAG, "setKeyStoreString was successful: " + success);
         return success && success2;
 
@@ -305,7 +297,7 @@ public class BRWalletManager {
         return validateRecoveryPhrase(words, phrase);
     }
 
-    private native byte[] encodeSeed(byte[] seed, String[] wordList);
+    private native String encodeSeed(byte[] seed, String[] wordList);
 
     public native void createWallet(int transactionCount, byte[] pubkey);
 
@@ -313,15 +305,7 @@ public class BRWalletManager {
 
     public native void createTxArrayWithCount(int count);
 
-    public native void setCallbacks(byte[] wallet);
-
-    public native void setPeerManagerCallbacks(byte[] peerManager);
-
     public native byte[] getMasterPubKey(String normalizedString);
-
-    public native void testWalletCallbacks();
-
-    public native void testTransactionAdding(long amount);
 
     public static native String getReceiveAddress();
 
@@ -355,7 +339,7 @@ public class BRWalletManager {
 
     private native boolean validateRecoveryPhrase(String[] words, String phrase);
 
-    public native static  String getFirstAddress(byte[] mpk);
+    public native static String getFirstAddress(byte[] mpk);
 
     public native boolean publishSerializedTransaction(byte[] serializedTransaction, String phrase);
 
