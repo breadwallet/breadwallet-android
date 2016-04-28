@@ -555,7 +555,8 @@ public class MainActivity extends FragmentActivity implements Observer {
     public void pay(final String addressHolder, String amountHolder) {
         if (addressHolder == null || amountHolder == null) return;
         if (addressHolder.length() < 20) return;
-        final Double amountAsDouble = Double.parseDouble(amountHolder);
+        BigDecimal bigDecimal = new BigDecimal(amountHolder);
+        final Double amountAsDouble = bigDecimal.doubleValue();
         if (amountAsDouble <= 0) return;
         Log.e(TAG, "*********Sending: " + amountHolder + " to: " + addressHolder);
         final CurrencyManager cm = CurrencyManager.getInstance(this);
@@ -583,12 +584,13 @@ public class MainActivity extends FragmentActivity implements Observer {
                         })
                         .setPositiveButton("confirm", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                byte[] tmpTx2 = m.tryTransaction(addressHolder, cm.getSatoshisFromBits(Math.round(amountAsDouble)));
+                                byte[] tmpTx2 = m.tryTransaction(addressHolder, cm.getSatoshisFromBits(Math.round(amountAsDouble - amountToReduce)));
                                 if (tmpTx2 != null) {
                                     PostAuthenticationProcessor.getInstance().setTmpTx(tmpTx2);
                                     confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, Math.round(amountAsDouble - amountToReduce), null));
                                 } else {
                                     Log.e(TAG, "tmpTxObject2 is null!!!");
+                                    ((BreadWalletApp) getApplication()).showCustomToast(app, "Failed to send, insufficient funds", screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
                                 }
                             }
                         });

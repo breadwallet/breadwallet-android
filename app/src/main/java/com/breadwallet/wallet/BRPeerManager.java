@@ -99,12 +99,17 @@ public class BRPeerManager {
     public static void syncSucceeded() {
         Log.e(TAG, "syncSucceeded");
         if (ctx == null) ctx = MainActivity.app;
-        if (ctx != null)
+        if (ctx != null) {
             stopSyncingProgressThread();
+            ((MainActivity)ctx).hideAllBubbles();
+        }
     }
 
     public static void syncFailed() {
-        stopSyncingProgressThread();
+        if (ctx != null) {
+            stopSyncingProgressThread();
+            ((MainActivity)ctx).hideAllBubbles();
+        }
     }
 
     public static void txStatusUpdate() {

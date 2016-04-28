@@ -291,7 +291,7 @@ public class FragmentSettingsAll extends Fragment {
             } else {
 
                 Log.e(TAG, "item.getBlockHeight(): " + blockHeight + ", confirms: " + confirms + ", lastBlock: " + estimatedBlockHeight);
-                sentReceivedTextView.setText(String.format("%d confirmations", confirms >= 0 && confirms <= 5 ? confirms : -1));
+                sentReceivedTextView.setText(String.format(Locale.getDefault(), "%d confirmations", confirms >= 0 && confirms <= 5 ? confirms : 0));
             }
         }
 
