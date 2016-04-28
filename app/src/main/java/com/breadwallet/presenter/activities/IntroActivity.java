@@ -88,7 +88,7 @@ public class IntroActivity extends FragmentActivity {
         });
 
         canary = KeyStoreManager.getKeyStoreCanary(this, BRConstants.CANARY_REQUEST_CODE);
-        if(canary.equals("noauth")) return;
+        if (canary.equals("noauth")) return;
         byte[] masterPubKey = KeyStoreManager.getMasterPublicKey(this);
         boolean isFirstAddressCorrect = false;
         if (masterPubKey != null && masterPubKey.length != 0) {
@@ -200,7 +200,7 @@ public class IntroActivity extends FragmentActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode){
+        switch (requestCode) {
             case BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
                     PostAuthenticationProcessor.getInstance().onCreateWalletAuth(this);
@@ -253,7 +253,7 @@ public class IntroActivity extends FragmentActivity {
 
     }
 
-    public  void startTheWalletIfExists() {
+    public void startTheWalletIfExists() {
         final BRWalletManager m = BRWalletManager.getInstance(this);
         if (!m.isPasscodeEnabled(this)) {
             //Device passcode/password should be enabled for the app to work
