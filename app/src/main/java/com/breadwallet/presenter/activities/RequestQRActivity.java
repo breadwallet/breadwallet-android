@@ -99,7 +99,7 @@ public class RequestQRActivity extends Activity {
             final String iso = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
             final float rate = settings.getFloat(FragmentCurrency.RATE, 1);
             amount = CurrencyManager.getInstance(this).getBitsAndExchangeString(rate, iso,
-                    String.valueOf(new BigDecimal(obj.amount).multiply(new BigDecimal("1000000"))));
+                    String.valueOf(new BigDecimal(obj.amount)));
         } catch (InvalidAlgorithmParameterException e) {
             e.printStackTrace();
         }

@@ -313,7 +313,7 @@ public class BRWalletManager {
 
     public native boolean pay(String addressHolder, long amountHolder, String strSeed);
 
-    public native boolean validateAddress(String address);
+    public static native boolean validateAddress(String address);
 
     public native boolean addressContainedInWallet(String address);
 

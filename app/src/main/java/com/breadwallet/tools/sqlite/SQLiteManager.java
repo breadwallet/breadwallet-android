@@ -143,7 +143,7 @@ public class SQLiteManager {
     public void insertMerkleBlocks(BlockEntity[] blockEntities) {
         MerkleBlockDataSource BKdataSource = null;
 
-        Log.e(TAG, "SQLiteManager - merkleBlock inserted");
+//        Log.e(TAG, "SQLiteManager - merkleBlock inserted");
 
         try {
             BKdataSource = new MerkleBlockDataSource(ctx);
@@ -194,7 +194,7 @@ public class SQLiteManager {
 
         PeerDataSource PRdataSource = null;
 
-        Log.e(TAG, "SQLiteManager - peer inserted");
+//        Log.e(TAG, "SQLiteManager - peer inserted");
 
         try {
             PRdataSource = new PeerDataSource(ctx);
@@ -211,7 +211,7 @@ public class SQLiteManager {
     public void updateTxByHash(String hash, int blockHeight) {
         TransactionDataSource TXdataSource = null;
 
-        Log.e(TAG, "SQLiteManager - transaction inserted");
+        Log.e(TAG, "SQLiteManager - transaction updated");
 
         try {
             TXdataSource = new TransactionDataSource(ctx);

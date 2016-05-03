@@ -249,7 +249,7 @@ public class PasswordDialogFragment extends DialogFragment {
                     BRWalletManager walletManager = BRWalletManager.getInstance(getActivity());
                     String seed = KeyStoreManager.getKeyStorePhrase(getActivity(), BRConstants.PAY_REQUEST_CODE);
                     if (seed != null && !seed.isEmpty()) {
-                        boolean success = walletManager.pay(request.addresses[0], request.amount * 100, seed);
+                        boolean success = walletManager.pay(request.addresses[0], (long) (request.amount * 100), seed);
                         if (!success) {
                             ((BreadWalletApp) getActivity().getApplication()).showCustomToast(getActivity(),
                                     "Failed to send", MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
@@ -259,7 +259,6 @@ public class PasswordDialogFragment extends DialogFragment {
                         return false;
                     }
                     seed = null;
-
                     final MediaPlayer mp = MediaPlayer.create(getActivity(), R.raw.coinflip);
                     mp.start();
                     FragmentAnimator.hideScanResultFragment();

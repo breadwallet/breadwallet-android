@@ -176,9 +176,8 @@ public class MainFragment extends Fragment {
     }
 
     private boolean checkIfAddressIsValid(String str) {
-        BRWalletManager m = BRWalletManager.getInstance(getActivity());
 
-        return m.validateAddress(str.trim());
+        return BRWalletManager.validateAddress(str.trim());
     }
 
     @Override

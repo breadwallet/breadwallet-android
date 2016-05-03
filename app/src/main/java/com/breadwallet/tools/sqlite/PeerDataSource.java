@@ -52,9 +52,6 @@ class PeerDataSource {
             BRSQLiteHelper.PEER_ADDRESS,
             BRSQLiteHelper.PEER_PORT,
             BRSQLiteHelper.PEER_TIMESTAMP
-//            BRSQLiteHelper.PEER_ADDRESS,
-//            BRSQLiteHelper.PEER_MISBEHAVIN, BRSQLiteHelper.PEER_PORT,
-//            BRSQLiteHelper.PEER_SERVICES, BRSQLiteHelper.PEER_TIME_STAMP
     };
 
     private PeerDataSource() {
@@ -66,18 +63,20 @@ class PeerDataSource {
     }
 
     public void open() throws SQLException {
-        database = dbHelper.getWritableDatabase();
+        database = dbHelper != null ? dbHelper.getWritableDatabase() : null;
     }
 
     public void close() {
-        dbHelper.close();
+        if (dbHelper != null) {
+            dbHelper.close();
+        }
     }
 
     public void putPeers(PeerEntity[] peerEntities) {
         database.beginTransaction();
         try {
             for (PeerEntity p : peerEntities) {
-                Log.e(TAG,"sqlite peer saved: " + Arrays.toString(p.getPeerTimeStamp()));
+//                Log.e(TAG,"sqlite peer saved: " + Arrays.toString(p.getPeerTimeStamp()));
                 ContentValues values = new ContentValues();
                 values.put(BRSQLiteHelper.PEER_ADDRESS, p.getPeerAddress());
                 values.put(BRSQLiteHelper.PEER_PORT, p.getPeerPort());
@@ -128,11 +127,6 @@ class PeerDataSource {
     private BRPeerEntity cursorToPeer(Cursor cursor) {
         BRPeerEntity peerEntity = new BRPeerEntity(cursor.getBlob(1), cursor.getBlob(2), cursor.getBlob(3));
         peerEntity.setId(cursor.getInt(0));
-//        peerEntity.setAddress(cursor.getInt(1));
-//        peerEntity.setMisbehavin(cursor.getShort(2));
-//        peerEntity.setPort(cursor.getShort(3));
-//        peerEntity.setServices(cursor.getShort(4));
-//        peerEntity.setTimeStamp(cursor.getLong(5));
         return peerEntity;
     }
 }

@@ -244,8 +244,8 @@ public class CurrencyManager extends Observable {
         return target / 100;
     }
 
-    public long getSatoshisFromBits(long target) {
-        return target * 100;
+    public long getSatoshisFromBits(double target) {
+        return (long) (target * 100);
     }
 
     public String getCurrentBalanceText() {

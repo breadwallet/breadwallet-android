@@ -3,7 +3,9 @@ package com.breadwallet.tools.security;
 import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
@@ -14,6 +16,7 @@ import com.breadwallet.presenter.entities.RequestObject;
 import com.breadwallet.presenter.exceptions.CertificateChainNotFound;
 import com.breadwallet.presenter.exceptions.PaymentRequestExpiredException;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
+import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.wallet.BRWalletManager;
 
@@ -22,8 +25,10 @@ import org.apache.commons.io.IOUtils;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.security.InvalidAlgorithmParameterException;
@@ -70,7 +75,15 @@ public class RequestHandler {
                 return;
             }
             if (requestObject.r != null) {
-                tryAndProcessRequestURL(requestObject);
+                //TODO fix that later
+                //----------------------------------------------------------------------------------
+                ((BreadWalletApp) app.getApplication()).showCustomToast(app, "Payment protocol not available in beta",
+                        MainActivity.screenParametersPoint.y / 2 + 300, Toast.LENGTH_LONG, 0);
+                if(requestObject.address == null || requestObject.address.isEmpty()) return;
+                tryAndProcessBitcoinURL(requestObject, app);
+                //----------------------------------------------------------------------------------
+//                tryAndProcessRequestURL(requestObject);
+                //----------------------------------------------------------------------------------
             } else if (requestObject.address != null) {
                 tryAndProcessBitcoinURL(requestObject, app);
             } else {
@@ -86,34 +99,53 @@ public class RequestHandler {
 
     public static RequestObject getRequestFromString(String str)
             throws InvalidAlgorithmParameterException {
-//        Log.e(TAG,"TEMP STRING: " + str);
-//        Log.e(TAG, "THIS SHOULD BE CALLED ONCE: " + Thread.currentThread().getName());
+        if (str == null || str.isEmpty()) return null;
         RequestObject obj = new RequestObject();
-        if (str.startsWith("bitcoin:")) {
-            String[] parts = str.split("\\?", 2);
-            obj.address = parts[0].substring(8);
-            if (parts.length == 1) return obj;
-            String[] params = parts[1].split("&");
-            for (String s : params) {
-                String[] keyValue = s.split("=");
-                if (keyValue.length != 2)
-                    throw new InvalidAlgorithmParameterException();
-                if (keyValue[0].equals("amount")) {
-                    obj.amount = keyValue[1];
-                    Log.e(TAG, "amount: " + obj.amount);
-                } else if (keyValue[0].equals("label")) {
-                    obj.label = keyValue[1];
-                    Log.e(TAG, "label: " + obj.label);
-                } else if (keyValue[0].equals("message")) {
-                    obj.message = keyValue[1].replace("%20", " ");
-                    Log.e(TAG, "message: " + obj.message);
-                } else if (keyValue[0].startsWith("req")) {
-                    obj.req = keyValue[1];
-                    Log.e(TAG, "req: " + obj.req);
-                } else if (keyValue[0].startsWith("r")) {
-                    obj.r = keyValue[1];
-                    Log.e(TAG, "r: " + obj.r);
+
+        String tmp = str.trim().replaceAll("\n", "").replaceAll(" ", "%20");
+        URI uri = URI.create(tmp);
+
+        if (uri.getScheme() == null || !uri.getScheme().equals("bitcoin")) {
+            tmp = "bitcoin://".concat(tmp);
+        } else {
+            tmp = tmp.replace("bitcoin:", "bitcoin://");
+        }
+        uri = URI.create(tmp);
+//        String[] parts = tmp.split("\\?", 2);
+        String host = uri.getHost();
+        if (host != null) {
+            String addrs = host.trim();
+            if (BRWalletManager.validateAddress(addrs)) {
+                obj.address = addrs;
+            }
+        }
+        String query = uri.getQuery();
+        if (query == null) return obj;
+        String[] params = query.split("&");
+        for (String s : params) {
+            String[] keyValue = s.split("=", 2);
+            if (keyValue.length != 2)
+                continue;
+            if (keyValue[0].trim().equals("amount")) {
+                try {
+                    BigDecimal bigDecimal = new BigDecimal(keyValue[1]);
+                    obj.amount = bigDecimal.multiply(new BigDecimal("1000000")).toString();
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
                 }
+                Log.e(TAG, "amount: " + obj.amount);
+            } else if (keyValue[0].trim().equals("label")) {
+                obj.label = keyValue[1];
+                Log.e(TAG, "label: " + obj.label);
+            } else if (keyValue[0].trim().equals("message")) {
+                obj.message = keyValue[1];
+                Log.e(TAG, "message: " + obj.message);
+            } else if (keyValue[0].trim().startsWith("req")) {
+                obj.req = keyValue[1];
+                Log.e(TAG, "req: " + obj.req);
+            } else if (keyValue[0].trim().startsWith("r")) {
+                obj.r = keyValue[1];
+                Log.e(TAG, "r: " + obj.r);
             }
         }
         Log.e(TAG, "obj.address: " + obj.address);
@@ -138,31 +170,41 @@ public class RequestHandler {
         /** use the C implementation to check it */
         final String str = requestObject.address;
         if (str == null) return false;
-        if (!BRWalletManager.getInstance(app).validateAddress(str.trim())) {
-            Log.e(TAG, "WRONG ADDRESS");
-            return false;
-        }
         final String[] addresses = new String[1];
         addresses[0] = str;
 //        CustomLogger.LogThis("amount", requestObject.amount, "address", requestObject.address);
         if (requestObject.amount != null) {
+            BigDecimal bigDecimal = new BigDecimal(requestObject.amount);
+            long amount = bigDecimal.longValue();
+            if (amount == 0) MainActivity.app.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    FragmentScanResult.address = str;
+                    //TODO find a better way
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            FragmentAnimator.animateScanResultFragment();
+                        }
+                    }, 1000);
 
-            Double doubleAmount = Double.parseDouble(requestObject.amount ) * 1000000;
-            long amount = doubleAmount.longValue();
-//            PaymentRequestEntity requestEntity = new PaymentRequestEntity(addresses,
-//                    amount, null);
-            Log.e(TAG, "requestEntity.amount: " + amount);
-            Log.e(TAG, "requestEntity.addresses[0]: " + addresses[0]);
+                }
+            });
             String strAmount = String.valueOf(amount);
             if (app != null) {
-                app.pay(addresses[0], strAmount);
+                app.pay(addresses[0], strAmount, null);
             }
         } else {
             MainActivity.app.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     FragmentScanResult.address = str;
-                    FragmentAnimator.animateScanResultFragment();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            FragmentAnimator.animateScanResultFragment();
+                        }
+                    }, 1000);
                 }
             });
         }
@@ -177,7 +219,7 @@ public class RequestHandler {
         @Override
         protected String doInBackground(String... uri) {
             InputStream in;
-            MainActivity app = MainActivity.app;
+            final MainActivity app = MainActivity.app;
             try {
                 Log.e(TAG, "the uri: " + uri[0]);
                 URL url = new URL(uri[0]);
@@ -188,19 +230,35 @@ public class RequestHandler {
                 urlConnection.setUseCaches(false);
                 in = urlConnection.getInputStream();
                 if (in == null) {
-//                    Log.e(TAG, "The inputStream is null!");
+                    Log.e(TAG, "The inputStream is null!");
                     return null;
                 }
                 byte[] serializedBytes = IOUtils.toByteArray(in);
                 if (serializedBytes == null || serializedBytes.length == 0) {
-                    throw new NullPointerException("bytes are null!");
+                    Log.e(TAG, "serializedBytes are null!!!");
+                    return null;
                 }
                 paymentRequest = parsePaymentRequest(serializedBytes);
+
+                if (paymentRequest == null) {
+                    Log.e(TAG, "paymentRequest is null!!!");
+                    if (app != null) {
+                        app.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ((BreadWalletApp) app.getApplication()).showCustomToast(app, "invalid request",
+                                        MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
+                            }
+                        });
+                    }
+                    return null;
+                }
+
                 //Logging
                 StringBuilder allAddresses = new StringBuilder();
                 for (String s : paymentRequest.addresses) {
                     allAddresses.append(s).append(", ");
-                    if (!BRWalletManager.getInstance(app).validateAddress(s)) {
+                    if (!BRWalletManager.validateAddress(s)) {
                         if (app != null)
                             ((BreadWalletApp) app.getApplication()).
                                     showCustomDialog(app.getString(R.string.attention),
@@ -218,8 +276,10 @@ public class RequestHandler {
 //                        String.valueOf(paymentRequest.merchantData.length), "addresses", allAddresses.toString(),
 //                        "amount", String.valueOf(paymentRequest.amount));
                 //end logging
-                if (paymentRequest.time > paymentRequest.expires)
-                    throw new PaymentRequestExpiredException("The request is expired!");
+                if (paymentRequest.time > paymentRequest.expires) {
+                    Log.e(TAG, "Request is expired");
+                    return null;
+                }
                 List<X509Certificate> certList = X509CertificateValidator.getCertificateFromBytes(serializedBytes);
                 certName = X509CertificateValidator.certificateValidation(certList, paymentRequest);
 
@@ -238,10 +298,6 @@ public class RequestHandler {
                                 showCustomDialog(app.getString(R.string.warning), app.getString(R.string.connection_timed_out), app.getString(R.string.close));
                 } else if (e instanceof CertificateChainNotFound) {
                     Log.e(TAG, "No certificates!", e);
-                } else if (e instanceof PaymentRequestExpiredException) {
-                    if (app != null)
-                        ((BreadWalletApp) app.getApplication()).
-                                showCustomDialog(app.getString(R.string.warning), app.getString(R.string.payment_request_expired), app.getString(R.string.close));
                 } else {
                     if (app != null)
                         ((BreadWalletApp) app.getApplication()).
@@ -265,7 +321,7 @@ public class RequestHandler {
                     paymentRequest.amount, cn);
             MainActivity app = MainActivity.app;
             if (app != null) {
-                app.confirmPay(requestEntity);
+                app.pay(requestEntity.addresses[0], String.valueOf(CurrencyManager.getInstance(app).getBitsFromSatoshi(requestEntity.amount)), requestEntity.cn);
             }
 
         }

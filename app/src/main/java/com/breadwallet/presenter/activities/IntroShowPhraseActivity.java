@@ -81,7 +81,6 @@ public class IntroShowPhraseActivity extends Activity {
             phrase = null;
         } else {
             phrase = null;
-            throw new RuntimeException("Failed to retrieve the phrase!");
         }
 
         new Handler().postDelayed(new Runnable() {

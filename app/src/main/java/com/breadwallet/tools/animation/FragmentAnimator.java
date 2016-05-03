@@ -111,8 +111,13 @@ public class FragmentAnimator {
         MainActivity.scanResultFragmentOn = true;
         InputMethodManager keyboard = (InputMethodManager) app.
                 getSystemService(Context.INPUT_METHOD_SERVICE);
-        keyboard.hideSoftInputFromWindow(CustomPagerAdapter.adapter.
-                mainFragment.addressEditText.getWindowToken(), 0);
+
+        try {
+            keyboard.hideSoftInputFromWindow(CustomPagerAdapter.adapter.
+                    mainFragment.addressEditText.getWindowToken(), 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         app.setBurgerButtonImage(MainActivity.BACK);
         //Disabled inspection: <Expected resource type anim>
         final FragmentManager fragmentManager = app.getFragmentManager();
