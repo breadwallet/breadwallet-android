@@ -39,13 +39,13 @@ class JsonParser {
     public static final String TAG = JsonParser.class.getName();
 
     public static JSONArray getJSonArray() {
-        String jsonString = callURL("https://bitpay.com/rates");
+        String jsonString = callURL("https://api.breadwallet.com/rates");
 //        System.out.println("\n\njsonString: " + jsonString);
         JSONArray jsonArray = null;
         try {
             JSONObject obj = new JSONObject(jsonString);
 
-            jsonArray = obj.getJSONArray("data");
+            jsonArray = obj.getJSONArray("body");
 //            Log.e(TAG,"\n\njsonArray: " + jsonArray);
         } catch (JSONException e) {
             e.printStackTrace();

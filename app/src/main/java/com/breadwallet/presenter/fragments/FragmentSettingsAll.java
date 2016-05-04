@@ -28,6 +28,7 @@ import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -299,14 +300,14 @@ public class FragmentSettingsAll extends Fragment {
         Log.e(TAG, "item.getTimeStamp(): " + itemTimeStamp);
         dateTextView.setText(itemTimeStamp != 0 ? getFormattedDateFromLong(itemTimeStamp * 1000) : getFormattedDateFromLong(System.currentTimeMillis()));
 
-        double bitsAmount = m.getBitsFromSatoshi(received ? item.getReceived() : (item.getSent() - item.getReceived()) * -1);
+        long satoshisAmount = received ? item.getReceived() : (item.getSent() - item.getReceived()) * -1;
 
-        bitsTextView.setText(m.getFormattedCurrencyString("BTC", String.valueOf(bitsAmount)));
-        dollarsTextView.setText(String.format("(%s)", m.getExchangeForAmount(m.getRateFromPrefs(), m.getISOFromPrefs(), String.valueOf(bitsAmount))));
-        double bitsAfterTx = m.getBitsFromSatoshi(item.getBalanceAfterTx());
+        bitsTextView.setText(m.getFormattedCurrencyString("BTC", satoshisAmount));
+        dollarsTextView.setText(String.format("(%s)", m.getExchangeForAmount(m.getRateFromPrefs(), m.getISOFromPrefs(), new BigDecimal(satoshisAmount))));
+        long satoshisAfterTx = item.getBalanceAfterTx();
 
-        bitsTotalTextView.setText(m.getFormattedCurrencyString("BTC", String.valueOf(bitsAfterTx)));
-        dollarsTotalTextView.setText(String.format("(%s)", m.getExchangeForAmount(m.getRateFromPrefs(), m.getISOFromPrefs(), String.valueOf(bitsAfterTx))));
+        bitsTotalTextView.setText(m.getFormattedCurrencyString("BTC", satoshisAfterTx));
+        dollarsTotalTextView.setText(String.format("(%s)", m.getExchangeForAmount(m.getRateFromPrefs(), m.getISOFromPrefs(), new BigDecimal(satoshisAfterTx))));
 
         return tmpLayout;
     }

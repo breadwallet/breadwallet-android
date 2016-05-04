@@ -23,6 +23,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
@@ -68,17 +69,19 @@ public class CurrencyManager extends Observable {
     private long BALANCE = 0;
     private TimerTask timerTask;
     public final String bitcoinLowercase = "\u0180";
-    private final Handler handler = new Handler();
+    private Handler handler;
     public static boolean separatorNeedsToBeShown = false;
     private final CurrencyListAdapter currencyListAdapter;
     private static Activity ctx;
 
     private CurrencyManager() {
         currencyListAdapter = new CurrencyListAdapter(ctx);
+        handler = new Handler();
     }
 
     public static CurrencyManager getInstance(Activity context) {
         ctx = context;
+
         if (instance == null) {
             instance = new CurrencyManager();
         }
@@ -86,7 +89,7 @@ public class CurrencyManager extends Observable {
     }
 
     public boolean isNetworkAvailable(Activity context) {
-        if(context == null) return false;
+        if (context == null) return false;
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
@@ -209,57 +212,49 @@ public class CurrencyManager extends Observable {
         }
     }
 
-    public String getMiddleTextExchangeString(long rate, String iso) {
+    public String getMiddleTextExchangeString(double rate, String iso) {
 //        Log.e(TAG, "result of the exchange rate calculation: " + result);
         if (rate == 0) rate = 1;
-        double result = 1000000 / rate;
-        DecimalFormat decimalFormat = new DecimalFormat("0.00");
-        return getFormattedCurrencyString(iso, "1") + " = " +
-                getFormattedCurrencyString("BTC", String.valueOf(decimalFormat.format(result)));
+        if (ctx == null) ctx = MainActivity.app;
+        if (ctx == null) return null;
+        long result = BRWalletManager.getInstance(ctx).bitcoinAmount(100, new BigDecimal(String.valueOf(rate)).multiply(new BigDecimal("100")).doubleValue());
+        return getFormattedCurrencyString(iso, 100) + " = " +
+                getFormattedCurrencyString("BTC", result);
     }
 
-    public String getBitsAndExchangeString(double rate, String iso, String target) {
+    public String getBitsAndExchangeString(double rate, String iso, BigDecimal target) {
         Log.e(TAG, "target: " + target);
 //        Log.e(TAG, "result of the exchange rate calculation: " + result);
         if (rate == 0) rate = 1;
-        double exchange = (Double.parseDouble(target) * rate / 1000000);
-        DecimalFormat decimalFormat = new DecimalFormat("0.00");
-        return getFormattedCurrencyString("BTC", target) + " = " +
-                getFormattedCurrencyString(iso, String.valueOf(decimalFormat.format(exchange)));
+        long exchange = BRWalletManager.getInstance(ctx).localAmount(target.longValue(),
+                new BigDecimal(String.valueOf(rate)).multiply(new BigDecimal("100")).doubleValue());
+        return getFormattedCurrencyString("BTC", target.longValue()) + " = " +
+                getFormattedCurrencyString(iso, exchange);
     }
 
-    public String getExchangeForAmount(double rate, String iso, String target) {
+    public String getExchangeForAmount(double rate, String iso, BigDecimal target) {
         if (rate == 0) rate = 1;
-        double exchange = (Double.parseDouble(target) * rate / 1000000);
+        long exchange = BRWalletManager.getInstance(ctx).localAmount(target.longValue(),
+                new BigDecimal(String.valueOf(rate)).multiply(new BigDecimal("100")).doubleValue());
         if (ctx != null) {
 //            long exchangeFromCore = BRWalletManager.getInstance(ctx).localAmount(new Double(target).longValue(),rate);
-            Log.e(TAG,"exchange: " + exchange);
+            Log.e(TAG, "exchange: " + exchange);
 //            Log.e(TAG,"exchangeFromCore: " + exchangeFromCore);
         }
-        DecimalFormat decimalFormat = new DecimalFormat("0.00");
-        return getFormattedCurrencyString(iso, String.valueOf(decimalFormat.format(exchange)));
-    }
-
-    public double getBitsFromSatoshi(double target) {
-        return target / 100;
-    }
-
-    public long getSatoshisFromBits(double target) {
-        return (long) (target * 100);
+        return getFormattedCurrencyString(iso, exchange);
     }
 
     public String getCurrentBalanceText() {
         String iso = getISOFromPrefs();
         double rate = getRateFromPrefs();
-        double balance = getBitsFromSatoshi(getBALANCE());
-        double exchange = (balance * rate / 1000000);
-//        CustomLogger.LogThis("rate", String.valueOf(rate), "exchange", String.valueOf(exchange));
-        //        Log.e(TAG, "getCurrentBalanceText: " + result);
-        return getFormattedCurrencyString("BTC", String.valueOf(balance)) + " (" +
-                getFormattedCurrencyString(iso, String.valueOf(exchange)) + ")";
+        long exchange = BRWalletManager.getInstance(ctx).localAmount(getBALANCE(),new BigDecimal(String.valueOf(rate)).multiply(new BigDecimal("100")).doubleValue());
+        Log.e(TAG, "getCurrentBalanceText, exchange: " + exchange);
+
+        return getFormattedCurrencyString("BTC", getBALANCE()) + " (" +
+                getFormattedCurrencyString(iso, exchange) + ")";
     }
 
-    public String getFormattedCurrencyString(String isoCurrencyCode, String amount) {
+    public String getFormattedCurrencyString(String isoCurrencyCode, long amount) {
         DecimalFormat currencyFormat;
 
         // This formats currency values as the user expects to read them (default locale).
@@ -290,7 +285,7 @@ public class CurrencyManager extends Observable {
         currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
 //        Log.e(TAG, "Returning the formatted string with separatorVisibility: " +
 // currencyFormat.isDecimalSeparatorAlwaysShown());
-        return currencyFormat.format(new BigDecimal(amount).doubleValue());
+        return currencyFormat.format(new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100")).doubleValue());
     }
 
     public String getFormattedCurrencyStringForLocale(Locale locale, String isoCurrencyCode, double amount) {

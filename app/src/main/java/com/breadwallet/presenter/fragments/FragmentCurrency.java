@@ -105,7 +105,7 @@ public class FragmentCurrency extends Fragment {
                 editor.putFloat(RATE, rate);
                 editor.apply();
 //                Log.e(TAG, "rate: " + rate + ", ISO: " + ISO);
-                String finalExchangeRate = CurrencyManager.getInstance(app).getMiddleTextExchangeString((long) rate, ISO);
+                String finalExchangeRate = CurrencyManager.getInstance(app).getMiddleTextExchangeString(rate, ISO);
 
 //                ((BreadWalletApp) getActivity().getApplication()).setTopMiddleView(
 //                        BreadWalletApp.BREAD_WALLET_TEXT, finalExchangeRate);
@@ -126,7 +126,7 @@ public class FragmentCurrency extends Fragment {
         float tmpRate;
         tmpRate = (adapter != null && !adapter.isEmpty()) ?
                 adapter.getItem(settings.getInt(POSITION, 0)).rate : settings.getFloat(FragmentCurrency.RATE, 1);
-        String readyText = CurrencyManager.getInstance(app).getMiddleTextExchangeString((long) tmpRate, iso);
+        String readyText = CurrencyManager.getInstance(app).getMiddleTextExchangeString(tmpRate, iso);
         MiddleViewAdapter.resetMiddleView(getActivity(),readyText);
         new Handler().postDelayed(new Runnable() {
             @Override

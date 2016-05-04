@@ -98,8 +98,7 @@ public class RequestQRActivity extends Activity {
             SharedPreferences settings = getSharedPreferences(MainActivity.PREFS_NAME, 0);
             final String iso = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
             final float rate = settings.getFloat(FragmentCurrency.RATE, 1);
-            amount = CurrencyManager.getInstance(this).getBitsAndExchangeString(rate, iso,
-                    String.valueOf(new BigDecimal(obj.amount)));
+            amount = CurrencyManager.getInstance(this).getBitsAndExchangeString(rate, iso, new BigDecimal(obj.amount));
         } catch (InvalidAlgorithmParameterException e) {
             e.printStackTrace();
         }
@@ -124,10 +123,6 @@ public class RequestQRActivity extends Activity {
             @Override
             public void onClick(View view) {
                 breadWalletApp.cancelToast();
-//                if (FragmentAnimator.checkTheMultipressingAvailability()) {
-//                    sharingFragment.setTheAddress(mainAddressText.getText().toString());
-//                    sharingFragment.show(fm, SharingFragment.class.getName());
-//                }
             }
         });
 

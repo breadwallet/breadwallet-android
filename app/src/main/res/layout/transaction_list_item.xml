@@ -10,7 +10,7 @@
         android:id="@+id/transaction_layout_raw1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
+        android:layout_marginStart="15dp"
         android:layout_marginTop="15dp"
         android:layout_weight="1"
         android:orientation="vertical">
@@ -23,7 +23,7 @@
             android:includeFontPadding="false"
             android:padding="0px"
             android:text="sent/received"
-            android:textSize="13sp" />
+            android:textSize="12sp" />
 
         <com.breadwallet.tools.AutoResizeTextView
             android:id="@+id/transaction_date"
@@ -34,7 +34,7 @@
             android:clickable="false"
             android:text="some date"
             android:textColor="@color/grey"
-            android:textSize="13sp" />
+            android:textSize="12sp" />
 
     </LinearLayout>
 
@@ -43,9 +43,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
-        android:layout_toEndOf="@+id/transaction_layout_raw2"
         android:layout_weight="1"
-        android:gravity="right|center_vertical"
+        android:gravity="end|center_vertical"
         android:orientation="vertical">
 
         <com.breadwallet.tools.AutoResizeTextView
@@ -55,7 +54,7 @@
             android:clickable="false"
             android:text="some dollars"
             android:textColor="@color/grey"
-            android:textSize="17sp" />
+            android:textSize="15sp" />
 
 
         <com.breadwallet.tools.AutoResizeTextView
@@ -66,7 +65,7 @@
             android:clickable="false"
             android:text="some total dollars"
             android:textColor="@color/grey"
-            android:textSize="13sp" />
+            android:textSize="12sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -85,7 +84,7 @@
             android:clickable="false"
             android:text="some bits"
             android:textColor="@color/dark_grey"
-            android:textSize="17sp"
+            android:textSize="15sp"
             android:textStyle="bold" />
 
         <com.breadwallet.tools.AutoResizeTextView
@@ -96,7 +95,7 @@
             android:clickable="false"
             android:text="some total bits"
             android:textColor="@color/dark_grey"
-            android:textSize="13sp" />
+            android:textSize="12sp" />
 
     </LinearLayout>
 

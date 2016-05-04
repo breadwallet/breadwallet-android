@@ -29,6 +29,7 @@ import com.breadwallet.tools.sqlite.SQLiteManager;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.util.List;
 
@@ -246,12 +247,12 @@ public class BRWalletManager {
                     CurrencyManager m = CurrencyManager.getInstance(ctx);
 //                    if (amount > 0) {
 //                        showWritePhraseDialog();
-                    double absAmount = amount > 0 ? amount : amount * -1;
+                    long absAmount = amount > 0 ? amount : amount * -1;
                     CurrencyManager cm = CurrencyManager.getInstance(ctx);
                     String strToShow = String.format(ctx.getString(amount > 0 ? R.string.received : R.string.sent),
-                            cm.getFormattedCurrencyString("BTC", String.valueOf(cm.getBitsFromSatoshi(absAmount))) + " (" +
-                                    m.getExchangeForAmount(m.getRateFromPrefs(), m.getISOFromPrefs(), String.valueOf(m.getBitsFromSatoshi(absAmount))) + ")");
-                    ((BreadWalletApp) ctx.getApplicationContext()).showCustomToast((Activity) ctx, strToShow,
+                            cm.getFormattedCurrencyString("BTC", absAmount) + " (" +
+                                    m.getExchangeForAmount(m.getRateFromPrefs(), m.getISOFromPrefs(), new BigDecimal(absAmount)) + ")");
+                    ((BreadWalletApp) ctx.getApplicationContext()).showCustomToast(ctx, strToShow,
                             BreadWalletApp.DISPLAY_HEIGHT_PX / 2, Toast.LENGTH_LONG, 1);
 //                    } else {
 //                        ((BreadWalletApp) ctx.getApplicationContext()).showCustomToast((Activity) ctx,
@@ -321,7 +322,7 @@ public class BRWalletManager {
 
     public native int feeForTransaction(String addressHolder, long amountHolder);
 
-    public native double getMinOutputAmount();
+    public native long getMinOutputAmount();
 
     public native long getMaxOutputAmount();
 

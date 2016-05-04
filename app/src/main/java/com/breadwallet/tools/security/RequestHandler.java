@@ -129,7 +129,7 @@ public class RequestHandler {
             if (keyValue[0].trim().equals("amount")) {
                 try {
                     BigDecimal bigDecimal = new BigDecimal(keyValue[1]);
-                    obj.amount = bigDecimal.multiply(new BigDecimal("1000000")).toString();
+                    obj.amount = bigDecimal.multiply(new BigDecimal("100000000")).toString();
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }
@@ -192,7 +192,7 @@ public class RequestHandler {
             });
             String strAmount = String.valueOf(amount);
             if (app != null) {
-                app.pay(addresses[0], strAmount, null);
+                app.pay(addresses[0], new BigDecimal(strAmount), null);
             }
         } else {
             MainActivity.app.runOnUiThread(new Runnable() {
@@ -321,7 +321,7 @@ public class RequestHandler {
                     paymentRequest.amount, cn);
             MainActivity app = MainActivity.app;
             if (app != null) {
-                app.pay(requestEntity.addresses[0], String.valueOf(CurrencyManager.getInstance(app).getBitsFromSatoshi(requestEntity.amount)), requestEntity.cn);
+                app.pay(requestEntity.addresses[0], new BigDecimal(requestEntity.amount), requestEntity.cn);
             }
 
         }

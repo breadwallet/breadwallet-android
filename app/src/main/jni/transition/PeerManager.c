@@ -56,7 +56,6 @@ static JNIEnv* getEnv() {
     return env;
 }
 
-
 static void syncStarted(void *info) {
 
     if(!_peerManager) return;
@@ -93,7 +92,6 @@ static void syncFailed(void *info, int error) {
     //call java methods
     (*globalEnv)->CallStaticVoidMethod(globalEnv, _peerManagerClass, mid);
 
-    (*_jvmPM)->DetachCurrentThread(_jvmPM);
 
 }
 

@@ -19,6 +19,9 @@ import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.wallet.BRWalletManager;
 
+import java.math.BigDecimal;
+import java.util.Locale;
+
 /**
  * BreadWallet
  * <p/>
@@ -84,7 +87,7 @@ public class FragmentTransactionExpanded extends Fragment {
         } else if (blockHeight == Integer.MAX_VALUE) {
             statusText.setText(R.string.verified_waiting);
         } else {
-            statusText.setText(String.format("confirmed in block #%d\n%s", blockHeight,
+            statusText.setText(String.format(Locale.getDefault(), "confirmed in block #%d\n%s", blockHeight,
                     FragmentSettingsAll.getFormattedDateFromLong(item.getTimeStamp())));
         }
 
@@ -94,8 +97,8 @@ public class FragmentTransactionExpanded extends Fragment {
             Log.e(TAG, "Tx Detail received!!!! amount: " + amount + " item.getBlockHeight(): " + item.getBlockHeight());
 
             hashText.setText(item.getHexId());
-            amountText.setText(m.getFormattedCurrencyString("BTC", String.valueOf(m.getBitsFromSatoshi(amount))));
-            exchangeText.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, String.valueOf(m.getBitsFromSatoshi(amount)))));
+            amountText.setText(m.getFormattedCurrencyString("BTC", amount));
+            exchangeText.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, new BigDecimal(amount))));
 
             String fromAddresses[] = item.getFrom();
             setReceivedFromAddresses(generalTxFrom, fromAddresses);
@@ -106,21 +109,17 @@ public class FragmentTransactionExpanded extends Fragment {
             TextView toFeeAmountText = (TextView) rootView.findViewById(R.id.tx_to_fee_amount_text);
             TextView toFeeExchangeText = (TextView) rootView.findViewById(R.id.tx_to_fee_exchange_text);
 
-            double tempReceived = m.getBitsFromSatoshi(item.getReceived());
-            double tempSent = m.getBitsFromSatoshi(item.getSent());
-            double tempFee = m.getBitsFromSatoshi(item.getFee());
+            long amount = item.getSent() - item.getReceived();
 
-            double amount = tempSent - tempReceived;
-
-            Log.e(TAG, "Tx Detail sent!!!! amount: " + amount + " tempFee: " + tempFee + " tempSent: "
-                    + tempSent + " item.getBlockHeight(): " + item.getBlockHeight());
+            Log.e(TAG, "Tx Detail sent!!!! amount: " + amount + " tempFee: " + item.getFee() + " tempSent: "
+                    + item.getSent() + " item.getBlockHeight(): " + item.getBlockHeight());
 
             hashText.setText(item.getHexId());
 
 //            statusText.setText(String.format("confirmed in block #%d\n%s", item.getBlockHeight(),
 //                    FragmentSettingsAll.getFormattedDateFromLong(item.getTimeStamp())));
-            amountText.setText(String.format("-%s", m.getFormattedCurrencyString("BTC", String.valueOf(amount))));
-            exchangeText.setText(String.format("(-%s)", m.getExchangeForAmount(rate, iso, String.valueOf(amount))));
+            amountText.setText(String.format("-%s", m.getFormattedCurrencyString("BTC", amount)));
+            exchangeText.setText(String.format("(-%s)", m.getExchangeForAmount(rate, iso, new BigDecimal(amount))));
             String fromAddresses[] = item.getFrom();
             long[] outAmounts = item.getOutAmounts();
             setSentFromAddresses(generalTxFrom, fromAddresses);
@@ -129,8 +128,8 @@ public class FragmentTransactionExpanded extends Fragment {
 //            toDescription.setText(getString(R.string.payment_address));
 //            toAmountText.setText(m.getFormattedCurrencyString("BTC", String.valueOf(m.getBitsFromSatoshi(amount))));
 //            toExchangeText.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, String.valueOf(amount))));
-            toFeeAmountText.setText(String.format("-%s", m.getFormattedCurrencyString("BTC", String.valueOf(tempFee))));
-            toFeeExchangeText.setText(String.format("(-%s)", m.getExchangeForAmount(rate, iso, String.valueOf(tempFee))));
+            toFeeAmountText.setText(String.format("-%s", m.getFormattedCurrencyString("BTC", item.getFee())));
+            toFeeExchangeText.setText(String.format("(-%s)", m.getExchangeForAmount(rate, iso, new BigDecimal(item.getFee()))));
 
         }
 
@@ -208,8 +207,8 @@ public class FragmentTransactionExpanded extends Fragment {
             if (addresses[i] != null && !addresses[i].isEmpty()) {
                 txTo.setText(addresses[i]);
                 txToDescription.setText(getString(R.string.wallet_address));
-                txToAmount.setText(m.getFormattedCurrencyString("BTC", String.valueOf(m.getBitsFromSatoshi(amounts[i]))));
-                txToExchange.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, String.valueOf(m.getBitsFromSatoshi(amounts[i])))));
+                txToAmount.setText(m.getFormattedCurrencyString("BTC", amounts[i]));
+                txToExchange.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, new BigDecimal(amounts[i]))));
 
                 view.addView(addressBlock);
                 view.addView(FragmentSettingsAll.getSeparationLine(0, getActivity()));
@@ -239,8 +238,8 @@ public class FragmentTransactionExpanded extends Fragment {
             if (addresses[i] != null && !addresses[i].isEmpty()) {
                 txTo.setText(addresses[i]);
                 txToDescription.setText(getString(R.string.payment_address));
-                txToAmount.setText(String.format("-%s", m.getFormattedCurrencyString("BTC", String.valueOf(m.getBitsFromSatoshi(amounts[i])))));
-                txToExchange.setText(String.format("(-%s)", m.getExchangeForAmount(rate, iso, String.valueOf(m.getBitsFromSatoshi(amounts[i])))));
+                txToAmount.setText(String.format("-%s", m.getFormattedCurrencyString("BTC", amounts[i])));
+                txToExchange.setText(String.format("(-%s)", m.getExchangeForAmount(rate, iso, new BigDecimal(amounts[i]))));
 
                 view.addView(addressBlock);
                 view.addView(FragmentSettingsAll.getSeparationLine(0, getActivity()));

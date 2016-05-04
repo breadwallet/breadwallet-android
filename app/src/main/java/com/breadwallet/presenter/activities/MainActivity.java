@@ -167,7 +167,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         //loading the native library
 
 
-
         app = this;
         initializeViews();
 
@@ -220,7 +219,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     private void setUrlHandler() {
         Intent intent = getIntent();
         Uri data = intent.getData();
-        if(data == null) return;
+        if (data == null) return;
         String scheme = data.getScheme();
         if (scheme != null && scheme.startsWith("bitcoin")) {
             Log.e(TAG, "bitcoin url");
@@ -241,7 +240,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                 String amountHolder = FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_RIGHT ?
                         AmountAdapter.getRightValue() : AmountAdapter.getLeftValue();
                 String addressHolder = FragmentScanResult.address;
-                pay(addressHolder, amountHolder, null);
+                pay(addressHolder, new BigDecimal(amountHolder).multiply(new BigDecimal("100")), null);
             }
         });
 
@@ -576,28 +575,27 @@ public class MainActivity extends FragmentActivity implements Observer {
     }
 
     //
-    public void pay(final String addressHolder, String amountHolder, final String cn) {
-        if (addressHolder == null || amountHolder == null) return;
+    public void pay(final String addressHolder, final BigDecimal bigDecimalAmount, final String cn) {
+        if (addressHolder == null || bigDecimalAmount == null) return;
         if (addressHolder.length() < 20) return;
-        BigDecimal bigDecimal = new BigDecimal(amountHolder);
-        final long amountAsLong = bigDecimal.longValue();
-        if (amountAsLong < 0) return;
-        Log.e(TAG, "*********Sending: " + amountHolder + " to: " + addressHolder);
+//        final long amountAsLong = bigDecimal.longValue();
+        if (bigDecimalAmount.longValue() < 0) return;
+        Log.e(TAG, "*********Sending: " + bigDecimalAmount + " to: " + addressHolder);
         final CurrencyManager cm = CurrencyManager.getInstance(this);
 
         if (cm.isNetworkAvailable(this)) {
             final BRWalletManager m = BRWalletManager.getInstance(this);
-            byte[] tmpTx = m.tryTransaction(addressHolder, cm.getSatoshisFromBits(amountAsLong));
-            double feeForTx = cm.getBitsFromSatoshi(m.feeForTransaction(addressHolder, cm.getSatoshisFromBits(amountAsLong)));
-            if (tmpTx == null && amountAsLong <= cm.getBitsFromSatoshi(cm.getBALANCE()) && amountAsLong > 0) {
+            byte[] tmpTx = m.tryTransaction(addressHolder, bigDecimalAmount.longValue());
+            long feeForTx = m.feeForTransaction(addressHolder, bigDecimalAmount.longValue());
+            if (tmpTx == null && bigDecimalAmount.longValue() <= cm.getBALANCE() && bigDecimalAmount.longValue() > 0) {
 
-                final double maxAmountDouble = cm.getBitsFromSatoshi(m.getMaxOutputAmount());
+                final long maxAmountDouble = m.getMaxOutputAmount();
                 Log.e(TAG, "maxAmountDouble: " + maxAmountDouble);
-                final double amountToReduce = amountAsLong - maxAmountDouble;
+                final long amountToReduce = bigDecimalAmount.longValue() - maxAmountDouble;
 //                String strToReduce = String.valueOf(amountToReduce);
                 final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-                builder.setMessage(String.format("reduce payment amount by %s to accommodate the bitcoin network fee?", cm.getFormattedCurrencyString("BTC", String.valueOf(amountToReduce))))
+                builder.setMessage(String.format("reduce payment amount by %s to accommodate the bitcoin network fee?", cm.getFormattedCurrencyString("BTC", amountToReduce)))
                         .setTitle("insufficient funds for bitcoin network fee")
                         .setCancelable(false)
                         .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
@@ -608,10 +606,10 @@ public class MainActivity extends FragmentActivity implements Observer {
                         })
                         .setPositiveButton("confirm", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                byte[] tmpTx2 = m.tryTransaction(addressHolder, cm.getSatoshisFromBits(Math.round(amountAsLong - amountToReduce)));
+                                byte[] tmpTx2 = m.tryTransaction(addressHolder, bigDecimalAmount.longValue() - amountToReduce);
                                 if (tmpTx2 != null) {
                                     PostAuthenticationProcessor.getInstance().setTmpTx(tmpTx2);
-                                    confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, amountAsLong - amountToReduce, cn));
+                                    confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, bigDecimalAmount.longValue() - amountToReduce, cn));
                                 } else {
                                     Log.e(TAG, "tmpTxObject2 is null!!!");
                                     ((BreadWalletApp) getApplication()).showCustomToast(app, "Failed to send, insufficient funds", screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
@@ -623,14 +621,14 @@ public class MainActivity extends FragmentActivity implements Observer {
                 return;
             }
             PostAuthenticationProcessor.getInstance().setTmpTx(tmpTx);
-            Log.e(TAG, "pay >>>> feeForTx: " + feeForTx + ", amountAsDouble: " + amountAsLong +
-                    ", CurrencyManager.getInstance(this).getBALANCE(): " + cm.getBitsFromSatoshi(cm.getBALANCE()));
-            if (feeForTx != 0 && amountAsLong + feeForTx < cm.getBitsFromSatoshi(cm.getBALANCE())) {
+            Log.e(TAG, "pay >>>> feeForTx: " + feeForTx + ", amountAsDouble: " + bigDecimalAmount.longValue() +
+                    ", CurrencyManager.getInstance(this).getBALANCE(): " + cm.getBALANCE());
+            if (feeForTx != 0 && bigDecimalAmount.longValue() + feeForTx < cm.getBALANCE()) {
 
-                confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, amountAsLong, cn));
+                confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, bigDecimalAmount.longValue(), cn));
             } else {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage(String.format(Locale.getDefault(), "insufficient funds to send: %s", cm.getFormattedCurrencyString("BTC", String.valueOf(amountAsLong))))
+                builder.setMessage(String.format(Locale.getDefault(), "insufficient funds to send: %s", cm.getFormattedCurrencyString("BTC", bigDecimalAmount.longValue())))
                         .setCancelable(false)
                         .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
@@ -661,12 +659,12 @@ public class MainActivity extends FragmentActivity implements Observer {
         String tempAmount = FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_RIGHT ?
                 AmountAdapter.getRightValue() : AmountAdapter.getLeftValue();
         BRWalletManager m = BRWalletManager.getInstance(this);
-        double minAmount = CurrencyManager.getInstance(this).getBitsFromSatoshi(m.getMinOutputAmount());
-        if (Double.valueOf(tempAmount) < minAmount) {
+        long minAmount = m.getMinOutputAmount();
+        if (new BigDecimal(tempAmount).multiply(new BigDecimal("100")).doubleValue() < minAmount) {
             ((BreadWalletApp) getApplication()).showCustomDialog(getString(R.string.warning), "The amount cannot be less than ƀ" + minAmount, getString(R.string.ok));
             return;
         }
-        String strAmount = String.valueOf(new BigDecimal(tempAmount).divide(new BigDecimal("1000000")));
+        String strAmount = String.valueOf(new BigDecimal(tempAmount).divide(new BigDecimal("1000000")).toString());
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         String testTemp = prefs.getString(PREFS_NAME, "");
 
@@ -756,22 +754,22 @@ public class MainActivity extends FragmentActivity implements Observer {
         settings = getSharedPreferences(MainActivity.PREFS_NAME, 0);
         String iso = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
         float rate = settings.getFloat(FragmentCurrency.RATE, 1.0f);
-        String amount = String.valueOf(request.amount);
         CurrencyManager cm = CurrencyManager.getInstance(this);
         BRWalletManager m = BRWalletManager.getInstance(this);
-        final double feeForTx = cm.getBitsFromSatoshi(m.feeForTransaction(request.addresses[0], cm.getSatoshisFromBits(request.amount)));
-        final double total = request.amount + feeForTx;
-        final String message = certification + allAddresses.toString() + "\n\n" + "amount: " + cm.getFormattedCurrencyString("BTC", String.valueOf(request.amount))
-                + " (" + cm.getExchangeForAmount(rate, iso, amount) + ")" + "\nnetwork fee: +" + cm.getFormattedCurrencyString("BTC", String.valueOf(feeForTx))
-                + " (" + cm.getExchangeForAmount(rate, iso, String.valueOf(feeForTx)) + ")" + "\ntotal: " + cm.getFormattedCurrencyString("BTC", String.valueOf(total))
-                + " (" + cm.getExchangeForAmount(rate, iso, String.valueOf(total)) + ")";
+        final long feeForTx = m.feeForTransaction(request.addresses[0], request.amount);
+        final long total = request.amount + feeForTx;
+        final String message = certification + allAddresses.toString() + "\n\n" + "amount: " + cm.getFormattedCurrencyString("BTC", request.amount)
+                + " (" + cm.getExchangeForAmount(rate, iso, new BigDecimal(request.amount)) + ")" + "\nnetwork fee: +" + cm.getFormattedCurrencyString("BTC", feeForTx)
+                + " (" + cm.getExchangeForAmount(rate, iso, new BigDecimal(feeForTx)) + ")" + "\ntotal: " + cm.getFormattedCurrencyString("BTC", total)
+                + " (" + cm.getExchangeForAmount(rate, iso, new BigDecimal(total)) + ")";
 
 //        ((BreadWalletApp) getApplication()).showCustomDialog("payment info", certification + allAddresses.toString() +
 //                "\n\n" + "amount " + CurrencyManager.getInstance(this).getFormattedCurrencyString("BTC", String.valueOf(request.amount / 100))
 //                + " (" + CurrencyManager.getInstance(this).getFormattedCurrencyString(iso, amount) + ")", "send");
-        double minOutput = BRWalletManager.getInstance(this).getMinOutputAmount() / 100d;
+        double minOutput = BRWalletManager.getInstance(this).getMinOutputAmount();
         if (request.amount < minOutput) {
-            final String bitcoinMinMessage = String.format(Locale.getDefault(), "bitcoin payments can't be less than ƀ%.2f", minOutput);
+            final String bitcoinMinMessage = String.format(Locale.getDefault(), "bitcoin payments can't be less than ƀ%.2f",
+                    new BigDecimal(minOutput).divide(new BigDecimal("100")));
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -842,14 +840,13 @@ public class MainActivity extends FragmentActivity implements Observer {
             }
 
             byte[] pubkeyEncoded = KeyStoreManager.getMasterPublicKey(this);
-//            pubkeyEncoded = null;
-            //todo TEST THAT
             if (pubkeyEncoded == null || pubkeyEncoded.length == 0) {
-                ((BreadWalletApp) getApplication()).showCustomToast(this, "The KeyStore is temporary unavailable, please try again later",
-                        screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
+
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        ((BreadWalletApp) getApplication()).showCustomToast(app, "The KeyStore is temporary unavailable, please try again later",
+                                screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -894,8 +891,6 @@ public class MainActivity extends FragmentActivity implements Observer {
 
             int walletTimeString = KeyStoreManager.getWalletCreationTime(this);
             final int earliestKeyTime = walletTimeString != 0 ? walletTimeString : 0;
-            //TODO take off
-//            final long tempTime = 1454736431;
             Log.e(TAG, "earliestKeyTime before connecting: " + earliestKeyTime);
             pm.createAndConnect(earliestKeyTime > 0 ? earliestKeyTime : 0, blocksCount, peersCount);
             Log.e(TAG, "some");
@@ -1089,57 +1084,56 @@ public class MainActivity extends FragmentActivity implements Observer {
         return false;
     }
 
-    //TODO delete this testing
-    private void testRequestHandler() {
-        try {
-            RequestObject requestObject;
-            String reqString;
-
-            reqString = "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?label=foo%26bar";
-            Log.e(TAG, reqString);
-            requestObject = RequestHandler.getRequestFromString(reqString);
-            CustomLogger.LogThis("address", requestObject.address, "amount", requestObject.amount, "label",
-                    requestObject.label, "message", requestObject.message, "r", requestObject.r, "req", requestObject.req);
-
-//            reqString = "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?amount=20.3&label=Luke-Jr";
+//    private void testRequestHandler() {
+//        try {
+//            RequestObject requestObject;
+//            String reqString;
+//
+//            reqString = "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?label=foo%26bar";
 //            Log.e(TAG, reqString);
 //            requestObject = RequestHandler.getRequestFromString(reqString);
 //            CustomLogger.LogThis("address", requestObject.address, "amount", requestObject.amount, "label",
 //                    requestObject.label, "message", requestObject.message, "r", requestObject.r, "req", requestObject.req);
 //
-//            reqString = "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?amount=50&label=Luke-Jr&message=Donation%20for%20project%20xyz";
-//            Log.e(TAG, reqString);
-//            requestObject = RequestHandler.getRequestFromString(reqString);
-//            CustomLogger.LogThis("address", requestObject.address, "amount", requestObject.amount, "label",
-//                    requestObject.label, "message", requestObject.message, "r", requestObject.r, "req", requestObject.req);
+////            reqString = "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?amount=20.3&label=Luke-Jr";
+////            Log.e(TAG, reqString);
+////            requestObject = RequestHandler.getRequestFromString(reqString);
+////            CustomLogger.LogThis("address", requestObject.address, "amount", requestObject.amount, "label",
+////                    requestObject.label, "message", requestObject.message, "r", requestObject.r, "req", requestObject.req);
+////
+////            reqString = "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?amount=50&label=Luke-Jr&message=Donation%20for%20project%20xyz";
+////            Log.e(TAG, reqString);
+////            requestObject = RequestHandler.getRequestFromString(reqString);
+////            CustomLogger.LogThis("address", requestObject.address, "amount", requestObject.amount, "label",
+////                    requestObject.label, "message", requestObject.message, "r", requestObject.r, "req", requestObject.req);
+////
+////            reqString = "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?req-somethingyoudontunderstand=50&req-somethingelseyoudontget=999";
+////            Log.e(TAG, reqString);
+////            requestObject = RequestHandler.getRequestFromString(reqString);
+////            CustomLogger.LogThis("address", requestObject.address, "amount", requestObject.amount, "label",
+////                    requestObject.label, "message", requestObject.message, "r", requestObject.r, "req", requestObject.req);
+////
+////            reqString = "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?somethingyoudontunderstand=50&somethingelseyoudontget=999";
+////            Log.e(TAG, reqString);
+////            requestObject = RequestHandler.getRequestFromString(reqString);
+////            CustomLogger.LogThis("address", requestObject.address, "amount", requestObject.amount, "label",
+////                    requestObject.label, "message", requestObject.message, "r", requestObject.r, "req", requestObject.req);
+////
+////            reqString = "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi";
+////            Log.e(TAG, reqString);
+////            requestObject = RequestHandler.getRequestFromString(reqString);
+////            CustomLogger.LogThis("address", requestObject.address, "amount", requestObject.amount, "label",
+////                    requestObject.label, "message", requestObject.message, "r", requestObject.r, "req", requestObject.req);
+////
+////            reqString = " bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?label=Luke-Jr";
+////            Log.e(TAG, reqString);
+////            requestObject = RequestHandler.getRequestFromString(reqString);
+////            CustomLogger.LogThis("address", requestObject.address, "amount", requestObject.amount, "label",
+////                    requestObject.label, "message", requestObject.message, "r", requestObject.r, "req", requestObject.req);
 //
-//            reqString = "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?req-somethingyoudontunderstand=50&req-somethingelseyoudontget=999";
-//            Log.e(TAG, reqString);
-//            requestObject = RequestHandler.getRequestFromString(reqString);
-//            CustomLogger.LogThis("address", requestObject.address, "amount", requestObject.amount, "label",
-//                    requestObject.label, "message", requestObject.message, "r", requestObject.r, "req", requestObject.req);
-//
-//            reqString = "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?somethingyoudontunderstand=50&somethingelseyoudontget=999";
-//            Log.e(TAG, reqString);
-//            requestObject = RequestHandler.getRequestFromString(reqString);
-//            CustomLogger.LogThis("address", requestObject.address, "amount", requestObject.amount, "label",
-//                    requestObject.label, "message", requestObject.message, "r", requestObject.r, "req", requestObject.req);
-//
-//            reqString = "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi";
-//            Log.e(TAG, reqString);
-//            requestObject = RequestHandler.getRequestFromString(reqString);
-//            CustomLogger.LogThis("address", requestObject.address, "amount", requestObject.amount, "label",
-//                    requestObject.label, "message", requestObject.message, "r", requestObject.r, "req", requestObject.req);
-//
-//            reqString = " bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?label=Luke-Jr";
-//            Log.e(TAG, reqString);
-//            requestObject = RequestHandler.getRequestFromString(reqString);
-//            CustomLogger.LogThis("address", requestObject.address, "amount", requestObject.amount, "label",
-//                    requestObject.label, "message", requestObject.message, "r", requestObject.r, "req", requestObject.req);
-
-        } catch (InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
-        }
-    }
+//        } catch (InvalidAlgorithmParameterException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
 }
