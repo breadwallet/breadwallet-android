@@ -6,6 +6,7 @@ model {
         buildToolsVersion = '23.0.3'
 
         defaultConfig {
+
             testInstrumentationRunner = 'android.support.test.runner.AndroidJUnitRunner'
             applicationId = 'com.breadwallet'
             minSdkVersion.apiLevel = 23
@@ -40,16 +41,16 @@ model {
         buildTypes {
             release {
                 minifyEnabled = false
-                debuggable = false
+                debuggable = true
                 ndk {
-                    debuggable true
+                    debuggable = true
                 }
 
             }
             debug {
                 debuggable = true
                 ndk {
-                    debuggable true
+                    debuggable = true
                 }
             }
 
