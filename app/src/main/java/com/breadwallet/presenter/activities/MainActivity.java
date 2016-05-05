@@ -694,6 +694,13 @@ public class MainActivity extends FragmentActivity implements Observer {
                     KeyStoreManager.showAuthenticationScreen(this, requestCode);
                 }
                 break;
+            case BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE:
+                if(resultCode == RESULT_OK){
+                    PostAuthenticationProcessor.getInstance().onPaymentProtocolRequest();
+                } else {
+                    KeyStoreManager.showAuthenticationScreen(this, requestCode);
+                }
+                break;
         }
     }
 

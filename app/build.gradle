@@ -16,7 +16,7 @@ model {
         ndk {
             moduleName = "core"
             toolchain = "clang"
-
+            debuggable = true
 //            // Note that CFlags has a capital C, which is inconsistent with
 //            // the naming convention of other properties.  This is a
 //            // technical limitation that will be resolved

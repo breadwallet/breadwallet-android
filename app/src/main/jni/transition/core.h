@@ -33,7 +33,7 @@
 //        (JNIEnv *env, jobject obj, jstring address);
 
 jbyteArray Java_com_breadwallet_tools_security_RequestHandler_parsePaymentRequest
-        (JNIEnv *env, jobject obj, jbyteArray payment);
+        (JNIEnv *env, jobject obj, jbyteArray payment, jstring phrase);
 
 jbyteArray Java_com_breadwallet_tools_security_RequestHandler_getCertificatesFromPaymentRequest
         (JNIEnv *env, jobject obj, jbyteArray payment, jint index);

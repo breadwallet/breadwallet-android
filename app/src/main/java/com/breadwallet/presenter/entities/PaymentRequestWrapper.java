@@ -25,11 +25,23 @@ package com.breadwallet.presenter.entities;
  * THE SOFTWARE.
  */
 
-public class PaymentRequestCWrapper {
-    public final String TAG = PaymentRequestCWrapper.class.getName();
+public class PaymentRequestWrapper {
+    public final String TAG = PaymentRequestWrapper.class.getName();
+
+    //error types
+    public static final int INSUFFICIENT_FUNDS_ERROR = 1;
+    public static final int SIGNING_FAILED_ERROR = 2;
+    public static final int INVALID_REQUEST_ERROR = 3;
+    public static final int REQUEST_TOO_LONG_ERROR = 4;
+
+    //errors
+    public int error = 0;
+
+    //response
+    public byte[] payment;
 
     //Protocol
-    boolean isPaymentRequest;
+    public boolean isPaymentRequest;
     public byte[] signature;
     public byte[] pkiData;
     public String pkiType;
@@ -46,8 +58,7 @@ public class PaymentRequestCWrapper {
     public String[] addresses;
     public long amount;
 
-    private PaymentRequestCWrapper() {
-    }
+    private PaymentRequestWrapper() {}
 
     public void byteSignature(byte[] fromJNI) {
         this.signature = fromJNI;
@@ -59,6 +70,10 @@ public class PaymentRequestCWrapper {
 
     public void merchantData(byte[] merchantData) {
         this.merchantData = merchantData;
+    }
+
+    public void payment(byte[] payment) {
+        this.payment = payment;
     }
 
 }

@@ -1,7 +1,5 @@
 package com.breadwallet.tools.security;
 
-import android.app.Activity;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
@@ -10,13 +8,12 @@ import android.widget.Toast;
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.presenter.entities.PaymentRequestCWrapper;
+import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.RequestObject;
 import com.breadwallet.presenter.exceptions.CertificateChainNotFound;
-import com.breadwallet.presenter.exceptions.PaymentRequestExpiredException;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
-import com.breadwallet.tools.CurrencyManager;
+import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.wallet.BRWalletManager;
 
@@ -76,7 +73,7 @@ public class RequestHandler {
             }
             if (requestObject.r != null) {
                 //TODO fix that later
-                //----------------------------------------------------------------------------------
+//                ----------------------------------------------------------------------------------
                 ((BreadWalletApp) app.getApplication()).showCustomToast(app, "Payment protocol not available in beta",
                         MainActivity.screenParametersPoint.y / 2 + 300, Toast.LENGTH_LONG, 0);
                 if(requestObject.address == null || requestObject.address.isEmpty()) return;
@@ -214,7 +211,7 @@ public class RequestHandler {
     static class RequestTask extends AsyncTask<String, String, String> {
         HttpURLConnection urlConnection;
         String certName = null;
-        PaymentRequestCWrapper paymentRequest = null;
+        PaymentRequestWrapper paymentRequest = null;
 
         @Override
         protected String doInBackground(String... uri) {
@@ -225,10 +222,18 @@ public class RequestHandler {
                 URL url = new URL(uri[0]);
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestProperty("Accept", "application/bitcoin-paymentrequest");
-                urlConnection.setConnectTimeout(5000);
-                urlConnection.setReadTimeout(10000);
+                urlConnection.setConnectTimeout(3000);
+                urlConnection.setReadTimeout(3000);
                 urlConnection.setUseCaches(false);
                 in = urlConnection.getInputStream();
+
+                String phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE);
+                if (phrase == null) {
+                    if (urlConnection != null) urlConnection.disconnect();
+                    PostAuthenticationProcessor.getInstance().setUri(uri[0]);
+                    return null;
+                }
+
                 if (in == null) {
                     Log.e(TAG, "The inputStream is null!");
                     return null;
@@ -238,16 +243,49 @@ public class RequestHandler {
                     Log.e(TAG, "serializedBytes are null!!!");
                     return null;
                 }
-                paymentRequest = parsePaymentRequest(serializedBytes);
 
-                if (paymentRequest == null) {
+                paymentRequest = parsePaymentRequest(serializedBytes, phrase);
+
+                if (paymentRequest == null || paymentRequest.error == PaymentRequestWrapper.INVALID_REQUEST_ERROR) {
                     Log.e(TAG, "paymentRequest is null!!!");
                     if (app != null) {
                         app.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                ((BreadWalletApp) app.getApplication()).showCustomToast(app, "invalid request",
-                                        MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
+                                ((BreadWalletApp) app.getApplication()).showCustomDialog("Warning", "Invalid request", "ok");
+                            }
+                        });
+                    }
+                    return null;
+                } else if (paymentRequest.error == PaymentRequestWrapper.INSUFFICIENT_FUNDS_ERROR) {
+                    Log.e(TAG, "insufficient amount!!!");
+                    if (app != null) {
+                        app.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ((BreadWalletApp) app.getApplication()).showCustomDialog("Warning", "Insufficient amount to satisfy the request", "ok");
+                            }
+                        });
+                    }
+                    return null;
+                } else if (paymentRequest.error == PaymentRequestWrapper.SIGNING_FAILED_ERROR) {
+                    Log.e(TAG, "failed to sign tx!!!");
+                    if (app != null) {
+                        app.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ((BreadWalletApp) app.getApplication()).showCustomDialog("Warning", "Failed to sign transaction", "ok");
+                            }
+                        });
+                    }
+                    return null;
+                } else if (paymentRequest.error == PaymentRequestWrapper.REQUEST_TOO_LONG_ERROR) {
+                    Log.e(TAG, "failed to sign tx!!!");
+                    if (app != null) {
+                        app.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ((BreadWalletApp) app.getApplication()).showCustomDialog("Warning", "PaymentRequest message is too large", "ok");
                             }
                         });
                     }
@@ -350,7 +388,7 @@ public class RequestHandler {
 
     }
 
-    public static native PaymentRequestCWrapper parsePaymentRequest(byte[] req);
+    public static native PaymentRequestWrapper parsePaymentRequest(byte[] req, String phrase);
 
     public static native byte[] getCertificatesFromPaymentRequest(byte[] req, int index);
 

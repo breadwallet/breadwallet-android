@@ -109,18 +109,6 @@ static void txStatusUpdate(void *info) {
 
 }
 
-//static void txRejected(void *info, int rescanRecommended) {
-//    if(!_peerManager) return;
-//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "txRejected");
-//    JNIEnv *globalEnv = getEnv();
-//    if(!globalEnv) return;
-//    jmethodID mid = (*globalEnv)->GetStaticMethodID(globalEnv, _peerManagerClass, "txRejected", "(I)V");
-//    //call java methods
-//    (*globalEnv)->CallStaticVoidMethod(globalEnv, _peerManagerClass, mid, rescanRecommended);
-//
-//    (*_jvmPM)->DetachCurrentThread(_jvmPM);
-//}
-
 
 static void saveBlocks(void *info, BRMerkleBlock *blocks[], size_t count) {
     if(!_peerManager) return;

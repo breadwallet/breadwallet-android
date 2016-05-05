@@ -27,6 +27,8 @@
 #include "wallet.h"
 #include <stdio.h>
 #include <android/log.h>
+#include <BRPaymentProtocol.h>
+#include <BRBIP39Mnemonic.h>
 #include "BRPaymentProtocol.h"
 
 //
@@ -151,45 +153,82 @@ const int TEST_REQ = 0;
 //        "\x50\x55\x66\x77\x71\x85\xdd\x6f\x93\x2b\xae\xb5\xd5\xe2\xd4\x39\x8d\x01\x14\x0d\x48";
 
 JNIEXPORT jobject Java_com_breadwallet_tools_security_RequestHandler_parsePaymentRequest
-        (JNIEnv *env, jobject obj, jbyteArray payment) {
+        (JNIEnv *env, jobject obj, jbyteArray payment, jstring phrase) {
     if (!payment) return NULL;
+
+    //create class
+    jclass clazz = (*env)->FindClass(env, "com/breadwallet/presenter/entities/PaymentRequestWrapper");
+    jobject entity = (*env)->AllocObject(env, clazz);
+    jfieldID jerror = (*env)->GetFieldID(env, clazz, "error", "I");
+
+    const char *rawPhrase = (*env)->GetStringUTFChars(env, phrase, 0);
 
     BRPaymentProtocolRequest *nativeRequest;
     int requestLength = (*env)->GetArrayLength(env, payment);
+    if (requestLength > 50000) {
+        (*env)->SetIntField(env, entity, jerror, 4);
+        return entity;
+    }
     jbyte *bytePayment = (*env)->GetByteArrayElements(env, payment, 0);
     nativeRequest = BRPaymentProtocolRequestParse((const uint8_t *) bytePayment,
                                                   (size_t) requestLength);
 
-    //testing the raw request form the top
-    //android debugging
-    //__android_log_write(ANDROID_LOG_ERROR, ">>>>>>MESSAGE FROM C: ", nativeRequest->pkiType);
-
-    //read amount and addresses from outputs
     uint64_t outputsLength = nativeRequest->details->outputsCount;
     uint64_t total_amount = 0;
 
     jobjectArray stringArray = (jobjectArray) (*env)->NewObjectArray(env, (jsize) outputsLength,
-                                                                     (*env)->FindClass(env,
-                                                                                       "java/lang/String"),
+                                                                     (*env)->FindClass(env, "java/lang/String"),
                                                                      (*env)->NewStringUTF(env, ""));
     if (outputsLength > 0) {
-//         int addressesLength = sizeof(addresses);
         int i;
         for (i = 0; i < outputsLength; i++) {
             BRTxOutput *op = &nativeRequest->details->outputs[i];
             (*env)->SetObjectArrayElement(env, stringArray, i,
                                           (*env)->NewStringUTF(env, op->address));
-//            __android_log_print(ANDROID_LOG_DEBUG, "LOG_TAG", "Need to print : %s", op->address);
             total_amount += op->amount;
         }
     }
 
-    __android_log_print(ANDROID_LOG_DEBUG, "parsePaymentRequest, ", "nativeRequest->details->network: %s, BITCOIN_TESTNET: %d", nativeRequest->details->network, BITCOIN_TESTNET);
+    __android_log_print(ANDROID_LOG_DEBUG, "parsePaymentRequest", "nativeRequest->details->network: %s, "
+            "BITCOIN_TESTNET: %d", nativeRequest->details->network, BITCOIN_TESTNET);
 
-    if ((nativeRequest->details->network == "main" && BITCOIN_TESTNET == 1) ||
-        (nativeRequest->details->network != "main" && BITCOIN_TESTNET == 0)) {
-        return NULL;
+    if ((strcmp(nativeRequest->details->network, "main") == 0 && BITCOIN_TESTNET == 1) ||
+        (strcmp(nativeRequest->details->network, "main") != 0 && BITCOIN_TESTNET == 0)) {
+        (*env)->SetIntField(env, entity, jerror, 3);
+        return entity;
     }
+
+    //Create serialized paymentProtocolPayment
+    BRAddress changeAddress = BRWalletChangeAddress(_wallet);
+
+    BRTransaction *tx = BRWalletCreateTxForOutputs(_wallet, nativeRequest->details->outputs, nativeRequest->details->outputsCount);
+    if(!tx) {
+        (*env)->SetIntField(env, entity, jerror, 1);
+        return entity;
+    }
+
+    UInt512 key = UINT512_ZERO;
+    BRBIP39DeriveKey(key.u8, rawPhrase, NULL);
+
+    size_t seedSize = sizeof(key);
+
+    BRWalletSignTransaction(_wallet, tx, key.u8, seedSize);
+    if(!BRTransactionIsSigned(tx)) {
+        (*env)->SetIntField(env, entity, jerror, 2);
+        return entity;
+    }
+
+    BRPaymentProtocolPayment *paymentProtocolPayment;
+    paymentProtocolPayment = BRPaymentProtocolPaymentNew(nativeRequest->details->merchantData, nativeRequest->details->merchDataLen,
+                                                         &tx, 1, &total_amount, &changeAddress, 1, nativeRequest->details->memo);
+    uint8_t buf[BRPaymentProtocolPaymentSerialize(paymentProtocolPayment, NULL, 0)];
+    size_t len = BRPaymentProtocolPaymentSerialize(paymentProtocolPayment, buf, sizeof(buf));
+
+    //paymentProtocolPayment
+    jbyte *bytesPaymentProtocolPayment = (jbyte *) buf;
+    size_t bytesPaymentProtocolPaymentSize = len;
+    jbyteArray byteArrayPaymentProtocolPayment = (*env)->NewByteArray(env, (jsize) bytesPaymentProtocolPaymentSize);
+    (*env)->SetByteArrayRegion(env, byteArrayPaymentProtocolPayment, 0, (jsize) bytesPaymentProtocolPaymentSize, bytesPaymentProtocolPayment);
 
     //signature
     jbyte *bytesSignature = (jbyte *) nativeRequest->signature;
@@ -207,13 +246,7 @@ JNIEXPORT jobject Java_com_breadwallet_tools_security_RequestHandler_parsePaymen
     jbyte *bytesMerchantData = (jbyte *) nativeRequest->details->merchantData;
     size_t merchantDataSize = nativeRequest->details->merchDataLen;
     jbyteArray byteArrayMerchantData = (*env)->NewByteArray(env, (jsize) merchantDataSize);
-    (*env)->SetByteArrayRegion(env, byteArrayMerchantData, 0, (jsize) merchantDataSize,
-                               bytesMerchantData);
-
-    //create class
-    jclass clazz = (*env)->FindClass(env,
-                                     "com/breadwallet/presenter/entities/PaymentRequestCWrapper");
-    jobject entity = (*env)->AllocObject(env, clazz);
+    (*env)->SetByteArrayRegion(env, byteArrayMerchantData, 0, (jsize) merchantDataSize, bytesMerchantData);
 
     //fields
     jfieldID pkiTypeField = (*env)->GetFieldID(env, clazz, "pkiType", "Ljava/lang/String;");
@@ -229,18 +262,16 @@ JNIEXPORT jobject Java_com_breadwallet_tools_security_RequestHandler_parsePaymen
     jmethodID midByteSignature = (*env)->GetMethodID(env, clazz, "byteSignature", "([B)V");
     jmethodID midPkiData = (*env)->GetMethodID(env, clazz, "pkiData", "([B)V");
     jmethodID midMerchantData = (*env)->GetMethodID(env, clazz, "merchantData", "([B)V");
+    jmethodID midPayment = (*env)->GetMethodID(env, clazz, "payment", "([B)V");
+
 
     //set java fields
-    (*env)->SetObjectField(env, entity, pkiTypeField,
-                           (*env)->NewStringUTF(env, nativeRequest->pkiType));
-    (*env)->SetObjectField(env, entity, networkField,
-                           (*env)->NewStringUTF(env, nativeRequest->details->network));
+    (*env)->SetObjectField(env, entity, pkiTypeField, (*env)->NewStringUTF(env, nativeRequest->pkiType));
+    (*env)->SetObjectField(env, entity, networkField, (*env)->NewStringUTF(env, nativeRequest->details->network));
     (*env)->SetLongField(env, entity, timeField, (jlong) nativeRequest->details->time);
     (*env)->SetLongField(env, entity, expiresField, (jlong) nativeRequest->details->expires);
-    (*env)->SetObjectField(env, entity, memoField,
-                           (*env)->NewStringUTF(env, nativeRequest->details->memo));
-    (*env)->SetObjectField(env, entity, paymentURLField,
-                           (*env)->NewStringUTF(env, nativeRequest->details->paymentURL));
+    (*env)->SetObjectField(env, entity, memoField, (*env)->NewStringUTF(env, nativeRequest->details->memo));
+    (*env)->SetObjectField(env, entity, paymentURLField, (*env)->NewStringUTF(env, nativeRequest->details->paymentURL));
     (*env)->SetObjectField(env, entity, addresses, stringArray);
     (*env)->SetLongField(env, entity, amount, (jlong) total_amount);
 
@@ -248,9 +279,11 @@ JNIEXPORT jobject Java_com_breadwallet_tools_security_RequestHandler_parsePaymen
     (*env)->CallVoidMethod(env, entity, midByteSignature, byteArraySignature);
     (*env)->CallVoidMethod(env, entity, midPkiData, byteArrayPkiData);
     (*env)->CallVoidMethod(env, entity, midMerchantData, byteArrayPkiData);
+    (*env)->CallVoidMethod(env, entity, midPayment, byteArrayPaymentProtocolPayment);
 
     //release stuff
     (*env)->ReleaseByteArrayElements(env, payment, bytePayment, JNI_COMMIT);
+    BRPaymentProtocolPaymentFree(paymentProtocolPayment);
 
     return entity;
 }
@@ -262,15 +295,12 @@ JNIEXPORT jbyteArray Java_com_breadwallet_tools_security_RequestHandler_getCerti
     BRPaymentProtocolRequest *nativeRequest;
     int requestLength = (*env)->GetArrayLength(env, payment);
     jbyte *bytePayment = (*env)->GetByteArrayElements(env, payment, 0);
-    nativeRequest = BRPaymentProtocolRequestParse((const uint8_t *) bytePayment,
-                                                  (size_t) requestLength);
+    nativeRequest = BRPaymentProtocolRequestParse((const uint8_t *) bytePayment, (size_t) requestLength);
     //testing the raw request example!!!!!!
 
     //get certificate
     uint8_t buf[BRPaymentProtocolRequestCert(nativeRequest, NULL, 0, (size_t) index)];
-    size_t length = BRPaymentProtocolRequestCert(nativeRequest, buf, (size_t) sizeof(buf),
-                                                 (size_t) index);
-//    __android_log_write(ANDROID_LOG_DEBUG, ">>>>>>MESSAGE FROM C: ", (char *) length);
+    size_t length = BRPaymentProtocolRequestCert(nativeRequest, buf, (size_t) sizeof(buf), (size_t) index);
 
     //convert it to jbyteArray
     jbyte *certJbyte = (jbyte *) buf;
@@ -283,8 +313,7 @@ JNIEXPORT jbyteArray Java_com_breadwallet_tools_security_RequestHandler_getCerti
     return result;
 }
 
-JNIEXPORT void JNICALL Java_com_breadwallet_presenter_activities_MainActivity_cTests(JNIEnv *env,
-                                                                                     jobject obj) {
+JNIEXPORT void JNICALL Java_com_breadwallet_presenter_activities_MainActivity_cTests(JNIEnv *env, jobject obj) {
 //    int result = BRRunTests();
 //    __android_log_print(ANDROID_LOG_ERROR, "Core Tests: ", "%d", result);
 }

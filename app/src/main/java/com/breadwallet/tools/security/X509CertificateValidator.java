@@ -2,7 +2,7 @@ package com.breadwallet.tools.security;
 
 import android.util.Log;
 
-import com.breadwallet.presenter.entities.PaymentRequestCWrapper;
+import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.presenter.exceptions.CertificateChainNotFound;
 
 import java.io.ByteArrayInputStream;
@@ -57,7 +57,7 @@ class X509CertificateValidator {
     public static final String ROOT_CERTS_DIR = "/system/etc/security/cacerts";
 
     public static String certificateValidation(List<X509Certificate> certList,
-                                                PaymentRequestCWrapper paymentRequest)
+                                                PaymentRequestWrapper paymentRequest)
             throws KeyStoreException, CertificateChainNotFound {
         if (certList.size() == 0) {
             throw new CertificateChainNotFound("no certificates supplied");
