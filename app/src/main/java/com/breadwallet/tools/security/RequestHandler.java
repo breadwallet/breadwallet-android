@@ -74,12 +74,12 @@ public class RequestHandler {
             if (requestObject.r != null) {
                 //TODO fix that later
 //                ----------------------------------------------------------------------------------
-                ((BreadWalletApp) app.getApplication()).showCustomToast(app, "Payment protocol not available in beta",
-                        MainActivity.screenParametersPoint.y / 2 + 300, Toast.LENGTH_LONG, 0);
-                if(requestObject.address == null || requestObject.address.isEmpty()) return;
-                tryAndProcessBitcoinURL(requestObject, app);
+//                ((BreadWalletApp) app.getApplication()).showCustomToast(app, "Payment protocol not available in beta",
+//                        MainActivity.screenParametersPoint.y / 2 + 300, Toast.LENGTH_LONG, 0);
+//                if(requestObject.address == null || requestObject.address.isEmpty()) return;
+//                tryAndProcessBitcoinURL(requestObject, app);
                 //----------------------------------------------------------------------------------
-//                tryAndProcessRequestURL(requestObject);
+                tryAndProcessRequestURL(requestObject);
                 //----------------------------------------------------------------------------------
             } else if (requestObject.address != null) {
                 tryAndProcessBitcoinURL(requestObject, app);
@@ -316,6 +316,10 @@ public class RequestHandler {
                 //end logging
                 if (paymentRequest.time > paymentRequest.expires) {
                     Log.e(TAG, "Request is expired");
+                    if (app != null)
+                        ((BreadWalletApp) app.getApplication()).
+                                showCustomDialog(app.getString(R.string.attention), "Expired request",
+                                        app.getString(R.string.close));
                     return null;
                 }
                 List<X509Certificate> certList = X509CertificateValidator.getCertificateFromBytes(serializedBytes);

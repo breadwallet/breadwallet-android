@@ -33,12 +33,14 @@ public class PaymentRequestWrapper {
     public static final int SIGNING_FAILED_ERROR = 2;
     public static final int INVALID_REQUEST_ERROR = 3;
     public static final int REQUEST_TOO_LONG_ERROR = 4;
+    public static final int AMOUNTS_ERROR = 4;
 
     //errors
     public int error = 0;
 
     //response
     public byte[] payment;
+    public byte[] serializedTx;
 
     //Protocol
     public boolean isPaymentRequest;
@@ -74,6 +76,10 @@ public class PaymentRequestWrapper {
 
     public void payment(byte[] payment) {
         this.payment = payment;
+    }
+
+    public void serializedTx(byte[] serializedTx) {
+        this.serializedTx = serializedTx;
     }
 
 }

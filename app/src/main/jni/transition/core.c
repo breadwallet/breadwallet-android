@@ -218,11 +218,24 @@ JNIEXPORT jobject Java_com_breadwallet_tools_security_RequestHandler_parsePaymen
         return entity;
     }
 
+    uint64_t amountToBeSent = BRWalletAmountSentByTx(_wallet, tx) - BRWalletAmountReceivedFromTx(_wallet,tx);
+
+    if(amountToBeSent != total_amount) {
+        (*env)->SetIntField(env, entity, jerror, 5);
+        return entity;
+    }
+
     BRPaymentProtocolPayment *paymentProtocolPayment;
     paymentProtocolPayment = BRPaymentProtocolPaymentNew(nativeRequest->details->merchantData, nativeRequest->details->merchDataLen,
                                                          &tx, 1, &total_amount, &changeAddress, 1, nativeRequest->details->memo);
     uint8_t buf[BRPaymentProtocolPaymentSerialize(paymentProtocolPayment, NULL, 0)];
     size_t len = BRPaymentProtocolPaymentSerialize(paymentProtocolPayment, buf, sizeof(buf));
+
+    //serialized transaction
+    uint8_t txBuf[BRTransactionSerialize(tx, NULL, 0)];
+    size_t txLen = BRTransactionSerialize(tx, txBuf, sizeof(txBuf));
+    jbyteArray serializedTx = (*env)->NewByteArray(env, (jsize) txLen);
+    (*env)->SetByteArrayRegion(env, serializedTx, 0, (jsize) txLen, (jbyte *) txBuf);
 
     //paymentProtocolPayment
     jbyte *bytesPaymentProtocolPayment = (jbyte *) buf;
@@ -263,7 +276,7 @@ JNIEXPORT jobject Java_com_breadwallet_tools_security_RequestHandler_parsePaymen
     jmethodID midPkiData = (*env)->GetMethodID(env, clazz, "pkiData", "([B)V");
     jmethodID midMerchantData = (*env)->GetMethodID(env, clazz, "merchantData", "([B)V");
     jmethodID midPayment = (*env)->GetMethodID(env, clazz, "payment", "([B)V");
-
+    jmethodID midSerializedTx = (*env)->GetMethodID(env, clazz, "serializedTx", "([B)V");
 
     //set java fields
     (*env)->SetObjectField(env, entity, pkiTypeField, (*env)->NewStringUTF(env, nativeRequest->pkiType));
@@ -273,13 +286,14 @@ JNIEXPORT jobject Java_com_breadwallet_tools_security_RequestHandler_parsePaymen
     (*env)->SetObjectField(env, entity, memoField, (*env)->NewStringUTF(env, nativeRequest->details->memo));
     (*env)->SetObjectField(env, entity, paymentURLField, (*env)->NewStringUTF(env, nativeRequest->details->paymentURL));
     (*env)->SetObjectField(env, entity, addresses, stringArray);
-    (*env)->SetLongField(env, entity, amount, (jlong) total_amount);
+    (*env)->SetLongField(env, entity, amount, (jlong) amountToBeSent);
 
     //call java methods
     (*env)->CallVoidMethod(env, entity, midByteSignature, byteArraySignature);
     (*env)->CallVoidMethod(env, entity, midPkiData, byteArrayPkiData);
     (*env)->CallVoidMethod(env, entity, midMerchantData, byteArrayPkiData);
     (*env)->CallVoidMethod(env, entity, midPayment, byteArrayPaymentProtocolPayment);
+    (*env)->CallVoidMethod(env, entity, midSerializedTx, serializedTx);
 
     //release stuff
     (*env)->ReleaseByteArrayElements(env, payment, bytePayment, JNI_COMMIT);

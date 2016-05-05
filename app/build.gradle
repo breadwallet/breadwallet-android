@@ -37,19 +37,21 @@ model {
             ignoreWarnings = false
         }
 
-
         buildTypes {
             release {
                 minifyEnabled = false
                 debuggable = true
                 ndk {
+                    minifyEnabled = false
                     debuggable = true
                 }
 
             }
             debug {
                 debuggable = true
+                minifyEnabled = false
                 ndk {
+                    minifyEnabled = false
                     debuggable = true
                 }
             }
