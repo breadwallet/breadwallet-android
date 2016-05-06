@@ -6,15 +6,15 @@ model {
         buildToolsVersion = '23.0.3'
 
         defaultConfig {
-
             testInstrumentationRunner = 'android.support.test.runner.AndroidJUnitRunner'
             applicationId = 'com.breadwallet'
             minSdkVersion.apiLevel = 23
             targetSdkVersion.apiLevel = 23
-            versionCode = 6
-            versionName = "0.6-beta6"
+            versionCode = 7
+            versionName = "0.6-beta7"
         }
         ndk {
+            ext.stripSymbols = false
             moduleName = "core"
             toolchain = "clang"
             debuggable = true

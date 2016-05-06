@@ -171,7 +171,8 @@ public class PostAuthenticationProcessor {
 
     }
 
-    public void onPaymentProtocolRequest(){
+    public void onPaymentProtocolRequest() {
+        Log.e(TAG, "onPaymentProtocolRequest");
         HttpURLConnection urlConnection = null;
         String certName = null;
         PaymentRequestWrapper paymentRequest = null;
@@ -179,7 +180,7 @@ public class PostAuthenticationProcessor {
         final MainActivity app = MainActivity.app;
         try {
             Log.e(TAG, "the uri: " + uri);
-            if(uri == null) return;
+            if (uri == null) return;
             URL url = new URL(uri);
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestProperty("Accept", "application/bitcoin-paymentrequest");
@@ -265,14 +266,6 @@ public class PostAuthenticationProcessor {
                 }
             }
             allAddresses.delete(allAddresses.length() - 2, allAddresses.length());
-
-//                CustomLogger.LogThis("Signature", String.valueOf(paymentRequest.signature.length),
-//                        "pkiType", paymentRequest.pkiType, "pkiData", String.valueOf(paymentRequest.pkiData.length));
-//                CustomLogger.LogThis("network", paymentRequest.network, "time", String.valueOf(paymentRequest.time),
-//                        "expires", String.valueOf(paymentRequest.expires), "memo", paymentRequest.memo,
-//                        "paymentURL", paymentRequest.paymentURL, "merchantDataSize",
-//                        String.valueOf(paymentRequest.merchantData.length), "addresses", allAddresses.toString(),
-//                        "amount", String.valueOf(paymentRequest.amount));
             //end logging
             if (paymentRequest.time > paymentRequest.expires) {
                 Log.e(TAG, "Request is expired");
@@ -305,7 +298,18 @@ public class PostAuthenticationProcessor {
         } finally {
             if (urlConnection != null) urlConnection.disconnect();
         }
-        return;
+        if (paymentRequest != null && paymentRequest.serializedTx != null) {
+            String seed = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAY_REQUEST_CODE);
+            boolean success = BRWalletManager.getInstance(app).publishSerializedTransaction(paymentRequest.serializedTx, seed);
+            if (app != null)
+                if (!success)
+                    ((BreadWalletApp) app.getApplication()).showCustomToast(app, "failed to send", MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
+        } else {
+            Log.e(TAG, "this.tmpTxObject is null!!!!!!!!!!!!!");
+            if (app != null)
+                ((BreadWalletApp) app.getApplication()).showCustomToast(app, "failed to send", MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
+        }
+
     }
 
 
@@ -322,7 +326,6 @@ public class PostAuthenticationProcessor {
     public void setUri(String uri) {
         this.uri = uri;
     }
-
 
 
     public void clearTmpTxObject() {

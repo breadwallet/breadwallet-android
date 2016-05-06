@@ -152,7 +152,7 @@ const int TEST_REQ = 0;
 //        "\x7b\x5d\x76\x05\x3a\x58\x40\xbc\x4d\x61\x04\xdd\x87\xef\xc3\x1b\xcc\x3a\x8a\xef\xc3\x10\x02\x35\xbe\x61\xc0\x3a"
 //        "\x50\x55\x66\x77\x71\x85\xdd\x6f\x93\x2b\xae\xb5\xd5\xe2\xd4\x39\x8d\x01\x14\x0d\x48";
 
-JNIEXPORT jobject Java_com_breadwallet_tools_security_RequestHandler_parsePaymentRequest
+JNIEXPORT jobject JNICALL Java_com_breadwallet_tools_security_RequestHandler_parsePaymentRequest
         (JNIEnv *env, jobject obj, jbyteArray payment, jstring phrase) {
     if (!payment) return NULL;
 
@@ -302,7 +302,7 @@ JNIEXPORT jobject Java_com_breadwallet_tools_security_RequestHandler_parsePaymen
     return entity;
 }
 
-JNIEXPORT jbyteArray Java_com_breadwallet_tools_security_RequestHandler_getCertificatesFromPaymentRequest
+JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_tools_security_RequestHandler_getCertificatesFromPaymentRequest
         (JNIEnv *env, jobject obj, jbyteArray payment, jint index) {
 
     //create the BRPaymentProtocolRequest

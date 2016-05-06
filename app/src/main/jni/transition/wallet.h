@@ -31,27 +31,27 @@
 extern BRWallet *_wallet;
 extern jclass _walletManagerClass;
 
-JNIEXPORT jstring Java_com_breadwallet_wallet_BRWalletManager_encodeSeed(JNIEnv *env,
+JNIEXPORT jstring JNICALL Java_com_breadwallet_wallet_BRWalletManager_encodeSeed(JNIEnv *env,
                                                                             jobject thiz,
                                                                             jbyteArray seed,
                                                                             jobjectArray stringArray);
 
-JNIEXPORT void Java_com_breadwallet_wallet_BRWalletManager_createWallet(JNIEnv *env,
+JNIEXPORT void JNICALL Java_com_breadwallet_wallet_BRWalletManager_createWallet(JNIEnv *env,
                                                                         jobject thiz,
                                                                         size_t txCount,
                                                                         jbyteArray bytePubKey);
 
-JNIEXPORT jbyteArray Java_com_breadwallet_wallet_BRWalletManager_getMasterPubKey(JNIEnv *env,
+JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getMasterPubKey(JNIEnv *env,
                                                                               jobject thiz,
                                                                               jstring phrase);
 
-JNIEXPORT void Java_com_breadwallet_wallet_BRWalletManager_putTransaction(JNIEnv *env,
+JNIEXPORT void JNICALL Java_com_breadwallet_wallet_BRWalletManager_putTransaction(JNIEnv *env,
                                                                                 jobject thiz,
                                                                                 jbyteArray transaction,
                                                                                 jlong blockHeight,
                                                                                 jlong timeStamp);
 
-JNIEXPORT void Java_com_breadwallet_wallet_BRWalletManager_createTxArrayWithCount(JNIEnv *env,
+JNIEXPORT void JNICALL Java_com_breadwallet_wallet_BRWalletManager_createTxArrayWithCount(JNIEnv *env,
                                                                                   jobject thiz,
                                                                                   int txCount);
 JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRWalletManager_validateAddress
@@ -72,16 +72,16 @@ JNIEXPORT jint JNICALL Java_com_breadwallet_wallet_BRWalletManager_feeForTransac
 JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRWalletManager_isCreated
         (JNIEnv *env, jobject obj);
 
-JNIEXPORT jstring Java_com_breadwallet_wallet_BRWalletManager_getReceiveAddress(JNIEnv *env,
+JNIEXPORT jstring JNICALL Java_com_breadwallet_wallet_BRWalletManager_getReceiveAddress(JNIEnv *env,
                                                                                 jobject thiz);
 
-JNIEXPORT jobjectArray Java_com_breadwallet_wallet_BRWalletManager_getTransactions(JNIEnv *env,
+JNIEXPORT jobjectArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTransactions(JNIEnv *env,
                                                                                    jobject thiz);
 
 JNIEXPORT jobject JNICALL Java_com_breadwallet_wallet_BRWalletManager_tryTransaction
         (JNIEnv *env, jobject obj, jstring jAddress, jlong jAmount);
 
-JNIEXPORT jboolean Java_com_breadwallet_wallet_BRWalletManager_pay(JNIEnv *env, jobject thiz,
+JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRWalletManager_pay(JNIEnv *env, jobject thiz,
                                                                    jstring address,
                                                                    jlong amount,
                                                                    jstring strSeed);
@@ -92,26 +92,26 @@ JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRWalletManager_transacti
 JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_getMaxOutputAmount
         (JNIEnv *env, jobject obj);
 
-JNIEXPORT jlong Java_com_breadwallet_wallet_BRWalletManager_localAmount(JNIEnv *env, jobject thiz,
+JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_localAmount(JNIEnv *env, jobject thiz,
                                                                         jlong amount,
                                                                         double price);
 
-JNIEXPORT jlong Java_com_breadwallet_wallet_BRWalletManager_bitcoinAmount(JNIEnv *env, jobject thiz,
+JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_bitcoinAmount(JNIEnv *env, jobject thiz,
                                                                           jlong localAmount,
                                                                           double price);
 
-JNIEXPORT void Java_com_breadwallet_wallet_BRWalletManager_walletFreeEverything(JNIEnv *env, jobject thiz);
+JNIEXPORT void JNICALL Java_com_breadwallet_wallet_BRWalletManager_walletFreeEverything(JNIEnv *env, jobject thiz);
 
 JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRWalletManager_validateRecoveryPhrase
                                                                         (JNIEnv *env, jobject obj,
                                                                         jobjectArray stringArray,
                                                                         jstring jPhrase);
 
-JNIEXPORT jstring Java_com_breadwallet_wallet_BRWalletManager_getFirstAddress(JNIEnv *env,
+JNIEXPORT jstring JNICALL Java_com_breadwallet_wallet_BRWalletManager_getFirstAddress(JNIEnv *env,
                                                                          jobject thiz,
                                                                          jbyteArray bytePubKey);
 
-JNIEXPORT jboolean Java_com_breadwallet_wallet_BRWalletManager_publishSerializedTransaction(JNIEnv *env,
+JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRWalletManager_publishSerializedTransaction(JNIEnv *env,
                                                                                 jobject thiz,
                                                                                 jbyteArray serializedTransaction,
                                                                                 jstring phrase);

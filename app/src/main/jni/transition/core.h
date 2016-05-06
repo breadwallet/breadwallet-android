@@ -32,10 +32,10 @@
 //JNIEXPORT jboolean JNICALL Java_com_breadwallet_tools_security_RequestHandler_validateAddress
 //        (JNIEnv *env, jobject obj, jstring address);
 
-jbyteArray Java_com_breadwallet_tools_security_RequestHandler_parsePaymentRequest
+JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_tools_security_RequestHandler_parsePaymentRequest
         (JNIEnv *env, jobject obj, jbyteArray payment, jstring phrase);
 
-jbyteArray Java_com_breadwallet_tools_security_RequestHandler_getCertificatesFromPaymentRequest
+JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_tools_security_RequestHandler_getCertificatesFromPaymentRequest
         (JNIEnv *env, jobject obj, jbyteArray payment, jint index);
 
 JNIEXPORT void JNICALL Java_com_breadwallet_presenter_activities_MainActivity_cTests(JNIEnv *env,

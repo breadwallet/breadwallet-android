@@ -295,32 +295,6 @@ public class KeyStoreManager {
         return true;
     }
 
-//    public static boolean deleteAllKeyStoreEntries() {
-//        KeyStore keyStore;
-//        try {
-//            keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
-//            keyStore.load(null);
-//            Enumeration<String> aliases = keyStore.aliases();
-//            while (aliases.hasMoreElements()) {
-//                String alias = aliases.nextElement();
-//                Log.e(TAG, "Deleting alias: " + alias);
-//                keyStore.deleteEntry(alias);
-//            }
-//        } catch (NoSuchAlgorithmException e) {
-//            e.printStackTrace();
-//            return false;
-//        } catch (KeyStoreException e) {
-//            e.printStackTrace();
-//            return false;
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            return false;
-//        } catch (java.security.cert.CertificateException e) {
-//            e.printStackTrace();
-//        }
-//        return true;
-//    }
-
     public static void showAuthenticationScreen(Activity context, int requestCode) {
         // Create the Confirm Credentials screen. You can customize the title and description. Or
         // we will provide a generic one for you if you leave it null
@@ -373,6 +347,5 @@ public class KeyStoreManager {
         }
         return false;
     }
-
 
 }
