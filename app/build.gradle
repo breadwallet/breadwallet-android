@@ -14,14 +14,13 @@ model {
             versionName = "0.6-beta7"
         }
         ndk {
-            ext.stripSymbols = false
             moduleName = "core"
             toolchain = "clang"
             debuggable = true
 //            // Note that CFlags has a capital C, which is inconsistent with
 //            // the naming convention of other properties.  This is a
 //            // technical limitation that will be resolved
-            CFlags.addAll(['-std=c99','-g','-DBITCOIN_TESTNET=0','-I' + file('src/main/secp/secp256k1/include'), '-I' + file('src/main/secp/secp256k1') ,'-I' + file('src/main/secp'), '-I' + file('src/main/jni/breadwallet-core'),'-I' + file('src/main/jni/transition')])
+            CFlags.addAll(['-std=c99','-g','-DBITCOIN_TESTNET=1','-I' + file('src/main/secp/secp256k1/include'), '-I' + file('src/main/secp/secp256k1') ,'-I' + file('src/main/secp'), '-I' + file('src/main/jni/breadwallet-core'),'-I' + file('src/main/jni/transition')])
 //                           '-Wno-trigraphs', '-Wmissing','-field-initializers', '-Wno-missing-prototypes', '-Werror=return-type', '-Wdocumentation', '-Wunreachable-code-aggressive', '-Wno-missing-braces', '-Wparentheses', '-Wswitch', '-Wno-unused-function', '-Wunused-label', '-Wno-unused-parameter', '-Wunused-variable', '-Wunused-value', '-Wempty-body', '-Wconditional-uninitialized', '-Wno-unknown-pragmas', '-pedantic', '-Wshadow', '-Wfour-char-constants', '-Wno-conversion', '-Wconstant-conversion', '-Wint-conversion', '-Wbool-conversion ', '-Wenum-conversion', '-Wassign-enum', '-Wno-shorten-64-to-32', '-Wpointer-sign', '-Wnewline-eof', '-Wdeprecated-declarations', '-Wno-sign-conversion'])
 //            ldFlags.add("-L/custom/lib/path")
             ldLibs.addAll(['android','log'])

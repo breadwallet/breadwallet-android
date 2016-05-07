@@ -58,6 +58,7 @@ import org.acra.annotation.ReportsCrashes;
  * THE SOFTWARE.
  */
 
+//TODO take that off before release
 @ReportsCrashes(
         mailTo = "mihail@breadwallet.com", // my email here
         customReportContent = {
