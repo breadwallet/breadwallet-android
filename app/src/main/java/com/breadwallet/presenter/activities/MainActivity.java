@@ -364,6 +364,8 @@ public class MainActivity extends FragmentActivity implements Observer {
         if (currentSyncProgress > 0 && currentSyncProgress < 1) {
             Log.e(TAG, "Worked! restarted the syncing!");
             BRPeerManager.startSyncingProgressThread();
+        } else {
+            BRPeerManager.stopSyncingProgressThread();
         }
         askForPasscode();
     }
@@ -609,7 +611,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                                 byte[] tmpTx2 = m.tryTransaction(addressHolder, bigDecimalAmount.longValue() - amountToReduce);
                                 if (tmpTx2 != null) {
                                     PostAuthenticationProcessor.getInstance().setTmpTx(tmpTx2);
-                                    confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, bigDecimalAmount.longValue() - amountToReduce, cn));
+                                    confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, bigDecimalAmount.longValue() - amountToReduce, cn,tmpTx2));
                                 } else {
                                     Log.e(TAG, "tmpTxObject2 is null!!!");
                                     ((BreadWalletApp) getApplication()).showCustomToast(app, "Failed to send, insufficient funds", screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
@@ -625,7 +627,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                     ", CurrencyManager.getInstance(this).getBALANCE(): " + cm.getBALANCE());
             if (feeForTx != 0 && bigDecimalAmount.longValue() + feeForTx < cm.getBALANCE()) {
 
-                confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, bigDecimalAmount.longValue(), cn));
+                confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, bigDecimalAmount.longValue(), cn, tmpTx));
             } else {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage(String.format(Locale.getDefault(), "insufficient funds to send: %s", cm.getFormattedCurrencyString("BTC", bigDecimalAmount.longValue())))

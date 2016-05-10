@@ -249,7 +249,12 @@ public class PasswordDialogFragment extends DialogFragment {
                     BRWalletManager walletManager = BRWalletManager.getInstance(getActivity());
                     String seed = KeyStoreManager.getKeyStorePhrase(getActivity(), BRConstants.PAY_REQUEST_CODE);
                     if (seed != null && !seed.isEmpty()) {
-                        boolean success = walletManager.pay(request.addresses[0], (request.amount), seed);
+                        boolean success;
+                        if (request.serializedTx != null) {
+                            success = walletManager.publishSerializedTransaction(request.serializedTx, seed);
+                        } else {
+                            success = walletManager.pay(request.addresses[0], (request.amount), seed);
+                        }
                         if (!success) {
                             ((BreadWalletApp) getActivity().getApplication()).showCustomToast(getActivity(),
                                     "Failed to send", MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);

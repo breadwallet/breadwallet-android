@@ -49,7 +49,7 @@ import javax.net.ssl.X509TrustManager;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-class X509CertificateValidator {
+public class X509CertificateValidator {
     private static final String TAG = X509CertificateValidator.class.getName();
     public static final String PKI_X509_SHA256 = "x509+sha256";
     public static final String PKI_X509_SHA1 = "x509+sha1";

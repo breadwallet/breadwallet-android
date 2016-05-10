@@ -33,7 +33,7 @@ public class PaymentRequestWrapper {
     public static final int SIGNING_FAILED_ERROR = 2;
     public static final int INVALID_REQUEST_ERROR = 3;
     public static final int REQUEST_TOO_LONG_ERROR = 4;
-    public static final int AMOUNTS_ERROR = 4;
+    public static final int AMOUNTS_ERROR = 5;
 
     //errors
     public int error = 0;
@@ -59,6 +59,7 @@ public class PaymentRequestWrapper {
     //Outputs
     public String[] addresses;
     public long amount;
+    public long fee;
 
     private PaymentRequestWrapper() {}
 

@@ -250,7 +250,7 @@ JNIEXPORT void JNICALL Java_com_breadwallet_wallet_BRPeerManager_createAndConnec
                                   networkIsReachable);
     }
     //TESTING ONLY
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "earliestKeyTime: %d",  (int) earliestKeyTime);
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "earliestKeyTime: %d",  earliestKeyTime);
 //    _peerManager = BRPeerManagerNew(_wallet, (uint32_t) earliestKeyTime, NULL,0, NULL, 0);
 
     if (_peerManager == NULL) {

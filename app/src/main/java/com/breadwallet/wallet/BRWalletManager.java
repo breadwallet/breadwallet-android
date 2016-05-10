@@ -239,7 +239,7 @@ public class BRWalletManager {
             });
         }
         if (ctx == null) ctx = MainActivity.app;
-        if (ctx != null && !MiddleViewAdapter.getSyncing()) {
+        if (ctx != null ) {
 
             ctx.runOnUiThread(new Runnable() {
                 @Override

@@ -218,12 +218,19 @@ JNIEXPORT jobject JNICALL Java_com_breadwallet_tools_security_RequestHandler_par
         return entity;
     }
 
-    uint64_t amountToBeSent = BRWalletAmountSentByTx(_wallet, tx) - BRWalletAmountReceivedFromTx(_wallet,tx);
+    uint64_t feeForTx = BRWalletFeeForTx(_wallet, tx);
 
+    uint64_t amountToBeSent = BRWalletAmountSentByTx(_wallet, tx) - BRWalletAmountReceivedFromTx(_wallet,tx) - feeForTx;
+    __android_log_print(ANDROID_LOG_ERROR, "Core Tests: ", "amountToBeSent: %d",
+                        (int) amountToBeSent);
+    __android_log_print(ANDROID_LOG_ERROR, "Core Tests: ", "total_amount: %d",
+                        (int) total_amount);
     if(amountToBeSent != total_amount) {
         (*env)->SetIntField(env, entity, jerror, 5);
         return entity;
     }
+
+
 
     BRPaymentProtocolPayment *paymentProtocolPayment;
     paymentProtocolPayment = BRPaymentProtocolPaymentNew(nativeRequest->details->merchantData, nativeRequest->details->merchDataLen,
@@ -270,6 +277,7 @@ JNIEXPORT jobject JNICALL Java_com_breadwallet_tools_security_RequestHandler_par
     jfieldID paymentURLField = (*env)->GetFieldID(env, clazz, "paymentURL", "Ljava/lang/String;");
     jfieldID addresses = (*env)->GetFieldID(env, clazz, "addresses", "[Ljava/lang/String;");
     jfieldID amount = (*env)->GetFieldID(env, clazz, "amount", "J");
+    jfieldID fee = (*env)->GetFieldID(env, clazz, "fee", "J");
 
     //methods id
     jmethodID midByteSignature = (*env)->GetMethodID(env, clazz, "byteSignature", "([B)V");
@@ -287,6 +295,7 @@ JNIEXPORT jobject JNICALL Java_com_breadwallet_tools_security_RequestHandler_par
     (*env)->SetObjectField(env, entity, paymentURLField, (*env)->NewStringUTF(env, nativeRequest->details->paymentURL));
     (*env)->SetObjectField(env, entity, addresses, stringArray);
     (*env)->SetLongField(env, entity, amount, (jlong) amountToBeSent);
+    (*env)->SetLongField(env, entity, fee, (jlong) feeForTx);
 
     //call java methods
     (*env)->CallVoidMethod(env, entity, midByteSignature, byteArraySignature);
