@@ -1,19 +1,15 @@
 package com.breadwallet.presenter;
 
-import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;
-import android.app.FragmentManager;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
 import android.os.Handler;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Display;
@@ -40,8 +36,6 @@ import org.acra.ACRA;
 import org.acra.ReportField;
 import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
-
-import javax.inject.Inject;
 
 /**
  * BreadWallet
