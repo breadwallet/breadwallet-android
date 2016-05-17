@@ -38,6 +38,7 @@ public class BRConstants {
     public static final int AUTH_FOR_PHRASE = 11;
     public static final int AUTH_FOR_PAY = 12;
     public static final int AUTH_FOR_GENERAL = 13;
+    public static final int AUTH_FOR_LIMIT = 14;
 
     /**
      * BlockHeight prefs
@@ -62,6 +63,7 @@ public class BRConstants {
 
     public static final String CANARY_STRING = "canary";
     public static final String FIRST_ADDRESS = "firstAddress";
+    public static final String SECURE_TIME_PREFS = "secureTime";
 
     private BRConstants() {
     }

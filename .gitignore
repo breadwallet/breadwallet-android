@@ -59,3 +59,4 @@ gradle.properties
 # jniLibs files
 #NDK
 obj/
+crash.txt

@@ -4,6 +4,7 @@
       <w>bitcoin</w>
       <w>breadwallet</w>
       <w>merkle</w>
+      <w>passcode</w>
       <w>sqlite</w>
     </words>
   </dictionary>

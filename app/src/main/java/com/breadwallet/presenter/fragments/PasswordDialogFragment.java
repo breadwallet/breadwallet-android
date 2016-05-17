@@ -28,6 +28,9 @@ package com.breadwallet.presenter.fragments;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.inputmethodservice.Keyboard;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.text.Editable;
@@ -36,6 +39,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -44,6 +48,7 @@ import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
+import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.tools.BRConstants;
@@ -58,11 +63,16 @@ import com.breadwallet.tools.security.PassCodeManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.wallet.BRWalletManager;
 
+import java.security.KeyStore;
+import java.util.Locale;
+
 public class PasswordDialogFragment extends DialogFragment {
 
     private static final String TAG = PasswordDialogFragment.class.getName();
     private EditText passcodeEditText;
+    private EditText phraseEditText;
     private Button cancel;
+    private Button reset;
     private DialogFragment dialogFragment;
     private static final int AUTH_MODE_CHECK_PASS = 0;
     private static final int AUTH_MODE_NEW_PASS = 1;
@@ -77,6 +87,9 @@ public class PasswordDialogFragment extends DialogFragment {
     private TextView digit_3;
     private TextView digit_4;
     private PaymentRequestEntity request;
+    private TextView info;
+    private TextWatcher textWatcher;
+    private String prevPass;
 
     private int mode = -1;
 
@@ -88,30 +101,27 @@ public class PasswordDialogFragment extends DialogFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_password_dialog, container);
         dialogFragment = this;
         passcodeEditText = (EditText) view.findViewById(R.id.edit_passcode);
+        phraseEditText = (EditText) view.findViewById(R.id.edit_phrase);
         cancel = (Button) view.findViewById(R.id.button_password_cancel);
+        reset = (Button) view.findViewById(R.id.button_password_reset);
         title = (TextView) view.findViewById(R.id.passcode_dialog_title);
+        info = (TextView) view.findViewById(R.id.password_info_text);
 
         digit_1 = (TextView) view.findViewById(R.id.passcode_digit1);
         digit_2 = (TextView) view.findViewById(R.id.passcode_digit2);
         digit_3 = (TextView) view.findViewById(R.id.passcode_digit3);
         digit_4 = (TextView) view.findViewById(R.id.passcode_digit4);
+        prevPass = "";
 
         clearDigits();
 
         final InputMethodManager keyboard = (InputMethodManager) getActivity().
                 getSystemService(Context.INPUT_METHOD_SERVICE);
-
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                keyboard.showSoftInput(passcodeEditText, 0);
-            }
-        });
 
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,6 +129,45 @@ public class PasswordDialogFragment extends DialogFragment {
                 getDialog().cancel();
                 passcodeEditText.setText("");
                 keyboard.hideSoftInputFromWindow(cancel.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
+            }
+        });
+
+        reset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (phraseEditText.getVisibility() == View.GONE) {
+                    phraseEditText.setVisibility(View.VISIBLE);
+                    title.setText(R.string.recovery_title);
+                    info.setVisibility(View.GONE);
+                } else {
+                    if (!phraseEditText.getText().toString().isEmpty() && KeyStoreManager.phraseIsValid(phraseEditText.getText().toString(), getActivity())) {
+                        KeyStoreManager.putFailCount(0, getActivity());
+                        KeyStoreManager.putFailTimeStamp(0, getActivity());
+                        getDialog().dismiss();
+                    }
+                }
+
+            }
+        });
+
+        int failCount = KeyStoreManager.getFailCount(getActivity());
+        SharedPreferences prefs = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
+
+        long secureTime = prefs.getLong(BRConstants.SECURE_TIME_PREFS, 0);
+        long failTimestamp = KeyStoreManager.getFailTimeStampt(getActivity());
+        if (secureTime == 0) secureTime = System.currentTimeMillis() / 1000;
+
+        updateInfoText();
+
+        if (secureTime < failTimestamp + Math.pow(6, failCount - 3) * 60.0) {
+            setWalletDisabled();
+            return view;
+        }
+
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                keyboard.showSoftInput(passcodeEditText, 0);
             }
         });
 
@@ -134,7 +183,8 @@ public class PasswordDialogFragment extends DialogFragment {
         if (verifyOnly) {
             title.setText(R.string.enter_passcode);
         }
-        passcodeEditText.addTextChangedListener(new TextWatcher() {
+
+        textWatcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -150,7 +200,8 @@ public class PasswordDialogFragment extends DialogFragment {
             public void afterTextChanged(Editable s) {
 
             }
-        });
+        };
+        passcodeEditText.addTextChangedListener(textWatcher);
 
         getDialog().setCanceledOnTouchOutside(false);
         return view;
@@ -213,7 +264,11 @@ public class PasswordDialogFragment extends DialogFragment {
                     if (passToCheck.equals(tempPassToChange)) {
                         passCodeManager.setPassCode(tempPassToChange, getActivity());
                         tempPassToChange = "";
-                        getDialog().cancel();
+                        try {
+                            getDialog().dismiss();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         String tmp = CurrencyManager.getInstance(getActivity()).getCurrentBalanceText();
                         MiddleViewAdapter.resetMiddleView(getActivity(), tmp);
                         ((BreadWalletApp) getActivity().getApplicationContext()).setUnlocked(true);
@@ -231,10 +286,22 @@ public class PasswordDialogFragment extends DialogFragment {
             }
             // verify the passcode
         } else if (verifyOnly) {
+            //assume the passcode is wrong all the time
+            if(!prevPass.equals(s.toString())){
+                KeyStoreManager.putFailCount(KeyStoreManager.getFailCount(getActivity()) + 1, getActivity());
+            }
+
+            prevPass = s.toString();
+            if (KeyStoreManager.getFailCount(getActivity()) >= 3) setWalletDisabled();
             if (passCodeManager.checkAuth(s.toString(), getActivity())) {
+                //reset the passcode after successful attempt
+                KeyStoreManager.putFailCount(0, getActivity());
 //                BreadWalletApp.canceled = true;
                 getDialog().cancel();
-                MainActivity app = (MainActivity) getActivity();
+                long totalSpent = BRWalletManager.getInstance(getActivity()).getTotalSent();
+                long spendLimit = totalSpent + PassCodeManager.getInstance().getLimit(getActivity()) + (request == null ? 0 : request.amount);
+                KeyStoreManager.putSpendLimit(spendLimit, getActivity());
+                Log.e(TAG, "Setting the new limit: " + spendLimit + ", totalSpent was: " + totalSpent);
 
                 ((BreadWalletApp) getActivity().getApplicationContext()).setUnlocked(true);
                 FragmentSettingsAll.refreshUI(getActivity());
@@ -245,6 +312,8 @@ public class PasswordDialogFragment extends DialogFragment {
                 Log.e(TAG, "mode: " + mode + " request: " + request);
                 if (mode == BRConstants.AUTH_FOR_PHRASE) {
                     FragmentAnimator.animateSlideToLeft((MainActivity) getActivity(), new FragmentRecoveryPhrase(), new FragmentSettings());
+                } else if (mode == BRConstants.AUTH_FOR_LIMIT) {
+                    FragmentAnimator.animateSlideToLeft((MainActivity) getActivity(), new FragmentSpendLimit(), new FragmentSettings());
                 } else if (mode == BRConstants.AUTH_FOR_PAY && request != null) {
                     BRWalletManager walletManager = BRWalletManager.getInstance(getActivity());
                     String seed = KeyStoreManager.getKeyStorePhrase(getActivity(), BRConstants.PAY_REQUEST_CODE);
@@ -321,6 +390,44 @@ public class PasswordDialogFragment extends DialogFragment {
         return false;
     }
 
+    private void updateInfoText() {
+        int failCount = KeyStoreManager.getFailCount(getActivity());
+        int attemptsRemaining = 8 - failCount;
+
+        if (attemptsRemaining <= 0){
+            BRWalletManager m = BRWalletManager.getInstance(getActivity());
+            m.wipeKeyStore();
+            m.wipeWalletButKeystore(getActivity());
+            startIntroActivity();
+            FragmentAnimator.resetFragmentAnimator();
+        }
+        if(failCount >= 3){
+            info.setVisibility(View.VISIBLE);
+            info.setText(String.format(Locale.getDefault(),"%d attempts remaining", attemptsRemaining < 0 ? 0 : attemptsRemaining));
+        }
+    }
+
+    private void setWalletDisabled() {
+        int failCount = KeyStoreManager.getFailCount(getActivity());
+        SharedPreferences prefs = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
+
+        long secureTime = prefs.getLong(BRConstants.SECURE_TIME_PREFS, 0);
+        long failTimestamp = KeyStoreManager.getFailTimeStampt(getActivity());
+        double waitTime = (failTimestamp + Math.pow(6, failCount - 3) * 60.0 - secureTime) / 60.0;
+        title.setText(R.string.wallet_disabled);
+        passcodeEditText.setVisibility(View.GONE);
+        info.setVisibility(View.VISIBLE);
+        info.setText(String.format(getString(R.string.try_again), (int) waitTime));
+        digit_1.setVisibility(View.GONE);
+        digit_2.setVisibility(View.GONE);
+        digit_3.setVisibility(View.GONE);
+        digit_4.setVisibility(View.GONE);
+        getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        passcodeEditText.removeTextChangedListener(textWatcher);
+        reset.setVisibility(View.VISIBLE);
+
+    }
+
     public void setPaymentRequestEntity(PaymentRequestEntity requestEntity) {
         request = requestEntity;
     }
@@ -344,5 +451,15 @@ public class PasswordDialogFragment extends DialogFragment {
         digit_2.setText("-");
         digit_3.setText("-");
         digit_4.setText("-");
+    }
+
+    private void startIntroActivity() {
+
+        Intent intent;
+        intent = new Intent(getActivity(), IntroActivity.class);
+        startActivity(intent);
+        if (!getActivity().isDestroyed()) {
+            getActivity().finish();
+        }
     }
 }

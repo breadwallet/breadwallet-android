@@ -59,7 +59,6 @@ public class RequestHandler {
                 return;
             }
             if (requestObject.r != null) {
-                //TODO fix that later
 //                ----------------------------------------------------------------------------------
 //                ((BreadWalletApp) app.getApplication()).showCustomToast(app, "Payment protocol not available in beta",
 //                        MainActivity.screenParametersPoint.y / 2 + 300, Toast.LENGTH_LONG, 0);
@@ -160,7 +159,7 @@ public class RequestHandler {
         if (requestObject.amount != null) {
             BigDecimal bigDecimal = new BigDecimal(requestObject.amount);
             long amount = bigDecimal.longValue();
-            if (amount == 0) MainActivity.app.runOnUiThread(new Runnable() {
+            if (amount == 0 && app != null) app.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     FragmentScanResult.address = str;
@@ -179,18 +178,19 @@ public class RequestHandler {
                 app.pay(addresses[0], new BigDecimal(strAmount), null);
             }
         } else {
-            MainActivity.app.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    FragmentScanResult.address = str;
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            FragmentAnimator.animateScanResultFragment();
-                        }
-                    }, 1000);
-                }
-            });
+            if (app != null)
+                app.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        FragmentScanResult.address = str;
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                FragmentAnimator.animateScanResultFragment();
+                            }
+                        }, 1000);
+                    }
+                });
         }
         return true;
     }

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 import android.security.keystore.UserNotAuthenticatedException;
@@ -11,7 +12,9 @@ import android.util.Log;
 
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.TypesConverter;
+import com.breadwallet.wallet.BRWalletManager;
 
 import org.apache.commons.io.IOUtils;
 
@@ -33,6 +36,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.Enumeration;
 
@@ -72,29 +76,39 @@ import javax.crypto.spec.IvParameterSpec;
 public class KeyStoreManager {
     private static final String TAG = KeyStoreManager.class.getName();
 
-    private static final String CIPHER_ALGORITHM = "AES/CBC/PKCS7Padding";
-    private static final String PADDING = KeyProperties.ENCRYPTION_PADDING_PKCS7;
-    private static final String BLOCK_MODE = KeyProperties.BLOCK_MODE_CBC;
-    private static final String ANDROID_KEY_STORE = "AndroidKeyStore";
+    public static final String CIPHER_ALGORITHM = "AES/CBC/PKCS7Padding";
+    public static final String PADDING = KeyProperties.ENCRYPTION_PADDING_PKCS7;
+    public static final String BLOCK_MODE = KeyProperties.BLOCK_MODE_CBC;
+    public static final String ANDROID_KEY_STORE = "AndroidKeyStore";
 
-    private static final String PHRASE_IV = "ivphrase";
-    private static final String CANARY_IV = "ivcanary";
-    private static final String PUB_KEY_IV = "ivpubkey";
-    private static final String TIME_IV = "ivtime";
-    private static final String PASS_CODE_IV = "ivpasscode";
+    public static final String PHRASE_IV = "ivphrase";
+    public static final String CANARY_IV = "ivcanary";
+    public static final String PUB_KEY_IV = "ivpubkey";
+    public static final String TIME_IV = "ivtime";
+    public static final String PASS_CODE_IV = "ivpasscode";
+    public static final String FAIL_COUNT_IV = "ivfailcount";
+    public static final String SPENT_LIMIT_IV = "ivspendlimit";
+    public static final String FAIL_TIMESTAMP_IV = "ivfailtimestamp";
 
     public static final String PHRASE_ALIAS = "phrase";
     public static final String CANARY_ALIAS = "canary";
-    private static final String PUB_KEY_ALIAS = "pubKey";
-    private static final String WALLET_CREATION_TIME_ALIAS = "creationTime";
-    private static final String PASS_CODE_ALIAS = "passCode";
-    private static final String PHRASE_FILENAME = "my_phrase";
-    private static final String CANARY_FILENAME = "my_canary";
-    private static final String PUB_KEY_FILENAME = "my_pub_key";
-    private static final String WALLET_CREATION_TIME_FILENAME = "my_creation_time";
-    private static final String PASS_CODE_FILENAME = "my_pass_code";
+    public static final String PUB_KEY_ALIAS = "pubKey";
+    public static final String WALLET_CREATION_TIME_ALIAS = "creationTime";
+    public static final String PASS_CODE_ALIAS = "passCode";
+    public static final String FAIL_COUNT_ALIAS = "failCount";
+    public static final String SPEND_LIMIT_ALIAS = "spendlimit";
+    public static final String FAIL_TIMESTAMP_ALIAS = "failTimeStamp";
 
-    private static final int AUTH_DURATION_SEC = 300; //TODO make 300
+    public static final String PHRASE_FILENAME = "my_phrase";
+    public static final String CANARY_FILENAME = "my_canary";
+    public static final String PUB_KEY_FILENAME = "my_pub_key";
+    public static final String WALLET_CREATION_TIME_FILENAME = "my_creation_time";
+    public static final String PASS_CODE_FILENAME = "my_pass_code";
+    public static final String FAIL_COUNT_FILENAME = "my_fail_count";
+    public static final String SPEND_LIMIT_FILENAME = "my_spend_limit";
+    public static final String FAIL_TIMESTAMP_FILENAME = "my_fail_timestamp";
+
+    public static final int AUTH_DURATION_SEC = 300; //TODO make 300
 //    private static final int CANARY_AUTH_DURATION_SEC = Integer.MAX_VALUE;
 
     private static boolean setData(Activity context, byte[] data, String alias, String alias_file, String alias_iv, int request_code, boolean auth_required) {
@@ -155,7 +169,7 @@ public class KeyStoreManager {
         return false;
     }
 
-    public static byte[] getData(Activity context, String alias, String alias_file, String alias_iv, int request_code) {
+    private static byte[] getData(Activity context, String alias, String alias_file, String alias_iv, int request_code) {
         KeyStore keyStore;
         String filesDirectory = context.getFilesDir().getAbsolutePath();
         String encryptedDataFilePath = filesDirectory + File.separator + alias_file;
@@ -270,6 +284,55 @@ public class KeyStoreManager {
         return result.length > 0 ? TypesConverter.bytesToInt(result) : 0;
     }
 
+    public static boolean putFailCount(int failCount, Activity context) {
+        Log.e(TAG, "putFailCount: " + failCount);
+        if (failCount >= 3) {
+            SharedPreferences prefs = context.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
+            long time = prefs.getLong(BRConstants.SECURE_TIME_PREFS, System.currentTimeMillis() / 1000);
+            putFailTimeStamp(time, context);
+        }
+        byte[] bytesToStore = TypesConverter.intToBytes(failCount);
+        return bytesToStore.length != 0 && setData(context, bytesToStore, FAIL_COUNT_ALIAS, FAIL_COUNT_FILENAME, FAIL_COUNT_IV, 0, false);
+    }
+
+    public static int getFailCount(final Activity context) {
+        byte[] result = getData(context, FAIL_COUNT_ALIAS, FAIL_COUNT_FILENAME, FAIL_COUNT_IV, 0);
+        Log.e(TAG, "getFailCount: " + (result.length > 0 ? TypesConverter.bytesToInt(result) : 0));
+        return result.length > 0 ? TypesConverter.bytesToInt(result) : 0;
+    }
+
+    public static boolean putSpendLimit(long spendLimit, Activity context) {
+
+        byte[] bytesToStore = TypesConverter.long2byteArray(spendLimit);
+        return bytesToStore.length != 0 && setData(context, bytesToStore, SPEND_LIMIT_ALIAS, SPEND_LIMIT_FILENAME, SPENT_LIMIT_IV, 0, false);
+    }
+
+    public static long getSpendLimit(final Activity context) {
+        byte[] result = getData(context, SPEND_LIMIT_ALIAS, SPEND_LIMIT_FILENAME, SPENT_LIMIT_IV, 0);
+        return result.length > 0 ? TypesConverter.byteArray2long(result) : 0;
+    }
+
+    public static boolean putFailTimeStamp(long spendLimit, Activity context) {
+
+        byte[] bytesToStore = TypesConverter.long2byteArray(spendLimit);
+        return bytesToStore.length != 0 && setData(context, bytesToStore, FAIL_TIMESTAMP_ALIAS, FAIL_TIMESTAMP_FILENAME, FAIL_TIMESTAMP_IV, 0, false);
+    }
+
+    public static long getFailTimeStampt(final Activity context) {
+        byte[] result = getData(context, FAIL_TIMESTAMP_ALIAS, FAIL_TIMESTAMP_FILENAME, FAIL_TIMESTAMP_IV, 0);
+        return result.length > 0 ? TypesConverter.byteArray2long(result) : 0;
+    }
+
+    public static boolean phraseIsValid(String insertedPhrase, Activity activity) {
+        String normalizedPhrase = Normalizer.normalize(insertedPhrase.trim(), Normalizer.Form.NFKD);
+        if (!BRWalletManager.getInstance(activity).validatePhrase(activity, normalizedPhrase))
+            return false;
+        BRWalletManager m = BRWalletManager.getInstance(activity);
+        byte[] pubKey = m.getMasterPubKey(normalizedPhrase);
+        byte[] pubKeyFromKeyStore = KeyStoreManager.getMasterPublicKey(activity);
+        return Arrays.equals(pubKey, pubKeyFromKeyStore);
+    }
+
     public static boolean resetWalletKeyStore() {
         KeyStore keyStore;
         try {
@@ -280,6 +343,8 @@ public class KeyStoreManager {
             keyStore.deleteEntry(WALLET_CREATION_TIME_ALIAS);
             keyStore.deleteEntry(PASS_CODE_ALIAS);
             keyStore.deleteEntry(CANARY_ALIAS);
+            keyStore.deleteEntry(FAIL_COUNT_ALIAS);
+            keyStore.deleteEntry(FAIL_TIMESTAMP_ALIAS);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
             return false;

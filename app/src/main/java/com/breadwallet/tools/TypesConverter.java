@@ -49,11 +49,10 @@ public class TypesConverter {
     public static byte[] toBytes(char[] chars) {
         CharBuffer charBuffer = CharBuffer.wrap(chars);
         ByteBuffer byteBuffer = Charset.forName("UTF-8").encode(charBuffer);
-        byte[] bytes = Arrays.copyOfRange(byteBuffer.array(),
-                byteBuffer.position(), byteBuffer.limit());
-//        Arrays.fill(charBuffer.array(), '\u0000'); // clear sensitive data
+        //        Arrays.fill(charBuffer.array(), '\u0000'); // clear sensitive data
 //        Arrays.fill(byteBuffer.array(), (byte) 0); // clear sensitive data
-        return bytes;
+        return Arrays.copyOfRange(byteBuffer.array(),
+                byteBuffer.position(), byteBuffer.limit());
     }
 
     public static char[] lowerCaseCharArray(char[] arr){
@@ -69,5 +68,19 @@ public class TypesConverter {
         for(int i = 0; i < arr.length; i++)
             charArray[i] = (char) arr[i];
         return charArray;
+    }
+
+    public static byte[] long2byteArray(long l) {
+        byte b[] = new byte[8];
+
+        ByteBuffer buf = ByteBuffer.wrap(b);
+        buf.putLong(l);
+        return b;
+    }
+
+    public static long byteArray2long(byte[] b) {
+
+        ByteBuffer buf = ByteBuffer.wrap(b);
+        return buf.getLong();
     }
 }

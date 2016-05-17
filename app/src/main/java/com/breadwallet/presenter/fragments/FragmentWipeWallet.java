@@ -1,6 +1,7 @@
 
 package com.breadwallet.presenter.fragments;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
@@ -100,7 +101,7 @@ public class FragmentWipeWallet extends Fragment {
                         allowWipeButtonPress = true;
                     }
                 }, 500);
-                if (phraseIsValid(recoveryPhraseEditText.getText().toString().trim().toLowerCase())) {
+                if (KeyStoreManager.phraseIsValid(recoveryPhraseEditText.getText().toString().trim().toLowerCase(), getActivity())) {
                     m.wipeKeyStore();
                     m.wipeWalletButKeystore(getActivity());
                     startIntroActivity();
@@ -123,14 +124,6 @@ public class FragmentWipeWallet extends Fragment {
         return rootView;
     }
 
-    private boolean phraseIsValid(String insertedPhrase) {
-        String normalizedPhrase = Normalizer.normalize(insertedPhrase.trim(), Normalizer.Form.NFKD);
-        if (!BRWalletManager.getInstance(getActivity()).validatePhrase(getActivity(), normalizedPhrase))
-            return false;
-        byte[] pubKey = m.getMasterPubKey(normalizedPhrase);
-        byte[] pubKeyFromKeyStore = KeyStoreManager.getMasterPublicKey(getActivity());
-        return Arrays.equals(pubKey, pubKeyFromKeyStore);
-    }
 
     @Override
     public void onPause() {

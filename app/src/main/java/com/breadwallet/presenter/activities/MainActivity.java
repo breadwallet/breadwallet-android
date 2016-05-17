@@ -53,6 +53,7 @@ import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.CustomLogger;
 import com.breadwallet.tools.NetworkChangeReceiver;
+import com.breadwallet.tools.security.PassCodeManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.security.RequestHandler;
 import com.breadwallet.tools.security.RootUtil;
@@ -154,6 +155,10 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     public static boolean appInBackground = false;
 
+    static {
+        System.loadLibrary("core");
+    }
+
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
         beenThroughSavedInstanceMethod = true;
@@ -164,16 +169,14 @@ public class MainActivity extends FragmentActivity implements Observer {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //loading the native library
-
-
         app = this;
         initializeViews();
 
-        //TODO take this testing off
-//        testRequestHandler();
-
         printPhoneSpecs();
+
+        //TODO delete this testing stuff
+//        KeyStoreManager.putFailCount(0, this);
+//        KeyStoreManager.putFailTimeStamp(0, this);
 
         new Thread(new Runnable() {
             @Override
@@ -611,7 +614,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                                 byte[] tmpTx2 = m.tryTransaction(addressHolder, bigDecimalAmount.longValue() - amountToReduce);
                                 if (tmpTx2 != null) {
                                     PostAuthenticationProcessor.getInstance().setTmpTx(tmpTx2);
-                                    confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, bigDecimalAmount.longValue() - amountToReduce, cn,tmpTx2));
+                                    confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, bigDecimalAmount.longValue() - amountToReduce, cn, tmpTx2));
                                 } else {
                                     Log.e(TAG, "tmpTxObject2 is null!!!");
                                     ((BreadWalletApp) getApplication()).showCustomToast(app, "Failed to send, insufficient funds", screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
@@ -697,7 +700,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                 }
                 break;
             case BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE:
-                if(resultCode == RESULT_OK){
+                if (resultCode == RESULT_OK) {
                     PostAuthenticationProcessor.getInstance().onPaymentProtocolRequest();
                 } else {
                     KeyStoreManager.showAuthenticationScreen(this, requestCode);
@@ -903,6 +906,7 @@ public class MainActivity extends FragmentActivity implements Observer {
             Log.e(TAG, "earliestKeyTime before connecting: " + earliestKeyTime);
             pm.createAndConnect(earliestKeyTime > 0 ? earliestKeyTime : 0, blocksCount, peersCount);
             Log.e(TAG, "some");
+
         }
     }
 

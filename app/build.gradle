@@ -10,8 +10,8 @@ model {
             applicationId = 'com.breadwallet'
             minSdkVersion.apiLevel = 23
             targetSdkVersion.apiLevel = 23
-            versionCode = 7
-            versionName = "0.6-beta7"
+            versionCode = 8
+            versionName = "0.6-beta8"
         }
 
         ndk {
@@ -22,6 +22,7 @@ model {
 //            // Note that CFlags has a capital C, which is inconsistent with
 //            // the naming convention of other properties.  This is a
 //            // technical limitation that will be resolved
+            //TODO set -DBITCOIN_TESTNET=0
             CFlags.addAll(['-std=c99', '-g', '-DBITCOIN_TESTNET=0', '-I' + file('src/main/secp/secp256k1/include'), '-I' + file('src/main/secp/secp256k1'), '-I' + file('src/main/secp'), '-I' + file('src/main/jni/breadwallet-core'), '-I' + file('src/main/jni/transition')])
 //                           '-Wno-trigraphs', '-Wmissing','-field-initializers', '-Wno-missing-prototypes', '-Werror=return-type', '-Wdocumentation', '-Wunreachable-code-aggressive', '-Wno-missing-braces', '-Wparentheses', '-Wswitch', '-Wno-unused-function', '-Wunused-label', '-Wno-unused-parameter', '-Wunused-variable', '-Wunused-value', '-Wempty-body', '-Wconditional-uninitialized', '-Wno-unknown-pragmas', '-pedantic', '-Wshadow', '-Wfour-char-constants', '-Wno-conversion', '-Wconstant-conversion', '-Wint-conversion', '-Wbool-conversion ', '-Wenum-conversion', '-Wassign-enum', '-Wno-shorten-64-to-32', '-Wpointer-sign', '-Wnewline-eof', '-Wdeprecated-declarations', '-Wno-sign-conversion'])
 //            ldFlags.add('-whole-archive')
@@ -63,18 +64,20 @@ model {
     }
 
 }
-task copyEndpointLib(type: Copy) {
-    from 'build/intermediates/binaries/debug/obj'
-    into 'build/intermediates/binaries/debug/lib'
-}
-tasks.whenTaskAdded { task ->
-    if (task.name.startsWith("strip")) {
-        task.enabled = false
-        println 'found a strip task'
-    } else if(task.name.startsWith("mergeDebugJniLib")){
-        task.finalizedBy copyEndpointLib
-    }
-}
+
+
+//task copyEndpointLib(type: Copy) {
+//    from 'build/intermediates/binaries/debug/obj'
+//    into 'build/intermediates/binaries/debug/lib'
+//}
+//tasks.whenTaskAdded { task ->
+//    if (task.name.startsWith("strip")) {
+//        task.enabled = false
+//        println 'found a strip task'
+//    } else if(task.name.startsWith("mergeDebugJniLib")){
+//        task.finalizedBy copyEndpointLib
+//    }
+//}
 
 repositories {
     mavenCentral()
@@ -89,25 +92,25 @@ dependencies {
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'
     // Set this dependency to build and run UI Automator tests
     androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.1'
-    androidTestCompile 'com.android.support:appcompat-v7:23.3.0'
-    androidTestCompile 'com.android.support:support-v13:23.3.0'
+    androidTestCompile 'com.android.support:appcompat-v7:23.4.0'
+    androidTestCompile 'com.android.support:support-v13:23.4.0'
     androidTestCompile 'com.google.zxing:core:3.2.1'
     androidTestCompile 'com.facebook.rebound:rebound:0.3.8'
     androidTestCompile 'com.mcxiaoke.volley:library:1.0.19'
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
-    androidTestCompile 'com.android.support:design:23.3.0'
+    androidTestCompile 'com.android.support:design:23.4.0'
     androidTestCompile('ch.acra:acra:4.5.0') {
         exclude group: 'org.json', module: 'json'
     }
     androidTestCompile 'org.apache.directory.studio:org.apache.commons.io:2.4'
     //
-    compile 'com.android.support:appcompat-v7:23.3.0'
-    compile 'com.android.support:support-v13:23.3.0'
+    compile 'com.android.support:appcompat-v7:23.4.0'
+    compile 'com.android.support:support-v13:23.4.0'
     compile 'com.google.zxing:core:3.2.1'
     compile 'com.facebook.rebound:rebound:0.3.8'
     compile 'com.mcxiaoke.volley:library:1.0.19'
     compile 'com.android.support.test.espresso:espresso-core:2.2.2'
-    compile 'com.android.support:design:23.3.0'
+    compile 'com.android.support:design:23.4.0'
     compile('ch.acra:acra:4.5.0') {
         exclude group: 'org.json', module: 'json'
     }

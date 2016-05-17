@@ -344,4 +344,6 @@ public class BRWalletManager {
 
     public native boolean publishSerializedTransaction(byte[] serializedTransaction, String phrase);
 
+    public native long getTotalSent();
+
 }

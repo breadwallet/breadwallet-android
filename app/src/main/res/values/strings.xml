@@ -158,4 +158,9 @@
     <string name="no_transactions">no transactions</string>
     <string name="recovery_phrase">recovery phrase:</string>
     <string name="refresh">refresh</string>
+    <string name="use_passcode">use passcode</string>
+    <string name="wallet_disabled">wallet disabled</string>
+    <string name="try_again">try again in %d minute</string>
+    <string name="reset">reset</string>
+    <string name="recovery_title">recovery phrase</string>
 </resources>

@@ -113,7 +113,7 @@ public class CurrencyManager extends Observable {
         if (isNetworkAvailable(context)) {
             try {
                 JSONArray arr;
-                arr = JsonParser.getJSonArray();
+                arr = JsonParser.getJSonArray(context);
 //                Log.e(TAG, "JSONArray arr.length(): " + arr.length());
                 int length = arr.length();
                 for (int i = 1; i < length; i++) {
@@ -333,14 +333,12 @@ public class CurrencyManager extends Observable {
 
     public String getISOFromPrefs() {
         SharedPreferences settings = MainActivity.app.getSharedPreferences(MainActivity.PREFS_NAME, 0);
-        String iso = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
-        return iso;
+        return settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
     }
 
     public double getRateFromPrefs() {
         SharedPreferences settings = MainActivity.app.getSharedPreferences(MainActivity.PREFS_NAME, 0);
-        float rate = settings.getFloat(FragmentCurrency.RATE, 0f);
-        return rate;
+        return settings.getFloat(FragmentCurrency.RATE, 0f);
     }
 
 }

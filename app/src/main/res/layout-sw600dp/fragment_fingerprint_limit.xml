@@ -1,0 +1,156 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="90dp"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/limit_line1"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/separator_height"
+        android:background="@color/grey" />
+
+    <RelativeLayout
+        android:id="@+id/always_passcode"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/clickable_layout"
+        android:clickable="true">
+
+        <TextView
+            android:id="@+id/always_passcode_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="20dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/grey"
+            android:textSize="@dimen/text_size" />
+
+        <ImageView
+            android:id="@+id/checkmark1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="20dp"
+            android:visibility="gone"
+            android:background="@drawable/checkmark" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/limit_line2"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/separator_height"
+        android:layout_marginStart="20dp"
+        android:background="@color/grey" />
+
+    <RelativeLayout
+        android:id="@+id/limit_100k"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/clickable_layout"
+        android:clickable="true">
+
+        <TextView
+            android:id="@+id/limit_100k_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="20dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/grey"
+            android:textSize="@dimen/text_size" />
+
+        <ImageView
+            android:id="@+id/checkmark2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="20dp"
+            android:visibility="gone"
+            android:background="@drawable/checkmark" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/limit_line3"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/separator_height"
+        android:layout_marginStart="20dp"
+        android:background="@color/grey" />
+
+    <RelativeLayout
+        android:id="@+id/limit_1B"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/clickable_layout"
+        android:clickable="true">
+
+        <TextView
+            android:id="@+id/limit_1B_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="20dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/grey"
+            android:textSize="@dimen/text_size" />
+
+        <ImageView
+            android:id="@+id/checkmark3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="20dp"
+            android:visibility="gone"
+            android:background="@drawable/checkmark" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/limit_line4"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/separator_height"
+        android:layout_marginStart="20dp"
+        android:background="@color/grey" />
+
+    <RelativeLayout
+        android:id="@+id/limit_10B"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/clickable_layout"
+        android:clickable="true">
+
+        <TextView
+            android:id="@+id/limit_10B_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="20dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/grey"
+            android:textSize="@dimen/text_size" />
+
+        <ImageView
+            android:id="@+id/checkmark4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="20dp"
+            android:visibility="gone"
+            android:background="@drawable/checkmark" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/limit_line5"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/separator_height"
+        android:background="@color/grey" />
+
+</LinearLayout>

@@ -1,15 +1,21 @@
 
 package com.breadwallet.presenter.fragments;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.app.KeyguardManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.hardware.fingerprint.FingerprintManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -21,6 +27,9 @@ import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.adapter.CurrencyListAdapter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.FragmentAnimator;
+import com.breadwallet.tools.security.PassCodeManager;
+
+import org.w3c.dom.Text;
 
 /**
  * BreadWallet
@@ -63,10 +72,9 @@ public class FragmentSettings extends Fragment {
 
         app = MainActivity.app;
         fragmentSettings = this;
-//        fragmentCurrency = app.fragmentCurrency;
-        FragmentCurrency fragmentCurrency = (FragmentCurrency) getActivity().getFragmentManager().
-                findFragmentByTag(FragmentCurrency.class.getName());
-        new ListInitiatorTask().execute();
+//        FragmentCurrency fragmentCurrency = (FragmentCurrency) getActivity().getFragmentManager().
+//                findFragmentByTag(FragmentCurrency.class.getName());
+        initList();
         RelativeLayout about = (RelativeLayout) rootView.findViewById(R.id.about);
         TextView currencyName = (TextView) rootView.findViewById(R.id.three_letters_currency);
         RelativeLayout changePassword = (RelativeLayout) rootView.findViewById(R.id.change_password);
@@ -77,6 +85,30 @@ public class FragmentSettings extends Fragment {
         RelativeLayout localCurrency = (RelativeLayout) rootView.findViewById(R.id.local_currency);
         RelativeLayout recoveryPhrase = (RelativeLayout) rootView.findViewById(R.id.recovery_phrase);
         RelativeLayout startRecoveryWallet = (RelativeLayout) rootView.findViewById(R.id.start_recovery_wallet);
+        RelativeLayout fingerprintLimit = (RelativeLayout) rootView.findViewById(R.id.fingerprint_limit);
+        RelativeLayout line5 = (RelativeLayout) rootView.findViewById(R.id.settings_line_5);
+        TextView theLimit = (TextView) rootView.findViewById(R.id.fingerprint_limit_text);
+
+
+        theLimit.setText(CurrencyManager.getInstance(getActivity()).getFormattedCurrencyString("BTC", PassCodeManager.getInstance().getLimit(getActivity())));
+        FingerprintManager mFingerprintManager;
+        mFingerprintManager = (FingerprintManager) getActivity().getSystemService(Context.FINGERPRINT_SERVICE);
+        boolean useFingerPrint = mFingerprintManager.isHardwareDetected()
+                && mFingerprintManager.hasEnrolledFingerprints();
+        if (!useFingerPrint) {
+            fingerprintLimit.setVisibility(View.GONE);
+            line5.setVisibility(View.GONE);
+        }
+
+        fingerprintLimit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (FragmentAnimator.checkTheMultipressingAvailability()) {
+                    ((BreadWalletApp) getActivity().getApplicationContext()).promptForAuthentication(getActivity(), BRConstants.AUTH_FOR_LIMIT, null);
+                }
+            }
+        });
+
         startRecoveryWallet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -149,25 +181,9 @@ public class FragmentSettings extends Fragment {
 //        Log.e(TAG, "In onPause");
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
+    private void initList() {
+        CurrencyListAdapter.currencyListAdapter = CurrencyManager.getInstance(getActivity()).getCurrencyAdapterIfReady();
     }
 
-    private class ListInitiatorTask extends AsyncTask {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Object doInBackground(Object[] params) {
-            CurrencyListAdapter.currencyListAdapter = CurrencyManager.getInstance(getActivity()).getCurrencyAdapterIfReady();
-            return null;
-        }
-
-    }
 
 }

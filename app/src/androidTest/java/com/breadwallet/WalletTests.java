@@ -4,14 +4,17 @@ import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.RequestObject;
 import com.breadwallet.tools.CurrencyManager;
+import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.RequestHandler;
 
 import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.security.InvalidAlgorithmParameterException;
+import java.security.Key;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 /**
  * BreadWallet

@@ -1,5 +1,12 @@
 package com.breadwallet.tools;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.util.Log;
+
+import com.breadwallet.presenter.activities.MainActivity;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -9,23 +16,29 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * BreadWallet
- *
+ * <p/>
  * Created by Mihail Gutan on 7/14/15.
  * Copyright (c) 2016 breadwallet llc <mihail@breadwallet.com>
- *
+ * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * <p/>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
+ * <p/>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -38,15 +51,20 @@ import java.nio.charset.Charset;
 class JsonParser {
     public static final String TAG = JsonParser.class.getName();
 
-    public static JSONArray getJSonArray() {
+    public static JSONArray getJSonArray(Activity activity) {
         String jsonString = callURL("https://api.breadwallet.com/rates");
-//        System.out.println("\n\njsonString: " + jsonString);
         JSONArray jsonArray = null;
         try {
             JSONObject obj = new JSONObject(jsonString);
-
             jsonArray = obj.getJSONArray("body");
-//            Log.e(TAG,"\n\njsonArray: " + jsonArray);
+            JSONObject headers = obj.getJSONObject("headers");
+            String secureDate = headers.getString("Date");
+            long date = Date.parse(secureDate) / 1000;
+            SharedPreferences prefs = activity.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putLong(BRConstants.SECURE_TIME_PREFS, date);
+            editor.apply();
+            Log.e(TAG, "Secure time set to: " + date);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -67,6 +85,7 @@ class JsonParser {
                 in = new InputStreamReader(urlConn.getInputStream(),
                         Charset.defaultCharset());
                 BufferedReader bufferedReader = new BufferedReader(in);
+
                 int cp;
                 while ((cp = bufferedReader.read()) != -1) {
                     sb.append((char) cp);
@@ -81,4 +100,5 @@ class JsonParser {
 
         return sb.toString();
     }
+
 }
