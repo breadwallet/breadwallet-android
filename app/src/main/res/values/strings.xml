@@ -163,4 +163,5 @@
     <string name="try_again">try again in %d minute</string>
     <string name="reset">reset</string>
     <string name="recovery_title">recovery phrase</string>
+    <string name="phrase_no_match">Recovery phrase doesn\'t match</string>
 </resources>

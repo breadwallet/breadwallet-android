@@ -114,7 +114,9 @@ public class CurrencyManager extends Observable {
             try {
                 JSONArray arr;
                 arr = JsonParser.getJSonArray(context);
+                JsonParser.updateFeePerKb(context);
 //                Log.e(TAG, "JSONArray arr.length(): " + arr.length());
+
                 int length = arr.length();
                 for (int i = 1; i < length; i++) {
                     CurrencyEntity tmp = new CurrencyEntity();
@@ -166,7 +168,7 @@ public class CurrencyManager extends Observable {
                 currencyListAdapter.addAll(tmp);
                 currencyListAdapter.notifyDataSetChanged();
                 if (FragmentAnimator.level <= 2)
-                    MiddleViewAdapter.resetMiddleView((Activity) ctx, null);
+                    MiddleViewAdapter.resetMiddleView( ctx, null);
             } else {
                 Log.e(TAG, "Adapter Not Changed, data is empty");
             }

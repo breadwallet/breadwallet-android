@@ -33,6 +33,7 @@ import android.content.SharedPreferences;
 import android.inputmethodservice.Keyboard;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -144,6 +145,15 @@ public class PasswordDialogFragment extends DialogFragment {
                         KeyStoreManager.putFailCount(0, getActivity());
                         KeyStoreManager.putFailTimeStamp(0, getActivity());
                         getDialog().dismiss();
+                    } else {
+                        final String tmpTitle = title.getText().toString();
+                        title.setText(R.string.phrase_no_match);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                title.setText(tmpTitle);
+                            }
+                        }, 3000);
                     }
                 }
 
@@ -287,7 +297,7 @@ public class PasswordDialogFragment extends DialogFragment {
             // verify the passcode
         } else if (verifyOnly) {
             //assume the passcode is wrong all the time
-            if(!prevPass.equals(s.toString())){
+            if (!prevPass.equals(s.toString())) {
                 KeyStoreManager.putFailCount(KeyStoreManager.getFailCount(getActivity()) + 1, getActivity());
             }
 
@@ -394,16 +404,16 @@ public class PasswordDialogFragment extends DialogFragment {
         int failCount = KeyStoreManager.getFailCount(getActivity());
         int attemptsRemaining = 8 - failCount;
 
-        if (attemptsRemaining <= 0){
+        if (attemptsRemaining <= 0) {
             BRWalletManager m = BRWalletManager.getInstance(getActivity());
             m.wipeKeyStore();
             m.wipeWalletButKeystore(getActivity());
             startIntroActivity();
             FragmentAnimator.resetFragmentAnimator();
         }
-        if(failCount >= 3){
+        if (failCount >= 3) {
             info.setVisibility(View.VISIBLE);
-            info.setText(String.format(Locale.getDefault(),"%d attempts remaining", attemptsRemaining < 0 ? 0 : attemptsRemaining));
+            info.setText(String.format(Locale.getDefault(), "%d attempts remaining", attemptsRemaining < 0 ? 0 : attemptsRemaining));
         }
     }
 

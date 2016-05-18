@@ -66,6 +66,9 @@ import org.acra.annotation.ReportsCrashes;
 @ReportsCrashes(
         mailTo = "mihail@breadwallet.com", // my email here
         customReportContent = {
+                ReportField.BRAND,
+                ReportField.APPLICATION_LOG,
+                ReportField.DEVICE_FEATURES,
                 ReportField.APP_VERSION_CODE,
                 ReportField.APP_VERSION_NAME,
                 ReportField.ANDROID_VERSION,

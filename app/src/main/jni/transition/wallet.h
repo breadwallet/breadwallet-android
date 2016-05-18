@@ -128,5 +128,8 @@ JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRWalletManager_publishSe
 JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTotalSent
         (JNIEnv *env, jobject obj);
 
+JNIEXPORT void JNICALL Java_com_breadwallet_wallet_BRWalletManager_setFeePerKb
+        (JNIEnv *env, jobject obj, jlong fee);
+
 
 #endif //BREADWALLET_WALLET_H

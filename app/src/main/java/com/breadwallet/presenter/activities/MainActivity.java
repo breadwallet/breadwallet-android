@@ -879,6 +879,11 @@ public class MainActivity extends FragmentActivity implements Observer {
             editor.apply();
         }
 
+        SharedPreferences prefs = getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
+        long fee = prefs.getLong(BRConstants.FEE_KB_PREFS, 0);
+        if (fee == 0) fee = BRWalletManager.DEFAULT_FEE_PER_KB;
+        BRWalletManager.getInstance(this).setFeePerKb(fee);
+
         if (!pm.isCreated()) {
             List<BRMerkleBlockEntity> blocks = sqLiteManager.getBlocks();
             List<BRPeerEntity> peers = sqLiteManager.getPeers();

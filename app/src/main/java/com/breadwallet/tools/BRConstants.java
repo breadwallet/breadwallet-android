@@ -64,6 +64,7 @@ public class BRConstants {
     public static final String CANARY_STRING = "canary";
     public static final String FIRST_ADDRESS = "firstAddress";
     public static final String SECURE_TIME_PREFS = "secureTime";
+    public static final String FEE_KB_PREFS = "feeKb";
 
     private BRConstants() {
     }

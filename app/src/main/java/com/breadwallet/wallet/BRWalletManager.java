@@ -63,6 +63,9 @@ public class BRWalletManager {
     public static final String ASKED_TO_WRITE_PHRASE = "phraseWrittenDown";
     private static BRWalletManager instance;
     private static Activity ctx;
+    public static final long TX_FEE_PER_KB = 5000;
+    public static final long DEFAULT_FEE_PER_KB = (TX_FEE_PER_KB * 1000 + 190) / 191;
+    public static final long MAX_FEE_PER_KB = (100100 * 1000 + 190) / 191;
 
     private BRWalletManager() {
     }
@@ -239,7 +242,7 @@ public class BRWalletManager {
             });
         }
         if (ctx == null) ctx = MainActivity.app;
-        if (ctx != null ) {
+        if (ctx != null) {
 
             ctx.runOnUiThread(new Runnable() {
                 @Override
@@ -345,5 +348,7 @@ public class BRWalletManager {
     public native boolean publishSerializedTransaction(byte[] serializedTransaction, String phrase);
 
     public native long getTotalSent();
+
+    public native long setFeePerKb(long fee);
 
 }

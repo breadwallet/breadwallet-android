@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.wallet.BRWalletManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -69,6 +70,25 @@ class JsonParser {
             e.printStackTrace();
         }
         return jsonArray;
+    }
+
+    public static void updateFeePerKb(Activity activity) {
+        String jsonString = callURL("https://api.breadwallet.com/fee-per-kb");
+        long fee;
+        try {
+            JSONObject obj = new JSONObject(jsonString);
+            fee = obj.getLong("fee_per_kb");
+            SharedPreferences prefs = activity.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
+            if (fee != 0 && fee < BRWalletManager.MAX_FEE_PER_KB) {
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putLong(BRConstants.FEE_KB_PREFS, fee);
+                editor.apply();
+                BRWalletManager.getInstance(activity).setFeePerKb(fee);
+                Log.e(TAG, "fee set to: " + fee);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private static String callURL(String myURL) {
