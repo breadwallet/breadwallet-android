@@ -10,8 +10,8 @@ model {
             applicationId = 'com.breadwallet'
             minSdkVersion.apiLevel = 23
             targetSdkVersion.apiLevel = 23
-            versionCode = 8
-            versionName = "0.6-beta8"
+            versionCode = 9
+            versionName = "0.6-beta9"
         }
 
         ndk {
@@ -23,7 +23,7 @@ model {
 //            // the naming convention of other properties.  This is a
 //            // technical limitation that will be resolved
             //TODO set -DBITCOIN_TESTNET=0
-            CFlags.addAll(['-std=c99', '-g', '-DBITCOIN_TESTNET=1', '-I' + file('src/main/secp/secp256k1/include'), '-I' + file('src/main/secp/secp256k1'), '-I' + file('src/main/secp'), '-I' + file('src/main/jni/breadwallet-core'), '-I' + file('src/main/jni/transition')])
+            CFlags.addAll(['-std=c99', '-g', '-DBITCOIN_TESTNET=0', '-I' + file('src/main/secp/secp256k1/include'), '-I' + file('src/main/secp/secp256k1'), '-I' + file('src/main/secp'), '-I' + file('src/main/jni/breadwallet-core'), '-I' + file('src/main/jni/transition')])
 //                           '-Wno-trigraphs', '-Wmissing','-field-initializers', '-Wno-missing-prototypes', '-Werror=return-type', '-Wdocumentation', '-Wunreachable-code-aggressive', '-Wno-missing-braces', '-Wparentheses', '-Wswitch', '-Wno-unused-function', '-Wunused-label', '-Wno-unused-parameter', '-Wunused-variable', '-Wunused-value', '-Wempty-body', '-Wconditional-uninitialized', '-Wno-unknown-pragmas', '-pedantic', '-Wshadow', '-Wfour-char-constants', '-Wno-conversion', '-Wconstant-conversion', '-Wint-conversion', '-Wbool-conversion ', '-Wenum-conversion', '-Wassign-enum', '-Wno-shorten-64-to-32', '-Wpointer-sign', '-Wnewline-eof', '-Wdeprecated-declarations', '-Wno-sign-conversion'])
 //            ldFlags.add('-whole-archive')
             ldLibs.addAll(['android', 'log'])
@@ -34,7 +34,7 @@ model {
             // set to true to turn off analysis progress reporting by lint
             quiet = false
             // if true, stop the gradle build if errors are found
-            abortOnError = false
+            abortOnError = true
             // if true, only report errors
             ignoreWarnings = false
         }
@@ -43,12 +43,10 @@ model {
             release {
                 proguardFiles.add(file('proguard-rules.pro'))
                 minifyEnabled false
-                multiDexEnabled true
                 debuggable = false
                 ndk {
                     minifyEnabled false
-                    multiDexEnabled true
-                    debuggable = false
+                    debuggable = true
                 }
             }
             debug {
@@ -66,7 +64,6 @@ model {
     }
 
 }
-
 
 //task copyEndpointLib(type: Copy) {
 //    from 'build/intermediates/binaries/debug/obj'
