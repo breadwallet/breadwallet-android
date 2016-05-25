@@ -331,6 +331,7 @@ public class PasswordDialogFragment extends DialogFragment {
                         boolean success;
                         if (request.serializedTx != null) {
                             success = walletManager.publishSerializedTransaction(request.serializedTx, seed);
+                            request.serializedTx = null;
                         } else {
                             success = walletManager.pay(request.addresses[0], (request.amount), seed);
                         }

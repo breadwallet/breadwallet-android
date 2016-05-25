@@ -99,15 +99,15 @@ public class BRPeerManager {
     public static void syncSucceeded() {
         Log.e(TAG, "syncSucceeded");
         if (ctx == null) ctx = MainActivity.app;
+        stopSyncingProgressThread();
         if (ctx != null) {
-            stopSyncingProgressThread();
             ((MainActivity)ctx).hideAllBubbles();
         }
     }
 
     public static void syncFailed() {
+        stopSyncingProgressThread();
         if (ctx != null) {
-            stopSyncingProgressThread();
             ((MainActivity)ctx).hideAllBubbles();
         }
     }
@@ -192,46 +192,6 @@ public class BRPeerManager {
         }
     }
 
-//    public static void saveLastBlockHeight() {
-//        Log.e(TAG, "saveLastBlockHeight");
-//        MainActivity app = MainActivity.app;
-//        if (app != null) {
-//            int blockHeight = getCurrentBlockHeight();
-//            Log.e(TAG, "saveLastBlockHeight: blockHeight: " + blockHeight);
-//            if (blockHeight <= 0) return;
-//            SharedPreferences prefs = app.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
-//            int blockHeightFromPrefs = prefs.getInt(BRConstants.BLOCK_HEIGHT, 0);
-//            Log.e(TAG, "saveLastBlockHeight: blockHeightFromPrefs: " + blockHeightFromPrefs);
-//            if (blockHeight > blockHeightFromPrefs && blockHeight < Integer.MAX_VALUE) {
-//                SharedPreferences prefs2 = app.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
-//                SharedPreferences.Editor editor = prefs2.edit();
-//                editor.putInt(BRConstants.BLOCK_HEIGHT, blockHeight);
-//                editor.apply();
-//                if (ctx == null) ctx = MainActivity.app;
-//                ((Activity) ctx).runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        FragmentSettingsAll.refreshTransactions(ctx);
-//                    }
-//                });
-//
-//            }
-//        }
-//    }
-//
-//    public static int getLastBlockFromPrefs() {
-//        Log.e(TAG, "getLastBlockFromPrefs");
-//        MainActivity app = MainActivity.app;
-//        int blockHeightFromPrefs = 0;
-//        int blockHeight = getCurrentBlockHeight();
-//        if (app != null) {
-//            SharedPreferences prefs = app.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
-//            blockHeightFromPrefs = prefs.getInt(BRConstants.BLOCK_HEIGHT, 0);
-//
-//        }
-//        Log.e(TAG, "getLastBlockFromPrefs: blockHeight: " + blockHeight);
-//        return blockHeight < Integer.MAX_VALUE && blockHeight > blockHeightFromPrefs ? blockHeight : blockHeightFromPrefs;
-//    }
 
     public static void startSyncingProgressThread() {
         if (ctx == null) ctx = MainActivity.app;

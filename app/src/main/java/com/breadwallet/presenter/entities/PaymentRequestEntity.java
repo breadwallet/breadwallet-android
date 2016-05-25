@@ -27,11 +27,11 @@ package com.breadwallet.presenter.entities;
 public class PaymentRequestEntity {
     public static final String TAG = PaymentRequestEntity.class.getName();
 
-    public final byte[] serializedTx;
+    public byte[] serializedTx;
 
-    public final String[] addresses;
-    public final long amount;
-    public final String cn;
+    public String[] addresses;
+    public long amount;
+    public String cn;
 
     public PaymentRequestEntity(String theAddress[], long theAmount, String theCn, byte[] serializedTx) {
         this.serializedTx = serializedTx;

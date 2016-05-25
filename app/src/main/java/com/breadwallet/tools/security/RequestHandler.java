@@ -195,7 +195,6 @@ public class RequestHandler {
         return true;
     }
 
-
     public static native PaymentRequestWrapper parsePaymentRequest(byte[] req, String phrase);
 
     public static native byte[] getCertificatesFromPaymentRequest(byte[] req, int index);

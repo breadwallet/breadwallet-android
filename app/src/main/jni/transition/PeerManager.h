@@ -76,4 +76,7 @@ JNIEXPORT void JNICALL Java_com_breadwallet_wallet_BRPeerManager_peerManagerFree
                                                                                      jobject thiz);
 
 
+JNIEXPORT void JNICALL
+Java_com_breadwallet_presenter_activities_IntroActivity_testCore(JNIEnv *env, jobject instance);
+
 #endif //BREADWALLET_PEERMANAGER_H

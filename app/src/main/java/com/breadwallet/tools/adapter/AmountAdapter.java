@@ -142,10 +142,7 @@ public class AmountAdapter extends Observable {
 
     private static boolean isDigitInsertingLegal(String text) {
 //        Log.e(TAG, "Testing isDigitInsertingLegal, text: " + text);
-        if (text.length() < DIGITS_LIMIT) {
-            return !comaHasBeenInserted || digitsInserted < MAX_DIGITS_AFTER_SEPARATOR;
-        }
-        return false;
+        return text.length() < DIGITS_LIMIT && (!comaHasBeenInserted || digitsInserted < MAX_DIGITS_AFTER_SEPARATOR);
     }
 
     /**

@@ -154,6 +154,9 @@ const int TEST_REQ = 0;
 
 JNIEXPORT jobject JNICALL Java_com_breadwallet_tools_security_RequestHandler_parsePaymentRequest
         (JNIEnv *env, jobject obj, jbyteArray payment, jstring phrase) {
+
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "parsePaymentRequest");
+
     if (!payment) return NULL;
 
     //create class
@@ -313,6 +316,8 @@ JNIEXPORT jobject JNICALL Java_com_breadwallet_tools_security_RequestHandler_par
 
 JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_tools_security_RequestHandler_getCertificatesFromPaymentRequest
         (JNIEnv *env, jobject obj, jbyteArray payment, jint index) {
+
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "getCertificatesFromPaymentRequest");
 
     //create the BRPaymentProtocolRequest
     BRPaymentProtocolRequest *nativeRequest;

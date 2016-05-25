@@ -146,7 +146,6 @@ public class ParallaxViewPager extends ViewPager {
 //            Log.w(ParallaxViewPager.class.getName(), "Invalid bitmap bounds for the current device, parallax effect will not work.");
         }
 
-
         final float ratio = (float) getHeight() / bitmap.getHeight();
         if (ratio != 1) {
             switch (scaleType) {

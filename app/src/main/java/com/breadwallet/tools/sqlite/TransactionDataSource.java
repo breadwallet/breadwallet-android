@@ -59,11 +59,13 @@ public class TransactionDataSource {
     }
 
     public void open() throws SQLException {
-        database = dbHelper.getWritableDatabase();
+        database = dbHelper != null ? dbHelper.getWritableDatabase() : null;
     }
 
     public void close() {
-        dbHelper.close();
+        if (dbHelper != null) {
+            dbHelper.close();
+        }
     }
 
     public BRTransactionEntity createTransaction(BRTransactionEntity transactionEntity) {
@@ -126,7 +128,7 @@ public class TransactionDataSource {
     }
 
     public void deleteAllTransactions() {
-        database.delete(BRSQLiteHelper.TX_TABLE_NAME, BRSQLiteHelper.TX_COLUMN_ID + " <> \'1\'", null);
+        database.delete(BRSQLiteHelper.TX_TABLE_NAME, null, null);
     }
 
     public List<BRTransactionEntity> getAllTransactions() {

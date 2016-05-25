@@ -69,22 +69,4 @@ public class WordsReader {
         return wordList;
     }
 
-    public static byte[] getWordListBytes(Context context) throws IOException {
-        String languageCode = context.getString(R.string.lang);
-//        Log.e(TAG, "The language is: " + languageCode);
-        String fileName = "words/" + languageCode + "-BIP39Words.txt";
-        byte[] wordsBytes = null;
-        try {
-            AssetManager assetManager = context.getResources().getAssets();
-            InputStream inputStream = assetManager.open(fileName);
-            wordsBytes = new byte[inputStream.available()];
-            int result = inputStream.read(wordsBytes);
-            Log.e(TAG, String.format("The result: %s and the wordsBytes: %s", result, wordsBytes));
-        } catch (Exception ex) {
-            Log.e(TAG, "UUUps, getWordListBytes error: ", ex);
-        }
-        if (wordsBytes == null) throw new NullPointerException("bytes cannot be null");
-        return wordsBytes;
-    }
-
 }

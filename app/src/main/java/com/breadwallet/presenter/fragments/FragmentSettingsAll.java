@@ -60,7 +60,7 @@ import java.util.Locale;
 
 public class FragmentSettingsAll extends Fragment {
     private static final String TAG = FragmentSettingsAll.class.getName();
-    private static TransactionListItem[] transactionObjects;
+    public static TransactionListItem[] transactionObjects;
     public static LinearLayout transactionList;
     public static LinearLayout transactionHistory;
     public static TextView noTransactions;
@@ -150,9 +150,7 @@ public class FragmentSettingsAll extends Fragment {
     }
 
     public static void refreshTransactions(final Activity ctx) {
-        TransactionListItem[] txs = BRWalletManager.getInstance(ctx).getTransactions();
-        if (txs != null)
-            transactionObjects = txs;
+        transactionObjects = BRWalletManager.getInstance(ctx).getTransactions();
 
         if (ctx != null && ctx instanceof MainActivity) {
             ctx.runOnUiThread(new Runnable() {

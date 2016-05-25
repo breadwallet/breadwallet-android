@@ -76,7 +76,7 @@ public class IntroActivity extends FragmentActivity {
         setContentView(R.layout.activity_intro);
         app = this;
 
-
+        testCore();
         leftButton = (Button) findViewById(R.id.intro_left_button);
         leftButton.setVisibility(View.GONE);
         leftButton.setClickable(false);
@@ -111,6 +111,8 @@ public class IntroActivity extends FragmentActivity {
         startTheWalletIfExists();
 
     }
+
+    public native void testCore();
 
     public boolean checkFirstAddress(byte[] mpk) {
         SharedPreferences prefs = getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
@@ -197,7 +199,6 @@ public class IntroActivity extends FragmentActivity {
         }
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
@@ -275,5 +276,4 @@ public class IntroActivity extends FragmentActivity {
 
         }
     }
-
 }

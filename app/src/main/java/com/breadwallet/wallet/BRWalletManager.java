@@ -104,12 +104,10 @@ public class BRWalletManager {
         KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), ctx);
         byte[] pubKey = BRWalletManager.getInstance(ctx).getMasterPubKey(strPhrase);
         KeyStoreManager.putMasterPublicKey(pubKey, ctx);
-        strPhrase = null;
         Log.e(TAG, "setKeyStoreString was successful: " + success);
         return success && success2;
 
     }
-
 //    public boolean setKeyStoreString(String strPhrase, String key,
 //                                     boolean authenticated, Context ctx) {
 //        return KeyStoreManager.setKeyStoreString(strPhrase, ctx);

@@ -131,6 +131,7 @@ public class PostAuthenticationProcessor {
         if (this.tmpTx != null) {
             String seed = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAY_REQUEST_CODE);
             boolean success = BRWalletManager.getInstance(app).publishSerializedTransaction(tmpTx, seed);
+            tmpTx = null;
             FragmentAnimator.hideScanResultFragment();
             if (!success)
                 ((BreadWalletApp) app.getApplication()).showCustomToast(app, "failed to send", MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
