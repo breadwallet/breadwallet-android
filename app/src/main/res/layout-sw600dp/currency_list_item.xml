@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:id="@+id/list_item_layout">
 
-    <com.breadwallet.tools.AutoResizeTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    <com.breadwallet.presenter.customviews.AutoResizeTextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/currency_item_text"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

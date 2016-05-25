@@ -25,7 +25,7 @@
             android:text="sent/received"
             android:textSize="12sp" />
 
-        <com.breadwallet.tools.AutoResizeTextView
+        <com.breadwallet.presenter.customviews.AutoResizeTextView
             android:id="@+id/transaction_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -47,7 +47,7 @@
         android:gravity="end|center_vertical"
         android:orientation="vertical">
 
-        <com.breadwallet.tools.AutoResizeTextView
+        <com.breadwallet.presenter.customviews.AutoResizeTextView
             android:id="@+id/transaction_amount_dollars"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -57,7 +57,7 @@
             android:textSize="15sp" />
 
 
-        <com.breadwallet.tools.AutoResizeTextView
+        <com.breadwallet.presenter.customviews.AutoResizeTextView
             android:id="@+id/transaction_amount_dollars_total"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -77,7 +77,7 @@
         android:layout_weight="1"
         android:orientation="vertical">
 
-        <com.breadwallet.tools.AutoResizeTextView
+        <com.breadwallet.presenter.customviews.AutoResizeTextView
             android:id="@+id/transaction_amount_bits"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -87,7 +87,7 @@
             android:textSize="15sp"
             android:textStyle="bold" />
 
-        <com.breadwallet.tools.AutoResizeTextView
+        <com.breadwallet.presenter.customviews.AutoResizeTextView
             android:id="@+id/transaction_amount_bits_total"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

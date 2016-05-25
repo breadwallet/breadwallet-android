@@ -1,4 +1,4 @@
-package com.breadwallet.tools;
+package com.breadwallet.presenter.customviews;
 
 /**
  * DO WHAT YOU WANT TO PUBLIC LICENSE

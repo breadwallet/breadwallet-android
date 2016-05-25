@@ -19,12 +19,11 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.presenter.bubbleview.BubbleTextVew;
+import com.breadwallet.presenter.customviews.BubbleTextVew;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
@@ -36,7 +35,6 @@ import com.google.zxing.WriterException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.logging.Handler;
 
 /**
  * BreadWallet
