@@ -52,8 +52,7 @@ import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.NetworkChangeReceiver;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.security.RequestHandler;
-import com.breadwallet.tools.security.RootUtil;
-import com.breadwallet.tools.SoftKeyboard;
+import com.breadwallet.tools.security.RootHelper;
 import com.breadwallet.tools.adapter.AmountAdapter;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
@@ -135,7 +134,6 @@ public class MainActivity extends FragmentActivity implements Observer {
     private int middleBubbleBlocksCount = 0;
     private static int MODE = RELEASE;
     private TextView testnet;
-    public SoftKeyboard softKeyboard;
     private RelativeLayout mainLayout;
     private FingerprintManager fingerprintManager;
     private ToastBlockShowTask toastBlockShowTask;
@@ -206,7 +204,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         testnet.setVisibility(MODE == DEBUG ? View.VISIBLE : View.GONE);
 
         InputMethodManager im = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
-        softKeyboard = new SoftKeyboard(mainLayout, im);
 
         setListeners();
         scaleView(pageIndicatorLeft, 1f, PAGE_INDICATOR_SCALE_UP, 1f, PAGE_INDICATOR_SCALE_UP);
@@ -318,7 +315,7 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     private void checkDeviceRooted() {
         boolean hasBitcoin = CurrencyManager.getInstance(this).getBALANCE() > 0;
-        if (RootUtil.isDeviceRooted()) {
+        if (RootHelper.isDeviceRooted()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("DEVICE SECURITY COMPROMISED")
                     .setMessage("On a \'rooted\' device, any app can access any other app\'s keystore data (and steal your bitcoins)."
@@ -390,7 +387,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         FragmentAnimator.level = 0;
         CurrencyManager.getInstance(this).stopTimerTask();
         Log.e(TAG, "Activity Destroyed!");
-        softKeyboard.unRegisterSoftKeyboardCallback();
         unregisterScreenLockReceiver();
 
     }

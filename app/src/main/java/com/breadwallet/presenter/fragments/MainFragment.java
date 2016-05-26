@@ -2,6 +2,7 @@ package com.breadwallet.presenter.fragments;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +10,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -18,6 +20,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.BRClipboardManager;
+import com.breadwallet.tools.adapter.CustomPagerAdapter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.wallet.BRWalletManager;
@@ -56,7 +59,7 @@ public class MainFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         final Button scanQRButton = (Button) rootView.findViewById(R.id.main_button_scan_qr_code);
         RelativeLayout mainFragmentLayout = (RelativeLayout) rootView.findViewById(R.id.main_fragment);
@@ -189,6 +192,9 @@ public class MainFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        MainActivity.app.softKeyboard.closeSoftKeyboard();
+        InputMethodManager keyboard = (InputMethodManager) getActivity().
+                getSystemService(Context.INPUT_METHOD_SERVICE);
+        keyboard.hideSoftInputFromWindow(CustomPagerAdapter.adapter.
+                mainFragment.addressEditText.getWindowToken(), 0);
     }
 }

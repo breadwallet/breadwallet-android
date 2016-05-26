@@ -4,6 +4,8 @@
     android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
     android:background="@android:color/transparent"
     tools:context="com.breadwallet.presenter.activities.MainActivity">
 

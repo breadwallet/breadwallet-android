@@ -33,6 +33,7 @@ import com.breadwallet.tools.animation.FragmentAnimator;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 public class MiddleViewAdapter {
     private static final String TAG = MiddleViewAdapter.class.getName();
     private static boolean syncing = false;

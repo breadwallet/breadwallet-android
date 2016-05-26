@@ -61,16 +61,6 @@ public class CustomPagerAdapter extends FragmentPagerAdapter {
 
     }
 
-//    public void swipe(int leftRight){
-//        if(leftRight == 0){
-////            this.
-//        } else {
-//
-//        }
-//    }
-
-//    on
-
     @Override
     public int getCount() {
         return fragments.size();

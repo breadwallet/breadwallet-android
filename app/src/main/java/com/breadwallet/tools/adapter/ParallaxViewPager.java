@@ -8,14 +8,12 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.util.Log;
 
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.tools.animation.FragmentAnimator;
-import com.breadwallet.tools.animation.SpringAnimator;
 
 /**
  * BreadWallet
@@ -110,17 +108,6 @@ public class ParallaxViewPager extends ViewPager {
                 }
 
                 MainActivity.app.setPagerIndicator(position);
-//                if (FragmentAnimator.level == 0) {
-//                    new Handler().postDelayed(new Runnable() {
-//
-//                        @Override
-//                        public void run() {
-//                            SpringAnimator.showBouncySlideHorizontal(CustomPagerAdapter.adapter.getItem(position).getView(), position == 1 ? SpringAnimator.TO_RIGHT : SpringAnimator.TO_LEFT, 15);
-//                        }
-//                    }, 80);
-//                }
-
-//                Log.e("AdapterParalax", "Showing animation!!!!!");
             }
 
             @Override
@@ -143,7 +130,7 @@ public class ParallaxViewPager extends ViewPager {
 
     private void calculateParallaxParameters() {
         if (bitmap.getWidth() < getWidth() && bitmap.getWidth() < bitmap.getHeight() && scaleType == FIT_HEIGHT) {
-//            Log.w(ParallaxViewPager.class.getName(), "Invalid bitmap bounds for the current device, parallax effect will not work.");
+            Log.w(ParallaxViewPager.class.getName(), "Invalid bitmap bounds for the current device, parallax effect will not work.");
         }
 
         final float ratio = (float) getHeight() / bitmap.getHeight();
