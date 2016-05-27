@@ -16,7 +16,7 @@ model {
 
         ndk {
             moduleName = "core"
-            toolchain = "gcc"
+            toolchain = "clang"
 
 //            // Note that CFlags has a capital C, which is inconsistent with
 //            // the naming convention of other properties.  This is a
@@ -50,11 +50,11 @@ model {
             }
             debug {
                 proguardFiles.add(file('proguard-rules.pro'))
-                debuggable = true
+                debuggable = false
                 minifyEnabled = false
                 ndk {
                     minifyEnabled = false
-                    debuggable = true
+                    debuggable = false
                 }
             }
 
