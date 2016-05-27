@@ -42,5 +42,4 @@ public class IntroWelcomeFragment extends Fragment {
         return inflater.inflate(
                 R.layout.intro_fragment_welcome, container, false);
     }
-
 }

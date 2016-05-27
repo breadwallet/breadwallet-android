@@ -105,9 +105,8 @@ public class ParallaxViewPager extends ViewPager {
                     ((BreadWalletApp) app.getApplication()).cancelToast();
                     ((BreadWalletApp) app.getApplication()).hideKeyboard(app);
                     app.hideAllBubbles();
+                    app.setPagerIndicator(position);
                 }
-
-                MainActivity.app.setPagerIndicator(position);
             }
 
             @Override

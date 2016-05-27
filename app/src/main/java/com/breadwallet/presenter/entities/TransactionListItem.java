@@ -55,7 +55,7 @@ public class TransactionListItem {
         this.balanceAfterTx = balanceAfterTx;
         this.outAmounts = outAmounts;
 //        Log.e(TAG, "TransactionListItem CONSTRUCTOR!");
-//        CustomLogger.LogThis("timeStamp", String.valueOf(timeStamp), "blockHeight", String.valueOf(blockHeight),
+//        CustomLogger.logThis("timeStamp", String.valueOf(timeStamp), "blockHeight", String.valueOf(blockHeight),
 //                "hash", hexId, "sent", String.valueOf(sent), "received", String.valueOf(received),
 //                "fee", String.valueOf(fee), "to", to, "from", from);
     }

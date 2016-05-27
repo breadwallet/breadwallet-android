@@ -112,7 +112,7 @@ public class IntroActivity extends FragmentActivity {
 
     }
 
-    public native void testCore();
+//    public native void testCore();
 
     public boolean checkFirstAddress(byte[] mpk) {
         SharedPreferences prefs = getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);

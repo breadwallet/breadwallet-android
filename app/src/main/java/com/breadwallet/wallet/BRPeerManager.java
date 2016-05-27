@@ -248,6 +248,7 @@ public class BRPeerManager {
         }
 
         public void setRunning(boolean b) {
+            Log.e(TAG,"setRunning: " + b);
             running = b;
         }
 

@@ -267,7 +267,7 @@ public class FragmentSettingsAll extends Fragment {
         });
 
         boolean received = item.getSent() == 0;
-        CustomLogger.LogThis("TX getReceived", String.valueOf(item.getReceived()), "TX getSent", String.valueOf(item.getSent()),
+        CustomLogger.logThis("TX getReceived", String.valueOf(item.getReceived()), "TX getSent", String.valueOf(item.getSent()),
                 "TX getBalanceAfterTx", String.valueOf(item.getBalanceAfterTx()));
         int blockHeight = item.getBlockHeight();
         int estimatedBlockHeight = BRPeerManager.getEstimatedBlockHeight();

@@ -618,7 +618,7 @@ public class FragmentDecoder extends Fragment
 //        Resources resources = MainActivity.app.getResources();
 //        int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
 //        if (resourceId > 0) {
-//            CustomLogger.LogThis("bottomBar", String.valueOf(resources.getDimensionPixelSize(resourceId)));
+//            CustomLogger.logThis("bottomBar", String.valueOf(resources.getDimensionPixelSize(resourceId)));
 //            return resources.getDimensionPixelSize(resourceId);
 //        }
 //        Log.e(TAG, "bottomBar is 0!");

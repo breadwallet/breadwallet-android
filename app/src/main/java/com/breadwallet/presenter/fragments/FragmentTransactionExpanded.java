@@ -87,7 +87,7 @@ public class FragmentTransactionExpanded extends Fragment {
         } else if (blockHeight == Integer.MAX_VALUE) {
             statusText.setText(R.string.verified_waiting);
         } else {
-            statusText.setText(String.format(Locale.getDefault(), "confirmed in block #%d\n%s", blockHeight,
+            statusText.setText(String.format(Locale.getDefault(), "confirmed in block #%d%n%s", blockHeight,
                     FragmentSettingsAll.getFormattedDateFromLong(item.getTimeStamp())));
         }
 

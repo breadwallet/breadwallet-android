@@ -155,7 +155,7 @@ public class RequestHandler {
         if (str == null) return false;
         final String[] addresses = new String[1];
         addresses[0] = str;
-//        CustomLogger.LogThis("amount", requestObject.amount, "address", requestObject.address);
+//        CustomLogger.logThis("amount", requestObject.amount, "address", requestObject.address);
         if (requestObject.amount != null) {
             BigDecimal bigDecimal = new BigDecimal(requestObject.amount);
             long amount = bigDecimal.longValue();

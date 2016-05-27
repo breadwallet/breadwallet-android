@@ -29,7 +29,7 @@ import android.util.Log;
 public class CustomLogger {
     private static final String TAG = CustomLogger.class.getName();
 
-    public static void LogThis(String... args) {
+    public static void logThis(String... args) {
         StringBuilder strToLog = new StringBuilder();
         int i = 0;
         for (String arg : args) {

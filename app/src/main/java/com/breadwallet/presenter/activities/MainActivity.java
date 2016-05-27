@@ -827,7 +827,7 @@ public class MainActivity extends FragmentActivity implements Observer {
 
         SQLiteManager sqLiteManager = SQLiteManager.getInstance(this);
 
-//        CustomLogger.LogThis("setUpTheWallet: number of transactions from sqlite: ",
+//        CustomLogger.logThis("setUpTheWallet: number of transactions from sqlite: ",
 //                String.valueOf(transactions.size()),
 //                " transactionCount: ", String.valueOf(transactionsCount), " blocksCount: ",
 //                String.valueOf(blocksCount), " peersCount: ", String.valueOf(peersCount));
@@ -1101,43 +1101,43 @@ public class MainActivity extends FragmentActivity implements Observer {
 //            reqString = "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?label=foo%26bar";
 //            Log.e(TAG, reqString);
 //            requestObject = RequestHandler.getRequestFromString(reqString);
-//            CustomLogger.LogThis("address", requestObject.address, "amount", requestObject.amount, "label",
+//            CustomLogger.logThis("address", requestObject.address, "amount", requestObject.amount, "label",
 //                    requestObject.label, "message", requestObject.message, "r", requestObject.r, "req", requestObject.req);
 //
 ////            reqString = "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?amount=20.3&label=Luke-Jr";
 ////            Log.e(TAG, reqString);
 ////            requestObject = RequestHandler.getRequestFromString(reqString);
-////            CustomLogger.LogThis("address", requestObject.address, "amount", requestObject.amount, "label",
+////            CustomLogger.logThis("address", requestObject.address, "amount", requestObject.amount, "label",
 ////                    requestObject.label, "message", requestObject.message, "r", requestObject.r, "req", requestObject.req);
 ////
 ////            reqString = "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?amount=50&label=Luke-Jr&message=Donation%20for%20project%20xyz";
 ////            Log.e(TAG, reqString);
 ////            requestObject = RequestHandler.getRequestFromString(reqString);
-////            CustomLogger.LogThis("address", requestObject.address, "amount", requestObject.amount, "label",
+////            CustomLogger.logThis("address", requestObject.address, "amount", requestObject.amount, "label",
 ////                    requestObject.label, "message", requestObject.message, "r", requestObject.r, "req", requestObject.req);
 ////
 ////            reqString = "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?req-somethingyoudontunderstand=50&req-somethingelseyoudontget=999";
 ////            Log.e(TAG, reqString);
 ////            requestObject = RequestHandler.getRequestFromString(reqString);
-////            CustomLogger.LogThis("address", requestObject.address, "amount", requestObject.amount, "label",
+////            CustomLogger.logThis("address", requestObject.address, "amount", requestObject.amount, "label",
 ////                    requestObject.label, "message", requestObject.message, "r", requestObject.r, "req", requestObject.req);
 ////
 ////            reqString = "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?somethingyoudontunderstand=50&somethingelseyoudontget=999";
 ////            Log.e(TAG, reqString);
 ////            requestObject = RequestHandler.getRequestFromString(reqString);
-////            CustomLogger.LogThis("address", requestObject.address, "amount", requestObject.amount, "label",
+////            CustomLogger.logThis("address", requestObject.address, "amount", requestObject.amount, "label",
 ////                    requestObject.label, "message", requestObject.message, "r", requestObject.r, "req", requestObject.req);
 ////
 ////            reqString = "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi";
 ////            Log.e(TAG, reqString);
 ////            requestObject = RequestHandler.getRequestFromString(reqString);
-////            CustomLogger.LogThis("address", requestObject.address, "amount", requestObject.amount, "label",
+////            CustomLogger.logThis("address", requestObject.address, "amount", requestObject.amount, "label",
 ////                    requestObject.label, "message", requestObject.message, "r", requestObject.r, "req", requestObject.req);
 ////
 ////            reqString = " bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?label=Luke-Jr";
 ////            Log.e(TAG, reqString);
 ////            requestObject = RequestHandler.getRequestFromString(reqString);
-////            CustomLogger.LogThis("address", requestObject.address, "amount", requestObject.amount, "label",
+////            CustomLogger.logThis("address", requestObject.address, "amount", requestObject.amount, "label",
 ////                    requestObject.label, "message", requestObject.message, "r", requestObject.r, "req", requestObject.req);
 //
 //        } catch (InvalidAlgorithmParameterException e) {

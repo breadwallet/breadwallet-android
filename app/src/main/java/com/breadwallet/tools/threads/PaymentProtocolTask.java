@@ -171,9 +171,9 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
             }
             allAddresses.delete(allAddresses.length() - 2, allAddresses.length());
 
-//                CustomLogger.LogThis("Signature", String.valueOf(paymentRequest.signature.length),
+//                CustomLogger.logThis("Signature", String.valueOf(paymentRequest.signature.length),
 //                        "pkiType", paymentRequest.pkiType, "pkiData", String.valueOf(paymentRequest.pkiData.length));
-//                CustomLogger.LogThis("network", paymentRequest.network, "time", String.valueOf(paymentRequest.time),
+//                CustomLogger.logThis("network", paymentRequest.network, "time", String.valueOf(paymentRequest.time),
 //                        "expires", String.valueOf(paymentRequest.expires), "memo", paymentRequest.memo,
 //                        "paymentURL", paymentRequest.paymentURL, "merchantDataSize",
 //                        String.valueOf(paymentRequest.merchantData.length), "addresses", allAddresses.toString(),

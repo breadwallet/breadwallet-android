@@ -45,8 +45,6 @@ public class BubbleTextVew extends TextView {
         initView();
     }
 
-
-
     private void initView() {
         setPadding(30, 50, 30, 20);
     }

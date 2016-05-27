@@ -408,6 +408,7 @@ JNIEXPORT void JNICALL Java_com_breadwallet_wallet_BRPeerManager_peerManagerFree
     if (_peerManager) {
         BRPeerManagerDisconnect(_peerManager);
         BRPeerManagerFree(_peerManager);
+        _peerManager = NULL;
     }
     if (_blocks) {
         free(_blocks);
@@ -418,7 +419,6 @@ JNIEXPORT void JNICALL Java_com_breadwallet_wallet_BRPeerManager_peerManagerFree
         free(_peers);
         _peers = NULL;
     }
-    _peerManager = NULL;
 
 }
 

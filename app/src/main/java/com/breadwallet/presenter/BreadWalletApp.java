@@ -32,11 +32,6 @@ import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.wallet.BRWalletManager;
 
-import org.acra.ACRA;
-import org.acra.ReportField;
-import org.acra.ReportingInteractionMode;
-import org.acra.annotation.ReportsCrashes;
-
 /**
  * BreadWallet
  * <p/>
@@ -62,24 +57,23 @@ import org.acra.annotation.ReportsCrashes;
  * THE SOFTWARE.
  */
 
-//TODO take that off before release
-@ReportsCrashes(
-        mailTo = "mihail@breadwallet.com", // my email here
-        customReportContent = {
-                ReportField.BRAND,
-                ReportField.APPLICATION_LOG,
-                ReportField.DEVICE_FEATURES,
-                ReportField.APP_VERSION_CODE,
-                ReportField.APP_VERSION_NAME,
-                ReportField.ANDROID_VERSION,
-                ReportField.PACKAGE_NAME,
-                ReportField.REPORT_ID,
-                ReportField.BUILD,
-                ReportField.STACK_TRACE
-        },
-        mode = ReportingInteractionMode.TOAST,
-        resToastText = R.string.crash_toast_text,
-        formKey = "Test Phone")
+//@ReportsCrashes(
+//        mailTo = "mihail@breadwallet.com", // my email here
+//        customReportContent = {
+//                ReportField.BRAND,
+//                ReportField.APPLICATION_LOG,
+//                ReportField.DEVICE_FEATURES,
+//                ReportField.APP_VERSION_CODE,
+//                ReportField.APP_VERSION_NAME,
+//                ReportField.ANDROID_VERSION,
+//                ReportField.PACKAGE_NAME,
+//                ReportField.REPORT_ID,
+//                ReportField.BUILD,
+//                ReportField.STACK_TRACE
+//        },
+//        mode = ReportingInteractionMode.TOAST,
+//        resToastText = R.string.crash_toast_text,
+//        formKey = "Test Phone")
 public class BreadWalletApp extends Application {
     public static final int BREAD_WALLET_IMAGE = 0;
     public static final int BREAD_WALLET_TEXT = 1;
@@ -112,7 +106,7 @@ public class BreadWalletApp extends Application {
         display.getSize(size);
         DISPLAY_WIDTH_PX = size.x;
         DISPLAY_HEIGHT_PX = size.y;
-        ACRA.init(this);
+//        ACRA.init(this);
         mFingerprintManager = (FingerprintManager) getSystemService(Context.FINGERPRINT_SERVICE);
 //        TypefaceUtil.overrideFont(getApplicationContext(), "DEFAULT", "fonts/UbuntuMono-R.ttf");
 
