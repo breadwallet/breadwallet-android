@@ -64,10 +64,16 @@ public class FragmentTransactionExpanded extends Fragment {
         } else {
             rootView = inflater.inflate(R.layout.transaction_item_expanded_sent, container, false);
         }
-        TextView hashText = (TextView) rootView.findViewById(R.id.tx_hash_text);
+        final TextView hashText = (TextView) rootView.findViewById(R.id.tx_hash_text);
         TextView statusText = (TextView) rootView.findViewById(R.id.tx_status_text);
         TextView amountText = (TextView) rootView.findViewById(R.id.tx_amount_text);
         TextView exchangeText = (TextView) rootView.findViewById(R.id.tx_exchange_text);
+        hashText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e(TAG,"tx id: " + hashText.getText().toString());
+            }
+        });
 //        TextView fromText = (TextView) rootView.findViewById(R.id.tx_from_text);
 //        TextView fromDescription = (TextView) rootView.findViewById(R.id.tx_from_description);
 //        TextView toText = (TextView) rootView.findViewById(R.id.tx_to_text);
