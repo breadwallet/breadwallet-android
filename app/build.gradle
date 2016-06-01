@@ -39,12 +39,13 @@ model {
         }
 
         buildTypes {
+            //TODO check with debuggable = false
             release {
                 proguardFiles.add(file('proguard-rules.pro'))
-                minifyEnabled false
+                minifyEnabled = false
                 debuggable = false
                 ndk {
-                    minifyEnabled false
+                    minifyEnabled = false
                     debuggable = false
                 }
             }
@@ -62,19 +63,6 @@ model {
 
     }
 }
-
-//task copyEndpointLib(type: Copy) {
-//    from 'build/intermediates/binaries/debug/obj'
-//    into 'build/intermediates/binaries/debug/lib'
-//}
-//tasks.whenTaskAdded { task ->
-//    if (task.name.startsWith("strip")) {
-//        task.enabled = false
-//        println 'found a strip task'
-//    } else if(task.name.startsWith("mergeDebugJniLib")){
-//        task.finalizedBy copyEndpointLib
-//    }
-//}
 
 repositories {
     mavenCentral()
