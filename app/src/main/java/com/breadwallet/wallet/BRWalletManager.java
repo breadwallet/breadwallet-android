@@ -15,6 +15,7 @@ import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.IntroShowPhraseActivity;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.activities.RequestQRActivity;
+import com.breadwallet.presenter.entities.ImportPrivKeyEntity;
 import com.breadwallet.presenter.entities.TmpTxObject;
 import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
@@ -26,6 +27,7 @@ import com.breadwallet.tools.adapter.CustomPagerAdapter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.sqlite.SQLiteManager;
+import com.breadwallet.tools.threads.ImportPrivKeyTask;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -113,10 +115,6 @@ public class BRWalletManager {
 //        return KeyStoreManager.setKeyStoreString(strPhrase, ctx);
 //    }
 
-    /**
-     * given a private key, queries chain.com for unspent outputs and calls the completion block with
-     * a signed transaction that will sweep the balance into wallet (doesn't publish the tx)
-     */
     public boolean wipeKeyStore() {
         return KeyStoreManager.resetWalletKeyStore();
     }
@@ -126,10 +124,7 @@ public class BRWalletManager {
      */
     public boolean noWallet(Activity ctx) {
         byte[] pubkey = KeyStoreManager.getMasterPublicKey(ctx);
-//        Log.e(TAG, "in the noWallet, pubkey.length(): " + pubkey.length);
-//        Log.e(TAG, "in the noWallet, pubkey: " + pubkey);
         return pubkey == null || pubkey.length == 0;
-
     }
 
     /**
@@ -168,6 +163,20 @@ public class BRWalletManager {
         SharedPreferences.Editor editor = activity.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE).edit();
         editor.clear();
         editor.apply();
+    }
+
+    public void confirmSweep(Activity activity, String privKey) {
+
+        if (activity == null) return;
+
+        if (isValidBitcoinBIP38Key(privKey)) {
+            Log.e(TAG, "isValidBitcoinBIP38Key true");
+            ((BreadWalletApp) activity.getApplication()).showCustomDialog("Info", "Password encrypted key", "ok");
+        } else if (isValidBitcoinPrivateKey(privKey)) {
+            Log.e(TAG, "isValidBitcoinPrivateKey true");
+            new ImportPrivKeyTask(activity).execute(privKey);
+        }
+
     }
 
     private static void showWritePhraseDialog() {
@@ -349,4 +358,17 @@ public class BRWalletManager {
 
     public native long setFeePerKb(long fee);
 
+    public native boolean isValidBitcoinPrivateKey(String key);
+
+    public native boolean isValidBitcoinBIP38Key(String key);
+
+    public native String getAddressFromPrivKey(String key);
+
+    public native void createInputArray();
+
+    public native void addInputToPrivKeyTx(byte[] hash, int vout, byte[] script, long amount);
+
+    public native boolean confirmKeySweep(byte[] tx, String key);
+
+    public native ImportPrivKeyEntity getPrivKeyObject();
 }

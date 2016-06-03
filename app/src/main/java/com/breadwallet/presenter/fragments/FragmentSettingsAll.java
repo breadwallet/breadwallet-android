@@ -102,9 +102,9 @@ public class FragmentSettingsAll extends Fragment {
             @Override
             public void onClick(View view) {
                 if (FragmentAnimator.checkTheMultipressingAvailability()) {
-//                    FragmentAnimator.animateDecoderFragment();
-                    ((BreadWalletApp) getActivity().getApplication()).showCustomToast(getActivity(), "Not available for beta version",
-                            MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
+                    FragmentAnimator.animateDecoderFragment(FragmentDecoder.IMPORT_PRIVATE_KEYS);
+//                    ((BreadWalletApp) getActivity().getApplication()).showCustomToast(getActivity(), "Not available for beta version",
+//                            MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
                 }
             }
         });

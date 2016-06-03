@@ -44,6 +44,7 @@ import com.breadwallet.presenter.entities.BRPeerEntity;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.fragments.FragmentCurrency;
+import com.breadwallet.presenter.fragments.FragmentDecoder;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.presenter.fragments.FragmentSettings;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
@@ -709,7 +710,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    FragmentAnimator.animateDecoderFragment();
+                    FragmentAnimator.animateDecoderFragment(FragmentDecoder.QR_SCAN);
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
 

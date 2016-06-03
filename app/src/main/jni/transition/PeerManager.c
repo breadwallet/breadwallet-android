@@ -422,8 +422,8 @@ JNIEXPORT void JNICALL Java_com_breadwallet_wallet_BRPeerManager_peerManagerFree
 
 }
 
-JNIEXPORT void JNICALL
-Java_com_breadwallet_presenter_activities_IntroActivity_testCore(JNIEnv *env, jobject instance) {
-    BRKey key;
-    BRKeySetPrivKey(&key, "5Kb8kLf9zgWQnogidDA76MzPL6TsZZY36hWXMssSzNydYXYB9KF");
-}
+//JNIEXPORT void JNICALL
+//Java_com_breadwallet_presenter_activities_IntroActivity_testCore(JNIEnv *env, jobject instance) {
+//    BRKey key;
+//    BRKeySetPrivKey(&key, "5Kb8kLf9zgWQnogidDA76MzPL6TsZZY36hWXMssSzNydYXYB9KF");
+//}

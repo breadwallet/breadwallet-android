@@ -3,7 +3,7 @@ package com.breadwallet.presenter.entities;
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail Gutan on 9/23/15.
+ * Created by Mihail Gutan on 6/2/16.
  * Copyright (c) 2016 breadwallet llc <mihail@breadwallet.com>
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,49 +24,34 @@ package com.breadwallet.presenter.entities;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class BRTransactionEntity {
-    private byte[] buff;
-    private int blockheight;
-    private long timestamp;
-    private String txHash;
 
-    private BRTransactionEntity(){
+public class ImportPrivKeyEntity {
+    public static final String TAG = ImportPrivKeyEntity.class.getName();
 
+    private byte[] tx;
+
+    public byte[] getTx() {
+        return tx;
     }
 
-    public long getBlockheight() {
-        return blockheight;
+    public long getAmount() {
+        return amount;
     }
 
-    public void setBlockheight(int blockheight) {
-        this.blockheight = blockheight;
+    public long getFee() {
+        return fee;
     }
 
-    public long getTimestamp() {
-        return timestamp;
+    private long amount;
+    private long fee;
+
+    private ImportPrivKeyEntity() {
     }
 
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public String getTxHash() {
-        return txHash;
-    }
-
-    public void setTxHash(String txHash) {
-        this.txHash = txHash;
-    }
-
-    public BRTransactionEntity(byte[] txBuff, int blockheight, long timestamp, String txHash) {
-        this.blockheight = blockheight;
-        this.timestamp = timestamp;
-        this.buff = txBuff;
-        this.txHash = txHash;
-    }
-
-    public byte[] getBuff() {
-        return buff;
+    public ImportPrivKeyEntity(byte[] tx, long amount, long fee) {
+        this.tx = tx;
+        this.amount = amount;
+        this.fee = fee;
     }
 
 }

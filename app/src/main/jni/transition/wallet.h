@@ -131,5 +131,39 @@ JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTotalSent
 JNIEXPORT void JNICALL Java_com_breadwallet_wallet_BRWalletManager_setFeePerKb
         (JNIEnv *env, jobject obj, jlong fee);
 
+JNIEXPORT jboolean JNICALL
+        Java_com_breadwallet_wallet_BRWalletManager_isValidBitcoinPrivateKey(JNIEnv *env,
+                                                                             jobject instance,
+                                                                             jstring key);
+
+JNIEXPORT jboolean JNICALL
+        Java_com_breadwallet_wallet_BRWalletManager_isValidBitcoinBIP38Key(JNIEnv *env,
+                                                                           jobject instance,
+                                                                           jstring key);
+
+JNIEXPORT jstring JNICALL
+        Java_com_breadwallet_wallet_BRWalletManager_getAddressFromPrivKey(JNIEnv *env,
+                                                                          jobject instance,
+                                                                          jstring key);
+
+JNIEXPORT void JNICALL Java_com_breadwallet_wallet_BRWalletManager_createInputArray(
+        JNIEnv *env,
+        jobject thiz);
+
+JNIEXPORT void JNICALL Java_com_breadwallet_wallet_BRWalletManager_addInputToPrivKeyTx(JNIEnv *env,
+                                                                                       jobject thiz,
+                                                                                       jbyteArray hash,
+                                                                                       int vout,
+                                                                                       jbyteArray script,
+                                                                                       jlong amount);
+
+JNIEXPORT jobject  JNICALL Java_com_breadwallet_wallet_BRWalletManager_getPrivKeyObject(JNIEnv *env,
+                                                                                        jobject thiz);
+
+JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRWalletManager_confirmKeySweep(JNIEnv *env,
+                                                                                       jobject thiz,
+                                                                                       jbyteArray tx,
+                                                                                       jstring privKey);
+
 
 #endif //BREADWALLET_WALLET_H

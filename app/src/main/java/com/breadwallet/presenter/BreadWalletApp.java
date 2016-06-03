@@ -302,12 +302,12 @@ public class BreadWalletApp extends Application {
 
     public void showCustomDialog(final String title, final String message, final String buttonText) {
         Log.e(TAG, "Showing a dialog!");
-        MainActivity app = MainActivity.app;
+        final MainActivity app = MainActivity.app;
         if (app == null) return;
         app.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                new android.app.AlertDialog.Builder(MainActivity.app)
+                new android.app.AlertDialog.Builder(app)
                         .setTitle(title)
                         .setMessage(message)
                         .setPositiveButton(buttonText, new DialogInterface.OnClickListener() {

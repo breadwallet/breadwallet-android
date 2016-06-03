@@ -192,8 +192,4 @@ public class PostAuthenticationProcessor {
         this.uri = uri;
     }
 
-
-    public void clearTmpTxObject() {
-        this.tmpTx = null;
-    }
 }

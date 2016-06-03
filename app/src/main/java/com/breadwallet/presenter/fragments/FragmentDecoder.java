@@ -77,6 +77,9 @@ public class FragmentDecoder extends Fragment
     private static final String CAMERA_GUIDE_RED = "red";
     private static final String CAMERA_GUIDE = "reg";
     private static final String TEXT_EMPTY = "";
+    public static final int QR_SCAN = 1;
+    public static final int IMPORT_PRIVATE_KEYS = 2;
+    private int mode;
 
     private boolean useImageAvailable = true;
 
@@ -149,20 +152,6 @@ public class FragmentDecoder extends Fragment
 
                 @Override
                 public void onImageAvailable(ImageReader reader) {
-//                    Log.e(TAG, "onImageAvailable: " + count++);
-//                    if (!useImageAvailable) {
-//                        return;
-//                    } else {
-//                        useImageAvailable = false;
-//                        new Handler().postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                useImageAvailable = true;
-//                            }
-//                        }, 300);
-//                    }
-
-//                    Log.e(TAG, "onImageAvailable after the check ");
 
                     Image img = null;
                     img = reader.acquireLatestImage();
@@ -183,15 +172,33 @@ public class FragmentDecoder extends Fragment
                             throw new NullPointerException("no QR code");
                         }
                         String decoded = rawResult.getText();
-                        String validationString = validateResult(decoded);
-//                        Log.e(TAG, "validationString: " + validationString);
-                        if (Objects.equals(validationString, TEXT_EMPTY)) {
-                            onQRCodeRead((MainActivity) getActivity(), rawResult.getText());
-                        } else {
-                            setCameraGuide(CAMERA_GUIDE_RED);
-                            setGuideText(validationString);
-                        }
 
+                        if (mode == IMPORT_PRIVATE_KEYS) {
+                            if (accessGranted) {
+                                accessGranted = false;
+                                BRWalletManager.getInstance(getActivity()).confirmSweep(getActivity(), decoded);
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        FragmentAnimator.hideDecoderFragment();
+                                    }
+                                });
+                            }
+                        } else if (mode == QR_SCAN) {
+                            String validationString = validateResult(decoded);
+//                        Log.e(TAG, "validationString: " + validationString);
+                            if (Objects.equals(validationString, TEXT_EMPTY)) {
+                                if (accessGranted) {
+                                    accessGranted = false;
+                                    onQRCodeRead((MainActivity) getActivity(), rawResult.getText());
+                                }
+                            } else {
+                                setCameraGuide(CAMERA_GUIDE_RED);
+                                setGuideText(validationString);
+                            }
+                        } else {
+                            return;
+                        }
                     } catch (ReaderException ignored) {
                         setCameraGuide(CAMERA_GUIDE);
 //                        Log.e(TAG, "Reader shows an exception! ", ignored);
@@ -568,21 +575,18 @@ public class FragmentDecoder extends Fragment
     }
 
     private static synchronized void onQRCodeRead(final MainActivity app, final String text) {
-        if (accessGranted) {
-            accessGranted = false;
-            app.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (text != null) {
-                        FragmentAnimator.hideDecoderFragment();
-                        Log.e(TAG, "BEFORE processRequest");
-                        RequestHandler.processRequest(app, text);
+        app.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (text != null) {
+                    FragmentAnimator.hideDecoderFragment();
+                    Log.e(TAG, "BEFORE processRequest");
+                    RequestHandler.processRequest(app, text);
 
-                    }
                 }
-            });
+            }
+        });
 
-        }
     }
 
     /**
@@ -678,6 +682,10 @@ public class FragmentDecoder extends Fragment
             }
         });
 
+    }
+
+    public void setMode(int mode) {
+        this.mode = mode;
     }
 
 }

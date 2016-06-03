@@ -95,7 +95,7 @@ public class MainFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if (FragmentAnimator.checkTheMultipressingAvailability()) {
-                    FragmentAnimator.animateDecoderFragment();
+                    FragmentAnimator.animateDecoderFragment(FragmentDecoder.QR_SCAN);
                 }
             }
         });

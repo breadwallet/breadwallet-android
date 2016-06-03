@@ -59,7 +59,7 @@ public class FragmentAnimator {
     private static boolean multiplePressingAvailable = true;
     private static final Object lockObject = new Object();
 
-    public static void animateDecoderFragment() {
+    public static void animateDecoderFragment(int mode) {
 
         MainActivity app = MainActivity.app;
         if (app == null) return;
@@ -97,7 +97,9 @@ public class FragmentAnimator {
             //Disabled inspection: <Expected resource type anim>
             FragmentTransaction fragmentTransaction = app.getFragmentManager().beginTransaction();
             fragmentTransaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_top);
-            fragmentTransaction.replace(R.id.main_layout, new FragmentDecoder(), FragmentDecoder.class.getName());
+            FragmentDecoder fragmentDecoder = new FragmentDecoder();
+            fragmentDecoder.setMode(mode);
+            fragmentTransaction.replace(R.id.main_layout, fragmentDecoder, FragmentDecoder.class.getName());
             int temp = fragmentTransaction.commit();
         }
     }
@@ -142,6 +144,7 @@ public class FragmentAnimator {
      * Animate the transition on burgerButton/MenuButton pressed
      */
     public static void pressMenuButton(final MainActivity context, final Fragment to) {
+        if (context == null || to == null) return;
         ((BreadWalletApp) context.getApplication()).cancelToast();
 //        Log.e(TAG, "The level is: " + level);
         FragmentManager fragmentManager = context.getFragmentManager();
@@ -318,7 +321,7 @@ public class FragmentAnimator {
         app.setBurgerButtonImage(MainActivity.BURGER);
     }
 
-    public static void resetFragmentAnimator(){
+    public static void resetFragmentAnimator() {
         level = 0;
         wipeWalletOpen = false;
         previous.clear();
