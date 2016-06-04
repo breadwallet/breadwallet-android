@@ -180,11 +180,17 @@ public class FragmentTransactionExpanded extends Fragment {
         for (String address : addresses) {
             RelativeLayout addressBlock = (RelativeLayout) inflater.inflate(R.layout.
                     transaction_sent_from_addresses, null);
-            TextView txFrom = (TextView) addressBlock.findViewById(R.id.tx_from_text);
+            final TextView txFrom = (TextView) addressBlock.findViewById(R.id.tx_from_text);
             TextView txFromDescription = (TextView) addressBlock.findViewById(R.id.tx_from_description);
             if (address != null && !address.isEmpty()) {
                 txFrom.setText(address);
                 txFromDescription.setText(getString(R.string.wallet_address));
+                addressBlock.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.e(TAG,"tx from: " + txFrom.getText().toString());
+                    }
+                });
                 view.addView(addressBlock);
                 view.addView(FragmentSettingsAll.getSeparationLine(0, getActivity()));
             }
@@ -205,7 +211,7 @@ public class FragmentTransactionExpanded extends Fragment {
 //            amountText.setText(m.getFormattedCurrencyString("BTC", String.valueOf(m.getBitsFromSatoshi(amount))));
 //            exchangeText.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, String.valueOf(amount))));
 
-            TextView txTo = (TextView) addressBlock.findViewById(R.id.tx_to_text);
+            final TextView txTo = (TextView) addressBlock.findViewById(R.id.tx_to_text);
             TextView txToDescription = (TextView) addressBlock.findViewById(R.id.tx_to_description);
             TextView txToAmount = (TextView) addressBlock.findViewById(R.id.tx_to_amount_text);
             TextView txToExchange = (TextView) addressBlock.findViewById(R.id.tx_to_exchange_text);
@@ -215,7 +221,12 @@ public class FragmentTransactionExpanded extends Fragment {
                 txToDescription.setText(getString(R.string.wallet_address));
                 txToAmount.setText(m.getFormattedCurrencyString("BTC", amounts[i]));
                 txToExchange.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, new BigDecimal(amounts[i]))));
-
+                addressBlock.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.e(TAG,"tx to: " + txTo.getText().toString());
+                    }
+                });
                 view.addView(addressBlock);
                 view.addView(FragmentSettingsAll.getSeparationLine(0, getActivity()));
             }

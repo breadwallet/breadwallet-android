@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
@@ -18,6 +19,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.net.URLConnection;
@@ -64,13 +66,30 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
         key = params[0];
         if (key == null || key.isEmpty() || app == null) return null;
         String tmpAddrs = BRWalletManager.getInstance(app).getAddressFromPrivKey(key);
-        if (tmpAddrs.equals("")) {
-            ((BreadWalletApp)app.getApplication()).showCustomDialog(app.getString(R.string.warning),
-                    "this private key is already in your wallet", app.getString(R.string.ok));
-            importPrivKeyEntity = null;
-        }
+        Log.e(TAG, "tmpAddrs: " + tmpAddrs);
+//        if (tmpAddrs.equals("")) {
+//            app.runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    ((BreadWalletApp)app.getApplication()).showCustomDialog(app.getString(R.string.warning),
+//                            "this private key is already in your wallet", app.getString(R.string.ok));
+//                }
+//            });
+//
+//            importPrivKeyEntity = null;
+//            return null;
+//        }
         String url = UNSPENT_URL + tmpAddrs + "/utxo";
         importPrivKeyEntity = createTx(app, url);
+        if (importPrivKeyEntity == null) {
+            app.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ((BreadWalletApp) app.getApplication()).showCustomDialog(app.getString(R.string.warning),
+                            "this private key is empty", app.getString(R.string.ok));
+                }
+            });
+        }
         return null;
     }
 
@@ -88,7 +107,11 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
                 .setMessage(message)
                 .setPositiveButton(app.getString(R.string.send), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        BRWalletManager.getInstance(app).confirmKeySweep(importPrivKeyEntity.getTx(), key);
+                        boolean result = BRWalletManager.getInstance(app).confirmKeySweep(importPrivKeyEntity.getTx(), key);
+                        if (!result) {
+                            ((BreadWalletApp) app.getApplication()).showCustomDialog(app.getString(R.string.warning),
+                                    "failed to sweep the key", app.getString(R.string.ok));
+                        }
                     }
                 })
                 .setIcon(android.R.drawable.ic_dialog_alert)
@@ -112,7 +135,9 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
                 int vout = obj.getInt("vout");
                 String scriptPubKey = obj.getString("scriptPubKey");
                 long amount = obj.getLong("amount");
-                BRWalletManager.getInstance(activity).addInputToPrivKeyTx(txid.getBytes(), vout, scriptPubKey.getBytes(), amount);
+                byte[] txidBytes = hexStringToByteArray(txid);
+                byte[] scriptPubKeyBytes = hexStringToByteArray(scriptPubKey);
+                BRWalletManager.getInstance(activity).addInputToPrivKeyTx(txidBytes, vout, scriptPubKeyBytes, amount);
             }
 
             result = BRWalletManager.getInstance(activity).getPrivKeyObject();
@@ -121,6 +146,16 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
             e.printStackTrace();
         }
         return result;
+    }
+
+    public static byte[] hexStringToByteArray(String s) {
+        int len = s.length();
+        byte[] data = new byte[len / 2];
+        for (int i = 0; i < len; i += 2) {
+            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
+                    + Character.digit(s.charAt(i + 1), 16));
+        }
+        return data;
     }
 
     private static String callURL(String myURL) {

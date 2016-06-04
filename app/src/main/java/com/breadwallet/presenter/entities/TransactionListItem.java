@@ -26,10 +26,9 @@ package com.breadwallet.presenter.entities;
  */
 public class TransactionListItem {
     public static final String TAG = TransactionListItem.class.getName();
-    final protected static char[] hexArray = "0123456789abcdef".toCharArray();
     private long timeStamp;
     private int blockHeight;
-    private String hexId;
+    private String hash;
     private long sent;
     private long received;
     private long fee;
@@ -41,12 +40,12 @@ public class TransactionListItem {
     private TransactionListItem() {
     }
 
-    public TransactionListItem(long timeStamp, int blockHeight, byte[] hash, long sent,
+    public TransactionListItem(long timeStamp, int blockHeight, String hash, long sent,
                                long received, long fee, String to[], String from[],
                                long balanceAfterTx, long[] outAmounts) {
         this.timeStamp = timeStamp;
         this.blockHeight = blockHeight;
-        this.hexId = bytesToHex(hash);
+        this.hash = hash;
         this.sent = sent;
         this.received = received;
         this.fee = fee;
@@ -58,16 +57,6 @@ public class TransactionListItem {
 //        CustomLogger.logThis("timeStamp", String.valueOf(timeStamp), "blockHeight", String.valueOf(blockHeight),
 //                "hash", hexId, "sent", String.valueOf(sent), "received", String.valueOf(received),
 //                "fee", String.valueOf(fee), "to", to, "from", from);
-    }
-
-    public static String bytesToHex(byte[] bytes) {
-        char[] hexChars = new char[bytes.length * 2];
-        for (int j = 0; j < bytes.length; j++) {
-            int v = bytes[j] & 0xFF;
-            hexChars[j * 2] = hexArray[v >>> 4];
-            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
-        }
-        return new StringBuilder(new String(hexChars)).reverse().toString();
     }
 
     public int getBlockHeight() {
@@ -82,12 +71,8 @@ public class TransactionListItem {
         return from;
     }
 
-    public static char[] getHexArray() {
-        return hexArray;
-    }
-
     public String getHexId() {
-        return hexId;
+        return hash;
     }
 
     public long getReceived() {
