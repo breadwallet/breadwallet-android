@@ -7,7 +7,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.text.InputType;
 import android.util.Log;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.breadwallet.R;
@@ -25,6 +27,7 @@ import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.WordsReader;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
+import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.sqlite.SQLiteManager;
 import com.breadwallet.tools.threads.ImportPrivKeyTask;
@@ -165,18 +168,72 @@ public class BRWalletManager {
         editor.apply();
     }
 
-    public void confirmSweep(Activity activity, String privKey) {
+    public void confirmSweep(final Activity activity, final String privKey) {
 
         if (activity == null) return;
 
         if (isValidBitcoinBIP38Key(privKey)) {
             Log.e(TAG, "isValidBitcoinBIP38Key true");
-            ((BreadWalletApp) activity.getApplication()).showCustomDialog("Info", "Password encrypted key", "ok");
+            //TODO implement this when core is ready
+//            activity.runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//
+//                    final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+//                    builder.setTitle("password protected key");
+//
+//                    // Set up the input
+//                    final EditText input = new EditText(activity);
+//                    // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+//                    input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+//                    builder.setView(input);
+//
+//                    // Set up the buttons
+//                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            String pass = input.getText().toString();
+//                            String decryptedKey = decryptBip38Key(privKey, pass);
+//                            Log.e(TAG, "decryptedKey: " + decryptedKey);
+//                            if (decryptedKey.equals("")) {
+//                                confirmSweep(activity, privKey);
+//                            } else {
+//                                confirmSweep(activity, decryptedKey);
+//                            }
+//                        }
+//                    });
+//                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            dialog.cancel();
+//                        }
+//                    });
+//
+//                    builder.show();
+//                }
+//            });
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ((BreadWalletApp)activity.getApplication()).showCustomDialog("Not available for beta version", "" ,activity.getString(R.string.ok));
+                        }
+                    });
+                }
+            });
         } else if (isValidBitcoinPrivateKey(privKey)) {
             Log.e(TAG, "isValidBitcoinPrivateKey true");
             new ImportPrivKeyTask(activity).execute(privKey);
+        } else {
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ((BreadWalletApp)activity.getApplication()).showCustomDialog("not a valid private key", "" ,activity.getString(R.string.ok));
+                }
+            });
         }
-
     }
 
     private static void showWritePhraseDialog() {
@@ -371,4 +428,6 @@ public class BRWalletManager {
     public native boolean confirmKeySweep(byte[] tx, String key);
 
     public native ImportPrivKeyEntity getPrivKeyObject();
+
+    public native String decryptBip38Key(String privKey, String pass);
 }

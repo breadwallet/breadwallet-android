@@ -146,6 +146,11 @@ JNIEXPORT jstring JNICALL
                                                                           jobject instance,
                                                                           jstring key);
 
+JNIEXPORT jstring JNICALL
+        Java_com_breadwallet_wallet_BRWalletManager_decryptBip38Key(JNIEnv *env,
+                                                                    jobject instance,
+                                                                    jstring privKey, jstring pass);
+
 JNIEXPORT void JNICALL Java_com_breadwallet_wallet_BRWalletManager_createInputArray(
         JNIEnv *env,
         jobject thiz);

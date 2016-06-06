@@ -6,8 +6,8 @@
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
+        android:layout_height="wrap_content">
+
         <LinearLayout
             android:id="@+id/transactions_item"
             android:layout_width="match_parent"
@@ -85,8 +85,8 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="@dimen/transaction_item_margin"
-                    android:textAlignment="viewEnd"
                     android:gravity="right"
+                    android:textAlignment="viewEnd"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/grey"
                     android:textSize="13sp" />
@@ -160,16 +160,12 @@
                 android:textColor="@color/dark_grey"
                 android:textSize="15sp" />
 
-            <!--<RelativeLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="@dimen/separator_height"-->
-            <!--android:background="@color/grey" />-->
 
             <LinearLayout
                 android:id="@+id/general_tx_to_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"></LinearLayout>
+                android:orientation="vertical" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -240,21 +236,11 @@
                 android:textColor="@color/dark_grey"
                 android:textSize="15sp" />
 
-            <!--<RelativeLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="@dimen/separator_height"-->
-            <!--android:background="@color/grey" />-->
-
             <LinearLayout
                 android:id="@+id/general_tx_from_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"></LinearLayout>
-
-            <!--<RelativeLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="@dimen/separator_height"-->
-            <!--android:background="@color/grey" />-->
+                android:orientation="vertical" />
 
         </LinearLayout>
     </LinearLayout>

@@ -10,13 +10,13 @@ model {
             applicationId = 'com.breadwallet'
             minSdkVersion.apiLevel = 23
             targetSdkVersion.apiLevel = 23
-            versionCode = 10
-            versionName = "0.6-beta10"
+            versionCode = 11
+            versionName = "0.6-beta11"
         }
 
         ndk {
             moduleName = "core"
-            toolchain = "gcc"
+            toolchain = "clang"
 
             //TODO set -DBITCOIN_TESTNET=0
             CFlags.addAll(['-std=c99', '-g', '-DBITCOIN_TESTNET=0', '-I' + file('src/main/secp/secp256k1/include'), '-I' + file('src/main/secp/secp256k1'), '-I' + file('src/main/secp'), '-I' + file('src/main/jni/breadwallet-core'), '-I' + file('src/main/jni/transition')])
@@ -29,6 +29,7 @@ model {
         lintOptions.with {
             // set to true to turn off analysis progress reporting by lint
             quiet = false
+            explainIssues = true
             // if true, stop the gradle build if errors are found
             abortOnError = true
             // if true, only report errors
@@ -52,7 +53,7 @@ model {
                 minifyEnabled = false
                 ndk {
                     minifyEnabled = false
-                    debuggable = true
+                    debuggable = false
                 }
             }
 
@@ -81,11 +82,7 @@ dependencies {
     androidTestCompile 'com.mcxiaoke.volley:library:1.0.19'
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
     androidTestCompile 'com.android.support:design:23.4.0'
-//    androidTestCompile('ch.acra:acra:4.5.0') {
-//        exclude group: 'org.json', module: 'json'
-//    }
     androidTestCompile 'org.apache.directory.studio:org.apache.commons.io:2.4'
-    //
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support:support-v13:23.4.0'
     compile 'com.google.zxing:core:3.2.1'
@@ -93,8 +90,5 @@ dependencies {
     compile 'com.mcxiaoke.volley:library:1.0.19'
     compile 'com.android.support.test.espresso:espresso-core:2.2.2'
     compile 'com.android.support:design:23.4.0'
-//    compile('ch.acra:acra:4.5.0') {
-//        exclude group: 'org.json', module: 'json'
-//    }
     compile 'org.apache.directory.studio:org.apache.commons.io:2.4'
 }

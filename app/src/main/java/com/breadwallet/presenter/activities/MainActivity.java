@@ -168,10 +168,6 @@ public class MainActivity extends FragmentActivity implements Observer {
 
         printPhoneSpecs();
 
-        //TODO delete this testing stuff
-//        KeyStoreManager.putFailCount(0, this);
-//        KeyStoreManager.putFailTimeStamp(0, this);
-
         new Thread(new Runnable() {
             @Override
             public void run() {

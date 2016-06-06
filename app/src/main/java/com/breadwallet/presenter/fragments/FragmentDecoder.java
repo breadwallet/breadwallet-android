@@ -213,11 +213,8 @@ public class FragmentDecoder extends Fragment
                             img.close();
 
                     }
-                    if (rawResult != null) {
-//                        Log.e(TAG, "Decoding successful!");
-                    } else {
+                    if (rawResult == null) {
                         setCameraGuide(CAMERA_GUIDE);
-//                        Log.d(TAG, "No QR code found…");
                     }
                 }
 

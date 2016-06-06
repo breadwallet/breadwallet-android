@@ -72,7 +72,7 @@ public class MainFragment extends Fragment {
             public void onClick(View v) {
                 addressEditText.setText(BRClipboardManager.readFromClipboard(getActivity()));
                 MainActivity app = MainActivity.app;
-                if(app != null){
+                if (app != null) {
                     app.hideAllBubbles();
                 }
             }
@@ -84,7 +84,7 @@ public class MainFragment extends Fragment {
                 ((BreadWalletApp) getActivity().getApplication()).hideKeyboard(getActivity());
                 addressEditText.clearFocus();
                 MainActivity app = MainActivity.app;
-                if(app != null){
+                if (app != null) {
                     app.hideAllBubbles();
                 }
             }
@@ -113,6 +113,13 @@ public class MainFragment extends Fragment {
                     }
                     Log.e(TAG, "tempAddress: " + tempAddress);
                     final String finalAddress = tempAddress;
+                    BRWalletManager wm = BRWalletManager.getInstance(getActivity());
+
+                    if (wm.isValidBitcoinPrivateKey(finalAddress) || wm.isValidBitcoinBIP38Key(finalAddress)) {
+                        BRWalletManager.getInstance(getActivity()).confirmSweep(getActivity(), finalAddress);
+                        return;
+                    }
+
                     if (checkIfAddressIsValid(finalAddress)) {
                         if (finalAddress != null) {
                             BRWalletManager m = BRWalletManager.getInstance(getActivity());

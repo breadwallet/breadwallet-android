@@ -91,12 +91,6 @@ public class BreadWalletApp extends Application {
     public static int DISPLAY_HEIGHT_PX;
     FingerprintManager mFingerprintManager;
 
-//    public static boolean canceled = false;
-    //    public static final String CREDENTIAL_TITLE = "Insert password";
-//    public static final String CREDENTIAL_DESCRIPTION = "Insert your password to unlock the app.";
-//    public static boolean canceled = false;
-
-
     @Override
     public void onCreate() {
         super.onCreate();

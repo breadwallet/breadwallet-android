@@ -67,18 +67,6 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
         if (key == null || key.isEmpty() || app == null) return null;
         String tmpAddrs = BRWalletManager.getInstance(app).getAddressFromPrivKey(key);
         Log.e(TAG, "tmpAddrs: " + tmpAddrs);
-//        if (tmpAddrs.equals("")) {
-//            app.runOnUiThread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    ((BreadWalletApp)app.getApplication()).showCustomDialog(app.getString(R.string.warning),
-//                            "this private key is already in your wallet", app.getString(R.string.ok));
-//                }
-//            });
-//
-//            importPrivKeyEntity = null;
-//            return null;
-//        }
         String url = UNSPENT_URL + tmpAddrs + "/utxo";
         importPrivKeyEntity = createTx(app, url);
         if (importPrivKeyEntity == null) {
