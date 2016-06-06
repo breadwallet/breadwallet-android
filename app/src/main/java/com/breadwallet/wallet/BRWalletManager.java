@@ -168,9 +168,9 @@ public class BRWalletManager {
         editor.apply();
     }
 
-    public void confirmSweep(final Activity activity, final String privKey) {
+    public boolean confirmSweep(final Activity activity, final String privKey) {
 
-        if (activity == null) return;
+        if (activity == null) return false;
 
         if (isValidBitcoinBIP38Key(privKey)) {
             Log.e(TAG, "isValidBitcoinBIP38Key true");
@@ -223,16 +223,13 @@ public class BRWalletManager {
                     });
                 }
             });
+            return true;
         } else if (isValidBitcoinPrivateKey(privKey)) {
             Log.e(TAG, "isValidBitcoinPrivateKey true");
             new ImportPrivKeyTask(activity).execute(privKey);
+            return true;
         } else {
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    ((BreadWalletApp)activity.getApplication()).showCustomDialog("not a valid private key", "" ,activity.getString(R.string.ok));
-                }
-            });
+            return false;
         }
     }
 

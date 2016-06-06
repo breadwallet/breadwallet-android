@@ -77,9 +77,9 @@ public class FragmentDecoder extends Fragment
     private static final String CAMERA_GUIDE_RED = "red";
     private static final String CAMERA_GUIDE = "reg";
     private static final String TEXT_EMPTY = "";
-    public static final int QR_SCAN = 1;
-    public static final int IMPORT_PRIVATE_KEYS = 2;
-    private int mode;
+//    public static final int QR_SCAN = 1;
+//    public static final int IMPORT_PRIVATE_KEYS = 2;
+//    private int mode;
 
     private boolean useImageAvailable = true;
 
@@ -173,31 +173,29 @@ public class FragmentDecoder extends Fragment
                         }
                         String decoded = rawResult.getText();
 
-                        if (mode == IMPORT_PRIVATE_KEYS) {
-                            if (accessGranted) {
-                                accessGranted = false;
-                                BRWalletManager.getInstance(getActivity()).confirmSweep(getActivity(), decoded);
+                        if (accessGranted) {
+                            Log.e(TAG,"entered the accessGranted area!");
+                            accessGranted = false;
+                            boolean isPrivKey = BRWalletManager.getInstance(getActivity()).confirmSweep(getActivity(), decoded);
+                            if (isPrivKey) {
                                 getActivity().runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
                                         FragmentAnimator.hideDecoderFragment();
                                     }
                                 });
+                                return;
                             }
-                        } else if (mode == QR_SCAN) {
+
                             String validationString = validateResult(decoded);
 //                        Log.e(TAG, "validationString: " + validationString);
                             if (Objects.equals(validationString, TEXT_EMPTY)) {
-                                if (accessGranted) {
-                                    accessGranted = false;
-                                    onQRCodeRead((MainActivity) getActivity(), rawResult.getText());
-                                }
+                                onQRCodeRead((MainActivity) getActivity(), rawResult.getText());
                             } else {
                                 setCameraGuide(CAMERA_GUIDE_RED);
                                 setGuideText(validationString);
+                                accessGranted = true;
                             }
-                        } else {
-                            return;
                         }
                     } catch (ReaderException ignored) {
                         setCameraGuide(CAMERA_GUIDE);
@@ -681,8 +679,5 @@ public class FragmentDecoder extends Fragment
 
     }
 
-    public void setMode(int mode) {
-        this.mode = mode;
-    }
 
 }

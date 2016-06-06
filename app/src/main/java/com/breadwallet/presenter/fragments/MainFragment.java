@@ -95,7 +95,7 @@ public class MainFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if (FragmentAnimator.checkTheMultipressingAvailability()) {
-                    FragmentAnimator.animateDecoderFragment(FragmentDecoder.QR_SCAN);
+                    FragmentAnimator.animateDecoderFragment();
                 }
             }
         });
@@ -117,6 +117,7 @@ public class MainFragment extends Fragment {
 
                     if (wm.isValidBitcoinPrivateKey(finalAddress) || wm.isValidBitcoinBIP38Key(finalAddress)) {
                         BRWalletManager.getInstance(getActivity()).confirmSweep(getActivity(), finalAddress);
+                        addressEditText.setText("");
                         return;
                     }
 

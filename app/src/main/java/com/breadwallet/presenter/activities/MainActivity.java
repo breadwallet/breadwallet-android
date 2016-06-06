@@ -706,7 +706,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    FragmentAnimator.animateDecoderFragment(FragmentDecoder.QR_SCAN);
+                    FragmentAnimator.animateDecoderFragment();
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
 

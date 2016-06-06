@@ -59,7 +59,7 @@ public class FragmentAnimator {
     private static boolean multiplePressingAvailable = true;
     private static final Object lockObject = new Object();
 
-    public static void animateDecoderFragment(int mode) {
+    public static void animateDecoderFragment() {
 
         MainActivity app = MainActivity.app;
         if (app == null) return;
@@ -98,7 +98,6 @@ public class FragmentAnimator {
             FragmentTransaction fragmentTransaction = app.getFragmentManager().beginTransaction();
             fragmentTransaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_top);
             FragmentDecoder fragmentDecoder = new FragmentDecoder();
-            fragmentDecoder.setMode(mode);
             fragmentTransaction.replace(R.id.main_layout, fragmentDecoder, FragmentDecoder.class.getName());
             int temp = fragmentTransaction.commit();
         }
