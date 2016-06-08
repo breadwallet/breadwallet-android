@@ -33,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="28dp"
             android:layout_gravity="center"
-            android:text="settings"
+            android:text="@string/settings"
             android:textColor="@color/grey"
             android:textSize="22sp" />
     </ViewFlipper>
@@ -148,7 +148,7 @@
             android:layout_height="13dp"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
             android:background="@drawable/shadow"
             android:paddingBottom="@dimen/pager_indicator_shadow_padding"
             android:paddingLeft="@dimen/pager_indicator_shadow_padding"
@@ -162,7 +162,7 @@
             android:layout_height="13dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
             android:background="@drawable/shadow"
             android:paddingBottom="@dimen/pager_indicator_shadow_padding"
             android:paddingLeft="@dimen/pager_indicator_shadow_padding"

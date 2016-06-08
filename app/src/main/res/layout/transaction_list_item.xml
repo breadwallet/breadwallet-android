@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:weightSum="3">
+    android:weightSum="3"
+    android:baselineAligned="false">
 
     <LinearLayout
         android:id="@+id/transaction_layout_raw1"
@@ -22,7 +23,7 @@
             android:clickable="false"
             android:includeFontPadding="false"
             android:padding="0px"
-            android:text="sent/received"
+            android:text="@string/sent_received"
             android:textSize="12sp" />
 
         <com.breadwallet.presenter.customviews.AutoResizeTextView
@@ -32,7 +33,6 @@
             android:layout_marginBottom="13dp"
             android:layout_marginTop="5dp"
             android:clickable="false"
-            android:text="some date"
             android:textColor="@color/grey"
             android:textSize="12sp" />
 
@@ -52,7 +52,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="false"
-            android:text="some dollars"
             android:textColor="@color/grey"
             android:textSize="15sp" />
 
@@ -63,7 +62,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="3dp"
             android:clickable="false"
-            android:text="some total dollars"
             android:textColor="@color/grey"
             android:textSize="12sp" />
     </LinearLayout>
@@ -82,7 +80,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="false"
-            android:text="some bits"
             android:textColor="@color/dark_grey"
             android:textSize="15sp"
             android:textStyle="bold" />
@@ -93,7 +90,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="3dp"
             android:clickable="false"
-            android:text="some total bits"
             android:textColor="@color/dark_grey"
             android:textSize="12sp" />
 

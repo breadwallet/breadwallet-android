@@ -1,15 +1,18 @@
 package com.breadwallet.presenter;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Display;
@@ -29,6 +32,7 @@ import com.breadwallet.presenter.fragments.FingerprintDialogFragment;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.presenter.fragments.PasswordDialogFragment;
 import com.breadwallet.tools.BRConstants;
+import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.wallet.BRWalletManager;
 
@@ -87,7 +91,6 @@ public class BreadWalletApp extends Application {
     public boolean allowKeyStoreAccess;
     private String oldMessage;
     private Toast toast;
-    private static int DISPLAY_WIDTH_PX;
     public static int DISPLAY_HEIGHT_PX;
     FingerprintManager mFingerprintManager;
 
@@ -98,7 +101,7 @@ public class BreadWalletApp extends Application {
         Display display = wm.getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        DISPLAY_WIDTH_PX = size.x;
+        int DISPLAY_WIDTH_PX = size.x;
         DISPLAY_HEIGHT_PX = size.y;
 //        ACRA.init(this);
         mFingerprintManager = (FingerprintManager) getSystemService(Context.FINGERPRINT_SERVICE);
@@ -220,10 +223,14 @@ public class BreadWalletApp extends Application {
     @TargetApi(Build.VERSION_CODES.LOLLIPOP_MR1)
     public void promptForAuthentication(Activity context, int mode, PaymentRequestEntity requestEntity) {
         Log.e(TAG, "promptForAuthentication: " + mode);
+        if (!FragmentAnimator.checkTheMultipressingAvailability()) {
+            return;
+        }
         if (context == null) return;
         KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Activity.KEYGUARD_SERVICE);
-        boolean useFingerPrint = mFingerprintManager.isHardwareDetected()
-                && mFingerprintManager.hasEnrolledFingerprints();
+
+        boolean useFingerPrint = ActivityCompat.checkSelfPermission(this, Manifest.permission.USE_FINGERPRINT) ==
+                PackageManager.PERMISSION_GRANTED && mFingerprintManager.isHardwareDetected() && mFingerprintManager.hasEnrolledFingerprints();
         if (mode == BRConstants.AUTH_FOR_PAY) {
             long limit = KeyStoreManager.getSpendLimit(context);
             long totalSent = BRWalletManager.getInstance(context).getTotalSent();

@@ -24,7 +24,7 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="136dp"
-            android:text="No Internet Connection"
+            android:text="@string/no_internet_connection"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/grey"
             android:visibility="gone" />
@@ -36,7 +36,7 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:background="@android:color/transparent"
-            android:text="Refresh"
+            android:text="@string/refresh"
             android:textColor="@color/blue"
             android:visibility="gone" />
 

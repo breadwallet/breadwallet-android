@@ -23,6 +23,7 @@ import com.google.zxing.client.android.common.PlatformSupportManager;
  * Selects an appropriate implementation of {@link OpenCameraInterface} based on the device's
  * API level.
  */
+@SuppressWarnings("deprecation")
 final class OpenCameraManager extends PlatformSupportManager<OpenCameraInterface> {
 
     public OpenCameraManager() {

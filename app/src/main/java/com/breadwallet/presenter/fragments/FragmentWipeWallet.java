@@ -55,7 +55,6 @@ import java.util.Arrays;
 
 public class FragmentWipeWallet extends Fragment {
     private static final String TAG = FragmentWipeWallet.class.getName();
-    private Button close;
     private EditText recoveryPhraseEditText;
     private Button wipe;
     private BRWalletManager m;
@@ -69,7 +68,7 @@ public class FragmentWipeWallet extends Fragment {
         View rootView = inflater.inflate(
                 R.layout.fragment_wipe_wallet, container, false);
         m = BRWalletManager.getInstance(getActivity());
-        close = (Button) rootView.findViewById(R.id.wipe_wallet_close);
+        Button close = (Button) rootView.findViewById(R.id.wipe_wallet_close);
         recoveryPhraseEditText = (EditText) rootView.findViewById(R.id.editText_phrase);
         wipe = (Button) rootView.findViewById(R.id.wipe_wallet_wipe);
         recoveryPhraseEditText.setText("");

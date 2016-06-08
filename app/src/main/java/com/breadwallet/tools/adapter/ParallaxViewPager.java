@@ -184,6 +184,7 @@ public class ParallaxViewPager extends ViewPager {
      *
      * @param background
      */
+    @SuppressWarnings("deprecation")
     @Override
     public void setBackgroundDrawable(Drawable background) {
         bitmap = ((BitmapDrawable) background).getBitmap();

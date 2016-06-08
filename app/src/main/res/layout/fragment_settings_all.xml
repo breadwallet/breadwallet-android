@@ -61,7 +61,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:padding="10dp"
-                        android:text="transaction history"
+                        android:text="@string/transaction_history"
                         android:textAlignment="center"
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:textColor="@color/dark_blue"
@@ -94,7 +94,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginStart="20dp"
                     android:background="@drawable/cameraguidebluesmall" />
 
                 <TextView
@@ -102,9 +102,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginStart="20dp"
                     android:layout_toEndOf="@+id/camera_guide"
-                    android:text="import private key"
+                    android:text="@string/import_private_key"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/dark_blue"
                     android:textSize="@dimen/text_size" />
@@ -115,7 +115,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/separator_height"
-                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
                 android:background="@color/grey" />
 
             <RelativeLayout
@@ -132,7 +132,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginStart="20dp"
                     android:background="@drawable/rescan" />
 
                 <TextView
@@ -140,9 +140,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginStart="20dp"
                     android:layout_toEndOf="@+id/rescan_image"
-                    android:text="rescan blockchain"
+                    android:text="@string/rescan_blockchain"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/dark_blue"
                     android:textSize="@dimen/text_size" />
@@ -181,8 +181,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="20dp"
-                    android:text="settings"
+                    android:layout_marginStart="20dp"
+                    android:text="@string/settings"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/grey"
                     android:textSize="@dimen/text_size" />
@@ -192,7 +192,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginRight="20dp"
+                    android:layout_marginEnd="20dp"
                     android:background="@drawable/chevron" />
 
             </RelativeLayout>

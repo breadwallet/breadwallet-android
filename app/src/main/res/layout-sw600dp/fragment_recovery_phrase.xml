@@ -10,7 +10,6 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="36dp"
@@ -26,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="60dp"
-        android:text="please write it down"
+        android:text="@string/please_write_it_down"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/grey"
         android:textSize="16sp" />

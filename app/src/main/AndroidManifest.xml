@@ -14,6 +14,8 @@
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <application
+        android:fullBackupContent="false"
+        android:supportsRtl="true"
         android:name=".presenter.BreadWalletApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"

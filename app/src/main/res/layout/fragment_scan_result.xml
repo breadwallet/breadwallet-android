@@ -8,9 +8,9 @@
         android:id="@+id/amount_to_pay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_marginLeft="3dp"
-        android:layout_marginRight="16dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="3dp"
+        android:layout_marginEnd="16dp"
         android:textColor="@android:color/darker_gray"
         android:textSize="26sp" />
 
@@ -62,8 +62,8 @@
         android:layout_width="fill_parent"
         android:layout_height="1dp"
         android:layout_below="@+id/custom_keyboard_layout"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:background="@android:color/darker_gray" />
 
     <TextView
@@ -72,8 +72,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/second_line"
         android:layout_centerHorizontal="true"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginTop="10dp"
         android:text="@string/the_address" />
 

@@ -25,6 +25,7 @@ import android.util.Log;
  * front cameras, and rotated cameras.
  */
 @TargetApi(9)
+@SuppressWarnings("deprecation")
 public final class GingerbreadOpenCameraInterface implements OpenCameraInterface {
 
   private static final String TAG = "GingerbreadOpenCamera";

@@ -229,6 +229,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
                     imageB.setLongClickable(true);
                     imageB.setOnTouchListener(new BackPressCustomKeyboardOnTouchListener());
                     imageB.setId(R.id.keyboard_back_button);
+                    //noinspection deprecation
                     imageB.setBackgroundColor(getResources().getColor(android.R.color.transparent));
                     imageB.setX(interButtonGap / 2 + interButtonGap * 3 + buttonWidth * 2 + (buttonWidth / 32));
                     imageB.setY(buttonHeight * 3 + interButtonGap * 3 + (buttonHeight / 4));

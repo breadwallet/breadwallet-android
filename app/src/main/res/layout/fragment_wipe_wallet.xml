@@ -30,7 +30,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:paddingTop="90dp"
-        android:text="confirm:"
+        android:text="@string/confirm"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/light_grey" />
 

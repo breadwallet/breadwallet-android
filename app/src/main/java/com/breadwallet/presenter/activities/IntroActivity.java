@@ -56,7 +56,6 @@ public class IntroActivity extends FragmentActivity {
     private static final String TAG = IntroActivity.class.getName();
     public static IntroActivity app;
     private Button leftButton;
-    private String canary;
 
     //loading the native library
     static {
@@ -87,7 +86,7 @@ public class IntroActivity extends FragmentActivity {
             }
         });
 
-        canary = KeyStoreManager.getKeyStoreCanary(this, BRConstants.CANARY_REQUEST_CODE);
+        String canary = KeyStoreManager.getKeyStoreCanary(this, BRConstants.CANARY_REQUEST_CODE);
         if (canary.equals("noauth")) return;
         byte[] masterPubKey = KeyStoreManager.getMasterPublicKey(this);
         boolean isFirstAddressCorrect = false;

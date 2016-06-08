@@ -103,8 +103,6 @@ public class FragmentSettingsAll extends Fragment {
             public void onClick(View view) {
                 if (FragmentAnimator.checkTheMultipressingAvailability()) {
                     FragmentAnimator.animateDecoderFragment();
-//                    ((BreadWalletApp) getActivity().getApplication()).showCustomToast(getActivity(), "Not available for beta version",
-//                            MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
                 }
             }
         });
@@ -118,7 +116,6 @@ public class FragmentSettingsAll extends Fragment {
                             BRPeerManager.getInstance(getActivity()).rescan();
                         }
                     }).start();
-
                 }
             }
         });

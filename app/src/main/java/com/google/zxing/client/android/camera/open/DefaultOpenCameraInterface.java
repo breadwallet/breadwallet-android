@@ -21,6 +21,7 @@ import android.hardware.Camera;
 /**
  * Default implementation for Android before API 9 / Gingerbread.
  */
+@SuppressWarnings("deprecation")
 final class DefaultOpenCameraInterface implements OpenCameraInterface {
 
   /**

@@ -60,7 +60,7 @@ class JsonParser {
             jsonArray = obj.getJSONArray("body");
             JSONObject headers = obj.getJSONObject("headers");
             String secureDate = headers.getString("Date");
-            long date = Date.parse(secureDate) / 1000;
+            @SuppressWarnings("deprecation") long date = Date.parse(secureDate) / 1000;
             SharedPreferences prefs = activity.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putLong(BRConstants.SECURE_TIME_PREFS, date);

@@ -17,15 +17,19 @@
 package com.breadwallet.tools.security;
 
 import com.breadwallet.R;
+
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.CancellationSignal;
+import android.support.v4.app.ActivityCompat;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import javax.inject.Inject;
 
 /**
- * Small helper class to manage text/icon around fingerprint authentication UI. 
+ * Small helper class to manage text/icon around fingerprint authentication UI.
  */
 public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallback {
 
@@ -41,8 +45,8 @@ public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallba
     boolean mSelfCancelled;
 
     /**
-     * Builder class for {@link FingerprintUiHelper} in which injected fields from Dagger 
-     * holds its fields and takes other arguments in the {@link #build} method. 
+     * Builder class for {@link FingerprintUiHelper} in which injected fields from Dagger
+     * holds its fields and takes other arguments in the {@link #build} method.
      */
     public static class FingerprintUiHelperBuilder {
         private final FingerprintManager mFingerPrintManager;
@@ -59,8 +63,8 @@ public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallba
     }
 
     /**
-     * Constructor for {@link FingerprintUiHelper}. This method is expected to be called from 
-     * only the {@link FingerprintUiHelperBuilder} class. 
+     * Constructor for {@link FingerprintUiHelper}. This method is expected to be called from
+     * only the {@link FingerprintUiHelperBuilder} class.
      */
     private FingerprintUiHelper(FingerprintManager fingerprintManager,
                                 ImageView icon, TextView errorTextView, Callback callback) {
@@ -69,12 +73,13 @@ public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallba
         mErrorTextView = errorTextView;
         mCallback = callback;
     }
-
+    @SuppressWarnings("MissingPermission")
     public boolean isFingerprintAuthAvailable() {
         return mFingerprintManager.isHardwareDetected()
                 && mFingerprintManager.hasEnrolledFingerprints();
     }
 
+    @SuppressWarnings("MissingPermission")
     public void startListening(FingerprintManager.CryptoObject cryptoObject) {
         if (!isFingerprintAuthAvailable()) {
             return;

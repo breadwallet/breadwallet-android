@@ -62,7 +62,6 @@ public class FragmentCurrency extends Fragment {
     private CurrencyListAdapter adapter;
     private TextView currencyItemText;
     private ProgressBar currencyProgressBar;
-    private SharedPreferences settings;
     private String ISO;
     private float rate;
     public static int lastItemsPosition = 0;
@@ -81,7 +80,7 @@ public class FragmentCurrency extends Fragment {
         currencyProgressBar = (ProgressBar) rootView.findViewById(R.id.currency_progress_barr);
         currencyRefresh = (Button) rootView.findViewById(R.id.currencyRefresh);
         noInternetConnection = (TextView) rootView.findViewById(R.id.noInternetConnectionText);
-        settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
         currencyList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         editor = settings.edit();
         currencyRefresh.setOnClickListener(new View.OnClickListener() {

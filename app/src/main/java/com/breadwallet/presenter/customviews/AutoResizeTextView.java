@@ -286,7 +286,7 @@ public class AutoResizeTextView extends TextView {
                     while (width < lineWidth + ellipseWidth) {
                         lineWidth = textPaint.measureText(text.subSequence(start, --end + 1).toString());
                     }
-                    setText(text.subSequence(0, end) + mEllipsis);
+                    setText(String.valueOf(text.subSequence(0, end)).concat(mEllipsis));
                 }
             }
         }

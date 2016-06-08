@@ -1,7 +1,9 @@
 package com.breadwallet.presenter.fragments;
 
+import android.Manifest;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Rect;
@@ -24,6 +26,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.v13.app.FragmentCompat;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.util.Size;
 import android.view.LayoutInflater;
@@ -174,7 +177,7 @@ public class FragmentDecoder extends Fragment
                         String decoded = rawResult.getText();
 
                         if (accessGranted) {
-                            Log.e(TAG,"entered the accessGranted area!");
+                            Log.e(TAG, "entered the accessGranted area!");
                             accessGranted = false;
                             boolean isPrivKey = BRWalletManager.getInstance(getActivity()).confirmSweep(getActivity(), decoded);
                             if (isPrivKey) {
@@ -420,6 +423,9 @@ public class FragmentDecoder extends Fragment
         try {
             if (!mCameraOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
                 throw new RuntimeException("Time out waiting to lock camera opening.");
+            }
+            if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                return;
             }
             manager.openCamera(mCameraId, mStateCallback, mBackgroundHandler);
         } catch (CameraAccessException e) {

@@ -31,7 +31,7 @@ import java.util.Arrays;
  */
 public class TypesConverter {
 
-    private TypesConverter(){};
+    private TypesConverter(){}
 
     public static byte[] intToBytes(int x) {
         ByteBuffer buffer = ByteBuffer.allocate(4);

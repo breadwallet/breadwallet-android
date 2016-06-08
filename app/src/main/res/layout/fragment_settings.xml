@@ -31,7 +31,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="20dp"
-                    android:text="about"
+                    android:text="@string/about"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/grey"
                     android:textSize="@dimen/text_size" />
@@ -67,7 +67,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="20dp"
-                    android:text="recovery phrase"
+                    android:text="@string/recovery_phrase_button"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/grey"
                     android:textSize="@dimen/text_size" />
@@ -106,7 +106,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="20dp"
-                    android:text="local currency"
+                    android:text="@string/local_currency"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/grey"
                     android:textSize="@dimen/text_size" />
@@ -152,7 +152,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="20dp"
-                    android:text="fingerprint spend limit"
+                    android:text="@string/fingerprint_spend_limit"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/grey"
                     android:textSize="@dimen/text_size" />
@@ -202,7 +202,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="20dp"
-                    android:text="change passcode"
+                    android:text="@string/change_passcode"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/dark_blue"
                     android:textSize="@dimen/text_size" />
@@ -228,7 +228,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="20dp"
-                    android:text="start/recovery another wallet"
+                    android:text="@string/start_recover_another_wallet"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/red"
                     android:textSize="@dimen/text_size" />

@@ -1,15 +1,17 @@
-
 package com.breadwallet.presenter.fragments;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.view.LayoutInflater;
@@ -93,8 +95,9 @@ public class FragmentSettings extends Fragment {
         theLimit.setText(CurrencyManager.getInstance(getActivity()).getFormattedCurrencyString("BTC", PassCodeManager.getInstance().getLimit(getActivity())));
         FingerprintManager mFingerprintManager;
         mFingerprintManager = (FingerprintManager) getActivity().getSystemService(Context.FINGERPRINT_SERVICE);
-        boolean useFingerPrint = mFingerprintManager.isHardwareDetected()
-                && mFingerprintManager.hasEnrolledFingerprints();
+        boolean useFingerPrint;
+        useFingerPrint = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.USE_FINGERPRINT) == PackageManager.PERMISSION_GRANTED && mFingerprintManager.isHardwareDetected() && mFingerprintManager.hasEnrolledFingerprints();
+
         if (!useFingerPrint) {
             fingerprintLimit.setVisibility(View.GONE);
             line5.setVisibility(View.GONE);

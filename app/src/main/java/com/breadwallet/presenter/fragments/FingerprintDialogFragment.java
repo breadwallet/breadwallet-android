@@ -15,6 +15,7 @@ package com.breadwallet.presenter.fragments;/*
  */
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.hardware.fingerprint.FingerprintManager;
@@ -138,7 +139,9 @@ public class FingerprintDialogFragment extends DialogFragment
     public void onAuthenticated() {
         // Callback from FingerprintUiHelper. Let the activity know that authentication was 
         // successful.
-        getDialog().cancel();
+        Dialog d = getDialog();
+        if(d == null) return;
+        d.cancel();
 
         ((BreadWalletApp) getActivity().getApplicationContext()).setUnlocked(true);
         FragmentSettingsAll.refreshUI(getActivity());

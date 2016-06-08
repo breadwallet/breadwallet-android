@@ -33,6 +33,7 @@ import java.io.IOException;
  *
  * @author dswitkin@google.com (Daniel Switkin)
  */
+@SuppressWarnings("deprecation")
 final class CameraManager {
 
     private static final String TAG = CameraManager.class.getSimpleName();

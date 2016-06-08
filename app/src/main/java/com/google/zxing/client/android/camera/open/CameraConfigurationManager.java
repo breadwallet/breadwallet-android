@@ -31,6 +31,7 @@ import java.util.List;
  * A class which deals with reading, parsing, and setting the camera parameters which are used to
  * configure the camera hardware.
  */
+@SuppressWarnings("deprecation")
 final class CameraConfigurationManager {
 
   private static final String TAG = "CameraConfiguration";

@@ -57,7 +57,7 @@ public class FragmentAnimator {
     public static boolean wipeWalletOpen = false;
     private static Stack<Fragment> previous = new Stack<>();
     private static boolean multiplePressingAvailable = true;
-    private static final Object lockObject = new Object();
+//    private static final Object lockObject = new Object();
 
     public static void animateDecoderFragment() {
 
@@ -72,7 +72,9 @@ public class FragmentAnimator {
             if (ActivityCompat.shouldShowRequestPermissionRationale(app,
                     Manifest.permission.CAMERA)) {
                 Log.e(TAG, "YES explanation!");
-                ((BreadWalletApp) app.getApplication()).showCustomToast(app, "Please go to Settings > apps > Breadwallet and turn on the camera permission", MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
+                ((BreadWalletApp) app.getApplication()).showCustomToast(app,
+                        "Please go to Settings > apps > Breadwallet and turn on the camera permission",
+                        MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
@@ -256,22 +258,19 @@ public class FragmentAnimator {
      * else :
      * - return false.
      */
-    public static boolean checkTheMultipressingAvailability() {
-//        Log.e(TAG, "multiplePressingAvailable: " + multiplePressingAvailable);
-        synchronized (lockObject) {
-            if (multiplePressingAvailable) {
-                multiplePressingAvailable = false;
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        multiplePressingAvailable = true;
-                        Log.w(TAG, "multiplePressingAvailable is back to - true");
-                    }
-                }, 300);
-                return true;
-            } else {
-                return false;
-            }
+    public static synchronized boolean checkTheMultipressingAvailability() {
+        if (multiplePressingAvailable) {
+            multiplePressingAvailable = false;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    multiplePressingAvailable = true;
+                    Log.w(TAG, "multiplePressingAvailable is back to - true");
+                }
+            }, 300);
+            return true;
+        } else {
+            return false;
         }
     }
 

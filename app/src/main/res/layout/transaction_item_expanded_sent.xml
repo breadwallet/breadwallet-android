@@ -32,7 +32,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:text="id:"
+                    android:text="@string/id"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/dark_grey"
                     android:textSize="15sp" />
@@ -42,11 +42,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="@dimen/transaction_item_margin"
+                    android:layout_marginStart="@dimen/transaction_item_margin"
                     android:layout_toEndOf="@id/tx_id_label"
                     android:ellipsize="middle"
                     android:singleLine="true"
-                    android:text="----------------------------------------------------------------"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/grey"
                     android:textSize="13sp" />
@@ -56,7 +55,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/separator_height"
-                android:layout_marginLeft="@dimen/transaction_item_margin"
+                android:layout_marginStart="@dimen/transaction_item_margin"
                 android:background="@color/grey" />
 
             <RelativeLayout
@@ -73,7 +72,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:text="status:"
+                    android:text="@string/status"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/dark_grey"
                     android:textSize="15sp" />
@@ -82,11 +81,10 @@
                     android:id="@+id/tx_status_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="@dimen/transaction_item_margin"
-                    android:gravity="right"
-                    android:textAlignment="viewEnd"
+                    android:layout_marginStart="@dimen/transaction_item_margin"
+                    android:gravity="end"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/grey"
                     android:textSize="13sp" />
@@ -96,7 +94,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/separator_height"
-                android:layout_marginLeft="@dimen/transaction_item_margin"
+                android:layout_marginStart="@dimen/transaction_item_margin"
                 android:background="@color/grey" />
 
             <RelativeLayout
@@ -112,7 +110,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:text="amount:"
+                    android:text="@string/amount"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/dark_grey"
                     android:textSize="15sp" />
@@ -123,8 +121,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="@dimen/transaction_item_margin"
-                    android:text="\u0180-------"
+                    android:layout_marginStart="@dimen/transaction_item_margin"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/dark_grey"
                     android:textSize="14sp"
@@ -135,9 +132,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="@dimen/transaction_item_margin"
+                    android:layout_marginStart="@dimen/transaction_item_margin"
                     android:layout_toStartOf="@id/tx_amount_text"
-                    android:text="($----)"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/grey"
                     android:textSize="13sp" />
@@ -153,9 +149,9 @@
                 android:id="@+id/tx_to_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/transaction_item_margin"
+                android:layout_marginStart="@dimen/transaction_item_margin"
                 android:layout_marginTop="20dp"
-                android:text="to:"
+                android:text="@string/to"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@color/dark_grey"
                 android:textSize="15sp" />
@@ -200,7 +196,6 @@
                     android:layout_marginLeft="@dimen/transaction_item_margin"
                     android:layout_marginRight="@dimen/transaction_item_margin"
                     android:layout_marginTop="@dimen/transaction_item_margin"
-                    android:text="\u0180--------"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/red_text"
                     android:textSize="14sp"
@@ -211,9 +206,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignBaseline="@+id/tx_to_fee_amount_text"
-                    android:layout_marginLeft="@dimen/transaction_item_margin"
+                    android:layout_marginStart="@dimen/transaction_item_margin"
                     android:layout_toStartOf="@id/tx_to_fee_amount_text"
-                    android:text="($-----)"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/red_text"
                     android:textSize="13sp" />
@@ -229,9 +223,9 @@
                 android:id="@+id/tx_from_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/transaction_item_margin"
+                android:layout_marginStart="@dimen/transaction_item_margin"
                 android:layout_marginTop="@dimen/transaction_item_margin"
-                android:text="from:"
+                android:text="@string/from"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@color/dark_grey"
                 android:textSize="15sp" />

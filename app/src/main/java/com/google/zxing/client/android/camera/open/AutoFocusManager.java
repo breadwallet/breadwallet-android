@@ -27,6 +27,7 @@ import com.google.zxing.client.android.common.executor.AsyncTaskExecManager;
 import java.util.ArrayList;
 import java.util.Collection;
 
+@SuppressWarnings("deprecation")
 final class AutoFocusManager implements Camera.AutoFocusCallback {
 
   private static final String TAG = AutoFocusManager.class.getSimpleName();

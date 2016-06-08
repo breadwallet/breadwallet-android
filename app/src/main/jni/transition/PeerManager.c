@@ -33,6 +33,7 @@
 #include <pthread.h>
 #include <BRBase58.h>
 #include <stdio.h>
+#include <assert.h>
 
 #define fprintf(...) __android_log_print(ANDROID_LOG_ERROR, "bread", _va_rest(__VA_ARGS__, NULL))
 
@@ -300,6 +301,8 @@ JNIEXPORT void JNICALL Java_com_breadwallet_wallet_BRPeerManager_putBlock(JNIEnv
     }
     int bkLength = (*env)->GetArrayLength(env, block);
     jbyte *byteBk = (*env)->GetByteArrayElements(env, block, 0);
+    assert(byteBk != NULL);
+    if(!byteBk) return;
     BRMerkleBlock *tmpBk = BRMerkleBlockParse((const uint8_t *) byteBk, (size_t) bkLength);
     tmpBk->height = (uint32_t) blockHeight;
 
@@ -347,13 +350,6 @@ JNIEXPORT void JNICALL Java_com_breadwallet_wallet_BRPeerManager_putPeer(JNIEnv 
     tmpPr.flags = 0;
 
     _peers[_peersCounter++] = tmpPr;
-
-//    (jbyte *)&tmpPr.address;
-//    sizeof(tmpPr.address);
-//
-//            BRMerkleBlockParse(byteBk, bkLength);
-//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "adding a block: blockhight: %d, "
-//            "transactionCounter: %d", tmpTx->blockHeight, _transactionsCounter);
 
 }
 

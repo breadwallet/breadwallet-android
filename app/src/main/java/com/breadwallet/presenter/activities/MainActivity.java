@@ -135,7 +135,6 @@ public class MainActivity extends FragmentActivity implements Observer {
     private int middleBubbleBlocksCount = 0;
     private static int MODE = RELEASE;
     private TextView testnet;
-    private RelativeLayout mainLayout;
     private FingerprintManager fingerprintManager;
     private ToastBlockShowTask toastBlockShowTask;
     private int runCount = 0;
@@ -394,7 +393,7 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     private void initializeViews() {
         pay = (TextView) findViewById(R.id.main_button_pay);
-        mainLayout = (RelativeLayout) findViewById(R.id.main_layout);
+        RelativeLayout mainLayout = (RelativeLayout) findViewById(R.id.main_layout);
         testnet = (TextView) findViewById(R.id.testnet);
         networkErrorBar = (RelativeLayout) findViewById(R.id.main_internet_status_bar);
         burgerButton = (Button) findViewById(R.id.main_button_burger);
@@ -1040,6 +1039,7 @@ public class MainActivity extends FragmentActivity implements Observer {
 
         Log.e(specsTag, "* screen X: " + screenParametersPoint.x + " , screen Y: " + screenParametersPoint.y);
 
+        //noinspection deprecation
         Log.e(specsTag, "* Build.CPU_ABI: " + Build.CPU_ABI);
 
         Runtime rt = Runtime.getRuntime();

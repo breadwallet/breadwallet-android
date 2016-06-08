@@ -37,18 +37,11 @@ public class BRClipboardManager {
     @SuppressLint("NewApi")
     public static void copyToClipboard(Context context, String text) {
         try {
-            int sdk = android.os.Build.VERSION.SDK_INT;
-            if (sdk < android.os.Build.VERSION_CODES.HONEYCOMB) {
-                android.text.ClipboardManager clipboard = (android.text.ClipboardManager) context
-                        .getSystemService(Context.CLIPBOARD_SERVICE);
-                clipboard.setText(text);
-            } else {
-                android.content.ClipboardManager clipboard = (android.content.ClipboardManager) context
-                        .getSystemService(Context.CLIPBOARD_SERVICE);
-                android.content.ClipData clip = android.content.ClipData
-                        .newPlainText("message", text);
-                clipboard.setPrimaryClip(clip);
-            }
+            android.content.ClipboardManager clipboard = (android.content.ClipboardManager) context
+                    .getSystemService(Context.CLIPBOARD_SERVICE);
+            android.content.ClipData clip = android.content.ClipData
+                    .newPlainText("message", text);
+            clipboard.setPrimaryClip(clip);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -56,38 +49,31 @@ public class BRClipboardManager {
 
     @SuppressLint("NewApi")
     public static String readFromClipboard(Context context) {
-        int sdk = android.os.Build.VERSION.SDK_INT;
-        if (sdk < android.os.Build.VERSION_CODES.HONEYCOMB) {
-            android.text.ClipboardManager clipboard = (android.text.ClipboardManager) context
-                    .getSystemService(Context.CLIPBOARD_SERVICE);
-            return clipboard.getText().toString();
-        } else {
-            ClipboardManager clipboard = (ClipboardManager) context
-                    .getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipboardManager clipboard = (ClipboardManager) context
+                .getSystemService(Context.CLIPBOARD_SERVICE);
 
-            // Gets a content resolver instance
-            ContentResolver cr = context.getContentResolver();
+        // Gets a content resolver instance
+        ContentResolver cr = context.getContentResolver();
 
-            // Gets the clipboard data from the clipboard
-            ClipData clip = clipboard.getPrimaryClip();
-            if (clip != null) {
+        // Gets the clipboard data from the clipboard
+        ClipData clip = clipboard.getPrimaryClip();
+        if (clip != null) {
 
-                String text = null;
-                String title = null;
+            String text = null;
+            String title = null;
 
-                // Gets the first item from the clipboard data
-                ClipData.Item item = clip.getItemAt(0);
+            // Gets the first item from the clipboard data
+            ClipData.Item item = clip.getItemAt(0);
 
-                // Tries to get the item's contents as a URI pointing to a note
-                Uri uri = item.getUri();
+            // Tries to get the item's contents as a URI pointing to a note
+            Uri uri = item.getUri();
 
-                // If the contents of the clipboard wasn't a reference to a
-                // note, then
-                // this converts whatever it is to text.
-                text = coerceToText(item).toString();
+            // If the contents of the clipboard wasn't a reference to a
+            // note, then
+            // this converts whatever it is to text.
+            text = coerceToText(item).toString();
 
-                return text;
-            }
+            return text;
         }
         return "";
     }

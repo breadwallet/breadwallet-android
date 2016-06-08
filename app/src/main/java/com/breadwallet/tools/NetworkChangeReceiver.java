@@ -67,6 +67,10 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
                 @Override
                 public void run() {
                     networkErrorBar.setVisibility(View.GONE);
+                    double progress = BRPeerManager.syncProgress();
+                    if(progress < 1 && progress > 0){
+                        BRPeerManager.startSyncingProgressThread();
+                    }
 //                    ((BreadWalletApp) app.getApplication()).showCustomToast(app, app.getString(R.string.no_internet_connection),
 //                            500, Toast.LENGTH_SHORT,0);
                 }

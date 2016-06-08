@@ -39,14 +39,13 @@ import com.breadwallet.wallet.BRWalletManager;
 public class IntroNewWalletFragment extends Fragment {
     private static final String TAG = IntroNewWalletFragment.class.getName();
     public Button introGenerate;
-    private BRWalletManager m;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         // The last two arguments ensure LayoutParams are inflated
         // properly.
-        m = BRWalletManager.getInstance(getActivity());
+        BRWalletManager m = BRWalletManager.getInstance(getActivity());
         final View rootView = inflater.inflate(R.layout.intro_fragment_new_wallet, container, false);
         introGenerate = (Button) rootView.findViewById(R.id.intro_new_wallet_generate);
         introGenerate.setOnClickListener(new View.OnClickListener() {
