@@ -22,6 +22,7 @@ import com.breadwallet.presenter.fragments.IntroWarningFragment;
 import com.breadwallet.presenter.fragments.IntroWelcomeFragment;
 import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.animation.BackgroundMovingAnimator;
+import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.wallet.BRWalletManager;
@@ -135,6 +136,12 @@ public class IntroActivity extends FragmentActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        BackgroundMovingAnimator.stopBackgroundMoving();
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
 
     }
@@ -205,14 +212,20 @@ public class IntroActivity extends FragmentActivity {
                 if (resultCode == RESULT_OK) {
                     PostAuthenticationProcessor.getInstance().onCreateWalletAuth(this);
                 } else {
-                    KeyStoreManager.showAuthenticationScreen(this, requestCode);
+//                    KeyStoreManager.showAuthenticationScreen(this, requestCode);
+                    BRWalletManager m = BRWalletManager.getInstance(this);
+                    m.wipeKeyStore();
+                    m.wipeWalletButKeystore(this);
+                    FragmentAnimator.resetFragmentAnimator();
+                    finish();
                 }
                 break;
             case BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
                     PostAuthenticationProcessor.getInstance().onRecoverWalletAuth(this);
                 } else {
-                    KeyStoreManager.showAuthenticationScreen(this, requestCode);
+//                    KeyStoreManager.showAuthenticationScreen(this, requestCode);
+//                    finish();
                 }
                 break;
 
@@ -220,7 +233,8 @@ public class IntroActivity extends FragmentActivity {
                 if (resultCode == RESULT_OK) {
                     PostAuthenticationProcessor.getInstance().onCanaryCheckAuth(this);
                 } else {
-                    KeyStoreManager.showAuthenticationScreen(this, requestCode);
+//                    KeyStoreManager.showAuthenticationScreen(this, requestCode);
+                    finish();
                 }
                 break;
 

@@ -16,7 +16,7 @@ model {
 
         ndk {
             moduleName = "core"
-            toolchain = "clang"
+            toolchain = "gcc"
 
             //TODO set -DBITCOIN_TESTNET=0
             CFlags.addAll(['-std=c99', '-g', '-DBITCOIN_TESTNET=0', '-I' + file('src/main/secp/secp256k1/include'), '-I' + file('src/main/secp/secp256k1'), '-I' + file('src/main/secp'), '-I' + file('src/main/jni/breadwallet-core'), '-I' + file('src/main/jni/transition')])
@@ -49,11 +49,11 @@ model {
             }
             debug {
                 proguardFiles.add(file('proguard-rules.pro'))
-                debuggable = false
+                debuggable = true
                 minifyEnabled = false
                 ndk {
                     minifyEnabled = false
-                    debuggable = false
+                    debuggable = true
                 }
             }
 

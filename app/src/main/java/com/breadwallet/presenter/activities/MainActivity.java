@@ -187,7 +187,8 @@ public class MainActivity extends FragmentActivity implements Observer {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ((BreadWalletApp) getApplication()).showCustomToast(app, "CUSTOM INPUT TYPE!", 300, Toast.LENGTH_LONG, 0);
+                            ((BreadWalletApp) getApplication()).showCustomToast(app,
+                                    "CUSTOM INPUT TYPE! Please switch to the default one", 300, Toast.LENGTH_LONG, 0);
                         }
                     });
             }
@@ -239,6 +240,9 @@ public class MainActivity extends FragmentActivity implements Observer {
             @Override
             public void onClick(View v) {
 
+                if(scanResultFragmentOn){
+                   return;
+                }
                 if (MiddleViewAdapter.getSyncing() && FragmentAnimator.level == 0) {
                     hideAllBubbles();
                     if (middleBubbleBlocksCount == 0) {
@@ -332,7 +336,6 @@ public class MainActivity extends FragmentActivity implements Observer {
     protected void onRestart() {
         super.onRestart();  // Always call the superclass method first
         app = this;
-        // Activity being restarted from stopped state
     }
 
     @Override
@@ -348,12 +351,12 @@ public class MainActivity extends FragmentActivity implements Observer {
         currencyManager.addObserver(this);
         MiddleViewAdapter.resetMiddleView(this, null);
         boolean isNetworkAvailable = CurrencyManager.getInstance(this).isNetworkAvailable(this);
-        Log.e(TAG, "isNetworkAvailable: " + isNetworkAvailable);
+//        Log.e(TAG, "isNetworkAvailable: " + isNetworkAvailable);
         networkErrorBar.setVisibility(isNetworkAvailable ? View.GONE : View.VISIBLE);
         startStopReceiver(true);
         double currentSyncProgress = BRPeerManager.syncProgress();
         if (currentSyncProgress > 0 && currentSyncProgress < 1) {
-            Log.e(TAG, "Worked! restarted the syncing!");
+//            Log.e(TAG, "Worked! restarted the syncing!");
             BRPeerManager.startSyncingProgressThread();
         } else {
             BRPeerManager.stopSyncingProgressThread();
@@ -566,7 +569,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         }
     }
 
-    //
     public void pay(final String addressHolder, final BigDecimal bigDecimalAmount, final String cn) {
         if (addressHolder == null || bigDecimalAmount == null) return;
         if (addressHolder.length() < 20) return;
@@ -675,22 +677,18 @@ public class MainActivity extends FragmentActivity implements Observer {
                 if (resultCode == RESULT_OK) {
                     PostAuthenticationProcessor.getInstance().onShowPhraseAuth(this);
                 } else {
-                    KeyStoreManager.showAuthenticationScreen(this, requestCode);
+                    onBackPressed();
                 }
                 break;
 
             case BRConstants.PAY_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
                     PostAuthenticationProcessor.getInstance().onPublishTxAuth(this);
-                } else {
-                    KeyStoreManager.showAuthenticationScreen(this, requestCode);
                 }
                 break;
             case BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
                     PostAuthenticationProcessor.getInstance().onPaymentProtocolRequest();
-                } else {
-                    KeyStoreManager.showAuthenticationScreen(this, requestCode);
                 }
                 break;
         }
@@ -816,11 +814,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         BRWalletManager m = BRWalletManager.getInstance(this);
         final BRPeerManager pm = BRPeerManager.getInstance(this);
 
-//        String phrase = KeyStoreManager.getKeyStoreString(this);
-//        if (phrase == null) return;
-//        String normalizedPhrase = Normalizer.normalize(phrase, Normalizer.Form.NFKD);
-//        m.getMasterPubKey(normalizedPhrase);
-
         SQLiteManager sqLiteManager = SQLiteManager.getInstance(this);
 
 //        CustomLogger.logThis("setUpTheWallet: number of transactions from sqlite: ",
@@ -897,7 +890,6 @@ public class MainActivity extends FragmentActivity implements Observer {
             final int earliestKeyTime = walletTimeString != 0 ? walletTimeString : 0;
             Log.e(TAG, "earliestKeyTime before connecting: " + earliestKeyTime);
             pm.createAndConnect(earliestKeyTime > 0 ? earliestKeyTime : 0, blocksCount, peersCount);
-            Log.e(TAG, "some");
 
         }
     }
@@ -979,59 +971,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         syncProgressText.setVisibility(b ? View.VISIBLE : View.GONE);
     }
 
-//    private native void cTests();
-//
-//    private void createInvisibleLayoutTips() {
-//        // Creating a new RelativeLayout
-//        final RelativeLayout mask = new RelativeLayout(this);
-//
-//        // Defining the RelativeLayout layout parameters.
-//        // In this case I want to fill its parent
-//        RelativeLayout.LayoutParams rlp = new RelativeLayout.LayoutParams(
-//                RelativeLayout.LayoutParams.MATCH_PARENT,
-//                RelativeLayout.LayoutParams.MATCH_PARENT);
-//
-//        // Adding the TextView to the RelativeLayout as a child
-//        mask.setLayoutParams(rlp);
-//        int position = 0;  // position of the tab you want
-//        CustomPagerAdapter.adapter.getItem()
-//        showTip();
-//
-//        mask.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (tipsCount >= 6) {
-//                    mainLayout.removeView(mask);
-//                }
-//                showTip();
-//            }
-//        });
-//        mainLayout.addView(mask);
-//
-//    }
-//
-//    private void showTip() {
-//        if (tipsCount == 0)
-//            ((BreadWalletApp) getApplicationContext()).showCustomToast(this, getString(R.string.middle_view_tip_first),
-//                    MainActivity.screenParametersPoint.y / 5, Toast.LENGTH_LONG, 0);
-//        if (tipsCount == 1)
-//            ((BreadWalletApp) getApplicationContext()).showCustomToast(this, getString(R.string.middle_view_tip_second),
-//                    MainActivity.screenParametersPoint.y / 4, Toast.LENGTH_LONG, 0);
-//        if (tipsCount == 2)
-//            ((BreadWalletApp) getApplicationContext()).showCustomToast(this, getString(R.string.toast_qr_tip),
-//                    MainActivity.screenParametersPoint.y / 3, Toast.LENGTH_LONG, 0);
-//        if (tipsCount == 3)
-//            ((BreadWalletApp) getApplicationContext()).showCustomToast(this, getString(R.string.toast_address_tip),
-//                    MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
-//        if (tipsCount == 4)
-//            ((BreadWalletApp) getApplicationContext()).showCustomToast(this, getString(R.string.scan_qr_code_tip),
-//                    MainActivity.screenParametersPoint.y, Toast.LENGTH_LONG, 0);
-//        if (tipsCount == 5)
-//            ((BreadWalletApp) getApplicationContext()).showCustomToast(this, getString(R.string.clipboard_tip),
-//                    MainActivity.screenParametersPoint.y / 5, Toast.LENGTH_LONG, 0);
-//        tipsCount++;
-//    }
-
     private void printPhoneSpecs() {
         String specsTag = "PHONE SPECS";
         Log.e(specsTag, "");
@@ -1089,57 +1028,5 @@ public class MainActivity extends FragmentActivity implements Observer {
         }
         return false;
     }
-
-//    private void testRequestHandler() {
-//        try {
-//            RequestObject requestObject;
-//            String reqString;
-//
-//            reqString = "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?label=foo%26bar";
-//            Log.e(TAG, reqString);
-//            requestObject = RequestHandler.getRequestFromString(reqString);
-//            CustomLogger.logThis("address", requestObject.address, "amount", requestObject.amount, "label",
-//                    requestObject.label, "message", requestObject.message, "r", requestObject.r, "req", requestObject.req);
-//
-////            reqString = "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?amount=20.3&label=Luke-Jr";
-////            Log.e(TAG, reqString);
-////            requestObject = RequestHandler.getRequestFromString(reqString);
-////            CustomLogger.logThis("address", requestObject.address, "amount", requestObject.amount, "label",
-////                    requestObject.label, "message", requestObject.message, "r", requestObject.r, "req", requestObject.req);
-////
-////            reqString = "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?amount=50&label=Luke-Jr&message=Donation%20for%20project%20xyz";
-////            Log.e(TAG, reqString);
-////            requestObject = RequestHandler.getRequestFromString(reqString);
-////            CustomLogger.logThis("address", requestObject.address, "amount", requestObject.amount, "label",
-////                    requestObject.label, "message", requestObject.message, "r", requestObject.r, "req", requestObject.req);
-////
-////            reqString = "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?req-somethingyoudontunderstand=50&req-somethingelseyoudontget=999";
-////            Log.e(TAG, reqString);
-////            requestObject = RequestHandler.getRequestFromString(reqString);
-////            CustomLogger.logThis("address", requestObject.address, "amount", requestObject.amount, "label",
-////                    requestObject.label, "message", requestObject.message, "r", requestObject.r, "req", requestObject.req);
-////
-////            reqString = "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?somethingyoudontunderstand=50&somethingelseyoudontget=999";
-////            Log.e(TAG, reqString);
-////            requestObject = RequestHandler.getRequestFromString(reqString);
-////            CustomLogger.logThis("address", requestObject.address, "amount", requestObject.amount, "label",
-////                    requestObject.label, "message", requestObject.message, "r", requestObject.r, "req", requestObject.req);
-////
-////            reqString = "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi";
-////            Log.e(TAG, reqString);
-////            requestObject = RequestHandler.getRequestFromString(reqString);
-////            CustomLogger.logThis("address", requestObject.address, "amount", requestObject.amount, "label",
-////                    requestObject.label, "message", requestObject.message, "r", requestObject.r, "req", requestObject.req);
-////
-////            reqString = " bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?label=Luke-Jr";
-////            Log.e(TAG, reqString);
-////            requestObject = RequestHandler.getRequestFromString(reqString);
-////            CustomLogger.logThis("address", requestObject.address, "amount", requestObject.amount, "label",
-////                    requestObject.label, "message", requestObject.message, "r", requestObject.r, "req", requestObject.req);
-//
-//        } catch (InvalidAlgorithmParameterException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
 }

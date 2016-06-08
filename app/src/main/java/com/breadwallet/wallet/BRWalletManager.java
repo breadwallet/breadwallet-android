@@ -174,7 +174,6 @@ public class BRWalletManager {
 
         if (isValidBitcoinBIP38Key(privKey)) {
             Log.e(TAG, "isValidBitcoinBIP38Key true");
-            //TODO implement this when core is ready
 //            activity.runOnUiThread(new Runnable() {
 //                @Override
 //                public void run() {
@@ -332,11 +331,11 @@ public class BRWalletManager {
         sqLiteManager.insertTransaction(tx, blockHeight, timestamp, hash);
     }
 
-    public static void onTxUpdated(String hash, int blockHeight) {
+    public static void onTxUpdated(String hash, int blockHeight, int timeStamp) {
         Log.e(TAG, "in the BRWalletManager - onTxUpdated");
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) {
-            SQLiteManager.getInstance(ctx).updateTxByHash(hash, blockHeight);
+            SQLiteManager.getInstance(ctx).updateTxByHash(hash, blockHeight, timeStamp);
         }
     }
 

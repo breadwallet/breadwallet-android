@@ -55,14 +55,14 @@ public class FragmentRecoveryPhrase extends Fragment {
         thePhrase = (TextView) rootView.findViewById(R.id.the_phrase);
 
 //        //TODO delete this code below which is for testing reasons only
-        thePhrase.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                BRClipboardManager.copyToClipboard(getActivity(), thePhrase.getText().toString());
-                ((BreadWalletApp) getActivity().getApplication()).showCustomToast(getActivity(),
-                        getString(R.string.copied), 300, Toast.LENGTH_SHORT, 0);
-            }
-        });
+//        thePhrase.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                BRClipboardManager.copyToClipboard(getActivity(), thePhrase.getText().toString());
+//                ((BreadWalletApp) getActivity().getApplication()).showCustomToast(getActivity(),
+//                        getString(R.string.copied), 300, Toast.LENGTH_SHORT, 0);
+//            }
+//        });
 
         String phrase = KeyStoreManager.getKeyStorePhrase(getActivity(), BRConstants.SHOW_PHRASE_REQUEST_CODE);
         if (phrase == null || phrase.isEmpty()) return rootView;

@@ -101,14 +101,14 @@ public class BRPeerManager {
         if (ctx == null) ctx = MainActivity.app;
         stopSyncingProgressThread();
         if (ctx != null) {
-            ((MainActivity)ctx).hideAllBubbles();
+            ((MainActivity) ctx).hideAllBubbles();
         }
     }
 
     public static void syncFailed() {
         stopSyncingProgressThread();
         if (ctx != null) {
-            ((MainActivity)ctx).hideAllBubbles();
+            ((MainActivity) ctx).hideAllBubbles();
         }
     }
 
@@ -117,15 +117,7 @@ public class BRPeerManager {
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null)
             FragmentSettingsAll.refreshTransactions(ctx);
-//        if (syncProgress() >= 1) {
-//            if (ctx == null) ctx = MainActivity.app;
-//            if (ctx != null) MiddleViewAdapter.setSyncing((Activity) ctx, false);
-//        }
 
-    }
-
-    public static void txRejected(int rescanRecommended) {
-        Log.e(TAG, "txRejected");
     }
 
     public static void saveBlocks(final BlockEntity[] blockEntities) {
@@ -200,7 +192,11 @@ public class BRPeerManager {
             ctx.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    ((MainActivity) ctx).showHideSyncProgressViews(true);
+                    try {
+                        ((MainActivity) ctx).showHideSyncProgressViews(true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             });
         }
@@ -222,7 +218,12 @@ public class BRPeerManager {
             ctx.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    ((MainActivity) ctx).showHideSyncProgressViews(false);
+                    try {
+                        ((MainActivity) ctx).showHideSyncProgressViews(false);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
                 }
             });
         }
@@ -248,7 +249,7 @@ public class BRPeerManager {
         }
 
         public void setRunning(boolean b) {
-            Log.e(TAG,"setRunning: " + b);
+            Log.e(TAG, "setRunning: " + b);
             running = b;
         }
 
@@ -257,10 +258,11 @@ public class BRPeerManager {
             final MainActivity app = MainActivity.app;
             progressStatus = 0;
             if (app != null) {
+                progressStatus = syncProgress();
                 app.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        progressStatus = syncProgress();
+
                         app.showHideSyncProgressViews(true);
                         app.syncProgressBar.setProgress((int) (progressStatus * 100));
                         app.syncProgressText.setText(String.format("%s%%", new DecimalFormat("#.#").format(progressStatus * 100)));
@@ -268,10 +270,10 @@ public class BRPeerManager {
                 });
 
                 while (running) {
+                    progressStatus = syncProgress();
                     app.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            progressStatus = syncProgress();
                             app.syncProgressBar.setProgress((int) (progressStatus * 100));
                             app.syncProgressText.setText(String.format("%s%%", new DecimalFormat("#.#").format(progressStatus * 100)));
 

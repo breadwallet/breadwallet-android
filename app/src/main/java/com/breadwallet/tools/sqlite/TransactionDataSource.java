@@ -74,30 +74,6 @@ public class TransactionDataSource {
         values.put(BRSQLiteHelper.TX_BUFF, transactionEntity.getBuff());
         values.put(BRSQLiteHelper.TX_BLOCK_HEIGHT, transactionEntity.getBlockheight());
         values.put(BRSQLiteHelper.TX_TIME_STAMP, transactionEntity.getTimestamp());
-//        values.put(BRSQLiteHelper.TX_BLOCK_HEIGHT, transactionEntity.getBlockHeight());
-//        values.put(BRSQLiteHelper.TX_LOCK_TIME, transactionEntity.getLockTime());
-//        values.put(BRSQLiteHelper.TX_TIME_STAMP, transactionEntity.getTimeStamp());
-//        values.put(BRSQLiteHelper.TX_HASH, transactionEntity.getTxHash());
-//
-//        for (BRTxInputEntity input : transactionEntity.getInputs()) {
-//            ContentValues inputValues = new ContentValues();
-//            inputValues.put(BRSQLiteHelper.IN_INDEX, input.getIndex());
-//            inputValues.put(BRSQLiteHelper.IN_PREV_OUT_INDEX, input.getPrevOutIndex());
-//            inputValues.put(BRSQLiteHelper.IN_PREV_OUT_TX_HASH, input.getPrevOutTxHash());
-//            inputValues.put(BRSQLiteHelper.IN_SEQUENCE, input.getSequence());
-//            inputValues.put(BRSQLiteHelper.IN_SIGNATURE, input.getSignatures());
-//
-//            database.insert(BRSQLiteHelper.IN_TABLE_NAME, null, values);
-//        }
-//
-//        for (BRTxOutputEntity output : transactionEntity.getOutputs()) {
-//            ContentValues outputValues = new ContentValues();
-//            outputValues.put(BRSQLiteHelper.OUT_INDEX, output.getIndex());
-//            outputValues.put(BRSQLiteHelper.OUT_TX_HASH, output.getTxHash());
-//            outputValues.put(BRSQLiteHelper.OUT_VALUE, output.getValue());
-//
-//            database.insert(BRSQLiteHelper.OUT_TABLE_NAME, null, values);
-//        }
 
         database.beginTransaction();
         try {
@@ -151,20 +127,15 @@ public class TransactionDataSource {
     }
 
     private BRTransactionEntity cursorToTransaction(Cursor cursor) {
-        //        transactionEntity.setBlockHeight(cursor.getInt(1));
-//        transactionEntity.setLockTime(cursor.getInt(2));
-//        transactionEntity.setTimeStamp(cursor.getInt(3));
-//        transactionEntity.setTxHash(cursor.getBlob(4));
         return new BRTransactionEntity(cursor.getBlob(1), cursor.getInt(2), cursor.getLong(3), cursor.getString(0));
     }
 
-    public void updateTxBlockHeight(String hash, int blockHeight) {
+    public void updateTxBlockHeight(String hash, int blockHeight, int timeStamp) {
         Log.e(TAG, "transaction deleted with id: " + hash);
-//        database.delete(BRSQLiteHelper.TX_TABLE_NAME, BRSQLiteHelper.TX_COLUMN_ID
-//                + " = " + strHash, null);
         String strFilter = "_id=\'" + hash + "\'";
         ContentValues args = new ContentValues();
         args.put(BRSQLiteHelper.TX_BLOCK_HEIGHT, blockHeight);
+        args.put(BRSQLiteHelper.TX_TIME_STAMP, timeStamp);
 
         database.update(BRSQLiteHelper.TX_TABLE_NAME, args, strFilter, null);
     }

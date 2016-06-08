@@ -91,7 +91,7 @@ public class SQLiteManager {
         BRTransactionEntity entity = new BRTransactionEntity(transaction, blockheight, timestamp, txHash);
         TransactionDataSource TXdataSource = null;
 
-        Log.e(TAG, "SQLiteManager - transaction inserted");
+        Log.e(TAG, "SQLiteManager - transaction inserted with timestamp: " + timestamp);
 
         try {
             TXdataSource = new TransactionDataSource(ctx);
@@ -208,7 +208,7 @@ public class SQLiteManager {
         }
     }
 
-    public void updateTxByHash(String hash, int blockHeight) {
+    public void updateTxByHash(String hash, int blockHeight, int timeStamp) {
         TransactionDataSource TXdataSource = null;
 
         Log.e(TAG, "SQLiteManager - transaction updated");
@@ -216,7 +216,7 @@ public class SQLiteManager {
         try {
             TXdataSource = new TransactionDataSource(ctx);
             TXdataSource.open();
-            TXdataSource.updateTxBlockHeight(hash, blockHeight);
+            TXdataSource.updateTxBlockHeight(hash, blockHeight, timeStamp);
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {

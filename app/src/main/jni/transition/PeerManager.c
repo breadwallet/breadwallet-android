@@ -119,7 +119,6 @@ static void txStatusUpdate(void *info) {
 
 }
 
-
 static void saveBlocks(void *info, BRMerkleBlock *blocks[], size_t count) {
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "saveBlocks");
     if (!_peerManager) return;

@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.graphics.Matrix;
 import android.graphics.RectF;
+import android.util.Log;
 import android.widget.ImageView;
 
 /**
@@ -36,25 +37,26 @@ public class BackgroundMovingAnimator {
     private static final int RightToLeft = 1;
     private static final int LeftToRight = 2;
     private static int mDirection = RightToLeft;
-    private static final RectF mDisplayRect = new RectF();
+    private static RectF mDisplayRect = new RectF();
     private static Matrix mMatrix = new Matrix();
     private static float mScaleFactor;
     private static final int DURATION = 30000;
     private static ImageView background;
+    private static ValueAnimator mCurrentAnimator;
 
     private static void animate() {
         updateDisplayRect();
         if (mDirection == RightToLeft) {
-//            animate(mDisplayRect.left, mDisplayRect.left -
-//                    (mDisplayRect.right - background.getWidth()));
-            animate(mDisplayRect.left, 0.0f);  // BUG: XXX animates past background bounds
+            animate(mDisplayRect.left, mDisplayRect.left -
+                    (mDisplayRect.right - background.getWidth()));
+//            animate(mDisplayRect.left, 0.0f);  // BUG: XXX animates past background bounds
         } else {
             animate(mDisplayRect.left, 0.0f);
         }
     }
 
     private static void animate(float from, float to) {
-        ValueAnimator mCurrentAnimator = ValueAnimator.ofFloat(from, to);
+        mCurrentAnimator = ValueAnimator.ofFloat(from, to);
         mCurrentAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -76,7 +78,6 @@ public class BackgroundMovingAnimator {
                     mDirection = LeftToRight;
                 else
                     mDirection = RightToLeft;
-//
                 animate();
             }
         });
@@ -101,5 +102,21 @@ public class BackgroundMovingAnimator {
                 animate();
             }
         });
+    }
+
+    public static void stopBackgroundMoving() {
+        if (background != null) {
+            background.clearAnimation();
+            background = null;
+        }
+        if (mMatrix != null)
+            mMatrix.reset();
+
+        if (mCurrentAnimator != null) {
+            mCurrentAnimator.removeAllListeners();
+            mCurrentAnimator.cancel();
+        }
+        mDirection = RightToLeft;
+        mScaleFactor = 0;
     }
 }
