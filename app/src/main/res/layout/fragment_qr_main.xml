@@ -16,6 +16,7 @@
         <TextView
             android:id="@+id/main_text_receive_money"
             android:layout_width="wrap_content"
+            android:layout_marginTop="20dp"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
@@ -28,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/main_text_receive_money"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="15dp" />
+            android:layout_marginTop="30dp" />
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/theAddressLayout"

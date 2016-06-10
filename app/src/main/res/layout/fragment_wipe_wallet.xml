@@ -32,7 +32,7 @@
         android:paddingTop="90dp"
         android:text="@string/confirm"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/light_grey" />
+        android:textColor="@color/light_gray" />
 
     <TextView
         android:id="@+id/textWipeWallet"

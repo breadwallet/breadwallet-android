@@ -2,20 +2,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:paddingTop="90dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/separator_height"
+        android:background="@color/gray" />
 
     <RelativeLayout
         android:id="@+id/local_currency"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+        android:layout_height="match_parent">
 
         <ListView
             android:id="@+id/currency_list_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:listSelector="@color/white"
-            android:cacheColorHint="@android:color/transparent"/>
+            android:cacheColorHint="@android:color/transparent"
+            android:listSelector="@color/white" />
 
         <TextView
             android:id="@+id/noInternetConnectionText"
@@ -26,7 +31,7 @@
             android:layout_marginTop="136dp"
             android:text="@string/no_internet_connection"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/grey"
+            android:textColor="@color/gray"
             android:visibility="gone" />
 
         <Button
@@ -45,8 +50,8 @@
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true" />
 
     </RelativeLayout>
 </LinearLayout>

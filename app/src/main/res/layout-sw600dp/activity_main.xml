@@ -4,6 +4,8 @@
     android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
     android:background="@android:color/transparent"
     tools:context="com.breadwallet.presenter.activities.MainActivity">
 
@@ -32,7 +34,7 @@
             android:layout_height="28dp"
             android:layout_gravity="center"
             android:text="@string/settings"
-            android:textColor="@color/grey"
+            android:textColor="@color/gray"
             android:textSize="22sp" />
     </ViewFlipper>
 
@@ -41,10 +43,9 @@
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:visibility="gone"
         android:layout_below="@+id/main_button_burger"
         android:progressDrawable="@drawable/progress_blue"
-         />
+        android:visibility="gone" />
 
     <TextView
 
@@ -55,7 +56,7 @@
         android:layout_marginBottom="15dp"
         android:layout_marginStart="20dp"
         android:layout_toEndOf="@+id/middle_view_flipper"
-        android:textColor="@color/light_grey"
+        android:textColor="@color/light_gray"
         android:textSize="13sp"
         android:visibility="gone" />
 
@@ -93,9 +94,9 @@
             android:id="@+id/main_button_request"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginEnd="10dp"
             android:clickable="true"
             android:gravity="center"
-            android:layout_marginEnd="10dp"
             android:onClick="request"
             android:text="@string/request"
             android:textColor="@color/dark_blue"
@@ -117,7 +118,7 @@
             android:id="@+id/network_bar_line"
             android:layout_width="match_parent"
             android:layout_height="@dimen/separator_height"
-            android:background="@color/grey" />
+            android:background="@color/gray" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -143,29 +144,27 @@
 
         <ImageView
             android:id="@+id/circle_indicator_left"
-            android:layout_width="13dp"
-            android:layout_height="13dp"
+            android:layout_width="11dp"
+            android:layout_height="11dp"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:layout_marginStart="10dp"
-            android:background="@drawable/shadow"
+            android:layout_marginStart="18dp"
             android:paddingBottom="@dimen/pager_indicator_shadow_padding"
-            android:paddingStart="@dimen/pager_indicator_shadow_padding"
-            android:paddingEnd="@dimen/pager_indicator_shadow_padding"
+            android:paddingLeft="@dimen/pager_indicator_shadow_padding"
+            android:paddingRight="@dimen/pager_indicator_shadow_padding"
             android:paddingTop="0dp"
             android:src="@drawable/circle_indicator" />
 
         <ImageView
             android:id="@+id/circle_indicator_right"
-            android:layout_width="13dp"
-            android:layout_height="13dp"
+            android:layout_width="11dp"
+            android:layout_height="11dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:layout_marginEnd="10dp"
-            android:background="@drawable/shadow"
+            android:layout_marginEnd="18dp"
             android:paddingBottom="@dimen/pager_indicator_shadow_padding"
-            android:paddingStart="@dimen/pager_indicator_shadow_padding"
-            android:paddingEnd="@dimen/pager_indicator_shadow_padding"
+            android:paddingLeft="@dimen/pager_indicator_shadow_padding"
+            android:paddingRight="@dimen/pager_indicator_shadow_padding"
             android:paddingTop="0dp"
             android:src="@drawable/circle_indicator" />
     </RelativeLayout>
@@ -178,7 +177,7 @@
         android:layout_alignParentEnd="true"
         android:alpha="0.7"
         android:padding="20dp"
-        android:text="@string/testnet"
+        android:text="testnet"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="@color/dark_red" />
 

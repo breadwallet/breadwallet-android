@@ -8,7 +8,7 @@
         android:id="@+id/limit_line1"
         android:layout_width="match_parent"
         android:layout_height="@dimen/separator_height"
-        android:background="@color/grey" />
+        android:background="@color/gray" />
 
     <RelativeLayout
         android:id="@+id/always_passcode"
@@ -24,7 +24,7 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="20dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/grey"
+            android:textColor="@color/gray"
             android:textSize="@dimen/text_size" />
 
         <ImageView
@@ -44,7 +44,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/separator_height"
         android:layout_marginStart="20dp"
-        android:background="@color/grey" />
+        android:background="@color/gray" />
 
     <RelativeLayout
         android:id="@+id/limit_100k"
@@ -60,7 +60,7 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="20dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/grey"
+            android:textColor="@color/gray"
             android:textSize="@dimen/text_size" />
 
         <ImageView
@@ -80,7 +80,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/separator_height"
         android:layout_marginStart="20dp"
-        android:background="@color/grey" />
+        android:background="@color/gray" />
 
     <RelativeLayout
         android:id="@+id/limit_1B"
@@ -96,7 +96,7 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="20dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/grey"
+            android:textColor="@color/gray"
             android:textSize="@dimen/text_size" />
 
         <ImageView
@@ -116,7 +116,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/separator_height"
         android:layout_marginStart="20dp"
-        android:background="@color/grey" />
+        android:background="@color/gray" />
 
     <RelativeLayout
         android:id="@+id/limit_10B"
@@ -132,7 +132,7 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="20dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/grey"
+            android:textColor="@color/gray"
             android:textSize="@dimen/text_size" />
 
         <ImageView
@@ -151,6 +151,6 @@
         android:id="@+id/limit_line5"
         android:layout_width="match_parent"
         android:layout_height="@dimen/separator_height"
-        android:background="@color/grey" />
+        android:background="@color/gray" />
 
 </LinearLayout>

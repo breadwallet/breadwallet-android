@@ -16,7 +16,7 @@
                 android:id="@+id/settings_line_1"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/separator_height"
-                android:background="@color/grey" />
+                android:background="@color/gray" />
 
             <RelativeLayout
                 android:id="@+id/about"
@@ -33,7 +33,7 @@
                     android:layout_marginStart="20dp"
                     android:text="@string/about"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@color/grey"
+                    android:textColor="@color/gray"
                     android:textSize="@dimen/text_size" />
 
                 <ImageView
@@ -52,7 +52,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/separator_height"
                 android:layout_marginStart="20dp"
-                android:background="@color/grey" />
+                android:background="@color/gray" />
 
             <RelativeLayout
                 android:id="@+id/recovery_phrase"
@@ -69,7 +69,7 @@
                     android:layout_marginStart="20dp"
                     android:text="@string/recovery_phrase_button"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@color/grey"
+                    android:textColor="@color/gray"
                     android:textSize="@dimen/text_size" />
 
                 <ImageView
@@ -85,14 +85,14 @@
                 android:id="@+id/settings_line_3"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/separator_height"
-                android:background="@color/grey" />
+                android:background="@color/gray" />
 
             <RelativeLayout
                 android:id="@+id/settings_line_4"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/separator_height"
                 android:layout_marginTop="30dp"
-                android:background="@color/grey" />
+                android:background="@color/gray" />
 
             <RelativeLayout
                 android:id="@+id/local_currency"
@@ -108,7 +108,7 @@
                     android:layout_marginStart="20dp"
                     android:text="@string/local_currency"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@color/grey"
+                    android:textColor="@color/gray"
                     android:textSize="@dimen/text_size" />
 
                 <TextView
@@ -138,7 +138,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/separator_height"
                 android:layout_marginStart="20dp"
-                android:background="@color/grey" />
+                android:background="@color/gray" />
 
             <RelativeLayout
                 android:id="@+id/fingerprint_limit"
@@ -154,7 +154,7 @@
                     android:layout_marginStart="20dp"
                     android:text="@string/fingerprint_spend_limit"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@color/grey"
+                    android:textColor="@color/gray"
                     android:textSize="@dimen/text_size" />
 
                 <TextView
@@ -181,14 +181,14 @@
                 android:id="@+id/settings_line_5c"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/separator_height"
-                android:background="@color/grey" />
+                android:background="@color/gray" />
 
             <RelativeLayout
                 android:id="@+id/settings_line_6"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/separator_height"
                 android:layout_marginTop="30dp"
-                android:background="@color/grey" />
+                android:background="@color/gray" />
 
             <RelativeLayout
                 android:id="@+id/change_password"
@@ -214,7 +214,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/separator_height"
                 android:layout_marginStart="20dp"
-                android:background="@color/grey" />
+                android:background="@color/gray" />
 
             <RelativeLayout
                 android:id="@+id/start_recovery_wallet"
@@ -236,10 +236,57 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:id="@+id/settings_line_8"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/separator_height"
-                android:background="@color/grey" />
+                android:layout_marginStart="20dp"
+                android:background="@color/gray" />
+
+            <RelativeLayout
+                android:id="@+id/rescan_blockchain"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/clickable_layout"
+                android:clickable="true">
+
+
+                <ImageView
+                    android:id="@+id/rescan_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="20dp"
+                    android:background="@drawable/rescan" />
+
+                <TextView
+                    android:id="@+id/text_rescan_blockchain"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="20dp"
+                    android:layout_toEndOf="@+id/rescan_image"
+                    android:text="@string/rescan_blockchain"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/dark_blue"
+                    android:textSize="@dimen/text_size" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/separator_height"
+                android:background="@color/gray" />
+
+            <TextView
+                android:id="@+id/rescan_instructions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="10dp"
+                android:text="@string/settingsall_rescan_instructions"
+                android:textColor="@color/gray"
+                android:textSize="16sp" />
+
 
         </LinearLayout>
 

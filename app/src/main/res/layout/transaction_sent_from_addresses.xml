@@ -16,7 +16,7 @@ android:clickable="true">
     android:layout_marginTop="@dimen/transaction_item_margin"
     android:singleLine="true"
     android:textAppearance="?android:attr/textAppearanceLarge"
-    android:textColor="@color/grey"
+    android:textColor="@color/gray"
     android:textSize="13sp" />
 
 <TextView
@@ -28,7 +28,7 @@ android:clickable="true">
     android:layout_marginStart="@dimen/transaction_item_margin"
     android:text="@string/spent_address"
     android:textAppearance="?android:attr/textAppearanceLarge"
-    android:textColor="@color/grey"
+    android:textColor="@color/gray"
     android:textSize="13sp" />
 
 </RelativeLayout>

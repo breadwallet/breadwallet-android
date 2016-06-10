@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
@@ -78,7 +77,7 @@ public class FragmentSettingsAll extends Fragment {
 
         RelativeLayout importPrivateKeys = (RelativeLayout) rootView.findViewById(R.id.import_private_key);
         RelativeLayout settings = (RelativeLayout) rootView.findViewById(R.id.settings);
-        RelativeLayout rescan = (RelativeLayout) rootView.findViewById(R.id.rescan_blockchain);
+
         noTransactions = (TextView) rootView.findViewById(R.id.text_no_transactions);
         transactionHistory = (LinearLayout) rootView.findViewById(R.id.layout_transaction_history);
         transactionList = (LinearLayout) rootView.findViewById(R.id.transactions_list);
@@ -90,8 +89,10 @@ public class FragmentSettingsAll extends Fragment {
         transactionHistory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((BreadWalletApp) getActivity().getApplicationContext()).
-                        promptForAuthentication(getActivity(), BRConstants.AUTH_FOR_GENERAL, null);
+                if (FragmentAnimator.checkTheMultipressingAvailability()) {
+                    ((BreadWalletApp) getActivity().getApplicationContext()).
+                            promptForAuthentication(getActivity(), BRConstants.AUTH_FOR_GENERAL, null);
+                }
             }
         });
         refreshTransactions(getActivity());
@@ -106,19 +107,7 @@ public class FragmentSettingsAll extends Fragment {
                 }
             }
         });
-        rescan.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (FragmentAnimator.checkTheMultipressingAvailability()) {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            BRPeerManager.getInstance(getActivity()).rescan();
-                        }
-                    }).start();
-                }
-            }
-        });
+
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -229,7 +218,7 @@ public class FragmentSettingsAll extends Fragment {
         //0 - regular , 1 - with left padding
         RelativeLayout line = new RelativeLayout(ctx);
         line.setMinimumHeight(1);
-        line.setBackgroundColor(ctx.getColor(R.color.grey));
+        line.setBackgroundColor(ctx.getColor(R.color.gray));
         if (MODE == 1)
             line.setPadding(40, 0, 0, 0);
         return line;

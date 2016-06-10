@@ -4,237 +4,233 @@
     android:layout_height="match_parent"
     android:layout_marginTop="90dp">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
+        android:id="@+id/transactions_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        >
-        <LinearLayout
-            android:id="@+id/transactions_item"
+        android:orientation="vertical">
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="@dimen/separator_height"
+            android:background="@color/gray" />
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/separator_height"
-                android:background="@color/grey" />
-
-            <RelativeLayout
-                android:id="@+id/tx_id"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/clickable_layout"
-                android:clickable="true"
-                android:padding="@dimen/transaction_item_margin">
-
-                <TextView
-                    android:id="@+id/tx_id_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:text="@string/id"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@color/dark_grey"
-                    android:textSize="15sp" />
-
-                <TextView
-                    android:id="@+id/tx_hash_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="@dimen/transaction_item_margin"
-                    android:layout_toEndOf="@id/tx_id_label"
-                    android:ellipsize="middle"
-                    android:singleLine="true"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@color/grey"
-                    android:textSize="13sp" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/separator_height"
-                android:layout_marginStart="@dimen/transaction_item_margin"
-                android:background="@color/grey" />
-
-            <RelativeLayout
-                android:id="@+id/tx_status"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/clickable_layout"
-                android:clickable="true"
-                android:padding="@dimen/transaction_item_margin">
-
-
-                <TextView
-                    android:id="@+id/tx_status_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:text="@string/status"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@color/dark_grey"
-                    android:textSize="15sp" />
-
-                <TextView
-                    android:id="@+id/tx_status_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="@dimen/transaction_item_margin"
-                    android:gravity="end"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@color/grey"
-                    android:textSize="13sp" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/separator_height"
-                android:layout_marginStart="@dimen/transaction_item_margin"
-                android:background="@color/grey" />
-
-            <RelativeLayout
-                android:id="@+id/tx_amount"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/clickable_layout"
-                android:clickable="true"
-                android:padding="@dimen/transaction_item_margin">
-
-                <TextView
-                    android:id="@+id/tx_amount_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:text="@string/amount"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@color/dark_grey"
-                    android:textSize="15sp" />
-
-                <TextView
-                    android:id="@+id/tx_amount_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="@dimen/transaction_item_margin"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@color/dark_grey"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tx_exchange_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="@dimen/transaction_item_margin"
-                    android:layout_toStartOf="@id/tx_amount_text"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@color/grey"
-                    android:textSize="13sp" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/separator_height"
-                android:background="@color/grey" />
+        <RelativeLayout
+            android:id="@+id/tx_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/clickable_layout"
+            android:clickable="true"
+            android:padding="@dimen/transaction_item_margin">
 
             <TextView
-                android:id="@+id/tx_to_label"
+                android:id="@+id/tx_id_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/transaction_item_margin"
-                android:layout_marginTop="20dp"
-                android:text="@string/to"
+                android:layout_centerVertical="true"
+                android:text="@string/id"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@color/dark_grey"
                 android:textSize="15sp" />
 
-            <LinearLayout
-                android:id="@+id/general_tx_to_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"/>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/separator_height"
-                android:background="@color/grey" />
-
-            <RelativeLayout
-                android:id="@+id/tx_fee_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/clickable_layout"
-                android:clickable="true">
-
-
-                <TextView
-                    android:id="@+id/tx_to_fee_description"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/transaction_item_margin"
-                    android:layout_marginStart="@dimen/transaction_item_margin"
-                    android:layout_marginTop="@dimen/transaction_item_margin"
-                    android:text="@string/bitcoin_network_fee"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@color/grey"
-                    android:textSize="13sp" />
-
-                <TextView
-                    android:id="@+id/tx_to_fee_amount_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginLeft="@dimen/transaction_item_margin"
-                    android:layout_marginRight="@dimen/transaction_item_margin"
-                    android:layout_marginTop="@dimen/transaction_item_margin"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@color/red_text"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tx_to_fee_exchange_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBaseline="@+id/tx_to_fee_amount_text"
-                    android:layout_marginStart="@dimen/transaction_item_margin"
-                    android:layout_toStartOf="@id/tx_to_fee_amount_text"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@color/red_text"
-                    android:textSize="13sp" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/separator_height"
-                android:background="@color/grey" />
-
             <TextView
-                android:id="@+id/tx_from_label"
+                android:id="@+id/tx_hash_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/transaction_item_margin"
+                android:layout_toEndOf="@id/tx_id_label"
+                android:ellipsize="none"
+                android:singleLine="false"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/gray"
+                android:textSize="13sp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/separator_height"
+            android:layout_marginStart="@dimen/transaction_item_margin"
+            android:background="@color/gray" />
+
+        <RelativeLayout
+            android:id="@+id/tx_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/clickable_layout"
+            android:clickable="true"
+            android:padding="@dimen/transaction_item_margin">
+
+
+            <TextView
+                android:id="@+id/tx_status_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="@string/status"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/dark_grey"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/tx_status_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/transaction_item_margin"
+                android:gravity="end"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/gray"
+                android:textSize="13sp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/separator_height"
+            android:layout_marginStart="@dimen/transaction_item_margin"
+            android:background="@color/gray" />
+
+        <RelativeLayout
+            android:id="@+id/tx_amount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/clickable_layout"
+            android:clickable="true"
+            android:padding="@dimen/transaction_item_margin">
+
+            <TextView
+                android:id="@+id/tx_amount_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="@string/amount"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/dark_grey"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/tx_amount_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/transaction_item_margin"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/dark_grey"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tx_exchange_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/transaction_item_margin"
+                android:layout_toStartOf="@id/tx_amount_text"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/gray"
+                android:textSize="13sp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/separator_height"
+            android:background="@color/gray" />
+
+        <TextView
+            android:id="@+id/tx_to_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/transaction_item_margin"
+            android:layout_marginTop="20dp"
+            android:text="@string/to"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/dark_grey"
+            android:textSize="15sp" />
+
+
+        <LinearLayout
+            android:id="@+id/general_tx_to_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/separator_height"
+            android:background="@color/gray" />
+
+        <RelativeLayout
+            android:id="@+id/tx_fee_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/clickable_layout"
+            android:clickable="true">
+
+
+            <TextView
+                android:id="@+id/tx_to_fee_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/transaction_item_margin"
                 android:layout_marginStart="@dimen/transaction_item_margin"
                 android:layout_marginTop="@dimen/transaction_item_margin"
-                android:text="@string/from"
+                android:text="@string/bitcoin_network_fee"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/dark_grey"
-                android:textSize="15sp" />
+                android:textColor="@color/gray"
+                android:textSize="13sp" />
 
-            <LinearLayout
-                android:id="@+id/general_tx_from_layout"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/tx_to_fee_amount_text"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"/>
+                android:layout_alignParentEnd="true"
+                android:layout_marginLeft="@dimen/transaction_item_margin"
+                android:layout_marginRight="@dimen/transaction_item_margin"
+                android:layout_marginTop="@dimen/transaction_item_margin"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/red_text"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
-        </LinearLayout>
+            <TextView
+                android:id="@+id/tx_to_fee_exchange_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/tx_to_fee_amount_text"
+                android:layout_marginStart="@dimen/transaction_item_margin"
+                android:layout_toStartOf="@id/tx_to_fee_amount_text"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/red_text"
+                android:textSize="13sp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/separator_height"
+            android:background="@color/gray" />
+
+        <TextView
+            android:id="@+id/tx_from_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/transaction_item_margin"
+            android:layout_marginTop="@dimen/transaction_item_margin"
+            android:text="@string/from"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/dark_grey"
+            android:textSize="15sp" />
+
+        <LinearLayout
+            android:id="@+id/general_tx_from_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
     </LinearLayout>
 </ScrollView>

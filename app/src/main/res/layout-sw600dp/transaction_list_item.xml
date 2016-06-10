@@ -24,7 +24,7 @@
             android:includeFontPadding="false"
             android:padding="0px"
             android:text="@string/sent_received"
-            android:textSize="13sp" />
+            android:textSize="12sp" />
 
         <com.breadwallet.presenter.customviews.AutoResizeTextView
             android:id="@+id/transaction_date"
@@ -33,8 +33,8 @@
             android:layout_marginBottom="13dp"
             android:layout_marginTop="5dp"
             android:clickable="false"
-            android:textColor="@color/grey"
-            android:textSize="13sp" />
+            android:textColor="@color/gray"
+            android:textSize="12sp" />
 
     </LinearLayout>
 
@@ -52,8 +52,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="false"
-            android:textColor="@color/grey"
-            android:textSize="17sp" />
+            android:textColor="@color/gray"
+            android:textSize="15sp" />
 
 
         <com.breadwallet.presenter.customviews.AutoResizeTextView
@@ -62,8 +62,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="3dp"
             android:clickable="false"
-            android:textColor="@color/grey"
-            android:textSize="13sp" />
+            android:textColor="@color/gray"
+            android:textSize="12sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -81,7 +81,7 @@
             android:layout_height="wrap_content"
             android:clickable="false"
             android:textColor="@color/dark_grey"
-            android:textSize="17sp"
+            android:textSize="15sp"
             android:textStyle="bold" />
 
         <com.breadwallet.presenter.customviews.AutoResizeTextView
@@ -91,7 +91,7 @@
             android:layout_marginTop="3dp"
             android:clickable="false"
             android:textColor="@color/dark_grey"
-            android:textSize="13sp" />
+            android:textSize="12sp" />
 
     </LinearLayout>
 

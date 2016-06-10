@@ -35,13 +35,13 @@
         android:ellipsize="start"
         android:singleLine="true"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textColor="@color/light_grey"
+        android:textColor="@color/light_gray"
         android:textSize="20sp" />
 
     <View
         android:id="@+id/first_line"
         android:layout_width="fill_parent"
-        android:layout_height="1dp"
+        android:layout_height="1px"
         android:layout_below="@+id/amount_to_pay"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
@@ -60,7 +60,7 @@
     <View
         android:id="@+id/second_line"
         android:layout_width="fill_parent"
-        android:layout_height="1dp"
+        android:layout_height="1px"
         android:layout_below="@+id/custom_keyboard_layout"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
@@ -76,6 +76,5 @@
         android:layout_marginEnd="16dp"
         android:layout_marginTop="10dp"
         android:text="@string/the_address" />
-
 
 </RelativeLayout>

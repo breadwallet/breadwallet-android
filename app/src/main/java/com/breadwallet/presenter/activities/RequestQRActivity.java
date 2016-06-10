@@ -144,6 +144,8 @@ public class RequestQRActivity extends Activity {
                 smallerDimension);
         try {
             Bitmap bitmap = qrCodeEncoder.encodeAsBitmap();
+            qrcode.setPadding(1, 1, 1, 1);
+            qrcode.setBackgroundResource(R.color.gray);
             qrcode.setImageBitmap(bitmap);
 
         } catch (WriterException e) {

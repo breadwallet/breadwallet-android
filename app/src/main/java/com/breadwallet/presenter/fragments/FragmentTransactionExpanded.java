@@ -102,7 +102,7 @@ public class FragmentTransactionExpanded extends Fragment {
             long amount = item.getReceived();
             Log.e(TAG, "Tx Detail received!!!! amount: " + amount + " item.getBlockHeight(): " + item.getBlockHeight());
 
-            hashText.setText(item.getHexId());
+            hashText.setText(BRWalletManager.getInstance(getActivity()).reverseTxHash(item.getHexId()));
             amountText.setText(m.getFormattedCurrencyString("BTC", amount));
             exchangeText.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, new BigDecimal(amount))));
 
@@ -120,7 +120,7 @@ public class FragmentTransactionExpanded extends Fragment {
             Log.e(TAG, "Tx Detail sent!!!! amount: " + amount + " tempFee: " + item.getFee() + " tempSent: "
                     + item.getSent() + " item.getBlockHeight(): " + item.getBlockHeight());
 
-            hashText.setText(item.getHexId());
+            hashText.setText(BRWalletManager.getInstance(getActivity()).reverseTxHash(item.getHexId()));
 
 //            statusText.setText(String.format("confirmed in block #%d\n%s", item.getBlockHeight(),
 //                    FragmentSettingsAll.getFormattedDateFromLong(item.getTimeStamp())));

@@ -426,4 +426,6 @@ public class BRWalletManager {
     public native ImportPrivKeyEntity getPrivKeyObject();
 
     public native String decryptBip38Key(String privKey, String pass);
+
+    public native String reverseTxHash(String txHash);
 }

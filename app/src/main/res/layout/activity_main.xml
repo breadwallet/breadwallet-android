@@ -34,7 +34,7 @@
             android:layout_height="28dp"
             android:layout_gravity="center"
             android:text="@string/settings"
-            android:textColor="@color/grey"
+            android:textColor="@color/gray"
             android:textSize="22sp" />
     </ViewFlipper>
 
@@ -56,7 +56,7 @@
         android:layout_marginBottom="15dp"
         android:layout_marginStart="20dp"
         android:layout_toEndOf="@+id/middle_view_flipper"
-        android:textColor="@color/light_grey"
+        android:textColor="@color/light_gray"
         android:textSize="13sp"
         android:visibility="gone" />
 
@@ -118,7 +118,7 @@
             android:id="@+id/network_bar_line"
             android:layout_width="match_parent"
             android:layout_height="@dimen/separator_height"
-            android:background="@color/grey" />
+            android:background="@color/gray" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -144,12 +144,11 @@
 
         <ImageView
             android:id="@+id/circle_indicator_left"
-            android:layout_width="13dp"
-            android:layout_height="13dp"
+            android:layout_width="11dp"
+            android:layout_height="11dp"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:layout_marginStart="10dp"
-            android:background="@drawable/shadow"
+            android:layout_marginStart="18dp"
             android:paddingBottom="@dimen/pager_indicator_shadow_padding"
             android:paddingLeft="@dimen/pager_indicator_shadow_padding"
             android:paddingRight="@dimen/pager_indicator_shadow_padding"
@@ -158,12 +157,11 @@
 
         <ImageView
             android:id="@+id/circle_indicator_right"
-            android:layout_width="13dp"
-            android:layout_height="13dp"
+            android:layout_width="11dp"
+            android:layout_height="11dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:layout_marginEnd="10dp"
-            android:background="@drawable/shadow"
+            android:layout_marginEnd="18dp"
             android:paddingBottom="@dimen/pager_indicator_shadow_padding"
             android:paddingLeft="@dimen/pager_indicator_shadow_padding"
             android:paddingRight="@dimen/pager_indicator_shadow_padding"

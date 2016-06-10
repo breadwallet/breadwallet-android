@@ -9,5 +9,5 @@
     <solid android:color="@color/wallet_orange"/>
     <stroke
         android:width="1px"
-        android:color="@color/grey" />
+        android:color="@color/gray" />
 </shape>

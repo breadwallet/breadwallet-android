@@ -6,7 +6,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/separator_height"
-        android:background="@color/grey" />
+        android:background="@color/gray" />
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
@@ -28,7 +28,7 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/separator_height"
-                    android:background="@color/grey" />
+                    android:background="@color/gray" />
 
                 <LinearLayout
                     android:id="@+id/transactions_list"
@@ -46,7 +46,7 @@
                     android:layout_gravity="center"
                     android:text="@string/no_transactions"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@color/light_grey"
+                    android:textColor="@color/light_gray"
                     android:textSize="@dimen/text_size" />
 
                 <LinearLayout
@@ -71,7 +71,7 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/separator_height"
-                    android:background="@color/grey" />
+                    android:background="@color/gray" />
             </LinearLayout>
 
 
@@ -79,7 +79,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/separator_height"
                 android:layout_marginTop="30dp"
-                android:background="@color/grey" />
+                android:background="@color/gray" />
 
             <RelativeLayout
                 android:id="@+id/import_private_key"
@@ -116,59 +116,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/separator_height"
                 android:layout_marginStart="20dp"
-                android:background="@color/grey" />
-
-            <RelativeLayout
-                android:id="@+id/rescan_blockchain"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="@drawable/clickable_layout"
-                android:clickable="true">
-
-
-                <ImageView
-                    android:id="@+id/rescan_image"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="20dp"
-                    android:background="@drawable/rescan" />
-
-                <TextView
-                    android:id="@+id/text_rescan_blockchain"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="20dp"
-                    android:layout_toEndOf="@+id/rescan_image"
-                    android:text="@string/rescan_blockchain"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@color/dark_blue"
-                    android:textSize="@dimen/text_size" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/separator_height"
-                android:background="@color/grey" />
-
-            <TextView
-                android:id="@+id/rescan_instructions"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginTop="10dp"
-                android:text="@string/settingsall_rescan_instructions"
-                android:textColor="@color/grey"
-                android:textSize="16sp" />
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/separator_height"
-                android:layout_marginTop="30dp"
-                android:background="@color/grey" />
+                android:background="@color/gray" />
 
             <RelativeLayout
                 android:id="@+id/settings"
@@ -177,14 +125,24 @@
                 android:background="@drawable/clickable_layout"
                 android:clickable="true">
 
+                <ImageView
+                    android:id="@+id/settings_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="20dp"
+                    android:background="@drawable/settings" />
+
                 <TextView
                     android:layout_width="wrap_content"
+                    android:layout_toEndOf="@+id/settings_icon"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="20dp"
                     android:text="@string/settings"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@color/grey"
+                    android:textColor="@color/gray"
                     android:textSize="@dimen/text_size" />
 
                 <ImageView
@@ -201,7 +159,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/separator_height"
                 android:layout_marginBottom="30dp"
-                android:background="@color/grey" />
+                android:background="@color/gray" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

@@ -170,5 +170,8 @@ JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRWalletManager_confirmKe
                                                                                        jbyteArray tx,
                                                                                        jstring privKey);
 
+JNIEXPORT jstring JNICALL Java_com_breadwallet_wallet_BRWalletManager_reverseTxHash(JNIEnv *env,
+                                                                                    jobject thiz,
+                                                                                    jstring txHash);
 
 #endif //BREADWALLET_WALLET_H

@@ -8,7 +8,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/separator_height"
-        android:background="@color/grey" />
+        android:background="@color/gray" />
 
     <RelativeLayout
         android:id="@+id/local_currency"
@@ -31,7 +31,7 @@
             android:layout_marginTop="136dp"
             android:text="@string/no_internet_connection"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/grey"
+            android:textColor="@color/gray"
             android:visibility="gone" />
 
         <Button

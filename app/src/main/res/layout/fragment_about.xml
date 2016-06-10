@@ -18,7 +18,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/separator_height"
                 android:layout_marginTop="70dp"
-                android:background="@color/grey" />
+                android:background="@color/gray" />
 
             <RelativeLayout
                 android:id="@+id/about"
@@ -102,7 +102,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/separator_height"
-                android:background="@color/grey" />
+                android:background="@color/gray" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

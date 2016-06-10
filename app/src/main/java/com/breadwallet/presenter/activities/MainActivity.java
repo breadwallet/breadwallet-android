@@ -21,6 +21,7 @@ import android.os.PersistableBundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -240,8 +241,8 @@ public class MainActivity extends FragmentActivity implements Observer {
             @Override
             public void onClick(View v) {
 
-                if(scanResultFragmentOn){
-                   return;
+                if (scanResultFragmentOn) {
+                    return;
                 }
                 if (MiddleViewAdapter.getSyncing() && FragmentAnimator.level == 0) {
                     hideAllBubbles();
@@ -304,10 +305,12 @@ public class MainActivity extends FragmentActivity implements Observer {
             @TargetApi(Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
-                SpringAnimator.showAnimation(lockerButton);
+                if (FragmentAnimator.checkTheMultipressingAvailability()) {
+                    SpringAnimator.showAnimation(lockerButton);
 //                passwordDialogFragment.show(fm, TAG);
-                if (KeyStoreManager.getPassCode(app) != 0)
-                    ((BreadWalletApp) getApplication()).promptForAuthentication(app, BRConstants.AUTH_FOR_GENERAL, null);
+                    if (KeyStoreManager.getPassCode(app) != 0)
+                        ((BreadWalletApp) getApplication()).promptForAuthentication(app, BRConstants.AUTH_FOR_GENERAL, null);
+                }
 
             }
         });
@@ -376,6 +379,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     protected void onStop() {
         super.onStop();
         CurrencyManager.getInstance(this).stopTimerTask();
+//        FragmentAnimator.level = 0;
 
     }
 
@@ -409,6 +413,8 @@ public class MainActivity extends FragmentActivity implements Observer {
         syncProgressText = (TextView) findViewById(R.id.sync_progress_text);
 //        middleView = findViewById(R.id.main_label_breadwallet);
         pageIndicatorRight = (ImageView) findViewById(R.id.circle_indicator_right);
+        pageIndicatorLeft.setImageResource(R.drawable.circle_indicator);
+        pageIndicatorRight.setImageResource(R.drawable.circle_indicator);
         CustomPagerAdapter pagerAdapter = new CustomPagerAdapter(getFragmentManager());
         burgerButtonMap = new HashMap<>();
         parallaxViewPager = ((ParallaxViewPager) findViewById(R.id.main_viewpager));
@@ -490,14 +496,10 @@ public class MainActivity extends FragmentActivity implements Observer {
     public void setPagerIndicator(int x) {
         if (x == 0) {
             Log.d(TAG, "Left Indicator changed");
-            pageIndicatorLeft.setImageResource(R.drawable.circle_indicator_active);
-            pageIndicatorRight.setImageResource(R.drawable.circle_indicator);
             scaleView(pageIndicatorLeft, 1f, PAGE_INDICATOR_SCALE_UP, 1f, PAGE_INDICATOR_SCALE_UP);
             scaleView(pageIndicatorRight, PAGE_INDICATOR_SCALE_UP, 1f, PAGE_INDICATOR_SCALE_UP, 1f);
         } else if (x == 1) {
             Log.d(TAG, "Right Indicator changed");
-            pageIndicatorLeft.setImageResource(R.drawable.circle_indicator);
-            pageIndicatorRight.setImageResource(R.drawable.circle_indicator_active);
             scaleView(pageIndicatorRight, 1f, PAGE_INDICATOR_SCALE_UP, 1f, PAGE_INDICATOR_SCALE_UP);
             scaleView(pageIndicatorLeft, PAGE_INDICATOR_SCALE_UP, 1f, PAGE_INDICATOR_SCALE_UP, 1f);
         } else {
@@ -796,7 +798,32 @@ public class MainActivity extends FragmentActivity implements Observer {
                             public void onClick(DialogInterface dialog, int which) {
                                 ((BreadWalletApp) getApplicationContext()).promptForAuthentication(app, BRConstants.AUTH_FOR_PAY, request);
                             }
-                        })
+                        }).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+
+                        if (!scanResultFragmentOn) {
+                            FragmentScanResult.address = request.addresses[0];
+                            new android.app.AlertDialog.Builder(app)
+                                    .setTitle(getString(R.string.payment_info))
+                                    .setMessage("change payment amount?")
+                                    .setPositiveButton("change", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            FragmentAnimator.animateScanResultFragment();
+                                        }
+                                    }).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                    FragmentScanResult.address = null;
+                                }
+                            })
+                                    .setIcon(android.R.drawable.ic_dialog_alert)
+                                    .show();
+                        }
+                    }
+                })
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .show();
             }

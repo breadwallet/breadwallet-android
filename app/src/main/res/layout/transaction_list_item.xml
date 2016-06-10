@@ -33,7 +33,7 @@
             android:layout_marginBottom="13dp"
             android:layout_marginTop="5dp"
             android:clickable="false"
-            android:textColor="@color/grey"
+            android:textColor="@color/gray"
             android:textSize="12sp" />
 
     </LinearLayout>
@@ -52,7 +52,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="false"
-            android:textColor="@color/grey"
+            android:textColor="@color/gray"
             android:textSize="15sp" />
 
 
@@ -62,7 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="3dp"
             android:clickable="false"
-            android:textColor="@color/grey"
+            android:textColor="@color/gray"
             android:textSize="12sp" />
     </LinearLayout>
 

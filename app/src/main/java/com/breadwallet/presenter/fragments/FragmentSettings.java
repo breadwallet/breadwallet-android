@@ -30,6 +30,7 @@ import com.breadwallet.tools.adapter.CurrencyListAdapter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.security.PassCodeManager;
+import com.breadwallet.wallet.BRPeerManager;
 
 import org.w3c.dom.Text;
 
@@ -90,6 +91,7 @@ public class FragmentSettings extends Fragment {
         RelativeLayout fingerprintLimit = (RelativeLayout) rootView.findViewById(R.id.fingerprint_limit);
         RelativeLayout line5 = (RelativeLayout) rootView.findViewById(R.id.settings_line_5);
         TextView theLimit = (TextView) rootView.findViewById(R.id.fingerprint_limit_text);
+        RelativeLayout rescan = (RelativeLayout) rootView.findViewById(R.id.rescan_blockchain);
 
 
         theLimit.setText(CurrencyManager.getInstance(getActivity()).getFormattedCurrencyString("BTC", PassCodeManager.getInstance().getLimit(getActivity())));
@@ -165,6 +167,20 @@ public class FragmentSettings extends Fragment {
             public void onClick(View v) {
                 final android.app.FragmentManager fm = getActivity().getFragmentManager();
                 new PasswordDialogFragment().show(fm, PasswordDialogFragment.class.getName());
+            }
+        });
+
+        rescan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (FragmentAnimator.checkTheMultipressingAvailability()) {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            BRPeerManager.getInstance(getActivity()).rescan();
+                        }
+                    }).start();
+                }
             }
         });
 

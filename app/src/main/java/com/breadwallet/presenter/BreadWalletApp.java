@@ -223,9 +223,6 @@ public class BreadWalletApp extends Application {
     @TargetApi(Build.VERSION_CODES.LOLLIPOP_MR1)
     public void promptForAuthentication(Activity context, int mode, PaymentRequestEntity requestEntity) {
         Log.e(TAG, "promptForAuthentication: " + mode);
-        if (!FragmentAnimator.checkTheMultipressingAvailability()) {
-            return;
-        }
         if (context == null) return;
         KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Activity.KEYGUARD_SERVICE);
 

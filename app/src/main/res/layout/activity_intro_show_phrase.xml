@@ -44,7 +44,7 @@
             android:layout_marginTop="20dp"
             android:text="@string/please_write_it_down"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/grey"
+            android:textColor="@color/gray"
             android:textSize="16sp" />
 
         <RelativeLayout
@@ -53,7 +53,7 @@
             android:layout_height="@dimen/separator_height"
             android:layout_below="@id/textView1"
             android:layout_marginTop="40dp"
-            android:background="@color/grey" />
+            android:background="@color/gray" />
 
         <RelativeLayout
             android:id="@+id/relativeLayout"
@@ -83,7 +83,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/separator_height"
             android:layout_below="@id/relativeLayout"
-            android:background="@color/grey" />
+            android:background="@color/gray" />
 
         <RelativeLayout
             android:id="@+id/write_down_notice_layout"

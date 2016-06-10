@@ -1,13 +1,9 @@
 <shape
-    android:shape="rectangle"
+    android:shape="oval"
     xmlns:android="http://schemas.android.com/apk/res/android">
-    <corners android:radius="3dp" />
 
-    <solid android:color="@color/almost_white" />
+    <solid android:color="@color/page_indicator_gray" />
     <size
         android:height="10dp"
         android:width="10dp" />
-    <stroke
-        android:color="@color/light_grey"
-        android:width="1px" />
 </shape>

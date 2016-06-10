@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:windowSoftInputMode="adjustPan|adjustResize">
+    android:descendantFocusability="beforeDescendants"
+    android:windowSoftInputMode="stateAlwaysHidden">
 
     <TextView
         android:id="@+id/main_text_send_money"
@@ -13,7 +14,6 @@
         android:layout_above="@+id/scan_clipboard_buttons_layout"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
-        android:layout_marginBottom="10dp"
         android:text="@string/send_money"
         android:textSize="@dimen/text_size" />
 
@@ -22,6 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
         android:layout_centerVertical="true"
         android:layout_gravity="center"
         android:gravity="center"
@@ -30,31 +31,32 @@
         <Button
             android:id="@+id/main_button_scan_qr_code"
             android:layout_width="240dp"
-            android:layout_height="50dp"
+            android:layout_height="45dp"
             android:layout_gravity="center"
-            android:layout_marginTop="10dp"
             android:background="@drawable/button_regular_blue"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
             android:shadowColor="@android:color/transparent"
-            android:src="@drawable/cameraguide_blue_small"
+            android:drawableLeft="@drawable/cameraguide_blue_small"
             android:text="@string/scan_qr_code"
             android:textAllCaps="false"
             android:stateListAnimator="@null"
             android:textColor="@color/dark_blue"
-            android:textSize="16sp" />
+            android:textSize="18sp" />
 
         <Button
             android:id="@+id/main_button_pay_address_from_clipboard"
             android:layout_width="240dp"
-            android:layout_height="50dp"
+            android:layout_height="45dp"
             android:layout_gravity="center"
             android:stateListAnimator="@null"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="40dp"
             android:background="@drawable/button_regular_blue"
             android:shadowColor="@android:color/transparent"
             android:text="@string/pay_address_from_clipboard"
             android:textAllCaps="false"
             android:textColor="@color/dark_blue"
-            android:textSize="16sp" />
+            android:textSize="18sp" />
     </LinearLayout>
 
     <EditText
@@ -68,7 +70,7 @@
         android:layout_marginTop="20dp"
         android:background="#00000000"
         android:textAlignment="gravity"
-        android:textColor="@color/grey"
+        android:textColor="@color/gray"
         android:textSize="@dimen/text_size" />
 
 </RelativeLayout>

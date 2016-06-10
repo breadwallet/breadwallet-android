@@ -30,6 +30,7 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.security.cert.X509Certificate;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * BreadWallet
@@ -249,6 +250,29 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
         String iso = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
         float rate = settings.getFloat(FragmentCurrency.RATE, 1.0f);
         CurrencyManager cm = CurrencyManager.getInstance(app);
+
+        double minOutput = BRWalletManager.getInstance(app).getMinOutputAmount();
+        if (paymentRequest.amount < minOutput) {
+            final String bitcoinMinMessage = String.format(Locale.getDefault(), "bitcoin payments can't be less than ƀ%.2f",
+                    new BigDecimal(minOutput).divide(new BigDecimal("100")));
+            app.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    new android.app.AlertDialog.Builder(app)
+                            .setTitle(app.getString(R.string.payment_failed))
+                            .setMessage(bitcoinMinMessage)
+                            .setPositiveButton(app.getString(R.string.ok), new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            })
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
+                }
+            });
+
+            return;
+        }
 
         final long total = paymentRequest.amount + paymentRequest.fee;
 

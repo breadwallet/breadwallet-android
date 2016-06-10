@@ -8,10 +8,10 @@
 
     <RelativeLayout
         android:id="@+id/qr_page_layout"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true">
 
         <TextView
             android:id="@+id/main_text_receive_money"
@@ -28,8 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/main_text_receive_money"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="15dp" />
-
+            android:layout_marginTop="30dp" />
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/theAddressLayout"
@@ -45,8 +44,8 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:gravity="center"
-                android:textColor="@color/dark_blue"
                 android:padding="15dp"
+                android:textColor="@color/dark_blue"
                 android:textSize="14sp" />
         </RelativeLayout>
     </RelativeLayout>
