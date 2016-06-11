@@ -3,10 +3,14 @@ package com.breadwallet.presenter.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,26 +51,46 @@ import com.breadwallet.wallet.BRWalletManager;
 public class FragmentRecoveryPhrase extends Fragment {
     public static final String TAG = FragmentRecoveryPhrase.class.getName();
     private TextView thePhrase;
+    private ImageView checkBox;
+    private RelativeLayout checkBoxlayout;
+    private boolean checked = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(
                 R.layout.fragment_recovery_phrase, container, false);
         thePhrase = (TextView) rootView.findViewById(R.id.the_phrase);
+        checkBox = (ImageView) rootView.findViewById(R.id.write_down_check_box);
+        checkBoxlayout = (RelativeLayout) rootView.findViewById(R.id.write_down_notice_layout);
 
-//        //TODO delete this code below which is for testing reasons only
-        thePhrase.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                BRClipboardManager.copyToClipboard(getActivity(), thePhrase.getText().toString());
-                ((BreadWalletApp) getActivity().getApplication()).showCustomToast(getActivity(),
-                        getString(R.string.copied), 300, Toast.LENGTH_SHORT, 0);
-            }
-        });
+        SharedPreferences prefs = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
+        boolean phraseWroteDown = prefs.getBoolean(BRWalletManager.PHRASE_WRITTEN, false);
+
+        //TODO delete this code below which is for testing reasons only
+//        thePhrase.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                BRClipboardManager.copyToClipboard(getActivity(), thePhrase.getText().toString());
+//                ((BreadWalletApp) getActivity().getApplication()).showCustomToast(getActivity(),
+//                        getString(R.string.copied), 300, Toast.LENGTH_SHORT, 0);
+//            }
+//        });
+
+        if (!phraseWroteDown) {
+            checkBoxlayout.setVisibility(View.VISIBLE);
+            checkBox.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setCheckBoxImage();
+
+                }
+            });
+        }
+
 
         String phrase = KeyStoreManager.getKeyStorePhrase(getActivity(), BRConstants.SHOW_PHRASE_REQUEST_CODE);
         if (phrase == null || phrase.isEmpty()) return rootView;
-        if (phrase.charAt(phrase.length()-1) == '\0') {
+        if (phrase.charAt(phrase.length() - 1) == '\0') {
             ((BreadWalletApp) getActivity().getApplication()).showCustomDialog(getString(R.string.warning),
                     "Recovery phrase error, please contact support at breadwallet.com", getString(R.string.close));
         }
@@ -83,5 +107,14 @@ public class FragmentRecoveryPhrase extends Fragment {
         if (app != null)
             ((BreadWalletApp) app.getApplication()).hideKeyboard(app);
         MiddleViewAdapter.resetMiddleView(getActivity(), null);
+    }
+
+    private void setCheckBoxImage() {
+        checkBox.setImageResource(!checked ? R.drawable.checkbox_checked : R.drawable.checkbox_empty);
+        checked = !checked;
+        SharedPreferences prefs = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(BRWalletManager.PHRASE_WRITTEN, checked);
+        editor.apply();
     }
 }

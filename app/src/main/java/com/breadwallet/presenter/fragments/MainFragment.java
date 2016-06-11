@@ -4,6 +4,11 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -13,6 +18,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
@@ -20,10 +26,13 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.BRClipboardManager;
+import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.wallet.BRWalletManager;
+
+import java.util.Locale;
 
 /**
  * BreadWallet
@@ -53,6 +62,7 @@ import com.breadwallet.wallet.BRWalletManager;
 public class MainFragment extends Fragment {
     private static final String TAG = MainFragment.class.getName();
     public EditText addressEditText;
+    public ImageView bug;
 //    private AlertDialog alertDialog;
 
     @Override
@@ -65,6 +75,7 @@ public class MainFragment extends Fragment {
         RelativeLayout mainFragmentLayout = (RelativeLayout) rootView.findViewById(R.id.main_fragment);
         Button payAddressFromClipboardButton = (Button)
                 rootView.findViewById(R.id.main_button_pay_address_from_clipboard);
+        bug = (ImageView) rootView.findViewById(R.id.bug);
         addressEditText = (EditText) rootView.findViewById(R.id.address_edit_text);
         addressEditText.setGravity(Gravity.CENTER_HORIZONTAL);
         addressEditText.setOnClickListener(new View.OnClickListener() {
@@ -74,6 +85,36 @@ public class MainFragment extends Fragment {
                 MainActivity app = MainActivity.app;
                 if (app != null) {
                     app.hideAllBubbles();
+                }
+            }
+        });
+
+
+        bug.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (FragmentAnimator.checkTheMultipressingAvailability()) {
+                    String to = BRConstants.SUPPORT_EMAIL;
+                    PackageInfo pInfo = null;
+                    int version = 0;
+                    try {
+                        pInfo = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0);
+                        version = pInfo.versionCode;
+                    } catch (PackageManager.NameNotFoundException e) {
+                        e.printStackTrace();
+                    }
+
+                    String message = String.format(Locale.getDefault(), "ABI: %s, Android version: %s, Breadwallet version: %d\n\n",
+                            Build.CPU_ABI, Build.VERSION.RELEASE, version);
+                    Intent email = new Intent(Intent.ACTION_SEND);
+                    email.putExtra(Intent.EXTRA_EMAIL, new String[]{to});
+                    email.putExtra(Intent.EXTRA_TEXT, message);
+                    email.putExtra(Intent.EXTRA_SUBJECT, "app crashes");
+
+                    // need this to prompts email client only
+                    email.setType("message/rfc822");
+
+                    startActivity(Intent.createChooser(email, "Choose an Email client"));
                 }
             }
         });

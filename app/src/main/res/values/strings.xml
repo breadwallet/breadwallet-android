@@ -169,8 +169,8 @@
     <string name="testnet">testnet</string>
     <string name="breadwallet_v0_6">breadwallet v0.6</string>
     <string name="copyright_u00a9_2016_breadwallet_llc">copyright © 2016 breadwallet llc</string>
-    <string name="this_app_is_open_source">this app is open source</string>
-    <string name="breadwallet_com">breadwallet.com</string>
+    <string name="app_support">app support:</string>
+    <string name="support_website">support@breadwallet.com</string>
     <string name="exchange_rate_data_provided_by">exchange rate data provided by</string>
     <string name="bitpay_com_rates">bitpay.com/rates</string>
     <string name="about">about</string>
@@ -188,4 +188,5 @@
     <string name="amount">amount:</string>
     <string name="from">from:</string>
     <string name="sent_received">sent/received</string>
+    <string name="beta">beta</string>
 </resources>

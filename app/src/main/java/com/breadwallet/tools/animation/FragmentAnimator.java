@@ -225,7 +225,8 @@ public class FragmentAnimator {
                 SpringAnimator.showBouncySlideHorizontal(to.getView(), SpringAnimator.TO_RIGHT, 20);
             }
         }, 200);
-        previous.add(previousFragment);
+        if (previousFragment != null)
+            previous.add(previousFragment);
         fragmentTransaction.commit();
 //        Log.e(TAG, "The level is: " + level);
     }

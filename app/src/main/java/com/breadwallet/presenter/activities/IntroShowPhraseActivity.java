@@ -49,7 +49,6 @@ public class IntroShowPhraseActivity extends Activity {
     private RelativeLayout writeDownLayout;
     private ImageView checkBox;
     private boolean checked = false;
-    public static final String PHRASE_SAVED = "phraseSaved";
     public static String phrase = null;
 
     @Override
@@ -65,6 +64,7 @@ public class IntroShowPhraseActivity extends Activity {
             @Override
             public void onClick(View v) {
                 setCheckBoxImage();
+
             }
         });
 
@@ -94,10 +94,7 @@ public class IntroShowPhraseActivity extends Activity {
             @Override
             public void onClick(View v) {
                 remindMeLater.setVisibility(View.GONE);
-                SharedPreferences prefs = getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putBoolean(BRWalletManager.ASKED_TO_WRITE_PHRASE, true);
-                editor.apply();
+
                 startMainActivity();
 
                 try {
@@ -154,7 +151,7 @@ public class IntroShowPhraseActivity extends Activity {
         checked = !checked;
         SharedPreferences prefs = getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(PHRASE_SAVED, checked);
+        editor.putBoolean(BRWalletManager.PHRASE_WRITTEN, checked);
         editor.apply();
     }
 }

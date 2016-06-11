@@ -2,11 +2,13 @@ package com.breadwallet.wallet;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.FragmentTransaction;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Handler;
 import android.text.InputType;
 import android.util.Log;
 import android.widget.EditText;
@@ -20,6 +22,7 @@ import com.breadwallet.presenter.activities.RequestQRActivity;
 import com.breadwallet.presenter.entities.ImportPrivKeyEntity;
 import com.breadwallet.presenter.entities.TmpTxObject;
 import com.breadwallet.presenter.entities.TransactionListItem;
+import com.breadwallet.presenter.fragments.FragmentRecoveryPhrase;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.presenter.fragments.MainFragmentQR;
 import com.breadwallet.tools.BRConstants;
@@ -27,6 +30,7 @@ import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.WordsReader;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
+import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.sqlite.SQLiteManager;
@@ -65,7 +69,7 @@ import java.util.List;
 
 public class BRWalletManager {
     private static final String TAG = BRWalletManager.class.getName();
-    public static final String ASKED_TO_WRITE_PHRASE = "phraseWrittenDown";
+    public static final String PHRASE_WRITTEN = "phraseWritten";
     private static BRWalletManager instance;
     private static Activity ctx;
     public static final long TX_FEE_PER_KB = 5000;
@@ -217,7 +221,7 @@ public class BRWalletManager {
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ((BreadWalletApp)activity.getApplication()).showCustomDialog("Not available for beta version", "" ,activity.getString(R.string.ok));
+                            ((BreadWalletApp) activity.getApplication()).showCustomDialog("Not available for beta version", "", activity.getString(R.string.ok));
                         }
                     });
                 }
@@ -240,23 +244,23 @@ public class BRWalletManager {
                 @Override
                 public void run() {
                     SharedPreferences prefs = ctx.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
-                    boolean phraseWroteDown = prefs.getBoolean(ASKED_TO_WRITE_PHRASE, false);
+                    boolean phraseWroteDown = prefs.getBoolean(PHRASE_WRITTEN, false);
                     if (phraseWroteDown) return;
                     AlertDialog alert;
                     AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
                     builder.setTitle(ctx.getString(R.string.you_received_bitcoin));
 
                     builder.setMessage(ctx.getString(R.string.write_down_phrase));
-                    builder.setPositiveButton(ctx.getString(R.string.show_phrase),
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                    Intent intent;
-                                    intent = new Intent(ctx, IntroShowPhraseActivity.class);
-                                    ctx.startActivity(intent);
-                                }
-                            });
-                    builder.setNegativeButton(ctx.getString(R.string.do_it_later),
+//                    builder.setPositiveButton(ctx.getString(R.string.show_phrase),
+//                            new DialogInterface.OnClickListener() {
+//                                public void onClick(DialogInterface dialog, int which) {
+//                                    dialog.dismiss();
+//                                    MainActivity app = MainActivity.app;
+//                                    if (app != null)
+//                                        FragmentAnimator.animateSlideToLeft(app, new FragmentRecoveryPhrase(), null);
+//                                }
+//                            });
+                    builder.setNegativeButton(ctx.getString(R.string.ok),
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.dismiss();
@@ -308,8 +312,6 @@ public class BRWalletManager {
                 @Override
                 public void run() {
                     CurrencyManager m = CurrencyManager.getInstance(ctx);
-//                    if (amount > 0) {
-//                        showWritePhraseDialog();
                     long absAmount = amount > 0 ? amount : amount * -1;
                     CurrencyManager cm = CurrencyManager.getInstance(ctx);
                     String strToShow = String.format(ctx.getString(amount > 0 ? R.string.received : R.string.sent),
@@ -317,14 +319,13 @@ public class BRWalletManager {
                                     m.getExchangeForAmount(m.getRateFromPrefs(), m.getISOFromPrefs(), new BigDecimal(absAmount)) + ")");
                     ((BreadWalletApp) ctx.getApplicationContext()).showCustomToast(ctx, strToShow,
                             BreadWalletApp.DISPLAY_HEIGHT_PX / 2, Toast.LENGTH_LONG, 1);
-//                    } else {
-//                        ((BreadWalletApp) ctx.getApplicationContext()).showCustomToast((Activity) ctx,
-//                                String.format(ctx.getString(R.string.sent), m.bitcoinLowercase + m.getBitsFromSatoshi(amount)),
-//                                BreadWalletApp.DISPLAY_HEIGHT_PX / 2, Toast.LENGTH_LONG, 1);
-//                    }
                 }
             });
 
+        }
+
+        if (getInstance(ctx).getTxCount() <= 1) {
+            showWritePhraseDialog();
         }
 
         SQLiteManager sqLiteManager = SQLiteManager.getInstance(ctx);
@@ -339,11 +340,46 @@ public class BRWalletManager {
         }
     }
 
-    public static void onTxDeleted(String hash) {
+    public static void onTxDeleted(String hash, int notifyUser, final int recommendRescan) {
         Log.e(TAG, "in the BRWalletManager - onTxDeleted");
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) {
             SQLiteManager.getInstance(ctx).deleteTxByHash(hash);
+            if (notifyUser == 1) {
+                ctx.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        AlertDialog alert;
+                        AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+                        builder.setTitle("transaction rejected");
+
+                        builder.setMessage(recommendRescan == 1 ? "Your wallet may be out of sync.\nThis can often be fixed by rescanning the blockchain." : "");
+                        if (recommendRescan == 1)
+                            builder.setPositiveButton("rescan",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            if (FragmentAnimator.checkTheMultipressingAvailability()) {
+                                                new Thread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        BRPeerManager.getInstance(ctx).rescan();
+                                                    }
+                                                }).start();
+                                            }
+                                        }
+                                    });
+                        builder.setNegativeButton(ctx.getString(R.string.cancel),
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                        alert = builder.create();
+                        alert.show();
+                    }
+                });
+
+            }
         }
     }
 
@@ -428,4 +464,6 @@ public class BRWalletManager {
     public native String decryptBip38Key(String privKey, String pass);
 
     public native String reverseTxHash(String txHash);
+
+    public native int getTxCount();
 }
