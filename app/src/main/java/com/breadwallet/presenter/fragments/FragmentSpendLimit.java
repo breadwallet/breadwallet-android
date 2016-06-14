@@ -15,6 +15,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.CurrencyManager;
+import com.breadwallet.tools.SharedPreferencesManager;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.security.PassCodeManager;
 
@@ -75,8 +76,8 @@ public class FragmentSpendLimit extends Fragment {
         checkMark4 = (ImageView) rootView.findViewById(R.id.checkmark4);
 
         CurrencyManager cm = CurrencyManager.getInstance(getActivity());
-        String iso = cm.getISOFromPrefs();
-        double rate = cm.getRateFromPrefs();
+        String iso = SharedPreferencesManager.getIso(getActivity());
+        double rate = SharedPreferencesManager.getRate(getActivity());
 
         String alwaysPasscodeString = "always require passcode";
         String limit100kString = String.format("%s    (%s)", cm.getFormattedCurrencyString("BTC", limit1),

@@ -50,7 +50,7 @@ public class SpringAnimator {
 
         // Add a spring to the system.
         final Spring spring = springSystem.createSpring();
-        SpringConfig config = new SpringConfig(200, 10);
+        SpringConfig config = new SpringConfig(400, 20);
         spring.setSpringConfig(config);
         spring.setEndValue(0.8f);
 
@@ -145,12 +145,6 @@ public class SpringAnimator {
             SpringConfig config = new SpringConfig(600, 20);
             spring.setSpringConfig(config);
             spring.setEndValue(1f);
-//            new Handler().postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    spring.setEndValue(0);
-//                }
-//            }, 100);
 
             // Add a listener to observe the motion of the spring.
             spring.addListener(new SpringListener() {

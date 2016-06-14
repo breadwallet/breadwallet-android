@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 
@@ -21,6 +22,7 @@ import com.breadwallet.presenter.fragments.IntroRecoverWalletFragment;
 import com.breadwallet.presenter.fragments.IntroWarningFragment;
 import com.breadwallet.presenter.fragments.IntroWelcomeFragment;
 import com.breadwallet.tools.BRConstants;
+import com.breadwallet.tools.SharedPreferencesManager;
 import com.breadwallet.tools.animation.BackgroundMovingAnimator;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
@@ -76,6 +78,7 @@ public class IntroActivity extends FragmentActivity {
         setContentView(R.layout.activity_intro);
         app = this;
 
+
 //        testCore();
         leftButton = (Button) findViewById(R.id.intro_left_button);
         leftButton.setVisibility(View.GONE);
@@ -115,8 +118,7 @@ public class IntroActivity extends FragmentActivity {
 //    public native void testCore();
 
     public boolean checkFirstAddress(byte[] mpk) {
-        SharedPreferences prefs = getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
-        String addressFromPrefs = prefs.getString(BRConstants.FIRST_ADDRESS, "");
+        String addressFromPrefs = SharedPreferencesManager.getFirstAddress(this);
         String generatedAddress = BRWalletManager.getFirstAddress(mpk);
         Log.e(TAG, "addressFromPrefs: " + addressFromPrefs);
         Log.e(TAG, "generatedAddress: " + generatedAddress);

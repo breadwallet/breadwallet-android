@@ -15,6 +15,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.fragments.FragmentCurrency;
+import com.breadwallet.tools.SharedPreferencesManager;
 
 /**
  * BreadWallet
@@ -63,8 +64,7 @@ public class CurrencyListAdapter extends ArrayAdapter<CurrencyEntity> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        SharedPreferences settings = mContext.getSharedPreferences(MainActivity.PREFS_NAME, 0);
-        final int tmp = settings.getInt(FragmentCurrency.POSITION, 0);
+        final int tmp = SharedPreferencesManager.getCurrencyListPosition(mContext);
         if (convertView == null) {
             // inflate the layout
             LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();

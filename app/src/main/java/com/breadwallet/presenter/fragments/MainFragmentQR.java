@@ -24,6 +24,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.customviews.BubbleTextVew;
+import com.breadwallet.tools.SharedPreferencesManager;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
@@ -97,10 +98,8 @@ public class MainFragmentQR extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        SharedPreferences prefs = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
-
         BRWalletManager.refreshAddress();
-        receiveAddress = prefs.getString(MainActivity.PREFS_NAME, null);
+        receiveAddress = SharedPreferencesManager.getReceiveAddress(getActivity());
 
         qrcode = (ImageView) getActivity().findViewById(R.id.main_image_qr_code);
         sharingFragment = new SharingFragment();
@@ -177,7 +176,7 @@ public class MainFragmentQR extends Fragment {
                 smallerDimension);
         try {
             bitmap = qrCodeEncoder.encodeAsBitmap();
-            qrcode.setPadding(1,1,1,1);
+            qrcode.setPadding(1, 1, 1, 1);
             qrcode.setBackgroundResource(R.color.gray);
             qrcode.setImageBitmap(bitmap);
 
@@ -224,8 +223,7 @@ public class MainFragmentQR extends Fragment {
         if (str != null) {
             receiveAddress = str;
         } else {
-            SharedPreferences prefs = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
-            receiveAddress = prefs.getString(MainActivity.PREFS_NAME, null);
+            receiveAddress = SharedPreferencesManager.getReceiveAddress(getActivity());
         }
         generateQR();
     }

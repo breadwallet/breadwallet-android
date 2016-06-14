@@ -2,6 +2,7 @@ package com.breadwallet.wallet;
 
 import android.app.Activity;
 import android.util.Log;
+import android.view.WindowManager;
 
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.BlockEntity;
@@ -188,11 +189,13 @@ public class BRPeerManager {
     public static void startSyncingProgressThread() {
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) {
+
             MiddleViewAdapter.setSyncing(ctx, true);
             ctx.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     try {
+                        ctx.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                         ((MainActivity) ctx).showHideSyncProgressViews(true);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -219,6 +222,7 @@ public class BRPeerManager {
                 @Override
                 public void run() {
                     try {
+                        ctx.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                         ((MainActivity) ctx).showHideSyncProgressViews(false);
                     } catch (Exception e) {
                         e.printStackTrace();

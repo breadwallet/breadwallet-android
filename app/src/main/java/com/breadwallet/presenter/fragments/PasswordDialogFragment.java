@@ -54,6 +54,7 @@ import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.CurrencyManager;
+import com.breadwallet.tools.SharedPreferencesManager;
 import com.breadwallet.tools.TypesConverter;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
@@ -161,9 +162,7 @@ public class PasswordDialogFragment extends DialogFragment {
         });
 
         int failCount = KeyStoreManager.getFailCount(getActivity());
-        SharedPreferences prefs = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
-
-        long secureTime = prefs.getLong(BRConstants.SECURE_TIME_PREFS, 0);
+        long secureTime = SharedPreferencesManager.getSecureTime(getActivity());
         long failTimestamp = KeyStoreManager.getFailTimeStampt(getActivity());
         if (secureTime == 0) secureTime = System.currentTimeMillis() / 1000;
 
@@ -420,9 +419,8 @@ public class PasswordDialogFragment extends DialogFragment {
 
     private void setWalletDisabled() {
         int failCount = KeyStoreManager.getFailCount(getActivity());
-        SharedPreferences prefs = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
 
-        long secureTime = prefs.getLong(BRConstants.SECURE_TIME_PREFS, 0);
+        long secureTime = SharedPreferencesManager.getSecureTime(getActivity());
         long failTimestamp = KeyStoreManager.getFailTimeStampt(getActivity());
         double waitTime = (failTimestamp + Math.pow(6, failCount - 3) * 60.0 - secureTime) / 60.0;
         title.setText(R.string.wallet_disabled);

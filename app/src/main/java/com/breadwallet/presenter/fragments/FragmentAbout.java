@@ -66,12 +66,12 @@ public class FragmentAbout extends Fragment {
                         e.printStackTrace();
                     }
 
-                    String message = String.format(Locale.getDefault(), "ABI: %s, Android version: %s, Breadwallet version: %d\n\n",
-                            Build.CPU_ABI, Build.VERSION.RELEASE, version);
+                    String message = String.format(Locale.getDefault(), "%s %s /ABI: %s /Android v: %s /Breadwallet v: %d\n\n",
+                            Build.MANUFACTURER.toUpperCase(), Build.MODEL,Build.CPU_ABI, Build.VERSION.RELEASE, version);
                     Intent email = new Intent(Intent.ACTION_SEND);
                     email.putExtra(Intent.EXTRA_EMAIL, new String[]{to});
                     email.putExtra(Intent.EXTRA_TEXT, message);
-                    email.putExtra(Intent.EXTRA_SUBJECT, "app crashes");
+                    email.putExtra(Intent.EXTRA_SUBJECT, "support request");
 
                     // need this to prompts email client only
                     email.setType("message/rfc822");

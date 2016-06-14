@@ -19,6 +19,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.CurrencyManager;
+import com.breadwallet.tools.SharedPreferencesManager;
 import com.breadwallet.tools.adapter.CurrencyListAdapter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.SpringAnimator;
@@ -65,7 +66,6 @@ public class FragmentCurrency extends Fragment {
     private String ISO;
     private float rate;
     public static int lastItemsPosition = 0;
-    private SharedPreferences.Editor editor;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -80,9 +80,7 @@ public class FragmentCurrency extends Fragment {
         currencyProgressBar = (ProgressBar) rootView.findViewById(R.id.currency_progress_barr);
         currencyRefresh = (Button) rootView.findViewById(R.id.currencyRefresh);
         noInternetConnection = (TextView) rootView.findViewById(R.id.noInternetConnectionText);
-        SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
         currencyList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        editor = settings.edit();
         currencyRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,16 +97,12 @@ public class FragmentCurrency extends Fragment {
                 ISO = selectedCurrency.substring(0, 3);
                 lastItemsPosition = position;
                 rate = adapter.getItem(position).rate;
-                editor.putString(CURRENT_CURRENCY, ISO);
-                editor.putInt(POSITION, lastItemsPosition);
-                editor.putFloat(RATE, rate);
-                editor.apply();
-//                Log.e(TAG, "rate: " + rate + ", ISO: " + ISO);
+                SharedPreferencesManager.putIso(getActivity(), ISO);
+                SharedPreferencesManager.putCurrencyListPosition(getActivity(), lastItemsPosition);
+                SharedPreferencesManager.putRate(getActivity(), rate);
                 String finalExchangeRate = CurrencyManager.getInstance(app).getMiddleTextExchangeString(rate, ISO);
 
-//                ((BreadWalletApp) getActivity().getApplication()).setTopMiddleView(
-//                        BreadWalletApp.BREAD_WALLET_TEXT, finalExchangeRate);
-                MiddleViewAdapter.resetMiddleView(getActivity(),finalExchangeRate);
+                MiddleViewAdapter.resetMiddleView(getActivity(), finalExchangeRate);
                 adapter.notifyDataSetChanged();
 
             }
@@ -120,20 +114,19 @@ public class FragmentCurrency extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
-        final String iso = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
+        final String iso = SharedPreferencesManager.getIso(getActivity());
         float tmpRate;
         tmpRate = (adapter != null && !adapter.isEmpty()) ?
-                adapter.getItem(settings.getInt(POSITION, 0)).rate : settings.getFloat(FragmentCurrency.RATE, 1);
+                adapter.getItem(SharedPreferencesManager.getCurrencyListPosition(getActivity())).rate
+                : SharedPreferencesManager.getRate(getActivity());
         String readyText = CurrencyManager.getInstance(app).getMiddleTextExchangeString(tmpRate, iso);
-        MiddleViewAdapter.resetMiddleView(getActivity(),readyText);
+        MiddleViewAdapter.resetMiddleView(getActivity(), readyText);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 tryAndSetAdapter();
             }
         }, 500);
-
     }
 
     @Override
@@ -150,7 +143,7 @@ public class FragmentCurrency extends Fragment {
             currencyProgressBar.setVisibility(View.GONE);
         } else {
             ((BreadWalletApp) app.getApplicationContext()).showCustomToast(getActivity(),
-                    getString(R.string.no_internet_connection), 500, Toast.LENGTH_SHORT,0);
+                    getString(R.string.no_internet_connection), 500, Toast.LENGTH_SHORT, 0);
             currencyRefresh.setVisibility(View.VISIBLE);
             noInternetConnection.setVisibility(View.VISIBLE);
             currencyProgressBar.setVisibility(View.GONE);

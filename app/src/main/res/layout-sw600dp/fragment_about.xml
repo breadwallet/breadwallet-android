@@ -69,6 +69,7 @@
                     android:layout_centerHorizontal="true"
                     android:autoLink="web"
                     android:text="@string/support_website"
+                    android:textColor="@color/blue"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textSize="@dimen/text_size" />
 

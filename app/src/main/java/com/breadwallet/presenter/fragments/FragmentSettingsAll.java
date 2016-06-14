@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
@@ -22,6 +23,7 @@ import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.CustomLogger;
+import com.breadwallet.tools.SharedPreferencesManager;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.wallet.BRPeerManager;
@@ -287,11 +289,11 @@ public class FragmentSettingsAll extends Fragment {
         long satoshisAmount = received ? item.getReceived() : (item.getSent() - item.getReceived()) * -1;
 
         bitsTextView.setText(m.getFormattedCurrencyString("BTC", satoshisAmount));
-        dollarsTextView.setText(String.format("(%s)", m.getExchangeForAmount(m.getRateFromPrefs(), m.getISOFromPrefs(), new BigDecimal(satoshisAmount))));
+        dollarsTextView.setText(String.format("(%s)", m.getExchangeForAmount(SharedPreferencesManager.getRate(app), SharedPreferencesManager.getIso(app), new BigDecimal(satoshisAmount))));
         long satoshisAfterTx = item.getBalanceAfterTx();
 
         bitsTotalTextView.setText(m.getFormattedCurrencyString("BTC", satoshisAfterTx));
-        dollarsTotalTextView.setText(String.format("(%s)", m.getExchangeForAmount(m.getRateFromPrefs(), m.getISOFromPrefs(), new BigDecimal(satoshisAfterTx))));
+        dollarsTotalTextView.setText(String.format("(%s)", m.getExchangeForAmount(SharedPreferencesManager.getRate(app), SharedPreferencesManager.getIso(app), new BigDecimal(satoshisAfterTx))));
 
         return tmpLayout;
     }

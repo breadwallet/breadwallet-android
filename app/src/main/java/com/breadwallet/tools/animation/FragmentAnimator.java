@@ -92,7 +92,7 @@ public class FragmentAnimator {
             if (FragmentAnimator.level > 0)
                 FragmentAnimator.pressMenuButton(app, new FragmentSettingsAll());
 //            Log.e(TAG, "in the animateDecoderFragment");
-            MainActivity.beenThroughSavedInstanceMethod = false;
+//            MainActivity.beenThroughSavedInstanceMethod = false;
             MainActivity.decoderFragmentOn = true;
             app.activityButtonsEnable(false);
             CustomPagerAdapter.adapter.showFragments(false);
@@ -110,7 +110,7 @@ public class FragmentAnimator {
         if (app == null) return;
         CustomPagerAdapter.adapter.showFragments(false);
 //        Log.e(TAG, "animateScanResultFragment");
-        MainActivity.beenThroughSavedInstanceMethod = false;
+//        MainActivity.beenThroughSavedInstanceMethod = false;
         MainActivity.scanResultFragmentOn = true;
         InputMethodManager keyboard = (InputMethodManager) app.
                 getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -160,8 +160,9 @@ public class FragmentAnimator {
             MainActivity.pageIndicator.setVisibility(View.GONE);
             InputMethodManager keyboard = (InputMethodManager) context.
                     getSystemService(Context.INPUT_METHOD_SERVICE);
-            keyboard.hideSoftInputFromWindow(CustomPagerAdapter.adapter.
-                    mainFragment.addressEditText.getWindowToken(), 0);
+            if (keyboard != null)
+                keyboard.hideSoftInputFromWindow(CustomPagerAdapter.adapter.
+                        mainFragment.addressEditText.getWindowToken(), 0);
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {

@@ -9,16 +9,15 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.tools.BRClipboardManager;
 import com.breadwallet.tools.BRConstants;
+import com.breadwallet.tools.SharedPreferencesManager;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.wallet.BRWalletManager;
@@ -63,8 +62,7 @@ public class FragmentRecoveryPhrase extends Fragment {
         checkBox = (ImageView) rootView.findViewById(R.id.write_down_check_box);
         checkBoxlayout = (RelativeLayout) rootView.findViewById(R.id.write_down_notice_layout);
 
-        SharedPreferences prefs = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
-        boolean phraseWroteDown = prefs.getBoolean(BRWalletManager.PHRASE_WRITTEN, false);
+        boolean phraseWroteDown = SharedPreferencesManager.getPhraseWroteDown(getActivity());
 
         //TODO delete this code below which is for testing reasons only
 //        thePhrase.setOnClickListener(new View.OnClickListener() {
@@ -102,6 +100,8 @@ public class FragmentRecoveryPhrase extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE);
         Activity app = getActivity();
         if (app == null) app = MainActivity.app;
         if (app != null)
@@ -109,12 +109,15 @@ public class FragmentRecoveryPhrase extends Fragment {
         MiddleViewAdapter.resetMiddleView(getActivity(), null);
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
+    }
+
     private void setCheckBoxImage() {
         checkBox.setImageResource(!checked ? R.drawable.checkbox_checked : R.drawable.checkbox_empty);
         checked = !checked;
-        SharedPreferences prefs = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(BRWalletManager.PHRASE_WRITTEN, checked);
-        editor.apply();
+        SharedPreferencesManager.putCheckBoxRecoveryPhraseFragment(getActivity(), checked);
     }
 }

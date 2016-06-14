@@ -67,6 +67,9 @@ public class BRConstants {
     public static final String FEE_KB_PREFS = "feeKb";
     public static String SUPPORT_EMAIL = "support@breadwallet.com";
 
+    public static final int ONE_BITCOIN = 100000000;
+    public static final String LIMIT_PREFS = "fingerprintLimit";
+
     private BRConstants() {
     }
 

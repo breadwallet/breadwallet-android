@@ -16,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.tools.SharedPreferencesManager;
 import com.breadwallet.wallet.BRWalletManager;
 
 /**
@@ -149,9 +150,6 @@ public class IntroShowPhraseActivity extends Activity {
         checkBox.setImageResource(!checked ? R.drawable.checkbox_checked : R.drawable.checkbox_empty);
         remindMeLater.setText(!checked ? getResources().getString(R.string.done) : getResources().getString(R.string.remind_me_later));
         checked = !checked;
-        SharedPreferences prefs = getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(BRWalletManager.PHRASE_WRITTEN, checked);
-        editor.apply();
+        SharedPreferencesManager.putCheckBoxRecoveryPhraseFragment(this, checked);
     }
 }

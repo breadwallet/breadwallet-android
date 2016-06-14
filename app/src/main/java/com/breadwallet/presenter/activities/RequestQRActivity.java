@@ -21,6 +21,7 @@ import com.breadwallet.presenter.entities.RequestObject;
 import com.breadwallet.presenter.fragments.FragmentCurrency;
 import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.CurrencyManager;
+import com.breadwallet.tools.SharedPreferencesManager;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.qrcode.QRCodeEncoder;
 import com.breadwallet.tools.security.RequestHandler;
@@ -95,9 +96,8 @@ public class RequestQRActivity extends Activity {
         try {
             RequestObject obj = RequestHandler.getRequestFromString(finalAddress);
             address = obj.address;
-            SharedPreferences settings = getSharedPreferences(MainActivity.PREFS_NAME, 0);
-            final String iso = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
-            final float rate = settings.getFloat(FragmentCurrency.RATE, 1);
+            final String iso = SharedPreferencesManager.getIso(this);
+            final float rate = SharedPreferencesManager.getRate(this);
             amount = CurrencyManager.getInstance(this).getBitsAndExchangeString(rate, iso, new BigDecimal(obj.amount));
         } catch (InvalidAlgorithmParameterException e) {
             e.printStackTrace();

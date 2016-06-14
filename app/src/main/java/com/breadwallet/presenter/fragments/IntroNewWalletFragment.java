@@ -10,6 +10,7 @@ import android.widget.Button;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.IntroActivity;
+import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.wallet.BRWalletManager;
 
 /**
@@ -51,18 +52,19 @@ public class IntroNewWalletFragment extends Fragment {
         introGenerate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new Handler().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        BRWalletManager m = BRWalletManager.getInstance(getActivity());
-                        m.wipeWalletButKeystore(getActivity());
-                        m.wipeKeyStore();
-                        boolean success = m.generateRandomSeed();
-                        if (success)
-                            ((IntroActivity) getActivity()).showWarningFragment();
-                    }
-                });
-
+                if (FragmentAnimator.checkTheMultipressingAvailability()) {
+                    new Handler().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            BRWalletManager m = BRWalletManager.getInstance(getActivity());
+                            m.wipeWalletButKeystore(getActivity());
+                            m.wipeKeyStore();
+                            boolean success = m.generateRandomSeed();
+                            if (success)
+                                ((IntroActivity) getActivity()).showWarningFragment();
+                        }
+                    });
+                }
             }
         });
         return rootView;

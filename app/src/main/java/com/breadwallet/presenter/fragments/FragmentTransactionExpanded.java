@@ -16,6 +16,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.tools.CurrencyManager;
+import com.breadwallet.tools.SharedPreferencesManager;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.wallet.BRWalletManager;
 
@@ -84,9 +85,8 @@ public class FragmentTransactionExpanded extends Fragment {
         LinearLayout generalTxFrom = (LinearLayout) rootView.findViewById(R.id.general_tx_from_layout);
         LinearLayout generalTxTo = (LinearLayout) rootView.findViewById(R.id.general_tx_to_layout);
         CurrencyManager m = CurrencyManager.getInstance(getActivity());
-        SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
-        final double rate = settings.getFloat(FragmentCurrency.RATE, 0);
-        final String iso = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
+        final double rate = SharedPreferencesManager.getRate(getActivity());
+        final String iso = SharedPreferencesManager.getIso(getActivity());
         int blockHeight = item.getBlockHeight();
         if (!BRWalletManager.getInstance(getActivity()).transactionIsVerified(item.getHexId())) {
             statusText.setText(R.string.unverified_by_peers);
@@ -204,9 +204,8 @@ public class FragmentTransactionExpanded extends Fragment {
             RelativeLayout addressBlock = (RelativeLayout) inflater.inflate(R.layout.
                     transaction_received_to_addresses, null);
             CurrencyManager m = CurrencyManager.getInstance(getActivity());
-            SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
-            final double rate = settings.getFloat(FragmentCurrency.RATE, 0);
-            final String iso = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
+            final double rate = SharedPreferencesManager.getRate(getActivity());
+            final String iso = SharedPreferencesManager.getIso(getActivity());
 
 //            amountText.setText(m.getFormattedCurrencyString("BTC", String.valueOf(m.getBitsFromSatoshi(amount))));
 //            exchangeText.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, String.valueOf(amount))));
@@ -240,12 +239,8 @@ public class FragmentTransactionExpanded extends Fragment {
             RelativeLayout addressBlock = (RelativeLayout) inflater.inflate(R.layout.
                     transaction_sent_to_addresses, null);
             CurrencyManager m = CurrencyManager.getInstance(getActivity());
-            SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
-            final double rate = settings.getFloat(FragmentCurrency.RATE, 0);
-            final String iso = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
-
-//            amountText.setText(m.getFormattedCurrencyString("BTC", String.valueOf(m.getBitsFromSatoshi(amount))));
-//            exchangeText.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, String.valueOf(amount))));
+            final double rate = SharedPreferencesManager.getRate(getActivity());
+            final String iso = SharedPreferencesManager.getIso(getActivity());
 
             TextView txTo = (TextView) addressBlock.findViewById(R.id.tx_to_text);
             TextView txToDescription = (TextView) addressBlock.findViewById(R.id.tx_to_description);

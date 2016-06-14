@@ -14,6 +14,7 @@ import com.breadwallet.presenter.exceptions.CertificateChainNotFound;
 import com.breadwallet.presenter.fragments.FragmentCurrency;
 import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.CurrencyManager;
+import com.breadwallet.tools.SharedPreferencesManager;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.security.RequestHandler;
@@ -245,10 +246,8 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
         }
 
         //DecimalFormat decimalFormat = new DecimalFormat("0.00");
-        SharedPreferences settings;
-        settings = app.getSharedPreferences(MainActivity.PREFS_NAME, 0);
-        String iso = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
-        float rate = settings.getFloat(FragmentCurrency.RATE, 1.0f);
+        String iso = SharedPreferencesManager.getIso(app);
+        float rate = SharedPreferencesManager.getRate(app);
         CurrencyManager cm = CurrencyManager.getInstance(app);
 
         double minOutput = BRWalletManager.getInstance(app).getMinOutputAmount();

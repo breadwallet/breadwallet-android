@@ -13,7 +13,9 @@ import android.widget.ImageView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.tools.SharedPreferencesManager;
 import com.breadwallet.tools.animation.BackgroundMovingAnimator;
+import com.breadwallet.tools.animation.FragmentAnimator;
 
 /**
  * BreadWallet
@@ -54,20 +56,21 @@ public class IntroNewRecoverFragment extends Fragment {
         newWallet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((IntroActivity) getActivity()).showNewWalletFragment();
+                if (FragmentAnimator.checkTheMultipressingAvailability()) {
+                    ((IntroActivity) getActivity()).showNewWalletFragment();
+                }
             }
         });
 
         recoverWallet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((IntroActivity) getActivity()).showRecoverWalletFragment();
+                if (FragmentAnimator.checkTheMultipressingAvailability()) {
+                    ((IntroActivity) getActivity()).showRecoverWalletFragment();
+                }
             }
         });
-        SharedPreferences prefs = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(MainActivity.PREFS_NAME, null);
-        editor.apply();
+        SharedPreferencesManager.putReceiveAddress(getActivity(), null);
         return rootView;
     }
 

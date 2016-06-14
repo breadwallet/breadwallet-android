@@ -26,6 +26,7 @@ import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.CurrencyManager;
+import com.breadwallet.tools.SharedPreferencesManager;
 import com.breadwallet.tools.adapter.CurrencyListAdapter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.FragmentAnimator;
@@ -81,8 +82,7 @@ public class FragmentSettings extends Fragment {
         RelativeLayout about = (RelativeLayout) rootView.findViewById(R.id.about);
         TextView currencyName = (TextView) rootView.findViewById(R.id.three_letters_currency);
         RelativeLayout changePassword = (RelativeLayout) rootView.findViewById(R.id.change_password);
-        SharedPreferences settings = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, 0);
-        final String tmp = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
+        final String tmp = SharedPreferencesManager.getIso(getActivity());
 //        Log.e(TAG, "Tmp 3 letters: " + tmp);
         currencyName.setText(tmp);
         RelativeLayout localCurrency = (RelativeLayout) rootView.findViewById(R.id.local_currency);
@@ -165,14 +165,20 @@ public class FragmentSettings extends Fragment {
         changePassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final android.app.FragmentManager fm = getActivity().getFragmentManager();
-                new PasswordDialogFragment().show(fm, PasswordDialogFragment.class.getName());
+                if (FragmentAnimator.checkTheMultipressingAvailability()) {
+                    final android.app.FragmentManager fm = getActivity().getFragmentManager();
+                    new PasswordDialogFragment().show(fm, PasswordDialogFragment.class.getName());
+                }
+                }
             }
-        });
 
-        rescan.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            );
+
+            rescan.setOnClickListener(new View.OnClickListener()
+
+            {
+                @Override
+                public void onClick (View v){
                 if (FragmentAnimator.checkTheMultipressingAvailability()) {
                     new Thread(new Runnable() {
                         @Override
@@ -182,27 +188,28 @@ public class FragmentSettings extends Fragment {
                     }).start();
                 }
             }
-        });
+            }
 
-        return rootView;
-    }
+            );
 
-    @Override
-    public void onResume() {
-        super.onResume();
+            return rootView;
+        }
+
+        @Override
+        public void onResume () {
+            super.onResume();
 //        Log.e(TAG, "In onResume");
-        MiddleViewAdapter.resetMiddleView(getActivity(), null);
-    }
+            MiddleViewAdapter.resetMiddleView(getActivity(), null);
+        }
 
-    @Override
-    public void onPause() {
-        super.onPause();
+        @Override
+        public void onPause () {
+            super.onPause();
 //        Log.e(TAG, "In onPause");
-    }
+        }
 
     private void initList() {
         CurrencyListAdapter.currencyListAdapter = CurrencyManager.getInstance(getActivity()).getCurrencyAdapterIfReady();
     }
-
 
 }

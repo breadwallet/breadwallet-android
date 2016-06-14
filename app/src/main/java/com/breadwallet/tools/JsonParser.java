@@ -61,10 +61,8 @@ class JsonParser {
             JSONObject headers = obj.getJSONObject("headers");
             String secureDate = headers.getString("Date");
             @SuppressWarnings("deprecation") long date = Date.parse(secureDate) / 1000;
-            SharedPreferences prefs = activity.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putLong(BRConstants.SECURE_TIME_PREFS, date);
-            editor.apply();
+
+            SharedPreferencesManager.putSecureTime(activity, date);
             Log.e(TAG, "Secure time set to: " + date);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -78,11 +76,9 @@ class JsonParser {
         try {
             JSONObject obj = new JSONObject(jsonString);
             fee = obj.getLong("fee_per_kb");
-            SharedPreferences prefs = activity.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
             if (fee != 0 && fee < BRWalletManager.MAX_FEE_PER_KB) {
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putLong(BRConstants.FEE_KB_PREFS, fee);
-                editor.apply();
+
+                SharedPreferencesManager.putFeePerKb(activity, fee);
                 BRWalletManager.getInstance(activity).setFeePerKb(fee);
                 Log.e(TAG, "fee set to: " + fee);
             }

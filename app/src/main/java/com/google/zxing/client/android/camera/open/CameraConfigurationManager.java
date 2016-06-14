@@ -78,8 +78,6 @@ final class CameraConfigurationManager {
       Log.w(TAG, "In camera config safe mode -- most settings will not be honored");
     }
 
-    // All references to SharedPreferences are removed from here
-
     String focusMode = null;
    
     // Maybe selected auto-focus but not available, so fall through here:

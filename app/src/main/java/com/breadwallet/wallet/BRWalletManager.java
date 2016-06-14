@@ -27,6 +27,7 @@ import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.presenter.fragments.MainFragmentQR;
 import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.CurrencyManager;
+import com.breadwallet.tools.SharedPreferencesManager;
 import com.breadwallet.tools.WordsReader;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
@@ -149,9 +150,7 @@ public class BRWalletManager {
             MainFragmentQR mainFragmentQR = CustomPagerAdapter.adapter == null ? null : CustomPagerAdapter.adapter.mainFragmentQR;
             String tmpAddr = getReceiveAddress();
             if (tmpAddr == null || tmpAddr.isEmpty()) return;
-            SharedPreferences.Editor editor = ctx.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE).edit();
-            editor.putString(MainActivity.PREFS_NAME, tmpAddr);
-            editor.apply();
+            SharedPreferencesManager.putReceiveAddress(ctx, tmpAddr);
             if (mainFragmentQR == null) return;
             mainFragmentQR.refreshAddress(tmpAddr);
         } else {
@@ -167,9 +166,7 @@ public class BRWalletManager {
         sqLiteManager.deleteTransactions();
         sqLiteManager.deleteBlocks();
         sqLiteManager.deletePeers();
-        SharedPreferences.Editor editor = activity.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE).edit();
-        editor.clear();
-        editor.apply();
+        SharedPreferencesManager.clearAllPrefs(activity);
     }
 
     public boolean confirmSweep(final Activity activity, final String privKey) {
@@ -178,54 +175,54 @@ public class BRWalletManager {
 
         if (isValidBitcoinBIP38Key(privKey)) {
             Log.e(TAG, "isValidBitcoinBIP38Key true");
-//            activity.runOnUiThread(new Runnable() {
-//                @Override
-//                public void run() {
-//
-//                    final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-//                    builder.setTitle("password protected key");
-//
-//                    // Set up the input
-//                    final EditText input = new EditText(activity);
-//                    // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-//                    input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-//                    builder.setView(input);
-//
-//                    // Set up the buttons
-//                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            String pass = input.getText().toString();
-//                            String decryptedKey = decryptBip38Key(privKey, pass);
-//                            Log.e(TAG, "decryptedKey: " + decryptedKey);
-//                            if (decryptedKey.equals("")) {
-//                                confirmSweep(activity, privKey);
-//                            } else {
-//                                confirmSweep(activity, decryptedKey);
-//                            }
-//                        }
-//                    });
-//                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            dialog.cancel();
-//                        }
-//                    });
-//
-//                    builder.show();
-//                }
-//            });
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    activity.runOnUiThread(new Runnable() {
+
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                    builder.setTitle("password protected key");
+
+                    // Set up the input
+                    final EditText input = new EditText(activity);
+                    // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                    input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    builder.setView(input);
+
+                    // Set up the buttons
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
-                        public void run() {
-                            ((BreadWalletApp) activity.getApplication()).showCustomDialog("Not available for beta version", "", activity.getString(R.string.ok));
+                        public void onClick(DialogInterface dialog, int which) {
+                            String pass = input.getText().toString();
+                            String decryptedKey = decryptBip38Key(privKey, pass);
+                            Log.e(TAG, "decryptedKey: " + decryptedKey);
+                            if (decryptedKey.equals("")) {
+                                confirmSweep(activity, privKey);
+                            } else {
+                                confirmSweep(activity, decryptedKey);
+                            }
                         }
                     });
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+
+                    builder.show();
                 }
             });
+//            activity.runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    activity.runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            ((BreadWalletApp) activity.getApplication()).showCustomDialog("Not available for beta version", "", activity.getString(R.string.ok));
+//                        }
+//                    });
+//                }
+//            });
             return true;
         } else if (isValidBitcoinPrivateKey(privKey)) {
             Log.e(TAG, "isValidBitcoinPrivateKey true");
@@ -243,8 +240,7 @@ public class BRWalletManager {
             ctx.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    SharedPreferences prefs = ctx.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
-                    boolean phraseWroteDown = prefs.getBoolean(PHRASE_WRITTEN, false);
+                    boolean phraseWroteDown = SharedPreferencesManager.getPhraseWroteDown(ctx);
                     if (phraseWroteDown) return;
                     AlertDialog alert;
                     AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
@@ -316,7 +312,7 @@ public class BRWalletManager {
                     CurrencyManager cm = CurrencyManager.getInstance(ctx);
                     String strToShow = String.format(ctx.getString(amount > 0 ? R.string.received : R.string.sent),
                             cm.getFormattedCurrencyString("BTC", absAmount) + " (" +
-                                    m.getExchangeForAmount(m.getRateFromPrefs(), m.getISOFromPrefs(), new BigDecimal(absAmount)) + ")");
+                                    m.getExchangeForAmount(SharedPreferencesManager.getRate(ctx), SharedPreferencesManager.getIso(ctx), new BigDecimal(absAmount)) + ")");
                     ((BreadWalletApp) ctx.getApplicationContext()).showCustomToast(ctx, strToShow,
                             BreadWalletApp.DISPLAY_HEIGHT_PX / 2, Toast.LENGTH_LONG, 1);
                 }

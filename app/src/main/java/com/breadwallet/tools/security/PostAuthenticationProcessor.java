@@ -84,12 +84,15 @@ public class PostAuthenticationProcessor {
             try {
                 app.showWarningFragment();
             } catch (Exception e) {
-                e.printStackTrace();
+                BRWalletManager m = BRWalletManager.getInstance(app);
+                m.wipeKeyStore();
+                m.wipeWalletButKeystore(app);
+                FragmentAnimator.resetFragmentAnimator();
+                throw new NullPointerException("failed to generate seed");
             }
         } else {
             throw new NullPointerException("failed to generate seed");
         }
-
     }
 
     public void onRecoverWalletAuth(IntroActivity app) {

@@ -25,6 +25,7 @@ import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodInfo;
@@ -52,6 +53,7 @@ import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.NetworkChangeReceiver;
+import com.breadwallet.tools.SharedPreferencesManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.security.RequestHandler;
 import com.breadwallet.tools.security.RootHelper;
@@ -115,6 +117,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     public static boolean decoderFragmentOn;
     public static boolean scanResultFragmentOn;
     public static RelativeLayout pageIndicator;
+    public static RelativeLayout protectionLayer;
     private ImageView pageIndicatorLeft;
     private ImageView pageIndicatorRight;
     private Map<String, Integer> burgerButtonMap;
@@ -125,7 +128,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     public TextView syncProgressText;
     private static ParallaxViewPager parallaxViewPager;
     private boolean doubleBackToExitPressedOnce;
-    public static boolean beenThroughSavedInstanceMethod = false;
+    //    public static boolean beenThroughSavedInstanceMethod = false;
     public ViewFlipper viewFlipper;
     public ViewFlipper lockerPayFlipper;
     private RelativeLayout networkErrorBar;
@@ -153,13 +156,11 @@ public class MainActivity extends FragmentActivity implements Observer {
         System.loadLibrary("core");
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        beenThroughSavedInstanceMethod = true;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if (savedInstanceState != null)
+            savedInstanceState.clear();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -348,6 +349,8 @@ public class MainActivity extends FragmentActivity implements Observer {
         middleViewState = 0;
         middleBubbleBlocksCount = 0;
         app = this;
+        protectionLayer.setVisibility(View.GONE);
+
         CurrencyManager currencyManager = CurrencyManager.getInstance(this);
         currencyManager.startTimer();
         currencyManager.deleteObservers();
@@ -369,6 +372,7 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     @Override
     protected void onPause() {
+        protectionLayer.setVisibility(View.VISIBLE);
         super.onPause();
         appInBackground = true;
         Log.e(TAG, "Activity onPause");
@@ -428,6 +432,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         middleBubbleBlocks = (BubbleTextVew) findViewById(R.id.middle_bubble_blocks);
         qrBubble1 = (BubbleTextVew) findViewById(R.id.qr_bubble1);
         qrBubble2 = (BubbleTextVew) findViewById(R.id.qr_bubble2);
+        protectionLayer = (RelativeLayout) findViewById(R.id.protection_layer);
 //        myClipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
 
     }
@@ -661,12 +666,13 @@ public class MainActivity extends FragmentActivity implements Observer {
             return;
         }
         String strAmount = String.valueOf(new BigDecimal(tempAmount).divide(new BigDecimal("1000000")).toString());
-        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        String testTemp = prefs.getString(PREFS_NAME, "");
+        String address = SharedPreferencesManager.getReceiveAddress(this);
+
+
 
         intent = new Intent(this, RequestQRActivity.class);
         intent.putExtra(BRConstants.INTENT_EXTRA_REQUEST_AMOUNT, strAmount);
-        intent.putExtra(BRConstants.INTENT_EXTRA_REQUEST_ADDRESS, testTemp);
+        intent.putExtra(BRConstants.INTENT_EXTRA_REQUEST_ADDRESS, address);
         startActivity(intent);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         FragmentAnimator.hideScanResultFragment();
@@ -733,7 +739,6 @@ public class MainActivity extends FragmentActivity implements Observer {
     }
 
     public void confirmPay(final PaymentRequestEntity request) {
-        SharedPreferences settings;
         boolean certified = false;
         if (request.cn != null && request.cn.length() != 0) {
             certified = true;
@@ -750,9 +755,9 @@ public class MainActivity extends FragmentActivity implements Observer {
         }
 
         //DecimalFormat decimalFormat = new DecimalFormat("0.00");
-        settings = getSharedPreferences(MainActivity.PREFS_NAME, 0);
-        String iso = settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
-        float rate = settings.getFloat(FragmentCurrency.RATE, 1.0f);
+        String iso = SharedPreferencesManager.getIso(this);
+
+        float rate = SharedPreferencesManager.getRate(this);
         CurrencyManager cm = CurrencyManager.getInstance(this);
         BRWalletManager m = BRWalletManager.getInstance(this);
         final long feeForTx = m.feeForTransaction(request.addresses[0], request.amount);
@@ -880,14 +885,10 @@ public class MainActivity extends FragmentActivity implements Observer {
             //Save the first address for future check
             m.createWallet(transactionsCount, pubkeyEncoded);
             String firstAddress = BRWalletManager.getFirstAddress(pubkeyEncoded);
-            SharedPreferences prefs = getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putString(BRConstants.FIRST_ADDRESS, firstAddress);
-            editor.apply();
+            SharedPreferencesManager.putFirstAddress(this, firstAddress);
         }
 
-        SharedPreferences prefs = getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
-        long fee = prefs.getLong(BRConstants.FEE_KB_PREFS, 0);
+        long fee = SharedPreferencesManager.getFeePerKb(this);
         if (fee == 0) fee = BRWalletManager.DEFAULT_FEE_PER_KB;
         BRWalletManager.getInstance(this).setFeePerKb(fee);
 

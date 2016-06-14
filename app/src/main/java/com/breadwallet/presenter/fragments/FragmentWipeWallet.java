@@ -12,6 +12,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -128,11 +129,14 @@ public class FragmentWipeWallet extends Fragment {
     public void onPause() {
         super.onPause();
         ((BreadWalletApp) getActivity().getApplication()).hideKeyboard(getActivity());
+        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE);
         allowWipeButtonPress = true;
         MainActivity app = MainActivity.app;
         if (app != null)

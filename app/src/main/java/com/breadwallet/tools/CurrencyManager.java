@@ -126,18 +126,15 @@ public class CurrencyManager extends Observable {
                         tmp.code = tmpObj.getString("code");
                         tmp.codeAndName = tmp.code + " - " + tmp.name;
                         tmp.rate = (float) tmpObj.getDouble("rate");
-                        if (tmp.code.equals("USD")) {
-                            String theIso = getISOFromPrefs();
+                        String selectedISO = SharedPreferencesManager.getIso(context);
+                        Log.e(TAG,"selectedISO: " + selectedISO);
+                        if (tmp.code.equalsIgnoreCase(selectedISO)) {
 //                            Log.e(TAG, "theIso : " + theIso);
-                            if (theIso.equals("USD")) {
 //                                Log.e(TAG, "Putting the shit in the shared preffs");
-                                SharedPreferences settings = context.getSharedPreferences(MainActivity.PREFS_NAME, 0);
-                                SharedPreferences.Editor editor = settings.edit();
-                                editor.putString(FragmentCurrency.CURRENT_CURRENCY, tmp.code);
-                                editor.putInt(FragmentCurrency.POSITION, FragmentCurrency.lastItemsPosition);
-                                editor.putFloat(FragmentCurrency.RATE, tmp.rate);
-                                editor.apply();
-                            }
+                            SharedPreferencesManager.putIso(context, tmp.code);
+                            SharedPreferencesManager.putCurrencyListPosition(context, i - 1);
+                            Log.e(TAG,"position set: " + (i - 1));
+                            SharedPreferencesManager.putRate(context, tmp.rate);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -168,7 +165,7 @@ public class CurrencyManager extends Observable {
                 currencyListAdapter.addAll(tmp);
                 currencyListAdapter.notifyDataSetChanged();
                 if (FragmentAnimator.level <= 2)
-                    MiddleViewAdapter.resetMiddleView( ctx, null);
+                    MiddleViewAdapter.resetMiddleView(ctx, null);
             } else {
                 Log.e(TAG, "Adapter Not Changed, data is empty");
             }
@@ -247,9 +244,9 @@ public class CurrencyManager extends Observable {
     }
 
     public String getCurrentBalanceText() {
-        String iso = getISOFromPrefs();
-        double rate = getRateFromPrefs();
-        long exchange = BRWalletManager.getInstance(ctx).localAmount(getBALANCE(),new BigDecimal(String.valueOf(rate)).multiply(new BigDecimal("100")).doubleValue());
+        String iso = SharedPreferencesManager.getIso(ctx);
+        double rate = SharedPreferencesManager.getRate(ctx);
+        long exchange = BRWalletManager.getInstance(ctx).localAmount(getBALANCE(), new BigDecimal(String.valueOf(rate)).multiply(new BigDecimal("100")).doubleValue());
         Log.e(TAG, "getCurrentBalanceText, exchange: " + exchange);
 
         return getFormattedCurrencyString("BTC", getBALANCE()) + " (" +
@@ -331,16 +328,6 @@ public class CurrencyManager extends Observable {
         ((java.text.DecimalFormat) currencyFormat).setDecimalFormatSymbols(decimalFormatSymbols);
 
         return currencyFormat.format(amount);
-    }
-
-    public String getISOFromPrefs() {
-        SharedPreferences settings = MainActivity.app.getSharedPreferences(MainActivity.PREFS_NAME, 0);
-        return settings.getString(FragmentCurrency.CURRENT_CURRENCY, "USD");
-    }
-
-    public double getRateFromPrefs() {
-        SharedPreferences settings = MainActivity.app.getSharedPreferences(MainActivity.PREFS_NAME, 0);
-        return settings.getFloat(FragmentCurrency.RATE, 0f);
     }
 
 }

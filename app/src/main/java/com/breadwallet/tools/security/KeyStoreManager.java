@@ -13,6 +13,7 @@ import android.util.Log;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.BRConstants;
+import com.breadwallet.tools.SharedPreferencesManager;
 import com.breadwallet.tools.TypesConverter;
 import com.breadwallet.wallet.BRWalletManager;
 
@@ -287,8 +288,8 @@ public class KeyStoreManager {
     public static boolean putFailCount(int failCount, Activity context) {
         Log.e(TAG, "putFailCount: " + failCount);
         if (failCount >= 3) {
-            SharedPreferences prefs = context.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
-            long time = prefs.getLong(BRConstants.SECURE_TIME_PREFS, System.currentTimeMillis() / 1000);
+
+            long time = SharedPreferencesManager.getSecureTime(context);
             putFailTimeStamp(time, context);
         }
         byte[] bytesToStore = TypesConverter.intToBytes(failCount);

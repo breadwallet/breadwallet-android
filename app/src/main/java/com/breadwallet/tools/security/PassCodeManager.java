@@ -1,10 +1,8 @@
 package com.breadwallet.tools.security;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.SharedPreferences;
 
-import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.tools.SharedPreferencesManager;
 import com.breadwallet.wallet.BRWalletManager;
 
 /**
@@ -32,10 +30,8 @@ import com.breadwallet.wallet.BRWalletManager;
  * THE SOFTWARE.
  */
 public class PassCodeManager {
-    private static PassCodeManager instance;
-    private static final int ONE_BITCOIN = 100000000;
     public static final String TAG = PassCodeManager.class.getName();
-    public static final String LIMIT_PREFS = "fingerprintLimit";
+    private static PassCodeManager instance;
 
     private PassCodeManager() {
     }
@@ -56,15 +52,11 @@ public class PassCodeManager {
     }
 
     public int getLimit(Activity activity) {
-        SharedPreferences prefs = activity.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
-        return prefs.getInt(LIMIT_PREFS, ONE_BITCOIN);
+        return SharedPreferencesManager.getLimit(activity);
     }
 
     public void setLimit(Activity activity, int limit) {
-        SharedPreferences prefs = activity.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt(LIMIT_PREFS, limit);
-        editor.apply();
+        SharedPreferencesManager.putLimit(activity,limit);
     }
 
 
