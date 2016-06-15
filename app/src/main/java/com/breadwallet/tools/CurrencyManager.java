@@ -127,13 +127,13 @@ public class CurrencyManager extends Observable {
                         tmp.codeAndName = tmp.code + " - " + tmp.name;
                         tmp.rate = (float) tmpObj.getDouble("rate");
                         String selectedISO = SharedPreferencesManager.getIso(context);
-                        Log.e(TAG,"selectedISO: " + selectedISO);
+//                        Log.e(TAG,"selectedISO: " + selectedISO);
                         if (tmp.code.equalsIgnoreCase(selectedISO)) {
 //                            Log.e(TAG, "theIso : " + theIso);
 //                                Log.e(TAG, "Putting the shit in the shared preffs");
                             SharedPreferencesManager.putIso(context, tmp.code);
                             SharedPreferencesManager.putCurrencyListPosition(context, i - 1);
-                            Log.e(TAG,"position set: " + (i - 1));
+//                            Log.e(TAG,"position set: " + (i - 1));
                             SharedPreferencesManager.putRate(context, tmp.rate);
                         }
                     } catch (JSONException e) {

@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="@string/more"
+        android:textSize="@dimen/text_size"
         android:textColor="@color/dark_blue"/>
 
 </LinearLayout>

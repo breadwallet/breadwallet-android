@@ -116,7 +116,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     public static MainActivity app;
     public static boolean decoderFragmentOn;
     public static boolean scanResultFragmentOn;
-    public static RelativeLayout pageIndicator;
+    public RelativeLayout pageIndicator;
     public static RelativeLayout protectionLayer;
     private ImageView pageIndicatorLeft;
     private ImageView pageIndicatorRight;
@@ -163,6 +163,8 @@ public class MainActivity extends FragmentActivity implements Observer {
             savedInstanceState.clear();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (KeyStoreManager.getMasterPublicKey(this).length == 0) finish();
 
         app = this;
         initializeViews();
@@ -667,7 +669,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         }
         String strAmount = String.valueOf(new BigDecimal(tempAmount).divide(new BigDecimal("1000000")).toString());
         String address = SharedPreferencesManager.getReceiveAddress(this);
-
 
 
         intent = new Intent(this, RequestQRActivity.class);

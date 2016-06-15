@@ -2,11 +2,18 @@ package com.breadwallet.tools.adapter;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Handler;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.TranslateAnimation;
+import android.widget.FrameLayout;
 
+import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.fragments.MainFragment;
@@ -45,6 +52,7 @@ public class CustomPagerAdapter extends FragmentPagerAdapter {
     public final MainFragment mainFragment;
     public final MainFragmentQR mainFragmentQR;
     private final List<Fragment> fragments;
+    private final int ANIM_DURATION = 150;
     private View main;
     private View mainQR;
     public static CustomPagerAdapter adapter;
@@ -83,30 +91,90 @@ public class CustomPagerAdapter extends FragmentPagerAdapter {
         if (main == null) main = mainFragment.getView();
         if (mainQR == null) mainQR = mainFragmentQR.getView();
         if (b) {
-            new Handler().postDelayed(new Runnable() {
+            new Handler().post(new Runnable() {
 
                 @Override
                 public void run() {
-                    if (main != null)
-                        main.setVisibility(View.VISIBLE);
-                    if (mainQR != null)
-                        mainQR.setVisibility(View.VISIBLE);
-                    MainActivity.pageIndicator.setVisibility(View.VISIBLE);
+                    MainActivity app = MainActivity.app;
+                    if (app != null) {
+                        TranslateAnimation anim = new TranslateAnimation(0, 0, -600, 0);
+                        anim.setAnimationListener(new Animation.AnimationListener() {
+                            @Override
+                            public void onAnimationStart(Animation animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animation animation) {
+                                if(main!=null)main.setVisibility(View.VISIBLE);
+                                if(mainQR!=null)mainQR.setVisibility(View.VISIBLE);
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animation animation) {
+
+                            }
+                        });
+                        anim.setDuration(ANIM_DURATION);
+                        Animation animation = new AlphaAnimation(0f, 1f);
+                        animation.setDuration(ANIM_DURATION);
+                        AnimationSet set = new AnimationSet(true);
+                        set.addAnimation(anim);
+                        set.addAnimation(animation);
+                        if (main != null) {
+                            main.startAnimation(set);
+//                            main.startAnimation(animation);
+                        }
+                        if (mainQR != null) {
+                            mainQR.startAnimation(set);
+//                            mainQR.startAnimation(animation);
+                        }
+                        app.pageIndicator.setVisibility(View.VISIBLE);
+                    }
                 }
-            }, 200);
+            });
 
         } else {
-            new Handler().postDelayed(new Runnable() {
+            new Handler().post(new Runnable() {
 
                 @Override
                 public void run() {
-                    if (main != null)
-                        main.setVisibility(View.GONE);
-                    if (mainQR != null)
-                        mainQR.setVisibility(View.GONE);
-                    MainActivity.pageIndicator.setVisibility(View.GONE);
+                    MainActivity app = MainActivity.app;
+                    if (app != null) {
+                        TranslateAnimation anim = new TranslateAnimation(0, 0, 0, -600);
+                        anim.setDuration(ANIM_DURATION);
+                        anim.setAnimationListener(new Animation.AnimationListener() {
+                            @Override
+                            public void onAnimationStart(Animation animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animation animation) {
+                                if(main!=null)main.setVisibility(View.GONE);
+                                if(mainQR!=null)mainQR.setVisibility(View.GONE);
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animation animation) {
+
+                            }
+                        });
+                        Animation animation = new AlphaAnimation(1f, 0f);
+                        animation.setDuration(ANIM_DURATION);
+                        AnimationSet set = new AnimationSet(true);
+                        set.addAnimation(anim);
+                        set.addAnimation(animation);
+                        if (main != null) {
+                            main.startAnimation(set);
+                        }
+                        if (mainQR != null) {
+                            mainQR.startAnimation(set);
+                        }
+                        app.pageIndicator.setVisibility(View.VISIBLE);
+                    }
                 }
-            }, 200);
+            });
 
         }
     }

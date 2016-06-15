@@ -106,13 +106,14 @@ public class PostAuthenticationProcessor {
                 success2 = KeyStoreManager.putKeyStoreCanary(BRConstants.CANARY_STRING, app, 0);
             if (!success || !success2)
                 return;
-
-            byte[] pubKey = BRWalletManager.getInstance(app).getMasterPubKey(phraseForKeyStore);
-            KeyStoreManager.putMasterPublicKey(pubKey, app);
+            if (phraseForKeyStore.length() != 0) {
+                byte[] pubKey = BRWalletManager.getInstance(app).getMasterPubKey(phraseForKeyStore);
+                KeyStoreManager.putMasterPublicKey(pubKey, app);
 //                    Log.w(TAG, "The phrase from keystore is: " + KeyStoreManager.getKeyStoreString(getActivity()));
-            app.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-            app.startMainActivity();
-            if (!app.isDestroyed()) app.finish();
+                app.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                app.startMainActivity();
+                if (!app.isDestroyed()) app.finish();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

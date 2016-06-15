@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 
+import com.facebook.rebound.SimpleSpringListener;
 import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringConfig;
 import com.facebook.rebound.SpringListener;
@@ -38,8 +39,8 @@ public class SpringAnimator {
     private static final String TAG = SpringAnimator.class.getName();
 
     private static final int SPRING_DELAY_MS = 30;
-    private static final double TENSION = 600;
-    private static final double DAMPER = 35;
+    private static final double TENSION = 800;
+    private static final double DAMPER = 30;
     public static final int TO_LEFT = -1;
     public static final int TO_RIGHT = 1;
 
@@ -194,18 +195,12 @@ public class SpringAnimator {
         if(view == null) return;
         // Add a spring to the system.
         final Spring spring = springSystem.createSpring();
-        SpringConfig config = new SpringConfig(TENSION, DAMPER);
+        SpringConfig config = new SpringConfig(500, 40);
         spring.setSpringConfig(config);
-        spring.setEndValue(1f);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                spring.setEndValue(0f);
-            }
-        }, SPRING_DELAY_MS);
+        spring.setEndValue(1);
 
         // Add a listener to observe the motion of the spring.
-        spring.addListener(new SpringListener() {
+        spring.addListener(new SimpleSpringListener() {
 
             @Override
             public void onSpringUpdate(Spring spring) {
@@ -216,17 +211,6 @@ public class SpringAnimator {
                 view.setX(direction * (value * -tension));
             }
 
-            @Override
-            public void onSpringAtRest(Spring spring) {
-            }
-
-            @Override
-            public void onSpringActivate(Spring spring) {
-            }
-
-            @Override
-            public void onSpringEndStateChange(Spring spring) {
-            }
         });
     }
 
@@ -245,12 +229,12 @@ public class SpringAnimator {
         SpringConfig config = new SpringConfig(TENSION, DAMPER);
         spring.setSpringConfig(config);
         spring.setEndValue(1f);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                spring.setEndValue(0f);
-            }
-        }, 30);
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                spring.setEndValue(0f);
+//            }
+//        }, 30);
 
         // Add a listener to observe the motion of the spring.
         spring.addListener(new SpringListener() {

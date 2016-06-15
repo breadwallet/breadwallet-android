@@ -163,50 +163,48 @@ public class FragmentSettings extends Fragment {
             }
         });
         changePassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (FragmentAnimator.checkTheMultipressingAvailability()) {
-                    final android.app.FragmentManager fm = getActivity().getFragmentManager();
-                    new PasswordDialogFragment().show(fm, PasswordDialogFragment.class.getName());
-                }
-                }
-            }
+                                              @Override
+                                              public void onClick(View v) {
+                                                  if (FragmentAnimator.checkTheMultipressingAvailability()) {
+                                                      final android.app.FragmentManager fm = getActivity().getFragmentManager();
+                                                      new PasswordDialogFragment().show(fm, PasswordDialogFragment.class.getName());
+                                                  }
+                                              }
+                                          }
 
-            );
+        );
 
-            rescan.setOnClickListener(new View.OnClickListener()
+        rescan.setOnClickListener(new View.OnClickListener() {
+                                      @Override
+                                      public void onClick(View v) {
+                                          if (FragmentAnimator.checkTheMultipressingAvailability()) {
+                                              new Thread(new Runnable() {
+                                                  @Override
+                                                  public void run() {
+                                                      BRPeerManager.getInstance(getActivity()).rescan();
+                                                  }
+                                              }).start();
+                                          }
+                                      }
+                                  }
 
-            {
-                @Override
-                public void onClick (View v){
-                if (FragmentAnimator.checkTheMultipressingAvailability()) {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            BRPeerManager.getInstance(getActivity()).rescan();
-                        }
-                    }).start();
-                }
-            }
-            }
+        );
 
-            );
+        return rootView;
+    }
 
-            return rootView;
-        }
-
-        @Override
-        public void onResume () {
-            super.onResume();
+    @Override
+    public void onResume() {
+        super.onResume();
 //        Log.e(TAG, "In onResume");
-            MiddleViewAdapter.resetMiddleView(getActivity(), null);
-        }
+        MiddleViewAdapter.resetMiddleView(getActivity(), null);
+    }
 
-        @Override
-        public void onPause () {
-            super.onPause();
+    @Override
+    public void onPause() {
+        super.onPause();
 //        Log.e(TAG, "In onPause");
-        }
+    }
 
     private void initList() {
         CurrencyListAdapter.currencyListAdapter = CurrencyManager.getInstance(getActivity()).getCurrencyAdapterIfReady();
