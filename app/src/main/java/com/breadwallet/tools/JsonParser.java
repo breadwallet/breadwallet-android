@@ -67,6 +67,26 @@ class JsonParser {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        return jsonArray == null ? getBackUpJSonArray(activity) : jsonArray;
+    }
+
+    public static JSONArray getBackUpJSonArray(Activity activity) {
+        String jsonString = callURL("https://bitpay.com/rates");
+        //        System.out.println("\n\njsonString: " + jsonString);
+        JSONArray jsonArray = null;
+        try {
+            JSONObject obj = new JSONObject(jsonString);
+
+            jsonArray = obj.getJSONArray("data");
+            JSONObject headers = obj.getJSONObject("headers");
+            String secureDate = headers.getString("Date");
+            @SuppressWarnings("deprecation") long date = Date.parse(secureDate) / 1000;
+
+            SharedPreferencesManager.putSecureTime(activity, date);
+//            Log.e(TAG,"\n\njsonArray: " + jsonArray);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         return jsonArray;
     }
 

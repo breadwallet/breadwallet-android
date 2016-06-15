@@ -88,7 +88,7 @@ public class PostAuthenticationProcessor {
                 m.wipeKeyStore();
                 m.wipeWalletButKeystore(app);
                 FragmentAnimator.resetFragmentAnimator();
-                throw new NullPointerException("failed to generate seed");
+                app.finish();
             }
         } else {
             throw new NullPointerException("failed to generate seed");

@@ -109,7 +109,9 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
     }
 
     public static ImportPrivKeyEntity createTx(Activity activity, String url) {
+        if (url == null || url.isEmpty()) return null;
         String jsonString = callURL(url);
+        if (jsonString == null || jsonString.isEmpty()) return null;
         ImportPrivKeyEntity result = null;
         JSONArray jsonArray = null;
         try {

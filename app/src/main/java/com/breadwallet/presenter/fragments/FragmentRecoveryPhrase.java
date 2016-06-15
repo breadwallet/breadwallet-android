@@ -13,9 +13,12 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.tools.BRClipboardManager;
 import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.SharedPreferencesManager;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
@@ -65,14 +68,14 @@ public class FragmentRecoveryPhrase extends Fragment {
         boolean phraseWroteDown = SharedPreferencesManager.getPhraseWroteDown(getActivity());
 
         //TODO delete this code below which is for testing reasons only
-//        thePhrase.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                BRClipboardManager.copyToClipboard(getActivity(), thePhrase.getText().toString());
-//                ((BreadWalletApp) getActivity().getApplication()).showCustomToast(getActivity(),
-//                        getString(R.string.copied), 300, Toast.LENGTH_SHORT, 0);
-//            }
-//        });
+        thePhrase.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BRClipboardManager.copyToClipboard(getActivity(), thePhrase.getText().toString());
+                ((BreadWalletApp) getActivity().getApplication()).showCustomToast(getActivity(),
+                        getString(R.string.copied), 300, Toast.LENGTH_SHORT, 0);
+            }
+        });
 
         if (!phraseWroteDown) {
             checkBoxlayout.setVisibility(View.VISIBLE);

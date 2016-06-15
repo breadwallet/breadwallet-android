@@ -26,8 +26,11 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
 import android.view.animation.ScaleAnimation;
+import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -112,12 +115,10 @@ public class MainActivity extends FragmentActivity implements Observer {
     private static final int DEBUG = 1;
     private static final int RELEASE = 2;
     private static final float PAGE_INDICATOR_SCALE_UP = 1.3f;
-
     public static MainActivity app;
     public static boolean decoderFragmentOn;
     public static boolean scanResultFragmentOn;
     public RelativeLayout pageIndicator;
-    public static RelativeLayout protectionLayer;
     private ImageView pageIndicatorLeft;
     private ImageView pageIndicatorRight;
     private Map<String, Integer> burgerButtonMap;
@@ -128,7 +129,6 @@ public class MainActivity extends FragmentActivity implements Observer {
     public TextView syncProgressText;
     private static ParallaxViewPager parallaxViewPager;
     private boolean doubleBackToExitPressedOnce;
-    //    public static boolean beenThroughSavedInstanceMethod = false;
     public ViewFlipper viewFlipper;
     public ViewFlipper lockerPayFlipper;
     private RelativeLayout networkErrorBar;
@@ -139,10 +139,6 @@ public class MainActivity extends FragmentActivity implements Observer {
     private int middleBubbleBlocksCount = 0;
     private static int MODE = RELEASE;
     private TextView testnet;
-    private FingerprintManager fingerprintManager;
-    private ToastBlockShowTask toastBlockShowTask;
-    private int runCount = 0;
-    boolean deleteTxs = false;
     private BubbleTextVew middleBubble1;
     private BubbleTextVew middleBubble2;
     private BubbleTextVew middleBubbleBlocks;
@@ -155,7 +151,6 @@ public class MainActivity extends FragmentActivity implements Observer {
     static {
         System.loadLibrary("core");
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -351,7 +346,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         middleViewState = 0;
         middleBubbleBlocksCount = 0;
         app = this;
-        protectionLayer.setVisibility(View.GONE);
 
         CurrencyManager currencyManager = CurrencyManager.getInstance(this);
         currencyManager.startTimer();
@@ -374,7 +368,6 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     @Override
     protected void onPause() {
-        protectionLayer.setVisibility(View.VISIBLE);
         super.onPause();
         appInBackground = true;
         Log.e(TAG, "Activity onPause");
@@ -434,8 +427,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         middleBubbleBlocks = (BubbleTextVew) findViewById(R.id.middle_bubble_blocks);
         qrBubble1 = (BubbleTextVew) findViewById(R.id.qr_bubble1);
         qrBubble2 = (BubbleTextVew) findViewById(R.id.qr_bubble2);
-        protectionLayer = (RelativeLayout) findViewById(R.id.protection_layer);
-//        myClipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
 
     }
 
@@ -841,18 +832,12 @@ public class MainActivity extends FragmentActivity implements Observer {
         MiddleViewAdapter.resetMiddleView(this, null);
     }
 
-
     private void setUpTheWallet() {
 
         BRWalletManager m = BRWalletManager.getInstance(this);
         final BRPeerManager pm = BRPeerManager.getInstance(this);
 
         SQLiteManager sqLiteManager = SQLiteManager.getInstance(this);
-
-//        CustomLogger.logThis("setUpTheWallet: number of transactions from sqlite: ",
-//                String.valueOf(transactions.size()),
-//                " transactionCount: ", String.valueOf(transactionsCount), " blocksCount: ",
-//                String.valueOf(blocksCount), " peersCount: ", String.valueOf(peersCount));
 
         if (!m.isCreated()) {
             List<BRTransactionEntity> transactions = sqLiteManager.getTransactions();
@@ -980,18 +965,36 @@ public class MainActivity extends FragmentActivity implements Observer {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (middleBubble1 != null)
-                    middleBubble1.setVisibility(View.GONE);
-                if (middleBubble2 != null)
-                    middleBubble2.setVisibility(View.GONE);
-                if (middleBubbleBlocks != null)
-                    middleBubbleBlocks.setVisibility(View.GONE);
-                if (qrBubble2 != null)
-                    qrBubble2.setVisibility(View.GONE);
-                if (qrBubble1 != null)
-                    qrBubble1.setVisibility(View.GONE);
+                fadeScaleBubble(middleBubble1, middleBubble2, middleBubbleBlocks, qrBubble2, qrBubble1);
             }
         });
+
+    }
+
+    private void fadeScaleBubble(final View... views) {
+        if (views == null || views.length == 0) return;
+        for (final View v : views) {
+            if (v == null || v.getVisibility() != View.VISIBLE) continue;
+            Animation animation = new AlphaAnimation(1f, 0f);
+            animation.setDuration(150);
+            animation.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    v.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+            v.startAnimation(animation);
+        }
 
     }
 

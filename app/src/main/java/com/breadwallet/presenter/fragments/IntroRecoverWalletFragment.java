@@ -63,6 +63,7 @@ public class IntroRecoverWalletFragment extends Fragment {
         recoverButton = (Button) rootView.findViewById(R.id.recover_button);
         editText = (EditText) rootView.findViewById(R.id.recover_wallet_edit_text);
         editText.setText("");
+//        editText.setText("こせき　ぎじにってい　けっこん　せつぞく　うんどう　ふこう　にっすう　こせい　きさま　なまみ　たきび　はかい");
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) ||
@@ -80,7 +81,7 @@ public class IntroRecoverWalletFragment extends Fragment {
                     alertDialog.dismiss();
                 }
 
-                String phraseToCheck = editText.getText().toString().trim().toLowerCase();
+                String phraseToCheck = editText.getText().toString().toLowerCase();
                 String normalizedPhrase = Normalizer.normalize(phraseToCheck, Normalizer.Form.NFKD);
 
                 if (BRWalletManager.getInstance(getActivity()).validatePhrase(getActivity(), phraseToCheck)) {
@@ -93,8 +94,6 @@ public class IntroRecoverWalletFragment extends Fragment {
                     boolean success2 = false;
                     if (success)
                         success2 = KeyStoreManager.putKeyStoreCanary(BRConstants.CANARY_STRING, getActivity(), 0);
-//                    CharSequence sequence = CharBuffer.wrap(phraseToCheck);
-//                    char[] normalizedPhrase = Normalizer.normalize(sequence, Normalizer.Form.NFKD).toCharArray();
                     if (!success || !success2){
                         PostAuthenticationProcessor.getInstance().setPhraseForKeyStore(normalizedPhrase);
                         return;

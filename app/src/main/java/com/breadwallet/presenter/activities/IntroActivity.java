@@ -227,7 +227,7 @@ public class IntroActivity extends FragmentActivity {
                     PostAuthenticationProcessor.getInstance().onRecoverWalletAuth(this);
                 } else {
 //                    KeyStoreManager.showAuthenticationScreen(this, requestCode);
-//                    finish();
+                    finish();
                 }
                 break;
 
