@@ -171,7 +171,7 @@ public class CustomPagerAdapter extends FragmentPagerAdapter {
                         if (mainQR != null) {
                             mainQR.startAnimation(set);
                         }
-                        app.pageIndicator.setVisibility(View.VISIBLE);
+                        app.pageIndicator.setVisibility(View.GONE);
                     }
                 }
             });

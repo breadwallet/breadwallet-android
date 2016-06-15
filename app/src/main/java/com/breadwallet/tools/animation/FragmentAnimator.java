@@ -157,6 +157,7 @@ public class FragmentAnimator {
             fragmentTransaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_top);
             fragmentTransaction.add(R.id.main_layout, to, FragmentSettingsAll.class.getName());
             fragmentTransaction.commit();
+//            context.pageIndicator.setVisibility(View.GONE);
             InputMethodManager keyboard = (InputMethodManager) context.
                     getSystemService(Context.INPUT_METHOD_SERVICE);
             if (keyboard != null)
@@ -178,6 +179,7 @@ public class FragmentAnimator {
             fragmentTransaction.remove(fragmentSettingsAll);
             fragmentTransaction.commit();
             CustomPagerAdapter.adapter.showFragments(true);
+//            context.pageIndicator.setVisibility(View.VISIBLE);
         }
     }
 

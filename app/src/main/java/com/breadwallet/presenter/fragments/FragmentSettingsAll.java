@@ -175,7 +175,7 @@ public class FragmentSettingsAll extends Fragment {
         noTransactions.setVisibility(View.GONE);
         transactionList.removeAllViews();
 
-        transactionList.addView(getSeparationLine(0, ctx));
+//        transactionList.addView(getSeparationLine(0, ctx));
 
         int limit = transactionObjects.length > 5 ? 5 : transactionObjects.length;
         Log.e(TAG, "transactionObjects.length: " + transactionObjects.length);
@@ -189,7 +189,7 @@ public class FragmentSettingsAll extends Fragment {
             }
         }
         if (transactionObjects.length > 5) {
-            transactionList.addView(getSeparationLine(0, ctx));
+//            transactionList.addView(getSeparationLine(0, ctx));
             transactionList.addView(getMore(ctx));
         }
 //        transactionList.addView(getSeparationLine(0, ctx));
@@ -199,6 +199,7 @@ public class FragmentSettingsAll extends Fragment {
     public static LinearLayout getMore(final Activity context) {
         LayoutInflater inflater = (LayoutInflater) context.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout more = (LinearLayout) inflater.inflate(R.layout.transaction_list_item_more, null);
+        more.setBackgroundResource(R.drawable.clickable_layout);
         more.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

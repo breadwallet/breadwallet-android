@@ -38,7 +38,6 @@ import com.facebook.rebound.SpringSystem;
 public class SpringAnimator {
     private static final String TAG = SpringAnimator.class.getName();
 
-    private static final int SPRING_DELAY_MS = 30;
     private static final double TENSION = 800;
     private static final double DAMPER = 30;
     public static final int TO_LEFT = -1;
@@ -56,7 +55,7 @@ public class SpringAnimator {
         spring.setEndValue(0.8f);
 
         // Add a listener to observe the motion of the spring.
-        spring.addListener(new SpringListener() {
+        spring.addListener(new SimpleSpringListener() {
 
             @Override
             public void onSpringUpdate(Spring spring) {
@@ -67,17 +66,6 @@ public class SpringAnimator {
                 view.setScaleY(value);
             }
 
-            @Override
-            public void onSpringAtRest(Spring spring) {
-            }
-
-            @Override
-            public void onSpringActivate(Spring spring) {
-            }
-
-            @Override
-            public void onSpringEndStateChange(Spring spring) {
-            }
         });
 
     }
@@ -102,7 +90,7 @@ public class SpringAnimator {
             }, 100);
 
             // Add a listener to observe the motion of the spring.
-            spring.addListener(new SpringListener() {
+            spring.addListener(new SimpleSpringListener() {
 
                 @Override
                 public void onSpringUpdate(Spring spring) {
@@ -115,20 +103,9 @@ public class SpringAnimator {
                     view.setScaleY(scale);
                 }
 
-                @Override
-                public void onSpringAtRest(Spring spring) {
-                }
-
-                @Override
-                public void onSpringActivate(Spring spring) {
-                }
-
-                @Override
-                public void onSpringEndStateChange(Spring spring) {
-                }
             });
         } else {
-            Log.e(TAG, "The view is null cannot show bouncy animaion!");
+            Log.e(TAG, "The view is null cannot show bouncy animation!");
         }
         // Set the spring in motion; moving from 0 to 1
 
@@ -148,7 +125,7 @@ public class SpringAnimator {
             spring.setEndValue(1f);
 
             // Add a listener to observe the motion of the spring.
-            spring.addListener(new SpringListener() {
+            spring.addListener(new SimpleSpringListener() {
 
                 @Override
                 public void onSpringUpdate(Spring spring) {
@@ -161,26 +138,13 @@ public class SpringAnimator {
                     view.setScaleY(scale);
                 }
 
-                @Override
-                public void onSpringAtRest(Spring spring) {
-                }
-
-                @Override
-                public void onSpringActivate(Spring spring) {
-                }
-
-                @Override
-                public void onSpringEndStateChange(Spring spring) {
-                }
             });
         } else {
-            Log.e(TAG, "The view is null cannot show bouncy animaion!");
+            Log.e(TAG, "The view is null cannot show bouncy animation!");
         }
         // Set the spring in motion; moving from 0 to 1
 
     }
-
-
 
     /**
      * Uses the Facebook Spring animation to show a bouncy animation on
@@ -192,10 +156,10 @@ public class SpringAnimator {
      */
     public static void showBouncySlideHorizontal(final View view, final int direction, final int tension) {
         SpringSystem springSystem = SpringSystem.create();
-        if(view == null) return;
+        if (view == null) return;
         // Add a spring to the system.
         final Spring spring = springSystem.createSpring();
-        SpringConfig config = new SpringConfig(500, 40);
+        SpringConfig config = new SpringConfig(800, 30);
         spring.setSpringConfig(config);
         spring.setEndValue(1);
 
@@ -208,7 +172,8 @@ public class SpringAnimator {
                 // state by asking its current value in onSpringUpdate.
 
                 float value = (float) spring.getCurrentValue();
-                view.setX(direction * (value * -tension));
+
+                view.setX(direction * (value));
             }
 
         });
@@ -223,21 +188,16 @@ public class SpringAnimator {
      */
     public static void showBouncySlideVertical(final View view, final int direction) {
         SpringSystem springSystem = SpringSystem.create();
+        if (view == null) return;
 
         // Add a spring to the system.
         final Spring spring = springSystem.createSpring();
         SpringConfig config = new SpringConfig(TENSION, DAMPER);
         spring.setSpringConfig(config);
         spring.setEndValue(1f);
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                spring.setEndValue(0f);
-//            }
-//        }, 30);
 
         // Add a listener to observe the motion of the spring.
-        spring.addListener(new SpringListener() {
+        spring.addListener(new SimpleSpringListener() {
 
             @Override
             public void onSpringUpdate(Spring spring) {
@@ -245,21 +205,10 @@ public class SpringAnimator {
                 // state by asking its current value in onSpringUpdate.
 
                 float value = (float) spring.getCurrentValue();
-                if (view != null)
-                    view.setY(direction * (value * -20));
+                view.setY(direction * (value * -20));
+//                Log.e(TAG,"direction * (value * -20): "  + (direction * (value * -20)));
             }
 
-            @Override
-            public void onSpringAtRest(Spring spring) {
-            }
-
-            @Override
-            public void onSpringActivate(Spring spring) {
-            }
-
-            @Override
-            public void onSpringEndStateChange(Spring spring) {
-            }
         });
     }
 
