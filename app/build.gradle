@@ -10,8 +10,8 @@ model {
             applicationId = 'com.breadwallet'
             minSdkVersion.apiLevel = 23
             targetSdkVersion.apiLevel = 23
-            versionCode = 11
-            versionName = "0.6-beta11"
+            versionCode = 12
+            versionName = "0.6-beta12"
         }
 
         ndk {
@@ -49,11 +49,11 @@ model {
             }
             debug {
                 proguardFiles.add(file('proguard-rules.pro'))
-                debuggable = true
+                debuggable = false
                 minifyEnabled = false
                 ndk {
                     minifyEnabled = false
-                    debuggable = true
+                    debuggable = false
                 }
             }
 
