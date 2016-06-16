@@ -131,7 +131,6 @@
             android:textColor="@color/red" />
 
         <RelativeLayout
-            android:id="@+id/network_bar_line"
             android:layout_width="match_parent"
             android:layout_height="@dimen/separator_height"
             android:background="@color/gray" />

@@ -4,9 +4,9 @@
     android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/transparent"
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
-    android:background="@android:color/transparent"
     tools:context="com.breadwallet.presenter.activities.MainActivity">
 
     <com.breadwallet.tools.adapter.ParallaxViewPager xmlns:android="http://schemas.android.com/apk/res/android"
@@ -48,7 +48,6 @@
         android:visibility="gone" />
 
     <TextView
-
         android:id="@+id/sync_progress_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -107,7 +106,7 @@
     <RelativeLayout
         android:id="@+id/main_internet_status_bar"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/sync_progress_bar"
         android:layout_centerHorizontal="true"
         android:background="@color/pink"
@@ -130,6 +129,11 @@
             android:foregroundGravity="center"
             android:text="@string/no_internet_connection"
             android:textColor="@color/red" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/separator_height"
+            android:background="@color/gray" />
 
     </RelativeLayout>
 
@@ -228,6 +232,13 @@
         android:gravity="center"
         android:textColor="@android:color/white"
         android:textSize="16sp"
+        android:visibility="gone" />
+
+    <RelativeLayout
+        android:id="@+id/protection_layer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
         android:visibility="gone" />
 
 </RelativeLayout>

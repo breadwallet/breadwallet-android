@@ -73,4 +73,28 @@
         android:textColor="@color/gray"
         android:textSize="@dimen/text_size" />
 
+
+
+    <ImageView
+        android:id="@+id/bug"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:src="@drawable/bug" />
+
+    <TextView
+        android:id="@+id/beta"
+        android:layout_alignLeft="@+id/bug"
+        android:textColor="@color/dark_blue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/bug"
+        android:layout_gravity="center"
+        android:text="@string/beta"
+        android:layout_marginStart="4dp"
+        android:textSize="12sp" />
+
 </RelativeLayout>

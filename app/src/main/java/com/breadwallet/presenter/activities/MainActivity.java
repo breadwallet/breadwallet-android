@@ -159,8 +159,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (KeyStoreManager.getMasterPublicKey(this).length == 0) finish();
-
         app = this;
         initializeViews();
 

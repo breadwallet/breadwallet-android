@@ -81,8 +81,8 @@
 
         <ImageView
             android:id="@+id/write_down_check_box"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_alignBottom="@+id/i_wrote_it_down_text"
             android:layout_marginStart="10dp"
             android:layout_toEndOf="@+id/i_wrote_it_down_text"
