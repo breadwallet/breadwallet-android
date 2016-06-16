@@ -240,7 +240,7 @@ public class BreadWalletApp extends Application {
                 }
         }
 
-        if (mode == BRConstants.AUTH_FOR_LIMIT) {
+        if (mode == BRConstants.AUTH_FOR_LIMIT || mode == BRConstants.AUTH_FOR_PHRASE) {
             useFingerPrint = false;
         }
 
