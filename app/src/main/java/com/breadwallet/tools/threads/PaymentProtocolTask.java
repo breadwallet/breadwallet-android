@@ -11,8 +11,8 @@ import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.presenter.exceptions.CertificateChainNotFound;
-import com.breadwallet.presenter.fragments.FragmentCurrency;
 import com.breadwallet.tools.BRConstants;
+import com.breadwallet.tools.ByteReader;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.SharedPreferencesManager;
 import com.breadwallet.tools.security.KeyStoreManager;
@@ -21,8 +21,6 @@ import com.breadwallet.tools.security.RequestHandler;
 import com.breadwallet.tools.security.X509CertificateValidator;
 import com.breadwallet.wallet.BRWalletManager;
 
-import org.apache.commons.io.IOUtils;
-
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -30,6 +28,7 @@ import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -89,7 +88,8 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 Log.e(TAG, "The inputStream is null!");
                 return null;
             }
-            byte[] serializedBytes = IOUtils.toByteArray(in);
+            byte[] serializedBytes = ByteReader.readBytesFromStream(in);
+            Log.e(TAG,"byteTest: PaymentProtocolTask: " + Arrays.toString(serializedBytes));
             if (serializedBytes == null || serializedBytes.length == 0) {
                 Log.e(TAG, "serializedBytes are null!!!");
                 return null;

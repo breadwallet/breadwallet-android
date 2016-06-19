@@ -10,25 +10,17 @@ import android.security.keystore.KeyProperties;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.util.Log;
 
-import com.breadwallet.presenter.activities.IntroActivity;
-import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.tools.BRConstants;
+import com.breadwallet.tools.ByteReader;
 import com.breadwallet.tools.SharedPreferencesManager;
 import com.breadwallet.tools.TypesConverter;
 import com.breadwallet.wallet.BRWalletManager;
-
-import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.Charset;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
@@ -39,7 +31,6 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.text.Normalizer;
 import java.util.Arrays;
-import java.util.Enumeration;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -189,7 +180,8 @@ public class KeyStoreManager {
 
             CipherInputStream cipherInputStream = new CipherInputStream(
                     new FileInputStream(encryptedDataFilePath), outCipher);
-            result = IOUtils.toByteArray(cipherInputStream);
+            result = ByteReader.readBytesFromStream(cipherInputStream);
+            Log.e(TAG,"byteTest: getData: " + Arrays.toString(result));
         } catch (UserNotAuthenticatedException e) {
             Log.e(TAG, Log.getStackTraceString(e));
             Log.e(TAG, "showAuthenticationScreen");
@@ -378,7 +370,8 @@ public class KeyStoreManager {
         try {
             File file = new File(path);
             FileInputStream fin = new FileInputStream(file);
-            bytes = IOUtils.toByteArray(fin);
+            bytes = ByteReader.readBytesFromStream(fin);
+            Log.e(TAG,"byteTest: readBytesFromFile: " + Arrays.toString(bytes));
         } catch (IOException e) {
             e.printStackTrace();
         }

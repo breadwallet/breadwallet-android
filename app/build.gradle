@@ -70,12 +70,8 @@ dependencies {
     androidTestCompile 'com.android.support:appcompat-v7:23.4.0'
     androidTestCompile 'com.android.support:support-v13:23.4.0'
     androidTestCompile 'com.google.zxing:core:3.2.1'
-//    androidTestCompile 'com.facebook.rebound:rebound:0.3.8'
-    androidTestCompile 'org.apache.directory.studio:org.apache.commons.io:2.4'
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support:support-v13:23.4.0'
     compile 'com.google.zxing:core:3.2.1'
-//    compile 'com.facebook.rebound:rebound:0.3.8'
     compile 'com.android.support.test.espresso:espresso-core:2.2.2'
-    compile 'org.apache.directory.studio:org.apache.commons.io:2.4'
 }

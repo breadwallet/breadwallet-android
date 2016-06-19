@@ -18,11 +18,8 @@ package com.breadwallet.tools.security;
 
 import com.breadwallet.R;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.CancellationSignal;
-import android.support.v4.app.ActivityCompat;
 import android.widget.ImageView;
 import android.widget.TextView;
 

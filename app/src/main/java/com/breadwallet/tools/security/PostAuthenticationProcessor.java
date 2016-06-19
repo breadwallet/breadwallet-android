@@ -1,20 +1,12 @@
 package com.breadwallet.tools.security;
 
-import android.app.Activity;
-import android.content.Context;
-import android.os.Handler;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.presenter.entities.PaymentRequestWrapper;
-import com.breadwallet.presenter.entities.TmpTxObject;
-import com.breadwallet.presenter.exceptions.CertificateChainNotFound;
 import com.breadwallet.presenter.fragments.FragmentRecoveryPhrase;
 import com.breadwallet.presenter.fragments.FragmentSettings;
 import com.breadwallet.presenter.fragments.IntroWelcomeFragment;
@@ -23,16 +15,7 @@ import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
 import com.breadwallet.wallet.BRWalletManager;
 
-import org.apache.commons.io.IOUtils;
-
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.SocketTimeoutException;
-import java.net.URL;
-import java.security.cert.X509Certificate;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * BreadWallet

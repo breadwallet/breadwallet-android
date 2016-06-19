@@ -65,7 +65,7 @@ public class IntroRecoverWalletFragment extends Fragment {
         editText = (EditText) rootView.findViewById(R.id.recover_wallet_edit_text);
         editText.setText("");
 //        editText.setText("こせき　ぎじにってい　けっこん　せつぞく　うんどう　ふこう　にっすう　こせい　きさま　なまみ　たきび　はかい");
-        editText.setText("こせきぎじにっていけっこんせつぞくうんどうふこうにっすうこせいきさまなまみたきびはかい");
+//        editText.setText("こせきぎじにっていけっこんせつぞくうんどうふこうにっすうこせいきさまなまみたきびはかい");
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) ||
