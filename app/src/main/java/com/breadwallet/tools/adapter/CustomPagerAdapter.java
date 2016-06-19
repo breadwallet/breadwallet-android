@@ -97,6 +97,7 @@ public class CustomPagerAdapter extends FragmentPagerAdapter {
                 public void run() {
                     MainActivity app = MainActivity.app;
                     if (app != null) {
+
                         TranslateAnimation anim = new TranslateAnimation(0, 0, -600, 0);
                         anim.setAnimationListener(new Animation.AnimationListener() {
                             @Override
@@ -106,8 +107,8 @@ public class CustomPagerAdapter extends FragmentPagerAdapter {
 
                             @Override
                             public void onAnimationEnd(Animation animation) {
-                                if(main!=null)main.setVisibility(View.VISIBLE);
-                                if(mainQR!=null)mainQR.setVisibility(View.VISIBLE);
+                                if (main != null) main.setVisibility(View.VISIBLE);
+                                if (mainQR != null) mainQR.setVisibility(View.VISIBLE);
                             }
 
                             @Override
@@ -130,6 +131,12 @@ public class CustomPagerAdapter extends FragmentPagerAdapter {
 //                            mainQR.startAnimation(animation);
                         }
                         app.pageIndicator.setVisibility(View.VISIBLE);
+                        app.bug.setVisibility(View.VISIBLE);
+                        if (MiddleViewAdapter.getSyncing()){
+                            app.syncProgressBar.setVisibility(View.VISIBLE);
+                            app.syncProgressText.setVisibility(View.VISIBLE);
+                        }
+
                     }
                 }
             });
@@ -151,8 +158,8 @@ public class CustomPagerAdapter extends FragmentPagerAdapter {
 
                             @Override
                             public void onAnimationEnd(Animation animation) {
-                                if(main!=null)main.setVisibility(View.GONE);
-                                if(mainQR!=null)mainQR.setVisibility(View.GONE);
+                                if (main != null) main.setVisibility(View.GONE);
+                                if (mainQR != null) mainQR.setVisibility(View.GONE);
                             }
 
                             @Override
@@ -172,6 +179,9 @@ public class CustomPagerAdapter extends FragmentPagerAdapter {
                             mainQR.startAnimation(set);
                         }
                         app.pageIndicator.setVisibility(View.GONE);
+                        app.bug.setVisibility(View.GONE);
+                        app.syncProgressBar.setVisibility(View.GONE);
+                        app.syncProgressText.setVisibility(View.GONE);
                     }
                 }
             });

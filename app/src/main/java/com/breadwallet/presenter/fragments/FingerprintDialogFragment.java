@@ -169,8 +169,6 @@ public class FingerprintDialogFragment extends DialogFragment
             } else {
                 return;
             }
-            final MediaPlayer mp = MediaPlayer.create(getActivity(), R.raw.coinflip);
-            mp.start();
             FragmentAnimator.hideScanResultFragment();
         }
         dismiss();

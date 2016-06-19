@@ -62,7 +62,7 @@ import java.util.Locale;
 public class MainFragment extends Fragment {
     private static final String TAG = MainFragment.class.getName();
     public EditText addressEditText;
-    public ImageView bug;
+
 //    private AlertDialog alertDialog;
 
     @Override
@@ -75,7 +75,7 @@ public class MainFragment extends Fragment {
         RelativeLayout mainFragmentLayout = (RelativeLayout) rootView.findViewById(R.id.main_fragment);
         Button payAddressFromClipboardButton = (Button)
                 rootView.findViewById(R.id.main_button_pay_address_from_clipboard);
-        bug = (ImageView) rootView.findViewById(R.id.bug);
+
         addressEditText = (EditText) rootView.findViewById(R.id.address_edit_text);
         addressEditText.setGravity(Gravity.CENTER_HORIZONTAL);
         addressEditText.setOnClickListener(new View.OnClickListener() {
@@ -90,34 +90,7 @@ public class MainFragment extends Fragment {
         });
 
 
-        bug.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (FragmentAnimator.checkTheMultipressingAvailability()) {
-                    String to = BRConstants.SUPPORT_EMAIL;
-                    PackageInfo pInfo = null;
-                    int version = 0;
-                    try {
-                        pInfo = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0);
-                        version = pInfo.versionCode;
-                    } catch (PackageManager.NameNotFoundException e) {
-                        e.printStackTrace();
-                    }
 
-                    String message = String.format(Locale.getDefault(), "%s %s /ABI: %s /Android v: %s /Breadwallet v: %d\n\n",
-                            Build.MANUFACTURER.toUpperCase(), Build.MODEL,Build.CPU_ABI, Build.VERSION.RELEASE, version);
-                    Intent email = new Intent(Intent.ACTION_SEND);
-                    email.putExtra(Intent.EXTRA_EMAIL, new String[]{to});
-                    email.putExtra(Intent.EXTRA_TEXT, message);
-                    email.putExtra(Intent.EXTRA_SUBJECT, "support request");
-
-                    // need this to prompts email client only
-                    email.setType("message/rfc822");
-
-                    startActivity(Intent.createChooser(email, "Choose an Email client"));
-                }
-            }
-        });
 
         rootView.setOnClickListener(new View.OnClickListener() {
             @Override

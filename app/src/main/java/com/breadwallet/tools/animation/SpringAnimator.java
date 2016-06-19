@@ -3,12 +3,13 @@ package com.breadwallet.tools.animation;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.ScaleAnimation;
+import android.view.animation.TranslateAnimation;
 
-import com.facebook.rebound.SimpleSpringListener;
-import com.facebook.rebound.Spring;
-import com.facebook.rebound.SpringConfig;
-import com.facebook.rebound.SpringListener;
-import com.facebook.rebound.SpringSystem;
+import com.breadwallet.presenter.fragments.FragmentSettingsAll;
+
 
 /**
  * BreadWallet
@@ -38,35 +39,23 @@ import com.facebook.rebound.SpringSystem;
 public class SpringAnimator {
     private static final String TAG = SpringAnimator.class.getName();
 
-    private static final double TENSION = 800;
-    private static final double DAMPER = 30;
-    public static final int TO_LEFT = -1;
-    public static final int TO_RIGHT = 1;
-
     public static void showExpandCameraGuide(final View view) {
-        view.setScaleX(0.1f);
-        view.setScaleX(0.1f);
-        SpringSystem springSystem = SpringSystem.create();
-
-        // Add a spring to the system.
-        final Spring spring = springSystem.createSpring();
-        SpringConfig config = new SpringConfig(400, 20);
-        spring.setSpringConfig(config);
-        spring.setEndValue(0.8f);
-
-        // Add a listener to observe the motion of the spring.
-        spring.addListener(new SimpleSpringListener() {
-
+        if (view != null) {
+            view.setVisibility(View.GONE);
+        }
+        new Handler().postDelayed(new Runnable() {
             @Override
-            public void onSpringUpdate(Spring spring) {
-                // You can observe the updates in the spring
-                // state by asking its current value in onSpringUpdate.
-                float value = (float) spring.getCurrentValue();
-                view.setScaleX(value);
-                view.setScaleY(value);
+            public void run() {
+                ScaleAnimation trans = new ScaleAnimation(0.0f, 1f, 0.0f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                trans.setDuration(800);
+                trans.setInterpolator(new DecelerateOvershootInterpolator(1.3f, 4f));
+                Log.e(TAG, "startAnimation");
+                if (view != null) {
+                    view.setVisibility(View.VISIBLE);
+                    view.startAnimation(trans);
+                }
             }
-
-        });
+        }, 200);
 
     }
 
@@ -74,40 +63,13 @@ public class SpringAnimator {
      * Shows the springy animation on views
      */
     public static void showAnimation(final View view) {
-        if (view != null) {
-            SpringSystem springSystem = SpringSystem.create();
-
-            // Add a spring to the system.
-            final Spring spring = springSystem.createSpring();
-            SpringConfig config = new SpringConfig(TENSION, DAMPER);
-            spring.setSpringConfig(config);
-            spring.setEndValue(1f);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    spring.setEndValue(0);
-                }
-            }, 100);
-
-            // Add a listener to observe the motion of the spring.
-            spring.addListener(new SimpleSpringListener() {
-
-                @Override
-                public void onSpringUpdate(Spring spring) {
-                    // You can observe the updates in the spring
-                    // state by asking its current value in onSpringUpdate.
-
-                    float value = (float) spring.getCurrentValue();
-                    float scale = 1f - (value * 0.5f);
-                    view.setScaleX(scale);
-                    view.setScaleY(scale);
-                }
-
-            });
-        } else {
-            Log.e(TAG, "The view is null cannot show bouncy animation!");
-        }
-        // Set the spring in motion; moving from 0 to 1
+        if (view == null) return;
+        ScaleAnimation trans = new ScaleAnimation(0.3f, 1f, 0.3f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        trans.setDuration(500);
+        trans.setInterpolator(new DecelerateOvershootInterpolator(1.3f, 4f));
+        Log.e(TAG, "startAnimation");
+        view.setVisibility(View.VISIBLE);
+        view.startAnimation(trans);
 
     }
 
@@ -115,36 +77,15 @@ public class SpringAnimator {
      * Shows the springy bubble animation on views
      */
     public static void showBubbleAnimation(final View view) {
-        if (view != null) {
-            SpringSystem springSystem = SpringSystem.create();
-
-            // Add a spring to the system.
-            final Spring spring = springSystem.createSpring();
-            SpringConfig config = new SpringConfig(600, 30);
-            spring.setSpringConfig(config);
-            spring.setEndValue(1f);
-
-            // Add a listener to observe the motion of the spring.
-            spring.addListener(new SimpleSpringListener() {
-
-                @Override
-                public void onSpringUpdate(Spring spring) {
-                    // You can observe the updates in the spring
-                    // state by asking its current value in onSpringUpdate.
-
-                    float value = (float) spring.getCurrentValue();
-                    float scale = 0.5f + (value * 0.5f);
-                    view.setScaleX(scale);
-                    view.setScaleY(scale);
-                }
-
-            });
-        } else {
-            Log.e(TAG, "The view is null cannot show bouncy animation!");
-        }
-        // Set the spring in motion; moving from 0 to 1
-
+        if (view == null) return;
+        ScaleAnimation trans = new ScaleAnimation(0.0f, 1f, 0.0f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        trans.setDuration(500);
+        trans.setInterpolator(new DecelerateOvershootInterpolator(1.3f, 1.2f));
+        Log.e(TAG, "startAnimation");
+        view.setVisibility(View.VISIBLE);
+        view.startAnimation(trans);
     }
+
 
     /**
      * Uses the Facebook Spring animation to show a bouncy animation on
@@ -155,28 +96,28 @@ public class SpringAnimator {
      * @param tension   an int value to specify the springy tension
      */
     public static void showBouncySlideHorizontal(final View view, final int direction, final int tension) {
-        SpringSystem springSystem = SpringSystem.create();
-        if (view == null) return;
-        // Add a spring to the system.
-        final Spring spring = springSystem.createSpring();
-        SpringConfig config = new SpringConfig(800, 30);
-        spring.setSpringConfig(config);
-        spring.setEndValue(1);
-
-        // Add a listener to observe the motion of the spring.
-        spring.addListener(new SimpleSpringListener() {
-
-            @Override
-            public void onSpringUpdate(Spring spring) {
-                // You can observe the updates in the spring
-                // state by asking its current value in onSpringUpdate.
-
-                float value = (float) spring.getCurrentValue();
-
-                view.setX(direction * (value));
-            }
-
-        });
+//        SpringSystem springSystem = SpringSystem.create();
+//        if (view == null) return;
+//        // Add a spring to the system.
+//        final Spring spring = springSystem.createSpring();
+//        SpringConfig config = new SpringConfig(800, 30);
+//        spring.setSpringConfig(config);
+//        spring.setEndValue(1);
+//
+//        // Add a listener to observe the motion of the spring.
+//        spring.addListener(new SimpleSpringListener() {
+//
+//            @Override
+//            public void onSpringUpdate(Spring spring) {
+//                // You can observe the updates in the spring
+//                // state by asking its current value in onSpringUpdate.
+//
+//                float value = (float) spring.getCurrentValue();
+//
+//                view.setX(direction * (value));
+//            }
+//
+//        });
     }
 
     /**
@@ -187,29 +128,36 @@ public class SpringAnimator {
      * @param direction SpringAnimator.TO_LEFT or  SpringAnimator.TO_RIGHT
      */
     public static void showBouncySlideVertical(final View view, final int direction) {
-        SpringSystem springSystem = SpringSystem.create();
-        if (view == null) return;
+//        SpringSystem springSystem = SpringSystem.create();
+//        if (view == null) return;
+//
+//        // Add a spring to the system.
+//        final Spring spring = springSystem.createSpring();
+//        SpringConfig config = new SpringConfig(400, 15);
+//        spring.setSpringConfig(config);
+//        spring.setEndValue(1f);
+//
+//        // Add a listener to observe the motion of the spring.
+//        spring.addListener(new SimpleSpringListener() {
+//
+//            @Override
+//            public void onSpringUpdate(Spring spring) {
+//                // You can observe the updates in the spring
+//                // state by asking its current value in onSpringUpdate.
+//
+//                float value = (float) spring.getCurrentValue();
+//                view.setY(direction * (value * 20));
+////                Log.e(TAG,"direction * (value * -20): "  + (direction * (value * -20)));
+//            }
+//
+//        });
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                spring.setEndValue(0f);
+//            }
+//        }, 100);
 
-        // Add a spring to the system.
-        final Spring spring = springSystem.createSpring();
-        SpringConfig config = new SpringConfig(TENSION, DAMPER);
-        spring.setSpringConfig(config);
-        spring.setEndValue(1f);
-
-        // Add a listener to observe the motion of the spring.
-        spring.addListener(new SimpleSpringListener() {
-
-            @Override
-            public void onSpringUpdate(Spring spring) {
-                // You can observe the updates in the spring
-                // state by asking its current value in onSpringUpdate.
-
-                float value = (float) spring.getCurrentValue();
-                view.setY(direction * (value * -20));
-//                Log.e(TAG,"direction * (value * -20): "  + (direction * (value * -20)));
-            }
-
-        });
     }
 
 }

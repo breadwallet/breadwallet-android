@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_layout"
     android:layout_width="match_parent"
@@ -17,25 +18,26 @@
     <ViewFlipper
         android:id="@+id/middle_view_flipper"
         android:layout_width="wrap_content"
-        android:layout_height="28dp"
+        android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:background="@android:color/transparent">
 
         <ImageView
             android:id="@+id/main_label_breadwallet"
-            android:layout_width="120dp"
-            android:layout_height="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="@drawable/breadwalletupcentered" />
+            android:background="@drawable/breadwalletupcentered"
+            android:textAlignment="center" />
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="28dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="@string/settings"
             android:textColor="@color/gray"
-            android:textSize="22sp" />
+            android:textSize="14sp" />
     </ViewFlipper>
 
     <ProgressBar
@@ -107,31 +109,34 @@
         android:id="@+id/main_internet_status_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/sync_progress_bar"
         android:layout_centerHorizontal="true"
         android:background="@color/pink"
         android:orientation="horizontal"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <RelativeLayout
             android:id="@+id/network_bar_line"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="@dimen/separator_height"
             android:background="@color/gray" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
+            android:id="@+id/not_connected_text"
+            android:layout_centerVertical="true"
             android:layout_below="@+id/network_bar_line"
             android:layout_centerHorizontal="true"
-            android:layout_gravity="center"
-            android:foregroundGravity="center"
+            android:gravity="center"
+            android:padding="2dp"
             android:text="@string/no_internet_connection"
-            android:textColor="@color/red" />
+            android:textAlignment="center"
+            android:textColor="@color/red"
+            android:textSize="10sp" />
 
         <RelativeLayout
             android:layout_width="match_parent"
+            android:layout_below="@+id/not_connected_text"
             android:layout_height="@dimen/separator_height"
             android:background="@color/gray" />
 
@@ -173,17 +178,17 @@
             android:src="@drawable/circle_indicator" />
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/testnet"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:alpha="0.7"
-        android:padding="20dp"
-        android:text="testnet"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textColor="@color/dark_red" />
+    <!--<TextView-->
+    <!--android:id="@+id/testnet"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignParentBottom="true"-->
+    <!--android:layout_alignParentEnd="true"-->
+    <!--android:alpha="0.7"-->
+    <!--android:padding="20dp"-->
+    <!--android:text="testnet"-->
+    <!--android:textAppearance="?android:attr/textAppearanceSmall"-->
+    <!--android:textColor="@color/dark_red" />-->
 
 
     <com.breadwallet.presenter.customviews.BubbleTextVew
@@ -240,5 +245,34 @@
         android:layout_height="match_parent"
         android:background="@color/white"
         android:visibility="gone" />
+
+    <RelativeLayout
+        android:id="@+id/bug"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="20dp"
+        android:layout_marginEnd="20dp">
+
+        <TextView
+            android:id="@+id/beta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="4dp"
+            android:text="@string/beta"
+            android:textColor="@color/dark_blue"
+            android:textSize="12sp" />
+
+        <ImageView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/beta"
+            android:src="@drawable/bug" />
+
+    </RelativeLayout>
+
 
 </RelativeLayout>

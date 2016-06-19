@@ -153,8 +153,10 @@ public class IntroActivity extends FragmentActivity {
         fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
         IntroWelcomeFragment introWelcomeFragment = (IntroWelcomeFragment) getFragmentManager().
                 findFragmentByTag(IntroWelcomeFragment.class.getName());
-        fragmentTransaction.replace(introWelcomeFragment.getId(), new IntroNewRecoverFragment(), IntroNewRecoverFragment.class.getName());
-        fragmentTransaction.commitAllowingStateLoss();
+        if (introWelcomeFragment != null) {
+            fragmentTransaction.replace(introWelcomeFragment.getId(), new IntroNewRecoverFragment(), IntroNewRecoverFragment.class.getName());
+            fragmentTransaction.commitAllowingStateLoss();
+        }
     }
 
     public void showNewWalletFragment() {
@@ -164,6 +166,7 @@ public class IntroActivity extends FragmentActivity {
         fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
         IntroNewRecoverFragment introNewRecoverFragment = (IntroNewRecoverFragment) getFragmentManager().
                 findFragmentByTag(IntroNewRecoverFragment.class.getName());
+
         fragmentTransaction.replace(introNewRecoverFragment.getId(), new IntroNewWalletFragment(), IntroNewWalletFragment.class.getName()).
                 addToBackStack(null);
         fragmentTransaction.commitAllowingStateLoss();

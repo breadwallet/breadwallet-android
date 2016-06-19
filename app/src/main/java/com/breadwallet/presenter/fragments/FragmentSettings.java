@@ -181,6 +181,7 @@ public class FragmentSettings extends Fragment {
                                               new Thread(new Runnable() {
                                                   @Override
                                                   public void run() {
+                                                      FragmentAnimator.goToMainActivity(fragmentSettings);
                                                       BRPeerManager.getInstance(getActivity()).rescan();
                                                   }
                                               }).start();

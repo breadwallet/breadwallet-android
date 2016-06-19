@@ -11,6 +11,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
@@ -57,6 +58,9 @@ public class FragmentAnimator {
     public static boolean wipeWalletOpen = false;
     private static Stack<Fragment> previous = new Stack<>();
     private static boolean multiplePressingAvailable = true;
+//    private static int VERTICAL_BOUNCE_DELAY = 60;
+    private static int horizontalSlideDuration = 300;
+    private static boolean horizontalSlideAvailable = true;
 //    private static final Object lockObject = new Object();
 
     public static void animateDecoderFragment() {
@@ -106,7 +110,7 @@ public class FragmentAnimator {
     }
 
     public static void animateScanResultFragment() {
-        MainActivity app = MainActivity.app;
+        final MainActivity app = MainActivity.app;
         if (app == null) return;
         CustomPagerAdapter.adapter.showFragments(false);
 //        Log.e(TAG, "animateScanResultFragment");
@@ -126,18 +130,22 @@ public class FragmentAnimator {
         final FragmentManager fragmentManager = app.getFragmentManager();
         final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
-        fragmentTransaction.replace(R.id.main_layout, new FragmentScanResult(), FragmentScanResult.class.getName());
+//        fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
+        final FragmentScanResult scanResult = new FragmentScanResult();
+        fragmentTransaction.replace(R.id.main_layout, scanResult, FragmentScanResult.class.getName());
         fragmentTransaction.commit();
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                FragmentScanResult fragmentScanResult = (FragmentScanResult) fragmentManager.
-                        findFragmentByTag(FragmentScanResult.class.getName());
-                SpringAnimator.showBouncySlideHorizontal(fragmentScanResult.getView(),
-                        SpringAnimator.TO_RIGHT, 70);
+                TranslateAnimation trans = new TranslateAnimation(app.getResources().getInteger(R.integer.standard_screen_width), 0, 0, 0);
+                trans.setDuration(500);
+                trans.setInterpolator(new DecelerateOvershootInterpolator(3f, 0.5f));
+                View view = scanResult.getView();
+                Log.e(TAG, "startAnimation");
+                if (view != null)
+                    view.startAnimation(trans);
             }
-        }, 200);
+        }, 1);
     }
 
 
@@ -148,27 +156,42 @@ public class FragmentAnimator {
         if (context == null || to == null) return;
         ((BreadWalletApp) context.getApplication()).cancelToast();
 //        Log.e(TAG, "The level is: " + level);
-        FragmentManager fragmentManager = context.getFragmentManager();
+        final FragmentManager fragmentManager = context.getFragmentManager();
         if (level == 0) {
             level++;
             CustomPagerAdapter.adapter.showFragments(false);
             context.setBurgerButtonImage(MainActivity.CLOSE);
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_top);
+//            fragmentTransaction.setCustomAnimations(R.animator.from_bottom, 0);
             fragmentTransaction.add(R.id.main_layout, to, FragmentSettingsAll.class.getName());
             fragmentTransaction.commit();
-//            context.pageIndicator.setVisibility(View.GONE);
-            InputMethodManager keyboard = (InputMethodManager) context.
-                    getSystemService(Context.INPUT_METHOD_SERVICE);
-            if (keyboard != null)
-                keyboard.hideSoftInputFromWindow(CustomPagerAdapter.adapter.
-                        mainFragment.addressEditText.getWindowToken(), 0);
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    SpringAnimator.showBouncySlideVertical(to.getView(), SpringAnimator.TO_LEFT);
+                    TranslateAnimation trans = new TranslateAnimation(0, 0, 1920, 0);
+                    trans.setDuration(500);
+                    trans.setInterpolator(new DecelerateOvershootInterpolator(3f, 0.5f));
+                    View view = to.getView();
+                    Log.e(TAG, "startAnimation");
+                    if (view != null)
+                        view.startAnimation(trans);
                 }
-            }, 200);
+            }, 1);
+
+
+            InputMethodManager keyboard = (InputMethodManager) context.
+                    getSystemService(Context.INPUT_METHOD_SERVICE);
+
+            if (keyboard != null)
+                keyboard.hideSoftInputFromWindow(CustomPagerAdapter.adapter.
+                        mainFragment.addressEditText.getWindowToken(), 0);
+//            new Handler().postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    SpringAnimator.showBouncySlideVertical(to.getView(), SpringAnimator.TO_LEFT);
+//
+//                }
+//            }, 200);
         } else if (level == 1) {
             level--;
             context.setBurgerButtonImage(MainActivity.BURGER);
@@ -179,7 +202,6 @@ public class FragmentAnimator {
             fragmentTransaction.remove(fragmentSettingsAll);
             fragmentTransaction.commit();
             CustomPagerAdapter.adapter.showFragments(true);
-//            context.pageIndicator.setVisibility(View.VISIBLE);
         }
     }
 
@@ -193,13 +215,13 @@ public class FragmentAnimator {
             fragmentTransaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_top);
             fragmentTransaction.replace(R.id.main_layout, to, to.getClass().getName());
             fragmentTransaction.commit();
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    SpringAnimator.showBouncySlideVertical(to.getView(),
-                            SpringAnimator.TO_RIGHT);
-                }
-            }, 200);
+//            new Handler().postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    SpringAnimator.showBouncySlideVertical(to.getView(),
+//                            SpringAnimator.TO_RIGHT);
+//                }
+//            }, VERTICAL_BOUNCE_DELAY);
 
         } else {
             wipeWalletOpen = false;
@@ -213,26 +235,35 @@ public class FragmentAnimator {
     /**
      * Animates the fragment transition on button_regular_blue "Settings" pressed
      */
-    public static void animateSlideToLeft(MainActivity context, final Fragment to, Fragment previousFragment) {
+    public static void animateSlideToLeft(final MainActivity context, final Fragment to, Fragment previousFragment) {
+        if (!checkTheHorizontalSlideAvailability()) return;
         level++;
         if (level > 1)
             context.setBurgerButtonImage(MainActivity.BACK);
         FragmentTransaction fragmentTransaction = context.getFragmentManager().beginTransaction();
-        fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
+//        fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
         fragmentTransaction.replace(R.id.main_layout, to, to.getClass().getName());
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                SpringAnimator.showBouncySlideHorizontal(to.getView(), SpringAnimator.TO_RIGHT, 20);
-            }
-        }, 200);
         if (previousFragment != null)
             previous.add(previousFragment);
         fragmentTransaction.commit();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                TranslateAnimation trans = new TranslateAnimation(context.getResources().getInteger(R.integer.standard_screen_width), 0, 0, 0);
+                trans.setDuration(horizontalSlideDuration);
+                trans.setInterpolator(new DecelerateOvershootInterpolator(1f, 0.5f));
+                View view = to.getView();
+                Log.e(TAG, "startAnimation");
+                if (view != null)
+                    view.startAnimation(trans);
+            }
+        }, 1);
+
 //        Log.e(TAG, "The level is: " + level);
     }
 
-    public static void animateSlideToRight(MainActivity context) {
+    public static void animateSlideToRight(final MainActivity context) {
+        if (!checkTheHorizontalSlideAvailability()) return;
         final Fragment tmp = previous.pop();
         level--;
         if (level < 1)
@@ -241,15 +272,22 @@ public class FragmentAnimator {
             context.setBurgerButtonImage(MainActivity.CLOSE);
 //            Log.e(TAG, "The actual SettingsFragment: " + tmp);
         FragmentTransaction fragmentTransaction = context.getFragmentManager().beginTransaction();
-        fragmentTransaction.setCustomAnimations(R.animator.from_left, R.animator.to_right);
+//        fragmentTransaction.setCustomAnimations(R.animator.from_left, R.animator.to_right);
         fragmentTransaction.replace(R.id.main_layout, tmp, tmp.getClass().getName());
+        fragmentTransaction.commit();
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                SpringAnimator.showBouncySlideHorizontal(tmp.getView(), SpringAnimator.TO_LEFT, 20);
+                TranslateAnimation trans = new TranslateAnimation(-context.getResources().getInteger(R.integer.standard_screen_width), 0, 0, 0);
+                trans.setDuration(horizontalSlideDuration);
+                trans.setInterpolator(new DecelerateOvershootInterpolator(1f, 0.5f));
+                View view = tmp.getView();
+                Log.e(TAG, "startAnimation");
+                if (view != null)
+                    view.startAnimation(trans);
             }
-        }, 200);
-        fragmentTransaction.commit();
+        }, 1);
+
 //        Log.e(TAG, "The level is: " + level);
     }
 
@@ -270,6 +308,22 @@ public class FragmentAnimator {
                     Log.w(TAG, "multiplePressingAvailable is back to - true");
                 }
             }, 300);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static synchronized boolean checkTheHorizontalSlideAvailability() {
+        if (horizontalSlideAvailable) {
+            horizontalSlideAvailable = false;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    horizontalSlideAvailable = true;
+                    Log.w(TAG, "multiplePressingAvailable is back to - true");
+                }
+            }, horizontalSlideDuration);
             return true;
         } else {
             return false;
@@ -326,6 +380,27 @@ public class FragmentAnimator {
         wipeWalletOpen = false;
         previous.clear();
         multiplePressingAvailable = true;
+    }
+
+    public static void goToMainActivity(final Fragment fragment) {
+        final MainActivity app = MainActivity.app;
+        if (app == null) return;
+        if (fragment != null) {
+            app.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    FragmentManager fragmentManager = app.getFragmentManager();
+                    fragmentManager.beginTransaction().setCustomAnimations(R.animator.from_top, R.animator.to_bottom).
+                            remove(fragment).commit();
+                    CustomPagerAdapter.adapter.showFragments(true);
+                    app.activityButtonsEnable(true);
+                    app.setBurgerButtonImage(0);
+                }
+            });
+
+        }
+        resetFragmentAnimator();
+
     }
 
 }

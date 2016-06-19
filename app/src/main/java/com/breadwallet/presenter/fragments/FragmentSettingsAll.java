@@ -175,8 +175,6 @@ public class FragmentSettingsAll extends Fragment {
         noTransactions.setVisibility(View.GONE);
         transactionList.removeAllViews();
 
-//        transactionList.addView(getSeparationLine(0, ctx));
-
         int limit = transactionObjects.length > 5 ? 5 : transactionObjects.length;
         Log.e(TAG, "transactionObjects.length: " + transactionObjects.length);
 

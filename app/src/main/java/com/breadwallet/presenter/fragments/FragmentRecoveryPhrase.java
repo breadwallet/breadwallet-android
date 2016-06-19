@@ -68,14 +68,14 @@ public class FragmentRecoveryPhrase extends Fragment {
         boolean phraseWroteDown = SharedPreferencesManager.getPhraseWroteDown(getActivity());
 
         //TODO delete this code below which is for testing reasons only
-//        thePhrase.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                BRClipboardManager.copyToClipboard(getActivity(), thePhrase.getText().toString());
-//                ((BreadWalletApp) getActivity().getApplication()).showCustomToast(getActivity(),
-//                        getString(R.string.copied), 300, Toast.LENGTH_SHORT, 0);
-//            }
-//        });
+        thePhrase.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BRClipboardManager.copyToClipboard(getActivity(), thePhrase.getText().toString());
+                ((BreadWalletApp) getActivity().getApplication()).showCustomToast(getActivity(),
+                        getString(R.string.copied), 300, Toast.LENGTH_SHORT, 0);
+            }
+        });
 
         if (!phraseWroteDown) {
             checkBoxlayout.setVisibility(View.VISIBLE);
@@ -96,6 +96,8 @@ public class FragmentRecoveryPhrase extends Fragment {
         }
 
         thePhrase.setText(phrase);
+        if(phrase.charAt(0) > 0x3000)
+            thePhrase.setText(phrase.replace(" ", "\u3000"));
         return rootView;
     }
 

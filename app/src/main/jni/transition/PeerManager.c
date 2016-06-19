@@ -300,10 +300,10 @@ JNIEXPORT void JNICALL Java_com_breadwallet_wallet_BRPeerManager_putBlock(JNIEnv
     int bkLength = (*env)->GetArrayLength(env, block);
     jbyte *byteBk = (*env)->GetByteArrayElements(env, block, 0);
     assert(byteBk != NULL);
-    if(!byteBk) return;
+    if (!byteBk) return;
     BRMerkleBlock *tmpBk = BRMerkleBlockParse((const uint8_t *) byteBk, (size_t) bkLength);
+    if (!tmpBk) return;
     tmpBk->height = (uint32_t) blockHeight;
-
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "adding a block: blockhight: %d",
                         tmpBk->height);
     _blocks[_blocksCounter++] = tmpBk;

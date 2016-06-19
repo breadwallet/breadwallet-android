@@ -340,6 +340,7 @@ public class FragmentDecoder extends Fragment
             @Override
             public void run() {
                 if (camera_guide_image != null)
+
                     SpringAnimator.showExpandCameraGuide(camera_guide_image);
             }
         });

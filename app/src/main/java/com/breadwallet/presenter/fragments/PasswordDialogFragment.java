@@ -343,8 +343,7 @@ public class PasswordDialogFragment extends DialogFragment {
                         return false;
                     }
                     seed = null;
-                    final MediaPlayer mp = MediaPlayer.create(getActivity(), R.raw.coinflip);
-                    mp.start();
+
                     FragmentAnimator.hideScanResultFragment();
                 }
             } else {

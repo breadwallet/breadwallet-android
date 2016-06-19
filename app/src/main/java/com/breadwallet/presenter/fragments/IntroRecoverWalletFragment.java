@@ -17,6 +17,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.tools.BRConstants;
+import com.breadwallet.tools.WordsReader;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.wallet.BRWalletManager;
@@ -64,6 +65,7 @@ public class IntroRecoverWalletFragment extends Fragment {
         editText = (EditText) rootView.findViewById(R.id.recover_wallet_edit_text);
         editText.setText("");
 //        editText.setText("こせき　ぎじにってい　けっこん　せつぞく　うんどう　ふこう　にっすう　こせい　きさま　なまみ　たきび　はかい");
+        editText.setText("こせきぎじにっていけっこんせつぞくうんどうふこうにっすうこせいきさまなまみたきびはかい");
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) ||
@@ -82,24 +84,24 @@ public class IntroRecoverWalletFragment extends Fragment {
                 }
 
                 String phraseToCheck = editText.getText().toString().toLowerCase();
-                String normalizedPhrase = Normalizer.normalize(phraseToCheck, Normalizer.Form.NFKD);
+                String cleanPhrase = WordsReader.cleanPhrase(getActivity(),phraseToCheck);
 
-                if (BRWalletManager.getInstance(getActivity()).validatePhrase(getActivity(), phraseToCheck)) {
+                if (BRWalletManager.getInstance(getActivity()).validatePhrase(getActivity(), cleanPhrase)) {
 
                     BRWalletManager m = BRWalletManager.getInstance(getActivity());
                     m.wipeWalletButKeystore(getActivity());
                     m.wipeKeyStore();
 
-                    boolean success = KeyStoreManager.putKeyStorePhrase(normalizedPhrase, getActivity(), BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE);
+                    boolean success = KeyStoreManager.putKeyStorePhrase(cleanPhrase, getActivity(), BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE);
                     boolean success2 = false;
                     if (success)
                         success2 = KeyStoreManager.putKeyStoreCanary(BRConstants.CANARY_STRING, getActivity(), 0);
                     if (!success || !success2){
-                        PostAuthenticationProcessor.getInstance().setPhraseForKeyStore(normalizedPhrase);
+                        PostAuthenticationProcessor.getInstance().setPhraseForKeyStore(cleanPhrase);
                         return;
                     }
 
-                    byte[] pubKey = m.getMasterPubKey(normalizedPhrase);
+                    byte[] pubKey = m.getMasterPubKey(cleanPhrase);
                     KeyStoreManager.putMasterPublicKey(pubKey, getActivity());
                     IntroActivity introActivity = (IntroActivity) getActivity();
                     getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
@@ -108,7 +110,7 @@ public class IntroRecoverWalletFragment extends Fragment {
                 } else {
                     alertDialog.setTitle(getResources().getString(R.string.alert));
                     //don't use
-                    alertDialog.setMessage("\"" + normalizedPhrase + "\" - " +
+                    alertDialog.setMessage("\"" + cleanPhrase + "\" - " +
                             getResources().getString(R.string.dialog_recovery_phrase_invalid));
                     alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getResources().getString(R.string.ok),
                             new DialogInterface.OnClickListener() {

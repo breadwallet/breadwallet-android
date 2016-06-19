@@ -79,6 +79,8 @@ public class IntroShowPhraseActivity extends Activity {
 
         if (phrase != null && phrase.length() > 1) {
             thePhrase.setText(phrase);
+            if(phrase.charAt(0) > 0x3000)
+                thePhrase.setText(phrase.replace(" ", "\u3000"));
             phrase = null;
         } else {
             phrase = null;

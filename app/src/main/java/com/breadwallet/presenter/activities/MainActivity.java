@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.hardware.fingerprint.FingerprintManager;
@@ -35,6 +36,7 @@ import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -138,7 +140,8 @@ public class MainActivity extends FragmentActivity implements Observer {
     private BroadcastReceiver mPowerKeyReceiver = null;
     private int middleBubbleBlocksCount = 0;
     private static int MODE = RELEASE;
-    private TextView testnet;
+    public RelativeLayout bug;
+//    private TextView testnet;
     private BubbleTextVew middleBubble1;
     private BubbleTextVew middleBubble2;
     private BubbleTextVew middleBubbleBlocks;
@@ -195,7 +198,7 @@ public class MainActivity extends FragmentActivity implements Observer {
             MODE = DEBUG;
             Log.e(TAG, "DEBUG MODE!!!!!!");
         }
-        testnet.setVisibility(MODE == DEBUG ? View.VISIBLE : View.GONE);
+//        testnet.setVisibility(MODE == DEBUG ? View.VISIBLE : View.GONE);
 
         InputMethodManager im = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
 
@@ -230,6 +233,35 @@ public class MainActivity extends FragmentActivity implements Observer {
                         AmountAdapter.getRightValue() : AmountAdapter.getLeftValue();
                 String addressHolder = FragmentScanResult.address;
                 pay(addressHolder, new BigDecimal(amountHolder).multiply(new BigDecimal("100")), null);
+            }
+        });
+
+        bug.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (FragmentAnimator.checkTheMultipressingAvailability()) {
+                    String to = BRConstants.SUPPORT_EMAIL;
+                    PackageInfo pInfo = null;
+                    int version = 0;
+                    try {
+                        pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+                        version = pInfo.versionCode;
+                    } catch (PackageManager.NameNotFoundException e) {
+                        e.printStackTrace();
+                    }
+
+                    String message = String.format(Locale.getDefault(), "%s %s /ABI: %s /Android v: %s /Breadwallet v: %d\n\n",
+                            Build.MANUFACTURER.toUpperCase(), Build.MODEL, Build.CPU_ABI, Build.VERSION.RELEASE, version);
+                    Intent email = new Intent(Intent.ACTION_SEND);
+                    email.putExtra(Intent.EXTRA_EMAIL, new String[]{to});
+                    email.putExtra(Intent.EXTRA_TEXT, message);
+                    email.putExtra(Intent.EXTRA_SUBJECT, "support request");
+
+                    // need this to prompts email client only
+                    email.setType("message/rfc822");
+
+                    startActivity(Intent.createChooser(email, "Choose an Email client"));
+                }
             }
         });
 
@@ -397,8 +429,9 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     private void initializeViews() {
         pay = (TextView) findViewById(R.id.main_button_pay);
+        bug = (RelativeLayout) findViewById(R.id.bug);
         RelativeLayout mainLayout = (RelativeLayout) findViewById(R.id.main_layout);
-        testnet = (TextView) findViewById(R.id.testnet);
+//        testnet = (TextView) findViewById(R.id.testnet);
         networkErrorBar = (RelativeLayout) findViewById(R.id.main_internet_status_bar);
         burgerButton = (Button) findViewById(R.id.main_button_burger);
         lockerPayFlipper = (ViewFlipper) findViewById(R.id.locker_pay_flipper);

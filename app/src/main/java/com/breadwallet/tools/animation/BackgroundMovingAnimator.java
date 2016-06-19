@@ -45,27 +45,37 @@ public class BackgroundMovingAnimator {
     private static ValueAnimator mCurrentAnimator;
 
     private static void animate() {
+        if(background == null) {
+            stopBackgroundMoving();
+            return;
+        }
         updateDisplayRect();
         if (mDirection == RightToLeft) {
             animate(mDisplayRect.left, mDisplayRect.left -
                     (mDisplayRect.right - background.getWidth()));
-//            animate(mDisplayRect.left, 0.0f);  // BUG: XXX animates past background bounds
         } else {
             animate(mDisplayRect.left, 0.0f);
         }
     }
 
     private static void animate(float from, float to) {
+        if(background == null) {
+            stopBackgroundMoving();
+            return;
+        }
         mCurrentAnimator = ValueAnimator.ofFloat(from, to);
         mCurrentAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
+                if(background == null) {
+                    stopBackgroundMoving();
+                    return;
+                }
                 float value = (Float) animation.getAnimatedValue();
 
                 mMatrix.reset();
                 mMatrix.postScale(mScaleFactor, mScaleFactor);
                 mMatrix.postTranslate(value, 0);
-
                 background.setImageMatrix(mMatrix);
 
             }
@@ -85,6 +95,10 @@ public class BackgroundMovingAnimator {
     }
 
     private static void updateDisplayRect() {
+        if(background == null) {
+            stopBackgroundMoving();
+            return;
+        }
         mDisplayRect.set(0, 0, background.getDrawable().getIntrinsicWidth(),
                 background.getDrawable().getIntrinsicHeight());
         mMatrix.mapRect(mDisplayRect);

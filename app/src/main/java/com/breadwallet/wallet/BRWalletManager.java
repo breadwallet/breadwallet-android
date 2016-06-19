@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Handler;
 import android.text.InputType;
 import android.util.Log;
@@ -94,7 +95,8 @@ public class BRWalletManager {
         String[] words = new String[0];
         List<String> list;
         try {
-            list = WordsReader.getWordList(ctx);
+            String languageCode = ctx.getString(R.string.lang);
+            list = WordsReader.getWordList(ctx, languageCode);
             words = list.toArray(new String[list.size()]);
         } catch (IOException e) {
             e.printStackTrace();
@@ -314,6 +316,8 @@ public class BRWalletManager {
                                     m.getExchangeForAmount(SharedPreferencesManager.getRate(ctx), SharedPreferencesManager.getIso(ctx), new BigDecimal(absAmount)) + ")");
                     ((BreadWalletApp) ctx.getApplicationContext()).showCustomToast(ctx, strToShow,
                             BreadWalletApp.DISPLAY_HEIGHT_PX / 2, Toast.LENGTH_LONG, 1);
+                    final MediaPlayer mp = MediaPlayer.create(ctx, R.raw.coinflip);
+                    mp.start();
                 }
             });
 
@@ -381,15 +385,33 @@ public class BRWalletManager {
     public boolean validatePhrase(Activity activity, String phrase) {
         String[] words = new String[0];
         List<String> list;
+
+        String[] cleanWordList = null;
         try {
-            list = WordsReader.getWordList(activity);
+            boolean isLocal = true;
+            String languageCode = ctx.getString(R.string.lang);
+            list = WordsReader.getWordList(activity, languageCode);
+
+            String[] phraseWords = phrase.split(" ");
+            if (!list.contains(phraseWords[0])) {
+                isLocal = false;
+            }
+            if (!isLocal) {
+                String lang = WordsReader.getLang(activity, phraseWords[0]);
+                if (lang != null) {
+                    list = WordsReader.getWordList(activity, lang);
+                }
+
+            }
             words = list.toArray(new String[list.size()]);
+            cleanWordList = WordsReader.cleanWordList(words);
+            if (cleanWordList == null) return false;
         } catch (IOException e) {
             e.printStackTrace();
         }
         if (words.length != 2048)
             throw new IllegalArgumentException("words.length is not 2048");
-        return validateRecoveryPhrase(words, phrase);
+        return validateRecoveryPhrase(cleanWordList, phrase);
     }
 
     private native String encodeSeed(byte[] seed, String[] wordList);

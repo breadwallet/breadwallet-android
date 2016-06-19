@@ -2,10 +2,11 @@
 <set xmlns:android="http://schemas.android.com/apk/res/android"
     android:shareInterpolator="false">
     <objectAnimator xmlns:android="http://schemas.android.com/apk/res/android"
-        android:interpolator="@android:anim/accelerate_decelerate_interpolator"
         android:duration="@integer/slide_speed"
+        android:interpolator="@anim/bounce_interpolator"
         android:propertyName="y"
         android:valueFrom="0"
         android:valueTo="@integer/standard_screen_height_neg"
         android:valueType="floatType" />
+
 </set>

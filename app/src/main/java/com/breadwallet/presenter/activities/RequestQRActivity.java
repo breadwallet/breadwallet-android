@@ -2,7 +2,6 @@ package com.breadwallet.presenter.activities;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -18,7 +17,6 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.entities.RequestObject;
-import com.breadwallet.presenter.fragments.FragmentCurrency;
 import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.SharedPreferencesManager;
@@ -142,15 +140,16 @@ public class RequestQRActivity extends Activity {
         QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(bitcoinURL,
                 BarcodeFormat.QR_CODE.toString(),
                 smallerDimension);
+        Bitmap bitmap = null;
         try {
-            Bitmap bitmap = qrCodeEncoder.encodeAsBitmap();
-            qrcode.setPadding(1, 1, 1, 1);
-            qrcode.setBackgroundResource(R.color.gray);
-            qrcode.setImageBitmap(bitmap);
-
+            bitmap = qrCodeEncoder.encodeAsBitmap();
         } catch (WriterException e) {
             e.printStackTrace();
         }
+        qrcode.setPadding(1, 1, 1, 1);
+        qrcode.setBackgroundResource(R.color.gray);
+        qrcode.setImageBitmap(bitmap);
+
     }
 
     @Override
