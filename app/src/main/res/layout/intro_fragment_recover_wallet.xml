@@ -26,7 +26,6 @@
         android:imeOptions="actionDone"
         android:inputType="textMultiLine"
         android:lines="5"
-        android:hint="@string/recovery_phrase"
         android:textColorHint="@color/wallet_orange"
         android:padding="20dp"
         android:scrollHorizontally="false"

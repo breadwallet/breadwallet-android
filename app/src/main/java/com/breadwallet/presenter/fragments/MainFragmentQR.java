@@ -176,13 +176,13 @@ public class MainFragmentQR extends Fragment {
                 smallerDimension);
         try {
             bitmap = qrCodeEncoder.encodeAsBitmap();
-            qrcode.setPadding(1, 1, 1, 1);
-            qrcode.setBackgroundResource(R.color.gray);
-            qrcode.setImageBitmap(bitmap);
-
         } catch (WriterException e) {
             e.printStackTrace();
         }
+        qrcode.setPadding(1, 1, 1, 1);
+        qrcode.setBackgroundResource(R.color.gray);
+        qrcode.setImageBitmap(bitmap);
+
     }
 
     private void saveBitmapToFile() {

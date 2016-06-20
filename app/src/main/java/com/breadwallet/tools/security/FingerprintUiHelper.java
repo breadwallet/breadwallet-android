@@ -23,8 +23,6 @@ import android.os.CancellationSignal;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import javax.inject.Inject;
-
 /**
  * Small helper class to manage text/icon around fingerprint authentication UI.
  */
@@ -48,7 +46,6 @@ public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallba
     public static class FingerprintUiHelperBuilder {
         private final FingerprintManager mFingerPrintManager;
 
-        @Inject
         public FingerprintUiHelperBuilder(FingerprintManager fingerprintManager) {
             mFingerPrintManager = fingerprintManager;
         }

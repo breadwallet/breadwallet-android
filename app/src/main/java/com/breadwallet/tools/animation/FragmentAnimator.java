@@ -212,16 +212,21 @@ public class FragmentAnimator {
         if (!wipeWalletOpen) {
             wipeWalletOpen = true;
             FragmentTransaction fragmentTransaction = context.getFragmentManager().beginTransaction();
-            fragmentTransaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_top);
+//            fragmentTransaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_top);
             fragmentTransaction.replace(R.id.main_layout, to, to.getClass().getName());
             fragmentTransaction.commit();
-//            new Handler().postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    SpringAnimator.showBouncySlideVertical(to.getView(),
-//                            SpringAnimator.TO_RIGHT);
-//                }
-//            }, VERTICAL_BOUNCE_DELAY);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    TranslateAnimation trans = new TranslateAnimation(0, 0, 1920, 0);
+                    trans.setDuration(500);
+                    trans.setInterpolator(new DecelerateOvershootInterpolator(3f, 0.5f));
+                    View view = to.getView();
+                    Log.e(TAG, "startAnimation");
+                    if (view != null)
+                        view.startAnimation(trans);
+                }
+            }, 1);
 
         } else {
             wipeWalletOpen = false;

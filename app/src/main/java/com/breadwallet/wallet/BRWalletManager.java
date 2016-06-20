@@ -180,6 +180,12 @@ public class BRWalletManager {
                 @Override
                 public void run() {
 
+                    if(!CurrencyManager.getInstance(activity).isNetworkAvailable(activity)){
+                        ((BreadWalletApp) activity.getApplication()).showCustomDialog(activity.getString(R.string.warning),
+                                "no network connection", activity.getString(R.string.ok));
+                        return;
+                    }
+
                     final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                     builder.setTitle("password protected key");
 
@@ -197,6 +203,7 @@ public class BRWalletManager {
                             String decryptedKey = decryptBip38Key(privKey, pass);
                             Log.e(TAG, "decryptedKey: " + decryptedKey);
                             if (decryptedKey.equals("")) {
+                                SpringAnimator.showAnimation(input);
                                 confirmSweep(activity, privKey);
                             } else {
                                 confirmSweep(activity, decryptedKey);

@@ -1,5 +1,6 @@
 package com.breadwallet.tools.qrcode;
 
+
 import com.google.zxing.LuminanceSource;
 
 /**

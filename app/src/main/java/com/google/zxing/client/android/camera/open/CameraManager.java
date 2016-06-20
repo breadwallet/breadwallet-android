@@ -22,7 +22,7 @@ import android.hardware.Camera;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
-import com.google.zxing.PlanarYUVLuminanceSource;
+import com.breadwallet.tools.qrcode.PlanarYUVLuminanceSource;
 
 import java.io.IOException;
 
@@ -159,23 +159,6 @@ final class CameraManager {
     }
 
 
-    // All references to Torch are removed from original ZXING authors work since we're not using them.
 
-    // All references to FramingRects are removed from original ZXING authors work since we're not using them.
-
-    /**
-     * A factory method to build the appropriate LuminanceSource object based on the format
-     * of the preview buffers, as described by Camera.Parameters.
-     *
-     * @param data   A preview frame.
-     * @param width  The width of the image.
-     * @param height The height of the image.
-     * @return A PlanarYUVLuminanceSource instance.
-     */
-    public PlanarYUVLuminanceSource buildLuminanceSource(byte[] data, int width, int height) {
-
-        return new PlanarYUVLuminanceSource(data, width, height, 0, 0, width, height, false); // Search QR in all image along, not only in Framing Rect as original code done
-
-    }
 
 }
