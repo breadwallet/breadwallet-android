@@ -181,7 +181,6 @@ public class KeyStoreManager {
             CipherInputStream cipherInputStream = new CipherInputStream(
                     new FileInputStream(encryptedDataFilePath), outCipher);
             result = ByteReader.readBytesFromStream(cipherInputStream);
-            Log.e(TAG,"byteTest: getData: " + Arrays.toString(result));
         } catch (UserNotAuthenticatedException e) {
             Log.e(TAG, Log.getStackTraceString(e));
             Log.e(TAG, "showAuthenticationScreen");
@@ -371,7 +370,6 @@ public class KeyStoreManager {
             File file = new File(path);
             FileInputStream fin = new FileInputStream(file);
             bytes = ByteReader.readBytesFromStream(fin);
-            Log.e(TAG,"byteTest: readBytesFromFile: " + Arrays.toString(bytes));
         } catch (IOException e) {
             e.printStackTrace();
         }

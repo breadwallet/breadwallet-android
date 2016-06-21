@@ -40,8 +40,8 @@ android:clickable="true">
     android:layout_marginEnd="@dimen/transaction_item_margin"
     android:textAppearance="?android:attr/textAppearanceLarge"
     android:textColor="@color/red_text"
-    android:textSize="14sp"
-    android:textStyle="bold" />
+    android:textSize="12sp"
+     />
 
 <TextView
     android:id="@+id/tx_to_exchange_text"
@@ -52,6 +52,6 @@ android:clickable="true">
     android:layout_toStartOf="@id/tx_to_amount_text"
     android:textAppearance="?android:attr/textAppearanceLarge"
     android:textColor="@color/red_text"
-    android:textSize="13sp" />
+    android:textSize="12sp" />
 
 </RelativeLayout>

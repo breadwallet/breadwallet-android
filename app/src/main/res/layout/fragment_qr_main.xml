@@ -70,7 +70,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
-        android:layout_marginTop="300dp"
+        android:layout_marginTop="320dp"
         android:layout_marginStart="20dp"
         android:background="@drawable/bubble_up"
         android:gravity="center"

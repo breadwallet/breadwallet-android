@@ -24,6 +24,7 @@ import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.CustomLogger;
 import com.breadwallet.tools.SharedPreferencesManager;
+import com.breadwallet.tools.Utils;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.wallet.BRPeerManager;
@@ -80,6 +81,8 @@ public class FragmentSettingsAll extends Fragment {
         RelativeLayout importPrivateKeys = (RelativeLayout) rootView.findViewById(R.id.import_private_key);
         RelativeLayout settings = (RelativeLayout) rootView.findViewById(R.id.settings);
 
+
+
         noTransactions = (TextView) rootView.findViewById(R.id.text_no_transactions);
         transactionHistory = (LinearLayout) rootView.findViewById(R.id.layout_transaction_history);
         transactionList = (LinearLayout) rootView.findViewById(R.id.transactions_list);
@@ -93,7 +96,7 @@ public class FragmentSettingsAll extends Fragment {
             public void onClick(View v) {
                 if (FragmentAnimator.checkTheMultipressingAvailability()) {
                     ((BreadWalletApp) getActivity().getApplicationContext()).
-                            promptForAuthentication(getActivity(), BRConstants.AUTH_FOR_GENERAL, null);
+                            promptForAuthentication(getActivity(), BRConstants.AUTH_FOR_GENERAL, null, null, null, null);
                 }
             }
         });
@@ -122,6 +125,7 @@ public class FragmentSettingsAll extends Fragment {
                 }
             }
         });
+
         return rootView;
     }
 
@@ -197,6 +201,8 @@ public class FragmentSettingsAll extends Fragment {
     public static LinearLayout getMore(final Activity context) {
         LayoutInflater inflater = (LayoutInflater) context.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout more = (LinearLayout) inflater.inflate(R.layout.transaction_list_item_more, null);
+        TextView moreText = (TextView) more.findViewById(R.id.more_text);
+        Utils.overrideFonts(moreText);
         more.setBackgroundResource(R.drawable.clickable_layout);
         more.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -237,6 +243,7 @@ public class FragmentSettingsAll extends Fragment {
         TextView dollarsTextView = (TextView) tmpLayout.findViewById(R.id.transaction_amount_dollars);
         TextView bitsTotalTextView = (TextView) tmpLayout.findViewById(R.id.transaction_amount_bits_total);
         TextView dollarsTotalTextView = (TextView) tmpLayout.findViewById(R.id.transaction_amount_dollars_total);
+        Utils.overrideFonts(sentReceivedTextView, dateTextView, bitsTextView, dollarsTextView, bitsTotalTextView, dollarsTotalTextView);
         tmpLayout.setBackgroundResource(R.drawable.clickable_layout);
 
         tmpLayout.setOnClickListener(new View.OnClickListener() {
@@ -297,6 +304,7 @@ public class FragmentSettingsAll extends Fragment {
         return tmpLayout;
     }
 
+    @SuppressWarnings("deprecation")
     @SuppressLint("SimpleDateFormat")
     public static String getFormattedDateFromLong(long time) {
         MainActivity app = MainActivity.app;

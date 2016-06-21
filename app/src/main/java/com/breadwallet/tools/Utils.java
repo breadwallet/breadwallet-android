@@ -1,9 +1,20 @@
-package com.breadwallet.presenter.entities;
+package com.breadwallet.tools;
+
+import android.app.Activity;
+import android.app.Fragment;
+import android.graphics.Typeface;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.breadwallet.presenter.fragments.FragmentSettingsAll;
+
+import org.w3c.dom.Text;
 
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail Gutan on 11/19/15.
+ * Created by Mihail Gutan on 6/21/16.
  * Copyright (c) 2016 breadwallet llc <mihail@breadwallet.com>
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,22 +35,26 @@ package com.breadwallet.presenter.entities;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class PaymentRequestEntity {
-    public static final String TAG = PaymentRequestEntity.class.getName();
+public class Utils {
+    public static final String TAG = Utils.class.getName();
 
-    public byte[] serializedTx;
+    public static void overrideFonts(TextView... v) {
 
-    public String[] addresses;
-    public long amount;
-    public String cn;
-    public boolean isAmountRequested;
+        if (v == null) return;
 
-    public PaymentRequestEntity(String theAddress[], long theAmount, String theCn, byte[] serializedTx, boolean isAmountRequested) {
-        this.isAmountRequested = isAmountRequested;
-        this.serializedTx = serializedTx;
-        this.addresses = theAddress;
-        this.amount = theAmount;
-        this.cn = theCn;
+        Typeface FONT_REGULAR = Typeface.create("sans-serif-light", Typeface.NORMAL);
+
+        for (TextView view : v) {
+            try {
+                if (view != null) {
+                    view.setTypeface(FONT_REGULAR);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+
+
     }
-
 }

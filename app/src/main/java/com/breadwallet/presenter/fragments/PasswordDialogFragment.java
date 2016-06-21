@@ -28,6 +28,7 @@ package com.breadwallet.presenter.fragments;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.inputmethodservice.Keyboard;
@@ -52,6 +53,7 @@ import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
+import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.SharedPreferencesManager;
@@ -63,6 +65,7 @@ import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PassCodeManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
+import com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.security.KeyStore;
@@ -89,9 +92,11 @@ public class PasswordDialogFragment extends DialogFragment {
     private TextView digit_3;
     private TextView digit_4;
     private PaymentRequestEntity request;
+    private PaymentRequestWrapper paymentRequest;
     private TextView info;
     private TextWatcher textWatcher;
     private String prevPass;
+    private String message;
 
     private int mode = -1;
 
@@ -114,6 +119,10 @@ public class PasswordDialogFragment extends DialogFragment {
         title = (TextView) view.findViewById(R.id.passcode_dialog_title);
         info = (TextView) view.findViewById(R.id.password_info_text);
 
+        TextView description = (TextView) view.findViewById(R.id.passcode_dialog_description);
+
+        if (message != null) description.setText(message);
+
         digit_1 = (TextView) view.findViewById(R.id.passcode_digit1);
         digit_2 = (TextView) view.findViewById(R.id.passcode_digit2);
         digit_3 = (TextView) view.findViewById(R.id.passcode_digit3);
@@ -131,6 +140,25 @@ public class PasswordDialogFragment extends DialogFragment {
                 getDialog().cancel();
                 passcodeEditText.setText("");
                 keyboard.hideSoftInputFromWindow(cancel.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
+                if (!MainActivity.scanResultFragmentOn && mode == BRConstants.AUTH_FOR_PAY && request.isAmountRequested) {
+                    FragmentScanResult.address = request.addresses[0];
+                    new android.app.AlertDialog.Builder(getActivity())
+                            .setTitle(getString(R.string.payment_info))
+                            .setMessage("change payment amount?")
+                            .setPositiveButton("change", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    FragmentAnimator.animateScanResultFragment();
+                                }
+                            }).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            FragmentScanResult.address = null;
+                        }
+                    })
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
+                }
             }
         });
 
@@ -345,6 +373,10 @@ public class PasswordDialogFragment extends DialogFragment {
                     seed = null;
 
                     FragmentAnimator.hideScanResultFragment();
+                } else if (mode == BRConstants.AUTH_FOR_PAYMENT_PROTOCOL && paymentRequest != null) {
+                    if (paymentRequest.paymentURL == null || paymentRequest.paymentURL.isEmpty())
+                        return false;
+                    new PaymentProtocolPostPaymentTask(paymentRequest).execute();
                 }
             } else {
                 SpringAnimator.showAnimation(dialogFragment.getView());
@@ -436,8 +468,9 @@ public class PasswordDialogFragment extends DialogFragment {
 
     }
 
-    public void setPaymentRequestEntity(PaymentRequestEntity requestEntity) {
+    public void setPaymentRequestEntity(PaymentRequestEntity requestEntity, PaymentRequestWrapper paymentRequest) {
         request = requestEntity;
+        this.paymentRequest = paymentRequest;
     }
 
     public void setMode(int mode) {
@@ -470,4 +503,9 @@ public class PasswordDialogFragment extends DialogFragment {
             getActivity().finish();
         }
     }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
 }

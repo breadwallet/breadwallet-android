@@ -15,9 +15,9 @@
         android:layout_marginTop="36dp"
         android:gravity="center"
         android:text="@string/dialog_recovery_phrase_warning"
-        android:textColor="@color/dark_grey"
+        android:textColor="@color/black"
         android:textSize="@dimen/text_size"
-        android:textStyle="bold" />
+         />
 
     <TextView
         android:id="@+id/textView1"
@@ -28,7 +28,7 @@
         android:text="@string/please_write_it_down"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/gray"
-        android:textSize="16sp" />
+        android:textSize="20sp" />
 
     <RelativeLayout
         android:layout_width="match_parent"

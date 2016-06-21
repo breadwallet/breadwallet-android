@@ -3,16 +3,24 @@ apply plugin: 'com.android.model.application'
 model {
     android {
         compileSdkVersion = 24
-        buildToolsVersion = '23.0.3'
+        buildToolsVersion = '24.0.0'
 
         defaultConfig {
             testInstrumentationRunner = 'android.support.test.runner.AndroidJUnitRunner'
             applicationId = 'com.breadwallet'
             minSdkVersion.apiLevel = 23
-            targetSdkVersion.apiLevel = 23
-            versionCode = 12
-            versionName = "0.6-beta12"
+            targetSdkVersion.apiLevel = 24
+            versionCode = 13
+            versionName = "0.6-beta13"
+//            jackOptions {
+//                enabled = true
+//            }
         }
+
+//        compileOptions.with {
+//            sourceCompatibility=JavaVersion.VERSION_1_8
+//            targetCompatibility=JavaVersion.VERSION_1_8
+//        }
 
         ndk {
             moduleName = "core"

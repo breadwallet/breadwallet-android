@@ -180,7 +180,7 @@ public class BRWalletManager {
                 @Override
                 public void run() {
 
-                    if(!CurrencyManager.getInstance(activity).isNetworkAvailable(activity)){
+                    if (!CurrencyManager.getInstance(activity).isNetworkAvailable(activity)) {
                         ((BreadWalletApp) activity.getApplication()).showCustomDialog(activity.getString(R.string.warning),
                                 "no network connection", activity.getString(R.string.ok));
                         return;
@@ -315,14 +315,15 @@ public class BRWalletManager {
             ctx.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    CurrencyManager m = CurrencyManager.getInstance(ctx);
-                    long absAmount = amount > 0 ? amount : amount * -1;
-                    CurrencyManager cm = CurrencyManager.getInstance(ctx);
-                    String strToShow = String.format(ctx.getString(amount > 0 ? R.string.received : R.string.sent),
-                            cm.getFormattedCurrencyString("BTC", absAmount) + " (" +
-                                    m.getExchangeForAmount(SharedPreferencesManager.getRate(ctx), SharedPreferencesManager.getIso(ctx), new BigDecimal(absAmount)) + ")");
-                    ((BreadWalletApp) ctx.getApplicationContext()).showCustomToast(ctx, strToShow,
-                            BreadWalletApp.DISPLAY_HEIGHT_PX / 2, Toast.LENGTH_LONG, 1);
+                    if (!((BreadWalletApp) ctx.getApplication()).isToastShown()) {
+                        CurrencyManager m = CurrencyManager.getInstance(ctx);
+                        long absAmount = amount > 0 ? amount : amount * -1;
+                        String strToShow = String.format(ctx.getString(amount > 0 ? R.string.received : R.string.sent),
+                                m.getFormattedCurrencyString("BTC", absAmount) + " (" +
+                                        m.getExchangeForAmount(SharedPreferencesManager.getRate(ctx), SharedPreferencesManager.getIso(ctx), new BigDecimal(absAmount)) + ")");
+                        ((BreadWalletApp) ctx.getApplicationContext()).showCustomToast(ctx, strToShow,
+                                BreadWalletApp.DISPLAY_HEIGHT_PX / 2, Toast.LENGTH_LONG, 1);
+                    }
                     final MediaPlayer mp = MediaPlayer.create(ctx, R.raw.coinflip);
                     mp.start();
                 }
@@ -331,7 +332,18 @@ public class BRWalletManager {
         }
 
         if (getInstance(ctx).getTxCount() <= 1) {
-            showWritePhraseDialog();
+            ctx.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            showWritePhraseDialog();
+                        }
+                    }, 4000);
+                }
+            });
+
         }
 
         SQLiteManager sqLiteManager = SQLiteManager.getInstance(ctx);
@@ -490,4 +502,6 @@ public class BRWalletManager {
     public native String reverseTxHash(String txHash);
 
     public native int getTxCount();
+
+    public native double getMinOutputAmountRequested();
 }

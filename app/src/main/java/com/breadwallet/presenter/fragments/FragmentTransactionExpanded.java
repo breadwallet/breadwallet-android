@@ -72,7 +72,7 @@ public class FragmentTransactionExpanded extends Fragment {
         hashText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e(TAG,"tx id: " + hashText.getText().toString());
+                Log.e(TAG, "tx id: " + hashText.getText().toString());
             }
         });
 //        TextView fromText = (TextView) rootView.findViewById(R.id.tx_from_text);
@@ -96,13 +96,17 @@ public class FragmentTransactionExpanded extends Fragment {
             statusText.setText(String.format(Locale.getDefault(), "confirmed in block #%d%n%s", blockHeight,
                     FragmentSettingsAll.getFormattedDateFromLong(item.getTimeStamp())));
         }
+        String rawHash = BRWalletManager.getInstance(getActivity()).reverseTxHash(item.getHexId());
+        final int mid = rawHash.length() / 2;
+        String hashString = rawHash.substring(0, mid) + "\n" + rawHash.substring(mid);
 
+        hashText.setText(hashString);
         if (received) {
 
             long amount = item.getReceived();
             Log.e(TAG, "Tx Detail received!!!! amount: " + amount + " item.getBlockHeight(): " + item.getBlockHeight());
 
-            hashText.setText(BRWalletManager.getInstance(getActivity()).reverseTxHash(item.getHexId()));
+
             amountText.setText(m.getFormattedCurrencyString("BTC", amount));
             exchangeText.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, new BigDecimal(amount))));
 
@@ -120,22 +124,15 @@ public class FragmentTransactionExpanded extends Fragment {
             Log.e(TAG, "Tx Detail sent!!!! amount: " + amount + " tempFee: " + item.getFee() + " tempSent: "
                     + item.getSent() + " item.getBlockHeight(): " + item.getBlockHeight());
 
-            hashText.setText(BRWalletManager.getInstance(getActivity()).reverseTxHash(item.getHexId()));
-
-//            statusText.setText(String.format("confirmed in block #%d\n%s", item.getBlockHeight(),
-//                    FragmentSettingsAll.getFormattedDateFromLong(item.getTimeStamp())));
-            amountText.setText(String.format("-%s", m.getFormattedCurrencyString("BTC", amount)));
-            exchangeText.setText(String.format("(-%s)", m.getExchangeForAmount(rate, iso, new BigDecimal(amount))));
+            amountText.setText(String.format("%s", m.getFormattedCurrencyString("BTC", -amount)));
+            exchangeText.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, new BigDecimal(-amount))));
             String fromAddresses[] = item.getFrom();
             long[] outAmounts = item.getOutAmounts();
             setSentFromAddresses(generalTxFrom, fromAddresses);
             String toAddresses[] = item.getTo();
             setSentToAddresses(generalTxTo, toAddresses, outAmounts);
-//            toDescription.setText(getString(R.string.payment_address));
-//            toAmountText.setText(m.getFormattedCurrencyString("BTC", String.valueOf(m.getBitsFromSatoshi(amount))));
-//            toExchangeText.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, String.valueOf(amount))));
-            toFeeAmountText.setText(String.format("-%s", m.getFormattedCurrencyString("BTC", item.getFee())));
-            toFeeExchangeText.setText(String.format("(-%s)", m.getExchangeForAmount(rate, iso, new BigDecimal(item.getFee()))));
+            toFeeAmountText.setText(String.format("%s", m.getFormattedCurrencyString("BTC", -item.getFee())));
+            toFeeExchangeText.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, new BigDecimal(-item.getFee()))));
 
         }
 
@@ -188,7 +185,7 @@ public class FragmentTransactionExpanded extends Fragment {
                 addressBlock.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Log.e(TAG,"tx from: " + txFrom.getText().toString());
+                        Log.e(TAG, "tx from: " + txFrom.getText().toString());
                     }
                 });
                 view.addView(addressBlock);
@@ -223,7 +220,7 @@ public class FragmentTransactionExpanded extends Fragment {
                 addressBlock.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Log.e(TAG,"tx to: " + txTo.getText().toString());
+                        Log.e(TAG, "tx to: " + txTo.getText().toString());
                     }
                 });
                 view.addView(addressBlock);
@@ -250,8 +247,8 @@ public class FragmentTransactionExpanded extends Fragment {
             if (addresses[i] != null && !addresses[i].isEmpty()) {
                 txTo.setText(addresses[i]);
                 txToDescription.setText(getString(R.string.payment_address));
-                txToAmount.setText(String.format("-%s", m.getFormattedCurrencyString("BTC", amounts[i])));
-                txToExchange.setText(String.format("(-%s)", m.getExchangeForAmount(rate, iso, new BigDecimal(amounts[i]))));
+                txToAmount.setText(String.format("%s", m.getFormattedCurrencyString("BTC", -amounts[i])));
+                txToExchange.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, new BigDecimal(-amounts[i]))));
 
                 view.addView(addressBlock);
                 view.addView(FragmentSettingsAll.getSeparationLine(0, getActivity()));

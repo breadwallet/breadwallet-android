@@ -66,6 +66,9 @@ JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRWalletManager_addressCo
 JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_getMinOutputAmount
         (JNIEnv *env, jobject obj);
 
+JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_getMinOutputAmountRequested
+        (JNIEnv *env, jobject obj);
+
 JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRWalletManager_addressIsUsed
         (JNIEnv *env, jobject obj, jstring address);
 
@@ -124,6 +127,11 @@ JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRWalletManager_publishSe
         jobject thiz,
         jbyteArray serializedTransaction,
         jstring phrase);
+
+JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRWalletManager_publishSignedSerializedTransaction(
+        JNIEnv *env,
+        jobject thiz,
+        jbyteArray serializedTransaction);
 
 JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTotalSent
         (JNIEnv *env, jobject obj);

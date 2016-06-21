@@ -248,23 +248,12 @@
                 android:background="@drawable/clickable_layout"
                 android:clickable="true">
 
-
-                <ImageView
-                    android:id="@+id/rescan_image"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="20dp"
-                    android:background="@drawable/rescan" />
-
                 <TextView
                     android:id="@+id/text_rescan_blockchain"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="20dp"
-                    android:layout_toEndOf="@+id/rescan_image"
                     android:text="@string/rescan_blockchain"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/dark_blue"
@@ -285,8 +274,7 @@
                 android:layout_marginTop="10dp"
                 android:text="@string/settingsall_rescan_instructions"
                 android:textColor="@color/gray"
-                android:textSize="16sp" />
-
+                android:textSize="12sp" />
 
         </LinearLayout>
 

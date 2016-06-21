@@ -18,6 +18,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
+import android.content.DialogInterface;
 import android.hardware.fingerprint.FingerprintManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -33,11 +34,13 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
+import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.security.FingerprintUiHelper;
 import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask;
 import com.breadwallet.wallet.BRWalletManager;
 
 /**
@@ -49,8 +52,11 @@ public class FingerprintDialogFragment extends DialogFragment
 
     private FingerprintManager.CryptoObject mCryptoObject;
     private FingerprintUiHelper mFingerprintUiHelper;
+    private String message;
+    private String title;
 
     private PaymentRequestEntity request;
+    private PaymentRequestWrapper paymentRequest;
 
     private int mode = -1;
 
@@ -74,6 +80,7 @@ public class FingerprintDialogFragment extends DialogFragment
 
         View v = inflater.inflate(R.layout.fingerprint_dialog_container, container, false);
         getDialog().setTitle("Fingerprint authorization");
+        if (title != null) getDialog().setTitle(title);
         // If fingerprint authentication is not available, switch immediately to the backup
         // (password) screen.
         FingerprintManager mFingerprintManager = (FingerprintManager) getActivity().getSystemService(Activity.FINGERPRINT_SERVICE);
@@ -82,17 +89,38 @@ public class FingerprintDialogFragment extends DialogFragment
                 (ImageView) v.findViewById(R.id.fingerprint_icon),
                 (TextView) v.findViewById(R.id.fingerprint_status), this);
         View mFingerprintContent = v.findViewById(R.id.fingerprint_container);
+        TextView description = (TextView) v.findViewById(R.id.fingerprint_description);
+        if (message != null) description.setText(message);
 
         Button mCancelButton = (Button) v.findViewById(R.id.cancel_button);
         Button mSecondDialogButton = (Button) v.findViewById(R.id.second_dialog_button);
         mCancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (!MainActivity.scanResultFragmentOn && mode == BRConstants.AUTH_FOR_PAY && request.isAmountRequested) {
+                    FragmentScanResult.address = request.addresses[0];
+                    new android.app.AlertDialog.Builder(getActivity())
+                            .setTitle(getString(R.string.payment_info))
+                            .setMessage("change payment amount?")
+                            .setPositiveButton("change", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    FragmentAnimator.animateScanResultFragment();
+                                }
+                            }).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            FragmentScanResult.address = null;
+                        }
+                    })
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
+                }
                 dismiss();
             }
         });
         mCancelButton.setText(R.string.cancel);
-        mSecondDialogButton.setText(R.string.use_password);
+        mSecondDialogButton.setText(R.string.use_passcode);
         mFingerprintContent.setVisibility(View.VISIBLE);
         mSecondDialogButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,8 +155,9 @@ public class FingerprintDialogFragment extends DialogFragment
         getDialog().cancel();
         PasswordDialogFragment passwordDialogFragment = new PasswordDialogFragment();
         passwordDialogFragment.setMode(mode);
-        passwordDialogFragment.setPaymentRequestEntity(request);
+        passwordDialogFragment.setPaymentRequestEntity(request, paymentRequest);
         passwordDialogFragment.setVerifyOnlyTrue();
+        passwordDialogFragment.setMessage(message);
         FragmentManager fm = getActivity().getFragmentManager();
         passwordDialogFragment.show(fm, PasswordDialogFragment.class.getName());
         if (mFingerprintUiHelper != null)
@@ -140,7 +169,7 @@ public class FingerprintDialogFragment extends DialogFragment
         // Callback from FingerprintUiHelper. Let the activity know that authentication was 
         // successful.
         Dialog d = getDialog();
-        if(d == null) return;
+        if (d == null) return;
         d.cancel();
 
         ((BreadWalletApp) getActivity().getApplicationContext()).setUnlocked(true);
@@ -170,6 +199,9 @@ public class FingerprintDialogFragment extends DialogFragment
                 return;
             }
             FragmentAnimator.hideScanResultFragment();
+        } else if (mode == BRConstants.AUTH_FOR_PAYMENT_PROTOCOL && paymentRequest != null) {
+            if (paymentRequest.paymentURL == null || paymentRequest.paymentURL.isEmpty()) return;
+            new PaymentProtocolPostPaymentTask(paymentRequest).execute();
         }
         dismiss();
     }
@@ -179,11 +211,20 @@ public class FingerprintDialogFragment extends DialogFragment
         goToBackup();
     }
 
-    public void setPaymentRequestEntity(PaymentRequestEntity requestEntity) {
+    public void setPaymentRequestEntity(PaymentRequestEntity requestEntity, PaymentRequestWrapper paymentRequest) {
+        this.paymentRequest = paymentRequest;
         request = requestEntity;
     }
 
     public void setMode(int mode) {
         this.mode = mode;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }

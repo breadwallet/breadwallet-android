@@ -28,6 +28,7 @@ import android.widget.Toast;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
+import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.presenter.fragments.FingerprintDialogFragment;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.presenter.fragments.PasswordDialogFragment;
@@ -221,7 +222,7 @@ public class BreadWalletApp extends Application {
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP_MR1)
-    public void promptForAuthentication(Activity context, int mode, PaymentRequestEntity requestEntity) {
+    public void promptForAuthentication(Activity context, int mode, PaymentRequestEntity requestEntity, String message, String title, PaymentRequestWrapper paymentRequest) {
         Log.e(TAG, "promptForAuthentication: " + mode);
         if (context == null) return;
         KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Activity.KEYGUARD_SERVICE);
@@ -253,13 +254,16 @@ public class BreadWalletApp extends Application {
                 // This happens when no fingerprints are registered.
                 FingerprintDialogFragment fingerprintDialogFragment = new FingerprintDialogFragment();
                 fingerprintDialogFragment.setMode(mode);
-                fingerprintDialogFragment.setPaymentRequestEntity(requestEntity);
+                fingerprintDialogFragment.setPaymentRequestEntity(requestEntity, paymentRequest);
+                fingerprintDialogFragment.setMessage(message);
+                fingerprintDialogFragment.setTitle(title);
                 fingerprintDialogFragment.show(context.getFragmentManager(), FingerprintDialogFragment.class.getName());
             } else {
                 PasswordDialogFragment passwordDialogFragment = new PasswordDialogFragment();
                 passwordDialogFragment.setMode(mode);
-                passwordDialogFragment.setPaymentRequestEntity(requestEntity);
+                passwordDialogFragment.setPaymentRequestEntity(requestEntity, paymentRequest);
                 passwordDialogFragment.setVerifyOnlyTrue();
+                passwordDialogFragment.setMessage(message);
                 passwordDialogFragment.show(context.getFragmentManager(), PasswordDialogFragment.class.getName());
             }
         } else {

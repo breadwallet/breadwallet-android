@@ -2,7 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="90dp">
+    android:layout_marginTop="60dp">
 
     <LinearLayout
         android:id="@+id/transactions_item"
@@ -38,9 +38,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="@dimen/transaction_item_margin"
-                android:layout_toEndOf="@id/tx_id_label"
-                android:ellipsize="middle"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="@dimen/transaction_item_margin"
                 android:singleLine="false"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@color/gray"
@@ -119,9 +118,9 @@
                 android:layout_centerVertical="true"
                 android:layout_marginStart="@dimen/transaction_item_margin"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/dark_grey"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                 />
 
             <TextView
                 android:id="@+id/tx_exchange_text"
@@ -132,7 +131,7 @@
                 android:layout_toStartOf="@id/tx_amount_text"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@color/gray"
-                android:textSize="13sp" />
+                android:textSize="15sp" />
 
         </RelativeLayout>
 

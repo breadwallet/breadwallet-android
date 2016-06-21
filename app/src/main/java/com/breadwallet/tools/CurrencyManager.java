@@ -262,9 +262,11 @@ public class CurrencyManager extends Observable {
         // s the currency symbol.
         DecimalFormatSymbols decimalFormatSymbols;
         Currency currency;
+        String symbol = null;
         if (Objects.equals(isoCurrencyCode, "BTC")) {
             decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
-            decimalFormatSymbols.setCurrencySymbol(bitcoinLowercase);
+            symbol = bitcoinLowercase;
+            decimalFormatSymbols.setCurrencySymbol(symbol);
         } else {
             try {
                 currency = Currency.getInstance(isoCurrencyCode);
@@ -274,7 +276,7 @@ public class CurrencyManager extends Observable {
                 currency = Currency.getInstance(Locale.getDefault());
             }
             decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
-            String symbol = currency.getSymbol();
+            symbol = currency.getSymbol();
             decimalFormatSymbols.setCurrencySymbol(symbol);
         }
         currencyFormat.setDecimalSeparatorAlwaysShown(separatorNeedsToBeShown);
@@ -282,6 +284,9 @@ public class CurrencyManager extends Observable {
         currencyFormat.setMinimumFractionDigits(AmountAdapter.digitsInserted);
         currencyFormat.setGroupingUsed(true);
         currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
+        currencyFormat.setNegativePrefix(decimalFormatSymbols.getCurrencySymbol() + "-");
+// or "-"+symbol if that's what you need
+        currencyFormat.setNegativeSuffix("");
 //        Log.e(TAG, "Returning the formatted string with separatorVisibility: " +
 // currencyFormat.isDecimalSeparatorAlwaysShown());
         return currencyFormat.format(new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100")).doubleValue());

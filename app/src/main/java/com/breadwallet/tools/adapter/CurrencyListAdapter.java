@@ -16,6 +16,7 @@ import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.fragments.FragmentCurrency;
 import com.breadwallet.tools.SharedPreferencesManager;
+import com.breadwallet.tools.Utils;
 
 /**
  * BreadWallet
@@ -73,6 +74,7 @@ public class CurrencyListAdapter extends ArrayAdapter<CurrencyEntity> {
         // get the TextView and then set the text (item name) and tag (item ID) values
         textViewItem = null;
         textViewItem = (TextView) convertView.findViewById(R.id.currency_item_text);
+        Utils.overrideFonts(textViewItem);
         textViewItem.setText(this.getItem(position).codeAndName);
         ImageView checkMark = (ImageView) convertView.findViewById(R.id.currency_checkmark);
 

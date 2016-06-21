@@ -3,6 +3,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingTop="60dp">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/separator_height"
@@ -11,8 +12,8 @@
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="none"
-        android:nestedScrollingEnabled="false">
+        android:nestedScrollingEnabled="false"
+        android:scrollbars="none">
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
@@ -26,11 +27,6 @@
                 android:background="@drawable/clickable_layout"
                 android:orientation="vertical">
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/separator_height"
-                    android:background="@color/gray" />
-
                 <LinearLayout
                     android:id="@+id/transactions_list"
                     android:layout_width="match_parent"
@@ -43,8 +39,8 @@
                     android:id="@+id/text_no_transactions"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="20dp"
                     android:layout_gravity="center"
+                    android:padding="20dp"
                     android:text="@string/no_transactions"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/light_gray"
@@ -137,10 +133,10 @@
 
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_toEndOf="@+id/settings_icon"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="20dp"
+                    android:layout_toEndOf="@+id/settings_icon"
                     android:text="@string/settings"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/gray"

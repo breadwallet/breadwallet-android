@@ -109,7 +109,7 @@ public class FragmentSettings extends Fragment {
             @Override
             public void onClick(View v) {
                 if (FragmentAnimator.checkTheMultipressingAvailability()) {
-                    ((BreadWalletApp) getActivity().getApplicationContext()).promptForAuthentication(getActivity(), BRConstants.AUTH_FOR_LIMIT, null);
+                    ((BreadWalletApp) getActivity().getApplicationContext()).promptForAuthentication(getActivity(), BRConstants.AUTH_FOR_LIMIT, null, null, null, null);
                 }
             }
         });
@@ -133,7 +133,7 @@ public class FragmentSettings extends Fragment {
                             .setMessage(getResources().getString(R.string.dialog_do_not_let_anyone))
                             .setPositiveButton(getResources().getString(R.string.show), new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
-                                    ((BreadWalletApp) getActivity().getApplicationContext()).promptForAuthentication(getActivity(), BRConstants.AUTH_FOR_PHRASE, null);
+                                    ((BreadWalletApp) getActivity().getApplicationContext()).promptForAuthentication(getActivity(), BRConstants.AUTH_FOR_PHRASE, null, null, null, null);
                                 }
                             })
                             .setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {

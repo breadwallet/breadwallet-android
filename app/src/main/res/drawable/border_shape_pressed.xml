@@ -6,7 +6,7 @@
         android:bottomRightRadius="0dp"
         android:bottomLeftRadius="0dp" />
 
-    <solid android:color="@color/wallet_orange"/>
+    <solid android:color="@color/extra_light_grey"/>
     <stroke
         android:width="1px"
         android:color="@color/gray" />

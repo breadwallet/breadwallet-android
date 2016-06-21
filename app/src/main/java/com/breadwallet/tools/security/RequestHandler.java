@@ -171,7 +171,7 @@ public class RequestHandler {
             }
             String strAmount = String.valueOf(amount);
             if (app != null) {
-                app.pay(addresses[0], new BigDecimal(strAmount), null);
+                app.pay(addresses[0], new BigDecimal(strAmount), null, true);
             }
         } else {
             if (app != null)
@@ -192,6 +192,8 @@ public class RequestHandler {
     }
 
     public static native PaymentRequestWrapper parsePaymentRequest(byte[] req, String phrase);
+
+    public static native String parsePaymentACK(byte[] req);
 
     public static native byte[] getCertificatesFromPaymentRequest(byte[] req, int index);
 

@@ -7,11 +7,12 @@
 
     <TextView
         android:layout_width="match_parent"
+        android:id="@+id/more_text"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:padding="10dp"
         android:text="@string/more"
-        android:textStyle="normal"
+        android:typeface="sans"
         android:textColor="@color/dark_blue"
         android:textSize="@dimen/text_size" />
 

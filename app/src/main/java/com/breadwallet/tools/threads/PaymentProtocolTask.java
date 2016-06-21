@@ -89,7 +89,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 return null;
             }
             byte[] serializedBytes = ByteReader.readBytesFromStream(in);
-            Log.e(TAG,"byteTest: PaymentProtocolTask: " + Arrays.toString(serializedBytes));
+            Log.e(TAG, "byteTest: PaymentProtocolTask: " + Arrays.toString(serializedBytes));
             if (serializedBytes == null || serializedBytes.length == 0) {
                 Log.e(TAG, "serializedBytes are null!!!");
                 return null;
@@ -115,7 +115,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                     app.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ((BreadWalletApp) app.getApplication()).showCustomDialog("Warning", "Insufficient amount to satisfy the request", "ok");
+                            ((BreadWalletApp) app.getApplication()).showCustomDialog("Warning", "Insufficient funds", "ok");
                         }
                     });
                 }
@@ -239,11 +239,14 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
             allAddresses.append(s + ", ");
         }
         allAddresses.delete(allAddresses.length() - 2, allAddresses.length());
-        String certification = "";
+        String certification;
+        String memo = (!paymentRequest.memo.isEmpty() ? "\n" : "") + paymentRequest.memo ;
         if (certified) {
-            certification = "certified: " + cn + "\n";
-            allAddresses = new StringBuilder();
+            certification = "\ud83d\udd12 " + cn + "\n";
+        } else {
+            certification = "\u274C " + cn + "\n";
         }
+        allAddresses = new StringBuilder();
 
         //DecimalFormat decimalFormat = new DecimalFormat("0.00");
         String iso = SharedPreferencesManager.getIso(app);
@@ -275,8 +278,8 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
 
         final long total = paymentRequest.amount + paymentRequest.fee;
 
-        final PaymentRequestEntity request = new PaymentRequestEntity(paymentRequest.addresses, paymentRequest.amount, cn, paymentRequest.serializedTx);
-        final String message = certification + allAddresses.toString() + "\n\n" + "amount: " + cm.getFormattedCurrencyString("BTC", paymentRequest.amount)
+        final PaymentRequestEntity request = new PaymentRequestEntity(paymentRequest.addresses, paymentRequest.amount, cn, paymentRequest.serializedTx, false);
+        final String message = certification + memo + allAddresses.toString() + "\n\n" + "amount: " + cm.getFormattedCurrencyString("BTC", paymentRequest.amount)
                 + " (" + cm.getExchangeForAmount(rate, iso, new BigDecimal(paymentRequest.amount)) + ")" + "\nnetwork fee: +" + cm.getFormattedCurrencyString("BTC", paymentRequest.fee)
                 + " (" + cm.getExchangeForAmount(rate, iso, new BigDecimal(paymentRequest.fee)) + ")" + "\ntotal: " + cm.getFormattedCurrencyString("BTC", total)
                 + " (" + cm.getExchangeForAmount(rate, iso, new BigDecimal(total)) + ")";
@@ -284,16 +287,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
         app.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                new android.app.AlertDialog.Builder(app)
-                        .setTitle(app.getString(R.string.payment_info))
-                        .setMessage(message)
-                        .setPositiveButton(app.getString(R.string.send), new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                ((BreadWalletApp) app.getApplicationContext()).promptForAuthentication(app, BRConstants.AUTH_FOR_PAY, request);
-                            }
-                        })
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .show();
+                ((BreadWalletApp) app.getApplicationContext()).promptForAuthentication(app, BRConstants.AUTH_FOR_PAYMENT_PROTOCOL, request, message, app.getString(R.string.payment_info), paymentRequest);
             }
         });
 //            Log.e(TAG, "paymentRequest.amount: " + paymentRequest.amount);

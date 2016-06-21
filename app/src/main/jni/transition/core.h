@@ -32,5 +32,8 @@ JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_tools_security_RequestHandler_
 JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_tools_security_RequestHandler_getCertificatesFromPaymentRequest
         (JNIEnv *env, jobject obj, jbyteArray payment, jint index);
 
+JNIEXPORT jstring JNICALL Java_com_breadwallet_tools_security_RequestHandler_parsePaymentACK
+        (JNIEnv *env, jobject obj, jbyteArray paymentACK);
+
 
 #endif //BREADWALLET_CORE_H

@@ -141,7 +141,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     private int middleBubbleBlocksCount = 0;
     private static int MODE = RELEASE;
     public RelativeLayout bug;
-//    private TextView testnet;
+    //    private TextView testnet;
     private BubbleTextVew middleBubble1;
     private BubbleTextVew middleBubble2;
     private BubbleTextVew middleBubbleBlocks;
@@ -232,7 +232,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                 String amountHolder = FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_RIGHT ?
                         AmountAdapter.getRightValue() : AmountAdapter.getLeftValue();
                 String addressHolder = FragmentScanResult.address;
-                pay(addressHolder, new BigDecimal(amountHolder).multiply(new BigDecimal("100")), null);
+                pay(addressHolder, new BigDecimal(amountHolder).multiply(new BigDecimal("100")), null, false);
             }
         });
 
@@ -337,7 +337,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                     SpringAnimator.showAnimation(lockerButton);
 //                passwordDialogFragment.show(fm, TAG);
                     if (KeyStoreManager.getPassCode(app) != 0)
-                        ((BreadWalletApp) getApplication()).promptForAuthentication(app, BRConstants.AUTH_FOR_GENERAL, null);
+                        ((BreadWalletApp) getApplication()).promptForAuthentication(app, BRConstants.AUTH_FOR_GENERAL, null, null, null, null);
                 }
 
             }
@@ -600,7 +600,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         }
     }
 
-    public void pay(final String addressHolder, final BigDecimal bigDecimalAmount, final String cn) {
+    public void pay(final String addressHolder, final BigDecimal bigDecimalAmount, final String cn, final boolean isAmountRequested) {
         if (addressHolder == null || bigDecimalAmount == null) return;
         if (addressHolder.length() < 20) return;
 //        final long amountAsLong = bigDecimal.longValue();
@@ -634,7 +634,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                                 byte[] tmpTx2 = m.tryTransaction(addressHolder, bigDecimalAmount.longValue() - amountToReduce);
                                 if (tmpTx2 != null) {
                                     PostAuthenticationProcessor.getInstance().setTmpTx(tmpTx2);
-                                    confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, bigDecimalAmount.longValue() - amountToReduce, cn, tmpTx2));
+                                    confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, bigDecimalAmount.longValue() - amountToReduce, cn, tmpTx2, isAmountRequested));
                                 } else {
                                     Log.e(TAG, "tmpTxObject2 is null!!!");
                                     ((BreadWalletApp) getApplication()).showCustomToast(app, "Failed to send, insufficient funds", screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
@@ -649,8 +649,7 @@ public class MainActivity extends FragmentActivity implements Observer {
             Log.e(TAG, "pay >>>> feeForTx: " + feeForTx + ", amountAsDouble: " + bigDecimalAmount.longValue() +
                     ", CurrencyManager.getInstance(this).getBALANCE(): " + cm.getBALANCE());
             if (feeForTx != 0 && bigDecimalAmount.longValue() + feeForTx < cm.getBALANCE()) {
-
-                confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, bigDecimalAmount.longValue(), cn, tmpTx));
+                confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, bigDecimalAmount.longValue(), cn, tmpTx, isAmountRequested));
             } else {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage(String.format(Locale.getDefault(), "insufficient funds to send: %s", cm.getFormattedCurrencyString("BTC", bigDecimalAmount.longValue())))
@@ -686,7 +685,10 @@ public class MainActivity extends FragmentActivity implements Observer {
         BRWalletManager m = BRWalletManager.getInstance(this);
         long minAmount = m.getMinOutputAmount();
         if (new BigDecimal(tempAmount).multiply(new BigDecimal("100")).doubleValue() < minAmount) {
-            ((BreadWalletApp) getApplication()).showCustomDialog(getString(R.string.warning), "The amount cannot be less than ƀ" + minAmount, getString(R.string.ok));
+            final String bitcoinMinMessage = String.format(Locale.getDefault(), "bitcoin payments can't be less than ƀ%.2f",
+                    new BigDecimal(minAmount).divide(new BigDecimal("100")));
+            ((BreadWalletApp) getApplication()).showCustomDialog("amount too small",
+                    bitcoinMinMessage, getString(R.string.ok));
             return;
         }
         String strAmount = String.valueOf(new BigDecimal(tempAmount).divide(new BigDecimal("1000000")).toString());
@@ -792,8 +794,13 @@ public class MainActivity extends FragmentActivity implements Observer {
 
 //        ((BreadWalletApp) getApplication()).showCustomDialog("payment info", certification + allAddresses.toString() +
 //                "\n\n" + "amount " + CurrencyManager.getInstance(this).getFormattedCurrencyString("BTC", String.valueOf(request.amount / 100))
-//                + " (" + CurrencyManager.getInstance(this).getFormattedCurrencyString(iso, amount) + ")", "send");
-        double minOutput = BRWalletManager.getInstance(this).getMinOutputAmount();
+//                + " (" + CurrencyManager.getInstance(this).getFormattedCurrencyString(iso, amount) + ")", "send")
+        double minOutput;
+        if (request.isAmountRequested) {
+            minOutput = BRWalletManager.getInstance(this).getMinOutputAmountRequested();
+        } else {
+            minOutput = BRWalletManager.getInstance(this).getMinOutputAmount();
+        }
         if (request.amount < minOutput) {
             final String bitcoinMinMessage = String.format(Locale.getDefault(), "bitcoin payments can't be less than ƀ%.2f",
                     new BigDecimal(minOutput).divide(new BigDecimal("100")));
@@ -819,41 +826,43 @@ public class MainActivity extends FragmentActivity implements Observer {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                new android.app.AlertDialog.Builder(app)
-                        .setTitle(getString(R.string.payment_info))
-                        .setMessage(message)
-                        .setPositiveButton(getString(R.string.send), new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                ((BreadWalletApp) getApplicationContext()).promptForAuthentication(app, BRConstants.AUTH_FOR_PAY, request);
-                            }
-                        }).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
+                ((BreadWalletApp) getApplicationContext()).promptForAuthentication(app, BRConstants.AUTH_FOR_PAY, request, message, getString(R.string.payment_info), null);
 
-                        if (!scanResultFragmentOn) {
-                            FragmentScanResult.address = request.addresses[0];
-                            new android.app.AlertDialog.Builder(app)
-                                    .setTitle(getString(R.string.payment_info))
-                                    .setMessage("change payment amount?")
-                                    .setPositiveButton("change", new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            FragmentAnimator.animateScanResultFragment();
-                                        }
-                                    }).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                    FragmentScanResult.address = null;
-                                }
-                            })
-                                    .setIcon(android.R.drawable.ic_dialog_alert)
-                                    .show();
-                        }
-                    }
-                })
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .show();
+//                new android.app.AlertDialog.Builder(app)
+//                        .setTitle(getString(R.string.payment_info))
+//                        .setMessage(message)
+//                        .setPositiveButton(getString(R.string.send), new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                ((BreadWalletApp) getApplicationContext()).promptForAuthentication(app, BRConstants.AUTH_FOR_PAY, request);
+//                            }
+//                        }).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        dialog.dismiss();
+//
+//                        if (!scanResultFragmentOn) {
+//                            FragmentScanResult.address = request.addresses[0];
+//                            new android.app.AlertDialog.Builder(app)
+//                                    .setTitle(getString(R.string.payment_info))
+//                                    .setMessage("change payment amount?")
+//                                    .setPositiveButton("change", new DialogInterface.OnClickListener() {
+//                                        public void onClick(DialogInterface dialog, int which) {
+//                                            FragmentAnimator.animateScanResultFragment();
+//                                        }
+//                                    }).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialog, int which) {
+//                                    dialog.dismiss();
+//                                    FragmentScanResult.address = null;
+//                                }
+//                            })
+//                                    .setIcon(android.R.drawable.ic_dialog_alert)
+//                                    .show();
+//                        }
+//                    }
+//                })
+//                        .setIcon(android.R.drawable.ic_dialog_alert)
+//                        .show();
             }
         });
     }

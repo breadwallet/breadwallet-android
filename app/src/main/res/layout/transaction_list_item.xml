@@ -3,9 +3,9 @@
     android:id="@+id/transaction_list_item_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:baselineAligned="false"
     android:orientation="horizontal"
-    android:weightSum="3"
-    android:baselineAligned="false">
+    android:weightSum="3">
 
     <LinearLayout
         android:id="@+id/transaction_layout_raw1"
@@ -24,7 +24,7 @@
             android:includeFontPadding="false"
             android:padding="0px"
             android:text="@string/sent_received"
-            android:textSize="12sp" />
+            android:textSize="13sp" />
 
         <com.breadwallet.presenter.customviews.AutoResizeTextView
             android:id="@+id/transaction_date"
@@ -42,8 +42,8 @@
         android:id="@+id/transaction_layout_raw3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
         android:layout_weight="1"
+        android:layout_gravity="center"
         android:gravity="end|center_vertical"
         android:orientation="vertical">
 
@@ -60,9 +60,9 @@
             android:id="@+id/transaction_amount_dollars_total"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
+            android:layout_marginTop="4dp"
             android:clickable="false"
-            android:textColor="@color/gray"
+            android:textColor="@color/light_gray"
             android:textSize="12sp" />
     </LinearLayout>
 
@@ -71,8 +71,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="15dp"
+        android:layout_gravity="center"
         android:layout_weight="1"
+        android:layout_marginBottom="1dp"
         android:orientation="vertical">
 
         <com.breadwallet.presenter.customviews.AutoResizeTextView
@@ -80,15 +81,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="false"
-            android:textColor="@color/dark_grey"
-            android:textSize="15sp"
-            android:textStyle="bold" />
+            android:layout_marginBottom="2dp"
+            android:textColor="@color/black"
+            android:textSize="18sp" />
 
         <com.breadwallet.presenter.customviews.AutoResizeTextView
             android:id="@+id/transaction_amount_bits_total"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
             android:clickable="false"
             android:textColor="@color/dark_grey"
             android:textSize="12sp" />
