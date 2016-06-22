@@ -90,7 +90,9 @@ public class FingerprintDialogFragment extends DialogFragment
                 (TextView) v.findViewById(R.id.fingerprint_status), this);
         View mFingerprintContent = v.findViewById(R.id.fingerprint_container);
         TextView description = (TextView) v.findViewById(R.id.fingerprint_description);
-        if (message != null) description.setText(message);
+        if (message != null) {
+            description.setText(message);
+        }
 
         Button mCancelButton = (Button) v.findViewById(R.id.cancel_button);
         Button mSecondDialogButton = (Button) v.findViewById(R.id.second_dialog_button);

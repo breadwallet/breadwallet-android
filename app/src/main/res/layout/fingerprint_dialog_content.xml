@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2015 The Android Open Source Project
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,21 +18,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="8dp"
-    android:paddingStart="24dp"
     android:paddingEnd="24dp"
-    android:paddingTop="16dp">
+    android:paddingStart="24dp">
 
     <TextView
         android:id="@+id/fingerprint_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:gravity="center"
-        android:textAlignment="center"
-        android:layout_alignParentTop="true"
         android:text="@string/fingerprint_description"
+        android:textAlignment="center"
         android:textAppearance="@android:style/TextAppearance.Material.Subhead"
-        android:textColor="?android:attr/textColorSecondary"/>
+        android:textColor="?android:attr/textColorSecondary" />
 
 
     <ImageView

@@ -29,10 +29,12 @@ import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Currency;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Observable;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -164,9 +166,16 @@ public class CurrencyManager extends Observable {
                 currencyListAdapter.clear();
                 currencyListAdapter.addAll(tmp);
                 currencyListAdapter.notifyDataSetChanged();
+//                SharedPreferencesManager.putExchangeRates(ctx, tmp);
                 if (FragmentAnimator.level <= 2)
                     MiddleViewAdapter.resetMiddleView(ctx, null);
             } else {
+//                if(currencyListAdapter.getCount() == 0){
+//                    currencyListAdapter.clear();
+//                    currencyListAdapter.addAll(tmp);
+//                    currencyListAdapter.notifyDataSetChanged();
+//                }
+
                 Log.e(TAG, "Adapter Not Changed, data is empty");
             }
         }
@@ -281,7 +290,7 @@ public class CurrencyManager extends Observable {
         }
         currencyFormat.setDecimalSeparatorAlwaysShown(separatorNeedsToBeShown);
         currencyFormat.setMaximumFractionDigits(2);
-        currencyFormat.setMinimumFractionDigits(AmountAdapter.digitsInserted);
+        currencyFormat.setMinimumFractionDigits(2);
         currencyFormat.setGroupingUsed(true);
         currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
         currencyFormat.setNegativePrefix(decimalFormatSymbols.getCurrencySymbol() + "-");

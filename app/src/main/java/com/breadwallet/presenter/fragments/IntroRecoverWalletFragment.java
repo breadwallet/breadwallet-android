@@ -2,13 +2,18 @@ package com.breadwallet.presenter.fragments;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -53,6 +58,7 @@ public class IntroRecoverWalletFragment extends Fragment {
     private Button recoverButton;
     private EditText editText;
     private AlertDialog alertDialog;
+    InputMethodManager keyboard;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -61,11 +67,12 @@ public class IntroRecoverWalletFragment extends Fragment {
         // properly.
         View rootView = inflater.inflate(
                 R.layout.intro_fragment_recover_wallet, container, false);
+
+        keyboard = (InputMethodManager) getActivity().
+                getSystemService(Context.INPUT_METHOD_SERVICE);
         recoverButton = (Button) rootView.findViewById(R.id.recover_button);
         editText = (EditText) rootView.findViewById(R.id.recover_wallet_edit_text);
         editText.setText("");
-//        editText.setText("こせき　ぎじにってい　けっこん　せつぞく　うんどう　ふこう　にっすう　こせい　きさま　なまみ　たきび　はかい");
-//        editText.setText("こせきぎじにっていけっこんせつぞくうんどうふこうにっすうこせいきさまなまみたきびはかい");
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) ||
@@ -84,7 +91,7 @@ public class IntroRecoverWalletFragment extends Fragment {
                 }
 
                 String phraseToCheck = editText.getText().toString().toLowerCase();
-                String cleanPhrase = WordsReader.cleanPhrase(getActivity(),phraseToCheck);
+                String cleanPhrase = WordsReader.cleanPhrase(getActivity(), phraseToCheck);
 
                 if (BRWalletManager.getInstance(getActivity()).validatePhrase(getActivity(), cleanPhrase)) {
 
@@ -96,7 +103,7 @@ public class IntroRecoverWalletFragment extends Fragment {
                     boolean success2 = false;
                     if (success)
                         success2 = KeyStoreManager.putKeyStoreCanary(BRConstants.CANARY_STRING, getActivity(), 0);
-                    if (!success || !success2){
+                    if (!success || !success2) {
                         PostAuthenticationProcessor.getInstance().setPhraseForKeyStore(cleanPhrase);
                         return;
                     }
@@ -122,12 +129,24 @@ public class IntroRecoverWalletFragment extends Fragment {
                 }
             }
         });
+
         return rootView;
     }
 
-
     @Override
     public void onResume() {
+        if (editText != null) {
+            (new Handler()).postDelayed(new Runnable() {
+
+                public void run() {
+
+                    editText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
+                    editText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
+
+                }
+            }, 100);
+
+        }
         super.onResume();
     }
 

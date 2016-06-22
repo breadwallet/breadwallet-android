@@ -479,6 +479,8 @@ public class BRWalletManager {
 
     public native boolean publishSerializedTransaction(byte[] serializedTransaction, String phrase);
 
+    public native boolean publishSignedSerializedTransaction(byte[] serializedTransaction);
+
     public native long getTotalSent();
 
     public native long setFeePerKb(long fee);

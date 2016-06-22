@@ -151,14 +151,14 @@
     <string name="generate_recovery_phrase">generate recovery phrase</string>
     <string name="request">request</string>
     <string name="pay">pay</string>
-    <string name="at_this_address">Receive bitcoins at this address:</string>
+    <string name="at_this_address">receive bitcoins at this address:</string>
     <string name="generate_phrase_text1">start a new wallet by generating a wallet recovery phrase</string>
     <string name="generate_phrase_text2">if you ever lose your phone, you will need this phrase to recover your wallet</string>
     <string name="i_wrote_it_down">I wrote it down:</string>
     <string name="no_transactions">no transactions</string>
     <string name="recovery_phrase">recovery phrase:</string>
     <string name="refresh">refresh</string>
-    <string name="use_passcode">use passcode</string>
+    <string name="use_passcode">passcode</string>
     <string name="wallet_disabled">wallet disabled</string>
     <string name="try_again">try again in %d minutes</string>
     <string name="reset">reset</string>

@@ -7,11 +7,14 @@ import android.util.Log;
 
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.fragments.FragmentCurrency;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.util.Currency;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * BreadWallet
@@ -157,5 +160,21 @@ public class SharedPreferencesManager {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putLong(BRConstants.SECURE_TIME_PREFS, date);
         editor.apply();
+    }
+
+    public static void putExchangeRates(Activity activity, Set<CurrencyEntity> rates) {
+        Set<String> set = new HashSet<>();
+        for(CurrencyEntity s : rates){
+            set.add(s.codeAndName);
+        }
+        SharedPreferences prefs = activity.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putStringSet(BRConstants.EXCHANGE_RATES, set);
+        editor.apply();
+    }
+
+    public static Set<String> getExchangeRates(Activity context) {
+        SharedPreferences prefs = context.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getStringSet(BRConstants.EXCHANGE_RATES, new HashSet<String>());
     }
 }

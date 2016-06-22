@@ -97,6 +97,7 @@ public class PasswordDialogFragment extends DialogFragment {
     private TextWatcher textWatcher;
     private String prevPass;
     private String message;
+    private TextView description;
 
     private int mode = -1;
 
@@ -119,7 +120,7 @@ public class PasswordDialogFragment extends DialogFragment {
         title = (TextView) view.findViewById(R.id.passcode_dialog_title);
         info = (TextView) view.findViewById(R.id.password_info_text);
 
-        TextView description = (TextView) view.findViewById(R.id.passcode_dialog_description);
+        description = (TextView) view.findViewById(R.id.passcode_dialog_description);
 
         if (message != null) description.setText(message);
 
@@ -168,6 +169,7 @@ public class PasswordDialogFragment extends DialogFragment {
                 if (phraseEditText.getVisibility() == View.GONE) {
                     phraseEditText.setVisibility(View.VISIBLE);
                     title.setText(R.string.recovery_title);
+                    description.setText("");
                     info.setVisibility(View.GONE);
                 } else {
                     if (!phraseEditText.getText().toString().isEmpty() && KeyStoreManager.phraseIsValid(phraseEditText.getText().toString(), getActivity())) {
@@ -455,6 +457,7 @@ public class PasswordDialogFragment extends DialogFragment {
         long failTimestamp = KeyStoreManager.getFailTimeStampt(getActivity());
         double waitTime = (failTimestamp + Math.pow(6, failCount - 3) * 60.0 - secureTime) / 60.0;
         title.setText(R.string.wallet_disabled);
+        description.setText("");
         passcodeEditText.setVisibility(View.GONE);
         info.setVisibility(View.VISIBLE);
         info.setText(String.format(getString(R.string.try_again), (int) waitTime));

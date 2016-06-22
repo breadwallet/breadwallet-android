@@ -104,6 +104,7 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
             }
 
             message = RequestHandler.parsePaymentACK(serializedBytes);
+            BRWalletManager.getInstance(app).publishSignedSerializedTransaction(paymentRequest.serializedTx);
 
         } catch (Exception e) {
             if (e instanceof java.net.UnknownHostException) {

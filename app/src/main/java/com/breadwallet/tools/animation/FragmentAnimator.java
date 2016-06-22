@@ -59,7 +59,7 @@ public class FragmentAnimator {
     private static Stack<Fragment> previous = new Stack<>();
     private static boolean multiplePressingAvailable = true;
 //    private static int VERTICAL_BOUNCE_DELAY = 60;
-    private static int horizontalSlideDuration = 300;
+    public static int horizontalSlideDuration = 300;
     private static boolean horizontalSlideAvailable = true;
 //    private static final Object lockObject = new Object();
 

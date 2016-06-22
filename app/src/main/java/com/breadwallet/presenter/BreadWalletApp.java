@@ -256,7 +256,7 @@ public class BreadWalletApp extends Application {
                 fingerprintDialogFragment.setMode(mode);
                 fingerprintDialogFragment.setPaymentRequestEntity(requestEntity, paymentRequest);
                 fingerprintDialogFragment.setMessage(message);
-                fingerprintDialogFragment.setTitle(title);
+                fingerprintDialogFragment.setTitle(message != null ? "" : title);
                 fingerprintDialogFragment.show(context.getFragmentManager(), FingerprintDialogFragment.class.getName());
             } else {
                 PasswordDialogFragment passwordDialogFragment = new PasswordDialogFragment();

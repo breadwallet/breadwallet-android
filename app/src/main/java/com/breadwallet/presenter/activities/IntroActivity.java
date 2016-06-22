@@ -1,6 +1,7 @@
 
 package com.breadwallet.presenter.activities;
 
+import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 
@@ -24,6 +26,7 @@ import com.breadwallet.presenter.fragments.IntroWelcomeFragment;
 import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.SharedPreferencesManager;
 import com.breadwallet.tools.animation.BackgroundMovingAnimator;
+import com.breadwallet.tools.animation.DecelerateOvershootInterpolator;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
@@ -150,38 +153,99 @@ public class IntroActivity extends FragmentActivity {
 
     private void showNewRecoverWalletFragment() {
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
+//        fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
         IntroWelcomeFragment introWelcomeFragment = (IntroWelcomeFragment) getFragmentManager().
                 findFragmentByTag(IntroWelcomeFragment.class.getName());
         if (introWelcomeFragment != null) {
-            fragmentTransaction.replace(introWelcomeFragment.getId(), new IntroNewRecoverFragment(), IntroNewRecoverFragment.class.getName());
+            final IntroNewRecoverFragment introNewRecoverFragment = new IntroNewRecoverFragment();
+            fragmentTransaction.replace(introWelcomeFragment.getId(), introNewRecoverFragment, IntroNewRecoverFragment.class.getName());
             fragmentTransaction.commitAllowingStateLoss();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    TranslateAnimation trans = new TranslateAnimation(app.getResources().getInteger(R.integer.standard_screen_width), 0, 0, 0);
+                    trans.setDuration(FragmentAnimator.horizontalSlideDuration);
+                    trans.setInterpolator(new DecelerateOvershootInterpolator(1f, 0.5f));
+                    View view = introNewRecoverFragment.getView();
+                    Log.e(TAG, "startAnimation");
+                    if (view != null)
+                        view.startAnimation(trans);
+                }
+            }, 1);
         }
+
+//        if (!checkTheHorizontalSlideAvailability()) return;
+//        level++;
+//        if (level > 1)
+//            context.setBurgerButtonImage(MainActivity.BACK);
+//        FragmentTransaction fragmentTransaction = context.getFragmentManager().beginTransaction();
+////        fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
+//        fragmentTransaction.replace(R.id.main_layout, to, to.getClass().getName());
+//        if (previousFragment != null)
+//            previous.add(previousFragment);
+//        fragmentTransaction.commit();
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                TranslateAnimation trans = new TranslateAnimation(context.getResources().getInteger(R.integer.standard_screen_width), 0, 0, 0);
+//                trans.setDuration(horizontalSlideDuration);
+//                trans.setInterpolator(new DecelerateOvershootInterpolator(1f, 0.5f));
+//                View view = to.getView();
+//                Log.e(TAG, "startAnimation");
+//                if (view != null)
+//                    view.startAnimation(trans);
+//            }
+//        }, 1);
     }
 
     public void showNewWalletFragment() {
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         leftButton.setVisibility(View.VISIBLE);
         leftButton.setClickable(true);
-        fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
-        IntroNewRecoverFragment introNewRecoverFragment = (IntroNewRecoverFragment) getFragmentManager().
+//        fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
+        final IntroNewRecoverFragment introNewRecoverFragment = (IntroNewRecoverFragment) getFragmentManager().
                 findFragmentByTag(IntroNewRecoverFragment.class.getName());
 
-        fragmentTransaction.replace(introNewRecoverFragment.getId(), new IntroNewWalletFragment(), IntroNewWalletFragment.class.getName()).
+        final IntroNewWalletFragment introNewWalletFragment = new IntroNewWalletFragment();
+        fragmentTransaction.replace(introNewRecoverFragment.getId(), introNewWalletFragment, IntroNewWalletFragment.class.getName()).
                 addToBackStack(null);
         fragmentTransaction.commitAllowingStateLoss();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                TranslateAnimation trans = new TranslateAnimation(app.getResources().getInteger(R.integer.standard_screen_width), 0, 0, 0);
+                trans.setDuration(FragmentAnimator.horizontalSlideDuration);
+                trans.setInterpolator(new DecelerateOvershootInterpolator(1f, 0.5f));
+                View view = introNewWalletFragment.getView();
+                Log.e(TAG, "startAnimation");
+                if (view != null)
+                    view.startAnimation(trans);
+            }
+        }, 1);
     }
 
     public void showRecoverWalletFragment() {
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         leftButton.setVisibility(View.VISIBLE);
         leftButton.setClickable(true);
-        fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
         IntroNewRecoverFragment introNewRecoverFragment = (IntroNewRecoverFragment) getFragmentManager().
                 findFragmentByTag(IntroNewRecoverFragment.class.getName());
-        fragmentTransaction.replace(introNewRecoverFragment.getId(), new IntroRecoverWalletFragment(), IntroRecoverWalletFragment.class.getName()).
+        final IntroRecoverWalletFragment introRecoverWalletFragment = new IntroRecoverWalletFragment();
+        fragmentTransaction.replace(introNewRecoverFragment.getId(), introRecoverWalletFragment, IntroRecoverWalletFragment.class.getName()).
                 addToBackStack(null);
         fragmentTransaction.commitAllowingStateLoss();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                TranslateAnimation trans = new TranslateAnimation(app.getResources().getInteger(R.integer.standard_screen_width), 0, 0, 0);
+                trans.setDuration(FragmentAnimator.horizontalSlideDuration);
+                trans.setInterpolator(new DecelerateOvershootInterpolator(1f, 0.5f));
+                View view = introRecoverWalletFragment.getView();
+                Log.e(TAG, "startAnimation");
+                if (view != null)
+                    view.startAnimation(trans);
+            }
+        }, 1);
     }
 
     public void showWarningFragment() {
@@ -266,6 +330,29 @@ public class IntroActivity extends FragmentActivity {
                 leftButton.setClickable(false);
             }
             getFragmentManager().popBackStack();
+// FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+//
+//            Fragment target = getFragmentManager().
+//                    findFragmentByTag(IntroRecoverWalletFragment.class.getName());
+//            if (target == null) target = getFragmentManager().
+//                    findFragmentByTag(IntroNewWalletFragment.class.getName());
+//            if(target== null) return;
+//            fragmentTransaction.replace(target.getId(), new IntroNewRecoverFragment(), target.getClass().getName());
+//            fragmentTransaction.commitAllowingStateLoss();
+//
+//            final Fragment finalTarget = target;
+//            new Handler().postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    TranslateAnimation trans = new TranslateAnimation(0, -app.getResources().getInteger(R.integer.standard_screen_width), 0, 0);
+//                    trans.setDuration(FragmentAnimator.horizontalSlideDuration);
+//                    trans.setInterpolator(new DecelerateOvershootInterpolator(1f, 0.5f));
+//                    View view = finalTarget.getView();
+//                    Log.e(TAG, "startAnimation");
+//                    if (view != null)
+//                        view.startAnimation(trans);
+//                }
+//            }, 5);
         } else {
             super.onBackPressed();
         }

@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/main_label_breadwallet"
-        android:layout_width="120dp"
-        android:layout_height="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
         android:layout_marginTop="30dp"
@@ -104,8 +104,8 @@
 
             <ImageView
                 android:id="@+id/write_down_check_box"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/i_wrote_it_down_text"
                 android:layout_marginStart="10dp"
                 android:layout_toEndOf="@+id/i_wrote_it_down_text"
