@@ -1,0 +1,20 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/copy_button_layout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:background="@drawable/copy_button"
+    android:elevation="2dp"
+    android:orientation="horizontal">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:textStyle="bold"
+        android:paddingEnd="15dp"
+        android:paddingStart="15dp"
+        android:text="@string/copy"
+        android:textAllCaps="true"
+        android:textColor="@color/black" />
+</LinearLayout>

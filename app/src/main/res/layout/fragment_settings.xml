@@ -165,7 +165,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="50dp"
                     android:textColor="@color/dark_blue"
-                    android:textSize="20sp" />
+                    android:textSize="16sp" />
 
                 <ImageView
                     android:layout_width="wrap_content"

@@ -18,6 +18,7 @@ import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.SharedPreferencesManager;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
+import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.math.BigDecimal;
@@ -75,6 +76,7 @@ public class FragmentTransactionExpanded extends Fragment {
                 Log.e(TAG, "tx id: " + hashText.getText().toString());
             }
         });
+
 //        TextView fromText = (TextView) rootView.findViewById(R.id.tx_from_text);
 //        TextView fromDescription = (TextView) rootView.findViewById(R.id.tx_from_description);
 //        TextView toText = (TextView) rootView.findViewById(R.id.tx_to_text);
@@ -101,6 +103,8 @@ public class FragmentTransactionExpanded extends Fragment {
         String hashString = rawHash.substring(0, mid) + "\n" + rawHash.substring(mid);
 
         hashText.setText(hashString);
+        FragmentAnimator.showCopyBubble(getActivity(), rootView.findViewById(R.id.tx_id), hashText);
+
         if (received) {
 
             long amount = item.getReceived();
@@ -135,8 +139,23 @@ public class FragmentTransactionExpanded extends Fragment {
             toFeeExchangeText.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, new BigDecimal(-item.getFee()))));
 
         }
+        setHideCopyBubbleListeners(rootView.findViewById(R.id.tx_amount),
+                rootView.findViewById(R.id.tx_fee_layout), rootView.findViewById(R.id.tx_status),
+                rootView.findViewById(R.id.transactions_item));
+
 
         return rootView;
+    }
+
+    private void setHideCopyBubbleListeners(View... views) {
+        for (View v : views) {
+            if (v != null) v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    FragmentAnimator.hideCopyBubble(getActivity());
+                }
+            });
+        }
     }
 
     @Override
@@ -148,7 +167,9 @@ public class FragmentTransactionExpanded extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        FragmentAnimator.hideCopyBubble(getActivity());
     }
+
 
     public void setCurrentObject(TransactionListItem item) {
         this.item = item;
@@ -162,6 +183,7 @@ public class FragmentTransactionExpanded extends Fragment {
                     transaction_received_from_addresses, null);
             TextView txFrom = (TextView) addressBlock.findViewById(R.id.tx_from_text);
             TextView txFromDescription = (TextView) addressBlock.findViewById(R.id.tx_from_description);
+            FragmentAnimator.showCopyBubble(getActivity(), addressBlock, txFrom);
             if (address != null && !address.isEmpty()) {
                 txFrom.setText(address);
                 txFromDescription.setText(getString(R.string.spent_address));
@@ -179,15 +201,10 @@ public class FragmentTransactionExpanded extends Fragment {
                     transaction_sent_from_addresses, null);
             final TextView txFrom = (TextView) addressBlock.findViewById(R.id.tx_from_text);
             TextView txFromDescription = (TextView) addressBlock.findViewById(R.id.tx_from_description);
+            FragmentAnimator.showCopyBubble(getActivity(), addressBlock, txFrom);
             if (address != null && !address.isEmpty()) {
                 txFrom.setText(address);
                 txFromDescription.setText(getString(R.string.wallet_address));
-                addressBlock.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Log.e(TAG, "tx from: " + txFrom.getText().toString());
-                    }
-                });
                 view.addView(addressBlock);
                 view.addView(FragmentSettingsAll.getSeparationLine(0, getActivity()));
             }
@@ -204,27 +221,20 @@ public class FragmentTransactionExpanded extends Fragment {
             final double rate = SharedPreferencesManager.getRate(getActivity());
             final String iso = SharedPreferencesManager.getIso(getActivity());
 
-//            amountText.setText(m.getFormattedCurrencyString("BTC", String.valueOf(m.getBitsFromSatoshi(amount))));
-//            exchangeText.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, String.valueOf(amount))));
-
             final TextView txTo = (TextView) addressBlock.findViewById(R.id.tx_to_text);
             TextView txToDescription = (TextView) addressBlock.findViewById(R.id.tx_to_description);
             TextView txToAmount = (TextView) addressBlock.findViewById(R.id.tx_to_amount_text);
             TextView txToExchange = (TextView) addressBlock.findViewById(R.id.tx_to_exchange_text);
+            FragmentAnimator.showCopyBubble(getActivity(), addressBlock, txTo);
 
             if (addresses[i] != null && !addresses[i].isEmpty()) {
                 txTo.setText(addresses[i]);
                 txToDescription.setText(getString(R.string.wallet_address));
                 txToAmount.setText(m.getFormattedCurrencyString("BTC", amounts[i]));
                 txToExchange.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, new BigDecimal(amounts[i]))));
-                addressBlock.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Log.e(TAG, "tx to: " + txTo.getText().toString());
-                    }
-                });
                 view.addView(addressBlock);
-                view.addView(FragmentSettingsAll.getSeparationLine(0, getActivity()));
+                if (i != addresses.length - 1)
+                    view.addView(FragmentSettingsAll.getSeparationLine(0, getActivity()));
             }
         }
     }
@@ -243,15 +253,16 @@ public class FragmentTransactionExpanded extends Fragment {
             TextView txToDescription = (TextView) addressBlock.findViewById(R.id.tx_to_description);
             TextView txToAmount = (TextView) addressBlock.findViewById(R.id.tx_to_amount_text);
             TextView txToExchange = (TextView) addressBlock.findViewById(R.id.tx_to_exchange_text);
+            FragmentAnimator.showCopyBubble(getActivity(), addressBlock, txTo);
 
             if (addresses[i] != null && !addresses[i].isEmpty()) {
                 txTo.setText(addresses[i]);
                 txToDescription.setText(getString(R.string.payment_address));
                 txToAmount.setText(String.format("%s", m.getFormattedCurrencyString("BTC", -amounts[i])));
                 txToExchange.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, new BigDecimal(-amounts[i]))));
-
                 view.addView(addressBlock);
-                view.addView(FragmentSettingsAll.getSeparationLine(0, getActivity()));
+                if (i != addresses.length - 1)
+                    view.addView(FragmentSettingsAll.getSeparationLine(0, getActivity()));
             }
         }
     }

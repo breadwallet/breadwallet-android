@@ -40,7 +40,7 @@
     <string name="toast_address_tip">This is your bitcoin address. Tap to copy it or send it by email or sms. The address will change each time you receive funds, but old addresses always work</string>
     <string name="mainactivity_press_back_again">Press again to exit!</string>
     <string name="no_internet_connection">not connected</string>
-    <string name="warning">WARNING</string>
+    <string name="warning">warning</string>
     <string name="dialog_do_not_let_anyone">DO NOT let anyone see your recovery phrase or they can spend your bitcoins.
         \n\nNEVER type your recovery phrase into password managers or elsewhere.\nOther devices may be infected.\n\nDO NOT take a screenshot.\nScreenshots are visible to other apps and devices.</string>
     <string name="show">show</string>
@@ -50,7 +50,7 @@
     <string name="ok">ok</string>
     <string name="sharing_message">Hi, here is my bitcoin address: </string>
     <string name="dialog_receive_bitcoins">Receive bitcoins</string>
-    <string name="toast_address_copied">Address copied to clipboard</string>
+    <string name="toast_address_copied">address copied to clipboard</string>
     <string name="dialog_email_title">Send your bitcoin address</string>
     <string name="bitcoin_address">"Bitcoin Address"</string>
     <string name="crash_toast_text">Crashed! Report sent to the developer\'s email.</string>
@@ -59,7 +59,7 @@
     <string name="middle_view_tip_second">&#384; is for \'bits\'. &#384;1,000,000 = 1 bitcoin.</string>
     <string name="done">done</string>
     <string name="remind_me_later">remind me later</string>
-    <string name="enter_old_passcode">Enter old passcode</string>
+    <string name="enter_old_passcode">enter old passcode</string>
     <string name="chose_a_new_passcode">chose a new passcode</string>
     <string name="verify_passcode">verify passcode</string>
     <string name="insert_password">Insert password</string>
@@ -189,4 +189,5 @@
     <string name="from">from:</string>
     <string name="sent_received">sent/received</string>
     <string name="beta">beta</string>
+    <string name="copy">copy</string>
 </resources>

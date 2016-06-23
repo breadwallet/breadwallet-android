@@ -1,10 +1,11 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-	<item name="android:textViewStyle">@style/RobotoTextViewStyle</item>
-	<item name="android:buttonStyle">@style/RobotoButtonStyle</item>
+        <item name="android:textViewStyle">@style/RobotoTextViewStyle</item>
+        <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
+
     </style>
 
     <style name="RobotoTextViewStyle" parent="android:Widget.TextView">
@@ -13,6 +14,8 @@
 
     <style name="RobotoButtonStyle" parent="android:Widget.Holo.Button">
         <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:color">@color/dark_blue</item>
+
     </style>
 
     <!-- Base application theme. -->

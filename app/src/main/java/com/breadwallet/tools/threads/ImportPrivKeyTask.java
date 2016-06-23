@@ -87,9 +87,11 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
         if (app == null || importPrivKeyEntity == null) return;
         CurrencyManager cm = CurrencyManager.getInstance(app);
         String amountString = String.format("%s(%s)", cm.getFormattedCurrencyString("BTC",
-                importPrivKeyEntity.getAmount()), cm.getExchangeForAmount(SharedPreferencesManager.getRate(app), SharedPreferencesManager.getIso(app), new BigDecimal(importPrivKeyEntity.getAmount())));
+                importPrivKeyEntity.getAmount()), cm.getExchangeForAmount(SharedPreferencesManager.getRate(app),
+                SharedPreferencesManager.getIso(app), new BigDecimal(importPrivKeyEntity.getAmount())));
         String feeString = String.format("%s(%s)", cm.getFormattedCurrencyString("BTC",
-                importPrivKeyEntity.getFee()), cm.getExchangeForAmount(SharedPreferencesManager.getRate(app), SharedPreferencesManager.getIso(app), new BigDecimal(importPrivKeyEntity.getFee())));
+                importPrivKeyEntity.getFee()), cm.getExchangeForAmount(SharedPreferencesManager.getRate(app),
+                SharedPreferencesManager.getIso(app), new BigDecimal(importPrivKeyEntity.getFee())));
         String message = String.format("Send %s from this private key into your wallet? The bitcoin network will receive a fee of %s.", amountString, feeString);
         new android.app.AlertDialog.Builder(app)
                 .setTitle("")

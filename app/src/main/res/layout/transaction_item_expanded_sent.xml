@@ -37,6 +37,7 @@
                 android:id="@+id/tx_hash_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:clickable="false"
                 android:layout_centerVertical="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="@dimen/transaction_item_margin"
@@ -150,7 +151,6 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/dark_grey"
             android:textSize="15sp" />
-
 
         <LinearLayout
             android:id="@+id/general_tx_to_layout"

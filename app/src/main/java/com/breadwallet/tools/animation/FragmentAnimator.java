@@ -1,18 +1,26 @@
 package com.breadwallet.tools.animation;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewParentCompat;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewParent;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
@@ -22,6 +30,7 @@ import com.breadwallet.presenter.fragments.FragmentDecoder;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.presenter.fragments.FragmentSettings;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
+import com.breadwallet.tools.BRClipboardManager;
 import com.breadwallet.tools.BRConstants;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
 
@@ -58,9 +67,10 @@ public class FragmentAnimator {
     public static boolean wipeWalletOpen = false;
     private static Stack<Fragment> previous = new Stack<>();
     private static boolean multiplePressingAvailable = true;
-//    private static int VERTICAL_BOUNCE_DELAY = 60;
+    //    private static int VERTICAL_BOUNCE_DELAY = 60;
     public static int horizontalSlideDuration = 300;
     private static boolean horizontalSlideAvailable = true;
+    private static View copy;
 //    private static final Object lockObject = new Object();
 
     public static void animateDecoderFragment() {
@@ -406,6 +416,70 @@ public class FragmentAnimator {
         }
         resetFragmentAnimator();
 
+    }
+
+    public static void showCopyBubble(final Activity context, final View v, final View t) {
+        if (context == null) return;
+        if (v != null)
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (copy == null)
+                        copy = context.getLayoutInflater().inflate(R.layout.copy, null);
+                    if (copy == null) return;
+                    final RelativeLayout root = (RelativeLayout) context.findViewById(R.id.main_layout);
+                    root.removeView(copy);
+                    copy.setClickable(true);
+                    copy.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            try {
+                                if (t != null) {
+                                    BRClipboardManager.copyToClipboard(context, ((TextView) t).getText().toString());
+                                    Log.e(TAG, "clicked copy: " + ((TextView) t).getText().toString());
+                                }
+                                root.removeView(copy);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                    root.addView(copy);
+                    copy.setY(getRelativeTop(v));
+                    copy.setX(MainActivity.screenParametersPoint.x / 2 - 40);
+                }
+            });
+        if (t != null)
+            t.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    View parent = (View) t.getParent();
+                    if (parent != null)
+                        parent.performClick();
+                }
+            });
+
+    }
+
+    public static void hideCopyBubble(final Activity context) {
+        if (context == null) return;
+        if (copy == null) return;
+        RelativeLayout root = (RelativeLayout) context.findViewById(R.id.main_layout);
+        root.removeView(copy);
+    }
+
+    private static int getRelativeLeft(View myView) {
+        if (myView.getParent() == myView.getRootView())
+            return myView.getLeft();
+        else
+            return myView.getLeft() + getRelativeLeft((View) myView.getParent());
+    }
+
+    private static int getRelativeTop(View myView) {
+        if (myView.getParent() == myView.getRootView())
+            return myView.getTop();
+        else
+            return myView.getTop() + getRelativeTop((View) myView.getParent());
     }
 
 }

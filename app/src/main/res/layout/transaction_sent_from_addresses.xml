@@ -16,7 +16,7 @@ android:clickable="true">
     android:layout_marginTop="@dimen/transaction_item_margin"
     android:singleLine="true"
     android:textAppearance="?android:attr/textAppearanceLarge"
-    android:textColor="@color/light_gray"
+    android:textColor="@color/gray"
     android:textSize="12sp" />
 
 <TextView
