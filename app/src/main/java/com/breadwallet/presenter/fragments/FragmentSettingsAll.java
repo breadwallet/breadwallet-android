@@ -161,6 +161,7 @@ public class FragmentSettingsAll extends Fragment {
         if (!BreadWalletApp.unlocked) {
             transactionList.setVisibility(View.GONE);
             transactionHistory.setVisibility(View.VISIBLE);
+
         } else {
             transactionList.setVisibility(View.VISIBLE);
             transactionHistory.setVisibility(View.GONE);
@@ -170,44 +171,75 @@ public class FragmentSettingsAll extends Fragment {
             transactionHistory.setVisibility(View.GONE);
             return;
         }
+
         noTransactions.setVisibility(View.GONE);
         transactionList.removeAllViews();
 
-        int limit = transactionObjects.length > 5 ? 5 : transactionObjects.length;
-        Log.e(TAG, "transactionObjects.length: " + transactionObjects.length);
+        if (!BreadWalletApp.unlocked) {
+            int unconfirmedTxCount = 0;
+            for (TransactionListItem transactionObject : transactionObjects) {
+                int blockHeight = transactionObject.getBlockHeight();
+                int estimatedBlockHeight = BRPeerManager.getEstimatedBlockHeight();
+                int confirms = blockHeight == Integer.MAX_VALUE ? 0 : estimatedBlockHeight - blockHeight + 1;
+                if (blockHeight != Integer.MAX_VALUE && confirms < 6) {
+                    if (unconfirmedTxCount != 0) transactionList.addView(getSeparationLine(1, ctx));
+                    transactionList.addView(getViewFromTransactionObject(transactionObject));
 
-        for (int i = 0; i < limit; i++) {
-            View tmpView = getViewFromTransactionObject(transactionObjects[i]);
-            if (tmpView != null) {
-                transactionList.addView(tmpView);
-                if (i != transactionObjects.length - 1)
-                    transactionList.addView(getSeparationLine(1, ctx));
+                    unconfirmedTxCount++;
+                }
             }
-        }
-        if (transactionObjects.length > 5) {
-            transactionList.addView(getMore(ctx, true));
+            if (unconfirmedTxCount != transactionObjects.length) {
+                transactionList.addView(getSeparationLine(1, ctx));
+                transactionList.addView(getMore(ctx, false));
+            }
+            transactionList.setVisibility(View.VISIBLE);
+            transactionHistory.setVisibility(View.GONE);
+        } else {
+
+            int limit = transactionObjects.length > 5 ? 5 : transactionObjects.length;
+            Log.e(TAG, "transactionObjects.length: " + transactionObjects.length);
+
+            for (int i = 0; i < limit; i++) {
+                View tmpView = getViewFromTransactionObject(transactionObjects[i]);
+                if (tmpView != null) {
+                    transactionList.addView(tmpView);
+                    if (i != transactionObjects.length - 1)
+                        transactionList.addView(getSeparationLine(1, ctx));
+                }
+            }
+            if (transactionObjects.length > 5) {
+                transactionList.addView(getMore(ctx, true));
+            }
         }
 
     }
 
-    public static LinearLayout getMore(final Activity context, boolean auth) {
+    public static LinearLayout getMore(final Activity context, final boolean auth) {
         LayoutInflater inflater = (LayoutInflater) context.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout more = (LinearLayout) inflater.inflate(R.layout.transaction_list_item_more, null);
         TextView moreText = (TextView) more.findViewById(R.id.more_text);
         Utils.overrideFonts(moreText);
         more.setBackgroundResource(R.drawable.clickable_layout);
+
         more.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                transactionList.removeView(v);
-                for (int i = 5; i < transactionObjects.length; i++) {
-                    View tmpView = getViewFromTransactionObject(transactionObjects[i]);
-                    if (tmpView != null)
-                        transactionList.addView(tmpView);
-                    if (i != transactionObjects.length - 1)
-                        transactionList.addView(getSeparationLine(1, context));
+                if (auth) {
+                    transactionList.removeView(v);
+                    for (int i = 5; i < transactionObjects.length; i++) {
+                        View tmpView = getViewFromTransactionObject(transactionObjects[i]);
+                        if (tmpView != null)
+                            transactionList.addView(tmpView);
+                        if (i != transactionObjects.length - 1)
+                            transactionList.addView(getSeparationLine(1, context));
+                    }
+//                    transactionList.addView(getSeparationLine(0, context));
+                } else {
+                    if (FragmentAnimator.checkTheMultipressingAvailability()) {
+                        ((BreadWalletApp) context.getApplicationContext()).
+                                promptForAuthentication(context, BRConstants.AUTH_FOR_GENERAL, null, null, null, null);
+                    }
                 }
-                transactionList.addView(getSeparationLine(0, context));
             }
         });
         return more;

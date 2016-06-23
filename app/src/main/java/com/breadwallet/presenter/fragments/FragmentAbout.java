@@ -58,16 +58,16 @@ public class FragmentAbout extends Fragment {
                 if (FragmentAnimator.checkTheMultipressingAvailability()) {
                     String to = BRConstants.SUPPORT_EMAIL;
                     PackageInfo pInfo = null;
-                    int version = 0;
+                    String version = "";
                     try {
                         pInfo = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0);
-                        version = pInfo.versionCode;
+                        version = pInfo.versionName;
                     } catch (PackageManager.NameNotFoundException e) {
                         e.printStackTrace();
                     }
 
-                    String message = String.format(Locale.getDefault(), "%s %s /ABI: %s /Android v: %s /Breadwallet v: %d\n\n",
-                            Build.MANUFACTURER.toUpperCase(), Build.MODEL,Build.CPU_ABI, Build.VERSION.RELEASE, version);
+                    String message = String.format(Locale.getDefault(), "%s / Android %s / breadwallet %s\n\n",
+                            Build.MODEL, Build.VERSION.RELEASE, version);
                     Intent email = new Intent(Intent.ACTION_SEND);
                     email.putExtra(Intent.EXTRA_EMAIL, new String[]{to});
                     email.putExtra(Intent.EXTRA_TEXT, message);
