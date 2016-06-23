@@ -35,10 +35,12 @@ import android.inputmethodservice.Keyboard;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -166,6 +168,16 @@ public class PasswordDialogFragment extends DialogFragment {
         reset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (phraseEditText == null) return;
+                (new Handler()).postDelayed(new Runnable() {
+
+                    public void run() {
+
+                        phraseEditText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
+                        phraseEditText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
+
+                    }
+                }, 100);
                 if (phraseEditText.getVisibility() == View.GONE) {
                     phraseEditText.setVisibility(View.VISIBLE);
                     title.setText(R.string.recovery_title);
@@ -460,7 +472,10 @@ public class PasswordDialogFragment extends DialogFragment {
         description.setText("");
         passcodeEditText.setVisibility(View.GONE);
         info.setVisibility(View.VISIBLE);
-        info.setText(String.format(getString(R.string.try_again), (int) waitTime));
+        String tryAgain = getString(R.string.try_again);
+        String message = String.format(waitTime == 1 ? tryAgain.substring(0, tryAgain.length() - 1) : tryAgain, (int) waitTime);
+
+        info.setText(message);
         digit_1.setVisibility(View.GONE);
         digit_2.setVisibility(View.GONE);
         digit_3.setVisibility(View.GONE);

@@ -8,8 +8,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -141,6 +143,18 @@ public class FragmentWipeWallet extends Fragment {
         MainActivity app = MainActivity.app;
         if (app != null)
             app.activityButtonsEnable(false);
+        if (recoveryPhraseEditText != null) {
+            (new Handler()).postDelayed(new Runnable() {
+
+                public void run() {
+
+                    recoveryPhraseEditText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
+                    recoveryPhraseEditText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
+
+                }
+            }, 100);
+
+        }
     }
 
     private void startIntroActivity() {
