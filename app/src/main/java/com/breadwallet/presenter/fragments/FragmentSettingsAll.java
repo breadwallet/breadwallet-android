@@ -137,6 +137,7 @@ public class FragmentSettingsAll extends Fragment {
     public void onResume() {
         super.onResume();
         MiddleViewAdapter.resetMiddleView(getActivity(), null);
+        refreshUI(getActivity());
 //        refreshTransactions(getActivity());
     }
 
@@ -156,16 +157,9 @@ public class FragmentSettingsAll extends Fragment {
     }
 
     public static void refreshUI(Activity ctx) {
+        Log.e(TAG, "refreshUI");
         if (transactionList == null || transactionHistory == null)
             return;
-        if (!BreadWalletApp.unlocked) {
-            transactionList.setVisibility(View.GONE);
-            transactionHistory.setVisibility(View.VISIBLE);
-
-        } else {
-            transactionList.setVisibility(View.VISIBLE);
-            transactionHistory.setVisibility(View.GONE);
-        }
         if (transactionObjects == null) {
             noTransactions.setVisibility(View.VISIBLE);
             transactionHistory.setVisibility(View.GONE);
@@ -176,25 +170,38 @@ public class FragmentSettingsAll extends Fragment {
         transactionList.removeAllViews();
 
         if (!BreadWalletApp.unlocked) {
-            int unconfirmedTxCount = 0;
+            boolean addLine = false;
+            int unconfirmedTxCount = getUnconfirmedCount(transactionObjects);
+            if (unconfirmedTxCount == 0) {
+                transactionList.setVisibility(View.GONE);
+                transactionHistory.setVisibility(View.VISIBLE);
+                return;
+            }
+            transactionHistory.setVisibility(View.GONE);
+            transactionList.setVisibility(View.VISIBLE);
             for (TransactionListItem transactionObject : transactionObjects) {
                 int blockHeight = transactionObject.getBlockHeight();
                 int estimatedBlockHeight = BRPeerManager.getEstimatedBlockHeight();
                 int confirms = blockHeight == Integer.MAX_VALUE ? 0 : estimatedBlockHeight - blockHeight + 1;
                 if (blockHeight != Integer.MAX_VALUE && confirms < 6) {
-                    if (unconfirmedTxCount != 0) transactionList.addView(getSeparationLine(1, ctx));
+                    if (addLine) {
+                        transactionList.addView(getSeparationLine(1, ctx));
+                    } else {
+                        addLine = true;
+                    }
                     transactionList.addView(getViewFromTransactionObject(transactionObject));
 
-                    unconfirmedTxCount++;
                 }
             }
             if (unconfirmedTxCount != transactionObjects.length) {
                 transactionList.addView(getSeparationLine(1, ctx));
                 transactionList.addView(getMore(ctx, false));
             }
+
+
+        } else {
             transactionList.setVisibility(View.VISIBLE);
             transactionHistory.setVisibility(View.GONE);
-        } else {
 
             int limit = transactionObjects.length > 5 ? 5 : transactionObjects.length;
             Log.e(TAG, "transactionObjects.length: " + transactionObjects.length);
@@ -212,6 +219,19 @@ public class FragmentSettingsAll extends Fragment {
             }
         }
 
+    }
+
+    private static int getUnconfirmedCount(TransactionListItem[] items) {
+        int count = 0;
+        for (TransactionListItem t : items) {
+            int blockHeight = t.getBlockHeight();
+            int estimatedBlockHeight = BRPeerManager.getEstimatedBlockHeight();
+            int confirms = blockHeight == Integer.MAX_VALUE ? 0 : estimatedBlockHeight - blockHeight + 1;
+            if (blockHeight != Integer.MAX_VALUE && confirms < 6) {
+                count++;
+            }
+        }
+        return count;
     }
 
     public static LinearLayout getMore(final Activity context, final boolean auth) {

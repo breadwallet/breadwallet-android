@@ -228,11 +228,13 @@ public class MainActivity extends FragmentActivity implements Observer {
         pay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                hideAllBubbles();
-                String amountHolder = FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_RIGHT ?
-                        AmountAdapter.getRightValue() : AmountAdapter.getLeftValue();
-                String addressHolder = FragmentScanResult.address;
-                pay(addressHolder, new BigDecimal(amountHolder).multiply(new BigDecimal("100")), null, false);
+                if (FragmentAnimator.checkTheMultipressingAvailability()) {
+                    hideAllBubbles();
+                    String amountHolder = FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_RIGHT ?
+                            AmountAdapter.getRightValue() : AmountAdapter.getLeftValue();
+                    String addressHolder = FragmentScanResult.address;
+                    pay(addressHolder, new BigDecimal(amountHolder).multiply(new BigDecimal("100")), null, false);
+                }
             }
         });
 
@@ -251,7 +253,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                     }
 
                     String message = String.format(Locale.getDefault(), "%s / Android %s / breadwallet %s\n\n",
-                             Build.MODEL, Build.VERSION.RELEASE, version);
+                            Build.MODEL, Build.VERSION.RELEASE, version);
                     Intent email = new Intent(Intent.ACTION_SEND);
                     email.putExtra(Intent.EXTRA_EMAIL, new String[]{to});
                     email.putExtra(Intent.EXTRA_TEXT, message);
