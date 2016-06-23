@@ -16,6 +16,8 @@ import android.support.v4.view.ViewParentCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewParent;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
@@ -75,87 +77,95 @@ public class FragmentAnimator {
 
     public static void animateDecoderFragment() {
 
-        MainActivity app = MainActivity.app;
-        if (app == null) return;
+        try {
+            MainActivity app = MainActivity.app;
+            if (app == null) return;
 
-        // Here, thisActivity is the current activity
-        if (ContextCompat.checkSelfPermission(app,
-                Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(app,
-                    Manifest.permission.CAMERA)) {
-                Log.e(TAG, "YES explanation!");
-                ((BreadWalletApp) app.getApplication()).showCustomToast(app,
-                        "Please go to Settings > apps > Breadwallet and turn on the camera permission",
-                        MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
+            // Here, thisActivity is the current activity
+            if (ContextCompat.checkSelfPermission(app,
+                    Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED) {
+                // Should we show an explanation?
+                if (ActivityCompat.shouldShowRequestPermissionRationale(app,
+                        Manifest.permission.CAMERA)) {
+                    Log.e(TAG, "YES explanation!");
+                    ((BreadWalletApp) app.getApplication()).showCustomToast(app,
+                            "Please go to Settings > apps > Breadwallet and turn on the camera permission",
+                            MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
+                    // Show an explanation to the user *asynchronously* -- don't block
+                    // this thread waiting for the user's response! After the user
+                    // sees the explanation, try again to request the permission.
+                } else {
+                    Log.e(TAG, "NO explanation!");
+                    // No explanation needed, we can request the permission.
+                    ActivityCompat.requestPermissions(app,
+                            new String[]{Manifest.permission.CAMERA},
+                            BRConstants.CAMERA_REQUEST_ID);
+                    // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                    // app-defined int constant. The callback method gets the
+                    // result of the request.
+                }
             } else {
-                Log.e(TAG, "NO explanation!");
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(app,
-                        new String[]{Manifest.permission.CAMERA},
-                        BRConstants.CAMERA_REQUEST_ID);
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
+                if (FragmentAnimator.level > 0)
+                    FragmentAnimator.pressMenuButton(app, new FragmentSettingsAll());
+                //            Log.e(TAG, "in the animateDecoderFragment");
+                //            MainActivity.beenThroughSavedInstanceMethod = false;
+                MainActivity.decoderFragmentOn = true;
+                app.activityButtonsEnable(false);
+                CustomPagerAdapter.adapter.showFragments(false);
+                //Disabled inspection: <Expected resource type anim>
+                FragmentTransaction fragmentTransaction = app.getFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_top);
+                FragmentDecoder fragmentDecoder = new FragmentDecoder();
+                fragmentTransaction.replace(R.id.main_layout, fragmentDecoder, FragmentDecoder.class.getName());
+                int temp = fragmentTransaction.commit();
             }
-        } else {
-            if (FragmentAnimator.level > 0)
-                FragmentAnimator.pressMenuButton(app, new FragmentSettingsAll());
-//            Log.e(TAG, "in the animateDecoderFragment");
-//            MainActivity.beenThroughSavedInstanceMethod = false;
-            MainActivity.decoderFragmentOn = true;
-            app.activityButtonsEnable(false);
-            CustomPagerAdapter.adapter.showFragments(false);
-            //Disabled inspection: <Expected resource type anim>
-            FragmentTransaction fragmentTransaction = app.getFragmentManager().beginTransaction();
-            fragmentTransaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_top);
-            FragmentDecoder fragmentDecoder = new FragmentDecoder();
-            fragmentTransaction.replace(R.id.main_layout, fragmentDecoder, FragmentDecoder.class.getName());
-            int temp = fragmentTransaction.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     public static void animateScanResultFragment() {
-        final MainActivity app = MainActivity.app;
-        if (app == null) return;
-        CustomPagerAdapter.adapter.showFragments(false);
+        try {
+            final MainActivity app = MainActivity.app;
+            if (app == null) return;
+            CustomPagerAdapter.adapter.showFragments(false);
 //        Log.e(TAG, "animateScanResultFragment");
 //        MainActivity.beenThroughSavedInstanceMethod = false;
-        MainActivity.scanResultFragmentOn = true;
-        InputMethodManager keyboard = (InputMethodManager) app.
-                getSystemService(Context.INPUT_METHOD_SERVICE);
+            MainActivity.scanResultFragmentOn = true;
+            InputMethodManager keyboard = (InputMethodManager) app.
+                    getSystemService(Context.INPUT_METHOD_SERVICE);
 
-        try {
-            keyboard.hideSoftInputFromWindow(CustomPagerAdapter.adapter.
-                    mainFragment.addressEditText.getWindowToken(), 0);
+            try {
+                keyboard.hideSoftInputFromWindow(CustomPagerAdapter.adapter.
+                        mainFragment.addressEditText.getWindowToken(), 0);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            app.setBurgerButtonImage(MainActivity.BACK);
+            //Disabled inspection: <Expected resource type anim>
+            final FragmentManager fragmentManager = app.getFragmentManager();
+            final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+//        fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
+            final FragmentScanResult scanResult = new FragmentScanResult();
+            fragmentTransaction.replace(R.id.main_layout, scanResult, FragmentScanResult.class.getName());
+            fragmentTransaction.commit();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    TranslateAnimation trans = new TranslateAnimation(app.getResources().getInteger(R.integer.standard_screen_width), 0, 0, 0);
+                    trans.setDuration(500);
+                    trans.setInterpolator(new DecelerateOvershootInterpolator(3f, 0.5f));
+                    View view = scanResult.getView();
+                    Log.e(TAG, "startAnimation");
+                    if (view != null)
+                        view.startAnimation(trans);
+                }
+            }, 1);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        app.setBurgerButtonImage(MainActivity.BACK);
-        //Disabled inspection: <Expected resource type anim>
-        final FragmentManager fragmentManager = app.getFragmentManager();
-        final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-//        fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
-        final FragmentScanResult scanResult = new FragmentScanResult();
-        fragmentTransaction.replace(R.id.main_layout, scanResult, FragmentScanResult.class.getName());
-        fragmentTransaction.commit();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                TranslateAnimation trans = new TranslateAnimation(app.getResources().getInteger(R.integer.standard_screen_width), 0, 0, 0);
-                trans.setDuration(500);
-                trans.setInterpolator(new DecelerateOvershootInterpolator(3f, 0.5f));
-                View view = scanResult.getView();
-                Log.e(TAG, "startAnimation");
-                if (view != null)
-                    view.startAnimation(trans);
-            }
-        }, 1);
     }
 
 
@@ -163,55 +173,59 @@ public class FragmentAnimator {
      * Animate the transition on burgerButton/MenuButton pressed
      */
     public static void pressMenuButton(final MainActivity context, final Fragment to) {
-        if (context == null || to == null) return;
-        ((BreadWalletApp) context.getApplication()).cancelToast();
+        try {
+            if (context == null || to == null) return;
+            ((BreadWalletApp) context.getApplication()).cancelToast();
 //        Log.e(TAG, "The level is: " + level);
-        final FragmentManager fragmentManager = context.getFragmentManager();
-        if (level == 0) {
-            level++;
-            CustomPagerAdapter.adapter.showFragments(false);
-            context.setBurgerButtonImage(MainActivity.CLOSE);
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//            fragmentTransaction.setCustomAnimations(R.animator.from_bottom, 0);
-            fragmentTransaction.add(R.id.main_layout, to, FragmentSettingsAll.class.getName());
-            fragmentTransaction.commit();
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    TranslateAnimation trans = new TranslateAnimation(0, 0, 1920, 0);
-                    trans.setDuration(500);
-                    trans.setInterpolator(new DecelerateOvershootInterpolator(3f, 0.5f));
-                    View view = to.getView();
-                    Log.e(TAG, "startAnimation");
-                    if (view != null)
-                        view.startAnimation(trans);
-                }
-            }, 1);
+            final FragmentManager fragmentManager = context.getFragmentManager();
+            if (level == 0) {
+                level++;
+                CustomPagerAdapter.adapter.showFragments(false);
+                context.setBurgerButtonImage(MainActivity.CLOSE);
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                //            fragmentTransaction.setCustomAnimations(R.animator.from_bottom, 0);
+                fragmentTransaction.add(R.id.main_layout, to, FragmentSettingsAll.class.getName());
+                fragmentTransaction.commit();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        TranslateAnimation trans = new TranslateAnimation(0, 0, 1920, 0);
+                        trans.setDuration(500);
+                        trans.setInterpolator(new DecelerateOvershootInterpolator(3f, 0.5f));
+                        View view = to.getView();
+                        Log.e(TAG, "startAnimation");
+                        if (view != null)
+                            view.startAnimation(trans);
+                    }
+                }, 1);
 
 
-            InputMethodManager keyboard = (InputMethodManager) context.
-                    getSystemService(Context.INPUT_METHOD_SERVICE);
+                InputMethodManager keyboard = (InputMethodManager) context.
+                        getSystemService(Context.INPUT_METHOD_SERVICE);
 
-            if (keyboard != null)
-                keyboard.hideSoftInputFromWindow(CustomPagerAdapter.adapter.
-                        mainFragment.addressEditText.getWindowToken(), 0);
-//            new Handler().postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    SpringAnimator.showBouncySlideVertical(to.getView(), SpringAnimator.TO_LEFT);
-//
-//                }
-//            }, 200);
-        } else if (level == 1) {
-            level--;
-            context.setBurgerButtonImage(MainActivity.BURGER);
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.setCustomAnimations(R.animator.from_top, R.animator.to_bottom);
-            FragmentSettingsAll fragmentSettingsAll = (FragmentSettingsAll) fragmentManager.
-                    findFragmentByTag(FragmentSettingsAll.class.getName());
-            fragmentTransaction.remove(fragmentSettingsAll);
-            fragmentTransaction.commit();
-            CustomPagerAdapter.adapter.showFragments(true);
+                if (keyboard != null)
+                    keyboard.hideSoftInputFromWindow(CustomPagerAdapter.adapter.
+                            mainFragment.addressEditText.getWindowToken(), 0);
+                //            new Handler().postDelayed(new Runnable() {
+                //                @Override
+                //                public void run() {
+                //                    SpringAnimator.showBouncySlideVertical(to.getView(), SpringAnimator.TO_LEFT);
+                //
+                //                }
+                //            }, 200);
+            } else if (level == 1) {
+                level--;
+                context.setBurgerButtonImage(MainActivity.BURGER);
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.setCustomAnimations(R.animator.from_top, R.animator.to_bottom);
+                FragmentSettingsAll fragmentSettingsAll = (FragmentSettingsAll) fragmentManager.
+                        findFragmentByTag(FragmentSettingsAll.class.getName());
+                fragmentTransaction.remove(fragmentSettingsAll);
+                fragmentTransaction.commit();
+                CustomPagerAdapter.adapter.showFragments(true);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -219,31 +233,35 @@ public class FragmentAnimator {
      * Animate the transition on wipe wallet fragment
      */
     public static void pressWipeWallet(final MainActivity context, final Fragment to) {
-        if (!wipeWalletOpen) {
-            wipeWalletOpen = true;
-            FragmentTransaction fragmentTransaction = context.getFragmentManager().beginTransaction();
-//            fragmentTransaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_top);
-            fragmentTransaction.replace(R.id.main_layout, to, to.getClass().getName());
-            fragmentTransaction.commit();
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    TranslateAnimation trans = new TranslateAnimation(0, 0, 1920, 0);
-                    trans.setDuration(500);
-                    trans.setInterpolator(new DecelerateOvershootInterpolator(3f, 0.5f));
-                    View view = to.getView();
-                    Log.e(TAG, "startAnimation");
-                    if (view != null)
-                        view.startAnimation(trans);
-                }
-            }, 1);
+        try {
+            if (!wipeWalletOpen) {
+                wipeWalletOpen = true;
+                FragmentTransaction fragmentTransaction = context.getFragmentManager().beginTransaction();
+                //            fragmentTransaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_top);
+                fragmentTransaction.replace(R.id.main_layout, to, to.getClass().getName());
+                fragmentTransaction.commit();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        TranslateAnimation trans = new TranslateAnimation(0, 0, 1920, 0);
+                        trans.setDuration(500);
+                        trans.setInterpolator(new DecelerateOvershootInterpolator(3f, 0.5f));
+                        View view = to.getView();
+                        Log.e(TAG, "startAnimation");
+                        if (view != null)
+                            view.startAnimation(trans);
+                    }
+                }, 1);
 
-        } else {
-            wipeWalletOpen = false;
-            FragmentTransaction fragmentTransaction = context.getFragmentManager().beginTransaction();
-            fragmentTransaction.setCustomAnimations(R.animator.from_top, R.animator.to_bottom);
-            fragmentTransaction.replace(R.id.main_layout, new FragmentSettings(), FragmentSettings.class.getName());
-            fragmentTransaction.commit();
+            } else {
+                wipeWalletOpen = false;
+                FragmentTransaction fragmentTransaction = context.getFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(R.animator.from_top, R.animator.to_bottom);
+                fragmentTransaction.replace(R.id.main_layout, new FragmentSettings(), FragmentSettings.class.getName());
+                fragmentTransaction.commit();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -251,57 +269,65 @@ public class FragmentAnimator {
      * Animates the fragment transition on button_regular_blue "Settings" pressed
      */
     public static void animateSlideToLeft(final MainActivity context, final Fragment to, Fragment previousFragment) {
-        if (!checkTheHorizontalSlideAvailability()) return;
-        level++;
-        if (level > 1)
-            context.setBurgerButtonImage(MainActivity.BACK);
-        FragmentTransaction fragmentTransaction = context.getFragmentManager().beginTransaction();
+        try {
+            if (!checkTheHorizontalSlideAvailability()) return;
+            level++;
+            if (level > 1)
+                context.setBurgerButtonImage(MainActivity.BACK);
+            FragmentTransaction fragmentTransaction = context.getFragmentManager().beginTransaction();
 //        fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
-        fragmentTransaction.replace(R.id.main_layout, to, to.getClass().getName());
-        if (previousFragment != null)
-            previous.add(previousFragment);
-        fragmentTransaction.commit();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                TranslateAnimation trans = new TranslateAnimation(context.getResources().getInteger(R.integer.standard_screen_width), 0, 0, 0);
-                trans.setDuration(horizontalSlideDuration);
-                trans.setInterpolator(new DecelerateOvershootInterpolator(1f, 0.5f));
-                View view = to.getView();
-                Log.e(TAG, "startAnimation");
-                if (view != null)
-                    view.startAnimation(trans);
-            }
-        }, 1);
+            fragmentTransaction.replace(R.id.main_layout, to, to.getClass().getName());
+            if (previousFragment != null)
+                previous.add(previousFragment);
+            fragmentTransaction.commit();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    TranslateAnimation trans = new TranslateAnimation(context.getResources().getInteger(R.integer.standard_screen_width), 0, 0, 0);
+                    trans.setDuration(horizontalSlideDuration);
+                    trans.setInterpolator(new DecelerateOvershootInterpolator(1f, 0.5f));
+                    View view = to.getView();
+                    Log.e(TAG, "startAnimation");
+                    if (view != null)
+                        view.startAnimation(trans);
+                }
+            }, 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 //        Log.e(TAG, "The level is: " + level);
     }
 
     public static void animateSlideToRight(final MainActivity context) {
-        if (!checkTheHorizontalSlideAvailability()) return;
-        final Fragment tmp = previous.pop();
-        level--;
-        if (level < 1)
-            context.setBurgerButtonImage(MainActivity.BURGER);
-        if (level == 1)
-            context.setBurgerButtonImage(MainActivity.CLOSE);
+        try {
+            if (!checkTheHorizontalSlideAvailability()) return;
+            final Fragment tmp = previous.pop();
+            level--;
+            if (level < 1)
+                context.setBurgerButtonImage(MainActivity.BURGER);
+            if (level == 1)
+                context.setBurgerButtonImage(MainActivity.CLOSE);
 //            Log.e(TAG, "The actual SettingsFragment: " + tmp);
-        FragmentTransaction fragmentTransaction = context.getFragmentManager().beginTransaction();
+            FragmentTransaction fragmentTransaction = context.getFragmentManager().beginTransaction();
 //        fragmentTransaction.setCustomAnimations(R.animator.from_left, R.animator.to_right);
-        fragmentTransaction.replace(R.id.main_layout, tmp, tmp.getClass().getName());
-        fragmentTransaction.commit();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                TranslateAnimation trans = new TranslateAnimation(-context.getResources().getInteger(R.integer.standard_screen_width), 0, 0, 0);
-                trans.setDuration(horizontalSlideDuration);
-                trans.setInterpolator(new DecelerateOvershootInterpolator(1f, 0.5f));
-                View view = tmp.getView();
-                Log.e(TAG, "startAnimation");
-                if (view != null)
-                    view.startAnimation(trans);
-            }
-        }, 1);
+            fragmentTransaction.replace(R.id.main_layout, tmp, tmp.getClass().getName());
+            fragmentTransaction.commit();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    TranslateAnimation trans = new TranslateAnimation(-context.getResources().getInteger(R.integer.standard_screen_width), 0, 0, 0);
+                    trans.setDuration(horizontalSlideDuration);
+                    trans.setInterpolator(new DecelerateOvershootInterpolator(1f, 0.5f));
+                    View view = tmp.getView();
+                    Log.e(TAG, "startAnimation");
+                    if (view != null)
+                        view.startAnimation(trans);
+                }
+            }, 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 //        Log.e(TAG, "The level is: " + level);
     }
@@ -347,47 +373,54 @@ public class FragmentAnimator {
 
     public static void hideDecoderFragment() {
 //        Log.e(TAG, "hideDecoderFragment");
-        MainActivity app = MainActivity.app;
-        if (app == null) return;
-        MainActivity.decoderFragmentOn = false;
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                FragmentAnimator.multiplePressingAvailable = true;
-            }
-        }, 300);
-        final FragmentManager fragmentManager = app.getFragmentManager();
-        FragmentDecoder fragmentDecoder = (FragmentDecoder) fragmentManager.findFragmentByTag(FragmentDecoder.class.getName());
-        if (fragmentDecoder == null) return;
-        fragmentManager.beginTransaction().setCustomAnimations(R.animator.from_top, R.animator.to_bottom).
-                remove(fragmentDecoder).commit();
-        CustomPagerAdapter.adapter.showFragments(true);
-        app.activityButtonsEnable(true);
-//        Log.e(TAG, "got to the end of hideDecoderFragment");
+        try {
+            MainActivity app = MainActivity.app;
+            if (app == null) return;
+            MainActivity.decoderFragmentOn = false;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    FragmentAnimator.multiplePressingAvailable = true;
+                }
+            }, 300);
+            final FragmentManager fragmentManager = app.getFragmentManager();
+            FragmentDecoder fragmentDecoder = (FragmentDecoder) fragmentManager.findFragmentByTag(FragmentDecoder.class.getName());
+            if (fragmentDecoder == null) return;
+            fragmentManager.beginTransaction().setCustomAnimations(R.animator.from_top, R.animator.to_bottom).
+                    remove(fragmentDecoder).commit();
+            CustomPagerAdapter.adapter.showFragments(true);
+            app.activityButtonsEnable(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
     public static void hideScanResultFragment() {
-        MainActivity app = MainActivity.app;
-        if (app == null) return;
+        try {
+            MainActivity app = MainActivity.app;
+            if (app == null) return;
 //        Log.e(TAG, "hideScanResultFragment");
-        CustomPagerAdapter.adapter.showFragments(true);
-        MainActivity.scanResultFragmentOn = false;
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                FragmentAnimator.multiplePressingAvailable = true;
-            }
-        }, 300);
+            CustomPagerAdapter.adapter.showFragments(true);
+            MainActivity.scanResultFragmentOn = false;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    FragmentAnimator.multiplePressingAvailable = true;
+                }
+            }, 300);
 
-        FragmentManager fragmentManager = app.getFragmentManager();
-        FragmentScanResult fragmentScanResult = (FragmentScanResult)
-                fragmentManager.findFragmentByTag(FragmentScanResult.class.getName());
-        if (fragmentScanResult == null) return;
-        fragmentManager.beginTransaction().
-                setCustomAnimations(R.animator.from_left, R.animator.to_right).
-                remove(fragmentScanResult).commit();
-        app.setBurgerButtonImage(MainActivity.BURGER);
+            FragmentManager fragmentManager = app.getFragmentManager();
+            FragmentScanResult fragmentScanResult = (FragmentScanResult)
+                    fragmentManager.findFragmentByTag(FragmentScanResult.class.getName());
+            if (fragmentScanResult == null) return;
+            fragmentManager.beginTransaction().
+                    setCustomAnimations(R.animator.from_left, R.animator.to_right).
+                    remove(fragmentScanResult).commit();
+            app.setBurgerButtonImage(MainActivity.BURGER);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void resetFragmentAnimator() {
@@ -398,74 +431,107 @@ public class FragmentAnimator {
     }
 
     public static void goToMainActivity(final Fragment fragment) {
-        final MainActivity app = MainActivity.app;
-        if (app == null) return;
-        if (fragment != null) {
-            app.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    FragmentManager fragmentManager = app.getFragmentManager();
-                    fragmentManager.beginTransaction().setCustomAnimations(R.animator.from_top, R.animator.to_bottom).
-                            remove(fragment).commit();
-                    CustomPagerAdapter.adapter.showFragments(true);
-                    app.activityButtonsEnable(true);
-                    app.setBurgerButtonImage(0);
-                }
-            });
+        try {
+            final MainActivity app = MainActivity.app;
+            if (app == null) return;
+            if (fragment != null) {
+                app.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        FragmentManager fragmentManager = app.getFragmentManager();
+                        fragmentManager.beginTransaction().setCustomAnimations(R.animator.from_top, R.animator.to_bottom).
+                                remove(fragment).commit();
+                        CustomPagerAdapter.adapter.showFragments(true);
+                        app.activityButtonsEnable(true);
+                        app.setBurgerButtonImage(0);
+                    }
+                });
 
+            }
+            resetFragmentAnimator();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        resetFragmentAnimator();
 
     }
 
     public static void showCopyBubble(final Activity context, final View v, final View t) {
-        if (context == null) return;
-        if (v != null)
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (copy == null)
-                        copy = context.getLayoutInflater().inflate(R.layout.copy, null);
-                    if (copy == null) return;
-                    final RelativeLayout root = (RelativeLayout) context.findViewById(R.id.main_layout);
-                    root.removeView(copy);
-                    copy.setClickable(true);
-                    copy.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            try {
-                                if (t != null) {
-                                    BRClipboardManager.copyToClipboard(context, ((TextView) t).getText().toString());
-                                    Log.e(TAG, "clicked copy: " + ((TextView) t).getText().toString());
+        try {
+            if (context == null) return;
+            if (v != null)
+                v.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (copy == null)
+                            copy = context.getLayoutInflater().inflate(R.layout.copy, null);
+                        if (copy == null) return;
+                        final RelativeLayout root = (RelativeLayout) context.findViewById(R.id.main_layout);
+                        root.removeView(copy);
+                        copy.setClickable(true);
+                        copy.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                try {
+                                    if (t != null) {
+                                        BRClipboardManager.copyToClipboard(context, ((TextView) t).getText().toString());
+                                        Log.e(TAG, "clicked copy: " + ((TextView) t).getText().toString());
+                                    }
+                                    hideCopyBubble(context);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
                                 }
-                                root.removeView(copy);
-                            } catch (Exception e) {
-                                e.printStackTrace();
                             }
-                        }
-                    });
-                    root.addView(copy);
-                    copy.setY(getRelativeTop(v));
-                    copy.setX(MainActivity.screenParametersPoint.x / 2 - 40);
-                }
-            });
-        if (t != null)
-            t.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    View parent = (View) t.getParent();
-                    if (parent != null)
-                        parent.performClick();
-                }
-            });
+                        });
+                        root.addView(copy);
+                        copy.setY(getRelativeTop(v));
+                        copy.setX(MainActivity.screenParametersPoint.x / 2 - 40);
+                    }
+                });
+            if (t != null)
+                t.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        View parent = (View) t.getParent();
+                        if (parent != null)
+                            parent.performClick();
+                    }
+                });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
     public static void hideCopyBubble(final Activity context) {
-        if (context == null) return;
-        if (copy == null) return;
-        RelativeLayout root = (RelativeLayout) context.findViewById(R.id.main_layout);
-        root.removeView(copy);
+        try {
+            if (context == null) return;
+            if (copy == null) return;
+            final RelativeLayout root = (RelativeLayout) context.findViewById(R.id.main_layout);
+            if (copy.getVisibility() == View.VISIBLE) {
+                Animation animation = new AlphaAnimation(1f, 0f);
+                animation.setDuration(150);
+                animation.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        root.removeView(copy);
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+                copy.startAnimation(animation);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private static int getRelativeLeft(View myView) {

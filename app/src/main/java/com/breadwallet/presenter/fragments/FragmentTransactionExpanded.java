@@ -233,8 +233,8 @@ public class FragmentTransactionExpanded extends Fragment {
                 txToAmount.setText(m.getFormattedCurrencyString("BTC", amounts[i]));
                 txToExchange.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, new BigDecimal(amounts[i]))));
                 view.addView(addressBlock);
-                if (i != addresses.length - 1)
-                    view.addView(FragmentSettingsAll.getSeparationLine(0, getActivity()));
+//                if (i != addresses.length - 1)
+                view.addView(FragmentSettingsAll.getSeparationLine(0, getActivity()));
             }
         }
     }

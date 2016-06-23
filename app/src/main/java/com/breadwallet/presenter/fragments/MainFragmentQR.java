@@ -79,33 +79,15 @@ public class MainFragmentQR extends Fragment {
         // The last two arguments ensure LayoutParams are inflated
         // properly.
         View rootView = inflater.inflate(R.layout.fragment_qr_main, container, false);
-        final MainActivity app = MainActivity.app;
-        if (app != null) {
-            app.qrBubble1 = (BubbleTextVew) rootView.findViewById(R.id.qr_bubble1);
-            app.qrBubble2 = (BubbleTextVew) rootView.findViewById(R.id.qr_bubble2);
-        }
-        rootView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (app != null) {
-                    app.hideAllBubbles();
-                }
-            }
-        });
-        return rootView;
-    }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
         BRWalletManager.refreshAddress();
         receiveAddress = SharedPreferencesManager.getReceiveAddress(getActivity());
 
-        qrcode = (ImageView) getActivity().findViewById(R.id.main_image_qr_code);
+        qrcode = (ImageView) rootView.findViewById(R.id.main_image_qr_code);
         sharingFragment = new SharingFragment();
-        final RelativeLayout main_fragment_qr = (RelativeLayout) getActivity().findViewById(R.id.main_fragment_qr);
-        mainAddressText = (TextView) getActivity().findViewById(R.id.main_address_text);
-        RelativeLayout addressLayout = (RelativeLayout) getActivity().findViewById(R.id.theAddressLayout);
+        final RelativeLayout main_fragment_qr = (RelativeLayout) rootView.findViewById(R.id.main_fragment_qr);
+        mainAddressText = (TextView) rootView.findViewById(R.id.main_address_text);
+        RelativeLayout addressLayout = (RelativeLayout) rootView.findViewById(R.id.theAddressLayout);
         generateQR();
         fm = getActivity().getFragmentManager();
         main_fragment_qr.setPadding(0, MainActivity.screenParametersPoint.y / 5, 0, 0);
@@ -152,6 +134,29 @@ public class MainFragmentQR extends Fragment {
 
             }
         });
+
+
+        final MainActivity app = MainActivity.app;
+        if (app != null) {
+            app.qrBubble1 = (BubbleTextVew) rootView.findViewById(R.id.qr_bubble1);
+            app.qrBubble2 = (BubbleTextVew) rootView.findViewById(R.id.qr_bubble2);
+        }
+        rootView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (app != null) {
+                    app.hideAllBubbles();
+                }
+            }
+        });
+
+        return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
     }
 
     private void generateQR() {

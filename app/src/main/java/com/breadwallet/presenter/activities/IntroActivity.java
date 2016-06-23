@@ -68,6 +68,8 @@ public class IntroActivity extends FragmentActivity {
         System.loadLibrary("core");
     }
 
+    private boolean backNotAllowed = false;
+
     @Override
     protected void onRestart() {
         super.onRestart();  // Always call the superclass method first
@@ -257,6 +259,7 @@ public class IntroActivity extends FragmentActivity {
         leftButton.setVisibility(View.GONE);
         leftButton.setClickable(false);
         fragmentTransaction.commitAllowingStateLoss();
+        backNotAllowed = true;
     }
 
     @Override
@@ -323,6 +326,7 @@ public class IntroActivity extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
+        if(backNotAllowed) return;
         int backStackEntryCount = getFragmentManager().getBackStackEntryCount();
         if (backStackEntryCount > 0) {
             if (backStackEntryCount == 1) {
@@ -330,29 +334,6 @@ public class IntroActivity extends FragmentActivity {
                 leftButton.setClickable(false);
             }
             getFragmentManager().popBackStack();
-// FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-//
-//            Fragment target = getFragmentManager().
-//                    findFragmentByTag(IntroRecoverWalletFragment.class.getName());
-//            if (target == null) target = getFragmentManager().
-//                    findFragmentByTag(IntroNewWalletFragment.class.getName());
-//            if(target== null) return;
-//            fragmentTransaction.replace(target.getId(), new IntroNewRecoverFragment(), target.getClass().getName());
-//            fragmentTransaction.commitAllowingStateLoss();
-//
-//            final Fragment finalTarget = target;
-//            new Handler().postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    TranslateAnimation trans = new TranslateAnimation(0, -app.getResources().getInteger(R.integer.standard_screen_width), 0, 0);
-//                    trans.setDuration(FragmentAnimator.horizontalSlideDuration);
-//                    trans.setInterpolator(new DecelerateOvershootInterpolator(1f, 0.5f));
-//                    View view = finalTarget.getView();
-//                    Log.e(TAG, "startAnimation");
-//                    if (view != null)
-//                        view.startAnimation(trans);
-//                }
-//            }, 5);
         } else {
             super.onBackPressed();
         }

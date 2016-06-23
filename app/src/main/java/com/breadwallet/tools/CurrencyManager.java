@@ -290,7 +290,7 @@ public class CurrencyManager extends Observable {
         }
         currencyFormat.setDecimalSeparatorAlwaysShown(separatorNeedsToBeShown);
         currencyFormat.setMaximumFractionDigits(2);
-        currencyFormat.setMinimumFractionDigits(2);
+        currencyFormat.setMinimumFractionDigits(AmountAdapter.digitsInserted);
         currencyFormat.setGroupingUsed(true);
         currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
         currencyFormat.setNegativePrefix(decimalFormatSymbols.getCurrencySymbol() + "-");

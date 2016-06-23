@@ -82,7 +82,6 @@ public class FragmentSettingsAll extends Fragment {
         RelativeLayout settings = (RelativeLayout) rootView.findViewById(R.id.settings);
 
 
-
         noTransactions = (TextView) rootView.findViewById(R.id.text_no_transactions);
         transactionHistory = (LinearLayout) rootView.findViewById(R.id.layout_transaction_history);
         transactionList = (LinearLayout) rootView.findViewById(R.id.transactions_list);
@@ -162,18 +161,13 @@ public class FragmentSettingsAll extends Fragment {
         if (!BreadWalletApp.unlocked) {
             transactionList.setVisibility(View.GONE);
             transactionHistory.setVisibility(View.VISIBLE);
-//            Log.e(TAG, "inside, NO auth");
         } else {
             transactionList.setVisibility(View.VISIBLE);
             transactionHistory.setVisibility(View.GONE);
-//            Log.e(TAG, "inside, YES auth");
         }
         if (transactionObjects == null) {
-            if (BreadWalletApp.unlocked) {
-                noTransactions.setVisibility(View.VISIBLE);
-            } else {
-                noTransactions.setVisibility(View.GONE);
-            }
+            noTransactions.setVisibility(View.VISIBLE);
+            transactionHistory.setVisibility(View.GONE);
             return;
         }
         noTransactions.setVisibility(View.GONE);
@@ -191,14 +185,12 @@ public class FragmentSettingsAll extends Fragment {
             }
         }
         if (transactionObjects.length > 5) {
-//            transactionList.addView(getSeparationLine(0, ctx));
-            transactionList.addView(getMore(ctx));
+            transactionList.addView(getMore(ctx, true));
         }
-//        transactionList.addView(getSeparationLine(0, ctx));
 
     }
 
-    public static LinearLayout getMore(final Activity context) {
+    public static LinearLayout getMore(final Activity context, boolean auth) {
         LayoutInflater inflater = (LayoutInflater) context.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout more = (LinearLayout) inflater.inflate(R.layout.transaction_list_item_more, null);
         TextView moreText = (TextView) more.findViewById(R.id.more_text);
