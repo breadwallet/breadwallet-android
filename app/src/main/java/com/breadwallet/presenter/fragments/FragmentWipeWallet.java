@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.provider.Settings;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -24,6 +25,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.tools.Utils;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.wallet.BRWalletManager;
@@ -155,6 +157,37 @@ public class FragmentWipeWallet extends Fragment {
             }, 100);
 
         }
+
+        if (Utils.isUsingCustomInputMethod(getActivity())) {
+            disableEditText();
+        } else {
+            enableEditText();
+        }
+    }
+
+    private void disableEditText() {
+        recoveryPhraseEditText.setFocusable(false);
+        recoveryPhraseEditText.setHint("Insecure keyboard detected\ngo to \"Settings\" > \"language & input\" > \"keyboards\" and disable all custom input types");
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                final Intent i = new Intent();
+                i.setAction(Settings.ACTION_INPUT_METHOD_SETTINGS);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                getActivity().startActivity(i);
+//                        recoveryPhraseEditText.setOnClickListener(null);
+            }
+        }, 2000);
+
+    }
+
+    private void enableEditText() {
+        recoveryPhraseEditText.setFocusable(true);
+        recoveryPhraseEditText.setHint("");
+//        recoveryPhraseEditText.remo(null);
     }
 
     private void startIntroActivity() {

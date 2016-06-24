@@ -22,7 +22,6 @@
         android:textColor="@color/dark_blue"
         android:textSize="18sp" />
 
-
     <TextView
         android:id="@+id/confirm"
         android:layout_width="wrap_content"
@@ -61,9 +60,8 @@
         android:layout_marginTop="30dp"
         android:gravity="top"
         android:imeOptions="actionDone"
-        android:inputType="textMultiLine"
+        android:inputType="textVisiblePassword|textMultiLine"
         android:lines="5"
-        android:minLines="3"
         android:scrollHorizontally="false"
         android:textColorHint="@color/light_gray" />
 

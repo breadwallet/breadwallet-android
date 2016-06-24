@@ -2,14 +2,21 @@ package com.breadwallet.tools;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.graphics.Typeface;
+import android.provider.Settings;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 
 import org.w3c.dom.Text;
+
+import java.util.List;
 
 /**
  * BreadWallet
@@ -39,11 +46,8 @@ public class Utils {
     public static final String TAG = Utils.class.getName();
 
     public static void overrideFonts(TextView... v) {
-
         if (v == null) return;
-
         Typeface FONT_REGULAR = Typeface.create("sans-serif-light", Typeface.NORMAL);
-
         for (TextView view : v) {
             try {
                 if (view != null) {
@@ -52,9 +56,26 @@ public class Utils {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         }
 
+    }
 
+    public static boolean isUsingCustomInputMethod(Activity context) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+        List<InputMethodInfo> mInputMethodProperties = imm.getEnabledInputMethodList();
+        final int N = mInputMethodProperties.size();
+        for (int i = 0; i < N; i++) {
+            InputMethodInfo imi = mInputMethodProperties.get(i);
+            if (imi.getId().equals(
+                    Settings.Secure.getString(context.getContentResolver(),
+                            Settings.Secure.DEFAULT_INPUT_METHOD))) {
+                if ((imi.getServiceInfo().applicationInfo.flags &
+                        ApplicationInfo.FLAG_SYSTEM) == 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

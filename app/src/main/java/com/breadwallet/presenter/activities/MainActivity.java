@@ -130,7 +130,6 @@ public class MainActivity extends FragmentActivity implements Observer {
     public ProgressBar syncProgressBar;
     public TextView syncProgressText;
     private static ParallaxViewPager parallaxViewPager;
-    private boolean doubleBackToExitPressedOnce;
     public ViewFlipper viewFlipper;
     public ViewFlipper lockerPayFlipper;
     private RelativeLayout networkErrorBar;
@@ -180,27 +179,11 @@ public class MainActivity extends FragmentActivity implements Observer {
 
         checkDeviceRooted();
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if (isUsingCustomInputMethod())
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            ((BreadWalletApp) getApplication()).showCustomToast(app,
-                                    "CUSTOM INPUT TYPE! Please switch to the default one", 300, Toast.LENGTH_LONG, 0);
-                        }
-                    });
-            }
-        }).start();
 
         if (((BreadWalletApp) getApplication()).isEmulatorOrDebug()) {
             MODE = DEBUG;
             Log.e(TAG, "DEBUG MODE!!!!!!");
         }
-//        testnet.setVisibility(MODE == DEBUG ? View.VISIBLE : View.GONE);
-
-        InputMethodManager im = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
 
         setListeners();
         scaleView(pageIndicatorLeft, 1f, PAGE_INDICATOR_SCALE_UP, 1f, PAGE_INDICATOR_SCALE_UP);
@@ -488,10 +471,6 @@ public class MainActivity extends FragmentActivity implements Observer {
             //switch the level of fragments creation.
             switch (FragmentAnimator.level) {
                 case 0:
-                    if (doubleBackToExitPressedOnce) {
-                        super.onBackPressed();
-                        break;
-                    }
                     if (decoderFragmentOn) {
                         FragmentAnimator.hideDecoderFragment();
                         break;
@@ -500,11 +479,6 @@ public class MainActivity extends FragmentActivity implements Observer {
                         FragmentAnimator.hideScanResultFragment();
                         break;
                     }
-                    this.doubleBackToExitPressedOnce = true;
-                    ((BreadWalletApp) getApplicationContext()).showCustomToast(this,
-                            getResources().getString(R.string.mainactivity_press_back_again), 140,
-                            Toast.LENGTH_SHORT, 0);
-                    makeDoubleBackToExitPressedOnce();
                     break;
                 case 1:
                     FragmentAnimator.pressMenuButton(this, new FragmentSettingsAll());
@@ -583,15 +557,6 @@ public class MainActivity extends FragmentActivity implements Observer {
                 Animation.RELATIVE_TO_SELF, 0.5f); // Pivot point of Y scaling
         anim.setFillAfter(true); // Needed to keep the result of the animation
         v.startAnimation(anim);
-    }
-
-    private void makeDoubleBackToExitPressedOnce() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                doubleBackToExitPressedOnce = false;
-            }
-        }, 1000);
     }
 
     private void startStopReceiver(boolean b) {
@@ -1084,23 +1049,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         }
     }
 
-    public boolean isUsingCustomInputMethod() {
-        InputMethodManager imm = (InputMethodManager) getSystemService(
-                Context.INPUT_METHOD_SERVICE);
-        List<InputMethodInfo> mInputMethodProperties = imm.getEnabledInputMethodList();
-        final int N = mInputMethodProperties.size();
-        for (int i = 0; i < N; i++) {
-            InputMethodInfo imi = mInputMethodProperties.get(i);
-            if (imi.getId().equals(
-                    Settings.Secure.getString(getContentResolver(),
-                            Settings.Secure.DEFAULT_INPUT_METHOD))) {
-                if ((imi.getServiceInfo().applicationInfo.flags &
-                        ApplicationInfo.FLAG_SYSTEM) == 0) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+
 
 }

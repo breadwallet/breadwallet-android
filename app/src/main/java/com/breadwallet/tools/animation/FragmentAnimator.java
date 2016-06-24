@@ -90,7 +90,7 @@ public class FragmentAnimator {
                         Manifest.permission.CAMERA)) {
                     Log.e(TAG, "YES explanation!");
                     ((BreadWalletApp) app.getApplication()).showCustomToast(app,
-                            "Please go to Settings > apps > Breadwallet and turn on the camera permission",
+                            "allow camera access in \"Settings\" > \"Apps\" > \"breadwallet\" > \"Permissions\"",
                             MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
                     // Show an explanation to the user *asynchronously* -- don't block
                     // this thread waiting for the user's response! After the user

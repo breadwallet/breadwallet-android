@@ -4,9 +4,12 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.provider.Settings;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -22,6 +25,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.tools.BRConstants;
+import com.breadwallet.tools.Utils;
 import com.breadwallet.tools.WordsReader;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
@@ -133,6 +137,36 @@ public class IntroRecoverWalletFragment extends Fragment {
         return rootView;
     }
 
+    private void disableEditText() {
+        editText.setFocusable(false);
+        editText.setHint("Insecure keyboard detected\ngo to \"Settings\" > \"language & input\" > \"keyboards\" and disable all custom input types");
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                editText.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        final Intent i = new Intent();
+                        i.setAction(Settings.ACTION_INPUT_METHOD_SETTINGS);
+                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                        i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                        getActivity().startActivity(i);
+                        editText.setOnClickListener(null);
+                    }
+                });
+            }
+        }, 400);
+
+    }
+
+    private void enableEditText(){
+        editText.setFocusable(true);
+        editText.setHint("");
+        editText.setOnClickListener(null);
+    }
+
     @Override
     public void onResume() {
         if (editText != null) {
@@ -146,6 +180,12 @@ public class IntroRecoverWalletFragment extends Fragment {
                 }
             }, 100);
 
+        }
+
+        if (Utils.isUsingCustomInputMethod(getActivity())) {
+            disableEditText();
+        } else {
+            enableEditText();
         }
         super.onResume();
     }

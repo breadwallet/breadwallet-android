@@ -24,7 +24,7 @@
         android:background="@color/white_trans"
         android:gravity="top"
         android:imeOptions="actionDone"
-        android:inputType="textMultiLine"
+        android:inputType="textVisiblePassword|textMultiLine"
         android:lines="5"
         android:textColorHint="@color/wallet_orange"
         android:padding="20dp"

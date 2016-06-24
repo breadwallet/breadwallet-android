@@ -1,25 +1,6 @@
 <resources>
-    //The QR
-    <string name="title_activity_qrscan">QRScanner</string>
-    <string name="scanner_activity">ZXing Scanner - Full Activity</string>
-    <string name="scanner_fragment_activity">ZXing Scanner - Full Fragment Activity</string>
-    <string name="simple_scanner_activity">ZXing Scanner - Simple Activity</string>
-    <string name="simple_scanner_fragment_activity">ZXing Scanner - Simple Fragment Activity</string>
-    <string name="simple_activity_sample">Simple Activity Sample</string>
-    <string name="simple_fragment_sample">Simple Fragment Sample</string>
-    <string name="activity_sample">Full Activity Sample</string>
-    <string name="fragment_sample">Full Fragment Sample</string>
-    <string name="toggle_flash">Flash</string>
-    <string name="flash_on">Flash [ON]</string>
-    <string name="flash_off">Flash [OFF]</string>
-    <string name="auto_focus_on">Auto Focus [ON]</string>
-    <string name="auto_focus_off">Auto Focus [OFF]</string>
-    <string name="formats">Formats</string>
-    <string name="choose_formats">Choose Formats</string>
-    <string name="select_camera">Select a Camera</string>
     <string name="ok_button">OK</string>
     <string name="cancel_button">Cancel</string>
-    //End QR
     <string name="app_name">breadwallet</string>
     <string name="the_address">address</string>
     <string name="action_settings">Settings</string>
@@ -53,8 +34,6 @@
     <string name="toast_address_copied">address copied to clipboard</string>
     <string name="dialog_email_title">Send your bitcoin address</string>
     <string name="bitcoin_address">"Bitcoin Address"</string>
-    <string name="crash_toast_text">Crashed! Report sent to the developer\'s email.</string>
-    <string name="bitcoin_lower_unicode">&#384;</string>
     <string name="middle_view_tip_first">This is your bitcoin balance. Bitcoin is a currency. The exchange rate changed with the market.</string>
     <string name="middle_view_tip_second">&#384; is for \'bits\'. &#384;1,000,000 = 1 bitcoin.</string>
     <string name="done">done</string>
@@ -65,28 +44,12 @@
     <string name="insert_password">Insert password</string>
     <string name="lang">en</string>
 
-    //FingerPrint
-    <string name="use_password">Use password</string>
-    <string name="sign_in">Sign in</string>
-    <string name="password">Password</string>
     <string name="fingerprint_description">Confirm fingerprint to continue</string>
     <string name="fingerprint_hint">Touch sensor</string>
     <string name="password_description">Enter your store password to continue</string>
-    <string name="purchase">Purchase</string>
     <string name="fingerprint_not_recognized">Fingerprint not recognized. Try again</string>
     <string name="fingerprint_success">Fingerprint recognized</string>
-    <string name="item_description">Mesh backpack in white. Black textile trim throughout.</string>
-    <string name="purchase_done">Purchase successful</string>
-    <string name="new_fingerprint_enrolled_description">A new fingerprint was added to this device, so your password is required.</string>
-    <string name="use_fingerprint_in_future">Use fingerprint in the future</string>
-    <string name="use_fingerprint_to_authenticate_title">Use fingerprint to authenticate</string>
-    <string name="use_fingerprint_to_authenticate_key">use_fingerprint_to_authenticate_key</string>
 
-    //testing new camera
-    <string name="picture">Picture</string>
-    <string name="description_info">Info</string>
-    <string name="request_permission">This sample needs camera permission.</string>
-    <string name="camera_error">This device doesn\'t support Camera2 API.</string>
     <string name="title_activity_request_qr">RequestQRActivity</string>
 
     <string name="fragmentdecoder_not_valid_bitcoin_address">not a valid bitcoin addresses: \n</string>
@@ -99,7 +62,6 @@
     <string name="sharingfragment_at_this_address">at this address:\n%1$s</string>
     <string name="middle_view_settings">settings</string>
     <string name="middle_view_transaction_details">transaction details</string>
-    <string name="password_need_auth">need authentication</string>
     <string name="invalid_address">invalid address</string>
     <string name="invalid_address_with_holder">invalid address\nn%1$s</string>
     <string name="close">close</string>
@@ -126,7 +88,6 @@
     <string name="chose_a_passcode">chose a passcode</string>
     <string name="enter_passcode">enter passcode</string>
     <string name="scan_qr_code_tip">Scan someone else\'s QR code to get their bitcoin address. You can send a payment to anyone with an address.</string>
-    <string name="clipboard_tip">Bitcoin addresses can also be copied to the clipboard. A bitcoin address always starts with \'1\' or \'3\'.</string>
     <string name="recover_button">recover</string>
     <string name="address_already_in_your_wallet">address already in your wallet!</string>
     <string name="syncing">syncing…</string>
@@ -166,7 +127,6 @@
     <string name="phrase_no_match">Recovery phrase doesn\'t match</string>
     <string name="please_write_it_down">please write it down</string>
     <string name="settings">settings</string>
-    <string name="testnet">testnet</string>
     <string name="breadwallet_v0_6">breadwallet v0.6</string>
     <string name="copyright_u00a9_2016_breadwallet_llc">copyright © 2016 breadwallet llc</string>
     <string name="app_support">app support:</string>
