@@ -96,11 +96,11 @@ public class SharingFragment extends DialogFragment {
                     Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                             "mailto", "", null));
                     emailIntent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.bitcoin_address));
-                    emailIntent.putExtra(Intent.EXTRA_TEXT, getResources().getString(R.string.sharing_message) + " " + theAddress);
+                    emailIntent.putExtra(Intent.EXTRA_TEXT, "bitcoin:" + theAddress);
                     Uri uri = Uri.parse("file://" + MainFragmentQR.qrCodeImageFile.getAbsolutePath());
                     Log.e(TAG, "The qrCodeImageFile.getAbsolutePath(): " + MainFragmentQR.qrCodeImageFile.getAbsolutePath());
                     emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
-                    startActivity(Intent.createChooser(emailIntent, getResources().getString(R.string.dialog_email_title)));
+                    startActivity(Intent.createChooser(emailIntent, getResources().getString(R.string.bitcoin_address)));
                     getDialog().cancel();
                 }
             }
@@ -114,7 +114,7 @@ public class SharingFragment extends DialogFragment {
                     if (theAddress == null || theAddress.isEmpty()) return;
                     Intent sendIntent = new Intent(Intent.ACTION_VIEW);
                     sendIntent.setData(Uri.parse("sms:"));
-                    sendIntent.putExtra("sms_body", getResources().getString(R.string.sharing_message) + " " + theAddress);
+                    sendIntent.putExtra("sms_body", "bitcoin:" + theAddress);
                     sendIntent.putExtra("exit_on_sent", true);
                     startActivity(sendIntent);
                     getDialog().cancel();

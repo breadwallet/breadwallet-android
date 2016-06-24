@@ -110,7 +110,7 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
             if (e instanceof java.net.UnknownHostException) {
                 if (app != null)
                     ((BreadWalletApp) app.getApplication()).
-                            showCustomDialog(app.getString(R.string.attention), app.getString(R.string.unknown_host), app.getString(R.string.close));
+                            showCustomDialog(app.getString(R.string.error), app.getString(R.string.unknown_host), app.getString(R.string.close));
             } else if (e instanceof FileNotFoundException) {
                 if (app != null)
                     ((BreadWalletApp) app.getApplication()).

@@ -182,7 +182,7 @@ public class BRWalletManager {
 
                     if (!CurrencyManager.getInstance(activity).isNetworkAvailable(activity)) {
                         ((BreadWalletApp) activity.getApplication()).showCustomDialog(activity.getString(R.string.warning),
-                                "no network connection", activity.getString(R.string.ok));
+                                "not connected", activity.getString(R.string.ok));
                         return;
                     }
 

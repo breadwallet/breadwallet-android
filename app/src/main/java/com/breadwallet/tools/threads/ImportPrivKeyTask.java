@@ -86,10 +86,10 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
     protected void onPostExecute(String s) {
         if (app == null || importPrivKeyEntity == null) return;
         CurrencyManager cm = CurrencyManager.getInstance(app);
-        String amountString = String.format("%s(%s)", cm.getFormattedCurrencyString("BTC",
+        String amountString = String.format("%s (%s)", cm.getFormattedCurrencyString("BTC",
                 importPrivKeyEntity.getAmount()), cm.getExchangeForAmount(SharedPreferencesManager.getRate(app),
                 SharedPreferencesManager.getIso(app), new BigDecimal(importPrivKeyEntity.getAmount())));
-        String feeString = String.format("%s(%s)", cm.getFormattedCurrencyString("BTC",
+        String feeString = String.format("%s (%s)", cm.getFormattedCurrencyString("BTC",
                 importPrivKeyEntity.getFee()), cm.getExchangeForAmount(SharedPreferencesManager.getRate(app),
                 SharedPreferencesManager.getIso(app), new BigDecimal(importPrivKeyEntity.getFee())));
         String message = String.format("Send %s from this private key into your wallet? The bitcoin network will receive a fee of %s.", amountString, feeString);
@@ -101,7 +101,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
                         boolean result = BRWalletManager.getInstance(app).confirmKeySweep(importPrivKeyEntity.getTx(), key);
                         if (!result) {
                             ((BreadWalletApp) app.getApplication()).showCustomDialog(app.getString(R.string.warning),
-                                    "failed to sweep the key", app.getString(R.string.ok));
+                                    "couldn't sweep balance", app.getString(R.string.ok));
                         }
                     }
                 })
