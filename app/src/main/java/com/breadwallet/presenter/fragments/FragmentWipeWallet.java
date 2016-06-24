@@ -4,12 +4,14 @@ package com.breadwallet.presenter.fragments;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -17,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -77,7 +80,6 @@ public class FragmentWipeWallet extends Fragment {
         recoveryPhraseEditText = (EditText) rootView.findViewById(R.id.editText_phrase);
         wipe = (Button) rootView.findViewById(R.id.wipe_wallet_wipe);
         recoveryPhraseEditText.setText("");
-        recoveryPhraseEditText.setSingleLine();
         recoveryPhraseEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) ||
@@ -145,11 +147,10 @@ public class FragmentWipeWallet extends Fragment {
         MainActivity app = MainActivity.app;
         if (app != null)
             app.activityButtonsEnable(false);
-        if (recoveryPhraseEditText != null) {
+        if (recoveryPhraseEditText != null && !Utils.isUsingCustomInputMethod(getActivity())) {
             (new Handler()).postDelayed(new Runnable() {
 
                 public void run() {
-
                     recoveryPhraseEditText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
                     recoveryPhraseEditText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
 
@@ -166,6 +167,7 @@ public class FragmentWipeWallet extends Fragment {
     }
 
     private void disableEditText() {
+        Log.e(TAG,"disableEditText");
         recoveryPhraseEditText.setFocusable(false);
         recoveryPhraseEditText.setHint("Insecure keyboard detected\ngo to \"Settings\" > \"language & input\" > \"keyboards\" and disable all custom input types");
 
@@ -178,20 +180,21 @@ public class FragmentWipeWallet extends Fragment {
                 i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                 getActivity().startActivity(i);
-//                        recoveryPhraseEditText.setOnClickListener(null);
             }
         }, 2000);
 
     }
 
     private void enableEditText() {
+        Log.e(TAG,"enableEditText");
         recoveryPhraseEditText.setFocusable(true);
+        recoveryPhraseEditText.setFocusableInTouchMode(true);
         recoveryPhraseEditText.setHint("");
-//        recoveryPhraseEditText.remo(null);
+
+
     }
 
     private void startIntroActivity() {
-
         Intent intent;
         intent = new Intent(getActivity(), IntroActivity.class);
         startActivity(intent);
