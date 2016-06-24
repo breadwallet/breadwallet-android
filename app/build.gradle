@@ -10,8 +10,8 @@ model {
             applicationId = 'com.breadwallet'
             minSdkVersion.apiLevel = 23
             targetSdkVersion.apiLevel = 24
-            versionCode = 13
-            versionName = "0.6-beta13"
+            versionCode = 14
+            versionName = "0.6-beta14"
 //            jackOptions {
 //                enabled = true
 //            }
