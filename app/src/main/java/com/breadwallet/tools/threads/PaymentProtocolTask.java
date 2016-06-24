@@ -103,7 +103,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                     app.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ((BreadWalletApp) app.getApplication()).showCustomDialog("Warning", "Invalid request", "ok");
+                            ((BreadWalletApp) app.getApplication()).showCustomDialog("", "Invalid request", "ok");
                         }
                     });
                 }
@@ -115,7 +115,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                     app.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ((BreadWalletApp) app.getApplication()).showCustomDialog("Warning", "Insufficient funds", "ok");
+                            ((BreadWalletApp) app.getApplication()).showCustomDialog("", "Insufficient funds", "ok");
                         }
                     });
                 }
@@ -127,7 +127,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                     app.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ((BreadWalletApp) app.getApplication()).showCustomDialog("Warning", "Failed to sign transaction", "ok");
+                            ((BreadWalletApp) app.getApplication()).showCustomDialog("", "Failed to sign transaction", "ok");
                         }
                     });
                 }
@@ -139,7 +139,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                     app.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ((BreadWalletApp) app.getApplication()).showCustomDialog("Warning", "PaymentRequest message is too large", "ok");
+                            ((BreadWalletApp) app.getApplication()).showCustomDialog("", "PaymentRequest message is too large", "ok");
                         }
                     });
                 }
@@ -151,7 +151,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                     app.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ((BreadWalletApp) app.getApplication()).showCustomDialog("Warning", "Something went wrong", "ok");
+                            ((BreadWalletApp) app.getApplication()).showCustomDialog("", "Something went wrong", "ok");
                         }
                     });
                 }
@@ -166,7 +166,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 if (!BRWalletManager.validateAddress(s)) {
                     if (app != null)
                         ((BreadWalletApp) app.getApplication()).
-                                showCustomDialog(app.getString(R.string.attention),
+                                showCustomDialog(app.getString(R.string.error),
                                         String.format(app.getString(R.string.invalid_address_with_holder), s),
                                         app.getString(R.string.close));
                 }
@@ -185,7 +185,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 Log.e(TAG, "Request is expired");
                 if (app != null)
                     ((BreadWalletApp) app.getApplication()).
-                            showCustomDialog(app.getString(R.string.attention), "Expired request",
+                            showCustomDialog(app.getString(R.string.error), "Expired request",
                                     app.getString(R.string.close));
                 return null;
             }
@@ -196,7 +196,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
             if (e instanceof java.net.UnknownHostException) {
                 if (app != null)
                     ((BreadWalletApp) app.getApplication()).
-                            showCustomDialog(app.getString(R.string.attention), app.getString(R.string.unknown_host), app.getString(R.string.close));
+                            showCustomDialog(app.getString(R.string.error), app.getString(R.string.unknown_host), app.getString(R.string.close));
             } else if (e instanceof FileNotFoundException) {
                 if (app != null)
                     ((BreadWalletApp) app.getApplication()).

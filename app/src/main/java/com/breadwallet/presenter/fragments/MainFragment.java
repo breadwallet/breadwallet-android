@@ -140,7 +140,7 @@ public class MainFragment extends Fragment {
                             BRWalletManager m = BRWalletManager.getInstance(getActivity());
                             if (m.addressContainedInWallet(finalAddress)) {
 
-                                builder.setTitle(getResources().getString(R.string.alert));
+                                //builder.setTitle(getResources().getString(R.string.alert));
                                 builder.setMessage(getResources().getString(R.string.address_already_in_your_wallet));
                                 builder.setNeutralButton(getResources().getString(R.string.ok),
                                         new DialogInterface.OnClickListener() {
@@ -180,7 +180,7 @@ public class MainFragment extends Fragment {
                             throw new NullPointerException();
                         }
                     } else {
-                        builder.setTitle(getResources().getString(R.string.alert));
+                        //builder.setTitle(getResources().getString(R.string.alert));
                         builder.setMessage(getResources().getString(R.string.mainfragment_clipboard_invalid_data));
                         builder.setNeutralButton(getResources().getString(R.string.ok),
                                 new DialogInterface.OnClickListener() {

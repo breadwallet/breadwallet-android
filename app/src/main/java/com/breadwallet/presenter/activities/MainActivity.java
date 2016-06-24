@@ -587,7 +587,7 @@ public class MainActivity extends FragmentActivity implements Observer {
 //                String strToReduce = String.valueOf(amountToReduce);
                 final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-                builder.setMessage(String.format("reduce payment amount by %s to accommodate the bitcoin network fee?", cm.getFormattedCurrencyString("BTC", amountToReduce)))
+                builder.setMessage(String.format("reduce payment amount by %s?", cm.getFormattedCurrencyString("BTC", amountToReduce)))
                         .setTitle("insufficient funds for bitcoin network fee")
                         .setCancelable(false)
                         .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
@@ -619,7 +619,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                 confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, bigDecimalAmount.longValue(), cn, tmpTx, isAmountRequested));
             } else {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage(String.format(Locale.getDefault(), "insufficient funds to send: %s", cm.getFormattedCurrencyString("BTC", bigDecimalAmount.longValue())))
+                builder.setMessage("insufficient funds")
                         .setCancelable(false)
                         .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
@@ -631,7 +631,7 @@ public class MainActivity extends FragmentActivity implements Observer {
             }
         } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("No internet connection!")
+            builder.setMessage("not connected")
                     .setCancelable(false)
                     .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {

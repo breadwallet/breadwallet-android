@@ -112,8 +112,7 @@ public class FragmentWipeWallet extends Fragment {
                     FragmentAnimator.resetFragmentAnimator();
                 } else {
                     new AlertDialog.Builder(getActivity())
-                            .setTitle(getString(R.string.attention))
-                            .setMessage(getString(R.string.wipewallet_not_valid_phrase))
+                            .setMessage(getString(R.string.bad_recovery_phrase))
                             .setNegativeButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.cancel();

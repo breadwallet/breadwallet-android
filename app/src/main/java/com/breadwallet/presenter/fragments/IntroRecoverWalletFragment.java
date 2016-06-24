@@ -119,10 +119,9 @@ public class IntroRecoverWalletFragment extends Fragment {
                     introActivity.startMainActivity();
                     if (!introActivity.isDestroyed()) introActivity.finish();
                 } else {
-                    alertDialog.setTitle(getResources().getString(R.string.alert));
+                    //alertDialog.setTitle(getResources().getString(R.string.alert));
                     //don't use
-                    alertDialog.setMessage("\"" + cleanPhrase + "\" - " +
-                            getResources().getString(R.string.dialog_recovery_phrase_invalid));
+                    alertDialog.setMessage(getResources().getString(R.string.bad_recovery_phrase));
                     alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getResources().getString(R.string.ok),
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {

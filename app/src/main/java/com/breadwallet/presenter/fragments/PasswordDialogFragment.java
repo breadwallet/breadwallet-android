@@ -228,7 +228,7 @@ public class PasswordDialogFragment extends DialogFragment {
         if (firstTime) {
             cancel.setClickable(false);
             cancel.setVisibility(View.GONE);
-            title.setText(R.string.chose_a_new_passcode);
+            title.setText(R.string.choose_new_passcode);
             currentMode = AUTH_MODE_NEW_PASS;
         }
         if (verifyOnly) {
@@ -331,7 +331,7 @@ public class PasswordDialogFragment extends DialogFragment {
                         SpringAnimator.showAnimation(dialogFragment.getView());
                         passcodeEditText.setText("");
                         currentMode = AUTH_MODE_NEW_PASS;
-                        title.setText(getResources().getString(R.string.chose_a_new_passcode));
+                        title.setText(getResources().getString(R.string.choose_new_passcode));
                     }
                     break;
             }
@@ -402,7 +402,7 @@ public class PasswordDialogFragment extends DialogFragment {
                 case AUTH_MODE_CHECK_PASS:
                     if (passCodeManager.checkAuth(s.toString(), getActivity())) {
                         currentMode = AUTH_MODE_NEW_PASS;
-                        title.setText(getResources().getString(R.string.chose_a_new_passcode));
+                        title.setText(getResources().getString(R.string.choose_new_passcode));
                         passcodeEditText.setText("");
                     } else {
                         SpringAnimator.showAnimation(dialogFragment.getView());
@@ -437,7 +437,7 @@ public class PasswordDialogFragment extends DialogFragment {
                         SpringAnimator.showAnimation(dialogFragment.getView());
                         passcodeEditText.setText("");
                         currentMode = AUTH_MODE_NEW_PASS;
-                        title.setText(getResources().getString(R.string.chose_a_new_passcode));
+                        title.setText(getResources().getString(R.string.choose_new_passcode));
                     }
                     break;
             }
