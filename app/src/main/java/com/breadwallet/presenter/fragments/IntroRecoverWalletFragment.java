@@ -143,27 +143,23 @@ public class IntroRecoverWalletFragment extends Fragment {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                editText.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        final Intent i = new Intent();
-                        i.setAction(Settings.ACTION_INPUT_METHOD_SETTINGS);
-                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                        i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                        getActivity().startActivity(i);
-                        editText.setOnClickListener(null);
-                    }
-                });
+                if (Utils.isUsingCustomInputMethod(getActivity())) {
+                    final Intent i = new Intent();
+                    i.setAction(Settings.ACTION_INPUT_METHOD_SETTINGS);
+                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                    i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                    getActivity().startActivity(i);
+                }
             }
-        }, 400);
+        }, 2000);
 
     }
 
-    private void enableEditText(){
+    private void enableEditText() {
         editText.setFocusable(true);
+        editText.setFocusableInTouchMode(true);
         editText.setHint("");
-        editText.setOnClickListener(null);
     }
 
     @Override
@@ -172,7 +168,6 @@ public class IntroRecoverWalletFragment extends Fragment {
             (new Handler()).postDelayed(new Runnable() {
 
                 public void run() {
-
                     editText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
                     editText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
 

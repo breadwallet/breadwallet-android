@@ -166,31 +166,29 @@ public class FragmentWipeWallet extends Fragment {
     }
 
     private void disableEditText() {
-        Log.e(TAG,"disableEditText");
         recoveryPhraseEditText.setFocusable(false);
         recoveryPhraseEditText.setHint("Insecure keyboard detected\ngo to \"Settings\" > \"language & input\" > \"keyboards\" and disable all custom input types");
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                final Intent i = new Intent();
-                i.setAction(Settings.ACTION_INPUT_METHOD_SETTINGS);
-                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                getActivity().startActivity(i);
+                if (Utils.isUsingCustomInputMethod(getActivity())) {
+                    final Intent i = new Intent();
+                    i.setAction(Settings.ACTION_INPUT_METHOD_SETTINGS);
+                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                    i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                    getActivity().startActivity(i);
+                }
             }
         }, 2000);
 
     }
 
     private void enableEditText() {
-        Log.e(TAG,"enableEditText");
         recoveryPhraseEditText.setFocusable(true);
         recoveryPhraseEditText.setFocusableInTouchMode(true);
         recoveryPhraseEditText.setHint("");
-
-
     }
 
     private void startIntroActivity() {

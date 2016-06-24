@@ -61,6 +61,7 @@ public class Utils {
     }
 
     public static boolean isUsingCustomInputMethod(Activity context) {
+        if(context == null) return false;
         InputMethodManager imm = (InputMethodManager) context.getSystemService(
                 Context.INPUT_METHOD_SERVICE);
         List<InputMethodInfo> mInputMethodProperties = imm.getEnabledInputMethodList();
