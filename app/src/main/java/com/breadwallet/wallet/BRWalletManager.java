@@ -119,10 +119,6 @@ public class BRWalletManager {
         return success2;
 
     }
-//    public boolean setKeyStoreString(String strPhrase, String key,
-//                                     boolean authenticated, Context ctx) {
-//        return KeyStoreManager.setKeyStoreString(strPhrase, ctx);
-//    }
 
     public boolean wipeKeyStore() {
         return KeyStoreManager.resetWalletKeyStore();

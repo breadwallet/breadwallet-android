@@ -34,7 +34,7 @@
         </activity>
         <activity
             android:name=".presenter.activities.MainActivity"
-            android:label="@string/breadwallet"
+            android:label="@string/app_name"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -45,11 +45,11 @@
         </activity>
         <activity
             android:name=".presenter.activities.IntroShowPhraseActivity"
-            android:label="@string/title_activity_intro_show_phrase"
+            android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
             android:name=".presenter.activities.RequestQRActivity"
-            android:label="@string/title_activity_request_qr"
+            android:label="@string/app_name"
             android:screenOrientation="portrait" />
     </application>
 

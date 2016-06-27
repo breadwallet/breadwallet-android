@@ -117,6 +117,7 @@ public class IntroShowPhraseActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
+        phrase = null;
     }
 
     @Override
@@ -127,6 +128,7 @@ public class IntroShowPhraseActivity extends Activity {
         Intent intent;
         intent = new Intent(this, MainActivity.class);
         startActivity(intent);
+        phrase = null;
         if (!IntroShowPhraseActivity.this.isDestroyed()) {
             finish();
         }
