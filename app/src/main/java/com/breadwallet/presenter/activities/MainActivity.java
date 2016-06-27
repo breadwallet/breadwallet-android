@@ -182,7 +182,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         String scheme = data.getScheme();
         if (scheme != null && scheme.startsWith("bitcoin")) {
             Log.e(TAG, "bitcoin url");
-            ((BreadWalletApp) getApplication()).showCustomToast(this, intent.getDataString(), screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
+//            ((BreadWalletApp) getApplication()).showCustomToast(this, intent.getDataString(), screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
             String str = intent.getDataString();
             Log.e(TAG, "str: " + str);
             RequestHandler.processRequest(this, str);

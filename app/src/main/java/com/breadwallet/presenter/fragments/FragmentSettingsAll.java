@@ -31,7 +31,9 @@ import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -348,19 +350,22 @@ public class FragmentSettingsAll extends Fragment {
         return tmpLayout;
     }
 
-    @SuppressWarnings("deprecation")
-    @SuppressLint("SimpleDateFormat")
     public static String getFormattedDateFromLong(long time) {
+
         MainActivity app = MainActivity.app;
-        SimpleDateFormat sdf;
+        SimpleDateFormat formatter = new SimpleDateFormat("M/d@ha", Locale.getDefault());
+        boolean is24HoursFormat = false;
         if (app != null) {
-            Locale current = app.getResources().getConfiguration().locale;
-            sdf = new SimpleDateFormat("M/d@ha", current);
-        } else {
-            sdf = new SimpleDateFormat("M/d@ha");
+            is24HoursFormat = android.text.format.DateFormat.is24HourFormat(app.getApplicationContext());
+            if (is24HoursFormat) {
+                formatter = new SimpleDateFormat("M/d H", Locale.getDefault());
+            }
         }
-        Date resultDate = new Date(time);
-        return sdf.format(resultDate).toLowerCase();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(time);
+        String result = formatter.format(calendar.getTime()).toLowerCase().replace("am", "a").replace("pm", "p");
+        if (is24HoursFormat) result += "h";
+        return result;
     }
 
 }
