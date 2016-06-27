@@ -1,7 +1,7 @@
 <resources>
     <string name="ok_button">OK</string>
     <string name="cancel_button">Cancel</string>
-    <string name="app_name">breadwallet</string>
+    <string name="app_name">&#384;readwallet</string>
     <string name="the_address">address</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_main">MainActivity</string>
