@@ -463,6 +463,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                         FragmentAnimator.hideScanResultFragment();
                         break;
                     }
+                    super.onBackPressed();
                     break;
                 case 1:
                     FragmentAnimator.pressMenuButton(this, new FragmentSettingsAll());
