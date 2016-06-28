@@ -6,6 +6,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.fragments.FragmentSettings;
+import com.breadwallet.tools.BRStringFormatter;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.animation.FragmentAnimator;
 
@@ -60,7 +61,7 @@ public class MiddleViewAdapter {
         if (FragmentAnimator.level == 0 || FragmentAnimator.level == 1) {
             if (BreadWalletApp.unlocked) {
                 try {
-                    String tmp = CurrencyManager.getInstance(MainActivity.app).getCurrentBalanceText();
+                    String tmp = BRStringFormatter.getCurrentBalanceText(app);
                     ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
                 } catch (Exception e) {
                     e.printStackTrace();

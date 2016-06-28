@@ -74,7 +74,7 @@ public class CurrencyManager extends Observable {
     private Timer timer;
     private long BALANCE = 0;
     private TimerTask timerTask;
-    public final String bitcoinLowercase = "\u0180";
+    public static final String bitcoinLowercase = "\u0180";
     private Handler handler;
     public static boolean separatorNeedsToBeShown = false;
     private final CurrencyListAdapter currencyListAdapter;
@@ -226,128 +226,6 @@ public class CurrencyManager extends Observable {
         }
     }
 
-    public String getMiddleTextExchangeString(double rate, String iso) {
-//        Log.e(TAG, "result of the exchange rate calculation: " + result);
-        if (rate == 0) rate = 1;
-        if (ctx == null) ctx = MainActivity.app;
-        if (ctx == null) return null;
-        long result = BRWalletManager.getInstance(ctx).bitcoinAmount(100, new BigDecimal(String.valueOf(rate)).multiply(new BigDecimal("100")).doubleValue());
-        return getFormattedCurrencyString(iso, 100) + " = " +
-                getFormattedCurrencyString("BTC", result);
-    }
 
-    public String getBitsAndExchangeString(double rate, String iso, BigDecimal target) {
-        Log.e(TAG, "target: " + target);
-//        Log.e(TAG, "result of the exchange rate calculation: " + result);
-        if (rate == 0) rate = 1;
-        long exchange = BRWalletManager.getInstance(ctx).localAmount(target.longValue(),
-                new BigDecimal(String.valueOf(rate)).multiply(new BigDecimal("100")).doubleValue());
-        return getFormattedCurrencyString("BTC", target.longValue()) + " = " +
-                getFormattedCurrencyString(iso, exchange);
-    }
-
-    public String getExchangeForAmount(double rate, String iso, BigDecimal target) {
-        if (rate == 0) rate = 1;
-        long exchange = BRWalletManager.getInstance(ctx).localAmount(target.longValue(),
-                new BigDecimal(String.valueOf(rate)).multiply(new BigDecimal("100")).doubleValue());
-        if (ctx != null) {
-//            long exchangeFromCore = BRWalletManager.getInstance(ctx).localAmount(new Double(target).longValue(),rate);
-            Log.e(TAG, "exchange: " + exchange);
-//            Log.e(TAG,"exchangeFromCore: " + exchangeFromCore);
-        }
-        return getFormattedCurrencyString(iso, exchange);
-    }
-
-    public String getCurrentBalanceText() {
-        String iso = SharedPreferencesManager.getIso(ctx);
-        double rate = SharedPreferencesManager.getRate(ctx);
-        long exchange = BRWalletManager.getInstance(ctx).localAmount(getBALANCE(), new BigDecimal(String.valueOf(rate)).multiply(new BigDecimal("100")).doubleValue());
-        Log.e(TAG, "getCurrentBalanceText, exchange: " + exchange);
-
-        return getFormattedCurrencyString("BTC", getBALANCE()) + " (" +
-                getFormattedCurrencyString(iso, exchange) + ")";
-    }
-
-    public String getFormattedCurrencyString(String isoCurrencyCode, long amount) {
-        DecimalFormat currencyFormat;
-
-        // This formats currency values as the user expects to read them (default locale).
-        currencyFormat = (DecimalFormat) DecimalFormat.getCurrencyInstance();
-        // This specifies the actual currency that the value is in, and provide
-        // s the currency symbol.
-        DecimalFormatSymbols decimalFormatSymbols;
-        Currency currency;
-        String symbol = null;
-        if (Objects.equals(isoCurrencyCode, "BTC")) {
-            decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
-            symbol = bitcoinLowercase;
-            decimalFormatSymbols.setCurrencySymbol(symbol);
-        } else {
-            try {
-                currency = Currency.getInstance(isoCurrencyCode);
-//                Log.e(TAG, "Currency.getInstance succeeded: " + currency.getSymbol());
-            } catch (IllegalArgumentException e) {
-//                Log.e(TAG, "Currency.getInstance did not succeed, going with the default", e);
-                currency = Currency.getInstance(Locale.getDefault());
-            }
-            decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
-            symbol = currency.getSymbol();
-            decimalFormatSymbols.setCurrencySymbol(symbol);
-        }
-        currencyFormat.setDecimalSeparatorAlwaysShown(separatorNeedsToBeShown);
-        currencyFormat.setMaximumFractionDigits(2);
-        currencyFormat.setMinimumFractionDigits(AmountAdapter.digitsInserted);
-        currencyFormat.setGroupingUsed(true);
-        currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
-        currencyFormat.setNegativePrefix(decimalFormatSymbols.getCurrencySymbol() + "-");
-// or "-"+symbol if that's what you need
-        currencyFormat.setNegativeSuffix("");
-//        Log.e(TAG, "Returning the formatted string with separatorVisibility: " +
-// currencyFormat.isDecimalSeparatorAlwaysShown());
-        return currencyFormat.format(new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100")).doubleValue());
-    }
-
-    public String getFormattedCurrencyStringForLocale(Locale locale, String isoCurrencyCode, double amount) {
-        // This formats currency values as the user expects to read them (default locale).
-        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(locale);
-
-        // This specifies the actual currency that the value is in, and provides the currency symbol.
-        Currency currency = Currency.getInstance(isoCurrencyCode);
-
-        // Note we don't supply a locale to this method - uses default locale to format the currency symbol.
-        String symbol = currency.getSymbol(locale);
-
-        // We then tell our formatter to use this symbol.
-        DecimalFormatSymbols decimalFormatSymbols = ((java.text.DecimalFormat) currencyFormat).getDecimalFormatSymbols();
-        decimalFormatSymbols.setCurrencySymbol(symbol);
-        ((java.text.DecimalFormat) currencyFormat).setDecimalFormatSymbols(decimalFormatSymbols);
-
-        return currencyFormat.format(amount);
-    }
-
-    public String getFormattedCurrencyStringFixed(Locale locale, String isoCurrencyCode, double amount) {
-        // This formats currency values as the user expects to read them in the supplied locale.
-        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(locale);
-
-        // This specifies the actual currency that the value is in, and provides
-        // the currency symbol that is used
-        Currency currency = Currency.getInstance(isoCurrencyCode);
-
-        // Our fix is to use the US locale as default for the symbol, unless the currency is USD
-        // and the locale is NOT the US, in which case we know it should be US$.
-        String symbol;
-        if (isoCurrencyCode.equalsIgnoreCase("usd") && !locale.equals(Locale.US)) {
-            symbol = "US$";// currency.getSymbol(Locale.UK);
-        } else {
-            symbol = currency.getSymbol(Locale.US); // US locale has the best symbol formatting table.
-        }
-
-        // We tell our formatter to use this symbol
-        DecimalFormatSymbols decimalFormatSymbols = ((java.text.DecimalFormat) currencyFormat).getDecimalFormatSymbols();
-        decimalFormatSymbols.setCurrencySymbol(symbol);
-        ((java.text.DecimalFormat) currencyFormat).setDecimalFormatSymbols(decimalFormatSymbols);
-
-        return currencyFormat.format(amount);
-    }
 
 }

@@ -57,6 +57,7 @@ import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.tools.BRConstants;
+import com.breadwallet.tools.BRStringFormatter;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.SharedPreferencesManager;
 import com.breadwallet.tools.TypesConverter;
@@ -320,10 +321,10 @@ public class PasswordDialogFragment extends DialogFragment {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        String tmp = CurrencyManager.getInstance(getActivity()).getCurrentBalanceText();
+                        String tmp = BRStringFormatter.getCurrentBalanceText(getActivity());
                         MiddleViewAdapter.resetMiddleView(getActivity(), tmp);
                         ((BreadWalletApp) getActivity().getApplicationContext()).setUnlocked(true);
-                        InputMethodManager keyboard = (InputMethodManager) MainActivity.app.
+                        InputMethodManager keyboard = (InputMethodManager) getActivity().
                                 getSystemService(Context.INPUT_METHOD_SERVICE);
                         keyboard.hideSoftInputFromWindow(cancel.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
                         currentMode = AUTH_MODE_CHECK_PASS;
@@ -426,10 +427,10 @@ public class PasswordDialogFragment extends DialogFragment {
                         passCodeManager.setPassCode(tempPassToChange, getActivity());
                         tempPassToChange = "";
                         getDialog().cancel();
-                        String tmp = CurrencyManager.getInstance(getActivity()).getCurrentBalanceText();
+                        String tmp = BRStringFormatter.getCurrentBalanceText(getActivity());
                         MiddleViewAdapter.resetMiddleView(getActivity(), tmp);
                         ((BreadWalletApp) getActivity().getApplicationContext()).setUnlocked(true);
-                        InputMethodManager keyboard = (InputMethodManager) MainActivity.app.
+                        InputMethodManager keyboard = (InputMethodManager) getActivity().
                                 getSystemService(Context.INPUT_METHOD_SERVICE);
                         keyboard.hideSoftInputFromWindow(cancel.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
                         currentMode = AUTH_MODE_CHECK_PASS;

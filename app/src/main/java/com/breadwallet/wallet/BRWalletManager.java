@@ -27,6 +27,7 @@ import com.breadwallet.presenter.fragments.FragmentRecoveryPhrase;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.presenter.fragments.MainFragmentQR;
 import com.breadwallet.tools.BRConstants;
+import com.breadwallet.tools.BRStringFormatter;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.SharedPreferencesManager;
 import com.breadwallet.tools.WordsReader;
@@ -304,9 +305,9 @@ public class BRWalletManager {
                     CurrencyManager m = CurrencyManager.getInstance(ctx);
                     long absAmount = amount > 0 ? amount : amount * -1;
                     String strToShow = String.format(ctx.getString(amount > 0 ? R.string.received : R.string.sent),
-                            m.getFormattedCurrencyString("BTC", absAmount) + " (" +
-                                    m.getExchangeForAmount(SharedPreferencesManager.getRate(ctx),
-                                            SharedPreferencesManager.getIso(ctx), new BigDecimal(absAmount)) + ")");
+                            BRStringFormatter.getFormattedCurrencyString("BTC", absAmount) + " (" +
+                                    BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(ctx),
+                                            SharedPreferencesManager.getIso(ctx), new BigDecimal(absAmount), ctx) + ")");
                     showSentReceivedToast(strToShow);
                 }
 

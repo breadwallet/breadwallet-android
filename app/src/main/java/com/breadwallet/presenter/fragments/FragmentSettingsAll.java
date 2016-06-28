@@ -21,6 +21,7 @@ import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.tools.BRConstants;
+import com.breadwallet.tools.BRStringFormatter;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.CustomLogger;
 import com.breadwallet.tools.SharedPreferencesManager;
@@ -159,6 +160,7 @@ public class FragmentSettingsAll extends Fragment {
     }
 
     public static void refreshUI(Activity ctx) {
+        if (FragmentAnimator.level != 1) return;
         Log.e(TAG, "refreshUI");
         if (transactionList == null || transactionHistory == null)
             return;
@@ -181,9 +183,9 @@ public class FragmentSettingsAll extends Fragment {
             }
             transactionHistory.setVisibility(View.GONE);
             transactionList.setVisibility(View.VISIBLE);
+            int estimatedBlockHeight = BRPeerManager.getEstimatedBlockHeight();
             for (TransactionListItem transactionObject : transactionObjects) {
                 int blockHeight = transactionObject.getBlockHeight();
-                int estimatedBlockHeight = BRPeerManager.getEstimatedBlockHeight();
                 int confirms = blockHeight == Integer.MAX_VALUE ? 0 : estimatedBlockHeight - blockHeight + 1;
                 if (blockHeight != Integer.MAX_VALUE && confirms < 6) {
                     if (addLine) {
@@ -225,9 +227,9 @@ public class FragmentSettingsAll extends Fragment {
 
     private static int getUnconfirmedCount(TransactionListItem[] items) {
         int count = 0;
+        int estimatedBlockHeight = BRPeerManager.getEstimatedBlockHeight();
         for (TransactionListItem t : items) {
             int blockHeight = t.getBlockHeight();
-            int estimatedBlockHeight = BRPeerManager.getEstimatedBlockHeight();
             int confirms = blockHeight == Integer.MAX_VALUE ? 0 : estimatedBlockHeight - blockHeight + 1;
             if (blockHeight != Integer.MAX_VALUE && confirms < 6) {
                 count++;
@@ -340,12 +342,12 @@ public class FragmentSettingsAll extends Fragment {
 
         long satoshisAmount = received ? item.getReceived() : (item.getSent() - item.getReceived()) * -1;
 
-        bitsTextView.setText(m.getFormattedCurrencyString("BTC", satoshisAmount));
-        dollarsTextView.setText(String.format("(%s)", m.getExchangeForAmount(SharedPreferencesManager.getRate(app), SharedPreferencesManager.getIso(app), new BigDecimal(satoshisAmount))));
+        bitsTextView.setText(BRStringFormatter.getFormattedCurrencyString("BTC", satoshisAmount));
+        dollarsTextView.setText(String.format("(%s)", BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(app), SharedPreferencesManager.getIso(app), new BigDecimal(satoshisAmount),app)));
         long satoshisAfterTx = item.getBalanceAfterTx();
 
-        bitsTotalTextView.setText(m.getFormattedCurrencyString("BTC", satoshisAfterTx));
-        dollarsTotalTextView.setText(String.format("(%s)", m.getExchangeForAmount(SharedPreferencesManager.getRate(app), SharedPreferencesManager.getIso(app), new BigDecimal(satoshisAfterTx))));
+        bitsTotalTextView.setText(BRStringFormatter.getFormattedCurrencyString("BTC", satoshisAfterTx));
+        dollarsTotalTextView.setText(String.format("(%s)", BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(app), SharedPreferencesManager.getIso(app), new BigDecimal(satoshisAfterTx), app)));
 
         return tmpLayout;
     }

@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.TransactionListItem;
+import com.breadwallet.tools.BRStringFormatter;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.SharedPreferencesManager;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
@@ -111,8 +112,8 @@ public class FragmentTransactionExpanded extends Fragment {
             Log.e(TAG, "Tx Detail received!!!! amount: " + amount + " item.getBlockHeight(): " + item.getBlockHeight());
 
 
-            amountText.setText(m.getFormattedCurrencyString("BTC", amount));
-            exchangeText.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, new BigDecimal(amount))));
+            amountText.setText(BRStringFormatter.getFormattedCurrencyString("BTC", amount));
+            exchangeText.setText(String.format("(%s)", BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(amount), getActivity())));
 
             String fromAddresses[] = item.getFrom();
             setReceivedFromAddresses(generalTxFrom, fromAddresses);
@@ -128,15 +129,15 @@ public class FragmentTransactionExpanded extends Fragment {
             Log.e(TAG, "Tx Detail sent!!!! amount: " + amount + " tempFee: " + item.getFee() + " tempSent: "
                     + item.getSent() + " item.getBlockHeight(): " + item.getBlockHeight());
 
-            amountText.setText(String.format("%s", m.getFormattedCurrencyString("BTC", -amount)));
-            exchangeText.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, new BigDecimal(-amount))));
+            amountText.setText(String.format("%s", BRStringFormatter.getFormattedCurrencyString("BTC", -amount)));
+            exchangeText.setText(String.format("(%s)", BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(-amount), getActivity())));
             String fromAddresses[] = item.getFrom();
             long[] outAmounts = item.getOutAmounts();
             setSentFromAddresses(generalTxFrom, fromAddresses);
             String toAddresses[] = item.getTo();
             setSentToAddresses(generalTxTo, toAddresses, outAmounts);
-            toFeeAmountText.setText(String.format("%s", m.getFormattedCurrencyString("BTC", -item.getFee())));
-            toFeeExchangeText.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, new BigDecimal(-item.getFee()))));
+            toFeeAmountText.setText(String.format("%s", BRStringFormatter.getFormattedCurrencyString("BTC", -item.getFee())));
+            toFeeExchangeText.setText(String.format("(%s)", BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(-item.getFee()),getActivity())));
 
         }
         setHideCopyBubbleListeners(rootView.findViewById(R.id.tx_amount),
@@ -230,8 +231,8 @@ public class FragmentTransactionExpanded extends Fragment {
             if (addresses[i] != null && !addresses[i].isEmpty()) {
                 txTo.setText(addresses[i]);
                 txToDescription.setText(getString(R.string.wallet_address));
-                txToAmount.setText(m.getFormattedCurrencyString("BTC", amounts[i]));
-                txToExchange.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, new BigDecimal(amounts[i]))));
+                txToAmount.setText(BRStringFormatter.getFormattedCurrencyString("BTC", amounts[i]));
+                txToExchange.setText(String.format("(%s)", BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(amounts[i]),getActivity())));
                 view.addView(addressBlock);
 //                if (i != addresses.length - 1)
                 view.addView(FragmentSettingsAll.getSeparationLine(0, getActivity()));
@@ -258,8 +259,8 @@ public class FragmentTransactionExpanded extends Fragment {
             if (addresses[i] != null && !addresses[i].isEmpty()) {
                 txTo.setText(addresses[i]);
                 txToDescription.setText(getString(R.string.payment_address));
-                txToAmount.setText(String.format("%s", m.getFormattedCurrencyString("BTC", -amounts[i])));
-                txToExchange.setText(String.format("(%s)", m.getExchangeForAmount(rate, iso, new BigDecimal(-amounts[i]))));
+                txToAmount.setText(String.format("%s", BRStringFormatter.getFormattedCurrencyString("BTC", -amounts[i])));
+                txToExchange.setText(String.format("(%s)", BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(-amounts[i]), getActivity())));
                 view.addView(addressBlock);
                 if (i != addresses.length - 1)
                     view.addView(FragmentSettingsAll.getSeparationLine(0, getActivity()));

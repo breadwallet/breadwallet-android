@@ -79,6 +79,8 @@ public class ToastBlockShowTask {
                 return;
             }
             if (blocksToast == null || !blocksToast.getView().isShown()) {
+                currBlock = String.valueOf(BRPeerManager.getCurrentBlockHeight());
+                latestBlockKnown = String.valueOf(BRPeerManager.getEstimatedBlockHeight());
                 Runnable runnable = new Runnable() {
                     public void run() {
                         blocksToast = new Toast(activity);
@@ -86,8 +88,6 @@ public class ToastBlockShowTask {
                         layout = inflater.inflate(R.layout.toast,
                                 (ViewGroup) activity.findViewById(R.id.toast_layout_root));
                         text = (TextView) layout.findViewById(R.id.toast_text);
-                        currBlock = String.valueOf(BRPeerManager.getCurrentBlockHeight());
-                        latestBlockKnown = String.valueOf(BRPeerManager.getEstimatedBlockHeight());
                         formattedBlockInfo = String.format("block #%s of %s", currBlock, latestBlockKnown);
                         text.setText(formattedBlockInfo);
                         blocksToast.setGravity(Gravity.TOP, 0, MainActivity.screenParametersPoint.y / 8);

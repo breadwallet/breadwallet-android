@@ -12,6 +12,7 @@ import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.presenter.exceptions.CertificateChainNotFound;
 import com.breadwallet.tools.BRConstants;
+import com.breadwallet.tools.BRStringFormatter;
 import com.breadwallet.tools.ByteReader;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.SharedPreferencesManager;
@@ -240,7 +241,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
         }
         allAddresses.delete(allAddresses.length() - 2, allAddresses.length());
         String certification;
-        String memo = (!paymentRequest.memo.isEmpty() ? "\n" : "") + paymentRequest.memo ;
+        String memo = (!paymentRequest.memo.isEmpty() ? "\n" : "") + paymentRequest.memo;
         if (certified) {
             certification = "\ud83d\udd12 " + cn + "\n";
         } else {
@@ -279,10 +280,10 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
         final long total = paymentRequest.amount + paymentRequest.fee;
 
         final PaymentRequestEntity request = new PaymentRequestEntity(paymentRequest.addresses, paymentRequest.amount, cn, paymentRequest.serializedTx, false);
-        final String message = certification + memo + allAddresses.toString() + "\n\n" + "amount: " + cm.getFormattedCurrencyString("BTC", paymentRequest.amount)
-                + " (" + cm.getExchangeForAmount(rate, iso, new BigDecimal(paymentRequest.amount)) + ")" + "\nnetwork fee: +" + cm.getFormattedCurrencyString("BTC", paymentRequest.fee)
-                + " (" + cm.getExchangeForAmount(rate, iso, new BigDecimal(paymentRequest.fee)) + ")" + "\ntotal: " + cm.getFormattedCurrencyString("BTC", total)
-                + " (" + cm.getExchangeForAmount(rate, iso, new BigDecimal(total)) + ")";
+        final String message = certification + memo + allAddresses.toString() + "\n\n" + "amount: " + BRStringFormatter.getFormattedCurrencyString("BTC", paymentRequest.amount)
+                + " (" + BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(paymentRequest.amount), app) + ")" + "\nnetwork fee: +" + BRStringFormatter.getFormattedCurrencyString("BTC", paymentRequest.fee)
+                + " (" + BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(paymentRequest.fee), app) + ")" + "\ntotal: " + BRStringFormatter.getFormattedCurrencyString("BTC", total)
+                + " (" + BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(total), app) + ")";
 
         app.runOnUiThread(new Runnable() {
             @Override

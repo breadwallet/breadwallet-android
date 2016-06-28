@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.tools.BRStringFormatter;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.SharedPreferencesManager;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
@@ -80,12 +81,12 @@ public class FragmentSpendLimit extends Fragment {
         double rate = SharedPreferencesManager.getRate(getActivity());
 
         String alwaysPasscodeString = "always require passcode";
-        String limit100kString = String.format("%s    (%s)", cm.getFormattedCurrencyString("BTC", limit1),
-                cm.getExchangeForAmount(rate, iso, new BigDecimal(String.valueOf(limit1))));
-        String limit1BString = String.format("%s   (%s)", cm.getFormattedCurrencyString("BTC", limit2),
-                cm.getExchangeForAmount(rate, iso, new BigDecimal(String.valueOf(limit2))));
-        String limit10BString = String.format("%s  (%s)", cm.getFormattedCurrencyString("BTC", limit3),
-                cm.getExchangeForAmount(rate, iso, new BigDecimal(String.valueOf(limit3))));
+        String limit100kString = String.format("%s    (%s)", BRStringFormatter.getFormattedCurrencyString("BTC", limit1),
+                BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(String.valueOf(limit1)), getActivity()));
+        String limit1BString = String.format("%s   (%s)", BRStringFormatter.getFormattedCurrencyString("BTC", limit2),
+                BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(String.valueOf(limit2)), getActivity()));
+        String limit10BString = String.format("%s  (%s)", BRStringFormatter.getFormattedCurrencyString("BTC", limit3),
+                BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(String.valueOf(limit3)),getActivity()));
 
         alwaysPasscodeText.setText(alwaysPasscodeString);
         limit100kText.setText(limit100kString);

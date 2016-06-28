@@ -10,6 +10,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.ImportPrivKeyEntity;
+import com.breadwallet.tools.BRStringFormatter;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.SharedPreferencesManager;
 import com.breadwallet.wallet.BRWalletManager;
@@ -86,12 +87,12 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
     protected void onPostExecute(String s) {
         if (app == null || importPrivKeyEntity == null) return;
         CurrencyManager cm = CurrencyManager.getInstance(app);
-        String amountString = String.format("%s (%s)", cm.getFormattedCurrencyString("BTC",
-                importPrivKeyEntity.getAmount()), cm.getExchangeForAmount(SharedPreferencesManager.getRate(app),
-                SharedPreferencesManager.getIso(app), new BigDecimal(importPrivKeyEntity.getAmount())));
-        String feeString = String.format("%s (%s)", cm.getFormattedCurrencyString("BTC",
-                importPrivKeyEntity.getFee()), cm.getExchangeForAmount(SharedPreferencesManager.getRate(app),
-                SharedPreferencesManager.getIso(app), new BigDecimal(importPrivKeyEntity.getFee())));
+        String amountString = String.format("%s (%s)", BRStringFormatter.getFormattedCurrencyString("BTC",
+                importPrivKeyEntity.getAmount()), BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(app),
+                SharedPreferencesManager.getIso(app), new BigDecimal(importPrivKeyEntity.getAmount()), app));
+        String feeString = String.format("%s (%s)", BRStringFormatter.getFormattedCurrencyString("BTC",
+                importPrivKeyEntity.getFee()), BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(app),
+                SharedPreferencesManager.getIso(app), new BigDecimal(importPrivKeyEntity.getFee()), app));
         String message = String.format("Send %s from this private key into your wallet? The bitcoin network will receive a fee of %s.", amountString, feeString);
         new android.app.AlertDialog.Builder(app)
                 .setTitle("")

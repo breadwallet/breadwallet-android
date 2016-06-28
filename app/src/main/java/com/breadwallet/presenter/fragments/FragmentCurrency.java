@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.tools.BRStringFormatter;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.SharedPreferencesManager;
 import com.breadwallet.tools.adapter.CurrencyListAdapter;
@@ -101,7 +102,7 @@ public class FragmentCurrency extends Fragment {
                 SharedPreferencesManager.putIso(getActivity(), ISO);
                 SharedPreferencesManager.putCurrencyListPosition(getActivity(), lastItemsPosition);
                 SharedPreferencesManager.putRate(getActivity(), rate);
-                String finalExchangeRate = CurrencyManager.getInstance(app).getMiddleTextExchangeString(rate, ISO);
+                String finalExchangeRate = BRStringFormatter.getMiddleTextExchangeString(rate, ISO, getActivity());
 
                 MiddleViewAdapter.resetMiddleView(getActivity(), finalExchangeRate);
                 adapter.notifyDataSetChanged();
@@ -120,7 +121,7 @@ public class FragmentCurrency extends Fragment {
         tmpRate = (adapter != null && !adapter.isEmpty()) ?
                 adapter.getItem(SharedPreferencesManager.getCurrencyListPosition(getActivity())).rate
                 : SharedPreferencesManager.getRate(getActivity());
-        String readyText = CurrencyManager.getInstance(app).getMiddleTextExchangeString(tmpRate, iso);
+        String readyText = BRStringFormatter.getMiddleTextExchangeString(tmpRate, iso, getActivity());
         MiddleViewAdapter.resetMiddleView(getActivity(), readyText);
         new Handler().postDelayed(new Runnable() {
             @Override

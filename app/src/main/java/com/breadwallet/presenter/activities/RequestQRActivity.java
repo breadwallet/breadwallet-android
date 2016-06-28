@@ -18,6 +18,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.entities.RequestObject;
 import com.breadwallet.tools.BRConstants;
+import com.breadwallet.tools.BRStringFormatter;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.SharedPreferencesManager;
 import com.breadwallet.tools.animation.SpringAnimator;
@@ -96,7 +97,7 @@ public class RequestQRActivity extends Activity {
             address = obj.address;
             final String iso = SharedPreferencesManager.getIso(this);
             final float rate = SharedPreferencesManager.getRate(this);
-            amount = CurrencyManager.getInstance(this).getBitsAndExchangeString(rate, iso, new BigDecimal(obj.amount));
+            amount = BRStringFormatter.getBitsAndExchangeString(rate, iso, new BigDecimal(obj.amount), this);
         } catch (InvalidAlgorithmParameterException e) {
             e.printStackTrace();
         }

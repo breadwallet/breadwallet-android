@@ -41,6 +41,7 @@ import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.presenter.fragments.FragmentSettings;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.tools.BRConstants;
+import com.breadwallet.tools.BRStringFormatter;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.NetworkChangeReceiver;
 import com.breadwallet.tools.SharedPreferencesManager;
@@ -150,12 +151,14 @@ public class MainActivity extends FragmentActivity implements Observer {
 
         printPhoneSpecs();
 
-        new Thread(new Runnable() {
+        Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
                 setUpTheWallet();
             }
-        }).start();
+        });
+        t.setPriority(Thread.MIN_PRIORITY);
+        t.start();
 
         registerScreenLockReceiver();
 
@@ -564,7 +567,7 @@ public class MainActivity extends FragmentActivity implements Observer {
 //                String strToReduce = String.valueOf(amountToReduce);
                 final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-                builder.setMessage(String.format("reduce payment amount by %s?", cm.getFormattedCurrencyString("BTC", amountToReduce)))
+                builder.setMessage(String.format("reduce payment amount by %s?", BRStringFormatter.getFormattedCurrencyString("BTC", amountToReduce)))
                         .setTitle("insufficient funds for bitcoin network fee")
                         .setCancelable(false)
                         .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
@@ -720,10 +723,10 @@ public class MainActivity extends FragmentActivity implements Observer {
         BRWalletManager m = BRWalletManager.getInstance(this);
         final long feeForTx = m.feeForTransaction(request.addresses[0], request.amount);
         final long total = request.amount + feeForTx;
-        final String message = certification + allAddresses.toString() + "\n\n" + "amount: " + cm.getFormattedCurrencyString("BTC", request.amount)
-                + " (" + cm.getExchangeForAmount(rate, iso, new BigDecimal(request.amount)) + ")" + "\nnetwork fee: +" + cm.getFormattedCurrencyString("BTC", feeForTx)
-                + " (" + cm.getExchangeForAmount(rate, iso, new BigDecimal(feeForTx)) + ")" + "\ntotal: " + cm.getFormattedCurrencyString("BTC", total)
-                + " (" + cm.getExchangeForAmount(rate, iso, new BigDecimal(total)) + ")";
+        final String message = certification + allAddresses.toString() + "\n\n" + "amount: " + BRStringFormatter.getFormattedCurrencyString("BTC", request.amount)
+                + " (" + BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(request.amount),app) + ")" + "\nnetwork fee: +" + BRStringFormatter.getFormattedCurrencyString("BTC", feeForTx)
+                + " (" + BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(feeForTx), app) + ")" + "\ntotal: " + BRStringFormatter.getFormattedCurrencyString("BTC", total)
+                + " (" + BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(total), app) + ")";
 
         double minOutput;
         if (request.isAmountRequested) {
@@ -958,12 +961,13 @@ public class MainActivity extends FragmentActivity implements Observer {
     public class ToastUpdater extends Thread {
         public void run() {
             while (middleBubbleBlocks.getVisibility() == View.VISIBLE) {
+                final String latestBlockKnown = String.valueOf(BRPeerManager.getEstimatedBlockHeight());
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
                         String currBlock = String.valueOf(BRPeerManager.getCurrentBlockHeight());
-                        String latestBlockKnown = String.valueOf(BRPeerManager.getEstimatedBlockHeight());
+
                         String formattedBlockInfo = String.format("block #%s of %s", currBlock, latestBlockKnown);
                         middleBubbleBlocks.setText(formattedBlockInfo);
                     }

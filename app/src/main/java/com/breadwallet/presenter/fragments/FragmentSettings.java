@@ -25,6 +25,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.BRConstants;
+import com.breadwallet.tools.BRStringFormatter;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.SharedPreferencesManager;
 import com.breadwallet.tools.adapter.CurrencyListAdapter;
@@ -94,7 +95,7 @@ public class FragmentSettings extends Fragment {
         RelativeLayout rescan = (RelativeLayout) rootView.findViewById(R.id.rescan_blockchain);
 
 
-        theLimit.setText(CurrencyManager.getInstance(getActivity()).getFormattedCurrencyString("BTC", PassCodeManager.getInstance().getLimit(getActivity())));
+        theLimit.setText(BRStringFormatter.getFormattedCurrencyString("BTC", PassCodeManager.getInstance().getLimit(getActivity())));
         FingerprintManager mFingerprintManager;
         mFingerprintManager = (FingerprintManager) getActivity().getSystemService(Context.FINGERPRINT_SERVICE);
         boolean useFingerPrint;
