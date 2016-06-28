@@ -28,8 +28,11 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Currency;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -37,6 +40,7 @@ import java.util.Observable;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.TreeSet;
 
 /**
  * BreadWallet
@@ -110,8 +114,8 @@ public class CurrencyManager extends Observable {
         return BALANCE;
     }
 
-    private List<CurrencyEntity> getCurrencies(Activity context) {
-        List<CurrencyEntity> list = new ArrayList<>();
+    private Set<CurrencyEntity> getCurrencies(Activity context) {
+        Set<CurrencyEntity> set = new LinkedHashSet<>();
         if (isNetworkAvailable(context)) {
             try {
                 JSONArray arr;
@@ -141,17 +145,19 @@ public class CurrencyManager extends Observable {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    list.add(tmp);
+                    set.add(tmp);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        return list;
+        List tempList = new ArrayList<>(set);
+        Collections.reverse(tempList);
+        return new LinkedHashSet<>(set);
     }
 
     public class GetCurrenciesTask extends AsyncTask {
-        List<CurrencyEntity> tmp;
+        Set<CurrencyEntity> tmp;
 
         @Override
         protected Object doInBackground(Object[] params) {
@@ -161,21 +167,21 @@ public class CurrencyManager extends Observable {
 
         @Override
         protected void onPostExecute(Object o) {
+
             if (tmp.size() > 0) {
 //                Log.e(TAG, "inside the adapter changing shit");
                 currencyListAdapter.clear();
                 currencyListAdapter.addAll(tmp);
                 currencyListAdapter.notifyDataSetChanged();
-//                SharedPreferencesManager.putExchangeRates(ctx, tmp);
+                SharedPreferencesManager.putExchangeRates(ctx, tmp);
                 if (FragmentAnimator.level <= 2)
                     MiddleViewAdapter.resetMiddleView(ctx, null);
             } else {
-//                if(currencyListAdapter.getCount() == 0){
-//                    currencyListAdapter.clear();
-//                    currencyListAdapter.addAll(tmp);
-//                    currencyListAdapter.notifyDataSetChanged();
-//                }
-
+                currencyListAdapter.clear();
+                Set<CurrencyEntity> currencyEntitySet = SharedPreferencesManager.getExchangeRates(ctx);
+                if (currencyEntitySet == null || currencyEntitySet.isEmpty()) return;
+                currencyListAdapter.addAll(currencyEntitySet);
+                currencyListAdapter.notifyDataSetChanged();
                 Log.e(TAG, "Adapter Not Changed, data is empty");
             }
         }

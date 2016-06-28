@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -137,13 +138,14 @@ public class FragmentCurrency extends Fragment {
     private synchronized void tryAndSetAdapter() {
         adapter = CurrencyManager.getInstance(getActivity()).getCurrencyAdapterIfReady();
         if (adapter.getCount() > 0) {
+            Log.e(TAG, "1 adapter.getCount(): " + adapter.getCount());
             currencyList.setAdapter(adapter);
+            currencyRefresh.clearAnimation();
             currencyRefresh.setVisibility(View.GONE);
             noInternetConnection.setVisibility(View.GONE);
             currencyProgressBar.setVisibility(View.GONE);
         } else {
-            ((BreadWalletApp) app.getApplicationContext()).showCustomToast(getActivity(),
-                    getString(R.string.no_internet_connection), 500, Toast.LENGTH_SHORT, 0);
+            Log.e(TAG, "2 adapter.getCount(): " + adapter.getCount());
             currencyRefresh.setVisibility(View.VISIBLE);
             noInternetConnection.setVisibility(View.VISIBLE);
             currencyProgressBar.setVisibility(View.GONE);

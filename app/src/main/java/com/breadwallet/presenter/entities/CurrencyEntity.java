@@ -1,5 +1,7 @@
 package com.breadwallet.presenter.entities;
 
+import java.io.Serializable;
+
 /**
  * BreadWallet
  * <p/>
@@ -24,7 +26,11 @@ package com.breadwallet.presenter.entities;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class CurrencyEntity {
+public class CurrencyEntity implements Serializable {
+
+    //Change this after modifying the class
+    private static final long serialVersionUID = 7526472295622776147L;
+
     public static final String TAG = CurrencyEntity.class.getName();
     public String codeAndName;
     public String name;

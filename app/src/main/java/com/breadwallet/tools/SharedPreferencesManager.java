@@ -3,6 +3,9 @@ package com.breadwallet.tools;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Base64;
+import android.util.Base64InputStream;
+import android.util.Base64OutputStream;
 import android.util.Log;
 
 import com.breadwallet.presenter.activities.IntroActivity;
@@ -11,6 +14,11 @@ import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.fragments.FragmentCurrency;
 import com.breadwallet.wallet.BRWalletManager;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Currency;
 import java.util.HashSet;
 import java.util.Locale;
@@ -163,18 +171,54 @@ public class SharedPreferencesManager {
     }
 
     public static void putExchangeRates(Activity activity, Set<CurrencyEntity> rates) {
-        Set<String> set = new HashSet<>();
-        for(CurrencyEntity s : rates){
-            set.add(s.codeAndName);
-        }
         SharedPreferences prefs = activity.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putStringSet(BRConstants.EXCHANGE_RATES, set);
-        editor.apply();
+        editor.remove(BRConstants.EXCHANGE_RATES);
+        ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
+
+        ObjectOutputStream objectOutput;
+        try {
+            objectOutput = new ObjectOutputStream(arrayOutputStream);
+            objectOutput.writeObject(rates);
+            byte[] data = arrayOutputStream.toByteArray();
+            objectOutput.close();
+            arrayOutputStream.close();
+
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            Base64OutputStream b64 = new Base64OutputStream(out, Base64.DEFAULT);
+            b64.write(data);
+            b64.close();
+            out.close();
+
+            editor.putString(BRConstants.EXCHANGE_RATES, new String(out.toByteArray()));
+
+            editor.apply();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
-    public static Set<String> getExchangeRates(Activity context) {
+    @SuppressWarnings("unchecked")
+    public static Set<CurrencyEntity> getExchangeRates(Activity context) {
         SharedPreferences prefs = context.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
-        return prefs.getStringSet(BRConstants.EXCHANGE_RATES, new HashSet<String>());
+
+        byte[] bytes = prefs.getString(BRConstants.EXCHANGE_RATES, "{}").getBytes();
+        if (bytes.length == 0) {
+            return null;
+        }
+        Set<CurrencyEntity> result = null;
+        ByteArrayInputStream byteArray = new ByteArrayInputStream(bytes);
+        Base64InputStream base64InputStream = new Base64InputStream(byteArray, Base64.DEFAULT);
+        ObjectInputStream in;
+        try {
+            in = new ObjectInputStream(base64InputStream);
+
+            result = (Set<CurrencyEntity>) in.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return result;
     }
 }
