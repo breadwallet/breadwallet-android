@@ -183,7 +183,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         if (scheme != null && scheme.startsWith("bitcoin")) {
             Log.e(TAG, "bitcoin url");
             String str = intent.getDataString();
-            Log.e(TAG, "str: " + str);
             RequestHandler.processRequest(this, str);
         } else {
             Log.e(TAG, "No bitcoin url");
@@ -283,16 +282,13 @@ public class MainActivity extends FragmentActivity implements Observer {
             @Override
             public void onClick(View v) {
                 hideAllBubbles();
-                Log.d(TAG, "Testing burger button_regular_blue! should work");
                 SpringAnimator.showAnimation(burgerButton);
                 if (FragmentAnimator.level > 1 || scanResultFragmentOn || decoderFragmentOn) {
-                    Log.e(TAG, "CHECK:Should press back!");
                     onBackPressed();
                 } else {
                     //check multi pressing availability here, because method onBackPressed does the checking as well.
                     if (FragmentAnimator.checkTheMultipressingAvailability()) {
                         FragmentAnimator.pressMenuButton(app, new FragmentSettingsAll());
-                        Log.e(TAG, "CHECK:Should press menu");
                     }
                 }
             }
@@ -303,7 +299,6 @@ public class MainActivity extends FragmentActivity implements Observer {
             public void onClick(View v) {
                 if (FragmentAnimator.checkTheMultipressingAvailability()) {
                     SpringAnimator.showAnimation(lockerButton);
-//                passwordDialogFragment.show(fm, TAG);
                     if (KeyStoreManager.getPassCode(app) != 0)
                         ((BreadWalletApp) getApplication()).promptForAuthentication(app, BRConstants.AUTH_FOR_GENERAL, null, null, null, null);
                 }
@@ -399,7 +394,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         pay = (TextView) findViewById(R.id.main_button_pay);
         bug = (RelativeLayout) findViewById(R.id.bug);
         RelativeLayout mainLayout = (RelativeLayout) findViewById(R.id.main_layout);
-//        testnet = (TextView) findViewById(R.id.testnet);
         networkErrorBar = (RelativeLayout) findViewById(R.id.main_internet_status_bar);
         burgerButton = (Button) findViewById(R.id.main_button_burger);
         lockerPayFlipper = (ViewFlipper) findViewById(R.id.locker_pay_flipper);
@@ -409,7 +403,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         pageIndicatorLeft = (ImageView) findViewById(R.id.circle_indicator_left);
         syncProgressBar = (ProgressBar) findViewById(R.id.sync_progress_bar);
         syncProgressText = (TextView) findViewById(R.id.sync_progress_text);
-//        middleView = findViewById(R.id.main_label_breadwallet);
         pageIndicatorRight = (ImageView) findViewById(R.id.circle_indicator_right);
         pageIndicatorLeft.setImageResource(R.drawable.circle_indicator);
         pageIndicatorRight.setImageResource(R.drawable.circle_indicator);
@@ -615,7 +608,7 @@ public class MainActivity extends FragmentActivity implements Observer {
             }
         } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("not connected")
+            builder.setMessage(R.string.not_connected)
                     .setCancelable(false)
                     .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
@@ -680,27 +673,17 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        Log.e(TAG, "********************** onActivityResult >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> " + requestCode);
         switch (requestCode) {
             case BRConstants.CAMERA_REQUEST_ID: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
                     FragmentAnimator.animateDecoderFragment();
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
 
-                } else {
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
                 }
                 return;
             }
 
-            // other 'case' lines to check for other
-            // permissions this app might request
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
@@ -710,7 +693,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         int[] location = new int[2];
         viewFlipper.getLocationOnScreen(location);
         boolean isShown = location[1] < 0;
-        Log.e(TAG, "The keyboard is shown: " + isShown + " y location: " + location[1]);
         return isShown;
     }
 
@@ -743,9 +725,6 @@ public class MainActivity extends FragmentActivity implements Observer {
                 + " (" + cm.getExchangeForAmount(rate, iso, new BigDecimal(feeForTx)) + ")" + "\ntotal: " + cm.getFormattedCurrencyString("BTC", total)
                 + " (" + cm.getExchangeForAmount(rate, iso, new BigDecimal(total)) + ")";
 
-//        ((BreadWalletApp) getApplication()).showCustomDialog("payment info", certification + allAddresses.toString() +
-//                "\n\n" + "amount " + CurrencyManager.getInstance(this).getFormattedCurrencyString("BTC", String.valueOf(request.amount / 100))
-//                + " (" + CurrencyManager.getInstance(this).getFormattedCurrencyString(iso, amount) + ")", "send")
         double minOutput;
         if (request.isAmountRequested) {
             minOutput = BRWalletManager.getInstance(this).getMinOutputAmountRequested();
@@ -779,41 +758,6 @@ public class MainActivity extends FragmentActivity implements Observer {
             public void run() {
                 ((BreadWalletApp) getApplicationContext()).promptForAuthentication(app, BRConstants.AUTH_FOR_PAY, request, message, getString(R.string.payment_info), null);
 
-//                new android.app.AlertDialog.Builder(app)
-//                        .setTitle(getString(R.string.payment_info))
-//                        .setMessage(message)
-//                        .setPositiveButton(getString(R.string.send), new DialogInterface.OnClickListener() {
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                ((BreadWalletApp) getApplicationContext()).promptForAuthentication(app, BRConstants.AUTH_FOR_PAY, request);
-//                            }
-//                        }).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        dialog.dismiss();
-//
-//                        if (!scanResultFragmentOn) {
-//                            FragmentScanResult.address = request.addresses[0];
-//                            new android.app.AlertDialog.Builder(app)
-//                                    .setTitle(getString(R.string.payment_info))
-//                                    .setMessage("change payment amount?")
-//                                    .setPositiveButton("change", new DialogInterface.OnClickListener() {
-//                                        public void onClick(DialogInterface dialog, int which) {
-//                                            FragmentAnimator.animateScanResultFragment();
-//                                        }
-//                                    }).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-//                                @Override
-//                                public void onClick(DialogInterface dialog, int which) {
-//                                    dialog.dismiss();
-//                                    FragmentScanResult.address = null;
-//                                }
-//                            })
-//                                    .setIcon(android.R.drawable.ic_dialog_alert)
-//                                    .show();
-//                        }
-//                    }
-//                })
-//                        .setIcon(android.R.drawable.ic_dialog_alert)
-//                        .show();
             }
         });
     }
@@ -1032,7 +976,6 @@ public class MainActivity extends FragmentActivity implements Observer {
             }
         }
     }
-
 
 
 }

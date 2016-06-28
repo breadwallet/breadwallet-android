@@ -138,14 +138,12 @@ public class FragmentCurrency extends Fragment {
     private synchronized void tryAndSetAdapter() {
         adapter = CurrencyManager.getInstance(getActivity()).getCurrencyAdapterIfReady();
         if (adapter.getCount() > 0) {
-            Log.e(TAG, "1 adapter.getCount(): " + adapter.getCount());
             currencyList.setAdapter(adapter);
             currencyRefresh.clearAnimation();
             currencyRefresh.setVisibility(View.GONE);
             noInternetConnection.setVisibility(View.GONE);
             currencyProgressBar.setVisibility(View.GONE);
         } else {
-            Log.e(TAG, "2 adapter.getCount(): " + adapter.getCount());
             currencyRefresh.setVisibility(View.VISIBLE);
             noInternetConnection.setVisibility(View.VISIBLE);
             currencyProgressBar.setVisibility(View.GONE);

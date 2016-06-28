@@ -79,8 +79,6 @@ public class IntroActivity extends FragmentActivity {
         setContentView(R.layout.activity_intro);
         app = this;
 
-
-//        testCore();
         leftButton = (Button) findViewById(R.id.intro_left_button);
         leftButton.setVisibility(View.GONE);
         leftButton.setClickable(false);
@@ -115,8 +113,6 @@ public class IntroActivity extends FragmentActivity {
         startTheWalletIfExists();
 
     }
-
-//    public native void testCore();
 
     public boolean checkFirstAddress(byte[] mpk) {
         String addressFromPrefs = SharedPreferencesManager.getFirstAddress(this);
@@ -172,35 +168,12 @@ public class IntroActivity extends FragmentActivity {
             }, 1);
         }
 
-//        if (!checkTheHorizontalSlideAvailability()) return;
-//        level++;
-//        if (level > 1)
-//            context.setBurgerButtonImage(MainActivity.BACK);
-//        FragmentTransaction fragmentTransaction = context.getFragmentManager().beginTransaction();
-////        fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
-//        fragmentTransaction.replace(R.id.main_layout, to, to.getClass().getName());
-//        if (previousFragment != null)
-//            previous.add(previousFragment);
-//        fragmentTransaction.commit();
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                TranslateAnimation trans = new TranslateAnimation(context.getResources().getInteger(R.integer.standard_screen_width), 0, 0, 0);
-//                trans.setDuration(horizontalSlideDuration);
-//                trans.setInterpolator(new DecelerateOvershootInterpolator(1f, 0.5f));
-//                View view = to.getView();
-//                Log.e(TAG, "startAnimation");
-//                if (view != null)
-//                    view.startAnimation(trans);
-//            }
-//        }, 1);
     }
 
     public void showNewWalletFragment() {
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         leftButton.setVisibility(View.VISIBLE);
         leftButton.setClickable(true);
-//        fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
         final IntroNewRecoverFragment introNewRecoverFragment = (IntroNewRecoverFragment) getFragmentManager().
                 findFragmentByTag(IntroNewRecoverFragment.class.getName());
 
@@ -239,7 +212,6 @@ public class IntroActivity extends FragmentActivity {
                 trans.setDuration(FragmentAnimator.horizontalSlideDuration);
                 trans.setInterpolator(new DecelerateOvershootInterpolator(1f, 0.5f));
                 View view = introRecoverWalletFragment.getView();
-                Log.e(TAG, "startAnimation");
                 if (view != null)
                     view.startAnimation(trans);
             }
@@ -280,7 +252,6 @@ public class IntroActivity extends FragmentActivity {
                 if (resultCode == RESULT_OK) {
                     PostAuthenticationProcessor.getInstance().onCreateWalletAuth(this);
                 } else {
-//                    KeyStoreManager.showAuthenticationScreen(this, requestCode);
                     BRWalletManager m = BRWalletManager.getInstance(this);
                     m.wipeKeyStore();
                     m.wipeWalletButKeystore(this);
@@ -292,7 +263,6 @@ public class IntroActivity extends FragmentActivity {
                 if (resultCode == RESULT_OK) {
                     PostAuthenticationProcessor.getInstance().onRecoverWalletAuth(this);
                 } else {
-//                    KeyStoreManager.showAuthenticationScreen(this, requestCode);
                     finish();
                 }
                 break;
@@ -301,14 +271,12 @@ public class IntroActivity extends FragmentActivity {
                 if (resultCode == RESULT_OK) {
                     PostAuthenticationProcessor.getInstance().onCanaryCheckAuth(this);
                 } else {
-//                    KeyStoreManager.showAuthenticationScreen(this, requestCode);
                     finish();
                 }
                 break;
 
         }
 
-        //when starting another activity that will return a result (ex: auth)
     }
 
     public void startIntroShowPhrase() {
@@ -347,12 +315,10 @@ public class IntroActivity extends FragmentActivity {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        Log.e(TAG, "should create new wallet");
                         showNewRecoverWalletFragment();
                     }
                 }, 800);
             } else {
-                Log.e(TAG, "should go to the current wallet");
                 startMainActivity();
             }
 
