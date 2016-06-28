@@ -77,6 +77,7 @@ public class BRWalletManager {
     public static final long TX_FEE_PER_KB = 5000;
     public static final long DEFAULT_FEE_PER_KB = (TX_FEE_PER_KB * 1000 + 190) / 191;
     public static final long MAX_FEE_PER_KB = (100100 * 1000 + 190) / 191;
+    private static int messageId = 0;
 
     private BRWalletManager() {
     }
@@ -216,17 +217,6 @@ public class BRWalletManager {
                     builder.show();
                 }
             });
-//            activity.runOnUiThread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    activity.runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            ((BreadWalletApp) activity.getApplication()).showCustomDialog("Not available for beta version", "", activity.getString(R.string.ok));
-//                        }
-//                    });
-//                }
-//            });
             return true;
         } else if (isValidBitcoinPrivateKey(privKey)) {
             Log.e(TAG, "isValidBitcoinPrivateKey true");
@@ -311,18 +301,15 @@ public class BRWalletManager {
             ctx.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (!((BreadWalletApp) ctx.getApplication()).isToastShown()) {
-                        CurrencyManager m = CurrencyManager.getInstance(ctx);
-                        long absAmount = amount > 0 ? amount : amount * -1;
-                        String strToShow = String.format(ctx.getString(amount > 0 ? R.string.received : R.string.sent),
-                                m.getFormattedCurrencyString("BTC", absAmount) + " (" +
-                                        m.getExchangeForAmount(SharedPreferencesManager.getRate(ctx), SharedPreferencesManager.getIso(ctx), new BigDecimal(absAmount)) + ")");
-                        ((BreadWalletApp) ctx.getApplicationContext()).showCustomToast(ctx, strToShow,
-                                BreadWalletApp.DISPLAY_HEIGHT_PX / 2, Toast.LENGTH_LONG, 1);
-                    }
-                    final MediaPlayer mp = MediaPlayer.create(ctx, R.raw.coinflip);
-                    mp.start();
+                    CurrencyManager m = CurrencyManager.getInstance(ctx);
+                    long absAmount = amount > 0 ? amount : amount * -1;
+                    String strToShow = String.format(ctx.getString(amount > 0 ? R.string.received : R.string.sent),
+                            m.getFormattedCurrencyString("BTC", absAmount) + " (" +
+                                    m.getExchangeForAmount(SharedPreferencesManager.getRate(ctx),
+                                            SharedPreferencesManager.getIso(ctx), new BigDecimal(absAmount)) + ")");
+                    showSentReceivedToast(strToShow);
                 }
+
             });
 
         }
@@ -344,6 +331,35 @@ public class BRWalletManager {
 
         SQLiteManager sqLiteManager = SQLiteManager.getInstance(ctx);
         sqLiteManager.insertTransaction(tx, blockHeight, timestamp, hash);
+    }
+
+    private static void showSentReceivedToast(final String message) {
+        messageId++;
+        if (ctx == null) ctx = MainActivity.app;
+        if (ctx != null) {
+            ctx.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    final int temp = messageId;
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (temp == messageId) {
+                                if (!((BreadWalletApp) ctx.getApplication()).isToastShown()) {
+                                    ((BreadWalletApp) ctx.getApplicationContext()).showCustomToast(ctx, message,
+                                            BreadWalletApp.DISPLAY_HEIGHT_PX / 2, Toast.LENGTH_LONG, 1);
+                                    final MediaPlayer mp = MediaPlayer.create(ctx, R.raw.coinflip);
+                                    mp.start();
+                                    messageId = 0;
+                                }
+                            }
+                        }
+                    }, 1000);
+
+                }
+            });
+
+        }
     }
 
     public static void onTxUpdated(String hash, int blockHeight, int timeStamp) {

@@ -339,7 +339,7 @@ public class FragmentAnimator {
      * else :
      * - return false.
      */
-    public static synchronized boolean checkTheMultipressingAvailability() {
+    public static boolean checkTheMultipressingAvailability() {
         if (multiplePressingAvailable) {
             multiplePressingAvailable = false;
             new Handler().postDelayed(new Runnable() {
@@ -355,7 +355,7 @@ public class FragmentAnimator {
         }
     }
 
-    public static synchronized boolean checkTheHorizontalSlideAvailability() {
+    public static boolean checkTheHorizontalSlideAvailability() {
         if (horizontalSlideAvailable) {
             horizontalSlideAvailable = false;
             new Handler().postDelayed(new Runnable() {
