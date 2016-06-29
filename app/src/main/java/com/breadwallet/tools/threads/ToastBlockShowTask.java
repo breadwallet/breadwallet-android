@@ -101,13 +101,13 @@ public class ToastBlockShowTask {
                 return;
             }
             while ((timePeriod += interval) < 5000) {
-
+                currBlock = String.valueOf(BRPeerManager.getCurrentBlockHeight());
+                latestBlockKnown = String.valueOf(BRPeerManager.getEstimatedBlockHeight());
                 Log.e(TAG, "in the while: " + getName());
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        currBlock = String.valueOf(BRPeerManager.getCurrentBlockHeight());
-                        latestBlockKnown = String.valueOf(BRPeerManager.getEstimatedBlockHeight());
+
                         formattedBlockInfo = String.format("block #%s of %s", currBlock, latestBlockKnown);
                         text.setText(formattedBlockInfo);
                     }

@@ -27,6 +27,7 @@ import com.breadwallet.presenter.fragments.FragmentRecoveryPhrase;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.presenter.fragments.MainFragmentQR;
 import com.breadwallet.tools.BRConstants;
+import com.breadwallet.tools.BRNotificationManager;
 import com.breadwallet.tools.BRStringFormatter;
 import com.breadwallet.tools.CurrencyManager;
 import com.breadwallet.tools.SharedPreferencesManager;
@@ -352,6 +353,8 @@ public class BRWalletManager {
                                     final MediaPlayer mp = MediaPlayer.create(ctx, R.raw.coinflip);
                                     mp.start();
                                     messageId = 0;
+                                    if (MainActivity.appInBackground)
+                                        BRNotificationManager.sendNotification(ctx, R.drawable.notification_icon, ctx.getString(R.string.app_name), message, 1);
                                 }
                             }
                         }
