@@ -113,7 +113,10 @@
     <string name="refresh">refresh</string>
     <string name="use_passcode">passcode</string>
     <string name="wallet_disabled">wallet disabled</string>
-    <string name="try_again">try again in %d minutes</string>
+    <plurals name="try_again">
+        <item quantity="one">try again in %d minute</item>
+        <item quantity="other">try again in %d minutes</item>
+    </plurals>
     <string name="reset">reset</string>
     <string name="recovery_title">recovery phrase</string>
     <string name="phrase_no_match">recovery phrase doesn\'t match</string>

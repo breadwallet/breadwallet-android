@@ -31,6 +31,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.inputmethodservice.Keyboard;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -473,8 +474,11 @@ public class PasswordDialogFragment extends DialogFragment {
         description.setText("");
         passcodeEditText.setVisibility(View.GONE);
         info.setVisibility(View.VISIBLE);
-        String tryAgain = getString(R.string.try_again);
-        String message = String.format(waitTime == 1 ? tryAgain.substring(0, tryAgain.length() - 1) : tryAgain, (int) waitTime);
+        // Get the Resources
+        Resources res = getResources();
+        String tryAgain = res.getQuantityString(R.plurals.try_again,
+                (int) waitTime);
+        String message = String.format(tryAgain, (int) waitTime);
 
         info.setText(message);
         digit_1.setVisibility(View.GONE);

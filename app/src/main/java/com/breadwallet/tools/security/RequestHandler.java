@@ -171,7 +171,7 @@ public class RequestHandler {
             }
             String strAmount = String.valueOf(amount);
             if (app != null) {
-                app.pay(addresses[0], new BigDecimal(strAmount), null, true);
+                BRWalletManager.getInstance(app).pay(addresses[0], new BigDecimal(strAmount), null, true);
             }
         } else {
             if (app != null)

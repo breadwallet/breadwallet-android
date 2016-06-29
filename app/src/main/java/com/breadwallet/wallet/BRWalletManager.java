@@ -21,6 +21,7 @@ import com.breadwallet.presenter.activities.IntroShowPhraseActivity;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.activities.RequestQRActivity;
 import com.breadwallet.presenter.entities.ImportPrivKeyEntity;
+import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.TmpTxObject;
 import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.presenter.fragments.FragmentRecoveryPhrase;
@@ -37,6 +38,7 @@ import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.sqlite.SQLiteManager;
 import com.breadwallet.tools.threads.ImportPrivKeyTask;
 
@@ -45,6 +47,7 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * BreadWallet
@@ -447,6 +450,151 @@ public class BRWalletManager {
         if (words.length != 2048)
             throw new IllegalArgumentException("words.length is not 2048");
         return validateRecoveryPhrase(cleanWordList, phrase);
+    }
+
+    public void confirmPay(final PaymentRequestEntity request) {
+        if (ctx == null) ctx = MainActivity.app;
+        if (ctx == null) return;
+        boolean certified = false;
+        if (request.cn != null && request.cn.length() != 0) {
+            certified = true;
+        }
+        StringBuilder allAddresses = new StringBuilder();
+        for (String s : request.addresses) {
+            allAddresses.append(s + ", ");
+        }
+        allAddresses.delete(allAddresses.length() - 2, allAddresses.length());
+        String certification = "";
+        if (certified) {
+            certification = "certified: " + request.cn + "\n";
+            allAddresses = new StringBuilder();
+        }
+
+        //DecimalFormat decimalFormat = new DecimalFormat("0.00");
+        String iso = SharedPreferencesManager.getIso(ctx);
+
+        float rate = SharedPreferencesManager.getRate(ctx);
+        CurrencyManager cm = CurrencyManager.getInstance(ctx);
+        BRWalletManager m = BRWalletManager.getInstance(ctx);
+        final long feeForTx = m.feeForTransaction(request.addresses[0], request.amount);
+        final long total = request.amount + feeForTx;
+        final String message = certification + allAddresses.toString() + "\n\n" + "amount: " + BRStringFormatter.getFormattedCurrencyString("BTC", request.amount)
+                + " (" + BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(request.amount), ctx) + ")" + "\nnetwork fee: +" + BRStringFormatter.getFormattedCurrencyString("BTC", feeForTx)
+                + " (" + BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(feeForTx), ctx) + ")" + "\ntotal: " + BRStringFormatter.getFormattedCurrencyString("BTC", total)
+                + " (" + BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(total), ctx) + ")";
+
+        double minOutput;
+        if (request.isAmountRequested) {
+            minOutput = BRWalletManager.getInstance(ctx).getMinOutputAmountRequested();
+        } else {
+            minOutput = BRWalletManager.getInstance(ctx).getMinOutputAmount();
+        }
+        if (request.amount < minOutput) {
+            final String bitcoinMinMessage = String.format(Locale.getDefault(), "bitcoin payments can't be less than ƀ%.2f",
+                    new BigDecimal(minOutput).divide(new BigDecimal("100")));
+            ctx.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    new android.app.AlertDialog.Builder(ctx)
+                            .setTitle(ctx.getString(R.string.payment_failed))
+                            .setMessage(bitcoinMinMessage)
+                            .setPositiveButton(ctx.getString(R.string.ok), new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            })
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
+                }
+            });
+
+            return;
+        }
+
+        ctx.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ((BreadWalletApp) ctx.getApplicationContext()).promptForAuthentication(ctx, BRConstants.AUTH_FOR_PAY, request, message, ctx.getString(R.string.payment_info), null);
+
+            }
+        });
+    }
+
+    public void pay(final String addressHolder, final BigDecimal bigDecimalAmount, final String cn, final boolean isAmountRequested) {
+        if (addressHolder == null || bigDecimalAmount == null) return;
+        if (addressHolder.length() < 20) return;
+//        final long amountAsLong = bigDecimal.longValue();
+        if (bigDecimalAmount.longValue() < 0) return;
+        Log.e(TAG, "*********Sending: " + bigDecimalAmount + " to: " + addressHolder);
+        final CurrencyManager cm = CurrencyManager.getInstance(ctx);
+
+        if (cm.isNetworkAvailable(ctx)) {
+            final BRWalletManager m = BRWalletManager.getInstance(ctx);
+            byte[] tmpTx = m.tryTransaction(addressHolder, bigDecimalAmount.longValue());
+            long feeForTx = m.feeForTransaction(addressHolder, bigDecimalAmount.longValue());
+            if (tmpTx == null && bigDecimalAmount.longValue() <= cm.getBALANCE() && bigDecimalAmount.longValue() > 0) {
+
+                final long maxAmountDouble = m.getMaxOutputAmount();
+                Log.e(TAG, "maxAmountDouble: " + maxAmountDouble);
+                final long amountToReduce = bigDecimalAmount.longValue() - maxAmountDouble;
+//                String strToReduce = String.valueOf(amountToReduce);
+                final AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+
+                builder.setMessage(String.format("reduce payment amount by %s?", BRStringFormatter.getFormattedCurrencyString("BTC", amountToReduce)))
+                        .setTitle("insufficient funds for bitcoin network fee")
+                        .setCancelable(false)
+                        .setNegativeButton(ctx.getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        })
+                        .setPositiveButton("confirm", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                byte[] tmpTx2 = m.tryTransaction(addressHolder, bigDecimalAmount.longValue() - amountToReduce);
+                                if (tmpTx2 != null) {
+                                    PostAuthenticationProcessor.getInstance().setTmpTx(tmpTx2);
+                                    confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, bigDecimalAmount.longValue() - amountToReduce, cn, tmpTx2, isAmountRequested));
+                                } else {
+                                    Log.e(TAG, "tmpTxObject2 is null!!!");
+                                    ((BreadWalletApp) ctx.getApplication()).showCustomToast(ctx, "Failed to send, insufficient funds", MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
+                                }
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+                return;
+            }
+            PostAuthenticationProcessor.getInstance().setTmpTx(tmpTx);
+            Log.e(TAG, "pay >>>> feeForTx: " + feeForTx + ", amountAsDouble: " + bigDecimalAmount.longValue() +
+                    ", CurrencyManager.getInstance(this).getBALANCE(): " + cm.getBALANCE());
+            if (feeForTx != 0 && bigDecimalAmount.longValue() + feeForTx < cm.getBALANCE()) {
+                confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, bigDecimalAmount.longValue(), cn, tmpTx, isAmountRequested));
+            } else {
+                AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+                builder.setMessage("insufficient funds")
+                        .setCancelable(false)
+                        .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+            builder.setMessage(R.string.not_connected)
+                    .setCancelable(false)
+                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
+
     }
 
     private native String encodeSeed(byte[] seed, String[] wordList);
