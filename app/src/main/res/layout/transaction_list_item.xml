@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/transaction_list_item_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:baselineAligned="false"
@@ -8,7 +7,6 @@
     android:weightSum="3">
 
     <LinearLayout
-        android:id="@+id/transaction_layout_raw1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
@@ -39,7 +37,6 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/transaction_layout_raw3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -67,7 +64,6 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/transaction_layout_raw2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"

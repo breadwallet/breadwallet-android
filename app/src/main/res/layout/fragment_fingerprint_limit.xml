@@ -5,7 +5,6 @@
     android:orientation="vertical">
 
     <RelativeLayout
-        android:id="@+id/limit_line1"
         android:layout_width="match_parent"
         android:layout_height="@dimen/separator_height"
         android:background="@color/gray" />
@@ -40,7 +39,6 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/limit_line2"
         android:layout_width="match_parent"
         android:layout_height="@dimen/separator_height"
         android:layout_marginStart="20dp"
@@ -76,7 +74,6 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/limit_line3"
         android:layout_width="match_parent"
         android:layout_height="@dimen/separator_height"
         android:layout_marginStart="20dp"
@@ -112,7 +109,6 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/limit_line4"
         android:layout_width="match_parent"
         android:layout_height="@dimen/separator_height"
         android:layout_marginStart="20dp"
@@ -148,7 +144,6 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/limit_line5"
         android:layout_width="match_parent"
         android:layout_height="@dimen/separator_height"
         android:background="@color/gray" />

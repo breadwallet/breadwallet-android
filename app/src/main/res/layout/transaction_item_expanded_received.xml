@@ -24,7 +24,6 @@
             android:padding="@dimen/transaction_item_margin">
 
             <TextView
-                android:id="@+id/tx_id_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
@@ -63,7 +62,6 @@
 
 
             <TextView
-                android:id="@+id/tx_status_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
@@ -101,7 +99,6 @@
             android:padding="@dimen/transaction_item_margin">
 
             <TextView
-                android:id="@+id/tx_amount_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"

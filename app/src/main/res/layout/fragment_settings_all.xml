@@ -21,7 +21,6 @@
             android:orientation="vertical">
 
             <LinearLayout
-                android:id="@+id/transactions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/clickable_layout"
@@ -95,7 +94,6 @@
                     android:background="@drawable/cameraguidebluesmall" />
 
                 <TextView
-                    android:id="@+id/text_import_private_key"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"

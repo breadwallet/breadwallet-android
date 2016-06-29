@@ -16,9 +16,5 @@
 <resources>
     //The QR
     <!-- Messages IDs -->
-    <item name="menu_flash" type="id" />
-    <item name="menu_auto_focus" type="id" />
-    <item name="menu_formats" type="id" />
-    <item name="menu_camera_selector" type="id" />
     <item name="keyboard_back_button" type="id" />
 </resources>

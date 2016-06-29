@@ -8,7 +8,6 @@
     android:windowSoftInputMode="stateAlwaysHidden">
 
     <TextView
-        android:id="@+id/main_text_send_money"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/scan_clipboard_buttons_layout"

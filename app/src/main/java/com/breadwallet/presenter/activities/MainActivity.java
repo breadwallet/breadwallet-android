@@ -178,6 +178,10 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+    }
+
     private void setUrlHandler() {
         Intent intent = getIntent();
         Uri data = intent.getData();

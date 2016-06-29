@@ -13,7 +13,6 @@
             android:orientation="vertical">
 
             <RelativeLayout
-                android:id="@+id/settings_line_1"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/separator_height"
                 android:background="@color/gray" />
@@ -26,7 +25,6 @@
                 android:clickable="true">
 
                 <TextView
-                    android:id="@+id/about_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
@@ -48,7 +46,6 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:id="@+id/settings_line_2"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/separator_height"
                 android:layout_marginStart="20dp"
@@ -62,7 +59,6 @@
                 android:clickable="true">
 
                 <TextView
-                    android:id="@+id/recovery_phrase_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
@@ -82,13 +78,11 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:id="@+id/settings_line_3"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/separator_height"
                 android:background="@color/gray" />
 
             <RelativeLayout
-                android:id="@+id/settings_line_4"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/separator_height"
                 android:layout_marginTop="30dp"
@@ -178,13 +172,11 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:id="@+id/settings_line_5c"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/separator_height"
                 android:background="@color/gray" />
 
             <RelativeLayout
-                android:id="@+id/settings_line_6"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/separator_height"
                 android:layout_marginTop="30dp"
@@ -210,7 +202,6 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:id="@+id/settings_line_7"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/separator_height"
                 android:layout_marginStart="20dp"
@@ -249,7 +240,6 @@
                 android:clickable="true">
 
                 <TextView
-                    android:id="@+id/text_rescan_blockchain"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
@@ -266,7 +256,6 @@
                 android:background="@color/gray" />
 
             <TextView
-                android:id="@+id/rescan_instructions"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"

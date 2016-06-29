@@ -1,14 +1,7 @@
 <resources>
     <string name="ok_button">OK</string>
-    <string name="cancel_button">Cancel</string>
     <string name="app_name">&#384;readwallet</string>
     <string name="the_address">address</string>
-    <string name="action_settings">Settings</string>
-    <string name="title_activity_main">MainActivity</string>
-    <string name="title_activity_scan_result">ScanResultActivity</string>
-    <string name="title_activity_decoder">DecoderActivity</string>
-    <string name="title_activity_test_qr">TestQRActivity</string>
-    <string name="title_activity_intro_show_phrase">IntroShowPhrase</string>
     <string name="bad_recovery_phrase">bad recovery phrase</string>
     <string name="settingsall_rescan_instructions">rescan blockchain if you think you may have missing transactions,
     or are having trouble sending (rescanning can take several minutes)</string>
@@ -19,15 +12,14 @@
     <!--<string name="hello_world">Hello world!</string>-->
     <string name="toast_qr_tip">Let others scan this QR code to get your bitcoin address. Anyone can send bitcoins to your wallet by transferring them to your address</string>
     <string name="toast_address_tip">This is your bitcoin address. Tap to copy it or send it by email or sms. The address will change each time you receive funds, but old addresses always work</string>
-    <string name="mainactivity_press_back_again">Press again to exit!</string>
     <string name="no_internet_connection">not connected</string>
     <string name="warning">warning</string>
     <string name="dialog_do_not_let_anyone">DO NOT let anyone see your recovery phrase or they can spend your bitcoins.
         \n\nNEVER type your recovery phrase into password managers or elsewhere.\nOther devices may be infected.\n\nDO NOT take a screenshot.\nScreenshots are visible to other apps and devices.</string>
     <string name="show">show</string>
-    <string name="cancel">cancel</string>
+    <string name="cancel">Cancel</string>
     <string name="mainfragment_clipboard_invalid_data">"clipboard doesn't contain a valid bitcoin address\n"</string>
-    <string name="ok">ok</string>
+    <string name="ok">OK</string>
     <string name="dialog_receive_bitcoins">Receive bitcoins</string>
     <string name="toast_address_copied">address copied to clipboard</string>
     <string name="bitcoin_address">"Bitcoin Address"</string>
@@ -45,12 +37,9 @@
     <string name="fingerprint_not_recognized">Fingerprint not recognized. Try again.</string>
     <string name="fingerprint_success">Fingerprint recognized</string>
 
-    <string name="title_activity_request_qr">RequestQRActivity</string>
-
     <string name="fragmentdecoder_not_valid_bitcoin_address">not a valid bitcoin addresses: \n</string>
     <string name="fragmentdecoder_not_a_bitcoin_qr_code">not a bitcoin QR code</string>
     <string name="failed">failed</string>
-    <string name="copied">copied</string>
     <string name="to">to: </string>
     <string name="error">error</string>
     <string name="middle_view_settings">settings</string>
@@ -61,7 +50,6 @@
     <string name="invalid_payment_request">invalid payment request</string>
     <string name="unknown_host">unknown host</string>
     <string name="connection_timed_out">connection timed out</string>
-    <string name="payment_request_expired">payment request expired</string>
     <string name="something_went_wrong">something went wrong</string>
     <string name="more">more…</string>
     <string name="sent">sent: %s</string>
@@ -79,7 +67,6 @@
     <string name="send_address_as_message">send address as message</string>
     <string name="copy_address_to_clipboard">copy address to clipboard</string>
     <string name="enter_passcode">enter passcode</string>
-    <string name="scan_qr_code_tip">Scan someone else\'s QR code to get their bitcoin address. You can send a payment to anyone with an address.</string>
     <string name="recover_button">recover</string>
     <string name="address_already_in_your_wallet">this payment address is already in your wallet</string>
     <string name="syncing">syncing…</string>
@@ -89,8 +76,6 @@
     <string name="verified_waiting">verified, waiting for confirmation</string>
     <string name="you_received_bitcoin">you received bitcoin!</string>
     <string name="write_down_phrase">next, write down your recovery phrase\n\nif you ever lose your phone, you will need it to recover your wallet</string>
-    <string name="show_phrase">show phrase</string>
-    <string name="do_it_later">do it later</string>
     <string name="unverified">unverified</string>
     <string name="unverified_by_peers">not verified by at least 3 peers</string>
     <string name="moved">moved</string>
