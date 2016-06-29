@@ -251,11 +251,11 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         if (ISO == null) ISO = "USD";
         final String btcIso = "BTC";
         if (currentCurrencyPosition == BITCOIN_RIGHT) {
-            amountToPay.setText(BRStringFormatter.getFormattedCurrencyString(btcIso, bitcoinValue.multiply(new BigDecimal("100")).longValue()));
-            amountBeforeArrow.setText(BRStringFormatter.getFormattedCurrencyString(ISO, otherValue.multiply(new BigDecimal("100")).longValue()));
+            amountToPay.setText(BRStringFormatter.getFormattedCurrencyStringForKeyboard(btcIso, bitcoinValue.multiply(new BigDecimal("100")).longValue()));
+            amountBeforeArrow.setText(BRStringFormatter.getFormattedCurrencyStringForKeyboard(ISO, otherValue.multiply(new BigDecimal("100")).longValue()));
         } else if (currentCurrencyPosition == BITCOIN_LEFT) {
-            amountToPay.setText(BRStringFormatter.getFormattedCurrencyString(ISO, bitcoinValue.multiply(new BigDecimal("100")).longValue()));
-            amountBeforeArrow.setText(BRStringFormatter.getFormattedCurrencyString(btcIso, otherValue.multiply(new BigDecimal("100")).longValue()));
+            amountToPay.setText(BRStringFormatter.getFormattedCurrencyStringForKeyboard(ISO, bitcoinValue.multiply(new BigDecimal("100")).longValue()));
+            amountBeforeArrow.setText(BRStringFormatter.getFormattedCurrencyStringForKeyboard(btcIso, otherValue.multiply(new BigDecimal("100")).longValue()));
         } else {
             throw new IllegalArgumentException("currentPosition should be BITCOIN_LEFT or BITCOIN_RIGHT");
         }

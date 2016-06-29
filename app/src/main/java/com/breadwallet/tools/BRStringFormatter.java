@@ -104,9 +104,42 @@ public class BRStringFormatter {
         } else {
             try {
                 currency = Currency.getInstance(isoCurrencyCode);
-//                Log.e(TAG, "Currency.getInstance succeeded: " + currency.getSymbol());
             } catch (IllegalArgumentException e) {
-//                Log.e(TAG, "Currency.getInstance did not succeed, going with the default", e);
+                currency = Currency.getInstance(Locale.getDefault());
+            }
+            decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
+            symbol = currency.getSymbol();
+            decimalFormatSymbols.setCurrencySymbol(symbol);
+        }
+        currencyFormat.setMaximumFractionDigits(2);
+        currencyFormat.setMinimumFractionDigits(0);
+        currencyFormat.setGroupingUsed(true);
+        currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
+        currencyFormat.setNegativePrefix(decimalFormatSymbols.getCurrencySymbol() + "-");
+        currencyFormat.setNegativeSuffix("");
+        BigDecimal result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100"));
+        if (getNumberOfDecimalPlaces(result) == 1) currencyFormat.setMinimumFractionDigits(2);
+        return currencyFormat.format(result.doubleValue());
+    }
+
+    public static String getFormattedCurrencyStringForKeyboard(String isoCurrencyCode, long amount) {
+        DecimalFormat currencyFormat;
+
+        // This formats currency values as the user expects to read them (default locale).
+        currencyFormat = (DecimalFormat) DecimalFormat.getCurrencyInstance();
+        // This specifies the actual currency that the value is in, and provide
+        // s the currency symbol.
+        DecimalFormatSymbols decimalFormatSymbols;
+        Currency currency;
+        String symbol = null;
+        if (Objects.equals(isoCurrencyCode, "BTC")) {
+            decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
+            symbol = CurrencyManager.bitcoinLowercase;
+            decimalFormatSymbols.setCurrencySymbol(symbol);
+        } else {
+            try {
+                currency = Currency.getInstance(isoCurrencyCode);
+            } catch (IllegalArgumentException e) {
                 currency = Currency.getInstance(Locale.getDefault());
             }
             decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
@@ -119,10 +152,7 @@ public class BRStringFormatter {
         currencyFormat.setGroupingUsed(true);
         currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
         currencyFormat.setNegativePrefix(decimalFormatSymbols.getCurrencySymbol() + "-");
-// or "-"+symbol if that's what you need
         currencyFormat.setNegativeSuffix("");
-//        Log.e(TAG, "Returning the formatted string with separatorVisibility: " +
-// currencyFormat.isDecimalSeparatorAlwaysShown());
         return currencyFormat.format(new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100")).doubleValue());
     }
 
@@ -167,5 +197,12 @@ public class BRStringFormatter {
         ((java.text.DecimalFormat) currencyFormat).setDecimalFormatSymbols(decimalFormatSymbols);
 
         return currencyFormat.format(amount);
+    }
+
+
+    private static int getNumberOfDecimalPlaces(BigDecimal bigDecimal) {
+        String string = bigDecimal.stripTrailingZeros().toPlainString();
+        int index = string.indexOf(".");
+        return index < 0 ? 0 : string.length() - index - 1;
     }
 }
