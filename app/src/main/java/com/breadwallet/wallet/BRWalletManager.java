@@ -210,15 +210,29 @@ public class BRWalletManager {
                     builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            String pass = input.getText().toString();
-                            String decryptedKey = decryptBip38Key(privKey, pass);
-                            Log.e(TAG, "decryptedKey: " + decryptedKey);
-                            if (decryptedKey.equals("")) {
-                                SpringAnimator.showAnimation(input);
-                                confirmSweep(activity, privKey);
-                            } else {
-                                confirmSweep(activity, decryptedKey);
-                            }
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (ctx != null)
+                                        ctx.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                ((BreadWalletApp) ctx.getApplication()).showCustomToast(ctx, "scanning private key", MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_SHORT, 1);
+                                            }
+                                        });
+                                    String pass = input.getText().toString();
+                                    String decryptedKey = decryptBip38Key(privKey, pass);
+                                    Log.e(TAG, "decryptedKey: " + decryptedKey);
+
+                                    if (decryptedKey.equals("")) {
+                                        SpringAnimator.showAnimation(input);
+                                        confirmSweep(activity, privKey);
+                                    } else {
+                                        confirmSweep(activity, decryptedKey);
+                                    }
+                                }
+                            }).start();
+
                         }
                     });
                     builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

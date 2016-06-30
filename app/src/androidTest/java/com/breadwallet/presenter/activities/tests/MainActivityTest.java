@@ -1,6 +1,8 @@
 //package com.breadwallet.presenter.activities.tests;
 //
 //import android.support.test.InstrumentationRegistry;
+//import android.support.test.rule.ActivityTestRule;
+//import android.support.test.runner.AndroidJUnit4;
 //import android.test.ActivityInstrumentationTestCase2;
 //import android.test.suitebuilder.annotation.MediumTest;
 //import android.widget.Button;
@@ -8,6 +10,10 @@
 //import com.breadwallet.R;
 //import com.breadwallet.presenter.activities.MainActivity;
 //import com.breadwallet.tools.adapter.CurrencyListAdapter;
+//
+//import org.junit.Rule;
+//import org.junit.Test;
+//import org.junit.runner.RunWith;
 //
 //import java.util.Random;
 //
@@ -21,7 +27,6 @@
 //import static android.support.test.espresso.action.ViewActions.swipeRight;
 //import static android.support.test.espresso.action.ViewActions.typeText;
 //import static android.support.test.espresso.matcher.ViewMatchers.withId;
-//import static android.support.test.espresso.matcher.ViewMatchers.withText;
 //import static org.hamcrest.Matchers.startsWith;
 //import static org.hamcrest.object.HasToString.hasToString;
 //
@@ -50,85 +55,63 @@
 // * THE SOFTWARE.
 // */
 //
-//public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActivity> {
+//@RunWith(AndroidJUnit4.class)
+//public class MainActivityTest {
 //
-//    MainActivity activity;
-//    Button burgerButton;
-//    Button scanQRCode;
-//    Button copyAddressFromClipboard;
+//    @Rule
+//    public ActivityTestRule<MainActivity> mActivityRule =
+//            new ActivityTestRule<>(MainActivity.class);
 //
-//    public MainActivityTest() {
-//        super(MainActivity.class);
-//    }
 //
-//    @Override
-//    protected void setUp() throws Exception {
-//        super.setUp();
-//        setActivityInitialTouchMode(true);
-//        injectInstrumentation(InstrumentationRegistry.getInstrumentation()); // injects the Instrumentation for the Espresso
-//        activity = getActivity();
-//        burgerButton = (Button) activity.findViewById(R.id.main_button_burger);
-//        scanQRCode = (Button) activity.findViewById(R.id.main_button_scan_qr_code);
-//        copyAddressFromClipboard = (Button) activity.findViewById(R.id.main_button_pay_address_from_clipboard);
-//    }
+////
+////    @Test
+////    public void testCurrencyList() {
+////        onView(withId(R.id.main_button_burger)).perform(click());
+////        onView(withId(R.id.settings)).perform(click());
+////        onView(withId(R.id.local_currency)).perform(click());
+////        if (!CurrencyListAdapter.currencyListAdapter.isEmpty()) {
+////            Random r = new Random();
+////
+////            //click on random list item;
+////            int rand;
+////            rand = r.nextInt(CurrencyListAdapter.currencyListAdapter.getCount());
+////            onData(hasToString(startsWith("")))
+////                    .inAdapterView(withId(R.id.currency_list_view)).atPosition(rand)
+////                    .perform(click());
+////            rand = r.nextInt(CurrencyListAdapter.currencyListAdapter.getCount());
+////            onData(hasToString(startsWith("")))
+////                    .inAdapterView(withId(R.id.currency_list_view)).atPosition(rand)
+////                    .perform(click());
+////            rand = r.nextInt(CurrencyListAdapter.currencyListAdapter.getCount());
+////            onData(hasToString(startsWith("")))
+////                    .inAdapterView(withId(R.id.currency_list_view)).atPosition(rand)
+////                    .perform(click());
+////            rand = r.nextInt(CurrencyListAdapter.currencyListAdapter.getCount());
+////            onData(hasToString(startsWith("")))
+////                    .inAdapterView(withId(R.id.currency_list_view)).atPosition(rand)
+////                    .perform(click());
+////            rand = r.nextInt(CurrencyListAdapter.currencyListAdapter.getCount());
+////            onData(hasToString(startsWith("")))
+////                    .inAdapterView(withId(R.id.currency_list_view)).atPosition(rand)
+////                    .perform(click());
+////        }
+////        pressBack();
+////        pressBack();
+////        pressBack();
+////
+////    }
 //
-//    public void testPreconditions() {
-//        assertNotNull("activity is null", activity);
-//        assertNotNull("burgerButton is null", burgerButton);
-//        assertNotNull("scanQRCode is null", scanQRCode);
-//        assertNotNull("copyAddressFromClipboard is null", copyAddressFromClipboard);
-//    }
-//
-//    @MediumTest
-//    public void testCurrencyList() {
-//        onView(withId(R.id.main_button_burger)).perform(click());
-//        onView(withId(R.id.settings)).perform(click());
-//        onView(withId(R.id.local_currency)).perform(click());
-//        if (!CurrencyListAdapter.currencyListAdapter.isEmpty()) {
-//            Random r = new Random();
-//
-//            //click on random list item;
-//            int rand;
-//            rand = r.nextInt(CurrencyListAdapter.currencyListAdapter.getCount());
-//            onData(hasToString(startsWith("")))
-//                    .inAdapterView(withId(R.id.currency_list_view)).atPosition(rand)
-//                    .perform(click());
-//            rand = r.nextInt(CurrencyListAdapter.currencyListAdapter.getCount());
-//            onData(hasToString(startsWith("")))
-//                    .inAdapterView(withId(R.id.currency_list_view)).atPosition(rand)
-//                    .perform(click());
-//            rand = r.nextInt(CurrencyListAdapter.currencyListAdapter.getCount());
-//            onData(hasToString(startsWith("")))
-//                    .inAdapterView(withId(R.id.currency_list_view)).atPosition(rand)
-//                    .perform(click());
-//            rand = r.nextInt(CurrencyListAdapter.currencyListAdapter.getCount());
-//            onData(hasToString(startsWith("")))
-//                    .inAdapterView(withId(R.id.currency_list_view)).atPosition(rand)
-//                    .perform(click());
-//            rand = r.nextInt(CurrencyListAdapter.currencyListAdapter.getCount());
-//            onData(hasToString(startsWith("")))
-//                    .inAdapterView(withId(R.id.currency_list_view)).atPosition(rand)
-//                    .perform(click());
-//        }
-//        pressBack();
-//        pressBack();
-//        pressBack();
-//
-//    }
-//
-//    @MediumTest
+//    @Test
 //    public void testFragments() {
 //        onView(withId(R.id.main_button_burger)).perform(click());
 //        try {
-//            Thread.sleep(500);
+//            Thread.sleep(1000);
 //        } catch (InterruptedException e) {
 //            e.printStackTrace();
 //        }
 //        onView(withId(R.id.settings)).perform(click());
 //        onView(withId(R.id.start_recovery_wallet)).perform(click());
 //        pressBack();
-//        onView(withId(R.id.recovery_phrase)).perform(click());
-//        onView(withText("show")).perform(click());
 //        pressBack();
 //        onView(withId(R.id.about)).perform(click());
 //        onView(withId(R.id.main_button_burger)).perform(click());
@@ -137,10 +120,6 @@
 //        onView(withId(R.id.main_layout)).perform(swipeLeft());
 //        onView(withId(R.id.theAddressLayout)).perform(click());
 //        onView(withId(R.id.copy_address)).perform(click());
-//        onView(withId(R.id.main_button_locker)).perform(click());
-//        onView(withId(R.id.edit_password)).perform(typeText("1234"));
-//        onView(withId(R.id.button_password_ok)).perform(click());
-//        assertTrue(MainActivity.unlocked);
 //        onView(withId(R.id.main_layout)).perform(swipeRight());
 //        try {
 //            Thread.sleep(500);
@@ -150,16 +129,10 @@
 //    }
 //
 //
-//    @MediumTest
+//    @Test
 //    public void testChangeText_sameActivity() {
 //        onView(withId(R.id.address_edit_text))
 //                .perform(clearText(), typeText("some testing text"), closeSoftKeyboard(), clearText());
-//
-//    }
-//
-//    @Override
-//    protected void tearDown() throws Exception {
-//        super.tearDown();
 //
 //    }
 //}

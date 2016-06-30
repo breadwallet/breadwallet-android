@@ -66,7 +66,6 @@ model {
             }
 
         }
-
     }
 }
 
@@ -74,6 +73,16 @@ repositories {
     mavenCentral()
 }
 dependencies {
+
+//    androidTestCompile 'com.android.support.test:runner:0.3'
+//    androidTestCompile 'com.android.support.test:rules:0.3'
+//    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
+//    androidTestCompile 'com.android.support:appcompat-v7:24.0.0'
+//    androidTestCompile 'com.android.support:support-v13:24.0.0'
+//
+//    compile 'com.android.support.test.espresso:espresso-core:2.2.2'
+
     compile 'com.android.support:appcompat-v7:24.0.0'
     compile 'com.android.support:support-v13:24.0.0'
+
 }
