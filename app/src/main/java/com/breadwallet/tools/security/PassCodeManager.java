@@ -2,7 +2,7 @@ package com.breadwallet.tools.security;
 
 import android.app.Activity;
 
-import com.breadwallet.tools.SharedPreferencesManager;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.wallet.BRWalletManager;
 
 /**

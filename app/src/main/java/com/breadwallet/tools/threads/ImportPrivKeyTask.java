@@ -2,17 +2,15 @@ package com.breadwallet.tools.threads;
 
 import android.app.Activity;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.BreadWalletApp;
-import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.entities.ImportPrivKeyEntity;
-import com.breadwallet.tools.BRStringFormatter;
-import com.breadwallet.tools.CurrencyManager;
-import com.breadwallet.tools.SharedPreferencesManager;
+import com.breadwallet.tools.util.BRStringFormatter;
+import com.breadwallet.tools.manager.CurrencyManager;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.wallet.BRWalletManager;
 
 import org.json.JSONArray;
@@ -21,7 +19,6 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.net.URLConnection;

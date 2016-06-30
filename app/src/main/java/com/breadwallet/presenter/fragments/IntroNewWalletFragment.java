@@ -10,7 +10,7 @@ import android.widget.Button;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.IntroActivity;
-import com.breadwallet.tools.animation.FragmentAnimator;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.wallet.BRWalletManager;
 
 /**
@@ -52,7 +52,7 @@ public class IntroNewWalletFragment extends Fragment {
         introGenerate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (FragmentAnimator.checkTheMultipressingAvailability()) {
+                if (BRAnimator.checkTheMultipressingAvailability()) {
                     new Handler().post(new Runnable() {
                         @Override
                         public void run() {

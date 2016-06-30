@@ -2,40 +2,41 @@ package com.breadwallet.wallet;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.FragmentTransaction;
 import android.app.KeyguardManager;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.text.InputType;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TableLayout;
 import android.widget.Toast;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.BreadWalletApp;
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.IntroShowPhraseActivity;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.activities.RequestQRActivity;
+import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
+import com.breadwallet.presenter.entities.BRPeerEntity;
+import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.presenter.entities.ImportPrivKeyEntity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
-import com.breadwallet.presenter.entities.TmpTxObject;
 import com.breadwallet.presenter.entities.TransactionListItem;
-import com.breadwallet.presenter.fragments.FragmentRecoveryPhrase;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.presenter.fragments.MainFragmentQR;
-import com.breadwallet.tools.BRConstants;
-import com.breadwallet.tools.BRNotificationManager;
-import com.breadwallet.tools.BRStringFormatter;
-import com.breadwallet.tools.CurrencyManager;
-import com.breadwallet.tools.SharedPreferencesManager;
-import com.breadwallet.tools.WordsReader;
+import com.breadwallet.tools.threads.PassCodeTask;
+import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.manager.BRNotificationManager;
+import com.breadwallet.tools.util.BRStringFormatter;
+import com.breadwallet.tools.manager.CurrencyManager;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.util.WordsReader;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
-import com.breadwallet.tools.adapter.MiddleViewAdapter;
-import com.breadwallet.tools.animation.FragmentAnimator;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
@@ -43,7 +44,6 @@ import com.breadwallet.tools.sqlite.SQLiteManager;
 import com.breadwallet.tools.threads.ImportPrivKeyTask;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.util.List;
@@ -76,12 +76,10 @@ import java.util.Locale;
 
 public class BRWalletManager {
     private static final String TAG = BRWalletManager.class.getName();
-    public static final String PHRASE_WRITTEN = "phraseWritten";
+
     private static BRWalletManager instance;
     private static Activity ctx;
-    public static final long TX_FEE_PER_KB = 5000;
-    public static final long DEFAULT_FEE_PER_KB = (TX_FEE_PER_KB * 1000 + 190) / 191;
-    public static final long MAX_FEE_PER_KB = (100100 * 1000 + 190) / 191;
+
     private static int messageId = 0;
 
     private BRWalletManager() {
@@ -195,7 +193,18 @@ public class BRWalletManager {
                     final EditText input = new EditText(activity);
                     // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
                     input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    input.setMaxWidth(200);
                     builder.setView(input);
+
+                    (new Handler()).postDelayed(new Runnable() {
+
+                        public void run() {
+                            input.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
+                            input.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
+
+                        }
+                    }, 100);
+
 
                     // Set up the buttons
                     builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -252,7 +261,7 @@ public class BRWalletManager {
 //                                    dialog.dismiss();
 //                                    MainActivity app = MainActivity.app;
 //                                    if (app != null)
-//                                        FragmentAnimator.animateSlideToLeft(app, new FragmentRecoveryPhrase(), null);
+//                                        BRAnimator.animateSlideToLeft(app, new FragmentRecoveryPhrase(), null);
 //                                }
 //                            });
                     builder.setNegativeButton(ctx.getString(R.string.ok),
@@ -395,7 +404,7 @@ public class BRWalletManager {
                             builder.setPositiveButton("rescan",
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int which) {
-                                            if (FragmentAnimator.checkTheMultipressingAvailability()) {
+                                            if (BRAnimator.checkTheMultipressingAvailability()) {
                                                 new Thread(new Runnable() {
                                                     @Override
                                                     public void run() {
@@ -595,6 +604,100 @@ public class BRWalletManager {
             alert.show();
         }
 
+    }
+
+    public void askForPasscode() {
+        if (ctx == null) return;
+        final int pass = KeyStoreManager.getPassCode(ctx);
+        if (pass == 0) {
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    if (ctx != null) {
+                        Log.e(TAG, "PASSCODE: " + pass);
+                        new PassCodeTask(ctx).start();
+                    }
+                }
+            });
+        }
+
+    }
+
+    public void setUpTheWallet() {
+        if (ctx == null) return;
+
+        BRWalletManager m = BRWalletManager.getInstance(ctx);
+        final BRPeerManager pm = BRPeerManager.getInstance(ctx);
+
+        SQLiteManager sqLiteManager = SQLiteManager.getInstance(ctx);
+
+        if (!m.isCreated()) {
+            List<BRTransactionEntity> transactions = sqLiteManager.getTransactions();
+            int transactionsCount = transactions.size();
+            if (transactionsCount > 0) {
+                m.createTxArrayWithCount(transactionsCount);
+                for (BRTransactionEntity entity : transactions) {
+                    m.putTransaction(entity.getBuff(), entity.getBlockheight(), entity.getTimestamp());
+                }
+            }
+
+            byte[] pubkeyEncoded = KeyStoreManager.getMasterPublicKey(ctx);
+            if (pubkeyEncoded == null || pubkeyEncoded.length == 0) {
+
+                ctx.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((BreadWalletApp) ctx.getApplication()).showCustomToast(ctx, "The KeyStore is temporary unavailable, please try again later",
+                                MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                ctx.finish();
+                            }
+                        }, 3500);
+                    }
+                });
+
+                return;
+            }
+            //Save the first address for future check
+            m.createWallet(transactionsCount, pubkeyEncoded);
+            String firstAddress = BRWalletManager.getFirstAddress(pubkeyEncoded);
+            SharedPreferencesManager.putFirstAddress(ctx, firstAddress);
+        }
+
+        long fee = SharedPreferencesManager.getFeePerKb(ctx);
+        if (fee == 0) fee = BRConstants.DEFAULT_FEE_PER_KB;
+        BRWalletManager.getInstance(ctx).setFeePerKb(fee);
+
+        if (!pm.isCreated()) {
+            List<BRMerkleBlockEntity> blocks = sqLiteManager.getBlocks();
+            List<BRPeerEntity> peers = sqLiteManager.getPeers();
+            final int blocksCount = blocks.size();
+            final int peersCount = peers.size();
+            if (blocksCount > 0) {
+                pm.createBlockArrayWithCount(blocksCount);
+                for (BRMerkleBlockEntity entity : blocks) {
+                    pm.putBlock(entity.getBuff(), entity.getBlockHeight());
+                }
+            }
+
+            if (peersCount > 0) {
+                pm.createPeerArrayWithCount(peersCount);
+                for (BRPeerEntity entity : peers) {
+                    pm.putPeer(entity.getAddress(), entity.getPort(), entity.getTimeStamp());
+                }
+            }
+
+            Log.e(TAG, "blocksCount before connecting: " + blocksCount);
+            Log.e(TAG, "peersCount before connecting: " + peersCount);
+
+            int walletTimeString = KeyStoreManager.getWalletCreationTime(ctx);
+            final int earliestKeyTime = walletTimeString != 0 ? walletTimeString : 0;
+            Log.e(TAG, "earliestKeyTime before connecting: " + earliestKeyTime);
+            pm.createAndConnect(earliestKeyTime > 0 ? earliestKeyTime : 0, blocksCount, peersCount);
+
+        }
     }
 
     private native String encodeSeed(byte[] seed, String[] wordList);

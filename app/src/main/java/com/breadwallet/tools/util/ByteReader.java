@@ -1,4 +1,4 @@
-package com.breadwallet.tools;
+package com.breadwallet.tools.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

@@ -1,21 +1,23 @@
-package com.breadwallet.tools;
+package com.breadwallet.tools.util;
+
+import android.graphics.ImageFormat;
 
 /**
  * BreadWallet
- * <p>
+ * <p/>
  * Created by Mihail Gutan on 2/16/16.
  * Copyright (c) 2016 breadwallet llc <mihail@breadwallet.com>
- * <p>
+ * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * <p>
+ * <p/>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * <p>
+ * <p/>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -67,10 +69,86 @@ public class BRConstants {
     public static final String SECURE_TIME_PREFS = "secureTime";
     public static final String EXCHANGE_RATES = "exchangeRates";
     public static final String FEE_KB_PREFS = "feeKb";
+    public static final String LITTLE_CIRCLE = "\u2022";
     public static String SUPPORT_EMAIL = "support@breadwallet.com";
 
     public static final int ONE_BITCOIN = 100000000;
     public static final String LIMIT_PREFS = "fingerprintLimit";
+
+    /**
+     * MainActivity
+     */
+    public static final int BURGER = 0;
+    public static final int CLOSE = 1;
+    public static final int BACK = 2;
+    public static final int DEBUG = 1;
+    public static final int RELEASE = 2;
+    public static final float PAGE_INDICATOR_SCALE_UP = 1.3f;
+    public static final String PREFS_NAME = "MyPrefsFile";
+
+    /**
+     * BRWalletManager
+     */
+    public static final String PHRASE_WRITTEN = "phraseWritten";
+    public static final long TX_FEE_PER_KB = 5000;
+    public static final long DEFAULT_FEE_PER_KB = (TX_FEE_PER_KB * 1000 + 190) / 191;
+    public static final long MAX_FEE_PER_KB = (100100 * 1000 + 190) / 191;
+
+    /**
+     * BreadWalletApp
+     */
+    public static final int BREAD_WALLET_IMAGE = 0;
+    public static final int BREAD_WALLET_TEXT = 1;
+    public static final int LOCKER_BUTTON = 2;
+    public static final int PAY_BUTTON = 3;
+    public static final int REQUEST_BUTTON = 4;
+
+    /**
+     * FragmentCurrency
+     */
+    public static final String CURRENT_CURRENCY = "currentCurrency";
+    public static final String POSITION = "position";
+    public static final String RATE = "rate";
+
+    /**
+     * FragmentDecoder
+     */
+    public static final int sImageFormat = ImageFormat.YUV_420_888;
+    public static final String CAMERA_GUIDE_RED = "red";
+    public static final String CAMERA_GUIDE = "reg";
+    public static final String TEXT_EMPTY = "";
+
+    /**
+     * FragmentScanResult
+     */
+    public static final int BITCOIN_LEFT = 1;
+    public static final int BITCOIN_RIGHT = 2;
+    public static final String DOUBLE_ARROW = "\u21CB";
+
+    /**
+     * FragmentSpendLimit
+     */
+    public static final int limit1 = 10000000;
+    public static final int limit2 = 100000000;
+    public static final int limit3 = 1000000000;
+
+    /**
+     * PasswordDialogFragment
+     */
+    public static final int AUTH_MODE_CHECK_PASS = 0;
+    public static final int AUTH_MODE_NEW_PASS = 1;
+    public static final int AUTH_MODE_CONFIRM_PASS = 2;
+
+    /**
+     * AmountAdapter
+     */
+    public static final int MAX_DIGITS_AFTER_SEPARATOR = 2;
+    public static final int DIGITS_LIMIT = 12;
+
+    /**
+     * SharedPreferencesManager
+     */
+    public static String RECEIVE_ADDRESS = "receive_address";
 
     private BRConstants() {
     }

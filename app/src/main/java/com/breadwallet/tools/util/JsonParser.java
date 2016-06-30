@@ -1,11 +1,9 @@
-package com.breadwallet.tools;
+package com.breadwallet.tools.util;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.wallet.BRWalletManager;
 
 import org.json.JSONArray;
@@ -17,12 +15,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * BreadWallet
@@ -49,7 +42,7 @@ import java.util.Map;
  * THE SOFTWARE.
  */
 
-class JsonParser {
+public class JsonParser {
     public static final String TAG = JsonParser.class.getName();
 
     public static JSONArray getJSonArray(Activity activity) {
@@ -96,7 +89,7 @@ class JsonParser {
         try {
             JSONObject obj = new JSONObject(jsonString);
             fee = obj.getLong("fee_per_kb");
-            if (fee != 0 && fee < BRWalletManager.MAX_FEE_PER_KB) {
+            if (fee != 0 && fee < BRConstants.MAX_FEE_PER_KB) {
 
                 SharedPreferencesManager.putFeePerKb(activity, fee);
                 BRWalletManager.getInstance(activity).setFeePerKb(fee);

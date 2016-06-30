@@ -1,4 +1,4 @@
-package com.breadwallet.tools;
+package com.breadwallet.tools.manager;
 
 import android.annotation.SuppressLint;
 import android.content.ClipData;

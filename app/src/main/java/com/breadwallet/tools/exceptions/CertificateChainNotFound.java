@@ -1,4 +1,4 @@
-package com.breadwallet.presenter.exceptions;
+package com.breadwallet.tools.exceptions;
 
 import java.security.GeneralSecurityException;
 

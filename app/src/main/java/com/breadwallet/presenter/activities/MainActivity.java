@@ -31,20 +31,19 @@ import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.BreadWalletApp;
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.customviews.BubbleTextVew;
 import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
 import com.breadwallet.presenter.entities.BRPeerEntity;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
-import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.presenter.fragments.FragmentSettings;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
-import com.breadwallet.tools.BRConstants;
-import com.breadwallet.tools.BRStringFormatter;
-import com.breadwallet.tools.CurrencyManager;
-import com.breadwallet.tools.NetworkChangeReceiver;
-import com.breadwallet.tools.SharedPreferencesManager;
+import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.manager.CurrencyManager;
+import com.breadwallet.tools.util.NetworkChangeReceiver;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.security.RequestHandler;
 import com.breadwallet.tools.security.RootHelper;
@@ -52,11 +51,11 @@ import com.breadwallet.tools.adapter.AmountAdapter;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.adapter.ParallaxViewPager;
-import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.sqlite.SQLiteManager;
 import com.breadwallet.tools.threads.PassCodeTask;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 
@@ -70,20 +69,20 @@ import java.util.Observer;
 
 /**
  * BreadWallet
- * <p/>
+ * <p>
  * Created by Mihail Gutan on 8/4/15.
  * Copyright (c) 2016 breadwallet llc <mihail@breadwallet.com>
- * <p/>
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * <p/>
+ * <p>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * <p/>
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -95,13 +94,8 @@ import java.util.Observer;
 
 public class MainActivity extends FragmentActivity implements Observer {
     private static final String TAG = MainActivity.class.getName();
-    public static final String PREFS_NAME = "MyPrefsFile";
-    public static final int BURGER = 0;
-    public static final int CLOSE = 1;
-    public static final int BACK = 2;
-    private static final int DEBUG = 1;
-    private static final int RELEASE = 2;
-    private static final float PAGE_INDICATOR_SCALE_UP = 1.3f;
+
+
     public static MainActivity app;
     public static boolean decoderFragmentOn;
     public static boolean scanResultFragmentOn;
@@ -123,7 +117,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     private int middleViewState = 0;
     private BroadcastReceiver mPowerKeyReceiver = null;
     private int middleBubbleBlocksCount = 0;
-    private static int MODE = RELEASE;
+    private static int MODE = BRConstants.RELEASE;
     public RelativeLayout bug;
     //    private TextView testnet;
     private BubbleTextVew middleBubble1;
@@ -149,12 +143,12 @@ public class MainActivity extends FragmentActivity implements Observer {
         app = this;
         initializeViews();
 
-        printPhoneSpecs();
+        Utils.printPhoneSpecs();
 
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                setUpTheWallet();
+                BRWalletManager.getInstance(app).setUpTheWallet();
             }
         });
         t.setPriority(Thread.MIN_PRIORITY);
@@ -166,14 +160,13 @@ public class MainActivity extends FragmentActivity implements Observer {
 
         checkDeviceRooted();
 
-
-        if (((BreadWalletApp) getApplication()).isEmulatorOrDebug()) {
-            MODE = DEBUG;
+        if (Utils.isEmulatorOrDebug()) {
+            MODE = BRConstants.DEBUG;
             Log.e(TAG, "DEBUG MODE!!!!!!");
         }
 
         setListeners();
-        scaleView(pageIndicatorLeft, 1f, PAGE_INDICATOR_SCALE_UP, 1f, PAGE_INDICATOR_SCALE_UP);
+        BRAnimator.scaleView(pageIndicatorLeft, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP);
         setUrlHandler();
 
     }
@@ -200,9 +193,9 @@ public class MainActivity extends FragmentActivity implements Observer {
         pay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (FragmentAnimator.checkTheMultipressingAvailability()) {
+                if (BRAnimator.checkTheMultipressingAvailability()) {
                     hideAllBubbles();
-                    String amountHolder = FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_RIGHT ?
+                    String amountHolder = FragmentScanResult.currentCurrencyPosition == BRConstants.BITCOIN_RIGHT ?
                             AmountAdapter.getRightValue() : AmountAdapter.getLeftValue();
                     String addressHolder = FragmentScanResult.address;
                     BRWalletManager.getInstance(app).pay(addressHolder, new BigDecimal(amountHolder).multiply(new BigDecimal("100")), null, false);
@@ -213,7 +206,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         bug.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (FragmentAnimator.checkTheMultipressingAvailability()) {
+                if (BRAnimator.checkTheMultipressingAvailability()) {
                     String to = BRConstants.SUPPORT_EMAIL;
                     PackageInfo pInfo = null;
                     String version = "";
@@ -246,7 +239,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                 if (scanResultFragmentOn) {
                     return;
                 }
-                if (MiddleViewAdapter.getSyncing() && FragmentAnimator.level == 0) {
+                if (MiddleViewAdapter.getSyncing() && BRAnimator.level == 0) {
                     hideAllBubbles();
                     if (middleBubbleBlocksCount == 0) {
                         middleBubbleBlocksCount = 1;
@@ -264,7 +257,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                     }
                     return;
                 }
-                if (FragmentAnimator.level == 0 && BreadWalletApp.unlocked) {
+                if (BRAnimator.level == 0 && BreadWalletApp.unlocked) {
                     hideAllBubbles();
                     if (middleViewState == 0) {
                         middleBubble2.setVisibility(View.GONE);
@@ -290,12 +283,12 @@ public class MainActivity extends FragmentActivity implements Observer {
             public void onClick(View v) {
                 hideAllBubbles();
                 SpringAnimator.showAnimation(burgerButton);
-                if (FragmentAnimator.level > 1 || scanResultFragmentOn || decoderFragmentOn) {
+                if (BRAnimator.level > 1 || scanResultFragmentOn || decoderFragmentOn) {
                     onBackPressed();
                 } else {
                     //check multi pressing availability here, because method onBackPressed does the checking as well.
-                    if (FragmentAnimator.checkTheMultipressingAvailability()) {
-                        FragmentAnimator.pressMenuButton(app, new FragmentSettingsAll());
+                    if (BRAnimator.checkTheMultipressingAvailability()) {
+                        BRAnimator.pressMenuButton(app, new FragmentSettingsAll());
                     }
                 }
             }
@@ -304,7 +297,7 @@ public class MainActivity extends FragmentActivity implements Observer {
             @TargetApi(Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
-                if (FragmentAnimator.checkTheMultipressingAvailability()) {
+                if (BRAnimator.checkTheMultipressingAvailability()) {
                     SpringAnimator.showAnimation(lockerButton);
                     if (KeyStoreManager.getPassCode(app) != 0)
                         ((BreadWalletApp) getApplication()).promptForAuthentication(app, BRConstants.AUTH_FOR_GENERAL, null, null, null, null);
@@ -363,7 +356,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         } else {
             BRPeerManager.stopSyncingProgressThread();
         }
-        askForPasscode();
+        BRWalletManager.getInstance(this).askForPasscode();
     }
 
     @Override
@@ -378,7 +371,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     protected void onStop() {
         super.onStop();
         CurrencyManager.getInstance(this).stopTimerTask();
-//        FragmentAnimator.level = 0;
+//        BRAnimator.level = 0;
 
     }
 
@@ -386,7 +379,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     protected void onDestroy() {
         super.onDestroy();
         finish();
-        FragmentAnimator.level = 0;
+        BRAnimator.level = 0;
         CurrencyManager.getInstance(this).stopTimerTask();
         Log.e(TAG, "Activity Destroyed!");
         unregisterScreenLockReceiver();
@@ -432,10 +425,10 @@ public class MainActivity extends FragmentActivity implements Observer {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_MENU) {
-            if (FragmentAnimator.level > 1 || scanResultFragmentOn || decoderFragmentOn) {
+            if (BRAnimator.level > 1 || scanResultFragmentOn || decoderFragmentOn) {
                 this.onBackPressed();
-            } else if (FragmentAnimator.checkTheMultipressingAvailability()) {
-                FragmentAnimator.pressMenuButton(app, new FragmentSettingsAll());
+            } else if (BRAnimator.checkTheMultipressingAvailability()) {
+                BRAnimator.pressMenuButton(app, new FragmentSettingsAll());
             }
         }
         // let the system handle all other key events
@@ -444,32 +437,32 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     @Override
     public void onBackPressed() {
-        if (FragmentAnimator.checkTheMultipressingAvailability()) {
+        if (BRAnimator.checkTheMultipressingAvailability()) {
             Log.e(TAG, "onBackPressed!");
-            if (FragmentAnimator.wipeWalletOpen) {
-                FragmentAnimator.pressWipeWallet(this, new FragmentSettings());
+            if (BRAnimator.wipeWalletOpen) {
+                BRAnimator.pressWipeWallet(this, new FragmentSettings());
                 activityButtonsEnable(true);
                 return;
             }
             //switch the level of fragments creation.
-            switch (FragmentAnimator.level) {
+            switch (BRAnimator.level) {
                 case 0:
                     if (decoderFragmentOn) {
-                        FragmentAnimator.hideDecoderFragment();
+                        BRAnimator.hideDecoderFragment();
                         break;
                     }
                     if (scanResultFragmentOn) {
-                        FragmentAnimator.hideScanResultFragment();
+                        BRAnimator.hideScanResultFragment();
                         break;
                     }
                     super.onBackPressed();
                     break;
                 case 1:
-                    FragmentAnimator.pressMenuButton(this, new FragmentSettingsAll());
-                    FragmentAnimator.hideDecoderFragment();
+                    BRAnimator.pressMenuButton(this, new FragmentSettingsAll());
+                    BRAnimator.hideDecoderFragment();
                     break;
                 default:
-                    FragmentAnimator.animateSlideToRight(this);
+                    BRAnimator.animateSlideToRight(this);
                     break;
             }
         }
@@ -485,12 +478,12 @@ public class MainActivity extends FragmentActivity implements Observer {
     public void setPagerIndicator(int x) {
         if (x == 0) {
             Log.d(TAG, "Left Indicator changed");
-            scaleView(pageIndicatorLeft, 1f, PAGE_INDICATOR_SCALE_UP, 1f, PAGE_INDICATOR_SCALE_UP);
-            scaleView(pageIndicatorRight, PAGE_INDICATOR_SCALE_UP, 1f, PAGE_INDICATOR_SCALE_UP, 1f);
+            BRAnimator.scaleView(pageIndicatorLeft, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP);
+            BRAnimator.scaleView(pageIndicatorRight, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f);
         } else if (x == 1) {
             Log.d(TAG, "Right Indicator changed");
-            scaleView(pageIndicatorRight, 1f, PAGE_INDICATOR_SCALE_UP, 1f, PAGE_INDICATOR_SCALE_UP);
-            scaleView(pageIndicatorLeft, PAGE_INDICATOR_SCALE_UP, 1f, PAGE_INDICATOR_SCALE_UP, 1f);
+            BRAnimator.scaleView(pageIndicatorRight, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP);
+            BRAnimator.scaleView(pageIndicatorLeft, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f);
         } else {
             Log.e(TAG, "Something went wrong setting the circle pageIndicator");
         }
@@ -533,15 +526,6 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     }
 
-    private void scaleView(View v, float startScaleX, float endScaleX, float startScaleY, float endScaleY) {
-        Animation anim = new ScaleAnimation(
-                startScaleX, endScaleX, // Start and end values for the X axis scaling
-                startScaleY, endScaleY, // Start and end values for the Y axis scaling
-                Animation.RELATIVE_TO_SELF, 0.5f, // Pivot point of X scaling
-                Animation.RELATIVE_TO_SELF, 0.5f); // Pivot point of Y scaling
-        anim.setFillAfter(true); // Needed to keep the result of the animation
-        v.startAnimation(anim);
-    }
 
     private void startStopReceiver(boolean b) {
         if (b) {
@@ -552,11 +536,10 @@ public class MainActivity extends FragmentActivity implements Observer {
     }
 
 
-
     public void request(View view) {
         SpringAnimator.showAnimation(view);
         Intent intent;
-        String tempAmount = FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_RIGHT ?
+        String tempAmount = FragmentScanResult.currentCurrencyPosition == BRConstants.BITCOIN_RIGHT ?
                 AmountAdapter.getRightValue() : AmountAdapter.getLeftValue();
         BRWalletManager m = BRWalletManager.getInstance(this);
         long minAmount = m.getMinOutputAmount();
@@ -576,7 +559,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         intent.putExtra(BRConstants.INTENT_EXTRA_REQUEST_ADDRESS, address);
         startActivity(intent);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-        FragmentAnimator.hideScanResultFragment();
+        BRAnimator.hideScanResultFragment();
     }
 
     @Override
@@ -610,7 +593,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    FragmentAnimator.animateDecoderFragment();
+                    BRAnimator.animateDecoderFragment();
 
                 }
                 return;
@@ -624,10 +607,8 @@ public class MainActivity extends FragmentActivity implements Observer {
     public boolean isSoftKeyboardShown() {
         int[] location = new int[2];
         viewFlipper.getLocationOnScreen(location);
-        boolean isShown = location[1] < 0;
-        return isShown;
+        return location[1] < 0;
     }
-
 
 
     @Override
@@ -635,81 +616,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         MiddleViewAdapter.resetMiddleView(this, null);
     }
 
-    private void setUpTheWallet() {
-
-        BRWalletManager m = BRWalletManager.getInstance(this);
-        final BRPeerManager pm = BRPeerManager.getInstance(this);
-
-        SQLiteManager sqLiteManager = SQLiteManager.getInstance(this);
-
-        if (!m.isCreated()) {
-            List<BRTransactionEntity> transactions = sqLiteManager.getTransactions();
-            int transactionsCount = transactions.size();
-            if (transactionsCount > 0) {
-                m.createTxArrayWithCount(transactionsCount);
-                for (BRTransactionEntity entity : transactions) {
-                    m.putTransaction(entity.getBuff(), entity.getBlockheight(), entity.getTimestamp());
-                }
-            }
-
-            byte[] pubkeyEncoded = KeyStoreManager.getMasterPublicKey(this);
-            if (pubkeyEncoded == null || pubkeyEncoded.length == 0) {
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ((BreadWalletApp) getApplication()).showCustomToast(app, "The KeyStore is temporary unavailable, please try again later",
-                                screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                finish();
-                            }
-                        }, 3500);
-                    }
-                });
-
-                return;
-            }
-            //Save the first address for future check
-            m.createWallet(transactionsCount, pubkeyEncoded);
-            String firstAddress = BRWalletManager.getFirstAddress(pubkeyEncoded);
-            SharedPreferencesManager.putFirstAddress(this, firstAddress);
-        }
-
-        long fee = SharedPreferencesManager.getFeePerKb(this);
-        if (fee == 0) fee = BRWalletManager.DEFAULT_FEE_PER_KB;
-        BRWalletManager.getInstance(this).setFeePerKb(fee);
-
-        if (!pm.isCreated()) {
-            List<BRMerkleBlockEntity> blocks = sqLiteManager.getBlocks();
-            List<BRPeerEntity> peers = sqLiteManager.getPeers();
-            final int blocksCount = blocks.size();
-            final int peersCount = peers.size();
-            if (blocksCount > 0) {
-                pm.createBlockArrayWithCount(blocksCount);
-                for (BRMerkleBlockEntity entity : blocks) {
-                    pm.putBlock(entity.getBuff(), entity.getBlockHeight());
-                }
-            }
-
-            if (peersCount > 0) {
-                pm.createPeerArrayWithCount(peersCount);
-                for (BRPeerEntity entity : peers) {
-                    pm.putPeer(entity.getAddress(), entity.getPort(), entity.getTimeStamp());
-                }
-            }
-
-            Log.e(TAG, "blocksCount before connecting: " + blocksCount);
-            Log.e(TAG, "peersCount before connecting: " + peersCount);
-
-            int walletTimeString = KeyStoreManager.getWalletCreationTime(this);
-            final int earliestKeyTime = walletTimeString != 0 ? walletTimeString : 0;
-            Log.e(TAG, "earliestKeyTime before connecting: " + earliestKeyTime);
-            pm.createAndConnect(earliestKeyTime > 0 ? earliestKeyTime : 0, blocksCount, peersCount);
-
-        }
-    }
 
     private void registerScreenLockReceiver() {
         final IntentFilter theFilter = new IntentFilter();
@@ -724,7 +630,6 @@ public class MainActivity extends FragmentActivity implements Observer {
 
                 if (strAction.equals(Intent.ACTION_SCREEN_OFF)) {
                     ((BreadWalletApp) getApplicationContext()).setUnlocked(false);
-                    Log.e(TAG, ">>>>>>>>onReceive>>>>>>>>> the screen is locked!");
                 }
             }
         };
@@ -733,71 +638,23 @@ public class MainActivity extends FragmentActivity implements Observer {
     }
 
     private void unregisterScreenLockReceiver() {
-        int apiLevel = Build.VERSION.SDK_INT;
 
-        if (apiLevel >= 7) {
-            try {
-                getApplicationContext().unregisterReceiver(mPowerKeyReceiver);
-            } catch (IllegalArgumentException e) {
-                mPowerKeyReceiver = null;
-            }
-        } else {
+        try {
             getApplicationContext().unregisterReceiver(mPowerKeyReceiver);
+        } catch (IllegalArgumentException e) {
             mPowerKeyReceiver = null;
         }
     }
 
-    private void askForPasscode() {
-        final int pass = KeyStoreManager.getPassCode(app);
-        if (pass == 0) {
-            new Handler().post(new Runnable() {
-                @Override
-                public void run() {
-                    if (app != null) {
-                        Log.e(TAG, "PASSCODE: " + pass);
-                        new PassCodeTask(app).start();
-                    }
-                }
-            });
-        }
-
-    }
 
     public void hideAllBubbles() {
 
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                fadeScaleBubble(middleBubble1, middleBubble2, middleBubbleBlocks, qrBubble2, qrBubble1);
+                BRAnimator.fadeScaleBubble(middleBubble1, middleBubble2, middleBubbleBlocks, qrBubble2, qrBubble1);
             }
         });
-
-    }
-
-    private void fadeScaleBubble(final View... views) {
-        if (views == null || views.length == 0) return;
-        for (final View v : views) {
-            if (v == null || v.getVisibility() != View.VISIBLE) continue;
-            Animation animation = new AlphaAnimation(1f, 0f);
-            animation.setDuration(150);
-            animation.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    v.setVisibility(View.GONE);
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-
-                }
-            });
-            v.startAnimation(animation);
-        }
 
     }
 
@@ -806,33 +663,16 @@ public class MainActivity extends FragmentActivity implements Observer {
         syncProgressText.setVisibility(b ? View.VISIBLE : View.GONE);
     }
 
-    private void printPhoneSpecs() {
-        String specsTag = "PHONE SPECS";
-        Log.e(specsTag, "");
-        Log.e(specsTag, "***************************PHONE SPECS***************************");
-
-        Log.e(specsTag, "* screen X: " + screenParametersPoint.x + " , screen Y: " + screenParametersPoint.y);
-
-        //noinspection deprecation
-        Log.e(specsTag, "* Build.CPU_ABI: " + Build.CPU_ABI);
-
-        Runtime rt = Runtime.getRuntime();
-        long maxMemory = rt.maxMemory();
-        Log.e(specsTag, "* maxMemory:" + Long.toString(maxMemory));
-        Log.e(specsTag, "----------------------------PHONE SPECS----------------------------");
-        Log.e(specsTag, "");
-    }
 
     public class ToastUpdater extends Thread {
         public void run() {
             while (middleBubbleBlocks.getVisibility() == View.VISIBLE) {
                 final String latestBlockKnown = String.valueOf(BRPeerManager.getEstimatedBlockHeight());
+                android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+                final String currBlock = String.valueOf(BRPeerManager.getCurrentBlockHeight());
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
-                        String currBlock = String.valueOf(BRPeerManager.getCurrentBlockHeight());
-
                         String formattedBlockInfo = String.format("block #%s of %s", currBlock, latestBlockKnown);
                         middleBubbleBlocks.setText(formattedBlockInfo);
                     }

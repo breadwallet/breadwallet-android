@@ -1,9 +1,5 @@
 package com.breadwallet.presenter.entities;
 
-import android.util.Log;
-
-import com.breadwallet.tools.CustomLogger;
-
 /**
  * BreadWallet
  * <p/>

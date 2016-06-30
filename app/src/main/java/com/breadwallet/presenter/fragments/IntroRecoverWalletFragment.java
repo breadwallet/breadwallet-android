@@ -5,7 +5,6 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -22,16 +21,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.BreadWalletApp;
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.IntroActivity;
-import com.breadwallet.tools.BRConstants;
-import com.breadwallet.tools.Utils;
-import com.breadwallet.tools.WordsReader;
+import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.Utils;
+import com.breadwallet.tools.util.WordsReader;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.wallet.BRWalletManager;
-
-import java.text.Normalizer;
 
 /**
  * BreadWallet

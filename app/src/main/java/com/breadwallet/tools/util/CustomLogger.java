@@ -1,11 +1,11 @@
-package com.breadwallet.presenter.exceptions;
+package com.breadwallet.tools.util;
 
-import java.security.GeneralSecurityException;
+import android.util.Log;
 
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail Gutan on 11/16/15.
+ * Created by Mihail Gutan on 11/17/15.
  * Copyright (c) 2016 breadwallet llc <mihail@breadwallet.com>
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -26,24 +26,21 @@ import java.security.GeneralSecurityException;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class PaymentRequestExpiredException extends GeneralSecurityException {
-    public static final String TAG = PaymentRequestExpiredException.class.getName();
+public class CustomLogger {
+    private static final String TAG = CustomLogger.class.getName();
 
-    private PaymentRequestExpiredException(){
-        super();
-    }
-
-    public PaymentRequestExpiredException(String msg){
-        super("The request is expired!");
-    }
-
-    private PaymentRequestExpiredException(String msg, Throwable cause){
-        super(msg,cause);
-    }
-
-    private PaymentRequestExpiredException(Throwable cause){
-        super(cause);
+    public static void logThis(String... args) {
+        StringBuilder strToLog = new StringBuilder();
+        int i = 0;
+        for (String arg : args) {
+            if (i++ % 2 == 0) {
+                strToLog.append(" | ").append(arg).append(": ");
+            } else {
+                strToLog.append(arg);
+            }
+            if(i % 4 == 0) strToLog.append("\n");
+        }
+        Log.e(TAG, strToLog.toString());
     }
 
 }
-

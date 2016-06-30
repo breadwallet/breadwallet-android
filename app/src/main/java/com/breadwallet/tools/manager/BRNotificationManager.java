@@ -1,7 +1,6 @@
-package com.breadwallet.tools;
+package com.breadwallet.tools.manager;
 
 import android.app.Activity;
-import android.app.ActivityOptions;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
@@ -9,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.NotificationCompat;
 
-import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
 
 /**

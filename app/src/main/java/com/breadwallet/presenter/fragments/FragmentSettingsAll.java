@@ -1,6 +1,5 @@
 package com.breadwallet.presenter.fragments;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
@@ -13,29 +12,26 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.BreadWalletApp;
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.TransactionListItem;
-import com.breadwallet.tools.BRConstants;
-import com.breadwallet.tools.BRStringFormatter;
-import com.breadwallet.tools.CurrencyManager;
-import com.breadwallet.tools.CustomLogger;
-import com.breadwallet.tools.SharedPreferencesManager;
-import com.breadwallet.tools.Utils;
+import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.BRStringFormatter;
+import com.breadwallet.tools.manager.CurrencyManager;
+import com.breadwallet.tools.util.CustomLogger;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
-import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.math.BigDecimal;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -96,7 +92,7 @@ public class FragmentSettingsAll extends Fragment {
         transactionHistory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (FragmentAnimator.checkTheMultipressingAvailability()) {
+                if (BRAnimator.checkTheMultipressingAvailability()) {
                     ((BreadWalletApp) getActivity().getApplicationContext()).
                             promptForAuthentication(getActivity(), BRConstants.AUTH_FOR_GENERAL, null, null, null, null);
                 }
@@ -109,8 +105,8 @@ public class FragmentSettingsAll extends Fragment {
         importPrivateKeys.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (FragmentAnimator.checkTheMultipressingAvailability()) {
-                    FragmentAnimator.animateDecoderFragment();
+                if (BRAnimator.checkTheMultipressingAvailability()) {
+                    BRAnimator.animateDecoderFragment();
                 }
             }
         });
@@ -118,12 +114,12 @@ public class FragmentSettingsAll extends Fragment {
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (FragmentAnimator.checkTheMultipressingAvailability()) {
+                if (BRAnimator.checkTheMultipressingAvailability()) {
                     MainActivity app = MainActivity.app;
                     if (app == null) return;
                     FragmentSettingsAll fragmentSettingsAll = (FragmentSettingsAll) getActivity().
                             getFragmentManager().findFragmentByTag(FragmentSettingsAll.class.getName());
-                    FragmentAnimator.animateSlideToLeft(app, new FragmentSettings(), fragmentSettingsAll);
+                    BRAnimator.animateSlideToLeft(app, new FragmentSettings(), fragmentSettingsAll);
                 }
             }
         });
@@ -160,7 +156,7 @@ public class FragmentSettingsAll extends Fragment {
     }
 
     public static void refreshUI(Activity ctx) {
-        if (FragmentAnimator.level != 1) return;
+        if (BRAnimator.level != 1) return;
         Log.e(TAG, "refreshUI");
         if (transactionList == null || transactionHistory == null)
             return;
@@ -259,7 +255,7 @@ public class FragmentSettingsAll extends Fragment {
                     }
 //                    transactionList.addView(getSeparationLine(0, context));
                 } else {
-                    if (FragmentAnimator.checkTheMultipressingAvailability()) {
+                    if (BRAnimator.checkTheMultipressingAvailability()) {
                         ((BreadWalletApp) context.getApplicationContext()).
                                 promptForAuthentication(context, BRConstants.AUTH_FOR_GENERAL, null, null, null, null);
                     }
@@ -298,12 +294,12 @@ public class FragmentSettingsAll extends Fragment {
             @Override
             public void onClick(View v) {
 //                Log.e(TAG, "clicked: " + ((TextView) tmpLayout.findViewById(R.id.transaction_date)).getText().toString());
-                if (FragmentAnimator.checkTheMultipressingAvailability()) {
+                if (BRAnimator.checkTheMultipressingAvailability()) {
                     FragmentSettingsAll fragmentSettingsAll = (FragmentSettingsAll) app.
                             getFragmentManager().findFragmentByTag(FragmentSettingsAll.class.getName());
                     FragmentTransactionExpanded fragmentTransactionExpanded = new FragmentTransactionExpanded();
                     fragmentTransactionExpanded.setCurrentObject(item);
-                    FragmentAnimator.animateSlideToLeft(app, fragmentTransactionExpanded, fragmentSettingsAll);
+                    BRAnimator.animateSlideToLeft(app, fragmentTransactionExpanded, fragmentSettingsAll);
                 }
             }
         });

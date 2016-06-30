@@ -5,35 +5,31 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewParentCompat;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewParent;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.BreadWalletApp;
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.fragments.FragmentDecoder;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.presenter.fragments.FragmentSettings;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
-import com.breadwallet.tools.BRClipboardManager;
-import com.breadwallet.tools.BRConstants;
+import com.breadwallet.tools.manager.BRClipboardManager;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
 
 import java.util.Stack;
@@ -63,8 +59,8 @@ import java.util.Stack;
  * THE SOFTWARE.
  */
 
-public class FragmentAnimator {
-    private static final String TAG = FragmentAnimator.class.getName();
+public class BRAnimator {
+    private static final String TAG = BRAnimator.class.getName();
     public static int level = 0;
     public static boolean wipeWalletOpen = false;
     private static Stack<Fragment> previous = new Stack<>();
@@ -106,8 +102,8 @@ public class FragmentAnimator {
                     // result of the request.
                 }
             } else {
-                if (FragmentAnimator.level > 0)
-                    FragmentAnimator.pressMenuButton(app, new FragmentSettingsAll());
+                if (BRAnimator.level > 0)
+                    BRAnimator.pressMenuButton(app, new FragmentSettingsAll());
                 //            Log.e(TAG, "in the animateDecoderFragment");
                 //            MainActivity.beenThroughSavedInstanceMethod = false;
                 MainActivity.decoderFragmentOn = true;
@@ -142,7 +138,7 @@ public class FragmentAnimator {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            app.setBurgerButtonImage(MainActivity.BACK);
+            app.setBurgerButtonImage(BRConstants.BACK);
             //Disabled inspection: <Expected resource type anim>
             final FragmentManager fragmentManager = app.getFragmentManager();
             final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -181,7 +177,7 @@ public class FragmentAnimator {
             if (level == 0) {
                 level++;
                 CustomPagerAdapter.adapter.showFragments(false);
-                context.setBurgerButtonImage(MainActivity.CLOSE);
+                context.setBurgerButtonImage(BRConstants.CLOSE);
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 //            fragmentTransaction.setCustomAnimations(R.animator.from_bottom, 0);
                 fragmentTransaction.add(R.id.main_layout, to, FragmentSettingsAll.class.getName());
@@ -215,7 +211,7 @@ public class FragmentAnimator {
                 //            }, 200);
             } else if (level == 1) {
                 level--;
-                context.setBurgerButtonImage(MainActivity.BURGER);
+                context.setBurgerButtonImage(BRConstants.BURGER);
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.setCustomAnimations(R.animator.from_top, R.animator.to_bottom);
                 FragmentSettingsAll fragmentSettingsAll = (FragmentSettingsAll) fragmentManager.
@@ -273,7 +269,7 @@ public class FragmentAnimator {
             if (!checkTheHorizontalSlideAvailability()) return;
             level++;
             if (level > 1)
-                context.setBurgerButtonImage(MainActivity.BACK);
+                context.setBurgerButtonImage(BRConstants.BACK);
             FragmentTransaction fragmentTransaction = context.getFragmentManager().beginTransaction();
 //        fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
             fragmentTransaction.replace(R.id.main_layout, to, to.getClass().getName());
@@ -305,9 +301,9 @@ public class FragmentAnimator {
             final Fragment tmp = previous.pop();
             level--;
             if (level < 1)
-                context.setBurgerButtonImage(MainActivity.BURGER);
+                context.setBurgerButtonImage(BRConstants.BURGER);
             if (level == 1)
-                context.setBurgerButtonImage(MainActivity.CLOSE);
+                context.setBurgerButtonImage(BRConstants.CLOSE);
 //            Log.e(TAG, "The actual SettingsFragment: " + tmp);
             FragmentTransaction fragmentTransaction = context.getFragmentManager().beginTransaction();
 //        fragmentTransaction.setCustomAnimations(R.animator.from_left, R.animator.to_right);
@@ -380,7 +376,7 @@ public class FragmentAnimator {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    FragmentAnimator.multiplePressingAvailable = true;
+                    BRAnimator.multiplePressingAvailable = true;
                 }
             }, 300);
             final FragmentManager fragmentManager = app.getFragmentManager();
@@ -406,7 +402,7 @@ public class FragmentAnimator {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    FragmentAnimator.multiplePressingAvailable = true;
+                    BRAnimator.multiplePressingAvailable = true;
                 }
             }, 300);
 
@@ -417,7 +413,7 @@ public class FragmentAnimator {
             fragmentManager.beginTransaction().
                     setCustomAnimations(R.animator.from_left, R.animator.to_right).
                     remove(fragmentScanResult).commit();
-            app.setBurgerButtonImage(MainActivity.BURGER);
+            app.setBurgerButtonImage(BRConstants.BURGER);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -532,6 +528,43 @@ public class FragmentAnimator {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static void fadeScaleBubble(final View... views) {
+        if (views == null || views.length == 0) return;
+        for (final View v : views) {
+            if (v == null || v.getVisibility() != View.VISIBLE) continue;
+            Animation animation = new AlphaAnimation(1f, 0f);
+            animation.setDuration(150);
+            animation.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    v.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+            v.startAnimation(animation);
+        }
+
+    }
+
+    public static  void scaleView(View v, float startScaleX, float endScaleX, float startScaleY, float endScaleY) {
+        Animation anim = new ScaleAnimation(
+                startScaleX, endScaleX, // Start and end values for the X axis scaling
+                startScaleY, endScaleY, // Start and end values for the Y axis scaling
+                Animation.RELATIVE_TO_SELF, 0.5f, // Pivot point of X scaling
+                Animation.RELATIVE_TO_SELF, 0.5f); // Pivot point of Y scaling
+        anim.setFillAfter(true); // Needed to keep the result of the animation
+        v.startAnimation(anim);
     }
 
     private static int getRelativeLeft(View myView) {

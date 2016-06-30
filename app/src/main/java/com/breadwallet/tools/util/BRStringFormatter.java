@@ -1,11 +1,12 @@
-package com.breadwallet.tools;
+package com.breadwallet.tools.util;
 
 import android.app.Activity;
 import android.util.Log;
 
 import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.adapter.AmountAdapter;
+import com.breadwallet.tools.manager.CurrencyManager;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.math.BigDecimal;

@@ -4,14 +4,13 @@ import android.app.Activity;
 import android.util.Log;
 import android.view.WindowManager;
 
-import com.breadwallet.presenter.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.BlockEntity;
 import com.breadwallet.presenter.entities.PeerEntity;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
-import com.breadwallet.tools.CurrencyManager;
+import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.manager.CurrencyManager;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
-import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.sqlite.SQLiteManager;
 
 import java.text.DecimalFormat;
@@ -198,7 +197,7 @@ public class BRPeerManager {
                 public void run() {
                     try {
                         ctx.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-                        if (FragmentAnimator.level == 0)
+                        if (BRAnimator.level == 0)
                             ((MainActivity) ctx).showHideSyncProgressViews(true);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -271,7 +270,7 @@ public class BRPeerManager {
                     @Override
                     public void run() {
 
-                        if (FragmentAnimator.level == 0)
+                        if (BRAnimator.level == 0)
                             app.showHideSyncProgressViews(true);
                         app.syncProgressBar.setProgress((int) (progressStatus * 100));
                         app.syncProgressText.setText(String.format("%s%%", new DecimalFormat("#.#").format(progressStatus * 100)));

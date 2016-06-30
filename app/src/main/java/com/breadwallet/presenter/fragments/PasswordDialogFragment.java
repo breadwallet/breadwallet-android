@@ -30,10 +30,7 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.inputmethodservice.Keyboard;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -52,27 +49,23 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.BreadWalletApp;
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
-import com.breadwallet.tools.BRConstants;
-import com.breadwallet.tools.BRStringFormatter;
-import com.breadwallet.tools.CurrencyManager;
-import com.breadwallet.tools.SharedPreferencesManager;
-import com.breadwallet.tools.TypesConverter;
+import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.BRStringFormatter;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
-import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PassCodeManager;
-import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask;
 import com.breadwallet.wallet.BRWalletManager;
 
-import java.security.KeyStore;
 import java.util.Locale;
 
 public class PasswordDialogFragment extends DialogFragment {
@@ -83,10 +76,8 @@ public class PasswordDialogFragment extends DialogFragment {
     private Button cancel;
     private Button reset;
     private DialogFragment dialogFragment;
-    private static final int AUTH_MODE_CHECK_PASS = 0;
-    private static final int AUTH_MODE_NEW_PASS = 1;
-    private static final int AUTH_MODE_CONFIRM_PASS = 2;
-    private int currentMode = AUTH_MODE_CHECK_PASS;
+
+    private int currentMode = BRConstants.AUTH_MODE_CHECK_PASS;
     private String tempPassToChange;
     private boolean firstTime = false; // if false then change;
     private boolean verifyOnly = false;
@@ -152,7 +143,7 @@ public class PasswordDialogFragment extends DialogFragment {
                             .setMessage("change payment amount?")
                             .setPositiveButton("change", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
-                                    FragmentAnimator.animateScanResultFragment();
+                                    BRAnimator.animateScanResultFragment();
                                 }
                             }).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                         @Override
@@ -231,7 +222,7 @@ public class PasswordDialogFragment extends DialogFragment {
             cancel.setClickable(false);
             cancel.setVisibility(View.GONE);
             title.setText(R.string.choose_new_passcode);
-            currentMode = AUTH_MODE_NEW_PASS;
+            currentMode = BRConstants.AUTH_MODE_NEW_PASS;
         }
         if (verifyOnly) {
             title.setText(R.string.enter_passcode);
@@ -306,13 +297,13 @@ public class PasswordDialogFragment extends DialogFragment {
         //Set and confirm the new passcode
         if (firstTime) {
             switch (currentMode) {
-                case AUTH_MODE_NEW_PASS:
+                case BRConstants.AUTH_MODE_NEW_PASS:
                     tempPassToChange = s.toString();
-                    currentMode = AUTH_MODE_CONFIRM_PASS;
+                    currentMode = BRConstants.AUTH_MODE_CONFIRM_PASS;
                     title.setText(getResources().getString(R.string.verify_passcode));
                     passcodeEditText.setText("");
                     break;
-                case AUTH_MODE_CONFIRM_PASS:
+                case BRConstants.AUTH_MODE_CONFIRM_PASS:
                     String passToCheck = s.toString();
                     if (passToCheck.equals(tempPassToChange)) {
                         passCodeManager.setPassCode(tempPassToChange, getActivity());
@@ -328,11 +319,11 @@ public class PasswordDialogFragment extends DialogFragment {
                         InputMethodManager keyboard = (InputMethodManager) getActivity().
                                 getSystemService(Context.INPUT_METHOD_SERVICE);
                         keyboard.hideSoftInputFromWindow(cancel.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
-                        currentMode = AUTH_MODE_CHECK_PASS;
+                        currentMode = BRConstants.AUTH_MODE_CHECK_PASS;
                     } else {
                         SpringAnimator.showAnimation(dialogFragment.getView());
                         passcodeEditText.setText("");
-                        currentMode = AUTH_MODE_NEW_PASS;
+                        currentMode = BRConstants.AUTH_MODE_NEW_PASS;
                         title.setText(getResources().getString(R.string.choose_new_passcode));
                     }
                     break;
@@ -364,9 +355,9 @@ public class PasswordDialogFragment extends DialogFragment {
                 passcodeEditText.setText("");
                 Log.e(TAG, "mode: " + mode + " request: " + request);
                 if (mode == BRConstants.AUTH_FOR_PHRASE) {
-                    FragmentAnimator.animateSlideToLeft((MainActivity) getActivity(), new FragmentRecoveryPhrase(), new FragmentSettings());
+                    BRAnimator.animateSlideToLeft((MainActivity) getActivity(), new FragmentRecoveryPhrase(), new FragmentSettings());
                 } else if (mode == BRConstants.AUTH_FOR_LIMIT) {
-                    FragmentAnimator.animateSlideToLeft((MainActivity) getActivity(), new FragmentSpendLimit(), new FragmentSettings());
+                    BRAnimator.animateSlideToLeft((MainActivity) getActivity(), new FragmentSpendLimit(), new FragmentSettings());
                 } else if (mode == BRConstants.AUTH_FOR_PAY && request != null) {
                     BRWalletManager walletManager = BRWalletManager.getInstance(getActivity());
                     String seed = KeyStoreManager.getKeyStorePhrase(getActivity(), BRConstants.PAY_REQUEST_CODE);
@@ -388,7 +379,7 @@ public class PasswordDialogFragment extends DialogFragment {
                     }
                     seed = null;
 
-                    FragmentAnimator.hideScanResultFragment();
+                    BRAnimator.hideScanResultFragment();
                 } else if (mode == BRConstants.AUTH_FOR_PAYMENT_PROTOCOL && paymentRequest != null) {
                     if (paymentRequest.paymentURL == null || paymentRequest.paymentURL.isEmpty())
                         return false;
@@ -401,9 +392,9 @@ public class PasswordDialogFragment extends DialogFragment {
 
         } else {
             switch (currentMode) {
-                case AUTH_MODE_CHECK_PASS:
+                case BRConstants.AUTH_MODE_CHECK_PASS:
                     if (passCodeManager.checkAuth(s.toString(), getActivity())) {
-                        currentMode = AUTH_MODE_NEW_PASS;
+                        currentMode = BRConstants.AUTH_MODE_NEW_PASS;
                         title.setText(getResources().getString(R.string.choose_new_passcode));
                         passcodeEditText.setText("");
                     } else {
@@ -411,10 +402,10 @@ public class PasswordDialogFragment extends DialogFragment {
                         passcodeEditText.setText("");
                     }
                     break;
-                case AUTH_MODE_NEW_PASS:
+                case BRConstants.AUTH_MODE_NEW_PASS:
                     if (s.length() > 3 && s.length() < 12) {
                         tempPassToChange = s.toString();
-                        currentMode = AUTH_MODE_CONFIRM_PASS;
+                        currentMode = BRConstants.AUTH_MODE_CONFIRM_PASS;
                         title.setText(getResources().getString(R.string.verify_passcode));
                         passcodeEditText.setText("");
                     } else {
@@ -422,7 +413,7 @@ public class PasswordDialogFragment extends DialogFragment {
                         passcodeEditText.setText("");
                     }
                     break;
-                case AUTH_MODE_CONFIRM_PASS:
+                case BRConstants.AUTH_MODE_CONFIRM_PASS:
                     String passToCheck = s.toString();
                     if (passToCheck.equals(tempPassToChange)) {
                         passCodeManager.setPassCode(tempPassToChange, getActivity());
@@ -434,11 +425,11 @@ public class PasswordDialogFragment extends DialogFragment {
                         InputMethodManager keyboard = (InputMethodManager) getActivity().
                                 getSystemService(Context.INPUT_METHOD_SERVICE);
                         keyboard.hideSoftInputFromWindow(cancel.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
-                        currentMode = AUTH_MODE_CHECK_PASS;
+                        currentMode = BRConstants.AUTH_MODE_CHECK_PASS;
                     } else {
                         SpringAnimator.showAnimation(dialogFragment.getView());
                         passcodeEditText.setText("");
-                        currentMode = AUTH_MODE_NEW_PASS;
+                        currentMode = BRConstants.AUTH_MODE_NEW_PASS;
                         title.setText(getResources().getString(R.string.choose_new_passcode));
                     }
                     break;
@@ -456,7 +447,7 @@ public class PasswordDialogFragment extends DialogFragment {
             m.wipeKeyStore();
             m.wipeWalletButKeystore(getActivity());
             startIntroActivity();
-            FragmentAnimator.resetFragmentAnimator();
+            BRAnimator.resetFragmentAnimator();
         }
         if (failCount >= 3) {
             info.setVisibility(View.VISIBLE);
@@ -502,10 +493,10 @@ public class PasswordDialogFragment extends DialogFragment {
 
     private void addRemoveDigit(int digits) {
         if (digit_1 == null) return;
-        digit_1.setText(digits >= 1 ? "\u2022" : "-");
-        digit_2.setText(digits >= 2 ? "\u2022" : "-");
-        digit_3.setText(digits >= 3 ? "\u2022" : "-");
-        digit_4.setText(digits >= 4 ? "\u2022" : "-");
+        digit_1.setText(digits >= 1 ? BRConstants.LITTLE_CIRCLE : "-");
+        digit_2.setText(digits >= 2 ? BRConstants.LITTLE_CIRCLE : "-");
+        digit_3.setText(digits >= 3 ? BRConstants.LITTLE_CIRCLE : "-");
+        digit_4.setText(digits >= 4 ? BRConstants.LITTLE_CIRCLE : "-");
 
     }
 

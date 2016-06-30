@@ -42,14 +42,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.BreadWalletApp;
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.RequestObject;
-import com.breadwallet.tools.animation.FragmentAnimator;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.qrcode.AutoFitTextureView;
 import com.breadwallet.tools.qrcode.PlanarYUVLuminanceSource;
 import com.breadwallet.tools.security.RequestHandler;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.BRWalletManager;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.ReaderException;
@@ -76,10 +77,7 @@ import static android.hardware.camera2.CaptureRequest.CONTROL_AF_MODE;
 
 public class FragmentDecoder extends Fragment
         implements FragmentCompat.OnRequestPermissionsResultCallback {
-    private static final int sImageFormat = ImageFormat.YUV_420_888;
-    private static final String CAMERA_GUIDE_RED = "red";
-    private static final String CAMERA_GUIDE = "reg";
-    private static final String TEXT_EMPTY = "";
+
 //    public static final int QR_SCAN = 1;
 //    public static final int IMPORT_PRIVATE_KEYS = 2;
 //    private int mode;
@@ -184,7 +182,7 @@ public class FragmentDecoder extends Fragment
                                 getActivity().runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        FragmentAnimator.hideDecoderFragment();
+                                        BRAnimator.hideDecoderFragment();
                                     }
                                 });
                                 return;
@@ -192,20 +190,20 @@ public class FragmentDecoder extends Fragment
 
                             String validationString = validateResult(decoded);
 //                        Log.e(TAG, "validationString: " + validationString);
-                            if (Objects.equals(validationString, TEXT_EMPTY)) {
+                            if (Objects.equals(validationString, BRConstants.TEXT_EMPTY)) {
                                 onQRCodeRead((MainActivity) getActivity(), rawResult.getText());
                             } else {
-                                setCameraGuide(CAMERA_GUIDE_RED);
+                                setCameraGuide(BRConstants.CAMERA_GUIDE_RED);
                                 setGuideText(validationString);
                                 accessGranted = true;
                             }
                         }
                     } catch (ReaderException ignored) {
-                        setCameraGuide(CAMERA_GUIDE);
+                        setCameraGuide(BRConstants.CAMERA_GUIDE);
 //                        Log.e(TAG, "Reader shows an exception! ", ignored);
                         /* Ignored */
                     } catch (NullPointerException | IllegalStateException ex) {
-                        setCameraGuide(CAMERA_GUIDE);
+                        setCameraGuide(BRConstants.CAMERA_GUIDE);
                         ex.printStackTrace();
                     } finally {
                         mQrReader.reset();
@@ -215,7 +213,7 @@ public class FragmentDecoder extends Fragment
 
                     }
                     if (rawResult == null) {
-                        setCameraGuide(CAMERA_GUIDE);
+                        setCameraGuide(BRConstants.CAMERA_GUIDE);
                     }
                 }
 
@@ -386,10 +384,10 @@ public class FragmentDecoder extends Fragment
                 StreamConfigurationMap map = characteristics.get(SCALER_STREAM_CONFIGURATION_MAP);
 
                 // For still image captures, we use the largest available size.
-                List<Size> outputSizes = Arrays.asList(map.getOutputSizes(sImageFormat));
+                List<Size> outputSizes = Arrays.asList(map.getOutputSizes(BRConstants.sImageFormat));
                 Size largest = Collections.max(outputSizes, new CompareSizesByArea());
 
-                mImageReader = ImageReader.newInstance(largest.getWidth() / 16, largest.getHeight() / 16, sImageFormat, 2);
+                mImageReader = ImageReader.newInstance(largest.getWidth() / 16, largest.getHeight() / 16, BRConstants.sImageFormat, 2);
                 mImageReader.setOnImageAvailableListener(mOnImageAvailableListener, mBackgroundHandler);
                 // Danger, W.R.! Attempting to use too large a preview size could exceed the camera
                 // bus' bandwidth limitation, resulting in gorgeous previews but the storage of
@@ -581,7 +579,7 @@ public class FragmentDecoder extends Fragment
             @Override
             public void run() {
                 if (text != null) {
-                    FragmentAnimator.hideDecoderFragment();
+                    BRAnimator.hideDecoderFragment();
                     Log.e(TAG, "BEFORE processRequest");
                     RequestHandler.processRequest(app, text);
 
@@ -646,11 +644,11 @@ public class FragmentDecoder extends Fragment
             return getActivity().getResources().getString(R.string.fragmentdecoder_not_a_bitcoin_qr_code);
         }
         if (obj.r != null) {
-            return TEXT_EMPTY;
+            return BRConstants.TEXT_EMPTY;
         }
         if (obj.address != null) {
             if (BRWalletManager.validateAddress(obj.address)) {
-                return TEXT_EMPTY;
+                return BRConstants.TEXT_EMPTY;
             } else {
                 return getActivity().getResources().getString(R.string.fragmentdecoder_not_valid_bitcoin_address);
             }
@@ -662,11 +660,11 @@ public class FragmentDecoder extends Fragment
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (str.equalsIgnoreCase(CAMERA_GUIDE)) {
+                if (str.equalsIgnoreCase(BRConstants.CAMERA_GUIDE)) {
                     camera_guide_image.setImageResource(R.drawable.cameraguide);
-                    setGuideText(TEXT_EMPTY);
+                    setGuideText(BRConstants.TEXT_EMPTY);
 //                    Log.e(TAG, "camera_guide set: cameraguide");
-                } else if (str.equalsIgnoreCase(CAMERA_GUIDE_RED)) {
+                } else if (str.equalsIgnoreCase(BRConstants.CAMERA_GUIDE_RED)) {
                     camera_guide_image.setImageResource(R.drawable.cameraguide_red);
 //                    Log.e(TAG, "camera_guide set: cameraguide_red ");
                 } else {

@@ -12,11 +12,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.BreadWalletApp;
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.tools.BRStringFormatter;
-import com.breadwallet.tools.CurrencyManager;
-import com.breadwallet.tools.SharedPreferencesManager;
+import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.BRStringFormatter;
+import com.breadwallet.tools.manager.CurrencyManager;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.security.PassCodeManager;
 
@@ -49,9 +50,7 @@ import java.math.BigDecimal;
 
 public class FragmentSpendLimit extends Fragment {
     public static final String TAG = FragmentSpendLimit.class.getName();
-    private static final int limit1 = 10000000;
-    private static final int limit2 = 100000000;
-    private static final int limit3 = 1000000000;
+
     private ImageView checkMark1;
     private ImageView checkMark2;
     private ImageView checkMark3;
@@ -81,12 +80,12 @@ public class FragmentSpendLimit extends Fragment {
         double rate = SharedPreferencesManager.getRate(getActivity());
 
         String alwaysPasscodeString = "always require passcode";
-        String limit100kString = String.format("%s    (%s)", BRStringFormatter.getFormattedCurrencyString("BTC", limit1),
-                BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(String.valueOf(limit1)), getActivity()));
-        String limit1BString = String.format("%s   (%s)", BRStringFormatter.getFormattedCurrencyString("BTC", limit2),
-                BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(String.valueOf(limit2)), getActivity()));
-        String limit10BString = String.format("%s  (%s)", BRStringFormatter.getFormattedCurrencyString("BTC", limit3),
-                BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(String.valueOf(limit3)),getActivity()));
+        String limit100kString = String.format("%s    (%s)", BRStringFormatter.getFormattedCurrencyString("BTC", BRConstants.limit1),
+                BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(String.valueOf(BRConstants.limit1)), getActivity()));
+        String limit1BString = String.format("%s   (%s)", BRStringFormatter.getFormattedCurrencyString("BTC", BRConstants.limit2),
+                BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(String.valueOf(BRConstants.limit2)), getActivity()));
+        String limit10BString = String.format("%s  (%s)", BRStringFormatter.getFormattedCurrencyString("BTC", BRConstants.limit3),
+                BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(String.valueOf(BRConstants.limit3)),getActivity()));
 
         alwaysPasscodeText.setText(alwaysPasscodeString);
         limit100kText.setText(limit100kString);
@@ -135,15 +134,15 @@ public class FragmentSpendLimit extends Fragment {
                 break;
             case 2:
                 checkMark2.setVisibility(View.VISIBLE);
-                PassCodeManager.getInstance().setLimit(getActivity(), limit1);
+                PassCodeManager.getInstance().setLimit(getActivity(), BRConstants.limit1);
                 break;
             case 3:
                 checkMark3.setVisibility(View.VISIBLE);
-                PassCodeManager.getInstance().setLimit(getActivity(), limit2);
+                PassCodeManager.getInstance().setLimit(getActivity(), BRConstants.limit2);
                 break;
             case 4:
                 checkMark4.setVisibility(View.VISIBLE);
-                PassCodeManager.getInstance().setLimit(getActivity(), limit3);
+                PassCodeManager.getInstance().setLimit(getActivity(), BRConstants.limit3);
                 break;
         }
     }
@@ -154,13 +153,13 @@ public class FragmentSpendLimit extends Fragment {
             case 0:
                 checkMark1.setVisibility(View.VISIBLE);
                 break;
-            case limit1:
+            case BRConstants.limit1:
                 checkMark2.setVisibility(View.VISIBLE);
                 break;
-            case limit2:
+            case BRConstants.limit2:
                 checkMark3.setVisibility(View.VISIBLE);
                 break;
-            case limit3:
+            case BRConstants.limit3:
                 checkMark4.setVisibility(View.VISIBLE);
                 break;
 

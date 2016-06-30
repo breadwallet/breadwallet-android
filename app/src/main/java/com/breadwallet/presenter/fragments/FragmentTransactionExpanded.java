@@ -2,7 +2,6 @@
 package com.breadwallet.presenter.fragments;
 
 import android.app.Fragment;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,13 +12,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.TransactionListItem;
-import com.breadwallet.tools.BRStringFormatter;
-import com.breadwallet.tools.CurrencyManager;
-import com.breadwallet.tools.SharedPreferencesManager;
+import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.util.BRStringFormatter;
+import com.breadwallet.tools.manager.CurrencyManager;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
-import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.math.BigDecimal;
@@ -104,7 +102,7 @@ public class FragmentTransactionExpanded extends Fragment {
         String hashString = rawHash.substring(0, mid) + "\n" + rawHash.substring(mid);
 
         hashText.setText(hashString);
-        FragmentAnimator.showCopyBubble(getActivity(), rootView.findViewById(R.id.tx_id), hashText);
+        BRAnimator.showCopyBubble(getActivity(), rootView.findViewById(R.id.tx_id), hashText);
 
         if (received) {
 
@@ -153,7 +151,7 @@ public class FragmentTransactionExpanded extends Fragment {
             if (v != null) v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    FragmentAnimator.hideCopyBubble(getActivity());
+                    BRAnimator.hideCopyBubble(getActivity());
                 }
             });
         }
@@ -168,7 +166,7 @@ public class FragmentTransactionExpanded extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        FragmentAnimator.hideCopyBubble(getActivity());
+        BRAnimator.hideCopyBubble(getActivity());
     }
 
 
@@ -184,7 +182,7 @@ public class FragmentTransactionExpanded extends Fragment {
                     transaction_received_from_addresses, null);
             TextView txFrom = (TextView) addressBlock.findViewById(R.id.tx_from_text);
             TextView txFromDescription = (TextView) addressBlock.findViewById(R.id.tx_from_description);
-            FragmentAnimator.showCopyBubble(getActivity(), addressBlock, txFrom);
+            BRAnimator.showCopyBubble(getActivity(), addressBlock, txFrom);
             if (address != null && !address.isEmpty()) {
                 txFrom.setText(address);
                 txFromDescription.setText(getString(R.string.spent_address));
@@ -202,7 +200,7 @@ public class FragmentTransactionExpanded extends Fragment {
                     transaction_sent_from_addresses, null);
             final TextView txFrom = (TextView) addressBlock.findViewById(R.id.tx_from_text);
             TextView txFromDescription = (TextView) addressBlock.findViewById(R.id.tx_from_description);
-            FragmentAnimator.showCopyBubble(getActivity(), addressBlock, txFrom);
+            BRAnimator.showCopyBubble(getActivity(), addressBlock, txFrom);
             if (address != null && !address.isEmpty()) {
                 txFrom.setText(address);
                 txFromDescription.setText(getString(R.string.wallet_address));
@@ -226,7 +224,7 @@ public class FragmentTransactionExpanded extends Fragment {
             TextView txToDescription = (TextView) addressBlock.findViewById(R.id.tx_to_description);
             TextView txToAmount = (TextView) addressBlock.findViewById(R.id.tx_to_amount_text);
             TextView txToExchange = (TextView) addressBlock.findViewById(R.id.tx_to_exchange_text);
-            FragmentAnimator.showCopyBubble(getActivity(), addressBlock, txTo);
+            BRAnimator.showCopyBubble(getActivity(), addressBlock, txTo);
 
             if (addresses[i] != null && !addresses[i].isEmpty()) {
                 txTo.setText(addresses[i]);
@@ -254,7 +252,7 @@ public class FragmentTransactionExpanded extends Fragment {
             TextView txToDescription = (TextView) addressBlock.findViewById(R.id.tx_to_description);
             TextView txToAmount = (TextView) addressBlock.findViewById(R.id.tx_to_amount_text);
             TextView txToExchange = (TextView) addressBlock.findViewById(R.id.tx_to_exchange_text);
-            FragmentAnimator.showCopyBubble(getActivity(), addressBlock, txTo);
+            BRAnimator.showCopyBubble(getActivity(), addressBlock, txTo);
 
             if (addresses[i] != null && !addresses[i].isEmpty()) {
                 txTo.setText(addresses[i]);

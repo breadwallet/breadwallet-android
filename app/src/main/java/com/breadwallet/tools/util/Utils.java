@@ -1,20 +1,17 @@
-package com.breadwallet.tools;
+package com.breadwallet.tools.util;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.provider.Settings;
-import android.view.View;
-import android.view.ViewGroup;
+import android.util.Log;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
-import com.breadwallet.presenter.fragments.FragmentSettingsAll;
-
-import org.w3c.dom.Text;
+import com.breadwallet.presenter.activities.MainActivity;
 
 import java.util.List;
 
@@ -78,5 +75,28 @@ public class Utils {
             }
         }
         return false;
+    }
+
+    @SuppressWarnings("deprecation")
+    public static void printPhoneSpecs() {
+        String specsTag = "PHONE SPECS";
+        Log.e(specsTag, "");
+        Log.e(specsTag, "***************************PHONE SPECS***************************");
+        Log.e(specsTag, "* screen X: " + MainActivity.screenParametersPoint.x + " , screen Y: " + MainActivity.screenParametersPoint.y);
+        Log.e(specsTag, "* Build.CPU_ABI: " + Build.CPU_ABI);
+        Runtime rt = Runtime.getRuntime();
+        long maxMemory = rt.maxMemory();
+        Log.e(specsTag, "* maxMemory:" + Long.toString(maxMemory));
+        Log.e(specsTag, "----------------------------PHONE SPECS----------------------------");
+        Log.e(specsTag, "");
+    }
+
+    public static boolean isEmulatorOrDebug() {
+        String fing = Build.FINGERPRINT;
+        boolean isEmulator = false;
+        if (fing != null) {
+            isEmulator = fing.contains("vbox") || fing.contains("generic");
+        }
+        return isEmulator;
     }
 }

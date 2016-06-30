@@ -1,4 +1,4 @@
-package com.breadwallet.tools;
+package com.breadwallet.tools.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -33,7 +33,7 @@ import java.io.StreamCorruptedException;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-class ReadWriteBytes {
+public class ReadWriteBytes {
 
     public static Object readBytes(byte[] bytes) {
         ByteArrayInputStream bis = new ByteArrayInputStream(bytes);

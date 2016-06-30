@@ -4,11 +4,6 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -18,21 +13,16 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.BreadWalletApp;
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.tools.BRClipboardManager;
-import com.breadwallet.tools.BRConstants;
+import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
-import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.wallet.BRWalletManager;
-
-import java.util.Locale;
 
 /**
  * BreadWallet
@@ -108,8 +98,8 @@ public class MainFragment extends Fragment {
         scanQRButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (FragmentAnimator.checkTheMultipressingAvailability()) {
-                    FragmentAnimator.animateDecoderFragment();
+                if (BRAnimator.checkTheMultipressingAvailability()) {
+                    BRAnimator.animateDecoderFragment();
                 }
             }
         });
@@ -120,7 +110,7 @@ public class MainFragment extends Fragment {
                 AlertDialog alert = null;
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-                if (FragmentAnimator.checkTheMultipressingAvailability()) {
+                if (BRAnimator.checkTheMultipressingAvailability()) {
                     String tempAddress = BRClipboardManager.readFromClipboard(getActivity());
                     if (!addressEditText.getText().toString().isEmpty()) {
                         tempAddress = addressEditText.getText().toString();
@@ -160,7 +150,7 @@ public class MainFragment extends Fragment {
                                         new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int which) {
                                                 dialog.dismiss();
-                                                FragmentAnimator.animateScanResultFragment();
+                                                BRAnimator.animateScanResultFragment();
                                                 FragmentScanResult.address = finalAddress;
                                             }
                                         });
@@ -173,7 +163,7 @@ public class MainFragment extends Fragment {
                                 alert = builder.create();
                                 alert.show();
                             } else {
-                                FragmentAnimator.animateScanResultFragment();
+                                BRAnimator.animateScanResultFragment();
                                 FragmentScanResult.address = finalAddress;
                             }
                         } else {

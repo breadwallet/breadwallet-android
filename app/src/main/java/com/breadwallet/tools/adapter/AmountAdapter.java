@@ -3,10 +3,11 @@ package com.breadwallet.tools.adapter;
 import android.app.Activity;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.BreadWalletApp;
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
-import com.breadwallet.tools.CurrencyManager;
+import com.breadwallet.tools.manager.CurrencyManager;
+import com.breadwallet.tools.util.BRConstants;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -41,19 +42,17 @@ import java.util.Observable;
 public class AmountAdapter extends Observable {
     private static final String TAG = AmountAdapter.class.getName();
     private static boolean comaHasBeenInserted = false;
-    private static final int DIGITS_LIMIT = 12;
     private static boolean isTextColorGrey = true;
     private static String rightValue = "0";
     private static String leftValue = "0";
-    private static final int MAX_DIGITS_AFTER_SEPARATOR = 2;
     public static int digitsInserted = 0;
-    private static int buttonCode = BreadWalletApp.PAY_BUTTON;
+    private static int buttonCode = BRConstants.PAY_BUTTON;
 
     public static void preConditions(String tmp) {
         if (FragmentScanResult.isARequest) {
-            buttonCode = BreadWalletApp.REQUEST_BUTTON;
+            buttonCode = BRConstants.REQUEST_BUTTON;
         } else {
-            buttonCode = BreadWalletApp.PAY_BUTTON;
+            buttonCode = BRConstants.PAY_BUTTON;
         }
         switch (tmp) {
             case "":
@@ -83,7 +82,7 @@ public class AmountAdapter extends Observable {
             if (rightValue.equals("0.")) {
                 changeTextColor(2);
                 calculateAndPassValuesToFragment(rightValue.substring(0, length - 1));
-                ((BreadWalletApp) app.getApplication()).setLockerPayButton(BreadWalletApp.LOCKER_BUTTON);
+                ((BreadWalletApp) app.getApplication()).setLockerPayButton(BRConstants.LOCKER_BUTTON);
             }
         }
         if (length > 1) {
@@ -93,7 +92,7 @@ public class AmountAdapter extends Observable {
                 calculateAndPassValuesToFragment(rightValue.substring(0, length - 1));
             }
         } else {
-            ((BreadWalletApp) app.getApplication()).setLockerPayButton(BreadWalletApp.LOCKER_BUTTON);
+            ((BreadWalletApp) app.getApplication()).setLockerPayButton(BRConstants.LOCKER_BUTTON);
             changeTextColor(2);
             calculateAndPassValuesToFragment("0");
         }
@@ -142,7 +141,7 @@ public class AmountAdapter extends Observable {
 
     private static boolean isDigitInsertingLegal(String text) {
 //        Log.e(TAG, "Testing isDigitInsertingLegal, text: " + text);
-        return text.length() < DIGITS_LIMIT && (!comaHasBeenInserted || digitsInserted < MAX_DIGITS_AFTER_SEPARATOR);
+        return text.length() < BRConstants.DIGITS_LIMIT && (!comaHasBeenInserted || digitsInserted < BRConstants.MAX_DIGITS_AFTER_SEPARATOR);
     }
 
     /**
@@ -178,7 +177,7 @@ public class AmountAdapter extends Observable {
             if (rightValueObject.equals(new BigDecimal("0"))) {
                 leftValueObject = new BigDecimal("0");
             } else {
-                if (FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_RIGHT) {
+                if (FragmentScanResult.currentCurrencyPosition == BRConstants.BITCOIN_RIGHT) {
                     //from bits to other currency using rate
                     if (rate.intValue() > 1) {
                         leftValueObject = rate.multiply(rightValueObject.divide(new BigDecimal("1000000")));
@@ -186,7 +185,7 @@ public class AmountAdapter extends Observable {
                         leftValueObject = new BigDecimal("0");
                     }
 
-                } else if (FragmentScanResult.currentCurrencyPosition == FragmentScanResult.BITCOIN_LEFT) {
+                } else if (FragmentScanResult.currentCurrencyPosition == BRConstants.BITCOIN_LEFT) {
                     //from other currency to bits using rate
                     if (rate.intValue() > 1) {
                         leftValueObject = rightValueObject.multiply(new BigDecimal("1000000")).

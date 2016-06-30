@@ -2,7 +2,6 @@ package com.breadwallet.tools.adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -12,11 +11,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
-import com.breadwallet.presenter.fragments.FragmentCurrency;
-import com.breadwallet.tools.SharedPreferencesManager;
-import com.breadwallet.tools.Utils;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.util.Utils;
 
 /**
  * BreadWallet

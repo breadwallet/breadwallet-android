@@ -1,40 +1,32 @@
 package com.breadwallet.presenter.fragments;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.Fragment;
-import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.hardware.fingerprint.FingerprintManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.BreadWalletApp;
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.tools.BRConstants;
-import com.breadwallet.tools.BRStringFormatter;
-import com.breadwallet.tools.CurrencyManager;
-import com.breadwallet.tools.SharedPreferencesManager;
+import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.BRStringFormatter;
+import com.breadwallet.tools.manager.CurrencyManager;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.adapter.CurrencyListAdapter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
-import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.security.PassCodeManager;
 import com.breadwallet.wallet.BRPeerManager;
-
-import org.w3c.dom.Text;
 
 /**
  * BreadWallet
@@ -109,7 +101,7 @@ public class FragmentSettings extends Fragment {
         fingerprintLimit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (FragmentAnimator.checkTheMultipressingAvailability()) {
+                if (BRAnimator.checkTheMultipressingAvailability()) {
                     ((BreadWalletApp) getActivity().getApplicationContext()).promptForAuthentication(getActivity(), BRConstants.AUTH_FOR_LIMIT, null, null, null, null);
                 }
             }
@@ -118,8 +110,8 @@ public class FragmentSettings extends Fragment {
         startRecoveryWallet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (FragmentAnimator.checkTheMultipressingAvailability()) {
-                    FragmentAnimator.pressWipeWallet(app, new FragmentWipeWallet());
+                if (BRAnimator.checkTheMultipressingAvailability()) {
+                    BRAnimator.pressWipeWallet(app, new FragmentWipeWallet());
                     app.activityButtonsEnable(false);
                 }
             }
@@ -127,7 +119,7 @@ public class FragmentSettings extends Fragment {
         recoveryPhrase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (FragmentAnimator.checkTheMultipressingAvailability()) {
+                if (BRAnimator.checkTheMultipressingAvailability()) {
 
                     new AlertDialog.Builder(getActivity())
                             .setTitle(getResources().getString(R.string.warning))
@@ -150,23 +142,23 @@ public class FragmentSettings extends Fragment {
         about.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (FragmentAnimator.checkTheMultipressingAvailability()) {
-                    FragmentAnimator.animateSlideToLeft(app, new FragmentAbout(), fragmentSettings);
+                if (BRAnimator.checkTheMultipressingAvailability()) {
+                    BRAnimator.animateSlideToLeft(app, new FragmentAbout(), fragmentSettings);
                 }
             }
         });
         localCurrency.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (FragmentAnimator.checkTheMultipressingAvailability()) {
-                    FragmentAnimator.animateSlideToLeft(app, new FragmentCurrency(), fragmentSettings);
+                if (BRAnimator.checkTheMultipressingAvailability()) {
+                    BRAnimator.animateSlideToLeft(app, new FragmentCurrency(), fragmentSettings);
                 }
             }
         });
         changePassword.setOnClickListener(new View.OnClickListener() {
                                               @Override
                                               public void onClick(View v) {
-                                                  if (FragmentAnimator.checkTheMultipressingAvailability()) {
+                                                  if (BRAnimator.checkTheMultipressingAvailability()) {
                                                       final android.app.FragmentManager fm = getActivity().getFragmentManager();
                                                       new PasswordDialogFragment().show(fm, PasswordDialogFragment.class.getName());
                                                   }
@@ -178,11 +170,11 @@ public class FragmentSettings extends Fragment {
         rescan.setOnClickListener(new View.OnClickListener() {
                                       @Override
                                       public void onClick(View v) {
-                                          if (FragmentAnimator.checkTheMultipressingAvailability()) {
+                                          if (BRAnimator.checkTheMultipressingAvailability()) {
                                               new Thread(new Runnable() {
                                                   @Override
                                                   public void run() {
-                                                      FragmentAnimator.goToMainActivity(fragmentSettings);
+                                                      BRAnimator.goToMainActivity(fragmentSettings);
                                                       BRPeerManager.getInstance(getActivity()).rescan();
                                                   }
                                               }).start();

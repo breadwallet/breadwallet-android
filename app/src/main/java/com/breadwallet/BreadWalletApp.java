@@ -1,4 +1,4 @@
-package com.breadwallet.presenter;
+package com.breadwallet;
 
 import android.Manifest;
 import android.annotation.TargetApi;
@@ -25,15 +25,13 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.presenter.fragments.FingerprintDialogFragment;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.presenter.fragments.PasswordDialogFragment;
-import com.breadwallet.tools.BRConstants;
-import com.breadwallet.tools.animation.FragmentAnimator;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.wallet.BRWalletManager;
 
@@ -80,12 +78,6 @@ import com.breadwallet.wallet.BRWalletManager;
 //        resToastText = R.string.crash_toast_text,
 //        formKey = "Test Phone")
 public class BreadWalletApp extends Application {
-    public static final int BREAD_WALLET_IMAGE = 0;
-    public static final int BREAD_WALLET_TEXT = 1;
-    public static final int LOCKER_BUTTON = 2;
-    public static final int PAY_BUTTON = 3;
-    public static final int REQUEST_BUTTON = 4;
-
     private static final String TAG = BreadWalletApp.class.getName();
     public static boolean unlocked = false;
     private boolean customToastAvailable = true;
@@ -106,7 +98,6 @@ public class BreadWalletApp extends Application {
         DISPLAY_HEIGHT_PX = size.y;
 //        ACRA.init(this);
         mFingerprintManager = (FingerprintManager) getSystemService(Context.FINGERPRINT_SERVICE);
-//        TypefaceUtil.overrideFont(getApplicationContext(), "DEFAULT", "fonts/UbuntuMono-R.ttf");
 
     }
 
@@ -155,29 +146,15 @@ public class BreadWalletApp extends Application {
         return toast != null && toast.getView().isShown();
     }
 
-//    public int getRelativeLeft(View myView) {
-//        if (myView.getParent() == myView.getRootView())
-//            return myView.getLeft();
-//        else
-//            return myView.getLeft() + getRelativeLeft((View) myView.getParent());
-//    }
-
-    public int getRelativeTop(View myView) {
-        if (myView.getParent() == myView.getRootView())
-            return myView.getTop();
-        else
-            return myView.getTop() + getRelativeTop((View) myView.getParent());
-    }
-
     public void setTopMiddleView(int view, String text) {
         MainActivity app = MainActivity.app;
         switch (view) {
-            case BREAD_WALLET_IMAGE:
+            case BRConstants.BREAD_WALLET_IMAGE:
                 if (app.viewFlipper.getDisplayedChild() == 1) {
                     app.viewFlipper.showPrevious();
                 }
                 break;
-            case BREAD_WALLET_TEXT:
+            case BRConstants.BREAD_WALLET_TEXT:
                 if (app.viewFlipper.getDisplayedChild() == 0) {
                     app.viewFlipper.showNext();
                 }
@@ -192,7 +169,7 @@ public class BreadWalletApp extends Application {
         Log.e(TAG, "Flipper has # of child: " + app.lockerPayFlipper.getChildCount());
         Log.e(TAG, "app.lockerPayFlipper: " + app.lockerPayFlipper.getDisplayedChild());
         switch (view) {
-            case LOCKER_BUTTON:
+            case BRConstants.LOCKER_BUTTON:
                 if (app.lockerPayFlipper.getDisplayedChild() == 1) {
                     app.lockerPayFlipper.showPrevious();
 
@@ -202,13 +179,13 @@ public class BreadWalletApp extends Application {
                 }
                 app.lockerButton.setVisibility(unlocked ? View.INVISIBLE : View.VISIBLE);
                 break;
-            case PAY_BUTTON:
+            case BRConstants.PAY_BUTTON:
                 if (app.lockerPayFlipper.getDisplayedChild() == 0)
                     app.lockerPayFlipper.showNext();
                 if (app.lockerPayFlipper.getDisplayedChild() == 2)
                     app.lockerPayFlipper.showPrevious();
                 break;
-            case REQUEST_BUTTON:
+            case BRConstants.REQUEST_BUTTON:
                 if (app.lockerPayFlipper.getDisplayedChild() == 0) {
                     app.lockerPayFlipper.showNext();
                     app.lockerPayFlipper.showNext();
@@ -292,14 +269,7 @@ public class BreadWalletApp extends Application {
                 .show();
     }
 
-    public boolean isEmulatorOrDebug() {
-        String fing = Build.FINGERPRINT;
-        boolean isEmulator = false;
-        if (fing != null) {
-            isEmulator = fing.contains("vbox") || fing.contains("generic");
-        }
-        return isEmulator;
-    }
+
 
     public void showCustomDialog(final String title, final String message, final String buttonText) {
         Log.e(TAG, "Showing a dialog!");

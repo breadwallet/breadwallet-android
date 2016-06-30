@@ -4,15 +4,14 @@ import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.util.Log;
 
-import com.breadwallet.tools.ByteReader;
-import com.breadwallet.tools.SharedPreferencesManager;
-import com.breadwallet.tools.TypesConverter;
+import com.breadwallet.tools.util.ByteReader;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.io.File;

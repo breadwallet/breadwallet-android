@@ -4,12 +4,12 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.BreadWalletApp;
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.presenter.entities.RequestObject;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
-import com.breadwallet.tools.animation.FragmentAnimator;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
 import com.breadwallet.wallet.BRWalletManager;
 
@@ -161,7 +161,7 @@ public class RequestHandler {
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                FragmentAnimator.animateScanResultFragment();
+                                BRAnimator.animateScanResultFragment();
                             }
                         }, 1000);
 
@@ -182,7 +182,7 @@ public class RequestHandler {
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                FragmentAnimator.animateScanResultFragment();
+                                BRAnimator.animateScanResultFragment();
                             }
                         }, 1000);
                     }

@@ -33,12 +33,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.breadwallet.presenter.entities.BRPeerEntity;
-import com.breadwallet.presenter.entities.BlockEntity;
 import com.breadwallet.presenter.entities.PeerEntity;
-import com.breadwallet.tools.TypesConverter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 class PeerDataSource {

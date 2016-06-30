@@ -1,17 +1,14 @@
 
 package com.breadwallet.presenter.fragments;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -19,22 +16,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.BreadWalletApp;
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.tools.Utils;
-import com.breadwallet.tools.animation.FragmentAnimator;
+import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.wallet.BRWalletManager;
-
-import java.text.Normalizer;
-import java.util.Arrays;
 
 /**
  * BreadWallet
@@ -111,7 +104,7 @@ public class FragmentWipeWallet extends Fragment {
                     m.wipeKeyStore();
                     m.wipeWalletButKeystore(getActivity());
                     startIntroActivity();
-                    FragmentAnimator.resetFragmentAnimator();
+                    BRAnimator.resetFragmentAnimator();
                 } else {
                     new AlertDialog.Builder(getActivity())
                             .setMessage(getString(R.string.bad_recovery_phrase))

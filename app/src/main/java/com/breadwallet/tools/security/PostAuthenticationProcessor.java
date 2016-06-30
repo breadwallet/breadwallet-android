@@ -4,14 +4,14 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.BreadWalletApp;
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.fragments.FragmentRecoveryPhrase;
 import com.breadwallet.presenter.fragments.FragmentSettings;
 import com.breadwallet.presenter.fragments.IntroWelcomeFragment;
-import com.breadwallet.tools.BRConstants;
-import com.breadwallet.tools.animation.FragmentAnimator;
+import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
 import com.breadwallet.wallet.BRWalletManager;
 
@@ -70,7 +70,7 @@ public class PostAuthenticationProcessor {
                 BRWalletManager m = BRWalletManager.getInstance(app);
                 m.wipeKeyStore();
                 m.wipeWalletButKeystore(app);
-                FragmentAnimator.resetFragmentAnimator();
+                BRAnimator.resetFragmentAnimator();
                 app.finish();
             }
         } else {
@@ -107,7 +107,7 @@ public class PostAuthenticationProcessor {
     public void onShowPhraseAuth(MainActivity app) {
         Log.e(TAG, "onShowPhraseAuth");
         try {
-            FragmentAnimator.animateSlideToLeft(app, new FragmentRecoveryPhrase(), new FragmentSettings());
+            BRAnimator.animateSlideToLeft(app, new FragmentRecoveryPhrase(), new FragmentSettings());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -119,7 +119,7 @@ public class PostAuthenticationProcessor {
             String seed = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAY_REQUEST_CODE);
             boolean success = BRWalletManager.getInstance(app).publishSerializedTransaction(tmpTx, seed);
             tmpTx = null;
-            FragmentAnimator.hideScanResultFragment();
+            BRAnimator.hideScanResultFragment();
             if (!success)
                 ((BreadWalletApp) app.getApplication()).showCustomToast(app, "failed to send", MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
         } else {

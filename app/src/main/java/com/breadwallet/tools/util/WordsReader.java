@@ -1,11 +1,8 @@
-package com.breadwallet.tools;
+package com.breadwallet.tools.util;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetManager;
-import android.util.Log;
-
-import com.breadwallet.R;
 
 import java.io.BufferedReader;
 import java.io.IOException;

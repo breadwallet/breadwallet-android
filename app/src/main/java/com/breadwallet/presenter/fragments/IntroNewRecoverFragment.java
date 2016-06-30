@@ -1,21 +1,16 @@
 package com.breadwallet.presenter.fragments;
 
 import android.app.Fragment;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.IntroActivity;
-import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.tools.SharedPreferencesManager;
-import com.breadwallet.tools.animation.BackgroundMovingAnimator;
-import com.breadwallet.tools.animation.FragmentAnimator;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.animation.BRAnimator;
 
 /**
  * BreadWallet
@@ -56,7 +51,7 @@ public class IntroNewRecoverFragment extends Fragment {
         newWallet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (FragmentAnimator.checkTheMultipressingAvailability()) {
+                if (BRAnimator.checkTheMultipressingAvailability()) {
                     ((IntroActivity) getActivity()).showNewWalletFragment();
                 }
             }
@@ -65,7 +60,7 @@ public class IntroNewRecoverFragment extends Fragment {
         recoverWallet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (FragmentAnimator.checkTheMultipressingAvailability()) {
+                if (BRAnimator.checkTheMultipressingAvailability()) {
                     ((IntroActivity) getActivity()).showRecoverWalletFragment();
                 }
             }

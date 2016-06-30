@@ -12,9 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.breadwallet.R;
-import com.breadwallet.tools.BRConstants;
+import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
-import com.breadwallet.tools.animation.FragmentAnimator;
 
 import java.util.Locale;
 
@@ -55,7 +55,7 @@ public class FragmentAbout extends Fragment {
         rootView.findViewById(R.id.about4).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (FragmentAnimator.checkTheMultipressingAvailability()) {
+                if (BRAnimator.checkTheMultipressingAvailability()) {
                     String to = BRConstants.SUPPORT_EMAIL;
                     PackageInfo pInfo = null;
                     String version = "";

@@ -1,4 +1,4 @@
-package com.breadwallet.tools;
+package com.breadwallet.tools.manager;
 
 import android.app.Activity;
 import android.content.Context;
@@ -6,12 +6,11 @@ import android.content.SharedPreferences;
 import android.util.Base64;
 import android.util.Base64InputStream;
 import android.util.Base64OutputStream;
-import android.util.Log;
 
-import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.fragments.FragmentCurrency;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.io.ByteArrayInputStream;
@@ -20,7 +19,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Currency;
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
@@ -50,79 +48,79 @@ import java.util.Set;
  */
 public class SharedPreferencesManager {
     public static final String TAG = SharedPreferencesManager.class.getName();
-    private static String RECEIVE_ADDRESS = "receive_address";
+
 
     public static String getIso(Activity context) {
-        SharedPreferences settingsToGet = context.getSharedPreferences(MainActivity.PREFS_NAME, 0);
-        return settingsToGet.getString(FragmentCurrency.CURRENT_CURRENCY, Currency.getInstance(Locale.getDefault()).getCurrencyCode());
+        SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
+        return settingsToGet.getString(BRConstants.CURRENT_CURRENCY, Currency.getInstance(Locale.getDefault()).getCurrencyCode());
     }
 
 
     public static float getRate(Activity context) {
-        SharedPreferences settingsToGet = context.getSharedPreferences(MainActivity.PREFS_NAME, 0);
-        return settingsToGet.getFloat(FragmentCurrency.RATE, 1);
+        SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
+        return settingsToGet.getFloat(BRConstants.RATE, 1);
     }
 
     public static boolean getPhraseWroteDown(Activity context) {
-        SharedPreferences prefs = context.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
-        return prefs.getBoolean(BRWalletManager.PHRASE_WRITTEN, false);
+        SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getBoolean(BRConstants.PHRASE_WRITTEN, false);
 
     }
 
     public static void putCheckBoxRecoveryPhraseFragment(Activity context, boolean check) {
-        SharedPreferences prefs = context.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(BRWalletManager.PHRASE_WRITTEN, check);
+        editor.putBoolean(BRConstants.PHRASE_WRITTEN, check);
         editor.apply();
     }
 
     public static int getCurrencyListPosition(Context context) {
-        SharedPreferences settings = context.getSharedPreferences(MainActivity.PREFS_NAME, 0);
-        return settings.getInt(FragmentCurrency.POSITION, 0);
+        SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
+        return settings.getInt(BRConstants.POSITION, 0);
     }
 
 
     public static void putReceiveAddress(Activity ctx, String tmpAddr) {
-        SharedPreferences.Editor editor = ctx.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE).edit();
-        editor.putString(RECEIVE_ADDRESS, tmpAddr);
+        SharedPreferences.Editor editor = ctx.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE).edit();
+        editor.putString(BRConstants.RECEIVE_ADDRESS, tmpAddr);
         editor.apply();
     }
 
     public static void clearAllPrefs(Activity activity) {
-        SharedPreferences.Editor editor = activity.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE).edit();
+        SharedPreferences.Editor editor = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE).edit();
         editor.clear();
         editor.apply();
     }
 
     public static String getReceiveAddress(Activity context) {
-        SharedPreferences prefs = context.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
-        return prefs.getString(RECEIVE_ADDRESS, "");
+        SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString(BRConstants.RECEIVE_ADDRESS, "");
     }
 
     public static void putFirstAddress(Activity context, String firstAddress) {
-        SharedPreferences prefs = context.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(BRConstants.FIRST_ADDRESS, firstAddress);
         editor.apply();
     }
 
     public static long getFeePerKb(Activity context) {
-        SharedPreferences prefs = context.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getLong(BRConstants.FEE_KB_PREFS, 0);
     }
 
     public static long getSecureTime(Activity activity) {
-        SharedPreferences prefs = activity.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getLong(BRConstants.SECURE_TIME_PREFS, System.currentTimeMillis() / 1000);
     }
 
     public static int getLimit(Activity activity) {
-        SharedPreferences prefs = activity.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getInt(BRConstants.LIMIT_PREFS, BRConstants.ONE_BITCOIN);
     }
 
     public static void putLimit(Activity activity, int limit) {
-        SharedPreferences prefs = activity.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt(BRConstants.LIMIT_PREFS, limit);
         editor.apply();
@@ -130,48 +128,48 @@ public class SharedPreferencesManager {
 
     public static void putIso(Activity context, String code) {
 
-        SharedPreferences settings = context.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
-        editor.putString(FragmentCurrency.CURRENT_CURRENCY, code.equalsIgnoreCase(Locale.getDefault().getISO3Language()) ? null : code);
+        editor.putString(BRConstants.CURRENT_CURRENCY, code.equalsIgnoreCase(Locale.getDefault().getISO3Language()) ? null : code);
         editor.apply();
 
     }
 
     public static void putCurrencyListPosition(Activity context, int lastItemsPosition) {
-        SharedPreferences settings = context.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
-        editor.putInt(FragmentCurrency.POSITION, lastItemsPosition);
+        editor.putInt(BRConstants.POSITION, lastItemsPosition);
         editor.apply();
     }
 
     public static void putRate(Activity context, float rate) {
-        SharedPreferences settings = context.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
-        editor.putFloat(FragmentCurrency.RATE, rate);
+        editor.putFloat(BRConstants.RATE, rate);
         editor.apply();
     }
 
     public static String getFirstAddress(Activity context) {
-        SharedPreferences prefs = context.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getString(BRConstants.FIRST_ADDRESS, "");
     }
 
     public static void putFeePerKb(Activity context, long fee) {
-        SharedPreferences prefs = context.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putLong(BRConstants.FEE_KB_PREFS, fee);
         editor.apply();
     }
 
     public static void putSecureTime(Activity activity, long date) {
-        SharedPreferences prefs = activity.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putLong(BRConstants.SECURE_TIME_PREFS, date);
         editor.apply();
     }
 
     public static void putExchangeRates(Activity activity, Set<CurrencyEntity> rates) {
-        SharedPreferences prefs = activity.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.remove(BRConstants.EXCHANGE_RATES);
         ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
@@ -201,7 +199,7 @@ public class SharedPreferencesManager {
 
     @SuppressWarnings("unchecked")
     public static Set<CurrencyEntity> getExchangeRates(Activity context) {
-        SharedPreferences prefs = context.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
 
         byte[] bytes = prefs.getString(BRConstants.EXCHANGE_RATES, "{}").getBytes();
         if (bytes.length == 0) {

@@ -1,46 +1,31 @@
-package com.breadwallet.tools;
+package com.breadwallet.tools.manager;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
 
-import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
-import com.breadwallet.presenter.fragments.FragmentCurrency;
-import com.breadwallet.tools.adapter.AmountAdapter;
 import com.breadwallet.tools.adapter.CurrencyListAdapter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
-import com.breadwallet.tools.animation.FragmentAnimator;
-import com.breadwallet.wallet.BRWalletManager;
+import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.util.JsonParser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Currency;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
 import java.util.Observable;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.TreeSet;
 
 /**
  * BreadWallet
@@ -173,7 +158,7 @@ public class CurrencyManager extends Observable {
                 currencyListAdapter.addAll(tmp);
                 currencyListAdapter.notifyDataSetChanged();
                 SharedPreferencesManager.putExchangeRates(ctx, tmp);
-                if (FragmentAnimator.level <= 2)
+                if (BRAnimator.level <= 2)
                     MiddleViewAdapter.resetMiddleView(ctx, null);
             } else {
                 currencyListAdapter.clear();

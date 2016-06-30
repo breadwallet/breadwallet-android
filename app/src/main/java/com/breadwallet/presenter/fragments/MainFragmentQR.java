@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -21,12 +20,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.BreadWalletApp;
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.customviews.BubbleTextVew;
-import com.breadwallet.tools.SharedPreferencesManager;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
-import com.breadwallet.tools.animation.FragmentAnimator;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.qrcode.QRCodeEncoder;
 import com.breadwallet.wallet.BRWalletManager;
@@ -96,7 +95,7 @@ public class MainFragmentQR extends Fragment {
             @Override
             public void onClick(View view) {
                 breadWalletApp.cancelToast();
-                if (FragmentAnimator.checkTheMultipressingAvailability()) {
+                if (BRAnimator.checkTheMultipressingAvailability()) {
                     MainActivity app = MainActivity.app;
                     if (app != null) app.hideAllBubbles();
                     Log.e(TAG, "finalReceiveAddress: " + receiveAddress);
@@ -109,7 +108,7 @@ public class MainFragmentQR extends Fragment {
         qrcode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (FragmentAnimator.checkTheMultipressingAvailability()) {
+                if (BRAnimator.checkTheMultipressingAvailability()) {
                     MainActivity app = MainActivity.app;
                     if (app != null) {
                         app.hideAllBubbles();

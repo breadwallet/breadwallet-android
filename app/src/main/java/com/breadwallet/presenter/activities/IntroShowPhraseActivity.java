@@ -1,13 +1,9 @@
 package com.breadwallet.presenter.activities;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -16,8 +12,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.tools.SharedPreferencesManager;
-import com.breadwallet.wallet.BRWalletManager;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
 
 /**
  * BreadWallet

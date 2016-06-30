@@ -20,7 +20,6 @@ import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.hardware.fingerprint.FingerprintManager;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,13 +30,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.BreadWalletApp;
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
-import com.breadwallet.tools.BRConstants;
+import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
-import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.security.FingerprintUiHelper;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask;
@@ -106,7 +105,7 @@ public class FingerprintDialogFragment extends DialogFragment
                             .setMessage("change payment amount?")
                             .setPositiveButton("change", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
-                                    FragmentAnimator.animateScanResultFragment();
+                                    BRAnimator.animateScanResultFragment();
                                 }
                             }).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                         @Override
@@ -180,7 +179,7 @@ public class FingerprintDialogFragment extends DialogFragment
         ((BreadWalletApp) getActivity().getApplicationContext()).allowKeyStoreAccessForSeconds();
         getDialog().dismiss();
         if (mode == BRConstants.AUTH_FOR_PHRASE) {
-            FragmentAnimator.animateSlideToLeft((MainActivity) getActivity(), new FragmentRecoveryPhrase(), new FragmentSettings());
+            BRAnimator.animateSlideToLeft((MainActivity) getActivity(), new FragmentRecoveryPhrase(), new FragmentSettings());
         } else if (mode == BRConstants.AUTH_FOR_PAY && request != null) {
             BRWalletManager walletManager = BRWalletManager.getInstance(getActivity());
             String seed = KeyStoreManager.getKeyStorePhrase(getActivity(), BRConstants.PAY_REQUEST_CODE);
@@ -200,7 +199,7 @@ public class FingerprintDialogFragment extends DialogFragment
             } else {
                 return;
             }
-            FragmentAnimator.hideScanResultFragment();
+            BRAnimator.hideScanResultFragment();
         } else if (mode == BRConstants.AUTH_FOR_PAYMENT_PROTOCOL && paymentRequest != null) {
             if (paymentRequest.paymentURL == null || paymentRequest.paymentURL.isEmpty()) return;
             new PaymentProtocolPostPaymentTask(paymentRequest).execute();

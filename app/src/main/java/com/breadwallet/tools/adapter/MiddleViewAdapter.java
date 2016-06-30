@@ -3,12 +3,12 @@ package com.breadwallet.tools.adapter;
 import android.app.Activity;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.BreadWalletApp;
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.fragments.FragmentSettings;
-import com.breadwallet.tools.BRStringFormatter;
-import com.breadwallet.tools.CurrencyManager;
-import com.breadwallet.tools.animation.FragmentAnimator;
+import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.BRStringFormatter;
 
 /**
  * BreadWallet
@@ -43,7 +43,7 @@ public class MiddleViewAdapter {
 //        Log.e(TAG, "in the resetMiddleView: " + text);
         if(syncing){
             try {
-                ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, app.getString(R.string.syncing));
+                ((BreadWalletApp) app.getApplication()).setTopMiddleView(BRConstants.BREAD_WALLET_TEXT, app.getString(R.string.syncing));
             } catch (NullPointerException ex){
                 ex.printStackTrace();
             }
@@ -52,41 +52,41 @@ public class MiddleViewAdapter {
 
         if(text != null){
             try {
-                ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, text);
+                ((BreadWalletApp) app.getApplication()).setTopMiddleView(BRConstants.BREAD_WALLET_TEXT, text);
             } catch (Exception e) {
                 e.printStackTrace();
             }
             return;
         }
-        if (FragmentAnimator.level == 0 || FragmentAnimator.level == 1) {
+        if (BRAnimator.level == 0 || BRAnimator.level == 1) {
             if (BreadWalletApp.unlocked) {
                 try {
                     String tmp = BRStringFormatter.getCurrentBalanceText(app);
-                    ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, tmp);
+                    ((BreadWalletApp) app.getApplication()).setTopMiddleView(BRConstants.BREAD_WALLET_TEXT, tmp);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             } else {
                 try {
-                    ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_IMAGE, "");
+                    ((BreadWalletApp) app.getApplication()).setTopMiddleView(BRConstants.BREAD_WALLET_IMAGE, "");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-        } else if (FragmentAnimator.level == 2) {
+        } else if (BRAnimator.level == 2) {
             try {
                 FragmentSettings myFragment = (FragmentSettings)app.getFragmentManager().findFragmentByTag(FragmentSettings.class.getName());
                 if (myFragment != null && myFragment.isVisible()) {
-                    ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, app.getString(R.string.middle_view_settings));
+                    ((BreadWalletApp) app.getApplication()).setTopMiddleView(BRConstants.BREAD_WALLET_TEXT, app.getString(R.string.middle_view_settings));
                 } else {
-                    ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_TEXT, app.getString(R.string.middle_view_transaction_details));
+                    ((BreadWalletApp) app.getApplication()).setTopMiddleView(BRConstants.BREAD_WALLET_TEXT, app.getString(R.string.middle_view_transaction_details));
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
             try {
-                ((BreadWalletApp) app.getApplication()).setTopMiddleView(BreadWalletApp.BREAD_WALLET_IMAGE, "");
+                ((BreadWalletApp) app.getApplication()).setTopMiddleView(BRConstants.BREAD_WALLET_IMAGE, "");
             } catch (Exception e) {
                 e.printStackTrace();
             }

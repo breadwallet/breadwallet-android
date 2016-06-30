@@ -16,11 +16,11 @@ import android.widget.TextView;
 import android.graphics.Typeface;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.BreadWalletApp;
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.tools.BRStringFormatter;
-import com.breadwallet.tools.CurrencyManager;
-import com.breadwallet.tools.SharedPreferencesManager;
+import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.BRStringFormatter;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.adapter.AmountAdapter;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.listeners.BackPressCustomKeyboardOnTouchListener;
@@ -30,20 +30,20 @@ import java.math.BigDecimal;
 
 /**
  * BreadWallet
- * <p/>
+ * <p>
  * Created by Mihail Gutan on 7/14/15.
  * Copyright (c) 2016 breadwallet llc <mihail@breadwallet.com>
- * <p/>
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * <p/>
+ * <p>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * <p/>
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -60,12 +60,11 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
     public static TextView amountToPay;
     private static TextView amountBeforeArrow;
     public static String address = "-";
-    public static final int BITCOIN_LEFT = 1;
-    public static final int BITCOIN_RIGHT = 2;
-    public static int currentCurrencyPosition = BITCOIN_RIGHT;
+
+    public static int currentCurrencyPosition = BRConstants.BITCOIN_RIGHT;
     private static String ISO;
     public static double rate = -1;
-    private static final String DOUBLE_ARROW = "\u21CB";
+
     public static boolean isARequest = false;
 
     @Override
@@ -87,13 +86,15 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         customKeyboardLayout.getViewTreeObserver().addOnGlobalLayoutListener(
                 new ViewTreeObserver.OnGlobalLayoutListener() {
                     public void onGlobalLayout() {
-                        if (!MainActivity.app.isSoftKeyboardShown()) {
-                            int[] locations = new int[2];
-                            customKeyboardLayout.getLocationOnScreen(locations);
-                            customKeyboardLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                            createCustomKeyboardButtons(locations[1]);
+                        MainActivity app = MainActivity.app;
+                        if (app != null)
+                            if (!app.isSoftKeyboardShown()) {
+                                int[] locations = new int[2];
+                                customKeyboardLayout.getLocationOnScreen(locations);
+                                customKeyboardLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                                createCustomKeyboardButtons(locations[1]);
 
-                        }
+                            }
                     }
                 });
         View.OnClickListener listener = new View.OnClickListener() {
@@ -105,7 +106,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
             }
         };
         updateBothTextValues(new BigDecimal("0"), new BigDecimal("0"));
-        doubleArrow.setText(DOUBLE_ARROW);
+        doubleArrow.setText(BRConstants.DOUBLE_ARROW);
         doubleArrow.setOnClickListener(listener);
         amountBeforeArrow.setOnClickListener(listener);
         amountToPay.setOnClickListener(listener);
@@ -120,7 +121,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
     @Override
     public void onResume() {
         updateRateAndISO();
-        FragmentScanResult.currentCurrencyPosition = FragmentScanResult.BITCOIN_RIGHT;
+        FragmentScanResult.currentCurrencyPosition =BRConstants.BITCOIN_RIGHT;
         AmountAdapter.calculateAndPassValuesToFragment("0");
 
         scanResult.setText(isARequest ? "" : getString(R.string.to) + address);
@@ -132,7 +133,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
     public void onPause() {
         super.onPause();
         AmountAdapter.resetKeyboard();
-        ((BreadWalletApp) getActivity().getApplication()).setLockerPayButton(BreadWalletApp.LOCKER_BUTTON);
+        ((BreadWalletApp) getActivity().getApplication()).setLockerPayButton(BRConstants.LOCKER_BUTTON);
         isARequest = false;
     }
 
@@ -250,10 +251,10 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         if (ISO == null) updateRateAndISO();
         if (ISO == null) ISO = "USD";
         final String btcIso = "BTC";
-        if (currentCurrencyPosition == BITCOIN_RIGHT) {
+        if (currentCurrencyPosition == BRConstants.BITCOIN_RIGHT) {
             amountToPay.setText(BRStringFormatter.getFormattedCurrencyStringForKeyboard(btcIso, bitcoinValue.multiply(new BigDecimal("100")).longValue()));
             amountBeforeArrow.setText(BRStringFormatter.getFormattedCurrencyStringForKeyboard(ISO, otherValue.multiply(new BigDecimal("100")).longValue()));
-        } else if (currentCurrencyPosition == BITCOIN_LEFT) {
+        } else if (currentCurrencyPosition == BRConstants.BITCOIN_LEFT) {
             amountToPay.setText(BRStringFormatter.getFormattedCurrencyStringForKeyboard(ISO, bitcoinValue.multiply(new BigDecimal("100")).longValue()));
             amountBeforeArrow.setText(BRStringFormatter.getFormattedCurrencyStringForKeyboard(btcIso, otherValue.multiply(new BigDecimal("100")).longValue()));
         } else {

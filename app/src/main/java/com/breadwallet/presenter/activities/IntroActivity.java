@@ -13,17 +13,17 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.BreadWalletApp;
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.fragments.IntroNewRecoverFragment;
 import com.breadwallet.presenter.fragments.IntroNewWalletFragment;
 import com.breadwallet.presenter.fragments.IntroRecoverWalletFragment;
 import com.breadwallet.presenter.fragments.IntroWarningFragment;
 import com.breadwallet.presenter.fragments.IntroWelcomeFragment;
-import com.breadwallet.tools.BRConstants;
-import com.breadwallet.tools.SharedPreferencesManager;
+import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.animation.BackgroundMovingAnimator;
 import com.breadwallet.tools.animation.DecelerateOvershootInterpolator;
-import com.breadwallet.tools.animation.FragmentAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.wallet.BRWalletManager;
@@ -147,7 +147,6 @@ public class IntroActivity extends FragmentActivity {
 
     private void showNewRecoverWalletFragment() {
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-//        fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
         IntroWelcomeFragment introWelcomeFragment = (IntroWelcomeFragment) getFragmentManager().
                 findFragmentByTag(IntroWelcomeFragment.class.getName());
         if (introWelcomeFragment != null) {
@@ -158,7 +157,7 @@ public class IntroActivity extends FragmentActivity {
                 @Override
                 public void run() {
                     TranslateAnimation trans = new TranslateAnimation(app.getResources().getInteger(R.integer.standard_screen_width), 0, 0, 0);
-                    trans.setDuration(FragmentAnimator.horizontalSlideDuration);
+                    trans.setDuration(BRAnimator.horizontalSlideDuration);
                     trans.setInterpolator(new DecelerateOvershootInterpolator(1f, 0.5f));
                     View view = introNewRecoverFragment.getView();
                     Log.e(TAG, "startAnimation");
@@ -185,10 +184,9 @@ public class IntroActivity extends FragmentActivity {
             @Override
             public void run() {
                 TranslateAnimation trans = new TranslateAnimation(app.getResources().getInteger(R.integer.standard_screen_width), 0, 0, 0);
-                trans.setDuration(FragmentAnimator.horizontalSlideDuration);
+                trans.setDuration(BRAnimator.horizontalSlideDuration);
                 trans.setInterpolator(new DecelerateOvershootInterpolator(1f, 0.5f));
                 View view = introNewWalletFragment.getView();
-                Log.e(TAG, "startAnimation");
                 if (view != null)
                     view.startAnimation(trans);
             }
@@ -209,7 +207,7 @@ public class IntroActivity extends FragmentActivity {
             @Override
             public void run() {
                 TranslateAnimation trans = new TranslateAnimation(app.getResources().getInteger(R.integer.standard_screen_width), 0, 0, 0);
-                trans.setDuration(FragmentAnimator.horizontalSlideDuration);
+                trans.setDuration(BRAnimator.horizontalSlideDuration);
                 trans.setInterpolator(new DecelerateOvershootInterpolator(1f, 0.5f));
                 View view = introRecoverWalletFragment.getView();
                 if (view != null)
@@ -255,7 +253,7 @@ public class IntroActivity extends FragmentActivity {
                     BRWalletManager m = BRWalletManager.getInstance(this);
                     m.wipeKeyStore();
                     m.wipeWalletButKeystore(this);
-                    FragmentAnimator.resetFragmentAnimator();
+                    BRAnimator.resetFragmentAnimator();
                     finish();
                 }
                 break;
