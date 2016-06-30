@@ -10,9 +10,11 @@ import android.os.SystemClock;
 import android.text.InputType;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
@@ -187,24 +189,23 @@ public class BRWalletManager {
                     }
 
                     final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                    builder.setTitle("password protected key");
+//                    builder.setTitle("password protected key");
 
                     // Set up the input
-                    final EditText input = new EditText(activity);
+
+                    final View input = activity.getLayoutInflater().inflate(R.layout.view_bip38password_dialog, null);
                     // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-                    input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                    input.setMaxWidth(200);
                     builder.setView(input);
 
-                    (new Handler()).postDelayed(new Runnable() {
+                    final EditText editText = (EditText) input.findViewById(R.id.bip38password_edittext);
 
+                    (new Handler()).postDelayed(new Runnable() {
                         public void run() {
-                            input.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
-                            input.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
+                            editText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
+                            editText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
 
                         }
                     }, 100);
-
 
                     // Set up the buttons
                     builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -217,11 +218,14 @@ public class BRWalletManager {
                                         ctx.runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
-                                                ((BreadWalletApp) ctx.getApplication()).showCustomToast(ctx, "scanning private key", MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_SHORT, 1);
+                                                ((BreadWalletApp) ctx.getApplication()).showCustomToast(ctx, "scanning private key", MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 1);
                                             }
                                         });
-                                    String pass = input.getText().toString();
+                                    if (editText == null) return;
+
+                                    String pass = editText.getText().toString();
                                     String decryptedKey = decryptBip38Key(privKey, pass);
+
                                     Log.e(TAG, "decryptedKey: " + decryptedKey);
 
                                     if (decryptedKey.equals("")) {

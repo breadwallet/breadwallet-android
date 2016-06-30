@@ -131,4 +131,5 @@
     <string name="beta">beta</string>
     <string name="copy">copy</string>
     <string name="not_connected">not connected</string>
+    <string name="password_protected_key">password protected key</string>
 </resources>
