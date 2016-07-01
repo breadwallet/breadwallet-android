@@ -210,6 +210,4 @@ public class CurrencyManager extends Observable {
         }
     }
 
-
-
 }

@@ -135,7 +135,7 @@ public class IntroRecoverWalletFragment extends Fragment {
 
     private void disableEditText() {
         editText.setFocusable(false);
-        editText.setHint("Insecure keyboard detected\ngo to \"Settings\" > \"language & input\" > \"keyboards\" and disable all custom input types");
+        editText.setHint(getString(R.string.insecure_keyboard_message));
 
         new Handler().postDelayed(new Runnable() {
             @Override

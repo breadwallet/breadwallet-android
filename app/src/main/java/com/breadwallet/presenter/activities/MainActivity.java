@@ -544,9 +544,9 @@ public class MainActivity extends FragmentActivity implements Observer {
         BRWalletManager m = BRWalletManager.getInstance(this);
         long minAmount = m.getMinOutputAmount();
         if (new BigDecimal(tempAmount).multiply(new BigDecimal("100")).doubleValue() < minAmount) {
-            final String bitcoinMinMessage = String.format(Locale.getDefault(), "bitcoin payments can't be less than ƀ%.2f",
+            final String bitcoinMinMessage = String.format(Locale.getDefault(), getString(R.string.bitcoin_payment_cant_be_less),
                     new BigDecimal(minAmount).divide(new BigDecimal("100")));
-            ((BreadWalletApp) getApplication()).showCustomDialog("amount too small",
+            ((BreadWalletApp) getApplication()).showCustomDialog(getString(R.string.amount_too_small),
                     bitcoinMinMessage, getString(R.string.ok));
             return;
         }
@@ -673,7 +673,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        String formattedBlockInfo = String.format("block #%s of %s", currBlock, latestBlockKnown);
+                        String formattedBlockInfo = String.format(getString(R.string.blocks_text), currBlock, latestBlockKnown);
                         middleBubbleBlocks.setText(formattedBlockInfo);
                     }
                 });

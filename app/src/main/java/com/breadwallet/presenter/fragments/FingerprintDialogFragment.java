@@ -15,6 +15,7 @@ package com.breadwallet.presenter.fragments;/*
  */
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
@@ -78,7 +79,7 @@ public class FingerprintDialogFragment extends DialogFragment
                              Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.fingerprint_dialog_container, container, false);
-        getDialog().setTitle("Fingerprint authorization");
+        getDialog().setTitle(R.string.fingerprint_auth);
         if (title != null) getDialog().setTitle(title);
         // If fingerprint authentication is not available, switch immediately to the backup
         // (password) screen.
@@ -100,9 +101,9 @@ public class FingerprintDialogFragment extends DialogFragment
             public void onClick(View view) {
                 if (!MainActivity.scanResultFragmentOn && mode == BRConstants.AUTH_FOR_PAY && request.isAmountRequested) {
                     FragmentScanResult.address = request.addresses[0];
-                    new android.app.AlertDialog.Builder(getActivity())
+                    new AlertDialog.Builder(getActivity())
                             .setTitle(getString(R.string.payment_info))
-                            .setMessage("change payment amount?")
+                            .setMessage(R.string.change_payment_amount)
                             .setPositiveButton("change", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     BRAnimator.animateScanResultFragment();
@@ -193,7 +194,7 @@ public class FingerprintDialogFragment extends DialogFragment
                 }
                 if (!success) {
                     ((BreadWalletApp) getActivity().getApplication()).showCustomToast(getActivity(),
-                            "Failed to send", MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
+                            getActivity().getString(R.string.failed_to_send), MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
                     return;
                 }
             } else {

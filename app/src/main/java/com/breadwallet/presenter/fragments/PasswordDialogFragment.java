@@ -26,6 +26,7 @@ package com.breadwallet.presenter.fragments;
  */
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -138,10 +139,10 @@ public class PasswordDialogFragment extends DialogFragment {
                 keyboard.hideSoftInputFromWindow(cancel.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
                 if (!MainActivity.scanResultFragmentOn && mode == BRConstants.AUTH_FOR_PAY && request.isAmountRequested) {
                     FragmentScanResult.address = request.addresses[0];
-                    new android.app.AlertDialog.Builder(getActivity())
+                    new AlertDialog.Builder(getActivity())
                             .setTitle(getString(R.string.payment_info))
-                            .setMessage("change payment amount?")
-                            .setPositiveButton("change", new DialogInterface.OnClickListener() {
+                            .setMessage(R.string.change_payment_amount)
+                            .setPositiveButton(R.string.change, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     BRAnimator.animateScanResultFragment();
                                 }
@@ -451,7 +452,7 @@ public class PasswordDialogFragment extends DialogFragment {
         }
         if (failCount >= 3) {
             info.setVisibility(View.VISIBLE);
-            info.setText(String.format(Locale.getDefault(), "%d attempts remaining", attemptsRemaining < 0 ? 0 : attemptsRemaining));
+            info.setText(String.format(Locale.getDefault(), getActivity().getString(R.string.attempts_remaining), attemptsRemaining < 0 ? 0 : attemptsRemaining));
         }
     }
 

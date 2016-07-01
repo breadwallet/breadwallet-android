@@ -160,7 +160,7 @@ public class FragmentWipeWallet extends Fragment {
 
     private void disableEditText() {
         recoveryPhraseEditText.setFocusable(false);
-        recoveryPhraseEditText.setHint("Insecure keyboard detected\ngo to \"Settings\" > \"language & input\" > \"keyboards\" and disable all custom input types");
+        recoveryPhraseEditText.setHint(R.string.insecure_keyboard_message);
 
         new Handler().postDelayed(new Runnable() {
             @Override

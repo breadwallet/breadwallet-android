@@ -86,7 +86,7 @@ public class BRAnimator {
                         Manifest.permission.CAMERA)) {
                     Log.e(TAG, "YES explanation!");
                     ((BreadWalletApp) app.getApplication()).showCustomToast(app,
-                            "allow camera access in \"Settings\" > \"Apps\" > \"breadwallet\" > \"Permissions\"",
+                            app.getString(R.string.allow_camera_access),
                             MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
                     // Show an explanation to the user *asynchronously* -- don't block
                     // this thread waiting for the user's response! After the user

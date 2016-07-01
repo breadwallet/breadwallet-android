@@ -318,7 +318,7 @@ public class FragmentSettingsAll extends Fragment {
             sentReceivedTextView.setTextColor(unconfirmedColor);
         } else if (blockHeight != Integer.MAX_VALUE && confirms >= 6) {
             sentReceivedTextView.setBackgroundResource(received ? R.drawable.received_label : R.drawable.sent_label);
-            sentReceivedTextView.setText(received ? "received" : "sent");
+            sentReceivedTextView.setText(received ? R.string.received : R.string.sent);
             sentReceivedTextView.setTextColor(received ? receivedColor : sentColor);
         } else {
             sentReceivedTextView.setBackgroundResource(R.drawable.unconfirmed_label);
@@ -328,7 +328,7 @@ public class FragmentSettingsAll extends Fragment {
             } else {
 
                 Log.e(TAG, "item.getBlockHeight(): " + blockHeight + ", confirms: " + confirms + ", lastBlock: " + estimatedBlockHeight);
-                sentReceivedTextView.setText(String.format(Locale.getDefault(), "%d confirmations", confirms >= 0 && confirms <= 5 ? confirms : 0));
+                sentReceivedTextView.setText(String.format(Locale.getDefault(), app.getString(R.string.nr_confirmations), confirms >= 0 && confirms <= 5 ? confirms : 0));
             }
         }
 
@@ -339,7 +339,7 @@ public class FragmentSettingsAll extends Fragment {
         long satoshisAmount = received ? item.getReceived() : (item.getSent() - item.getReceived()) * -1;
 
         bitsTextView.setText(BRStringFormatter.getFormattedCurrencyString("BTC", satoshisAmount));
-        dollarsTextView.setText(String.format("(%s)", BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(app), SharedPreferencesManager.getIso(app), new BigDecimal(satoshisAmount),app)));
+        dollarsTextView.setText(String.format("(%s)", BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(app), SharedPreferencesManager.getIso(app), new BigDecimal(satoshisAmount), app)));
         long satoshisAfterTx = item.getBalanceAfterTx();
 
         bitsTotalTextView.setText(BRStringFormatter.getFormattedCurrencyString("BTC", satoshisAfterTx));

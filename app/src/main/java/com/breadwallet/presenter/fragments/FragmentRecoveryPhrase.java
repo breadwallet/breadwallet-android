@@ -87,7 +87,7 @@ public class FragmentRecoveryPhrase extends Fragment {
         if (phrase == null || phrase.isEmpty()) return rootView;
         if (phrase.charAt(phrase.length() - 1) == '\0') {
             ((BreadWalletApp) getActivity().getApplication()).showCustomDialog(getString(R.string.warning),
-                    "Recovery phrase error, please contact support at breadwallet.com", getString(R.string.close));
+                    getActivity().getString(R.string.phrase_error), getString(R.string.close));
         }
 
         thePhrase.setText(phrase);

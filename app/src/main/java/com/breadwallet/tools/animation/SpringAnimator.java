@@ -86,7 +86,4 @@ public class SpringAnimator {
         view.startAnimation(trans);
     }
 
-
-
 }
-

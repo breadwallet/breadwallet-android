@@ -208,7 +208,7 @@ public class BRWalletManager {
                     }, 100);
 
                     // Set up the buttons
-                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    builder.setPositiveButton(ctx.getString(R.string.ok), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             new Thread(new Runnable() {
@@ -335,7 +335,7 @@ public class BRWalletManager {
                 public void run() {
                     CurrencyManager m = CurrencyManager.getInstance(ctx);
                     long absAmount = amount > 0 ? amount : amount * -1;
-                    String strToShow = String.format(ctx.getString(amount > 0 ? R.string.received : R.string.sent),
+                    String strToShow = String.format(ctx.getString(amount > 0 ? R.string.received_amount : R.string.sent_amount),
                             BRStringFormatter.getFormattedCurrencyString("BTC", absAmount) + " (" +
                                     BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(ctx),
                                             SharedPreferencesManager.getIso(ctx), new BigDecimal(absAmount), ctx) + ")");

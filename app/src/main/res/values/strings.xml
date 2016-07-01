@@ -52,9 +52,11 @@
     <string name="connection_timed_out">connection timed out</string>
     <string name="something_went_wrong">something went wrong</string>
     <string name="more">more…</string>
-    <string name="sent">sent: %s</string>
+    <string name="sent_amount">sent: %s</string>
+    <string name="sent">sent</string>
     <string name="send">send</string>
-    <string name="received">received: %s</string>
+    <string name="received">received</string>
+    <string name="received_amount">received: %s</string>
     <string name="wallet_address">wallet address</string>
     <string name="payment_address">payment address</string>
     <string name="spent_address">spent address</string>
@@ -132,4 +134,19 @@
     <string name="copy">copy</string>
     <string name="not_connected">not connected</string>
     <string name="password_protected_key">password protected key</string>
+    <string name="bitcoin_payment_cant_be_less">bitcoin payments can\'t be less than ƀ%.2f</string>
+    <string name="amount_too_small">amount too small</string>
+    <string name="blocks_text">block #%s of %s</string>
+    <string name="fingerprint_auth">Fingerprint authorization</string>
+    <string name="change_payment_amount">change payment amount?</string>
+    <string name="failed_to_send">Failed to send</string>
+    <string name="support_request">support request</string>
+    <string name="choose_an_email_client">Choose an Email client</string>
+    <string name="phrase_error">Recovery phrase error, please contact support at breadwallet.com</string>
+    <string name="nr_confirmations">%d confirmations</string>
+    <string name="confirmed_in_block_nr">confirmed in block #%d%n%s</string>
+    <string name="insecure_keyboard_message"><![CDATA[Insecure keyboard detected\ngo to \"Settings\" > \"language & input\" > \"keyboards\" and disable all custom input types]]></string>
+    <string name="change">change</string>
+    <string name="attempts_remaining">%d attempts remaining</string>
+    <string name="allow_camera_access"><![CDATA[allow camera access in \"Settings\" > \"Apps\" > \"breadwallet\" > \"Permissions\"]]></string>
 </resources>

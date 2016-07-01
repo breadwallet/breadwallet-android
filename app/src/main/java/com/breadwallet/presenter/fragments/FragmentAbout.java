@@ -71,12 +71,12 @@ public class FragmentAbout extends Fragment {
                     Intent email = new Intent(Intent.ACTION_SEND);
                     email.putExtra(Intent.EXTRA_EMAIL, new String[]{to});
                     email.putExtra(Intent.EXTRA_TEXT, message);
-                    email.putExtra(Intent.EXTRA_SUBJECT, "support request");
+                    email.putExtra(Intent.EXTRA_SUBJECT, getActivity().getString(R.string.support_request));
 
                     // need this to prompts email client only
                     email.setType("message/rfc822");
 
-                    startActivity(Intent.createChooser(email, "Choose an Email client"));
+                    startActivity(Intent.createChooser(email, getActivity().getString(R.string.choose_an_email_client)));
                 }
             }
         });
