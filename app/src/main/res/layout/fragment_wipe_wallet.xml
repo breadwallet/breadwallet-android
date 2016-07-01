@@ -30,7 +30,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="90dp"
         android:textSize="18sp"
-        android:text="@string/confirm"
+        android:text="@string/confirm_"
         android:textColor="@color/light_gray" />
 
     <TextView

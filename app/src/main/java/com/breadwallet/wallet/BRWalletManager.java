@@ -184,7 +184,7 @@ public class BRWalletManager {
 
                     if (!CurrencyManager.getInstance(activity).isNetworkAvailable(activity)) {
                         ((BreadWalletApp) activity.getApplication()).showCustomDialog(activity.getString(R.string.warning),
-                                "not connected", activity.getString(R.string.ok));
+                                activity.getString(R.string.not_connected), activity.getString(R.string.ok));
                         return;
                     }
 
@@ -218,7 +218,7 @@ public class BRWalletManager {
                                         ctx.runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
-                                                ((BreadWalletApp) ctx.getApplication()).showCustomToast(ctx, "scanning private key", MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 1);
+                                                ((BreadWalletApp) ctx.getApplication()).showCustomToast(ctx, activity.getString(R.string.scanning_privkey), MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 1);
                                             }
                                         });
                                     if (editText == null) return;
@@ -239,7 +239,7 @@ public class BRWalletManager {
 
                         }
                     });
-                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    builder.setNegativeButton(activity.getString(R.string.cancel), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.cancel();
@@ -415,11 +415,11 @@ public class BRWalletManager {
                     public void run() {
                         AlertDialog alert;
                         AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
-                        builder.setTitle("transaction rejected");
+                        builder.setTitle(R.string.transaction_rejected);
 
-                        builder.setMessage(recommendRescan == 1 ? "Your wallet may be out of sync.\nThis can often be fixed by rescanning the blockchain." : "");
+                        builder.setMessage(recommendRescan == 1 ? ctx.getString(R.string.wallet_out_of_sync_message) : "");
                         if (recommendRescan == 1)
-                            builder.setPositiveButton("rescan",
+                            builder.setPositiveButton(R.string.rescan,
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int which) {
                                             if (BRAnimator.checkTheMultipressingAvailability()) {
@@ -517,7 +517,7 @@ public class BRWalletManager {
             minOutput = BRWalletManager.getInstance(ctx).getMinOutputAmount();
         }
         if (request.amount < minOutput) {
-            final String bitcoinMinMessage = String.format(Locale.getDefault(), "bitcoin payments can't be less than ƀ%.2f",
+            final String bitcoinMinMessage = String.format(Locale.getDefault(), ctx.getString(R.string.bitcoin_payment_cant_be_less),
                     new BigDecimal(minOutput).divide(new BigDecimal("100")));
             ctx.runOnUiThread(new Runnable() {
                 @Override
@@ -567,8 +567,8 @@ public class BRWalletManager {
 //                String strToReduce = String.valueOf(amountToReduce);
                 final AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
 
-                builder.setMessage(String.format("reduce payment amount by %s?", BRStringFormatter.getFormattedCurrencyString("BTC", amountToReduce)))
-                        .setTitle("insufficient funds for bitcoin network fee")
+                builder.setMessage(String.format(ctx.getString(R.string.reduce_payment_amount_by), BRStringFormatter.getFormattedCurrencyString("BTC", amountToReduce)))
+                        .setTitle(R.string.insufficient_funds_for_fee)
                         .setCancelable(false)
                         .setNegativeButton(ctx.getString(R.string.cancel), new DialogInterface.OnClickListener() {
                             @Override
@@ -576,7 +576,7 @@ public class BRWalletManager {
                                 dialog.cancel();
                             }
                         })
-                        .setPositiveButton("confirm", new DialogInterface.OnClickListener() {
+                        .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 byte[] tmpTx2 = m.tryTransaction(addressHolder, bigDecimalAmount.longValue() - amountToReduce);
                                 if (tmpTx2 != null) {
@@ -584,7 +584,7 @@ public class BRWalletManager {
                                     confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, bigDecimalAmount.longValue() - amountToReduce, cn, tmpTx2, isAmountRequested));
                                 } else {
                                     Log.e(TAG, "tmpTxObject2 is null!!!");
-                                    ((BreadWalletApp) ctx.getApplication()).showCustomToast(ctx, "Failed to send, insufficient funds", MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
+                                    ((BreadWalletApp) ctx.getApplication()).showCustomToast(ctx, ctx.getString(R.string.failed_to_send_insufficient_funds), MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
                                 }
                             }
                         });
@@ -599,7 +599,7 @@ public class BRWalletManager {
                 confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, bigDecimalAmount.longValue(), cn, tmpTx, isAmountRequested));
             } else {
                 AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
-                builder.setMessage("insufficient funds")
+                builder.setMessage(ctx.getString(R.string.insufficient_funds))
                         .setCancelable(false)
                         .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
@@ -613,7 +613,7 @@ public class BRWalletManager {
             AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
             builder.setMessage(R.string.not_connected)
                     .setCancelable(false)
-                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             dialog.cancel();
                         }
@@ -665,7 +665,7 @@ public class BRWalletManager {
                 ctx.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        ((BreadWalletApp) ctx.getApplication()).showCustomToast(ctx, "The KeyStore is temporary unavailable, please try again later",
+                        ((BreadWalletApp) ctx.getApplication()).showCustomToast(ctx, ctx.getString(R.string.keystore_unavailable),
                                 MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
                         new Handler().postDelayed(new Runnable() {
                             @Override

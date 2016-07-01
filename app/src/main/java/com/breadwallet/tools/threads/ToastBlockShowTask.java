@@ -88,7 +88,7 @@ public class ToastBlockShowTask {
                         layout = inflater.inflate(R.layout.toast,
                                 (ViewGroup) activity.findViewById(R.id.toast_layout_root));
                         text = (TextView) layout.findViewById(R.id.toast_text);
-                        formattedBlockInfo = String.format("block #%s of %s", currBlock, latestBlockKnown);
+                        formattedBlockInfo = String.format(activity.getString(R.string.blocks), currBlock, latestBlockKnown);
                         text.setText(formattedBlockInfo);
                         blocksToast.setGravity(Gravity.TOP, 0, MainActivity.screenParametersPoint.y / 8);
                         blocksToast.setDuration(Toast.LENGTH_LONG);
@@ -108,7 +108,7 @@ public class ToastBlockShowTask {
                     @Override
                     public void run() {
 
-                        formattedBlockInfo = String.format("block #%s of %s", currBlock, latestBlockKnown);
+                        formattedBlockInfo = String.format(activity.getString(R.string.blocks), currBlock, latestBlockKnown);
                         text.setText(formattedBlockInfo);
                     }
                 });

@@ -103,7 +103,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                     app.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ((BreadWalletApp) app.getApplication()).showCustomDialog("", "Invalid request", "ok");
+                            ((BreadWalletApp) app.getApplication()).showCustomDialog("", app.getString(R.string.invalid_request), app.getString(R.string.ok));
                         }
                     });
                 }
@@ -115,7 +115,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                     app.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ((BreadWalletApp) app.getApplication()).showCustomDialog("", "Insufficient funds", "ok");
+                            ((BreadWalletApp) app.getApplication()).showCustomDialog("", app.getString(R.string.insufficient_funds), app.getString(R.string.ok));
                         }
                     });
                 }
@@ -127,7 +127,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                     app.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ((BreadWalletApp) app.getApplication()).showCustomDialog("", "Failed to sign transaction", "ok");
+                            ((BreadWalletApp) app.getApplication()).showCustomDialog("", app.getString(R.string.failed_to_sign_tx), app.getString(R.string.ok));
                         }
                     });
                 }
@@ -139,7 +139,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                     app.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ((BreadWalletApp) app.getApplication()).showCustomDialog("", "PaymentRequest message is too large", "ok");
+                            ((BreadWalletApp) app.getApplication()).showCustomDialog("", app.getString(R.string.payment_request_message_too_large), app.getString(R.string.ok));
                         }
                     });
                 }
@@ -151,7 +151,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                     app.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ((BreadWalletApp) app.getApplication()).showCustomDialog("", "Something went wrong", "ok");
+                            ((BreadWalletApp) app.getApplication()).showCustomDialog("", app.getString(R.string.something_went_wrong), app.getString(R.string.ok));
                         }
                     });
                 }
@@ -185,7 +185,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 Log.e(TAG, "Request is expired");
                 if (app != null)
                     ((BreadWalletApp) app.getApplication()).
-                            showCustomDialog(app.getString(R.string.error), "Expired request",
+                            showCustomDialog(app.getString(R.string.error), app.getString(R.string.expired_request),
                                     app.getString(R.string.close));
                 return null;
             }
@@ -255,7 +255,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
 
         double minOutput = BRWalletManager.getInstance(app).getMinOutputAmount();
         if (paymentRequest.amount < minOutput) {
-            final String bitcoinMinMessage = String.format(Locale.getDefault(), "bitcoin payments can't be less than ƀ%.2f",
+            final String bitcoinMinMessage = String.format(Locale.getDefault(), app.getString(R.string.bitcoin_payment_cant_be_less),
                     new BigDecimal(minOutput).divide(new BigDecimal("100")));
             app.runOnUiThread(new Runnable() {
                 @Override
@@ -290,12 +290,6 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 ((BreadWalletApp) app.getApplicationContext()).promptForAuthentication(app, BRConstants.AUTH_FOR_PAYMENT_PROTOCOL, request, message, app.getString(R.string.payment_info), paymentRequest);
             }
         });
-//            Log.e(TAG, "paymentRequest.amount: " + paymentRequest.amount);
-//            PaymentRequestEntity requestEntity = new PaymentRequestEntity(paymentRequest.addresses,
-//                    paymentRequest.amount, cn);
-//            if (app != null) {
-//                app.pay(requestEntity.addresses[0], new BigDecimal(requestEntity.amount), requestEntity.cn);
-//            }
     }
 
     private String extractCNFromCertName(String str) {

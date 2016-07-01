@@ -121,7 +121,7 @@ public class PostAuthenticationProcessor {
             tmpTx = null;
             BRAnimator.hideScanResultFragment();
             if (!success)
-                ((BreadWalletApp) app.getApplication()).showCustomToast(app, "failed to send", MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
+                ((BreadWalletApp) app.getApplication()).showCustomToast(app, app.getString(R.string.failed_to_send), MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
         } else {
             Log.e(TAG, "this.tmpTxObject is null!!!!!!!!!!!!!");
         }

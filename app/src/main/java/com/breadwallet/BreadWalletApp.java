@@ -252,8 +252,7 @@ public class BreadWalletApp extends Application {
     public void showDeviceNotSecuredWarning(final Activity context) {
         Log.e(TAG, "WARNING device is not secured!");
         new AlertDialog.Builder(context)
-                .setMessage("A device screen lock is needed to safeguard your wallet. " +
-                        "Go to \"Settings\" > \"Security\" > \"Screen lock\" and enable to continue.")
+                .setMessage(R.string.encryption_needed_for_wallet)
                 .setNegativeButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         context.finish();

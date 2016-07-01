@@ -1,6 +1,7 @@
 package com.breadwallet.tools.threads;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -73,7 +74,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
                 @Override
                 public void run() {
                     ((BreadWalletApp) app.getApplication()).showCustomDialog(app.getString(R.string.warning),
-                            "this private key is empty", app.getString(R.string.ok));
+                            app.getString(R.string.priv_key_empty), app.getString(R.string.ok));
                 }
             });
         }
@@ -90,8 +91,8 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
         String feeString = String.format("%s (%s)", BRStringFormatter.getFormattedCurrencyString("BTC",
                 importPrivKeyEntity.getFee()), BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(app),
                 SharedPreferencesManager.getIso(app), new BigDecimal(importPrivKeyEntity.getFee()), app));
-        String message = String.format("Send %s from this private key into your wallet? The bitcoin network will receive a fee of %s.", amountString, feeString);
-        new android.app.AlertDialog.Builder(app)
+        String message = String.format(app.getString(R.string.send_money_from_privkey_message), amountString, feeString);
+        new AlertDialog.Builder(app)
                 .setTitle("")
                 .setMessage(message)
                 .setPositiveButton(app.getString(R.string.send), new DialogInterface.OnClickListener() {
@@ -99,7 +100,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
                         boolean result = BRWalletManager.getInstance(app).confirmKeySweep(importPrivKeyEntity.getTx(), key);
                         if (!result) {
                             ((BreadWalletApp) app.getApplication()).showCustomDialog(app.getString(R.string.warning),
-                                    "couldn't sweep balance", app.getString(R.string.ok));
+                                    app.getString(R.string.could_not_sweep_the_balance), app.getString(R.string.ok));
                         }
                     }
                 })

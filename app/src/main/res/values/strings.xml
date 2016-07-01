@@ -124,7 +124,7 @@
     <string name="transaction_history">transaction history</string>
     <string name="import_private_key">import private key</string>
     <string name="rescan_blockchain">rescan blockchain</string>
-    <string name="confirm">confirm:</string>
+    <string name="confirm_">confirm:</string>
     <string name="id">id:</string>
     <string name="status">status:</string>
     <string name="amount">amount:</string>
@@ -149,4 +149,23 @@
     <string name="change">change</string>
     <string name="attempts_remaining">%d attempts remaining</string>
     <string name="allow_camera_access"><![CDATA[allow camera access in \"Settings\" > \"Apps\" > \"breadwallet\" > \"Permissions\"]]></string>
+    <string name="priv_key_empty">this private key is empty</string>
+    <string name="could_not_sweep_the_balance">couldn\'t sweep balance</string>
+    <string name="send_money_from_privkey_message">Send %s from this private key into your wallet? The bitcoin network will receive a fee of %s.</string>
+    <string name="blocks">block #%s of %s</string>
+    <string name="invalid_request">Invalid request</string>
+    <string name="insufficient_funds">Insufficient funds</string>
+    <string name="failed_to_sign_tx">Failed to sign transaction</string>
+    <string name="payment_request_message_too_large">PaymentRequest message is too large</string>
+    <string name="expired_request">Expired request</string>
+    <string name="scanning_privkey">scanning private key</string>
+    <string name="transaction_rejected">transaction rejected</string>
+    <string name="wallet_out_of_sync_message">Your wallet may be out of sync.\nThis can often be fixed by rescanning the blockchain.</string>
+    <string name="rescan">rescan</string>
+    <string name="reduce_payment_amount_by">reduce payment amount by %s?</string>
+    <string name="insufficient_funds_for_fee">insufficient funds for bitcoin network fee</string>
+    <string name="confirm">confirm</string>
+    <string name="failed_to_send_insufficient_funds">Failed to send, insufficient funds</string>
+    <string name="keystore_unavailable">The KeyStore is temporary unavailable, please try again later</string>
+    <string name="encryption_needed_for_wallet"><![CDATA[A device screen lock is needed to safeguard your wallet. Go to \"Settings\" > \"Security\" > \"Screen lock\" and enable to continue.]]></string>
 </resources>
