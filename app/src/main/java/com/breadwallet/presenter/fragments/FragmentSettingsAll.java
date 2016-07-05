@@ -3,6 +3,7 @@ package com.breadwallet.presenter.fragments;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -326,9 +327,12 @@ public class FragmentSettingsAll extends Fragment {
             if (!BRWalletManager.getInstance(app).transactionIsVerified(item.getHexId())) {
                 sentReceivedTextView.setText(R.string.unverified);
             } else {
-
                 Log.e(TAG, "item.getBlockHeight(): " + blockHeight + ", confirms: " + confirms + ", lastBlock: " + estimatedBlockHeight);
-                sentReceivedTextView.setText(String.format(Locale.getDefault(), app.getString(R.string.nr_confirmations), confirms >= 0 && confirms <= 5 ? confirms : 0));
+                Resources res = app.getResources();
+                int confsNr = confirms >= 0 && confirms <= 5 ? confirms : 0;
+                String confs = res.getQuantityString(R.plurals.nr_confirmations, confsNr);
+                String message = String.format(confs, confsNr);
+                sentReceivedTextView.setText(message);
             }
         }
 

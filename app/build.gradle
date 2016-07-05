@@ -57,14 +57,13 @@ model {
             }
             debug {
                 proguardFiles.add(file('proguard-rules.pro'))
-                debuggable = true
+                debuggable = false
                 minifyEnabled = false
                 ndk {
                     minifyEnabled = false
-                    debuggable = true
+                    debuggable = false
                 }
             }
-
         }
     }
 }
@@ -79,7 +78,6 @@ dependencies {
 //    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
 //    androidTestCompile 'com.android.support:appcompat-v7:24.0.0'
 //    androidTestCompile 'com.android.support:support-v13:24.0.0'
-//
 //    compile 'com.android.support.test.espresso:espresso-core:2.2.2'
 
     compile 'com.android.support:appcompat-v7:24.0.0'

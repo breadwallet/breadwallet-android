@@ -53,20 +53,20 @@ import java.util.Locale;
 
 /**
  * BreadWallet
- * <p>
+ * <p/>
  * Created by Mihail Gutan on 9/22/15.
  * Copyright (c) 2016 breadwallet llc <mihail@breadwallet.com>
- * <p>
+ * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * <p>
+ * <p/>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * <p>
+ * <p/>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -218,7 +218,8 @@ public class BRWalletManager {
                                         ctx.runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
-                                                ((BreadWalletApp) ctx.getApplication()).showCustomToast(ctx, activity.getString(R.string.scanning_privkey), MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 1);
+                                                ((BreadWalletApp) ctx.getApplication()).showCustomToast(ctx,
+                                                        activity.getString(R.string.scanning_privkey), MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 1);
                                             }
                                         });
                                     if (editText == null) return;
@@ -334,7 +335,7 @@ public class BRWalletManager {
                 @Override
                 public void run() {
                     CurrencyManager m = CurrencyManager.getInstance(ctx);
-                    long absAmount = amount > 0 ? amount : amount * -1;
+                    long absAmount = (amount > 0 ? amount : amount * -1);
                     String strToShow = String.format(ctx.getString(amount > 0 ? R.string.received_amount : R.string.sent_amount),
                             BRStringFormatter.getFormattedCurrencyString("BTC", absAmount) + " (" +
                                     BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(ctx),
@@ -579,7 +580,6 @@ public class BRWalletManager {
                     return;
                 }
 
-
                 Log.e(TAG, "maxAmountDouble: " + maxAmountDouble);
                 final long amountToReduce = bigDecimalAmount.longValue() - maxAmountDouble;
 //                String strToReduce = String.valueOf(amountToReduce);
@@ -602,7 +602,8 @@ public class BRWalletManager {
                                     confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, bigDecimalAmount.longValue() - amountToReduce, cn, tmpTx2, isAmountRequested));
                                 } else {
                                     Log.e(TAG, "tmpTxObject2 is null!!!");
-                                    ((BreadWalletApp) ctx.getApplication()).showCustomToast(ctx, ctx.getString(R.string.failed_to_send_insufficient_funds), MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
+                                    ((BreadWalletApp) ctx.getApplication()).showCustomToast(ctx, ctx.getString(R.string.failed_to_send_insufficient_funds),
+                                            MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
                                 }
                             }
                         });
@@ -661,7 +662,6 @@ public class BRWalletManager {
 
     public void setUpTheWallet() {
         if (ctx == null) return;
-
         BRWalletManager m = BRWalletManager.getInstance(ctx);
         final BRPeerManager pm = BRPeerManager.getInstance(ctx);
 
@@ -693,7 +693,6 @@ public class BRWalletManager {
                         }, 3500);
                     }
                 });
-
                 return;
             }
             //Save the first address for future check
@@ -717,14 +716,12 @@ public class BRWalletManager {
                     pm.putBlock(entity.getBuff(), entity.getBlockHeight());
                 }
             }
-
             if (peersCount > 0) {
                 pm.createPeerArrayWithCount(peersCount);
                 for (BRPeerEntity entity : peers) {
                     pm.putPeer(entity.getAddress(), entity.getPort(), entity.getTimeStamp());
                 }
             }
-
             Log.e(TAG, "blocksCount before connecting: " + blocksCount);
             Log.e(TAG, "peersCount before connecting: " + peersCount);
 
