@@ -53,20 +53,20 @@ import java.util.Locale;
 
 /**
  * BreadWallet
- * <p/>
+ * <p>
  * Created by Mihail Gutan on 9/22/15.
  * Copyright (c) 2016 breadwallet llc <mihail@breadwallet.com>
- * <p/>
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * <p/>
+ * <p>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * <p/>
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -559,9 +559,27 @@ public class BRWalletManager {
             final BRWalletManager m = BRWalletManager.getInstance(ctx);
             byte[] tmpTx = m.tryTransaction(addressHolder, bigDecimalAmount.longValue());
             long feeForTx = m.feeForTransaction(addressHolder, bigDecimalAmount.longValue());
-            if (tmpTx == null && bigDecimalAmount.longValue() <= cm.getBALANCE() && bigDecimalAmount.longValue() > 0) {
 
+            if (tmpTx == null && bigDecimalAmount.longValue() <= cm.getBALANCE() && bigDecimalAmount.longValue() > 0) {
                 final long maxAmountDouble = m.getMaxOutputAmount();
+                if (maxAmountDouble < getMinOutputAmount()) {
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+                    builder.setMessage("")
+                            .setTitle(R.string.insufficient_funds_for_fee)
+                            .setCancelable(false)
+                            .setNegativeButton(ctx.getString(R.string.ok), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+
+                    return;
+                }
+
+
                 Log.e(TAG, "maxAmountDouble: " + maxAmountDouble);
                 final long amountToReduce = bigDecimalAmount.longValue() - maxAmountDouble;
 //                String strToReduce = String.valueOf(amountToReduce);

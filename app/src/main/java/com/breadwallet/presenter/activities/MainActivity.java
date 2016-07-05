@@ -315,7 +315,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                     .setMessage("On a \'rooted\' device, any app can access any other app\'s keystore data (and steal your bitcoins)."
                             + (hasBitcoin ? "\nWipe this wallet immediately and restore on a secure device." : ""))
                     .setCancelable(false)
-                    .setNegativeButton(getString(R.string.ok_button), new DialogInterface.OnClickListener() {
+                    .setNegativeButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.cancel();
@@ -673,7 +673,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        String formattedBlockInfo = String.format(getString(R.string.blocks_text), currBlock, latestBlockKnown);
+                        String formattedBlockInfo = String.format(getString(R.string.blocks), currBlock, latestBlockKnown);
                         middleBubbleBlocks.setText(formattedBlockInfo);
                     }
                 });

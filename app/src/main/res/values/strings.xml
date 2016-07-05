@@ -1,5 +1,4 @@
 <resources>
-    <string name="ok_button">OK</string>
     <string name="app_name">&#384;readwallet</string>
     <string name="the_address">address</string>
     <string name="bad_recovery_phrase">bad recovery phrase</string>
@@ -12,7 +11,6 @@
     <!--<string name="hello_world">Hello world!</string>-->
     <string name="toast_qr_tip">Let others scan this QR code to get your bitcoin address. Anyone can send bitcoins to your wallet by transferring them to your address</string>
     <string name="toast_address_tip">This is your bitcoin address. Tap to copy it or send it by email or sms. The address will change each time you receive funds, but old addresses always work</string>
-    <string name="no_internet_connection">not connected</string>
     <string name="warning">warning</string>
     <string name="dialog_do_not_let_anyone">DO NOT let anyone see your recovery phrase or they can spend your bitcoins.
         \n\nNEVER type your recovery phrase into password managers or elsewhere.\nOther devices may be infected.\n\nDO NOT take a screenshot.\nScreenshots are visible to other apps and devices.</string>
@@ -52,7 +50,7 @@
     <string name="connection_timed_out">connection timed out</string>
     <string name="something_went_wrong">something went wrong</string>
     <string name="more">more…</string>
-    <string name="sent_amount">sent: %s</string>
+    <string name="sent_amount">sent: %1$s</string>
     <string name="sent">sent</string>
     <string name="send">send</string>
     <string name="received">received</string>
@@ -101,8 +99,8 @@
     <string name="use_passcode">passcode</string>
     <string name="wallet_disabled">wallet disabled</string>
     <plurals name="try_again">
-        <item quantity="one">try again in %d minute</item>
-        <item quantity="other">try again in %d minutes</item>
+        <item quantity="one">try again in %1$d minute</item>
+        <item quantity="other">try again in %1$d minutes</item>
     </plurals>
     <string name="reset">reset</string>
     <string name="recovery_title">recovery phrase</string>
@@ -134,25 +132,24 @@
     <string name="copy">copy</string>
     <string name="not_connected">not connected</string>
     <string name="password_protected_key">password protected key</string>
-    <string name="bitcoin_payment_cant_be_less">bitcoin payments can\'t be less than ƀ%.2f</string>
+    <string name="bitcoin_payment_cant_be_less">bitcoin payments can\'t be less than ƀ%1$.2f</string>
     <string name="amount_too_small">amount too small</string>
-    <string name="blocks_text">block #%s of %s</string>
     <string name="fingerprint_auth">Fingerprint authorization</string>
     <string name="change_payment_amount">change payment amount?</string>
     <string name="failed_to_send">Failed to send</string>
     <string name="support_request">support request</string>
     <string name="choose_an_email_client">Choose an Email client</string>
     <string name="phrase_error">Recovery phrase error, please contact support at breadwallet.com</string>
-    <string name="nr_confirmations">%d confirmations</string>
-    <string name="confirmed_in_block_nr">confirmed in block #%d%n%s</string>
+    <string name="nr_confirmations">%1$d confirmations</string>
+    <string name="confirmed_in_block_nr">confirmed in block #%1$d%2$n%3$s</string>
     <string name="insecure_keyboard_message"><![CDATA[Insecure keyboard detected\ngo to \"Settings\" > \"language & input\" > \"keyboards\" and disable all custom input types]]></string>
     <string name="change">change</string>
-    <string name="attempts_remaining">%d attempts remaining</string>
+    <string name="attempts_remaining">%1$d attempts remaining</string>
     <string name="allow_camera_access"><![CDATA[allow camera access in \"Settings\" > \"Apps\" > \"breadwallet\" > \"Permissions\"]]></string>
     <string name="priv_key_empty">this private key is empty</string>
     <string name="could_not_sweep_the_balance">couldn\'t sweep balance</string>
-    <string name="send_money_from_privkey_message">Send %s from this private key into your wallet? The bitcoin network will receive a fee of %s.</string>
-    <string name="blocks">block #%s of %s</string>
+    <string name="send_money_from_privkey_message">Send %1$s from this private key into your wallet? The bitcoin network will receive a fee of %2$s.</string>
+    <string name="blocks">block #%1$s of %2$s</string>
     <string name="invalid_request">Invalid request</string>
     <string name="insufficient_funds">Insufficient funds</string>
     <string name="failed_to_sign_tx">Failed to sign transaction</string>
@@ -162,7 +159,7 @@
     <string name="transaction_rejected">transaction rejected</string>
     <string name="wallet_out_of_sync_message">Your wallet may be out of sync.\nThis can often be fixed by rescanning the blockchain.</string>
     <string name="rescan">rescan</string>
-    <string name="reduce_payment_amount_by">reduce payment amount by %s?</string>
+    <string name="reduce_payment_amount_by">reduce payment amount by %1$s?</string>
     <string name="insufficient_funds_for_fee">insufficient funds for bitcoin network fee</string>
     <string name="confirm">confirm</string>
     <string name="failed_to_send_insufficient_funds">Failed to send, insufficient funds</string>

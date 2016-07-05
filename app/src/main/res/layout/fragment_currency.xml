@@ -29,7 +29,7 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="136dp"
-            android:text="@string/no_internet_connection"
+            android:text="@string/not_connected"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/gray"
             android:visibility="gone" />
