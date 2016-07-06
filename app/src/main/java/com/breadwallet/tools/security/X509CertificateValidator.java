@@ -136,7 +136,6 @@ public class X509CertificateValidator {
             e.printStackTrace();
         }
         return theList;
-
     }
 
 }

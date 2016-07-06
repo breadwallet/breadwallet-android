@@ -345,7 +345,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         currencyManager.deleteObservers();
         currencyManager.addObserver(this);
         MiddleViewAdapter.resetMiddleView(this, null);
-        boolean isNetworkAvailable = CurrencyManager.getInstance(this).isNetworkAvailable(this);
+        boolean isNetworkAvailable = ((BreadWalletApp)getApplication()).isNetworkAvailable(this);
 //        Log.e(TAG, "isNetworkAvailable: " + isNetworkAvailable);
         networkErrorBar.setVisibility(isNetworkAvailable ? View.GONE : View.VISIBLE);
         startStopReceiver(true);

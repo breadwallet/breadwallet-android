@@ -209,8 +209,13 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 Log.e(TAG, "No certificates!", e);
             } else {
                 if (app != null)
-                    ((BreadWalletApp) app.getApplication()).
-                            showCustomDialog(app.getString(R.string.warning), app.getString(R.string.something_went_wrong), app.getString(R.string.close));
+                    if (!((BreadWalletApp) app.getApplication()).isNetworkAvailable(app))
+                        ((BreadWalletApp) app.getApplication()).
+                                showCustomDialog(app.getString(R.string.could_not_make_payment), app.getString(R.string.internet_seems_offline), app.getString(R.string.ok));
+                    else
+                        ((BreadWalletApp) app.getApplication()).
+                                showCustomDialog(app.getString(R.string.warning), app.getString(R.string.something_went_wrong), app.getString(R.string.close));
+
             }
             e.printStackTrace();
         } finally {
@@ -233,6 +238,8 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
         boolean certified = false;
         if (cn != null && cn.length() != 0) {
             certified = true;
+        } else {
+            cn = paymentRequest.addresses[0];
         }
         StringBuilder allAddresses = new StringBuilder();
         for (String s : paymentRequest.addresses) {

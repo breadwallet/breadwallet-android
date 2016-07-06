@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
 
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.adapter.CurrencyListAdapter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
@@ -79,13 +80,7 @@ public class CurrencyManager extends Observable {
         return instance;
     }
 
-    public boolean isNetworkAvailable(Activity context) {
-        if (context == null) return false;
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
+
 
     public void setBalance(long balance) {
         Log.e(TAG, "in the setBalance, BALANCE:  " + BALANCE);
@@ -100,7 +95,7 @@ public class CurrencyManager extends Observable {
 
     private Set<CurrencyEntity> getCurrencies(Activity context) {
         Set<CurrencyEntity> set = new LinkedHashSet<>();
-        if (isNetworkAvailable(context)) {
+        if (((BreadWalletApp)ctx.getApplication()).isNetworkAvailable(ctx)) {
             try {
                 JSONArray arr;
                 arr = JsonParser.getJSonArray(context);

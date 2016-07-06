@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.util.Log;
 import android.view.WindowManager;
 
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.BlockEntity;
 import com.breadwallet.presenter.entities.PeerEntity;
@@ -155,7 +156,7 @@ public class BRPeerManager {
 
     public static boolean networkIsReachable() {
         Log.e(TAG, "networkIsReachable");
-        return ctx != null && CurrencyManager.getInstance(ctx).isNetworkAvailable(ctx);
+        return ctx != null && ((BreadWalletApp) ctx.getApplication()).isNetworkAvailable(ctx);
     }
 
     public static void deleteBlocks() {
@@ -190,7 +191,7 @@ public class BRPeerManager {
     public static void startSyncingProgressThread() {
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) {
-            if (!CurrencyManager.getInstance(ctx).isNetworkAvailable(ctx)) return;
+            if (!((BreadWalletApp) ctx.getApplication()).isNetworkAvailable(ctx)) return;
             MiddleViewAdapter.setSyncing(ctx, true);
             ctx.runOnUiThread(new Runnable() {
                 @Override

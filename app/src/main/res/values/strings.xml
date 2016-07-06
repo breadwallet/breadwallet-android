@@ -144,7 +144,7 @@
         <item quantity="one">%1$d confirmation</item>
         <item quantity="other">%1$d confirmations</item>
     </plurals>
-    <string name="confirmed_in_block_nr">confirmed in block #%1$d%2$n%3$s</string>
+    <string name="confirmed_in_block_nr">confirmed in block #%1$d\n%2$s</string>
     <string name="insecure_keyboard_message"><![CDATA[Insecure keyboard detected\ngo to \"Settings\" > \"language & input\" > \"keyboards\" and disable all custom input types]]></string>
     <string name="change">change</string>
     <string name="attempts_remaining">%1$d attempts remaining</string>
@@ -168,4 +168,6 @@
     <string name="failed_to_send_insufficient_funds">Failed to send, insufficient funds</string>
     <string name="keystore_unavailable">The KeyStore is temporary unavailable, please try again later</string>
     <string name="encryption_needed_for_wallet"><![CDATA[A device screen lock is needed to safeguard your wallet. Go to \"Settings\" > \"Security\" > \"Screen lock\" and enable to continue.]]></string>
+    <string name="internet_seems_offline">The internet connection appears to be offline</string>
+    <string name="could_not_make_payment">couldn\'t make payment</string>
 </resources>

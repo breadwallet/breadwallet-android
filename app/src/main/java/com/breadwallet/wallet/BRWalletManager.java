@@ -182,7 +182,7 @@ public class BRWalletManager {
                 @Override
                 public void run() {
 
-                    if (!CurrencyManager.getInstance(activity).isNetworkAvailable(activity)) {
+                    if (!((BreadWalletApp)activity.getApplication()).isNetworkAvailable(activity)) {
                         ((BreadWalletApp) activity.getApplication()).showCustomDialog(activity.getString(R.string.warning),
                                 activity.getString(R.string.not_connected), activity.getString(R.string.ok));
                         return;
@@ -556,7 +556,7 @@ public class BRWalletManager {
         Log.e(TAG, "*********Sending: " + bigDecimalAmount + " to: " + addressHolder);
         final CurrencyManager cm = CurrencyManager.getInstance(ctx);
 
-        if (cm.isNetworkAvailable(ctx)) {
+        if (((BreadWalletApp)ctx.getApplication()).isNetworkAvailable(ctx)) {
             final BRWalletManager m = BRWalletManager.getInstance(ctx);
             byte[] tmpTx = m.tryTransaction(addressHolder, bigDecimalAmount.longValue());
             long feeForTx = m.feeForTransaction(addressHolder, bigDecimalAmount.longValue());

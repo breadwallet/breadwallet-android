@@ -6,6 +6,7 @@
       <w>breadwallet</w>
       <w>merkle</w>
       <w>passcode</w>
+      <w>satoshis</w>
       <w>sqlite</w>
     </words>
   </dictionary>
