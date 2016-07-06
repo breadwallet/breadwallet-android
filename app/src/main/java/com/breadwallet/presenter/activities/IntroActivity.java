@@ -12,6 +12,7 @@ import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.fragments.IntroNewRecoverFragment;
@@ -288,7 +289,7 @@ public class IntroActivity extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
-        if(backNotAllowed) return;
+        if (backNotAllowed) return;
         int backStackEntryCount = getFragmentManager().getBackStackEntryCount();
         if (backStackEntryCount > 0) {
             if (backStackEntryCount == 1) {

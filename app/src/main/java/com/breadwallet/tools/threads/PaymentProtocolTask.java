@@ -1,5 +1,7 @@
 package com.breadwallet.tools.threads;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -9,6 +11,8 @@ import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
+import com.breadwallet.presenter.fragments.FragmentScanResult;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.exceptions.CertificateChainNotFound;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRStringFormatter;
@@ -19,6 +23,7 @@ import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.security.RequestHandler;
 import com.breadwallet.tools.security.X509CertificateValidator;
+import com.breadwallet.tools.util.CustomLogger;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.io.FileNotFoundException;
@@ -62,14 +67,16 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
     HttpURLConnection urlConnection;
     String certName = null;
     PaymentRequestWrapper paymentRequest = null;
+    int certified = 0;
 
+    //params[0] = uri, params[1] = label
     @Override
-    protected String doInBackground(String... uri) {
+    protected String doInBackground(String... params) {
         InputStream in;
         final MainActivity app = MainActivity.app;
         try {
-            Log.e(TAG, "the uri: " + uri[0]);
-            URL url = new URL(uri[0]);
+            Log.e(TAG, "the uri: " + params[0]);
+            URL url = new URL(params[0]);
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestProperty("Accept", "application/bitcoin-paymentrequest");
             urlConnection.setConnectTimeout(3000);
@@ -80,7 +87,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
             String phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE);
             if (phrase == null || phrase.isEmpty()) {
                 if (urlConnection != null) urlConnection.disconnect();
-                PostAuthenticationProcessor.getInstance().setUri(uri[0]);
+                PostAuthenticationProcessor.getInstance().setUriAndLabel(params[0], params[1]);
                 return null;
             }
 
@@ -173,13 +180,13 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
             }
             allAddresses.delete(allAddresses.length() - 2, allAddresses.length());
 
-//                CustomLogger.logThis("Signature", String.valueOf(paymentRequest.signature.length),
-//                        "pkiType", paymentRequest.pkiType, "pkiData", String.valueOf(paymentRequest.pkiData.length));
-//                CustomLogger.logThis("network", paymentRequest.network, "time", String.valueOf(paymentRequest.time),
-//                        "expires", String.valueOf(paymentRequest.expires), "memo", paymentRequest.memo,
-//                        "paymentURL", paymentRequest.paymentURL, "merchantDataSize",
-//                        String.valueOf(paymentRequest.merchantData.length), "addresses", allAddresses.toString(),
-//                        "amount", String.valueOf(paymentRequest.amount));
+//            CustomLogger.logThis("Signature", String.valueOf(paymentRequest.signature.length),
+//                    "pkiType", paymentRequest.pkiType, "pkiData", String.valueOf(paymentRequest.pkiData.length));
+//            CustomLogger.logThis("network", paymentRequest.network, "time", String.valueOf(paymentRequest.time),
+//                    "expires", String.valueOf(paymentRequest.expires), "memo", paymentRequest.memo,
+//                    "paymentURL", paymentRequest.paymentURL, "merchantDataSize",
+//                    String.valueOf(paymentRequest.merchantData.length), "addresses", allAddresses.toString(),
+//                    "amount", String.valueOf(paymentRequest.amount));
             //end logging
             if (paymentRequest.expires != 0 && paymentRequest.time > paymentRequest.expires) {
                 Log.e(TAG, "Request is expired");
@@ -187,6 +194,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                     ((BreadWalletApp) app.getApplication()).
                             showCustomDialog(app.getString(R.string.error), app.getString(R.string.expired_request),
                                     app.getString(R.string.close));
+                paymentRequest = null;
                 return null;
             }
             List<X509Certificate> certList = X509CertificateValidator.getCertificateFromBytes(serializedBytes);
@@ -197,14 +205,17 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 if (app != null)
                     ((BreadWalletApp) app.getApplication()).
                             showCustomDialog(app.getString(R.string.error), app.getString(R.string.unknown_host), app.getString(R.string.close));
+                paymentRequest = null;
             } else if (e instanceof FileNotFoundException) {
                 if (app != null)
                     ((BreadWalletApp) app.getApplication()).
                             showCustomDialog(app.getString(R.string.warning), app.getString(R.string.invalid_payment_request), app.getString(R.string.close));
+                paymentRequest = null;
             } else if (e instanceof SocketTimeoutException) {
                 if (app != null)
                     ((BreadWalletApp) app.getApplication()).
                             showCustomDialog(app.getString(R.string.warning), app.getString(R.string.connection_timed_out), app.getString(R.string.close));
+                paymentRequest = null;
             } else if (e instanceof CertificateChainNotFound) {
                 Log.e(TAG, "No certificates!", e);
             } else {
@@ -212,15 +223,27 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                     if (!((BreadWalletApp) app.getApplication()).isNetworkAvailable(app))
                         ((BreadWalletApp) app.getApplication()).
                                 showCustomDialog(app.getString(R.string.could_not_make_payment), app.getString(R.string.internet_seems_offline), app.getString(R.string.ok));
+
                     else
                         ((BreadWalletApp) app.getApplication()).
                                 showCustomDialog(app.getString(R.string.warning), app.getString(R.string.something_went_wrong), app.getString(R.string.close));
+                paymentRequest = null;
 
             }
             e.printStackTrace();
         } finally {
             if (urlConnection != null) urlConnection.disconnect();
         }
+        if (!paymentRequest.pkiType.equals("none") && certName == null) {
+            certified = 2;
+        } else if (!paymentRequest.pkiType.equals("none") && certName != null) {
+            certified = 1;
+        }
+        certName = extractCNFromCertName(certName);
+        if (certName == null || certName.isEmpty())
+            certName = params[1];
+        if (certName == null || certName.isEmpty())
+            certName = paymentRequest.addresses[0];
         return null;
     }
 
@@ -228,31 +251,69 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
 
-        String cn = extractCNFromCertName(certName);
         final MainActivity app = MainActivity.app;
         if (app == null) return;
         if (paymentRequest == null || paymentRequest.addresses == null || paymentRequest.addresses.length == 0 || paymentRequest.amount == 0) {
             return;
         }
-
-        boolean certified = false;
-        if (cn != null && cn.length() != 0) {
-            certified = true;
+        final String certification;
+        if (certified == 0) {
+            certification = certName + "\n";
         } else {
-            cn = paymentRequest.addresses[0];
+            certification = (certified == 1 ? "\ud83d\udd12 " : "\u274C ") + certName + "\n";
+            new AlertDialog.Builder(app)
+                    .setTitle("")
+                    .setMessage(R.string.payee_not_certified)
+                    .setNegativeButton(app.getString(R.string.ignore), new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            continueWithThePayment(app, certification);
+                        }
+                    }).setPositiveButton(app.getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+            return;
+
         }
+        continueWithThePayment(app, certification);
+
+    }
+
+    private String extractCNFromCertName(String str) {
+        if (str == null || str.length() < 4) return null;
+        String cn = "CN=";
+        int index = -1;
+        int endIndex = -1;
+        for (int i = 0; i < str.length() - 3; i++) {
+            if (str.substring(i, i + 3).equalsIgnoreCase(cn)) {
+                index = i + 3;
+            }
+            if (index != -1) {
+                if (str.charAt(i) == ',') {
+                    endIndex = i;
+                    break;
+                }
+
+            }
+        }
+        String cleanCN = str.substring(index, endIndex);
+//            Log.e(TAG, "cleanCN: " + cleanCN);
+        return (index != -1 && endIndex != -1) ? cleanCN : null;
+    }
+
+    private void continueWithThePayment(final Activity app, String certification) {
+
         StringBuilder allAddresses = new StringBuilder();
         for (String s : paymentRequest.addresses) {
             allAddresses.append(s + ", ");
         }
         allAddresses.delete(allAddresses.length() - 2, allAddresses.length());
-        String certification;
+
         String memo = (!paymentRequest.memo.isEmpty() ? "\n" : "") + paymentRequest.memo;
-        if (certified) {
-            certification = "\ud83d\udd12 " + cn + "\n";
-        } else {
-            certification = "\u274C " + cn + "\n";
-        }
         allAddresses = new StringBuilder();
 
         //DecimalFormat decimalFormat = new DecimalFormat("0.00");
@@ -285,7 +346,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
 
         final long total = paymentRequest.amount + paymentRequest.fee;
 
-        final PaymentRequestEntity request = new PaymentRequestEntity(paymentRequest.addresses, paymentRequest.amount, cn, paymentRequest.serializedTx, false);
+        final PaymentRequestEntity request = new PaymentRequestEntity(paymentRequest.addresses, paymentRequest.amount, certName, paymentRequest.serializedTx, false);
         final String message = certification + memo + allAddresses.toString() + "\n\n" + "amount: " + BRStringFormatter.getFormattedCurrencyString("BTC", paymentRequest.amount)
                 + " (" + BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(paymentRequest.amount), app) + ")" + "\nnetwork fee: +" + BRStringFormatter.getFormattedCurrencyString("BTC", paymentRequest.fee)
                 + " (" + BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(paymentRequest.fee), app) + ")" + "\ntotal: " + BRStringFormatter.getFormattedCurrencyString("BTC", total)
@@ -297,28 +358,6 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 ((BreadWalletApp) app.getApplicationContext()).promptForAuthentication(app, BRConstants.AUTH_FOR_PAYMENT_PROTOCOL, request, message, app.getString(R.string.payment_info), paymentRequest);
             }
         });
-    }
-
-    private String extractCNFromCertName(String str) {
-        if (str == null || str.length() < 4) return null;
-        String cn = "CN=";
-        int index = -1;
-        int endIndex = -1;
-        for (int i = 0; i < str.length() - 3; i++) {
-            if (str.substring(i, i + 3).equalsIgnoreCase(cn)) {
-                index = i + 3;
-            }
-            if (index != -1) {
-                if (str.charAt(i) == ',') {
-                    endIndex = i;
-                    break;
-                }
-
-            }
-        }
-        String cleanCN = str.substring(index, endIndex);
-//            Log.e(TAG, "cleanCN: " + cleanCN);
-        return (index != -1 && endIndex != -1) ? cleanCN : null;
     }
 
 }

@@ -137,7 +137,7 @@ public class RequestHandler {
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-            new PaymentProtocolTask().execute(theURL);
+            new PaymentProtocolTask().execute(theURL, requestObject.label);
         }
 
     }

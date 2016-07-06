@@ -59,10 +59,11 @@ public class X509CertificateValidator {
     public static String certificateValidation(List<X509Certificate> certList,
                                                 PaymentRequestWrapper paymentRequest)
             throws KeyStoreException, CertificateChainNotFound {
+
+        String result = null;
         if (certList.size() == 0) {
             throw new CertificateChainNotFound("no certificates supplied");
         }
-        String result = null;
         try {
             Log.e(TAG, "The size of certList is: " + certList.size());
             TrustManagerFactory tmf = TrustManagerFactory.getInstance("X509");

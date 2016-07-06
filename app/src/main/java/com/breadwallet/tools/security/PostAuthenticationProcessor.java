@@ -47,6 +47,7 @@ public class PostAuthenticationProcessor {
     private String phraseForKeyStore;
     private byte[] tmpTx;
     private String uri;
+    private String label;
 
     private static PostAuthenticationProcessor instance;
 
@@ -161,7 +162,7 @@ public class PostAuthenticationProcessor {
     }
 
     public void onPaymentProtocolRequest() {
-        new PaymentProtocolTask().execute(uri);
+        new PaymentProtocolTask().execute(uri, label);
     }
 
 
@@ -175,8 +176,9 @@ public class PostAuthenticationProcessor {
         this.tmpTx = tmpTx;
     }
 
-    public void setUri(String uri) {
+    public void setUriAndLabel(String uri, String label) {
         this.uri = uri;
+        this.label = label;
     }
 
 }

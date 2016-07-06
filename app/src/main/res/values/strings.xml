@@ -170,4 +170,5 @@
     <string name="encryption_needed_for_wallet"><![CDATA[A device screen lock is needed to safeguard your wallet. Go to \"Settings\" > \"Security\" > \"Screen lock\" and enable to continue.]]></string>
     <string name="internet_seems_offline">The internet connection appears to be offline</string>
     <string name="could_not_make_payment">couldn\'t make payment</string>
+    <string name="payee_not_certified">payee identity isn’t certified</string>
 </resources>
