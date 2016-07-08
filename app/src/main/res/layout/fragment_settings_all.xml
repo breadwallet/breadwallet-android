@@ -20,19 +20,16 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <ListView
+                android:id="@+id/transactions_list"
+                android:layout_width="fill_parent"
+                android:layout_height="400dp"/>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/clickable_layout"
                 android:orientation="vertical">
-
-                <LinearLayout
-                    android:id="@+id/transactions_list"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:cacheColorHint="@android:color/transparent"
-                    android:listSelector="@color/white"
-                    android:orientation="vertical" />
 
                 <TextView
                     android:id="@+id/text_no_transactions"

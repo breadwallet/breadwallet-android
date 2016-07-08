@@ -288,7 +288,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                 } else {
                     //check multi pressing availability here, because method onBackPressed does the checking as well.
                     if (BRAnimator.checkTheMultipressingAvailability()) {
-                        BRAnimator.pressMenuButton(app, new FragmentSettingsAll());
+                        BRAnimator.pressMenuButton(app);
                     }
                 }
             }
@@ -428,7 +428,7 @@ public class MainActivity extends FragmentActivity implements Observer {
             if (BRAnimator.level > 1 || scanResultFragmentOn || decoderFragmentOn) {
                 this.onBackPressed();
             } else if (BRAnimator.checkTheMultipressingAvailability()) {
-                BRAnimator.pressMenuButton(app, new FragmentSettingsAll());
+                BRAnimator.pressMenuButton(app);
             }
         }
         // let the system handle all other key events
@@ -458,7 +458,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                     super.onBackPressed();
                     break;
                 case 1:
-                    BRAnimator.pressMenuButton(this, new FragmentSettingsAll());
+                    BRAnimator.pressMenuButton(this);
                     BRAnimator.hideDecoderFragment();
                     break;
                 default:

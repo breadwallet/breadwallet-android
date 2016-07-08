@@ -18,6 +18,7 @@ import com.breadwallet.tools.util.BRStringFormatter;
 import com.breadwallet.tools.manager.CurrencyManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.math.BigDecimal;
@@ -95,7 +96,7 @@ public class FragmentTransactionExpanded extends Fragment {
             statusText.setText(R.string.verified_waiting);
         } else {
             statusText.setText(String.format(Locale.getDefault(), getActivity().getString(R.string.confirmed_in_block_nr), blockHeight,
-                    FragmentSettingsAll.getFormattedDateFromLong(item.getTimeStamp())));
+                    Utils.getFormattedDateFromLong(item.getTimeStamp())));
         }
         String rawHash = BRWalletManager.getInstance(getActivity()).reverseTxHash(item.getHexId());
         final int mid = rawHash.length() / 2;

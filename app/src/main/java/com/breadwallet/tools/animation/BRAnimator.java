@@ -103,7 +103,7 @@ public class BRAnimator {
                 }
             } else {
                 if (BRAnimator.level > 0)
-                    BRAnimator.pressMenuButton(app, new FragmentSettingsAll());
+                    BRAnimator.pressMenuButton(app);
                 //            Log.e(TAG, "in the animateDecoderFragment");
                 //            MainActivity.beenThroughSavedInstanceMethod = false;
                 MainActivity.decoderFragmentOn = true;
@@ -168,9 +168,9 @@ public class BRAnimator {
     /**
      * Animate the transition on burgerButton/MenuButton pressed
      */
-    public static void pressMenuButton(final MainActivity context, final Fragment to) {
+    public static void pressMenuButton(final MainActivity context) {
         try {
-            if (context == null || to == null) return;
+            if (context == null) return;
             ((BreadWalletApp) context.getApplication()).cancelToast();
 //        Log.e(TAG, "The level is: " + level);
             final FragmentManager fragmentManager = context.getFragmentManager();
@@ -180,21 +180,24 @@ public class BRAnimator {
                 context.setBurgerButtonImage(BRConstants.CLOSE);
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 //            fragmentTransaction.setCustomAnimations(R.animator.from_bottom, 0);
+                FragmentSettingsAll to = (FragmentSettingsAll) fragmentManager.
+                        findFragmentByTag(FragmentSettingsAll.class.getName());
+                if (to == null) to = new FragmentSettingsAll();
                 fragmentTransaction.add(R.id.main_layout, to, FragmentSettingsAll.class.getName());
                 fragmentTransaction.commit();
+                final FragmentSettingsAll finalTo = to;
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         TranslateAnimation trans = new TranslateAnimation(0, 0, 1920, 0);
                         trans.setDuration(500);
                         trans.setInterpolator(new DecelerateOvershootInterpolator(3f, 0.5f));
-                        View view = to.getView();
+                        View view = finalTo.getView();
                         Log.e(TAG, "startAnimation");
                         if (view != null)
                             view.startAnimation(trans);
                     }
                 }, 1);
-
 
                 InputMethodManager keyboard = (InputMethodManager) context.
                         getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -202,13 +205,6 @@ public class BRAnimator {
                 if (keyboard != null)
                     keyboard.hideSoftInputFromWindow(CustomPagerAdapter.adapter.
                             mainFragment.addressEditText.getWindowToken(), 0);
-                //            new Handler().postDelayed(new Runnable() {
-                //                @Override
-                //                public void run() {
-                //                    SpringAnimator.showBouncySlideVertical(to.getView(), SpringAnimator.TO_LEFT);
-                //
-                //                }
-                //            }, 200);
             } else if (level == 1) {
                 level--;
                 context.setBurgerButtonImage(BRConstants.BURGER);
@@ -557,7 +553,7 @@ public class BRAnimator {
 
     }
 
-    public static  void scaleView(View v, float startScaleX, float endScaleX, float startScaleY, float endScaleY) {
+    public static void scaleView(View v, float startScaleX, float endScaleX, float startScaleY, float endScaleY) {
         Animation anim = new ScaleAnimation(
                 startScaleX, endScaleX, // Start and end values for the X axis scaling
                 startScaleY, endScaleY, // Start and end values for the Y axis scaling

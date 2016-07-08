@@ -13,7 +13,10 @@ import android.widget.TextView;
 
 import com.breadwallet.presenter.activities.MainActivity;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * BreadWallet
@@ -98,5 +101,23 @@ public class Utils {
             isEmulator = fing.contains("vbox") || fing.contains("generic");
         }
         return isEmulator;
+    }
+
+    public static String getFormattedDateFromLong(long time) {
+
+        MainActivity app = MainActivity.app;
+        SimpleDateFormat formatter = new SimpleDateFormat("M/d@ha", Locale.getDefault());
+        boolean is24HoursFormat = false;
+        if (app != null) {
+            is24HoursFormat = android.text.format.DateFormat.is24HourFormat(app.getApplicationContext());
+            if (is24HoursFormat) {
+                formatter = new SimpleDateFormat("M/d H", Locale.getDefault());
+            }
+        }
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(time);
+        String result = formatter.format(calendar.getTime()).toLowerCase().replace("am", "a").replace("pm", "p");
+        if (is24HoursFormat) result += "h";
+        return result;
     }
 }
