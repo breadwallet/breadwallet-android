@@ -187,7 +187,6 @@ public class BRPeerManager {
         }
     }
 
-
     public static void startSyncingProgressThread() {
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) {

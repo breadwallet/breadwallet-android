@@ -179,7 +179,7 @@ public class FragmentSettingsAll extends Fragment {
 //        transactionList.removeAllViews();
 
         if (!BreadWalletApp.unlocked) {
-            boolean addLine = false;
+//            boolean addLine = false;
             int unconfirmedTxCount = getUnconfirmedCount(transactionObjects);
             if (unconfirmedTxCount == 0) {
                 transactionList.setVisibility(View.GONE);

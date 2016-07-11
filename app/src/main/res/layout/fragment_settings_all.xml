@@ -22,8 +22,8 @@
 
             <ListView
                 android:id="@+id/transactions_list"
-                android:layout_width="fill_parent"
-                android:layout_height="400dp"/>
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
