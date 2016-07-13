@@ -23,6 +23,7 @@ import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.presenter.fragments.FragmentTransactionExpanded;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRStringFormatter;
 import com.breadwallet.tools.util.CustomLogger;
 import com.breadwallet.tools.util.Utils;
@@ -71,7 +72,7 @@ public class TransactionListAdapter extends BaseAdapter {
     private static int unconfirmedColor;
     private static int sentColor;
     private static int receivedColor;
-    private int itemsToShow = 0;
+    public static boolean showAllTx = false;
 
     public TransactionListAdapter(Activity a, TransactionListItem[] d) {
         activity = a;
@@ -82,23 +83,35 @@ public class TransactionListAdapter extends BaseAdapter {
         unconfirmedColor = ContextCompat.getColor(a, R.color.white);
         sentColor = Color.parseColor("#FF5454");
         receivedColor = Color.parseColor("#00BF00");
-        itemsToShow = data.size();
     }
 
     public void updateData(TransactionListItem[] d) {
-        if (d != null)
-            Collections.addAll(data, d);
+        if (d != null) {
+            if (d.length != data.size()) {
+                data.clear();
+                Collections.addAll(data, d);
+
+            }
+        }
+        showAllTx = false;
+        notifyDataSetChanged();
     }
 
     @Override
     public int getCount() {
-        Log.e(TAG, "data.size(): " + data.size());
-        return data.size() + 3;
+        Log.e(TAG, "getCount: data.size(): " + data.size());
+        final int EXTRA_ITEMS = 4;
+        if (!BreadWalletApp.unlocked) {
+            int unconfirmedTxCount = getUnconfirmedCount(data);
+            Log.e(TAG, "unconfirmedTxCount: " + unconfirmedTxCount);
+            return unconfirmedTxCount == 0 ? (EXTRA_ITEMS + 1) : unconfirmedTxCount + EXTRA_ITEMS + 1;
+        }
+        return data.size() + EXTRA_ITEMS;
     }
 
     @Override
     public Object getItem(int position) {
-        return position;
+        return data.get(position);
     }
 
     @Override
@@ -108,16 +121,14 @@ public class TransactionListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup viewGroup) {
-        View tmpLayout = convertView;
-        if (convertView == null)
-            tmpLayout = inflater.inflate(R.layout.transaction_list_item, null);
+        View tmpLayout = inflater.inflate(R.layout.transaction_list_item, null);
 
-        if (position == data.size()) {
+        if (position == getCount() - 3) {
             View separator = new View(activity);
             separator.setLayoutParams(new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.getPixelsFromDps(activity, 30)));
             separator.setBackgroundResource(android.R.color.transparent);
             return separator;
-        } else if (position == data.size() + 1) {
+        } else if (position == getCount() - 2) {
             RelativeLayout importPrivateKeys = (RelativeLayout) inflater.inflate(R.layout.button_import_privkey, null);
             importPrivateKeys.setLayoutParams(new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.getPixelsFromDps(activity, 50)));
             importPrivateKeys.setOnClickListener(new View.OnClickListener() {
@@ -130,7 +141,7 @@ public class TransactionListAdapter extends BaseAdapter {
             });
             return importPrivateKeys;
 
-        } else if (position == data.size() + 2) {
+        } else if (position == getCount() - 1) {
             RelativeLayout settings = (RelativeLayout) inflater.inflate(R.layout.button_settings, null);
             settings.setLayoutParams(new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.getPixelsFromDps(activity, 50)));
             settings.setOnClickListener(new View.OnClickListener() {
@@ -146,27 +157,92 @@ public class TransactionListAdapter extends BaseAdapter {
                 }
             });
             return settings;
+        } else if (position == getCount()) {
+            View separator = new View(activity);
+            separator.setLayoutParams(new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.getPixelsFromDps(activity, 30)));
+            separator.setBackgroundResource(android.R.color.transparent);
+            return separator;
         }
 
         if (!BreadWalletApp.unlocked) {
             int unconfirmedTxCount = getUnconfirmedCount(data);
-            RelativeLayout txHistory = new RelativeLayout(activity);
-            if (unconfirmedTxCount == 0 && txHistory.getParent() == viewGroup) {
-                txHistory.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.getPixelsFromDps(activity, 30)));
-                TextView txHistoryText = new TextView(activity);
-                txHistoryText.setText(activity.getString(R.string.transaction_history));
-                txHistoryText.setTextColor(activity.getColor(R.color.dark_blue));
-                txHistoryText.setGravity(View.TEXT_ALIGNMENT_CENTER);
-                txHistoryText.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                txHistory.addView(txHistoryText);
+            if (unconfirmedTxCount == 0 && position == 0) {
+                RelativeLayout txHistory = (RelativeLayout) inflater.inflate(R.layout.button_transaction_history, null);
+                txHistory.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.getPixelsFromDps(activity, 40)));
+                txHistory.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (BRAnimator.checkTheMultipressingAvailability()) {
+                            ((BreadWalletApp) activity.getApplicationContext()).
+                                    promptForAuthentication(activity, BRConstants.AUTH_FOR_GENERAL, null, null, null, null);
+                        }
+                    }
+                });
                 return txHistory;
             } else {
-                itemsToShow = unconfirmedTxCount;
+                if (position == unconfirmedTxCount) {
+                    RelativeLayout moreAuth = (RelativeLayout) inflater.inflate(R.layout.button_more, null);
+                    moreAuth.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.getPixelsFromDps(activity, 40)));
+                    moreAuth.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (BRAnimator.checkTheMultipressingAvailability()) {
+                                ((BreadWalletApp) activity.getApplicationContext()).
+                                        promptForAuthentication(activity, BRConstants.AUTH_FOR_GENERAL, null, null, null, null);
+                            }
+                        }
+                    });
+                    return moreAuth;
+                } else {
+                    return getTxView(tmpLayout, position);
+                }
+            }
+        } else {
+            Log.e(TAG, "showAllTx: " + showAllTx);
+            Log.e(TAG, "data.size(): " + data.size());
+            Log.e(TAG, "position: " + position);
+
+            if (showAllTx) return getTxView(tmpLayout, position);
+            if (data.size() > 5 && position <= 5) {
+
+                return getTxView(tmpLayout, position);
+            } else {
+                RelativeLayout more = (RelativeLayout) inflater.inflate(R.layout.button_more, null);
+                more.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.getPixelsFromDps(activity, 40)));
+                more.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showAllTx = true;
+                    }
+                });
+                return more;
+            }
+
+        }
+    }
+
+    public static int getUnconfirmedCount(List<TransactionListItem> items) {
+        int count = 0;
+        int estimatedBlockHeight = BRPeerManager.getEstimatedBlockHeight();
+        for (TransactionListItem t : items) {
+            if (t == null) continue;
+            int blockHeight = t.getBlockHeight();
+            int confirms = blockHeight == Integer.MAX_VALUE ? 0 : estimatedBlockHeight - blockHeight + 1;
+            if (blockHeight != Integer.MAX_VALUE && confirms < 6) {
+                count++;
             }
         }
-        if (position > itemsToShow - 1) return convertView;
+        return count;
+    }
+
+    @Override
+    public int getViewTypeCount() {
+        return 2;
+    }
+
+    public View getTxView(View tmpLayout, int position) {
+        Log.e(TAG, "getTxView: " + tmpLayout);
         TextView sentReceivedTextView = (TextView) tmpLayout.findViewById(R.id.transaction_sent_received_label);
-        if(sentReceivedTextView == null) return convertView;
         TextView dateTextView = (TextView) tmpLayout.findViewById(R.id.transaction_date);
         TextView bitsTextView = (TextView) tmpLayout.findViewById(R.id.transaction_amount_bits);
         TextView dollarsTextView = (TextView) tmpLayout.findViewById(R.id.transaction_amount_dollars);
@@ -235,26 +311,6 @@ public class TransactionListAdapter extends BaseAdapter {
         bitsTotalTextView.setText(BRStringFormatter.getFormattedCurrencyString("BTC", satoshisAfterTx));
         dollarsTotalTextView.setText(String.format("(%s)", BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(activity), SharedPreferencesManager.getIso(activity), new BigDecimal(satoshisAfterTx), activity)));
         return tmpLayout;
-
-    }
-
-    public static int getUnconfirmedCount(List<TransactionListItem> items) {
-        int count = 0;
-        int estimatedBlockHeight = BRPeerManager.getEstimatedBlockHeight();
-        for (TransactionListItem t : items) {
-            if (t == null) continue;
-            int blockHeight = t.getBlockHeight();
-            int confirms = blockHeight == Integer.MAX_VALUE ? 0 : estimatedBlockHeight - blockHeight + 1;
-            if (blockHeight != Integer.MAX_VALUE && confirms < 6) {
-                count++;
-            }
-        }
-        return count;
-    }
-
-    @Override
-    public int getViewTypeCount() {
-        return 2;
     }
 
 }

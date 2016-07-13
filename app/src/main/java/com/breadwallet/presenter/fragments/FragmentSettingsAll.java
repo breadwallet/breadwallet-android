@@ -99,8 +99,8 @@ public class FragmentSettingsAll extends Fragment {
 //            }
 //        });
         refreshTransactions(getActivity());
-        Button btnLoadMore = new Button(getActivity());
-        btnLoadMore.setText(getString(R.string.more));
+//        Button btnLoadMore = new Button(getActivity());
+//        btnLoadMore.setText(getString(R.string.more));
 
         // Adding Load More button to lisview at bottom
 //        transactionList.addFooterView(btnLoadMore);
@@ -164,10 +164,8 @@ public class FragmentSettingsAll extends Fragment {
 //            transactionObjects[i] = new TransactionListItem(3232, 4324, "the hash", 4343, 434, 34, new String[]{"to"}, new String[]{"from"}, 3232, new long[]{23});
 //        }
 ////
-//        if (adapter != null) {
-//            adapter.updateData(transactionObjects);
-//            adapter.notifyDataSetChanged();
-//        }
+        if (adapter != null)
+            adapter.updateData(transactionObjects);
 
 //        if (!BreadWalletApp.unlocked) {
 ////            boolean addLine = false;
@@ -220,7 +218,6 @@ public class FragmentSettingsAll extends Fragment {
 //        }
 
     }
-
 
 
 //    public static LinearLayout getMore(final Activity context, final boolean auth) {
