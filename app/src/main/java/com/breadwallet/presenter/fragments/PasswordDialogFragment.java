@@ -178,7 +178,7 @@ public class PasswordDialogFragment extends DialogFragment {
                     description.setText("");
                     info.setVisibility(View.GONE);
                 } else {
-                    if (!phraseEditText.getText().toString().isEmpty() && KeyStoreManager.phraseIsValid(phraseEditText.getText().toString(), getActivity())) {
+                    if (!phraseEditText.getText().toString().isEmpty() && KeyStoreManager.phraseIsValid(phraseEditText.getText().toString().toLowerCase(), getActivity())) {
                         KeyStoreManager.putFailCount(0, getActivity());
                         KeyStoreManager.putFailTimeStamp(0, getActivity());
                         getDialog().dismiss();
@@ -199,7 +199,7 @@ public class PasswordDialogFragment extends DialogFragment {
 
         int failCount = KeyStoreManager.getFailCount(getActivity());
         long secureTime = SharedPreferencesManager.getSecureTime(getActivity());
-        long failTimestamp = KeyStoreManager.getFailTimeStampt(getActivity());
+        long failTimestamp = KeyStoreManager.getFailTimeStamp(getActivity());
         if (secureTime == 0) secureTime = System.currentTimeMillis() / 1000;
 
         updateInfoText();
@@ -460,7 +460,7 @@ public class PasswordDialogFragment extends DialogFragment {
         int failCount = KeyStoreManager.getFailCount(getActivity());
 
         long secureTime = SharedPreferencesManager.getSecureTime(getActivity());
-        long failTimestamp = KeyStoreManager.getFailTimeStampt(getActivity());
+        long failTimestamp = KeyStoreManager.getFailTimeStamp(getActivity());
         double waitTime = (failTimestamp + Math.pow(6, failCount - 3) * 60.0 - secureTime) / 60.0;
         title.setText(R.string.wallet_disabled);
         description.setText("");
