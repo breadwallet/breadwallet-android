@@ -96,7 +96,8 @@ public class FragmentTransactionExpanded extends Fragment {
             statusText.setText(R.string.verified_waiting);
         } else {
             statusText.setText(String.format(Locale.getDefault(), getActivity().getString(R.string.confirmed_in_block_nr), blockHeight,
-                    Utils.getFormattedDateFromLong(item.getTimeStamp())));
+                    item.getTimeStamp() != 0 ? Utils.getFormattedDateFromLong(item.getTimeStamp() * 1000) : Utils.getFormattedDateFromLong(System.currentTimeMillis())));
+
         }
         String rawHash = BRWalletManager.getInstance(getActivity()).reverseTxHash(item.getHexId());
         final int mid = rawHash.length() / 2;
@@ -266,5 +267,4 @@ public class FragmentTransactionExpanded extends Fragment {
             }
         }
     }
-
 }

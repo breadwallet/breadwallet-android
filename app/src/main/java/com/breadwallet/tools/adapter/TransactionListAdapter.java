@@ -99,14 +99,12 @@ public class TransactionListAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        Log.e(TAG, "getCount: data.size(): " + data.size());
         final int EXTRA_ITEMS = 4;
         if (!BreadWalletApp.unlocked) {
             int unconfirmedTxCount = getUnconfirmedCount(data);
-            Log.e(TAG, "unconfirmedTxCount: " + unconfirmedTxCount);
             return unconfirmedTxCount == 0 ? (EXTRA_ITEMS + 1) : unconfirmedTxCount + EXTRA_ITEMS + 1;
         }
-        return data.size() + EXTRA_ITEMS;
+        return showAllTx ? (data.size() + EXTRA_ITEMS) : (data.size() > 5) ? (6 + EXTRA_ITEMS) : (data.size() + EXTRA_ITEMS);
     }
 
     @Override
@@ -122,13 +120,23 @@ public class TransactionListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup viewGroup) {
         View tmpLayout = inflater.inflate(R.layout.transaction_list_item, null);
-
-        if (position == getCount() - 3) {
+        if (data.size() == 0 && position == 0) {
+            RelativeLayout noTransactions = new RelativeLayout(activity);
+            noTransactions.setLayoutParams(new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.getPixelsFromDps(activity, 50)));
+            noTransactions.setGravity(RelativeLayout.CENTER_HORIZONTAL);
+            TextView noTransactionsText = new TextView(activity);
+            noTransactionsText.setGravity(View.TEXT_ALIGNMENT_CENTER);
+            noTransactionsText.setText(activity.getString(R.string.no_transactions));
+            noTransactionsText.setTextColor(activity.getColor(R.color.light_gray));
+            noTransactions.addView(noTransactionsText);
+            noTransactions.setBackgroundResource(android.R.color.transparent);
+            return noTransactions;
+        } else if (position == getCount() - 4) {
             View separator = new View(activity);
             separator.setLayoutParams(new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.getPixelsFromDps(activity, 30)));
             separator.setBackgroundResource(android.R.color.transparent);
             return separator;
-        } else if (position == getCount() - 2) {
+        } else if (position == getCount() - 3) {
             RelativeLayout importPrivateKeys = (RelativeLayout) inflater.inflate(R.layout.button_import_privkey, null);
             importPrivateKeys.setLayoutParams(new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.getPixelsFromDps(activity, 50)));
             importPrivateKeys.setOnClickListener(new View.OnClickListener() {
@@ -141,7 +149,7 @@ public class TransactionListAdapter extends BaseAdapter {
             });
             return importPrivateKeys;
 
-        } else if (position == getCount() - 1) {
+        } else if (position == getCount() - 2) {
             RelativeLayout settings = (RelativeLayout) inflater.inflate(R.layout.button_settings, null);
             settings.setLayoutParams(new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.getPixelsFromDps(activity, 50)));
             settings.setOnClickListener(new View.OnClickListener() {
@@ -157,10 +165,11 @@ public class TransactionListAdapter extends BaseAdapter {
                 }
             });
             return settings;
-        } else if (position == getCount()) {
+        } else if (position == getCount() - 1) {
             View separator = new View(activity);
             separator.setLayoutParams(new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.getPixelsFromDps(activity, 30)));
             separator.setBackgroundResource(android.R.color.transparent);
+            separator.setClickable(false);
             return separator;
         }
 
@@ -198,26 +207,25 @@ public class TransactionListAdapter extends BaseAdapter {
                 }
             }
         } else {
-            Log.e(TAG, "showAllTx: " + showAllTx);
-            Log.e(TAG, "data.size(): " + data.size());
-            Log.e(TAG, "position: " + position);
-
             if (showAllTx) return getTxView(tmpLayout, position);
-            if (data.size() > 5 && position <= 5) {
-
-                return getTxView(tmpLayout, position);
+            if (data.size() > 5) {
+                if (position < 5) {
+                    return getTxView(tmpLayout, position);
+                } else {
+                    RelativeLayout more = (RelativeLayout) inflater.inflate(R.layout.button_more, null);
+                    more.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.getPixelsFromDps(activity, 40)));
+                    more.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            showAllTx = true;
+                            notifyDataSetChanged();
+                        }
+                    });
+                    return more;
+                }
             } else {
-                RelativeLayout more = (RelativeLayout) inflater.inflate(R.layout.button_more, null);
-                more.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.getPixelsFromDps(activity, 40)));
-                more.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        showAllTx = true;
-                    }
-                });
-                return more;
+                return getTxView(tmpLayout, position);
             }
-
         }
     }
 
@@ -268,12 +276,12 @@ public class TransactionListAdapter extends BaseAdapter {
         });
 
         boolean received = item.getSent() == 0;
-        CustomLogger.logThis("TX getReceived", String.valueOf(item.getReceived()), "TX getSent", String.valueOf(item.getSent()),
-                "TX getBalanceAfterTx", String.valueOf(item.getBalanceAfterTx()));
+//        CustomLogger.logThis("TX getReceived", String.valueOf(item.getReceived()), "TX getSent", String.valueOf(item.getSent()),
+//                "TX getBalanceAfterTx", String.valueOf(item.getBalanceAfterTx()));
         int blockHeight = item.getBlockHeight();
         int estimatedBlockHeight = BRPeerManager.getEstimatedBlockHeight();
         int confirms = blockHeight == Integer.MAX_VALUE ? 0 : estimatedBlockHeight - blockHeight + 1;
-        Log.e(TAG, "confirms: " + confirms);
+//        Log.e(TAG, "confirms: " + confirms);
 
         if (item.getSent() > 0 && item.getSent() == item.getReceived()) {
             sentReceivedTextView.setBackgroundResource(R.drawable.unconfirmed_label);
@@ -289,7 +297,7 @@ public class TransactionListAdapter extends BaseAdapter {
             if (!BRWalletManager.getInstance(activity).transactionIsVerified(item.getHexId())) {
                 sentReceivedTextView.setText(R.string.unverified);
             } else {
-                Log.e(TAG, "item.getBlockHeight(): " + blockHeight + ", confirms: " + confirms + ", lastBlock: " + estimatedBlockHeight);
+//                Log.e(TAG, "item.getBlockHeight(): " + blockHeight + ", confirms: " + confirms + ", lastBlock: " + estimatedBlockHeight);
                 Resources res = activity.getResources();
                 int confsNr = confirms >= 0 && confirms <= 5 ? confirms : 0;
                 String confs = res.getQuantityString(R.plurals.nr_confirmations, confsNr);
@@ -299,18 +307,19 @@ public class TransactionListAdapter extends BaseAdapter {
         }
 
         long itemTimeStamp = item.getTimeStamp();
-        Log.e(TAG, "item.getTimeStamp(): " + itemTimeStamp);
+//        Log.e(TAG, "item.getTimeStamp(): " + itemTimeStamp);
         dateTextView.setText(itemTimeStamp != 0 ? Utils.getFormattedDateFromLong(itemTimeStamp * 1000) : Utils.getFormattedDateFromLong(System.currentTimeMillis()));
 
         long satoshisAmount = received ? item.getReceived() : (item.getSent() - item.getReceived()) * -1;
 
         bitsTextView.setText(BRStringFormatter.getFormattedCurrencyString("BTC", satoshisAmount));
-        dollarsTextView.setText(String.format("(%s)", BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(activity), SharedPreferencesManager.getIso(activity), new BigDecimal(satoshisAmount), activity)));
+        dollarsTextView.setText(String.format("(%s)", BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(activity),
+                SharedPreferencesManager.getIso(activity), new BigDecimal(satoshisAmount), activity)));
         long satoshisAfterTx = item.getBalanceAfterTx();
 
         bitsTotalTextView.setText(BRStringFormatter.getFormattedCurrencyString("BTC", satoshisAfterTx));
-        dollarsTotalTextView.setText(String.format("(%s)", BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(activity), SharedPreferencesManager.getIso(activity), new BigDecimal(satoshisAfterTx), activity)));
+        dollarsTotalTextView.setText(String.format("(%s)", BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(activity),
+                SharedPreferencesManager.getIso(activity), new BigDecimal(satoshisAfterTx), activity)));
         return tmpLayout;
     }
-
 }

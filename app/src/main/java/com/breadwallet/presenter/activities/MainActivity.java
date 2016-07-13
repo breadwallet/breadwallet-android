@@ -69,20 +69,20 @@ import java.util.Observer;
 
 /**
  * BreadWallet
- * <p>
+ * <p/>
  * Created by Mihail Gutan on 8/4/15.
  * Copyright (c) 2016 breadwallet llc <mihail@breadwallet.com>
- * <p>
+ * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * <p>
+ * <p/>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * <p>
+ * <p/>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -167,7 +167,6 @@ public class MainActivity extends FragmentActivity implements Observer {
 
         setListeners();
         BRAnimator.scaleView(pageIndicatorLeft, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP);
-        setUrlHandler();
 
     }
 
@@ -339,13 +338,18 @@ public class MainActivity extends FragmentActivity implements Observer {
         middleViewState = 0;
         middleBubbleBlocksCount = 0;
         app = this;
-
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                setUrlHandler();
+            }
+        },1000);
         CurrencyManager currencyManager = CurrencyManager.getInstance(this);
         currencyManager.startTimer();
         currencyManager.deleteObservers();
         currencyManager.addObserver(this);
         MiddleViewAdapter.resetMiddleView(this, null);
-        boolean isNetworkAvailable = ((BreadWalletApp)getApplication()).isNetworkAvailable(this);
+        boolean isNetworkAvailable = ((BreadWalletApp) getApplication()).isNetworkAvailable(this);
 //        Log.e(TAG, "isNetworkAvailable: " + isNetworkAvailable);
         networkErrorBar.setVisibility(isNetworkAvailable ? View.GONE : View.VISIBLE);
         startStopReceiver(true);

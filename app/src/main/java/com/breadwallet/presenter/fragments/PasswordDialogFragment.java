@@ -351,7 +351,7 @@ public class PasswordDialogFragment extends DialogFragment {
                 Log.e(TAG, "Setting the new limit: " + spendLimit + ", totalSpent was: " + totalSpent);
 
                 ((BreadWalletApp) getActivity().getApplicationContext()).setUnlocked(true);
-                FragmentSettingsAll.refreshUI(getActivity());
+                FragmentSettingsAll.refreshUI();
                 MiddleViewAdapter.resetMiddleView(getActivity(), null);
                 ((BreadWalletApp) getActivity().getApplicationContext()).allowKeyStoreAccessForSeconds();
                 getDialog().dismiss();

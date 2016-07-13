@@ -297,8 +297,6 @@ public class BreadWalletApp extends Application {
 
     public void setUnlocked(boolean b) {
         unlocked = b;
-        if (FragmentSettingsAll.transactionList != null)
-            FragmentSettingsAll.transactionList.setVisibility(b ? View.VISIBLE : View.GONE);
         MainActivity app = MainActivity.app;
         if (app != null) {
             app.lockerButton.setVisibility(b ? View.GONE : View.VISIBLE);

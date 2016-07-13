@@ -175,7 +175,7 @@ public class FingerprintDialogFragment extends DialogFragment
         d.cancel();
 
         ((BreadWalletApp) getActivity().getApplicationContext()).setUnlocked(true);
-        FragmentSettingsAll.refreshUI(getActivity());
+        FragmentSettingsAll.refreshUI();
         MiddleViewAdapter.resetMiddleView(getActivity(), null);
         ((BreadWalletApp) getActivity().getApplicationContext()).allowKeyStoreAccessForSeconds();
         getDialog().dismiss();

@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.breadwallet.R;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
@@ -55,7 +56,7 @@ public class CurrencyListAdapter extends ArrayAdapter<CurrencyEntity> {
 
         this.layoutResourceId = R.layout.currency_list_item;
         this.mContext = mContext;
-        ((Activity)mContext).getWindowManager().getDefaultDisplay().getSize(displayParameters);
+        ((Activity) mContext).getWindowManager().getDefaultDisplay().getSize(displayParameters);
         currencyListAdapter = this;
     }
 
