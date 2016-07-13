@@ -1,5 +1,6 @@
 package com.breadwallet.tools.adapter;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
@@ -10,11 +11,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.TransactionListItem;
+import com.breadwallet.presenter.fragments.FragmentSettings;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.presenter.fragments.FragmentTransactionExpanded;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -25,11 +29,14 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 
+import org.w3c.dom.Text;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * BreadWallet
@@ -64,6 +71,7 @@ public class TransactionListAdapter extends BaseAdapter {
     private static int unconfirmedColor;
     private static int sentColor;
     private static int receivedColor;
+    private int itemsToShow = 0;
 
     public TransactionListAdapter(Activity a, TransactionListItem[] d) {
         activity = a;
@@ -74,11 +82,18 @@ public class TransactionListAdapter extends BaseAdapter {
         unconfirmedColor = ContextCompat.getColor(a, R.color.white);
         sentColor = Color.parseColor("#FF5454");
         receivedColor = Color.parseColor("#00BF00");
+        itemsToShow = data.size();
+    }
+
+    public void updateData(TransactionListItem[] d) {
+        if (d != null)
+            Collections.addAll(data, d);
     }
 
     @Override
     public int getCount() {
-        return data.size();
+        Log.e(TAG, "data.size(): " + data.size());
+        return data.size() + 3;
     }
 
     @Override
@@ -96,7 +111,62 @@ public class TransactionListAdapter extends BaseAdapter {
         View tmpLayout = convertView;
         if (convertView == null)
             tmpLayout = inflater.inflate(R.layout.transaction_list_item, null);
+
+        if (position == data.size()) {
+            View separator = new View(activity);
+            separator.setLayoutParams(new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.getPixelsFromDps(activity, 30)));
+            separator.setBackgroundResource(android.R.color.transparent);
+            return separator;
+        } else if (position == data.size() + 1) {
+            RelativeLayout importPrivateKeys = (RelativeLayout) inflater.inflate(R.layout.button_import_privkey, null);
+            importPrivateKeys.setLayoutParams(new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.getPixelsFromDps(activity, 50)));
+            importPrivateKeys.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (BRAnimator.checkTheMultipressingAvailability()) {
+                        BRAnimator.animateDecoderFragment();
+                    }
+                }
+            });
+            return importPrivateKeys;
+
+        } else if (position == data.size() + 2) {
+            RelativeLayout settings = (RelativeLayout) inflater.inflate(R.layout.button_settings, null);
+            settings.setLayoutParams(new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.getPixelsFromDps(activity, 50)));
+            settings.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (BRAnimator.checkTheMultipressingAvailability()) {
+                        MainActivity app = MainActivity.app;
+                        if (app == null) return;
+                        FragmentSettingsAll fragmentSettingsAll = (FragmentSettingsAll) activity.
+                                getFragmentManager().findFragmentByTag(FragmentSettingsAll.class.getName());
+                        BRAnimator.animateSlideToLeft(app, new FragmentSettings(), fragmentSettingsAll);
+                    }
+                }
+            });
+            return settings;
+        }
+
+        if (!BreadWalletApp.unlocked) {
+            int unconfirmedTxCount = getUnconfirmedCount(data);
+            RelativeLayout txHistory = new RelativeLayout(activity);
+            if (unconfirmedTxCount == 0 && txHistory.getParent() == viewGroup) {
+                txHistory.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.getPixelsFromDps(activity, 30)));
+                TextView txHistoryText = new TextView(activity);
+                txHistoryText.setText(activity.getString(R.string.transaction_history));
+                txHistoryText.setTextColor(activity.getColor(R.color.dark_blue));
+                txHistoryText.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                txHistoryText.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                txHistory.addView(txHistoryText);
+                return txHistory;
+            } else {
+                itemsToShow = unconfirmedTxCount;
+            }
+        }
+        if (position > itemsToShow - 1) return convertView;
         TextView sentReceivedTextView = (TextView) tmpLayout.findViewById(R.id.transaction_sent_received_label);
+        if(sentReceivedTextView == null) return convertView;
         TextView dateTextView = (TextView) tmpLayout.findViewById(R.id.transaction_date);
         TextView bitsTextView = (TextView) tmpLayout.findViewById(R.id.transaction_amount_bits);
         TextView dollarsTextView = (TextView) tmpLayout.findViewById(R.id.transaction_amount_dollars);
@@ -104,6 +174,7 @@ public class TransactionListAdapter extends BaseAdapter {
         TextView dollarsTotalTextView = (TextView) tmpLayout.findViewById(R.id.transaction_amount_dollars_total);
         Utils.overrideFonts(sentReceivedTextView, dateTextView, bitsTextView, dollarsTextView, bitsTotalTextView, dollarsTotalTextView);
         tmpLayout.setBackgroundResource(R.drawable.clickable_layout);
+        Log.e(TAG, "position: " + position);
         final TransactionListItem item = data.get(position);
 
         tmpLayout.setOnClickListener(new View.OnClickListener() {
@@ -164,5 +235,26 @@ public class TransactionListAdapter extends BaseAdapter {
         bitsTotalTextView.setText(BRStringFormatter.getFormattedCurrencyString("BTC", satoshisAfterTx));
         dollarsTotalTextView.setText(String.format("(%s)", BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(activity), SharedPreferencesManager.getIso(activity), new BigDecimal(satoshisAfterTx), activity)));
         return tmpLayout;
+
     }
+
+    public static int getUnconfirmedCount(List<TransactionListItem> items) {
+        int count = 0;
+        int estimatedBlockHeight = BRPeerManager.getEstimatedBlockHeight();
+        for (TransactionListItem t : items) {
+            if (t == null) continue;
+            int blockHeight = t.getBlockHeight();
+            int confirms = blockHeight == Integer.MAX_VALUE ? 0 : estimatedBlockHeight - blockHeight + 1;
+            if (blockHeight != Integer.MAX_VALUE && confirms < 6) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    @Override
+    public int getViewTypeCount() {
+        return 2;
+    }
+
 }

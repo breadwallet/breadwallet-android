@@ -67,8 +67,9 @@ public class FragmentSettingsAll extends Fragment {
     private static final String TAG = FragmentSettingsAll.class.getName();
     public static TransactionListItem[] transactionObjects;
     public static ListView transactionList;
-    public static LinearLayout transactionHistory;
-    public static TextView noTransactions;
+    //    public static LinearLayout transactionHistory;
+//    public static TextView noTransactions;
+    public static TransactionListAdapter adapter;
 
 
     //    private RelativeLayout relativeLayout;
@@ -79,23 +80,24 @@ public class FragmentSettingsAll extends Fragment {
         // properly.
         final View rootView = inflater.inflate(R.layout.fragment_settings_all, container, false);
 
-        RelativeLayout importPrivateKeys = (RelativeLayout) rootView.findViewById(R.id.import_private_key);
-        RelativeLayout settings = (RelativeLayout) rootView.findViewById(R.id.settings);
+//        LinearLayout more = (LinearLayout) inflater.inflate(R.layout.transaction_list_item_more, null);
 
+//        RelativeLayout importPrivateKeys = (RelativeLayout) inflater.inflate(R.layout.button_import_privkey, null);
+//        RelativeLayout settings = (RelativeLayout) inflater.inflate(R.layout.button_settings, null);
 
-        noTransactions = (TextView) rootView.findViewById(R.id.text_no_transactions);
-        transactionHistory = (LinearLayout) rootView.findViewById(R.id.layout_transaction_history);
+//        noTransactions = (TextView) rootView.findViewById(R.id.text_no_transactions);
+//        transactionHistory = (LinearLayout) rootView.findViewById(R.id.layout_transaction_history);
         transactionList = (ListView) rootView.findViewById(R.id.transactions_list);
 
-        transactionHistory.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (BRAnimator.checkTheMultipressingAvailability()) {
-                    ((BreadWalletApp) getActivity().getApplicationContext()).
-                            promptForAuthentication(getActivity(), BRConstants.AUTH_FOR_GENERAL, null, null, null, null);
-                }
-            }
-        });
+//        transactionHistory.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (BRAnimator.checkTheMultipressingAvailability()) {
+//                    ((BreadWalletApp) getActivity().getApplicationContext()).
+//                            promptForAuthentication(getActivity(), BRConstants.AUTH_FOR_GENERAL, null, null, null, null);
+//                }
+//            }
+//        });
         refreshTransactions(getActivity());
         Button btnLoadMore = new Button(getActivity());
         btnLoadMore.setText(getString(R.string.more));
@@ -104,33 +106,12 @@ public class FragmentSettingsAll extends Fragment {
 //        transactionList.addFooterView(btnLoadMore);
 
         // Getting adapter
-        TransactionListAdapter adapter = new TransactionListAdapter(getActivity(), transactionObjects);
+        adapter = new TransactionListAdapter(getActivity(), transactionObjects);
         transactionList.setAdapter(adapter);
         adapter.notifyDataSetChanged();
         if (transactionObjects != null) {
             if (transactionObjects.length == 0) transactionObjects = null;
         }
-        importPrivateKeys.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (BRAnimator.checkTheMultipressingAvailability()) {
-                    BRAnimator.animateDecoderFragment();
-                }
-            }
-        });
-
-        settings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (BRAnimator.checkTheMultipressingAvailability()) {
-                    MainActivity app = MainActivity.app;
-                    if (app == null) return;
-                    FragmentSettingsAll fragmentSettingsAll = (FragmentSettingsAll) getActivity().
-                            getFragmentManager().findFragmentByTag(FragmentSettingsAll.class.getName());
-                    BRAnimator.animateSlideToLeft(app, new FragmentSettings(), fragmentSettingsAll);
-                }
-            }
-        });
 
         return rootView;
     }
@@ -166,82 +147,81 @@ public class FragmentSettingsAll extends Fragment {
     public static void refreshUI(Activity ctx) {
         if (BRAnimator.level != 1) return;
         Log.e(TAG, "refreshUI");
-        if (transactionList == null || transactionHistory == null)
-            return;
-        if (transactionObjects == null) {
-            noTransactions.setVisibility(View.VISIBLE);
-            transactionHistory.setVisibility(View.GONE);
-            transactionList.setVisibility(View.GONE);
-            return;
-        }
-
-        noTransactions.setVisibility(View.GONE);
-//        transactionList.removeAllViews();
-
-        if (!BreadWalletApp.unlocked) {
-//            boolean addLine = false;
-            int unconfirmedTxCount = getUnconfirmedCount(transactionObjects);
-            if (unconfirmedTxCount == 0) {
-                transactionList.setVisibility(View.GONE);
-                transactionHistory.setVisibility(View.VISIBLE);
-                return;
-            }
-            transactionHistory.setVisibility(View.GONE);
-            transactionList.setVisibility(View.VISIBLE);
-//            int estimatedBlockHeight = BRPeerManager.getEstimatedBlockHeight();
-//            for (TransactionListItem transactionObject : transactionObjects) {
-//                int blockHeight = transactionObject.getBlockHeight();
-//                int confirms = blockHeight == Integer.MAX_VALUE ? 0 : estimatedBlockHeight - blockHeight + 1;
-//                if (blockHeight != Integer.MAX_VALUE && confirms < 6) {
-//                    if (addLine) {
-//                        transactionList.addView(getSeparationLine(1, ctx));
-//                    } else {
-//                        addLine = true;
-//                    }
-//                    transactionList.addView(getViewFromTransactionObject(transactionObject));
+//        if (transactionList == null || transactionHistory == null)
+//            return;
+//        if (transactionObjects == null) {
+//            noTransactions.setVisibility(View.VISIBLE);
+//            transactionHistory.setVisibility(View.GONE);
+//            transactionList.setVisibility(View.GONE);
+//            return;
+//        }
 //
-//                }
-//            }
-//            if (unconfirmedTxCount != transactionObjects.length) {
-//                transactionList.addView(getSeparationLine(1, ctx));
-//                transactionList.addView(getMore(ctx, false));
-//            }
+//        noTransactions.setVisibility(View.GONE);
 
-
-        } else {
-            transactionList.setVisibility(View.VISIBLE);
-            transactionHistory.setVisibility(View.GONE);
-
-//            int limit = transactionObjects.length > 5 ? 5 : transactionObjects.length;
-//            Log.e(TAG, "transactionObjects.length: " + transactionObjects.length);
+//        transactionObjects = new TransactionListItem[5000];
 //
-//            for (int i = 0; i < limit; i++) {
-//                View tmpView = getViewFromTransactionObject(transactionObjects[i]);
-//                if (tmpView != null) {
-//                    transactionList.addView(tmpView);
-//                    if (i != transactionObjects.length - 1)
-//                        transactionList.addView(getSeparationLine(1, ctx));
-//                }
+//        for (int i = 0; i < 5000; i++) {
+//            transactionObjects[i] = new TransactionListItem(3232, 4324, "the hash", 4343, 434, 34, new String[]{"to"}, new String[]{"from"}, 3232, new long[]{23});
+//        }
+////
+//        if (adapter != null) {
+//            adapter.updateData(transactionObjects);
+//            adapter.notifyDataSetChanged();
+//        }
+
+//        if (!BreadWalletApp.unlocked) {
+////            boolean addLine = false;
+//            int unconfirmedTxCount = getUnconfirmedCount(transactionObjects);
+//            if (unconfirmedTxCount == 0) {
+//                transactionList.setVisibility(View.GONE);
+//                transactionHistory.setVisibility(View.VISIBLE);
+//                return;
 //            }
-//            if (transactionObjects.length > 5) {
-//                transactionList.addView(getMore(ctx, true));
-//            }
-        }
+//            transactionHistory.setVisibility(View.GONE);
+//            transactionList.setVisibility(View.VISIBLE);
+////            int estimatedBlockHeight = BRPeerManager.getEstimatedBlockHeight();
+////            for (TransactionListItem transactionObject : transactionObjects) {
+////                int blockHeight = transactionObject.getBlockHeight();
+////                int confirms = blockHeight == Integer.MAX_VALUE ? 0 : estimatedBlockHeight - blockHeight + 1;
+////                if (blockHeight != Integer.MAX_VALUE && confirms < 6) {
+////                    if (addLine) {
+////                        transactionList.addView(getSeparationLine(1, ctx));
+////                    } else {
+////                        addLine = true;
+////                    }
+////                    transactionList.addView(getViewFromTransactionObject(transactionObject));
+////
+////                }
+////            }
+////            if (unconfirmedTxCount != transactionObjects.length) {
+////                transactionList.addView(getSeparationLine(1, ctx));
+////                transactionList.addView(getMore(ctx, false));
+////            }
+//
+//
+//        } else {
+//            transactionList.setVisibility(View.VISIBLE);
+//            transactionHistory.setVisibility(View.GONE);
+//
+////            int limit = transactionObjects.length > 5 ? 5 : transactionObjects.length;
+////            Log.e(TAG, "transactionObjects.length: " + transactionObjects.length);
+////
+////            for (int i = 0; i < limit; i++) {
+////                View tmpView = getViewFromTransactionObject(transactionObjects[i]);
+////                if (tmpView != null) {
+////                    transactionList.addView(tmpView);
+////                    if (i != transactionObjects.length - 1)
+////                        transactionList.addView(getSeparationLine(1, ctx));
+////                }
+////            }
+////            if (transactionObjects.length > 5) {
+////                transactionList.addView(getMore(ctx, true));
+////            }
+//        }
 
     }
 
-    private static int getUnconfirmedCount(TransactionListItem[] items) {
-        int count = 0;
-        int estimatedBlockHeight = BRPeerManager.getEstimatedBlockHeight();
-        for (TransactionListItem t : items) {
-            int blockHeight = t.getBlockHeight();
-            int confirms = blockHeight == Integer.MAX_VALUE ? 0 : estimatedBlockHeight - blockHeight + 1;
-            if (blockHeight != Integer.MAX_VALUE && confirms < 6) {
-                count++;
-            }
-        }
-        return count;
-    }
+
 
 //    public static LinearLayout getMore(final Activity context, final boolean auth) {
 //        LayoutInflater inflater = (LayoutInflater) context.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);

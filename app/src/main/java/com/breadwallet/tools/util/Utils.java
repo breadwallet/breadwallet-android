@@ -120,4 +120,9 @@ public class Utils {
         if (is24HoursFormat) result += "h";
         return result;
     }
+
+    public static int getPixelsFromDps(Context context, int dps){
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dps * scale + 0.5f);
+    }
 }
