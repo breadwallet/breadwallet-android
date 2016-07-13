@@ -101,6 +101,8 @@ static void syncFailed(void *info, int error) {
     //call java methods
     (*globalEnv)->CallStaticVoidMethod(globalEnv, _peerManagerClass, mid);
 
+    (*_jvmPM)->DetachCurrentThread(_jvmPM);
+
 }
 
 static void txStatusUpdate(void *info) {

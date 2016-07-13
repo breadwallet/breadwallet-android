@@ -309,7 +309,7 @@ public class KeyStoreManager {
         return bytesToStore.length != 0 && setData(context, bytesToStore, FAIL_TIMESTAMP_ALIAS, FAIL_TIMESTAMP_FILENAME, FAIL_TIMESTAMP_IV, 0, false);
     }
 
-    public static long getFailTimeStampt(final Activity context) {
+    public static long getFailTimeStamp(final Activity context) {
         byte[] result = getData(context, FAIL_TIMESTAMP_ALIAS, FAIL_TIMESTAMP_FILENAME, FAIL_TIMESTAMP_IV, 0);
         return result.length > 0 ? TypesConverter.byteArray2long(result) : 0;
     }

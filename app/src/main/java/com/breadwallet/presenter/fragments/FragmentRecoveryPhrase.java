@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
@@ -51,7 +52,6 @@ public class FragmentRecoveryPhrase extends Fragment {
     public static final String TAG = FragmentRecoveryPhrase.class.getName();
     private TextView thePhrase;
     private ImageView checkBox;
-    private RelativeLayout checkBoxlayout;
     private boolean checked = false;
 
     @Override
@@ -60,19 +60,22 @@ public class FragmentRecoveryPhrase extends Fragment {
                 R.layout.fragment_recovery_phrase, container, false);
         thePhrase = (TextView) rootView.findViewById(R.id.the_phrase);
         checkBox = (ImageView) rootView.findViewById(R.id.write_down_check_box);
-        checkBoxlayout = (RelativeLayout) rootView.findViewById(R.id.write_down_notice_layout);
+        RelativeLayout checkBoxlayout = (RelativeLayout) rootView.findViewById(R.id.write_down_notice_layout);
 
         boolean phraseWroteDown = SharedPreferencesManager.getPhraseWroteDown(getActivity());
 
-        //TODO delete this code below which is for testing reasons only
-//        thePhrase.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                BRClipboardManager.copyToClipboard(getActivity(), thePhrase.getText().toString());
-//                ((BreadWalletApp) getActivity().getApplication()).showCustomToast(getActivity(),
-//                        "copied", 300, Toast.LENGTH_SHORT, 0);
-//            }
-//        });
+        if (BuildConfig.DEBUG) {
+            // do something for a debug build
+            thePhrase.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    BRClipboardManager.copyToClipboard(getActivity(), thePhrase.getText().toString());
+                    ((BreadWalletApp) getActivity().getApplication()).showCustomToast(getActivity(),
+                            "copied", 300, Toast.LENGTH_SHORT, 0);
+                }
+            });
+        }
+
 
         if (!phraseWroteDown) {
             checkBoxlayout.setVisibility(View.VISIBLE);
