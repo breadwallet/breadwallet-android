@@ -181,6 +181,7 @@ public class PasswordDialogFragment extends DialogFragment {
                     if (!phraseEditText.getText().toString().isEmpty() && KeyStoreManager.phraseIsValid(phraseEditText.getText().toString().toLowerCase(), getActivity())) {
                         KeyStoreManager.putFailCount(0, getActivity());
                         KeyStoreManager.putFailTimeStamp(0, getActivity());
+                        validatePassCode(String.valueOf(KeyStoreManager.getPassCode(getActivity())));
                         getDialog().dismiss();
                     } else {
                         final String tmpTitle = title.getText().toString();
