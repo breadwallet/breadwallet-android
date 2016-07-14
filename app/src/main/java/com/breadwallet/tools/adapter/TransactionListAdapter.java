@@ -92,7 +92,6 @@ public class TransactionListAdapter extends BaseAdapter {
             if (d.length != data.size()) {
                 data.clear();
                 Collections.addAll(data, d);
-
             }
         }
         showAllTx = false;
