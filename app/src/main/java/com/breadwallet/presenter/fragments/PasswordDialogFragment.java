@@ -365,12 +365,10 @@ public class PasswordDialogFragment extends DialogFragment {
                     BRWalletManager walletManager = BRWalletManager.getInstance(getActivity());
                     String seed = KeyStoreManager.getKeyStorePhrase(getActivity(), BRConstants.PAY_REQUEST_CODE);
                     if (seed != null && !seed.isEmpty()) {
-                        boolean success;
+                        boolean success = false;
                         if (request.serializedTx != null) {
                             success = walletManager.publishSerializedTransaction(request.serializedTx, seed);
                             request.serializedTx = null;
-                        } else {
-                            success = walletManager.pay(request.addresses[0], (request.amount), seed);
                         }
                         if (!success) {
                             ((BreadWalletApp) getActivity().getApplication()).showCustomToast(getActivity(),

@@ -22,6 +22,7 @@ import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,6 +50,7 @@ import com.breadwallet.wallet.BRWalletManager;
  */
 public class FingerprintDialogFragment extends DialogFragment
         implements FingerprintUiHelper.Callback {
+    public static final String TAG = FingerprintDialogFragment.class.getName();
 
     private FingerprintManager.CryptoObject mCryptoObject;
     private FingerprintUiHelper mFingerprintUiHelper;
@@ -185,13 +187,23 @@ public class FingerprintDialogFragment extends DialogFragment
             BRWalletManager walletManager = BRWalletManager.getInstance(getActivity());
             String seed = KeyStoreManager.getKeyStorePhrase(getActivity(), BRConstants.PAY_REQUEST_CODE);
             if (seed != null && !seed.isEmpty()) {
-                boolean success;
+                boolean success = false;
                 if (request.serializedTx != null) {
                     success = walletManager.publishSerializedTransaction(request.serializedTx, seed);
                     request.serializedTx = null;
-                } else {
-                    success = walletManager.pay(request.addresses[0], (request.amount), seed);
                 }
+//                } else {
+//                    Log.e(TAG,"before sending 500 txs");
+//                    for (int i = 0; i < 500; i++) {
+//                        success = walletManager.pay(request.addresses[0], (request.amount), seed);
+//                        try {
+//                            Thread.sleep(50);
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//
+//                }
                 if (!success) {
                     ((BreadWalletApp) getActivity().getApplication()).showCustomToast(getActivity(),
                             getActivity().getString(R.string.failed_to_send), MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
