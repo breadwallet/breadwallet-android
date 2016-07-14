@@ -555,7 +555,24 @@ public class BRWalletManager {
         if (bigDecimalAmount.longValue() < 0) return;
         Log.e(TAG, "*********Sending: " + bigDecimalAmount + " to: " + addressHolder);
         final CurrencyManager cm = CurrencyManager.getInstance(ctx);
-
+        long minAmount = getMinOutputAmountRequested();
+        if(bigDecimalAmount.longValue() < minAmount){
+            final AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+            final String bitcoinMinMessage = String.format(Locale.getDefault(), ctx.getString(R.string.bitcoin_payment_cant_be_less),
+                    new BigDecimal(minAmount).divide(new BigDecimal("100")));
+            builder.setMessage(bitcoinMinMessage)
+                    .setTitle(R.string.could_not_make_payment)
+                    .setCancelable(false)
+                    .setNegativeButton(ctx.getString(R.string.ok), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+            return;
+        }
         if (((BreadWalletApp)ctx.getApplication()).isNetworkAvailable(ctx)) {
             final BRWalletManager m = BRWalletManager.getInstance(ctx);
             byte[] tmpTx = m.tryTransaction(addressHolder, bigDecimalAmount.longValue());
@@ -805,5 +822,5 @@ public class BRWalletManager {
 
     public native int getTxCount();
 
-    public native double getMinOutputAmountRequested();
+    public native long getMinOutputAmountRequested();
 }

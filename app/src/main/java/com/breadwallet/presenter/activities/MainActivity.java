@@ -539,7 +539,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         }
     }
 
-
     public void request(View view) {
         SpringAnimator.showAnimation(view);
         Intent intent;

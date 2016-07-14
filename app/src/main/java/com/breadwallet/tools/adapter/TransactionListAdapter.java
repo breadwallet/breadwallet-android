@@ -7,6 +7,8 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -123,9 +125,10 @@ public class TransactionListAdapter extends BaseAdapter {
         if (data.size() == 0 && position == 0) {
             RelativeLayout noTransactions = new RelativeLayout(activity);
             noTransactions.setLayoutParams(new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.getPixelsFromDps(activity, 50)));
-            noTransactions.setGravity(RelativeLayout.CENTER_HORIZONTAL);
+            noTransactions.setGravity(Gravity.CENTER);
             TextView noTransactionsText = new TextView(activity);
-            noTransactionsText.setGravity(View.TEXT_ALIGNMENT_CENTER);
+            noTransactionsText.setGravity(Gravity.CENTER);
+            noTransactionsText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
             noTransactionsText.setText(activity.getString(R.string.no_transactions));
             noTransactionsText.setTextColor(activity.getColor(R.color.light_gray));
             noTransactions.addView(noTransactionsText);
