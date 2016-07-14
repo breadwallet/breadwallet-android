@@ -42,13 +42,13 @@ import com.breadwallet.BreadWalletApp;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRClipboardManager;
 
-public class SharingFragment extends DialogFragment {
+public class FragmentSharing extends DialogFragment {
 
-    private static final String TAG = SharingFragment.class.getName();
+    private static final String TAG = FragmentSharing.class.getName();
     private boolean customToastAvailable = true;
     private String theAddress;
 
-    public SharingFragment() {
+    public FragmentSharing() {
         // Empty constructor required for DialogFragment
     }
 
@@ -98,7 +98,8 @@ public class SharingFragment extends DialogFragment {
                     emailIntent.putExtra(Intent.EXTRA_TEXT, "bitcoin:" + theAddress);
                     Uri uri = Uri.parse("file://" + MainFragmentQR.qrCodeImageFile.getAbsolutePath());
                     Log.e(TAG, "The qrCodeImageFile.getAbsolutePath(): " + MainFragmentQR.qrCodeImageFile.getAbsolutePath());
-                    emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                    if (uri != null)
+                        emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
                     startActivity(Intent.createChooser(emailIntent, getResources().getString(R.string.bitcoin_address)));
                     getDialog().cancel();
                 }

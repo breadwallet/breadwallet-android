@@ -66,7 +66,7 @@ public class MainFragmentQR extends Fragment {
     private ImageView qrcode;
     private TextView mainAddressText;
     private Bitmap bitmap;
-    private SharingFragment sharingFragment;
+    private FragmentSharing sharingFragment;
     private FragmentManager fm;
     public static File qrCodeImageFile;
     private String receiveAddress;
@@ -83,7 +83,7 @@ public class MainFragmentQR extends Fragment {
         receiveAddress = SharedPreferencesManager.getReceiveAddress(getActivity());
 
         qrcode = (ImageView) rootView.findViewById(R.id.main_image_qr_code);
-        sharingFragment = new SharingFragment();
+        sharingFragment = new FragmentSharing();
         final RelativeLayout main_fragment_qr = (RelativeLayout) rootView.findViewById(R.id.main_fragment_qr);
         mainAddressText = (TextView) rootView.findViewById(R.id.main_address_text);
         RelativeLayout addressLayout = (RelativeLayout) rootView.findViewById(R.id.theAddressLayout);
@@ -101,7 +101,7 @@ public class MainFragmentQR extends Fragment {
                     Log.e(TAG, "finalReceiveAddress: " + receiveAddress);
                     sharingFragment.setTheAddress(receiveAddress);
                     saveBitmapToFile();
-                    sharingFragment.show(fm, SharingFragment.class.getName());
+                    sharingFragment.show(fm, FragmentSharing.class.getName());
                 }
             }
         });
