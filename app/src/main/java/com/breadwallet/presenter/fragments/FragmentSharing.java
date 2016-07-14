@@ -110,7 +110,6 @@ public class FragmentSharing extends DialogFragment {
             @Override
             public void onClick(View v) {
                 if (BRAnimator.checkTheMultipressingAvailability()) {
-
                     if (theAddress == null || theAddress.isEmpty()) return;
                     Intent sendIntent = new Intent(Intent.ACTION_VIEW);
                     sendIntent.setData(Uri.parse("sms:"));

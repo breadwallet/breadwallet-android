@@ -165,6 +165,13 @@ public class MainActivity extends FragmentActivity implements Observer {
             Log.e(TAG, "DEBUG MODE!!!!!!");
         }
 
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                setUrlHandler();
+            }
+        },1000);
+
         setListeners();
         BRAnimator.scaleView(pageIndicatorLeft, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP);
 
@@ -338,12 +345,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         middleViewState = 0;
         middleBubbleBlocksCount = 0;
         app = this;
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                setUrlHandler();
-            }
-        },1000);
+
         CurrencyManager currencyManager = CurrencyManager.getInstance(this);
         currencyManager.startTimer();
         currencyManager.deleteObservers();
