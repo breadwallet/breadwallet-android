@@ -314,21 +314,27 @@ public class MainActivity extends FragmentActivity implements Observer {
     }
 
     private void checkDeviceRooted() {
-        boolean hasBitcoin = CurrencyManager.getInstance(this).getBALANCE() > 0;
+        final boolean hasBitcoin = CurrencyManager.getInstance(this).getBALANCE() > 0;
         if (RootHelper.isDeviceRooted()) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("DEVICE SECURITY COMPROMISED")
-                    .setMessage("On a \'rooted\' device, any app can access any other app\'s keystore data (and steal your bitcoins)."
-                            + (hasBitcoin ? "\nWipe this wallet immediately and restore on a secure device." : ""))
-                    .setCancelable(false)
-                    .setNegativeButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    });
-            AlertDialog alert = builder.create();
-            alert.show();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(app);
+                    builder.setTitle("DEVICE SECURITY COMPROMISED")
+                            .setMessage("On a \'rooted\' device, any app can access any other app\'s keystore data (and steal your bitcoins)."
+                                    + (hasBitcoin ? "\nWipe this wallet immediately and restore on a secure device." : ""))
+                            .setCancelable(false)
+                            .setNegativeButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                }
+            },10000);
+
         }
     }
 

@@ -105,6 +105,7 @@ public class TransactionListAdapter extends BaseAdapter {
             int unconfirmedTxCount = getUnconfirmedCount(data);
             return unconfirmedTxCount == 0 ? (EXTRA_ITEMS + 1) : unconfirmedTxCount + EXTRA_ITEMS + 1;
         }
+        if (data.size() == 0) return EXTRA_ITEMS;
         return showAllTx ? (data.size() + EXTRA_ITEMS) : (data.size() > 5) ? (6 + EXTRA_ITEMS) : (data.size() + EXTRA_ITEMS);
     }
 
