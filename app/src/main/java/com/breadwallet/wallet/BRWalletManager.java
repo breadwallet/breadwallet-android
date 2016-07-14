@@ -535,15 +535,14 @@ public class BRWalletManager {
                             .show();
                 }
             });
-
             return;
         }
 
         ctx.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                ((BreadWalletApp) ctx.getApplicationContext()).promptForAuthentication(ctx, BRConstants.AUTH_FOR_PAY, request, message, ctx.getString(R.string.payment_info), null);
-
+                ((BreadWalletApp) ctx.getApplicationContext()).promptForAuthentication(ctx,
+                        BRConstants.AUTH_FOR_PAY, request, message, ctx.getString(R.string.payment_info), null);
             }
         });
     }
