@@ -63,7 +63,6 @@ import java.util.Locale;
  */
 public class PaymentProtocolTask extends AsyncTask<String, String, String> {
     public static final String TAG = PaymentProtocolTask.class.getName();
-
     HttpURLConnection urlConnection;
     String certName = null;
     PaymentRequestWrapper paymentRequest = null;
@@ -228,7 +227,6 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                         ((BreadWalletApp) app.getApplication()).
                                 showCustomDialog(app.getString(R.string.warning), app.getString(R.string.something_went_wrong), app.getString(R.string.close));
                 paymentRequest = null;
-
             }
             e.printStackTrace();
         } finally {
@@ -253,7 +251,8 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
 
         final MainActivity app = MainActivity.app;
         if (app == null) return;
-        if (paymentRequest == null || paymentRequest.addresses == null || paymentRequest.addresses.length == 0 || paymentRequest.amount == 0) {
+        if (paymentRequest == null || paymentRequest.addresses == null ||
+                paymentRequest.addresses.length == 0 || paymentRequest.amount == 0) {
             return;
         }
         final String certification;

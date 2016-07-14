@@ -115,22 +115,18 @@ public class PasswordDialogFragment extends DialogFragment {
         reset = (Button) view.findViewById(R.id.button_password_reset);
         title = (TextView) view.findViewById(R.id.passcode_dialog_title);
         info = (TextView) view.findViewById(R.id.password_info_text);
-
         description = (TextView) view.findViewById(R.id.passcode_dialog_description);
-
         if (message != null) description.setText(message);
-
         digit_1 = (TextView) view.findViewById(R.id.passcode_digit1);
         digit_2 = (TextView) view.findViewById(R.id.passcode_digit2);
         digit_3 = (TextView) view.findViewById(R.id.passcode_digit3);
         digit_4 = (TextView) view.findViewById(R.id.passcode_digit4);
+
         prevPass = "";
 
         clearDigits();
-
         final InputMethodManager keyboard = (InputMethodManager) getActivity().
                 getSystemService(Context.INPUT_METHOD_SERVICE);
-
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

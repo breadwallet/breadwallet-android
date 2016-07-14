@@ -31,6 +31,8 @@ import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.presenter.fragments.MainFragmentQR;
 import com.breadwallet.tools.threads.PassCodeTask;
+import com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask;
+import com.breadwallet.tools.threads.PaymentProtocolTask;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.manager.BRNotificationManager;
 import com.breadwallet.tools.util.BRStringFormatter;
@@ -182,7 +184,7 @@ public class BRWalletManager {
                 @Override
                 public void run() {
 
-                    if (!((BreadWalletApp)activity.getApplication()).isNetworkAvailable(activity)) {
+                    if (!((BreadWalletApp) activity.getApplication()).isNetworkAvailable(activity)) {
                         ((BreadWalletApp) activity.getApplication()).showCustomDialog(activity.getString(R.string.warning),
                                 activity.getString(R.string.not_connected), activity.getString(R.string.ok));
                         return;
@@ -301,6 +303,31 @@ public class BRWalletManager {
     /**
      * Wallet callbacks
      */
+
+    public static void publishCallback(final String message, int error) {
+        PaymentProtocolPostPaymentTask.waiting = false;
+        if (error != 0) {
+            ctx.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (!PaymentProtocolPostPaymentTask.waiting && !PaymentProtocolPostPaymentTask.sent) {
+
+                        if (PaymentProtocolPostPaymentTask.pendingErrorMessages.get(PaymentProtocolPostPaymentTask.MESSAGE) != null) {
+                            ((BreadWalletApp) ctx.getApplication()).
+                                    showCustomDialog(PaymentProtocolPostPaymentTask.pendingErrorMessages.get(PaymentProtocolPostPaymentTask.TITLE),
+                                            PaymentProtocolPostPaymentTask.pendingErrorMessages.get(PaymentProtocolPostPaymentTask.MESSAGE), ctx.getString(R.string.close));
+                            PaymentProtocolPostPaymentTask.pendingErrorMessages = null;
+                        } else {
+                            ((BreadWalletApp) ctx.getApplication()).showCustomToast(ctx, message,
+                                    MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 1);
+                        }
+                    }
+                }
+            });
+        } else {
+            PaymentProtocolPostPaymentTask.sent = true;
+        }
+    }
 
     public static void onBalanceChanged(final long balance) {
 
@@ -555,7 +582,7 @@ public class BRWalletManager {
         Log.e(TAG, "*********Sending: " + bigDecimalAmount + " to: " + addressHolder);
         final CurrencyManager cm = CurrencyManager.getInstance(ctx);
         long minAmount = getMinOutputAmountRequested();
-        if(bigDecimalAmount.longValue() < minAmount){
+        if (bigDecimalAmount.longValue() < minAmount) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
             final String bitcoinMinMessage = String.format(Locale.getDefault(), ctx.getString(R.string.bitcoin_payment_cant_be_less),
                     new BigDecimal(minAmount).divide(new BigDecimal("100")));
@@ -572,7 +599,7 @@ public class BRWalletManager {
             alert.show();
             return;
         }
-        if (((BreadWalletApp)ctx.getApplication()).isNetworkAvailable(ctx)) {
+        if (((BreadWalletApp) ctx.getApplication()).isNetworkAvailable(ctx)) {
             final BRWalletManager m = BRWalletManager.getInstance(ctx);
             byte[] tmpTx = m.tryTransaction(addressHolder, bigDecimalAmount.longValue());
             long feeForTx = m.feeForTransaction(addressHolder, bigDecimalAmount.longValue());
@@ -763,8 +790,8 @@ public class BRWalletManager {
 
     public native TransactionListItem[] getTransactions();
 
-    public native boolean pay(String addressHolder, long amountHolder, String strSeed);
-
+    //    public native boolean pay(String addressHolder, long amountHolder, String strSeed);
+//
     public static native boolean validateAddress(String address);
 
     public native boolean addressContainedInWallet(String address);
@@ -822,4 +849,5 @@ public class BRWalletManager {
     public native int getTxCount();
 
     public native long getMinOutputAmountRequested();
+
 }

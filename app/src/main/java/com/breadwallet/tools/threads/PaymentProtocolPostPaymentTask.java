@@ -18,6 +18,8 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * BreadWallet
@@ -46,9 +48,16 @@ import java.net.URL;
 public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, String> {
     public static final String TAG = PaymentProtocolPostPaymentTask.class.getName();
 
+    public static final String TITLE = "title";
+    public static final String MESSAGE = "message";
+
     HttpURLConnection urlConnection;
     PaymentRequestWrapper paymentRequest = null;
     String message;
+
+    public static boolean waiting = true;
+    public static boolean sent = false;
+    public static Map<String, String> pendingErrorMessages;
 
     public PaymentProtocolPostPaymentTask(PaymentRequestWrapper paymentRequest) {
         this.paymentRequest = paymentRequest;
@@ -59,6 +68,9 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
         InputStream in;
         final MainActivity app = MainActivity.app;
         try {
+            pendingErrorMessages = new HashMap<>();
+            waiting = true;
+            sent = false;
             Log.e(TAG, "the uri: " + paymentRequest.paymentURL);
             URL url = new URL(paymentRequest.paymentURL);
             urlConnection = (HttpURLConnection) url.openConnection();
@@ -88,29 +100,34 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
 
             message = RequestHandler.parsePaymentACK(serializedBytes);
             BRWalletManager.getInstance(app).publishSignedSerializedTransaction(paymentRequest.serializedTx);
-
+            sent = true;
         } catch (Exception e) {
             if (e instanceof java.net.UnknownHostException) {
-                if (app != null)
-                    ((BreadWalletApp) app.getApplication()).
-                            showCustomDialog(app.getString(R.string.error), app.getString(R.string.unknown_host), app.getString(R.string.close));
+                if (app != null) {
+                    pendingErrorMessages.put(TITLE, app.getString(R.string.error));
+                    pendingErrorMessages.put(MESSAGE, app.getString(R.string.unknown_host));
+                }
             } else if (e instanceof FileNotFoundException) {
-                if (app != null)
-                    ((BreadWalletApp) app.getApplication()).
-                            showCustomDialog(app.getString(R.string.warning), app.getString(R.string.invalid_payment_request), app.getString(R.string.close));
+                if (app != null) {
+                    pendingErrorMessages.put(TITLE, app.getString(R.string.warning));
+                    pendingErrorMessages.put(MESSAGE, app.getString(R.string.invalid_payment_request));
+                }
             } else if (e instanceof SocketTimeoutException) {
-                if (app != null)
-                    ((BreadWalletApp) app.getApplication()).
-                            showCustomDialog(app.getString(R.string.warning), app.getString(R.string.connection_timed_out), app.getString(R.string.close));
+                if (app != null) {
+                    pendingErrorMessages.put(TITLE, app.getString(R.string.warning));
+                    pendingErrorMessages.put(MESSAGE, app.getString(R.string.connection_timed_out));
+                }
             } else {
-                if (app != null)
-                    ((BreadWalletApp) app.getApplication()).
-                            showCustomDialog(app.getString(R.string.warning), app.getString(R.string.something_went_wrong), app.getString(R.string.close));
+                if (app != null) {
+                    pendingErrorMessages.put(TITLE, app.getString(R.string.warning));
+                    pendingErrorMessages.put(MESSAGE, app.getString(R.string.something_went_wrong));
+                }
             }
             e.printStackTrace();
         } finally {
             if (urlConnection != null) urlConnection.disconnect();
         }
+        waiting = false;
         return null;
     }
 
@@ -120,9 +137,16 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
         final MainActivity app = MainActivity.app;
 
         if (app != null && message != null) {
-            if(!message.isEmpty())
-            ((BreadWalletApp) app.getApplication()).
-                    showCustomToast(app, message, MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 1);
+            if (!message.isEmpty()) {
+                ((BreadWalletApp) app.getApplication()).
+                        showCustomToast(app, message, MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 1);
+            } else {
+                if (!waiting && !sent && pendingErrorMessages.get(MESSAGE) != null) {
+                    ((BreadWalletApp) app.getApplication()).
+                            showCustomDialog(pendingErrorMessages.get(TITLE), pendingErrorMessages.get(MESSAGE), app.getString(R.string.close));
+                    pendingErrorMessages = null;
+                }
+            }
         }
     }
 

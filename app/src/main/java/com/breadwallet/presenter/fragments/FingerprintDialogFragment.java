@@ -192,18 +192,6 @@ public class FingerprintDialogFragment extends DialogFragment
                     success = walletManager.publishSerializedTransaction(request.serializedTx, seed);
                     request.serializedTx = null;
                 }
-//                } else {
-//                    Log.e(TAG,"before sending 500 txs");
-//                    for (int i = 0; i < 500; i++) {
-//                        success = walletManager.pay(request.addresses[0], (request.amount), seed);
-//                        try {
-//                            Thread.sleep(50);
-//                        } catch (InterruptedException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//
-//                }
                 if (!success) {
                     ((BreadWalletApp) getActivity().getApplication()).showCustomToast(getActivity(),
                             getActivity().getString(R.string.failed_to_send), MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
