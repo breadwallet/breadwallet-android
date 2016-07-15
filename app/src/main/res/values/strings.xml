@@ -168,4 +168,6 @@
     <string name="internet_seems_offline">The internet connection appears to be offline</string>
     <string name="could_not_make_payment">couldn\'t make payment</string>
     <string name="payee_not_certified">payee identity isn’t certified</string>
+    <string name="scan_qr_tip">Scan someone else\'s QR code to get their bitcoin address. You can send a payment to anyone with an address</string>
+    <string name="pay_address_tip">Bitcoin addresses can also be copied to the clipboard. A bitcoin address always starts with \'1\' or \'3\'.</string>
 </resources>

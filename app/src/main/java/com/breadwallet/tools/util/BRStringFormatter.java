@@ -56,7 +56,6 @@ public class BRStringFormatter {
     }
 
     public static String getBitsAndExchangeString(double rate, String iso, BigDecimal target, Activity ctx) {
-        Log.e(TAG, "target: " + target);
 //        Log.e(TAG, "result of the exchange rate calculation: " + result);
         if (rate == 0) rate = 1;
         long exchange = BRWalletManager.getInstance(ctx).localAmount(target.longValue(),
@@ -69,11 +68,6 @@ public class BRStringFormatter {
         if (rate == 0) rate = 1;
         long exchange = BRWalletManager.getInstance(ctx).localAmount(target.longValue(),
                 new BigDecimal(String.valueOf(rate)).multiply(new BigDecimal("100")).doubleValue());
-        if (ctx != null) {
-//            long exchangeFromCore = BRWalletManager.getInstance(ctx).localAmount(new Double(target).longValue(),rate);
-            Log.e(TAG, "exchange: " + exchange);
-//            Log.e(TAG,"exchangeFromCore: " + exchangeFromCore);
-        }
         return getFormattedCurrencyString(iso, exchange);
     }
 
@@ -82,7 +76,6 @@ public class BRStringFormatter {
         String iso = SharedPreferencesManager.getIso(ctx);
         double rate = SharedPreferencesManager.getRate(ctx);
         long exchange = BRWalletManager.getInstance(ctx).localAmount(cm.getBALANCE(), new BigDecimal(String.valueOf(rate)).multiply(new BigDecimal("100")).doubleValue());
-        Log.e(TAG, "getCurrentBalanceText, exchange: " + exchange);
 
         return getFormattedCurrencyString("BTC", cm.getBALANCE()) + " (" +
                 getFormattedCurrencyString(iso, exchange) + ")";

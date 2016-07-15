@@ -232,6 +232,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
         } finally {
             if (urlConnection != null) urlConnection.disconnect();
         }
+        if (paymentRequest == null) return null;
         if (!paymentRequest.pkiType.equals("none") && certName == null) {
             certified = 2;
         } else if (!paymentRequest.pkiType.equals("none") && certName != null) {
@@ -311,7 +312,6 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
             allAddresses.append(s + ", ");
         }
         allAddresses.delete(allAddresses.length() - 2, allAddresses.length());
-
         String memo = (!paymentRequest.memo.isEmpty() ? "\n" : "") + paymentRequest.memo;
         allAddresses = new StringBuilder();
 
@@ -342,9 +342,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
 
             return;
         }
-
         final long total = paymentRequest.amount + paymentRequest.fee;
-
         final PaymentRequestEntity request = new PaymentRequestEntity(paymentRequest.addresses, paymentRequest.amount, certName, paymentRequest.serializedTx, false);
         final String message = certification + memo + allAddresses.toString() + "\n\n" + "amount: " + BRStringFormatter.getFormattedCurrencyString("BTC", paymentRequest.amount)
                 + " (" + BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(paymentRequest.amount), app) + ")" + "\nnetwork fee: +" + BRStringFormatter.getFormattedCurrencyString("BTC", paymentRequest.fee)

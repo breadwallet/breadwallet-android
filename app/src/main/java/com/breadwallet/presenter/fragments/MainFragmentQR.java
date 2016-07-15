@@ -22,7 +22,7 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.presenter.customviews.BubbleTextVew;
+import com.breadwallet.presenter.customviews.BubbleTextView;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -137,8 +137,8 @@ public class MainFragmentQR extends Fragment {
 
         final MainActivity app = MainActivity.app;
         if (app != null) {
-            app.qrBubble1 = (BubbleTextVew) rootView.findViewById(R.id.qr_bubble1);
-            app.qrBubble2 = (BubbleTextVew) rootView.findViewById(R.id.qr_bubble2);
+            app.qrBubble1 = (BubbleTextView) rootView.findViewById(R.id.qr_bubble1);
+            app.qrBubble2 = (BubbleTextView) rootView.findViewById(R.id.qr_bubble2);
         }
         rootView.setOnClickListener(new View.OnClickListener() {
             @Override

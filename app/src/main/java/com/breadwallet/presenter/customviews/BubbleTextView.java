@@ -29,18 +29,18 @@ import android.widget.TextView;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class BubbleTextVew extends TextView {
-    public BubbleTextVew(Context context) {
+public class BubbleTextView extends TextView {
+    public BubbleTextView(Context context) {
         super(context);
         initView();
     }
 
-    public BubbleTextVew(Context context, AttributeSet attrs) {
+    public BubbleTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
         initView();
     }
 
-    public BubbleTextVew(Context context, AttributeSet attrs, int defStyle) {
+    public BubbleTextView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         initView();
     }

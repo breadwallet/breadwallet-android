@@ -158,7 +158,7 @@ public class WordsReader {
         return phrase;
     }
 
-    private static List<String> getAllWordLists(Activity context) {
+    public static List<String> getAllWordLists(Activity context) {
         String[] langs = {"en", "es", "fr", "ja", "zh"};
         List<String> result = new ArrayList<>();
 

@@ -19,26 +19,18 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.ScaleAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
-import com.breadwallet.presenter.customviews.BubbleTextVew;
-import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
-import com.breadwallet.presenter.entities.BRPeerEntity;
-import com.breadwallet.presenter.entities.BRTransactionEntity;
+import com.breadwallet.presenter.customviews.BubbleTextView;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.presenter.fragments.FragmentSettings;
-import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.manager.CurrencyManager;
@@ -53,15 +45,12 @@ import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.adapter.ParallaxViewPager;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
-import com.breadwallet.tools.sqlite.SQLiteManager;
-import com.breadwallet.tools.threads.PassCodeTask;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Observable;
@@ -120,11 +109,13 @@ public class MainActivity extends FragmentActivity implements Observer {
     private static int MODE = BRConstants.RELEASE;
     public RelativeLayout bug;
     //    private TextView testnet;
-    private BubbleTextVew middleBubble1;
-    private BubbleTextVew middleBubble2;
-    private BubbleTextVew middleBubbleBlocks;
-    public BubbleTextVew qrBubble1;
-    public BubbleTextVew qrBubble2;
+    private BubbleTextView middleBubble1;
+    private BubbleTextView middleBubble2;
+    private BubbleTextView middleBubbleBlocks;
+    public BubbleTextView qrBubble1;
+    public BubbleTextView qrBubble2;
+    public BubbleTextView sendBubble1;
+    public BubbleTextView sendBubble2;
     private ToastUpdater toastUpdater;
 
     public static boolean appInBackground = false;
@@ -170,7 +161,7 @@ public class MainActivity extends FragmentActivity implements Observer {
             public void run() {
                 setUrlHandler();
             }
-        },1000);
+        }, 1000);
 
         setListeners();
         BRAnimator.scaleView(pageIndicatorLeft, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP);
@@ -333,7 +324,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                     AlertDialog alert = builder.create();
                     alert.show();
                 }
-            },10000);
+            }, 10000);
 
         }
     }
@@ -351,7 +342,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         middleViewState = 0;
         middleBubbleBlocksCount = 0;
         app = this;
-
         CurrencyManager currencyManager = CurrencyManager.getInstance(this);
         currencyManager.startTimer();
         currencyManager.deleteObservers();
@@ -368,7 +358,13 @@ public class MainActivity extends FragmentActivity implements Observer {
         } else {
             BRPeerManager.stopSyncingProgressThread();
         }
-        BRWalletManager.getInstance(this).askForPasscode();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                BRWalletManager.getInstance(app).askForPasscode();
+            }
+        }, 1000);
+
     }
 
     @Override
@@ -405,7 +401,6 @@ public class MainActivity extends FragmentActivity implements Observer {
     private void initializeViews() {
         pay = (TextView) findViewById(R.id.main_button_pay);
         bug = (RelativeLayout) findViewById(R.id.bug);
-        RelativeLayout mainLayout = (RelativeLayout) findViewById(R.id.main_layout);
         networkErrorBar = (RelativeLayout) findViewById(R.id.main_internet_status_bar);
         burgerButton = (Button) findViewById(R.id.main_button_burger);
         lockerPayFlipper = (ViewFlipper) findViewById(R.id.locker_pay_flipper);
@@ -426,11 +421,11 @@ public class MainActivity extends FragmentActivity implements Observer {
         burgerButtonMap.put("burger", R.drawable.burger);
         burgerButtonMap.put("close", R.drawable.x);
         burgerButtonMap.put("back", R.drawable.navigationback);
-        middleBubble1 = (BubbleTextVew) findViewById(R.id.middle_bubble_tip1);
-        middleBubble2 = (BubbleTextVew) findViewById(R.id.middle_bubble_tip2);
-        middleBubbleBlocks = (BubbleTextVew) findViewById(R.id.middle_bubble_blocks);
-        qrBubble1 = (BubbleTextVew) findViewById(R.id.qr_bubble1);
-        qrBubble2 = (BubbleTextVew) findViewById(R.id.qr_bubble2);
+        middleBubble1 = (BubbleTextView) findViewById(R.id.middle_bubble_tip1);
+        middleBubble2 = (BubbleTextView) findViewById(R.id.middle_bubble_tip2);
+        middleBubbleBlocks = (BubbleTextView) findViewById(R.id.middle_bubble_blocks);
+        qrBubble1 = (BubbleTextView) findViewById(R.id.qr_bubble1);
+        qrBubble2 = (BubbleTextView) findViewById(R.id.qr_bubble2);
 
     }
 
@@ -663,7 +658,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                BRAnimator.fadeScaleBubble(middleBubble1, middleBubble2, middleBubbleBlocks, qrBubble2, qrBubble1);
+                BRAnimator.fadeScaleBubble(middleBubble1, middleBubble2, middleBubbleBlocks, qrBubble2, qrBubble1, sendBubble1, sendBubble2);
             }
         });
 
@@ -673,6 +668,8 @@ public class MainActivity extends FragmentActivity implements Observer {
         syncProgressBar.setVisibility(b ? View.VISIBLE : View.GONE);
         syncProgressText.setVisibility(b ? View.VISIBLE : View.GONE);
     }
+
+
 
 
     public class ToastUpdater extends Thread {

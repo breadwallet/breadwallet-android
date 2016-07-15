@@ -121,7 +121,11 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
                 if (app != null) {
                     pendingErrorMessages.put(TITLE, app.getString(R.string.warning));
                     pendingErrorMessages.put(MESSAGE, app.getString(R.string.something_went_wrong));
+                    if (!((BreadWalletApp) app.getApplication()).isNetworkAvailable(app))
+                        ((BreadWalletApp) app.getApplication()).
+                                showCustomDialog(app.getString(R.string.could_not_make_payment), app.getString(R.string.internet_seems_offline), app.getString(R.string.ok));
                 }
+
             }
             e.printStackTrace();
         } finally {

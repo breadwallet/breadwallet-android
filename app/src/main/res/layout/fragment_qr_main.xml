@@ -50,7 +50,7 @@
         </RelativeLayout>
     </RelativeLayout>
 
-    <com.breadwallet.presenter.customviews.BubbleTextVew
+    <com.breadwallet.presenter.customviews.BubbleTextView
         android:id="@+id/qr_bubble1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -64,7 +64,7 @@
         android:textSize="16sp"
         android:visibility="gone" />
 
-    <com.breadwallet.presenter.customviews.BubbleTextVew
+    <com.breadwallet.presenter.customviews.BubbleTextView
         android:id="@+id/qr_bubble2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -8,6 +8,7 @@
     android:windowSoftInputMode="stateAlwaysHidden">
 
     <TextView
+        android:id="@+id/send_money_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/scan_clipboard_buttons_layout"
@@ -71,5 +72,33 @@
         android:textAlignment="gravity"
         android:textColor="@color/gray"
         android:textSize="@dimen/text_size" />
+
+    <com.breadwallet.presenter.customviews.BubbleTextView
+        android:id="@+id/send_bubble1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="160dp"
+        android:background="@drawable/bubble_up"
+        android:gravity="center"
+        android:text="@string/scan_qr_tip"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:visibility="gone" />
+
+    <com.breadwallet.presenter.customviews.BubbleTextView
+        android:id="@+id/send_bubble2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="240dp"
+        android:layout_marginStart="20dp"
+        android:background="@drawable/bubble_up"
+        android:gravity="center"
+        android:text="@string/pay_address_tip"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:visibility="gone" />
 
 </RelativeLayout>

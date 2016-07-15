@@ -103,9 +103,9 @@ public class TransactionListAdapter extends BaseAdapter {
         final int EXTRA_ITEMS = 4;
         if (!BreadWalletApp.unlocked) {
             int unconfirmedTxCount = getUnconfirmedCount(data);
-            return unconfirmedTxCount == 0 ? (EXTRA_ITEMS + 1) : unconfirmedTxCount + EXTRA_ITEMS + 1;
+            return unconfirmedTxCount == 0 ? (EXTRA_ITEMS + 1) : unconfirmedTxCount == data.size() ? (unconfirmedTxCount + EXTRA_ITEMS) : (unconfirmedTxCount + EXTRA_ITEMS + 1);
         }
-        if (data.size() == 0) return EXTRA_ITEMS;
+        if (data.size() == 0) return EXTRA_ITEMS + 1;
         return showAllTx ? (data.size() + EXTRA_ITEMS) : (data.size() > 5) ? (6 + EXTRA_ITEMS) : (data.size() + EXTRA_ITEMS);
     }
 
@@ -123,16 +123,8 @@ public class TransactionListAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup viewGroup) {
         View tmpLayout = inflater.inflate(R.layout.transaction_list_item, null);
         if (data.size() == 0 && position == 0) {
-            RelativeLayout noTransactions = new RelativeLayout(activity);
-            noTransactions.setLayoutParams(new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.getPixelsFromDps(activity, 50)));
-            noTransactions.setGravity(Gravity.CENTER);
-            TextView noTransactionsText = new TextView(activity);
-            noTransactionsText.setGravity(Gravity.CENTER);
-            noTransactionsText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
-            noTransactionsText.setText(activity.getString(R.string.no_transactions));
-            noTransactionsText.setTextColor(activity.getColor(R.color.light_gray));
-            noTransactions.addView(noTransactionsText);
-            noTransactions.setBackgroundResource(android.R.color.transparent);
+            RelativeLayout noTransactions = (RelativeLayout) inflater.inflate(R.layout.button_no_transactions, null);
+            noTransactions.setLayoutParams(new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.getPixelsFromDps(activity, 70)));
             return noTransactions;
         } else if (position == getCount() - 4) {
             View separator = new View(activity);
@@ -252,7 +244,6 @@ public class TransactionListAdapter extends BaseAdapter {
     }
 
     public View getTxView(View tmpLayout, int position) {
-        Log.e(TAG, "getTxView: " + tmpLayout);
         TextView sentReceivedTextView = (TextView) tmpLayout.findViewById(R.id.transaction_sent_received_label);
         TextView dateTextView = (TextView) tmpLayout.findViewById(R.id.transaction_date);
         TextView bitsTextView = (TextView) tmpLayout.findViewById(R.id.transaction_amount_bits);
@@ -261,7 +252,6 @@ public class TransactionListAdapter extends BaseAdapter {
         TextView dollarsTotalTextView = (TextView) tmpLayout.findViewById(R.id.transaction_amount_dollars_total);
         Utils.overrideFonts(sentReceivedTextView, dateTextView, bitsTextView, dollarsTextView, bitsTotalTextView, dollarsTotalTextView);
         tmpLayout.setBackgroundResource(R.drawable.clickable_layout);
-        Log.e(TAG, "position: " + position);
         final TransactionListItem item = data.get(position);
 
         tmpLayout.setOnClickListener(new View.OnClickListener() {

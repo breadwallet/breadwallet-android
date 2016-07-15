@@ -75,7 +75,6 @@ public class CustomPagerAdapter extends FragmentPagerAdapter {
         return fragments.get(position);
     }
 
-
     /**
      * Show the fragments or hide, which is specified by the boolean parameter b
      *

@@ -56,6 +56,7 @@ import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.manager.BRTipsManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRStringFormatter;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
@@ -315,6 +316,15 @@ public class PasswordDialogFragment extends DialogFragment {
                         String tmp = BRStringFormatter.getCurrentBalanceText(getActivity());
                         MiddleViewAdapter.resetMiddleView(getActivity(), tmp);
                         ((BreadWalletApp) getActivity().getApplicationContext()).setUnlocked(true);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                MainActivity app = MainActivity.app;
+                                if(app!= null){
+                                    BRTipsManager.showTipsTutorial(app);
+                                }
+                            }
+                        },1000);
                         InputMethodManager keyboard = (InputMethodManager) getActivity().
                                 getSystemService(Context.INPUT_METHOD_SERVICE);
                         keyboard.hideSoftInputFromWindow(cancel.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);

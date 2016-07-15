@@ -30,6 +30,8 @@ import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.wallet.BRWalletManager;
 
+import java.util.List;
+
 /**
  * BreadWallet
  * <p/>
@@ -116,9 +118,23 @@ public class IntroRecoverWalletFragment extends Fragment {
                     introActivity.startMainActivity();
                     if (!introActivity.isDestroyed()) introActivity.finish();
                 } else {
+                    String message = getResources().getString(R.string.bad_recovery_phrase);
+                    String[] words = cleanPhrase.split(" ");
+                    if (words.length != 12) {
+                        message = "recovery phrase must have 12 words";
+                    } else {
+                        List<String> allWords = WordsReader.getAllWordLists(getActivity());
+
+                        for (String word : words) {
+                            if (!allWords.contains(word)){
+                                message = "\""+ word +"\" is not a recovery phrase word";
+                            }
+                        }
+                    }
+
                     //alertDialog.setTitle(getResources().getString(R.string.alert));
                     //don't use
-                    alertDialog.setMessage(getResources().getString(R.string.bad_recovery_phrase));
+                    alertDialog.setMessage(message);
                     alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getResources().getString(R.string.ok),
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
