@@ -97,23 +97,41 @@ public class BRTipsManager {
     private static void swipeLeft(MainActivity app) {
 
 
-//        // Obtain MotionEvent object
+        CustomPagerAdapter adapter = CustomPagerAdapter.adapter;
+        // Obtain MotionEvent object
 //        if (app == null) return;
 //
 //        long downTime = SystemClock.uptimeMillis();
 //        long eventTime = SystemClock.uptimeMillis() + 100;
-//        float x = 0.5f;
+//        float x = 0.0f;
 //        float y = 0.0f;
-//        int metaState = 0;
-//        MotionEvent motionEvent = MotionEvent.obtain(
+//        MotionEvent motionEventDown = MotionEvent.obtain(
 //                downTime,
 //                eventTime,
+//                MotionEvent.ACTION_DOWN,
+//                x,
+//                y,
+//                0
+//        );
+//        MotionEvent motionEventMove = MotionEvent.obtain(
+//                downTime,
+//                eventTime + 400,
 //                MotionEvent.ACTION_MOVE,
 //                x,
 //                y,
-//                metaState
+//                0
+//        );
+//        MotionEvent motionEventUp = MotionEvent.obtain(
+//                downTime,
+//                eventTime,
+//                MotionEvent.ACTION_DOWN,
+//                x,
+//                y,
+//                0
 //        );
 //
-//        app.findViewById(R.id.scan_clipboard_buttons_layout).dispatchTouchEvent(motionEvent);
+//        app.findViewById(R.id.scan_clipboard_buttons_layout).dispatchTouchEvent(motionEventDown);
+//        app.findViewById(R.id.scan_clipboard_buttons_layout).dispatchTouchEvent(motionEventMove);
+//        app.findViewById(R.id.scan_clipboard_buttons_layout).dispatchTouchEvent(motionEventUp);
     }
 }

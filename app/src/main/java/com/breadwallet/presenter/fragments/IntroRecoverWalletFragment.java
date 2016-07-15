@@ -121,18 +121,17 @@ public class IntroRecoverWalletFragment extends Fragment {
                     String message = getResources().getString(R.string.bad_recovery_phrase);
                     String[] words = cleanPhrase.split(" ");
                     if (words.length != 12) {
-                        message = "recovery phrase must have 12 words";
+                        message = getActivity().getString(R.string.recovery_phrase_must_have_12_words);
                     } else {
                         List<String> allWords = WordsReader.getAllWordLists(getActivity());
 
                         for (String word : words) {
-                            if (!allWords.contains(word)){
-                                message = "\""+ word +"\" is not a recovery phrase word";
+                            if (!allWords.contains(word)) {
+                                message = "\"" + word + getActivity().getString(R.string.not_a_recovery_phrase_word);
                             }
                         }
                     }
 
-                    //alertDialog.setTitle(getResources().getString(R.string.alert));
                     //don't use
                     alertDialog.setMessage(message);
                     alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getResources().getString(R.string.ok),

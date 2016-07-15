@@ -398,6 +398,7 @@ public class PasswordDialogFragment extends DialogFragment {
             }
 
         } else {
+            //Change passcode
             switch (currentMode) {
                 case BRConstants.AUTH_MODE_CHECK_PASS:
                     if (passCodeManager.checkAuth(s.toString(), getActivity())) {
@@ -407,6 +408,11 @@ public class PasswordDialogFragment extends DialogFragment {
                     } else {
                         SpringAnimator.showAnimation(dialogFragment.getView());
                         passcodeEditText.setText("");
+                        if (!prevPass.equals(s.toString())) {
+                            KeyStoreManager.putFailCount(KeyStoreManager.getFailCount(getActivity()) + 1, getActivity());
+                        }
+                        prevPass = s.toString();
+                        if (KeyStoreManager.getFailCount(getActivity()) >= 3) setWalletDisabled();
                     }
                     break;
                 case BRConstants.AUTH_MODE_NEW_PASS:
