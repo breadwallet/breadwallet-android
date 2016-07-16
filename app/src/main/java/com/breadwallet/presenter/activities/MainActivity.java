@@ -97,7 +97,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     public TextView pay;
     public ProgressBar syncProgressBar;
     public TextView syncProgressText;
-    private static ParallaxViewPager parallaxViewPager;
+    public ParallaxViewPager parallaxViewPager;
     public ViewFlipper viewFlipper;
     public ViewFlipper lockerPayFlipper;
     private RelativeLayout networkErrorBar;
@@ -109,9 +109,9 @@ public class MainActivity extends FragmentActivity implements Observer {
     private static int MODE = BRConstants.RELEASE;
     public RelativeLayout bug;
     //    private TextView testnet;
-    private BubbleTextView middleBubble1;
-    private BubbleTextView middleBubble2;
-    private BubbleTextView middleBubbleBlocks;
+    public BubbleTextView middleBubble1;
+    public BubbleTextView middleBubble2;
+    public BubbleTextView middleBubbleBlocks;
     public BubbleTextView qrBubble1;
     public BubbleTextView qrBubble2;
     public BubbleTextView sendBubble1;

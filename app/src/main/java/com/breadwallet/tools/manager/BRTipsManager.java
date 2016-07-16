@@ -3,6 +3,7 @@ package com.breadwallet.tools.manager;
 import android.app.Instrumentation;
 import android.graphics.Point;
 import android.media.Image;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.v4.view.ViewPager;
@@ -18,6 +19,7 @@ import android.widget.ViewFlipper;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
+import com.breadwallet.tools.animation.SpringAnimator;
 
 /**
  * BreadWallet
@@ -54,84 +56,55 @@ public class BRTipsManager {
         final RelativeLayout tipsBlockPane = (RelativeLayout) app.findViewById(R.id.tips_block_pane);
         final TextView sendText = (TextView) app.findViewById(R.id.send_money_text);
         final ImageView qrcode = (ImageView) app.findViewById(R.id.main_image_qr_code);
-        final ViewFlipper viewFlipper = (ViewFlipper) MainActivity.app.findViewById(R.id.middle_view_flipper);
+        final ViewFlipper viewFlipper = (ViewFlipper) app.findViewById(R.id.middle_view_flipper);
         if (tipsBlockPane == null || qrcode == null ||
                 sendText == null || viewFlipper == null) return;
         tipsBlockPane.setVisibility(View.VISIBLE);
         final MainActivity finalApp = app;
-        viewFlipper.performClick();
-        tipsBlockPane.setOnClickListener(new View.OnClickListener() {
+        app.parallaxViewPager.setCurrentItem(1);
+        new Handler().postDelayed(new Runnable() {
             @Override
-            public void onClick(View view) {
-                switch (count) {
-                    case 0:
-                        viewFlipper.performClick();
-                        count++;
-                        break;
-                    case 1:
-                        sendText.performClick();
-                        count++;
-                        break;
-                    case 2:
-                        sendText.performClick();
-                        tipsBlockPane.setVisibility(View.GONE);
-                        swipeLeft(finalApp);
-                        count++;
-                        break;
-                    case 3:
-                        sendText.performClick();
-                        qrcode.performClick();
-                        count++;
-                        break;
-                    case 4:
-                        qrcode.performClick();
-                        count = 0;
-                        tipsBlockPane.setVisibility(View.GONE);
-                        break;
-
-                }
+            public void run() {
+                finalApp.middleBubble1.setVisibility(View.VISIBLE);
+                SpringAnimator.showBubbleAnimation(finalApp.middleBubble1);
+                tipsBlockPane.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        switch (count) {
+                            case 0:
+                                finalApp.middleBubble1.setVisibility(View.GONE);
+                                finalApp.middleBubble2.setVisibility(View.VISIBLE);
+                                SpringAnimator.showBubbleAnimation(finalApp.middleBubble2);
+                                count++;
+                                break;
+                            case 1:
+                                qrcode.performClick();
+                                count++;
+                                break;
+                            case 2:
+                                qrcode.performClick();
+                                count++;
+                                break;
+                            case 3:
+                                finalApp.parallaxViewPager.setCurrentItem(0);
+                                sendText.performClick();
+                                count++;
+                                break;
+                            case 4:
+                                sendText.performClick();
+                                count++;
+                                break;
+                            case 5:
+                                finalApp.parallaxViewPager.setCurrentItem(1);
+                                count = 0;
+                                tipsBlockPane.setVisibility(View.GONE);
+                                break;
+                        }
+                    }
+                });
             }
-        });
+        },500);
+
     }
 
-    private static void swipeLeft(MainActivity app) {
-
-
-        CustomPagerAdapter adapter = CustomPagerAdapter.adapter;
-        // Obtain MotionEvent object
-//        if (app == null) return;
-//
-//        long downTime = SystemClock.uptimeMillis();
-//        long eventTime = SystemClock.uptimeMillis() + 100;
-//        float x = 0.0f;
-//        float y = 0.0f;
-//        MotionEvent motionEventDown = MotionEvent.obtain(
-//                downTime,
-//                eventTime,
-//                MotionEvent.ACTION_DOWN,
-//                x,
-//                y,
-//                0
-//        );
-//        MotionEvent motionEventMove = MotionEvent.obtain(
-//                downTime,
-//                eventTime + 400,
-//                MotionEvent.ACTION_MOVE,
-//                x,
-//                y,
-//                0
-//        );
-//        MotionEvent motionEventUp = MotionEvent.obtain(
-//                downTime,
-//                eventTime,
-//                MotionEvent.ACTION_DOWN,
-//                x,
-//                y,
-//                0
-//        );
-//
-//        app.findViewById(R.id.scan_clipboard_buttons_layout).dispatchTouchEvent(motionEventDown);
-//        app.findViewById(R.id.scan_clipboard_buttons_layout).dispatchTouchEvent(motionEventMove);
-//        app.findViewById(R.id.scan_clipboard_buttons_layout).dispatchTouchEvent(motionEventUp);
-    }
 }

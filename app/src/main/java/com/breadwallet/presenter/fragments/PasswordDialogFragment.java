@@ -316,15 +316,10 @@ public class PasswordDialogFragment extends DialogFragment {
                         String tmp = BRStringFormatter.getCurrentBalanceText(getActivity());
                         MiddleViewAdapter.resetMiddleView(getActivity(), tmp);
                         ((BreadWalletApp) getActivity().getApplicationContext()).setUnlocked(true);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                MainActivity app = MainActivity.app;
-                                if(app!= null){
-                                    BRTipsManager.showTipsTutorial(app);
-                                }
-                            }
-                        },1000);
+                        MainActivity app = MainActivity.app;
+                        if (app != null) {
+                            BRTipsManager.showTipsTutorial(app);
+                        }
                         InputMethodManager keyboard = (InputMethodManager) getActivity().
                                 getSystemService(Context.INPUT_METHOD_SERVICE);
                         keyboard.hideSoftInputFromWindow(cancel.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);

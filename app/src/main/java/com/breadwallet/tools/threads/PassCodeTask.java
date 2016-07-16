@@ -2,9 +2,14 @@ package com.breadwallet.tools.threads;
 
 import android.app.Activity;
 import android.app.FragmentManager;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.util.Log;
+import android.view.MotionEvent;
 
+import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.fragments.PasswordDialogFragment;
+import com.breadwallet.tools.adapter.CustomPagerAdapter;
 import com.breadwallet.tools.security.KeyStoreManager;
 
 /**
@@ -81,13 +86,34 @@ public class PassCodeTask extends Thread {
         if (passwordDialogFragment != null) {
             try {
                 passwordDialogFragment.dismiss();
+                ensureHideKeyboard();
+
             } catch (IllegalStateException ex) {
                 ex.printStackTrace();
             }
         }
-//        if (activity != null)
-//            ((BreadWalletApp) activity.getApplication()).hideKeyboard(activity);
 
     }
 
+    private void ensureHideKeyboard() {
+        final CustomPagerAdapter adapter = CustomPagerAdapter.adapter;
+        if (adapter != null)
+            if (adapter.mainFragment.mainFragmentLayout != null) {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        (new Handler()).postDelayed(new Runnable() {
+
+                            public void run() {
+                                adapter.mainFragment.mainFragmentLayout.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
+                                adapter.mainFragment.mainFragmentLayout.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
+
+                            }
+                        }, 100);
+                    }
+                });
+
+            }
+    }
 }
+

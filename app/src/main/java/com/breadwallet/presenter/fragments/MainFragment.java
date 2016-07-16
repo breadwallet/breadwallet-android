@@ -55,6 +55,7 @@ import com.breadwallet.wallet.BRWalletManager;
 public class MainFragment extends Fragment {
     private static final String TAG = MainFragment.class.getName();
     public EditText addressEditText;
+    public RelativeLayout mainFragmentLayout;
     private int bubbleState = 0;
     public TextView sendText;
 
@@ -69,7 +70,7 @@ public class MainFragment extends Fragment {
         sendText = (TextView) rootView.findViewById(R.id.send_money_text);
 
         final Button scanQRButton = (Button) rootView.findViewById(R.id.main_button_scan_qr_code);
-        RelativeLayout mainFragmentLayout = (RelativeLayout) rootView.findViewById(R.id.main_fragment);
+        mainFragmentLayout = (RelativeLayout) rootView.findViewById(R.id.main_fragment);
         Button payAddressFromClipboardButton = (Button)
                 rootView.findViewById(R.id.main_button_pay_address_from_clipboard);
 
