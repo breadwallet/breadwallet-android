@@ -222,7 +222,7 @@ public class SharedPreferencesManager {
 
     public static int getStartHeight(Activity context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
-        return settingsToGet.getInt(BRConstants.START_HEIGHT, 1);
+        return settingsToGet.getInt(BRConstants.START_HEIGHT, 0);
     }
 
     public static void putStartHeight(Activity context, int startHeight){

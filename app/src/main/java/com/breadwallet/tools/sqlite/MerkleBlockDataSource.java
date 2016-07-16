@@ -50,12 +50,6 @@ class MerkleBlockDataSource {
             BRSQLiteHelper.MB_COLUMN_ID,
             BRSQLiteHelper.MB_BUFF,
             BRSQLiteHelper.MB_HEIGHT
-//            BRSQLiteHelper.MB_COLUMN_BLOCK_HASH, BRSQLiteHelper.MB_COLUMN_FLAGS,
-//            BRSQLiteHelper.MB_COLUMN_HASHES, BRSQLiteHelper.MB_COLUMN_HEIGHT,
-//            BRSQLiteHelper.MB_COLUMN_MERKLE_ROOT, BRSQLiteHelper.MB_COLUMN_NONCE,
-//            BRSQLiteHelper.MB_COLUMN_PREV_BLOCK, BRSQLiteHelper.MB_COLUMN_TARGET,
-//            BRSQLiteHelper.MB_COLUMN_TIME_STAMP, BRSQLiteHelper.MB_COLUMN_TOTAL_TRANSACTIONS,
-//            BRSQLiteHelper.MB_COLUMN_VERSION
     };
 
     private MerkleBlockDataSource() {
@@ -130,17 +124,6 @@ class MerkleBlockDataSource {
         BRMerkleBlockEntity merkleBlockEntity = new BRMerkleBlockEntity(cursor.getBlob(1), cursor.getInt(2));
         merkleBlockEntity.setId(cursor.getInt(0));
 
-//        merkleBlockEntity.setBlockHash(cursor.getBlob(1));
-//        merkleBlockEntity.setFlags(cursor.getBlob(2));
-//        merkleBlockEntity.setHashes(cursor.getBlob(3));
-//        merkleBlockEntity.setHeight(cursor.getInt(4));
-//        merkleBlockEntity.setMerkleRoot(cursor.getBlob(5));
-//        merkleBlockEntity.setNonce(cursor.getInt(6));
-//        merkleBlockEntity.setPrevBlock(cursor.getBlob(7));
-//        merkleBlockEntity.setTarget(cursor.getInt(8));
-//        merkleBlockEntity.setTimeStamp(cursor.getLong(9));
-//        merkleBlockEntity.setTotalTransactions(cursor.getInt(10));
-//        merkleBlockEntity.setVersion(cursor.getInt(11));
         return merkleBlockEntity;
     }
 }
