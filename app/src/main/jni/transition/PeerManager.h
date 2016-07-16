@@ -66,7 +66,8 @@ JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRPeerManager_isCreated
         (JNIEnv *env, jobject obj);
 
 JNIEXPORT jdouble JNICALL Java_com_breadwallet_wallet_BRPeerManager_syncProgress(JNIEnv *env,
-                                                                                 jobject thiz);
+                                                                                 jobject thiz,
+                                                                                 int startHeight);
 
 JNIEXPORT jint JNICALL Java_com_breadwallet_wallet_BRPeerManager_getCurrentBlockHeight(JNIEnv *env,
                                                                                        jobject thiz);

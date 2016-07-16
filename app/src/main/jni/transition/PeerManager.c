@@ -364,12 +364,13 @@ JNIEXPORT void JNICALL Java_com_breadwallet_wallet_BRPeerManager_createPeerArray
 }
 
 JNIEXPORT jdouble JNICALL Java_com_breadwallet_wallet_BRPeerManager_syncProgress(JNIEnv *env,
-                                                                                 jobject thiz) {
+                                                                                 jobject thiz,
+                                                                                 int startHeight) {
 //    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "syncProgress");
 
     if (!_peerManager || !_wallet) return 0;
 
-    return (jdouble) BRPeerManagerSyncProgress(_peerManager);
+    return (jdouble) BRPeerManagerSyncProgress(_peerManager, (uint32_t) startHeight);
     // need to call free();
 }
 

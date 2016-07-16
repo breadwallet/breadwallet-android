@@ -170,6 +170,7 @@ public class FragmentSettings extends Fragment {
         rescan.setOnClickListener(new View.OnClickListener() {
                                       @Override
                                       public void onClick(View v) {
+                                          SharedPreferencesManager.putStartHeight(getActivity(), 0);
                                           if (BRAnimator.checkTheMultipressingAvailability()) {
                                               new Thread(new Runnable() {
                                                   @Override

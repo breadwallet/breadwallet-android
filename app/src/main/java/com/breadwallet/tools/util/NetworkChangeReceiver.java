@@ -10,6 +10,7 @@ import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.wallet.BRPeerManager;
 
 /**
@@ -67,7 +68,7 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
                 @Override
                 public void run() {
                     networkErrorBar.setVisibility(View.GONE);
-                    double progress = BRPeerManager.syncProgress();
+                    double progress = BRPeerManager.syncProgress(SharedPreferencesManager.getStartHeight(app));
                     if(progress < 1 && progress > 0){
                         BRPeerManager.startSyncingProgressThread();
                     }

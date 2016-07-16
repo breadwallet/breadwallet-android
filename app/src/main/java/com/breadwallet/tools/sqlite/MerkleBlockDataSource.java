@@ -32,8 +32,10 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
 import com.breadwallet.presenter.entities.BlockEntity;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,7 +79,6 @@ class MerkleBlockDataSource {
     }
 
     public void putMerkleBlocks(BlockEntity[] blockEntities) {
-
         database.beginTransaction();
         try {
             for (BlockEntity b : blockEntities) {

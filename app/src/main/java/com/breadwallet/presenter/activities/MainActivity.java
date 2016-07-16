@@ -32,6 +32,7 @@ import com.breadwallet.presenter.customviews.BubbleTextView;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.presenter.fragments.FragmentSettings;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.manager.CurrencyManager;
 import com.breadwallet.tools.util.NetworkChangeReceiver;
@@ -351,7 +352,7 @@ public class MainActivity extends FragmentActivity implements Observer {
 //        Log.e(TAG, "isNetworkAvailable: " + isNetworkAvailable);
         networkErrorBar.setVisibility(isNetworkAvailable ? View.GONE : View.VISIBLE);
         startStopReceiver(true);
-        double currentSyncProgress = BRPeerManager.syncProgress();
+        double currentSyncProgress = BRPeerManager.syncProgress(SharedPreferencesManager.getStartHeight(this));
         if (currentSyncProgress > 0 && currentSyncProgress < 1) {
 //            Log.e(TAG, "Worked! restarted the syncing!");
             BRPeerManager.startSyncingProgressThread();

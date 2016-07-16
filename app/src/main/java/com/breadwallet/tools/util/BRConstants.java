@@ -149,6 +149,7 @@ public class BRConstants {
      * SharedPreferencesManager
      */
     public static String RECEIVE_ADDRESS = "receive_address";
+    public static String START_HEIGHT = "startHeight";
 
     private BRConstants() {
     }
