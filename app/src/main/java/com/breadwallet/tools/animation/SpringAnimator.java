@@ -78,9 +78,9 @@ public class SpringAnimator {
      */
     public static void showBubbleAnimation(final View view) {
         if (view == null) return;
-        ScaleAnimation trans = new ScaleAnimation(0.0f, 1f, 0.0f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        trans.setDuration(500);
-        trans.setInterpolator(new DecelerateOvershootInterpolator(1.3f, 1.2f));
+        ScaleAnimation trans = new ScaleAnimation(0.75f, 1f, 0.75f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        trans.setDuration(300);
+        trans.setInterpolator(new DecelerateOvershootInterpolator(1.0f, 1.85f));
         Log.e(TAG, "startAnimation");
         view.setVisibility(View.VISIBLE);
         view.startAnimation(trans);
