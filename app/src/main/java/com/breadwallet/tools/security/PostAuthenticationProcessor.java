@@ -58,7 +58,15 @@ public class PostAuthenticationProcessor {
         if (instance == null) {
             instance = new PostAuthenticationProcessor();
         }
+        instance.clearStat();
         return instance;
+    }
+
+    private void clearStat(){
+        phraseForKeyStore = null;
+        tmpTx = null;
+        uri = null;
+        label = null;
     }
 
     public void onCreateWalletAuth(IntroActivity app) {

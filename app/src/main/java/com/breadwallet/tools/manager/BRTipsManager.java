@@ -54,7 +54,7 @@ public class BRTipsManager {
         if (app == null) app = MainActivity.app;
         if (app == null) return;
         final RelativeLayout tipsBlockPane = (RelativeLayout) app.findViewById(R.id.tips_block_pane);
-        final TextView sendText = (TextView) app.findViewById(R.id.send_money_text);
+        final LinearLayout sendText = (LinearLayout) app.findViewById(R.id.send_money_text_layout);
         final ImageView qrcode = (ImageView) app.findViewById(R.id.main_image_qr_code);
         final ViewFlipper viewFlipper = (ViewFlipper) app.findViewById(R.id.middle_view_flipper);
         if (tipsBlockPane == null || qrcode == null ||

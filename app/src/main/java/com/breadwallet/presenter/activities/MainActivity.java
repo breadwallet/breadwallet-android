@@ -109,7 +109,6 @@ public class MainActivity extends FragmentActivity implements Observer {
     private int middleBubbleBlocksCount = 0;
     private static int MODE = BRConstants.RELEASE;
     public RelativeLayout bug;
-    //    private TextView testnet;
     public BubbleTextView middleBubble1;
     public BubbleTextView middleBubble2;
     public BubbleTextView middleBubbleBlocks;
@@ -233,7 +232,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         viewFlipper.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if (scanResultFragmentOn) {
                     return;
                 }
@@ -295,6 +293,7 @@ public class MainActivity extends FragmentActivity implements Observer {
             @TargetApi(Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
+                hideAllBubbles();
                 if (BRAnimator.checkTheMultipressingAvailability()) {
                     SpringAnimator.showAnimation(lockerButton);
                     if (KeyStoreManager.getPassCode(app) != 0)

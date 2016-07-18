@@ -30,6 +30,7 @@ import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.wallet.BRWalletManager;
 
+import java.util.IllegalFormatException;
 import java.util.List;
 
 /**
@@ -97,12 +98,12 @@ public class IntroRecoverWalletFragment extends Fragment {
                 String cleanPhrase = WordsReader.cleanPhrase(getActivity(), phraseToCheck);
 
                 if (BRWalletManager.getInstance(getActivity()).validatePhrase(getActivity(), cleanPhrase)) {
-
                     BRWalletManager m = BRWalletManager.getInstance(getActivity());
                     m.wipeWalletButKeystore(getActivity());
                     m.wipeKeyStore();
 
-                    boolean success = KeyStoreManager.putKeyStorePhrase(cleanPhrase, getActivity(), BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE);
+                    boolean success = KeyStoreManager.putKeyStorePhrase(cleanPhrase, getActivity(),
+                            BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE);
                     boolean success2 = false;
                     if (success)
                         success2 = KeyStoreManager.putKeyStoreCanary(BRConstants.CANARY_STRING, getActivity(), 0);

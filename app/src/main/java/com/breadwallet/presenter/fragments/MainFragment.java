@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -57,7 +58,7 @@ public class MainFragment extends Fragment {
     public EditText addressEditText;
     public RelativeLayout mainFragmentLayout;
     private int bubbleState = 0;
-    public TextView sendText;
+    private LinearLayout sendLabelLayout;
 
 //    private AlertDialog alertDialog;
 
@@ -67,7 +68,7 @@ public class MainFragment extends Fragment {
         // Inflate the layout for this fragment
         final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        sendText = (TextView) rootView.findViewById(R.id.send_money_text);
+        sendLabelLayout = (LinearLayout) rootView.findViewById(R.id.send_money_text_layout);
 
         final Button scanQRButton = (Button) rootView.findViewById(R.id.main_button_scan_qr_code);
         mainFragmentLayout = (RelativeLayout) rootView.findViewById(R.id.main_fragment);
@@ -118,6 +119,7 @@ public class MainFragment extends Fragment {
         scanQRButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ((MainActivity)getActivity()).hideAllBubbles();
                 if (BRAnimator.checkTheMultipressingAvailability()) {
                     BRAnimator.animateDecoderFragment();
                 }
@@ -129,7 +131,7 @@ public class MainFragment extends Fragment {
             public void onClick(View view) {
                 AlertDialog alert = null;
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
+                ((MainActivity)getActivity()).hideAllBubbles();
                 if (BRAnimator.checkTheMultipressingAvailability()) {
                     String tempAddress = BRClipboardManager.readFromClipboard(getActivity());
                     if (!addressEditText.getText().toString().isEmpty()) {
@@ -208,22 +210,38 @@ public class MainFragment extends Fragment {
 
         });
 
-        sendText.setOnClickListener(new View.OnClickListener() {
+        sendLabelLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (BRAnimator.checkTheMultipressingAvailability()) {
-                    MainActivity app = MainActivity.app;
+                    final MainActivity app = MainActivity.app;
                     if (app != null) {
                         app.hideAllBubbles();
                         if (bubbleState == 0) {
                             ((MainActivity) getActivity()).hideAllBubbles();
                             app.sendBubble1.setVisibility(View.VISIBLE);
-                            app.sendBubble2.setVisibility(View.GONE);
+                            app.sendBubble1.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    app.sendBubble1.setVisibility(View.GONE);
+                                    app.sendBubble2.setVisibility(View.VISIBLE);
+                                    SpringAnimator.showBubbleAnimation(app.sendBubble2);
+                                    bubbleState++;
+                                }
+                            });
+                                    app.sendBubble2.setVisibility(View.GONE);
                             SpringAnimator.showBubbleAnimation(app.sendBubble1);
                             bubbleState++;
                         } else if (bubbleState == 1) {
                             app.sendBubble1.setVisibility(View.GONE);
                             app.sendBubble2.setVisibility(View.VISIBLE);
+                            app.sendBubble2.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    app.hideAllBubbles();
+                                    bubbleState = 0;
+                                }
+                            });
                             SpringAnimator.showBubbleAnimation(app.sendBubble2);
                             bubbleState++;
                         } else {
@@ -262,5 +280,6 @@ public class MainFragment extends Fragment {
             if (editText != null)
                 keyboard.hideSoftInputFromWindow(editText.getWindowToken(), 0);
         }
+        ((MainActivity)getActivity()).hideAllBubbles();
     }
 }

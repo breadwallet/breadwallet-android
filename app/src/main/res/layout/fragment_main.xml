@@ -7,15 +7,26 @@
     android:orientation="vertical"
     android:windowSoftInputMode="stateAlwaysHidden">
 
-    <TextView
-        android:id="@+id/send_money_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <LinearLayout
+        android:id="@+id/send_money_text_layout"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
         android:layout_above="@+id/scan_clipboard_buttons_layout"
         android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
         android:layout_gravity="center"
-        android:text="@string/send_money"
-        android:textSize="@dimen/text_size" />
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/send_money"
+            android:textSize="@dimen/text_size" />
+
+    </LinearLayout>
+
 
     <LinearLayout
         android:id="@+id/scan_clipboard_buttons_layout"
@@ -24,7 +35,6 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:layout_gravity="center"
-        android:layout_marginTop="40dp"
         android:gravity="center"
         android:orientation="vertical">
 
@@ -92,8 +102,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
-        android:layout_marginTop="240dp"
         android:layout_marginStart="20dp"
+        android:layout_marginTop="240dp"
         android:background="@drawable/bubble_up"
         android:gravity="center"
         android:text="@string/pay_address_tip"

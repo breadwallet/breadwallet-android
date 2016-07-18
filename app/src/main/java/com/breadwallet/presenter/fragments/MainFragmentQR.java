@@ -65,6 +65,7 @@ public class MainFragmentQR extends Fragment {
     private static final String TAG = MainFragmentQR.class.getName();
     private ImageView qrcode;
     private TextView mainAddressText;
+    private RelativeLayout qrImageLayout;
     private Bitmap bitmap;
     private FragmentSharing sharingFragment;
     private FragmentManager fm;
@@ -81,7 +82,7 @@ public class MainFragmentQR extends Fragment {
 
         BRWalletManager.refreshAddress();
         receiveAddress = SharedPreferencesManager.getReceiveAddress(getActivity());
-
+        qrImageLayout = (RelativeLayout) rootView.findViewById(R.id.qr_image_address_layout);
         qrcode = (ImageView) rootView.findViewById(R.id.main_image_qr_code);
         sharingFragment = new FragmentSharing();
         final RelativeLayout main_fragment_qr = (RelativeLayout) rootView.findViewById(R.id.main_fragment_qr);
@@ -108,32 +109,15 @@ public class MainFragmentQR extends Fragment {
         qrcode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (BRAnimator.checkTheMultipressingAvailability()) {
-                    MainActivity app = MainActivity.app;
-                    if (app != null) {
-                        app.hideAllBubbles();
-                        if (bubbleState == 0) {
-                            ((MainActivity) getActivity()).hideAllBubbles();
-                            app.qrBubble1.setVisibility(View.VISIBLE);
-                            app.qrBubble2.setVisibility(View.GONE);
-                            SpringAnimator.showBubbleAnimation(app.qrBubble1);
-                            bubbleState++;
-                        } else if (bubbleState == 1) {
-                            app.qrBubble1.setVisibility(View.GONE);
-                            app.qrBubble2.setVisibility(View.VISIBLE);
-                            SpringAnimator.showBubbleAnimation(app.qrBubble2);
-                            bubbleState++;
-                        } else {
-                            app.hideAllBubbles();
-                            bubbleState = 0;
-                        }
-                    }
-
-                }
-
+                showTips();
             }
         });
-
+        qrImageLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showTips();
+            }
+        });
 
         final MainActivity app = MainActivity.app;
         if (app != null) {
@@ -150,6 +134,31 @@ public class MainFragmentQR extends Fragment {
         });
 
         return rootView;
+    }
+
+    private void showTips(){
+        if (BRAnimator.checkTheMultipressingAvailability()) {
+            MainActivity app = MainActivity.app;
+            if (app != null) {
+                app.hideAllBubbles();
+                if (bubbleState == 0) {
+                    ((MainActivity) getActivity()).hideAllBubbles();
+                    app.qrBubble1.setVisibility(View.VISIBLE);
+                    app.qrBubble2.setVisibility(View.GONE);
+                    SpringAnimator.showBubbleAnimation(app.qrBubble1);
+                    bubbleState++;
+                } else if (bubbleState == 1) {
+                    app.qrBubble1.setVisibility(View.GONE);
+                    app.qrBubble2.setVisibility(View.VISIBLE);
+                    SpringAnimator.showBubbleAnimation(app.qrBubble2);
+                    bubbleState++;
+                } else {
+                    app.hideAllBubbles();
+                    bubbleState = 0;
+                }
+            }
+
+        }
     }
 
     @Override
