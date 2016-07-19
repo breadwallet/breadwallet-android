@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
@@ -136,6 +138,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         initializeViews();
 
         Utils.printPhoneSpecs();
+
 
         Thread t = new Thread(new Runnable() {
             @Override
@@ -533,7 +536,6 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     }
 
-
     private void startStopReceiver(boolean b) {
         if (b) {
             this.registerReceiver(receiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
@@ -654,14 +656,13 @@ public class MainActivity extends FragmentActivity implements Observer {
 
 
     public void hideAllBubbles() {
-
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                BRAnimator.fadeScaleBubble(middleBubble1, middleBubble2, middleBubbleBlocks, qrBubble2, qrBubble1, sendBubble1, sendBubble2);
+                BRAnimator.fadeScaleBubble(middleBubble1, middleBubble2, middleBubbleBlocks,
+                        qrBubble2, qrBubble1, sendBubble1, sendBubble2);
             }
         });
-
     }
 
     public void showHideSyncProgressViews(boolean b) {
@@ -691,6 +692,5 @@ public class MainActivity extends FragmentActivity implements Observer {
             }
         }
     }
-
 
 }

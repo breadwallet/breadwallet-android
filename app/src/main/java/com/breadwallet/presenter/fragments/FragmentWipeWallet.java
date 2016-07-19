@@ -27,7 +27,10 @@ import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.util.WordsReader;
 import com.breadwallet.wallet.BRWalletManager;
+
+import java.util.List;
 
 /**
  * BreadWallet
@@ -60,6 +63,7 @@ public class FragmentWipeWallet extends Fragment {
     private Button wipe;
     private BRWalletManager m;
     private boolean allowWipeButtonPress = true;
+    private AlertDialog alertDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -88,10 +92,13 @@ public class FragmentWipeWallet extends Fragment {
                 getActivity().onBackPressed();
             }
         });
-
+        alertDialog = new AlertDialog.Builder(getActivity()).create();
         wipe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (alertDialog.isShowing()) {
+                    alertDialog.dismiss();
+                }
                 if (!allowWipeButtonPress) return;
                 allowWipeButtonPress = false;
                 new Handler().postDelayed(new Runnable() {
@@ -100,21 +107,36 @@ public class FragmentWipeWallet extends Fragment {
                         allowWipeButtonPress = true;
                     }
                 }, 500);
-                if (KeyStoreManager.phraseIsValid(recoveryPhraseEditText.getText().toString().trim().toLowerCase(), getActivity())) {
+                String cleanPhrase = WordsReader.cleanPhrase(getActivity(), recoveryPhraseEditText.getText().toString().trim().toLowerCase());
+                if (KeyStoreManager.phraseIsValid(cleanPhrase , getActivity())) {
                     m.wipeKeyStore();
                     m.wipeWalletButKeystore(getActivity());
                     startIntroActivity();
                     BRAnimator.resetFragmentAnimator();
                 } else {
-                    new AlertDialog.Builder(getActivity())
-                            .setMessage(getString(R.string.bad_recovery_phrase))
-                            .setNegativeButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    String message = getResources().getString(R.string.bad_recovery_phrase);
+                    String[] words = cleanPhrase.split(" ");
+                    if (words.length != 12) {
+                        message = getActivity().getString(R.string.recovery_phrase_must_have_12_words);
+                    } else {
+                        List<String> allWords = WordsReader.getAllWordLists(getActivity());
+
+                        for (String word : words) {
+                            if (!allWords.contains(word)) {
+                                message = "\"" + word + getActivity().getString(R.string.not_a_recovery_phrase_word);
+                            }
+                        }
+                    }
+
+                    //don't use
+                    alertDialog.setMessage(message);
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getResources().getString(R.string.ok),
+                            new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
-                                    dialog.cancel();
+                                    dialog.dismiss();
                                 }
-                            })
-                            .setIcon(android.R.drawable.ic_dialog_alert)
-                            .show();
+                            });
+                    alertDialog.show();
                 }
             }
         });

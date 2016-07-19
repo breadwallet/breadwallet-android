@@ -1,11 +1,12 @@
 <resources>
-
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
+        <!--<item name="android:colorPrimaryDark">@color/action_bar</item>-->
         <item name="android:textViewStyle">@style/RobotoTextViewStyle</item>
         <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
         <item name="android:windowBackground">@drawable/splash_screen</item>
+        <item name="android:actionMenuTextAppearance">@color/dark_grey</item>
     </style>
 
     <style name="RobotoTextViewStyle" parent="android:Widget.TextView">
@@ -17,34 +18,4 @@
         <item name="android:textColor">@color/dark_blue</item>
 
     </style>
-
-    <!-- Base application theme. -->
-    <style name="AppOverlayTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="android:windowActionBarOverlay">true</item>
-        <item name="android:actionBarStyle">@style/ActionBarStyle.Transparent</item>
-
-        <!-- Support library compatibility -->
-        <item name="windowActionBarOverlay">true</item>
-    </style>
-
-    <style name="ActionBarStyle.Transparent" parent="android:Widget.ActionBar">
-        <item name="android:background">#99000000</item>
-        <item name="android:titleTextStyle">@style/ActionBarStyle.Transparent.TitleTextStyle</item>
-        <item name="android:backgroundSplit">#99000000</item>
-    </style>
-
-    <style name="ActionBarStyle.Transparent.TitleTextStyle" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
-        <item name="android:textColor">@android:color/white</item>
-    </style>
-
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
 </resources>
