@@ -535,7 +535,6 @@ public class BRAnimator {
             animation.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {
-
                 }
 
                 @Override
@@ -570,7 +569,8 @@ public class BRAnimator {
             return myView.getLeft() + getRelativeLeft((View) myView.getParent());
     }
 
-    private static int getRelativeTop(View myView) {
+    public static int getRelativeTop(View myView) {
+        if (myView == null) return 0;
         if (myView.getParent() == myView.getRootView())
             return myView.getTop();
         else

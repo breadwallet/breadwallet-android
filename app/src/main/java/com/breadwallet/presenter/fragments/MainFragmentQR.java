@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -23,6 +24,7 @@ import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.customviews.BubbleTextView;
+import com.breadwallet.tools.manager.BRTipsManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -72,26 +74,27 @@ public class MainFragmentQR extends Fragment {
     public static File qrCodeImageFile;
     private String receiveAddress;
     private int bubbleState = 0;
+    private RelativeLayout addressLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         // The last two arguments ensure LayoutParams are inflated
         // properly.
-        View rootView = inflater.inflate(R.layout.fragment_qr_main, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_qr_main, container, false);
 
         BRWalletManager.refreshAddress();
         receiveAddress = SharedPreferencesManager.getReceiveAddress(getActivity());
         qrImageLayout = (RelativeLayout) rootView.findViewById(R.id.qr_image_address_layout);
         qrcode = (ImageView) rootView.findViewById(R.id.main_image_qr_code);
         sharingFragment = new FragmentSharing();
-        final RelativeLayout main_fragment_qr = (RelativeLayout) rootView.findViewById(R.id.main_fragment_qr);
+        final RelativeLayout mainFragmentQr = (RelativeLayout) rootView.findViewById(R.id.main_fragment_qr);
         mainAddressText = (TextView) rootView.findViewById(R.id.main_address_text);
-        RelativeLayout addressLayout = (RelativeLayout) rootView.findViewById(R.id.theAddressLayout);
+        addressLayout = (RelativeLayout) rootView.findViewById(R.id.theAddressLayout);
         generateQR();
         fm = getActivity().getFragmentManager();
-        main_fragment_qr.setPadding(0, MainActivity.screenParametersPoint.y / 5, 0, 0);
-        final BreadWalletApp breadWalletApp = (BreadWalletApp) MainActivity.app.getApplication();
+        mainFragmentQr.setPadding(0, MainActivity.screenParametersPoint.y / 5, 0, 0);
+        final BreadWalletApp breadWalletApp = (BreadWalletApp) getActivity().getApplication();
         addressLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -133,10 +136,24 @@ public class MainFragmentQR extends Fragment {
             }
         });
 
+        setTipsPositions(rootView);
+
         return rootView;
     }
 
-    private void showTips(){
+    private void setTipsPositions(final View rootView) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                View temp = rootView.findViewById(R.id.qr_image_address_layout);
+                int qrBubble1Position = temp == null ? MainActivity.screenParametersPoint.y / 2 : temp.getHeight() / 3 + temp.getHeight() / 10;
+                int qrBubble2Position = temp == null ? MainActivity.screenParametersPoint.y / 2 : temp.getHeight() - temp.getHeight() / 7;
+                BRTipsManager.setQrBubblesPosition(qrBubble1Position, qrBubble2Position);
+            }
+        }, 200);
+    }
+
+    private void showTips() {
         if (BRAnimator.checkTheMultipressingAvailability()) {
             MainActivity app = MainActivity.app;
             if (app != null) {

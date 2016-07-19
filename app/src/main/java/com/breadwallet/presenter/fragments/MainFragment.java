@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -26,6 +27,7 @@ import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
+import com.breadwallet.tools.manager.BRTipsManager;
 import com.breadwallet.wallet.BRWalletManager;
 
 /**
@@ -72,7 +74,7 @@ public class MainFragment extends Fragment {
 
         final Button scanQRButton = (Button) rootView.findViewById(R.id.main_button_scan_qr_code);
         mainFragmentLayout = (RelativeLayout) rootView.findViewById(R.id.main_fragment);
-        Button payAddressFromClipboardButton = (Button)
+        final Button payAddressFromClipboardButton = (Button)
                 rootView.findViewById(R.id.main_button_pay_address_from_clipboard);
 
         addressEditText = (EditText) rootView.findViewById(R.id.address_edit_text);
@@ -119,7 +121,7 @@ public class MainFragment extends Fragment {
         scanQRButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((MainActivity)getActivity()).hideAllBubbles();
+                ((MainActivity) getActivity()).hideAllBubbles();
                 if (BRAnimator.checkTheMultipressingAvailability()) {
                     BRAnimator.animateDecoderFragment();
                 }
@@ -131,7 +133,7 @@ public class MainFragment extends Fragment {
             public void onClick(View view) {
                 AlertDialog alert = null;
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                ((MainActivity)getActivity()).hideAllBubbles();
+                ((MainActivity) getActivity()).hideAllBubbles();
                 if (BRAnimator.checkTheMultipressingAvailability()) {
                     String tempAddress = BRClipboardManager.readFromClipboard(getActivity());
                     if (!addressEditText.getText().toString().isEmpty()) {
@@ -229,7 +231,7 @@ public class MainFragment extends Fragment {
                                     bubbleState++;
                                 }
                             });
-                                    app.sendBubble2.setVisibility(View.GONE);
+                            app.sendBubble2.setVisibility(View.GONE);
                             SpringAnimator.showBubbleAnimation(app.sendBubble1);
                             bubbleState++;
                         } else if (bubbleState == 1) {
@@ -255,12 +257,27 @@ public class MainFragment extends Fragment {
             }
         });
 
+        setTipsPositions(rootView);
+
         return rootView;
     }
 
     private boolean checkIfAddressIsValid(String str) {
-
         return BRWalletManager.validateAddress(str.trim());
+    }
+
+    private void setTipsPositions(final View rootView) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                View temp = rootView.findViewById(R.id.scan_clipboard_buttons_layout);
+                View sendMoneyLabel = rootView.findViewById(R.id.send_money_text_layout);
+                int tempHeight = temp == null ? 0 : temp.getHeight();
+                int sendBubble1Position = tempHeight == 0 ? MainActivity.screenParametersPoint.y / 2 : tempHeight / 2 + tempHeight / 10 + sendMoneyLabel.getHeight();
+                int sendBubble2Position = tempHeight == 0 ? MainActivity.screenParametersPoint.y / 2 : tempHeight + tempHeight / 3 + sendMoneyLabel.getHeight();
+                BRTipsManager.setSendBubblesPosition(sendBubble1Position, sendBubble2Position);
+            }
+        }, 200);
     }
 
     @Override
@@ -280,6 +297,6 @@ public class MainFragment extends Fragment {
             if (editText != null)
                 keyboard.hideSoftInputFromWindow(editText.getWindowToken(), 0);
         }
-        ((MainActivity)getActivity()).hideAllBubbles();
+        ((MainActivity) getActivity()).hideAllBubbles();
     }
 }

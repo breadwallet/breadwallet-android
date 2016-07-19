@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.util.Base64;
 import android.util.Base64InputStream;
 import android.util.Base64OutputStream;
+import android.util.Log;
 
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
@@ -225,7 +226,7 @@ public class SharedPreferencesManager {
         return settingsToGet.getInt(BRConstants.START_HEIGHT, 0);
     }
 
-    public static void putStartHeight(Activity context, int startHeight){
+    public static void putStartHeight(Activity context, int startHeight) {
         SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putInt(BRConstants.START_HEIGHT, startHeight);

@@ -33,6 +33,7 @@ import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.presenter.fragments.FragmentSettings;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRClipboardManager;
+import com.breadwallet.tools.manager.BRTipsManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.manager.CurrencyManager;
 import com.breadwallet.tools.util.NetworkChangeReceiver;
@@ -426,7 +427,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         middleBubbleBlocks = (BubbleTextView) findViewById(R.id.middle_bubble_blocks);
         qrBubble1 = (BubbleTextView) findViewById(R.id.qr_bubble1);
         qrBubble2 = (BubbleTextView) findViewById(R.id.qr_bubble2);
-
     }
 
     @Override
@@ -668,8 +668,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         syncProgressBar.setVisibility(b ? View.VISIBLE : View.GONE);
         syncProgressText.setVisibility(b ? View.VISIBLE : View.GONE);
     }
-
-
 
 
     public class ToastUpdater extends Thread {

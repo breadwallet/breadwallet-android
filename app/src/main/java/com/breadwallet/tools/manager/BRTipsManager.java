@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewParent;
@@ -20,6 +21,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
 import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.util.CustomLogger;
 
 /**
  * BreadWallet
@@ -103,7 +105,26 @@ public class BRTipsManager {
                     }
                 });
             }
-        },500);
+        }, 500);
+
+    }
+
+    public static void setSendBubblesPosition(int send1, int send2) {
+
+        MainActivity app = MainActivity.app;
+        if (app != null) {
+            app.sendBubble1.setY(send1);
+            app.sendBubble2.setY(send2);
+        }
+    }
+
+    public static void setQrBubblesPosition(int qr1, int qr2) {
+        MainActivity app = MainActivity.app;
+//
+        if (app != null) {
+            app.qrBubble1.setY(qr1);
+            app.qrBubble2.setY(qr2);
+        }
 
     }
 
