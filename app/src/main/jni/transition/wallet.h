@@ -128,10 +128,10 @@ JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRWalletManager_publishSe
         jbyteArray serializedTransaction,
         jstring phrase);
 
-JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRWalletManager_publishSignedSerializedTransaction(
-        JNIEnv *env,
-        jobject thiz,
-        jbyteArray serializedTransaction);
+//JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRWalletManager_publishSignedSerializedTransaction(
+//        JNIEnv *env,
+//        jobject thiz,
+//        jbyteArray serializedTransaction);
 
 JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTotalSent
         (JNIEnv *env, jobject obj);

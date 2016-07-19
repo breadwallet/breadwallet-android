@@ -7,10 +7,12 @@ import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.presenter.fragments.FragmentRecoveryPhrase;
 import com.breadwallet.presenter.fragments.FragmentSettings;
 import com.breadwallet.presenter.fragments.IntroWelcomeFragment;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
 import com.breadwallet.wallet.BRWalletManager;
@@ -46,6 +48,7 @@ public class PostAuthenticationProcessor {
 
     private String phraseForKeyStore;
     private byte[] tmpTx;
+    private PaymentRequestWrapper paymentRequest;
     private String uri;
     private String label;
 
@@ -149,7 +152,6 @@ public class PostAuthenticationProcessor {
                 BRWalletManager m = BRWalletManager.getInstance(app);
                 m.wipeWalletButKeystore(app);
                 m.wipeKeyStore();
-
             }
 
             app.getFragmentManager().beginTransaction().add(R.id.intro_layout, new IntroWelcomeFragment(),
@@ -161,10 +163,13 @@ public class PostAuthenticationProcessor {
 
     }
 
-    public void onPaymentProtocolRequest() {
-        new PaymentProtocolTask().execute(uri, label);
+    public void onPaymentProtocolRequest(MainActivity app) {
+        String phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE);
+        if (phrase == null || phrase.isEmpty() || paymentRequest.serializedTx == null)
+            return;
+        BRWalletManager.getInstance(app).publishSerializedTransaction(paymentRequest.serializedTx, phrase);
+        PaymentProtocolPostPaymentTask.sent = true;
     }
-
 
     public void setPhraseForKeyStore(String phraseForKeyStore) {
         Log.e(TAG, "setPhraseForKeyStore");
@@ -181,4 +186,7 @@ public class PostAuthenticationProcessor {
         this.label = label;
     }
 
+    public void setTmpPaymentRequest(PaymentRequestWrapper paymentRequest) {
+        this.paymentRequest = paymentRequest;
+    }
 }

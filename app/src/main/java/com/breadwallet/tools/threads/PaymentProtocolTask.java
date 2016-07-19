@@ -83,12 +83,12 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
             urlConnection.setUseCaches(false);
             in = urlConnection.getInputStream();
 
-            String phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE);
-            if (phrase == null || phrase.isEmpty()) {
-                if (urlConnection != null) urlConnection.disconnect();
-                PostAuthenticationProcessor.getInstance().setUriAndLabel(params[0], params[1]);
-                return null;
-            }
+//            String phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE);
+//            if (phrase == null || phrase.isEmpty()) {
+//                if (urlConnection != null) urlConnection.disconnect();
+//                PostAuthenticationProcessor.getInstance().setUriAndLabel(params[0], params[1]);
+//                return null;
+//            }
 
             if (in == null) {
                 Log.e(TAG, "The inputStream is null!");
@@ -101,7 +101,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 return null;
             }
 
-            paymentRequest = RequestHandler.parsePaymentRequest(serializedBytes, phrase);
+            paymentRequest = RequestHandler.parsePaymentRequest(serializedBytes);
 
             if (paymentRequest == null || paymentRequest.error == PaymentRequestWrapper.INVALID_REQUEST_ERROR) {
                 Log.e(TAG, "paymentRequest is null!!!");

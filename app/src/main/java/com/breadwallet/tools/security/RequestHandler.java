@@ -191,7 +191,7 @@ public class RequestHandler {
         return true;
     }
 
-    public static native PaymentRequestWrapper parsePaymentRequest(byte[] req, String phrase);
+    public static native PaymentRequestWrapper parsePaymentRequest(byte[] req);
 
     public static native String parsePaymentACK(byte[] req);
 

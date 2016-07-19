@@ -588,7 +588,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                 break;
             case BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
-                    PostAuthenticationProcessor.getInstance().onPaymentProtocolRequest();
+                    PostAuthenticationProcessor.getInstance().onPaymentProtocolRequest(this);
                 }
                 break;
         }

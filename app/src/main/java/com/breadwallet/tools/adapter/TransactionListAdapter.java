@@ -272,6 +272,7 @@ public class TransactionListAdapter extends BaseAdapter {
 //        CustomLogger.logThis("TX getReceived", String.valueOf(item.getReceived()), "TX getSent", String.valueOf(item.getSent()),
 //                "TX getBalanceAfterTx", String.valueOf(item.getBalanceAfterTx()));
         int blockHeight = item.getBlockHeight();
+
         int estimatedBlockHeight = BRPeerManager.getEstimatedBlockHeight();
         int confirms = blockHeight == Integer.MAX_VALUE ? 0 : estimatedBlockHeight - blockHeight + 1;
 //        Log.e(TAG, "confirms: " + confirms);

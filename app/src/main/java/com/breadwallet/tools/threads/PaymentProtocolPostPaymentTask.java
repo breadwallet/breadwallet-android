@@ -8,6 +8,9 @@ import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
+import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.security.PostAuthenticationProcessor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.ByteReader;
 import com.breadwallet.tools.security.RequestHandler;
 import com.breadwallet.wallet.BRWalletManager;
@@ -51,9 +54,9 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
     public static final String TITLE = "title";
     public static final String MESSAGE = "message";
 
-    HttpURLConnection urlConnection;
-    PaymentRequestWrapper paymentRequest = null;
-    String message;
+    public HttpURLConnection urlConnection;
+    public PaymentRequestWrapper paymentRequest = null;
+    public static String message;
 
     public static boolean waiting = true;
     public static boolean sent = false;
@@ -99,7 +102,12 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
             }
 
             message = RequestHandler.parsePaymentACK(serializedBytes);
-            BRWalletManager.getInstance(app).publishSignedSerializedTransaction(paymentRequest.serializedTx);
+            String phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE);
+            if (phrase == null || phrase.isEmpty()) {
+                PostAuthenticationProcessor.getInstance().setTmpPaymentRequest(paymentRequest);
+                return null;
+            }
+            BRWalletManager.getInstance(app).publishSerializedTransaction(paymentRequest.serializedTx, phrase);
             sent = true;
         } catch (Exception e) {
             if (e instanceof java.net.UnknownHostException) {
@@ -130,16 +138,21 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
             e.printStackTrace();
         } finally {
             if (urlConnection != null) urlConnection.disconnect();
+            waiting = false;
         }
-        waiting = false;
         return null;
     }
 
     @Override
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
-        final MainActivity app = MainActivity.app;
 
+        handleMessage();
+
+    }
+
+    public static void handleMessage(){
+        final MainActivity app = MainActivity.app;
         if (app != null && message != null) {
             if (!message.isEmpty()) {
                 ((BreadWalletApp) app.getApplication()).
