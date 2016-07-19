@@ -147,7 +147,7 @@ public class MainFragmentQR extends Fragment {
             public void run() {
                 View temp = rootView.findViewById(R.id.qr_image_address_layout);
                 int qrBubble1Position = temp == null ? MainActivity.screenParametersPoint.y / 2 : temp.getHeight() / 3 + temp.getHeight() / 10;
-                int qrBubble2Position = temp == null ? MainActivity.screenParametersPoint.y / 2 : temp.getHeight() - temp.getHeight() / 7;
+                int qrBubble2Position = temp == null ? MainActivity.screenParametersPoint.y / 3 : temp.getHeight() - temp.getHeight() / 7;
                 BRTipsManager.setQrBubblesPosition(qrBubble1Position, qrBubble2Position);
             }
         }, 200);

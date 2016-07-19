@@ -48,7 +48,6 @@ JNIEXPORT jobject JNICALL Java_com_breadwallet_tools_security_RequestHandler_par
     jobject entity = (*env)->AllocObject(env, clazz);
     jfieldID jerror = (*env)->GetFieldID(env, clazz, "error", "I");
 
-
     int requestLength = (*env)->GetArrayLength(env, payment);
 
     if (requestLength > 50000) {

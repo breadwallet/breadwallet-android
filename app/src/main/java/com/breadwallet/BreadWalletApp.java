@@ -147,7 +147,7 @@ public class BreadWalletApp extends Application {
     }
 
     public boolean isToastShown() {
-        return toast != null && toast.getView().isShown();
+        return toast != null && toast.getView() != null && toast.getView().isShown();
     }
 
     public void setTopMiddleView(int view, String text) {
