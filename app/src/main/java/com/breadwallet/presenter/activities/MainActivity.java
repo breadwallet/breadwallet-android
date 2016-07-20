@@ -180,17 +180,10 @@ public class MainActivity extends FragmentActivity implements Observer {
     }
 
     private void setStatusBarColor(){
-//        Window window = getWindow();
-//
-//// clear FLAG_TRANSLUCENT_STATUS flag:
-//        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-//
-//// add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
-//        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-//
-//// finally change the color
-//        window.setStatusBarColor(activity.getResources().getColor(R.color.my_statusbar_color));
-//        window.get(activity.getResources().getColor(R.color.my_statusbar_color));
+        Window window = getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(getColor(R.color.action_bar));
     }
 
     private void setUrlHandler() {
