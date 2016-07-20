@@ -43,14 +43,14 @@ JNIEXPORT void JNICALL
 Java_com_breadwallet_wallet_BRPeerManager_putBlock(JNIEnv *env, jobject thiz, jbyteArray block, int blockHeight);
 
 JNIEXPORT void JNICALL
-Java_com_breadwallet_wallet_BRPeerManager_createBlockArrayWithCount(JNIEnv *env, jobject thiz, size_t bkCount);
+Java_com_breadwallet_wallet_BRPeerManager_createBlockArrayWithCount(JNIEnv *env, jobject thiz, size_t blockCount);
 
 JNIEXPORT void JNICALL
 Java_com_breadwallet_wallet_BRPeerManager_putPeer(JNIEnv *env, jobject thiz, jbyteArray peerAddress,
                                                   jbyteArray peerPort, jbyteArray peerTimeStamp);
 
 JNIEXPORT void JNICALL
-Java_com_breadwallet_wallet_BRPeerManager_createPeerArrayWithCount(JNIEnv *env, jobject thiz, size_t prCount);
+Java_com_breadwallet_wallet_BRPeerManager_createPeerArrayWithCount(JNIEnv *env, jobject thiz, size_t peerCount);
 
 JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRPeerManager_isCreated(JNIEnv *env, jobject obj);
 
