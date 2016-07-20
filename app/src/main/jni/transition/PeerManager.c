@@ -47,7 +47,6 @@ static jclass _peerManagerClass;
 static size_t _managerNewCounter = 0;
 static jclass _blockClass;
 static jclass _peerClass;
-static int isAttached = 0;
 
 static JNIEnv *getEnv() {
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "getEnv peerManager");
@@ -59,18 +58,10 @@ static JNIEnv *getEnv() {
     if (status < 0) {
         status = (*_jvmPM)->AttachCurrentThread(_jvmPM, &env, NULL);
         if (status < 0) return NULL;
-        isAttached = 1;
     }
     return env;
 }
 
-static void detach_current_thread() {
-    if (isAttached) {
-        (*_jvmPM)->DetachCurrentThread(_jvmPM);
-        isAttached = 0;
-    }
-
-}
 
 static void syncStarted(void *info) {
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "syncStarted");
@@ -80,15 +71,12 @@ static void syncStarted(void *info) {
     jmethodID mid;
 
     if (!env) {
-        detach_current_thread();
         return;
     }
 
     //call java methods
     mid = (*env)->GetStaticMethodID(env, _peerManagerClass, "syncStarted", "()V");
     (*env)->CallStaticVoidMethod(env, _peerManagerClass, mid);
-//    (*_jvmPM)->DetachCurrentThread(_jvmPM);
-    detach_current_thread();
 }
 
 static void syncSucceeded(void *info) {
@@ -104,8 +92,6 @@ static void syncSucceeded(void *info) {
     //call java methods
     mid = (*env)->GetStaticMethodID(env, _peerManagerClass, "syncSucceeded", "()V");
     (*env)->CallStaticVoidMethod(env, _peerManagerClass, mid);
-//    (*_jvmPM)->DetachCurrentThread(_jvmPM);
-    detach_current_thread();
 }
 
 static void syncFailed(void *info, int error) {
@@ -120,8 +106,6 @@ static void syncFailed(void *info, int error) {
     //call java methods
     mid = (*env)->GetStaticMethodID(env, _peerManagerClass, "syncFailed", "()V");
     (*env)->CallStaticVoidMethod(env, _peerManagerClass, mid);
-//    (*_jvmPM)->DetachCurrentThread(_jvmPM);
-    detach_current_thread();
 }
 
 static void txStatusUpdate(void *info) {
@@ -132,14 +116,12 @@ static void txStatusUpdate(void *info) {
     jmethodID mid;
 
     if (!env) {
-        detach_current_thread();
         return;
     }
 
     //call java methods
     mid = (*env)->GetStaticMethodID(env, _peerManagerClass, "txStatusUpdate", "()V");
     (*env)->CallStaticVoidMethod(env, _peerManagerClass, mid);
-    detach_current_thread();
 }
 
 static void saveBlocks(void *info, BRMerkleBlock *blocks[], size_t count) {
@@ -181,7 +163,6 @@ static void saveBlocks(void *info, BRMerkleBlock *blocks[], size_t count) {
     mid = (*env)->GetStaticMethodID(env, _peerManagerClass, "saveBlocks",
                                     "([Lcom/breadwallet/presenter/entities/BlockEntity;)V");
     (*env)->CallStaticVoidMethod(env, _peerManagerClass, mid, blockObjectArray);
-    detach_current_thread();
 }
 
 static void savePeers(void *info, const BRPeer peers[], size_t count) {
@@ -228,7 +209,6 @@ static void savePeers(void *info, const BRPeer peers[], size_t count) {
     mid = (*env)->GetStaticMethodID(env, _peerManagerClass, "savePeers",
                                     "([Lcom/breadwallet/presenter/entities/PeerEntity;)V");
     (*env)->CallStaticVoidMethod(env, _peerManagerClass, mid, peerObjectArray);
-    detach_current_thread();
 }
 
 JNIEXPORT void JNICALL Java_com_breadwallet_wallet_BRPeerManager_rescan(JNIEnv *env, jobject thiz) {
@@ -249,6 +229,10 @@ static int networkIsReachable(void *info) {
     mid = (*env)->GetStaticMethodID(env, _peerManagerClass, "networkIsReachable", "()Z");
     isNetworkOn = (*env)->CallStaticBooleanMethod(env, _peerManagerClass, mid);
     return (isNetworkOn == JNI_TRUE) ? 1 : 0;
+}
+
+static void threadCleanup(void *info) {
+    (*_jvmPM)->DetachCurrentThread(_jvmPM);
 }
 
 JNIEXPORT void JNICALL
@@ -283,7 +267,7 @@ Java_com_breadwallet_wallet_BRPeerManager_createAndConnect(JNIEnv *env, jobject 
                                         _peers, (size_t) peersCount);
         BRPeerManagerSetCallbacks(_peerManager, NULL, syncStarted, syncSucceeded, syncFailed,
                                   txStatusUpdate,
-                                  saveBlocks, savePeers, networkIsReachable);
+                                  saveBlocks, savePeers, networkIsReachable, threadCleanup);
     }
 
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "earliestKeyTime: %d",

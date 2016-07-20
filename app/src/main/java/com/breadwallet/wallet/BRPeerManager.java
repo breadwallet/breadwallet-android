@@ -47,7 +47,6 @@ public class BRPeerManager {
     private static BRPeerManager instance;
     private static SyncProgressTask syncTask;
     private static Activity ctx;
-    public static boolean saveStuffRunning = false;
 
     private BRPeerManager() {
         syncTask = new SyncProgressTask();
@@ -115,7 +114,7 @@ public class BRPeerManager {
 
     public static void syncFailed() {
         stopSyncingProgressThread();
-        if (ctx != null) {
+        if (ctx != null && ctx instanceof MainActivity) {
             ((MainActivity) ctx).hideAllBubbles();
         }
     }
@@ -131,7 +130,6 @@ public class BRPeerManager {
     public static void saveBlocks(final BlockEntity[] blockEntities) {
         Log.e(TAG, "saveBlocks: " + blockEntities.length);
 
-        saveStuffRunning = true;
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) {
             new Thread(new Runnable() {
@@ -146,7 +144,6 @@ public class BRPeerManager {
 
     public static void savePeers(final PeerEntity[] peerEntities) {
         Log.e(TAG, "savePeers");
-        saveStuffRunning = true;
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) {
             new Thread(new Runnable() {

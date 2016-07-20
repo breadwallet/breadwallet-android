@@ -10,6 +10,7 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -45,6 +46,7 @@ import java.util.Locale;
 
 public class FragmentAbout extends Fragment {
 
+
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -52,34 +54,46 @@ public class FragmentAbout extends Fragment {
 
         View rootView = inflater.inflate(
                 R.layout.fragment_about, container, false);
-        rootView.findViewById(R.id.about4).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (BRAnimator.checkTheMultipressingAvailability()) {
-                    String to = BRConstants.SUPPORT_EMAIL;
-                    PackageInfo pInfo = null;
-                    String version = "";
-                    try {
-                        pInfo = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0);
-                        version = pInfo.versionName;
-                    } catch (PackageManager.NameNotFoundException e) {
-                        e.printStackTrace();
+        PackageInfo pInfo = null;
+        int versionCode = 0;
+        try {
+            pInfo = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0);
+            versionCode = pInfo.versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        TextView versionText = (TextView) rootView.findViewById(R.id.about1);
+        if (versionText != null)
+            versionText.setText(String.format(getString(R.string.breadwallet_v), versionCode));
+        TextView support = (TextView) rootView.findViewById(R.id.about4);
+        if (support != null)
+            support.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (BRAnimator.checkTheMultipressingAvailability()) {
+                        String to = BRConstants.SUPPORT_EMAIL;
+                        PackageInfo pInfo = null;
+                        String versionName = "";
+                        try {
+                            pInfo = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0);
+                            versionName = pInfo.versionName;
+                        } catch (PackageManager.NameNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                        String message = String.format(Locale.getDefault(), "%s / Android %s / breadwallet %s\n\n",
+                                Build.MODEL, Build.VERSION.RELEASE, versionName);
+                        Intent email = new Intent(Intent.ACTION_SEND);
+                        email.putExtra(Intent.EXTRA_EMAIL, new String[]{to});
+                        email.putExtra(Intent.EXTRA_TEXT, message);
+                        email.putExtra(Intent.EXTRA_SUBJECT, getActivity().getString(R.string.support_request));
+
+                        // need this to prompts email client only
+                        email.setType("message/rfc822");
+
+                        startActivity(Intent.createChooser(email, getActivity().getString(R.string.choose_an_email_client)));
                     }
-
-                    String message = String.format(Locale.getDefault(), "%s / Android %s / breadwallet %s\n\n",
-                            Build.MODEL, Build.VERSION.RELEASE, version);
-                    Intent email = new Intent(Intent.ACTION_SEND);
-                    email.putExtra(Intent.EXTRA_EMAIL, new String[]{to});
-                    email.putExtra(Intent.EXTRA_TEXT, message);
-                    email.putExtra(Intent.EXTRA_SUBJECT, getActivity().getString(R.string.support_request));
-
-                    // need this to prompts email client only
-                    email.setType("message/rfc822");
-
-                    startActivity(Intent.createChooser(email, getActivity().getString(R.string.choose_an_email_client)));
                 }
-            }
-        });
+            });
 
         return rootView;
     }

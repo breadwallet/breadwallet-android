@@ -33,7 +33,6 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="40dp"
-                    android:text="@string/breadwallet_v0_6"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/dark_grey"
                     android:textSize="@dimen/text_size" />

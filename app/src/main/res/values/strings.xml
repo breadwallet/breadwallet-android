@@ -104,7 +104,7 @@
     <string name="phrase_no_match">recovery phrase doesn\'t match</string>
     <string name="please_write_it_down">please write it down</string>
     <string name="settings">settings</string>
-    <string name="breadwallet_v0_6">breadwallet v0.6</string>
+    <string name="breadwallet_v">breadwallet %1$d</string>
     <string name="copyright_u00a9_2016_breadwallet_llc">copyright © 2016 breadwallet llc</string>
     <string name="app_support">app support:</string>
     <string name="support_website">support@breadwallet.com</string>
