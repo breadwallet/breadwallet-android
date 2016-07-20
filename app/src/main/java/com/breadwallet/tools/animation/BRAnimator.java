@@ -17,6 +17,7 @@ import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,6 +29,7 @@ import com.breadwallet.presenter.fragments.FragmentDecoder;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.presenter.fragments.FragmentSettings;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
+import com.breadwallet.presenter.fragments.MainFragment;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
@@ -61,6 +63,8 @@ import java.util.Stack;
 
 public class BRAnimator {
     private static final String TAG = BRAnimator.class.getName();
+    public static boolean decoderFragmentOn;
+    public static boolean scanResultFragmentOn;
     public static int level = 0;
     public static boolean wipeWalletOpen = false;
     private static Stack<Fragment> previous = new Stack<>();
@@ -106,7 +110,7 @@ public class BRAnimator {
                     BRAnimator.pressMenuButton(app);
                 //            Log.e(TAG, "in the animateDecoderFragment");
                 //            MainActivity.beenThroughSavedInstanceMethod = false;
-                MainActivity.decoderFragmentOn = true;
+                decoderFragmentOn = true;
                 app.activityButtonsEnable(false);
                 CustomPagerAdapter.adapter.showFragments(false);
                 //Disabled inspection: <Expected resource type anim>
@@ -128,7 +132,7 @@ public class BRAnimator {
             CustomPagerAdapter.adapter.showFragments(false);
 //        Log.e(TAG, "animateScanResultFragment");
 //        MainActivity.beenThroughSavedInstanceMethod = false;
-            MainActivity.scanResultFragmentOn = true;
+            scanResultFragmentOn = true;
             InputMethodManager keyboard = (InputMethodManager) app.
                     getSystemService(Context.INPUT_METHOD_SERVICE);
 
@@ -368,7 +372,7 @@ public class BRAnimator {
         try {
             MainActivity app = MainActivity.app;
             if (app == null) return;
-            MainActivity.decoderFragmentOn = false;
+            decoderFragmentOn = false;
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -387,18 +391,17 @@ public class BRAnimator {
         }
     }
 
-
     public static void hideScanResultFragment() {
         try {
             MainActivity app = MainActivity.app;
             if (app == null) return;
 //        Log.e(TAG, "hideScanResultFragment");
             CustomPagerAdapter.adapter.showFragments(true);
-            MainActivity.scanResultFragmentOn = false;
+            scanResultFragmentOn = false;
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    BRAnimator.multiplePressingAvailable = true;
+                    multiplePressingAvailable = true;
                 }
             }, 300);
 

@@ -134,7 +134,7 @@ public class PasswordDialogFragment extends DialogFragment {
                 getDialog().cancel();
                 passcodeEditText.setText("");
                 keyboard.hideSoftInputFromWindow(cancel.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
-                if (!MainActivity.scanResultFragmentOn && mode == BRConstants.AUTH_FOR_PAY && request.isAmountRequested) {
+                if (!BRAnimator.scanResultFragmentOn && mode == BRConstants.AUTH_FOR_PAY && request.isAmountRequested) {
                     FragmentScanResult.address = request.addresses[0];
                     new AlertDialog.Builder(getActivity())
                             .setTitle(getString(R.string.payment_info))

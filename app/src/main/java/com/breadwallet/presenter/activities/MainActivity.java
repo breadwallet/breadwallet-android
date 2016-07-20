@@ -33,6 +33,8 @@ import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.customviews.BubbleTextView;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.presenter.fragments.FragmentSettings;
+import com.breadwallet.presenter.fragments.MainFragment;
+import com.breadwallet.presenter.fragments.MainFragmentQR;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRTipsManager;
@@ -90,8 +92,7 @@ public class MainActivity extends FragmentActivity implements Observer {
 
 
     public static MainActivity app;
-    public static boolean decoderFragmentOn;
-    public static boolean scanResultFragmentOn;
+
     public RelativeLayout pageIndicator;
     private ImageView pageIndicatorLeft;
     private ImageView pageIndicatorRight;
@@ -139,7 +140,6 @@ public class MainActivity extends FragmentActivity implements Observer {
 
         Utils.printPhoneSpecs();
 
-
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -168,7 +168,8 @@ public class MainActivity extends FragmentActivity implements Observer {
         }, 1000);
 
         setListeners();
-        BRAnimator.scaleView(pageIndicatorLeft, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP);
+        BRAnimator.scaleView(pageIndicatorLeft, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f,
+                BRConstants.PAGE_INDICATOR_SCALE_UP);
 
     }
 
@@ -236,7 +237,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         viewFlipper.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (scanResultFragmentOn) {
+                if (BRAnimator.scanResultFragmentOn) {
                     return;
                 }
                 if (MiddleViewAdapter.getSyncing() && BRAnimator.level == 0) {
@@ -283,7 +284,7 @@ public class MainActivity extends FragmentActivity implements Observer {
             public void onClick(View v) {
                 hideAllBubbles();
                 SpringAnimator.showAnimation(burgerButton);
-                if (BRAnimator.level > 1 || scanResultFragmentOn || decoderFragmentOn) {
+                if (BRAnimator.level > 1 || BRAnimator.scanResultFragmentOn || BRAnimator.decoderFragmentOn) {
                     onBackPressed();
                 } else {
                     //check multi pressing availability here, because method onBackPressed does the checking as well.
@@ -435,7 +436,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_MENU) {
-            if (BRAnimator.level > 1 || scanResultFragmentOn || decoderFragmentOn) {
+            if (BRAnimator.level > 1 || BRAnimator.scanResultFragmentOn || BRAnimator.decoderFragmentOn) {
                 this.onBackPressed();
             } else if (BRAnimator.checkTheMultipressingAvailability()) {
                 BRAnimator.pressMenuButton(app);
@@ -457,11 +458,11 @@ public class MainActivity extends FragmentActivity implements Observer {
             //switch the level of fragments creation.
             switch (BRAnimator.level) {
                 case 0:
-                    if (decoderFragmentOn) {
+                    if (BRAnimator.decoderFragmentOn) {
                         BRAnimator.hideDecoderFragment();
                         break;
                     }
-                    if (scanResultFragmentOn) {
+                    if (BRAnimator.scanResultFragmentOn) {
                         BRAnimator.hideScanResultFragment();
                         break;
                     }
@@ -476,7 +477,6 @@ public class MainActivity extends FragmentActivity implements Observer {
                     break;
             }
         }
-
     }
 
     /**
@@ -560,7 +560,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         }
         String strAmount = String.valueOf(new BigDecimal(tempAmount).divide(new BigDecimal("1000000")).toString());
         String address = SharedPreferencesManager.getReceiveAddress(this);
-
 
         intent = new Intent(this, RequestQRActivity.class);
         intent.putExtra(BRConstants.INTENT_EXTRA_REQUEST_AMOUNT, strAmount);
@@ -669,7 +668,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         syncProgressBar.setVisibility(b ? View.VISIBLE : View.GONE);
         syncProgressText.setVisibility(b ? View.VISIBLE : View.GONE);
     }
-
 
     public class ToastUpdater extends Thread {
         public void run() {
