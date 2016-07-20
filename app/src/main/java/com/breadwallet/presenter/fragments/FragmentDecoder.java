@@ -402,7 +402,7 @@ public class FragmentDecoder extends Fragment
 //                    mTextureView.setAspectRatio(mPreviewSize.getWidth(), mPreviewSize.getHeight());
 //                } else {
                 mTextureView.setAspectRatio(MainActivity.screenParametersPoint.x,
-                        MainActivity.screenParametersPoint.y - getStatusBarHeight() - getBottomBar()); //portrait only
+                        MainActivity.screenParametersPoint.y - getStatusBarHeight()); //portrait only
 //                }
 
                 mCameraId = cameraId;
@@ -427,7 +427,8 @@ public class FragmentDecoder extends Fragment
             if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
-            manager.openCamera(mCameraId, mStateCallback, mBackgroundHandler);
+            if (mCameraId != null)
+                manager.openCamera(mCameraId, mStateCallback, mBackgroundHandler);
         } catch (CameraAccessException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -617,18 +618,6 @@ public class FragmentDecoder extends Fragment
         return statusBarHeight + titleBarHeight;
     }
 
-    private int getBottomBar() {
-//        MainActivity app = MainActivity.app;
-//        if (app == null) return 0;
-//        Resources resources = MainActivity.app.getResources();
-//        int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
-//        if (resourceId > 0) {
-//            CustomLogger.logThis("bottomBar", String.valueOf(resources.getDimensionPixelSize(resourceId)));
-//            return resources.getDimensionPixelSize(resourceId);
-//        }
-//        Log.e(TAG, "bottomBar is 0!");
-        return 0;
-    }
 
     /**
      * Validate the qr string and return the text to be shown to the user if the addresses is invalid
@@ -686,6 +675,5 @@ public class FragmentDecoder extends Fragment
             });
 
     }
-
 
 }
