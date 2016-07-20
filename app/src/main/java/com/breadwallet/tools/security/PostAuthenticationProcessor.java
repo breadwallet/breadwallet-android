@@ -119,15 +119,19 @@ public class PostAuthenticationProcessor {
 
     public void onPublishTxAuth(MainActivity app) {
         Log.e(TAG, "onPublishTxAuth");
-        if (this.tmpTx != null) {
-            String seed = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAY_REQUEST_CODE);
-            boolean success = BRWalletManager.getInstance(app).publishSerializedTransaction(tmpTx, seed);
+        try {
+            if (this.tmpTx != null) {
+                String seed = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAY_REQUEST_CODE);
+                boolean success = BRWalletManager.getInstance(app).publishSerializedTransaction(tmpTx, seed);
+                tmpTx = null;
+                BRAnimator.hideScanResultFragment();
+                if (!success)
+                    ((BreadWalletApp) app.getApplication()).showCustomToast(app, app.getString(R.string.failed_to_send), MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
+            } else {
+                Log.e(TAG, "this.tmpTxObject is null!!!!!!!!!!!!!");
+            }
+        } finally {
             tmpTx = null;
-            BRAnimator.hideScanResultFragment();
-            if (!success)
-                ((BreadWalletApp) app.getApplication()).showCustomToast(app, app.getString(R.string.failed_to_send), MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
-        } else {
-            Log.e(TAG, "this.tmpTxObject is null!!!!!!!!!!!!!");
         }
     }
 
@@ -164,11 +168,16 @@ public class PostAuthenticationProcessor {
     }
 
     public void onPaymentProtocolRequest(MainActivity app) {
-        String phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE);
-        if (phrase == null || phrase.isEmpty() || paymentRequest.serializedTx == null)
-            return;
-        BRWalletManager.getInstance(app).publishSerializedTransaction(paymentRequest.serializedTx, phrase);
-        PaymentProtocolPostPaymentTask.sent = true;
+        try {
+            String phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE);
+            if (phrase == null || phrase.isEmpty() || paymentRequest.serializedTx == null)
+                return;
+            BRWalletManager.getInstance(app).publishSerializedTransaction(paymentRequest.serializedTx, phrase);
+            PaymentProtocolPostPaymentTask.sent = true;
+        } finally {
+            paymentRequest = null;
+        }
+
     }
 
     public void setPhraseForKeyStore(String phraseForKeyStore) {

@@ -1,6 +1,7 @@
 package com.breadwallet.presenter.fragments;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -675,12 +676,14 @@ public class FragmentDecoder extends Fragment
     }
 
     private void setGuideText(final String str) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                decoderText.setText(str);
-            }
-        });
+        Activity activity = getActivity();
+        if (activity != null)
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    decoderText.setText(str);
+                }
+            });
 
     }
 
