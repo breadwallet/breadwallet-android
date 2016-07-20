@@ -9,8 +9,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
@@ -35,11 +33,7 @@ import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.customviews.BubbleTextView;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.presenter.fragments.FragmentSettings;
-import com.breadwallet.presenter.fragments.MainFragment;
-import com.breadwallet.presenter.fragments.MainFragmentQR;
 import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.manager.BRClipboardManager;
-import com.breadwallet.tools.manager.BRTipsManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.manager.CurrencyManager;
 import com.breadwallet.tools.util.NetworkChangeReceiver;
@@ -92,9 +86,7 @@ import java.util.Observer;
 public class MainActivity extends FragmentActivity implements Observer {
     private static final String TAG = MainActivity.class.getName();
 
-
     public static MainActivity app;
-
     public RelativeLayout pageIndicator;
     private ImageView pageIndicatorLeft;
     private ImageView pageIndicatorRight;
@@ -114,7 +106,6 @@ public class MainActivity extends FragmentActivity implements Observer {
     private BroadcastReceiver mPowerKeyReceiver = null;
     private int middleBubbleBlocksCount = 0;
     private static int MODE = BRConstants.RELEASE;
-    public RelativeLayout bug;
     public BubbleTextView middleBubble1;
     public BubbleTextView middleBubble2;
     public BubbleTextView middleBubbleBlocks;
@@ -183,7 +174,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         Window window = getWindow();
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(getColor(R.color.action_bar));
+        window.setStatusBarColor(getColor(R.color.status_bar));
     }
 
     private void setUrlHandler() {
@@ -210,35 +201,6 @@ public class MainActivity extends FragmentActivity implements Observer {
                             AmountAdapter.getRightValue() : AmountAdapter.getLeftValue();
                     String addressHolder = FragmentScanResult.address;
                     BRWalletManager.getInstance(app).pay(addressHolder, new BigDecimal(amountHolder).multiply(new BigDecimal("100")), null, false);
-                }
-            }
-        });
-
-        bug.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (BRAnimator.checkTheMultipressingAvailability()) {
-                    String to = BRConstants.SUPPORT_EMAIL;
-                    PackageInfo pInfo = null;
-                    String version = "";
-                    try {
-                        pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-                        version = pInfo.versionName;
-                    } catch (PackageManager.NameNotFoundException e) {
-                        e.printStackTrace();
-                    }
-
-                    String message = String.format(Locale.getDefault(), "%s / Android %s / breadwallet %s\n\n",
-                            Build.MODEL, Build.VERSION.RELEASE, version);
-                    Intent email = new Intent(Intent.ACTION_SEND);
-                    email.putExtra(Intent.EXTRA_EMAIL, new String[]{to});
-                    email.putExtra(Intent.EXTRA_TEXT, message);
-                    email.putExtra(Intent.EXTRA_SUBJECT, "support request");
-
-                    // need this to prompts email client only
-                    email.setType("message/rfc822");
-
-                    startActivity(Intent.createChooser(email, "Choose an Email client"));
                 }
             }
         });
@@ -414,7 +376,6 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     private void initializeViews() {
         pay = (TextView) findViewById(R.id.main_button_pay);
-        bug = (RelativeLayout) findViewById(R.id.bug);
         networkErrorBar = (RelativeLayout) findViewById(R.id.main_internet_status_bar);
         burgerButton = (Button) findViewById(R.id.main_button_burger);
         lockerPayFlipper = (ViewFlipper) findViewById(R.id.locker_pay_flipper);

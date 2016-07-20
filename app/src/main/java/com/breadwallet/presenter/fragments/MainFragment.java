@@ -215,6 +215,7 @@ public class MainFragment extends Fragment {
         sendLabelLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ((BreadWalletApp) getActivity().getApplication()).hideKeyboard(getActivity());
                 if (BRAnimator.checkTheMultipressingAvailability()) {
                     final MainActivity app = MainActivity.app;
                     if (app != null) {

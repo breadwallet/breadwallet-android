@@ -242,33 +242,6 @@
         android:background="@color/white"
         android:visibility="gone" />
 
-    <RelativeLayout
-        android:id="@+id/bug"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginBottom="20dp"
-        android:layout_marginEnd="20dp">
-
-        <TextView
-            android:id="@+id/beta"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="4dp"
-            android:text="@string/beta"
-            android:textColor="@color/dark_blue"
-            android:textSize="12sp" />
-
-        <ImageView
-
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/beta"
-            android:src="@drawable/bug" />
-
-    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/tips_block_pane"

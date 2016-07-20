@@ -3,7 +3,6 @@ package com.breadwallet.presenter.activities;
 
 import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
@@ -15,7 +14,6 @@ import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 
-import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.fragments.IntroNewRecoverFragment;
@@ -123,7 +121,7 @@ public class IntroActivity extends FragmentActivity {
         Window window = getWindow();
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(getColor(R.color.intro_action_bar));
+        window.setStatusBarColor(getColor(R.color.intro_status_bar));
     }
 
     public boolean checkFirstAddress(byte[] mpk) {
