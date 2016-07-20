@@ -48,7 +48,7 @@ static JNIEnv *getEnv()
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "getEnv Wallet");
     if (!_jvmW) return NULL;
 
-    static JNIEnv *env;
+    JNIEnv *env;
     int status = (*_jvmW)->GetEnv(_jvmW, (void **)&env, JNI_VERSION_1_6);
 
     if (status < 0) {

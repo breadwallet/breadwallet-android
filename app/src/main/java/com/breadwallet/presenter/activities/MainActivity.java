@@ -21,6 +21,8 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -170,11 +172,25 @@ public class MainActivity extends FragmentActivity implements Observer {
         setListeners();
         BRAnimator.scaleView(pageIndicatorLeft, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f,
                 BRConstants.PAGE_INDICATOR_SCALE_UP);
-
+        setStatusBarColor();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+    }
+
+    private void setStatusBarColor(){
+//        Window window = getWindow();
+//
+//// clear FLAG_TRANSLUCENT_STATUS flag:
+//        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+//
+//// add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+//        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+//
+//// finally change the color
+//        window.setStatusBarColor(activity.getResources().getColor(R.color.my_statusbar_color));
+//        window.get(activity.getResources().getColor(R.color.my_statusbar_color));
     }
 
     private void setUrlHandler() {

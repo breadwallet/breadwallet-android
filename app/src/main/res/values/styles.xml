@@ -2,11 +2,11 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Base.Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <!--<item name="android:colorPrimaryDark">@color/action_bar</item>-->
+        <item name="android:colorPrimaryDark">@color/action_bar</item>
+        <item name="android:windowLightStatusBar">true</item>
         <item name="android:textViewStyle">@style/RobotoTextViewStyle</item>
         <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
         <item name="android:windowBackground">@drawable/splash_screen</item>
-        <item name="android:actionMenuTextAppearance">@color/dark_grey</item>
     </style>
 
     <style name="RobotoTextViewStyle" parent="android:Widget.TextView">
