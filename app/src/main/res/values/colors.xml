@@ -20,7 +20,7 @@
     <item name="pink" type="color">#68ffc0c1</item>
     <item name="status_bar" type="color">#efeff4</item>
     <item name="intro_status_bar" type="color">#ffbf7f</item>
-    <item name="warning_status_bar" type="color">#ffbf7f</item>
+    <item name="warning_status_bar" type="color">#7f5225</item>
 
     //fingerprint
     <color name="warning_color">#f4511e</color>

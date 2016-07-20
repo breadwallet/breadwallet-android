@@ -1,6 +1,8 @@
 package com.breadwallet.tools.adapter;
 
 import android.app.Activity;
+import android.os.Handler;
+import android.util.Log;
 
 import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
@@ -47,6 +49,7 @@ public class AmountAdapter extends Observable {
     private static String leftValue = "0";
     public static int digitsInserted = 0;
     private static int buttonCode = BRConstants.PAY_BUTTON;
+    private static boolean pressAvailable = true;
 
     public static void preConditions(String tmp) {
         if (FragmentScanResult.isARequest) {
@@ -135,8 +138,6 @@ public class AmountAdapter extends Observable {
             }
         }
 
-//        Log.e(TAG, "The text after inserting digits: " + rightValue);
-
     }
 
     private static boolean isDigitInsertingLegal(String text) {
@@ -208,25 +209,27 @@ public class AmountAdapter extends Observable {
     }
 
     public static void switchCurrencies() {
-        FragmentScanResult.currentCurrencyPosition = FragmentScanResult.currentCurrencyPosition == 1 ? 2 : 1;
-        String tmp = rightValue;
-        rightValue = leftValue;
-        leftValue = tmp;
+        if (checkPressingAvailability()) {
+            FragmentScanResult.currentCurrencyPosition = FragmentScanResult.currentCurrencyPosition == 1 ? 2 : 1;
+            String tmp = rightValue;
+            rightValue = leftValue;
+            leftValue = tmp;
 //        Log.d(TAG, "rightValue: " + rightValue + "  leftValue: " + leftValue);
-        if (rightValue.contains(".")) {
+            if (rightValue.contains(".")) {
 //            Log.d(TAG, "Contains!: " + rightValue);
-            digitsInserted = rightValue.length() - rightValue.indexOf(".") - 1;
+                digitsInserted = rightValue.length() - rightValue.indexOf(".") - 1;
 //            Log.d(TAG, "Testing digitsInserted: " + digitsInserted);
-            comaHasBeenInserted = true;
-            CurrencyManager.separatorNeedsToBeShown = true;
-        } else {
+                comaHasBeenInserted = true;
+                CurrencyManager.separatorNeedsToBeShown = true;
+            } else {
 //            Log.d(TAG, "Does not contain!");
-            comaHasBeenInserted = false;
-            digitsInserted = 0;
-            CurrencyManager.separatorNeedsToBeShown = false;
-        }
+                comaHasBeenInserted = false;
+                digitsInserted = 0;
+                CurrencyManager.separatorNeedsToBeShown = false;
+            }
 
-        FragmentScanResult.updateBothTextValues(new BigDecimal(rightValue), new BigDecimal(leftValue));
+            FragmentScanResult.updateBothTextValues(new BigDecimal(rightValue), new BigDecimal(leftValue));
+        }
     }
 
     public static String getRightValue() {
@@ -235,6 +238,22 @@ public class AmountAdapter extends Observable {
 
     public static String getLeftValue() {
         return leftValue;
+    }
+
+    public static boolean checkPressingAvailability() {
+        if (pressAvailable) {
+            pressAvailable = false;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    pressAvailable = true;
+                    Log.w(TAG, "multiplePressingAvailable is back to - true");
+                }
+            }, 100);
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

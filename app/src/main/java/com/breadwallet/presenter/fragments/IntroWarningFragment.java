@@ -51,7 +51,6 @@ public class IntroWarningFragment extends Fragment {
             public void onClick(View v) {
                 ((IntroActivity) getActivity()).startIntroShowPhrase();
                 getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-
             }
         });
         setStatusBarColor();
@@ -62,7 +61,7 @@ public class IntroWarningFragment extends Fragment {
         Window window = getActivity().getWindow();
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(getActivity().getColor(R.color.status_bar));
+        window.setStatusBarColor(getActivity().getColor(R.color.warning_status_bar));
     }
 
 }

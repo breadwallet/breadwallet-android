@@ -792,8 +792,6 @@ public class BRWalletManager {
 
     public native TransactionListItem[] getTransactions();
 
-    //    public native boolean pay(String addressHolder, long amountHolder, String strSeed);
-//
     public static native boolean validateAddress(String address);
 
     public native boolean addressContainedInWallet(String address);
@@ -823,8 +821,6 @@ public class BRWalletManager {
     public native static String getFirstAddress(byte[] mpk);
 
     public native boolean publishSerializedTransaction(byte[] serializedTransaction, String phrase);
-
-//    public native boolean publishSignedSerializedTransaction(byte[] serializedTransaction);
 
     public native long getTotalSent();
 
