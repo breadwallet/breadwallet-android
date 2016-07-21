@@ -260,25 +260,30 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
         if (certified == 0) {
             certification = certName + "\n";
         } else {
-            certification = (certified == 1 ? "\ud83d\udd12 " : "\u274C ") + certName + "\n";
-            new AlertDialog.Builder(app)
-                    .setTitle("")
-                    .setMessage(R.string.payee_not_certified)
-                    .setNegativeButton(app.getString(R.string.ignore), new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            continueWithThePayment(app, certification);
-                        }
-                    }).setPositiveButton(app.getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            })
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show();
-            return;
+            if (certName == null || certName.isEmpty()) {
+                certification  = "\u274C " + certName + "\n";
+                new AlertDialog.Builder(app)
+                        .setTitle("")
+                        .setMessage(R.string.payee_not_certified)
+                        .setNegativeButton(app.getString(R.string.ignore), new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                continueWithThePayment(app, certification);
+                            }
+                        }).setPositiveButton(app.getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+                return;
+            } else {
+                certification = "\uD83D\uDD12 " + certName + "\n";
+            }
 
         }
+
         continueWithThePayment(app, certification);
 
     }

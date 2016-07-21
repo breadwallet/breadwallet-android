@@ -227,6 +227,7 @@ public class SharedPreferencesManager {
     }
 
     public static void putStartHeight(Activity context, int startHeight) {
+        if (context == null) return;
         SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putInt(BRConstants.START_HEIGHT, startHeight);
