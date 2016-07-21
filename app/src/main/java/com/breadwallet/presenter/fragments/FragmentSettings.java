@@ -9,6 +9,7 @@ import android.hardware.fingerprint.FingerprintManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -91,7 +92,8 @@ public class FragmentSettings extends Fragment {
         FingerprintManager mFingerprintManager;
         mFingerprintManager = (FingerprintManager) getActivity().getSystemService(Context.FINGERPRINT_SERVICE);
         boolean useFingerPrint;
-        useFingerPrint = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.USE_FINGERPRINT) == PackageManager.PERMISSION_GRANTED && mFingerprintManager.isHardwareDetected() && mFingerprintManager.hasEnrolledFingerprints();
+        useFingerPrint = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.USE_FINGERPRINT)
+                == PackageManager.PERMISSION_GRANTED && mFingerprintManager.isHardwareDetected() && mFingerprintManager.hasEnrolledFingerprints();
 
         if (!useFingerPrint) {
             fingerprintLimit.setVisibility(View.GONE);
@@ -102,7 +104,8 @@ public class FragmentSettings extends Fragment {
             @Override
             public void onClick(View v) {
                 if (BRAnimator.checkTheMultipressingAvailability()) {
-                    ((BreadWalletApp) getActivity().getApplicationContext()).promptForAuthentication(getActivity(), BRConstants.AUTH_FOR_LIMIT, null, null, null, null);
+                    ((BreadWalletApp) getActivity().getApplicationContext()).promptForAuthentication(getActivity(),
+                            BRConstants.AUTH_FOR_LIMIT, null, null, null, null);
                 }
             }
         });
@@ -175,6 +178,7 @@ public class FragmentSettings extends Fragment {
                                                   @Override
                                                   public void run() {
                                                       BRAnimator.goToMainActivity(fragmentSettings);
+                                                      Log.e(TAG,"rescan called!");
                                                       BRPeerManager.getInstance(getActivity()).rescan();
                                                       SharedPreferencesManager.putStartHeight(getActivity(), BRPeerManager.getCurrentBlockHeight());
                                                   }

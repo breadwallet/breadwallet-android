@@ -97,7 +97,7 @@ public class BRPeerManager {
 
     public static void syncStarted() {
         int startHeight = SharedPreferencesManager.getStartHeight(ctx);
-        Log.e(TAG,"startHeight: " + startHeight);
+        Log.e(TAG, "startHeight: " + startHeight);
         Log.e(TAG, "syncStarted: " + syncProgress(startHeight));
         startSyncingProgressThread();
     }
@@ -280,6 +280,7 @@ public class BRPeerManager {
 
                 while (running) {
                     progressStatus = syncProgress(SharedPreferencesManager.getStartHeight(app));
+                    Log.e(TAG, "progressStatus: " + progressStatus);
                     app.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -293,8 +294,6 @@ public class BRPeerManager {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-//                    Log.e(TAG,"sync task run ...");
-//                    if (progressStatus >= 1) running = false;
                 }
 
                 app.runOnUiThread(new Runnable() {
