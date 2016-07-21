@@ -104,7 +104,6 @@ public class IntroActivity extends FragmentActivity {
             Log.e(TAG, "CLEARING THE WALLET");
             BRWalletManager.getInstance(this).wipeWalletButKeystore(this);
         }
-
         if (canary.equals("none")) {
             BRWalletManager m = BRWalletManager.getInstance(this);
             m.wipeWalletButKeystore(this);

@@ -6,7 +6,6 @@
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:textViewStyle">@style/RobotoTextViewStyle</item>
         <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
-        <item name="android:windowBackground">@drawable/splash_screen</item>
     </style>
 
     <style name="RobotoTextViewStyle" parent="android:Widget.TextView">
