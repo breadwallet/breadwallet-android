@@ -10,19 +10,16 @@
     <uses-permission android:name="android.permission.USE_FINGERPRINT" />
     <uses-permission android:name="android.permission.SEND_SMS" />
 
-    <!--<uses-feature-->
-        <!--android:name="android.hardware.telephony"-->
-        <!--android:required="false" />-->
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
 
-    <!--<uses-feature-->
-        <!--android:name="android.hardware.camera"-->
-        <!--android:required="false" />-->
-    <!--<uses-feature-->
-        <!--android:name="android.hardware.camera.autofocus"-->
-        <!--android:required="false" />-->
-
-    <uses-feature android:name="android.hardware.camera" />
-    <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false" />
 
     <application
         android:name=".BreadWalletApp"
