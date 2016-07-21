@@ -73,6 +73,7 @@ Java_com_breadwallet_tools_security_RequestHandler_parsePaymentRequest(JNIEnv *e
     jobjectArray stringArray = (jobjectArray)(*env)->NewObjectArray(env, (jsize)outputsCount,
                                                                     (*env)->FindClass(env, "java/lang/String"),
                                                                     (*env)->NewStringUTF(env, ""));
+    
     for (size_t i = 0; i < outputsCount; i++) {
         BRTxOutput *op = &nativeRequest->details->outputs[i];
         
@@ -121,30 +122,30 @@ Java_com_breadwallet_tools_security_RequestHandler_parsePaymentRequest(JNIEnv *e
     //serialized transaction
     uint8_t txBuf[BRTransactionSerialize(tx, NULL, 0)];
     size_t txLen = BRTransactionSerialize(tx, txBuf, sizeof(txBuf));
-    jbyteArray serializedTx = (*env)->NewByteArray(env, (jsize) txLen);
-    (*env)->SetByteArrayRegion(env, serializedTx, 0, (jsize) txLen, (jbyte *) txBuf);
+    jbyteArray serializedTx = (*env)->NewByteArray(env, (jsize)txLen);
+    (*env)->SetByteArrayRegion(env, serializedTx, 0, (jsize)txLen, (jbyte *)txBuf);
 
     //paymentProtocolPayment
-    jbyte *bytesPaymentProtocolPayment = (jbyte *) buf;
+    jbyte *bytesPaymentProtocolPayment = (jbyte *)buf;
     size_t bytesPaymentProtocolPaymentSize = len;
     jbyteArray byteArrayPaymentProtocolPayment = (*env)->NewByteArray(env, (jsize)bytesPaymentProtocolPaymentSize);
     (*env)->SetByteArrayRegion(env, byteArrayPaymentProtocolPayment, 0, (jsize)bytesPaymentProtocolPaymentSize,
                                bytesPaymentProtocolPayment);
 
     //signature
-    jbyte *bytesSignature = (jbyte *) nativeRequest->signature;
+    jbyte *bytesSignature = (jbyte *)nativeRequest->signature;
     size_t bytesSignatureSize = nativeRequest->sigLen;
     jbyteArray byteArraySignature = (*env)->NewByteArray(env, (jsize)bytesSignatureSize);
     (*env)->SetByteArrayRegion(env, byteArraySignature, 0, (jsize)bytesSignatureSize, bytesSignature);
 
     //pkiData
-    jbyte *bytesPkiData = (jbyte *) nativeRequest->pkiData;
+    jbyte *bytesPkiData = (jbyte *)nativeRequest->pkiData;
     size_t pkiDataSize = nativeRequest->pkiLen;
     jbyteArray byteArrayPkiData = (*env)->NewByteArray(env, (jsize)pkiDataSize);
     (*env)->SetByteArrayRegion(env, byteArrayPkiData, 0, (jsize)pkiDataSize, bytesPkiData);
 
     //merchantData
-    jbyte *bytesMerchantData = (jbyte *) nativeRequest->details->merchantData;
+    jbyte *bytesMerchantData = (jbyte *)nativeRequest->details->merchantData;
     size_t merchantDataSize = nativeRequest->details->merchDataLen;
     jbyteArray byteArrayMerchantData = (*env)->NewByteArray(env, (jsize)merchantDataSize);
     (*env)->SetByteArrayRegion(env, byteArrayMerchantData, 0, (jsize)merchantDataSize, bytesMerchantData);
@@ -199,7 +200,7 @@ Java_com_breadwallet_tools_security_RequestHandler_getCertificatesFromPaymentReq
     if (!payment) return NULL;
     
     //create the BRPaymentProtocolRequest
-    size_t requestLength = (size_t) (*env)->GetArrayLength(env, payment);
+    size_t requestLength = (size_t)(*env)->GetArrayLength(env, payment);
     jbyte *bytePayment = (*env)->GetByteArrayElements(env, payment, 0);
     
     if (!bytePayment) return NULL;
@@ -231,7 +232,7 @@ Java_com_breadwallet_tools_security_RequestHandler_parsePaymentACK(JNIEnv *env, 
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "parsePaymentACK");
     if (!paymentACK) return NULL;
     
-    size_t requestLength = (size_t) (*env)->GetArrayLength(env, paymentACK);
+    size_t requestLength = (size_t)(*env)->GetArrayLength(env, paymentACK);
     jbyte *bytePayment = (*env)->GetByteArrayElements(env, paymentACK, 0);
 
     if (!bytePayment) return NULL;
