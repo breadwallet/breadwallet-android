@@ -7,7 +7,7 @@
     <string name="wipewallet_instructions">Enter this wallet\'s recovery phrase to wipe it and start/recover another.
     Your current balance remains on this phrase</string>
     <string name="dialog_recovery_phrase_warning">if you ever lose your phone, you will need
-        this phrase to recovery your wallet</string>
+        this phrase to recover your wallet</string>
     <string name="toast_qr_tip">Let others scan this QR code to get your bitcoin address. Anyone can send bitcoins to your wallet by transferring them to your address</string>
     <string name="toast_address_tip">This is your bitcoin address. Tap to copy it or send it by email or sms. The address will change each time you receive funds, but old addresses always work.</string>
     <string name="warning">warning</string>

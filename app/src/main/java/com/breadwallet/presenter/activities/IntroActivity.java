@@ -1,6 +1,7 @@
 
 package com.breadwallet.presenter.activities;
 
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
@@ -156,8 +157,9 @@ public class IntroActivity extends FragmentActivity {
     }
 
     private void showNewRecoverWalletFragment() {
-        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        IntroWelcomeFragment introWelcomeFragment = (IntroWelcomeFragment) getFragmentManager().
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        IntroWelcomeFragment introWelcomeFragment = (IntroWelcomeFragment) fragmentManager.
                 findFragmentByTag(IntroWelcomeFragment.class.getName());
         if (introWelcomeFragment != null) {
             final IntroNewRecoverFragment introNewRecoverFragment = new IntroNewRecoverFragment();
@@ -180,10 +182,11 @@ public class IntroActivity extends FragmentActivity {
     }
 
     public void showNewWalletFragment() {
-        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         leftButton.setVisibility(View.VISIBLE);
         leftButton.setClickable(true);
-        final IntroNewRecoverFragment introNewRecoverFragment = (IntroNewRecoverFragment) getFragmentManager().
+        final IntroNewRecoverFragment introNewRecoverFragment = (IntroNewRecoverFragment) fragmentManager.
                 findFragmentByTag(IntroNewRecoverFragment.class.getName());
 
         final IntroNewWalletFragment introNewWalletFragment = new IntroNewWalletFragment();
@@ -204,10 +207,11 @@ public class IntroActivity extends FragmentActivity {
     }
 
     public void showRecoverWalletFragment() {
-        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         leftButton.setVisibility(View.VISIBLE);
         leftButton.setClickable(true);
-        IntroNewRecoverFragment introNewRecoverFragment = (IntroNewRecoverFragment) getFragmentManager().
+        IntroNewRecoverFragment introNewRecoverFragment = (IntroNewRecoverFragment) fragmentManager.
                 findFragmentByTag(IntroNewRecoverFragment.class.getName());
         final IntroRecoverWalletFragment introRecoverWalletFragment = new IntroRecoverWalletFragment();
         fragmentTransaction.replace(introNewRecoverFragment.getId(), introRecoverWalletFragment, IntroRecoverWalletFragment.class.getName()).
@@ -227,8 +231,9 @@ public class IntroActivity extends FragmentActivity {
     }
 
     public void showWarningFragment() {
-        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        IntroNewWalletFragment introNewWalletFragment = (IntroNewWalletFragment) getFragmentManager().
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        IntroNewWalletFragment introNewWalletFragment = (IntroNewWalletFragment) fragmentManager.
                 findFragmentByTag(IntroNewWalletFragment.class.getName());
         fragmentTransaction.replace(introNewWalletFragment.getId(), new IntroWarningFragment(), IntroWarningFragment.class.getName());
         introNewWalletFragment.introGenerate.setClickable(false);
@@ -298,14 +303,15 @@ public class IntroActivity extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
+        FragmentManager fragmentManager = getFragmentManager();
         if (backNotAllowed) return;
-        int backStackEntryCount = getFragmentManager().getBackStackEntryCount();
+        int backStackEntryCount = fragmentManager.getBackStackEntryCount();
         if (backStackEntryCount > 0) {
             if (backStackEntryCount == 1) {
                 leftButton.setVisibility(View.GONE);
                 leftButton.setClickable(false);
             }
-            getFragmentManager().popBackStack();
+            fragmentManager.popBackStack();
         } else {
             super.onBackPressed();
         }

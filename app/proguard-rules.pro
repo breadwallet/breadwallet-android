@@ -16,6 +16,12 @@
 #   public *;
 #}
 -dontobfuscate
+-dontoptimize
+-dontshrink
+-dontusemixedcaseclassnames
+-dontskipnonpubliclibraryclasses
+-dontpreverify
+-verbose
 -keepclasseswithmembernames class * {
  native <methods>;
 }
