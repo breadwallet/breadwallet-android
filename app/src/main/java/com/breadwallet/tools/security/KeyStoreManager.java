@@ -97,10 +97,10 @@ public class KeyStoreManager {
     public static final String FAIL_TIMESTAMP_FILENAME = "my_fail_timestamp";
 
     public static final int AUTH_DURATION_SEC = 300; //TODO make 300
-//    private static final int CANARY_AUTH_DURATION_SEC = Integer.MAX_VALUE;
 
     private static boolean setData(Activity context, byte[] data, String alias, String alias_file, String alias_iv, int request_code, boolean auth_required) {
-        if(alias.equals(alias_file) || alias.equals(alias_iv) || alias_file.equals(alias_iv)) throw new IllegalArgumentException("mistake in parameters!");
+        if (alias.equals(alias_file) || alias.equals(alias_iv) || alias_file.equals(alias_iv))
+            throw new IllegalArgumentException("mistake in parameters!");
         try {
             KeyStore keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
             keyStore.load(null);
@@ -240,17 +240,25 @@ public class KeyStoreManager {
     }
 
     public static boolean putPassCode(String passcode, Activity context) {
-        Log.e(TAG, "putPassCode: " + passcode);
         byte[] bytesToStore = passcode.getBytes();
         return bytesToStore.length != 0 && setData(context, bytesToStore, PASS_CODE_ALIAS, PASS_CODE_FILENAME, PASS_CODE_IV, 0, false);
     }
 
     public static String getPassCode(final Activity context) {
-
         byte[] result = getData(context, PASS_CODE_ALIAS, PASS_CODE_FILENAME, PASS_CODE_IV, 0);
         String passCode = new String(result);
-        if (passCode.length() != 4)
+        try {
+            int test = Integer.parseInt(passCode);
+        } catch (Exception e) {
+            e.printStackTrace();
             passCode = "";
+            putPassCode(passCode, context);
+            return passCode;
+        }
+        if (passCode.length() != 4) {
+            passCode = "";
+            putPassCode(passCode, context);
+        }
         Log.e(TAG, "getPassCode: " + passCode);
         return passCode;
     }
@@ -304,7 +312,7 @@ public class KeyStoreManager {
     }
 
     public static boolean resetWalletKeyStore() {
-        Log.e(TAG,"resetWalletKeyStore");
+        Log.e(TAG, "resetWalletKeyStore");
         KeyStore keyStore;
         try {
             keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
