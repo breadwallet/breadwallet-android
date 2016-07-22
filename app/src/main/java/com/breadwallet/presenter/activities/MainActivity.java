@@ -561,13 +561,6 @@ public class MainActivity extends FragmentActivity implements Observer {
                 }
                 break;
 
-            case BRConstants.CANARY_REQUEST_CODE:
-                if (resultCode == RESULT_OK) {
-                    PostAuthenticationProcessor.getInstance().onCanaryCheckAuth(this);
-                } else {
-                    finish();
-                }
-                break;
         }
     }
 

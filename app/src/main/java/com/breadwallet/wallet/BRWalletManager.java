@@ -117,14 +117,12 @@ public class BRWalletManager {
         if (strPhrase == null || strPhrase.length() == 0)
             throw new NullPointerException("failed to encodeSeed");
         boolean success = KeyStoreManager.putKeyStorePhrase(strPhrase, ctx, BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE);
-        boolean success2 = false;
         if (!success) return false;
-        success2 = KeyStoreManager.putKeyStoreCanary(BRConstants.CANARY_STRING, ctx, 0);
         IntroShowPhraseActivity.phrase = strPhrase;
         KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), ctx);
         byte[] pubKey = BRWalletManager.getInstance(ctx).getMasterPubKey(strPhrase);
         KeyStoreManager.putMasterPublicKey(pubKey, ctx);
-        return success2;
+        return true;
 
     }
 
@@ -164,14 +162,8 @@ public class BRWalletManager {
     }
 
     public void wipeWalletButKeystore(final Activity activity) {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                BRPeerManager.getInstance(activity).peerManagerFreeEverything();
-                walletFreeEverything();
-            }
-        }, 1000);
-
+        BRPeerManager.getInstance(activity).peerManagerFreeEverything();
+        walletFreeEverything();
         SQLiteManager sqLiteManager = SQLiteManager.getInstance(activity);
         sqLiteManager.deleteTransactions();
         sqLiteManager.deleteBlocks();
@@ -180,9 +172,7 @@ public class BRWalletManager {
     }
 
     public boolean confirmSweep(final Activity activity, final String privKey) {
-
         if (activity == null) return false;
-
         if (isValidBitcoinBIP38Key(privKey)) {
             Log.e(TAG, "isValidBitcoinBIP38Key true");
             activity.runOnUiThread(new Runnable() {

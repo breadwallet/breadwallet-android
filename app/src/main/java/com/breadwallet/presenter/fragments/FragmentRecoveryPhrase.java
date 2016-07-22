@@ -54,6 +54,7 @@ public class FragmentRecoveryPhrase extends Fragment {
     private TextView thePhrase;
     private ImageView checkBox;
     private boolean checked = false;
+    public static String phrase;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -88,7 +89,6 @@ public class FragmentRecoveryPhrase extends Fragment {
             });
         }
 
-        String phrase = KeyStoreManager.getKeyStorePhrase(getActivity(), BRConstants.SHOW_PHRASE_REQUEST_CODE);
         if (phrase == null || phrase.isEmpty()) {
             new Handler().postDelayed(new Runnable() {
                 @Override

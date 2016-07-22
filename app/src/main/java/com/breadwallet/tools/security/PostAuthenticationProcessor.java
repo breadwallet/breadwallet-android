@@ -89,10 +89,7 @@ public class PostAuthenticationProcessor {
 
         try {
             boolean success = KeyStoreManager.putKeyStorePhrase(phraseForKeyStore, app, BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE);
-            boolean success2 = false;
-            if (success)
-                success2 = KeyStoreManager.putKeyStoreCanary(BRConstants.CANARY_STRING, app, 0);
-            if (!success || !success2)
+            if (!success)
                 return;
             if (phraseForKeyStore.length() != 0) {
                 byte[] pubKey = BRWalletManager.getInstance(app).getMasterPubKey(phraseForKeyStore);
@@ -112,7 +109,10 @@ public class PostAuthenticationProcessor {
     public void onShowPhraseAuth(MainActivity app) {
         Log.e(TAG, "onShowPhraseAuth");
         try {
-            BRAnimator.animateSlideToLeft(app, new FragmentRecoveryPhrase(), new FragmentSettings());
+            String phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.SHOW_PHRASE_REQUEST_CODE);
+            if(phrase == null || phrase.isEmpty()) return;
+            FragmentRecoveryPhrase.phrase = phrase;
+            ((BreadWalletApp) app.getApplicationContext()).promptForAuthentication(app, BRConstants.AUTH_FOR_PHRASE, null, null, null, null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -134,41 +134,6 @@ public class PostAuthenticationProcessor {
         } finally {
             tmpTx = null;
         }
-    }
-
-    public void onCanaryCheckAuth(Activity app) {
-        Log.e(TAG, "onCanaryCheckAuth");
-        if (app instanceof MainActivity) {
-            BRAnimator.animateSlideToLeft(((MainActivity) app), new FragmentRecoveryPhrase(), new FragmentSettings());
-        } else if (app instanceof IntroActivity) {
-            try {
-                String canary = KeyStoreManager.getKeyStoreCanary(app, BRConstants.CANARY_REQUEST_CODE);
-                if (canary.equals("noauth")) return;
-                byte[] masterPubKey = KeyStoreManager.getMasterPublicKey(app);
-                boolean isFirstAddressCorrect = false;
-                if (masterPubKey != null && masterPubKey.length != 0) {
-                    isFirstAddressCorrect = ((IntroActivity) app).checkFirstAddress(masterPubKey);
-                }
-                Log.e(TAG, "isFirstAddressCorrect: " + isFirstAddressCorrect);
-                if (!isFirstAddressCorrect) {
-                    Log.e(TAG, "CLEARING THE WALLET");
-                    BRWalletManager.getInstance(app).wipeWalletButKeystore(app);
-                }
-
-                if (canary.equals("none")) {
-                    BRWalletManager m = BRWalletManager.getInstance(app);
-                    m.wipeWalletButKeystore(app);
-                    m.wipeKeyStore();
-                }
-
-                app.getFragmentManager().beginTransaction().add(R.id.intro_layout, new IntroWelcomeFragment(),
-                        IntroWelcomeFragment.class.getName()).commit();
-                ((IntroActivity) app).startTheWalletIfExists();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
     }
 
     public void onPaymentProtocolRequest(MainActivity app) {

@@ -73,7 +73,6 @@ public class KeyStoreManager {
     public static final String ANDROID_KEY_STORE = "AndroidKeyStore";
 
     public static final String PHRASE_IV = "ivphrase";
-    public static final String CANARY_IV = "ivcanary";
     public static final String PUB_KEY_IV = "ivpubkey";
     public static final String TIME_IV = "ivtime";
     public static final String PASS_CODE_IV = "ivpasscode";
@@ -82,7 +81,6 @@ public class KeyStoreManager {
     public static final String FAIL_TIMESTAMP_IV = "ivfailtimestamp";
 
     public static final String PHRASE_ALIAS = "phrase";
-    public static final String CANARY_ALIAS = "canary";
     public static final String PUB_KEY_ALIAS = "pubKey";
     public static final String WALLET_CREATION_TIME_ALIAS = "creationTime";
     public static final String PASS_CODE_ALIAS = "passCode";
@@ -91,7 +89,6 @@ public class KeyStoreManager {
     public static final String FAIL_TIMESTAMP_ALIAS = "failTimeStamp";
 
     public static final String PHRASE_FILENAME = "my_phrase";
-    public static final String CANARY_FILENAME = "my_canary";
     public static final String PUB_KEY_FILENAME = "my_pub_key";
     public static final String WALLET_CREATION_TIME_FILENAME = "my_creation_time";
     public static final String PASS_CODE_FILENAME = "my_pass_code";
@@ -99,7 +96,7 @@ public class KeyStoreManager {
     public static final String SPEND_LIMIT_FILENAME = "my_spend_limit";
     public static final String FAIL_TIMESTAMP_FILENAME = "my_fail_timestamp";
 
-    public static final int AUTH_DURATION_SEC = 300; //TODO make 300
+    public static final int AUTH_DURATION_SEC = 15; //TODO make 300
 //    private static final int CANARY_AUTH_DURATION_SEC = Integer.MAX_VALUE;
 
     private static boolean setData(Activity context, byte[] data, String alias, String alias_file, String alias_iv, int request_code, boolean auth_required) {
@@ -224,32 +221,6 @@ public class KeyStoreManager {
         return result;
     }
 
-    public static boolean putKeyStoreCanary(String strToStore, Activity context, int requestCode) {
-        if (strToStore == null || strToStore.isEmpty()) return false;
-
-        byte[] strBytes = new byte[0];
-        try {
-            strBytes = strToStore.getBytes("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        Log.e(TAG,"putKeyStoreCanary, set, canary: " + new String(strBytes));
-        return strBytes.length != 0 && setData(context, strBytes, CANARY_ALIAS, CANARY_FILENAME, CANARY_IV, requestCode, true);
-    }
-
-    public static String getKeyStoreCanary(final Activity context, int requestCode) {
-
-        byte[] data = getData(context, CANARY_ALIAS, CANARY_FILENAME, CANARY_IV, requestCode);
-        String result = null;
-        try {
-            result = new String(data, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        Log.e(TAG,"getKeyStoreCanary: " + result);
-        return result;
-    }
-
     public static boolean putMasterPublicKey(byte[] masterPubKey, Activity context) {
         return masterPubKey != null && masterPubKey.length != 0 && setData(context, masterPubKey, PUB_KEY_ALIAS, PUB_KEY_FILENAME, PUB_KEY_IV, 0, false);
     }
@@ -342,7 +313,6 @@ public class KeyStoreManager {
             keyStore.deleteEntry(PUB_KEY_ALIAS);
             keyStore.deleteEntry(WALLET_CREATION_TIME_ALIAS);
             keyStore.deleteEntry(PASS_CODE_ALIAS);
-            keyStore.deleteEntry(CANARY_ALIAS);
             keyStore.deleteEntry(FAIL_COUNT_ALIAS);
             keyStore.deleteEntry(FAIL_TIMESTAMP_ALIAS);
         } catch (NoSuchAlgorithmException e) {

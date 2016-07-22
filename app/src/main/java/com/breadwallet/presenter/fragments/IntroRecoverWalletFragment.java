@@ -104,10 +104,7 @@ public class IntroRecoverWalletFragment extends Fragment {
 
                     boolean success = KeyStoreManager.putKeyStorePhrase(cleanPhrase, getActivity(),
                             BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE);
-                    boolean success2 = false;
-                    if (success)
-                        success2 = KeyStoreManager.putKeyStoreCanary(BRConstants.CANARY_STRING, getActivity(), 0);
-                    if (!success || !success2) {
+                    if (!success) {
                         PostAuthenticationProcessor.getInstance().setPhraseForKeyStore(cleanPhrase);
                         return;
                     }

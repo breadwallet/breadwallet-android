@@ -130,8 +130,9 @@ public class FragmentSettings extends Fragment {
                             .setMessage(getResources().getString(R.string.dialog_do_not_let_anyone))
                             .setPositiveButton(getResources().getString(R.string.show), new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
-                                    String canary = KeyStoreManager.getKeyStoreCanary(getActivity(), BRConstants.CANARY_REQUEST_CODE);
-                                    if (!canary.equals(BRConstants.CANARY_STRING)) return;
+                                    String phrase = KeyStoreManager.getKeyStorePhrase(getActivity(), BRConstants.SHOW_PHRASE_REQUEST_CODE);
+                                    if(phrase == null || phrase.isEmpty()) return;
+                                    FragmentRecoveryPhrase.phrase = phrase;
                                     ((BreadWalletApp) getActivity().getApplicationContext()).promptForAuthentication(getActivity(), BRConstants.AUTH_FOR_PHRASE, null, null, null, null);
                                 }
                             })

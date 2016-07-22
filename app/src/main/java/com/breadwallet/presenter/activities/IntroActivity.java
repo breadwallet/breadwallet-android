@@ -92,9 +92,6 @@ public class IntroActivity extends FragmentActivity {
             }
         });
 
-        String canary = KeyStoreManager.getKeyStoreCanary(this, BRConstants.CANARY_REQUEST_CODE);
-        Log.e(TAG,"canary: " + canary);
-        if (canary.equals("noauth")) return;
         byte[] masterPubKey = KeyStoreManager.getMasterPublicKey(this);
         boolean isFirstAddressCorrect = false;
         if (masterPubKey != null && masterPubKey.length != 0) {
@@ -104,12 +101,6 @@ public class IntroActivity extends FragmentActivity {
         if (!isFirstAddressCorrect) {
             Log.e(TAG, "CLEARING THE WALLET");
             BRWalletManager.getInstance(this).wipeWalletButKeystore(this);
-        }
-        if (canary.equals("none")) {
-            BRWalletManager m = BRWalletManager.getInstance(this);
-            m.wipeWalletButKeystore(this);
-            m.wipeKeyStore();
-
         }
         getFragmentManager().beginTransaction().add(R.id.intro_layout, new IntroWelcomeFragment(),
                 IntroWelcomeFragment.class.getName()).commit();
@@ -275,14 +266,6 @@ public class IntroActivity extends FragmentActivity {
             case BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
                     PostAuthenticationProcessor.getInstance().onRecoverWalletAuth(this);
-                } else {
-                    finish();
-                }
-                break;
-
-            case BRConstants.CANARY_REQUEST_CODE:
-                if (resultCode == RESULT_OK) {
-                    PostAuthenticationProcessor.getInstance().onCanaryCheckAuth(this);
                 } else {
                     finish();
                 }
