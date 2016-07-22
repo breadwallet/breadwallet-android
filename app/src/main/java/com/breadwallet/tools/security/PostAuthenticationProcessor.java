@@ -1,5 +1,6 @@
 package com.breadwallet.tools.security;
 
+import android.app.Activity;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -135,34 +136,37 @@ public class PostAuthenticationProcessor {
         }
     }
 
-    public void onCanaryCheckAuth(IntroActivity app) {
+    public void onCanaryCheckAuth(Activity app) {
         Log.e(TAG, "onCanaryCheckAuth");
+        if (app instanceof MainActivity) {
+            BRAnimator.animateSlideToLeft(((MainActivity) app), new FragmentRecoveryPhrase(), new FragmentSettings());
+        } else if (app instanceof IntroActivity) {
+            try {
+                String canary = KeyStoreManager.getKeyStoreCanary(app, BRConstants.CANARY_REQUEST_CODE);
+                if (canary.equals("noauth")) return;
+                byte[] masterPubKey = KeyStoreManager.getMasterPublicKey(app);
+                boolean isFirstAddressCorrect = false;
+                if (masterPubKey != null && masterPubKey.length != 0) {
+                    isFirstAddressCorrect = ((IntroActivity) app).checkFirstAddress(masterPubKey);
+                }
+                Log.e(TAG, "isFirstAddressCorrect: " + isFirstAddressCorrect);
+                if (!isFirstAddressCorrect) {
+                    Log.e(TAG, "CLEARING THE WALLET");
+                    BRWalletManager.getInstance(app).wipeWalletButKeystore(app);
+                }
 
-        try {
-            String canary = KeyStoreManager.getKeyStoreCanary(app, BRConstants.CANARY_REQUEST_CODE);
-            if (canary.equals("noauth")) return;
-            byte[] masterPubKey = KeyStoreManager.getMasterPublicKey(app);
-            boolean isFirstAddressCorrect = false;
-            if (masterPubKey != null && masterPubKey.length != 0) {
-                isFirstAddressCorrect = app.checkFirstAddress(masterPubKey);
-            }
-            Log.e(TAG, "isFirstAddressCorrect: " + isFirstAddressCorrect);
-            if (!isFirstAddressCorrect) {
-                Log.e(TAG, "CLEARING THE WALLET");
-                BRWalletManager.getInstance(app).wipeWalletButKeystore(app);
-            }
+                if (canary.equals("none")) {
+                    BRWalletManager m = BRWalletManager.getInstance(app);
+                    m.wipeWalletButKeystore(app);
+                    m.wipeKeyStore();
+                }
 
-            if (canary.equals("none")) {
-                BRWalletManager m = BRWalletManager.getInstance(app);
-                m.wipeWalletButKeystore(app);
-                m.wipeKeyStore();
+                app.getFragmentManager().beginTransaction().add(R.id.intro_layout, new IntroWelcomeFragment(),
+                        IntroWelcomeFragment.class.getName()).commit();
+                ((IntroActivity) app).startTheWalletIfExists();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-
-            app.getFragmentManager().beginTransaction().add(R.id.intro_layout, new IntroWelcomeFragment(),
-                    IntroWelcomeFragment.class.getName()).commit();
-            app.startTheWalletIfExists();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
 
     }

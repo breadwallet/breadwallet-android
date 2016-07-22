@@ -93,6 +93,7 @@ public class IntroActivity extends FragmentActivity {
         });
 
         String canary = KeyStoreManager.getKeyStoreCanary(this, BRConstants.CANARY_REQUEST_CODE);
+        Log.e(TAG,"canary: " + canary);
         if (canary.equals("noauth")) return;
         byte[] masterPubKey = KeyStoreManager.getMasterPublicKey(this);
         boolean isFirstAddressCorrect = false;

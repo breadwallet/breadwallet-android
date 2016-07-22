@@ -163,7 +163,6 @@ public class PasswordDialogFragment extends DialogFragment {
                 (new Handler()).postDelayed(new Runnable() {
 
                     public void run() {
-
                         phraseEditText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
                         phraseEditText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
 
@@ -178,9 +177,9 @@ public class PasswordDialogFragment extends DialogFragment {
                     if (!phraseEditText.getText().toString().isEmpty() && KeyStoreManager.phraseIsValid(phraseEditText.getText().toString().toLowerCase(), getActivity())) {
                         KeyStoreManager.putFailCount(0, getActivity());
                         KeyStoreManager.putFailTimeStamp(0, getActivity());
-                        KeyStoreManager.putPassCode(0, getActivity());
-                        BRWalletManager.getInstance(getActivity()).askForPasscode();
+                        PassCodeManager.getInstance().setPassCode("", getActivity());
                         getDialog().dismiss();
+                        BRWalletManager.getInstance(getActivity()).askForPasscode();
                     } else {
                         final String tmpTitle = title.getText().toString();
                         title.setText(R.string.phrase_no_match);

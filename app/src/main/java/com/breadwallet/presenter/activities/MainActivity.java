@@ -272,7 +272,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                 hideAllBubbles();
                 if (BRAnimator.checkTheMultipressingAvailability()) {
                     SpringAnimator.showAnimation(lockerButton);
-                    if (KeyStoreManager.getPassCode(app) != 0)
+                    if (!KeyStoreManager.getPassCode(app).isEmpty())
                         ((BreadWalletApp) getApplication()).promptForAuthentication(app, BRConstants.AUTH_FOR_GENERAL, null, null, null, null);
                 }
 
@@ -558,6 +558,14 @@ public class MainActivity extends FragmentActivity implements Observer {
             case BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
                     PostAuthenticationProcessor.getInstance().onPaymentProtocolRequest(this);
+                }
+                break;
+
+            case BRConstants.CANARY_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    PostAuthenticationProcessor.getInstance().onCanaryCheckAuth(this);
+                } else {
+                    finish();
                 }
                 break;
         }

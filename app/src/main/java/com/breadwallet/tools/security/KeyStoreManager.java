@@ -103,6 +103,7 @@ public class KeyStoreManager {
 //    private static final int CANARY_AUTH_DURATION_SEC = Integer.MAX_VALUE;
 
     private static boolean setData(Activity context, byte[] data, String alias, String alias_file, String alias_iv, int request_code, boolean auth_required) {
+        if(alias.equals(alias_file) || alias.equals(alias_iv) || alias_file.equals(alias_iv)) throw new IllegalArgumentException("mistake in parameters!");
         try {
             KeyStore keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
             keyStore.load(null);
@@ -232,10 +233,12 @@ public class KeyStoreManager {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        return strBytes.length != 0 && setData(context, strBytes, CANARY_ALIAS, CANARY_FILENAME, CANARY_FILENAME, requestCode, true);
+        Log.e(TAG,"putKeyStoreCanary, set, canary: " + new String(strBytes));
+        return strBytes.length != 0 && setData(context, strBytes, CANARY_ALIAS, CANARY_FILENAME, CANARY_IV, requestCode, true);
     }
 
     public static String getKeyStoreCanary(final Activity context, int requestCode) {
+
         byte[] data = getData(context, CANARY_ALIAS, CANARY_FILENAME, CANARY_IV, requestCode);
         String result = null;
         try {
@@ -243,6 +246,7 @@ public class KeyStoreManager {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+        Log.e(TAG,"getKeyStoreCanary: " + result);
         return result;
     }
 
@@ -264,21 +268,25 @@ public class KeyStoreManager {
         return result.length > 0 ? TypesConverter.bytesToInt(result) : 0;
     }
 
-    public static boolean putPassCode(int passcode, Activity context) {
-
-        byte[] bytesToStore = TypesConverter.intToBytes(passcode);
+    public static boolean putPassCode(String passcode, Activity context) {
+        Log.e(TAG, "putPassCode: " + passcode);
+        byte[] bytesToStore = passcode.getBytes();
         return bytesToStore.length != 0 && setData(context, bytesToStore, PASS_CODE_ALIAS, PASS_CODE_FILENAME, PASS_CODE_IV, 0, false);
     }
 
-    public static int getPassCode(final Activity context) {
+    public static String getPassCode(final Activity context) {
+
         byte[] result = getData(context, PASS_CODE_ALIAS, PASS_CODE_FILENAME, PASS_CODE_IV, 0);
-        return result.length > 0 ? TypesConverter.bytesToInt(result) : 0;
+        String passCode = new String(result);
+        if (passCode.length() != 4)
+            passCode = "";
+        Log.e(TAG, "getPassCode: " + passCode);
+        return passCode;
     }
 
     public static boolean putFailCount(int failCount, Activity context) {
         Log.e(TAG, "putFailCount: " + failCount);
         if (failCount >= 3) {
-
             long time = SharedPreferencesManager.getSecureTime(context);
             putFailTimeStamp(time, context);
         }
@@ -325,6 +333,7 @@ public class KeyStoreManager {
     }
 
     public static boolean resetWalletKeyStore() {
+        Log.e(TAG,"resetWalletKeyStore");
         KeyStore keyStore;
         try {
             keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);

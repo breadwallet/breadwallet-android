@@ -47,7 +47,7 @@ model {
             }
             debug {
                 proguardFiles.add(file('proguard-rules.pro'))
-                debuggable = false
+                debuggable = true
                 minifyEnabled = false
                 ndk {
                     CFlags.addAll(['-DBITCOIN_TESTNET=1'])

@@ -4,6 +4,7 @@ package com.breadwallet.presenter.fragments;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,7 +77,6 @@ public class FragmentRecoveryPhrase extends Fragment {
             });
         }
 
-
         if (!phraseWroteDown) {
             checkBoxlayout.setVisibility(View.VISIBLE);
             checkBox.setOnClickListener(new View.OnClickListener() {
@@ -89,7 +89,16 @@ public class FragmentRecoveryPhrase extends Fragment {
         }
 
         String phrase = KeyStoreManager.getKeyStorePhrase(getActivity(), BRConstants.SHOW_PHRASE_REQUEST_CODE);
-        if (phrase == null || phrase.isEmpty()) return rootView;
+        if (phrase == null || phrase.isEmpty()) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    getActivity().onBackPressed();
+                }
+            }, 10);
+            return rootView;
+        }
+        ;
         if (phrase.charAt(phrase.length() - 1) == '\0') {
             ((BreadWalletApp) getActivity().getApplication()).showCustomDialog(getString(R.string.warning),
                     getActivity().getString(R.string.phrase_error), getString(R.string.close));

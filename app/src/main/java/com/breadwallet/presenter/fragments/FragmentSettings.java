@@ -20,6 +20,7 @@ import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRStringFormatter;
 import com.breadwallet.tools.manager.CurrencyManager;
@@ -31,20 +32,20 @@ import com.breadwallet.wallet.BRPeerManager;
 
 /**
  * BreadWallet
- * <p>
+ * <p/>
  * Created by Mihail Gutan on 6/29/15.
  * Copyright (c) 2016 breadwallet llc <mihail@breadwallet.com>
- * <p>
+ * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * <p>
+ * <p/>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * <p>
+ * <p/>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -129,6 +130,8 @@ public class FragmentSettings extends Fragment {
                             .setMessage(getResources().getString(R.string.dialog_do_not_let_anyone))
                             .setPositiveButton(getResources().getString(R.string.show), new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
+                                    String canary = KeyStoreManager.getKeyStoreCanary(getActivity(), BRConstants.CANARY_REQUEST_CODE);
+                                    if (!canary.equals(BRConstants.CANARY_STRING)) return;
                                     ((BreadWalletApp) getActivity().getApplicationContext()).promptForAuthentication(getActivity(), BRConstants.AUTH_FOR_PHRASE, null, null, null, null);
                                 }
                             })
@@ -178,7 +181,7 @@ public class FragmentSettings extends Fragment {
                                                   @Override
                                                   public void run() {
                                                       BRAnimator.goToMainActivity(fragmentSettings);
-                                                      Log.e(TAG,"rescan called!");
+                                                      Log.e(TAG, "rescan called!");
                                                       BRPeerManager.getInstance(getActivity()).rescan();
                                                       SharedPreferencesManager.putStartHeight(getActivity(), BRPeerManager.getCurrentBlockHeight());
                                                   }

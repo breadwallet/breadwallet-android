@@ -281,6 +281,7 @@ public class BRPeerManager {
                 while (running) {
                     progressStatus = syncProgress(SharedPreferencesManager.getStartHeight(app));
                     Log.e(TAG, "progressStatus: " + progressStatus);
+                    if (progressStatus == 1) running = false;
                     app.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

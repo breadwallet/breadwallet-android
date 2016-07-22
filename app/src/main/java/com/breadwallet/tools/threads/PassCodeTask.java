@@ -39,7 +39,7 @@ import com.breadwallet.tools.security.KeyStoreManager;
 public class PassCodeTask extends Thread {
     public static final String TAG = PassCodeTask.class.getName();
     static PasswordDialogFragment passwordDialogFragment;
-    int pass = 0;
+    String pass = "";
     private Activity activity;
 
     public PassCodeTask(Activity activity) {
@@ -53,7 +53,7 @@ public class PassCodeTask extends Thread {
         if (activity == null) return;
         final FragmentManager fm = activity.getFragmentManager();
 
-        while (pass == 0 && activity != null) {
+        while (pass.isEmpty() && activity != null) {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

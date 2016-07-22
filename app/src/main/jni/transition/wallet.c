@@ -548,27 +548,6 @@ Java_com_breadwallet_wallet_BRWalletManager_transactionIsVerified(JNIEnv *env, j
     return (jboolean)(result ? JNI_TRUE : JNI_FALSE);
 }
 
-//JNIEXPORT jboolean JNICALL
-//Java_com_breadwallet_wallet_BRWalletManager_pay(JNIEnv *env, jobject thiz, jstring address, jlong amount,
-//                                                jstring strSeed)
-//{
-//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "pay");
-//    if (!_peerManager || !_wallet) return JNI_FALSE;
-//
-//    const char *rawAddress = (*env)->GetStringUTFChars(env, address, NULL);
-//    BRTransaction *tx = BRWalletCreateTransaction(_wallet, (uint64_t)amount, rawAddress);
-//
-//    if (!tx) return JNI_FALSE;
-//
-//    const char *rawString = (*env)->GetStringUTFChars(env, strSeed, 0);
-//    UInt512 key = UINT512_ZERO;
-//    BRBIP39DeriveKey(key.u8, rawString, NULL);
-//    size_t seedSize = sizeof(key);
-//
-//    BRWalletSignTransaction(_wallet, tx, key.u8, seedSize);
-//    BRPeerManagerPublishTx(_peerManager, tx, NULL, callback);
-//    return JNI_TRUE;
-//}
 
 JNIEXPORT jlong JNICALL
 Java_com_breadwallet_wallet_BRWalletManager_bitcoinAmount(JNIEnv *env, jobject thiz, jlong localAmount, double price)
@@ -670,25 +649,6 @@ Java_com_breadwallet_wallet_BRWalletManager_publishSerializedTransaction(JNIEnv 
     BRPeerManagerPublishTx(_peerManager, tmpTx, NULL, callback);
     return JNI_TRUE;
 }
-
-//JNIEXPORT jboolean JNICALL
-//Java_com_breadwallet_wallet_BRWalletManager_publishSignedSerializedTransaction(JNIEnv *env, jobject thiz,
-//                                                                               jbyteArray serializedTransaction)
-//{
-//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "publishSignedSerializedTransaction");
-//    if (!_peerManager) return JNI_FALSE;
-//    
-//    int txLength = (*env)->GetArrayLength(env, serializedTransaction);
-//    jbyte *byteTx = (*env)->GetByteArrayElements(env, serializedTransaction, 0);
-//    BRTransaction *tmpTx = BRTransactionParse((uint8_t *)byteTx, (size_t)txLength);
-//
-//    if (!tmpTx) return JNI_FALSE;
-//
-//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "BRTransactionIsSigned(tmpTx): %d",
-//                        BRTransactionIsSigned(tmpTx));
-//    BRPeerManagerPublishTx(_peerManager, tmpTx, NULL, callback);
-//    return JNI_TRUE;
-//}
 
 JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTotalSent(JNIEnv *env, jobject obj)
 {
