@@ -241,7 +241,7 @@ public class KeyStoreManager {
 
     public static boolean putPassCode(String passcode, Activity context) {
         byte[] bytesToStore = passcode.getBytes();
-        return bytesToStore.length != 0 && setData(context, bytesToStore, PASS_CODE_ALIAS, PASS_CODE_FILENAME, PASS_CODE_IV, 0, false);
+        return setData(context, bytesToStore, PASS_CODE_ALIAS, PASS_CODE_FILENAME, PASS_CODE_IV, 0, false);
     }
 
     public static String getPassCode(final Activity context) {

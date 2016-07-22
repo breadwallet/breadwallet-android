@@ -178,8 +178,8 @@ public class PasswordDialogFragment extends DialogFragment {
                         KeyStoreManager.putFailCount(0, getActivity());
                         KeyStoreManager.putFailTimeStamp(0, getActivity());
                         PassCodeManager.getInstance().setPassCode("", getActivity());
-                        getDialog().dismiss();
                         BRWalletManager.getInstance(getActivity()).askForPasscode();
+                        getDialog().dismiss();
                     } else {
                         final String tmpTitle = title.getText().toString();
                         title.setText(R.string.phrase_no_match);
@@ -317,7 +317,8 @@ public class PasswordDialogFragment extends DialogFragment {
                         ((BreadWalletApp) getActivity().getApplicationContext()).setUnlocked(true);
                         MainActivity app = MainActivity.app;
                         if (app != null) {
-                            BRTipsManager.showTipsTutorial(app);
+                            if (!SharedPreferencesManager.getTipsShown(app))
+                                BRTipsManager.showTipsTutorial(app);
                         }
                         InputMethodManager keyboard = (InputMethodManager) getActivity().
                                 getSystemService(Context.INPUT_METHOD_SERVICE);

@@ -233,4 +233,17 @@ public class SharedPreferencesManager {
         editor.putInt(BRConstants.START_HEIGHT, startHeight);
         editor.apply();
     }
+
+    public static boolean getTipsShown(Activity context) {
+        SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
+        return settingsToGet.getBoolean(BRConstants.TIPS_SHOWN, false);
+    }
+
+    public static void putTipsShown(Activity context, boolean tipsShown) {
+        if (context == null) return;
+        SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putBoolean(BRConstants.TIPS_SHOWN, tipsShown);
+        editor.apply();
+    }
 }

@@ -148,6 +148,7 @@ public class BRConstants {
      */
     public static String RECEIVE_ADDRESS = "receive_address";
     public static String START_HEIGHT = "startHeight";
+    public static String TIPS_SHOWN = "tipsShown";
 
     private BRConstants() {
     }

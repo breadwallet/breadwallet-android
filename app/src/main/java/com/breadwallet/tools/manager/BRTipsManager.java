@@ -99,6 +99,7 @@ public class BRTipsManager {
                             case 5:
                                 finalApp.parallaxViewPager.setCurrentItem(1);
                                 count = 0;
+                                SharedPreferencesManager.putTipsShown(finalApp, true);
                                 tipsBlockPane.setVisibility(View.GONE);
                                 break;
                         }
