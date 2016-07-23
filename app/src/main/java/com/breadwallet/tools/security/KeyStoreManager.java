@@ -253,6 +253,8 @@ public class KeyStoreManager {
             e.printStackTrace();
             passCode = "";
             putPassCode(passCode, context);
+            KeyStoreManager.putFailCount(0, context);
+            KeyStoreManager.putFailTimeStamp(0, context);
             return passCode;
         }
         if (passCode.length() != 4) {
