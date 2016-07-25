@@ -325,10 +325,16 @@ public class PasswordDialogFragment extends DialogFragment {
                         keyboard.hideSoftInputFromWindow(cancel.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
                         currentMode = BRConstants.AUTH_MODE_CHECK_PASS;
                     } else {
-                        SpringAnimator.showAnimation(dialogFragment.getView());
-                        passcodeEditText.setText("");
-                        currentMode = BRConstants.AUTH_MODE_NEW_PASS;
-                        title.setText(getResources().getString(R.string.choose_new_passcode));
+                        SpringAnimator.failShakeAnimation(getActivity(), dialogFragment.getView());
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                passcodeEditText.setText("");
+                                currentMode = BRConstants.AUTH_MODE_NEW_PASS;
+                                title.setText(getResources().getString(R.string.choose_new_passcode));
+                            }
+                        }, 500);
+
                     }
                     break;
             }
@@ -344,7 +350,6 @@ public class PasswordDialogFragment extends DialogFragment {
             if (passCodeManager.checkAuth(s.toString(), getActivity())) {
                 //reset the passcode after successful attempt
                 KeyStoreManager.putFailCount(0, getActivity());
-//                BreadWalletApp.canceled = true;
                 getDialog().cancel();
                 long totalSpent = BRWalletManager.getInstance(getActivity()).getTotalSent();
                 long spendLimit = totalSpent + PassCodeManager.getInstance().getLimit(getActivity()) + (request == null ? 0 : request.amount);
@@ -380,7 +385,6 @@ public class PasswordDialogFragment extends DialogFragment {
                         return false;
                     }
                     seed = null;
-
                     BRAnimator.hideScanResultFragment();
                 } else if (mode == BRConstants.AUTH_FOR_PAYMENT_PROTOCOL && paymentRequest != null) {
                     if (paymentRequest.paymentURL == null || paymentRequest.paymentURL.isEmpty())
@@ -388,8 +392,13 @@ public class PasswordDialogFragment extends DialogFragment {
                     new PaymentProtocolPostPaymentTask(paymentRequest).execute();
                 }
             } else {
-                SpringAnimator.showAnimation(dialogFragment.getView());
-                passcodeEditText.setText("");
+                SpringAnimator.failShakeAnimation(getActivity(), dialogFragment.getView());
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        passcodeEditText.setText("");
+                    }
+                }, 500);
             }
 
         } else {
@@ -401,7 +410,7 @@ public class PasswordDialogFragment extends DialogFragment {
                         title.setText(getResources().getString(R.string.choose_new_passcode));
                         passcodeEditText.setText("");
                     } else {
-                        SpringAnimator.showAnimation(dialogFragment.getView());
+                        SpringAnimator.failShakeAnimation(getActivity(), dialogFragment.getView());
                         passcodeEditText.setText("");
                         if (!prevPass.equals(s.toString())) {
                             KeyStoreManager.putFailCount(KeyStoreManager.getFailCount(getActivity()) + 1, getActivity());
@@ -435,10 +444,16 @@ public class PasswordDialogFragment extends DialogFragment {
                         keyboard.hideSoftInputFromWindow(cancel.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
                         currentMode = BRConstants.AUTH_MODE_CHECK_PASS;
                     } else {
-                        SpringAnimator.showAnimation(dialogFragment.getView());
-                        passcodeEditText.setText("");
-                        currentMode = BRConstants.AUTH_MODE_NEW_PASS;
-                        title.setText(getResources().getString(R.string.choose_new_passcode));
+                        SpringAnimator.failShakeAnimation(getActivity(), dialogFragment.getView());
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                passcodeEditText.setText("");
+                                currentMode = BRConstants.AUTH_MODE_NEW_PASS;
+                                title.setText(getResources().getString(R.string.choose_new_passcode));
+                            }
+                        }, 500);
+
                     }
                     break;
             }

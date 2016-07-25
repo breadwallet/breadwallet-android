@@ -1,32 +1,35 @@
 package com.breadwallet.tools.animation;
 
+import android.app.Activity;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 
+import com.breadwallet.R;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 
 
 /**
  * BreadWallet
- * <p/>
+ * <p>
  * Created by Mihail Gutan on 6/24/15.
  * Copyright (c) 2016 breadwallet llc <mihail@breadwallet.com>
- * <p/>
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * <p/>
+ * <p>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * <p/>
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -86,4 +89,11 @@ public class SpringAnimator {
         view.startAnimation(trans);
     }
 
+    public static void failShakeAnimation(Activity context, View view) {
+        Log.e(TAG, "failShakeAnimation");
+        if (view == null) return;
+        Animation shake = AnimationUtils.loadAnimation(context, R.anim.shake);
+        view.setVisibility(View.VISIBLE);
+        view.startAnimation(shake);
+    }
 }

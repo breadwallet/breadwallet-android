@@ -4,7 +4,9 @@ package com.breadwallet.presenter.fragments;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -13,6 +15,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.util.BRStringFormatter;
@@ -70,7 +73,6 @@ public class FragmentCurrency extends Fragment {
         // properly.
         final View rootView = inflater.inflate(
                 R.layout.fragment_currency, container, false);
-
         app = MainActivity.app;
         currencyList = (ListView) rootView.findViewById(R.id.currency_list_view);
         currencyProgressBar = (ProgressBar) rootView.findViewById(R.id.currency_progress_barr);
@@ -123,11 +125,17 @@ public class FragmentCurrency extends Fragment {
                 tryAndSetAdapter();
             }
         }, 500);
+        allowChangeDisplayUnits((MainActivity) getActivity(), true);
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        allowChangeDisplayUnits((MainActivity) getActivity(), false);
+    }
+
+    private void allowChangeDisplayUnits(MainActivity app, boolean allow) {
+
     }
 
     private void tryAndSetAdapter() {
