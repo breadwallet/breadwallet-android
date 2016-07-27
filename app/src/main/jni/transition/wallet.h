@@ -31,7 +31,7 @@
 extern BRWallet *_wallet;
 extern jclass _walletManagerClass;
 
-JNIEXPORT jstring JNICALL
+JNIEXPORT jbyteArray JNICALL
 Java_com_breadwallet_wallet_BRWalletManager_encodeSeed(JNIEnv *env, jobject thiz, jbyteArray seed,
                                                        jobjectArray stringArray);
 
@@ -40,7 +40,7 @@ Java_com_breadwallet_wallet_BRWalletManager_createWallet(JNIEnv *env, jobject th
                                                          jbyteArray bytePubKey);
 
 JNIEXPORT jbyteArray JNICALL
-Java_com_breadwallet_wallet_BRWalletManager_getMasterPubKey(JNIEnv *env, jobject thiz, jstring phrase);
+Java_com_breadwallet_wallet_BRWalletManager_getMasterPubKey(JNIEnv *env, jobject thiz, jbyteArray phrase);
 
 JNIEXPORT void JNICALL
 Java_com_breadwallet_wallet_BRWalletManager_putTransaction(JNIEnv *env, jobject thiz, jbyteArray transaction,
@@ -98,7 +98,7 @@ Java_com_breadwallet_wallet_BRWalletManager_getFirstAddress(JNIEnv *env, jobject
 JNIEXPORT jboolean JNICALL
 Java_com_breadwallet_wallet_BRWalletManager_publishSerializedTransaction(JNIEnv *env, jobject thiz,
                                                                          jbyteArray serializedTransaction,
-                                                                         jstring phrase);
+                                                                         jbyteArray phrase);
 
 JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTotalSent(JNIEnv *env, jobject obj);
 

@@ -14,6 +14,8 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 
+import java.util.Arrays;
+
 /**
  * BreadWallet
  * <p/>
@@ -45,7 +47,7 @@ public class IntroShowPhraseActivity extends Activity {
     private RelativeLayout writeDownLayout;
     private ImageView checkBox;
     private boolean checked = false;
-    public static String phrase = null;
+    public static byte[] phrase = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,14 +73,14 @@ public class IntroShowPhraseActivity extends Activity {
 
         writeDownLayout.setVisibility(View.GONE);
 
-        if (phrase != null && phrase.length() > 1) {
-            thePhrase.setText(phrase);
-            if(phrase.charAt(0) > 0x3000)
-                thePhrase.setText(phrase.replace(" ", "\u3000"));
-            phrase = null;
-        } else {
-            phrase = null;
+        if (phrase != null && phrase.length > 1) {
+            String tmpPhrase = new String(phrase);
+            thePhrase.setText(tmpPhrase);
+            if (tmpPhrase.charAt(0) > 0x3000)
+                thePhrase.setText(tmpPhrase.replace(" ", "\u3000"));
         }
+        if (phrase != null)
+            Arrays.fill(phrase, (byte) 0);
 
         new Handler().postDelayed(new Runnable() {
             @Override

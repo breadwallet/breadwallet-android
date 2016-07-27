@@ -113,8 +113,8 @@ public class BRWalletManager {
         if (words.length < 2000)
             throw new IllegalArgumentException("the list is wrong, size: " + words.length);
         if (keyBytes.length == 0) throw new NullPointerException("failed to create the seed");
-        String strPhrase = encodeSeed(keyBytes, words);
-        if (strPhrase == null || strPhrase.length() == 0)
+        byte[] strPhrase = encodeSeed(keyBytes, words);
+        if (strPhrase == null || strPhrase.length == 0)
             throw new NullPointerException("failed to encodeSeed");
         boolean success = KeyStoreManager.putKeyStorePhrase(strPhrase, ctx, BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE);
         if (!success) return false;
@@ -781,7 +781,13 @@ public class BRWalletManager {
         }
     }
 
-    private native String encodeSeed(byte[] seed, String[] wordList);
+    public static void sanitizeData(byte[] data) {
+        for (int i = 0; i < data.length; i++){
+            data[i] = 0;
+        }
+    }
+
+    private native byte[] encodeSeed(byte[] seed, String[] wordList);
 
     public native void createWallet(int transactionCount, byte[] pubkey);
 
@@ -789,7 +795,7 @@ public class BRWalletManager {
 
     public native void createTxArrayWithCount(int count);
 
-    public native byte[] getMasterPubKey(String normalizedString);
+    public native byte[] getMasterPubKey(byte[] normalizedString);
 
     public static native String getReceiveAddress();
 
@@ -823,7 +829,7 @@ public class BRWalletManager {
 
     public native static String getFirstAddress(byte[] mpk);
 
-    public native boolean publishSerializedTransaction(byte[] serializedTransaction, String phrase);
+    public native boolean publishSerializedTransaction(byte[] serializedTransaction, byte[] phrase);
 
     public native long getTotalSent();
 

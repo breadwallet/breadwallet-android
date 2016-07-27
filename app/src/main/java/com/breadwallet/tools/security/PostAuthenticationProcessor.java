@@ -88,11 +88,11 @@ public class PostAuthenticationProcessor {
         if (phraseForKeyStore == null) return;
 
         try {
-            boolean success = KeyStoreManager.putKeyStorePhrase(phraseForKeyStore, app, BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE);
+            boolean success = KeyStoreManager.putKeyStorePhrase(phraseForKeyStore.getBytes(), app, BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE);
             if (!success)
                 return;
             if (phraseForKeyStore.length() != 0) {
-                byte[] pubKey = BRWalletManager.getInstance(app).getMasterPubKey(phraseForKeyStore);
+                byte[] pubKey = BRWalletManager.getInstance(app).getMasterPubKey(phraseForKeyStore.getBytes());
                 KeyStoreManager.putMasterPublicKey(pubKey, app);
 //                    Log.w(TAG, "The phrase from keystore is: " + KeyStoreManager.getKeyStoreString(getActivity()));
                 app.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);

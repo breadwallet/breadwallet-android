@@ -196,36 +196,22 @@ public class KeyStoreManager {
         return result;
     }
 
-    public static boolean putKeyStorePhrase(String strToStore, Activity context, int requestCode) {
-        if (strToStore == null || strToStore.isEmpty()) return false;
+    public static boolean putKeyStorePhrase(byte[] strToStore, Activity context, int requestCode) {
+        return !(strToStore == null || strToStore.length == 0) && setData(context, strToStore, PHRASE_ALIAS, PHRASE_FILENAME, PHRASE_IV, requestCode, true);
 
-        byte[] strBytes = new byte[0];
-        try {
-            strBytes = strToStore.getBytes("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return strBytes.length != 0 && setData(context, strBytes, PHRASE_ALIAS, PHRASE_FILENAME, PHRASE_IV, requestCode, true);
     }
 
-    public static String getKeyStorePhrase(final Activity context, int requestCode) {
+    public static byte[] getKeyStorePhrase(final Activity context, int requestCode) {
 
         KeyguardManager myKM = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
         if (myKM.inKeyguardRestrictedInputMode()) {
             Log.e(TAG, "THE SCREEN IS LOCKED!");
-            return "";
+            return new byte[0];
         } else {
             Log.e(TAG, "THE SCREEN IS UNLOCKED!");
         }
-        byte[] data = getData(context, PHRASE_ALIAS, PHRASE_FILENAME, PHRASE_IV, requestCode);
-        String result = null;
-        try {
-            result = new String(data, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
 
-        return result;
+        return getData(context, PHRASE_ALIAS, PHRASE_FILENAME, PHRASE_IV, requestCode);
     }
 
     public static boolean putKeyStoreCanary(String strToStore, Activity context, int requestCode) {
