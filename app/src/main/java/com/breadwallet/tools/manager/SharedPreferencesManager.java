@@ -246,4 +246,17 @@ public class SharedPreferencesManager {
         editor.putBoolean(BRConstants.TIPS_SHOWN, tipsShown);
         editor.apply();
     }
+
+    public static int getCurrencyUnit(Activity context) {
+        SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
+        return settingsToGet.getInt(BRConstants.CURRENT_UNIT, BRConstants.CURRENT_UNIT_BITS);
+    }
+
+    public static void putCurrencyUnit(Activity context, int unit) {
+        if (context == null) return;
+        SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putInt(BRConstants.CURRENT_UNIT, unit);
+        editor.apply();
+    }
 }

@@ -60,7 +60,7 @@ public class CurrencyManager extends Observable {
     private Timer timer;
     private long BALANCE = 0;
     private TimerTask timerTask;
-    public static final String bitcoinLowercase = "\u0180";
+
     private Handler handler;
     public static boolean separatorNeedsToBeShown = false;
     private final CurrencyListAdapter currencyListAdapter;

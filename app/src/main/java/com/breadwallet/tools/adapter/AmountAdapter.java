@@ -9,6 +9,7 @@ import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.tools.manager.CurrencyManager;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.util.BRConstants;
 
 import java.math.BigDecimal;
@@ -50,8 +51,12 @@ public class AmountAdapter extends Observable {
     public static int digitsInserted = 0;
     private static int buttonCode = BRConstants.PAY_BUTTON;
     private static boolean pressAvailable = true;
+    private static int unit = BRConstants.CURRENT_UNIT_BITS;
 
     public static void preConditions(String tmp) {
+        Activity context = MainActivity.app;
+        if (context != null)
+            unit = SharedPreferencesManager.getCurrencyUnit(context);
         if (FragmentScanResult.isARequest) {
             buttonCode = BRConstants.REQUEST_BUTTON;
         } else {
@@ -140,8 +145,13 @@ public class AmountAdapter extends Observable {
     }
 
     private static boolean isDigitInsertingLegal(String text) {
-//        Log.e(TAG, "Testing isDigitInsertingLegal, text: " + text);
-        return text.length() < BRConstants.DIGITS_LIMIT && (!comaHasBeenInserted || digitsInserted < BRConstants.MAX_DIGITS_AFTER_SEPARATOR);
+        int maxDig = BRConstants.MAX_DIGITS_AFTER_SEPARATOR_BITS;
+
+        if (unit == BRConstants.CURRENT_UNIT_MBITS)
+            maxDig = BRConstants.MAX_DIGITS_AFTER_SEPARATOR_MBITS;
+        if (unit == BRConstants.CURRENT_UNIT_BITCOINS)
+            maxDig = BRConstants.MAX_DIGITS_AFTER_SEPARATOR_BITCOINS;
+        return text.length() < BRConstants.DIGITS_LIMIT && (!comaHasBeenInserted || digitsInserted < maxDig);
     }
 
     /**
@@ -152,7 +162,7 @@ public class AmountAdapter extends Observable {
     private static void changeTextColor(int color) {
         Activity context = MainActivity.app;
         isTextColorGrey = color != 1;
-        FragmentScanResult.amountToPay.setTextColor((color == 1) ? context.getResources().getColor(R.color.black)
+        FragmentScanResult.amountToPay.setTextColor((color == 1) ? context.getColor(R.color.black)
                 : context.getColor(android.R.color.darker_gray));
     }
 
@@ -167,6 +177,10 @@ public class AmountAdapter extends Observable {
     }
 
     public static void calculateAndPassValuesToFragment(String valuePassed) {
+        String divideBy = "1000000";
+
+        if (unit == BRConstants.CURRENT_UNIT_MBITS) divideBy = "1000";
+        if (unit == BRConstants.CURRENT_UNIT_BITCOINS) divideBy = "1";
         rightValue = valuePassed;
         try {
             BigDecimal rightValueObject = new BigDecimal(valuePassed);
@@ -178,7 +192,7 @@ public class AmountAdapter extends Observable {
                 if (FragmentScanResult.currentCurrencyPosition == BRConstants.BITCOIN_RIGHT) {
                     //from bits to other currency using rate
                     if (rate.intValue() > 1) {
-                        leftValueObject = rate.multiply(rightValueObject.divide(new BigDecimal("1000000")));
+                        leftValueObject = rate.multiply(rightValueObject.divide(new BigDecimal(divideBy)));
                     } else {
                         leftValueObject = new BigDecimal("0");
                     }
@@ -186,8 +200,9 @@ public class AmountAdapter extends Observable {
                 } else if (FragmentScanResult.currentCurrencyPosition == BRConstants.BITCOIN_LEFT) {
                     //from other currency to bits using rate
                     if (rate.intValue() > 1) {
-                        leftValueObject = rightValueObject.multiply(new BigDecimal("1000000")).
-                                divide(rate, RoundingMode.CEILING);
+                        leftValueObject = rightValueObject.multiply(new BigDecimal(divideBy)).
+                                divide(rate, 8, RoundingMode.HALF_UP);
+                        Log.e(TAG, "leftValueObject: " + leftValueObject);
                     } else {
                         leftValueObject = new BigDecimal("0");
                     }

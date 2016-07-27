@@ -104,8 +104,27 @@ public class IntroActivity extends FragmentActivity {
         }
         getFragmentManager().beginTransaction().add(R.id.intro_layout, new IntroWelcomeFragment(),
                 IntroWelcomeFragment.class.getName()).commit();
-        startTheWalletIfExists();
+
         setStatusBarColor();
+
+        String canary = KeyStoreManager.getKeyStoreCanary(this, BRConstants.CANARY_REQUEST_CODE);
+        if (canary.equalsIgnoreCase(KeyStoreManager.NO_AUTH)) return;
+        if (!canary.equalsIgnoreCase(BRConstants.CANARY_STRING)) {
+            Log.e(TAG, "!canary.equalsIgnoreCase(BRConstants.CANARY_STRING)");
+            String phrase = KeyStoreManager.getKeyStorePhrase(this, BRConstants.CANARY_REQUEST_CODE);
+            if (phrase.equalsIgnoreCase(KeyStoreManager.NO_AUTH)) return;
+            if (phrase.isEmpty()) {
+                Log.e(TAG, "phrase == null || phrase.isEmpty() : " + phrase);
+                BRWalletManager m = BRWalletManager.getInstance(this);
+                m.wipeKeyStore();
+                m.wipeWalletButKeystore(this);
+                BRAnimator.resetFragmentAnimator();
+            } else {
+                Log.e(TAG, "phrase != null : " + phrase);
+                KeyStoreManager.putKeyStoreCanary(BRConstants.CANARY_STRING, this, 0);
+            }
+        }
+        startTheWalletIfExists();
 
     }
 
@@ -251,6 +270,7 @@ public class IntroActivity extends FragmentActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.e(TAG, "IntroActivity, onActivityResult: " + requestCode);
         switch (requestCode) {
             case BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
@@ -266,6 +286,13 @@ public class IntroActivity extends FragmentActivity {
             case BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
                     PostAuthenticationProcessor.getInstance().onRecoverWalletAuth(this);
+                } else {
+                    finish();
+                }
+                break;
+            case BRConstants.CANARY_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    PostAuthenticationProcessor.getInstance().onCanaryCheck(this);
                 } else {
                     finish();
                 }

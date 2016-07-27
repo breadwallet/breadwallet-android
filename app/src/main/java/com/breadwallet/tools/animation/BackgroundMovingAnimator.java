@@ -105,10 +105,15 @@ public class BackgroundMovingAnimator {
     }
 
     public static void animateBackgroundMoving(ImageView theBackground) {
+
         background = theBackground;
         background.post(new Runnable() {
             @Override
             public void run() {
+                if(background == null) {
+                    stopBackgroundMoving();
+                    return;
+                }
                 mScaleFactor = (float) background.getHeight() /
                         (float) background.getDrawable().getIntrinsicHeight();
                 mMatrix.postScale(mScaleFactor, mScaleFactor);

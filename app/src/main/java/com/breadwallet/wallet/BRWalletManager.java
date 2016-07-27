@@ -572,6 +572,14 @@ public class BRWalletManager {
     public void pay(final String addressHolder, final BigDecimal bigDecimalAmount, final String cn, final boolean isAmountRequested) {
         if (addressHolder == null || bigDecimalAmount == null) return;
         if (addressHolder.length() < 20) return;
+
+        int unit = BRConstants.CURRENT_UNIT_BITS;
+        Activity context = MainActivity.app;
+        String divideBy = "100";
+        if (context != null)
+            unit = SharedPreferencesManager.getCurrencyUnit(context);
+        if (unit == BRConstants.CURRENT_UNIT_MBITS) divideBy = "100000";
+        if (unit == BRConstants.CURRENT_UNIT_BITCOINS) divideBy = "100000000";
 //        final long amountAsLong = bigDecimal.longValue();
         if (bigDecimalAmount.longValue() < 0) return;
         Log.e(TAG, "*********Sending: " + bigDecimalAmount + " to: " + addressHolder);
@@ -580,7 +588,7 @@ public class BRWalletManager {
         if (bigDecimalAmount.longValue() < minAmount) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
             final String bitcoinMinMessage = String.format(Locale.getDefault(), ctx.getString(R.string.bitcoin_payment_cant_be_less),
-                    new BigDecimal(minAmount).divide(new BigDecimal("100")));
+                    new BigDecimal(minAmount).divide(new BigDecimal(divideBy)));
             builder.setMessage(bitcoinMinMessage)
                     .setTitle(R.string.could_not_make_payment)
                     .setCancelable(false)

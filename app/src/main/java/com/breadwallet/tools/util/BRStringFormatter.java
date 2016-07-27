@@ -82,7 +82,9 @@ public class BRStringFormatter {
     }
 
     public static String getFormattedCurrencyString(String isoCurrencyCode, long amount) {
+        Log.e(TAG, "amount: " + amount);
         DecimalFormat currencyFormat;
+        BigDecimal result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100"));
 
         // This formats currency values as the user expects to read them (default locale).
         currencyFormat = (DecimalFormat) DecimalFormat.getCurrencyInstance();
@@ -91,33 +93,54 @@ public class BRStringFormatter {
         DecimalFormatSymbols decimalFormatSymbols;
         Currency currency;
         String symbol = null;
+        decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
         if (Objects.equals(isoCurrencyCode, "BTC")) {
-            decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
-            symbol = CurrencyManager.bitcoinLowercase;
-            decimalFormatSymbols.setCurrencySymbol(symbol);
+            String currencySymbolString = BRConstants.bitcoinLowercase;
+            MainActivity app = MainActivity.app;
+            if (app != null) {
+                int unit = SharedPreferencesManager.getCurrencyUnit(app);
+                switch (unit) {
+                    case BRConstants.CURRENT_UNIT_BITS:
+                        currencySymbolString = BRConstants.bitcoinLowercase;
+                        currencyFormat.setMaximumFractionDigits(2);
+                        if (getNumberOfDecimalPlaces(result) == 1)
+                            currencyFormat.setMinimumFractionDigits(2);
+                        break;
+                    case BRConstants.CURRENT_UNIT_MBITS:
+                        currencySymbolString = "m" + BRConstants.bitcoinUppercase;
+                        currencyFormat.setMaximumFractionDigits(5);
+                        result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100000"));
+                        break;
+                    case BRConstants.CURRENT_UNIT_BITCOINS:
+                        currencySymbolString = BRConstants.bitcoinUppercase;
+                        currencyFormat.setMaximumFractionDigits(8);
+                        result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100000000"));
+                        break;
+                }
+            }
+
+            symbol = currencySymbolString;
         } else {
             try {
                 currency = Currency.getInstance(isoCurrencyCode);
             } catch (IllegalArgumentException e) {
                 currency = Currency.getInstance(Locale.getDefault());
             }
-            decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
             symbol = currency.getSymbol();
-            decimalFormatSymbols.setCurrencySymbol(symbol);
         }
-        currencyFormat.setMaximumFractionDigits(2);
+        decimalFormatSymbols.setCurrencySymbol(symbol);
         currencyFormat.setMinimumFractionDigits(0);
         currencyFormat.setGroupingUsed(true);
         currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
         currencyFormat.setNegativePrefix(decimalFormatSymbols.getCurrencySymbol() + "-");
         currencyFormat.setNegativeSuffix("");
-        BigDecimal result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100"));
-        if (getNumberOfDecimalPlaces(result) == 1) currencyFormat.setMinimumFractionDigits(2);
         return currencyFormat.format(result.doubleValue());
     }
 
     public static String getFormattedCurrencyStringForKeyboard(String isoCurrencyCode, long amount) {
+        Log.e(TAG, "amount: " + amount);
         DecimalFormat currencyFormat;
+        BigDecimal result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100"));
 
         // This formats currency values as the user expects to read them (default locale).
         currencyFormat = (DecimalFormat) DecimalFormat.getCurrencyInstance();
@@ -126,28 +149,49 @@ public class BRStringFormatter {
         DecimalFormatSymbols decimalFormatSymbols;
         Currency currency;
         String symbol = null;
+        decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
         if (Objects.equals(isoCurrencyCode, "BTC")) {
-            decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
-            symbol = CurrencyManager.bitcoinLowercase;
-            decimalFormatSymbols.setCurrencySymbol(symbol);
+            String currencySymbolString = BRConstants.bitcoinLowercase;
+            MainActivity app = MainActivity.app;
+            if (app != null) {
+                int unit = SharedPreferencesManager.getCurrencyUnit(app);
+                switch (unit) {
+                    case BRConstants.CURRENT_UNIT_BITS:
+                        currencySymbolString = BRConstants.bitcoinLowercase;
+                        currencyFormat.setMaximumFractionDigits(2);
+                        if (getNumberOfDecimalPlaces(result) == 1)
+                            currencyFormat.setMinimumFractionDigits(2);
+                        break;
+                    case BRConstants.CURRENT_UNIT_MBITS:
+                        currencySymbolString = "m" + BRConstants.bitcoinUppercase;
+                        currencyFormat.setMaximumFractionDigits(5);
+                        result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100000"));
+                        break;
+                    case BRConstants.CURRENT_UNIT_BITCOINS:
+                        currencySymbolString = BRConstants.bitcoinUppercase;
+                        currencyFormat.setMaximumFractionDigits(8);
+                        result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100000000"));
+                        break;
+                }
+            }
+
+            symbol = currencySymbolString;
         } else {
             try {
                 currency = Currency.getInstance(isoCurrencyCode);
             } catch (IllegalArgumentException e) {
                 currency = Currency.getInstance(Locale.getDefault());
             }
-            decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
             symbol = currency.getSymbol();
-            decimalFormatSymbols.setCurrencySymbol(symbol);
         }
         currencyFormat.setDecimalSeparatorAlwaysShown(CurrencyManager.separatorNeedsToBeShown);
-        currencyFormat.setMaximumFractionDigits(2);
+        decimalFormatSymbols.setCurrencySymbol(symbol);
         currencyFormat.setMinimumFractionDigits(AmountAdapter.digitsInserted);
         currencyFormat.setGroupingUsed(true);
         currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
         currencyFormat.setNegativePrefix(decimalFormatSymbols.getCurrencySymbol() + "-");
         currencyFormat.setNegativeSuffix("");
-        return currencyFormat.format(new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100")).doubleValue());
+        return currencyFormat.format(result.doubleValue());
     }
 
     public static String getFormattedCurrencyStringForLocale(Locale locale, String isoCurrencyCode, double amount) {

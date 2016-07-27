@@ -107,6 +107,7 @@ public class FragmentRecoveryPhrase extends Fragment {
         thePhrase.setText(phrase);
         if (phrase.charAt(0) > 0x3000)
             thePhrase.setText(phrase.replace(" ", "\u3000"));
+
         return rootView;
     }
 

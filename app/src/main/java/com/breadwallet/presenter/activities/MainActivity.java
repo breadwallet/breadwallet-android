@@ -1,6 +1,7 @@
 package com.breadwallet.presenter.activities;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -170,7 +171,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     protected void onSaveInstanceState(Bundle outState) {
     }
 
-    private void setStatusBarColor(){
+    private void setStatusBarColor() {
         Window window = getWindow();
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -318,6 +319,8 @@ public class MainActivity extends FragmentActivity implements Observer {
         middleViewState = 0;
         middleBubbleBlocksCount = 0;
         app = this;
+        final BRWalletManager m = BRWalletManager.getInstance(this);
+
         CurrencyManager currencyManager = CurrencyManager.getInstance(this);
         currencyManager.startTimer();
         currencyManager.deleteObservers();
@@ -340,6 +343,10 @@ public class MainActivity extends FragmentActivity implements Observer {
                 BRWalletManager.getInstance(app).askForPasscode();
             }
         }, 1000);
+        if (!m.isPasscodeEnabled(this)) {
+            //Device passcode/password should be enabled for the app to work
+            ((BreadWalletApp) getApplication()).showDeviceNotSecuredWarning(this);
+        }
 
     }
 
@@ -520,17 +527,26 @@ public class MainActivity extends FragmentActivity implements Observer {
         String tempAmount = FragmentScanResult.currentCurrencyPosition == BRConstants.BITCOIN_RIGHT ?
                 AmountAdapter.getRightValue() : AmountAdapter.getLeftValue();
         BRWalletManager m = BRWalletManager.getInstance(this);
+        int unit = BRConstants.CURRENT_UNIT_BITS;
+        Activity context = MainActivity.app;
+        String divideBy = "100";
+        if (context != null)
+            unit = SharedPreferencesManager.getCurrencyUnit(context);
+        if (unit == BRConstants.CURRENT_UNIT_MBITS) divideBy = "100000";
+        if (unit == BRConstants.CURRENT_UNIT_BITCOINS) divideBy = "100000000";
         long minAmount = m.getMinOutputAmount();
-        if (new BigDecimal(tempAmount).multiply(new BigDecimal("100")).doubleValue() < minAmount) {
+        if (new BigDecimal(tempAmount).multiply(new BigDecimal(divideBy)).doubleValue() < minAmount) {
             final String bitcoinMinMessage = String.format(Locale.getDefault(), getString(R.string.bitcoin_payment_cant_be_less),
-                    new BigDecimal(minAmount).divide(new BigDecimal("100")));
+                    new BigDecimal(minAmount).divide(new BigDecimal(divideBy)));
             ((BreadWalletApp) getApplication()).showCustomDialog(getString(R.string.amount_too_small),
                     bitcoinMinMessage, getString(R.string.ok));
             return;
         }
-        String strAmount = String.valueOf(new BigDecimal(tempAmount).divide(new BigDecimal("1000000")).toString());
+        String divideByForIntent = "1000000";
+        if (unit == BRConstants.CURRENT_UNIT_MBITS) divideByForIntent = "1000";
+        if (unit == BRConstants.CURRENT_UNIT_BITCOINS) divideByForIntent = "1";
+        String strAmount = String.valueOf(new BigDecimal(tempAmount).divide(new BigDecimal(divideByForIntent)).toString());
         String address = SharedPreferencesManager.getReceiveAddress(this);
-
         intent = new Intent(this, RequestQRActivity.class);
         intent.putExtra(BRConstants.INTENT_EXTRA_REQUEST_AMOUNT, strAmount);
         intent.putExtra(BRConstants.INTENT_EXTRA_REQUEST_ADDRESS, address);

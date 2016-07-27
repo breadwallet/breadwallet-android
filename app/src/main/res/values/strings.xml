@@ -172,4 +172,6 @@
     <string name="pay_address_tip">Bitcoin addresses can also be copied to the clipboard. A bitcoin address always starts with \'1\' or \'3\'.</string>
     <string name="not_a_recovery_phrase_word">\" is not a recovery phrase word</string>
     <string name="recovery_phrase_must_have_12_words">recovery phrase must have 12 words</string>
+    <string name="auth_required">Authentication required</string>
+    <string name="auth_message">The phone has been unlocked for too long</string>
 </resources>

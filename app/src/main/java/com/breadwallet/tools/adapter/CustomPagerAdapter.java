@@ -80,8 +80,9 @@ public class CustomPagerAdapter extends FragmentPagerAdapter {
      *
      * @param b parameter that specifies to show or to hide the fragments
      */
-    public void showFragments(boolean b) {
+    public void showFragments(boolean b, final MainActivity app) {
 //        Log.w(TAG, "Warning showFragments called with variable: " + b);
+        if (app == null) return;
         if (main == null) main = mainFragment.getView();
         if (mainQR == null) mainQR = mainFragmentQR.getView();
         if (b) {
@@ -89,48 +90,44 @@ public class CustomPagerAdapter extends FragmentPagerAdapter {
 
                 @Override
                 public void run() {
-                    MainActivity app = MainActivity.app;
-                    if (app != null) {
+                    TranslateAnimation anim = new TranslateAnimation(0, 0, -600, 0);
+                    anim.setAnimationListener(new Animation.AnimationListener() {
+                        @Override
+                        public void onAnimationStart(Animation animation) {
 
-                        TranslateAnimation anim = new TranslateAnimation(0, 0, -600, 0);
-                        anim.setAnimationListener(new Animation.AnimationListener() {
-                            @Override
-                            public void onAnimationStart(Animation animation) {
+                        }
 
-                            }
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            if (main != null) main.setVisibility(View.VISIBLE);
+                            if (mainQR != null) mainQR.setVisibility(View.VISIBLE);
+                        }
 
-                            @Override
-                            public void onAnimationEnd(Animation animation) {
-                                if (main != null) main.setVisibility(View.VISIBLE);
-                                if (mainQR != null) mainQR.setVisibility(View.VISIBLE);
-                            }
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
 
-                            @Override
-                            public void onAnimationRepeat(Animation animation) {
-
-                            }
-                        });
-                        anim.setDuration(ANIM_DURATION);
-                        Animation animation = new AlphaAnimation(0f, 1f);
-                        animation.setDuration(ANIM_DURATION);
-                        AnimationSet set = new AnimationSet(true);
-                        set.addAnimation(anim);
-                        set.addAnimation(animation);
-                        if (main != null) {
-                            main.startAnimation(set);
+                        }
+                    });
+                    anim.setDuration(ANIM_DURATION);
+                    Animation animation = new AlphaAnimation(0f, 1f);
+                    animation.setDuration(ANIM_DURATION);
+                    AnimationSet set = new AnimationSet(true);
+                    set.addAnimation(anim);
+                    set.addAnimation(animation);
+                    if (main != null) {
+                        main.startAnimation(set);
 //                            main.startAnimation(animation);
-                        }
-                        if (mainQR != null) {
-                            mainQR.startAnimation(set);
-//                            mainQR.startAnimation(animation);
-                        }
-                        app.pageIndicator.setVisibility(View.VISIBLE);
-                        if (MiddleViewAdapter.getSyncing()){
-                            app.syncProgressBar.setVisibility(View.VISIBLE);
-                            app.syncProgressText.setVisibility(View.VISIBLE);
-                        }
-
                     }
+                    if (mainQR != null) {
+                        mainQR.startAnimation(set);
+//                            mainQR.startAnimation(animation);
+                    }
+                    app.pageIndicator.setVisibility(View.VISIBLE);
+                    if (MiddleViewAdapter.getSyncing()) {
+                        app.syncProgressBar.setVisibility(View.VISIBLE);
+                        app.syncProgressText.setVisibility(View.VISIBLE);
+                    }
+
                 }
             });
 
@@ -139,42 +136,39 @@ public class CustomPagerAdapter extends FragmentPagerAdapter {
 
                 @Override
                 public void run() {
-                    MainActivity app = MainActivity.app;
-                    if (app != null) {
-                        TranslateAnimation anim = new TranslateAnimation(0, 0, 0, -600);
-                        anim.setDuration(ANIM_DURATION);
-                        anim.setAnimationListener(new Animation.AnimationListener() {
-                            @Override
-                            public void onAnimationStart(Animation animation) {
+                    TranslateAnimation anim = new TranslateAnimation(0, 0, 0, -600);
+                    anim.setDuration(ANIM_DURATION);
+                    anim.setAnimationListener(new Animation.AnimationListener() {
+                        @Override
+                        public void onAnimationStart(Animation animation) {
 
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animation animation) {
-                                if (main != null) main.setVisibility(View.GONE);
-                                if (mainQR != null) mainQR.setVisibility(View.GONE);
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animation animation) {
-
-                            }
-                        });
-                        Animation animation = new AlphaAnimation(1f, 0f);
-                        animation.setDuration(ANIM_DURATION);
-                        AnimationSet set = new AnimationSet(true);
-                        set.addAnimation(anim);
-                        set.addAnimation(animation);
-                        if (main != null) {
-                            main.startAnimation(set);
                         }
-                        if (mainQR != null) {
-                            mainQR.startAnimation(set);
+
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            if (main != null) main.setVisibility(View.GONE);
+                            if (mainQR != null) mainQR.setVisibility(View.GONE);
                         }
-                        app.pageIndicator.setVisibility(View.GONE);
-                        app.syncProgressBar.setVisibility(View.GONE);
-                        app.syncProgressText.setVisibility(View.GONE);
+
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
+
+                        }
+                    });
+                    Animation animation = new AlphaAnimation(1f, 0f);
+                    animation.setDuration(ANIM_DURATION);
+                    AnimationSet set = new AnimationSet(true);
+                    set.addAnimation(anim);
+                    set.addAnimation(animation);
+                    if (main != null) {
+                        main.startAnimation(set);
                     }
+                    if (mainQR != null) {
+                        mainQR.startAnimation(set);
+                    }
+                    app.pageIndicator.setVisibility(View.GONE);
+                    app.syncProgressBar.setVisibility(View.GONE);
+                    app.syncProgressText.setVisibility(View.GONE);
                 }
             });
 

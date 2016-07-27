@@ -9,6 +9,7 @@ import android.security.keystore.KeyProperties;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.util.Log;
 
+import com.breadwallet.R;
 import com.breadwallet.tools.util.ByteReader;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.util.TypesConverter;
@@ -72,7 +73,10 @@ public class KeyStoreManager {
     public static final String BLOCK_MODE = KeyProperties.BLOCK_MODE_CBC;
     public static final String ANDROID_KEY_STORE = "AndroidKeyStore";
 
+    public static final String NO_AUTH = "noauth";
+
     public static final String PHRASE_IV = "ivphrase";
+    public static final String CANARY_IV = "ivcanary";
     public static final String PUB_KEY_IV = "ivpubkey";
     public static final String TIME_IV = "ivtime";
     public static final String PASS_CODE_IV = "ivpasscode";
@@ -81,6 +85,7 @@ public class KeyStoreManager {
     public static final String FAIL_TIMESTAMP_IV = "ivfailtimestamp";
 
     public static final String PHRASE_ALIAS = "phrase";
+    public static final String CANARY_ALIAS = "canary";
     public static final String PUB_KEY_ALIAS = "pubKey";
     public static final String WALLET_CREATION_TIME_ALIAS = "creationTime";
     public static final String PASS_CODE_ALIAS = "passCode";
@@ -89,6 +94,7 @@ public class KeyStoreManager {
     public static final String FAIL_TIMESTAMP_ALIAS = "failTimeStamp";
 
     public static final String PHRASE_FILENAME = "my_phrase";
+    public static final String CANARY_FILENAME = "my_canary";
     public static final String PUB_KEY_FILENAME = "my_pub_key";
     public static final String WALLET_CREATION_TIME_FILENAME = "my_creation_time";
     public static final String PASS_CODE_FILENAME = "my_pass_code";
@@ -96,7 +102,7 @@ public class KeyStoreManager {
     public static final String SPEND_LIMIT_FILENAME = "my_spend_limit";
     public static final String FAIL_TIMESTAMP_FILENAME = "my_fail_timestamp";
 
-    public static final int AUTH_DURATION_SEC = 300; //TODO make 300
+    public static final int AUTH_DURATION_SEC = 15; //TODO make 300
 
     private static boolean setData(Activity context, byte[] data, String alias, String alias_file, String alias_iv, int request_code, boolean auth_required) {
         if (alias.equals(alias_file) || alias.equals(alias_iv) || alias_file.equals(alias_iv))
@@ -182,6 +188,7 @@ public class KeyStoreManager {
             Log.e(TAG, Log.getStackTraceString(e));
             Log.e(TAG, "showAuthenticationScreen");
             showAuthenticationScreen(context, request_code);
+            if(alias.equalsIgnoreCase(CANARY_ALIAS) || alias.equalsIgnoreCase(PHRASE_ALIAS)) return NO_AUTH.getBytes();
         } catch (IOException | CertificateException | NoSuchAlgorithmException | UnrecoverableKeyException | NullPointerException |
                 InvalidAlgorithmParameterException | NoSuchPaddingException | KeyStoreException | InvalidKeyException e) {
             e.printStackTrace();
@@ -206,7 +213,7 @@ public class KeyStoreManager {
         KeyguardManager myKM = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
         if (myKM.inKeyguardRestrictedInputMode()) {
             Log.e(TAG, "THE SCREEN IS LOCKED!");
-            return null;
+            return "";
         } else {
             Log.e(TAG, "THE SCREEN IS UNLOCKED!");
         }
@@ -218,6 +225,31 @@ public class KeyStoreManager {
             e.printStackTrace();
         }
 
+        return result;
+    }
+
+    public static boolean putKeyStoreCanary(String strToStore, Activity context, int requestCode) {
+        Log.e(TAG, "putKeyStoreCanary: " + strToStore);
+        if (strToStore == null || strToStore.isEmpty()) return false;
+
+        byte[] strBytes = new byte[0];
+        try {
+            strBytes = strToStore.getBytes("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return strBytes.length != 0 && setData(context, strBytes, CANARY_ALIAS, CANARY_FILENAME, CANARY_IV, requestCode, true);
+    }
+
+    public static String getKeyStoreCanary(final Activity context, int requestCode) {
+        byte[] data = getData(context, CANARY_ALIAS, CANARY_FILENAME, CANARY_IV, requestCode);
+        String result = null;
+        try {
+            result = new String(data, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        Log.e(TAG, "getKeyStoreCanary: " + result);
         return result;
     }
 
@@ -320,6 +352,7 @@ public class KeyStoreManager {
             keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
             keyStore.load(null);
             keyStore.deleteEntry(PHRASE_ALIAS);
+            keyStore.deleteEntry(CANARY_ALIAS);
             keyStore.deleteEntry(PUB_KEY_ALIAS);
             keyStore.deleteEntry(WALLET_CREATION_TIME_ALIAS);
             keyStore.deleteEntry(PASS_CODE_ALIAS);
@@ -344,11 +377,11 @@ public class KeyStoreManager {
         // Create the Confirm Credentials screen. You can customize the title and description. Or
         // we will provide a generic one for you if you leave it null
         KeyguardManager mKeyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
-        Intent intent = mKeyguardManager.createConfirmDeviceCredentialIntent("Authentication required", "The phone has been unlocked for too long");
+        Intent intent = mKeyguardManager.createConfirmDeviceCredentialIntent(context.getString(R.string.auth_required), context.getString(R.string.auth_message));
         if (intent != null) {
             context.startActivityForResult(intent, requestCode);
         } else {
-            Log.e(TAG, "NO PASS SETUP");
+            throw new NullPointerException("no passcode is set");
         }
     }
 

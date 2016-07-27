@@ -64,23 +64,6 @@ import com.breadwallet.wallet.BRWalletManager;
  * THE SOFTWARE.
  */
 
-//@ReportsCrashes(
-//        mailTo = "mihail@breadwallet.com", // my email here
-//        customReportContent = {
-//                ReportField.BRAND,
-//                ReportField.APPLICATION_LOG,
-//                ReportField.DEVICE_FEATURES,
-//                ReportField.APP_VERSION_CODE,
-//                ReportField.APP_VERSION_NAME,
-//                ReportField.ANDROID_VERSION,
-//                ReportField.PACKAGE_NAME,
-//                ReportField.REPORT_ID,
-//                ReportField.BUILD,
-//                ReportField.STACK_TRACE
-//        },
-//        mode = ReportingInteractionMode.TOAST,
-//        resToastText = R.string.crash_toast_text,
-//        formKey = "Test Phone")
 public class BreadWalletApp extends Application {
     private static final String TAG = BreadWalletApp.class.getName();
     public static boolean unlocked = false;
@@ -100,7 +83,6 @@ public class BreadWalletApp extends Application {
         display.getSize(size);
         int DISPLAY_WIDTH_PX = size.x;
         DISPLAY_HEIGHT_PX = size.y;
-//        ACRA.init(this);
         mFingerprintManager = (FingerprintManager) getSystemService(Context.FINGERPRINT_SERVICE);
 
     }

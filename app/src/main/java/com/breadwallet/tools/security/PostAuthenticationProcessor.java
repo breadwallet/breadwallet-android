@@ -110,7 +110,7 @@ public class PostAuthenticationProcessor {
         Log.e(TAG, "onShowPhraseAuth");
         try {
             String phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.SHOW_PHRASE_REQUEST_CODE);
-            if(phrase == null || phrase.isEmpty()) return;
+            if (phrase == null || phrase.isEmpty()) return;
             FragmentRecoveryPhrase.phrase = phrase;
             ((BreadWalletApp) app.getApplicationContext()).promptForAuthentication(app, BRConstants.AUTH_FOR_PHRASE, null, null, null, null);
         } catch (Exception e) {
@@ -166,5 +166,22 @@ public class PostAuthenticationProcessor {
 
     public void setTmpPaymentRequest(PaymentRequestWrapper paymentRequest) {
         this.paymentRequest = paymentRequest;
+    }
+
+    public void onCanaryCheck(IntroActivity introActivity) {
+        String canary = KeyStoreManager.getKeyStoreCanary(introActivity, BRConstants.CANARY_REQUEST_CODE);
+        if (canary.equalsIgnoreCase(KeyStoreManager.NO_AUTH)) return;
+        if (!canary.equalsIgnoreCase(BRConstants.CANARY_STRING)) {
+            String phrase = KeyStoreManager.getKeyStorePhrase(introActivity, 0);
+            if (phrase == null || phrase.isEmpty()) {
+                BRWalletManager m = BRWalletManager.getInstance(introActivity);
+                m.wipeKeyStore();
+                m.wipeWalletButKeystore(introActivity);
+                BRAnimator.resetFragmentAnimator();
+            } else {
+                KeyStoreManager.putKeyStoreCanary(BRConstants.CANARY_STRING, introActivity, 0);
+            }
+        }
+        introActivity.startTheWalletIfExists();
     }
 }

@@ -112,7 +112,7 @@ public class BRAnimator {
                 //            MainActivity.beenThroughSavedInstanceMethod = false;
                 decoderFragmentOn = true;
                 app.activityButtonsEnable(false);
-                CustomPagerAdapter.adapter.showFragments(false);
+                CustomPagerAdapter.adapter.showFragments(false, app);
                 //Disabled inspection: <Expected resource type anim>
                 FragmentTransaction fragmentTransaction = app.getFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_top);
@@ -129,7 +129,7 @@ public class BRAnimator {
         try {
             final MainActivity app = MainActivity.app;
             if (app == null) return;
-            CustomPagerAdapter.adapter.showFragments(false);
+            CustomPagerAdapter.adapter.showFragments(false, app);
 //        Log.e(TAG, "animateScanResultFragment");
 //        MainActivity.beenThroughSavedInstanceMethod = false;
             scanResultFragmentOn = true;
@@ -180,7 +180,7 @@ public class BRAnimator {
             final FragmentManager fragmentManager = context.getFragmentManager();
             if (level == 0) {
                 level++;
-                CustomPagerAdapter.adapter.showFragments(false);
+                CustomPagerAdapter.adapter.showFragments(false, context);
                 context.setBurgerButtonImage(BRConstants.CLOSE);
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 //            fragmentTransaction.setCustomAnimations(R.animator.from_bottom, 0);
@@ -218,7 +218,7 @@ public class BRAnimator {
                         findFragmentByTag(FragmentSettingsAll.class.getName());
                 fragmentTransaction.remove(fragmentSettingsAll);
                 fragmentTransaction.commit();
-                CustomPagerAdapter.adapter.showFragments(true);
+                CustomPagerAdapter.adapter.showFragments(true, context);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -384,7 +384,7 @@ public class BRAnimator {
             if (fragmentDecoder == null) return;
             fragmentManager.beginTransaction().setCustomAnimations(R.animator.from_top, R.animator.to_bottom).
                     remove(fragmentDecoder).commit();
-            CustomPagerAdapter.adapter.showFragments(true);
+            CustomPagerAdapter.adapter.showFragments(true, app);
             app.activityButtonsEnable(true);
         } catch (Exception e) {
             e.printStackTrace();
@@ -396,7 +396,7 @@ public class BRAnimator {
             MainActivity app = MainActivity.app;
             if (app == null) return;
 //        Log.e(TAG, "hideScanResultFragment");
-            CustomPagerAdapter.adapter.showFragments(true);
+            CustomPagerAdapter.adapter.showFragments(true, app);
             scanResultFragmentOn = false;
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -436,7 +436,7 @@ public class BRAnimator {
                         FragmentManager fragmentManager = app.getFragmentManager();
                         fragmentManager.beginTransaction().setCustomAnimations(R.animator.from_top, R.animator.to_bottom).
                                 remove(fragment).commit();
-                        CustomPagerAdapter.adapter.showFragments(true);
+                        CustomPagerAdapter.adapter.showFragments(true, app);
                         app.activityButtonsEnable(true);
                         app.setBurgerButtonImage(0);
                     }

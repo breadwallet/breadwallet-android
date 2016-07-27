@@ -277,7 +277,6 @@ public class PasswordDialogFragment extends DialogFragment {
                 mainFragment.addressEditText;
         if (CustomPagerAdapter.adapter != null && editText != null)
             keyboard.hideSoftInputFromWindow(editText.getWindowToken(), 0);
-//        BreadWalletApp.canceled = true;
     }
 
     public void setFirstTimeTrue() {
@@ -317,8 +316,8 @@ public class PasswordDialogFragment extends DialogFragment {
                         ((BreadWalletApp) getActivity().getApplicationContext()).setUnlocked(true);
                         MainActivity app = MainActivity.app;
                         if (app != null) {
-                            if (!SharedPreferencesManager.getTipsShown(app))
-                                BRTipsManager.showTipsTutorial(app);
+                            BRTipsManager.showTipsTutorial(app);
+
                         }
                         InputMethodManager keyboard = (InputMethodManager) getActivity().
                                 getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -492,7 +491,7 @@ public class PasswordDialogFragment extends DialogFragment {
         Resources res = getResources();
         String tryAgain = res.getQuantityString(R.plurals.try_again,
                 (int) waitTime);
-        String message = String.format(tryAgain, (int) waitTime);
+        String message = String.format(tryAgain, (int) (waitTime == 0 ? 1 : waitTime));
 
         info.setText(message);
         digit_1.setVisibility(View.GONE);
