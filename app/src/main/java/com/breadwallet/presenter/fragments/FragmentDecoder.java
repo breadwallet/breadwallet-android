@@ -89,6 +89,7 @@ public class FragmentDecoder extends Fragment
      * Conversion from screen rotation to JPEG orientation.
      */
     private static boolean accessGranted = true;
+    private static boolean showingText = false;
     private ImageView camera_guide_image;
     private TextView decoderText;
     private ImageButton flashButton;
@@ -194,17 +195,28 @@ public class FragmentDecoder extends Fragment
                             if (Objects.equals(validationString, BRConstants.TEXT_EMPTY)) {
                                 onQRCodeRead((MainActivity) getActivity(), rawResult.getText());
                             } else {
-                                setCameraGuide(BRConstants.CAMERA_GUIDE_RED);
-                                setGuideText(validationString);
+                                if (!showingText) {
+                                    showingText = true;
+                                    setCameraGuide(BRConstants.CAMERA_GUIDE_RED);
+                                    setGuideText(validationString);
+                                    new Handler().postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            showingText = false;
+                                        }
+                                    }, 1000);
+                                }
                                 accessGranted = true;
                             }
                         }
                     } catch (ReaderException ignored) {
-                        setCameraGuide(BRConstants.CAMERA_GUIDE);
+                        if (!showingText)
+                            setCameraGuide(BRConstants.CAMERA_GUIDE);
 //                        Log.e(TAG, "Reader shows an exception! ", ignored);
                         /* Ignored */
                     } catch (NullPointerException | IllegalStateException ex) {
-                        setCameraGuide(BRConstants.CAMERA_GUIDE);
+                        if (!showingText)
+                            setCameraGuide(BRConstants.CAMERA_GUIDE);
                         ex.printStackTrace();
                     } finally {
                         mQrReader.reset();
@@ -214,6 +226,7 @@ public class FragmentDecoder extends Fragment
 
                     }
                     if (rawResult == null) {
+                        if (!showingText)
                         setCameraGuide(BRConstants.CAMERA_GUIDE);
                     }
                 }
@@ -309,7 +322,8 @@ public class FragmentDecoder extends Fragment
             public void onClick(View v) {
 
                 try {
-                    if (mPreviewRequestBuilder == null || mCaptureSession == null) return;
+                    if (mPreviewRequestBuilder == null || mCaptureSession == null)
+                        return;
 
                     if (++flashButtonCount % 2 != 0) {
                         mPreviewRequestBuilder.set(CaptureRequest.FLASH_MODE, CameraMetadata.FLASH_MODE_TORCH);
@@ -335,6 +349,7 @@ public class FragmentDecoder extends Fragment
     public void onResume() {
         super.onResume();
         accessGranted = true;
+        showingText = false;
         new Handler().post(new Runnable() {
             @Override
             public void run() {

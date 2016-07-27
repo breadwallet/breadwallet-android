@@ -57,7 +57,6 @@ import com.breadwallet.tools.animation.SpringAnimator;
 public class FragmentCurrency extends Fragment {
     private static final String TAG = FragmentCurrency.class.getName();
 
-
     private ListView currencyList;
     private Button currencyRefresh;
     private TextView noInternetConnection;
@@ -67,6 +66,7 @@ public class FragmentCurrency extends Fragment {
     private String ISO;
     private float rate;
     public static int lastItemsPosition = 0;
+    @SuppressWarnings("deprecation")
     final GestureDetector gdt = new GestureDetector(new GestureListener());
 
     @Override

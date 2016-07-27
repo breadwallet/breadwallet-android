@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -276,6 +277,48 @@ public class MainActivity extends FragmentActivity implements Observer {
                     if (!KeyStoreManager.getPassCode(app).isEmpty())
                         ((BreadWalletApp) getApplication()).promptForAuthentication(app, BRConstants.AUTH_FOR_GENERAL, null, null, null, null);
                 }
+
+            }
+        });
+        networkErrorBar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                view.setVisibility(View.GONE);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        final MainActivity app = MainActivity.app;
+                        if(app == null) return;
+                        networkErrorBar = (RelativeLayout) app.findViewById(R.id.main_internet_status_bar);
+                        final ConnectivityManager connectivityManager = ((ConnectivityManager) app.getSystemService(Context.CONNECTIVITY_SERVICE));
+                        boolean isConnected = connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
+                        BRPeerManager.getInstance(app).connect();
+                        if (!isConnected) {
+                            app.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    networkErrorBar.setVisibility(View.VISIBLE);
+                                    BRPeerManager.stopSyncingProgressThread();
+                                }
+                            });
+
+                            Log.e(TAG, "Network Not Available ");
+
+                        } else {
+                            app.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    networkErrorBar.setVisibility(View.GONE);
+                                    double progress = BRPeerManager.syncProgress(SharedPreferencesManager.getStartHeight(app));
+                                    if(progress < 1 && progress > 0){
+                                        BRPeerManager.startSyncingProgressThread();
+                                    }
+                                }
+                            });
+                            Log.e(TAG, "Network Available ");
+                        }
+                    }
+                },400);
 
             }
         });

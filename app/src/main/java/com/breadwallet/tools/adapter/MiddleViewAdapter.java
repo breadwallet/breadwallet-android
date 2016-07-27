@@ -41,16 +41,16 @@ public class MiddleViewAdapter {
 
     public static void resetMiddleView(Activity app, String text) {
 //        Log.e(TAG, "in the resetMiddleView: " + text);
-        if(syncing){
+        if (syncing && (BRAnimator.level == 0 || BRAnimator.level == 1)) {
             try {
                 ((BreadWalletApp) app.getApplication()).setTopMiddleView(BRConstants.BREAD_WALLET_TEXT, app.getString(R.string.syncing));
-            } catch (NullPointerException ex){
+            } catch (NullPointerException ex) {
                 ex.printStackTrace();
             }
-                return;
+            return;
         }
 
-        if(text != null){
+        if (text != null) {
             try {
                 ((BreadWalletApp) app.getApplication()).setTopMiddleView(BRConstants.BREAD_WALLET_TEXT, text);
             } catch (Exception e) {
@@ -75,7 +75,7 @@ public class MiddleViewAdapter {
             }
         } else if (BRAnimator.level == 2) {
             try {
-                FragmentSettings myFragment = (FragmentSettings)app.getFragmentManager().findFragmentByTag(FragmentSettings.class.getName());
+                FragmentSettings myFragment = (FragmentSettings) app.getFragmentManager().findFragmentByTag(FragmentSettings.class.getName());
                 if (myFragment != null && myFragment.isVisible()) {
                     ((BreadWalletApp) app.getApplication()).setTopMiddleView(BRConstants.BREAD_WALLET_TEXT, app.getString(R.string.middle_view_settings));
                 } else {
@@ -96,7 +96,7 @@ public class MiddleViewAdapter {
     public static void setSyncing(Activity app, final boolean b) {
         if (app == null) app = MainActivity.app;
         final Activity finalApp = app;
-        if(app == null) return;
+        if (app == null) return;
         app.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -107,7 +107,7 @@ public class MiddleViewAdapter {
 
     }
 
-    public static boolean getSyncing(){
+    public static boolean getSyncing() {
         return syncing;
     }
 }

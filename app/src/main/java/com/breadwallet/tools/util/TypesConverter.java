@@ -3,6 +3,7 @@ package com.breadwallet.tools.util;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 /**
@@ -82,5 +83,12 @@ public class TypesConverter {
 
         ByteBuffer buf = ByteBuffer.wrap(b);
         return buf.getLong();
+    }
+
+    public static  byte[] charsToBytes(char[] chars) {
+        ByteBuffer buf = StandardCharsets.UTF_8.encode(CharBuffer.wrap(chars));
+        byte[] array = new byte[buf.limit()];
+        buf.get(array);
+        return buf.array();
     }
 }

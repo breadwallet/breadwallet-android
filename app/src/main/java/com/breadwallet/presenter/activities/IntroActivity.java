@@ -107,24 +107,7 @@ public class IntroActivity extends FragmentActivity {
 
         setStatusBarColor();
 
-        String canary = KeyStoreManager.getKeyStoreCanary(this, BRConstants.CANARY_REQUEST_CODE);
-        if (canary.equalsIgnoreCase(KeyStoreManager.NO_AUTH)) return;
-        if (!canary.equalsIgnoreCase(BRConstants.CANARY_STRING)) {
-            Log.e(TAG, "!canary.equalsIgnoreCase(BRConstants.CANARY_STRING)");
-            String phrase = KeyStoreManager.getKeyStorePhrase(this, BRConstants.CANARY_REQUEST_CODE);
-            if (phrase.equalsIgnoreCase(KeyStoreManager.NO_AUTH)) return;
-            if (phrase.isEmpty()) {
-                Log.e(TAG, "phrase == null || phrase.isEmpty() : " + phrase);
-                BRWalletManager m = BRWalletManager.getInstance(this);
-                m.wipeKeyStore();
-                m.wipeWalletButKeystore(this);
-                BRAnimator.resetFragmentAnimator();
-            } else {
-                Log.e(TAG, "phrase != null : " + phrase);
-                KeyStoreManager.putKeyStoreCanary(BRConstants.CANARY_STRING, this, 0);
-            }
-        }
-        startTheWalletIfExists();
+        PostAuthenticationProcessor.getInstance().onCanaryCheck(this);
 
     }
 

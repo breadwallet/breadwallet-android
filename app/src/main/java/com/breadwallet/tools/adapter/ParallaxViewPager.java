@@ -14,6 +14,7 @@ import android.util.Log;
 
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.tools.animation.BRAnimator;
 
 /**
  * BreadWallet
@@ -97,7 +98,7 @@ public class ParallaxViewPager extends ViewPager {
 
             @Override
             public void onPageSelected(final int position) {
-                if (secondOnPageChangeListener != null) {
+                if (secondOnPageChangeListener != null && BRAnimator.level == 0) {
                     secondOnPageChangeListener.onPageSelected(position);
                 }
                 MainActivity app = MainActivity.app;

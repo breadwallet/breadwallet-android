@@ -172,16 +172,21 @@ public class PostAuthenticationProcessor {
         String canary = KeyStoreManager.getKeyStoreCanary(introActivity, BRConstants.CANARY_REQUEST_CODE);
         if (canary.equalsIgnoreCase(KeyStoreManager.NO_AUTH)) return;
         if (!canary.equalsIgnoreCase(BRConstants.CANARY_STRING)) {
-            String phrase = KeyStoreManager.getKeyStorePhrase(introActivity, 0);
-            if (phrase == null || phrase.isEmpty()) {
+            Log.e(TAG, "!canary.equalsIgnoreCase(BRConstants.CANARY_STRING)");
+            String phrase = KeyStoreManager.getKeyStorePhrase(introActivity, BRConstants.CANARY_REQUEST_CODE);
+            if (phrase.equalsIgnoreCase(KeyStoreManager.NO_AUTH)) return;
+            if (phrase.isEmpty()) {
+                Log.e(TAG, "phrase == null || phrase.isEmpty() : " + phrase);
                 BRWalletManager m = BRWalletManager.getInstance(introActivity);
                 m.wipeKeyStore();
                 m.wipeWalletButKeystore(introActivity);
                 BRAnimator.resetFragmentAnimator();
             } else {
+                Log.e(TAG, "phrase != null : " + phrase);
                 KeyStoreManager.putKeyStoreCanary(BRConstants.CANARY_STRING, introActivity, 0);
             }
         }
         introActivity.startTheWalletIfExists();
+
     }
 }
