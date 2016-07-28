@@ -175,6 +175,20 @@ static void txDeleted(void *info, UInt256 txHash, int notifyUser, int recommendR
     (*env)->CallStaticVoidMethod(env, _walletManagerClass, mid, (*env)->NewStringUTF(env, strHash));
 }
 
+UInt512 getPrivKeyFromPhrase(jbyteArray phrase, JNIEnv *env){
+    size_t phraseLength = (size_t) (*env)->GetArrayLength(env, phrase);
+    char buf[phraseLength + 1];
+     jbyte *bytePhrase = (*env)->GetByteArrayElements(env, phrase, 0); 
+    UInt512 key = UINT512_ZERO;
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "buf: %s",buf);
+    memset(buf, 0, sizeof(buf));
+    memcpy(buf, bytePhrase, phraseLength);
+    BRBIP39DeriveKey(key.u8, buf, NULL);
+    memset(buf, 0, sizeof(buf));
+    (*env)->ReleaseByteArrayElements(env, phrase, bytePhrase, JNI_ABORT);
+    return key;
+}
+
 JNIEXPORT jbyteArray
 Java_com_breadwallet_wallet_BRWalletManager_encodeSeed(JNIEnv *env, jobject thiz, jbyteArray seed,
                                                        jobjectArray stringArray) {
@@ -200,7 +214,7 @@ Java_com_breadwallet_wallet_BRWalletManager_encodeSeed(JNIEnv *env, jobject thiz
                   (size_t) seedLength);
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "result: %s", result);
     jbyte *phraseJbyte = (jbyte *) result;
-    int size = sizeof(result);
+    int size = sizeof(result)-1;
     jbyteArray bytePhrase = (*env)->NewByteArray(env, size);
     (*env)->SetByteArrayRegion(env, bytePhrase, 0, size, phraseJbyte);
 
@@ -271,12 +285,7 @@ Java_com_breadwallet_wallet_BRWalletManager_getMasterPubKey(JNIEnv *env, jobject
                                                             jbyteArray phrase) {
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "getMasterPubKey");
     (*env)->GetArrayLength(env, phrase);
-    jbyte *bytePhrase = (*env)->GetByteArrayElements(env, phrase, 0);
-    const char *rawPhrase = (const char *) bytePhrase;
-//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "rawPhrase: %s", rawPhrase);
-    UInt512 key = UINT512_ZERO;
-
-    BRBIP39DeriveKey(key.u8, rawPhrase, NULL);
+    UInt512 key = getPrivKeyFromPhrase(phrase, env);
 
     BRMasterPubKey pubKey = BRBIP32MasterPubKey(key.u8, sizeof(key));
     size_t pubKeySize = sizeof(pubKey);
@@ -285,7 +294,6 @@ Java_com_breadwallet_wallet_BRWalletManager_getMasterPubKey(JNIEnv *env, jobject
 
     (*env)->SetByteArrayRegion(env, result, 0, (jsize) pubKeySize, (const jbyte *) pubKeyBytes);
     //release everything
-    (*env)->ReleaseByteArrayElements(env, phrase, bytePhrase, JNI_ABORT);
     return result;
 }
 
@@ -611,14 +619,12 @@ Java_com_breadwallet_wallet_BRWalletManager_validateRecoveryPhrase(JNIEnv *env, 
         (*env)->DeleteLocalRef(env, string);
     }
 
-    (*env)->GetArrayLength(env, jPhrase);
-     jbyte *bytePhrase = (*env)->GetByteArrayElements(env, jPhrase, 0); 
-    const char *str = (const char *) bytePhrase;
-    int result = BRBIP39PhraseIsValid((const char **) wordList, str);
+    const char *str = (*env)->GetStringUTFChars(env, jPhrase, NULL);
+    int result = BRBIP39PhraseIsValid((const char **)wordList, str);
 
-    (*env)->ReleaseByteArrayElements(env, jPhrase, bytePhrase, JNI_ABORT);
+    (*env)->ReleaseStringUTFChars(env, jPhrase, str);
 
-    return (jboolean) (result ? JNI_TRUE : JNI_FALSE);
+    return (jboolean)(result ? JNI_TRUE : JNI_FALSE);
 }
 
 JNIEXPORT jstring JNICALL
@@ -650,13 +656,7 @@ Java_com_breadwallet_wallet_BRWalletManager_publishSerializedTransaction(JNIEnv 
     BRTransaction *tmpTx = BRTransactionParse((uint8_t *) byteTx, (size_t) txLength);
 
     if (!tmpTx) return JNI_FALSE;
-
-    (*env)->GetArrayLength(env, phrase);
-     jbyte *bytePhrase = (*env)->GetByteArrayElements(env, phrase, 0); 
-    const char *rawString = (const char *) bytePhrase;
-    UInt512 key = UINT512_ZERO;
-    BRBIP39DeriveKey(key.u8, rawString, NULL);
-
+    UInt512 key = getPrivKeyFromPhrase(phrase, env);
     size_t seedSize = sizeof(key);
 
     BRWalletSignTransaction(_wallet, tmpTx, key.u8, seedSize);
@@ -664,7 +664,7 @@ Java_com_breadwallet_wallet_BRWalletManager_publishSerializedTransaction(JNIEnv 
                         BRTransactionIsSigned(tmpTx));
     if (!tmpTx) return JNI_FALSE;
     BRPeerManagerPublishTx(_peerManager, tmpTx, NULL, callback);
-    (*env)->ReleaseByteArrayElements(env, phrase, bytePhrase, JNI_ABORT);
+
     return JNI_TRUE;
 }
 

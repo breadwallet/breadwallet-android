@@ -102,19 +102,8 @@ public class IntroRecoverWalletFragment extends Fragment {
                     m.wipeWalletButKeystore(getActivity());
                     m.wipeKeyStore();
 
-                    boolean success = KeyStoreManager.putKeyStorePhrase(cleanPhrase, getActivity(),
-                            BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE);
-                    if (!success) {
-                        PostAuthenticationProcessor.getInstance().setPhraseForKeyStore(cleanPhrase);
-                        return;
-                    }
-
-                    byte[] pubKey = m.getMasterPubKey(cleanPhrase);
-                    KeyStoreManager.putMasterPublicKey(pubKey, getActivity());
-                    IntroActivity introActivity = (IntroActivity) getActivity();
-                    getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                    introActivity.startMainActivity();
-                    if (!introActivity.isDestroyed()) introActivity.finish();
+                    PostAuthenticationProcessor.getInstance().setPhraseForKeyStore(cleanPhrase);
+                    PostAuthenticationProcessor.getInstance().onRecoverWalletAuth((IntroActivity) getActivity());
                 } else {
                     String message = getResources().getString(R.string.bad_recovery_phrase);
                     String[] words = cleanPhrase.split(" ");

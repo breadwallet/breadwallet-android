@@ -21,6 +21,7 @@ import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRStringFormatter;
 import com.breadwallet.tools.manager.CurrencyManager;
@@ -71,8 +72,6 @@ public class FragmentSettings extends Fragment {
 
         app = MainActivity.app;
         fragmentSettings = this;
-//        FragmentCurrency fragmentCurrency = (FragmentCurrency) getActivity().getFragmentManager().
-//                findFragmentByTag(FragmentCurrency.class.getName());
         initList();
         RelativeLayout about = (RelativeLayout) rootView.findViewById(R.id.about);
         TextView currencyName = (TextView) rootView.findViewById(R.id.three_letters_currency);
@@ -130,10 +129,7 @@ public class FragmentSettings extends Fragment {
                             .setMessage(getResources().getString(R.string.dialog_do_not_let_anyone))
                             .setPositiveButton(getResources().getString(R.string.show), new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
-                                    String phrase = KeyStoreManager.getKeyStorePhrase(getActivity(), BRConstants.SHOW_PHRASE_REQUEST_CODE);
-                                    if(phrase == null || phrase.isEmpty()) return;
-                                    FragmentRecoveryPhrase.phrase = phrase;
-                                    ((BreadWalletApp) getActivity().getApplicationContext()).promptForAuthentication(getActivity(), BRConstants.AUTH_FOR_PHRASE, null, null, null, null);
+                                    PostAuthenticationProcessor.getInstance().onShowPhraseAuth((MainActivity) getActivity());
                                 }
                             })
                             .setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {

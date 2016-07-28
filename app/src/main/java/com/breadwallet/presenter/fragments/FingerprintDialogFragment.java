@@ -37,6 +37,7 @@ import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.security.FingerprintUiHelper;
@@ -184,23 +185,7 @@ public class FingerprintDialogFragment extends DialogFragment
         if (mode == BRConstants.AUTH_FOR_PHRASE) {
             BRAnimator.animateSlideToLeft((MainActivity) getActivity(), new FragmentRecoveryPhrase(), new FragmentSettings());
         } else if (mode == BRConstants.AUTH_FOR_PAY && request != null) {
-            BRWalletManager walletManager = BRWalletManager.getInstance(getActivity());
-            String seed = KeyStoreManager.getKeyStorePhrase(getActivity(), BRConstants.PAY_REQUEST_CODE);
-            if (seed != null && !seed.isEmpty()) {
-                boolean success = false;
-                if (request.serializedTx != null) {
-                    success = walletManager.publishSerializedTransaction(request.serializedTx, seed);
-                    request.serializedTx = null;
-                }
-                if (!success) {
-                    ((BreadWalletApp) getActivity().getApplication()).showCustomToast(getActivity(),
-                            getActivity().getString(R.string.failed_to_send), MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
-                    return;
-                }
-            } else {
-                return;
-            }
-            BRAnimator.hideScanResultFragment();
+            PostAuthenticationProcessor.getInstance().onPublishTxAuth((MainActivity) getActivity());
         } else if (mode == BRConstants.AUTH_FOR_PAYMENT_PROTOCOL && paymentRequest != null) {
             if (paymentRequest.paymentURL == null || paymentRequest.paymentURL.isEmpty()) return;
             new PaymentProtocolPostPaymentTask(paymentRequest).execute();

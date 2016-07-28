@@ -24,6 +24,8 @@ import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.security.KeyStoreManager;
 
+import java.util.Arrays;
+
 /**
  * BreadWallet
  * <p/>
@@ -54,7 +56,7 @@ public class FragmentRecoveryPhrase extends Fragment {
     private TextView thePhrase;
     private ImageView checkBox;
     private boolean checked = false;
-    public static String phrase;
+    public static byte[] phrase;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -89,7 +91,7 @@ public class FragmentRecoveryPhrase extends Fragment {
             });
         }
 
-        if (phrase == null || phrase.isEmpty()) {
+        if (phrase.length == 0) {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -98,15 +100,16 @@ public class FragmentRecoveryPhrase extends Fragment {
             }, 10);
             return rootView;
         }
-        ;
-        if (phrase.charAt(phrase.length() - 1) == '\0') {
+        String cleanPhrase = new String(phrase);
+        Arrays.fill(phrase, (byte) 0);
+        if (cleanPhrase.charAt(cleanPhrase.length() - 1) == '\0') {
             ((BreadWalletApp) getActivity().getApplication()).showCustomDialog(getString(R.string.warning),
                     getActivity().getString(R.string.phrase_error), getString(R.string.close));
         }
 
-        thePhrase.setText(phrase);
-        if (phrase.charAt(0) > 0x3000)
-            thePhrase.setText(phrase.replace(" ", "\u3000"));
+        thePhrase.setText(cleanPhrase);
+        if (cleanPhrase.charAt(0) > 0x3000)
+            thePhrase.setText(cleanPhrase.replace(" ", "\u3000"));
 
         return rootView;
     }

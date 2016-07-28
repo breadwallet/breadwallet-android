@@ -60,7 +60,7 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
 
     public static boolean waiting = true;
     public static boolean sent = false;
-    public static Map<String, String> pendingErrorMessages;
+    public static Map<String, String> pendingErrorMessages = new HashMap<>();
 
     public PaymentProtocolPostPaymentTask(PaymentRequestWrapper paymentRequest) {
         this.paymentRequest = paymentRequest;
@@ -71,7 +71,6 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
         InputStream in;
         final MainActivity app = MainActivity.app;
         try {
-            pendingErrorMessages = new HashMap<>();
             waiting = true;
             sent = false;
             Log.e(TAG, "the uri: " + paymentRequest.paymentURL);
@@ -102,13 +101,8 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
             }
 
             message = RequestHandler.parsePaymentACK(serializedBytes);
-            String phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE);
-            if (phrase == null || phrase.isEmpty()) {
-                PostAuthenticationProcessor.getInstance().setTmpPaymentRequest(paymentRequest);
-                return null;
-            }
-            BRWalletManager.getInstance(app).publishSerializedTransaction(paymentRequest.serializedTx, phrase);
-            sent = true;
+            PostAuthenticationProcessor.getInstance().setTmpPaymentRequest(paymentRequest);
+            PostAuthenticationProcessor.getInstance().onPaymentProtocolRequest(app);
         } catch (Exception e) {
             if (e instanceof java.net.UnknownHostException) {
                 if (app != null) {
@@ -151,7 +145,7 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
 
     }
 
-    public static void handleMessage(){
+    public static void handleMessage() {
         final MainActivity app = MainActivity.app;
         if (app != null && message != null) {
             if (!message.isEmpty()) {

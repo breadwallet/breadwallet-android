@@ -52,7 +52,7 @@ model {
                 ndk {
                     CFlags.addAll(['-DBITCOIN_TESTNET=1'])
                     minifyEnabled = false
-                    debuggable = false
+                    debuggable = true
                 }
             }
         }

@@ -10,7 +10,9 @@ import android.widget.Button;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.IntroActivity;
+import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.wallet.BRWalletManager;
 
 /**
@@ -59,9 +61,7 @@ public class IntroNewWalletFragment extends Fragment {
                             BRWalletManager m = BRWalletManager.getInstance(getActivity());
                             m.wipeWalletButKeystore(getActivity());
                             m.wipeKeyStore();
-                            boolean success = m.generateRandomSeed();
-                            if (success)
-                                ((IntroActivity) getActivity()).showWarningFragment();
+                            PostAuthenticationProcessor.getInstance().onCreateWalletAuth((IntroActivity) getActivity());
                         }
                     });
                 }

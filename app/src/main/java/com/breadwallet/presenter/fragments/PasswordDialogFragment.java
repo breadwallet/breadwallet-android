@@ -57,6 +57,7 @@ import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRTipsManager;
+import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRStringFormatter;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
@@ -68,6 +69,7 @@ import com.breadwallet.tools.security.PassCodeManager;
 import com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask;
 import com.breadwallet.wallet.BRWalletManager;
 
+import java.util.Arrays;
 import java.util.Locale;
 
 public class PasswordDialogFragment extends DialogFragment {
@@ -367,24 +369,7 @@ public class PasswordDialogFragment extends DialogFragment {
                 } else if (mode == BRConstants.AUTH_FOR_LIMIT) {
                     BRAnimator.animateSlideToLeft((MainActivity) getActivity(), new FragmentSpendLimit(), new FragmentSettings());
                 } else if (mode == BRConstants.AUTH_FOR_PAY && request != null) {
-                    BRWalletManager walletManager = BRWalletManager.getInstance(getActivity());
-                    String seed = KeyStoreManager.getKeyStorePhrase(getActivity(), BRConstants.PAY_REQUEST_CODE);
-                    if (seed != null && !seed.isEmpty()) {
-                        boolean success = false;
-                        if (request.serializedTx != null) {
-                            success = walletManager.publishSerializedTransaction(request.serializedTx, seed);
-                            request.serializedTx = null;
-                        }
-                        if (!success) {
-                            ((BreadWalletApp) getActivity().getApplication()).showCustomToast(getActivity(),
-                                    "Failed to send", MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
-                            return false;
-                        }
-                    } else {
-                        return false;
-                    }
-                    seed = null;
-                    BRAnimator.hideScanResultFragment();
+                    PostAuthenticationProcessor.getInstance().onPublishTxAuth((MainActivity) getActivity());
                 } else if (mode == BRConstants.AUTH_FOR_PAYMENT_PROTOCOL && paymentRequest != null) {
                     if (paymentRequest.paymentURL == null || paymentRequest.paymentURL.isEmpty())
                         return false;

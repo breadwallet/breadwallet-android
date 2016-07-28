@@ -18,6 +18,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
 import com.breadwallet.wallet.BRWalletManager;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 
 /**
@@ -69,15 +70,7 @@ public class PostAuthenticationProcessor {
         Log.e(TAG, "onCreateWalletAuth");
         boolean success = BRWalletManager.getInstance(app).generateRandomSeed();
         if (success) {
-            try {
-                app.showWarningFragment();
-            } catch (Exception e) {
-                BRWalletManager m = BRWalletManager.getInstance(app);
-                m.wipeKeyStore();
-                m.wipeWalletButKeystore(app);
-                BRAnimator.resetFragmentAnimator();
-                app.finish();
-            }
+            app.showWarningFragment();
         } else {
             throw new NullPointerException("failed to generate seed");
         }
@@ -108,9 +101,10 @@ public class PostAuthenticationProcessor {
 
     public void onShowPhraseAuth(MainActivity app) {
         Log.e(TAG, "onShowPhraseAuth");
+        byte[] phrase = new byte[0];
         try {
-            String phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.SHOW_PHRASE_REQUEST_CODE);
-            if (phrase == null || phrase.isEmpty()) return;
+            phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.SHOW_PHRASE_REQUEST_CODE);
+            if (phrase.length == 0) return;
             FragmentRecoveryPhrase.phrase = phrase;
             ((BreadWalletApp) app.getApplicationContext()).promptForAuthentication(app, BRConstants.AUTH_FOR_PHRASE, null, null, null, null);
         } catch (Exception e) {
@@ -119,32 +113,43 @@ public class PostAuthenticationProcessor {
     }
 
     public void onPublishTxAuth(MainActivity app) {
-        Log.e(TAG, "onPublishTxAuth");
+        BRWalletManager walletManager = BRWalletManager.getInstance(app);
+        byte[] seed = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAY_REQUEST_CODE);
         try {
-            if (this.tmpTx != null) {
-                String seed = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAY_REQUEST_CODE);
-                boolean success = BRWalletManager.getInstance(app).publishSerializedTransaction(tmpTx, seed);
-                tmpTx = null;
-                BRAnimator.hideScanResultFragment();
-                if (!success)
-                    ((BreadWalletApp) app.getApplication()).showCustomToast(app, app.getString(R.string.failed_to_send), MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
+            if (seed.length != 0) {
+                boolean success = false;
+                if (tmpTx != null) {
+
+                    success = walletManager.publishSerializedTransaction(tmpTx, seed);
+                    tmpTx = null;
+                }
+                if (!success) {
+                    ((BreadWalletApp) app.getApplication()).showCustomToast(app,
+                            app.getString(R.string.failed_to_send), MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
+                    return;
+                }
             } else {
-                Log.e(TAG, "this.tmpTxObject is null!!!!!!!!!!!!!");
+                return;
             }
+
+            BRAnimator.hideScanResultFragment();
         } finally {
-            tmpTx = null;
+            Arrays.fill(seed, (byte) 0);
         }
     }
 
     public void onPaymentProtocolRequest(MainActivity app) {
+        byte[] phrase = new byte[0];
         try {
-            String phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE);
-            if (phrase == null || phrase.isEmpty() || paymentRequest.serializedTx == null)
+            phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE);
+            if (phrase == null || phrase.length == 0 || paymentRequest.serializedTx == null)
                 return;
             BRWalletManager.getInstance(app).publishSerializedTransaction(paymentRequest.serializedTx, phrase);
             PaymentProtocolPostPaymentTask.sent = true;
         } finally {
             paymentRequest = null;
+            if (phrase != null)
+                Arrays.fill(phrase, (byte) 0);
         }
 
     }
@@ -173,16 +178,17 @@ public class PostAuthenticationProcessor {
         if (canary.equalsIgnoreCase(KeyStoreManager.NO_AUTH)) return;
         if (!canary.equalsIgnoreCase(BRConstants.CANARY_STRING)) {
             Log.e(TAG, "!canary.equalsIgnoreCase(BRConstants.CANARY_STRING)");
-            String phrase = KeyStoreManager.getKeyStorePhrase(introActivity, BRConstants.CANARY_REQUEST_CODE);
-            if (phrase.equalsIgnoreCase(KeyStoreManager.NO_AUTH)) return;
-            if (phrase.isEmpty()) {
-                Log.e(TAG, "phrase == null || phrase.isEmpty() : " + phrase);
+            byte[] phrase = KeyStoreManager.getKeyStorePhrase(introActivity, BRConstants.CANARY_REQUEST_CODE);
+            String strPhrase = new String(phrase);
+            if (strPhrase.equalsIgnoreCase(KeyStoreManager.NO_AUTH)) return;
+            if (strPhrase.isEmpty()) {
+                Log.e(TAG, "phrase == null || phrase.isEmpty() : " + strPhrase);
                 BRWalletManager m = BRWalletManager.getInstance(introActivity);
                 m.wipeKeyStore();
                 m.wipeWalletButKeystore(introActivity);
                 BRAnimator.resetFragmentAnimator();
             } else {
-                Log.e(TAG, "phrase != null : " + phrase);
+                Log.e(TAG, "phrase != null : " + strPhrase);
                 KeyStoreManager.putKeyStoreCanary(BRConstants.CANARY_STRING, introActivity, 0);
             }
         }

@@ -326,7 +326,7 @@ public class KeyStoreManager {
         if (!BRWalletManager.getInstance(activity).validatePhrase(activity, normalizedPhrase))
             return false;
         BRWalletManager m = BRWalletManager.getInstance(activity);
-        byte[] pubKey = m.getMasterPubKey(normalizedPhrase);
+        byte[] pubKey = m.getMasterPubKey(normalizedPhrase.getBytes());
         byte[] pubKeyFromKeyStore = KeyStoreManager.getMasterPublicKey(activity);
         return Arrays.equals(pubKey, pubKeyFromKeyStore);
     }
