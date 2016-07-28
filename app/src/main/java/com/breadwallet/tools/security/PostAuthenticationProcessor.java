@@ -71,8 +71,6 @@ public class PostAuthenticationProcessor {
         boolean success = BRWalletManager.getInstance(app).generateRandomSeed();
         if (success) {
             app.showWarningFragment();
-        } else {
-            throw new NullPointerException("failed to generate seed");
         }
     }
 
@@ -91,17 +89,16 @@ public class PostAuthenticationProcessor {
                 app.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 app.startMainActivity();
                 if (!app.isDestroyed()) app.finish();
+                phraseForKeyStore = null;
             }
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            phraseForKeyStore = null;
         }
     }
 
     public void onShowPhraseAuth(MainActivity app) {
         Log.e(TAG, "onShowPhraseAuth");
-        byte[] phrase = new byte[0];
+        byte[] phrase;
         try {
             phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.SHOW_PHRASE_REQUEST_CODE);
             if (phrase.length == 0) return;

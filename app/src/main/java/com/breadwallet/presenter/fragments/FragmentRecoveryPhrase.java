@@ -102,7 +102,7 @@ public class FragmentRecoveryPhrase extends Fragment {
         }
         String cleanPhrase = new String(phrase);
         Arrays.fill(phrase, (byte) 0);
-        if (cleanPhrase.charAt(cleanPhrase.length() - 1) == '\0') {
+        if (cleanPhrase.split(" ").length == 12 && cleanPhrase.charAt(cleanPhrase.length() - 1) == '\0') {
             ((BreadWalletApp) getActivity().getApplication()).showCustomDialog(getString(R.string.warning),
                     getActivity().getString(R.string.phrase_error), getString(R.string.close));
         }

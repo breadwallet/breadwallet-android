@@ -28,6 +28,7 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.WordsReader;
+import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.util.List;
@@ -111,6 +112,7 @@ public class FragmentWipeWallet extends Fragment {
                 if (KeyStoreManager.phraseIsValid(cleanPhrase , getActivity())) {
                     m.wipeKeyStore();
                     m.wipeWalletButKeystore(getActivity());
+                    BRPeerManager.stopSyncingProgressThread();
                     startIntroActivity();
                     BRAnimator.resetFragmentAnimator();
                 } else {
