@@ -180,7 +180,6 @@ UInt512 getPrivKeyFromPhrase(jbyteArray phrase, JNIEnv *env){
     char buf[phraseLength + 1];
      jbyte *bytePhrase = (*env)->GetByteArrayElements(env, phrase, 0); 
     UInt512 key = UINT512_ZERO;
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "buf: %s",buf);
     memset(buf, 0, sizeof(buf));
     memcpy(buf, bytePhrase, phraseLength);
     BRBIP39DeriveKey(key.u8, buf, NULL);

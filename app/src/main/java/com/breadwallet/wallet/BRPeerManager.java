@@ -49,7 +49,6 @@ public class BRPeerManager {
     private static Activity ctx;
 
     private BRPeerManager() {
-        syncTask = new SyncProgressTask();
     }
 
     public static BRPeerManager getInstance(Activity context) {
@@ -190,6 +189,16 @@ public class BRPeerManager {
     }
 
     public static void startSyncingProgressThread() {
+        try {
+            if (syncTask != null) {
+                syncTask.setRunning(false);
+                syncTask.interrupt();
+            }
+            syncTask = new SyncProgressTask();
+            syncTask.start();
+        } catch (IllegalThreadStateException ex) {
+            ex.printStackTrace();
+        }
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) {
             if (!((BreadWalletApp) ctx.getApplication()).isNetworkAvailable(ctx)) return;
@@ -207,15 +216,7 @@ public class BRPeerManager {
                 }
             });
         }
-        try {
-            if (syncTask != null) {
-                syncTask.interrupt();
-            }
-            syncTask = new SyncProgressTask();
-            syncTask.start();
-        } catch (IllegalThreadStateException ex) {
-            ex.printStackTrace();
-        }
+
     }
 
     public static void stopSyncingProgressThread() {

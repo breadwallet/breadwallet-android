@@ -85,7 +85,6 @@ public class PostAuthenticationProcessor {
             if (phraseForKeyStore.length() != 0) {
                 byte[] pubKey = BRWalletManager.getInstance(app).getMasterPubKey(phraseForKeyStore.getBytes());
                 KeyStoreManager.putMasterPublicKey(pubKey, app);
-//                    Log.w(TAG, "The phrase from keystore is: " + KeyStoreManager.getKeyStoreString(getActivity()));
                 app.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 app.startMainActivity();
                 if (!app.isDestroyed()) app.finish();
@@ -101,7 +100,8 @@ public class PostAuthenticationProcessor {
         byte[] phrase;
         try {
             phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.SHOW_PHRASE_REQUEST_CODE);
-            if (phrase.length == 0) return;
+            Log.e(TAG, "phrase.length: " + phrase.length);
+            if (phrase.length < 10) return;
             FragmentRecoveryPhrase.phrase = phrase;
             ((BreadWalletApp) app.getApplicationContext()).promptForAuthentication(app, BRConstants.AUTH_FOR_PHRASE, null, null, null, null);
         } catch (Exception e) {
@@ -116,7 +116,6 @@ public class PostAuthenticationProcessor {
             if (seed.length != 0) {
                 boolean success = false;
                 if (tmpTx != null) {
-
                     success = walletManager.publishSerializedTransaction(tmpTx, seed);
                     tmpTx = null;
                 }
@@ -128,7 +127,6 @@ public class PostAuthenticationProcessor {
             } else {
                 return;
             }
-
             BRAnimator.hideScanResultFragment();
         } finally {
             Arrays.fill(seed, (byte) 0);
@@ -136,18 +134,13 @@ public class PostAuthenticationProcessor {
     }
 
     public void onPaymentProtocolRequest(MainActivity app) {
-        byte[] phrase = new byte[0];
-        try {
-            phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE);
-            if (phrase == null || phrase.length == 0 || paymentRequest.serializedTx == null)
-                return;
-            BRWalletManager.getInstance(app).publishSerializedTransaction(paymentRequest.serializedTx, phrase);
-            PaymentProtocolPostPaymentTask.sent = true;
-        } finally {
-            paymentRequest = null;
-            if (phrase != null)
-                Arrays.fill(phrase, (byte) 0);
-        }
+        byte[] phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE);
+        if (phrase == null || phrase.length < 10 || paymentRequest.serializedTx == null)
+            return;
+        BRWalletManager.getInstance(app).publishSerializedTransaction(paymentRequest.serializedTx, phrase);
+        PaymentProtocolPostPaymentTask.sent = true;
+        Arrays.fill(phrase, (byte) 0);
+        paymentRequest = null;
 
     }
 
