@@ -25,6 +25,7 @@ import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.WordsReader;
@@ -109,12 +110,13 @@ public class FragmentWipeWallet extends Fragment {
                     }
                 }, 500);
                 String cleanPhrase = WordsReader.cleanPhrase(getActivity(), recoveryPhraseEditText.getText().toString().trim().toLowerCase());
-                if (KeyStoreManager.phraseIsValid(cleanPhrase , getActivity())) {
+                if (KeyStoreManager.phraseIsValid(cleanPhrase, getActivity())) {
                     m.wipeKeyStore();
                     m.wipeWalletButKeystore(getActivity());
                     BRPeerManager.stopSyncingProgressThread();
                     startIntroActivity();
                     BRAnimator.resetFragmentAnimator();
+                    SharedPreferencesManager.putTipsShown(getActivity(), true);
                 } else {
                     String message = getResources().getString(R.string.bad_recovery_phrase);
                     String[] words = cleanPhrase.split(" ");
