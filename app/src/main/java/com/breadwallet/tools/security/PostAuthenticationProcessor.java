@@ -111,7 +111,10 @@ public class PostAuthenticationProcessor {
 
     public void onPublishTxAuth(MainActivity app) {
         BRWalletManager walletManager = BRWalletManager.getInstance(app);
-        byte[] seed = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAY_REQUEST_CODE);
+        byte[] rawSeed = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAY_REQUEST_CODE);
+        if (rawSeed.length < 10) return;
+        byte[] seed = Arrays.copyOf(rawSeed, rawSeed.length + 1);
+        seed[seed.length - 1] = 0;
         try {
             if (seed.length != 0) {
                 boolean success = false;
@@ -121,7 +124,8 @@ public class PostAuthenticationProcessor {
                 }
                 if (!success) {
                     ((BreadWalletApp) app.getApplication()).showCustomToast(app,
-                            app.getString(R.string.failed_to_send), MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
+                            app.getString(R.string.failed_to_send),
+                            MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
                     return;
                 }
             } else {
@@ -130,16 +134,21 @@ public class PostAuthenticationProcessor {
             BRAnimator.hideScanResultFragment();
         } finally {
             Arrays.fill(seed, (byte) 0);
+            Arrays.fill(rawSeed, (byte) 0);
         }
     }
 
     public void onPaymentProtocolRequest(MainActivity app) {
-        byte[] phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE);
-        if (phrase == null || phrase.length < 10 || paymentRequest.serializedTx == null)
+        byte[] rawSeed = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE);
+        if (rawSeed == null || rawSeed.length < 10 || paymentRequest.serializedTx == null)
             return;
-        BRWalletManager.getInstance(app).publishSerializedTransaction(paymentRequest.serializedTx, phrase);
+        if (rawSeed.length < 10) return;
+        byte[] seed = Arrays.copyOf(rawSeed, rawSeed.length + 1);
+        seed[seed.length - 1] = 0;
+        BRWalletManager.getInstance(app).publishSerializedTransaction(paymentRequest.serializedTx, seed);
         PaymentProtocolPostPaymentTask.sent = true;
-        Arrays.fill(phrase, (byte) 0);
+        Arrays.fill(rawSeed, (byte) 0);
+        Arrays.fill(seed, (byte) 0);
         paymentRequest = null;
 
     }
