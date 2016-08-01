@@ -72,8 +72,6 @@ public class IntroRecoverWalletFragment extends Fragment {
         View rootView = inflater.inflate(
                 R.layout.intro_fragment_recover_wallet, container, false);
 
-        keyboard = (InputMethodManager) getActivity().
-                getSystemService(Context.INPUT_METHOD_SERVICE);
         recoverButton = (Button) rootView.findViewById(R.id.recover_button);
         editText = (EditText) rootView.findViewById(R.id.recover_wallet_edit_text);
         editText.setText("");
@@ -98,11 +96,13 @@ public class IntroRecoverWalletFragment extends Fragment {
                 String cleanPhrase = WordsReader.cleanPhrase(getActivity(), phraseToCheck);
 
                 if (BRWalletManager.getInstance(getActivity()).validatePhrase(getActivity(), cleanPhrase)) {
+                    showKeyBoard(false);
                     BRWalletManager m = BRWalletManager.getInstance(getActivity());
                     m.wipeWalletButKeystore(getActivity());
                     m.wipeKeyStore();
                     PostAuthenticationProcessor.getInstance().setPhraseForKeyStore(cleanPhrase);
                     PostAuthenticationProcessor.getInstance().onRecoverWalletAuth((IntroActivity) getActivity());
+
                 } else {
                     String message = getResources().getString(R.string.bad_recovery_phrase);
                     String[] words = cleanPhrase.split(" ");
@@ -162,29 +162,24 @@ public class IntroRecoverWalletFragment extends Fragment {
 
     @Override
     public void onResume() {
-        if (editText != null) {
-            (new Handler()).postDelayed(new Runnable() {
-
-                public void run() {
-                    editText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
-                    editText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
-
-                }
-            }, 100);
-
-        }
-
         if (Utils.isUsingCustomInputMethod(getActivity())) {
             disableEditText();
         } else {
             enableEditText();
         }
+
         super.onResume();
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        ((BreadWalletApp) getActivity().getApplication()).hideKeyboard(getActivity());
+    public void showKeyBoard(boolean b) {
+        if (b) {
+            if (editText != null) {
+                editText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
+                editText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
+            }
+        } else {
+            ((BreadWalletApp) getActivity().getApplication()).hideKeyboard(getActivity());
+        }
+
     }
 }

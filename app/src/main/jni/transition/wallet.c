@@ -201,7 +201,7 @@ Java_com_breadwallet_wallet_BRWalletManager_encodeSeed(JNIEnv *env, jobject thiz
                   (size_t) seedLength);
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "result: %s", result);
     jbyte *phraseJbyte = (jbyte *) result;
-    int size = sizeof(result)-1;
+    int size = sizeof(result) - 1;
     jbyteArray bytePhrase = (*env)->NewByteArray(env, size);
     (*env)->SetByteArrayRegion(env, bytePhrase, 0, size, phraseJbyte);
 
@@ -272,14 +272,10 @@ Java_com_breadwallet_wallet_BRWalletManager_getMasterPubKey(JNIEnv *env, jobject
                                                             jbyteArray phrase) {
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "getMasterPubKey");
     (*env)->GetArrayLength(env, phrase);
-    size_t phraseLength = (size_t) (*env)->GetArrayLength(env, phrase);
-    char buf[phraseLength + 1];
-     jbyte *bytePhrase = (*env)->GetByteArrayElements(env, phrase, 0); 
+    jbyte *bytePhrase = (*env)->GetByteArrayElements(env, phrase, 0);
     UInt512 key = UINT512_ZERO;
-    memset(buf, 0, sizeof(buf));
-    memcpy(buf, bytePhrase, phraseLength);
-    BRBIP39DeriveKey(key.u8, buf, NULL);
-    memset(buf, 0, sizeof(buf));
+    char *charPhrase = (char *) bytePhrase;
+    BRBIP39DeriveKey(key.u8, charPhrase, NULL);
     BRMasterPubKey pubKey = BRBIP32MasterPubKey(key.u8, sizeof(key));
     size_t pubKeySize = sizeof(pubKey);
     jbyte *pubKeyBytes = (jbyte *) &pubKey;
@@ -401,8 +397,6 @@ JNIEXPORT jobjectArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTr
 
         int inCountTemp = (int) transactions_sqlite[i]->inCount;
         jobjectArray JfromAddresses = (*env)->NewObjectArray(env, inCountTemp, stringClass, 0);
-
-//        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "JfromAddresses: %d", (*env)->GetArrayLength(env, JfromAddresses));
 
         int inCountAfterFilter = 0;
 
@@ -613,11 +607,11 @@ Java_com_breadwallet_wallet_BRWalletManager_validateRecoveryPhrase(JNIEnv *env, 
     }
 
     const char *str = (*env)->GetStringUTFChars(env, jPhrase, NULL);
-    int result = BRBIP39PhraseIsValid((const char **)wordList, str);
+    int result = BRBIP39PhraseIsValid((const char **) wordList, str);
 
     (*env)->ReleaseStringUTFChars(env, jPhrase, str);
 
-    return (jboolean)(result ? JNI_TRUE : JNI_FALSE);
+    return (jboolean) (result ? JNI_TRUE : JNI_FALSE);
 }
 
 JNIEXPORT jstring JNICALL
@@ -649,15 +643,13 @@ Java_com_breadwallet_wallet_BRWalletManager_publishSerializedTransaction(JNIEnv 
     BRTransaction *tmpTx = BRTransactionParse((uint8_t *) byteTx, (size_t) txLength);
 
     if (!tmpTx) return JNI_FALSE;
-    //TEST
 
     size_t phraseLength = (size_t) (*env)->GetArrayLength(env, phrase);
-     jbyte *bytePhrase = (*env)->GetByteArrayElements(env, phrase, 0); 
+    jbyte *bytePhrase = (*env)->GetByteArrayElements(env, phrase, 0);
     UInt512 key = UINT512_ZERO;
     char *charPhrase = (char *) bytePhrase;
     BRBIP39DeriveKey(key.u8, charPhrase, NULL);
 
-    //TEST END
     size_t seedSize = sizeof(key);
 
     BRWalletSignTransaction(_wallet, tmpTx, key.u8, seedSize);

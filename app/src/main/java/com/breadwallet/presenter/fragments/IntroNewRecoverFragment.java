@@ -68,9 +68,4 @@ public class IntroNewRecoverFragment extends Fragment {
         SharedPreferencesManager.putReceiveAddress(getActivity(), null);
         return rootView;
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
 }

@@ -9,6 +9,7 @@ import android.security.keystore.KeyProperties;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.util.Log;
 
+import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.tools.util.ByteReader;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
@@ -102,7 +103,7 @@ public class KeyStoreManager {
     public static final String SPEND_LIMIT_FILENAME = "my_spend_limit";
     public static final String FAIL_TIMESTAMP_FILENAME = "my_fail_timestamp";
 
-    public static final int AUTH_DURATION_SEC = 15; //TODO make 300
+    public static final int AUTH_DURATION_SEC = BuildConfig.DEBUG ? 20 : 300; //TODO make 300
 
     private static boolean setData(Activity context, byte[] data, String alias, String alias_file, String alias_iv, int request_code, boolean auth_required) {
         if (alias.equals(alias_file) || alias.equals(alias_iv) || alias_file.equals(alias_iv))
@@ -165,6 +166,8 @@ public class KeyStoreManager {
     }
 
     private static byte[] getData(Activity context, String alias, String alias_file, String alias_iv, int request_code) {
+        if (alias.equals(alias_file) || alias.equals(alias_iv) || alias_file.equals(alias_iv))
+            throw new IllegalArgumentException("mistake in parameters!");
         KeyStore keyStore;
         String filesDirectory = context.getFilesDir().getAbsolutePath();
         String encryptedDataFilePath = filesDirectory + File.separator + alias_file;
@@ -188,7 +191,8 @@ public class KeyStoreManager {
             Log.e(TAG, Log.getStackTraceString(e));
             Log.e(TAG, "showAuthenticationScreen");
             showAuthenticationScreen(context, request_code);
-            if(alias.equalsIgnoreCase(CANARY_ALIAS) || alias.equalsIgnoreCase(PHRASE_ALIAS)) return NO_AUTH.getBytes();
+            if (alias.equalsIgnoreCase(CANARY_ALIAS) || alias.equalsIgnoreCase(PHRASE_ALIAS))
+                return NO_AUTH.getBytes();
         } catch (IOException | CertificateException | NoSuchAlgorithmException | UnrecoverableKeyException | NullPointerException |
                 InvalidAlgorithmParameterException | NoSuchPaddingException | KeyStoreException | InvalidKeyException e) {
             e.printStackTrace();
@@ -326,8 +330,10 @@ public class KeyStoreManager {
         if (!BRWalletManager.getInstance(activity).validatePhrase(activity, normalizedPhrase))
             return false;
         BRWalletManager m = BRWalletManager.getInstance(activity);
-        byte[] pubKey = m.getMasterPubKey(normalizedPhrase.getBytes());
+        byte[] bytePhrase = TypesConverter.getNullTerminatedPhrase(normalizedPhrase.getBytes());
+        byte[] pubKey = m.getMasterPubKey(bytePhrase);
         byte[] pubKeyFromKeyStore = KeyStoreManager.getMasterPublicKey(activity);
+        Arrays.fill(bytePhrase, (byte) 0);
         return Arrays.equals(pubKey, pubKeyFromKeyStore);
     }
 

@@ -70,8 +70,4 @@ public class IntroNewWalletFragment extends Fragment {
         return rootView;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
 }

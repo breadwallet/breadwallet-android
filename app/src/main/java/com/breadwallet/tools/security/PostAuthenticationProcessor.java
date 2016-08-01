@@ -16,6 +16,7 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
+import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.lang.reflect.Array;
@@ -77,13 +78,15 @@ public class PostAuthenticationProcessor {
     public void onRecoverWalletAuth(IntroActivity app) {
         Log.e(TAG, "onRecoverWalletAuth");
         if (phraseForKeyStore == null) return;
+        byte[] bytePhrase = new byte[0];
 
         try {
             boolean success = KeyStoreManager.putKeyStorePhrase(phraseForKeyStore.getBytes(), app, BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE);
             if (!success)
                 return;
             if (phraseForKeyStore.length() != 0) {
-                byte[] pubKey = BRWalletManager.getInstance(app).getMasterPubKey(phraseForKeyStore.getBytes());
+                bytePhrase = TypesConverter.getNullTerminatedPhrase(phraseForKeyStore.getBytes());
+                byte[] pubKey = BRWalletManager.getInstance(app).getMasterPubKey(bytePhrase);
                 KeyStoreManager.putMasterPublicKey(pubKey, app);
                 app.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 app.startMainActivity();
@@ -92,6 +95,8 @@ public class PostAuthenticationProcessor {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            Arrays.fill(bytePhrase,(byte) 0);
         }
     }
 
@@ -113,8 +118,7 @@ public class PostAuthenticationProcessor {
         BRWalletManager walletManager = BRWalletManager.getInstance(app);
         byte[] rawSeed = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAY_REQUEST_CODE);
         if (rawSeed.length < 10) return;
-        byte[] seed = Arrays.copyOf(rawSeed, rawSeed.length + 1);
-        seed[seed.length - 1] = 0;
+        byte[] seed = TypesConverter.getNullTerminatedPhrase(rawSeed);
         try {
             if (seed.length != 0) {
                 boolean success = false;
@@ -134,20 +138,20 @@ public class PostAuthenticationProcessor {
             BRAnimator.hideScanResultFragment();
         } finally {
             Arrays.fill(seed, (byte) 0);
-            Arrays.fill(rawSeed, (byte) 0);
         }
     }
 
     public void onPaymentProtocolRequest(MainActivity app) {
+
         byte[] rawSeed = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE);
         if (rawSeed == null || rawSeed.length < 10 || paymentRequest.serializedTx == null)
             return;
         if (rawSeed.length < 10) return;
-        byte[] seed = Arrays.copyOf(rawSeed, rawSeed.length + 1);
-        seed[seed.length - 1] = 0;
+
+        byte[] seed = TypesConverter.getNullTerminatedPhrase(rawSeed);
+
         BRWalletManager.getInstance(app).publishSerializedTransaction(paymentRequest.serializedTx, seed);
         PaymentProtocolPostPaymentTask.sent = true;
-        Arrays.fill(rawSeed, (byte) 0);
         Arrays.fill(seed, (byte) 0);
         paymentRequest = null;
 

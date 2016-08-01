@@ -27,6 +27,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
@@ -299,11 +300,13 @@ public class BreadWalletApp extends Application {
     public void hideKeyboard(Activity act) {
         Activity activity = act;
         if (activity == null) activity = MainActivity.app;
+        if (activity == null) activity = IntroActivity.app;
         if (activity != null) {
             View view = activity.getCurrentFocus();
             if (view != null) {
-                InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                Log.e(TAG,"keyboard hidden");
             }
         }
     }
