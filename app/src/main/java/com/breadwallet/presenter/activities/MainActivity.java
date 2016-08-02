@@ -202,7 +202,11 @@ public class MainActivity extends FragmentActivity implements Observer {
                     String amountHolder = FragmentScanResult.currentCurrencyPosition == BRConstants.BITCOIN_RIGHT ?
                             AmountAdapter.getRightValue() : AmountAdapter.getLeftValue();
                     String addressHolder = FragmentScanResult.address;
-                    BRWalletManager.getInstance(app).pay(addressHolder, new BigDecimal(amountHolder).multiply(new BigDecimal("100")), null, false);
+                    String multiplyBy = "100";
+                    int unit = SharedPreferencesManager.getCurrencyUnit(app);
+                    if (unit == BRConstants.CURRENT_UNIT_MBITS) multiplyBy = "100000";
+                    if (unit == BRConstants.CURRENT_UNIT_BITCOINS) multiplyBy = "100000000";
+                    BRWalletManager.getInstance(app).pay(addressHolder, new BigDecimal(amountHolder).multiply(new BigDecimal(multiplyBy)), null, false);
                 }
             }
         });
@@ -288,7 +292,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                     @Override
                     public void run() {
                         final MainActivity app = MainActivity.app;
-                        if(app == null) return;
+                        if (app == null) return;
                         networkErrorBar = (RelativeLayout) app.findViewById(R.id.main_internet_status_bar);
                         final ConnectivityManager connectivityManager = ((ConnectivityManager) app.getSystemService(Context.CONNECTIVITY_SERVICE));
                         boolean isConnected = connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
@@ -310,7 +314,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                                 public void run() {
                                     networkErrorBar.setVisibility(View.GONE);
                                     double progress = BRPeerManager.syncProgress(SharedPreferencesManager.getStartHeight(app));
-                                    if(progress < 1 && progress > 0){
+                                    if (progress < 1 && progress > 0) {
                                         BRPeerManager.startSyncingProgressThread();
                                     }
                                 }
@@ -318,7 +322,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                             Log.e(TAG, "Network Available ");
                         }
                     }
-                },400);
+                }, 400);
 
             }
         });

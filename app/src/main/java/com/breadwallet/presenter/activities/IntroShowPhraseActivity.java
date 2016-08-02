@@ -93,9 +93,7 @@ public class IntroShowPhraseActivity extends Activity {
             @Override
             public void onClick(View v) {
                 remindMeLater.setVisibility(View.GONE);
-
                 startMainActivity();
-
                 try {
                     finish();
                 } catch (Exception e) {
@@ -113,7 +111,8 @@ public class IntroShowPhraseActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        phrase = null;
+        if (phrase != null)
+            Arrays.fill(phrase, (byte) 0);
     }
 
     @Override
@@ -124,7 +123,8 @@ public class IntroShowPhraseActivity extends Activity {
         Intent intent;
         intent = new Intent(this, MainActivity.class);
         startActivity(intent);
-        phrase = null;
+        if (phrase != null)
+            Arrays.fill(phrase, (byte) 0);
         if (!IntroShowPhraseActivity.this.isDestroyed()) {
             finish();
         }

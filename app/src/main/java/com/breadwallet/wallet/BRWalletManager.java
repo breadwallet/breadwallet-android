@@ -38,6 +38,7 @@ import com.breadwallet.tools.manager.BRNotificationManager;
 import com.breadwallet.tools.util.BRStringFormatter;
 import com.breadwallet.tools.manager.CurrencyManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.WordsReader;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -50,6 +51,7 @@ import com.breadwallet.tools.threads.ImportPrivKeyTask;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.security.SecureRandom;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -118,9 +120,11 @@ public class BRWalletManager {
             throw new NullPointerException("failed to encodeSeed");
         boolean success = KeyStoreManager.putKeyStorePhrase(strPhrase, ctx, BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE);
         if (!success) return false;
-        IntroShowPhraseActivity.phrase = strPhrase;
+        IntroShowPhraseActivity.phrase = Arrays.copyOf(strPhrase, strPhrase.length);
+        Log.e(TAG,"generateRandomSeed: "+ Arrays.toString(strPhrase));
         KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), ctx);
-        byte[] pubKey = BRWalletManager.getInstance(ctx).getMasterPubKey(strPhrase);
+        byte[] strBytes = TypesConverter.getNullTerminatedPhrase(strPhrase);
+        byte[] pubKey = BRWalletManager.getInstance(ctx).getMasterPubKey(strBytes);
         KeyStoreManager.putMasterPublicKey(pubKey, ctx);
         return true;
 
