@@ -51,8 +51,10 @@ import com.breadwallet.tools.util.CustomLogger;
 public class BRTipsManager {
     public static final String TAG = BRTipsManager.class.getName();
     private static int count = 0;
+    private static boolean tryToGoToMainScreen = true;
 
     public static void showTipsTutorial(MainActivity app) {
+        tryToGoToMainScreen = true;
         count = 0;
         if (app == null) app = MainActivity.app;
         if (app == null || SharedPreferencesManager.getTipsShown(app)) return;
@@ -64,7 +66,13 @@ public class BRTipsManager {
                 sendText == null || viewFlipper == null) return;
         tipsBlockPane.setVisibility(View.VISIBLE);
         final MainActivity finalApp = app;
-        while(BRAnimator.level != 0) BRAnimator.pressMenuButton(app);
+        while (BRAnimator.level != 0 && tryToGoToMainScreen) BRAnimator.pressMenuButton(app);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                tryToGoToMainScreen = false;
+            }
+        },1000);
         app.parallaxViewPager.setCurrentItem(1);
         new Handler().postDelayed(new Runnable() {
             @Override

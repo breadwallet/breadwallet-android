@@ -124,8 +124,8 @@ public class CustomPagerAdapter extends FragmentPagerAdapter {
                     }
                     app.pageIndicator.setVisibility(View.VISIBLE);
                     if (MiddleViewAdapter.getSyncing()) {
-                        app.syncProgressBar.setVisibility(View.VISIBLE);
-                        app.syncProgressText.setVisibility(View.VISIBLE);
+
+                        app.showHideSyncProgressViews(true);
                     }
 
                 }
@@ -167,8 +167,7 @@ public class CustomPagerAdapter extends FragmentPagerAdapter {
                         mainQR.startAnimation(set);
                     }
                     app.pageIndicator.setVisibility(View.GONE);
-                    app.syncProgressBar.setVisibility(View.GONE);
-                    app.syncProgressText.setVisibility(View.GONE);
+                    app.showHideSyncProgressViews(false);
                 }
             });
 

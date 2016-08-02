@@ -62,10 +62,7 @@ public class RequestQRActivity extends Activity {
     public static RequestQRActivity requestApp;
     public Button close;
 
-    //    public static String THE_ADDRESS = "";
-//    public static String tmpAmount = "0";
     @Override
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_request_qr);
@@ -107,7 +104,11 @@ public class RequestQRActivity extends Activity {
                 SpringAnimator.showAnimation(v);
                 onBackPressed();
 
-                startActivity(intent);
+                if (MainActivity.app != null) {
+                    onBackPressed();
+                } else {
+                    startActivity(intent);
+                }
                 if (!RequestQRActivity.this.isDestroyed()) {
                     finish();
                 }

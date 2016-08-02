@@ -1,11 +1,16 @@
 package com.breadwallet.wallet;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.util.Log;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.RelativeLayout;
 
 import com.breadwallet.BreadWalletApp;
+import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.BlockEntity;
 import com.breadwallet.presenter.entities.PeerEntity;
@@ -58,30 +63,6 @@ public class BRPeerManager {
         }
         return instance;
     }
-
-    public native void createAndConnect(int earliestKeyTime, int blockCount, int peerCount);
-
-    public native void connect();
-
-    public native void putPeer(byte[] peerAddress, byte[] peerPort, byte[] peerTimeStamp);
-
-    public native void createPeerArrayWithCount(int count);
-
-    public native void putBlock(byte[] block, int blockHeight);
-
-    public native void createBlockArrayWithCount(int count);
-
-    public native static double syncProgress(int startHeight);
-
-    public native static int getCurrentBlockHeight();
-
-    public native static int getEstimatedBlockHeight();
-
-    public native boolean isCreated();
-
-    public native void peerManagerFreeEverything();
-
-    public native void rescan();
 
     /**
      * void BRPeerManagerSetCallbacks(BRPeerManager *manager, void *info,
@@ -190,12 +171,11 @@ public class BRPeerManager {
 
     public static void startSyncingProgressThread() {
         try {
-            if (syncTask != null) {
-                syncTask.setRunning(false);
-                syncTask.interrupt();
+            if (syncTask == null) {
+                syncTask = new SyncProgressTask();
+                syncTask.start();
             }
-            syncTask = new SyncProgressTask();
-            syncTask.start();
+
         } catch (IllegalThreadStateException ex) {
             ex.printStackTrace();
         }
@@ -241,6 +221,7 @@ public class BRPeerManager {
             if (syncTask != null) {
                 syncTask.setRunning(false);
                 syncTask.interrupt();
+                syncTask = null;
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -266,6 +247,7 @@ public class BRPeerManager {
         public void run() {
             final MainActivity app = MainActivity.app;
             progressStatus = 0;
+            final DecimalFormat decimalFormat = new DecimalFormat("#.#");
             if (app != null) {
 
                 progressStatus = syncProgress(SharedPreferencesManager.getStartHeight(app));
@@ -274,8 +256,8 @@ public class BRPeerManager {
                     public void run() {
                         if (BRAnimator.level == 0)
                             app.showHideSyncProgressViews(true);
-                        app.syncProgressBar.setProgress((int) (progressStatus * 100));
-                        app.syncProgressText.setText(String.format("%s%%", new DecimalFormat("#.#").format(progressStatus * 100)));
+
+                        app.setProgress((int) (progressStatus * 100), String.format("%s%%", decimalFormat.format(progressStatus * 100)));
                     }
                 });
 
@@ -286,13 +268,11 @@ public class BRPeerManager {
                     app.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            app.syncProgressBar.setProgress((int) (progressStatus * 100));
-                            app.syncProgressText.setText(String.format("%s%%", new DecimalFormat("#.#").format(progressStatus * 100)));
-
+                            app.setProgress((int) (progressStatus * 100), String.format("%s%%", decimalFormat.format(progressStatus * 100)));
                         }
                     });
                     try {
-                        Thread.sleep(500);
+                        Thread.sleep(300);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -311,4 +291,60 @@ public class BRPeerManager {
 
         }
     }
+
+    public void refreshConnection() {
+        final RelativeLayout networkErrorBar = (RelativeLayout) ctx.findViewById(R.id.main_internet_status_bar);
+        if (networkErrorBar == null) return;
+        final ConnectivityManager connectivityManager = ((ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE));
+        boolean isConnected = connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
+        BRPeerManager.getInstance(ctx).connect();
+        if (!isConnected) {
+            ctx.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    networkErrorBar.setVisibility(View.VISIBLE);
+                    BRPeerManager.stopSyncingProgressThread();
+                }
+            });
+
+            Log.e(TAG, "Network Not Available ");
+
+        } else {
+            ctx.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    networkErrorBar.setVisibility(View.GONE);
+                    double progress = BRPeerManager.syncProgress(SharedPreferencesManager.getStartHeight(ctx));
+                    if (progress < 1 && progress > 0) {
+                        BRPeerManager.startSyncingProgressThread();
+                    }
+                }
+            });
+            Log.e(TAG, "Network Available ");
+        }
+    }
+
+    public native void createAndConnect(int earliestKeyTime, int blockCount, int peerCount);
+
+    public native void connect();
+
+    public native void putPeer(byte[] peerAddress, byte[] peerPort, byte[] peerTimeStamp);
+
+    public native void createPeerArrayWithCount(int count);
+
+    public native void putBlock(byte[] block, int blockHeight);
+
+    public native void createBlockArrayWithCount(int count);
+
+    public native static double syncProgress(int startHeight);
+
+    public native static int getCurrentBlockHeight();
+
+    public native static int getEstimatedBlockHeight();
+
+    public native boolean isCreated();
+
+    public native void peerManagerFreeEverything();
+
+    public native void rescan();
 }

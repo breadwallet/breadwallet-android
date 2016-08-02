@@ -212,15 +212,6 @@ static void savePeers(void *info, const BRPeer peers[], size_t count)
     (*env)->CallStaticVoidMethod(env, _peerManagerClass, mid, peerObjectArray);
 }
 
-JNIEXPORT void JNICALL Java_com_breadwallet_wallet_BRPeerManager_rescan(JNIEnv *env, jobject thiz)
-{
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "rescan");
-    if (!_peerManager) __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "rescan: peerManager is NULL!!!!!!!");
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "is Connected: %d",
-                        BRPeerManagerIsConnected(_peerManager));
-    if (_peerManager) BRPeerManagerRescan(_peerManager);
-}
-
 static int networkIsReachable(void *info)
 {
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "networkIsReachable");
@@ -240,6 +231,15 @@ static int networkIsReachable(void *info)
 static void threadCleanup(void *info)
 {
     (*_jvmPM)->DetachCurrentThread(_jvmPM);
+}
+
+JNIEXPORT void JNICALL Java_com_breadwallet_wallet_BRPeerManager_rescan(JNIEnv *env, jobject thiz)
+{
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "rescan");
+    if (!_peerManager) __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "rescan: peerManager is NULL!!!!!!!");
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "is Connected: %d",
+                        BRPeerManagerIsConnected(_peerManager));
+    if (_peerManager) BRPeerManagerRescan(_peerManager);
 }
 
 JNIEXPORT void JNICALL

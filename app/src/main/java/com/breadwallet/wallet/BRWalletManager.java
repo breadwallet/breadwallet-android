@@ -3,8 +3,10 @@ package com.breadwallet.wallet;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.KeyguardManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.media.MediaPlayer;
+import android.net.ConnectivityManager;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.text.InputType;
@@ -13,6 +15,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -780,12 +783,6 @@ public class BRWalletManager {
             if (SharedPreferencesManager.getStartHeight(ctx) == 0)
                 SharedPreferencesManager.putStartHeight(ctx, BRPeerManager.getCurrentBlockHeight());
 
-        }
-    }
-
-    public static void sanitizeData(byte[] data) {
-        for (int i = 0; i < data.length; i++){
-            data[i] = 0;
         }
     }
 

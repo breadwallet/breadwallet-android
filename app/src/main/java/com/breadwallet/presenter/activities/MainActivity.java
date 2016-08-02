@@ -54,6 +54,7 @@ import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -96,8 +97,8 @@ public class MainActivity extends FragmentActivity implements Observer {
     private Button burgerButton;
     public Button lockerButton;
     public TextView pay;
-    public ProgressBar syncProgressBar;
-    public TextView syncProgressText;
+    private ProgressBar syncProgressBar;
+    private TextView syncProgressText;
     public ParallaxViewPager parallaxViewPager;
     public ViewFlipper viewFlipper;
     public ViewFlipper lockerPayFlipper;
@@ -291,36 +292,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        final MainActivity app = MainActivity.app;
-                        if (app == null) return;
-                        networkErrorBar = (RelativeLayout) app.findViewById(R.id.main_internet_status_bar);
-                        final ConnectivityManager connectivityManager = ((ConnectivityManager) app.getSystemService(Context.CONNECTIVITY_SERVICE));
-                        boolean isConnected = connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
-                        BRPeerManager.getInstance(app).connect();
-                        if (!isConnected) {
-                            app.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    networkErrorBar.setVisibility(View.VISIBLE);
-                                    BRPeerManager.stopSyncingProgressThread();
-                                }
-                            });
-
-                            Log.e(TAG, "Network Not Available ");
-
-                        } else {
-                            app.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    networkErrorBar.setVisibility(View.GONE);
-                                    double progress = BRPeerManager.syncProgress(SharedPreferencesManager.getStartHeight(app));
-                                    if (progress < 1 && progress > 0) {
-                                        BRPeerManager.startSyncingProgressThread();
-                                    }
-                                }
-                            });
-                            Log.e(TAG, "Network Available ");
-                        }
+                        BRPeerManager.getInstance(app).refreshConnection();
                     }
                 }, 400);
 
@@ -377,13 +349,7 @@ public class MainActivity extends FragmentActivity implements Observer {
 //        Log.e(TAG, "isNetworkAvailable: " + isNetworkAvailable);
         networkErrorBar.setVisibility(isNetworkAvailable ? View.GONE : View.VISIBLE);
         startStopReceiver(true);
-        double currentSyncProgress = BRPeerManager.syncProgress(SharedPreferencesManager.getStartHeight(this));
-        if (currentSyncProgress > 0 && currentSyncProgress < 1) {
-//            Log.e(TAG, "Worked! restarted the syncing!");
-            BRPeerManager.startSyncingProgressThread();
-        } else {
-            BRPeerManager.stopSyncingProgressThread();
-        }
+        BRPeerManager.getInstance(app).refreshConnection();
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -699,6 +665,10 @@ public class MainActivity extends FragmentActivity implements Observer {
     }
 
     public void showHideSyncProgressViews(boolean b) {
+        if (syncProgressBar == null || syncProgressText == null) {
+            Log.e(TAG, " WARNING!**!*!***!*!*!* syncProgressBar == null || syncProgressText = null");
+            return;
+        }
         syncProgressBar.setVisibility(b ? View.VISIBLE : View.GONE);
         syncProgressText.setVisibility(b ? View.VISIBLE : View.GONE);
     }
@@ -723,6 +693,16 @@ public class MainActivity extends FragmentActivity implements Observer {
                 }
             }
         }
+    }
+
+    public void setProgress(int progress, String progressText) {
+        Log.e(TAG,"setProgress: progress:" + progress + ", progressText: " + progressText);
+        if (syncProgressBar == null || syncProgressText == null) {
+            Log.e(TAG, " WARNING!**!*!***!*!*!* syncProgressBar == null || syncProgressText = null");
+            return;
+        }
+        syncProgressBar.setProgress(progress);
+        syncProgressText.setText(progressText);
     }
 
 }

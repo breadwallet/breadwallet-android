@@ -12,6 +12,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.wallet.BRPeerManager;
+import com.breadwallet.wallet.BRWalletManager;
 
 /**
  * BreadWallet
@@ -40,45 +41,13 @@ import com.breadwallet.wallet.BRPeerManager;
 
 public class NetworkChangeReceiver extends BroadcastReceiver {
     private static final String TAG = NetworkChangeReceiver.class.getName();
-    private RelativeLayout networkErrorBar;
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
         final MainActivity app = MainActivity.app;
         if(app == null) return;
-        networkErrorBar = (RelativeLayout) app.findViewById(R.id.main_internet_status_bar);
-        final ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
-        boolean isConnected = connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
-        BRPeerManager.getInstance(app).connect();
-        if (!isConnected) {
-            app.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    networkErrorBar.setVisibility(View.VISIBLE);
-                    BRPeerManager.stopSyncingProgressThread();
-//                    ((BreadWalletApp) app.getApplication()).showCustomToast(app, app.getString(R.string.no_internet_connection),
-//                            500, Toast.LENGTH_SHORT,0);
-                }
-            });
 
-            Log.e(TAG, "Network Not Available ");
-
-        } else {
-            app.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    networkErrorBar.setVisibility(View.GONE);
-                    double progress = BRPeerManager.syncProgress(SharedPreferencesManager.getStartHeight(app));
-                    if(progress < 1 && progress > 0){
-                        BRPeerManager.startSyncingProgressThread();
-                    }
-//                    ((BreadWalletApp) app.getApplication()).showCustomToast(app, app.getString(R.string.no_internet_connection),
-//                            500, Toast.LENGTH_SHORT,0);
-                }
-            });
-            Log.e(TAG, "Network Available ");
-        }
+        BRPeerManager.getInstance(app).refreshConnection();
     }
-
 
 }

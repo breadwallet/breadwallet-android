@@ -88,7 +88,6 @@ public class ParallaxViewPager extends ViewPager {
                     destination.left = (int) Math.floor((position + positionOffset - CORRECTION_PERCENTAGE) * getWidth());
                     destination.right = (int) Math.ceil((position + positionOffset + 1 + CORRECTION_PERCENTAGE) * getWidth());
                     invalidate();
-//                    Log.e(TAG, "The bitmap params: " + bitmap.getWidth() + "   " + bitmap.getHeight());
                 }
 
                 if (secondOnPageChangeListener != null) {
@@ -102,7 +101,7 @@ public class ParallaxViewPager extends ViewPager {
                     secondOnPageChangeListener.onPageSelected(position);
                 }
                 MainActivity app = MainActivity.app;
-                if (app != null) {
+                if (app != null && BRAnimator.level == 0) {
                     ((BreadWalletApp) app.getApplication()).cancelToast();
                     ((BreadWalletApp) app.getApplication()).hideKeyboard(app);
                     app.hideAllBubbles();
