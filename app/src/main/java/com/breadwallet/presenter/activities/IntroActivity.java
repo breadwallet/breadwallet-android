@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
@@ -80,7 +81,7 @@ public class IntroActivity extends FragmentActivity {
     private IntroRecoverWalletFragment introRecoverWalletFragment;
     private IntroNewWalletFragment introNewWalletFragment;
     private IntroWarningFragment introWarningFragment;
-
+    public static final Point screenParametersPoint = new Point();
 
     @Override
     protected void onRestart() {
@@ -97,7 +98,7 @@ public class IntroActivity extends FragmentActivity {
 
         if (!BuildConfig.DEBUG && KeyStoreManager.AUTH_DURATION_SEC != 300)
             throw new IllegalArgumentException("AUTH_DURATION_SEC should be 300");
-
+        getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
         leftButton = (Button) findViewById(R.id.intro_left_button);
         leftButton.setVisibility(View.GONE);
         leftButton.setClickable(false);
@@ -344,14 +345,17 @@ public class IntroActivity extends FragmentActivity {
 
     // direction == 1 -> RIGHT, direction == 2 -> LEFT
     private void animateSlide(final Fragment from, final Fragment to, int direction) {
+        int screenWidth = screenParametersPoint.x;
+        int screenHeigth = screenParametersPoint.y;
+
         showHideFragments(from, to);
-        TranslateAnimation transFrom = direction == RIGHT ? new TranslateAnimation(0, -app.getResources().getInteger(R.integer.standard_screen_width), 0, 0) : new TranslateAnimation(0, app.getResources().getInteger(R.integer.standard_screen_width), 0, 0);
+        TranslateAnimation transFrom = direction == RIGHT ? new TranslateAnimation(0, -screenWidth, 0, 0) : new TranslateAnimation(0,screenWidth, 0, 0);
         transFrom.setDuration(BRAnimator.horizontalSlideDuration);
         transFrom.setInterpolator(new DecelerateOvershootInterpolator(1f, 0.5f));
         View fromView = from.getView();
         if (fromView != null)
             fromView.startAnimation(transFrom);
-        TranslateAnimation transTo = direction == RIGHT ? new TranslateAnimation(app.getResources().getInteger(R.integer.standard_screen_width), 0, 0, 0) : new TranslateAnimation(-app.getResources().getInteger(R.integer.standard_screen_width), 0, 0, 0);
+        TranslateAnimation transTo = direction == RIGHT ? new TranslateAnimation(screenWidth, 0, 0, 0) : new TranslateAnimation(-screenWidth, 0, 0, 0);
         transTo.setDuration(BRAnimator.horizontalSlideDuration);
         transTo.setInterpolator(new DecelerateOvershootInterpolator(1f, 0.5f));
         transTo.setAnimationListener(new Animation.AnimationListener() {

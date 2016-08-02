@@ -20,6 +20,7 @@ import android.widget.ViewFlipper;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.util.CustomLogger;
 
@@ -63,6 +64,7 @@ public class BRTipsManager {
                 sendText == null || viewFlipper == null) return;
         tipsBlockPane.setVisibility(View.VISIBLE);
         final MainActivity finalApp = app;
+        while(BRAnimator.level != 0) BRAnimator.pressMenuButton(app);
         app.parallaxViewPager.setCurrentItem(1);
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -121,7 +123,6 @@ public class BRTipsManager {
 
     public static void setQrBubblesPosition(int qr1, int qr2) {
         MainActivity app = MainActivity.app;
-//
         if (app != null) {
             app.qrBubble1.setY(qr1);
             app.qrBubble2.setY(qr2);

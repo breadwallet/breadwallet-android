@@ -244,12 +244,10 @@ public class KeyStoreManager {
     }
 
     public static boolean putMasterPublicKey(byte[] masterPubKey, Activity context) {
-        Log.e(TAG,"putMasterPublicKey: " + Arrays.toString(masterPubKey));
         return masterPubKey != null && masterPubKey.length != 0 && setData(context, masterPubKey, PUB_KEY_ALIAS, PUB_KEY_FILENAME, PUB_KEY_IV, 0, false);
     }
 
     public static byte[] getMasterPublicKey(final Activity context) {
-        Log.e(TAG,"getMasterPublicKey: " + Arrays.toString(getData(context, PUB_KEY_ALIAS, PUB_KEY_FILENAME, PUB_KEY_IV, 0)));
         return getData(context, PUB_KEY_ALIAS, PUB_KEY_FILENAME, PUB_KEY_IV, 0);
     }
 

@@ -154,7 +154,7 @@ public class BRAnimator {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    TranslateAnimation trans = new TranslateAnimation(app.getResources().getInteger(R.integer.standard_screen_width), 0, 0, 0);
+                    TranslateAnimation trans = new TranslateAnimation(MainActivity.screenParametersPoint.x, 0, 0, 0);
                     trans.setDuration(500);
                     trans.setInterpolator(new DecelerateOvershootInterpolator(3f, 0.5f));
                     View view = scanResult.getView();
@@ -279,7 +279,7 @@ public class BRAnimator {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    TranslateAnimation trans = new TranslateAnimation(context.getResources().getInteger(R.integer.standard_screen_width), 0, 0, 0);
+                    TranslateAnimation trans = new TranslateAnimation(MainActivity.screenParametersPoint.x, 0, 0, 0);
                     trans.setDuration(horizontalSlideDuration);
                     trans.setInterpolator(new DecelerateOvershootInterpolator(1f, 0.5f));
                     View view = to.getView();
@@ -312,7 +312,7 @@ public class BRAnimator {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    TranslateAnimation trans = new TranslateAnimation(-context.getResources().getInteger(R.integer.standard_screen_width), 0, 0, 0);
+                    TranslateAnimation trans = new TranslateAnimation(-MainActivity.screenParametersPoint.x, 0, 0, 0);
                     trans.setDuration(horizontalSlideDuration);
                     trans.setInterpolator(new DecelerateOvershootInterpolator(1f, 0.5f));
                     View view = tmp.getView();

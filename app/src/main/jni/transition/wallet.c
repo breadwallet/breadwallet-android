@@ -191,7 +191,6 @@ Java_com_breadwallet_wallet_BRWalletManager_encodeSeed(JNIEnv *env, jobject thiz
 
         wordList[i] = rawString;
         (*env)->DeleteLocalRef(env, string);
-        // Don't forget to call `ReleaseStringUTFChars` when you're done.
     }
 
     jbyte *byteSeed = (*env)->GetByteArrayElements(env, seed, 0);
@@ -199,7 +198,6 @@ Java_com_breadwallet_wallet_BRWalletManager_encodeSeed(JNIEnv *env, jobject thiz
 
     BRBIP39Encode((char *) result, sizeof(result), wordList, (const uint8_t *) byteSeed,
                   (size_t) seedLength);
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "result: %s", result);
     jbyte *phraseJbyte = (jbyte *) result;
     int size = sizeof(result) - 1;
     jbyteArray bytePhrase = (*env)->NewByteArray(env, size);
@@ -644,7 +642,6 @@ Java_com_breadwallet_wallet_BRWalletManager_publishSerializedTransaction(JNIEnv 
 
     if (!tmpTx) return JNI_FALSE;
 
-    size_t phraseLength = (size_t) (*env)->GetArrayLength(env, phrase);
     jbyte *bytePhrase = (*env)->GetByteArrayElements(env, phrase, 0);
     UInt512 key = UINT512_ZERO;
     char *charPhrase = (char *) bytePhrase;

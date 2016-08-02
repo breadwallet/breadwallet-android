@@ -101,7 +101,6 @@ public class BRWalletManager {
 
     public boolean generateRandomSeed() {
         SecureRandom sr = new SecureRandom();
-
         String[] words = new String[0];
         List<String> list;
         try {
@@ -121,7 +120,6 @@ public class BRWalletManager {
         boolean success = KeyStoreManager.putKeyStorePhrase(strPhrase, ctx, BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE);
         if (!success) return false;
         IntroShowPhraseActivity.phrase = Arrays.copyOf(strPhrase, strPhrase.length);
-        Log.e(TAG,"generateRandomSeed: "+ Arrays.toString(strPhrase));
         KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), ctx);
         byte[] strBytes = TypesConverter.getNullTerminatedPhrase(strPhrase);
         byte[] pubKey = BRWalletManager.getInstance(ctx).getMasterPubKey(strBytes);
