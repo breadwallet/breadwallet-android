@@ -91,7 +91,9 @@ public class MainFragmentQR extends Fragment {
         final RelativeLayout mainFragmentQr = (RelativeLayout) rootView.findViewById(R.id.main_fragment_qr);
         mainAddressText = (TextView) rootView.findViewById(R.id.main_address_text);
         addressLayout = (RelativeLayout) rootView.findViewById(R.id.theAddressLayout);
-        generateQR();
+        String bitcoinUrl = "bitcoin:" + receiveAddress;
+        mainAddressText.setText(receiveAddress);
+        BRWalletManager.getInstance(getActivity()).generateQR(bitcoinUrl, qrcode);
         fm = getActivity().getFragmentManager();
         mainFragmentQr.setPadding(0, MainActivity.screenParametersPoint.y / 5, 0, 0);
         final BreadWalletApp breadWalletApp = (BreadWalletApp) getActivity().getApplication();
@@ -184,37 +186,6 @@ public class MainFragmentQR extends Fragment {
 
     }
 
-    private void generateQR() {
-        Log.e(TAG, "generateQR: " + receiveAddress);
-        Activity activity = getActivity();
-        if (activity == null || qrcode == null) return;
-
-        WindowManager manager = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
-        Display display = manager.getDefaultDisplay();
-        Point point = new Point();
-        display.getSize(point);
-        int width = point.x;
-        int height = point.y;
-        int smallerDimension = width < height ? width : height;
-        smallerDimension = smallerDimension * 3 / 4;
-
-        if (receiveAddress == null || receiveAddress.length() < 5)
-            return;
-        mainAddressText.setText(receiveAddress);
-        QRCodeEncoder qrCodeEncoder = new QRCodeEncoder("bitcoin:" + receiveAddress,
-                BarcodeFormat.QR_CODE.toString(),
-                smallerDimension);
-        try {
-            bitmap = qrCodeEncoder.encodeAsBitmap();
-        } catch (WriterException e) {
-            e.printStackTrace();
-        }
-        qrcode.setPadding(1, 1, 1, 1);
-        qrcode.setBackgroundResource(R.color.gray);
-        qrcode.setImageBitmap(bitmap);
-
-    }
-
     private void saveBitmapToFile() {
         FileOutputStream out = null;
         String path = Environment.getExternalStorageDirectory().toString();
@@ -255,7 +226,11 @@ public class MainFragmentQR extends Fragment {
         } else {
             receiveAddress = SharedPreferencesManager.getReceiveAddress(getActivity());
         }
-        generateQR();
+        Log.e(TAG, "refreshAddress: receiveAddress: " + receiveAddress);
+        String bitcoinUrl = "bitcoin:" + receiveAddress;
+        if(mainAddressText == null) return;
+        mainAddressText.setText(receiveAddress);
+        BRWalletManager.getInstance(getActivity()).generateQR(bitcoinUrl, qrcode);
     }
 
 }

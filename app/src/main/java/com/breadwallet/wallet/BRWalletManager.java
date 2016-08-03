@@ -5,15 +5,20 @@ import android.app.AlertDialog;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.text.InputType;
 import android.util.Log;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TableLayout;
@@ -33,6 +38,7 @@ import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.presenter.fragments.MainFragmentQR;
+import com.breadwallet.tools.qrcode.QRCodeEncoder;
 import com.breadwallet.tools.threads.PassCodeTask;
 import com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
@@ -50,13 +56,20 @@ import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.sqlite.SQLiteManager;
 import com.breadwallet.tools.threads.ImportPrivKeyTask;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * BreadWallet
@@ -88,6 +101,8 @@ public class BRWalletManager {
 
     private static BRWalletManager instance;
     private static Activity ctx;
+    private static final int WHITE = 0xFFFFFFFF;
+    private static final int BLACK = 0xFF000000;
 
     private static int messageId = 0;
 
@@ -157,6 +172,7 @@ public class BRWalletManager {
         if (ctx != null) {
             MainFragmentQR mainFragmentQR = CustomPagerAdapter.adapter == null ? null : CustomPagerAdapter.adapter.mainFragmentQR;
             String tmpAddr = getReceiveAddress();
+            Log.e(TAG,"generated receiveAddress: " + tmpAddr);
             if (tmpAddr == null || tmpAddr.isEmpty()) return;
             SharedPreferencesManager.putReceiveAddress(ctx, tmpAddr);
             if (mainFragmentQR == null) return;
@@ -784,6 +800,74 @@ public class BRWalletManager {
                 SharedPreferencesManager.putStartHeight(ctx, BRPeerManager.getCurrentBlockHeight());
 
         }
+    }
+
+    public void generateQR(String bitcoinURL, ImageView qrcode) {
+        if (qrcode == null || bitcoinURL == null || bitcoinURL.isEmpty()) return;
+        WindowManager manager = (WindowManager) ctx.getSystemService(Activity.WINDOW_SERVICE);
+        Display display = manager.getDefaultDisplay();
+        Point point = new Point();
+        display.getSize(point);
+        int width = point.x;
+        int height = point.y;
+        int smallerDimension = width < height ? width : height;
+        Log.e(TAG,"smallerDimension: " + smallerDimension);
+        smallerDimension = (int)(smallerDimension *0.7f);
+        Log.e(TAG,"smallerDimension: " + smallerDimension);
+        Bitmap bitmap = null;
+        try {
+            bitmap = encodeAsBitmap(bitcoinURL, smallerDimension);
+        } catch (WriterException e) {
+            e.printStackTrace();
+        }
+        qrcode.setPadding(1, 1, 1, 1);
+        qrcode.setBackgroundResource(R.color.gray);
+        qrcode.setImageBitmap(bitmap);
+
+    }
+
+    private Bitmap encodeAsBitmap(String content, int dimension) throws WriterException {
+
+        if (content == null) {
+            return null;
+        }
+        Map<EncodeHintType, Object> hints = null;
+        String encoding = guessAppropriateEncoding(content);
+        hints = new EnumMap<>(EncodeHintType.class);
+        if (encoding != null) {
+            hints.put(EncodeHintType.CHARACTER_SET, encoding);
+        }
+        hints.put(EncodeHintType.MARGIN, 1);
+        BitMatrix result;
+        try {
+            result = new MultiFormatWriter().encode(content, BarcodeFormat.QR_CODE, dimension, dimension, hints);
+        } catch (IllegalArgumentException iae) {
+            // Unsupported format
+            return null;
+        }
+        int width = result.getWidth();
+        int height = result.getHeight();
+        int[] pixels = new int[width * height];
+        for (int y = 0; y < height; y++) {
+            int offset = y * width;
+            for (int x = 0; x < width; x++) {
+                pixels[offset + x] = result.get(x, y) ? BLACK : WHITE;
+            }
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
+        return bitmap;
+    }
+
+    private static String guessAppropriateEncoding(CharSequence contents) {
+        // Very crude at the moment
+        for (int i = 0; i < contents.length(); i++) {
+            if (contents.charAt(i) > 0xFF) {
+                return "UTF-8";
+            }
+        }
+        return null;
     }
 
     private native byte[] encodeSeed(byte[] seed, String[] wordList);

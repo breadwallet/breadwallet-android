@@ -23,6 +23,7 @@ import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.qrcode.QRCodeEncoder;
 import com.breadwallet.tools.security.RequestHandler;
+import com.breadwallet.wallet.BRWalletManager;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 
@@ -85,7 +86,7 @@ public class RequestQRActivity extends Activity {
         RelativeLayout addressLayout = (RelativeLayout) findViewById(R.id.request_address_layout);
 //        Log.e(TAG,"THE_ADDRESS: " + THE_ADDRESS);
 
-        generateQR(finalAddress);
+        BRWalletManager.getInstance(this).generateQR(finalAddress,qrcode);
         String address = "";
         String amount = "";
         try {
@@ -103,7 +104,6 @@ public class RequestQRActivity extends Activity {
             public void onClick(View v) {
                 SpringAnimator.showAnimation(v);
                 onBackPressed();
-
                 if (MainActivity.app != null) {
                     onBackPressed();
                 } else {
@@ -127,31 +127,7 @@ public class RequestQRActivity extends Activity {
 
     }
 
-    private void generateQR(String bitcoinURL) {
-        if (qrcode == null) return;
-        WindowManager manager = (WindowManager) getSystemService(WINDOW_SERVICE);
-        Display display = manager.getDefaultDisplay();
-        Point point = new Point();
-        display.getSize(point);
-        int width = point.x;
-        int height = point.y;
-        int smallerDimension = width < height ? width : height;
-        smallerDimension = smallerDimension * 3 / 4;
 
-        QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(bitcoinURL,
-                BarcodeFormat.QR_CODE.toString(),
-                smallerDimension);
-        Bitmap bitmap = null;
-        try {
-            bitmap = qrCodeEncoder.encodeAsBitmap();
-        } catch (WriterException e) {
-            e.printStackTrace();
-        }
-        qrcode.setPadding(1, 1, 1, 1);
-        qrcode.setBackgroundResource(R.color.gray);
-        qrcode.setImageBitmap(bitmap);
-
-    }
 
     @Override
     protected void onResume() {
