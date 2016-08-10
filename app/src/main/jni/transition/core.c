@@ -68,7 +68,7 @@ Java_com_breadwallet_tools_security_RequestHandler_parsePaymentRequest(JNIEnv *e
         return entity;
     }
 
-    size_t outputsCount = nativeRequest->details->outputsCount;
+    size_t outputsCount = nativeRequest->details->outCount;
     uint64_t totalAmount = 0;
     jobjectArray stringArray = (jobjectArray)(*env)->NewObjectArray(env, (jsize)outputsCount,
                                                                     (*env)->FindClass(env, "java/lang/String"),
@@ -93,7 +93,7 @@ Java_com_breadwallet_tools_security_RequestHandler_parsePaymentRequest(JNIEnv *e
     //Create serialized paymentProtocolPayment
     BRAddress changeAddress = BRWalletChangeAddress(_wallet);
     BRTransaction *tx = BRWalletCreateTxForOutputs(_wallet, nativeRequest->details->outputs,
-                                                   nativeRequest->details->outputsCount);
+                                                   nativeRequest->details->outCount);
 
     if (!tx) {
         (*env)->SetIntField(env, entity, jerror, 1);
@@ -140,7 +140,7 @@ Java_com_breadwallet_tools_security_RequestHandler_parsePaymentRequest(JNIEnv *e
 
     //pkiData
     jbyte *bytesPkiData = (jbyte *)nativeRequest->pkiData;
-    size_t pkiDataSize = nativeRequest->pkiLen;
+    size_t pkiDataSize = nativeRequest->pkiDataLen;
     jbyteArray byteArrayPkiData = (*env)->NewByteArray(env, (jsize)pkiDataSize);
     (*env)->SetByteArrayRegion(env, byteArrayPkiData, 0, (jsize)pkiDataSize, bytesPkiData);
 
