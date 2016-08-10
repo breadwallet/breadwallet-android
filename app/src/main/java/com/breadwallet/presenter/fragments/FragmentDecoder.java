@@ -175,7 +175,6 @@ public class FragmentDecoder extends Fragment
 
                         int width = img.getWidth();
                         int height = img.getHeight();
-                        Log.e(TAG, "width: " + width + ", height: " + height + ", planes: " + img.getPlanes().length);
                         PlanarYUVLuminanceSource source = new PlanarYUVLuminanceSource(data, width, height, 0, 0, width, height, false);
                         BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
 
@@ -274,18 +273,6 @@ public class FragmentDecoder extends Fragment
     private CaptureRequest mPreviewRequest;
     private final Semaphore mCameraOpenCloseLock = new Semaphore(1);
     private int flashButtonCount;
-
-    /**
-     * Given {@code choices} of {@code Size}s supported by a camera, chooses the smallest one whose
-     * width and height are at least as large as the respective requested values, and whose aspect
-     * ratio matches with the specified value.
-     *
-     * @param choices     The list of sizes that the camera supports for the intended output class
-     * @param width       The minimum desired width
-     * @param height      The minimum desired height
-     * @param aspectRatio The aspect ratio
-     * @return The optimal {@code Size}, or an arbitrary one if none were big enough
-     */
 
     /**
      * Given {@code choices} of {@code Size}s supported by a camera, choose the smallest one that
@@ -438,7 +425,6 @@ public class FragmentDecoder extends Fragment
                 if (map == null) {
                     continue;
                 }
-
                 // For still image captures, we use the largest available size.
                 Size largest = Collections.max(
                         Arrays.asList(map.getOutputSizes(ImageFormat.YUV_420_888)),
@@ -500,19 +486,18 @@ public class FragmentDecoder extends Fragment
                         rotatedPreviewWidth, rotatedPreviewHeight, maxPreviewWidth,
                         maxPreviewHeight, largest);
 
-                // We fit the aspect ratio of TextureView to the size of preview we picked.
-                int orientation = getResources().getConfiguration().orientation;
-                if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    mTextureView.setAspectRatio(
-                            mPreviewSize.getWidth(), mPreviewSize.getHeight());
-                } else {
-                    mTextureView.setAspectRatio(
-                            mPreviewSize.getHeight(), mPreviewSize.getWidth());
-                }
+                mTextureView.setAspectRatio(MainActivity.screenParametersPoint.x,
+                        MainActivity.screenParametersPoint.y - getStatusBarHeight()); //portrait onl
 
                 // Check if the flash is supported.
                 Boolean available = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
                 mFlashSupported = available == null ? false : available;
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        flashButton.setVisibility(mFlashSupported? View.VISIBLE : View.GONE);
+                    }
+                });
 
                 mCameraId = cameraId;
                 return;
