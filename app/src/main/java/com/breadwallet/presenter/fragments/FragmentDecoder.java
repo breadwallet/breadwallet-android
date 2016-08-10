@@ -5,8 +5,10 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
@@ -70,20 +72,11 @@ import java.util.Objects;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
-import static android.hardware.camera2.CameraCharacteristics.LENS_FACING;
-import static android.hardware.camera2.CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP;
 import static android.hardware.camera2.CameraMetadata.CONTROL_AF_MODE_CONTINUOUS_PICTURE;
-import static android.hardware.camera2.CameraMetadata.LENS_FACING_FRONT;
 import static android.hardware.camera2.CaptureRequest.CONTROL_AF_MODE;
 
 public class FragmentDecoder extends Fragment
         implements FragmentCompat.OnRequestPermissionsResultCallback {
-
-//    public static final int QR_SCAN = 1;
-//    public static final int IMPORT_PRIVATE_KEYS = 2;
-//    private int mode;
-
-    private boolean useImageAvailable = true;
 
     /**
      * Conversion from screen rotation to JPEG orientation.
@@ -93,6 +86,23 @@ public class FragmentDecoder extends Fragment
     private ImageView camera_guide_image;
     private TextView decoderText;
     private ImageButton flashButton;
+    /**
+     * Max preview width that is guaranteed by Camera2 API
+     */
+    private static final int MAX_PREVIEW_WIDTH = 1920;
+
+    /**
+     * Max preview height that is guaranteed by Camera2 API
+     */
+    private static final int MAX_PREVIEW_HEIGHT = 1080;
+    /**
+     * Orientation of the camera sensor
+     */
+    private int mSensorOrientation;
+    /**
+     * Whether the current camera device supports Flash or not.
+     */
+    private boolean mFlashSupported;
 
     /**
      * Tag for the {@link Log}.
@@ -102,7 +112,6 @@ public class FragmentDecoder extends Fragment
     private final CameraCaptureSession.CaptureCallback mCaptureCallback =
             new CameraCaptureSession.CaptureCallback() {
                 private void process(CaptureResult result) {
-
                 }
 
                 @Override
@@ -155,18 +164,19 @@ public class FragmentDecoder extends Fragment
 
                 @Override
                 public void onImageAvailable(ImageReader reader) {
-
                     Image img = null;
-                    img = reader.acquireLatestImage();
                     Result rawResult = null;
                     try {
+                        img = reader.acquireLatestImage();
                         if (img == null) throw new NullPointerException("cannot be null");
                         ByteBuffer buffer = img.getPlanes()[0].getBuffer();
                         byte[] data = new byte[buffer.remaining()];
                         buffer.get(data);
+
                         int width = img.getWidth();
                         int height = img.getHeight();
-                        PlanarYUVLuminanceSource source = new PlanarYUVLuminanceSource(data, width, height);
+                        Log.e(TAG, "width: " + width + ", height: " + height + ", planes: " + img.getPlanes().length);
+                        PlanarYUVLuminanceSource source = new PlanarYUVLuminanceSource(data, width, height, 0, 0, width, height, false);
                         BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
 
                         rawResult = mQrReader.decode(bitmap);
@@ -209,25 +219,20 @@ public class FragmentDecoder extends Fragment
                                 accessGranted = true;
                             }
                         }
-                    } catch (ReaderException ignored) {
+                    } catch (ReaderException | NullPointerException | IllegalStateException ignored) {
                         if (!showingText)
                             setCameraGuide(BRConstants.CAMERA_GUIDE);
 //                        Log.e(TAG, "Reader shows an exception! ", ignored);
                         /* Ignored */
-                    } catch (NullPointerException | IllegalStateException ex) {
-                        if (!showingText)
-                            setCameraGuide(BRConstants.CAMERA_GUIDE);
-                        ex.printStackTrace();
                     } finally {
                         mQrReader.reset();
-//                        Log.e(TAG, "in the finally! ------------");
                         if (img != null)
                             img.close();
 
                     }
                     if (rawResult == null) {
                         if (!showingText)
-                        setCameraGuide(BRConstants.CAMERA_GUIDE);
+                            setCameraGuide(BRConstants.CAMERA_GUIDE);
                     }
                 }
 
@@ -268,7 +273,6 @@ public class FragmentDecoder extends Fragment
     private CaptureRequest.Builder mPreviewRequestBuilder;
     private CaptureRequest mPreviewRequest;
     private final Semaphore mCameraOpenCloseLock = new Semaphore(1);
-    private int count;
     private int flashButtonCount;
 
     /**
@@ -283,23 +287,51 @@ public class FragmentDecoder extends Fragment
      * @return The optimal {@code Size}, or an arbitrary one if none were big enough
      */
 
-    private static Size chooseOptimalSize(Size[] choices, int width, int height, Size aspectRatio) {
+    /**
+     * Given {@code choices} of {@code Size}s supported by a camera, choose the smallest one that
+     * is at least as large as the respective texture view size, and that is at most as large as the
+     * respective max size, and whose aspect ratio matches with the specified value. If such size
+     * doesn't exist, choose the largest one that is at most as large as the respective max size,
+     * and whose aspect ratio matches with the specified value.
+     *
+     * @param choices           The list of sizes that the camera supports for the intended output
+     *                          class
+     * @param textureViewWidth  The width of the texture view relative to sensor coordinate
+     * @param textureViewHeight The height of the texture view relative to sensor coordinate
+     * @param maxWidth          The maximum width that can be chosen
+     * @param maxHeight         The maximum height that can be chosen
+     * @param aspectRatio       The aspect ratio
+     * @return The optimal {@code Size}, or an arbitrary one if none were big enough
+     */
+    private static Size chooseOptimalSize(Size[] choices, int textureViewWidth,
+                                          int textureViewHeight, int maxWidth, int maxHeight, Size aspectRatio) {
+
         // Collect the supported resolutions that are at least as big as the preview Surface
         List<Size> bigEnough = new ArrayList<>();
+        // Collect the supported resolutions that are smaller than the preview Surface
+        List<Size> notBigEnough = new ArrayList<>();
         int w = aspectRatio.getWidth();
         int h = aspectRatio.getHeight();
         for (Size option : choices) {
-            if (option.getHeight() == option.getWidth() * h / w &&
-                    option.getWidth() >= width && option.getHeight() >= height) {
-                bigEnough.add(option);
+            if (option.getWidth() <= maxWidth && option.getHeight() <= maxHeight &&
+                    option.getHeight() == option.getWidth() * h / w) {
+                if (option.getWidth() >= textureViewWidth &&
+                        option.getHeight() >= textureViewHeight) {
+                    bigEnough.add(option);
+                } else {
+                    notBigEnough.add(option);
+                }
             }
         }
 
-        // Pick the smallest of those, assuming we found any
+        // Pick the smallest of those big enough. If there is no one big enough, pick the
+        // largest of those not big enough.
         if (bigEnough.size() > 0) {
             return Collections.min(bigEnough, new CompareSizesByArea());
+        } else if (notBigEnough.size() > 0) {
+            return Collections.max(notBigEnough, new CompareSizesByArea());
         } else {
-//            Log.e(TAG, "Couldn't find any suitable preview size");
+            Log.e(TAG, "Couldn't find any suitable preview size");
             return choices[0];
         }
     }
@@ -329,10 +361,12 @@ public class FragmentDecoder extends Fragment
                         mPreviewRequestBuilder.set(CaptureRequest.FLASH_MODE, CameraMetadata.FLASH_MODE_TORCH);
                         mCaptureSession.setRepeatingRequest(mPreviewRequestBuilder.build(), null, null);
                         flashButton.setBackgroundResource(R.drawable.flash_on);
+                        SpringAnimator.showAnimation(flashButton);
                     } else {
                         mPreviewRequestBuilder.set(CaptureRequest.FLASH_MODE, CameraMetadata.FLASH_MODE_OFF);
                         mCaptureSession.setRepeatingRequest(mPreviewRequestBuilder.build(), null, null);
                         flashButton.setBackgroundResource(R.drawable.flash_off);
+                        SpringAnimator.showAnimation(flashButton);
                     }
                 } catch (CameraAccessException e) {
                     e.printStackTrace();
@@ -374,7 +408,6 @@ public class FragmentDecoder extends Fragment
 
     @Override
     public void onPause() {
-//        Log.e(TAG, "onPause");
         closeCamera();
         stopBackgroundThread();
         super.onPause();
@@ -387,38 +420,99 @@ public class FragmentDecoder extends Fragment
      * @param height The height of available size for camera preview
      */
     private void setUpCameraOutputs(int width, int height) {
-        CameraManager manager = (CameraManager) getActivity().getSystemService(Context.CAMERA_SERVICE);
+        Activity activity = getActivity();
+        CameraManager manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
         try {
             for (String cameraId : manager.getCameraIdList()) {
-//                Log.e(TAG,"CAMERA ID : " + cameraId);
-                CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
+                CameraCharacteristics characteristics
+                        = manager.getCameraCharacteristics(cameraId);
 
                 // We don't use a front facing camera in this sample.
+                Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
+                if (facing != null && facing == CameraCharacteristics.LENS_FACING_FRONT) {
+                    continue;
+                }
 
-                if (characteristics.get(LENS_FACING) == LENS_FACING_FRONT) continue;
-
-                StreamConfigurationMap map = characteristics.get(SCALER_STREAM_CONFIGURATION_MAP);
+                StreamConfigurationMap map = characteristics.get(
+                        CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+                if (map == null) {
+                    continue;
+                }
 
                 // For still image captures, we use the largest available size.
-                List<Size> outputSizes = Arrays.asList(map.getOutputSizes(BRConstants.sImageFormat));
-                Size largest = Collections.max(outputSizes, new CompareSizesByArea());
+                Size largest = Collections.max(
+                        Arrays.asList(map.getOutputSizes(ImageFormat.YUV_420_888)),
+                        new CompareSizesByArea());
+                mImageReader = ImageReader.newInstance(largest.getWidth()/2, largest.getHeight()/2,
+                        ImageFormat.YUV_420_888, /*maxImages*/2);
+                mImageReader.setOnImageAvailableListener(
+                        mOnImageAvailableListener, mBackgroundHandler);
 
-                mImageReader = ImageReader.newInstance(largest.getWidth() / 16, largest.getHeight() / 16, BRConstants.sImageFormat, 2);
-                mImageReader.setOnImageAvailableListener(mOnImageAvailableListener, mBackgroundHandler);
-                // Danger, W.R.! Attempting to use too large a preview size could exceed the camera
+                // Find out if we need to swap dimension to get the preview size relative to sensor
+                // coordinate.
+                int displayRotation = activity.getWindowManager().getDefaultDisplay().getRotation();
+                //noinspection ConstantConditions
+                mSensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
+                boolean swappedDimensions = false;
+                switch (displayRotation) {
+                    case Surface.ROTATION_0:
+                    case Surface.ROTATION_180:
+                        if (mSensorOrientation == 90 || mSensorOrientation == 270) {
+                            swappedDimensions = true;
+                        }
+                        break;
+                    case Surface.ROTATION_90:
+                    case Surface.ROTATION_270:
+                        if (mSensorOrientation == 0 || mSensorOrientation == 180) {
+                            swappedDimensions = true;
+                        }
+                        break;
+                    default:
+                        Log.e(TAG, "Display rotation is invalid: " + displayRotation);
+                }
+
+                Point displaySize = new Point();
+                activity.getWindowManager().getDefaultDisplay().getSize(displaySize);
+                int rotatedPreviewWidth = width;
+                int rotatedPreviewHeight = height;
+                int maxPreviewWidth = displaySize.x;
+                int maxPreviewHeight = displaySize.y;
+
+                if (swappedDimensions) {
+                    rotatedPreviewWidth = height;
+                    rotatedPreviewHeight = width;
+                    maxPreviewWidth = displaySize.y;
+                    maxPreviewHeight = displaySize.x;
+                }
+
+                if (maxPreviewWidth > MAX_PREVIEW_WIDTH) {
+                    maxPreviewWidth = MAX_PREVIEW_WIDTH;
+                }
+
+                if (maxPreviewHeight > MAX_PREVIEW_HEIGHT) {
+                    maxPreviewHeight = MAX_PREVIEW_HEIGHT;
+                }
+
+                // Danger, W.R.! Attempting to use too large a preview size could  exceed the camera
                 // bus' bandwidth limitation, resulting in gorgeous previews but the storage of
                 // garbage capture data.
-                mPreviewSize = chooseOptimalSize(map.getOutputSizes(SurfaceTexture.class), width, height, largest);
-//                Log.e(TAG, "WIDTH: " + mPreviewSize.getWidth() + " HEIGHT: " + mPreviewSize.getHeight());
-                // We fit the aspect ratio of TextureView to the size of preview we picked.
+                mPreviewSize = chooseOptimalSize(map.getOutputSizes(SurfaceTexture.class),
+                        rotatedPreviewWidth, rotatedPreviewHeight, maxPreviewWidth,
+                        maxPreviewHeight, largest);
 
-//                int orientation = getResources().getConfiguration().orientation;
-//                if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-//                    mTextureView.setAspectRatio(mPreviewSize.getWidth(), mPreviewSize.getHeight());
-//                } else {
-                mTextureView.setAspectRatio(MainActivity.screenParametersPoint.x,
-                        MainActivity.screenParametersPoint.y - getStatusBarHeight()); //portrait only
-//                }
+                // We fit the aspect ratio of TextureView to the size of preview we picked.
+                int orientation = getResources().getConfiguration().orientation;
+                if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    mTextureView.setAspectRatio(
+                            mPreviewSize.getWidth(), mPreviewSize.getHeight());
+                } else {
+                    mTextureView.setAspectRatio(
+                            mPreviewSize.getHeight(), mPreviewSize.getWidth());
+                }
+
+                // Check if the flash is supported.
+                Boolean available = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
+                mFlashSupported = available == null ? false : available;
 
                 mCameraId = cameraId;
                 return;
@@ -519,6 +613,7 @@ public class FragmentDecoder extends Fragment
             mPreviewRequestBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             mPreviewRequestBuilder.addTarget(mImageSurface);
             mPreviewRequestBuilder.addTarget(surface);
+//            mPreviewRequestBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, 800);
 
             // Here, we create a CameraCaptureSession for camera preview.
             mCameraDevice.createCaptureSession(Arrays.asList(mImageSurface, surface),

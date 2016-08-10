@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -79,7 +80,7 @@ public class BRPeerManager {
         int startHeight = SharedPreferencesManager.getStartHeight(ctx);
         Log.e(TAG, "startHeight: " + startHeight);
         Log.e(TAG, "syncStarted: " + syncProgress(startHeight));
-        startSyncingProgressThread();
+        BRPeerManager.getInstance(ctx).refreshConnection();
     }
 
     public static void syncSucceeded() {
@@ -274,6 +275,7 @@ public class BRPeerManager {
                     try {
                         Thread.sleep(300);
                     } catch (InterruptedException e) {
+                        running = false;
                         e.printStackTrace();
                     }
                 }
@@ -296,7 +298,10 @@ public class BRPeerManager {
         final RelativeLayout networkErrorBar = (RelativeLayout) ctx.findViewById(R.id.main_internet_status_bar);
         if (networkErrorBar == null) return;
         final ConnectivityManager connectivityManager = ((ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE));
-        boolean isConnected = connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
+        boolean isConnected = connectivityManager.getActiveNetworkInfo() != null &&
+                connectivityManager.getActiveNetworkInfo().isConnected() &&
+                Settings.System.getInt(ctx.getContentResolver(),
+                Settings.Global.AIRPLANE_MODE_ON, 0) != 1;
         BRPeerManager.getInstance(ctx).connect();
         if (!isConnected) {
             ctx.runOnUiThread(new Runnable() {

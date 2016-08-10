@@ -19,12 +19,19 @@
     android:layout_height="match_parent"
     android:background="@color/black">
 
+    <!--<com.breadwallet.tools.qrcode.AutoFitTextureView-->
+    <!--android:id="@+id/texture"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignParentStart="true"-->
+    <!--android:layout_alignParentTop="true" />-->
+
     <ImageView
         android:id="@+id/decoder_camera_guide_image"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
         android:src="@drawable/cameraguide" />
 
     <TextView
@@ -40,11 +47,19 @@
         android:textColor="@android:color/white" />
 
     <ImageButton
+        android:id="@+id/button_flash"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/button_flash"
-        android:background="@drawable/flash_off"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/flash_off" />
+
+    <ImageView
+        android:id="@+id/test_image"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true" />
+
 
 </RelativeLayout>

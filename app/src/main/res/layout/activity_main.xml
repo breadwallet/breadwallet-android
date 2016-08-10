@@ -118,12 +118,12 @@
             android:background="@color/gray" />
 
         <TextView
+            android:id="@+id/not_connected_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/not_connected_text"
-            android:layout_centerVertical="true"
             android:layout_below="@+id/network_bar_line"
             android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
             android:gravity="center"
             android:padding="2dp"
             android:text="@string/not_connected"
@@ -133,8 +133,8 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_below="@+id/not_connected_text"
             android:layout_height="@dimen/separator_height"
+            android:layout_below="@+id/not_connected_text"
             android:background="@color/gray" />
 
     </RelativeLayout>
@@ -245,14 +245,12 @@
 
     <RelativeLayout
         android:id="@+id/tips_block_pane"
-        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/transparent"
         android:clickable="true"
-        >
+        android:visibility="gone">
 
     </RelativeLayout>
-
 
 </RelativeLayout>

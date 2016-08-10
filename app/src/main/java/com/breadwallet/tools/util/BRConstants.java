@@ -1,6 +1,7 @@
 package com.breadwallet.tools.util;
 
 import android.graphics.ImageFormat;
+import android.graphics.PixelFormat;
 
 /**
  * BreadWallet
@@ -112,7 +113,6 @@ public class BRConstants {
     /**
      * FragmentDecoder
      */
-    public static final int sImageFormat = ImageFormat.YUV_420_888;
     public static final String CAMERA_GUIDE_RED = "red";
     public static final String CAMERA_GUIDE = "reg";
     public static final String TEXT_EMPTY = "";
