@@ -549,8 +549,8 @@ public class MainActivity extends FragmentActivity implements Observer {
         if (unit == BRConstants.CURRENT_UNIT_BITCOINS) divideBy = "100000000";
         long minAmount = m.getMinOutputAmount();
         if (new BigDecimal(tempAmount).multiply(new BigDecimal(divideBy)).doubleValue() < minAmount) {
-            final String bitcoinMinMessage = String.format(Locale.getDefault(), getString(R.string.bitcoin_payment_cant_be_less),
-                    new BigDecimal(minAmount).divide(new BigDecimal(divideBy)));
+            String placeHolder = BRConstants.bitcoinLowercase + new BigDecimal(minAmount).divide(new BigDecimal(divideBy)).toString();
+            final String bitcoinMinMessage = String.format(Locale.getDefault(), getString(R.string.bitcoin_payment_cant_be_less), placeHolder);
             ((BreadWalletApp) getApplication()).showCustomDialog(getString(R.string.amount_too_small),
                     bitcoinMinMessage, getString(R.string.ok));
             return;
@@ -574,8 +574,6 @@ public class MainActivity extends FragmentActivity implements Observer {
             case BRConstants.SHOW_PHRASE_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
                     PostAuthenticationProcessor.getInstance().onShowPhraseAuth(this);
-                } else {
-                    onBackPressed();
                 }
                 break;
 
@@ -605,7 +603,6 @@ public class MainActivity extends FragmentActivity implements Observer {
                 }
                 return;
             }
-
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
@@ -676,9 +673,9 @@ public class MainActivity extends FragmentActivity implements Observer {
     public class ToastUpdater extends Thread {
         public void run() {
             while (middleBubbleBlocks.getVisibility() == View.VISIBLE) {
-                final String latestBlockKnown = String.valueOf(BRPeerManager.getEstimatedBlockHeight());
+                final int latestBlockKnown = BRPeerManager.getEstimatedBlockHeight();
                 android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
-                final String currBlock = String.valueOf(BRPeerManager.getCurrentBlockHeight());
+                final int currBlock = BRPeerManager.getCurrentBlockHeight();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

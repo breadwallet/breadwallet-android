@@ -103,7 +103,7 @@ public class KeyStoreManager {
     public static final String SPEND_LIMIT_FILENAME = "my_spend_limit";
     public static final String FAIL_TIMESTAMP_FILENAME = "my_fail_timestamp";
 
-    public static final int AUTH_DURATION_SEC = BuildConfig.DEBUG ? 20 : 300;
+    public static final int AUTH_DURATION_SEC = 300;
 
     private static boolean setData(Activity context, byte[] data, String alias, String alias_file, String alias_iv, int request_code, boolean auth_required) {
         if (alias.equals(alias_file) || alias.equals(alias_iv) || alias_file.equals(alias_iv))

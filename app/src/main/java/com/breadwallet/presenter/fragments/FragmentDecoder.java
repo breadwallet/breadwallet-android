@@ -629,7 +629,7 @@ public class FragmentDecoder extends Fragment
 
                         @Override
                         public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
-                            Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.failed),
+                            Toast.makeText(getActivity(), R.string.camera_configuration_failed,
                                     Toast.LENGTH_SHORT).show();
                         }
                     }, null

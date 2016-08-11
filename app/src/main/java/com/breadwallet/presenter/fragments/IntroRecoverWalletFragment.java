@@ -62,7 +62,6 @@ public class IntroRecoverWalletFragment extends Fragment {
     private Button recoverButton;
     private EditText editText;
     private AlertDialog alertDialog;
-    InputMethodManager keyboard;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -107,13 +106,13 @@ public class IntroRecoverWalletFragment extends Fragment {
                     String message = getResources().getString(R.string.bad_recovery_phrase);
                     String[] words = cleanPhrase.split(" ");
                     if (words.length != 12) {
-                        message = getActivity().getString(R.string.recovery_phrase_must_have_12_words);
+                        message = String.format(getActivity().getString(R.string.recovery_phrase_must_have_12_words),12);
                     } else {
                         List<String> allWords = WordsReader.getAllWordLists(getActivity());
 
                         for (String word : words) {
                             if (!allWords.contains(word)) {
-                                message = "\"" + word + getActivity().getString(R.string.not_a_recovery_phrase_word);
+                                message = String.format(getActivity().getString(R.string.not_a_recovery_phrase_word), word);
                             }
                         }
                     }

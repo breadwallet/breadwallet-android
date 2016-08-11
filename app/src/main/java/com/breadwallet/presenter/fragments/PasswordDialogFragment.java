@@ -226,7 +226,7 @@ public class PasswordDialogFragment extends DialogFragment {
             currentMode = BRConstants.AUTH_MODE_NEW_PASS;
         }
         if (verifyOnly) {
-            title.setText(R.string.enter_passcode);
+            title.setText(String.format(getResources().getString(R.string.enter_passcode), "\"" + BRConstants.bitcoinLowercase + "read\""));
         }
 
         textWatcher = new TextWatcher() {
@@ -458,7 +458,8 @@ public class PasswordDialogFragment extends DialogFragment {
         }
         if (failCount >= 3) {
             info.setVisibility(View.VISIBLE);
-            info.setText(String.format(Locale.getDefault(), getActivity().getString(R.string.attempts_remaining), attemptsRemaining < 0 ? 0 : attemptsRemaining));
+            info.setText(attemptsRemaining == 1 ? getActivity().getString(R.string.attempt_remaining1) :
+                    String.format(Locale.getDefault(), getActivity().getString(R.string.attempts_remaining), attemptsRemaining));
         }
     }
 
@@ -473,10 +474,7 @@ public class PasswordDialogFragment extends DialogFragment {
         passcodeEditText.setVisibility(View.GONE);
         info.setVisibility(View.VISIBLE);
         // Get the Resources
-        Resources res = getResources();
-        String tryAgain = res.getQuantityString(R.plurals.try_again,
-                (int) waitTime);
-        String message = String.format(tryAgain, (int) (waitTime == 0 ? 1 : waitTime));
+        String message = String.format(getString(R.string.try_again), (int) (waitTime == 0 ? 1 : waitTime), (waitTime == 1 ? R.string.minute : R.string.minutes));
 
         info.setText(message);
         digit_1.setVisibility(View.GONE);

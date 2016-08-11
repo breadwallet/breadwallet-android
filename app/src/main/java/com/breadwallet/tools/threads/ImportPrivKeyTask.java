@@ -84,14 +84,11 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
     @Override
     protected void onPostExecute(String s) {
         if (app == null || importPrivKeyEntity == null) return;
-        CurrencyManager cm = CurrencyManager.getInstance(app);
-        String amountString = String.format("%s (%s)", BRStringFormatter.getFormattedCurrencyString("BTC",
-                importPrivKeyEntity.getAmount()), BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(app),
-                SharedPreferencesManager.getIso(app), new BigDecimal(importPrivKeyEntity.getAmount()), app));
-        String feeString = String.format("%s (%s)", BRStringFormatter.getFormattedCurrencyString("BTC",
-                importPrivKeyEntity.getFee()), BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(app),
-                SharedPreferencesManager.getIso(app), new BigDecimal(importPrivKeyEntity.getFee()), app));
-        String message = String.format(app.getString(R.string.send_money_from_privkey_message), amountString, feeString);
+        String message = String.format(app.getString(R.string.send_money_from_privkey_message),
+                BRStringFormatter.getFormattedCurrencyString("BTC", importPrivKeyEntity.getAmount()),
+                BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(app), SharedPreferencesManager.getIso(app), new BigDecimal(importPrivKeyEntity.getAmount()), app),
+                BRStringFormatter.getFormattedCurrencyString("BTC", importPrivKeyEntity.getFee()),
+                BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(app), SharedPreferencesManager.getIso(app), new BigDecimal(importPrivKeyEntity.getFee()), app));
         new AlertDialog.Builder(app)
                 .setTitle("")
                 .setMessage(message)

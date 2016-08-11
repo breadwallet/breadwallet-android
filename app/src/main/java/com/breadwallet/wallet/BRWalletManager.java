@@ -3,15 +3,12 @@ package com.breadwallet.wallet;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.KeyguardManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.media.MediaPlayer;
-import android.net.ConnectivityManager;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.text.InputType;
 import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
@@ -19,10 +16,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TableLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
@@ -38,10 +31,8 @@ import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.presenter.fragments.MainFragmentQR;
-import com.breadwallet.tools.qrcode.QRCodeEncoder;
 import com.breadwallet.tools.threads.PassCodeTask;
 import com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask;
-import com.breadwallet.tools.threads.PaymentProtocolTask;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.manager.BRNotificationManager;
 import com.breadwallet.tools.util.BRStringFormatter;
@@ -237,7 +228,7 @@ public class BRWalletManager {
                                             @Override
                                             public void run() {
                                                 ((BreadWalletApp) ctx.getApplication()).showCustomToast(ctx,
-                                                        activity.getString(R.string.scanning_privkey), MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 1);
+                                                        activity.getString(R.string.checking_privkey_balance), MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 1);
                                             }
                                         });
                                     if (editText == null) return;
@@ -290,8 +281,8 @@ public class BRWalletManager {
                     AlertDialog alert;
                     AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
                     builder.setTitle(ctx.getString(R.string.you_received_bitcoin));
-
-                    builder.setMessage(ctx.getString(R.string.write_down_phrase));
+                    //todo add the second reminder
+                    builder.setMessage(String.format(ctx.getString(R.string.write_down_phrase),ctx.getString(R.string.write_down_phrase_holder1)));
 //                    builder.setPositiveButton(ctx.getString(R.string.show_phrase),
 //                            new DialogInterface.OnClickListener() {
 //                                public void onClick(DialogInterface dialog, int which) {
@@ -562,7 +553,7 @@ public class BRWalletManager {
         }
         if (request.amount < minOutput) {
             final String bitcoinMinMessage = String.format(Locale.getDefault(), ctx.getString(R.string.bitcoin_payment_cant_be_less),
-                    new BigDecimal(minOutput).divide(new BigDecimal("100")));
+                    BRConstants.bitcoinLowercase + new BigDecimal(minOutput).divide(new BigDecimal("100")));
             ctx.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -609,7 +600,7 @@ public class BRWalletManager {
         if (bigDecimalAmount.longValue() < minAmount) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
             final String bitcoinMinMessage = String.format(Locale.getDefault(), ctx.getString(R.string.bitcoin_payment_cant_be_less),
-                    new BigDecimal(minAmount).divide(new BigDecimal(divideBy)));
+                    BRConstants.bitcoinLowercase + new BigDecimal(minAmount).divide(new BigDecimal(divideBy)));
             builder.setMessage(bitcoinMinMessage)
                     .setTitle(R.string.could_not_make_payment)
                     .setCancelable(false)
@@ -652,7 +643,8 @@ public class BRWalletManager {
 //                String strToReduce = String.valueOf(amountToReduce);
                 final AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
 
-                builder.setMessage(String.format(ctx.getString(R.string.reduce_payment_amount_by), BRStringFormatter.getFormattedCurrencyString("BTC", amountToReduce)))
+                builder.setMessage(String.format(ctx.getString(R.string.reduce_payment_amount_by), BRStringFormatter.getFormattedCurrencyString("BTC", amountToReduce),
+                        BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(ctx), SharedPreferencesManager.getIso(ctx), new BigDecimal(amountToReduce), ctx)))
                         .setTitle(R.string.insufficient_funds_for_fee)
                         .setCancelable(false)
                         .setNegativeButton(ctx.getString(R.string.cancel), new DialogInterface.OnClickListener() {
@@ -669,7 +661,7 @@ public class BRWalletManager {
                                     confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, bigDecimalAmount.longValue() - amountToReduce, cn, tmpTx2, isAmountRequested));
                                 } else {
                                     Log.e(TAG, "tmpTxObject2 is null!!!");
-                                    ((BreadWalletApp) ctx.getApplication()).showCustomToast(ctx, ctx.getString(R.string.failed_to_send_insufficient_funds),
+                                    ((BreadWalletApp) ctx.getApplication()).showCustomToast(ctx, ctx.getString(R.string.insufficient_funds),
                                             MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
                                 }
                             }

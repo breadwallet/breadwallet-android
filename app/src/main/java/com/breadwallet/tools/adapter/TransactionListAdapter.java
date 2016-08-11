@@ -292,10 +292,10 @@ public class TransactionListAdapter extends BaseAdapter {
                 sentReceivedTextView.setText(R.string.unverified);
             } else {
 //                Log.e(TAG, "item.getBlockHeight(): " + blockHeight + ", confirms: " + confirms + ", lastBlock: " + estimatedBlockHeight);
-                Resources res = activity.getResources();
                 int confsNr = confirms >= 0 && confirms <= 5 ? confirms : 0;
-                String confs = res.getQuantityString(R.plurals.nr_confirmations, confsNr);
-                String message = String.format(confs, confsNr);
+                String message = confsNr == 0? activity.getString(R.string.nr_confirmations0) :
+                        (confsNr == 1? activity.getString(R.string.nr_confirmations1) : String.format(activity.getString(R.string.nr_confirmations),confsNr));
+
                 sentReceivedTextView.setText(message);
             }
         }

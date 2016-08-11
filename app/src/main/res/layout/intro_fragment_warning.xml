@@ -38,10 +38,10 @@
             android:layout_below="@id/intro_warning_no_eye"
             android:layout_centerHorizontal="true"
             android:gravity="center"
-            android:padding="20dp"
+            android:padding="10dp"
             android:text="@string/warning_text1"
             android:textColor="@color/white"
-            android:textSize="20sp" />
+            android:textSize="18sp" />
 
         <ImageView
             android:id="@+id/intro_warning_no_key"
@@ -58,12 +58,11 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/intro_warning_no_key"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"
             android:gravity="center"
-            android:padding="20dp"
+            android:padding="10dp"
             android:text="@string/warning_text2"
             android:textColor="@color/white"
-            android:textSize="20sp" />
+            android:textSize="18sp" />
     </RelativeLayout>
 
     <Button

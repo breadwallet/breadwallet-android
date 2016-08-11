@@ -126,7 +126,9 @@ public class FragmentSettings extends Fragment {
 
                     new AlertDialog.Builder(getActivity())
                             .setTitle(getResources().getString(R.string.warning))
-                            .setMessage(getResources().getString(R.string.dialog_do_not_let_anyone))
+                            .setMessage(getResources().getString(R.string.warning_text1) +
+                                    getResources().getString(R.string.warning_text2) +
+                                    getResources().getString(R.string.warning_text3))
                             .setPositiveButton(getResources().getString(R.string.show), new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     PostAuthenticationProcessor.getInstance().onShowPhraseAuth((MainActivity) getActivity());
