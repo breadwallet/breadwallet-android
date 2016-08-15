@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <integer name="slide_speed">150</integer>
+    <integer name="slide_speed">100</integer>
     <integer name="standard_screen_width">1080</integer>
     <integer name="standard_screen_width_neg">-1080</integer>
     <integer name="standard_screen_height">1920</integer>

@@ -22,7 +22,6 @@ import android.hardware.Camera;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
-import com.breadwallet.tools.qrcode.PlanarYUVLuminanceSource;
 
 import java.io.IOException;
 

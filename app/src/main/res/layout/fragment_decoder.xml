@@ -46,20 +46,12 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@android:color/white" />
 
-    <ImageButton
-        android:id="@+id/button_flash"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:background="@drawable/flash_off" />
-
-    <ImageView
-        android:id="@+id/test_image"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true" />
-
+    <!--<ImageButton-->
+        <!--android:id="@+id/button_flash"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:background="@drawable/flash_off" />-->
 
 </RelativeLayout>

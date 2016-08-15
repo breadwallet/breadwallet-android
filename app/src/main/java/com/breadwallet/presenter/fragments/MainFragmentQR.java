@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -29,10 +30,7 @@ import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
-import com.breadwallet.tools.qrcode.QRCodeEncoder;
 import com.breadwallet.wallet.BRWalletManager;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.WriterException;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -67,7 +65,7 @@ public class MainFragmentQR extends Fragment {
     private static final String TAG = MainFragmentQR.class.getName();
     private ImageView qrcode;
     private TextView mainAddressText;
-    private RelativeLayout qrImageLayout;
+    private LinearLayout qrImageLayout;
     private Bitmap bitmap;
     private FragmentSharing sharingFragment;
     private FragmentManager fm;
@@ -85,7 +83,7 @@ public class MainFragmentQR extends Fragment {
 
         BRWalletManager.refreshAddress();
         receiveAddress = SharedPreferencesManager.getReceiveAddress(getActivity());
-        qrImageLayout = (RelativeLayout) rootView.findViewById(R.id.qr_image_address_layout);
+        qrImageLayout = (LinearLayout) rootView.findViewById(R.id.qr_image_address_layout);
         qrcode = (ImageView) rootView.findViewById(R.id.main_image_qr_code);
         sharingFragment = new FragmentSharing();
         final RelativeLayout mainFragmentQr = (RelativeLayout) rootView.findViewById(R.id.main_fragment_qr);

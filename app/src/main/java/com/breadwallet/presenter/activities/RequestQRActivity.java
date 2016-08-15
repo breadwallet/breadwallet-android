@@ -2,11 +2,8 @@ package com.breadwallet.presenter.activities;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -21,11 +18,8 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRStringFormatter;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.animation.SpringAnimator;
-import com.breadwallet.tools.qrcode.QRCodeEncoder;
 import com.breadwallet.tools.security.RequestHandler;
 import com.breadwallet.wallet.BRWalletManager;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.WriterException;
 
 import java.math.BigDecimal;
 import java.security.InvalidAlgorithmParameterException;

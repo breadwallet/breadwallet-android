@@ -9,6 +9,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
+import android.widget.ImageView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
@@ -96,4 +97,5 @@ public class SpringAnimator {
         view.setVisibility(View.VISIBLE);
         view.startAnimation(shake);
     }
+
 }
