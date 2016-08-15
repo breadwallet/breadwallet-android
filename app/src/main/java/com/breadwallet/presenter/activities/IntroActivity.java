@@ -349,13 +349,15 @@ public class IntroActivity extends FragmentActivity {
         int screenHeigth = screenParametersPoint.y;
 
         showHideFragments(from, to);
-        TranslateAnimation transFrom = direction == RIGHT ? new TranslateAnimation(0, -screenWidth, 0, 0) : new TranslateAnimation(0,screenWidth, 0, 0);
+        TranslateAnimation transFrom = direction == RIGHT ?
+                new TranslateAnimation(0, -screenWidth, 0, 0) : new TranslateAnimation(0,screenWidth, 0, 0);
         transFrom.setDuration(BRAnimator.horizontalSlideDuration);
         transFrom.setInterpolator(new DecelerateOvershootInterpolator(1f, 0.5f));
         View fromView = from.getView();
         if (fromView != null)
             fromView.startAnimation(transFrom);
-        TranslateAnimation transTo = direction == RIGHT ? new TranslateAnimation(screenWidth, 0, 0, 0) : new TranslateAnimation(-screenWidth, 0, 0, 0);
+        TranslateAnimation transTo = direction == RIGHT ?
+                new TranslateAnimation(screenWidth, 0, 0, 0) : new TranslateAnimation(-screenWidth, 0, 0, 0);
         transTo.setDuration(BRAnimator.horizontalSlideDuration);
         transTo.setInterpolator(new DecelerateOvershootInterpolator(1f, 0.5f));
         transTo.setAnimationListener(new Animation.AnimationListener() {

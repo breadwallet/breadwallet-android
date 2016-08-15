@@ -72,6 +72,7 @@ public class PostAuthenticationProcessor {
         boolean success = BRWalletManager.getInstance(app).generateRandomSeed();
         if (success) {
             app.showWarningFragment();
+
         }
     }
 

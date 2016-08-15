@@ -69,7 +69,6 @@ public class FragmentSettingsAll extends Fragment {
     public static ListView transactionList;
     public static TransactionListAdapter adapter;
 
-    //RED FF5454 GREEN 00BF00 BLUE 0080FF
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // The last two arguments ensure LayoutParams are inflated

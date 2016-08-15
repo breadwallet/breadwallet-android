@@ -125,6 +125,7 @@ public class PasswordDialogFragment extends DialogFragment {
         digit_3 = (TextView) view.findViewById(R.id.passcode_digit3);
         digit_4 = (TextView) view.findViewById(R.id.passcode_digit4);
 
+
         prevPass = "";
 
         clearDigits();
@@ -249,6 +250,15 @@ public class PasswordDialogFragment extends DialogFragment {
         passcodeEditText.addTextChangedListener(textWatcher);
 
         getDialog().setCanceledOnTouchOutside(false);
+
+        (new Handler()).postDelayed(new Runnable() {
+
+            public void run() {
+                passcodeEditText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
+                passcodeEditText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
+
+            }
+        }, 200);
         return view;
     }
 

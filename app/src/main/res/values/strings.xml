@@ -74,6 +74,7 @@
     <!-- checked --><string name="write_down_phrase">\n%s\n\nif you ever lose your phone, you will need it to recover your wallet</string>
     <!-- checked --><string name="unverified">unverified</string>
     <string name="unverified_by_peers">not verified by at least 3 peers</string>
+    <string name="important">IMPORTANT</string>
     <!-- checked --><string name="moved">moved</string>
     <string name="receive_money">receive money:</string>
     <string name="send_money">send money:</string>
@@ -170,6 +171,8 @@
     <!-- no need --><string name="auth_required">Authentication required</string>
     <!-- no need --><string name="auth_message">The phone has been unlocked for too long</string>
     <!-- no need --><string name="camera_configuration_failed">camera configuration failed</string>
+    <string name="device_security_compromised">DEVICE SECURITY COMPROMISED</string>
+    <string name="show_phrase">show phrase</string>
 
 
     <integer name="viewfinder_border_width">4</integer>

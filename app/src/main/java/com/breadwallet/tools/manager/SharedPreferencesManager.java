@@ -115,6 +115,11 @@ public class SharedPreferencesManager {
         return prefs.getLong(BRConstants.SECURE_TIME_PREFS, System.currentTimeMillis() / 1000);
     }
 
+    public static long getPhraseWarningTime(Activity activity) {
+        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getLong(BRConstants.PHRASE_WARNING_TIME, System.currentTimeMillis() / 1000);
+    }
+
     public static int getLimit(Activity activity) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getInt(BRConstants.LIMIT_PREFS, BRConstants.ONE_BITCOIN);
@@ -169,6 +174,13 @@ public class SharedPreferencesManager {
         editor.apply();
     }
 
+    public static void putPhraseWarningTime(Activity activity, long phraseWarningTime) {
+        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putLong(BRConstants.PHRASE_WARNING_TIME, phraseWarningTime);
+        editor.apply();
+    }
+
     public static void putExchangeRates(Activity activity, Set<CurrencyEntity> rates) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
@@ -182,13 +194,11 @@ public class SharedPreferencesManager {
             byte[] data = arrayOutputStream.toByteArray();
             objectOutput.close();
             arrayOutputStream.close();
-
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             Base64OutputStream b64 = new Base64OutputStream(out, Base64.DEFAULT);
             b64.write(data);
             b64.close();
             out.close();
-
             editor.putString(BRConstants.EXCHANGE_RATES, new String(out.toByteArray()));
 
             editor.apply();

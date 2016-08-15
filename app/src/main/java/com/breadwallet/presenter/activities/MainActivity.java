@@ -167,6 +167,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         BRAnimator.scaleView(pageIndicatorLeft, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f,
                 BRConstants.PAGE_INDICATOR_SCALE_UP);
         setStatusBarColor();
+        BRWalletManager.showWritePhraseDialog(false);
     }
 
     @Override
@@ -307,7 +308,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                 @Override
                 public void run() {
                     AlertDialog.Builder builder = new AlertDialog.Builder(app);
-                    builder.setTitle("DEVICE SECURITY COMPROMISED")
+                    builder.setTitle(R.string.device_security_compromised)
                             .setMessage("On a \'rooted\' device, any app can access any other app\'s keystore data (and steal your bitcoins)."
                                     + (hasBitcoin ? "\nWipe this wallet immediately and restore on a secure device." : ""))
                             .setCancelable(false)
@@ -327,7 +328,7 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     @Override
     protected void onRestart() {
-        super.onRestart();  // Always call the superclass method first
+        super.onRestart();
         app = this;
     }
 
@@ -346,7 +347,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         currencyManager.addObserver(this);
         MiddleViewAdapter.resetMiddleView(this, null);
         boolean isNetworkAvailable = ((BreadWalletApp) getApplication()).isNetworkAvailable(this);
-//        Log.e(TAG, "isNetworkAvailable: " + isNetworkAvailable);
         networkErrorBar.setVisibility(isNetworkAvailable ? View.GONE : View.VISIBLE);
         startStopReceiver(true);
         BRPeerManager.getInstance(app).refreshConnection();
@@ -375,7 +375,6 @@ public class MainActivity extends FragmentActivity implements Observer {
     protected void onStop() {
         super.onStop();
         CurrencyManager.getInstance(this).stopTimerTask();
-//        BRAnimator.level = 0;
 
     }
 

@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.breadwallet.R;
@@ -29,6 +30,8 @@ import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.presenter.entities.ImportPrivKeyEntity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.TransactionListItem;
+import com.breadwallet.presenter.fragments.FragmentRecoveryPhrase;
+import com.breadwallet.presenter.fragments.FragmentSettings;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.presenter.fragments.MainFragmentQR;
 import com.breadwallet.tools.threads.PassCodeTask;
@@ -133,6 +136,7 @@ public class BRWalletManager {
         byte[] strBytes = TypesConverter.getNullTerminatedPhrase(strPhrase);
         byte[] pubKey = BRWalletManager.getInstance(ctx).getMasterPubKey(strBytes);
         KeyStoreManager.putMasterPublicKey(pubKey, ctx);
+        SharedPreferencesManager.putPhraseWarningTime(ctx, System.currentTimeMillis() / 1000);
         return true;
 
     }
@@ -163,7 +167,7 @@ public class BRWalletManager {
         if (ctx != null) {
             MainFragmentQR mainFragmentQR = CustomPagerAdapter.adapter == null ? null : CustomPagerAdapter.adapter.mainFragmentQR;
             String tmpAddr = getReceiveAddress();
-            Log.e(TAG,"generated receiveAddress: " + tmpAddr);
+            Log.e(TAG, "generated receiveAddress: " + tmpAddr);
             if (tmpAddr == null || tmpAddr.isEmpty()) return;
             SharedPreferencesManager.putReceiveAddress(ctx, tmpAddr);
             if (mainFragmentQR == null) return;
@@ -199,8 +203,6 @@ public class BRWalletManager {
 
                     final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 //                    builder.setTitle("password protected key");
-
-                    // Set up the input
 
                     final View input = activity.getLayoutInflater().inflate(R.layout.view_bip38password_dialog, null);
                     // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
@@ -269,7 +271,7 @@ public class BRWalletManager {
         }
     }
 
-    private static void showWritePhraseDialog() {
+    public static void showWritePhraseDialog(final boolean firstTime) {
 
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) {
@@ -278,20 +280,100 @@ public class BRWalletManager {
                 public void run() {
                     boolean phraseWroteDown = SharedPreferencesManager.getPhraseWroteDown(ctx);
                     if (phraseWroteDown) return;
+                    long now = System.currentTimeMillis() / 1000;
+                    long lastMessageShow = SharedPreferencesManager.getPhraseWarningTime(ctx);
+                    Log.e(TAG, "now:" + now);
+                    Log.e(TAG, "lastMessageShow:" + lastMessageShow);
+                    if (!firstTime && lastMessageShow > (now - 36 * 60 * 60)) return;//36 * 60 * 60
+                    SharedPreferencesManager.putPhraseWarningTime(ctx, System.currentTimeMillis() / 1000);
                     AlertDialog alert;
                     AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
-                    builder.setTitle(ctx.getString(R.string.you_received_bitcoin));
-                    //todo add the second reminder
-                    builder.setMessage(String.format(ctx.getString(R.string.write_down_phrase),ctx.getString(R.string.write_down_phrase_holder1)));
-//                    builder.setPositiveButton(ctx.getString(R.string.show_phrase),
-//                            new DialogInterface.OnClickListener() {
-//                                public void onClick(DialogInterface dialog, int which) {
-//                                    dialog.dismiss();
-//                                    MainActivity app = MainActivity.app;
-//                                    if (app != null)
-//                                        BRAnimator.animateSlideToLeft(app, new FragmentRecoveryPhrase(), null);
-//                                }
-//                            });
+                    builder.setTitle(firstTime ? ctx.getString(R.string.you_received_bitcoin) : ctx.getString(R.string.important));
+                    builder.setMessage(String.format(ctx.getString(R.string.write_down_phrase), firstTime ?
+                            ctx.getString(R.string.write_down_phrase_holder1) : ctx.getString(R.string.write_down_phrase_holder2)));
+                    builder.setPositiveButton(ctx.getString(R.string.show_phrase),
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(final DialogInterface dialog, int which) {
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            dialog.dismiss();
+                                            final MainActivity app = MainActivity.app;
+                                            if (app == null) return;
+                                            final RelativeLayout tipsBlockPane = (RelativeLayout) app.findViewById(R.id.tips_block_pane);
+
+                                            app.runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    tipsBlockPane.setVisibility(View.VISIBLE);
+                                                    new Handler().postDelayed(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            tipsBlockPane.setVisibility(View.GONE);
+                                                        }
+                                                    },5000);
+                                                }
+                                            });
+                                            //in case of an error assure the blockPane is gone anyway in 5 sec
+
+                                            switch (BRAnimator.level) {
+                                                case 0:
+                                                    app.runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            BRAnimator.pressMenuButton(app);
+                                                        }
+                                                    });
+
+                                                    try {
+                                                        Thread.sleep(500);
+                                                    } catch (InterruptedException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                    app.runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            FragmentSettingsAll fragmentSettingsAll = (FragmentSettingsAll) app.
+                                                                    getFragmentManager().findFragmentByTag(FragmentSettingsAll.class.getName());
+                                                            BRAnimator.animateSlideToLeft(app, new FragmentSettings(), fragmentSettingsAll);
+                                                        }
+                                                    });
+
+                                                    try {
+                                                        Thread.sleep(500);
+                                                    } catch (InterruptedException e) {
+                                                        e.printStackTrace();
+                                                    }
+
+                                                    app.runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            new android.support.v7.app.AlertDialog.Builder(app)
+                                                                    .setTitle(app.getResources().getString(R.string.warning))
+                                                                    .setMessage(app.getResources().getString(R.string.warning_text1) +
+                                                                            app.getResources().getString(R.string.warning_text2) +
+                                                                            app.getResources().getString(R.string.warning_text3))
+                                                                    .setPositiveButton(app.getResources().getString(R.string.show), new DialogInterface.OnClickListener() {
+                                                                        public void onClick(DialogInterface dialog, int which) {
+                                                                            PostAuthenticationProcessor.getInstance().onShowPhraseAuth(app);
+                                                                        }
+                                                                    })
+                                                                    .setNegativeButton(app.getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                                                                        public void onClick(DialogInterface dialog, int which) {
+                                                                            dialog.dismiss();
+                                                                        }
+                                                                    })
+                                                                    .show();
+                                                            tipsBlockPane.setVisibility(View.GONE);
+                                                        }
+                                                    });
+
+                                                    break;
+                                            }
+                                        }
+                                    }).start();
+                                }
+                            });
                     builder.setNegativeButton(ctx.getString(R.string.ok),
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
@@ -388,7 +470,7 @@ public class BRWalletManager {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            showWritePhraseDialog();
+                            showWritePhraseDialog(true);
                         }
                     }, 4000);
                 }
@@ -803,9 +885,9 @@ public class BRWalletManager {
         int width = point.x;
         int height = point.y;
         int smallerDimension = width < height ? width : height;
-        Log.e(TAG,"smallerDimension: " + smallerDimension);
-        smallerDimension = (int)(smallerDimension *0.7f);
-        Log.e(TAG,"smallerDimension: " + smallerDimension);
+        Log.e(TAG, "smallerDimension: " + smallerDimension);
+        smallerDimension = (int) (smallerDimension * 0.7f);
+        Log.e(TAG, "smallerDimension: " + smallerDimension);
         Bitmap bitmap = null;
         try {
             bitmap = encodeAsBitmap(bitcoinURL, smallerDimension);
