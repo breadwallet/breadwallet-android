@@ -29,17 +29,6 @@ public class BRMerkleBlockEntity {
     private long id;
     private byte[] buff;
     private int blockHeight;
-//    private byte[] blockHash = new byte[32];
-//    private byte[] flags = new byte[32];
-//    private byte[] hashes = new byte[32];
-//    private int height;
-//    private byte[] merkleRoot = new byte[32];
-//    private int nonce;
-//    private byte[] prevBlock = new byte[32];
-//    private int target;
-//    private long timeStamp;
-//    private int totalTransactions;
-//    private int version;
 
     private BRMerkleBlockEntity(){
 
@@ -69,91 +58,4 @@ public class BRMerkleBlockEntity {
     public void setBlockHeight(int blockHeight) {
         this.blockHeight = blockHeight;
     }
-//    public byte[] getBlockHash() {
-//        return blockHash;
-//    }
-//
-//    public void setBlockHash(byte[] blockHash) {
-//        this.blockHash = blockHash;
-//    }
-//
-//    public byte[] getFlags() {
-//        return flags;
-//    }
-//
-//    public void setFlags(byte[] flags) {
-//        this.flags = flags;
-//    }
-//
-//    public byte[] getHashes() {
-//        return hashes;
-//    }
-//
-//    public void setHashes(byte[] hashes) {
-//        this.hashes = hashes;
-//    }
-//
-//    public int getHeight() {
-//        return height;
-//    }
-//
-//    public void setHeight(int height) {
-//        this.height = height;
-//    }
-//
-//    public byte[] getMerkleRoot() {
-//        return merkleRoot;
-//    }
-//
-//    public void setMerkleRoot(byte[] merkleRoot) {
-//        this.merkleRoot = merkleRoot;
-//    }
-//
-//    public int getNonce() {
-//        return nonce;
-//    }
-//
-//    public void setNonce(int nonce) {
-//        this.nonce = nonce;
-//    }
-//
-//    public byte[] getPrevBlock() {
-//        return prevBlock;
-//    }
-//
-//    public void setPrevBlock(byte[] prevBlock) {
-//        this.prevBlock = prevBlock;
-//    }
-//
-//    public int getTarget() {
-//        return target;
-//    }
-//
-//    public void setTarget(int target) {
-//        this.target = target;
-//    }
-//
-//    public long getTimeStamp() {
-//        return timeStamp;
-//    }
-//
-//    public void setTimeStamp(long timeStamp) {
-//        this.timeStamp = timeStamp;
-//    }
-//
-//    public int getTotalTransactions() {
-//        return totalTransactions;
-//    }
-//
-//    public void setTotalTransactions(int totalTransactions) {
-//        this.totalTransactions = totalTransactions;
-//    }
-//
-//    public int getVersion() {
-//        return version;
-//    }
-//
-//    public void setVersion(int version) {
-//        this.version = version;
-//    }
 }

@@ -96,7 +96,7 @@ public class FragmentSharing extends DialogFragment {
                     emailIntent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.bitcoin_address));
                     emailIntent.putExtra(Intent.EXTRA_TEXT, "bitcoin:" + theAddress);
                     Uri uri = Uri.parse("file://" + MainFragmentQR.qrCodeImageFile.getAbsolutePath());
-                    Log.e(TAG, "The qrCodeImageFile.getAbsolutePath(): " + MainFragmentQR.qrCodeImageFile.getAbsolutePath());
+//                    Log.e(TAG, "The qrCodeImageFile.getAbsolutePath(): " + MainFragmentQR.qrCodeImageFile.getAbsolutePath());
                     if (uri != null)
                         emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
                     startActivity(Intent.createChooser(emailIntent, getResources().getString(R.string.bitcoin_address)));

@@ -48,12 +48,6 @@ public class FragmentDecoder extends Fragment implements QRScannerView.ResultHan
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                SpringAnimator.showCameraLogoAnimation(breadLogo);
-//            }
-//        },100);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -88,7 +82,6 @@ public class FragmentDecoder extends Fragment implements QRScannerView.ResultHan
             public void run() {
                 if (!text.isEmpty()) {
                     BRAnimator.hideDecoderFragment();
-                    Log.e(TAG, "BEFORE processRequest");
                     RequestHandler.processRequest(app, text);
 
                 }

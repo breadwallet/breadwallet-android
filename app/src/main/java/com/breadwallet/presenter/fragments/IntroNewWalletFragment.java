@@ -48,7 +48,6 @@ public class IntroNewWalletFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         // The last two arguments ensure LayoutParams are inflated
         // properly.
-        BRWalletManager m = BRWalletManager.getInstance(getActivity());
         final View rootView = inflater.inflate(R.layout.intro_fragment_new_wallet, container, false);
         introGenerate = (Button) rootView.findViewById(R.id.intro_new_wallet_generate);
         introGenerate.setOnClickListener(new View.OnClickListener() {

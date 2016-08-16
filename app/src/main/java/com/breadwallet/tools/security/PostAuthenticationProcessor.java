@@ -106,7 +106,7 @@ public class PostAuthenticationProcessor {
         byte[] phrase;
         try {
             phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.SHOW_PHRASE_REQUEST_CODE);
-            Log.e(TAG, "phrase.length: " + phrase.length);
+//            Log.e(TAG, "phrase.length: " + phrase.length);
             if (phrase.length < 10) return;
             FragmentRecoveryPhrase.phrase = phrase;
             ((BreadWalletApp) app.getApplicationContext()).promptForAuthentication(app, BRConstants.AUTH_FOR_PHRASE, null, null, null, null);
@@ -186,13 +186,11 @@ public class PostAuthenticationProcessor {
             String strPhrase = new String(phrase);
             if (strPhrase.equalsIgnoreCase(KeyStoreManager.NO_AUTH)) return;
             if (strPhrase.isEmpty()) {
-                Log.e(TAG, "phrase == null || phrase.isEmpty() : " + strPhrase);
                 BRWalletManager m = BRWalletManager.getInstance(introActivity);
                 m.wipeKeyStore();
                 m.wipeWalletButKeystore(introActivity);
                 BRAnimator.resetFragmentAnimator();
             } else {
-                Log.e(TAG, "phrase != null : " + strPhrase);
                 KeyStoreManager.putKeyStoreCanary(BRConstants.CANARY_STRING, introActivity, 0);
             }
         }

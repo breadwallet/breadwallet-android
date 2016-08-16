@@ -30,11 +30,6 @@ public class BRPeerEntity {
     private byte[] address;
     private byte[] port;
     private byte[] timeStamp;
-//    private int address;
-//    private short misbehavin;
-//    private short port;
-//    private short services;
-//    private long timeStamp;
 
     private BRPeerEntity(){
 
@@ -66,43 +61,4 @@ public class BRPeerEntity {
         return address;
     }
 
-//    public int getAddress() {
-//        return address;
-//    }
-//
-//    public void setAddress(int address) {
-//        this.address = address;
-//    }
-//
-//    public long getTimeStamp() {
-//        return timeStamp;
-//    }
-//
-//    public void setTimeStamp(long timeStamp) {
-//        this.timeStamp = timeStamp;
-//    }
-//
-//    public short getMisbehavin() {
-//        return misbehavin;
-//    }
-//
-//    public void setMisbehavin(short misbehavin) {
-//        this.misbehavin = misbehavin;
-//    }
-//
-//    public short getPort() {
-//        return port;
-//    }
-//
-//    public void setPort(short port) {
-//        this.port = port;
-//    }
-//
-//    public short getServices() {
-//        return services;
-//    }
-//
-//    public void setServices(short services) {
-//        this.services = services;
-//    }
 }

@@ -173,6 +173,9 @@
     <!-- no need --><string name="camera_configuration_failed">camera configuration failed</string>
     <string name="device_security_compromised">DEVICE SECURITY COMPROMISED</string>
     <string name="show_phrase">show phrase</string>
+    <string name="rooted_message">On a \'rooted\' device, any app can access any other app\'s keystore data (and steal your bitcoins).%s</string>
+    <string name="rooted_message_holder1">\nWipe this wallet immediately and restore on a secure device.</string>
+    <string name="copied">copied</string>
 
 
     <integer name="viewfinder_border_width">4</integer>

@@ -11,19 +11,14 @@ import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
-import com.breadwallet.presenter.fragments.FragmentScanResult;
-import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.exceptions.CertificateChainNotFound;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRStringFormatter;
 import com.breadwallet.tools.util.ByteReader;
 import com.breadwallet.tools.manager.CurrencyManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
-import com.breadwallet.tools.security.KeyStoreManager;
-import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.security.RequestHandler;
 import com.breadwallet.tools.security.X509CertificateValidator;
-import com.breadwallet.tools.util.CustomLogger;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.io.FileNotFoundException;
@@ -33,7 +28,6 @@ import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.security.cert.X509Certificate;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -83,19 +77,11 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
             urlConnection.setUseCaches(false);
             in = urlConnection.getInputStream();
 
-//            String phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE);
-//            if (phrase == null || phrase.isEmpty()) {
-//                if (urlConnection != null) urlConnection.disconnect();
-//                PostAuthenticationProcessor.getInstance().setUriAndLabel(params[0], params[1]);
-//                return null;
-//            }
-
             if (in == null) {
                 Log.e(TAG, "The inputStream is null!");
                 return null;
             }
             byte[] serializedBytes = ByteReader.readBytesFromStream(in);
-            Log.e(TAG, "byteTest: PaymentProtocolTask: " + Arrays.toString(serializedBytes));
             if (serializedBytes == null || serializedBytes.length == 0) {
                 Log.e(TAG, "serializedBytes are null!!!");
                 return null;

@@ -76,7 +76,6 @@ class MerkleBlockDataSource {
         database.beginTransaction();
         try {
             for (BlockEntity b : blockEntities) {
-//                Log.e(TAG,"sqlite block saved: " + b.getBlockHeight());
                 ContentValues values = new ContentValues();
                 values.put(BRSQLiteHelper.MB_BUFF, b.getBlockBytes());
                 values.put(BRSQLiteHelper.MB_HEIGHT, b.getBlockHeight());

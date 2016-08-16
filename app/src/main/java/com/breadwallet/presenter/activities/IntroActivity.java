@@ -185,15 +185,14 @@ public class IntroActivity extends FragmentActivity {
     public boolean checkFirstAddress(byte[] mpk) {
         String addressFromPrefs = SharedPreferencesManager.getFirstAddress(this);
         String generatedAddress = BRWalletManager.getFirstAddress(mpk);
-        Log.e(TAG, "addressFromPrefs: " + addressFromPrefs);
-        Log.e(TAG, "generatedAddress: " + generatedAddress);
+//        Log.e(TAG, "addressFromPrefs: " + addressFromPrefs);
+//        Log.e(TAG, "generatedAddress: " + generatedAddress);
         return addressFromPrefs.equals(generatedAddress);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        //testSQLiteConnectivity(this);   //do some SQLite testing
         app = this;
         //animates the orange BW background moving.
         ImageView background = (ImageView) findViewById(R.id.intro_bread_wallet_image);
@@ -260,7 +259,7 @@ public class IntroActivity extends FragmentActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.e(TAG, "IntroActivity, onActivityResult: " + requestCode);
+//        Log.e(TAG, "IntroActivity, onActivityResult: " + requestCode);
         switch (requestCode) {
             case BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {

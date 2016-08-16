@@ -53,7 +53,6 @@ public class SpringAnimator {
                 ScaleAnimation trans = new ScaleAnimation(0.0f, 1f, 0.0f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
                 trans.setDuration(800);
                 trans.setInterpolator(new DecelerateOvershootInterpolator(1.5f, 2.5f));
-                Log.e(TAG, "startAnimation");
                 if (view != null) {
                     view.setVisibility(View.VISIBLE);
                     view.startAnimation(trans);
@@ -71,7 +70,6 @@ public class SpringAnimator {
         ScaleAnimation trans = new ScaleAnimation(0.6f, 1f, 0.6f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         trans.setDuration(500);
         trans.setInterpolator(new DecelerateOvershootInterpolator(1.3f, 3f));
-        Log.e(TAG, "startAnimation");
         view.setVisibility(View.VISIBLE);
         view.startAnimation(trans);
 
@@ -85,13 +83,11 @@ public class SpringAnimator {
         ScaleAnimation trans = new ScaleAnimation(0.75f, 1f, 0.75f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         trans.setDuration(300);
         trans.setInterpolator(new DecelerateOvershootInterpolator(1.0f, 1.85f));
-        Log.e(TAG, "startAnimation");
         view.setVisibility(View.VISIBLE);
         view.startAnimation(trans);
     }
 
     public static void failShakeAnimation(Activity context, View view) {
-        Log.e(TAG, "failShakeAnimation");
         if (view == null) return;
         Animation shake = AnimationUtils.loadAnimation(context, R.anim.shake);
         view.setVisibility(View.VISIBLE);

@@ -84,8 +84,6 @@ public class FingerprintDialogFragment extends DialogFragment
         View v = inflater.inflate(R.layout.fingerprint_dialog_container, container, false);
         getDialog().setTitle(R.string.fingerprint_auth);
         if (title != null) getDialog().setTitle(title);
-        // If fingerprint authentication is not available, switch immediately to the backup
-        // (password) screen.
         FingerprintManager mFingerprintManager = (FingerprintManager) getActivity().getSystemService(Activity.FINGERPRINT_SERVICE);
         mFingerprintUiHelperBuilder = new FingerprintUiHelper.FingerprintUiHelperBuilder(mFingerprintManager);
         mFingerprintUiHelper = mFingerprintUiHelperBuilder.build(
@@ -107,7 +105,7 @@ public class FingerprintDialogFragment extends DialogFragment
                     new AlertDialog.Builder(getActivity())
                             .setTitle(getString(R.string.payment_info))
                             .setMessage(R.string.change_payment_amount)
-                            .setPositiveButton("change", new DialogInterface.OnClickListener() {
+                            .setPositiveButton(R.string.change, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     BRAnimator.animateScanResultFragment();
                                 }
@@ -171,8 +169,6 @@ public class FingerprintDialogFragment extends DialogFragment
 
     @Override
     public void onAuthenticated() {
-        // Callback from FingerprintUiHelper. Let the activity know that authentication was 
-        // successful.
         Dialog d = getDialog();
         if (d == null) return;
         d.cancel();

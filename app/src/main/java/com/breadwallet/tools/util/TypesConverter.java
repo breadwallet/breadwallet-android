@@ -51,8 +51,6 @@ public class TypesConverter {
     public static byte[] toBytes(char[] chars) {
         CharBuffer charBuffer = CharBuffer.wrap(chars);
         ByteBuffer byteBuffer = Charset.forName("UTF-8").encode(charBuffer);
-        //        Arrays.fill(charBuffer.array(), '\u0000'); // clear sensitive data
-//        Arrays.fill(byteBuffer.array(), (byte) 0); // clear sensitive data
         return Arrays.copyOfRange(byteBuffer.array(),
                 byteBuffer.position(), byteBuffer.limit());
     }

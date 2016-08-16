@@ -109,22 +109,22 @@ public class RequestHandler {
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }
-                Log.e(TAG, "amount: " + obj.amount);
+//                Log.e(TAG, "amount: " + obj.amount);
             } else if (keyValue[0].trim().equals("label")) {
                 obj.label = keyValue[1];
-                Log.e(TAG, "label: " + obj.label);
+//                Log.e(TAG, "label: " + obj.label);
             } else if (keyValue[0].trim().equals("message")) {
                 obj.message = keyValue[1];
-                Log.e(TAG, "message: " + obj.message);
+//                Log.e(TAG, "message: " + obj.message);
             } else if (keyValue[0].trim().startsWith("req")) {
                 obj.req = keyValue[1];
-                Log.e(TAG, "req: " + obj.req);
+//                Log.e(TAG, "req: " + obj.req);
             } else if (keyValue[0].trim().startsWith("r")) {
                 obj.r = keyValue[1];
-                Log.e(TAG, "r: " + obj.r);
+//                Log.e(TAG, "r: " + obj.r);
             }
         }
-        Log.e(TAG, "obj.address: " + obj.address);
+//        Log.e(TAG, "obj.address: " + obj.address);
         return obj;
     }
 

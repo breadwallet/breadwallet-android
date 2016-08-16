@@ -69,13 +69,12 @@ public class FragmentRecoveryPhrase extends Fragment {
         boolean phraseWroteDown = SharedPreferencesManager.getPhraseWroteDown(getActivity());
 
         if (BuildConfig.DEBUG) {
-            // do something for a debug build
             thePhrase.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     BRClipboardManager.copyToClipboard(getActivity(), thePhrase.getText().toString());
                     ((BreadWalletApp) getActivity().getApplication()).showCustomToast(getActivity(),
-                            "copied", 300, Toast.LENGTH_SHORT, 0);
+                            getActivity().getString(R.string.copied), 300, Toast.LENGTH_SHORT, 0);
                 }
             });
         }

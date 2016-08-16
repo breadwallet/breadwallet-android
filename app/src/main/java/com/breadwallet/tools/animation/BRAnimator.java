@@ -69,11 +69,9 @@ public class BRAnimator {
     public static boolean wipeWalletOpen = false;
     private static Stack<Fragment> previous = new Stack<>();
     private static boolean multiplePressingAvailable = true;
-    //    private static int VERTICAL_BOUNCE_DELAY = 60;
     public static int horizontalSlideDuration = 300;
     private static boolean horizontalSlideAvailable = true;
     private static View copy;
-//    private static final Object lockObject = new Object();
 
     public static void animateDecoderFragment() {
 
@@ -92,24 +90,16 @@ public class BRAnimator {
                     ((BreadWalletApp) app.getApplication()).showCustomToast(app,
                             app.getString(R.string.allow_camera_access),
                             MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
-                    // Show an explanation to the user *asynchronously* -- don't block
-                    // this thread waiting for the user's response! After the user
-                    // sees the explanation, try again to request the permission.
                 } else {
                     Log.e(TAG, "NO explanation!");
                     // No explanation needed, we can request the permission.
                     ActivityCompat.requestPermissions(app,
                             new String[]{Manifest.permission.CAMERA},
                             BRConstants.CAMERA_REQUEST_ID);
-                    // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                    // app-defined int constant. The callback method gets the
-                    // result of the request.
                 }
             } else {
                 if (BRAnimator.level > 0)
                     BRAnimator.pressMenuButton(app);
-                //            Log.e(TAG, "in the animateDecoderFragment");
-                //            MainActivity.beenThroughSavedInstanceMethod = false;
                 decoderFragmentOn = true;
                 app.activityButtonsEnable(false);
                 CustomPagerAdapter.adapter.showFragments(false, app);
@@ -130,8 +120,6 @@ public class BRAnimator {
             final MainActivity app = MainActivity.app;
             if (app == null) return;
             CustomPagerAdapter.adapter.showFragments(false, app);
-//        Log.e(TAG, "animateScanResultFragment");
-//        MainActivity.beenThroughSavedInstanceMethod = false;
             scanResultFragmentOn = true;
             InputMethodManager keyboard = (InputMethodManager) app.
                     getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -147,7 +135,6 @@ public class BRAnimator {
             final FragmentManager fragmentManager = app.getFragmentManager();
             final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-//        fragmentTransaction.setCustomAnimations(R.animator.from_right, R.animator.to_left);
             final FragmentScanResult scanResult = new FragmentScanResult();
             fragmentTransaction.replace(R.id.main_layout, scanResult, FragmentScanResult.class.getName());
             fragmentTransaction.commit();
@@ -158,7 +145,6 @@ public class BRAnimator {
                     trans.setDuration(500);
                     trans.setInterpolator(new DecelerateOvershootInterpolator(3f, 0.5f));
                     View view = scanResult.getView();
-                    Log.e(TAG, "startAnimation");
                     if (view != null)
                         view.startAnimation(trans);
                 }
@@ -176,14 +162,12 @@ public class BRAnimator {
         try {
             if (context == null) return;
             ((BreadWalletApp) context.getApplication()).cancelToast();
-//        Log.e(TAG, "The level is: " + level);
             final FragmentManager fragmentManager = context.getFragmentManager();
             if (level == 0) {
                 level++;
                 CustomPagerAdapter.adapter.showFragments(false, context);
                 context.setBurgerButtonImage(BRConstants.CLOSE);
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                //            fragmentTransaction.setCustomAnimations(R.animator.from_bottom, 0);
                 FragmentSettingsAll to = (FragmentSettingsAll) fragmentManager.
                         findFragmentByTag(FragmentSettingsAll.class.getName());
                 if (to == null) to = new FragmentSettingsAll();
@@ -197,7 +181,6 @@ public class BRAnimator {
                         trans.setDuration(500);
                         trans.setInterpolator(new DecelerateOvershootInterpolator(3f, 0.5f));
                         View view = finalTo.getView();
-                        Log.e(TAG, "startAnimation");
                         if (view != null)
                             view.startAnimation(trans);
                     }
@@ -243,7 +226,6 @@ public class BRAnimator {
                         trans.setDuration(500);
                         trans.setInterpolator(new DecelerateOvershootInterpolator(3f, 0.5f));
                         View view = to.getView();
-                        Log.e(TAG, "startAnimation");
                         if (view != null)
                             view.startAnimation(trans);
                     }
@@ -283,7 +265,6 @@ public class BRAnimator {
                     trans.setDuration(horizontalSlideDuration);
                     trans.setInterpolator(new DecelerateOvershootInterpolator(1f, 0.5f));
                     View view = to.getView();
-                    Log.e(TAG, "startAnimation");
                     if (view != null)
                         view.startAnimation(trans);
                 }
@@ -316,7 +297,6 @@ public class BRAnimator {
                     trans.setDuration(horizontalSlideDuration);
                     trans.setInterpolator(new DecelerateOvershootInterpolator(1f, 0.5f));
                     View view = tmp.getView();
-                    Log.e(TAG, "startAnimation");
                     if (view != null)
                         view.startAnimation(trans);
                 }
@@ -368,7 +348,6 @@ public class BRAnimator {
     }
 
     public static void hideDecoderFragment() {
-//        Log.e(TAG, "hideDecoderFragment");
         try {
             MainActivity app = MainActivity.app;
             if (app == null) return;
@@ -395,7 +374,6 @@ public class BRAnimator {
         try {
             MainActivity app = MainActivity.app;
             if (app == null) return;
-//        Log.e(TAG, "hideScanResultFragment");
             CustomPagerAdapter.adapter.showFragments(true, app);
             scanResultFragmentOn = false;
             new Handler().postDelayed(new Runnable() {

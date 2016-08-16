@@ -254,7 +254,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
     }
 
     public static void updateBothTextValues(BigDecimal bitcoinValue, BigDecimal otherValue) {
-        Log.e(TAG, "updateBothTextValues: bitcoinValue: " + bitcoinValue + ", otherValue: " + otherValue);
+//        Log.e(TAG, "updateBothTextValues: bitcoinValue: " + bitcoinValue + ", otherValue: " + otherValue);
         if (ISO == null) updateRateAndISO();
         if (ISO == null) ISO = "USD";
         String multiplyBy = "100";
@@ -278,7 +278,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         if (app == null) return;
         ISO = SharedPreferencesManager.getIso(app);
         rate = SharedPreferencesManager.getRate(app);
-        Log.d(TAG, "ISO: " + ISO + ", rate: " + rate);
+//        Log.d(TAG, "ISO: " + ISO + ", rate: " + rate);
     }
 
 }

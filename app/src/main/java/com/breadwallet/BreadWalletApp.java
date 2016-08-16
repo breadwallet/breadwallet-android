@@ -153,8 +153,6 @@ public class BreadWalletApp extends Application {
 
     public void setLockerPayButton(int view) {
         MainActivity app = MainActivity.app;
-        Log.e(TAG, "Flipper has # of child: " + app.lockerPayFlipper.getChildCount());
-        Log.e(TAG, "app.lockerPayFlipper: " + app.lockerPayFlipper.getDisplayedChild());
         switch (view) {
             case BRConstants.LOCKER_BUTTON:
                 if (app.lockerPayFlipper.getDisplayedChild() == 1) {
@@ -196,8 +194,6 @@ public class BreadWalletApp extends Application {
         if (mode == BRConstants.AUTH_FOR_PAY) {
             long limit = KeyStoreManager.getSpendLimit(context);
             long totalSent = BRWalletManager.getInstance(context).getTotalSent();
-            Log.e(TAG, "limit: " + limit);
-            Log.e(TAG, "totalSent: " + totalSent);
 
             if (requestEntity != null)
                 if (limit <= totalSent + requestEntity.amount) {

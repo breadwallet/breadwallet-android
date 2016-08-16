@@ -238,8 +238,6 @@ public class BRWalletManager {
                                     String pass = editText.getText().toString();
                                     String decryptedKey = decryptBip38Key(privKey, pass);
 
-                                    Log.e(TAG, "decryptedKey: " + decryptedKey);
-
                                     if (decryptedKey.equals("")) {
                                         SpringAnimator.showAnimation(input);
                                         confirmSweep(activity, privKey);
@@ -282,8 +280,6 @@ public class BRWalletManager {
                     if (phraseWroteDown) return;
                     long now = System.currentTimeMillis() / 1000;
                     long lastMessageShow = SharedPreferencesManager.getPhraseWarningTime(ctx);
-                    Log.e(TAG, "now:" + now);
-                    Log.e(TAG, "lastMessageShow:" + lastMessageShow);
                     if (!firstTime && lastMessageShow > (now - 36 * 60 * 60)) return;//36 * 60 * 60
                     SharedPreferencesManager.putPhraseWarningTime(ctx, System.currentTimeMillis() / 1000);
                     AlertDialog alert;
@@ -885,9 +881,7 @@ public class BRWalletManager {
         int width = point.x;
         int height = point.y;
         int smallerDimension = width < height ? width : height;
-        Log.e(TAG, "smallerDimension: " + smallerDimension);
         smallerDimension = (int) (smallerDimension * 0.7f);
-        Log.e(TAG, "smallerDimension: " + smallerDimension);
         Bitmap bitmap = null;
         try {
             bitmap = encodeAsBitmap(bitcoinURL, smallerDimension);

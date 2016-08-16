@@ -180,7 +180,6 @@ public class FragmentSettings extends Fragment {
                                                   @Override
                                                   public void run() {
                                                       BRAnimator.goToMainActivity(fragmentSettings);
-                                                      Log.e(TAG, "rescan called!");
                                                       BRPeerManager.getInstance(getActivity()).rescan();
                                                       SharedPreferencesManager.putStartHeight(getActivity(), BRPeerManager.getCurrentBlockHeight());
                                                   }
@@ -198,14 +197,12 @@ public class FragmentSettings extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-//        Log.e(TAG, "In onResume");
         MiddleViewAdapter.resetMiddleView(getActivity(), null);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-//        Log.e(TAG, "In onPause");
     }
 
     private void initList() {

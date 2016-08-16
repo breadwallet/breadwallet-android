@@ -57,7 +57,6 @@ public class PassCodeTask extends Thread {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Log.e(TAG, "PassCodeTask, while, run...");
                     if (passwordDialogFragment == null) {
                         passwordDialogFragment = new PasswordDialogFragment();
                     }

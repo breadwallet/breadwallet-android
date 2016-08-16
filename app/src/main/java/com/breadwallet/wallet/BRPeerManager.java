@@ -77,9 +77,6 @@ public class BRPeerManager {
      */
 
     public static void syncStarted() {
-        int startHeight = SharedPreferencesManager.getStartHeight(ctx);
-        Log.e(TAG, "startHeight: " + startHeight);
-        Log.e(TAG, "syncStarted: " + syncProgress(startHeight));
         BRPeerManager.getInstance(ctx).refreshConnection();
     }
 

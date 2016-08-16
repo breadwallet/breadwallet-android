@@ -202,7 +202,7 @@ public class AmountAdapter extends Observable {
                     if (rate.intValue() > 1) {
                         leftValueObject = rightValueObject.multiply(new BigDecimal(divideBy)).
                                 divide(rate, 8, RoundingMode.HALF_UP);
-                        Log.e(TAG, "leftValueObject: " + leftValueObject);
+//                        Log.e(TAG, "leftValueObject: " + leftValueObject);
                     } else {
                         leftValueObject = new BigDecimal("0");
                     }

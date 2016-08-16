@@ -43,33 +43,11 @@ class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String MB_HEIGHT = "merkleBlockHeight";
 
     public static final String MB_COLUMN_ID = "_id";
-//    public static final String MB_COLUMN_BLOCK_HASH = "blockHash";
-//    public static final String MB_COLUMN_FLAGS = "flags";
-//    public static final String MB_COLUMN_HASHES = "hashes";
-//    public static final String MB_COLUMN_HEIGHT = "height";
-//    public static final String MB_COLUMN_MERKLE_ROOT = "merkleRoot";
-//    public static final String MB_COLUMN_NONCE = "nonce";
-//    public static final String MB_COLUMN_PREV_BLOCK = "prevBlock";
-//    public static final String MB_COLUMN_TARGET = "target";
-//    public static final String MB_COLUMN_TIME_STAMP = "timeStamp";
-//    public static final String MB_COLUMN_TOTAL_TRANSACTIONS = "totalTransactions";
-//    public static final String MB_COLUMN_VERSION = "version";
 
     private static final String MB_DATABASE_CREATE = "create table " + MB_TABLE_NAME + "(" +
             MB_COLUMN_ID + " integer primary key autoincrement, " +
             MB_BUFF + " blob, " +
             MB_HEIGHT + " integer);";
-//            MB_COLUMN_BLOCK_HASH + " blob, " +
-//            MB_COLUMN_FLAGS + " blob, " +
-//            MB_COLUMN_HASHES + " blob, " +
-//            MB_COLUMN_HEIGHT + " integer, " +
-//            MB_COLUMN_MERKLE_ROOT + " blob, " +
-//            MB_COLUMN_NONCE + " integer, " +
-//            MB_COLUMN_PREV_BLOCK + " blob, " +
-//            MB_COLUMN_TARGET + " integer, " +
-//            MB_COLUMN_TIME_STAMP + " integer, " +
-//            MB_COLUMN_TOTAL_TRANSACTIONS + " integer, " +
-//            MB_COLUMN_VERSION + " integer );";
 
     /**
      * Transaction table
@@ -80,20 +58,12 @@ class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String TX_BUFF = "transactionBuff";
     public static final String TX_BLOCK_HEIGHT = "transactionBlockHeight";
     public static final String TX_TIME_STAMP = "transactionTimeStamp";
-//    public static final String TX_BLOCK_HEIGHT = "blockHeight";
-//    public static final String TX_LOCK_TIME = "lockTime";
-//    public static final String TX_TIME_STAMP = "timeStamp";
-//    public static final String TX_HASH = "txHash";
 
     private static final String TX_DATABASE_CREATE = "create table " + TX_TABLE_NAME + "(" +
             TX_COLUMN_ID + " text, " +
             TX_BUFF + " blob, " +
             TX_BLOCK_HEIGHT + " integer, " +
             TX_TIME_STAMP + " integer );";
-//            TX_BLOCK_HEIGHT + " integer, " +
-//            TX_LOCK_TIME + " integer, " +
-//            TX_TIME_STAMP + " integer, " +
-//            TX_HASH + " blob );";
 
     /**
      * Peer table
@@ -104,11 +74,6 @@ class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String PEER_ADDRESS = "peerAddress";
     public static final String PEER_PORT = "peerPort";
     public static final String PEER_TIMESTAMP = "peerTimestamp";
-//    public static final String PEER_ADDRESS = "addresses";
-//    public static final String PEER_MISBEHAVIN = "misbehavin";
-//    public static final String PEER_PORT = "port";
-//    public static final String PEER_SERVICES = "services";
-//    public static final String PEER_TIME_STAMP = "timeStamp";
 
     private static final String PEER_DATABASE_CREATE = "create table " + PEER_TABLE_NAME + "(" +
             PEER_COLUMN_ID + " integer primary key autoincrement, " +
@@ -116,49 +81,6 @@ class BRSQLiteHelper extends SQLiteOpenHelper {
             PEER_PORT + " blob," +
             PEER_TIMESTAMP + " blob );";
 
-//            PEER_ADDRESS + " integer, " +
-//            PEER_MISBEHAVIN + " integer, " +
-//            PEER_PORT + " integer, " +
-//            PEER_SERVICES + " integer " +
-//            PEER_TIME_STAMP + " integer );";
-
-//    /**
-//     * Inputs table
-//     */
-//
-//    public static final String IN_TABLE_NAME = "inputTable";
-//    public static final String IN_COLUMN_ID = "_id";
-//    public static final String IN_TX_HASH = "txHash";
-//    public static final String IN_INDEX = "index";
-//    public static final String IN_PREV_OUT_TX_HASH = "prevOutTxHash";
-//    public static final String IN_PREV_OUT_INDEX = "prevOutIndex";
-//    public static final String IN_SEQUENCE = "sequence";
-//    public static final String IN_SIGNATURE = "signature";
-//
-//    private static final String INPUTS_DATABASE_CREATE = "create table " + IN_TABLE_NAME + "(" +
-//            IN_COLUMN_ID + " integer primary key autoincrement, " +
-//            IN_TX_HASH + " blob, " +
-//            IN_INDEX + " integer, " +
-//            IN_PREV_OUT_TX_HASH + " blob, " +
-//            IN_PREV_OUT_INDEX + " integer " +
-//            IN_SEQUENCE + " integer ," +
-//            IN_SIGNATURE + " blob );";
-//
-//    /**
-//     * Outputs table
-//     */
-//
-//    public static final String OUT_TABLE_NAME = "outputTable";
-//    public static final String OUT_COLUMN_ID = "_id";
-//    public static final String OUT_TX_HASH = "txHash";
-//    public static final String OUT_INDEX = "index";
-//    public static final String OUT_VALUE = "value";
-//
-//    private static final String OUTPUTS_DATABASE_CREATE = "create table " + OUT_TABLE_NAME + "(" +
-//            OUT_COLUMN_ID + " integer primary key autoincrement, " +
-//            OUT_TX_HASH + " blob, " +
-//            OUT_INDEX + " integer, " +
-//            OUT_VALUE + " integer );";
 
 
     public BRSQLiteHelper(Context context) {
@@ -170,8 +92,6 @@ class BRSQLiteHelper extends SQLiteOpenHelper {
         database.execSQL(MB_DATABASE_CREATE);
         database.execSQL(TX_DATABASE_CREATE);
         database.execSQL(PEER_DATABASE_CREATE);
-//        database.execSQL(INPUTS_DATABASE_CREATE);
-//        database.execSQL(OUTPUTS_DATABASE_CREATE);
     }
 
     @Override
@@ -181,8 +101,6 @@ class BRSQLiteHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + MB_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + TX_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + PEER_TABLE_NAME);
-//        db.execSQL("DROP TABLE IF EXISTS " + IN_TABLE_NAME);
-//        db.execSQL("DROP TABLE IF EXISTS " + OUT_TABLE_NAME);
         //recreate the dbs
         onCreate(db);
     }

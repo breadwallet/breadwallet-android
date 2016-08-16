@@ -66,6 +66,7 @@ public class FragmentCurrency extends Fragment {
     private String ISO;
     private float rate;
     public static int lastItemsPosition = 0;
+
     @SuppressWarnings("deprecation")
     final GestureDetector gdt = new GestureDetector(new GestureListener());
 

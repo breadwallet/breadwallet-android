@@ -309,8 +309,8 @@ public class MainActivity extends FragmentActivity implements Observer {
                 public void run() {
                     AlertDialog.Builder builder = new AlertDialog.Builder(app);
                     builder.setTitle(R.string.device_security_compromised)
-                            .setMessage("On a \'rooted\' device, any app can access any other app\'s keystore data (and steal your bitcoins)."
-                                    + (hasBitcoin ? "\nWipe this wallet immediately and restore on a secure device." : ""))
+                            .setMessage(String.format(getString(R.string.rooted_message),
+                                    hasBitcoin ? getString(R.string.rooted_message_holder1) : ""))
                             .setCancelable(false)
                             .setNegativeButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                                 @Override
@@ -367,7 +367,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     protected void onPause() {
         super.onPause();
         appInBackground = true;
-        Log.e(TAG, "Activity onPause");
+//        Log.e(TAG, "Activity onPause");
         startStopReceiver(false);
     }
 
@@ -384,7 +384,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         finish();
         BRAnimator.level = 0;
         CurrencyManager.getInstance(this).stopTimerTask();
-        Log.e(TAG, "Activity Destroyed!");
+//        Log.e(TAG, "Activity Destroyed!");
         unregisterScreenLockReceiver();
 
     }
@@ -476,11 +476,11 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     public void setPagerIndicator(int x) {
         if (x == 0) {
-            Log.d(TAG, "Left Indicator changed");
+//            Log.d(TAG, "Left Indicator changed");
             BRAnimator.scaleView(pageIndicatorLeft, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP);
             BRAnimator.scaleView(pageIndicatorRight, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f);
         } else if (x == 1) {
-            Log.d(TAG, "Right Indicator changed");
+//            Log.d(TAG, "Right Indicator changed");
             BRAnimator.scaleView(pageIndicatorRight, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP);
             BRAnimator.scaleView(pageIndicatorLeft, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f);
         } else {
@@ -662,7 +662,6 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     public void showHideSyncProgressViews(boolean b) {
         if (syncProgressBar == null || syncProgressText == null) {
-            Log.e(TAG, " WARNING!**!*!***!*!*!* syncProgressBar == null || syncProgressText = null");
             return;
         }
         syncProgressBar.setVisibility(b ? View.VISIBLE : View.GONE);
@@ -694,7 +693,6 @@ public class MainActivity extends FragmentActivity implements Observer {
     public void setProgress(int progress, String progressText) {
         Log.e(TAG,"setProgress: progress:" + progress + ", progressText: " + progressText);
         if (syncProgressBar == null || syncProgressText == null) {
-            Log.e(TAG, " WARNING!**!*!***!*!*!* syncProgressBar == null || syncProgressText = null");
             return;
         }
         syncProgressBar.setProgress(progress);

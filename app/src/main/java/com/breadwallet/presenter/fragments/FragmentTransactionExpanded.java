@@ -95,7 +95,9 @@ public class FragmentTransactionExpanded extends Fragment {
         } else if (blockHeight == Integer.MAX_VALUE) {
             statusText.setText(R.string.verified_waiting);
         } else {
-            statusText.setText(String.format(Locale.getDefault(), getActivity().getString(R.string.confirmed_in_block_nr), blockHeight) + "\n"+ String.valueOf(item.getTimeStamp() != 0 ? Utils.getFormattedDateFromLong(item.getTimeStamp() * 1000) : Utils.getFormattedDateFromLong(System.currentTimeMillis())));
+            statusText.setText(String.format(Locale.getDefault(), getActivity().getString(R.string.confirmed_in_block_nr),
+                    blockHeight) + "\n"+ String.valueOf(item.getTimeStamp() != 0 ?
+                    Utils.getFormattedDateFromLong(item.getTimeStamp() * 1000) : Utils.getFormattedDateFromLong(System.currentTimeMillis())));
 
         }
         String rawHash = BRWalletManager.getInstance(getActivity()).reverseTxHash(item.getHexId());
@@ -108,8 +110,7 @@ public class FragmentTransactionExpanded extends Fragment {
         if (received) {
 
             long amount = item.getReceived();
-            Log.e(TAG, "Tx Detail received!!!! amount: " + amount + " item.getBlockHeight(): " + item.getBlockHeight());
-
+//            Log.e(TAG, "Tx Detail received!!!! amount: " + amount + " item.getBlockHeight(): " + item.getBlockHeight());
 
             amountText.setText(BRStringFormatter.getFormattedCurrencyString("BTC", amount));
             exchangeText.setText(String.format("(%s)", BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(amount), getActivity())));
@@ -125,8 +126,8 @@ public class FragmentTransactionExpanded extends Fragment {
 
             long amount = item.getSent() - item.getReceived();
 
-            Log.e(TAG, "Tx Detail sent!!!! amount: " + amount + " tempFee: " + item.getFee() + " tempSent: "
-                    + item.getSent() + " item.getBlockHeight(): " + item.getBlockHeight());
+//            Log.e(TAG, "Tx Detail sent!!!! amount: " + amount + " tempFee: " + item.getFee() + " tempSent: "
+//                    + item.getSent() + " item.getBlockHeight(): " + item.getBlockHeight());
 
             amountText.setText(String.format("%s", BRStringFormatter.getFormattedCurrencyString("BTC", -amount)));
             exchangeText.setText(String.format("(%s)", BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(-amount), getActivity())));

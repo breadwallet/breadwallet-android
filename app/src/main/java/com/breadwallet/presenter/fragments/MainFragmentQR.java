@@ -102,7 +102,7 @@ public class MainFragmentQR extends Fragment {
                 if (BRAnimator.checkTheMultipressingAvailability()) {
                     MainActivity app = MainActivity.app;
                     if (app != null) app.hideAllBubbles();
-                    Log.e(TAG, "finalReceiveAddress: " + receiveAddress);
+//                    Log.e(TAG, "finalReceiveAddress: " + receiveAddress);
                     sharingFragment.setTheAddress(receiveAddress);
                     saveBitmapToFile();
                     sharingFragment.show(fm, FragmentSharing.class.getName());
@@ -224,7 +224,7 @@ public class MainFragmentQR extends Fragment {
         } else {
             receiveAddress = SharedPreferencesManager.getReceiveAddress(getActivity());
         }
-        Log.e(TAG, "refreshAddress: receiveAddress: " + receiveAddress);
+//        Log.e(TAG, "refreshAddress: receiveAddress: " + receiveAddress);
         String bitcoinUrl = "bitcoin:" + receiveAddress;
         if(mainAddressText == null) return;
         mainAddressText.setText(receiveAddress);

@@ -139,7 +139,6 @@ public class MainFragment extends Fragment {
                     if (!addressEditText.getText().toString().isEmpty()) {
                         tempAddress = addressEditText.getText().toString();
                     }
-                    Log.e(TAG, "tempAddress: " + tempAddress);
                     final String finalAddress = tempAddress;
                     BRWalletManager wm = BRWalletManager.getInstance(getActivity());
 

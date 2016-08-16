@@ -103,7 +103,8 @@ public class TransactionListAdapter extends BaseAdapter {
         final int EXTRA_ITEMS = 4;
         if (!BreadWalletApp.unlocked) {
             int unconfirmedTxCount = getUnconfirmedCount(data);
-            return unconfirmedTxCount == 0 ? (EXTRA_ITEMS + 1) : unconfirmedTxCount == data.size() ? (unconfirmedTxCount + EXTRA_ITEMS) : (unconfirmedTxCount + EXTRA_ITEMS + 1);
+            return unconfirmedTxCount == 0 ? (EXTRA_ITEMS + 1) : unconfirmedTxCount == data.size()
+                    ? (unconfirmedTxCount + EXTRA_ITEMS) : (unconfirmedTxCount + EXTRA_ITEMS + 1);
         }
         if (data.size() == 0) return EXTRA_ITEMS + 1;
         return showAllTx ? (data.size() + EXTRA_ITEMS) : (data.size() > 5) ? (6 + EXTRA_ITEMS) : (data.size() + EXTRA_ITEMS);

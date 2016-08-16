@@ -155,7 +155,6 @@ public class KeyStoreManager {
             return true;
         } catch (UserNotAuthenticatedException e) {
             Log.e(TAG, Log.getStackTraceString(e));
-            Log.e(TAG, "showAuthenticationScreen");
             showAuthenticationScreen(context, request_code);
         } catch (CertificateException | NoSuchAlgorithmException | InvalidKeyException | NullPointerException
                 | NoSuchPaddingException | KeyStoreException | UnrecoverableKeyException |
@@ -189,7 +188,6 @@ public class KeyStoreManager {
             result = ByteReader.readBytesFromStream(cipherInputStream);
         } catch (UserNotAuthenticatedException e) {
             Log.e(TAG, Log.getStackTraceString(e));
-            Log.e(TAG, "showAuthenticationScreen");
             showAuthenticationScreen(context, request_code);
             if (alias.equalsIgnoreCase(CANARY_ALIAS) || alias.equalsIgnoreCase(PHRASE_ALIAS))
                 return NO_AUTH.getBytes();
@@ -208,18 +206,13 @@ public class KeyStoreManager {
     public static byte[] getKeyStorePhrase(final Activity context, int requestCode) {
 
         KeyguardManager myKM = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
-        if (myKM.inKeyguardRestrictedInputMode()) {
-            Log.e(TAG, "THE SCREEN IS LOCKED!");
+        if (myKM.inKeyguardRestrictedInputMode())
             return new byte[0];
-        } else {
-            Log.e(TAG, "THE SCREEN IS UNLOCKED!");
-        }
 
         return getData(context, PHRASE_ALIAS, PHRASE_FILENAME, PHRASE_IV, requestCode);
     }
 
     public static boolean putKeyStoreCanary(String strToStore, Activity context, int requestCode) {
-        Log.e(TAG, "putKeyStoreCanary: " + strToStore);
         if (strToStore == null || strToStore.isEmpty()) return false;
 
         byte[] strBytes = new byte[0];
@@ -239,7 +232,6 @@ public class KeyStoreManager {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        Log.e(TAG, "getKeyStoreCanary: " + result);
         return result;
     }
 
@@ -283,12 +275,10 @@ public class KeyStoreManager {
             passCode = "";
             putPassCode(passCode, context);
         }
-        Log.e(TAG, "getPassCode: " + passCode);
         return passCode;
     }
 
     public static boolean putFailCount(int failCount, Activity context) {
-        Log.e(TAG, "putFailCount: " + failCount);
         if (failCount >= 3) {
             long time = SharedPreferencesManager.getSecureTime(context);
             putFailTimeStamp(time, context);
@@ -299,7 +289,7 @@ public class KeyStoreManager {
 
     public static int getFailCount(final Activity context) {
         byte[] result = getData(context, FAIL_COUNT_ALIAS, FAIL_COUNT_FILENAME, FAIL_COUNT_IV, 0);
-        Log.e(TAG, "getFailCount: " + (result.length > 0 ? TypesConverter.bytesToInt(result) : 0));
+//        Log.e(TAG, "getFailCount: " + (result.length > 0 ? TypesConverter.bytesToInt(result) : 0));
         return result.length > 0 ? TypesConverter.bytesToInt(result) : 0;
     }
 
@@ -339,7 +329,6 @@ public class KeyStoreManager {
     }
 
     public static boolean resetWalletKeyStore() {
-        Log.e(TAG, "resetWalletKeyStore");
         KeyStore keyStore;
         try {
             keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
