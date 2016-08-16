@@ -417,6 +417,8 @@ public class MainActivity extends FragmentActivity implements Observer {
         burgerButtonMap.put("back", R.drawable.navigationback);
         middleBubble1 = (BubbleTextView) findViewById(R.id.middle_bubble_tip1);
         middleBubble2 = (BubbleTextView) findViewById(R.id.middle_bubble_tip2);
+        middleBubble2.setText(String.format(getString(R.string.middle_view_tip_second), BRConstants.bitcoinLowercase, BRConstants.bitcoinLowercase + "1,000,000"));
+
         middleBubbleBlocks = (BubbleTextView) findViewById(R.id.middle_bubble_blocks);
         qrBubble1 = (BubbleTextView) findViewById(R.id.qr_bubble1);
         qrBubble2 = (BubbleTextView) findViewById(R.id.qr_bubble2);
@@ -691,7 +693,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     }
 
     public void setProgress(int progress, String progressText) {
-        Log.e(TAG,"setProgress: progress:" + progress + ", progressText: " + progressText);
+        Log.e(TAG, "setProgress: progress:" + progress + ", progressText: " + progressText);
         if (syncProgressBar == null || syncProgressText == null) {
             return;
         }

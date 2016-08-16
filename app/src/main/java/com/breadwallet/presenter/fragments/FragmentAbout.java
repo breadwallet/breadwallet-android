@@ -85,7 +85,7 @@ public class FragmentAbout extends Fragment {
                         Intent email = new Intent(Intent.ACTION_SEND);
                         email.putExtra(Intent.EXTRA_EMAIL, new String[]{to});
                         email.putExtra(Intent.EXTRA_TEXT, message);
-                        email.putExtra(Intent.EXTRA_SUBJECT, getActivity().getString(R.string.support_request));
+                        email.putExtra(Intent.EXTRA_SUBJECT, "support request");
 
                         // need this to prompts email client only
                         email.setType("message/rfc822");

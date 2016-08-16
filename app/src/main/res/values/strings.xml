@@ -2,10 +2,8 @@
     <!-- no need --><string name="app_name">&#384;readwallet</string>
     <!-- checked --><string name="bad_recovery_phrase">bad recovery phrase</string>
     <!-- checked --><string name="settingsall_rescan_instructions">rescan blockchain if you think you may have missing transactions, or are having trouble sending (rescanning can take several minutes)</string>
-    <string name="wipewallet_instructions">Enter this wallet\'s recovery phrase to wipe it and start/recover another.
-    Your current balance remains on this phrase</string>
-    <string name="dialog_recovery_phrase_warning">if you ever lose your phone, you will need
-        this phrase to recover your wallet</string>
+    <!-- checked --><string name="wipewallet_instructions">Enter this wallet\'s recovery phrase to wipe it and start/recover another. Your current balance remains on this phrase.</string>
+    <!-- checked --><string name="dialog_recovery_phrase_warning">if you ever lose your phone, you will need this phrase to recover your wallet</string>
     <!-- checked --><string name="toast_qr_tip">Let others scan this QR code to get your bitcoin address. Anyone can send bitcoins to your wallet by transferring them to your address.</string>
     <!-- checked --><string name="toast_address_tip">This is your bitcoin address. Tap to copy it or send it by email or sms. The address will change each time you receive funds, but old addresses always work.</string>
     <!-- checked --><string name="warning">WARNING</string>
@@ -13,23 +11,24 @@
     <!-- checked --><string name="warning_text2">\nNEVER type your recovery phrase into\npassword managers or elsewhere.\nOther devices may be infected.\n</string>
     <!-- checked --><string name="warning_text3">\nDO NOT take a screenshot.\nScreenshots are visible to other apps\nand devices.\n</string>
     <!-- checked --><string name="show">show</string>
-    <!-- checked --><string name="cancel">Cancel</string>
+    <!-- checked --><string name="cancel">cancel</string>
     <!-- checked --><string name="mainfragment_clipboard_invalid_data">"clipboard doesn't contain a valid bitcoin address"</string>
-    <!-- checked --><string name="ok">OK</string>
+    <!-- checked --><string name="ok">ok</string>
     <!-- checked --><string name="toast_address_copied">copied</string>
     <!-- no need --><string name="bitcoin_address">"Bitcoin Address"</string>
     <!-- checked --><string name="middle_view_tip_first">This is your bitcoin balance. Bitcoin is a currency. The exchange rate changes with the market.</string>
-    <string name="middle_view_tip_second">&#384; is for \'bits\'. &#384;1,000,000 = 1 bitcoin.</string>
+    <!--<string name="middle_view_tip_second">&#384; is for \'bits\'. &#384;1,000,000 = 1 bitcoin.</string>-->
+    <string name="middle_view_tip_second">%1$s is for \'bits\'. %2$s = 1 bitcoin.</string>
     <!-- checked --><string name="done">done</string>
-    <string name="remind_me_later">remind me later</string>
+    <!-- checked --><string name="remind_me_later">remind me later</string>
     <!-- checked --><string name="enter_old_passcode">enter old passcode</string>
     <!-- checked --><string name="choose_new_passcode">choose wallet passcode</string>
     <!-- checked --><string name="verify_passcode">verify passcode</string>
     <!-- no need --><string name="lang">en</string>
-    <!-- no need --><string name="fingerprint_description">Confirm fingerprint</string>
-    <!-- no need --><string name="fingerprint_hint">Touch sensor</string>
-    <!-- no need --><string name="fingerprint_not_recognized">Fingerprint not recognized. Try again.</string>
-    <!-- no need --><string name="fingerprint_success">Fingerprint recognized</string>
+    <!-- no need --><string name="fingerprint_description">confirm fingerprint</string>
+    <!-- no need --><string name="fingerprint_hint">touch sensor</string>
+    <!-- no need --><string name="fingerprint_not_recognized">fingerprint not recognized. Try again.</string>
+    <!-- no need --><string name="fingerprint_success">fingerprint recognized</string>
     <!-- checked --><string name="fragmentdecoder_not_valid_bitcoin_address">not a valid bitcoin address</string>
     <!-- checked --><string name="fragmentdecoder_not_a_bitcoin_qr_code">not a bitcoin QR code</string>
     <!-- checked --><string name="to">to: </string>
@@ -84,7 +83,7 @@
     <string name="generate_recovery_phrase">generate recovery phrase</string>
     <string name="request">request</string>
     <string name="pay">pay</string>
-    <!-- checked --><string name="at_this_address">Receive bitcoins at this address: %s</string>
+    <!-- checked --><string name="at_this_address">receive bitcoins at this address: %s</string>
     <string name="generate_phrase_text1">start a new wallet by generating a wallet recovery phrase</string>
     <string name="generate_phrase_text2">if you ever lose your phone, you will need this phrase to recover your wallet</string>
     <string name="i_wrote_it_down">I wrote it down:</string>
@@ -128,10 +127,9 @@
     <!-- checked --><string name="password_protected_key">password protected key</string>
     <!-- checked --><string name="bitcoin_payment_cant_be_less">bitcoin payments can\'t be less than %s</string>
     <!-- checked --><string name="amount_too_small">amount too small</string>
-    <!-- no need --><string name="fingerprint_auth">Fingerprint authorization</string>
+    <!-- no need --><string name="fingerprint_auth">fingerprint authorization</string>
     <!-- checked --><string name="change_payment_amount">change payment amount?</string>
-    <string name="failed_to_send">Failed to send</string>
-    <string name="support_request">support request</string>
+    <string name="failed_to_send">failed to send</string>
     <!-- no need --><string name="choose_an_email_client">Choose an Email client</string>
     <!-- no need --><string name="phrase_error">Recovery phrase error, please contact support at breadwallet.com</string>
     <!-- checked --><string name="nr_confirmations">%d confirmations</string>
@@ -171,13 +169,9 @@
     <!-- no need --><string name="auth_required">Authentication required</string>
     <!-- no need --><string name="auth_message">The phone has been unlocked for too long</string>
     <!-- no need --><string name="camera_configuration_failed">camera configuration failed</string>
-    <string name="device_security_compromised">DEVICE SECURITY COMPROMISED</string>
-    <string name="show_phrase">show phrase</string>
-    <string name="rooted_message">On a \'rooted\' device, any app can access any other app\'s keystore data (and steal your bitcoins).%s</string>
-    <string name="rooted_message_holder1">\nWipe this wallet immediately and restore on a secure device.</string>
-    <string name="copied">copied</string>
-
-
-    <integer name="viewfinder_border_width">4</integer>
-    <integer name="viewfinder_border_length">60</integer>
+    <!-- no need --><string name="device_security_compromised">DEVICE SECURITY COMPROMISED</string>
+    <!-- checked --><string name="show_phrase">show phrase</string>
+    <!-- no need --><string name="rooted_message">On a \'rooted\' device, any app can access any other app\'s keystore data (and steal your bitcoins).%s</string>
+    <!-- no need --><string name="rooted_message_holder1">\nWipe this wallet immediately and restore on a secure device.</string>
+    <!-- checked --><string name="copied">copied</string>
 </resources>

@@ -484,7 +484,8 @@ public class PasswordDialogFragment extends DialogFragment {
         passcodeEditText.setVisibility(View.GONE);
         info.setVisibility(View.VISIBLE);
         // Get the Resources
-        String message = String.format(getString(R.string.try_again), (int) (waitTime == 0 ? 1 : waitTime), (waitTime == 1 ? R.string.minute : R.string.minutes));
+        String message = String.format(getString(R.string.try_again), (int) (waitTime == 0 ? 1 : waitTime),
+                (waitTime == 1 ? getString(R.string.minute) : getString(R.string.minutes)));
 
         info.setText(message);
         digit_1.setVisibility(View.GONE);
