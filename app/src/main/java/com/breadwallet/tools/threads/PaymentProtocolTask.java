@@ -152,18 +152,20 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
             }
 
             //Logging
-            StringBuilder allAddresses = new StringBuilder();
+//            StringBuilder allAddresses = new StringBuilder();
             for (String s : paymentRequest.addresses) {
-                allAddresses.append(s).append(", ");
+//                allAddresses.append(s).append(", ");
                 if (!BRWalletManager.validateAddress(s)) {
                     if (app != null)
                         ((BreadWalletApp) app.getApplication()).
                                 showCustomDialog(app.getString(R.string.error),
                                         String.format(app.getString(R.string.invalid_address_with_holder), s),
                                         app.getString(R.string.close));
+                    paymentRequest = null;
+                    return null;
                 }
             }
-            allAddresses.delete(allAddresses.length() - 2, allAddresses.length());
+//            allAddresses.delete(allAddresses.length() - 2, allAddresses.length());
 
 //            CustomLogger.logThis("Signature", String.valueOf(paymentRequest.signature.length),
 //                    "pkiType", paymentRequest.pkiType, "pkiData", String.valueOf(paymentRequest.pkiData.length));

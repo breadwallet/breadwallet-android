@@ -1,6 +1,8 @@
 package com.breadwallet.tools.security;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -10,6 +12,7 @@ import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.presenter.fragments.FragmentRecoveryPhrase;
+import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.presenter.fragments.FragmentSettings;
 import com.breadwallet.presenter.fragments.IntroWelcomeFragment;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -97,7 +100,7 @@ public class PostAuthenticationProcessor {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            Arrays.fill(bytePhrase,(byte) 0);
+            Arrays.fill(bytePhrase, (byte) 0);
         }
     }
 
@@ -128,9 +131,7 @@ public class PostAuthenticationProcessor {
                     tmpTx = null;
                 }
                 if (!success) {
-                    ((BreadWalletApp) app.getApplication()).showCustomToast(app,
-                            app.getString(R.string.failed_to_send),
-                            MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
+                    BRWalletManager.getInstance(app).offerToChangeTheAmount(app, app.getString(R.string.insufficient_funds));
                     return;
                 }
             } else {
@@ -195,6 +196,5 @@ public class PostAuthenticationProcessor {
             }
         }
         introActivity.startTheWalletIfExists();
-
     }
 }

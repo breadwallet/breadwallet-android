@@ -216,9 +216,9 @@ public class MainActivity extends FragmentActivity implements Observer {
         viewFlipper.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (BRAnimator.scanResultFragmentOn) {
+                if (BRAnimator.scanResultFragmentOn)
                     return;
-                }
+
                 if (MiddleViewAdapter.getSyncing() && BRAnimator.level == 0) {
                     hideAllBubbles();
                     if (middleBubbleBlocksCount == 0) {

@@ -21,7 +21,6 @@
             android:clickable="false"
             android:includeFontPadding="false"
             android:padding="0px"
-            android:text="@string/sent_received"
             android:textSize="13sp" />
 
         <com.breadwallet.presenter.customviews.AutoResizeTextView

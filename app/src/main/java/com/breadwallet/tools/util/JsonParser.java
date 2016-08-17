@@ -1,8 +1,12 @@
 package com.breadwallet.tools.util;
 
 import android.app.Activity;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.util.Log;
 
+import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.wallet.BRWalletManager;
 
@@ -16,6 +20,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * BreadWallet
@@ -108,9 +113,28 @@ public class JsonParser {
         try {
             URL url = new URL(myURL);
             urlConn = url.openConnection();
-            if (urlConn != null)
-                urlConn.setReadTimeout(60 * 1000);
-            if (urlConn != null && urlConn.getInputStream() != null) {
+            int versionNumber = 0;
+            MainActivity app = MainActivity.app;
+            if (app != null) {
+                try {
+                    PackageInfo pInfo = null;
+                    pInfo = app.getPackageManager().getPackageInfo(app.getPackageName(), 0);
+                    versionNumber = pInfo.versionCode;
+                } catch (PackageManager.NameNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+            int stringId = 0;
+            String appName = "";
+            if (app != null) {
+                stringId = app.getApplicationInfo().labelRes;
+                appName = app.getString(stringId);
+            }
+            String message = String.format(Locale.getDefault(), "%s/%d/%s", appName.isEmpty() ? "breadwallet" : appName, versionNumber, System.getProperty("http.agent"));
+            Log.e(TAG, "user agent: " + message);
+            urlConn.setRequestProperty("User-agent", message);
+            urlConn.setReadTimeout(60 * 1000);
+            if (urlConn.getInputStream() != null) {
                 in = new InputStreamReader(urlConn.getInputStream(),
                         Charset.defaultCharset());
                 BufferedReader bufferedReader = new BufferedReader(in);

@@ -57,7 +57,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
     private RelativeLayout customKeyboardLayout;
     public static TextView amountToPay;
     private static TextView amountBeforeArrow;
-    public static String address = "-";
+    public static String address;
     private static int unit = BRConstants.CURRENT_UNIT_BITS;
 
     public static int currentCurrencyPosition = BRConstants.BITCOIN_RIGHT;
@@ -119,6 +119,8 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
 
     @Override
     public void onResume() {
+        if (!isARequest && (address == null || address.length() < 20))
+            throw new NullPointerException("address is corrupted");
         updateRateAndISO();
         FragmentScanResult.currentCurrencyPosition = BRConstants.BITCOIN_RIGHT;
         AmountAdapter.calculateAndPassValuesToFragment("0");
@@ -247,7 +249,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         String tmp;
         try {
             tmp = ((Button) v).getText().toString();
-        } catch (ClassCastException ex){
+        } catch (ClassCastException ex) {
             tmp = "";
         }
         AmountAdapter.preConditions(tmp);

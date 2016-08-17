@@ -135,6 +135,7 @@ static void txAdded(void *info, BRTransaction *tx) {
     (*env)->CallStaticVoidMethod(env, _walletManagerClass, mid, result, (jint) tx->blockHeight,
                                  (jlong) tx->timestamp,
                                  (jlong) amount, jstrHash);
+    (*env)->DeleteLocalRef(env,jstrHash);
 }
 
 static void txUpdated(void *info, const UInt256 txHashes[], size_t count, uint32_t blockHeight,
@@ -155,6 +156,7 @@ static void txUpdated(void *info, const UInt256 txHashes[], size_t count, uint32
 
         (*env)->CallStaticVoidMethod(env, _walletManagerClass, mid, JstrHash, (jint) blockHeight,
                                      (jint) timestamp);
+        (*env)->DeleteLocalRef(env,JstrHash);
     }
 }
 

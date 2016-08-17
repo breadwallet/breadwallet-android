@@ -118,7 +118,7 @@ public class BRAnimator {
     public static void animateScanResultFragment() {
         try {
             final MainActivity app = MainActivity.app;
-            if (app == null) return;
+            if (app == null || scanResultFragmentOn) return;
             CustomPagerAdapter.adapter.showFragments(false, app);
             scanResultFragmentOn = true;
             InputMethodManager keyboard = (InputMethodManager) app.
@@ -153,7 +153,6 @@ public class BRAnimator {
             e.printStackTrace();
         }
     }
-
 
     /**
      * Animate the transition on burgerButton/MenuButton pressed
@@ -305,7 +304,6 @@ public class BRAnimator {
             e.printStackTrace();
         }
 
-//        Log.e(TAG, "The level is: " + level);
     }
 
 
@@ -391,8 +389,11 @@ public class BRAnimator {
                     setCustomAnimations(R.animator.from_left, R.animator.to_right).
                     remove(fragmentScanResult).commit();
             app.setBurgerButtonImage(BRConstants.BURGER);
+
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            FragmentScanResult.address = null;
         }
     }
 

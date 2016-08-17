@@ -68,8 +68,8 @@ model {
 repositories {
     mavenCentral()
 }
-dependencies {
 
+dependencies {
     compile 'com.android.support:appcompat-v7:24.1.1'
     compile 'com.android.support:support-v13:24.1.1'
 

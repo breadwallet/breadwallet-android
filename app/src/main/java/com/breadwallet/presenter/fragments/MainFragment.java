@@ -173,8 +173,8 @@ public class MainFragment extends Fragment {
                                         new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int which) {
                                                 dialog.dismiss();
-                                                BRAnimator.animateScanResultFragment();
                                                 FragmentScanResult.address = finalAddress;
+                                                BRAnimator.animateScanResultFragment();
                                             }
                                         });
                                 builder.setNegativeButton(getResources().getString(R.string.cancel),
@@ -186,8 +186,8 @@ public class MainFragment extends Fragment {
                                 alert = builder.create();
                                 alert.show();
                             } else {
-                                BRAnimator.animateScanResultFragment();
                                 FragmentScanResult.address = finalAddress;
+                                BRAnimator.animateScanResultFragment();
                             }
                         } else {
                             throw new NullPointerException();

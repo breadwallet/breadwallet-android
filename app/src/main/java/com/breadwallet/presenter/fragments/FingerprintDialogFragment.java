@@ -102,22 +102,7 @@ public class FingerprintDialogFragment extends DialogFragment
             public void onClick(View view) {
                 if (!BRAnimator.scanResultFragmentOn && mode == BRConstants.AUTH_FOR_PAY && request.isAmountRequested) {
                     FragmentScanResult.address = request.addresses[0];
-                    new AlertDialog.Builder(getActivity())
-                            .setTitle(getString(R.string.payment_info))
-                            .setMessage(R.string.change_payment_amount)
-                            .setPositiveButton(R.string.change, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    BRAnimator.animateScanResultFragment();
-                                }
-                            }).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                            FragmentScanResult.address = null;
-                        }
-                    })
-                            .setIcon(android.R.drawable.ic_dialog_alert)
-                            .show();
+                    BRWalletManager.getInstance(getActivity()).offerToChangeTheAmount(getActivity(), getActivity().getString(R.string.payment_info));
                 }
                 dismiss();
             }
