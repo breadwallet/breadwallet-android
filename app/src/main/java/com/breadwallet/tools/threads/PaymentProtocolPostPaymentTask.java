@@ -8,12 +8,9 @@ import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
-import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
-import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.ByteReader;
 import com.breadwallet.tools.security.RequestHandler;
-import com.breadwallet.wallet.BRWalletManager;
 
 import java.io.DataOutputStream;
 import java.io.FileNotFoundException;
@@ -112,7 +109,7 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
             } else if (e instanceof FileNotFoundException) {
                 if (app != null) {
                     pendingErrorMessages.put(TITLE, app.getString(R.string.warning));
-                    pendingErrorMessages.put(MESSAGE, app.getString(R.string.invalid_payment_request));
+                    pendingErrorMessages.put(MESSAGE, app.getString(R.string.bad_payment_request));
                 }
             } else if (e instanceof SocketTimeoutException) {
                 if (app != null) {
@@ -122,10 +119,10 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
             } else {
                 if (app != null) {
                     pendingErrorMessages.put(TITLE, app.getString(R.string.warning));
-                    pendingErrorMessages.put(MESSAGE, app.getString(R.string.something_went_wrong));
+                    pendingErrorMessages.put(MESSAGE, app.getString(R.string.could_not_transmit_payment));
                     if (!((BreadWalletApp) app.getApplication()).isNetworkAvailable(app))
                         ((BreadWalletApp) app.getApplication()).
-                                showCustomDialog(app.getString(R.string.could_not_make_payment), app.getString(R.string.internet_seems_offline), app.getString(R.string.ok));
+                                showCustomDialog(app.getString(R.string.could_not_make_payment), app.getString(R.string.not_connected_network), app.getString(R.string.ok));
                 }
 
             }
@@ -154,7 +151,7 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
             } else {
                 if (!waiting && !sent && pendingErrorMessages.get(MESSAGE) != null) {
                     ((BreadWalletApp) app.getApplication()).
-                            showCustomDialog(pendingErrorMessages.get(TITLE), pendingErrorMessages.get(MESSAGE), app.getString(R.string.close));
+                            showCustomDialog(pendingErrorMessages.get(TITLE), pendingErrorMessages.get(MESSAGE), app.getString(R.string.ok));
                     pendingErrorMessages = null;
                 }
             }

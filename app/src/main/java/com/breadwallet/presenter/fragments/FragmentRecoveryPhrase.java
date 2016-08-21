@@ -19,10 +19,8 @@ import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.manager.BRClipboardManager;
-import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
-import com.breadwallet.tools.security.KeyStoreManager;
 
 import java.util.Arrays;
 
@@ -103,7 +101,7 @@ public class FragmentRecoveryPhrase extends Fragment {
         Arrays.fill(phrase, (byte) 0);
         if (cleanPhrase.split(" ").length == 12 && cleanPhrase.charAt(cleanPhrase.length() - 1) == '\0') {
             ((BreadWalletApp) getActivity().getApplication()).showCustomDialog(getString(R.string.warning),
-                    getActivity().getString(R.string.phrase_error), getString(R.string.close));
+                    getActivity().getString(R.string.phrase_error), getString(R.string.ok));
         }
 
         thePhrase.setText(cleanPhrase);
@@ -134,6 +132,6 @@ public class FragmentRecoveryPhrase extends Fragment {
     private void setCheckBoxImage() {
         checkBox.setImageResource(!checked ? R.drawable.checkbox_checked : R.drawable.checkbox_empty);
         checked = !checked;
-        SharedPreferencesManager.putCheckBoxRecoveryPhraseFragment(getActivity(), checked);
+        SharedPreferencesManager.putPhraseWroteDown(getActivity(), checked);
     }
 }

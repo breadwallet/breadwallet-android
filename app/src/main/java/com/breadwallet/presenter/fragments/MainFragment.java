@@ -299,4 +299,5 @@ public class MainFragment extends Fragment {
         }
         ((MainActivity) getActivity()).hideAllBubbles();
     }
+
 }

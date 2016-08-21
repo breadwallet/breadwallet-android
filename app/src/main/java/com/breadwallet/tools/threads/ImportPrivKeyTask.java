@@ -83,16 +83,18 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
 
     @Override
     protected void onPostExecute(String s) {
+        String sentBits = BRStringFormatter.getFormattedCurrencyString("BTC", importPrivKeyEntity.getAmount());
+        String sentExchange = BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(app),
+                SharedPreferencesManager.getIso(app), new BigDecimal(importPrivKeyEntity.getAmount()), app);
+        String feeBits = BRStringFormatter.getFormattedCurrencyString("BTC", importPrivKeyEntity.getFee());
+        String feeExchange = BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(app),
+                SharedPreferencesManager.getIso(app), new BigDecimal(importPrivKeyEntity.getFee()), app);
         if (app == null || importPrivKeyEntity == null) return;
-        String message = String.format(app.getString(R.string.send_money_from_privkey_message),
-                BRStringFormatter.getFormattedCurrencyString("BTC", importPrivKeyEntity.getAmount()),
-                BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(app), SharedPreferencesManager.getIso(app), new BigDecimal(importPrivKeyEntity.getAmount()), app),
-                BRStringFormatter.getFormattedCurrencyString("BTC", importPrivKeyEntity.getFee()),
-                BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(app), SharedPreferencesManager.getIso(app), new BigDecimal(importPrivKeyEntity.getFee()), app));
+        String message = String.format(app.getString(R.string.send_money_from_privkey_message), sentBits, sentExchange, feeBits, feeExchange);
         new AlertDialog.Builder(app)
                 .setTitle("")
                 .setMessage(message)
-                .setPositiveButton(app.getString(R.string.send), new DialogInterface.OnClickListener() {
+                .setPositiveButton(String.format("%s (%s)", sentBits, sentExchange), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         boolean result = BRWalletManager.getInstance(app).confirmKeySweep(importPrivKeyEntity.getTx(), key);
                         if (!result) {

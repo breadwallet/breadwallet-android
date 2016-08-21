@@ -68,7 +68,7 @@ public class SharedPreferencesManager {
 
     }
 
-    public static void putCheckBoxRecoveryPhraseFragment(Activity context, boolean check) {
+    public static void putPhraseWroteDown(Activity context, boolean check) {
         SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(BRConstants.PHRASE_WRITTEN, check);

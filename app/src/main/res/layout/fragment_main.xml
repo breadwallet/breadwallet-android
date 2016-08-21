@@ -24,9 +24,7 @@
             android:layout_gravity="center"
             android:text="@string/send_money"
             android:textSize="@dimen/text_size" />
-
     </LinearLayout>
-
 
     <LinearLayout
         android:id="@+id/scan_clipboard_buttons_layout"
@@ -52,7 +50,7 @@
             android:text="@string/scan_qr_code"
             android:textAllCaps="false"
             android:textColor="@color/dark_blue"
-            android:textSize="18sp" />
+            android:textSize="16sp" />
 
         <Button
             android:id="@+id/main_button_pay_address_from_clipboard"
@@ -66,7 +64,7 @@
             android:text="@string/pay_address_from_clipboard"
             android:textAllCaps="false"
             android:textColor="@color/dark_blue"
-            android:textSize="18sp" />
+            android:textSize="16sp" />
     </LinearLayout>
 
     <EditText

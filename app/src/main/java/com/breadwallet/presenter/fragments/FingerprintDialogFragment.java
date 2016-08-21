@@ -102,7 +102,7 @@ public class FingerprintDialogFragment extends DialogFragment
             public void onClick(View view) {
                 if (!BRAnimator.scanResultFragmentOn && mode == BRConstants.AUTH_FOR_PAY && request.isAmountRequested) {
                     FragmentScanResult.address = request.addresses[0];
-                    BRWalletManager.getInstance(getActivity()).offerToChangeTheAmount(getActivity(), getActivity().getString(R.string.payment_info));
+                    BRWalletManager.getInstance(getActivity()).offerToChangeTheAmount(getActivity(), "");
                 }
                 dismiss();
             }

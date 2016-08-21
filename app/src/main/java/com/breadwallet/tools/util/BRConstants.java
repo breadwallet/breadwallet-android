@@ -1,8 +1,5 @@
 package com.breadwallet.tools.util;
 
-import android.graphics.ImageFormat;
-import android.graphics.PixelFormat;
-
 /**
  * BreadWallet
  * <p/>
@@ -162,13 +159,10 @@ public class BRConstants {
     public static final int CURRENT_UNIT_MBITS = 1;
     public static final int CURRENT_UNIT_BITCOINS = 2;
 
-
     public static final String bitcoinLowercase = "\u0180";
     public static final String bitcoinUppercase = "\u0243";
 
-
     private BRConstants() {
     }
-
 
 }

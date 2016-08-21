@@ -63,7 +63,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="20dp"
-                    android:text="@string/recovery_phrase_button"
+                    android:text="@string/recovery_phrase_label"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/gray"
                     android:textSize="@dimen/text_size" />

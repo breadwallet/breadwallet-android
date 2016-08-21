@@ -2,7 +2,6 @@ package com.breadwallet.presenter.fragments;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,7 +14,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -23,14 +21,12 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.IntroActivity;
-import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.tools.util.WordsReader;
-import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.wallet.BRWalletManager;
 
-import java.util.IllegalFormatException;
 import java.util.List;
 
 /**

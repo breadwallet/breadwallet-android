@@ -401,7 +401,7 @@ public class BRWalletManager {
                         if (PaymentProtocolPostPaymentTask.pendingErrorMessages.get(PaymentProtocolPostPaymentTask.MESSAGE) != null) {
                             ((BreadWalletApp) ctx.getApplication()).
                                     showCustomDialog(PaymentProtocolPostPaymentTask.pendingErrorMessages.get(PaymentProtocolPostPaymentTask.TITLE),
-                                            PaymentProtocolPostPaymentTask.pendingErrorMessages.get(PaymentProtocolPostPaymentTask.MESSAGE), ctx.getString(R.string.close));
+                                            PaymentProtocolPostPaymentTask.pendingErrorMessages.get(PaymentProtocolPostPaymentTask.MESSAGE), ctx.getString(R.string.ok));
                             PaymentProtocolPostPaymentTask.pendingErrorMessages = null;
                         } else {
                             ((BreadWalletApp) ctx.getApplication()).showCustomToast(ctx, message,
@@ -447,12 +447,14 @@ public class BRWalletManager {
             ctx.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    CurrencyManager m = CurrencyManager.getInstance(ctx);
                     long absAmount = (amount > 0 ? amount : amount * -1);
-                    String strToShow = String.format(ctx.getString(amount > 0 ? R.string.received_amount : R.string.sent_amount),
-                            BRStringFormatter.getFormattedCurrencyString("BTC", absAmount) + " (" +
+                    String strToShow = amount > 0 ?
+                            (String.format(ctx.getString(R.string.received_amount),
+                                    BRStringFormatter.getFormattedCurrencyString("BTC", absAmount),
                                     BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(ctx),
-                                            SharedPreferencesManager.getIso(ctx), new BigDecimal(absAmount), ctx) + ")");
+                                            SharedPreferencesManager.getIso(ctx), new BigDecimal(absAmount), ctx))) :
+                            ctx.getString(R.string.sent_exclaimed);
+
                     showSentReceivedToast(strToShow);
                 }
 
@@ -659,7 +661,7 @@ public class BRWalletManager {
             @Override
             public void run() {
                 ((BreadWalletApp) ctx.getApplicationContext()).promptForAuthentication(ctx,
-                        BRConstants.AUTH_FOR_PAY, request, message, ctx.getString(R.string.payment_info), null);
+                        BRConstants.AUTH_FOR_PAY, request, message, "", null);
             }
         });
     }
@@ -725,9 +727,12 @@ public class BRWalletManager {
                 final long amountToReduce = bigDecimalAmount.longValue() - maxAmountDouble;
 //                String strToReduce = String.valueOf(amountToReduce);
                 final AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+                String reduceBits = BRStringFormatter.getFormattedCurrencyString("BTC", amountToReduce);
+                String reduceFee = BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(ctx), SharedPreferencesManager.getIso(ctx), new BigDecimal(amountToReduce), ctx);
+                String reduceBitsMinus = BRStringFormatter.getFormattedCurrencyString("BTC", -amountToReduce);
+                String reduceFeeMinus = BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(ctx), SharedPreferencesManager.getIso(ctx), new BigDecimal(-amountToReduce), ctx);
 
-                builder.setMessage(String.format(ctx.getString(R.string.reduce_payment_amount_by), BRStringFormatter.getFormattedCurrencyString("BTC", amountToReduce),
-                        BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(ctx), SharedPreferencesManager.getIso(ctx), new BigDecimal(amountToReduce), ctx)))
+                builder.setMessage(String.format(ctx.getString(R.string.reduce_payment_amount_by), reduceBits, reduceFee))
                         .setTitle(R.string.insufficient_funds_for_fee)
                         .setCancelable(false)
                         .setNegativeButton(ctx.getString(R.string.cancel), new DialogInterface.OnClickListener() {
@@ -736,7 +741,7 @@ public class BRWalletManager {
                                 dialog.cancel();
                             }
                         })
-                        .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                        .setPositiveButton(String.format("%s (%s)", reduceBitsMinus, reduceFeeMinus), new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 byte[] tmpTx2 = m.tryTransaction(addressHolder, bigDecimalAmount.longValue() - amountToReduce);
                                 if (tmpTx2 != null) {
@@ -962,15 +967,15 @@ public class BRWalletManager {
                 .setMessage(R.string.change_payment_amount)
                 .setPositiveButton(R.string.change, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+
                         BRAnimator.animateScanResultFragment();
                     }
                 }).setNegativeButton(app.getString(R.string.cancel), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                FragmentScanResult.address = null;
-            }
-        })
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
     }

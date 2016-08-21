@@ -91,14 +91,14 @@ public class FragmentTransactionExpanded extends Fragment {
         final String iso = SharedPreferencesManager.getIso(getActivity());
         int blockHeight = item.getBlockHeight();
         if (!BRWalletManager.getInstance(getActivity()).transactionIsVerified(item.getHexId())) {
-            statusText.setText(R.string.unverified_by_peers);
+            statusText.setText(R.string.unverified);
         } else if (blockHeight == Integer.MAX_VALUE) {
             statusText.setText(R.string.verified_waiting);
         } else {
-            statusText.setText(String.format(Locale.getDefault(), getActivity().getString(R.string.confirmed_in_block_nr),
-                    blockHeight) + "\n"+ String.valueOf(item.getTimeStamp() != 0 ?
-                    Utils.getFormattedDateFromLong(item.getTimeStamp() * 1000) : Utils.getFormattedDateFromLong(System.currentTimeMillis())));
-
+            String statusString = String.format(Locale.getDefault(), getActivity().getString(R.string.confirmed_in_block_nr),
+                    blockHeight) + "\n" + String.valueOf(item.getTimeStamp() != 0 ?
+                    Utils.getFormattedDateFromLong(item.getTimeStamp() * 1000) : Utils.getFormattedDateFromLong(System.currentTimeMillis()));
+            statusText.setText(statusString);
         }
         String rawHash = BRWalletManager.getInstance(getActivity()).reverseTxHash(item.getHexId());
         final int mid = rawHash.length() / 2;
@@ -137,7 +137,7 @@ public class FragmentTransactionExpanded extends Fragment {
             String toAddresses[] = item.getTo();
             setSentToAddresses(generalTxTo, toAddresses, outAmounts);
             toFeeAmountText.setText(String.format("%s", BRStringFormatter.getFormattedCurrencyString("BTC", -item.getFee())));
-            toFeeExchangeText.setText(String.format("(%s)", BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(-item.getFee()),getActivity())));
+            toFeeExchangeText.setText(String.format("(%s)", BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(-item.getFee()), getActivity())));
 
         }
         setHideCopyBubbleListeners(rootView.findViewById(R.id.tx_amount),
@@ -232,7 +232,7 @@ public class FragmentTransactionExpanded extends Fragment {
                 txTo.setText(addresses[i]);
                 txToDescription.setText(getString(R.string.wallet_address));
                 txToAmount.setText(BRStringFormatter.getFormattedCurrencyString("BTC", amounts[i]));
-                txToExchange.setText(String.format("(%s)", BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(amounts[i]),getActivity())));
+                txToExchange.setText(String.format("(%s)", BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(amounts[i]), getActivity())));
                 view.addView(addressBlock);
 //                if (i != addresses.length - 1)
                 view.addView(FragmentSettingsAll.getSeparationLine(0, getActivity()));

@@ -135,6 +135,6 @@ public class IntroShowPhraseActivity extends Activity {
         checkBox.setImageResource(!checked ? R.drawable.checkbox_checked : R.drawable.checkbox_empty);
         remindMeLater.setText(!checked ? getResources().getString(R.string.done) : getResources().getString(R.string.remind_me_later));
         checked = !checked;
-        SharedPreferencesManager.putCheckBoxRecoveryPhraseFragment(this, checked);
+        SharedPreferencesManager.putPhraseWroteDown(this, checked);
     }
 }

@@ -143,7 +143,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                     app.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ((BreadWalletApp) app.getApplication()).showCustomDialog("", app.getString(R.string.something_went_wrong), app.getString(R.string.ok));
+                            ((BreadWalletApp) app.getApplication()).showCustomDialog("", app.getString(R.string.could_not_transmit_payment), app.getString(R.string.ok));
                         }
                     });
                 }
@@ -160,7 +160,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                         ((BreadWalletApp) app.getApplication()).
                                 showCustomDialog(app.getString(R.string.error),
                                         String.format(app.getString(R.string.invalid_address_with_holder), s),
-                                        app.getString(R.string.close));
+                                        app.getString(R.string.ok));
                     paymentRequest = null;
                     return null;
                 }
@@ -180,7 +180,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 if (app != null)
                     ((BreadWalletApp) app.getApplication()).
                             showCustomDialog(app.getString(R.string.error), app.getString(R.string.expired_request),
-                                    app.getString(R.string.close));
+                                    app.getString(R.string.ok));
                 paymentRequest = null;
                 return null;
             }
@@ -191,17 +191,17 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
             if (e instanceof java.net.UnknownHostException) {
                 if (app != null)
                     ((BreadWalletApp) app.getApplication()).
-                            showCustomDialog(app.getString(R.string.error), app.getString(R.string.unknown_host), app.getString(R.string.close));
+                            showCustomDialog(app.getString(R.string.error), app.getString(R.string.unknown_host), app.getString(R.string.ok));
                 paymentRequest = null;
             } else if (e instanceof FileNotFoundException) {
                 if (app != null)
                     ((BreadWalletApp) app.getApplication()).
-                            showCustomDialog(app.getString(R.string.warning), app.getString(R.string.invalid_payment_request), app.getString(R.string.close));
+                            showCustomDialog(app.getString(R.string.warning), app.getString(R.string.bad_payment_request), app.getString(R.string.ok));
                 paymentRequest = null;
             } else if (e instanceof SocketTimeoutException) {
                 if (app != null)
                     ((BreadWalletApp) app.getApplication()).
-                            showCustomDialog(app.getString(R.string.warning), app.getString(R.string.connection_timed_out), app.getString(R.string.close));
+                            showCustomDialog(app.getString(R.string.warning), app.getString(R.string.connection_timed_out), app.getString(R.string.ok));
                 paymentRequest = null;
             } else if (e instanceof CertificateChainNotFound) {
                 Log.e(TAG, "No certificates!", e);
@@ -209,11 +209,11 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 if (app != null)
                     if (!((BreadWalletApp) app.getApplication()).isNetworkAvailable(app))
                         ((BreadWalletApp) app.getApplication()).
-                                showCustomDialog(app.getString(R.string.could_not_make_payment), app.getString(R.string.internet_seems_offline), app.getString(R.string.ok));
+                                showCustomDialog(app.getString(R.string.could_not_make_payment), app.getString(R.string.not_connected_network), app.getString(R.string.ok));
 
                     else
                         ((BreadWalletApp) app.getApplication()).
-                                showCustomDialog(app.getString(R.string.warning), app.getString(R.string.something_went_wrong), app.getString(R.string.close));
+                                showCustomDialog(app.getString(R.string.warning), app.getString(R.string.could_not_transmit_payment), app.getString(R.string.ok));
                 paymentRequest = null;
             }
             e.printStackTrace();
@@ -345,7 +345,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
         app.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                ((BreadWalletApp) app.getApplicationContext()).promptForAuthentication(app, BRConstants.AUTH_FOR_PAYMENT_PROTOCOL, request, message, app.getString(R.string.payment_info), paymentRequest);
+                ((BreadWalletApp) app.getApplicationContext()).promptForAuthentication(app, BRConstants.AUTH_FOR_PAYMENT_PROTOCOL, request, message, "", paymentRequest);
             }
         });
     }

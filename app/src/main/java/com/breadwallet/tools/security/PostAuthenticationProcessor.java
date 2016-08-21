@@ -16,6 +16,7 @@ import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.presenter.fragments.FragmentSettings;
 import com.breadwallet.presenter.fragments.IntroWelcomeFragment;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
@@ -89,6 +90,7 @@ public class PostAuthenticationProcessor {
             if (!success)
                 return;
             if (phraseForKeyStore.length() != 0) {
+                SharedPreferencesManager.putPhraseWroteDown(app, true);
                 bytePhrase = TypesConverter.getNullTerminatedPhrase(phraseForKeyStore.getBytes());
                 byte[] pubKey = BRWalletManager.getInstance(app).getMasterPubKey(bytePhrase);
                 KeyStoreManager.putMasterPublicKey(pubKey, app);

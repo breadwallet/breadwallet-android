@@ -26,12 +26,9 @@ package com.breadwallet.presenter.fragments;
  */
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -47,7 +44,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
@@ -69,7 +65,6 @@ import com.breadwallet.tools.security.PassCodeManager;
 import com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask;
 import com.breadwallet.wallet.BRWalletManager;
 
-import java.util.Arrays;
 import java.util.Locale;
 
 public class PasswordDialogFragment extends DialogFragment {
@@ -139,7 +134,7 @@ public class PasswordDialogFragment extends DialogFragment {
                 keyboard.hideSoftInputFromWindow(cancel.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
                 if (!BRAnimator.scanResultFragmentOn && mode == BRConstants.AUTH_FOR_PAY && request.isAmountRequested) {
                     FragmentScanResult.address = request.addresses[0];
-                    BRWalletManager.getInstance(getActivity()).offerToChangeTheAmount(getActivity(), getActivity().getString(R.string.payment_info));
+                    BRWalletManager.getInstance(getActivity()).offerToChangeTheAmount(getActivity(), "");
                 }
             }
         });
@@ -158,7 +153,7 @@ public class PasswordDialogFragment extends DialogFragment {
                 }, 100);
                 if (phraseEditText.getVisibility() == View.GONE) {
                     phraseEditText.setVisibility(View.VISIBLE);
-                    title.setText(R.string.recovery_title);
+                    title.setText(R.string.recovery_phrase_label);
                     description.setText("");
                     info.setVisibility(View.GONE);
                 } else {

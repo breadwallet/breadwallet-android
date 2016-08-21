@@ -54,7 +54,7 @@ public class RequestHandler {
             if (requestObject == null) {
                 if (app != null) {
                     ((BreadWalletApp) app.getApplication()).showCustomDialog(app.getString(R.string.warning),
-                            app.getString(R.string.invalid_address), app.getString(R.string.close));
+                            app.getString(R.string.invalid_address), app.getString(R.string.ok));
                 }
                 return;
             }
@@ -65,7 +65,7 @@ public class RequestHandler {
             } else {
                 if (app != null) {
                     ((BreadWalletApp) app.getApplication()).showCustomDialog(app.getString(R.string.warning),
-                            app.getString(R.string.invalid_payment_request), app.getString(R.string.close));
+                            app.getString(R.string.bad_payment_request), app.getString(R.string.ok));
                 }
             }
         } catch (InvalidAlgorithmParameterException e) {

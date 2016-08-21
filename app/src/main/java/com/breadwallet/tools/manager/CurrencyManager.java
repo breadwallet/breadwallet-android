@@ -167,7 +167,7 @@ public class CurrencyManager extends Observable {
     }
 
     public CurrencyListAdapter getCurrencyAdapterIfReady() {
-        new GetCurrenciesTask().execute();
+//        new GetCurrenciesTask().execute();
         return currencyListAdapter;
     }
 
