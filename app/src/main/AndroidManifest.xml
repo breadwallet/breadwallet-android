@@ -13,7 +13,6 @@
     <uses-feature
         android:name="android.hardware.telephony"
         android:required="false" />
-
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
@@ -37,6 +36,7 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -62,6 +62,7 @@
             android:name=".presenter.activities.RequestQRActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
+        <activity android:name=".presenter.activities.PhraseFlowActivity"></activity>
     </application>
 
 </manifest>

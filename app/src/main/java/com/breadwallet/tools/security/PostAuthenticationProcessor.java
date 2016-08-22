@@ -10,6 +10,7 @@ import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.activities.PhraseFlowActivity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.presenter.fragments.FragmentRecoveryPhrase;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
@@ -120,7 +121,7 @@ public class PostAuthenticationProcessor {
         }
     }
 
-    public void onShowPhraseFlowAuth(MainActivity app) {
+    public void onShowPhraseFlowAuth(PhraseFlowActivity app) {
         Log.e(TAG, "onShowPhraseAuth");
         byte[] phrase;
         try {

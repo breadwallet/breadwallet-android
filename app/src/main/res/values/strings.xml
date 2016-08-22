@@ -1,172 +1,334 @@
 <resources>
-    <!-- no need --><string name="app_name">&#384;readwallet</string>
-    <!-- no need --><string name="lang">en</string>
+    <!-- no need -->
+    <string name="app_name">&#384;readwallet</string>
+    <!-- no need -->
+    <string name="lang">en</string>
 
-    <!-- android --><string name="bitcoin_address">Bitcoin Address</string>
-    <!-- android --><string name="fingerprint_description">confirm fingerprint</string>
-    <!-- android --><string name="fingerprint_hint">touch sensor</string>
-    <!-- android --><string name="fingerprint_not_recognized">fingerprint not recognized. Try again.</string>
-    <!-- android --><string name="fingerprint_success">fingerprint recognized</string>
-    <!-- android --><string name="fragmentdecoder_not_valid_bitcoin_address">not a valid bitcoin address</string>
-    <!-- android --><string name="fragmentdecoder_not_a_bitcoin_qr_code">not a bitcoin QR code</string>
-    <!-- android --><string name="error">error</string>
-    <!-- android --><string name="invalid_address">invalid address</string>
-    <!-- android --><string name="invalid_address_with_holder">invalid address\n%1$s</string>
-    <!-- android --><string name="fingerprint_auth">fingerprint authorization</string>
-    <!-- android --><string name="rooted_message">On a \'rooted\' device, any app can access any other app\'s keystore data (and steal your bitcoins).%s</string>
-    <!-- android --><string name="rooted_message_holder1">\nWipe this wallet immediately and restore on a secure device.</string>
-    <!-- android --><string name="auth_required">Authentication required</string>
-    <!-- android --><string name="auth_message">The phone has been unlocked for too long</string>
-    <!-- android --><string name="camera_configuration_failed">camera configuration failed</string>
-    <!-- android --><string name="device_security_compromised">DEVICE SECURITY COMPROMISED</string>
-    <!-- android --><string name="confirm">confirm</string>
-    <!-- android --><string name="keystore_unavailable">The KeyStore is temporary unavailable, please try again later</string>
-    <!-- android --><string name="encryption_needed_for_wallet">A device screen lock is needed to safeguard your wallet. Go to \"Settings\" > \"Security\" > \"Screen lock\" and enable to continue.</string>
-    <!-- android --><string name="failed_to_sign_tx">Failed to sign transaction</string>
-    <!-- android --><string name="payment_request_message_too_large">PaymentRequest message is too large</string>
-    <!-- android --><string name="expired_request">Expired request</string>
-    <!-- android --><string name="invalid_request">Invalid request</string>
-    <!-- android --><string name="allow_camera_access">allow camera access in \"Settings\" > \"Apps\" > \"breadwallet\" > \"Permissions\"</string>
-    <!-- android --><string name="insecure_keyboard_message">Insecure keyboard detected\ngo to \"Settings\" > \"language &amp; input\" > \"keyboards\" and disable all custom input types</string>
-    <!-- android --><string name="choose_an_email_client">Choose an Email client</string>
-    <!-- android --><string name="phrase_error">Recovery phrase error, please contact support at breadwallet.com</string>
-    <!-- android --><string name="recover_button">recover</string>
-    <!-- android --><string name="fingerprint_spend_limit">fingerprint spend limit</string>
-    <!-- android --><string name="refresh">refresh</string>
-    <!-- android --><string name="breadwallet_v">breadwallet %1$d</string>
-    <!-- android --><string name="copyright_u00a9_2016_breadwallet_llc">copyright © 2016 breadwallet llc</string>
-    <!-- android --><string name="app_support">app support:</string>
-    <!-- android --><string name="support_website">support@breadwallet.com</string>
-    <!-- android --><string name="exchange_rate_data_provided_by">exchange rate data provided by</string>
-    <!-- android --><string name="bitpay_com_rates">bitpay.com/rates</string>
-    <!-- android --><string name="unknown_host">unknown host</string>
-    <!-- android --><string name="connection_timed_out">connection timed out</string>
+    <!-- android -->
+    <string name="bitcoin_address">Bitcoin Address</string>
+    <!-- android -->
+    <string name="fingerprint_description">confirm fingerprint</string>
+    <!-- android -->
+    <string name="fingerprint_hint">touch sensor</string>
+    <!-- android -->
+    <string name="fingerprint_not_recognized">fingerprint not recognized. Try again.</string>
+    <!-- android -->
+    <string name="fingerprint_success">fingerprint recognized</string>
+    <!-- android -->
+    <string name="fragmentdecoder_not_valid_bitcoin_address">not a valid bitcoin address</string>
+    <!-- android -->
+    <string name="fragmentdecoder_not_a_bitcoin_qr_code">not a bitcoin QR code</string>
+    <!-- android -->
+    <string name="error">error</string>
+    <!-- android -->
+    <string name="invalid_address">invalid address</string>
+    <!-- android -->
+    <string name="invalid_address_with_holder">invalid address\n%1$s</string>
+    <!-- android -->
+    <string name="fingerprint_auth">fingerprint authorization</string>
+    <!-- android -->
+    <string name="rooted_message">On a \'rooted\' device, any app can access any other app\'s keystore data (and steal your bitcoins).%s</string>
+    <!-- android -->
+    <string name="rooted_message_holder1">\nWipe this wallet immediately and restore on a secure device.</string>
+    <!-- android -->
+    <string name="auth_required">Authentication required</string>
+    <!-- android -->
+    <string name="auth_message">The phone has been unlocked for too long</string>
+    <!-- android -->
+    <string name="camera_configuration_failed">camera configuration failed</string>
+    <!-- android -->
+    <string name="device_security_compromised">DEVICE SECURITY COMPROMISED</string>
+    <!-- android -->
+    <string name="confirm">confirm</string>
+    <!-- android -->
+    <string name="keystore_unavailable">The KeyStore is temporary unavailable, please try again later</string>
+    <!-- android -->
+    <string name="encryption_needed_for_wallet">A device screen lock is needed to safeguard your wallet. Go to \"Settings\" > \"Security\" > \"Screen lock\" and enable to continue.</string>
+    <!-- android -->
+    <string name="failed_to_sign_tx">Failed to sign transaction</string>
+    <!-- android -->
+    <string name="payment_request_message_too_large">PaymentRequest message is too large</string>
+    <!-- android -->
+    <string name="expired_request">Expired request</string>
+    <!-- android -->
+    <string name="invalid_request">Invalid request</string>
+    <!-- android -->
+    <string name="allow_camera_access">allow camera access in \"Settings\" > \"Apps\" > \"breadwallet\" > \"Permissions\"</string>
+    <!-- android -->
+    <string name="insecure_keyboard_message">Insecure keyboard detected\ngo to \"Settings\" > \"language &amp; input\" > \"keyboards\" and disable all custom input types</string>
+    <!-- android -->
+    <string name="choose_an_email_client">Choose an Email client</string>
+    <!-- android -->
+    <string name="phrase_error">Recovery phrase error, please contact support at breadwallet.com</string>
+    <!-- android -->
+    <string name="recover_button">recover</string>
+    <!-- android -->
+    <string name="fingerprint_spend_limit">fingerprint spend limit</string>
+    <!-- android -->
+    <string name="refresh">refresh</string>
+    <!-- android -->
+    <string name="breadwallet_v">breadwallet %1$d</string>
+    <!-- android -->
+    <string name="copyright_u00a9_2016_breadwallet_llc">copyright © 2016 breadwallet llc</string>
+    <!-- android -->
+    <string name="app_support">app support:</string>
+    <!-- android -->
+    <string name="support_website">support@breadwallet.com</string>
+    <!-- android -->
+    <string name="exchange_rate_data_provided_by">exchange rate data provided by</string>
+    <!-- android -->
+    <string name="bitpay_com_rates">bitpay.com/rates</string>
+    <!-- android -->
+    <string name="unknown_host">unknown host</string>
+    <!-- android -->
+    <string name="connection_timed_out">connection timed out</string>
 
     <string name="bad_recovery_phrase">bad recovery phrase</string>
-    <!-- checked --><string name="settingsall_rescan_instructions">rescan blockchain if you think you may have missing transactions, or are having trouble sending (rescanning can take several minutes)</string>
-    <!-- checked --><string name="wipewallet_instructions">Enter this wallet\'s recovery phrase to wipe it and start/recover another. Your current balance remains on this phrase.</string>
-    <!-- checked --><string name="dialog_recovery_phrase_warning">if you ever lose your phone, you will need this phrase to recover your wallet</string>
-    <!-- checked --><string name="toast_qr_tip">Let others scan this QR code to get your bitcoin address. Anyone can send bitcoins to your wallet by transferring them to your address.</string>
-    <!-- checked --><string name="toast_address_tip">This is your bitcoin address. Tap to copy it or send it by email or sms. The address will change each time you receive funds, but old addresses always work.</string>
+    <!-- checked -->
+    <string name="settingsall_rescan_instructions">rescan blockchain if you think you may have missing transactions, or are having trouble sending (rescanning can take several minutes)</string>
+    <!-- checked -->
+    <string name="wipewallet_instructions">Enter this wallet\'s recovery phrase to wipe it and start/recover another. Your current balance remains on this phrase.</string>
+    <!-- checked -->
+    <string name="dialog_recovery_phrase_warning">if you ever lose your phone, you will need this phrase to recover your wallet</string>
+    <!-- checked -->
+    <string name="toast_qr_tip">Let others scan this QR code to get your bitcoin address. Anyone can send bitcoins to your wallet by transferring them to your address.</string>
+    <!-- checked -->
+    <string name="toast_address_tip">This is your bitcoin address. Tap to copy it or send it by email or sms. The address will change each time you receive funds, but old addresses always work.</string>
     <string name="warning">WARNING</string>
-    <!-- checked --><string name="warning_text1">\nDO NOT let anyone see your recovery\nphrase or they can spend your bitcoins.\n</string>
-    <!-- checked --><string name="warning_text2">\nNEVER type your recovery phrase into\npassword managers or elsewhere.\nOther devices may be infected.\n</string>
-    <!-- checked --><string name="warning_text3">\nDO NOT take a screenshot.\nScreenshots are visible to other apps\nand devices.\n</string>
-    <!-- checked --><string name="show">show</string>
-    <!-- checked --><string name="cancel">cancel</string>
-    <!-- checked --><string name="mainfragment_clipboard_invalid_data">"clipboard doesn't contain a valid bitcoin address"</string>
-    <!-- checked --><string name="ok">ok</string>
-    <!-- checked --><string name="toast_address_copied">copied</string>
-    <!-- checked --><string name="middle_view_tip_first">This is your bitcoin balance. Bitcoin is a currency. The exchange rate changes with the market.</string>
-    <!-- checked --><string name="middle_view_tip_second">%1$s is for \'bits\'. %2$s = 1 bitcoin.</string>
-    <!-- checked --><string name="done">done</string>
-    <!-- checked --><string name="remind_me_later">remind me later</string>
-    <!-- checked --><string name="enter_old_passcode">enter old passcode</string>
-    <!-- checked --><string name="choose_new_passcode">choose wallet passcode</string>
-    <!-- checked --><string name="verify_passcode">verify passcode</string>
-    <!-- checked --><string name="to">to: </string>
-    <!-- checked --><string name="middle_view_settings">settings</string>
-    <!-- checked --><string name="middle_view_transaction_details">transaction details</string>
-    <!-- checked --><string name="bad_payment_request">bad payment request</string>
-    <!-- checked --><string name="more">more...</string>
-    <!-- checked --><string name="sent">sent</string>
-    <!-- checked --><string name="sent_exclaimed">sent!</string>
-    <!-- checked --><string name="received">received</string>
-    <!-- checked --><string name="received_amount">received %1$s (%2$s)</string>
-    <!-- checked --><string name="wallet_address">wallet address</string>
-    <!-- checked --><string name="payment_address">payment address</string>
-    <!-- checked --><string name="spent_address">spent address</string>
-    <!-- checked --><string name="bitcoin_network_fee">bitcoin network fee</string>
-    <!-- checked --><string name="pay_address_from_clipboard">pay address from clipboard</string>
-    <!-- checked --><string name="could_not_transmit_payment">couldn\'t transmit payment to bitcoin network</string>
-    <!-- checked --><string name="scan_qr_code">scan QR code</string>
-    <!-- checked --><string name="request_an_amount">request an amount</string>
-    <!-- checked --><string name="send_address_as_email">send address as email</string>
-    <!-- checked --><string name="send_address_as_message">send address as message</string>
-    <!-- checked --><string name="copy_address_to_clipboard">copy address to clipboard</string>
-    <!-- checked --><string name="enter_passcode">passcode for %s</string>
-    <!-- checked --><string name="address_already_in_your_wallet">this payment address is already in your wallet</string>
-    <!-- checked --><string name="syncing">syncing...</string>
-    <!-- checked --><string name="payment_failed">couldn\'t make payment</string>
-    <!-- checked --><string name="address_already_used">\nADDRESS ALREADY USED\n\nbitcoin addresses are intended for single use only\n\nre-use reduces privacy for both you and the recipient and can result in loss if the recipient doesn\'t directly control the address</string>
-    <!-- checked --><string name="ignore">ignore</string>
-    <!-- checked --><string name="verified_waiting">verified, waiting for confirmation</string>
-    <!-- checked --><string name="you_received_bitcoin">you received bitcoin!</string>
-    <!-- checked --><string name="write_down_phrase_holder1">next, write down your recovery phrase</string>
-    <!-- checked --><string name="write_down_phrase_holder2">WRITE DOWN YOUR RECOVERY PHRASE</string>
-    <!-- checked --><string name="write_down_phrase">\n%s\n\nif you ever lose your phone, you will need it to recover your wallet</string>
-    <!-- checked --><string name="unverified">unverified</string>
-    <!-- checked --><string name="important">IMPORTANT</string>
-    <!-- checked --><string name="moved">moved</string>
-    <!-- checked --><string name="receive_money">receive money:</string>
-    <!-- checked --><string name="send_money">send money:</string>
-    <!-- checked --><string name="new_wallet">new wallet</string>
-    <!-- checked --><string name="recover_wallet">recover wallet</string>
-    <!-- checked --><string name="wipe">wipe</string>
-    <!-- checked --><string name="generate_recovery_phrase">generate recovery phrase</string>
-    <!-- checked --><string name="request">request</string>
-    <!-- checked --><string name="pay">pay</string>
-    <!-- checked --><string name="at_this_address">receive bitcoins at this address: %s</string>
-    <!-- checked --><string name="generate_phrase_text1">start a new wallet by generating a wallet recovery phrase</string>
-    <!-- checked --><string name="generate_phrase_text2">if you ever lose your phone, you will need this phrase to recover your wallet</string>
-    <!-- checked --><string name="i_wrote_it_down">I wrote it down:</string>
-    <!-- checked --><string name="no_transactions">no transactions</string>
-    <!-- checked --><string name="recovery_phrase">recovery phrase:</string>
-    <!-- checked --><string name="use_passcode">passcode</string>
-    <!-- checked --><string name="try_again">try again in %1$d %2$s</string>
-    <!-- checked --><string name="wallet_disabled">wallet disabled</string>
-    <!-- checked --><string name="minute">minute</string>
-    <!-- checked --><string name="minutes">minutes</string>
-    <!-- checked --><string name="reset">reset</string>
-    <!-- checked --><string name="recovery_phrase_label">recovery phrase</string>
-    <!-- checked --><string name="phrase_no_match">recovery phrase doesn\'t match</string>
-    <!-- checked --><string name="please_write_it_down">please write it down</string>
-    <!-- checked --><string name="settings">settings</string>
-    <!-- checked --><string name="about">about</string>
-    <!-- checked --><string name="local_currency">local currency</string>
-    <!-- checked --><string name="change_passcode">change passcode</string>
-    <!-- checked --><string name="start_recover_another_wallet">start/recover another wallet</string>
-    <!-- checked --><string name="transaction_history">transaction history</string>
-    <!-- checked --><string name="import_private_key">import private key</string>
-    <!-- checked --><string name="rescan_blockchain">rescan blockchain</string>
-    <!-- checked --><string name="confirm_">confirm:</string>
-    <!-- checked --><string name="id">id:</string>
-    <!-- checked --><string name="status">status:</string>
-    <!-- checked --><string name="amount">amount:</string>
-    <!-- checked --><string name="from">from:</string>
-    <!-- checked --><string name="copy">copy</string>
+    <!-- checked -->
+    <string name="warning_text1">\nDO NOT let anyone see your recovery\nphrase or they can spend your bitcoins.\n</string>
+    <!-- checked -->
+    <string name="warning_text2">\nNEVER type your recovery phrase into\npassword managers or elsewhere.\nOther devices may be infected.\n</string>
+    <!-- checked -->
+    <string name="warning_text3">\nDO NOT take a screenshot.\nScreenshots are visible to other apps\nand devices.\n</string>
+    <!-- checked -->
+    <string name="show">show</string>
+    <!-- checked -->
+    <string name="cancel">cancel</string>
+    <!-- checked -->
+    <string name="mainfragment_clipboard_invalid_data">"clipboard doesn't contain a valid bitcoin address"</string>
+    <!-- checked -->
+    <string name="ok">ok</string>
+    <!-- checked -->
+    <string name="toast_address_copied">copied</string>
+    <!-- checked -->
+    <string name="middle_view_tip_first">This is your bitcoin balance. Bitcoin is a currency. The exchange rate changes with the market.</string>
+    <!-- checked -->
+    <string name="middle_view_tip_second">%1$s is for \'bits\'. %2$s = 1 bitcoin.</string>
+    <!-- checked -->
+    <string name="done">done</string>
+    <!-- checked -->
+    <string name="remind_me_later">remind me later</string>
+    <!-- checked -->
+    <string name="enter_old_passcode">enter old passcode</string>
+    <!-- checked -->
+    <string name="choose_new_passcode">choose wallet passcode</string>
+    <!-- checked -->
+    <string name="verify_passcode">verify passcode</string>
+    <!-- checked -->
+    <string name="to">to: </string>
+    <!-- checked -->
+    <string name="middle_view_settings">settings</string>
+    <!-- checked -->
+    <string name="middle_view_transaction_details">transaction details</string>
+    <!-- checked -->
+    <string name="bad_payment_request">bad payment request</string>
+    <!-- checked -->
+    <string name="more">more...</string>
+    <!-- checked -->
+    <string name="sent">sent</string>
+    <!-- checked -->
+    <string name="sent_exclaimed">sent!</string>
+    <!-- checked -->
+    <string name="received">received</string>
+    <!-- checked -->
+    <string name="received_amount">received %1$s (%2$s)</string>
+    <!-- checked -->
+    <string name="wallet_address">wallet address</string>
+    <!-- checked -->
+    <string name="payment_address">payment address</string>
+    <!-- checked -->
+    <string name="spent_address">spent address</string>
+    <!-- checked -->
+    <string name="bitcoin_network_fee">bitcoin network fee</string>
+    <!-- checked -->
+    <string name="pay_address_from_clipboard">pay address from clipboard</string>
+    <!-- checked -->
+    <string name="could_not_transmit_payment">couldn\'t transmit payment to bitcoin network</string>
+    <!-- checked -->
+    <string name="scan_qr_code">scan QR code</string>
+    <!-- checked -->
+    <string name="request_an_amount">request an amount</string>
+    <!-- checked -->
+    <string name="send_address_as_email">send address as email</string>
+    <!-- checked -->
+    <string name="send_address_as_message">send address as message</string>
+    <!-- checked -->
+    <string name="copy_address_to_clipboard">copy address to clipboard</string>
+    <!-- checked -->
+    <string name="enter_passcode">passcode for %s</string>
+    <!-- checked -->
+    <string name="address_already_in_your_wallet">this payment address is already in your wallet</string>
+    <!-- checked -->
+    <string name="syncing">syncing...</string>
+    <!-- checked -->
+    <string name="payment_failed">couldn\'t make payment</string>
+    <!-- checked -->
+    <string name="address_already_used">\nADDRESS ALREADY USED\n\nbitcoin addresses are intended for single use only\n\nre-use reduces privacy for both you and the recipient and can result in loss if the recipient doesn\'t directly control the address</string>
+    <!-- checked -->
+    <string name="ignore">ignore</string>
+    <!-- checked -->
+    <string name="verified_waiting">verified, waiting for confirmation</string>
+    <!-- checked -->
+    <string name="you_received_bitcoin">you received bitcoin!</string>
+    <!-- checked -->
+    <string name="write_down_phrase_holder1">next, write down your recovery phrase</string>
+    <!-- checked -->
+    <string name="write_down_phrase_holder2">WRITE DOWN YOUR RECOVERY PHRASE</string>
+    <!-- checked -->
+    <string name="write_down_phrase">\n%s\n\nif you ever lose your phone, you will need it to recover your wallet</string>
+    <!-- checked -->
+    <string name="unverified">unverified</string>
+    <!-- checked -->
+    <string name="important">IMPORTANT</string>
+    <!-- checked -->
+    <string name="moved">moved</string>
+    <!-- checked -->
+    <string name="receive_money">receive money:</string>
+    <!-- checked -->
+    <string name="send_money">send money:</string>
+    <!-- checked -->
+    <string name="new_wallet">new wallet</string>
+    <!-- checked -->
+    <string name="recover_wallet">recover wallet</string>
+    <!-- checked -->
+    <string name="wipe">wipe</string>
+    <!-- checked -->
+    <string name="generate_recovery_phrase">generate recovery phrase</string>
+    <!-- checked -->
+    <string name="request">request</string>
+    <!-- checked -->
+    <string name="pay">pay</string>
+    <!-- checked -->
+    <string name="at_this_address">receive bitcoins at this address: %s</string>
+    <!-- checked -->
+    <string name="generate_phrase_text1">start a new wallet by generating a wallet recovery phrase</string>
+    <!-- checked -->
+    <string name="generate_phrase_text2">if you ever lose your phone, you will need this phrase to recover your wallet</string>
+    <!-- checked -->
+    <string name="i_wrote_it_down">I wrote it down:</string>
+    <!-- checked -->
+    <string name="no_transactions">no transactions</string>
+    <!-- checked -->
+    <string name="recovery_phrase">recovery phrase:</string>
+    <!-- checked -->
+    <string name="use_passcode">passcode</string>
+    <!-- checked -->
+    <string name="try_again">try again in %1$d %2$s</string>
+    <!-- checked -->
+    <string name="wallet_disabled">wallet disabled</string>
+    <!-- checked -->
+    <string name="minute">minute</string>
+    <!-- checked -->
+    <string name="minutes">minutes</string>
+    <!-- checked -->
+    <string name="reset">reset</string>
+    <!-- checked -->
+    <string name="recovery_phrase_label">recovery phrase</string>
+    <!-- checked -->
+    <string name="phrase_no_match">recovery phrase doesn\'t match</string>
+    <!-- checked -->
+    <string name="please_write_it_down">please write it down</string>
+    <!-- checked -->
+    <string name="settings">settings</string>
+    <!-- checked -->
+    <string name="about">about</string>
+    <!-- checked -->
+    <string name="local_currency">local currency</string>
+    <!-- checked -->
+    <string name="change_passcode">change passcode</string>
+    <!-- checked -->
+    <string name="start_recover_another_wallet">start/recover another wallet</string>
+    <!-- checked -->
+    <string name="transaction_history">transaction history</string>
+    <!-- checked -->
+    <string name="import_private_key">import private key</string>
+    <!-- checked -->
+    <string name="rescan_blockchain">rescan blockchain</string>
+    <!-- checked -->
+    <string name="confirm_">confirm:</string>
+    <!-- checked -->
+    <string name="id">id:</string>
+    <!-- checked -->
+    <string name="status">status:</string>
+    <!-- checked -->
+    <string name="amount">amount:</string>
+    <!-- checked -->
+    <string name="from">from:</string>
+    <!-- checked -->
+    <string name="copy">copy</string>
     <string name="not_connected">not connected</string>
-    <!-- checked --><string name="password_protected_key">password protected key</string>
-    <!-- checked --><string name="bitcoin_payment_cant_be_less">bitcoin payments can\'t be less than %s</string>
-    <!-- checked --><string name="amount_too_small">amount too small</string>
-    <!-- checked --><string name="change_payment_amount">change payment amount?</string>
-    <!-- checked --><string name="nr_confirmations">%d confirmations</string>
-    <!-- checked --><string name="nr_confirmations0">0 confirmations</string>
+    <!-- checked -->
+    <string name="password_protected_key">password protected key</string>
+    <!-- checked -->
+    <string name="bitcoin_payment_cant_be_less">bitcoin payments can\'t be less than %s</string>
+    <!-- checked -->
+    <string name="amount_too_small">amount too small</string>
+    <!-- checked -->
+    <string name="change_payment_amount">change payment amount?</string>
+    <!-- checked -->
+    <string name="nr_confirmations">%d confirmations</string>
+    <!-- checked -->
+    <string name="nr_confirmations0">0 confirmations</string>
     <string name="nr_confirmations1">1 confirmation</string>
-    <!-- checked --><string name="confirmed_in_block_nr">confirmed in block #%d</string>
-    <!-- checked --><string name="change">change</string>
-    <!-- checked --><string name="attempts_remaining">\n%d attempts remaining\n</string>
-    <!-- checked --><string name="attempt_remaining1">\n1 attempt remaining\n</string>
-    <!-- checked --><string name="priv_key_empty">this private key is empty</string>
-    <!-- checked --><string name="could_not_sweep_the_balance">couldn\'t sweep balance</string>
-    <!-- checked --><string name="send_money_from_privkey_message">Send %1$s (%2$s) from this private key into your wallet? The bitcoin network will receive a fee of %3$s (%4$s).</string>
-    <!-- checked --><string name="blocks">block #%1$d of %2$d</string>
-    <!-- checked --><string name="insufficient_funds">insufficient funds</string>
-    <!-- checked --><string name="checking_privkey_balance">checking private key balance...</string>
-    <!-- checked --><string name="transaction_rejected">transaction rejected</string>
-    <!-- checked --><string name="wallet_out_of_sync_message">Your wallet may be out of sync.\nThis can often be fixed by rescanning the blockchain.</string>
-    <!-- checked --><string name="rescan">rescan</string>
-    <!-- checked --><string name="reduce_payment_amount_by">reduce payment amount by\n%1$s (%2$s)?</string>
-    <!-- checked --><string name="insufficient_funds_for_fee">insufficient funds for bitcoin network fee</string>
-    <!-- checked --><string name="not_connected_network">not connected to the bitcoin network</string>
-    <!-- checked --><string name="could_not_make_payment">couldn\'t make payment</string>
-    <!-- checked --><string name="payee_not_certified">payee identity isn\'t certified</string>
-    <!-- checked --><string name="scan_qr_tip">Scan someone else\'s QR code to get their bitcoin address. You can send a payment to anyone with an address.</string>
-    <!-- checked --><string name="pay_address_tip">Bitcoin addresses can also be copied to the clipboard. A bitcoin address always starts with \'1\' or \'3\'.</string>
-    <!-- checked --><string name="not_a_recovery_phrase_word">\"%s\" is not a recovery phrase word</string>
-    <!-- checked --><string name="recovery_phrase_must_have_12_words">recovery phrase must have %d words</string>
-    <!-- checked --><string name="show_phrase">show phrase</string>
-    <!-- checked --><string name="copied">copied</string>
+    <!-- checked -->
+    <string name="confirmed_in_block_nr">confirmed in block #%d</string>
+    <!-- checked -->
+    <string name="change">change</string>
+    <!-- checked -->
+    <string name="attempts_remaining">\n%d attempts remaining\n</string>
+    <!-- checked -->
+    <string name="attempt_remaining1">\n1 attempt remaining\n</string>
+    <!-- checked -->
+    <string name="priv_key_empty">this private key is empty</string>
+    <!-- checked -->
+    <string name="could_not_sweep_the_balance">couldn\'t sweep balance</string>
+    <!-- checked -->
+    <string name="send_money_from_privkey_message">Send %1$s (%2$s) from this private key into your wallet? The bitcoin network will receive a fee of %3$s (%4$s).</string>
+    <!-- checked -->
+    <string name="blocks">block #%1$d of %2$d</string>
+    <!-- checked -->
+    <string name="insufficient_funds">insufficient funds</string>
+    <!-- checked -->
+    <string name="checking_privkey_balance">checking private key balance...</string>
+    <!-- checked -->
+    <string name="transaction_rejected">transaction rejected</string>
+    <!-- checked -->
+    <string name="wallet_out_of_sync_message">Your wallet may be out of sync.\nThis can often be fixed by rescanning the blockchain.</string>
+    <!-- checked -->
+    <string name="rescan">rescan</string>
+    <!-- checked -->
+    <string name="reduce_payment_amount_by">reduce payment amount by\n%1$s (%2$s)?</string>
+    <!-- checked -->
+    <string name="insufficient_funds_for_fee">insufficient funds for bitcoin network fee</string>
+    <!-- checked -->
+    <string name="not_connected_network">not connected to the bitcoin network</string>
+    <!-- checked -->
+    <string name="could_not_make_payment">couldn\'t make payment</string>
+    <!-- checked -->
+    <string name="payee_not_certified">payee identity isn\'t certified</string>
+    <!-- checked -->
+    <string name="scan_qr_tip">Scan someone else\'s QR code to get their bitcoin address. You can send a payment to anyone with an address.</string>
+    <!-- checked -->
+    <string name="pay_address_tip">Bitcoin addresses can also be copied to the clipboard. A bitcoin address always starts with \'1\' or \'3\'.</string>
+    <!-- checked -->
+    <string name="not_a_recovery_phrase_word">\"%s\" is not a recovery phrase word</string>
+    <!-- checked -->
+    <string name="recovery_phrase_must_have_12_words">recovery phrase must have %d words</string>
+    <!-- checked -->
+    <string name="show_phrase">show phrase</string>
+    <!-- checked -->
+    <string name="copied">copied</string>
     <string name="phrase_flow1">To protect your funds, you must write down your recovery phrase and keep it in a safe place. You must do this before you continue to use your wallet.</string>
     <string name="continue_button">continue</string>
     <string name="phrase_flow2">This is your recovery phrase. Write it down on a piece of paper and keep it safe. On the next screen you must prove it is written down.</string>

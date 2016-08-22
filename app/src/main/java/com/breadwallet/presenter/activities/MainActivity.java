@@ -38,6 +38,7 @@ import android.widget.ViewFlipper;
 import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.customviews.BubbleTextView;
+import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.fragments.FragmentPhraseFlow1;
 import com.breadwallet.presenter.fragments.FragmentPhraseFlow2;
 import com.breadwallet.presenter.fragments.FragmentPhraseFlow3;
@@ -131,9 +132,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     public BubbleTextView sendBubble1;
     public BubbleTextView sendBubble2;
     private ToastUpdater toastUpdater;
-    public FragmentPhraseFlow1 fragmentPhraseFlow1;
-    public FragmentPhraseFlow2 fragmentPhraseFlow2;
-    public FragmentPhraseFlow3 fragmentPhraseFlow3;
+
 
     public static boolean appInBackground = false;
 
@@ -147,7 +146,6 @@ public class MainActivity extends FragmentActivity implements Observer {
             savedInstanceState.clear();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         app = this;
         initializeViews();
 
@@ -377,13 +375,18 @@ public class MainActivity extends FragmentActivity implements Observer {
             //Device passcode/password should be enabled for the app to work
             ((BreadWalletApp) getApplication()).showDeviceNotSecuredWarning(this);
         }
-
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                animateSavePhraseFlow();
+//                if (SharedPreferencesManager.getPhraseWroteDown(app)) return;
+                long balance = CurrencyManager.getInstance(app).getBALANCE();
+                long limit = SharedPreferencesManager.getLimit(app);
+                Log.e(TAG, "balance: " + balance);
+                Log.e(TAG, "limit: " + limit);
+                if (balance >= limit)
+                    animateSavePhraseFlow();
             }
-        },4000);
+        }, 4000);
 
     }
 
@@ -601,12 +604,6 @@ public class MainActivity extends FragmentActivity implements Observer {
                     PostAuthenticationProcessor.getInstance().onShowPhraseAuth(this);
                 }
                 break;
-            case BRConstants.SHOW_PHRASE_FLOW_REQUEST_CODE:
-                if (resultCode == RESULT_OK) {
-                    PostAuthenticationProcessor.getInstance().onShowPhraseFlowAuth(this);
-                }
-                break;
-
             case BRConstants.PAY_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
                     PostAuthenticationProcessor.getInstance().onPublishTxAuth(this);
@@ -730,74 +727,14 @@ public class MainActivity extends FragmentActivity implements Observer {
         syncProgressText.setText(progressText);
     }
 
-    public void animateSavePhraseFlow(){
-        fragmentPhraseFlow1 = new FragmentPhraseFlow1();
-        fragmentPhraseFlow2 = new FragmentPhraseFlow2();
-        fragmentPhraseFlow3 = new FragmentPhraseFlow3();
-        int layoutID = R.id.main_layout;
-
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-        fragmentTransaction.add(layoutID, fragmentPhraseFlow1,
-                IntroWelcomeFragment.class.getName());
-        fragmentTransaction.add(layoutID, fragmentPhraseFlow2,
-                IntroNewRecoverFragment.class.getName());
-        fragmentTransaction.add(layoutID, fragmentPhraseFlow3,
-                IntroNewWalletFragment.class.getName());
-
-        showHideFragments(fragmentPhraseFlow1);
-        fragmentTransaction.commitAllowingStateLoss();
-    }
-
-    // direction == 1 -> RIGHT, direction == 2 -> LEFT
-    public void animateSlide(final Fragment from, final Fragment to, int direction) {
-        int screenWidth = screenParametersPoint.x;
-        int screenHeigth = screenParametersPoint.y;
-
-        showHideFragments(from, to);
-        TranslateAnimation transFrom = direction == IntroActivity.RIGHT ?
-                new TranslateAnimation(0, -screenWidth, 0, 0) : new TranslateAnimation(0, screenWidth, 0, 0);
-        transFrom.setDuration(BRAnimator.horizontalSlideDuration);
-        transFrom.setInterpolator(new DecelerateOvershootInterpolator(1f, 0.5f));
-        View fromView = from.getView();
-        if (fromView != null)
-            fromView.startAnimation(transFrom);
-        TranslateAnimation transTo = direction == IntroActivity.RIGHT ?
-                new TranslateAnimation(screenWidth, 0, 0, 0) : new TranslateAnimation(-screenWidth, 0, 0, 0);
-        transTo.setDuration(BRAnimator.horizontalSlideDuration);
-        transTo.setInterpolator(new DecelerateOvershootInterpolator(1f, 0.5f));
-        transTo.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                showHideFragments(to);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-        View toView = to.getView();
-        if (toView != null)
-            toView.startAnimation(transTo);
-    }
-
-    private void showHideFragments(Fragment... fragments) {
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.hide(fragmentPhraseFlow1);
-        fragmentTransaction.hide(fragmentPhraseFlow2);
-        fragmentTransaction.hide(fragmentPhraseFlow3);
-        for (Fragment f : fragments) {
-            fragmentTransaction.show(f);
+    public void animateSavePhraseFlow() {
+        PhraseFlowActivity.screenParametersPoint = screenParametersPoint;
+        Intent intent;
+        intent = new Intent(this, PhraseFlowActivity.class);
+        startActivity(intent);
+        if (!MainActivity.this.isDestroyed()) {
+            finish();
         }
-        fragmentTransaction.commitAllowingStateLoss();
     }
 
 }

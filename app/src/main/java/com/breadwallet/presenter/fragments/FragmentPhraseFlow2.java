@@ -20,6 +20,7 @@ import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.activities.PhraseFlowActivity;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 
@@ -83,7 +84,7 @@ public class FragmentPhraseFlow2 extends Fragment {
         continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MainActivity app = ((MainActivity) getActivity());
+                PhraseFlowActivity app = ((PhraseFlowActivity) getActivity());
                 if(app == null) return;
                 app.fragmentPhraseFlow3.setPhrase(phrase);
                 app.animateSlide(app.fragmentPhraseFlow2, app.fragmentPhraseFlow3, IntroActivity.RIGHT);

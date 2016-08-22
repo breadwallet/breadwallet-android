@@ -63,12 +63,14 @@ public class SharedPreferencesManager {
     }
 
     public static boolean getPhraseWroteDown(Activity context) {
+        Log.e(TAG, "getPhraseWroteDown");
         SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getBoolean(BRConstants.PHRASE_WRITTEN, false);
 
     }
 
     public static void putPhraseWroteDown(Activity context, boolean check) {
+        Log.e(TAG, "putPhraseWroteDown: " + check);
         SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(BRConstants.PHRASE_WRITTEN, check);

@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.activities.PhraseFlowActivity;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
@@ -62,7 +63,7 @@ public class FragmentPhraseFlow1 extends Fragment {
         continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PostAuthenticationProcessor.getInstance().onShowPhraseFlowAuth((MainActivity) getActivity());
+                PostAuthenticationProcessor.getInstance().onShowPhraseFlowAuth((PhraseFlowActivity) getActivity());
             }
         });
         rootView.setOnTouchListener(new View.OnTouchListener() {

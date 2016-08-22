@@ -4,6 +4,8 @@ package com.breadwallet.presenter.fragments;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -12,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TextView;
@@ -20,9 +23,12 @@ import com.breadwallet.BreadWalletApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.activities.PhraseFlowActivity;
+import com.breadwallet.tools.adapter.CustomPagerAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.DecelerateOvershootInterpolator;
 import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -176,12 +182,16 @@ public class FragmentPhraseFlow3 extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        ((BreadWalletApp) getActivity().getApplication()).hideKeyboard(getActivity());
     }
 
     private void setTextWithRandomNr() {
         if (textFlow == null) return;
         final Random random = new Random();
         int n = random.nextInt(10) + 1;
+        while(phraseWords[n].equalsIgnoreCase(wordToCheck)){
+            n = random.nextInt(10) + 1;
+        }
         wordToCheck = phraseWords[n];
         String placeHolder;
         switch (n) {
@@ -233,6 +243,7 @@ public class FragmentPhraseFlow3 extends Fragment {
             tableLayout.setVisibility(View.GONE);
             stepsTextView.setVisibility(View.GONE);
             doneButton.setVisibility(View.VISIBLE);
+            SharedPreferencesManager.putPhraseWroteDown(getActivity(), true);
             return;
         }
         stepsTextView.setVisibility(View.GONE);
@@ -261,7 +272,7 @@ public class FragmentPhraseFlow3 extends Fragment {
     }
 
     private void goBack() {
-        MainActivity app = (MainActivity) getActivity();
+        PhraseFlowActivity app = (PhraseFlowActivity) getActivity();
         app.fragmentPhraseFlow2.setPhrase(phrase);
         app.animateSlide(app.fragmentPhraseFlow3, app.fragmentPhraseFlow2, IntroActivity.LEFT);
     }
@@ -271,34 +282,13 @@ public class FragmentPhraseFlow3 extends Fragment {
     }
 
     private void finishFlow() {
-
-        int screenWidth = MainActivity.screenParametersPoint.x;
-
-        TranslateAnimation transFrom = new TranslateAnimation(0, -screenWidth, 0, 0);
-        transFrom.setDuration(BRAnimator.horizontalSlideDuration);
-        transFrom.setInterpolator(new DecelerateOvershootInterpolator(1f, 0.5f));
-        transFrom.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.hide(((MainActivity) getActivity()).fragmentPhraseFlow3);
-                fragmentTransaction.commitAllowingStateLoss();
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-        View fromView = this.getView();
-        if (fromView != null)
-            fromView.startAnimation(transFrom);
+        PhraseFlowActivity app = (PhraseFlowActivity) getActivity();
+        Intent intent;
+        intent = new Intent(app, MainActivity.class);
+        startActivity(intent);
+        if (!app.isDestroyed()) {
+            app.finish();
+        }
 
     }
 
