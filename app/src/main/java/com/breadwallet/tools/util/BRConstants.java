@@ -60,6 +60,7 @@ public class BRConstants {
     public static final int PUT_PHRASE_NEW_WALLET_REQUEST_CODE = 114;
     public static final int PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE = 115;
     public static final int PAYMENT_PROTOCOL_REQUEST_CODE = 116;
+    public static final int SHOW_PHRASE_FLOW_REQUEST_CODE = 117;
 
     public static final String CANARY_STRING = "canary";
     public static final String FIRST_ADDRESS = "firstAddress";

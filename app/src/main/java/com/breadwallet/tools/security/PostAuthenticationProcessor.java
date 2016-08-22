@@ -120,6 +120,20 @@ public class PostAuthenticationProcessor {
         }
     }
 
+    public void onShowPhraseFlowAuth(MainActivity app) {
+        Log.e(TAG, "onShowPhraseAuth");
+        byte[] phrase;
+        try {
+            phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.SHOW_PHRASE_FLOW_REQUEST_CODE);
+//            Log.e(TAG, "phrase.length: " + phrase.length);
+            if (phrase.length < 10) return;
+            app.fragmentPhraseFlow2.setPhrase(phrase);
+            app.animateSlide(app.fragmentPhraseFlow1, app.fragmentPhraseFlow2, IntroActivity.RIGHT);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void onPublishTxAuth(MainActivity app) {
         BRWalletManager walletManager = BRWalletManager.getInstance(app);
         byte[] rawSeed = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAY_REQUEST_CODE);

@@ -534,6 +534,10 @@ public class BRAnimator {
 
     }
 
+    public static void animateSavePhraseFlow(){
+
+    }
+
     public static void scaleView(View v, float startScaleX, float endScaleX, float startScaleY, float endScaleY) {
         Animation anim = new ScaleAnimation(
                 startScaleX, endScaleX, // Start and end values for the X axis scaling

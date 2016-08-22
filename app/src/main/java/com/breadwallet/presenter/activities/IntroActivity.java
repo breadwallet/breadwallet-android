@@ -65,8 +65,8 @@ public class IntroActivity extends FragmentActivity {
     private static final String TAG = IntroActivity.class.getName();
     public static IntroActivity app;
     private Button leftButton;
-    private static final int RIGHT = 1;
-    private static final int LEFT = 2;
+    public static final int RIGHT = 1;
+    public static final int LEFT = 2;
 
     private int newRecoverNoneFlag = 0;//0 - in IntroNewRecoverFragment, 1 - in IntroNewWalletFragment, 2 - IntroRecoverWalletFragment
 
@@ -174,10 +174,10 @@ public class IntroActivity extends FragmentActivity {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(getColor(R.color.intro_status_bar));
         } else {
-                Window window = getWindow();
-                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                window.setStatusBarColor(getColor(R.color.warning_status_bar));
+            Window window = getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(getColor(R.color.warning_status_bar));
         }
     }
 
@@ -349,7 +349,7 @@ public class IntroActivity extends FragmentActivity {
 
         showHideFragments(from, to);
         TranslateAnimation transFrom = direction == RIGHT ?
-                new TranslateAnimation(0, -screenWidth, 0, 0) : new TranslateAnimation(0,screenWidth, 0, 0);
+                new TranslateAnimation(0, -screenWidth, 0, 0) : new TranslateAnimation(0, screenWidth, 0, 0);
         transFrom.setDuration(BRAnimator.horizontalSlideDuration);
         transFrom.setInterpolator(new DecelerateOvershootInterpolator(1f, 0.5f));
         View fromView = from.getView();

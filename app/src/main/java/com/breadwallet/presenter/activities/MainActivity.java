@@ -3,6 +3,9 @@ package com.breadwallet.presenter.activities;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -23,6 +26,8 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -33,9 +38,18 @@ import android.widget.ViewFlipper;
 import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.customviews.BubbleTextView;
+import com.breadwallet.presenter.fragments.FragmentPhraseFlow1;
+import com.breadwallet.presenter.fragments.FragmentPhraseFlow2;
+import com.breadwallet.presenter.fragments.FragmentPhraseFlow3;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.presenter.fragments.FragmentSettings;
+import com.breadwallet.presenter.fragments.IntroNewRecoverFragment;
+import com.breadwallet.presenter.fragments.IntroNewWalletFragment;
+import com.breadwallet.presenter.fragments.IntroRecoverWalletFragment;
+import com.breadwallet.presenter.fragments.IntroWarningFragment;
+import com.breadwallet.presenter.fragments.IntroWelcomeFragment;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.DecelerateOvershootInterpolator;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.manager.CurrencyManager;
 import com.breadwallet.tools.util.NetworkChangeReceiver;
@@ -117,6 +131,9 @@ public class MainActivity extends FragmentActivity implements Observer {
     public BubbleTextView sendBubble1;
     public BubbleTextView sendBubble2;
     private ToastUpdater toastUpdater;
+    public FragmentPhraseFlow1 fragmentPhraseFlow1;
+    public FragmentPhraseFlow2 fragmentPhraseFlow2;
+    public FragmentPhraseFlow3 fragmentPhraseFlow3;
 
     public static boolean appInBackground = false;
 
@@ -361,6 +378,13 @@ public class MainActivity extends FragmentActivity implements Observer {
             ((BreadWalletApp) getApplication()).showDeviceNotSecuredWarning(this);
         }
 
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                animateSavePhraseFlow();
+            }
+        },4000);
+
     }
 
     @Override
@@ -577,6 +601,11 @@ public class MainActivity extends FragmentActivity implements Observer {
                     PostAuthenticationProcessor.getInstance().onShowPhraseAuth(this);
                 }
                 break;
+            case BRConstants.SHOW_PHRASE_FLOW_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    PostAuthenticationProcessor.getInstance().onShowPhraseFlowAuth(this);
+                }
+                break;
 
             case BRConstants.PAY_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
@@ -699,6 +728,76 @@ public class MainActivity extends FragmentActivity implements Observer {
         }
         syncProgressBar.setProgress(progress);
         syncProgressText.setText(progressText);
+    }
+
+    public void animateSavePhraseFlow(){
+        fragmentPhraseFlow1 = new FragmentPhraseFlow1();
+        fragmentPhraseFlow2 = new FragmentPhraseFlow2();
+        fragmentPhraseFlow3 = new FragmentPhraseFlow3();
+        int layoutID = R.id.main_layout;
+
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        fragmentTransaction.add(layoutID, fragmentPhraseFlow1,
+                IntroWelcomeFragment.class.getName());
+        fragmentTransaction.add(layoutID, fragmentPhraseFlow2,
+                IntroNewRecoverFragment.class.getName());
+        fragmentTransaction.add(layoutID, fragmentPhraseFlow3,
+                IntroNewWalletFragment.class.getName());
+
+        showHideFragments(fragmentPhraseFlow1);
+        fragmentTransaction.commitAllowingStateLoss();
+    }
+
+    // direction == 1 -> RIGHT, direction == 2 -> LEFT
+    public void animateSlide(final Fragment from, final Fragment to, int direction) {
+        int screenWidth = screenParametersPoint.x;
+        int screenHeigth = screenParametersPoint.y;
+
+        showHideFragments(from, to);
+        TranslateAnimation transFrom = direction == IntroActivity.RIGHT ?
+                new TranslateAnimation(0, -screenWidth, 0, 0) : new TranslateAnimation(0, screenWidth, 0, 0);
+        transFrom.setDuration(BRAnimator.horizontalSlideDuration);
+        transFrom.setInterpolator(new DecelerateOvershootInterpolator(1f, 0.5f));
+        View fromView = from.getView();
+        if (fromView != null)
+            fromView.startAnimation(transFrom);
+        TranslateAnimation transTo = direction == IntroActivity.RIGHT ?
+                new TranslateAnimation(screenWidth, 0, 0, 0) : new TranslateAnimation(-screenWidth, 0, 0, 0);
+        transTo.setDuration(BRAnimator.horizontalSlideDuration);
+        transTo.setInterpolator(new DecelerateOvershootInterpolator(1f, 0.5f));
+        transTo.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                showHideFragments(to);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        View toView = to.getView();
+        if (toView != null)
+            toView.startAnimation(transTo);
+    }
+
+    private void showHideFragments(Fragment... fragments) {
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.hide(fragmentPhraseFlow1);
+        fragmentTransaction.hide(fragmentPhraseFlow2);
+        fragmentTransaction.hide(fragmentPhraseFlow3);
+        for (Fragment f : fragments) {
+            fragmentTransaction.show(f);
+        }
+        fragmentTransaction.commitAllowingStateLoss();
     }
 
 }

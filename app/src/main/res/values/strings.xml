@@ -167,6 +167,11 @@
     <!-- checked --><string name="recovery_phrase_must_have_12_words">recovery phrase must have %d words</string>
     <!-- checked --><string name="show_phrase">show phrase</string>
     <!-- checked --><string name="copied">copied</string>
+    <string name="phrase_flow1">To protect your funds, you must write down your recovery phrase and keep it in a safe place. You must do this before you continue to use your wallet.</string>
+    <string name="continue_button">continue</string>
+    <string name="phrase_flow2">This is your recovery phrase. Write it down on a piece of paper and keep it safe. On the next screen you must prove it is written down.</string>
+    <string name="phrase_flow3">Please tap the %s word of your recovery phrase from the list of possible words below:</string>
+    <string name="thanks_for_writing_phrase">Thank you for writing down your phrase. Please keep it in a safe place.</string>
 
     <!--<string name="sent_amount">sent: %1$s</string>-->
 </resources>
