@@ -3,18 +3,13 @@ package com.breadwallet.presenter.activities;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
-import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,8 +21,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -38,19 +31,9 @@ import android.widget.ViewFlipper;
 import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.customviews.BubbleTextView;
-import com.breadwallet.presenter.entities.CurrencyEntity;
-import com.breadwallet.presenter.fragments.FragmentPhraseFlow1;
-import com.breadwallet.presenter.fragments.FragmentPhraseFlow2;
-import com.breadwallet.presenter.fragments.FragmentPhraseFlow3;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.presenter.fragments.FragmentSettings;
-import com.breadwallet.presenter.fragments.IntroNewRecoverFragment;
-import com.breadwallet.presenter.fragments.IntroNewWalletFragment;
-import com.breadwallet.presenter.fragments.IntroRecoverWalletFragment;
-import com.breadwallet.presenter.fragments.IntroWarningFragment;
-import com.breadwallet.presenter.fragments.IntroWelcomeFragment;
 import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.animation.DecelerateOvershootInterpolator;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.manager.CurrencyManager;
 import com.breadwallet.tools.util.NetworkChangeReceiver;
@@ -69,7 +52,6 @@ import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -132,7 +114,6 @@ public class MainActivity extends FragmentActivity implements Observer {
     public BubbleTextView sendBubble1;
     public BubbleTextView sendBubble2;
     private ToastUpdater toastUpdater;
-
 
     public static boolean appInBackground = false;
 
@@ -296,7 +277,8 @@ public class MainActivity extends FragmentActivity implements Observer {
                 if (BRAnimator.checkTheMultipressingAvailability()) {
                     SpringAnimator.showAnimation(lockerButton);
                     if (!KeyStoreManager.getPassCode(app).isEmpty())
-                        ((BreadWalletApp) getApplication()).promptForAuthentication(app, BRConstants.AUTH_FOR_GENERAL, null, null, null, null);
+                        ((BreadWalletApp) getApplication()).promptForAuthentication(app,
+                                BRConstants.AUTH_FOR_GENERAL, null, null, null, null);
                 }
 
             }
@@ -394,7 +376,6 @@ public class MainActivity extends FragmentActivity implements Observer {
     protected void onPause() {
         super.onPause();
         appInBackground = true;
-//        Log.e(TAG, "Activity onPause");
         startStopReceiver(false);
     }
 
@@ -444,7 +425,8 @@ public class MainActivity extends FragmentActivity implements Observer {
         burgerButtonMap.put("back", R.drawable.navigationback);
         middleBubble1 = (BubbleTextView) findViewById(R.id.middle_bubble_tip1);
         middleBubble2 = (BubbleTextView) findViewById(R.id.middle_bubble_tip2);
-        middleBubble2.setText(String.format(getString(R.string.middle_view_tip_second), BRConstants.bitcoinLowercase, BRConstants.bitcoinLowercase + "1,000,000"));
+        middleBubble2.setText(String.format(getString(R.string.middle_view_tip_second),
+                BRConstants.bitcoinLowercase, BRConstants.bitcoinLowercase + "1,000,000"));
 
         middleBubbleBlocks = (BubbleTextView) findViewById(R.id.middle_bubble_blocks);
         qrBubble1 = (BubbleTextView) findViewById(R.id.qr_bubble1);
@@ -677,7 +659,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         }
     }
 
-
     public void hideAllBubbles() {
         runOnUiThread(new Runnable() {
             @Override
@@ -689,9 +670,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     }
 
     public void showHideSyncProgressViews(boolean b) {
-        if (syncProgressBar == null || syncProgressText == null) {
-            return;
-        }
+        if (syncProgressBar == null || syncProgressText == null) return;
         syncProgressBar.setVisibility(b ? View.VISIBLE : View.GONE);
         syncProgressText.setVisibility(b ? View.VISIBLE : View.GONE);
     }
@@ -719,15 +698,11 @@ public class MainActivity extends FragmentActivity implements Observer {
     }
 
     public void setProgress(int progress, String progressText) {
-//        Log.e(TAG, "setProgress: progress:" + progress + ", progressText: " + progressText);
-//        Log.e(TAG, "syncProgressBar:" + syncProgressBar + ", syncProgressText: " + syncProgressText);
-//        if (syncProgressBar == null || syncProgressText == null) {
-//            return;
-//        }
+        Log.e(TAG, "setProgress: progress:" + progress + ", progressText: " + progressText);
+        if (syncProgressBar == null || syncProgressText == null) return;
         syncProgressBar.setProgress(progress);
         syncProgressText.setText(progressText);
-        Log.e(TAG, "syncProgressBar viz:" + syncProgressBar.getVisibility() + ", syncProgressText viz: " + syncProgressText.getVisibility());
-        Log.e(TAG, "View.GONE:" + View.GONE + ", View.VISIBLE: " + View.VISIBLE);
+        Log.e(TAG,"syncProgressBar.progress: "+ syncProgressBar.getProgress());
     }
 
 }

@@ -169,10 +169,13 @@ public class BRPeerManager {
 
     public static void startSyncingProgressThread() {
         try {
-            if (syncTask == null) {
-                syncTask = new SyncProgressTask();
-                syncTask.start();
+            if (syncTask != null) {
+                syncTask.setRunning(false);
+                syncTask.interrupt();
+                syncTask = null;
             }
+            syncTask = new SyncProgressTask();
+            syncTask.start();
 
         } catch (IllegalThreadStateException ex) {
             ex.printStackTrace();
@@ -237,7 +240,7 @@ public class BRPeerManager {
         }
 
         public void setRunning(boolean b) {
-            Log.e(TAG, "setRunning: " + b);
+//            Log.e(TAG, "setRunning: " + b);
             running = b;
         }
 
@@ -258,10 +261,10 @@ public class BRPeerManager {
                         app.setProgress((int) (progressStatus * 100), String.format("%s%%", decimalFormat.format(progressStatus * 100)));
                     }
                 });
-
+                int startHeight = SharedPreferencesManager.getStartHeight(app);
                 while (running) {
-                    progressStatus = syncProgress(SharedPreferencesManager.getStartHeight(app));
-                    Log.e(TAG, "progressStatus: " + progressStatus);
+                    progressStatus = syncProgress(startHeight);
+                    Log.e(TAG, String.format("Thread:%s, progressStatus: %.2f", Thread.currentThread().getName(), progressStatus));
                     if (progressStatus == 1) running = false;
                     app.runOnUiThread(new Runnable() {
                         @Override
@@ -298,7 +301,7 @@ public class BRPeerManager {
         boolean isConnected = connectivityManager.getActiveNetworkInfo() != null &&
                 connectivityManager.getActiveNetworkInfo().isConnected() &&
                 Settings.System.getInt(ctx.getContentResolver(),
-                Settings.Global.AIRPLANE_MODE_ON, 0) != 1;
+                        Settings.Global.AIRPLANE_MODE_ON, 0) != 1;
         BRPeerManager.getInstance(ctx).connect();
         if (!isConnected) {
             ctx.runOnUiThread(new Runnable() {
