@@ -378,13 +378,13 @@ public class MainActivity extends FragmentActivity implements Observer {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-//                if (SharedPreferencesManager.getPhraseWroteDown(app)) return;
+                if (SharedPreferencesManager.getPhraseWroteDown(app)) return;
                 long balance = CurrencyManager.getInstance(app).getBALANCE();
                 long limit = SharedPreferencesManager.getLimit(app);
                 Log.e(TAG, "balance: " + balance);
                 Log.e(TAG, "limit: " + limit);
                 if (balance >= limit)
-                    animateSavePhraseFlow();
+                    BRWalletManager.getInstance(app).animateSavePhraseFlow();
             }
         }, 4000);
 
@@ -719,22 +719,15 @@ public class MainActivity extends FragmentActivity implements Observer {
     }
 
     public void setProgress(int progress, String progressText) {
-        Log.e(TAG, "setProgress: progress:" + progress + ", progressText: " + progressText);
-        if (syncProgressBar == null || syncProgressText == null) {
-            return;
-        }
+//        Log.e(TAG, "setProgress: progress:" + progress + ", progressText: " + progressText);
+//        Log.e(TAG, "syncProgressBar:" + syncProgressBar + ", syncProgressText: " + syncProgressText);
+//        if (syncProgressBar == null || syncProgressText == null) {
+//            return;
+//        }
         syncProgressBar.setProgress(progress);
         syncProgressText.setText(progressText);
-    }
-
-    public void animateSavePhraseFlow() {
-        PhraseFlowActivity.screenParametersPoint = screenParametersPoint;
-        Intent intent;
-        intent = new Intent(this, PhraseFlowActivity.class);
-        startActivity(intent);
-        if (!MainActivity.this.isDestroyed()) {
-            finish();
-        }
+        Log.e(TAG, "syncProgressBar viz:" + syncProgressBar.getVisibility() + ", syncProgressText viz: " + syncProgressText.getVisibility());
+        Log.e(TAG, "View.GONE:" + View.GONE + ", View.VISIBLE: " + View.VISIBLE);
     }
 
 }

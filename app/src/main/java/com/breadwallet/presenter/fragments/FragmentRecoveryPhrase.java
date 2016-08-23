@@ -21,6 +21,7 @@ import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
+import com.breadwallet.wallet.BRWalletManager;
 
 import java.util.Arrays;
 
@@ -83,7 +84,7 @@ public class FragmentRecoveryPhrase extends Fragment {
                 @Override
                 public void onClick(View v) {
                     setCheckBoxImage();
-
+                    BRWalletManager.getInstance(getActivity()).animateSavePhraseFlow();
                 }
             });
         }
@@ -132,6 +133,5 @@ public class FragmentRecoveryPhrase extends Fragment {
     private void setCheckBoxImage() {
         checkBox.setImageResource(!checked ? R.drawable.checkbox_checked : R.drawable.checkbox_empty);
         checked = !checked;
-        SharedPreferencesManager.putPhraseWroteDown(getActivity(), checked);
     }
 }

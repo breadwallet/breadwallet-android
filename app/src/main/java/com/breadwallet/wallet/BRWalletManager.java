@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.KeyguardManager;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.media.MediaPlayer;
@@ -21,8 +22,10 @@ import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
+import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.IntroShowPhraseActivity;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.activities.PhraseFlowActivity;
 import com.breadwallet.presenter.activities.RequestQRActivity;
 import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
 import com.breadwallet.presenter.entities.BRPeerEntity;
@@ -971,13 +974,23 @@ public class BRWalletManager {
                         BRAnimator.animateScanResultFragment();
                     }
                 }).setNegativeButton(app.getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        })
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
+    }
+
+    public void animateSavePhraseFlow() {
+        PhraseFlowActivity.screenParametersPoint = IntroActivity.screenParametersPoint == null ? MainActivity.screenParametersPoint : IntroActivity.screenParametersPoint;
+        Intent intent;
+        intent = new Intent(ctx, PhraseFlowActivity.class);
+        ctx.startActivity(intent);
+        if (!ctx.isDestroyed()) {
+            ctx.finish();
+        }
     }
 
     private native byte[] encodeSeed(byte[] seed, String[] wordList);

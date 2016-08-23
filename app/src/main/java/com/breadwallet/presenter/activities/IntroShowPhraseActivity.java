@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.wallet.BRWalletManager;
 
 import java.util.Arrays;
 
@@ -53,6 +55,11 @@ public class IntroShowPhraseActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro_show_phrase);
+
+        Window window = getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(getColor(R.color.status_bar));
 
         TextView thePhrase = (TextView) findViewById(R.id.the_phrase_at_startup);
         remindMeLater = (Button) findViewById(R.id.remind_me_later_button);
@@ -135,6 +142,6 @@ public class IntroShowPhraseActivity extends Activity {
         checkBox.setImageResource(!checked ? R.drawable.checkbox_checked : R.drawable.checkbox_empty);
         remindMeLater.setText(!checked ? getResources().getString(R.string.done) : getResources().getString(R.string.remind_me_later));
         checked = !checked;
-        SharedPreferencesManager.putPhraseWroteDown(this, checked);
+        BRWalletManager.getInstance(this).animateSavePhraseFlow();
     }
 }
