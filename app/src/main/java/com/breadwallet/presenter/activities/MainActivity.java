@@ -301,9 +301,11 @@ public class MainActivity extends FragmentActivity implements Observer {
     private void checkDeviceRooted() {
         final boolean hasBitcoin = CurrencyManager.getInstance(this).getBALANCE() > 0;
         if (RootHelper.isDeviceRooted()) {
+
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    if (app == null) return;
                     AlertDialog.Builder builder = new AlertDialog.Builder(app);
                     builder.setTitle(R.string.device_security_compromised)
                             .setMessage(String.format(getString(R.string.rooted_message),
@@ -316,7 +318,8 @@ public class MainActivity extends FragmentActivity implements Observer {
                                 }
                             });
                     AlertDialog alert = builder.create();
-                    alert.show();
+                    if (app != null && !app.isDestroyed())
+                        alert.show();
                 }
             }, 10000);
 
@@ -702,7 +705,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         if (syncProgressBar == null || syncProgressText == null) return;
         syncProgressBar.setProgress(progress);
         syncProgressText.setText(progressText);
-        Log.e(TAG,"syncProgressBar.progress: "+ syncProgressBar.getProgress());
+        Log.e(TAG, "syncProgressBar.progress: " + syncProgressBar.getProgress());
     }
 
 }

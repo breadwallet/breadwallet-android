@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -64,10 +65,12 @@ import java.util.Random;
 
 public class FragmentPhraseFlow3 extends Fragment {
 
+    public static final String TAG = FragmentPhraseFlow3.class.getName();
+
     private byte[] phrase;
     private String[] phraseWords;
     private TextView textFlow;
-    private String wordToCheck;
+    private String wordToCheck = "";
     private Button word1;
     private Button word2;
     private Button word3;
@@ -172,7 +175,6 @@ public class FragmentPhraseFlow3 extends Fragment {
     }
 
     private void startOver() {
-        wordToCheck = null;
         sixWords.clear();
         setTextWithRandomNr();
         fillWordsArray();
@@ -189,10 +191,15 @@ public class FragmentPhraseFlow3 extends Fragment {
         if (textFlow == null) return;
         final Random random = new Random();
         int n = random.nextInt(10) + 1;
-        while (phraseWords[n].equalsIgnoreCase(wordToCheck)) {
-            n = random.nextInt(10) + 1;
-        }
+        String oldWord = wordToCheck;
         wordToCheck = phraseWords[n];
+        Log.e(TAG, "WORDCHECK: before loop: " + wordToCheck + " , old: " + oldWord);
+        while (oldWord.equalsIgnoreCase(wordToCheck)) {
+            n = random.nextInt(10) + 1;
+            Log.e(TAG, "WORDCHECK: in the loop: " + n);
+            wordToCheck = phraseWords[n];
+        }
+        Log.e(TAG, "WORDCHECK: out of loop: " + wordToCheck + " , old: " + oldWord);
         String placeHolder;
         switch (n) {
             case 1:
@@ -204,7 +211,7 @@ public class FragmentPhraseFlow3 extends Fragment {
             case 0:
                 throw new IllegalArgumentException("Cannot be 0");
             case 11:
-                throw new IllegalArgumentException("Cannot be 0");
+                throw new IllegalArgumentException("Cannot be 11");
             default:
                 placeHolder = (n + 1) + "th";
                 break;
@@ -238,14 +245,14 @@ public class FragmentPhraseFlow3 extends Fragment {
     }
 
     private void nextTry() {
-        if (step == STEPS_LIMIT) {
-            textFlow.setText(R.string.thanks_for_writing_phrase);
-            tableLayout.setVisibility(View.GONE);
-            stepsTextView.setVisibility(View.GONE);
-            doneButton.setVisibility(View.VISIBLE);
-            SharedPreferencesManager.putPhraseWroteDown(getActivity(), true);
-            return;
-        }
+//        if (step == STEPS_LIMIT) {
+//            textFlow.setText(R.string.thanks_for_writing_phrase);
+//            tableLayout.setVisibility(View.GONE);
+//            stepsTextView.setVisibility(View.GONE);
+//            doneButton.setVisibility(View.VISIBLE);
+//            SharedPreferencesManager.putPhraseWroteDown(getActivity(), true);
+//            return;
+//        }
         stepsTextView.setVisibility(View.GONE);
         updateStepsText(++step);
         for (int i = 0; i < 6; i++) {
