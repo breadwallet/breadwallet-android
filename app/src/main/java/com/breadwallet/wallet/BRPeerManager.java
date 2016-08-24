@@ -83,6 +83,7 @@ public class BRPeerManager {
     public static void syncSucceeded() {
         Log.e(TAG, "syncSucceeded");
         if (ctx == null) ctx = MainActivity.app;
+        SharedPreferencesManager.putAllowSpend(ctx, true);
         stopSyncingProgressThread();
         if (ctx != null) {
             SharedPreferencesManager.putStartHeight(ctx, getCurrentBlockHeight());
@@ -170,7 +171,6 @@ public class BRPeerManager {
     public static void startSyncingProgressThread() {
         try {
             if (syncTask != null) {
-                syncTask.setRunning(false);
                 syncTask.interrupt();
                 syncTask = null;
             }
@@ -182,7 +182,11 @@ public class BRPeerManager {
         }
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) {
-            if (!((BreadWalletApp) ctx.getApplication()).isNetworkAvailable(ctx)) return;
+            if (!((BreadWalletApp) ctx.getApplication()).isNetworkAvailable(ctx)) {
+                syncTask.interrupt();
+                syncTask = null;
+                return;
+            }
             MiddleViewAdapter.setSyncing(ctx, true);
             ctx.runOnUiThread(new Runnable() {
                 @Override
@@ -208,19 +212,17 @@ public class BRPeerManager {
                 @Override
                 public void run() {
                     try {
-                        ctx.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                         ((MainActivity) ctx).showHideSyncProgressViews(false);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-
                 }
             });
         }
 
         try {
             if (syncTask != null) {
-                syncTask.setRunning(false);
+//                syncTask.setRunning(false);
                 syncTask.interrupt();
                 syncTask = null;
             }
@@ -230,7 +232,6 @@ public class BRPeerManager {
     }
 
     private static class SyncProgressTask extends Thread {
-
         public boolean running = true;
         public double progressStatus = 0;
 
@@ -239,10 +240,9 @@ public class BRPeerManager {
             running = true;
         }
 
-        public void setRunning(boolean b) {
-//            Log.e(TAG, "setRunning: " + b);
-            running = b;
-        }
+//        public void setRunning(boolean b) {
+//            running = b;
+//        }
 
         @Override
         public void run() {
@@ -250,7 +250,6 @@ public class BRPeerManager {
             progressStatus = 0;
             final DecimalFormat decimalFormat = new DecimalFormat("#.#");
             if (app != null) {
-
                 progressStatus = syncProgress(SharedPreferencesManager.getStartHeight(app));
                 app.runOnUiThread(new Runnable() {
                     @Override
@@ -264,7 +263,8 @@ public class BRPeerManager {
                 int startHeight = SharedPreferencesManager.getStartHeight(app);
                 while (running) {
                     progressStatus = syncProgress(startHeight);
-                    Log.e(TAG, String.format("Thread:%s, progressStatus: %.2f", Thread.currentThread().getName(), progressStatus));
+                    Log.e(TAG, String.format("Thread:%s, progressStatus: %.2f, sync: %b",
+                            Thread.currentThread().getName(), progressStatus, MiddleViewAdapter.getSyncing()));
                     if (progressStatus == 1) running = false;
                     app.runOnUiThread(new Runnable() {
                         @Override
@@ -276,18 +276,17 @@ public class BRPeerManager {
                         Thread.sleep(300);
                     } catch (InterruptedException e) {
                         running = false;
+                        app.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressStatus = 0;
+                                app.showHideSyncProgressViews(false);
+//                                MiddleViewAdapter.setSyncing(app, false);
+                            }
+                        });
                         e.printStackTrace();
                     }
                 }
-
-                app.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressStatus = 0;
-                        app.showHideSyncProgressViews(false);
-                        MiddleViewAdapter.setSyncing(app, false);
-                    }
-                });
 
             }
 

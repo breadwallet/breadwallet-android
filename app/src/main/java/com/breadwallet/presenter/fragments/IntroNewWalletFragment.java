@@ -12,6 +12,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.wallet.BRWalletManager;
 
@@ -60,6 +61,7 @@ public class IntroNewWalletFragment extends Fragment {
                             BRWalletManager m = BRWalletManager.getInstance(getActivity());
                             m.wipeWalletButKeystore(getActivity());
                             m.wipeKeyStore();
+                            SharedPreferencesManager.putAllowSpend(getActivity(),true);
                             PostAuthenticationProcessor.getInstance().onCreateWalletAuth((IntroActivity) getActivity());
                         }
                     });

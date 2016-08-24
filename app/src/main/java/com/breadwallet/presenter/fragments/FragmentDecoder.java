@@ -28,12 +28,6 @@ public class FragmentDecoder extends Fragment implements QRScannerView.ResultHan
         final RelativeLayout blackPane = new RelativeLayout(getContext());
         blackPane.setLayoutParams(new RelativeLayout.LayoutParams(MainActivity.screenParametersPoint.x, MainActivity.screenParametersPoint.y));
         blackPane.setBackgroundColor(Color.BLACK);
-//        breadLogo = new ImageView(getContext());
-//        breadLogo.setImageDrawable(getActivity().getDrawable(R.drawable.breadwallet_big));
-//        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(MainActivity.screenParametersPoint.x / 2, MainActivity.screenParametersPoint.x / 2);
-//        params.addRule(RelativeLayout.CENTER_HORIZONTAL);
-//        params.addRule(RelativeLayout.CENTER_VERTICAL);
-//        blackPane.addView(breadLogo, params);
 
         new Handler().postDelayed(new Runnable() {
             @Override

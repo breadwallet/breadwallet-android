@@ -1,5 +1,7 @@
 package com.breadwallet.tools.security;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Handler;
 import android.util.Log;
 
@@ -10,6 +12,7 @@ import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.presenter.entities.RequestObject;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
 import com.breadwallet.wallet.BRWalletManager;
 
@@ -48,7 +51,10 @@ public class RequestHandler {
     private static final Object lockObject = new Object();
 
     public static synchronized void processRequest(MainActivity app, String address) {
-
+        if (!SharedPreferencesManager.getAllowSpend(app)) {
+            showSpendNotAllowed(app);
+            return;
+        }
         try {
             RequestObject requestObject = getRequestFromString(address);
             if (requestObject == null) {
@@ -71,6 +77,25 @@ public class RequestHandler {
         } catch (InvalidAlgorithmParameterException e) {
             e.printStackTrace();
         }
+    }
+
+    private static void showSpendNotAllowed(final MainActivity app) {
+        app.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                AlertDialog.Builder builder = new AlertDialog.Builder(app);
+                builder.setTitle(R.string.syncing_in_progress)
+                        .setMessage(R.string.wait_for_sync_to_finish)
+                        .setNegativeButton(app.getString(R.string.ok), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
+        });
     }
 
     public static RequestObject getRequestFromString(String str)

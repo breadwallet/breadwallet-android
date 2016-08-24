@@ -122,4 +122,22 @@ public class PhraseFlowActivity extends Activity {
 
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        if (fragmentPhraseFlow3 != null && fragmentPhraseFlow3.isVisible()) {
+            fragmentPhraseFlow2.setPhrase(fragmentPhraseFlow3.getPhrase());
+            animateSlide(fragmentPhraseFlow3, fragmentPhraseFlow2, IntroActivity.LEFT);
+        } else if (fragmentPhraseFlow2 != null && fragmentPhraseFlow2.isVisible()){
+            animateSlide(fragmentPhraseFlow2, fragmentPhraseFlow1, IntroActivity.LEFT);
+        } else {
+            Intent intent;
+            intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            if (!isDestroyed()) {
+                finish();
+            }
+        }
+
+    }
 }

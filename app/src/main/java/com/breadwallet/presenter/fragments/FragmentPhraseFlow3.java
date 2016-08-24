@@ -189,7 +189,7 @@ public class FragmentPhraseFlow3 extends Fragment {
         if (textFlow == null) return;
         final Random random = new Random();
         int n = random.nextInt(10) + 1;
-        while(phraseWords[n].equalsIgnoreCase(wordToCheck)){
+        while (phraseWords[n].equalsIgnoreCase(wordToCheck)) {
             n = random.nextInt(10) + 1;
         }
         wordToCheck = phraseWords[n];
@@ -272,9 +272,11 @@ public class FragmentPhraseFlow3 extends Fragment {
     }
 
     private void goBack() {
-        PhraseFlowActivity app = (PhraseFlowActivity) getActivity();
-        app.fragmentPhraseFlow2.setPhrase(phrase);
-        app.animateSlide(app.fragmentPhraseFlow3, app.fragmentPhraseFlow2, IntroActivity.LEFT);
+        if (this.isVisible()) {
+            PhraseFlowActivity app = (PhraseFlowActivity) getActivity();
+            app.fragmentPhraseFlow2.setPhrase(phrase);
+            app.animateSlide(app.fragmentPhraseFlow3, app.fragmentPhraseFlow2, IntroActivity.LEFT);
+        }
     }
 
     private void updateStepsText(int steps) {
@@ -290,6 +292,10 @@ public class FragmentPhraseFlow3 extends Fragment {
             app.finish();
         }
 
+    }
+
+    public byte[] getPhrase() {
+        return phrase;
     }
 
 }

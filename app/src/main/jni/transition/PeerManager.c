@@ -34,6 +34,7 @@
 #include <BRBase58.h>
 #include <stdio.h>
 #include <assert.h>
+#include <unistd.h>
 
 #define fprintf(...) __android_log_print(ANDROID_LOG_ERROR, "bread", _va_rest(__VA_ARGS__, NULL))
 

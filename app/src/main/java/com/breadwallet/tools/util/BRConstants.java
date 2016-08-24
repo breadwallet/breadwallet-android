@@ -72,7 +72,7 @@ public class BRConstants {
     public static String SUPPORT_EMAIL = "support@breadwallet.com";
 
     public static final int ONE_BITCOIN = 100000000;
-    public static final String LIMIT_PREFS = "fingerprintLimit";
+
 
     /**
      * MainActivity
@@ -83,12 +83,11 @@ public class BRConstants {
     public static final int DEBUG = 1;
     public static final int RELEASE = 2;
     public static final float PAGE_INDICATOR_SCALE_UP = 1.3f;
-    public static final String PREFS_NAME = "MyPrefsFile";
+
 
     /**
      * BRWalletManager
      */
-    public static final String PHRASE_WRITTEN = "phraseWritten";
     public static final long TX_FEE_PER_KB = 5000;
     public static final long DEFAULT_FEE_PER_KB = (TX_FEE_PER_KB * 1000 + 190) / 191;
     public static final long MAX_FEE_PER_KB = (100100 * 1000 + 190) / 191;
@@ -101,13 +100,6 @@ public class BRConstants {
     public static final int LOCKER_BUTTON = 2;
     public static final int PAY_BUTTON = 3;
     public static final int REQUEST_BUTTON = 4;
-
-    /**
-     * FragmentCurrency
-     */
-    public static final String CURRENT_CURRENCY = "currentCurrency";
-    public static final String POSITION = "position";
-    public static final String RATE = "rate";
 
     /**
      * FragmentDecoder
@@ -148,10 +140,17 @@ public class BRConstants {
     /**
      * SharedPreferencesManager
      */
+    public static final String PREFS_NAME = "MyPrefsFile";
     public static final String RECEIVE_ADDRESS = "receive_address";
     public static final String START_HEIGHT = "startHeight";
     public static final String TIPS_SHOWN = "tipsShown";
     public static final String CURRENT_UNIT = "currencyUnit";
+    public static final String CURRENT_CURRENCY = "currentCurrency";
+    public static final String POSITION = "position";
+    public static final String RATE = "rate";
+    public static final String PHRASE_WRITTEN = "phraseWritten";
+    public static final String LIMIT_PREFS = "fingerprintLimit";
+    public static final String ALLOW_SPEND = "allowSpend";
 
     /**
      * Currency units

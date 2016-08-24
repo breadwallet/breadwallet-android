@@ -134,8 +134,19 @@ public class SharedPreferencesManager {
         editor.apply();
     }
 
-    public static void putIso(Activity context, String code) {
+    public static boolean getAllowSpend(Activity activity) {
+        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getBoolean(BRConstants.ALLOW_SPEND, true);
+    }
 
+    public static void putAllowSpend(Activity activity, boolean allow) {
+        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(BRConstants.ALLOW_SPEND, allow);
+        editor.apply();
+    }
+
+    public static void putIso(Activity context, String code) {
         SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putString(BRConstants.CURRENT_CURRENCY, code.equalsIgnoreCase(Locale.getDefault().getISO3Language()) ? null : code);
@@ -229,7 +240,6 @@ public class SharedPreferencesManager {
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-
         return result;
     }
 

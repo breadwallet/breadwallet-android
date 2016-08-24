@@ -438,7 +438,6 @@ public class PasswordDialogFragment extends DialogFragment {
     private void updateInfoText() {
         int failCount = KeyStoreManager.getFailCount(getActivity());
         int attemptsRemaining = 8 - failCount;
-
         if (attemptsRemaining <= 0) {
             BRWalletManager m = BRWalletManager.getInstance(getActivity());
             m.wipeKeyStore();

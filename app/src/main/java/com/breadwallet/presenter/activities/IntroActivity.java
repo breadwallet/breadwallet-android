@@ -265,6 +265,7 @@ public class IntroActivity extends FragmentActivity {
                 if (resultCode == RESULT_OK) {
                     PostAuthenticationProcessor.getInstance().onCreateWalletAuth(this);
                 } else {
+                    Log.e(TAG,"WARNING: resultCode != RESULT_OK");
                     BRWalletManager m = BRWalletManager.getInstance(this);
                     m.wipeKeyStore();
                     m.wipeWalletButKeystore(this);

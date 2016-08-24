@@ -124,7 +124,6 @@ public class CustomPagerAdapter extends FragmentPagerAdapter {
                     }
                     app.pageIndicator.setVisibility(View.VISIBLE);
                     if (MiddleViewAdapter.getSyncing()) {
-
                         app.showHideSyncProgressViews(true);
                     }
 

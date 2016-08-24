@@ -334,6 +334,8 @@
     <string name="phrase_flow2">This is your recovery phrase. Write it down on a piece of paper and keep it safe. On the next screen you must prove it is written down.</string>
     <string name="phrase_flow3">Please tap the %s word of your recovery phrase from the list of possible words below:</string>
     <string name="thanks_for_writing_phrase">Thank you for writing down your phrase. Please keep it in a safe place.</string>
+    <string name="syncing_in_progress">Syncing in progress..</string>
+    <string name="wait_for_sync_to_finish">Please wait for syncing to finish before sending funds.</string>
 
     <!--<string name="sent_amount">sent: %1$s</string>-->
 </resources>

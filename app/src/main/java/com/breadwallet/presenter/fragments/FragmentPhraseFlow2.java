@@ -105,4 +105,5 @@ public class FragmentPhraseFlow2 extends Fragment {
         super.onPause();
         getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
     }
+
 }

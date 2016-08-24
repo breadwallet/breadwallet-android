@@ -30,6 +30,7 @@ import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.presenter.fragments.FragmentSettings;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.presenter.fragments.MainFragment;
+import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
@@ -534,7 +535,7 @@ public class BRAnimator {
 
     }
 
-    public static void animateSavePhraseFlow(){
+    public static void animateSavePhraseFlow() {
 
     }
 

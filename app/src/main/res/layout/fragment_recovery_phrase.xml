@@ -12,22 +12,24 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="60dp"
         android:gravity="center"
         android:text="@string/dialog_recovery_phrase_warning"
-        android:textColor="@color/black"
-        android:textSize="@dimen/text_size" />
+        android:textColor="@color/dark_grey"
+        android:fontFamily="sans-serif-medium"
+        android:textSize="17sp" />
 
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="20dp"
+        android:fontFamily="sans-serif-light"
         android:text="@string/please_write_it_down"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/gray"
-        android:textSize="20sp" />
+        android:textColor="@color/dark_grey"
+        android:textSize="17sp" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -49,10 +51,11 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:gravity="center"
-            android:paddingLeft="30dp"
-            android:paddingRight="30dp"
+            android:fontFamily="sans-serif"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/dark_grey"
+            android:textColor="@color/black"
             android:textSize="@dimen/text_size" />
     </RelativeLayout>
 
