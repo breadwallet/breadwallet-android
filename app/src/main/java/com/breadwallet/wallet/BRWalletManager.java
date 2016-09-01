@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.breadwallet.R;
@@ -33,7 +32,6 @@ import com.breadwallet.presenter.entities.ImportPrivKeyEntity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
-import com.breadwallet.presenter.fragments.FragmentSettings;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.presenter.fragments.MainFragmentQR;
 import com.breadwallet.tools.threads.PassCodeTask;
@@ -761,6 +759,7 @@ public class BRWalletManager {
                         });
                 AlertDialog alert = builder.create();
                 alert.show();
+                alert.getButton(AlertDialog.BUTTON_POSITIVE).setAllCaps(false);
                 return;
             } else if (tmpTx == null && bigDecimalAmount.longValue() >= cm.getBALANCE() && bigDecimalAmount.longValue() > 0) {
                 Log.e(TAG, "addressHolder: " + addressHolder);
