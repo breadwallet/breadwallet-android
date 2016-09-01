@@ -25,8 +25,8 @@ import java.security.InvalidAlgorithmParameterException;
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail Gutan on 10/19/15.
- * Copyright (c) 2016 breadwallet llc <mihail@breadwallet.com>
+ * Created by Mihail Gutan <mihail@breadwallet.com> on 10/19/15.
+ * Copyright (c) 2016 breadwallet LLC
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -46,6 +46,7 @@ import java.security.InvalidAlgorithmParameterException;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 public class RequestHandler {
     private static final String TAG = RequestHandler.class.getName();
     private static final Object lockObject = new Object();

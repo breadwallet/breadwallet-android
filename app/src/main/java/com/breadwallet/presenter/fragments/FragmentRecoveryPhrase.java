@@ -27,20 +27,20 @@ import java.util.Arrays;
 
 /**
  * BreadWallet
- * <p/>
- * Created by Mihail on 7/22/15.
- * Copyright (c) 2016 Mihail Gutan <mihail@breadwallet.com>
- * <p/>
+ * <p>
+ * Created by Mihail Gutan <mihail@breadwallet.com> on 7/22/15.
+ * Copyright (c) 2016 breadwallet LLC
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * <p/>
+ * <p>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * <p/>
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -137,5 +137,10 @@ public class FragmentRecoveryPhrase extends Fragment {
         thePhrase.setText(cleanPhrase);
         if (cleanPhrase.charAt(0) > 0x3000)
             thePhrase.setText(cleanPhrase.replace(" ", "\u3000"));
+    }
+
+    public void releasePhrase() {
+        if (phrase != null)
+            Arrays.fill(phrase, (byte) 0);
     }
 }

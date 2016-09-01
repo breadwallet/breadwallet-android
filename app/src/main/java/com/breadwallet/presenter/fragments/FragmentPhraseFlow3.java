@@ -47,8 +47,8 @@ import java.util.Random;
 /**
  * BreadWallet
  * <p>
- * Created by Mihail Gutan on 7/14/15.
- * Copyright (c) 2016 breadwallet llc <mihail@breadwallet.com>
+ * Created by Mihail Gutan <mihail@breadwallet.com> on 7/14/15.
+ * Copyright (c) 2016 breadwallet LLC
  * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -68,6 +68,7 @@ import java.util.Random;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 
 public class FragmentPhraseFlow3 extends Fragment {
 
@@ -146,28 +147,30 @@ public class FragmentPhraseFlow3 extends Fragment {
                 final Button b = ((Button) view);
                 if (b.getText().toString().equalsIgnoreCase(wordToCheck)) {
                     b.setTextColor(getActivity().getColor(R.color.green_text));
+                    SpringAnimator.showAnimation(b);
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             nextTry();
                         }
-                    }, 1500);
+                    }, 800);
                 } else {
                     b.setTextColor(getActivity().getColor(R.color.red_text));
+                    SpringAnimator.failShakeAnimation(getActivity(), b);
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             goBack();
                         }
-                    }, 1500);
+                    }, 800);
                 }
-                SpringAnimator.showAnimation(b);
+
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         b.setTextColor(getActivity().getColor(R.color.dark_blue));
                     }
-                }, 1000);
+                }, 500);
 
             }
         };

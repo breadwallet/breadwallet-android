@@ -1,45 +1,33 @@
 package com.breadwallet.tools.manager;
 
-import android.app.Instrumentation;
-import android.graphics.Point;
-import android.media.Image;
 import android.os.Handler;
-import android.os.IBinder;
-import android.os.SystemClock;
-import android.support.v4.view.ViewPager;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewParent;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.tools.adapter.CustomPagerAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
-import com.breadwallet.tools.util.CustomLogger;
 
 /**
  * BreadWallet
- * <p/>
- * Created by Mihail Gutan on 7/14/16.
- * Copyright (c) 2016 breadwallet llc <mihail@breadwallet.com>
- * <p/>
+ * <p>
+ * Created by Mihail Gutan <mihail@breadwallet.com> on 7/14/16.
+ * Copyright (c) 2016 breadwallet LLC
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * <p/>
+ * <p>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * <p/>
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -48,6 +36,7 @@ import com.breadwallet.tools.util.CustomLogger;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 public class BRTipsManager {
     public static final String TAG = BRTipsManager.class.getName();
     private static int count = 0;

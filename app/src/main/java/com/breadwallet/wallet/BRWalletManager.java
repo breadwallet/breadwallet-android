@@ -59,7 +59,6 @@ import com.google.zxing.common.BitMatrix;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.security.SecureRandom;
-import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Locale;
@@ -68,8 +67,8 @@ import java.util.Map;
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail Gutan on 9/22/15.
- * Copyright (c) 2016 breadwallet llc <mihail@breadwallet.com>
+ * Created by Mihail Gutan <mihail@breadwallet.com> on 12/10/15.
+ * Copyright (c) 2016 breadwallet LLC
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -728,7 +727,6 @@ public class BRWalletManager {
 
                 Log.e(TAG, "maxAmountDouble: " + maxAmountDouble);
                 final long amountToReduce = bigDecimalAmount.longValue() - maxAmountDouble;
-//                String strToReduce = String.valueOf(amountToReduce);
                 final AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
                 String reduceBits = BRStringFormatter.getFormattedCurrencyString("BTC", amountToReduce);
                 String reduceFee = BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(ctx), SharedPreferencesManager.getIso(ctx), new BigDecimal(amountToReduce), ctx);
@@ -846,7 +844,8 @@ public class BRWalletManager {
                 ctx.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        ((BreadWalletApp) ctx.getApplication()).showCustomToast(ctx, ctx.getString(R.string.keystore_unavailable),
+                        ((BreadWalletApp) ctx.getApplication()).showCustomToast(ctx,
+                                ctx.getString(R.string.keystore_unavailable),
                                 MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
                         new Handler().postDelayed(new Runnable() {
                             @Override

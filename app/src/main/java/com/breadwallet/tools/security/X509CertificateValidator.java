@@ -28,8 +28,8 @@ import javax.net.ssl.X509TrustManager;
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail Gutan on 11/11/15.
- * Copyright (c) 2016 breadwallet llc <mihail@breadwallet.com>
+ * Created by Mihail Gutan <mihail@breadwallet.com> on 11/11/15.
+ * Copyright (c) 2016 breadwallet LLC
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -49,6 +49,7 @@ import javax.net.ssl.X509TrustManager;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 public class X509CertificateValidator {
     private static final String TAG = X509CertificateValidator.class.getName();
     public static final String PKI_X509_SHA256 = "x509+sha256";

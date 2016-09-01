@@ -3,8 +3,8 @@ package com.breadwallet.tools.util;
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail Gutan on 2/16/16.
- * Copyright (c) 2016 breadwallet llc <mihail@breadwallet.com>
+ * Created by Mihail Gutan <mihail@breadwallet.com> on 2/16/16.
+ * Copyright (c) 2016 breadwallet LLC
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,6 +24,7 @@ package com.breadwallet.tools.util;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 public class BRConstants {
 
     /**

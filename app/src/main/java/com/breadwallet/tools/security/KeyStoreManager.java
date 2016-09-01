@@ -44,8 +44,8 @@ import javax.crypto.spec.IvParameterSpec;
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail Gutan on 9/29/15.
- * Copyright (c) 2016 breadwallet llc <mihail@breadwallet.com>
+ * Created by Mihail Gutan <mihail@breadwallet.com> on 9/29/15.
+ * Copyright (c) 2016 breadwallet LLC
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
