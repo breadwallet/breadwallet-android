@@ -3,7 +3,6 @@
     <string name="app_name">&#384;readwallet</string>
     <!-- no need -->
     <string name="lang">en</string>
-
     <!-- android -->
     <string name="bitcoin_address">Bitcoin Address</string>
     <!-- android -->
@@ -98,9 +97,7 @@
     <!-- checked -->
     <string name="warning_text1">\nDO NOT let anyone see your recovery\nphrase or they can spend your bitcoins.\n</string>
     <!-- checked -->
-    <string name="warning_text2">\nNEVER type your recovery phrase into\npassword managers or elsewhere.\nOther devices may be infected.\n</string>
-    <!-- checked -->
-    <string name="warning_text3">\nDO NOT take a screenshot.\nScreenshots are visible to other apps\nand devices.\n</string>
+    <string name="warning_text2">\nNEVER type your recovery phrase into\npassword managers or any software.</string>
     <!-- checked -->
     <string name="show">show</string>
     <!-- checked -->
@@ -329,13 +326,24 @@
     <string name="show_phrase">show phrase</string>
     <!-- checked -->
     <string name="copied">copied</string>
-    <string name="phrase_flow1">To protect your funds, you must write down your recovery phrase and keep it in a safe place. You must do this before you continue to use your wallet.</string>
+    <!-- android -->
+    <!--<string name="phrase_flow1">To protect your funds, you must write down your recovery phrase and keep it in a safe place. You must do this before you continue to use your wallet.</string>-->
+    <!-- android -->
     <string name="continue_button">continue</string>
-    <string name="phrase_flow2">This is your recovery phrase. Write it down on a piece of paper and keep it safe. On the next screen you must prove it is written down.</string>
-    <string name="phrase_flow3">Please tap the %s word of your recovery phrase from the list of possible words below:</string>
-    <string name="thanks_for_writing_phrase">Thank you for writing down your phrase. Please keep it in a safe place.</string>
+    <!-- android -->
+    <string name="phrase_flow2">please write down your phrase.</string>
+    <!-- android -->
+    <string name="phrase_flow3">select the %s word of your recovery phrase from the list below.</string>
+    <!-- android -->
     <string name="syncing_in_progress">Syncing in progress..</string>
+    <!-- android -->
     <string name="wait_for_sync_to_finish">Please wait for syncing to finish before sending funds.</string>
+    <!-- android -->
+    <string name="skip">skip</string>
+    <string name="next">next</string>
+    <string name="step_holder">step %1$d of %2$d</string>
+    <string name="recovery_phrase_set">recovery phrase set</string>
+    <string name="write_down_your_recovery_phrase">WRITE DOWN YOUR \nRECOVERY PHRASE</string>
+    <string name="protect_your_wallet">protect your wallet and ensure you can recover it after replacing or resetting your phone, or disabling your lock screen.</string>
 
-    <!--<string name="sent_amount">sent: %1$s</string>-->
 </resources>

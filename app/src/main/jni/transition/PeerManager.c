@@ -389,6 +389,10 @@ JNIEXPORT void JNICALL Java_com_breadwallet_wallet_BRPeerManager_peerManagerFree
 
     if (_peerManager) {
         BRPeerManagerDisconnect(_peerManager);
+        struct timespec tim, tim2;
+        tim.tv_sec  = 0;
+        tim.tv_nsec = 200 * 1000 * 1000;
+        nanosleep(&tim , &tim2);
         BRPeerManagerFree(_peerManager);
         _peerManager = NULL;
     }

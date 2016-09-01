@@ -2,54 +2,32 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/backgroundmain_cropped">
+    android:layout_height="match_parent">
 
-    <RelativeLayout
-        android:id="@+id/separator1"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/separator_height"
-        android:layout_marginTop="100dp"
-        android:background="@color/gray" />
-
-    <LinearLayout
-        android:id="@+id/text_layout"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/textFlow3"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/separator1"
-        android:background="@drawable/clickable_layout"
-        android:clickable="false"
-        android:orientation="vertical"
-        android:padding="20dp">
+        android:layout_above="@+id/words_layout"
+        android:layout_marginBottom="50dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginStart="30dp"
+        android:gravity="center"
+        android:padding="20dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/dark_grey" />
 
-        <TextView
-            android:id="@+id/textFlow3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            android:layout_marginStart="20dp"
-            android:gravity="center"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/dark_grey" />
-
-    </LinearLayout>
-
-    <RelativeLayout
-        android:id="@+id/separator2"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/separator_height"
-        android:layout_below="@+id/text_layout"
-        android:background="@color/gray" />
 
     <TableLayout
         android:id="@+id/words_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/text_layout"
+        android:layout_centerVertical="true"
         android:clickable="false"
+        android:paddingBottom="10dp"
         android:paddingEnd="20dp"
         android:paddingStart="20dp"
-        android:paddingTop="100dp">
+        android:paddingTop="10dp">
 
         <TableRow
             android:layout_width="fill_parent"
@@ -130,9 +108,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/words_layout"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="20dp"
         android:gravity="center"
-        android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/dark_grey" />
 
     <Button
@@ -147,5 +124,16 @@
         android:textColor="@color/dark_blue"
         android:textSize="18sp"
         android:visibility="gone" />
+
+    <Button
+        android:id="@+id/skip_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:background="@android:color/transparent"
+        android:text="@string/skip"
+        android:textColor="@color/light_gray"
+        android:textSize="18sp" />
 
 </RelativeLayout>

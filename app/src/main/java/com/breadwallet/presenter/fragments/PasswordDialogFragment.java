@@ -355,7 +355,7 @@ public class PasswordDialogFragment extends DialogFragment {
                 passcodeEditText.setText("");
                 Log.e(TAG, "mode: " + mode + " request: " + request);
                 if (mode == BRConstants.AUTH_FOR_PHRASE) {
-                    BRAnimator.animateSlideToLeft((MainActivity) getActivity(), new FragmentRecoveryPhrase(), new FragmentSettings());
+                    BRWalletManager.getInstance(getActivity()).animateSavePhraseFlow();
                 } else if (mode == BRConstants.AUTH_FOR_LIMIT) {
                     BRAnimator.animateSlideToLeft((MainActivity) getActivity(), new FragmentSpendLimit(), new FragmentSettings());
                 } else if (mode == BRConstants.AUTH_FOR_PAY && request != null) {

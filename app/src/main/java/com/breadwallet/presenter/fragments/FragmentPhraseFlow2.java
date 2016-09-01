@@ -67,43 +67,38 @@ public class FragmentPhraseFlow2 extends Fragment {
         });
         thePhrase = (TextView) rootView.findViewById(R.id.the_phrase);
         continueButton = (Button) rootView.findViewById(R.id.continue_button);
+        TextView step1 = (TextView) rootView.findViewById(R.id.step1);
+        step1.setText(String.format(getString(R.string.step_holder), 1, 3));
 
         return rootView;
     }
 
     public void setPhrase(final byte[] phrase) {
-        String cleanPhrase = new String(phrase);
-        if (cleanPhrase.split(" ").length == 12 && cleanPhrase.charAt(cleanPhrase.length() - 1) == '\0') {
-            ((BreadWalletApp) getActivity().getApplication()).showCustomDialog(getString(R.string.warning),
-                    getActivity().getString(R.string.phrase_error), getString(R.string.ok));
-        }
-        thePhrase.setText(cleanPhrase);
-        if (cleanPhrase.charAt(0) > 0x3000)
-            thePhrase.setText(cleanPhrase.replace(" ", "\u3000"));
-
-        continueButton.setOnClickListener(new View.OnClickListener() {
+        new Handler().postDelayed(new Runnable() {
             @Override
-            public void onClick(View view) {
-                PhraseFlowActivity app = ((PhraseFlowActivity) getActivity());
-                if(app == null) return;
-                app.fragmentPhraseFlow3.setPhrase(phrase);
-                app.animateSlide(app.fragmentPhraseFlow2, app.fragmentPhraseFlow3, IntroActivity.RIGHT);
+            public void run() {
+                String cleanPhrase = new String(phrase);
+                if (cleanPhrase.split(" ").length == 12 && cleanPhrase.charAt(cleanPhrase.length() - 1) == '\0') {
+                    ((BreadWalletApp) getActivity().getApplication()).showCustomDialog(getString(R.string.warning),
+                            getActivity().getString(R.string.phrase_error), getString(R.string.ok));
+                }
+                thePhrase.setText(cleanPhrase);
+                if (cleanPhrase.charAt(0) > 0x3000)
+                    thePhrase.setText(cleanPhrase.replace(" ", "\u3000"));
+
+                continueButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        PhraseFlowActivity app = ((PhraseFlowActivity) getActivity());
+                        if(app == null) return;
+                        app.animateSlide(app.fragmentPhraseFlow2, app.fragmentPhraseFlow3, IntroActivity.RIGHT);
+                        app.fragmentPhraseFlow3.setPhrase(phrase);
+                    }
+                });
             }
-        });
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE);
+        },50);
 
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
-    }
 
 }

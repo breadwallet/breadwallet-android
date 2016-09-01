@@ -292,15 +292,6 @@ public class IntroActivity extends FragmentActivity {
 
     }
 
-    public void startIntroShowPhrase() {
-        Intent intent;
-        intent = new Intent(this, IntroShowPhraseActivity.class);
-        startActivity(intent);
-        if (!IntroActivity.this.isDestroyed()) {
-            finish();
-        }
-    }
-
     @Override
     public void onBackPressed() {
         if (backNotAllowed) return;

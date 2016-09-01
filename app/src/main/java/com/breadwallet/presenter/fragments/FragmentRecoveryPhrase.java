@@ -55,7 +55,8 @@ public class FragmentRecoveryPhrase extends Fragment {
     private TextView thePhrase;
     private ImageView checkBox;
     private boolean checked = false;
-    public static byte[] phrase;
+    private byte[] phrase;
+    private  RelativeLayout checkBoxlayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -63,8 +64,36 @@ public class FragmentRecoveryPhrase extends Fragment {
                 R.layout.fragment_recovery_phrase, container, false);
         thePhrase = (TextView) rootView.findViewById(R.id.the_phrase);
         checkBox = (ImageView) rootView.findViewById(R.id.write_down_check_box);
-        RelativeLayout checkBoxlayout = (RelativeLayout) rootView.findViewById(R.id.write_down_notice_layout);
+        checkBoxlayout = (RelativeLayout) rootView.findViewById(R.id.write_down_notice_layout);
 
+        return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE);
+        Activity app = getActivity();
+        if (app == null) app = MainActivity.app;
+        if (app != null)
+            ((BreadWalletApp) app.getApplication()).hideKeyboard(app);
+        MiddleViewAdapter.resetMiddleView(getActivity(), null);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
+    }
+
+    private void setCheckBoxImage() {
+        checkBox.setImageResource(!checked ? R.drawable.checkbox_checked : R.drawable.checkbox_empty);
+        checked = !checked;
+    }
+
+    public void setPhrase(byte[] phrase){
+        this.phrase = phrase;
         boolean phraseWroteDown = SharedPreferencesManager.getPhraseWroteDown(getActivity());
 
         if (BuildConfig.DEBUG) {
@@ -96,7 +125,7 @@ public class FragmentRecoveryPhrase extends Fragment {
                     getActivity().onBackPressed();
                 }
             }, 10);
-            return rootView;
+            return;
         }
         String cleanPhrase = new String(phrase);
         Arrays.fill(phrase, (byte) 0);
@@ -108,30 +137,5 @@ public class FragmentRecoveryPhrase extends Fragment {
         thePhrase.setText(cleanPhrase);
         if (cleanPhrase.charAt(0) > 0x3000)
             thePhrase.setText(cleanPhrase.replace(" ", "\u3000"));
-
-        return rootView;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE);
-        Activity app = getActivity();
-        if (app == null) app = MainActivity.app;
-        if (app != null)
-            ((BreadWalletApp) app.getApplication()).hideKeyboard(app);
-        MiddleViewAdapter.resetMiddleView(getActivity(), null);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
-    }
-
-    private void setCheckBoxImage() {
-        checkBox.setImageResource(!checked ? R.drawable.checkbox_checked : R.drawable.checkbox_empty);
-        checked = !checked;
     }
 }

@@ -12,19 +12,13 @@ import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.activities.PhraseFlowActivity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
-import com.breadwallet.presenter.fragments.FragmentRecoveryPhrase;
-import com.breadwallet.presenter.fragments.FragmentScanResult;
-import com.breadwallet.presenter.fragments.FragmentSettings;
-import com.breadwallet.presenter.fragments.IntroWelcomeFragment;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask;
 import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.tools.threads.PaymentProtocolTask;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.wallet.BRWalletManager;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 
 /**
@@ -87,7 +81,8 @@ public class PostAuthenticationProcessor {
         byte[] bytePhrase = new byte[0];
 
         try {
-            boolean success = KeyStoreManager.putKeyStorePhrase(phraseForKeyStore.getBytes(), app, BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE);
+            boolean success = KeyStoreManager.putKeyStorePhrase(phraseForKeyStore.getBytes(),
+                    app, BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE);
             if (!success)
                 return;
             if (phraseForKeyStore.length() != 0) {
@@ -107,29 +102,14 @@ public class PostAuthenticationProcessor {
         }
     }
 
-    public void onShowPhraseAuth(MainActivity app) {
-        Log.e(TAG, "onShowPhraseAuth");
-        byte[] phrase;
-        try {
-            phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.SHOW_PHRASE_REQUEST_CODE);
-//            Log.e(TAG, "phrase.length: " + phrase.length);
-            if (phrase.length < 10) return;
-            FragmentRecoveryPhrase.phrase = phrase;
-            ((BreadWalletApp) app.getApplicationContext()).promptForAuthentication(app, BRConstants.AUTH_FOR_PHRASE, null, null, null, null);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     public void onShowPhraseFlowAuth(PhraseFlowActivity app) {
         Log.e(TAG, "onShowPhraseAuth");
         byte[] phrase;
         try {
-            phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.SHOW_PHRASE_FLOW_REQUEST_CODE);
-//            Log.e(TAG, "phrase.length: " + phrase.length);
+            phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.SHOW_PHRASE_REQUEST_CODE);
             if (phrase.length < 10) return;
-            app.fragmentPhraseFlow2.setPhrase(phrase);
-            app.animateSlide(app.fragmentPhraseFlow1, app.fragmentPhraseFlow2, IntroActivity.RIGHT);
+            app.showHideFragments(app.fragmentPhraseFlow1);
+            app.fragmentPhraseFlow1.setPhrase(phrase);
         } catch (Exception e) {
             e.printStackTrace();
         }

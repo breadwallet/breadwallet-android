@@ -119,12 +119,12 @@ public class SharedPreferencesManager {
 
     public static long getPhraseWarningTime(Activity activity) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
-        return prefs.getLong(BRConstants.PHRASE_WARNING_TIME, System.currentTimeMillis() / 1000);
+        return prefs.getLong(BRConstants.PHRASE_WARNING_TIME, 0);
     }
 
     public static int getLimit(Activity activity) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
-        return prefs.getInt(BRConstants.LIMIT_PREFS, BRConstants.ONE_BITCOIN);
+        return prefs.getInt(BRConstants.LIMIT_PREFS, BRConstants.HUNDRED_BITS);
     }
 
     public static void putLimit(Activity activity, int limit) {

@@ -30,6 +30,7 @@ import com.breadwallet.tools.adapter.CurrencyListAdapter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.security.PassCodeManager;
 import com.breadwallet.wallet.BRPeerManager;
+import com.breadwallet.wallet.BRWalletManager;
 
 /**
  * BreadWallet
@@ -123,24 +124,7 @@ public class FragmentSettings extends Fragment {
             @Override
             public void onClick(View v) {
                 if (BRAnimator.checkTheMultipressingAvailability()) {
-
-                    new AlertDialog.Builder(getActivity())
-                            .setTitle(getResources().getString(R.string.warning))
-                            .setMessage(getResources().getString(R.string.warning_text1) +
-                                    getResources().getString(R.string.warning_text2) +
-                                    getResources().getString(R.string.warning_text3))
-                            .setPositiveButton(getResources().getString(R.string.show), new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    PostAuthenticationProcessor.getInstance().onShowPhraseAuth((MainActivity) getActivity());
-                                }
-                            })
-                            .setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-//                                    Log.d(TAG, "Canceled the view of the phrase!");
-                                }
-                            })
-                            .show();
+                    ((BreadWalletApp) app.getApplicationContext()).promptForAuthentication(app, BRConstants.AUTH_FOR_PHRASE, null, null, null, null);
                 }
             }
         });

@@ -23,7 +23,6 @@ import android.widget.Toast;
 import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.IntroActivity;
-import com.breadwallet.presenter.activities.IntroShowPhraseActivity;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.activities.PhraseFlowActivity;
 import com.breadwallet.presenter.activities.RequestQRActivity;
@@ -33,7 +32,6 @@ import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.presenter.entities.ImportPrivKeyEntity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.TransactionListItem;
-import com.breadwallet.presenter.fragments.FragmentRecoveryPhrase;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.presenter.fragments.FragmentSettings;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
@@ -135,12 +133,11 @@ public class BRWalletManager {
             throw new NullPointerException("failed to encodeSeed");
         boolean success = KeyStoreManager.putKeyStorePhrase(strPhrase, ctx, BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE);
         if (!success) return false;
-        IntroShowPhraseActivity.phrase = Arrays.copyOf(strPhrase, strPhrase.length);
         KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), ctx);
         byte[] strBytes = TypesConverter.getNullTerminatedPhrase(strPhrase);
         byte[] pubKey = BRWalletManager.getInstance(ctx).getMasterPubKey(strBytes);
         KeyStoreManager.putMasterPublicKey(pubKey, ctx);
-        SharedPreferencesManager.putPhraseWarningTime(ctx, System.currentTimeMillis() / 1000);
+
         return true;
 
     }
@@ -284,13 +281,18 @@ public class BRWalletManager {
                     if (phraseWroteDown) return;
                     long now = System.currentTimeMillis() / 1000;
                     long lastMessageShow = SharedPreferencesManager.getPhraseWarningTime(ctx);
-                    if (!firstTime && lastMessageShow > (now - 36 * 60 * 60)) return;//36 * 60 * 60
+                    if (lastMessageShow == 0 || (!firstTime && lastMessageShow > (now - 30)))
+                        return;//36 * 60 * 60//
+                    if (CurrencyManager.getInstance(ctx).getBALANCE() >= SharedPreferencesManager.getLimit(ctx)) {
+                        getInstance(ctx).animateSavePhraseFlow();
+                        return;
+                    }
                     SharedPreferencesManager.putPhraseWarningTime(ctx, System.currentTimeMillis() / 1000);
                     AlertDialog alert;
                     AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
-                    builder.setTitle(firstTime ? ctx.getString(R.string.you_received_bitcoin) : ctx.getString(R.string.important));
-                    builder.setMessage(String.format(ctx.getString(R.string.write_down_phrase), firstTime ?
-                            ctx.getString(R.string.write_down_phrase_holder1) : ctx.getString(R.string.write_down_phrase_holder2)));
+                    builder.setTitle(ctx.getString(R.string.you_received_bitcoin));
+                    builder.setMessage(String.format(ctx.getString(R.string.write_down_phrase),
+                            ctx.getString(R.string.write_down_phrase_holder1)));
                     builder.setPositiveButton(ctx.getString(R.string.show_phrase),
                             new DialogInterface.OnClickListener() {
                                 public void onClick(final DialogInterface dialog, int which) {
@@ -298,78 +300,77 @@ public class BRWalletManager {
                                         @Override
                                         public void run() {
                                             dialog.dismiss();
-                                            final MainActivity app = MainActivity.app;
-                                            if (app == null) return;
-                                            final RelativeLayout tipsBlockPane = (RelativeLayout) app.findViewById(R.id.tips_block_pane);
+                                            BRWalletManager.getInstance(ctx).animateSavePhraseFlow();
+//                                            final RelativeLayout tipsBlockPane = (RelativeLayout) app.findViewById(R.id.tips_block_pane);
 
-                                            app.runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    tipsBlockPane.setVisibility(View.VISIBLE);
-                                                    new Handler().postDelayed(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            tipsBlockPane.setVisibility(View.GONE);
-                                                        }
-                                                    }, 5000);
-                                                }
-                                            });
+//                                            app.runOnUiThread(new Runnable() {
+//                                                @Override
+//                                                public void run() {
+//                                                    tipsBlockPane.setVisibility(View.VISIBLE);
+//                                                    new Handler().postDelayed(new Runnable() {
+//                                                        @Override
+//                                                        public void run() {
+//                                                            tipsBlockPane.setVisibility(View.GONE);
+//                                                        }
+//                                                    }, 5000);
+//                                                }
+//                                            });
                                             //in case of an error assure the blockPane is gone anyway in 5 sec
 
-                                            switch (BRAnimator.level) {
-                                                case 0:
-                                                    app.runOnUiThread(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            BRAnimator.pressMenuButton(app);
-                                                        }
-                                                    });
+//                                            switch (BRAnimator.level) {
+//                                                case 0:
+//                                                    app.runOnUiThread(new Runnable() {
+//                                                        @Override
+//                                                        public void run() {
+//                                                            BRAnimator.pressMenuButton(app);
+//                                                        }
+//                                                    });
+//
+//                                                    try {
+//                                                        Thread.sleep(500);
+//                                                    } catch (InterruptedException e) {
+//                                                        e.printStackTrace();
+//                                                    }
+//                                                    app.runOnUiThread(new Runnable() {
+//                                                        @Override
+//                                                        public void run() {
+//                                                            FragmentSettingsAll fragmentSettingsAll = (FragmentSettingsAll) app.
+//                                                                    getFragmentManager().findFragmentByTag(FragmentSettingsAll.class.getName());
+//                                                            BRAnimator.animateSlideToLeft(app, new FragmentSettings(), fragmentSettingsAll);
+//                                                        }
+//                                                    });
+//
+//                                                    try {
+//                                                        Thread.sleep(500);
+//                                                    } catch (InterruptedException e) {
+//                                                        e.printStackTrace();
+//                                                    }
+//
+//                                                    app.runOnUiThread(new Runnable() {
+//                                                        @Override
+//                                                        public void run() {
+//                                                            new android.support.v7.app.AlertDialog.Builder(app)
+//                                                                    .setTitle(app.getResources().getString(R.string.warning))
+//                                                                    .setMessage(app.getResources().getString(R.string.warning_text1) +
+//                                                                            app.getResources().getString(R.string.warning_text2) +
+//                                                                            app.getResources().getString(R.string.warning_text3))
+//                                                                    .setPositiveButton(app.getResources().getString(R.string.show), new DialogInterface.OnClickListener() {
+//                                                                        public void onClick(DialogInterface dialog, int which) {
+//                                                                            PostAuthenticationProcessor.getInstance().onShowPhraseAuth(app);
+//                                                                        }
+//                                                                    })
+//                                                                    .setNegativeButton(app.getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+//                                                                        public void onClick(DialogInterface dialog, int which) {
+//                                                                            dialog.dismiss();
+//                                                                        }
+//                                                                    })
+//                                                                    .show();
+//                                                            tipsBlockPane.setVisibility(View.GONE);
+//                                                        }
+//                                                    });
 
-                                                    try {
-                                                        Thread.sleep(500);
-                                                    } catch (InterruptedException e) {
-                                                        e.printStackTrace();
-                                                    }
-                                                    app.runOnUiThread(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            FragmentSettingsAll fragmentSettingsAll = (FragmentSettingsAll) app.
-                                                                    getFragmentManager().findFragmentByTag(FragmentSettingsAll.class.getName());
-                                                            BRAnimator.animateSlideToLeft(app, new FragmentSettings(), fragmentSettingsAll);
-                                                        }
-                                                    });
-
-                                                    try {
-                                                        Thread.sleep(500);
-                                                    } catch (InterruptedException e) {
-                                                        e.printStackTrace();
-                                                    }
-
-                                                    app.runOnUiThread(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            new android.support.v7.app.AlertDialog.Builder(app)
-                                                                    .setTitle(app.getResources().getString(R.string.warning))
-                                                                    .setMessage(app.getResources().getString(R.string.warning_text1) +
-                                                                            app.getResources().getString(R.string.warning_text2) +
-                                                                            app.getResources().getString(R.string.warning_text3))
-                                                                    .setPositiveButton(app.getResources().getString(R.string.show), new DialogInterface.OnClickListener() {
-                                                                        public void onClick(DialogInterface dialog, int which) {
-                                                                            PostAuthenticationProcessor.getInstance().onShowPhraseAuth(app);
-                                                                        }
-                                                                    })
-                                                                    .setNegativeButton(app.getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                                                                        public void onClick(DialogInterface dialog, int which) {
-                                                                            dialog.dismiss();
-                                                                        }
-                                                                    })
-                                                                    .show();
-                                                            tipsBlockPane.setVisibility(View.GONE);
-                                                        }
-                                                    });
-
-                                                    break;
-                                            }
+//                                                    break;
+//                                            }
                                         }
                                     }).start();
                                 }
@@ -466,6 +467,7 @@ public class BRWalletManager {
         }
 
         if (getInstance(ctx).getTxCount() <= 1) {
+            SharedPreferencesManager.putPhraseWarningTime(ctx, System.currentTimeMillis() / 1000);
             ctx.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -984,7 +986,13 @@ public class BRWalletManager {
     }
 
     public void animateSavePhraseFlow() {
-        PhraseFlowActivity.screenParametersPoint = IntroActivity.screenParametersPoint == null ? MainActivity.screenParametersPoint : IntroActivity.screenParametersPoint;
+        PhraseFlowActivity.screenParametersPoint = IntroActivity.screenParametersPoint;
+        if (PhraseFlowActivity.screenParametersPoint == null ||
+                PhraseFlowActivity.screenParametersPoint.y == 0 ||
+                PhraseFlowActivity.screenParametersPoint.x == 0)
+            PhraseFlowActivity.screenParametersPoint = MainActivity.screenParametersPoint;
+        Log.e(TAG,"PhraseFlowActivity.screenParametersPoint.x: " + PhraseFlowActivity.screenParametersPoint.x);
+        Log.e(TAG,"PhraseFlowActivity.screenParametersPoint.y: " + PhraseFlowActivity.screenParametersPoint.y);
         Intent intent;
         intent = new Intent(ctx, PhraseFlowActivity.class);
         ctx.startActivity(intent);

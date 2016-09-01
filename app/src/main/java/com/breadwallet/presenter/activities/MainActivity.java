@@ -163,7 +163,8 @@ public class MainActivity extends FragmentActivity implements Observer {
         BRAnimator.scaleView(pageIndicatorLeft, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f,
                 BRConstants.PAGE_INDICATOR_SCALE_UP);
         setStatusBarColor();
-        BRWalletManager.showWritePhraseDialog(false);
+        if (CurrencyManager.getInstance(this).getBALANCE() < SharedPreferencesManager.getLimit(this))
+            BRWalletManager.showWritePhraseDialog(false);
     }
 
     @Override
@@ -584,11 +585,6 @@ public class MainActivity extends FragmentActivity implements Observer {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case BRConstants.SHOW_PHRASE_REQUEST_CODE:
-                if (resultCode == RESULT_OK) {
-                    PostAuthenticationProcessor.getInstance().onShowPhraseAuth(this);
-                }
-                break;
             case BRConstants.PAY_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
                     PostAuthenticationProcessor.getInstance().onPublishTxAuth(this);

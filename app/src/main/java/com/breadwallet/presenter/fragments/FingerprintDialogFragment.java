@@ -164,7 +164,7 @@ public class FingerprintDialogFragment extends DialogFragment
         ((BreadWalletApp) getActivity().getApplicationContext()).allowKeyStoreAccessForSeconds();
         getDialog().dismiss();
         if (mode == BRConstants.AUTH_FOR_PHRASE) {
-            BRAnimator.animateSlideToLeft((MainActivity) getActivity(), new FragmentRecoveryPhrase(), new FragmentSettings());
+            BRWalletManager.getInstance(getActivity()).animateSavePhraseFlow();
         } else if (mode == BRConstants.AUTH_FOR_PAY && request != null) {
             PostAuthenticationProcessor.getInstance().onPublishTxAuth((MainActivity) getActivity());
         } else if (mode == BRConstants.AUTH_FOR_PAYMENT_PROTOCOL && paymentRequest != null) {

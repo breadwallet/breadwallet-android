@@ -2,45 +2,43 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/backgroundmain_cropped">
+    android:layout_height="match_parent">
 
     <TextView
-
         android:id="@+id/textFlow2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="20dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="50dp"
+        android:layout_above="@+id/phrase_layout"
         android:gravity="center"
+        android:layout_centerHorizontal="true"
         android:text="@string/phrase_flow2"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/dark_grey" />
 
-    <RelativeLayout
-        android:id="@+id/separator1"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/separator_height"
-        android:layout_below="@id/textFlow2"
-        android:layout_marginTop="80dp"
-        android:background="@color/gray" />
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/phrase_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/separator1"
+        android:layout_centerVertical="true"
         android:background="@drawable/clickable_layout"
         android:clickable="false"
-        android:padding="10dp">
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/separator1"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/separator_height"
+            android:background="@color/gray" />
 
         <TextView
             android:id="@+id/the_phrase"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
+            android:layout_margin="10dp"
             android:gravity="center"
             android:paddingLeft="30dp"
             android:paddingRight="30dp"
@@ -48,14 +46,14 @@
             android:textColor="@color/dark_grey"
             android:textSize="22sp" />
 
-    </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/separator2"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/separator_height"
+            android:background="@color/gray" />
 
-    <RelativeLayout
-        android:id="@+id/separator2"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/separator_height"
-        android:layout_below="@id/phrase_layout"
-        android:background="@color/gray" />
+    </LinearLayout>
+
 
     <Button
         android:id="@+id/continue_button"
@@ -65,8 +63,16 @@
         android:layout_alignParentEnd="true"
         android:layout_margin="20dp"
         android:background="@android:color/transparent"
-        android:text="@string/continue_button"
+        android:text="@string/next"
         android:textColor="@color/dark_blue"
         android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/step1"
+        android:layout_marginTop="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/phrase_layout"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

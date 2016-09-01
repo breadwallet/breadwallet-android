@@ -11,6 +11,7 @@ import android.widget.Button;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.IntroActivity;
+import com.breadwallet.wallet.BRWalletManager;
 
 /**
  * BreadWallet
@@ -49,13 +50,11 @@ public class IntroWarningFragment extends Fragment {
         show.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((IntroActivity) getActivity()).startIntroShowPhrase();
+                BRWalletManager.getInstance(getActivity()).animateSavePhraseFlow();
                 getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
         });
         return rootView;
     }
-
-
 
 }

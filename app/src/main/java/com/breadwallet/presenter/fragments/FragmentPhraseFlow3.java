@@ -1,6 +1,7 @@
 
 package com.breadwallet.presenter.fragments;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -9,6 +10,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,6 +22,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.R;
@@ -29,7 +33,9 @@ import com.breadwallet.tools.adapter.CustomPagerAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.DecelerateOvershootInterpolator;
 import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.manager.CurrencyManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.security.PostAuthenticationProcessor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,20 +46,20 @@ import java.util.Random;
 
 /**
  * BreadWallet
- * <p/>
+ * <p>
  * Created by Mihail Gutan on 7/14/15.
  * Copyright (c) 2016 breadwallet llc <mihail@breadwallet.com>
- * <p/>
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * <p/>
+ * <p>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * <p/>
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -77,7 +83,6 @@ public class FragmentPhraseFlow3 extends Fragment {
     private Button word4;
     private Button word5;
     private Button word6;
-    private Button doneButton;
     private Button sixButtons[];
     private List<String> sixWords;
     private View.OnClickListener listener;
@@ -85,13 +90,13 @@ public class FragmentPhraseFlow3 extends Fragment {
     private TableLayout tableLayout;
     private int step = 1;
     private boolean pressAvailable;
-    private static final int STEPS_LIMIT = 2;
+    private static final int STEPS_LIMIT = 3;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_phrase_flow3, container, false);
-
+        Button skipButton = (Button) rootView.findViewById(R.id.skip_button);
         textFlow = (TextView) rootView.findViewById(R.id.textFlow3);
         stepsTextView = (TextView) rootView.findViewById(R.id.step);
         word1 = (Button) rootView.findViewById(R.id.word1);
@@ -100,7 +105,6 @@ public class FragmentPhraseFlow3 extends Fragment {
         word4 = (Button) rootView.findViewById(R.id.word4);
         word5 = (Button) rootView.findViewById(R.id.word5);
         word6 = (Button) rootView.findViewById(R.id.word6);
-        doneButton = (Button) rootView.findViewById(R.id.done_button);
         tableLayout = (TableLayout) rootView.findViewById(R.id.words_layout);
         rootView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -108,10 +112,19 @@ public class FragmentPhraseFlow3 extends Fragment {
                 return true;
             }
         });
-        doneButton.setOnClickListener(new View.OnClickListener() {
+        if (CurrencyManager.getInstance(getActivity()).getBALANCE() >= SharedPreferencesManager.getLimit(getActivity())) {
+            skipButton.setVisibility(View.GONE);
+        }
+        skipButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finishFlow();
+                Intent intent;
+                Activity app = getActivity();
+                intent = new Intent(app, MainActivity.class);
+                startActivity(intent);
+                if (!app.isDestroyed()) {
+                    app.finish();
+                }
             }
         });
 
@@ -121,7 +134,7 @@ public class FragmentPhraseFlow3 extends Fragment {
     public void setPhrase(byte[] phrase) {
         this.phrase = phrase;
         pressAvailable = true;
-        step = 1;
+        step = 2;
         updateStepsText(step);
         sixWords = new ArrayList<>();
         sixButtons = new Button[6];
@@ -187,19 +200,17 @@ public class FragmentPhraseFlow3 extends Fragment {
         ((BreadWalletApp) getActivity().getApplication()).hideKeyboard(getActivity());
     }
 
+
     private void setTextWithRandomNr() {
         if (textFlow == null) return;
         final Random random = new Random();
         int n = random.nextInt(10) + 1;
         String oldWord = wordToCheck;
         wordToCheck = phraseWords[n];
-        Log.e(TAG, "WORDCHECK: before loop: " + wordToCheck + " , old: " + oldWord);
         while (oldWord.equalsIgnoreCase(wordToCheck)) {
             n = random.nextInt(10) + 1;
-            Log.e(TAG, "WORDCHECK: in the loop: " + n);
             wordToCheck = phraseWords[n];
         }
-        Log.e(TAG, "WORDCHECK: out of loop: " + wordToCheck + " , old: " + oldWord);
         String placeHolder;
         switch (n) {
             case 1:
@@ -245,14 +256,11 @@ public class FragmentPhraseFlow3 extends Fragment {
     }
 
     private void nextTry() {
-//        if (step == STEPS_LIMIT) {
-//            textFlow.setText(R.string.thanks_for_writing_phrase);
-//            tableLayout.setVisibility(View.GONE);
-//            stepsTextView.setVisibility(View.GONE);
-//            doneButton.setVisibility(View.VISIBLE);
-//            SharedPreferencesManager.putPhraseWroteDown(getActivity(), true);
-//            return;
-//        }
+        if (step == STEPS_LIMIT) {
+            SharedPreferencesManager.putPhraseWroteDown(getActivity(), true);
+            finishFlow();
+            return;
+        }
         stepsTextView.setVisibility(View.GONE);
         updateStepsText(++step);
         for (int i = 0; i < 6; i++) {
@@ -281,24 +289,49 @@ public class FragmentPhraseFlow3 extends Fragment {
     private void goBack() {
         if (this.isVisible()) {
             PhraseFlowActivity app = (PhraseFlowActivity) getActivity();
-            app.fragmentPhraseFlow2.setPhrase(phrase);
             app.animateSlide(app.fragmentPhraseFlow3, app.fragmentPhraseFlow2, IntroActivity.LEFT);
+            app.fragmentPhraseFlow2.setPhrase(phrase);
         }
     }
 
     private void updateStepsText(int steps) {
-        stepsTextView.setText(String.format(Locale.getDefault(), "Steps %d/%d", steps, STEPS_LIMIT));
+        stepsTextView.setText(String.format(getString(R.string.step_holder), steps, STEPS_LIMIT));
     }
 
     private void finishFlow() {
-        PhraseFlowActivity app = (PhraseFlowActivity) getActivity();
-        Intent intent;
-        intent = new Intent(app, MainActivity.class);
-        startActivity(intent);
-        if (!app.isDestroyed()) {
-            app.finish();
-        }
+        Toast toast = new Toast(getActivity());
 
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View layout = inflater.inflate(R.layout.toast,
+                (ViewGroup) getActivity().findViewById(R.id.toast_layout_root));
+        layout.setBackgroundResource(R.drawable.toast_layout_black);
+        TextView text = (TextView) layout.findViewById(R.id.toast_text);
+        text.setText(R.string.recovery_phrase_set);
+        text.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+        text.setPadding(20, 40, 20, 40);
+        toast.setGravity(Gravity.BOTTOM, 0, PhraseFlowActivity.screenParametersPoint.y / 2);
+        toast.setDuration(Toast.LENGTH_SHORT);
+        toast.setView(layout);
+        toast.show();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                PhraseFlowActivity app = (PhraseFlowActivity) getActivity();
+                Intent intent;
+                intent = new Intent(app, MainActivity.class);
+                startActivity(intent);
+                if (!app.isDestroyed()) {
+                    app.finish();
+                }
+            }
+        }, 1000);
+
+    }
+
+    public void releasePhrase() {
+        if (phrase != null)
+            Arrays.fill(phrase, (byte) 0);
     }
 
     public byte[] getPhrase() {

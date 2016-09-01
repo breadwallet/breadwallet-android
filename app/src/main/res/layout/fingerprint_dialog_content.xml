@@ -28,7 +28,6 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:gravity="center"
-        android:text="@string/fingerprint_description"
         android:textAlignment="center"
         android:textAppearance="@android:style/TextAppearance.Material.Subhead"
         android:textColor="?android:attr/textColorSecondary" />
