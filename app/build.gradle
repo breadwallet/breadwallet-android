@@ -3,15 +3,15 @@ apply plugin: 'com.android.model.application'
 model {
     android {
         compileSdkVersion = 24
-        buildToolsVersion = '24.0.1'
+        buildToolsVersion = '24.0.2'
 
         defaultConfig {
             testInstrumentationRunner = 'android.support.test.runner.AndroidJUnitRunner'
             applicationId = 'com.breadwallet'
             minSdkVersion.apiLevel = 23
             targetSdkVersion.apiLevel = 24
-            versionCode = 25
-            versionName = "25"
+            versionCode = 26
+            versionName = "26"
         }
 
         ndk {
@@ -70,7 +70,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:24.1.1'
-    compile 'com.android.support:support-v13:24.1.1'
+    compile 'com.android.support:appcompat-v7:24.2.0'
+    compile 'com.android.support:support-v13:24.2.0'
 
 }

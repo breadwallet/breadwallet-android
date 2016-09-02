@@ -203,5 +203,6 @@ public class PhraseFlowActivity extends Activity {
     private void releasePhrase(){
         fragmentPhraseFlow1.releasePhrase();
         fragmentPhraseFlow3.releasePhrase();
+        fragmentRecoveryPhrase.releasePhrase();
     }
 }
