@@ -75,4 +75,11 @@
         android:layout_below="@+id/phrase_layout"
         android:layout_centerHorizontal="true" />
 
+    <Button
+        android:id="@+id/back_button"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentStart="true"
+        android:background="@drawable/navigationback" />
+
 </RelativeLayout>

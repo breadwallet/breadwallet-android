@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -27,20 +28,20 @@ import java.util.Arrays;
 
 /**
  * BreadWallet
- * <p>
+ * <p/>
  * Created by Mihail Gutan <mihail@breadwallet.com> on 7/22/15.
  * Copyright (c) 2016 breadwallet LLC
- * <p>
+ * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * <p>
+ * <p/>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * <p>
+ * <p/>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -56,7 +57,8 @@ public class FragmentRecoveryPhrase extends Fragment {
     private ImageView checkBox;
     private boolean checked = false;
     private byte[] phrase;
-    private  RelativeLayout checkBoxlayout;
+    private RelativeLayout checkBoxlayout;
+    private Button backButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -65,6 +67,13 @@ public class FragmentRecoveryPhrase extends Fragment {
         thePhrase = (TextView) rootView.findViewById(R.id.the_phrase);
         checkBox = (ImageView) rootView.findViewById(R.id.write_down_check_box);
         checkBoxlayout = (RelativeLayout) rootView.findViewById(R.id.write_down_notice_layout);
+        backButton = (Button) rootView.findViewById(R.id.back_button);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().onBackPressed();
+            }
+        });
 
         return rootView;
     }
@@ -92,7 +101,7 @@ public class FragmentRecoveryPhrase extends Fragment {
         checked = !checked;
     }
 
-    public void setPhrase(byte[] phrase){
+    public void setPhrase(byte[] phrase) {
         this.phrase = phrase;
         boolean phraseWroteDown = SharedPreferencesManager.getPhraseWroteDown(getActivity());
 

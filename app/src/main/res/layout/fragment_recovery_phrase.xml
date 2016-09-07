@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingTop="90dp">
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/back_button"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/navigationback" />
 
     <TextView
         android:id="@+id/textView"
@@ -13,15 +18,18 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="60dp"
+        android:fontFamily="sans-serif-medium"
         android:gravity="center"
+        android:paddingTop="60dp"
         android:text="@string/dialog_recovery_phrase_warning"
         android:textColor="@color/dark_grey"
-        android:fontFamily="sans-serif-medium"
         android:textSize="17sp" />
 
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="20dp"
@@ -31,38 +39,41 @@
         android:textColor="@color/dark_grey"
         android:textSize="17sp" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/separator_height"
-        android:layout_marginTop="50dp"
-        android:background="@color/gray" />
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
         android:background="@drawable/clickable_layout"
-        android:clickable="false"
-        android:padding="10dp">
+        android:orientation="vertical"
+        android:clickable="false">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/separator_height"
+            android:layout_marginBottom="10dp"
+            android:background="@color/gray" />
 
         <TextView
             android:id="@+id/the_phrase"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:gravity="center"
+            android:layout_gravity="center"
             android:fontFamily="sans-serif"
+            android:gravity="center"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/black"
             android:textSize="@dimen/text_size" />
-    </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/separator_height"
-        android:background="@color/gray" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/separator_height"
+            android:layout_marginTop="10dp"
+            android:background="@color/gray" />
+    </LinearLayout>
+
 
     <RelativeLayout
         android:id="@+id/write_down_notice_layout"
@@ -92,4 +103,4 @@
     </RelativeLayout>
 
 
-</LinearLayout>
+</RelativeLayout>

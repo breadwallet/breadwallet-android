@@ -341,7 +341,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         middleBubbleBlocksCount = 0;
         app = this;
         final BRWalletManager m = BRWalletManager.getInstance(this);
-
         CurrencyManager currencyManager = CurrencyManager.getInstance(this);
         currencyManager.startTimer();
         currencyManager.deleteObservers();
@@ -373,6 +372,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                     BRWalletManager.getInstance(app).animateSavePhraseFlow();
             }
         }, 4000);
+        BRWalletManager.refreshAddress();
 
     }
 

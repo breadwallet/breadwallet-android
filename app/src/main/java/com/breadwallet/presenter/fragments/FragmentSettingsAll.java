@@ -97,6 +97,7 @@ public class FragmentSettingsAll extends Fragment {
         super.onResume();
         MiddleViewAdapter.resetMiddleView(getActivity(), null);
         refreshUI();
+        adapter.notifyDataSetChanged();
     }
 
     public static void refreshTransactions(final Activity ctx) {

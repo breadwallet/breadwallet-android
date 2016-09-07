@@ -13,6 +13,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+import android.widget.Button;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.fragments.FragmentPhraseFlow1;
@@ -77,6 +78,7 @@ public class PhraseFlowActivity extends Activity {
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(getColor(R.color.status_bar));
+
 
         phraseFlowActivity = this;
 

@@ -35,6 +35,7 @@ import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.presenter.fragments.FingerprintDialogFragment;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.presenter.fragments.PasswordDialogFragment;
+import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.adapter.TransactionListAdapter;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.security.KeyStoreManager;
@@ -281,6 +282,8 @@ public class BreadWalletApp extends Application {
         if (app != null) {
             app.lockerButton.setVisibility(b ? View.GONE : View.VISIBLE);
             app.lockerButton.setClickable(!b);
+            MiddleViewAdapter.resetMiddleView(app, null);
+
         }
     }
 

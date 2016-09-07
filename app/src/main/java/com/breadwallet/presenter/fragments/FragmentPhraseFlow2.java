@@ -54,6 +54,7 @@ import java.util.Arrays;
 public class FragmentPhraseFlow2 extends Fragment {
     private TextView thePhrase;
     private Button continueButton;
+    private Button backButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -69,6 +70,13 @@ public class FragmentPhraseFlow2 extends Fragment {
         continueButton = (Button) rootView.findViewById(R.id.continue_button);
         TextView step1 = (TextView) rootView.findViewById(R.id.step1);
         step1.setText(String.format(getString(R.string.step_holder), 1, 3));
+        backButton = (Button) rootView.findViewById(R.id.back_button);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().onBackPressed();
+            }
+        });
 
         return rootView;
     }

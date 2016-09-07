@@ -92,6 +92,7 @@ public class FragmentPhraseFlow3 extends Fragment {
     private int step = 1;
     private boolean pressAvailable;
     private static final int STEPS_LIMIT = 3;
+    private Button backButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -107,6 +108,13 @@ public class FragmentPhraseFlow3 extends Fragment {
         word5 = (Button) rootView.findViewById(R.id.word5);
         word6 = (Button) rootView.findViewById(R.id.word6);
         tableLayout = (TableLayout) rootView.findViewById(R.id.words_layout);
+        backButton = (Button) rootView.findViewById(R.id.back_button);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().onBackPressed();
+            }
+        });
         rootView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
