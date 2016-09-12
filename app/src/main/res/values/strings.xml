@@ -346,4 +346,16 @@
     <string name="write_down_your_recovery_phrase">WRITE DOWN YOUR \nRECOVERY PHRASE</string>
     <string name="protect_your_wallet">protect your wallet and ensure you can recover it after replacing or resetting your phone, or disabling your lock screen.</string>
 
+    <string name="word_nr2">2nd</string>
+    <string name="word_nr3">3rd</string>
+    <string name="word_nr4">4th</string>
+    <string name="word_nr5">5th</string>
+    <string name="word_nr6">6th</string>
+    <string name="word_nr7">7th</string>
+    <string name="word_nr8">8th</string>
+    <string name="word_nr9">9th</string>
+    <string name="word_nr10">10th</string>
+    <string name="word_nr11">11th</string>
+
+
 </resources>

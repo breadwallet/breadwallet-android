@@ -10,10 +10,9 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="120dp"
         android:fontFamily="sans-serif-medium"
         android:gravity="center"
-        android:paddingTop="60dp"
         android:text="@string/dialog_recovery_phrase_warning"
         android:textColor="@color/dark_grey"
         android:textSize="17sp" />
@@ -21,9 +20,9 @@
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/textFlow2"
         android:layout_centerHorizontal="true"
-        android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="20dp"
         android:fontFamily="sans-serif-light"
@@ -46,40 +45,29 @@
             android:id="@+id/separator1"
             android:layout_width="match_parent"
             android:layout_height="@dimen/separator_height"
+            android:layout_marginBottom="10dp"
             android:background="@color/gray" />
 
         <TextView
             android:id="@+id/the_phrase"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
             android:gravity="center"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
-            android:fontFamily="sans-serif"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/black"
             android:textSize="@dimen/text_size" />
 
-        <!--android:id="@+id/the_phrase"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_gravity="center"-->
-        <!--android:fontFamily="sans-serif"-->
-        <!--android:gravity="center"-->
-        <!--android:paddingLeft="20dp"-->
-        <!--android:paddingRight="20dp"-->
-        <!--android:textAppearance="?android:attr/textAppearanceLarge"-->
-        <!--android:textColor="@color/black"-->
-        <!--android:textSize="@dimen/text_size"-->
-
         <RelativeLayout
             android:id="@+id/separator2"
             android:layout_width="match_parent"
+            android:layout_marginTop="10dp"
             android:layout_height="@dimen/separator_height"
             android:background="@color/gray" />
 
     </LinearLayout>
-
 
     <Button
         android:id="@+id/continue_button"

@@ -182,6 +182,9 @@ public class PhraseFlowActivity extends Activity {
             if (CurrencyManager.getInstance(this).getBALANCE() >= SharedPreferencesManager.getLimit(this)
                     && !SharedPreferencesManager.getPhraseWroteDown(this)) {
                 super.onBackPressed();
+                if (!isDestroyed()) {
+                    finish();
+                }
             } else {
                 Intent intent;
                 intent = new Intent(this, MainActivity.class);

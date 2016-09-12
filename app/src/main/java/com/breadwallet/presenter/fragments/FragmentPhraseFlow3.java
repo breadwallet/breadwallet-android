@@ -9,6 +9,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -46,20 +48,20 @@ import java.util.Random;
 
 /**
  * BreadWallet
- * <p>
+ * <p/>
  * Created by Mihail Gutan <mihail@breadwallet.com> on 7/14/15.
  * Copyright (c) 2016 breadwallet LLC
- * <p>
+ * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * <p>
+ * <p/>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * <p>
+ * <p/>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -224,22 +226,47 @@ public class FragmentPhraseFlow3 extends Fragment {
         }
         String placeHolder;
         switch (n) {
-            case 1:
-                placeHolder = "second";
-                break;
-            case 2:
-                placeHolder = "third";
-                break;
             case 0:
                 throw new IllegalArgumentException("Cannot be 0");
             case 11:
                 throw new IllegalArgumentException("Cannot be 11");
-            default:
-                placeHolder = (n + 1) + "th";
+            case 1:
+                placeHolder = getString(R.string.word_nr2);
                 break;
+            case 2:
+                placeHolder = getString(R.string.word_nr3);
+                break;
+            case 3:
+                placeHolder = getString(R.string.word_nr4);
+                break;
+            case 4:
+                placeHolder = getString(R.string.word_nr5);
+                break;
+            case 5:
+                placeHolder = getString(R.string.word_nr6);
+                break;
+            case 6:
+                placeHolder = getString(R.string.word_nr7);
+                break;
+            case 7:
+                placeHolder = getString(R.string.word_nr8);
+                break;
+            case 8:
+                placeHolder = getString(R.string.word_nr9);
+                break;
+            case 9:
+                placeHolder = getString(R.string.word_nr10);
+                break;
+            case 10:
+                placeHolder = getString(R.string.word_nr11);
+                break;
+            default:
+                throw new IllegalArgumentException("cannot be other");
 
         }
-        textFlow.setText(String.format(getString(R.string.phrase_flow3), placeHolder));
+        final SpannableStringBuilder str = new SpannableStringBuilder(String.format(getString(R.string.phrase_flow3), placeHolder));
+        str.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD), 11, 15, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        textFlow.setText(str);
     }
 
     private void fillWordsArray() {
