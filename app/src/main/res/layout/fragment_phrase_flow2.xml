@@ -8,15 +8,29 @@
         android:id="@+id/textFlow2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp"
-        android:layout_marginBottom="50dp"
-        android:layout_above="@+id/phrase_layout"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="60dp"
+        android:fontFamily="sans-serif-medium"
         android:gravity="center"
-        android:layout_centerHorizontal="true"
+        android:paddingTop="60dp"
         android:text="@string/dialog_recovery_phrase_warning"
+        android:textColor="@color/dark_grey"
+        android:textSize="17sp" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_below="@+id/textFlow2"
+        android:layout_centerHorizontal="true"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:fontFamily="sans-serif-light"
+        android:text="@string/please_write_it_down"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/dark_grey" />
+        android:textColor="@color/dark_grey"
+        android:textSize="17sp" />
 
 
     <LinearLayout
@@ -38,13 +52,25 @@
             android:id="@+id/the_phrase"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
             android:gravity="center"
-            android:paddingLeft="30dp"
-            android:paddingRight="30dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:fontFamily="sans-serif"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/dark_grey"
-            android:textSize="22sp" />
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size" />
+
+        <!--android:id="@+id/the_phrase"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:fontFamily="sans-serif"-->
+        <!--android:gravity="center"-->
+        <!--android:paddingLeft="20dp"-->
+        <!--android:paddingRight="20dp"-->
+        <!--android:textAppearance="?android:attr/textAppearanceLarge"-->
+        <!--android:textColor="@color/black"-->
+        <!--android:textSize="@dimen/text_size"-->
 
         <RelativeLayout
             android:id="@+id/separator2"
@@ -69,11 +95,11 @@
 
     <TextView
         android:id="@+id/step1"
-        android:layout_marginTop="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/phrase_layout"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp" />
 
     <Button
         android:id="@+id/back_button"

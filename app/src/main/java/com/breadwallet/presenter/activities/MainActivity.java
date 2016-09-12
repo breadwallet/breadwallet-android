@@ -370,7 +370,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                 long limit = SharedPreferencesManager.getLimit(app);
                 Log.e(TAG, "balance: " + balance);
                 Log.e(TAG, "limit: " + limit);
-                if (balance >= limit)
+                if (balance > limit)
                     BRWalletManager.getInstance(app).animateSavePhraseFlow();
             }
         }, 4000);
