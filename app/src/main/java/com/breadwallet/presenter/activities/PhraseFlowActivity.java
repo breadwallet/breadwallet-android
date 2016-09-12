@@ -182,9 +182,6 @@ public class PhraseFlowActivity extends Activity {
             if (CurrencyManager.getInstance(this).getBALANCE() >= SharedPreferencesManager.getLimit(this)
                     && !SharedPreferencesManager.getPhraseWroteDown(this)) {
                 super.onBackPressed();
-                if (!isDestroyed()) {
-                    finish();
-                }
             } else {
                 Intent intent;
                 intent = new Intent(this, MainActivity.class);
@@ -205,9 +202,20 @@ public class PhraseFlowActivity extends Activity {
 
     }
 
-    private void releasePhrase(){
+    private void releasePhrase() {
         fragmentPhraseFlow1.releasePhrase();
         fragmentPhraseFlow3.releasePhrase();
         fragmentRecoveryPhrase.releasePhrase();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Intent intent;
+        intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        if (!isDestroyed()) {
+            finish();
+        }
     }
 }
