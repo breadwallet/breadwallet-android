@@ -336,6 +336,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.e(TAG, "onResume");
         appInBackground = false;
         middleViewState = 0;
         middleBubbleBlocksCount = 0;

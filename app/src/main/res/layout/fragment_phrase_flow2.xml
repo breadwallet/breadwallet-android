@@ -14,7 +14,7 @@
         android:layout_above="@+id/phrase_layout"
         android:gravity="center"
         android:layout_centerHorizontal="true"
-        android:text="@string/phrase_flow2"
+        android:text="@string/dialog_recovery_phrase_warning"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/dark_grey" />
 

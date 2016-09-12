@@ -333,7 +333,7 @@
     <!-- android -->
     <string name="phrase_flow2">please write down your phrase.</string>
     <!-- android -->
-    <string name="phrase_flow3">select the %s word of your recovery phrase from the list below.</string>
+    <string name="phrase_flow3">select the %s word of your recovery phrase from the list below</string>
     <!-- android -->
     <string name="syncing_in_progress">Syncing in progress..</string>
     <!-- android -->
