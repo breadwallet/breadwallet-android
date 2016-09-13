@@ -175,7 +175,6 @@ public class BRStringFormatter {
                         break;
                 }
             }
-
             symbol = currencySymbolString;
         } else {
             try {
