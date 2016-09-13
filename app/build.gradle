@@ -11,7 +11,7 @@ model {
             minSdkVersion.apiLevel = 23
             targetSdkVersion.apiLevel = 24
             versionCode = 27
-            versionName = "2"
+            versionName = "27"
         }
 
         ndk {
