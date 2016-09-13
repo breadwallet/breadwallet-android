@@ -136,6 +136,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         AmountAdapter.resetKeyboard();
         ((BreadWalletApp) getActivity().getApplication()).setLockerPayButton(BRConstants.LOCKER_BUTTON);
         isARequest = false;
+        getActivity().onBackPressed();
     }
 
     @Override

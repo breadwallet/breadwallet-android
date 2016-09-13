@@ -79,7 +79,6 @@ public class PhraseFlowActivity extends Activity {
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(getColor(R.color.status_bar));
 
-
         phraseFlowActivity = this;
 
         fragmentPhraseFlow1 = new FragmentPhraseFlow1();
@@ -210,11 +209,11 @@ public class PhraseFlowActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        Intent intent;
-        intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-        if (!isDestroyed()) {
-            finish();
-        }
+//        Intent intent;
+//        intent = new Intent(this, MainActivity.class);
+//        startActivity(intent);
+//        if (!isDestroyed()) {
+//            finish();
+//        }
     }
 }

@@ -78,11 +78,14 @@ public class FragmentSettingsAll extends Fragment {
 
         transactionList = (ListView) rootView.findViewById(R.id.transactions_list);
 
-        refreshTransactions(getActivity());
+
         adapter = new TransactionListAdapter(getActivity(), transactionObjects);
         if (transactionObjects != null) {
             if (transactionObjects.length == 0) transactionObjects = null;
         }
+        if (transactionList != null)
+            transactionList.setAdapter(adapter);
+        refreshTransactions(getActivity());
         return rootView;
     }
 
@@ -112,8 +115,6 @@ public class FragmentSettingsAll extends Fragment {
                             @Override
                             public void run() {
                                 refreshTransactionAvailable = true;
-                                if (transactionList != null)
-                                    transactionList.setAdapter(adapter);
                                 refreshUI();
                             }
                         });
