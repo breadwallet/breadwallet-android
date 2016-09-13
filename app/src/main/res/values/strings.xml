@@ -344,7 +344,7 @@
     <string name="step_holder">step %1$d of %2$d</string>
     <string name="recovery_phrase_set">recovery phrase set</string>
     <string name="write_down_your_recovery_phrase">WRITE DOWN YOUR \nRECOVERY PHRASE</string>
-    <string name="protect_your_wallet">protect your wallet and ensure you can recover it after replacing or resetting your phone, or disabling your lock screen.</string>
+    <string name="protect_your_wallet">protect your wallet and ensure you can recover it after replacing or resetting your phone, or disabling your lock screen</string>
 
     <string name="word_nr2">2nd</string>
     <string name="word_nr3">3rd</string>

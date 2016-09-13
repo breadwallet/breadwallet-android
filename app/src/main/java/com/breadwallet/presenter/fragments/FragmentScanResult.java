@@ -1,5 +1,6 @@
 package com.breadwallet.presenter.fragments;
 
+import android.animation.Animator;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +18,7 @@ import android.graphics.Typeface;
 import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRStringFormatter;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
@@ -136,7 +138,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         AmountAdapter.resetKeyboard();
         ((BreadWalletApp) getActivity().getApplication()).setLockerPayButton(BRConstants.LOCKER_BUTTON);
         isARequest = false;
-        getActivity().onBackPressed();
+        BRAnimator.hideScanResultFragment();
     }
 
     @Override

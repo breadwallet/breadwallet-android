@@ -108,7 +108,7 @@ public class FragmentPhraseFlow1 extends Fragment {
             double rate = SharedPreferencesManager.getRate(getActivity());
             String limitText = String.format("%s(%s)", BRStringFormatter.getFormattedCurrencyString("BTC", limit),
                     BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(limit), getActivity()));
-            textFlow1.setText(String.format(Locale.getDefault(), "your account balance is above %s.\n\n", limitText));
+            textFlow1.setText(String.format(Locale.getDefault(), "your account balance is above %s\n\n", limitText));
             textFlow1.setTypeface(null, Typeface.BOLD);
             textFlow2.setText(R.string.protect_your_wallet);
         }

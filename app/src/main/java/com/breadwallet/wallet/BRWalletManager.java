@@ -280,10 +280,10 @@ public class BRWalletManager {
                     Log.e(TAG,"balance: " + CurrencyManager.getInstance(ctx).getBALANCE());
                     Log.e(TAG,"limit: " +SharedPreferencesManager.getLimit(ctx));
                     long lastMessageShow = SharedPreferencesManager.getPhraseWarningTime(ctx);
-                    if (lastMessageShow == 0 || (!firstTime && lastMessageShow > (now - 30)))
+                    if (lastMessageShow == 0 || (!firstTime && lastMessageShow > (now - 36 * 60 * 60)))
                         return;//36 * 60 * 60//
                     if (CurrencyManager.getInstance(ctx).getBALANCE() > SharedPreferencesManager.getLimit(ctx)) {
-                        getInstance(ctx).animateSavePhraseFlow();
+//                        getInstance(ctx).animateSavePhraseFlow();
                         return;
                     }
                     SharedPreferencesManager.putPhraseWarningTime(ctx, System.currentTimeMillis() / 1000);
@@ -901,6 +901,7 @@ public class BRWalletManager {
 
     public void generateQR(String bitcoinURL, ImageView qrcode) {
         if (qrcode == null || bitcoinURL == null || bitcoinURL.isEmpty()) return;
+        if(ctx == null) ctx = MainActivity.app;
         WindowManager manager = (WindowManager) ctx.getSystemService(Activity.WINDOW_SERVICE);
         Display display = manager.getDefaultDisplay();
         Point point = new Point();
