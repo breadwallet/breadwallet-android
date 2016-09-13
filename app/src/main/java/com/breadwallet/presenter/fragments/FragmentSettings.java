@@ -123,9 +123,7 @@ public class FragmentSettings extends Fragment {
         recoveryPhrase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (BRAnimator.checkTheMultipressingAvailability()) {
-                    ((BreadWalletApp) app.getApplicationContext()).promptForAuthentication(app, BRConstants.AUTH_FOR_PHRASE, null, null, null, null);
-                }
+                BRWalletManager.getInstance(getActivity()).animateSavePhraseFlow();
             }
         });
         about.setOnClickListener(new View.OnClickListener() {

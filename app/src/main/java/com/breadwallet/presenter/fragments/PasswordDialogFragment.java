@@ -2,20 +2,20 @@ package com.breadwallet.presenter.fragments;
 
 /**
  * BreadWallet
- * <p>
+ * <p/>
  * Created by Mihail Gutan <mihail@breadwallet.com> on 7/24/15.
  * Copyright (c) 2016 breadwallet LLC
- * <p>
+ * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * <p>
+ * <p/>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * <p>
+ * <p/>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -49,6 +49,7 @@ import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.activities.PhraseFlowActivity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -143,7 +144,7 @@ public class PasswordDialogFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 if (phraseEditText == null) return;
-                (new Handler()).postDelayed(new Runnable() {
+                new Handler().postDelayed(new Runnable() {
 
                     public void run() {
                         phraseEditText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
@@ -231,7 +232,7 @@ public class PasswordDialogFragment extends DialogFragment {
 
         getDialog().setCanceledOnTouchOutside(false);
 
-        (new Handler()).postDelayed(new Runnable() {
+        new Handler().postDelayed(new Runnable() {
 
             public void run() {
                 passcodeEditText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
@@ -246,29 +247,28 @@ public class PasswordDialogFragment extends DialogFragment {
     public void onResume() {
         super.onResume();
         passcodeEditText.setText("");
-        final Activity app = getActivity();
-        if (app != null) {
-            passcodeEditText.post(
-                    new Runnable() {
-                        public void run() {
-                            InputMethodManager inputMethodManager = (InputMethodManager) app.getSystemService(Context.INPUT_METHOD_SERVICE);
-                            inputMethodManager.toggleSoftInputFromWindow(passcodeEditText.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0);
-                            passcodeEditText.requestFocus();
-                        }
-                    });
-        }
+//        final Activity app = getActivity();
+//        if (app != null) {
+//            passcodeEditText.post(
+//                    new Runnable() {
+//                        public void run() {
+//                            InputMethodManager inputMethodManager = (InputMethodManager) app.getSystemService(Context.INPUT_METHOD_SERVICE);
+//                            inputMethodManager.toggleSoftInputFromWindow(passcodeEditText.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0);
+//                            passcodeEditText.requestFocus();
+//                        }
+//                    });
+//        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
 
-        InputMethodManager keyboard = (InputMethodManager) getActivity().
-                getSystemService(Context.INPUT_METHOD_SERVICE);
-        EditText editText = CustomPagerAdapter.adapter.
-                mainFragment.addressEditText;
-        if (CustomPagerAdapter.adapter != null && editText != null)
-            keyboard.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+        View view = getActivity().getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(passcodeEditText.getWindowToken(), 0);
+        }
     }
 
     public void setFirstTimeTrue() {
@@ -339,6 +339,12 @@ public class PasswordDialogFragment extends DialogFragment {
             prevPass = s.toString();
             if (KeyStoreManager.getFailCount(getActivity()) >= 3) setWalletDisabled();
             if (passCodeManager.checkAuth(s.toString(), getActivity())) {
+                InputMethodManager inputManager =
+                        (InputMethodManager) getActivity().
+                                getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputManager.hideSoftInputFromWindow(
+                        passcodeEditText.getWindowToken(),
+                        InputMethodManager.HIDE_NOT_ALWAYS);
                 //reset the passcode after successful attempt
                 KeyStoreManager.putFailCount(0, getActivity());
                 getDialog().cancel();
@@ -355,7 +361,14 @@ public class PasswordDialogFragment extends DialogFragment {
                 passcodeEditText.setText("");
                 Log.e(TAG, "mode: " + mode + " request: " + request);
                 if (mode == BRConstants.AUTH_FOR_PHRASE) {
-                    BRWalletManager.getInstance(getActivity()).animateSavePhraseFlow();
+                    PhraseFlowActivity app = ((PhraseFlowActivity) getActivity());
+                    if (SharedPreferencesManager.getPhraseWroteDown(app)) {
+                        app.animateSlide(app.fragmentPhraseFlow1, app.fragmentRecoveryPhrase, IntroActivity.RIGHT);
+                        app.fragmentRecoveryPhrase.setPhrase(FragmentPhraseFlow1.phrase);
+                    } else {
+                        app.animateSlide(app.fragmentPhraseFlow1, app.fragmentPhraseFlow2, IntroActivity.RIGHT);
+                        app.fragmentPhraseFlow2.setPhrase(FragmentPhraseFlow1.phrase);
+                    }
                 } else if (mode == BRConstants.AUTH_FOR_LIMIT) {
                     BRAnimator.animateSlideToLeft((MainActivity) getActivity(), new FragmentSpendLimit(), new FragmentSettings());
                 } else if (mode == BRConstants.AUTH_FOR_PAY && request != null) {

@@ -146,9 +146,7 @@ public class CurrencyManager extends Observable {
 
         @Override
         protected void onPostExecute(Object o) {
-
             if (tmp.size() > 0) {
-//                Log.e(TAG, "inside the adapter changing shit");
                 currencyListAdapter.clear();
                 currencyListAdapter.addAll(tmp);
                 currencyListAdapter.notifyDataSetChanged();
@@ -175,7 +173,6 @@ public class CurrencyManager extends Observable {
 
         timerTask = new TimerTask() {
             public void run() {
-
                 //use a handler to run a toast that shows the current timestamp
                 handler.post(new Runnable() {
                     public void run() {

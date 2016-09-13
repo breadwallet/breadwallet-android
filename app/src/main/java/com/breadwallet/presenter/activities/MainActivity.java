@@ -163,8 +163,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         BRAnimator.scaleView(pageIndicatorLeft, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f,
                 BRConstants.PAGE_INDICATOR_SCALE_UP);
         setStatusBarColor();
-        if (CurrencyManager.getInstance(this).getBALANCE() < SharedPreferencesManager.getLimit(this))
-            BRWalletManager.showWritePhraseDialog(false);
     }
 
     @Override

@@ -179,7 +179,7 @@ public class PhraseFlowActivity extends Activity {
             animateSlide(fragmentPhraseFlow3, fragmentPhraseFlow2, IntroActivity.LEFT);
             fragmentPhraseFlow2.setPhrase(fragmentPhraseFlow3.getPhrase());
         } else {
-            if (CurrencyManager.getInstance(this).getBALANCE() >= SharedPreferencesManager.getLimit(this)
+            if (CurrencyManager.getInstance(this).getBALANCE() > SharedPreferencesManager.getLimit(this)
                     && !SharedPreferencesManager.getPhraseWroteDown(this)) {
                 super.onBackPressed();
             } else {

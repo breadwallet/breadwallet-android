@@ -2,6 +2,7 @@
 package com.breadwallet.presenter.fragments;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -12,9 +13,11 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
@@ -60,7 +63,7 @@ import java.util.Locale;
 
 public class FragmentPhraseFlow1 extends Fragment {
     FragmentPhraseFlow1 fragmentPhraseFlow1;
-    private byte[] phrase;
+    public static byte[] phrase;
 
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
@@ -81,12 +84,9 @@ public class FragmentPhraseFlow1 extends Fragment {
             public void onClick(View view) {
                 PhraseFlowActivity app = ((PhraseFlowActivity) getActivity());
                 if (app == null) return;
-                if (SharedPreferencesManager.getPhraseWroteDown(app)) {
-                    app.animateSlide(app.fragmentPhraseFlow1, app.fragmentRecoveryPhrase, IntroActivity.RIGHT);
-                    app.fragmentRecoveryPhrase.setPhrase(phrase);
-                } else {
-                    app.animateSlide(app.fragmentPhraseFlow1, app.fragmentPhraseFlow2, IntroActivity.RIGHT);
-                    app.fragmentPhraseFlow2.setPhrase(phrase);
+
+                if (BRAnimator.checkTheMultipressingAvailability()) {
+                    ((BreadWalletApp) app.getApplicationContext()).promptForAuthentication(app, BRConstants.AUTH_FOR_PHRASE, null, null, null, null);
                 }
             }
         });
@@ -120,8 +120,13 @@ public class FragmentPhraseFlow1 extends Fragment {
         super.onResume();
     }
 
-    public void setPhrase(final byte[] phrase) {
-        this.phrase = phrase;
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    public void setPhrase(final byte[] thePhrase) {
+        phrase = thePhrase;
 
     }
 

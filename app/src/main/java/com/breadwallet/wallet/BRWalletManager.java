@@ -277,10 +277,12 @@ public class BRWalletManager {
                     boolean phraseWroteDown = SharedPreferencesManager.getPhraseWroteDown(ctx);
                     if (phraseWroteDown) return;
                     long now = System.currentTimeMillis() / 1000;
+                    Log.e(TAG,"balance: " + CurrencyManager.getInstance(ctx).getBALANCE());
+                    Log.e(TAG,"limit: " +SharedPreferencesManager.getLimit(ctx));
                     long lastMessageShow = SharedPreferencesManager.getPhraseWarningTime(ctx);
                     if (lastMessageShow == 0 || (!firstTime && lastMessageShow > (now - 30)))
                         return;//36 * 60 * 60//
-                    if (CurrencyManager.getInstance(ctx).getBALANCE() >= SharedPreferencesManager.getLimit(ctx)) {
+                    if (CurrencyManager.getInstance(ctx).getBALANCE() > SharedPreferencesManager.getLimit(ctx)) {
                         getInstance(ctx).animateSavePhraseFlow();
                         return;
                     }
@@ -473,7 +475,7 @@ public class BRWalletManager {
                         public void run() {
                             showWritePhraseDialog(true);
                         }
-                    }, 4000);
+                    }, 2000);
                 }
             });
 
