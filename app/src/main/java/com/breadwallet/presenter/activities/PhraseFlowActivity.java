@@ -194,7 +194,6 @@ public class PhraseFlowActivity extends Activity {
 
     }
 
-
     @Override
     public void onDestroy() {
         super.onDestroy();

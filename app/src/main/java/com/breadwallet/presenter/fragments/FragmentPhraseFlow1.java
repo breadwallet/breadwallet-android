@@ -97,7 +97,7 @@ public class FragmentPhraseFlow1 extends Fragment {
                 return true;
             }
         });
-        if (CurrencyManager.getInstance(getActivity()).getBALANCE() >= limit
+        if (CurrencyManager.getInstance(getActivity()).getBALANCE() > limit
                 && !SharedPreferencesManager.getPhraseWroteDown(getActivity())) {
             TextView title = (TextView) rootView.findViewById(R.id.warning_flow);
             TextView textFlow1 = (TextView) rootView.findViewById(R.id.textFlow1);

@@ -123,7 +123,7 @@ public class FragmentPhraseFlow3 extends Fragment {
                 return true;
             }
         });
-        if (CurrencyManager.getInstance(getActivity()).getBALANCE() >= SharedPreferencesManager.getLimit(getActivity())) {
+        if (CurrencyManager.getInstance(getActivity()).getBALANCE() > SharedPreferencesManager.getLimit(getActivity())) {
             skipButton.setVisibility(View.GONE);
         }
         skipButton.setOnClickListener(new View.OnClickListener() {
