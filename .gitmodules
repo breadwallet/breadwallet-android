@@ -1,6 +1,6 @@
 [submodule "app/src/main/jni/breadwallet-core"]
 	path = app/src/main/jni/breadwallet-core
-	url = git@github.com:breadwallet/breadwallet-core.git
+	url = https://github.com:breadwallet/breadwallet-core.git
 [submodule "app/src/main/secp/secp256k1"]
 	path = app/src/main/secp/secp256k1
-	url = git@github.com:bitcoin/secp256k1.git
+	url = https://github.com:bitcoin/secp256k1.git
