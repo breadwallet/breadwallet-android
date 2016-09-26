@@ -8,5 +8,6 @@ Prerequisites:
 - Go to https://github.com/breadwallet/breadwallet-android and clone or download the project
 - Open the project with Android Studio and let the project sync
 - Go to SDK Manager and download all the SDK Platforms and SDK Tools
-- init/update git submodules
-- NDK -> android-ndk-r11c
+- Initialize the submodules - <code>git submodule init</code>
+- Update the submodules - <code>git submodule update</code>
+- Build -> Rebuild Project
