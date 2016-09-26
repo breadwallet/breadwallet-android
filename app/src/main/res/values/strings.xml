@@ -333,8 +333,6 @@
     <!-- android -->
     <string name="phrase_flow2">please write down your phrase.</string>
     <!-- android -->
-    <string name="phrase_flow3">select the %s word of your recovery phrase from the list below</string>
-    <!-- android -->
     <string name="syncing_in_progress">Syncing in progress..</string>
     <!-- android -->
     <string name="wait_for_sync_to_finish">Please wait for syncing to finish before sending funds.</string>
@@ -346,16 +344,16 @@
     <string name="write_down_your_recovery_phrase">WRITE DOWN YOUR \nRECOVERY PHRASE</string>
     <string name="protect_your_wallet">protect your wallet and ensure you can recover it after replacing or resetting your phone, or disabling your lock screen</string>
 
-    <string name="word_nr2">2nd</string>
-    <string name="word_nr3">3rd</string>
-    <string name="word_nr4">4th</string>
-    <string name="word_nr5">5th</string>
-    <string name="word_nr6">6th</string>
-    <string name="word_nr7">7th</string>
-    <string name="word_nr8">8th</string>
-    <string name="word_nr9">9th</string>
-    <string name="word_nr10">10th</string>
-    <string name="word_nr11">11th</string>
+    <string name="word_nr2">select the 2nd word of your recovery phrase from the list below</string>
+    <string name="word_nr3">select the 3rd word of your recovery phrase from the list below</string>
+    <string name="word_nr4">select the 4th word of your recovery phrase from the list below</string>
+    <string name="word_nr5">select the 5th word of your recovery phrase from the list below</string>
+    <string name="word_nr6">select the 6th word of your recovery phrase from the list below</string>
+    <string name="word_nr7">select the 7th word of your recovery phrase from the list below</string>
+    <string name="word_nr8">select the 8th word of your recovery phrase from the list below</string>
+    <string name="word_nr9">select the 9th word of your recovery phrase from the list below</string>
+    <string name="word_nr10">select the 10th word of your recovery phrase from the list below</string>
+    <string name="word_nr11">select the 11th word of your recovery phrase from the list below</string>
 
 
 </resources>

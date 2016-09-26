@@ -264,7 +264,7 @@ public class FragmentPhraseFlow3 extends Fragment {
                 throw new IllegalArgumentException("cannot be other");
 
         }
-        final SpannableStringBuilder str = new SpannableStringBuilder(String.format(getString(R.string.phrase_flow3), placeHolder));
+        final SpannableStringBuilder str = new SpannableStringBuilder(placeHolder);
         str.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD), 11, 15, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         textFlow.setText(str);
     }
