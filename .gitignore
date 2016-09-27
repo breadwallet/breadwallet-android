@@ -60,3 +60,5 @@ gradle.properties
 #NDK
 obj/
 crash.txt
+/captures/
+/projectFilesBackup/

@@ -184,13 +184,10 @@ public class BreadWalletApp extends Application {
 
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP_MR1)
     public void promptForAuthentication(Activity context, int mode, PaymentRequestEntity requestEntity, String message, String title, PaymentRequestWrapper paymentRequest) {
         Log.e(TAG, "promptForAuthentication: " + mode);
         if (context == null) return;
         KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Activity.KEYGUARD_SERVICE);
-        Log.e(TAG, "Fingerpring: " + mFingerprintManager.isHardwareDetected());
-        Log.e(TAG, "Fingerpring enrolled: " + mFingerprintManager.hasEnrolledFingerprints());
 
         boolean useFingerPrint = ActivityCompat.checkSelfPermission(this, Manifest.permission.USE_FINGERPRINT) ==
                 PackageManager.PERMISSION_GRANTED && mFingerprintManager.isHardwareDetected() && mFingerprintManager.hasEnrolledFingerprints();

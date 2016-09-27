@@ -3,24 +3,17 @@ package com.breadwallet.presenter.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TextView;
@@ -31,19 +24,14 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.activities.PhraseFlowActivity;
-import com.breadwallet.tools.adapter.CustomPagerAdapter;
-import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.animation.DecelerateOvershootInterpolator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.CurrencyManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
-import com.breadwallet.tools.security.PostAuthenticationProcessor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Random;
 
 /**
@@ -231,42 +219,40 @@ public class FragmentPhraseFlow3 extends Fragment {
             case 11:
                 throw new IllegalArgumentException("Cannot be 11");
             case 1:
-                placeHolder = getString(R.string.word_nr2);
+                textFlow.setText(getText(R.string.word_nr2));
                 break;
             case 2:
-                placeHolder = getString(R.string.word_nr3);
+                textFlow.setText(getText(R.string.word_nr3));
                 break;
             case 3:
-                placeHolder = getString(R.string.word_nr4);
+                textFlow.setText(getText(R.string.word_nr4));
                 break;
             case 4:
-                placeHolder = getString(R.string.word_nr5);
+                textFlow.setText(getText(R.string.word_nr5));
                 break;
             case 5:
-                placeHolder = getString(R.string.word_nr6);
+                textFlow.setText(getText(R.string.word_nr6));
                 break;
             case 6:
-                placeHolder = getString(R.string.word_nr7);
+                textFlow.setText(getText(R.string.word_nr7));
                 break;
             case 7:
-                placeHolder = getString(R.string.word_nr8);
+                textFlow.setText(getText(R.string.word_nr8));
                 break;
             case 8:
-                placeHolder = getString(R.string.word_nr9);
+                textFlow.setText(getText(R.string.word_nr9));
                 break;
             case 9:
-                placeHolder = getString(R.string.word_nr10);
+                textFlow.setText(getText(R.string.word_nr10));
                 break;
             case 10:
-                placeHolder = getString(R.string.word_nr11);
+                textFlow.setText(getText(R.string.word_nr11));
                 break;
             default:
                 throw new IllegalArgumentException("cannot be other");
 
         }
-        final SpannableStringBuilder str = new SpannableStringBuilder(placeHolder);
-        str.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD), 11, 15, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        textFlow.setText(str);
+
     }
 
     private void fillWordsArray() {
