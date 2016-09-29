@@ -1,7 +1,5 @@
 package com.platform;
 
-import android.util.Log;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -10,17 +8,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static android.R.attr.entries;
-import static android.R.id.input;
-import static com.google.zxing.qrcode.decoder.ErrorCorrectionLevel.H;
 
 /**
  * BreadWallet
@@ -135,6 +127,32 @@ public class APIClient {
 
         return null;
 
+        HttpURLConnection conn = null;
+        try {
+            URL url = new URL(BASE_URL + FEE_PER_KB_URL);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            System.out.println(conn.getURL());
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(
+                    (conn.getInputStream())));
+
+            StringBuilder builder = new StringBuilder();
+            String aux;
+
+            while ((aux = br.readLine()) != null) {
+                builder.append(aux);
+            }
+            JSONObject object = new JSONObject(builder.toString());
+            return object.getInt("fee_per_kb");
+        } catch (IOException e) {
+            e.printStackTrace();
+            if (conn != null)
+                conn.disconnect();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     public String signRequest(String request) {
