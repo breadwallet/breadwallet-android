@@ -13,7 +13,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-
 /**
  * BreadWallet
  * <p/>
@@ -123,7 +122,7 @@ public class APIClient {
         return builder.toString();
     }
 
-    public Map<String, String> getToken() {
+    public int getToken() {
 
         return null;
 
@@ -144,7 +143,7 @@ public class APIClient {
                 builder.append(aux);
             }
             JSONObject object = new JSONObject(builder.toString());
-            return object.getInt("fee_per_kb");
+            return (long) object.getInt("fee_per_kb");
         } catch (IOException e) {
             e.printStackTrace();
             if (conn != null)
@@ -154,6 +153,7 @@ public class APIClient {
         }
         return 0;
     }
+
 
     public String signRequest(String request) {
         return null;
