@@ -135,7 +135,7 @@ static void txAdded(void *info, BRTransaction *tx) {
     (*env)->CallStaticVoidMethod(env, _walletManagerClass, mid, result, (jint) tx->blockHeight,
                                  (jlong) tx->timestamp,
                                  (jlong) amount, jstrHash);
-    (*env)->DeleteLocalRef(env,jstrHash);
+    (*env)->DeleteLocalRef(env, jstrHash);
 }
 
 static void txUpdated(void *info, const UInt256 txHashes[], size_t count, uint32_t blockHeight,
@@ -156,7 +156,7 @@ static void txUpdated(void *info, const UInt256 txHashes[], size_t count, uint32
 
         (*env)->CallStaticVoidMethod(env, _walletManagerClass, mid, JstrHash, (jint) blockHeight,
                                      (jint) timestamp);
-        (*env)->DeleteLocalRef(env,JstrHash);
+        (*env)->DeleteLocalRef(env, JstrHash);
     }
 }
 
@@ -840,4 +840,20 @@ JNIEXPORT jint JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTxCount(JN
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "reverseTxHash");
     if (!_wallet) return 0;
     return (jint) BRWalletTransactions(_wallet, NULL, 0);
+}
+
+
+JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getAuthPrivKeyForAPI(JNIEnv *env,
+                                                                                        jobject thiz,
+                                                                                        jbyteArray phrase) {
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "getAuthPrivKeyForAPI");
+    jbyte *bytePhrase = (*env)->GetByteArrayElements(env, phrase, 0);
+    size_t phraseLen = (size_t) (*env)->GetArrayLength(env, phrase);
+    BRKey key;
+    char *charPhrase = (char *) bytePhrase;
+    BRBIP32APIAuthKey(&key, charPhrase, phraseLen);
+    jbyteArray result = (*env)->NewByteArray(env, (jsize) sizeof(key));
+
+    (*env)->SetByteArrayRegion(env, result, 0, (jsize) sizeof(key), (jbyte *) &key);
+    return result;
 }

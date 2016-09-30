@@ -59,6 +59,7 @@ import com.google.zxing.common.BitMatrix;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.security.SecureRandom;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Locale;
@@ -132,6 +133,9 @@ public class BRWalletManager {
         if (!success) return false;
         KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), ctx);
         byte[] strBytes = TypesConverter.getNullTerminatedPhrase(strPhrase);
+        byte[] authKey = getAuthPrivKeyForAPI(strPhrase);
+//        Log.e(TAG,"authKey: " + Arrays.toString(authKey));
+        KeyStoreManager.putAuthKey(authKey, ctx);
         byte[] pubKey = BRWalletManager.getInstance(ctx).getMasterPubKey(strBytes);
         KeyStoreManager.putMasterPublicKey(pubKey, ctx);
 
@@ -1071,5 +1075,7 @@ public class BRWalletManager {
     public native int getTxCount();
 
     public native long getMinOutputAmountRequested();
+
+    public native byte[] getAuthPrivKeyForAPI(byte[] phrase);
 
 }

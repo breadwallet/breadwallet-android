@@ -133,4 +133,8 @@ Java_com_breadwallet_wallet_BRWalletManager_reverseTxHash(JNIEnv *env, jobject t
 
 JNIEXPORT jint JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTxCount(JNIEnv *env, jobject thiz);
 
+JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getAuthPrivKeyForAPI(JNIEnv *env,
+                                                                                           jobject thiz,
+                                                                                           jbyteArray phrase);
+
 #endif //BREADWALLET_WALLET_H

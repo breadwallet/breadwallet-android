@@ -84,6 +84,7 @@ public class KeyStoreManager {
     public static final String FAIL_COUNT_IV = "ivfailcount";
     public static final String SPENT_LIMIT_IV = "ivspendlimit";
     public static final String FAIL_TIMESTAMP_IV = "ivfailtimestamp";
+    public static final String AUTH_KEY_IV = "ivauthkey";
 
     public static final String PHRASE_ALIAS = "phrase";
     public static final String CANARY_ALIAS = "canary";
@@ -93,6 +94,7 @@ public class KeyStoreManager {
     public static final String FAIL_COUNT_ALIAS = "failCount";
     public static final String SPEND_LIMIT_ALIAS = "spendlimit";
     public static final String FAIL_TIMESTAMP_ALIAS = "failTimeStamp";
+    public static final String AUTH_KEY_ALIAS = "authKey";
 
     public static final String PHRASE_FILENAME = "my_phrase";
     public static final String CANARY_FILENAME = "my_canary";
@@ -102,6 +104,7 @@ public class KeyStoreManager {
     public static final String FAIL_COUNT_FILENAME = "my_fail_count";
     public static final String SPEND_LIMIT_FILENAME = "my_spend_limit";
     public static final String FAIL_TIMESTAMP_FILENAME = "my_fail_timestamp";
+    public static final String AUTH_KEY_FILENAME = "my_auth_key";
 
     public static final int AUTH_DURATION_SEC = 300;
 
@@ -241,6 +244,13 @@ public class KeyStoreManager {
 
     public static byte[] getMasterPublicKey(final Activity context) {
         return getData(context, PUB_KEY_ALIAS, PUB_KEY_FILENAME, PUB_KEY_IV, 0);
+    }
+    public static boolean putAuthKey(byte[] authKey, Activity context) {
+        return authKey != null && authKey.length != 0 && setData(context, authKey, AUTH_KEY_ALIAS, AUTH_KEY_FILENAME, AUTH_KEY_IV, 0, false);
+    }
+
+    public static byte[] getAuthKey(final Activity context) {
+        return getData(context, AUTH_KEY_ALIAS, AUTH_KEY_FILENAME, AUTH_KEY_IV, 0);
     }
 
     public static boolean putWalletCreationTime(int creationTime, Activity context) {
