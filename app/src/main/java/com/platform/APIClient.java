@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Map;
 
 /**
  * BreadWallet
@@ -34,7 +35,6 @@ import java.net.URL;
  * THE SOFTWARE.
  */
 public class APIClient {
-    public static final String TAG = APIClient.class.getName();
 
     // proto is the transport protocol to use for talking to the API (either http or https)
     private static final String PROTO = "https";
@@ -74,7 +74,7 @@ public class APIClient {
                 builder.append(aux);
             }
             JSONObject object = new JSONObject(builder.toString());
-            return object.getInt("fee_per_kb");
+            return (long) object.getInt("fee_per_kb");
         } catch (IOException e) {
             e.printStackTrace();
             if (conn != null)
@@ -85,6 +85,11 @@ public class APIClient {
         return 0;
     }
 
+    public Map<String, String> getToken() {
+        return null;
+
+    }
+
     public String signRequest(String request) {
         return null;
     }
@@ -92,4 +97,6 @@ public class APIClient {
     public String dataTaskWithRequest() {
         return null;
     }
+
+//    public String
 }
