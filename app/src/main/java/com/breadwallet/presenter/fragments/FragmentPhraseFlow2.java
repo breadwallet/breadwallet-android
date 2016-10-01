@@ -85,7 +85,7 @@ public class FragmentPhraseFlow2 extends Fragment {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                String cleanPhrase = new String(phrase);
+                String cleanPhrase = phrase == null? "" : new String(phrase);
                 if (cleanPhrase.split(" ").length == 12 && cleanPhrase.charAt(cleanPhrase.length() - 1) == '\0') {
                     ((BreadWalletApp) getActivity().getApplication()).showCustomDialog(getString(R.string.warning),
                             getActivity().getString(R.string.phrase_error), getString(R.string.ok));
@@ -104,7 +104,7 @@ public class FragmentPhraseFlow2 extends Fragment {
                     }
                 });
             }
-        },50);
+        }, 50);
 
     }
 

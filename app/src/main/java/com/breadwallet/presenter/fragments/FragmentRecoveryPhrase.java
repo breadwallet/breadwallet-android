@@ -102,6 +102,7 @@ public class FragmentRecoveryPhrase extends Fragment {
     }
 
     public void setPhrase(byte[] phrase) {
+        if (phrase == null) return;
         this.phrase = phrase;
         boolean phraseWroteDown = SharedPreferencesManager.getPhraseWroteDown(getActivity());
 

@@ -133,9 +133,9 @@ public class BRWalletManager {
         if (!success) return false;
         KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), ctx);
         byte[] strBytes = TypesConverter.getNullTerminatedPhrase(strPhrase);
-        byte[] authKey = getAuthPrivKeyForAPI(strPhrase);
+//        byte[] authKey = getAuthPrivKeyForAPI(strPhrase);
 //        Log.e(TAG,"authKey: " + Arrays.toString(authKey));
-        KeyStoreManager.putAuthKey(authKey, ctx);
+//        KeyStoreManager.putAuthKey(authKey, ctx);
         byte[] pubKey = BRWalletManager.getInstance(ctx).getMasterPubKey(strBytes);
         KeyStoreManager.putMasterPublicKey(pubKey, ctx);
 
@@ -1077,5 +1077,7 @@ public class BRWalletManager {
     public native long getMinOutputAmountRequested();
 
     public native byte[] getAuthPrivKeyForAPI(byte[] phrase);
+
+    public native byte[] getAuthPublicKeyForAPI(byte[] privKey);
 
 }

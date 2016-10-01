@@ -843,9 +843,10 @@ JNIEXPORT jint JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTxCount(JN
 }
 
 
-JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getAuthPrivKeyForAPI(JNIEnv *env,
-                                                                                        jobject thiz,
-                                                                                        jbyteArray phrase) {
+JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getAuthPrivKeyForAPI(
+        JNIEnv *env,
+        jobject thiz,
+        jbyteArray phrase) {
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "getAuthPrivKeyForAPI");
     jbyte *bytePhrase = (*env)->GetByteArrayElements(env, phrase, 0);
     size_t phraseLen = (size_t) (*env)->GetArrayLength(env, phrase);
@@ -855,5 +856,22 @@ JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getAuth
     jbyteArray result = (*env)->NewByteArray(env, (jsize) sizeof(key));
 
     (*env)->SetByteArrayRegion(env, result, 0, (jsize) sizeof(key), (jbyte *) &key);
+    return result;
+}
+
+JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getAuthPublicKeyForAPI(
+        JNIEnv *env,
+        jobject thiz,
+        jbyteArray privkey) {
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "getAuthPublicKeyForAPI");
+    jbyte *bytePrivKey = (*env)->GetByteArrayElements(env, privkey, 0);
+    BRKey key;
+    BRKey pubKey;
+
+    BRKeySetPrivKey(&key, (const char *) bytePrivKey);
+    size_t len = BRKeyPubKey(&key, NULL, 0);
+    BRKeyPubKey(&key, &pubKey, len);
+    jbyteArray result = (*env)->NewByteArray(env, (jsize) sizeof(pubKey));
+    (*env)->SetByteArrayRegion(env, result, 0, (jsize) sizeof(pubKey), (jbyte *) &pubKey);
     return result;
 }

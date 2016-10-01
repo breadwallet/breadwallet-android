@@ -179,7 +179,7 @@ public class FragmentPhraseFlow3 extends Fragment {
         sixButtons[3] = word4;
         sixButtons[4] = word5;
         sixButtons[5] = word6;
-        String cleanPhrase = new String(phrase);
+        String cleanPhrase = phrase == null? "" : new String(phrase);
         if (cleanPhrase.split(" ").length == 12 && cleanPhrase.charAt(cleanPhrase.length() - 1) == '\0') {
             ((BreadWalletApp) getActivity().getApplication()).showCustomDialog(getString(R.string.warning),
                     getActivity().getString(R.string.phrase_error), getString(R.string.ok));

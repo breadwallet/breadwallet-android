@@ -137,4 +137,8 @@ JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getAuth
                                                                                            jobject thiz,
                                                                                            jbyteArray phrase);
 
+JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getAuthPublicKeyForAPI(JNIEnv *env,
+                                                                                                jobject thiz,
+                                                                                                jbyteArray privkey);
+
 #endif //BREADWALLET_WALLET_H
