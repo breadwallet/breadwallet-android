@@ -1078,6 +1078,6 @@ public class BRWalletManager {
 
     public native byte[] getAuthPrivKeyForAPI(byte[] phrase);
 
-    public native byte[] getAuthPublicKeyForAPI(byte[] privKey);
+    public native String getAuthPublicKeyForAPI(byte[] privKey);
 
 }

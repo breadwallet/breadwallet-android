@@ -859,7 +859,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getAuth
     return result;
 }
 
-JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getAuthPublicKeyForAPI(
+JNIEXPORT jstring JNICALL Java_com_breadwallet_wallet_BRWalletManager_getAuthPublicKeyForAPI(
         JNIEnv *env,
         jobject thiz,
         jbyteArray privkey) {
@@ -871,7 +871,9 @@ JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getAuth
     BRKeySetPrivKey(&key, (const char *) bytePrivKey);
     size_t len = BRKeyPubKey(&key, NULL, 0);
     BRKeyPubKey(&key, &pubKey, len);
-    jbyteArray result = (*env)->NewByteArray(env, (jsize) sizeof(pubKey));
-    (*env)->SetByteArrayRegion(env, result, 0, (jsize) sizeof(pubKey), (jbyte *) &pubKey);
-    return result;
+    char *base58string = "";
+    size_t strLen = BRBase58Encode(NULL,0,NULL,0);
+    BRBase58Encode(base58string, strLen, (const uint8_t *) &key, len);
+
+    return (*env)->NewStringUTF(env, base58string);
 }
