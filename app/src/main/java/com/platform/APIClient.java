@@ -1,14 +1,26 @@
 package com.platform;
 
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import static android.R.attr.entries;
+import static android.R.id.input;
+import static com.google.zxing.qrcode.decoder.ErrorCorrectionLevel.H;
 
 /**
  * BreadWallet
@@ -36,6 +48,8 @@ import java.util.Map;
  */
 public class APIClient {
 
+    public static final String TAG = APIClient.class.getName();
+
     // proto is the transport protocol to use for talking to the API (either http or https)
     private static final String PROTO = "https";
     // host is the server(s) on which the API is hosted
@@ -47,6 +61,9 @@ public class APIClient {
     //singleton instance
     private static APIClient ourInstance;
 
+    private static final String GET = "GET";
+    private static final String POST = "POST";
+
     public static synchronized APIClient getInstance() {
         if (ourInstance == null) ourInstance = new APIClient();
         return ourInstance;
@@ -57,35 +74,65 @@ public class APIClient {
 
     //returns the fee per kb or 0 if something went wrong
     public long feePerKb() {
-        HttpURLConnection conn = null;
+
         try {
-            URL url = new URL(BASE_URL + FEE_PER_KB_URL);
-            conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            System.out.println(conn.getURL());
+            String strUtl = BASE_URL + FEE_PER_KB_URL;
+            HTTPRequest request = new HTTPRequest(strUtl, HTTPRequest.GET, true, true);
+            String response = sendRequest(request);
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(
-                    (conn.getInputStream())));
-
-            StringBuilder builder = new StringBuilder();
-            String aux;
-
-            while ((aux = br.readLine()) != null) {
-                builder.append(aux);
-            }
-            JSONObject object = new JSONObject(builder.toString());
+            JSONObject object = new JSONObject(response);
             return (long) object.getInt("fee_per_kb");
-        } catch (IOException e) {
-            e.printStackTrace();
-            if (conn != null)
-                conn.disconnect();
         } catch (JSONException e) {
             e.printStackTrace();
+
         }
         return 0;
     }
 
+    public String sendRequest(HTTPRequest req) {
+        StringBuilder builder = new StringBuilder();
+        BufferedReader bufferedReader = null;
+        HttpURLConnection conn = null;
+        try {
+            URL url = new URL(req.getUrl());
+
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod(req.getMethod());
+            conn.setDoOutput(req.isDoOutput());
+            conn.setDoInput(req.isDoInput());
+            if (req.getProperties() != null) {
+                Set set = req.getProperties().entrySet();
+                Iterator iterator = set.iterator();
+                while (iterator.hasNext()) {
+                    Map.Entry entries = (Map.Entry) iterator.next();
+                    conn.setRequestProperty(entries.getKey().toString(), entries.getValue().toString());
+                }
+            }
+            if (req.getMessage() != null) {
+                OutputStream os = conn.getOutputStream();
+                os.write(req.getMessage());
+                os.flush();
+            }
+            String aux = null;
+            bufferedReader = new BufferedReader(new InputStreamReader(
+                    (conn.getInputStream())));
+
+            while ((aux = bufferedReader.readLine()) != null) {
+                builder.append(aux);
+            }
+            System.out.println(conn.getURL());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (conn != null)
+                conn.disconnect();
+        }
+
+        return builder.toString();
+    }
+
     public Map<String, String> getToken() {
+
         return null;
 
     }
