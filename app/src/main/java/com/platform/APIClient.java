@@ -50,6 +50,8 @@ public class APIClient {
     private static final String BASE_URL = PROTO + "://" + HOST;
     //feePerKb url
     private static final String FEE_PER_KB_URL = "/v1/fee-per-kb";
+    //token
+    private static final String TOKEN = "/token";
     //singleton instance
     private static APIClient ourInstance;
 
@@ -79,6 +81,11 @@ public class APIClient {
 
         }
         return 0;
+    }
+
+
+    public String signRequest(String request) {
+        return null;
     }
 
     public String sendRequest(HTTPRequest req) {
@@ -167,13 +174,9 @@ public class APIClient {
     }
 
 
-    public String signRequest(String request) {
-        return null;
-    }
 
     public String dataTaskWithRequest() {
         return null;
     }
 
-//    public String
 }
