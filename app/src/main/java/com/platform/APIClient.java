@@ -1,5 +1,6 @@
 package com.platform;
 
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -128,30 +129,41 @@ public class APIClient {
 
         HttpURLConnection conn = null;
         try {
-            URL url = new URL(BASE_URL + FEE_PER_KB_URL);
-            conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            System.out.println(conn.getURL());
+            URL url = new URL(req.getUrl());
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod(req.getMethod());
+            conn.setDoOutput(req.isDoOutput());
+            conn.setDoInput(req.isDoInput());
+            if (req.getProperties() != null) {
+                Set set = req.getProperties().entrySet();
+                Iterator iterator = set.iterator();
+                while (iterator.hasNext()) {
+                    Map.Entry entries = (Map.Entry) iterator.next();
+                    conn.setRequestProperty(entries.getKey().toString(), entries.getValue().toString());
+                }
+            }
+            if (req.getMessage() != null) {
+                OutputStream os = conn.getOutputStream();
+                os.write(req.getMessage());
+                os.flush();
+            }
+            String aux = null;
+            bufferedReader = new BufferedReader(new InputStreamReader(
                     (conn.getInputStream())));
 
-            StringBuilder builder = new StringBuilder();
-            String aux;
-
-            while ((aux = br.readLine()) != null) {
+            while ((aux = bufferedReader.readLine()) != null) {
                 builder.append(aux);
             }
-            JSONObject object = new JSONObject(builder.toString());
-            return (long) object.getInt("fee_per_kb");
+            System.out.println(conn.getURL());
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
             if (conn != null)
                 conn.disconnect();
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
-        return 0;
+
+        return builder.toString();
     }
 
 
