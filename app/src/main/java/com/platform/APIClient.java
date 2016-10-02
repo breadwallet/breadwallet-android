@@ -58,6 +58,8 @@ public class APIClient {
     private static final String BASE_URL = PROTO + "://" + HOST;
     //feePerKb url
     private static final String FEE_PER_KB_URL = "/v1/fee-per-kb";
+    //token
+    private static final String TOKEN = "/token";
     //singleton instance
     private static APIClient ourInstance;
 
@@ -87,6 +89,35 @@ public class APIClient {
 
         }
         return 0;
+    }
+
+    public Map<String, String> getToken() {
+
+//        let req = NSMutableURLRequest(URL: url("/token"))
+//        req.HTTPMethod = "POST"
+//        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+//        req.setValue("application/json", forHTTPHeaderField: "Accept")
+//        let reqJson = [
+//        "pubKey": authPubKey.base58String(),
+//                "deviceID": getDeviceId()
+//        ]
+        try {
+            String strUtl = BASE_URL + TOKEN;
+            HTTPRequest request = new HTTPRequest(strUtl, HTTPRequest.POST, true, true);
+            String response = sendRequest(request);
+
+            JSONObject object = new JSONObject(response);
+            return (long) object.getInt("fee_per_kb");
+        } catch (JSONException e) {
+            e.printStackTrace();
+
+        }
+        return null;
+
+    }
+
+    public String signRequest(String request) {
+        return null;
     }
 
     public String sendRequest(HTTPRequest req) {
@@ -130,20 +161,4 @@ public class APIClient {
 
         return builder.toString();
     }
-
-    public Map<String, String> getToken() {
-
-        return null;
-
-    }
-
-    public String signRequest(String request) {
-        return null;
-    }
-
-    public String dataTaskWithRequest() {
-        return null;
-    }
-
-//    public String
 }
