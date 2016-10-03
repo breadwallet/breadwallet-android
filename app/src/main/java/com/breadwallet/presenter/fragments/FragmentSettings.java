@@ -31,6 +31,7 @@ import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.security.PassCodeManager;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
+import com.platform.APIClient;
 
 /**
  * BreadWallet
@@ -131,6 +132,12 @@ public class FragmentSettings extends Fragment {
             public void onClick(View v) {
                 if (BRAnimator.checkTheMultipressingAvailability()) {
                     BRAnimator.animateSlideToLeft(app, new FragmentAbout(), fragmentSettings);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            APIClient.getInstance(getActivity()).getToken();
+                        }
+                    }).start();
                 }
             }
         });

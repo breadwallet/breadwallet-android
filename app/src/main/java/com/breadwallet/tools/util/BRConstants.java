@@ -152,6 +152,7 @@ public class BRConstants {
     public static final String PHRASE_WRITTEN = "phraseWritten";
     public static final String LIMIT_PREFS = "fingerprintLimit";
     public static final String ALLOW_SPEND = "allowSpend";
+    public static final String USER_ID = "userId";
 
     /**
      * Currency units

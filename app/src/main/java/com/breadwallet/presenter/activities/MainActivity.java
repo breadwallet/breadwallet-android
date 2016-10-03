@@ -50,6 +50,7 @@ import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
+import com.platform.APIClient;
 
 import java.math.BigDecimal;
 import java.util.HashMap;

@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.util.Log;
 
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.wallet.BRWalletManager;
 
@@ -17,6 +18,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.Key;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -126,11 +128,16 @@ public class APIClient {
             String base58PubKey = BRWalletManager.getAuthPublicKeyForAPI(KeyStoreManager.getAuthKey(ctx));
             Log.e(TAG, "getToken: base58PubKey: " + base58PubKey);
             requestMessageJSON.put("pubKey", base58PubKey);
-            requestMessageJSON.put("deviceID", UUID.randomUUID().toString());
+            requestMessageJSON.put("deviceID", SharedPreferencesManager.getDeviceId(ctx));
             request.setMessage(requestMessageJSON.toString().getBytes());
             Log.e(TAG, "getToken: message: " + requestMessageJSON.toString());
             String response = sendRequest(request);
             Log.e(TAG, "getToken: response: " + response);
+            if (response.isEmpty()) return null;
+            JSONObject obj = new JSONObject(response);
+            String token = obj.getString("token");
+            KeyStoreManager.putToken(token.getBytes(), ctx);
+
             return null;
         } catch (JSONException e) {
             e.printStackTrace();

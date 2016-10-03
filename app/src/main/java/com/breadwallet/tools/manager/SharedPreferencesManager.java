@@ -22,6 +22,7 @@ import java.io.ObjectOutputStream;
 import java.util.Currency;
 import java.util.Locale;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * BreadWallet
@@ -280,6 +281,21 @@ public class SharedPreferencesManager {
         SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putInt(BRConstants.CURRENT_UNIT, unit);
+        editor.apply();
+    }
+
+    public static String getDeviceId(Activity context) {
+        SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
+        String deviceId = settingsToGet.getString(BRConstants.USER_ID, "");
+        if (deviceId.isEmpty()) setDeviceId(context, UUID.randomUUID().toString());
+        return (settingsToGet.getString(BRConstants.USER_ID, ""));
+    }
+
+    private static void setDeviceId(Activity context, String uuid) {
+        if (context == null) return;
+        SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString(BRConstants.USER_ID, uuid);
         editor.apply();
     }
 }
