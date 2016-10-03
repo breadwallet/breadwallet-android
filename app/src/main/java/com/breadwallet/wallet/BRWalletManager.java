@@ -55,6 +55,7 @@ import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
+import com.platform.APIClient;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -131,11 +132,19 @@ public class BRWalletManager {
             throw new NullPointerException("failed to encodeSeed");
         boolean success = KeyStoreManager.putKeyStorePhrase(strPhrase, ctx, BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE);
         if (!success) return false;
+        byte[] authKey = getAuthPrivKeyForAPI(keyBytes);
+//        Log.e(TAG,"authKey: " + Arrays.toString(authKey));
+        KeyStoreManager.putAuthKey(authKey, ctx);
         KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), ctx);
         byte[] strBytes = TypesConverter.getNullTerminatedPhrase(strPhrase);
-//        byte[] authKey = getAuthPrivKeyForAPI(strPhrase);
-//        Log.e(TAG,"authKey: " + Arrays.toString(authKey));
-//        KeyStoreManager.putAuthKey(authKey, ctx);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                APIClient.getInstance(ctx).getToken();
+            }
+        }).start();
+
         byte[] pubKey = BRWalletManager.getInstance(ctx).getMasterPubKey(strBytes);
         KeyStoreManager.putMasterPublicKey(pubKey, ctx);
 
@@ -1076,8 +1085,10 @@ public class BRWalletManager {
 
     public native long getMinOutputAmountRequested();
 
-    public native byte[] getAuthPrivKeyForAPI(byte[] phrase);
+    public static native byte[] getAuthPrivKeyForAPI(byte[] phrase);
 
-    public native String getAuthPublicKeyForAPI(byte[] privKey);
+    public static native String getAuthPublicKeyForAPI(byte[] privKey);
+
+    public static native byte[] getSeedFromPhrase(byte[] phrase);
 
 }

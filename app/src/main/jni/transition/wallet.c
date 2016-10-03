@@ -846,16 +846,16 @@ JNIEXPORT jint JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTxCount(JN
 JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getAuthPrivKeyForAPI(
         JNIEnv *env,
         jobject thiz,
-        jbyteArray phrase) {
+        jbyteArray seed) {
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "getAuthPrivKeyForAPI");
-    jbyte *bytePhrase = (*env)->GetByteArrayElements(env, phrase, 0);
-    size_t phraseLen = (size_t) (*env)->GetArrayLength(env, phrase);
+    jbyte *bytePhrase = (*env)->GetByteArrayElements(env, seed, 0);
+    size_t seedLen = (size_t) (*env)->GetArrayLength(env, seed);
     BRKey key;
-    char *charPhrase = (char *) bytePhrase;
-    BRBIP32APIAuthKey(&key, charPhrase, phraseLen);
-    jbyteArray result = (*env)->NewByteArray(env, (jsize) sizeof(key));
-
-    (*env)->SetByteArrayRegion(env, result, 0, (jsize) sizeof(key), (jbyte *) &key);
+    BRBIP32APIAuthKey(&key, bytePhrase, seedLen);
+    char rawKey[BRKeyPrivKey(&key, NULL, 0)];
+    BRKeyPrivKey(&key, rawKey, sizeof(rawKey));
+    jbyteArray result = (*env)->NewByteArray(env, (jsize) sizeof(rawKey));
+    (*env)->SetByteArrayRegion(env, result, 0, (jsize) sizeof(rawKey), (jbyte *) rawKey);
     return result;
 }
 
@@ -866,14 +866,29 @@ JNIEXPORT jstring JNICALL Java_com_breadwallet_wallet_BRWalletManager_getAuthPub
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "getAuthPublicKeyForAPI");
     jbyte *bytePrivKey = (*env)->GetByteArrayElements(env, privkey, 0);
     BRKey key;
-    BRKey pubKey;
 
     BRKeySetPrivKey(&key, (const char *) bytePrivKey);
+
     size_t len = BRKeyPubKey(&key, NULL, 0);
+    uint8_t pubKey[len];
     BRKeyPubKey(&key, &pubKey, len);
-    char *base58string = "";
-    size_t strLen = BRBase58Encode(NULL,0,NULL,0);
-    BRBase58Encode(base58string, strLen, (const uint8_t *) &key, len);
+    size_t strLen = BRBase58Encode(NULL, 0, pubKey, len);
+    char base58string[strLen];
+    BRBase58Encode(base58string, strLen, pubKey, len);
 
     return (*env)->NewStringUTF(env, base58string);
+}
+
+JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getSeedFromPhrase(
+        JNIEnv *env,
+        jobject thiz,
+        jbyteArray phrase) {
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "getSeedFromPhrase");
+    jbyte *bytePhrase = (*env)->GetByteArrayElements(env, phrase, 0);
+    UInt512 key = UINT512_ZERO;
+    char *charPhrase = (char *) bytePhrase;
+    BRBIP39DeriveKey(key.u8, charPhrase, NULL);
+    jbyteArray result = (*env)->NewByteArray(env, (jsize) sizeof(key));
+    (*env)->SetByteArrayRegion(env, result, 0, (jsize) sizeof(key), (jbyte *) &key);
+    return result;
 }
