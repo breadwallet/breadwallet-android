@@ -350,6 +350,7 @@ public class KeyStoreManager {
             keyStore.deleteEntry(PASS_CODE_ALIAS);
             keyStore.deleteEntry(FAIL_COUNT_ALIAS);
             keyStore.deleteEntry(FAIL_TIMESTAMP_ALIAS);
+            keyStore.deleteEntry(AUTH_KEY_ALIAS);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
             return false;

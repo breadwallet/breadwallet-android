@@ -1,6 +1,13 @@
 package com.platform;
 
+import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
+
+import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.util.TypesConverter;
+import com.breadwallet.wallet.BRWalletManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,10 +20,12 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import static android.R.attr.entries;
 import static android.R.id.input;
@@ -65,13 +74,16 @@ public class APIClient {
 
     private static final String GET = "GET";
     private static final String POST = "POST";
+    private Activity ctx;
 
-    public static synchronized APIClient getInstance() {
-        if (ourInstance == null) ourInstance = new APIClient();
+    public static synchronized APIClient getInstance(Activity context) {
+
+        if (ourInstance == null) ourInstance = new APIClient(context);
         return ourInstance;
     }
 
-    private APIClient() {
+    private APIClient(Activity context) {
+        ctx = context;
     }
 
     //returns the fee per kb or 0 if something went wrong
@@ -92,7 +104,8 @@ public class APIClient {
     }
 
     public Map<String, String> getToken() {
-
+        if(ctx == null) ctx = MainActivity.app;
+        if(ctx == null) return null;
 //        let req = NSMutableURLRequest(URL: url("/token"))
 //        req.HTTPMethod = "POST"
 //        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -103,11 +116,22 @@ public class APIClient {
 //        ]
         try {
             String strUtl = BASE_URL + TOKEN;
+            Log.e(TAG, "getToken: strUrl: " + strUtl);
             HTTPRequest request = new HTTPRequest(strUtl, HTTPRequest.POST, true, true);
+            Map<String,String> properties = new HashMap<>();
+            properties.put("Content-Type", "application/json");
+            properties.put("Accept", "application/json");
+            request.setProperties(properties);
+            JSONObject requestMessageJSON = new JSONObject();
+            String base58PubKey = BRWalletManager.getAuthPublicKeyForAPI(KeyStoreManager.getAuthKey(ctx));
+            Log.e(TAG, "getToken: base58PubKey: " + base58PubKey);
+            requestMessageJSON.put("pubKey", base58PubKey);
+            requestMessageJSON.put("deviceID", UUID.randomUUID().toString());
+            request.setMessage(requestMessageJSON.toString().getBytes());
+            Log.e(TAG, "getToken: message: " + requestMessageJSON.toString());
             String response = sendRequest(request);
-
-            JSONObject object = new JSONObject(response);
-            return (long) object.getInt("fee_per_kb");
+            Log.e(TAG, "getToken: response: " + response);
+            return null;
         } catch (JSONException e) {
             e.printStackTrace();
 
@@ -131,6 +155,8 @@ public class APIClient {
             conn.setRequestMethod(req.getMethod());
             conn.setDoOutput(req.isDoOutput());
             conn.setDoInput(req.isDoInput());
+            conn.setConnectTimeout(5000);
+            conn.setReadTimeout(10000);
             if (req.getProperties() != null) {
                 Set set = req.getProperties().entrySet();
                 Iterator iterator = set.iterator();
@@ -144,6 +170,8 @@ public class APIClient {
                 os.write(req.getMessage());
                 os.flush();
             }
+            System.out.println("sendRequest: getResponseMessage: " + conn.getResponseMessage());
+            System.out.println("sendRequest: getResponseCode: " + conn.getResponseCode());
             String aux = null;
             bufferedReader = new BufferedReader(new InputStreamReader(
                     (conn.getInputStream())));
