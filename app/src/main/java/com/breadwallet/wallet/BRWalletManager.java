@@ -137,14 +137,6 @@ public class BRWalletManager {
         KeyStoreManager.putAuthKey(authKey, ctx);
         KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), ctx);
         byte[] strBytes = TypesConverter.getNullTerminatedPhrase(strPhrase);
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                APIClient.getInstance(ctx).getToken();
-            }
-        }).start();
-
         byte[] pubKey = BRWalletManager.getInstance(ctx).getMasterPubKey(strBytes);
         KeyStoreManager.putMasterPublicKey(pubKey, ctx);
 
