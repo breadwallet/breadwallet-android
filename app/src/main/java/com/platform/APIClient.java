@@ -1,12 +1,11 @@
 package com.platform;
 
 import android.app.Activity;
-import android.content.Context;
+
 import android.util.Log;
 
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.security.KeyStoreManager;
-import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.wallet.BRWalletManager;
 
 import org.json.JSONException;
@@ -17,19 +16,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-
-import static android.R.attr.entries;
-import static android.R.id.input;
-import static com.google.zxing.qrcode.decoder.ErrorCorrectionLevel.H;
 
 /**
  * BreadWallet
@@ -86,6 +78,14 @@ public class APIClient {
         ctx = context;
     }
 
+    public static synchronized APIClient getInstance() {
+        if (ourInstance == null) ourInstance = new APIClient();
+        return ourInstance;
+    }
+
+    private APIClient() {
+    }
+
     //returns the fee per kb or 0 if something went wrong
     public long feePerKb() {
 
@@ -104,8 +104,8 @@ public class APIClient {
     }
 
     public Map<String, String> getToken() {
-        if(ctx == null) ctx = MainActivity.app;
-        if(ctx == null) return null;
+        if (ctx == null) ctx = MainActivity.app;
+        if (ctx == null) return null;
 //        let req = NSMutableURLRequest(URL: url("/token"))
 //        req.HTTPMethod = "POST"
 //        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -118,7 +118,7 @@ public class APIClient {
             String strUtl = BASE_URL + TOKEN;
             Log.e(TAG, "getToken: strUrl: " + strUtl);
             HTTPRequest request = new HTTPRequest(strUtl, HTTPRequest.POST, true, true);
-            Map<String,String> properties = new HashMap<>();
+            Map<String, String> properties = new HashMap<>();
             properties.put("Content-Type", "application/json");
             properties.put("Accept", "application/json");
             request.setProperties(properties);
@@ -143,6 +143,7 @@ public class APIClient {
     public String signRequest(String request) {
         return null;
     }
+
 
     public String sendRequest(HTTPRequest req) {
         StringBuilder builder = new StringBuilder();
@@ -189,4 +190,5 @@ public class APIClient {
 
         return builder.toString();
     }
+
 }
