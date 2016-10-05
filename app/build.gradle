@@ -14,6 +14,13 @@ model {
             versionName = "28"
         }
 
+        testOptions.with {
+            unitTests.all {
+                // All the usual Gradle options.
+                jvmArgs '-XX:MaxPermSize=256m'
+            }
+        }
+
         ndk {
             platformVersion = "23"
             moduleName = "core"
@@ -72,10 +79,14 @@ repositories {
 }
 
 dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'com.android.support:support-v13:24.2.1'
 
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.json:json:20140107'
+    androidTestCompile 'com.android.support:support-annotations:24.2.1'
+    androidTestCompile 'com.android.support.test:runner:0.5'
+    androidTestCompile 'com.android.support.test:rules:0.5'
+    androidTestCompile 'junit:junit:4.12'
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
 
 }
