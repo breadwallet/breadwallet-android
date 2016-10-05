@@ -1077,10 +1077,14 @@ public class BRWalletManager {
 
     public native long getMinOutputAmountRequested();
 
-    public static native byte[] getAuthPrivKeyForAPI(byte[] phrase);
+    public static native byte[] getAuthPrivKeyForAPI(byte[] seed);
 
     public static native String getAuthPublicKeyForAPI(byte[] privKey);
 
     public static native byte[] getSeedFromPhrase(byte[] phrase);
+
+    public static native String signString(String strToSign, byte[] privKey);
+
+    public static native String base58ofSha256(String strToSign);
 
 }

@@ -132,12 +132,6 @@ public class FragmentSettings extends Fragment {
             public void onClick(View v) {
                 if (BRAnimator.checkTheMultipressingAvailability()) {
                     BRAnimator.animateSlideToLeft(app, new FragmentAbout(), fragmentSettings);
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            APIClient.getInstance(getActivity()).getToken();
-                        }
-                    }).start();
                 }
             }
         });

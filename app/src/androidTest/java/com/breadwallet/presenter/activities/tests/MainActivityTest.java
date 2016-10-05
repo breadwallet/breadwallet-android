@@ -101,38 +101,38 @@
 ////
 ////    }
 //
-//    @Test
-//    public void testFragments() {
-//        onView(withId(R.id.main_button_burger)).perform(click());
-//        try {
-//            Thread.sleep(1000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//        onView(withId(R.id.settings)).perform(click());
-//        onView(withId(R.id.start_recovery_wallet)).perform(click());
-//        pressBack();
-//        pressBack();
-//        onView(withId(R.id.about)).perform(click());
-//        onView(withId(R.id.main_button_burger)).perform(click());
-//        onView(withId(R.id.main_button_burger)).perform(click());
-//        onView(withId(R.id.main_button_burger)).perform(click());
-//        onView(withId(R.id.main_layout)).perform(swipeLeft());
-//        onView(withId(R.id.theAddressLayout)).perform(click());
-//        onView(withId(R.id.copy_address)).perform(click());
-//        onView(withId(R.id.main_layout)).perform(swipeRight());
-//        try {
-//            Thread.sleep(500);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//
-//    @Test
-//    public void testChangeText_sameActivity() {
-//        onView(withId(R.id.address_edit_text))
-//                .perform(clearText(), typeText("some testing text"), closeSoftKeyboard(), clearText());
-//
-//    }
+////    @Test
+////    public void testFragments() {
+////        onView(withId(R.id.main_button_burger)).perform(click());
+////        try {
+////            Thread.sleep(1000);
+////        } catch (InterruptedException e) {
+////            e.printStackTrace();
+////        }
+////        onView(withId(R.id.settings)).perform(click());
+////        onView(withId(R.id.start_recovery_wallet)).perform(click());
+////        pressBack();
+////        pressBack();
+////        onView(withId(R.id.about)).perform(click());
+////        onView(withId(R.id.main_button_burger)).perform(click());
+////        onView(withId(R.id.main_button_burger)).perform(click());
+////        onView(withId(R.id.main_button_burger)).perform(click());
+////        onView(withId(R.id.main_layout)).perform(swipeLeft());
+////        onView(withId(R.id.theAddressLayout)).perform(click());
+////        onView(withId(R.id.copy_address)).perform(click());
+////        onView(withId(R.id.main_layout)).perform(swipeRight());
+////        try {
+////            Thread.sleep(500);
+////        } catch (InterruptedException e) {
+////            e.printStackTrace();
+////        }
+////    }
+////
+////
+////    @Test
+////    public void testChangeText_sameActivity() {
+////        onView(withId(R.id.address_edit_text))
+////                .perform(clearText(), typeText("some testing text"), closeSoftKeyboard(), clearText());
+////
+////    }
 //}

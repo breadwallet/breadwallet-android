@@ -38,7 +38,7 @@ public class HTTPRequest {
     private Map<String, String> properties;
     private boolean doOutput;
     private boolean doInput;
-    private byte[] message;
+    private String message;
     private String url;
 
     public HTTPRequest(String url, String method, boolean doInput, boolean doOutput){
@@ -88,11 +88,11 @@ public class HTTPRequest {
         this.doInput = doInput;
     }
 
-    public byte[] getMessage() {
+    public String getMessage() {
         return message;
     }
 
-    public void setMessage(byte[] message) {
+    public void setMessage(String message) {
         this.message = message;
     }
 
