@@ -14,12 +14,12 @@ model {
             versionName = "28"
         }
 
-        testOptions.with {
-            unitTests.all {
-                // All the usual Gradle options.
-                jvmArgs '-XX:MaxPermSize=256m'
-            }
-        }
+//        testOptions.with {
+//            unitTests.all {
+//                // All the usual Gradle options.
+//                jvmArgs '-XX:MaxPermSize=256m'
+//            }
+//        }
 
         ndk {
             platformVersion = "23"
