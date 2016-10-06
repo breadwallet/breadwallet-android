@@ -16,6 +16,7 @@ import com.breadwallet.R;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
+import com.platform.APIClient;
 
 import java.util.Locale;
 
@@ -94,6 +95,16 @@ public class FragmentAbout extends Fragment {
                     }
                 }
             });
+
+
+        //todo test , delete after!
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                APIClient apiClient = APIClient.getInstance();
+                apiClient.buyBitcoinMe();
+            }
+        }).start();
 
         return rootView;
     }

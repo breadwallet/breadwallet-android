@@ -2,6 +2,7 @@ package com.platform;
 
 import android.app.Activity;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.breadwallet.presenter.activities.MainActivity;
@@ -13,11 +14,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,6 +30,15 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
+import static android.R.attr.name;
+import static com.breadwallet.R.string.request;
 
 /**
  * BreadWallet
@@ -97,7 +110,7 @@ public class APIClient {
 
         try {
             String strUtl = BASE_URL + FEE_PER_KB_URL;
-            HTTPRequest request = new HTTPRequest(strUtl, HTTPRequest.GET, true, true);
+            Request request = new Request.Builder().url(strUtl).get().build();
             String response = sendRequest(request, false);
 
             JSONObject object = new JSONObject(response);
@@ -112,59 +125,49 @@ public class APIClient {
     public String buyBitcoinMe() {
         if (ctx == null) ctx = MainActivity.app;
         if (ctx == null) return null;
-        try {
-            String strUtl = BASE_URL + ME;
-            Log.e(TAG, "getToken: strUrl: " + strUtl);
-            HTTPRequest request = new HTTPRequest(strUtl, HTTPRequest.GET, true, true);
-            Map<String, String> properties = new HashMap<>();
-//            properties.put("Content-Type", "application/json");
-//            properties.put("Accept", "application/json");
-            request.setHeaders(properties);
-//            JSONObject requestMessageJSON = new JSONObject();
-//            String base58PubKey = BRWalletManager.getAuthPublicKeyForAPI(KeyStoreManager.getAuthKey(ctx));
-//            Log.e(TAG, "getToken: base58PubKey: " + base58PubKey);
-//            requestMessageJSON.put("pubKey", base58PubKey);
-//            requestMessageJSON.put("deviceID", SharedPreferencesManager.getDeviceId(ctx));
-//            request.setMessage(requestMessageJSON.toString());
-//            Log.e(TAG, "getToken: message: " + requestMessageJSON.toString());
-            String response = sendRequest(request, true);
-            if (response.equalsIgnoreCase("401")) {
-                getToken();
-                response = sendRequest(request, true);
-            }
-
-            Log.e(TAG, "getToken: response: " + response);
-            if (response.isEmpty()) return null;
-            JSONObject obj = new JSONObject(response);
-            String token = obj.getString("token");
-            KeyStoreManager.putToken(token.getBytes(), ctx);
-
-            return null;
-        } catch (JSONException e) {
-            e.printStackTrace();
-
+        String strUtl = BASE_URL + ME;
+        Log.e(TAG, "buyBitcoinMe: strUrl: " + strUtl);
+        Request request = new Request.Builder()
+                .url(strUtl)
+                .get()
+                .build();
+        String response = sendRequest(request, true);
+        if (response.equalsIgnoreCase("401")) {
+            getToken();
+            response = sendRequest(request, true);
         }
+
+        Log.e(TAG, "buyBitcoinMe: response: " + response);
+//            if (response.isEmpty()) return null;
+//            JSONObject obj = new JSONObject(response);
+//            String token = obj.getString("token");
+//            KeyStoreManager.putToken(token.getBytes(), ctx);
+
         return null;
     }
 
-    public Map<String, String> getToken() {
+    public String getToken() {
         if (ctx == null) ctx = MainActivity.app;
         if (ctx == null) return null;
         try {
             String strUtl = BASE_URL + TOKEN;
             Log.e(TAG, "getToken: strUrl: " + strUtl);
-            HTTPRequest request = new HTTPRequest(strUtl, HTTPRequest.POST, true, true);
-            Map<String, String> properties = new HashMap<>();
-            properties.put("Content-Type", "application/json");
-            properties.put("Accept", "application/json");
-            request.setHeaders(properties);
+
             JSONObject requestMessageJSON = new JSONObject();
             String base58PubKey = BRWalletManager.getAuthPublicKeyForAPI(KeyStoreManager.getAuthKey(ctx));
             Log.e(TAG, "getToken: base58PubKey: " + base58PubKey);
             requestMessageJSON.put("pubKey", base58PubKey);
             requestMessageJSON.put("deviceID", SharedPreferencesManager.getDeviceId(ctx));
-            request.setMessage(requestMessageJSON.toString());
             Log.e(TAG, "getToken: message: " + requestMessageJSON.toString());
+
+            final MediaType JSON
+                    = MediaType.parse("application/json; charset=utf-8");
+            RequestBody requestBody = RequestBody.create(JSON, requestMessageJSON.toString());
+            Request request = new Request.Builder()
+                    .url(strUtl)
+                    .header("Content-Type", "application/json")
+                    .header("Accept", "application/json")
+                    .post(requestBody).build();
             String response = sendRequest(request, false);
             Log.e(TAG, "getToken: response: " + response);
             if (response.isEmpty()) return null;
@@ -172,7 +175,7 @@ public class APIClient {
             String token = obj.getString("token");
             KeyStoreManager.putToken(token.getBytes(), ctx);
 
-            return null;
+            return token;
         } catch (JSONException e) {
             e.printStackTrace();
 
@@ -193,86 +196,107 @@ public class APIClient {
         return BRWalletManager.signString(request, KeyStoreManager.getAuthKey(ctx));
     }
 
-    public String sendRequest(HTTPRequest req, boolean needsAuth) {
-        StringBuilder builder = new StringBuilder();
+    public String sendRequest(Request request, boolean needsAuth) {
         String result = "";
         int responseCode = 0;
-        BufferedReader bufferedReader = null;
-        HttpURLConnection conn = null;
+
         if (needsAuth) {
+            Request.Builder modifiedRequest = request.newBuilder();
             String base58Body = "";
-            if (req.getMessage() != null) {
-                base58Body = BRWalletManager.base58ofSha256(req.getMessage());
+            if (request.body() != null) {
+                base58Body = BRWalletManager.base58ofSha256(request.body().toString());
             }
+            Date date = new Date(System.currentTimeMillis());
             SimpleDateFormat sdf =
                     new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
             sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-            String httpDate = sdf.format(new Date(System.currentTimeMillis()));
+            String httpDate = sdf.format(date);
 
-            req.getHeaders().put("Date", httpDate.substring(0, httpDate.length() - 6));
-            String requestString = createRequest(req.getMethod(), base58Body, req.getHeaders().get("Content-Type"), req.getHeaders().get("Date"), "/me");
+//            Date expdate= new Date();
+//            expdate.setTime (expdate.getTime() + (3600 * 1000));
+//            DateFormat df = new SimpleDateFormat("EEE, dd-MMM-yyyy HH:mm:ss zzz");
+//            df.setTimeZone(TimeZone.getTimeZone("GMT"));
+//            String cookieExpire = "expires=" + df.format(expdate);
+
+            request = modifiedRequest.header("Date", httpDate.substring(0, httpDate.length() - 10)).build();
+            String requestString = createRequest(request.method(), base58Body, request.header("Content-Type"), request.header("Date"), "/me");
 
             Log.e(TAG, "sendRequest: requestString: " + requestString);
             String signedRequest = signRequest(requestString);
-            String authValue = "bread " + new String(KeyStoreManager.getToken(ctx)) + ":" + signedRequest;
-            req.getHeaders().put("Authorization", authValue);
+            String token = new String(KeyStoreManager.getToken(ctx));
+            if(token.isEmpty()) token = getToken();
+            if(token == null || token.isEmpty()) {
+                Log.e(TAG, "sendRequest: failed to retrieve token");
+                return null;
+            }
+            String authValue = "bread " + token + ":" + signedRequest;
             Log.e(TAG, "sendRequest: authValue: " + authValue);
+            request = modifiedRequest.header("Authorization", authValue).build();
+
         }
         try {
-            URL url = new URL(req.getUrl());
-
-            conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod(req.getMethod());
-            conn.setDoOutput(req.isDoOutput());
-            conn.setDoInput(req.isDoInput());
-            conn.setConnectTimeout(5000);
-            conn.setReadTimeout(10000);
-            if (req.getHeaders() != null) {
-                Set set = req.getHeaders().entrySet();
-                Iterator iterator = set.iterator();
-                while (iterator.hasNext()) {
-                    Map.Entry entries = (Map.Entry) iterator.next();
-                    conn.setRequestProperty(entries.getKey().toString(), entries.getValue().toString());
-                    Log.e(TAG, "sendRequest: SetHeader: " + entries.getKey().toString() + ":" + entries.getValue().toString());
-                }
-            }
-            if (req.getMessage() != null) {
-                OutputStream os = conn.getOutputStream();
-                os.write(req.getMessage().getBytes());
-                os.flush();
-            }
-            System.out.println("sendRequest: getResponseMessage: " + conn.getResponseMessage());
-            System.out.println("sendRequest: getResponseCode: " + conn.getResponseCode());
-            responseCode = conn.getResponseCode();
-            String aux = null;
-            bufferedReader = new BufferedReader(new InputStreamReader(
-                    (conn.getInputStream())));
-
-            while ((aux = bufferedReader.readLine()) != null) {
-                builder.append(aux);
-            }
-            System.out.println(conn.getURL());
-            result = builder.toString();
+            OkHttpClient client = new OkHttpClient();
+            Response response = client.newCall(request).execute();
+            System.out.println("sendRequest: getResponseCode : " + response.code());
+            System.out.println("sendRequest: getResponseMessage: " + response.message());
+            responseCode = response.code();
+            result = response.body().string();
         } catch (IOException e) {
             e.printStackTrace();
-            BufferedReader bufferedReaderErr = new BufferedReader(new InputStreamReader(
-                    (conn.getErrorStream())));
-            StringBuilder err = new StringBuilder();
-            String temp;
-            try {
-                while ((temp = bufferedReaderErr.readLine()) != null) {
-                    err.append(temp);
-                }
-                Log.e(TAG, "sendRequest: ERROR STREAM: " + err.toString());
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-        } finally {
-            if (conn != null)
-                conn.disconnect();
         }
 
         return result.isEmpty() ? String.valueOf(responseCode) : result;
+    }
+
+    public void updateBundle(Context context, String name) {
+        if (name == null) {
+            Log.e(TAG, "updateBundle: name is null");
+            return;
+        }
+        String bundles = "bundles";
+
+        String bundlesFileName = String.format("/%s", bundles);
+        String bundleFileName = String.format("/%s/%s.tar", bundles, name);
+        String bundleFileNameExtracted = String.format("/%s/%s-extracted", bundles, name);
+
+//        Log.e(TAG, "updateBundle: bundlesFileName: " + bundlesFileName);
+//        Log.e(TAG, "updateBundle: bundleFileName: " + bundleFileName);
+//        Log.e(TAG, "updateBundle: bundleFileNameExtracted: " + bundleFileNameExtracted);
+
+        File bundlesFolder = new File(context.getFilesDir().getAbsolutePath() + bundlesFileName);
+        File bundleFile = new File(context.getFilesDir().getAbsolutePath() + bundleFileName);
+        File bundleExtractedFolder = new File(context.getFilesDir().getAbsolutePath() + bundleFileNameExtracted);
+//        Log.e(TAG, "updateBundle: bundlesFolder: " + bundlesFolder.toString());
+//        Log.e(TAG, "updateBundle: bundleFile: " + bundleFile.toString());
+//        Log.e(TAG, "updateBundle: bundleExtractedFolder: " + bundleExtractedFolder.toString());
+//
+//        Log.e(TAG, "updateBundle: bundlesFolder.exists: " + bundlesFolder.exists());
+//        Log.e(TAG, "updateBundle: bundleFile.exists: " + bundleFile.exists());
+//        Log.e(TAG, "updateBundle: bundleExtractedFolder.exists: " + bundleExtractedFolder.exists());
+
+        FileOutputStream bundlesOutStream = null;
+        FileOutputStream extractedOutStream = null;
+
+        try {
+            bundlesOutStream = new FileOutputStream(bundlesFolder);
+            extractedOutStream = new FileOutputStream(bundleExtractedFolder);
+//            outputStream.write(string.getBytes());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                bundlesOutStream.close();
+                extractedOutStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if (bundleFile.exists()) {
+            Log.e(TAG, "updateBundle: exists, fetching diff for most recent version");
+
+        }
+
     }
 
 }
