@@ -14,13 +14,6 @@ model {
             versionName = "28"
         }
 
-//        testOptions.with {
-//            unitTests.all {
-//                // All the usual Gradle options.
-//                jvmArgs '-XX:MaxPermSize=256m'
-//            }
-//        }
-
         ndk {
             platformVersion = "23"
             moduleName = "core"
@@ -65,7 +58,7 @@ model {
                 debuggable = true
                 minifyEnabled = false
                 ndk {
-//                    CFlags.addAll(['-DBITCOIN_TESTNET=1'])
+                    CFlags.addAll(['-DBITCOIN_TESTNET=1'])
                     minifyEnabled = false
                     debuggable = true
                 }

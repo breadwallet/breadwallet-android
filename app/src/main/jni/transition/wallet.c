@@ -903,15 +903,14 @@ JNIEXPORT jstring JNICALL Java_com_breadwallet_wallet_BRWalletManager_signString
 
     jbyte *bytePrivKey = (*env)->GetByteArrayElements(env, privKey, 0);
     BRKey key;
-    BRKeySetPrivKey(&key, (const char *) bytePrivKey);
-
+    int res = BRKeySetPrivKey(&key, (const char *) bytePrivKey);
     const char *rawString = (*env)->GetStringUTFChars(env, stringToSign, 0);
     size_t strLen = (size_t) (*env)->GetStringUTFLength(env, stringToSign);
-
     UInt256 md32;
     BRSHA256_2(&md32, rawString, strLen);
-    uint8_t compactSig[65];
-    size_t sigLen = BRKeyCompactSign(&key, compactSig, sizeof(compactSig), md32);
+    size_t sigLen = BRKeyCompactSign(&key, NULL, 0, md32);
+    uint8_t compactSig[sigLen];
+    sigLen = BRKeyCompactSign(&key, compactSig, sizeof(compactSig), md32);
     size_t base58len = BRBase58Encode(NULL, 0, compactSig, sigLen);
     char base58string[base58len];
     BRBase58Encode(base58string, base58len, compactSig, sigLen);

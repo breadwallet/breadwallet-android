@@ -26,8 +26,8 @@ import java.util.Map;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class HTTPRequest {
-    public static final String TAG = HTTPRequest.class.getName();
+public class HTTPRequestEntity {
+    public static final String TAG = HTTPRequestEntity.class.getName();
 
     //constants
     public static final String GET = "GET";
@@ -41,7 +41,7 @@ public class HTTPRequest {
     private String message;
     private String url;
 
-    public HTTPRequest(String url, String method, boolean doInput, boolean doOutput){
+    public HTTPRequestEntity(String url, String method, boolean doInput, boolean doOutput){
         this.url = url;
         this.method = method;
         this.doInput = doInput;
