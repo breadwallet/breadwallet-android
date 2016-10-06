@@ -212,13 +212,7 @@ public class APIClient {
             sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
             String httpDate = sdf.format(date);
 
-//            Date expdate= new Date();
-//            expdate.setTime (expdate.getTime() + (3600 * 1000));
-//            DateFormat df = new SimpleDateFormat("EEE, dd-MMM-yyyy HH:mm:ss zzz");
-//            df.setTimeZone(TimeZone.getTimeZone("GMT"));
-//            String cookieExpire = "expires=" + df.format(expdate);
-
-            request = modifiedRequest.header("Date", httpDate.substring(0, httpDate.length() - 10)).build();
+            request = modifiedRequest.header("Date", httpDate.substring(0, httpDate.length())).build();
             String requestString = createRequest(request.method(), base58Body, request.header("Content-Type"), request.header("Date"), "/me");
 
             Log.e(TAG, "sendRequest: requestString: " + requestString);
