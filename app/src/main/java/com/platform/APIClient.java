@@ -206,35 +206,39 @@ public class APIClient {
             if (request.body() != null) {
                 base58Body = BRWalletManager.base58ofSha256(request.body().toString());
             }
-            Date date = new Date(System.currentTimeMillis());
             SimpleDateFormat sdf =
                     new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
             sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-            String httpDate = sdf.format(date);
+            String httpDate = sdf.format(new Date(System.currentTimeMillis()));
 
-            request = modifiedRequest.header("Date", httpDate.substring(0, httpDate.length())).build();
+            request = modifiedRequest.header("Date", httpDate.substring(0, httpDate.length() - 6)).build();
             String requestString = createRequest(request.method(), base58Body, request.header("Content-Type"), request.header("Date"), "/me");
 
             Log.e(TAG, "sendRequest: requestString: " + requestString);
             String signedRequest = signRequest(requestString);
             String token = new String(KeyStoreManager.getToken(ctx));
-            if(token.isEmpty()) token = getToken();
-            if(token == null || token.isEmpty()) {
+            if (token.isEmpty()) token = getToken();
+            if (token == null || token.isEmpty()) {
                 Log.e(TAG, "sendRequest: failed to retrieve token");
                 return null;
             }
             String authValue = "bread " + token + ":" + signedRequest;
             Log.e(TAG, "sendRequest: authValue: " + authValue);
+            modifiedRequest = request.newBuilder();
             request = modifiedRequest.header("Authorization", authValue).build();
 
         }
         try {
             OkHttpClient client = new OkHttpClient();
+            Log.e(TAG, "sendRequest: dateHeader: " + request.header("Date"));
+            Log.e(TAG, "sendRequest: Authorization: " + request.header("Authorization"));
             Response response = client.newCall(request).execute();
             System.out.println("sendRequest: getResponseCode : " + response.code());
             System.out.println("sendRequest: getResponseMessage: " + response.message());
             responseCode = response.code();
             result = response.body().string();
+            Log.e(TAG, "sendRequest: result: " + result);
+            Log.e(TAG, "sendRequest: server date: " + response.header("Date"));
         } catch (IOException e) {
             e.printStackTrace();
         }
