@@ -109,15 +109,10 @@ public class APIClient {
         try {
             String strUtl = BASE_URL + FEE_PER_KB_URL;
             Request request = new Request.Builder().url(strUtl).get().build();
-            Response response = sendRequest(request, false);
-
+            String response = sendRequest(request, false);
+            Log.e(TAG, "feePerKb: response: " + response);
             JSONObject object = null;
-            try {
-                object = new JSONObject(response.body().string());
-            } catch (IOException e) {
-                e.printStackTrace();
-                return 0;
-            }
+            object = new JSONObject(response);
             return (long) object.getInt("fee_per_kb");
         } catch (JSONException e) {
             e.printStackTrace();
@@ -135,14 +130,16 @@ public class APIClient {
                 .url(strUtl)
                 .get()
                 .build();
-        Response response = sendRequest(request, true);
+        String response = sendRequest(request, true);
         if (response == null) {
             response = sendRequest(request, true);
         }
 
+        if (response == null) throw new NullPointerException();
+
         Log.e(TAG, "buyBitcoinMe: response: " + response);
 
-        return null;
+        return response;
     }
 
     public String getToken() {
@@ -167,19 +164,11 @@ public class APIClient {
                     .header("Content-Type", "application/json")
                     .header("Accept", "application/json")
                     .post(requestBody).build();
-            Response response = sendRequest(request, false);
+            String response = sendRequest(request, false);
             Log.e(TAG, "getToken: response: " + response);
-            try {
-                if (response.body().string().isEmpty()) return null;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            if (response.isEmpty()) return null;
             JSONObject obj = null;
-            try {
-                obj = new JSONObject(response.body().string());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            obj = new JSONObject(response);
             String token = obj.getString("token");
             KeyStoreManager.putToken(token.getBytes(), ctx);
 
@@ -204,12 +193,13 @@ public class APIClient {
         return BRWalletManager.signString(request, KeyStoreManager.getAuthKey(ctx));
     }
 
-    public Response sendRequest(Request request, boolean needsAuth) {
+    public String sendRequest(Request request, boolean needsAuth) {
         if (needsAuth) {
             Request.Builder modifiedRequest = request.newBuilder();
             String base58Body = "";
-            if (request.body() != null) {
-                base58Body = BRWalletManager.base58ofSha256(request.body().toString());
+            RequestBody body = request.body();
+            if (body != null) {
+                base58Body = BRWalletManager.base58ofSha256(body.toString());
             }
             SimpleDateFormat sdf =
                     new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
@@ -234,6 +224,7 @@ public class APIClient {
 
         }
         Response response = null;
+        String result = "";
         try {
             OkHttpClient client = new OkHttpClient();
             Log.e(TAG, "sendRequest: dateHeader: " + request.header("Date"));
@@ -241,12 +232,13 @@ public class APIClient {
             response = client.newCall(request).execute();
             System.out.println("sendRequest: response code: " + response.code() + " for: " + request.url());
             System.out.println("sendRequest: response message: " + response.message());
-            System.out.println("sendRequest: response body: " + response.body().string());
+            result = response.body().string();
+            System.out.println("sendRequest: response body: " + result);
             int responseCode = response.code();
-            if (responseCode == 401) {
-                getToken();
-                return response;
-            }
+//            if (responseCode == 401) {
+//                getToken();
+//                return result;
+//            }
 
 //            result = response.body().string();
 //            Log.e(TAG, "sendRequest: result: " + result);
@@ -255,7 +247,7 @@ public class APIClient {
             e.printStackTrace();
         }
 
-        return response;
+        return result;
     }
 
     public void updateBundle(Context context, String bundleName) {
@@ -270,20 +262,9 @@ public class APIClient {
         String bundleFileName = String.format("/%s/%s.tar", BUNDLES, bundleName);
         String bundleFileNameExtracted = String.format("/%s/%s-extracted", BUNDLES, bundleName);
 
-//        Log.e(TAG, "updateBundle: bundlesFileName: " + bundlesFileName);
-//        Log.e(TAG, "updateBundle: bundleFileName: " + bundleFileName);
-//        Log.e(TAG, "updateBundle: bundleFileNameExtracted: " + bundleFileNameExtracted);
-
         File bundlesFolder = new File(context.getFilesDir().getAbsolutePath() + bundlesFileName);
         File bundleFile = new File(context.getFilesDir().getAbsolutePath() + bundleFileName);
         File bundleExtractedFolder = new File(context.getFilesDir().getAbsolutePath() + bundleFileNameExtracted);
-//        Log.e(TAG, "updateBundle: bundlesFolder: " + bundlesFolder.toString());
-//        Log.e(TAG, "updateBundle: bundleFile: " + bundleFile.toString());
-//        Log.e(TAG, "updateBundle: bundleExtractedFolder: " + bundleExtractedFolder.toString());
-//
-//        Log.e(TAG, "updateBundle: bundlesFolder.exists: " + bundlesFolder.exists());
-//        Log.e(TAG, "updateBundle: bundleFile.exists: " + bundleFile.exists());
-//        Log.e(TAG, "updateBundle: bundleExtractedFolder.exists: " + bundleExtractedFolder.exists());
         FileOutputStream bundlesOutStream = null;
         FileOutputStream extractedOutStream = null;
 
@@ -308,13 +289,9 @@ public class APIClient {
             }
             String currentBundleSha = BRWalletManager.sha256Hex(bFile);
             Log.e(TAG, "updateBundle: currentBundleSha: " + currentBundleSha);
-            Response response = sendRequest(new Request.Builder().get().url(String.format("%s/assets/bundles/%s/versions", BASE_URL, BREAD_BUY)).build(), false);
+            String response = sendRequest(new Request.Builder().get().url(String.format("%s/assets/bundles/%s/versions", BASE_URL, BREAD_BUY)).build(), false);
             String respBody = "";
-            try {
-                respBody = response.body().string();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            respBody = response;
             Log.e(TAG, "updateBundle: response: " + respBody);
             String latestVersion = "";
 
@@ -332,14 +309,10 @@ public class APIClient {
             Request request = new Request.Builder()
                     .url(String.format("%s/assets/bundles/%s/download", BASE_URL, bundleName))
                     .get().build();
-            Response response = sendRequest(request, false);
+            String response = sendRequest(request, false);
             if (response == null) Log.e(TAG, "updateBundle: WARNING: response is null");
-            try {
-                String body = response.body().string();
-                Log.e(TAG, "updateBundle: body: " + body);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            String body = response;
+            Log.e(TAG, "updateBundle: body: " + body);
         }
 
     }
