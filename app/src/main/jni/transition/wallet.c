@@ -933,3 +933,16 @@ JNIEXPORT jstring JNICALL Java_com_breadwallet_wallet_BRWalletManager_base58ofSh
     return (*env)->NewStringUTF(env, base58string);
 
 }
+
+JNIEXPORT jstring JNICALL Java_com_breadwallet_wallet_BRWalletManager_sha256Hex(
+        JNIEnv *env,
+        jobject thiz,
+        jbyteArray data){
+
+    jbyte *byteData = (*env)->GetByteArrayElements(env, data, 0);
+    char* charData = (char *) byteData;
+    UInt256 md32;
+    BRSHA256_2(&md32, charData, sizeof(charData));
+    char* hexData = u256_hex_encode(md32);
+    return (*env)->NewStringUTF(env, hexData);
+}

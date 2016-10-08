@@ -10,25 +10,20 @@ import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.wallet.BRWalletManager;
 
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.io.IOUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 import java.util.TimeZone;
 
 import okhttp3.MediaType;
@@ -37,8 +32,8 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static android.R.attr.name;
-import static com.breadwallet.R.string.request;
+import static android.provider.ContactsContract.CommonDataKinds.Website.URL;
+
 
 /**
  * BreadWallet
@@ -85,6 +80,9 @@ public class APIClient {
 
     private static final String GET = "GET";
     private static final String POST = "POST";
+
+    public static final String BUNDLES = "bundles";
+    public static final String BREAD_BUY = "bread-buy";
     private Activity ctx;
 
     public static synchronized APIClient getInstance(Activity context) {
@@ -111,9 +109,15 @@ public class APIClient {
         try {
             String strUtl = BASE_URL + FEE_PER_KB_URL;
             Request request = new Request.Builder().url(strUtl).get().build();
-            String response = sendRequest(request, false);
+            Response response = sendRequest(request, false);
 
-            JSONObject object = new JSONObject(response);
+            JSONObject object = null;
+            try {
+                object = new JSONObject(response.body().string());
+            } catch (IOException e) {
+                e.printStackTrace();
+                return 0;
+            }
             return (long) object.getInt("fee_per_kb");
         } catch (JSONException e) {
             e.printStackTrace();
@@ -131,34 +135,29 @@ public class APIClient {
                 .url(strUtl)
                 .get()
                 .build();
-        String response = sendRequest(request, true);
-        if (response.equalsIgnoreCase("401")) {
-            getToken();
+        Response response = sendRequest(request, true);
+        if (response == null) {
             response = sendRequest(request, true);
         }
 
         Log.e(TAG, "buyBitcoinMe: response: " + response);
-//            if (response.isEmpty()) return null;
-//            JSONObject obj = new JSONObject(response);
-//            String token = obj.getString("token");
-//            KeyStoreManager.putToken(token.getBytes(), ctx);
 
         return null;
     }
 
     public String getToken() {
+        Log.e(TAG, "getToken");
         if (ctx == null) ctx = MainActivity.app;
         if (ctx == null) return null;
         try {
             String strUtl = BASE_URL + TOKEN;
-            Log.e(TAG, "getToken: strUrl: " + strUtl);
 
             JSONObject requestMessageJSON = new JSONObject();
             String base58PubKey = BRWalletManager.getAuthPublicKeyForAPI(KeyStoreManager.getAuthKey(ctx));
-            Log.e(TAG, "getToken: base58PubKey: " + base58PubKey);
+//            Log.e(TAG, "getToken: base58PubKey: " + base58PubKey);
             requestMessageJSON.put("pubKey", base58PubKey);
             requestMessageJSON.put("deviceID", SharedPreferencesManager.getDeviceId(ctx));
-            Log.e(TAG, "getToken: message: " + requestMessageJSON.toString());
+//            Log.e(TAG, "getToken: message: " + requestMessageJSON.toString());
 
             final MediaType JSON
                     = MediaType.parse("application/json; charset=utf-8");
@@ -168,10 +167,19 @@ public class APIClient {
                     .header("Content-Type", "application/json")
                     .header("Accept", "application/json")
                     .post(requestBody).build();
-            String response = sendRequest(request, false);
+            Response response = sendRequest(request, false);
             Log.e(TAG, "getToken: response: " + response);
-            if (response.isEmpty()) return null;
-            JSONObject obj = new JSONObject(response);
+            try {
+                if (response.body().string().isEmpty()) return null;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            JSONObject obj = null;
+            try {
+                obj = new JSONObject(response.body().string());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             String token = obj.getString("token");
             KeyStoreManager.putToken(token.getBytes(), ctx);
 
@@ -196,10 +204,7 @@ public class APIClient {
         return BRWalletManager.signString(request, KeyStoreManager.getAuthKey(ctx));
     }
 
-    public String sendRequest(Request request, boolean needsAuth) {
-        String result = "";
-        int responseCode = 0;
-
+    public Response sendRequest(Request request, boolean needsAuth) {
         if (needsAuth) {
             Request.Builder modifiedRequest = request.newBuilder();
             String base58Body = "";
@@ -228,34 +233,42 @@ public class APIClient {
             request = modifiedRequest.header("Authorization", authValue).build();
 
         }
+        Response response = null;
         try {
             OkHttpClient client = new OkHttpClient();
             Log.e(TAG, "sendRequest: dateHeader: " + request.header("Date"));
             Log.e(TAG, "sendRequest: Authorization: " + request.header("Authorization"));
-            Response response = client.newCall(request).execute();
-            System.out.println("sendRequest: getResponseCode : " + response.code());
-            System.out.println("sendRequest: getResponseMessage: " + response.message());
-            responseCode = response.code();
-            result = response.body().string();
-            Log.e(TAG, "sendRequest: result: " + result);
-            Log.e(TAG, "sendRequest: server date: " + response.header("Date"));
+            response = client.newCall(request).execute();
+            System.out.println("sendRequest: response code: " + response.code() + " for: " + request.url());
+            System.out.println("sendRequest: response message: " + response.message());
+            System.out.println("sendRequest: response body: " + response.body().string());
+            int responseCode = response.code();
+            if (responseCode == 401) {
+                getToken();
+                return response;
+            }
+
+//            result = response.body().string();
+//            Log.e(TAG, "sendRequest: result: " + result);
+//            Log.e(TAG, "sendRequest: server date: " + response.header("Date"));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return result.isEmpty() ? String.valueOf(responseCode) : result;
+        return response;
     }
 
-    public void updateBundle(Context context, String name) {
-        if (name == null) {
-            Log.e(TAG, "updateBundle: name is null");
+    public void updateBundle(Context context, String bundleName) {
+        Log.e(TAG, "updateBundle");
+        if (bundleName == null) {
+            Log.e(TAG, "updateBundle: bundleName is null");
             return;
         }
-        String bundles = "bundles";
 
-        String bundlesFileName = String.format("/%s", bundles);
-        String bundleFileName = String.format("/%s/%s.tar", bundles, name);
-        String bundleFileNameExtracted = String.format("/%s/%s-extracted", bundles, name);
+
+        String bundlesFileName = String.format("/%s", BUNDLES);
+        String bundleFileName = String.format("/%s/%s.tar", BUNDLES, bundleName);
+        String bundleFileNameExtracted = String.format("/%s/%s-extracted", BUNDLES, bundleName);
 
 //        Log.e(TAG, "updateBundle: bundlesFileName: " + bundlesFileName);
 //        Log.e(TAG, "updateBundle: bundleFileName: " + bundleFileName);
@@ -271,28 +284,102 @@ public class APIClient {
 //        Log.e(TAG, "updateBundle: bundlesFolder.exists: " + bundlesFolder.exists());
 //        Log.e(TAG, "updateBundle: bundleFile.exists: " + bundleFile.exists());
 //        Log.e(TAG, "updateBundle: bundleExtractedFolder.exists: " + bundleExtractedFolder.exists());
-
         FileOutputStream bundlesOutStream = null;
         FileOutputStream extractedOutStream = null;
 
-        try {
-            bundlesOutStream = new FileOutputStream(bundlesFolder);
-            extractedOutStream = new FileOutputStream(bundleExtractedFolder);
-//            outputStream.write(string.getBytes());
+        if (bundleFile.exists()) {
+            Log.e(TAG, "updateBundle: exists, fetching diff for most recent version");
+            tryExtractTar(bundleFile, bundleFileNameExtracted);
+            FileInputStream fileInputStream = null;
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
+            byte[] bFile = new byte[(int) bundleFile.length()];
+
             try {
-                bundlesOutStream.close();
-                extractedOutStream.close();
+                //convert file into array of bytes
+                fileInputStream = new FileInputStream(bundleFile);
+                fileInputStream.read(bFile);
+                fileInputStream.close();
+
+                for (int i = 0; i < bFile.length; i++) {
+                    System.out.print((char) bFile[i]);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            String currentBundleSha = BRWalletManager.sha256Hex(bFile);
+            Log.e(TAG, "updateBundle: currentBundleSha: " + currentBundleSha);
+            Response response = sendRequest(new Request.Builder().get().url(String.format("%s/assets/bundles/%s/versions", BASE_URL, BREAD_BUY)).build(), false);
+            String respBody = "";
+            try {
+                respBody = response.body().string();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Log.e(TAG, "updateBundle: response: " + respBody);
+            String latestVersion = "";
+
+            try {
+                JSONObject versionsJson = new JSONObject(respBody);
+                JSONArray jsonArray = versionsJson.getJSONArray("versions");
+                latestVersion = (String) jsonArray.get(jsonArray.length() - 1);
+                Log.e(TAG, "updateBundle: latestVersion: " + latestVersion);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        } else {
+            Log.e(TAG, "updateBundle: bundle doesn't exist, downloading new copy");
+            Request request = new Request.Builder()
+                    .url(String.format("%s/assets/bundles/%s/download", BASE_URL, bundleName))
+                    .get().build();
+            Response response = sendRequest(request, false);
+            if (response == null) Log.e(TAG, "updateBundle: WARNING: response is null");
+            try {
+                String body = response.body().string();
+                Log.e(TAG, "updateBundle: body: " + body);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        if (bundleFile.exists()) {
-            Log.e(TAG, "updateBundle: exists, fetching diff for most recent version");
 
+    }
+
+    private void tryExtractTar(File tarFile, String path) {
+        Log.e(TAG, "tryExtractTar: tarFile: " + tarFile);
+        Log.e(TAG, "tryExtractTar: path: " + path);
+        FileOutputStream outputFile = null;
+        TarArchiveInputStream myTarFile = null;
+        try {
+            myTarFile = new TarArchiveInputStream(new FileInputStream(tarFile));
+            TarArchiveEntry entry = null;
+            String individualFiles;
+            int offset;
+
+            while ((entry = myTarFile.getNextTarEntry()) != null) {
+                individualFiles = entry.getName();
+                byte[] content = new byte[(int) entry.getSize()];
+                offset = 0;
+                System.out.println("File Name in TAR File is: " + individualFiles);
+                System.out.println("Size of the File is: " + entry.getSize());
+                System.out.println("Byte Array length: " + content.length);
+                myTarFile.read(content, offset, content.length - offset);
+                outputFile = new FileOutputStream(new File(String.format("%s/%s", path, individualFiles)));
+                IOUtils.write(content, outputFile);
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                outputFile.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                myTarFile.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
     }

@@ -202,4 +202,9 @@ JNIEXPORT jstring JNICALL Java_com_breadwallet_wallet_BRWalletManager_base58ofSh
         jobject thiz,
         jstring stringToEncode);
 
+JNIEXPORT jstring JNICALL Java_com_breadwallet_wallet_BRWalletManager_sha256Hex(
+        JNIEnv *env,
+        jobject thiz,
+        jbyteArray data);
+
 #endif //BREADWALLET_WALLET_H
