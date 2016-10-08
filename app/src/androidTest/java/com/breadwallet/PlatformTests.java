@@ -2,6 +2,7 @@ package com.breadwallet;
 
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.util.Log;
 
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.wallet.BRWalletManager;
@@ -94,8 +95,6 @@ public class PlatformTests {
 
     }
 
-
-
 //    @Test
 //    public void bundleUpdateTest(){
 //        APIClient apiClient = APIClient.getInstance();
@@ -103,166 +102,18 @@ public class PlatformTests {
 //    }
 
     @Test
-    public void testMeRequest(){
-        APIClient apiClient = APIClient.getInstance();
-        apiClient.buyBitcoinMe();
-    }
-
-    @Test
     public void testGetToken(){
         APIClient apiClient = APIClient.getInstance();
         apiClient.getToken();
     }
 
-//    @Test
-//    public void testMeRequest() {
-//        String strUtl = BASE_URL + ME;
-//        System.out.println("getToken: strUrl: " + strUtl);
-//        HTTPRequestEntity request = new HTTPRequestEntity(strUtl, HTTPRequestEntity.GET, true, true);
-//        Map<String, String> properties = new HashMap<>();
-//        request.setHeaders(properties);
-//        SecureRandom sr = new SecureRandom();
-//        byte[] keyBytes = sr.generateSeed(16);
-//        if (keyBytes.length == 0) throw new NullPointerException("failed to create the seed");
-//        byte[] authKey = BRWalletManager.getAuthPrivKeyForAPI(keyBytes);
-//        String token = getToken(authKey);
-//        String response = sendRequest(request, true, token, authKey);
-//
-//        System.out.println("getToken: response: " + response);
-//        if (response.isEmpty()) {
-//            System.out.println("response.isEmpty()");
-//        }
-//    }
-//
-//    public String getToken(byte[] authKey) {
-//        try {
-//            String strUtl = BASE_URL + TOKEN;
-//            System.out.println("getToken: strUrl: " + strUtl);
-//            HTTPRequestEntity request = new HTTPRequestEntity(strUtl, HTTPRequestEntity.POST, true, true);
-//            Map<String, String> properties = new HashMap<>();
-//            properties.put("Content-Type", "application/json");
-//            properties.put("Accept", "application/json");
-//            request.setHeaders(properties);
-//            JSONObject requestMessageJSON = new JSONObject();
-//
-//            String base58PubKey = BRWalletManager.getAuthPublicKeyForAPI(authKey);
-//            System.out.println("getToken: base58PubKey: " + base58PubKey);
-//            requestMessageJSON.put("pubKey", base58PubKey);
-//            String uuid = UUID.randomUUID().toString();
-//            requestMessageJSON.put("deviceID", uuid);
-//            request.setMessage(requestMessageJSON.toString());
-//            System.out.println("getToken: message: " + requestMessageJSON.toString());
-//            String response = sendRequest(request, false, null, null);
-//            System.out.println("getToken: response: " + response);
-//            if (response.isEmpty()) return null;
-//            JSONObject obj = new JSONObject(response);
-//            return obj.getString("token");
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//
-//        }
-//        return null;
-//
-//    }
-//
-//    public String sendRequest(HTTPRequestEntity req, boolean needsAuth, String token, byte[] authKey) {
-//        StringBuilder builder = new StringBuilder();
-//        String result = "";
-//        int responseCode = 0;
-//        BufferedReader bufferedReader = null;
-//        HttpURLConnection conn = null;
-//        if (needsAuth) {
-//            if (token == null) {
-//                System.out.println("TOKEN IS NULL");
-//                return null;
-//            }
-//            String base58Body = "";
-//            if (req.getMessage() != null) {
-//                base58Body = BRWalletManager.base58ofSha256(req.getMessage());
-//            }
-//            SimpleDateFormat sdf =
-//                    new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
-//            sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-//            String httpDate = sdf.format(new Date(System.currentTimeMillis()));
-//
-//            req.getHeaders().put("Date", httpDate.substring(0, httpDate.length() - 6));
-//            String requestString = createRequest(req.getMethod(), base58Body,
-//                    req.getHeaders().get("Content-Type"), req.getHeaders().get("Date"), "/me");
-//
-//            System.out.println("sendRequest: requestString: " + requestString);
-//            String signedRequest = signRequest(requestString, authKey);
-//            String authValue = "bread " + token + ":" + signedRequest;
-//            req.getHeaders().put("Authorization", authValue);
-//            System.out.println("sendRequest: authValue: " + authValue);
-//        }
-//        try {
-//            URL url = new URL(req.getUrl());
-//
-//            conn = (HttpURLConnection) url.openConnection();
-//            conn.setRequestMethod(req.getMethod());
-//            conn.setDoOutput(req.isDoOutput());
-//            conn.setDoInput(req.isDoInput());
-//            conn.setConnectTimeout(5000);
-//            conn.setReadTimeout(10000);
-//            if (req.getHeaders() != null) {
-//                Set set = req.getHeaders().entrySet();
-//                Iterator iterator = set.iterator();
-//                while (iterator.hasNext()) {
-//                    Map.Entry entries = (Map.Entry) iterator.next();
-//                    conn.setRequestProperty(entries.getKey().toString(), entries.getValue().toString());
-//                    System.out.println("sendRequest: SetHeader: " + entries.getKey().toString() + ":" + entries.getValue().toString());
-//                }
-//            }
-//            if (req.getMessage() != null) {
-//                OutputStream os = conn.getOutputStream();
-//                os.write(req.getMessage().getBytes());
-//                os.flush();
-//            }
-//            System.out.println("sendRequest: getResponseMessage: " + conn.getResponseMessage());
-//            System.out.println("sendRequest: getResponseCode: " + conn.getResponseCode());
-//            responseCode = conn.getResponseCode();
-//            String aux = null;
-//            bufferedReader = new BufferedReader(new InputStreamReader(
-//                    (conn.getInputStream())));
-//
-//            while ((aux = bufferedReader.readLine()) != null) {
-//                builder.append(aux);
-//            }
-//            System.out.println(conn.getURL());
-//            result = builder.toString();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            BufferedReader bufferedReaderErr = new BufferedReader(new InputStreamReader(
-//                    (conn.getErrorStream())));
-//            StringBuilder err = new StringBuilder();
-//            String temp;
-//            try {
-//                while ((temp = bufferedReaderErr.readLine()) != null) {
-//                    err.append(temp);
-//                }
-//                System.out.println("sendRequest: ERROR STREAM: " + err.toString());
-//            } catch (IOException e1) {
-//                e1.printStackTrace();
-//            }
-//        } finally {
-//            if (conn != null)
-//                conn.disconnect();
-//        }
-//
-//        return result.isEmpty() ? String.valueOf(responseCode) : result;
-//    }
-//
-//    private String createRequest(String reqMethod, String base58Body, String contentType, String dateHeader, String url) {
-//        return (reqMethod == null ? "" : reqMethod) + "\n" +
-//                (base58Body == null ? "" : base58Body) + "\n" +
-//                (contentType == null ? "" : contentType) + "\n" +
-//                (dateHeader == null ? "" : dateHeader) + "\n" +
-//                (url == null ? "" : url) + "\n";
-//    }
-//
-//    public String signRequest(String request, byte[] authKey) {
-//        return BRWalletManager.signString(request, authKey);
-//    }
+    @Test
+    public void testMeRequest(){
+        APIClient apiClient = APIClient.getInstance();
+        String response = apiClient.buyBitcoinMe().toLowerCase().toString();
+        String expectedString = "invalid signature".toString();
+        Assert.assertNotEquals(response, expectedString);
 
+    }
 
 }
