@@ -895,27 +895,27 @@ JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getSeed
     return result;
 }
 
-JNIEXPORT jstring JNICALL Java_com_breadwallet_wallet_BRWalletManager_signString(
-        JNIEnv *env,
-        jobject thiz,
-        jstring stringToSign, jbyteArray privKey) {
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "signString");
-
-    jbyte *bytePrivKey = (*env)->GetByteArrayElements(env, privKey, 0);
-    BRKey key;
-    int res = BRKeySetPrivKey(&key, (const char *) bytePrivKey);
-    const char *rawString = (*env)->GetStringUTFChars(env, stringToSign, 0);
-    size_t strLen = (size_t) (*env)->GetStringUTFLength(env, stringToSign);
-    UInt256 md32;
-    BRSHA256_2(&md32, rawString, strLen);
-    size_t sigLen = BRKeyCompactSign(&key, NULL, 0, md32);
-    uint8_t compactSig[sigLen];
-    sigLen = BRKeyCompactSign(&key, compactSig, sizeof(compactSig), md32);
-    size_t base58len = BRBase58Encode(NULL, 0, compactSig, sigLen);
-    char base58string[base58len];
-    BRBase58Encode(base58string, base58len, compactSig, sigLen);
-    return (*env)->NewStringUTF(env, base58string);
-}
+//JNIEXPORT jstring JNICALL Java_com_breadwallet_wallet_BRWalletManager_signString(
+//        JNIEnv *env,
+//        jobject thiz,
+//        jstring stringToSign, jbyteArray privKey) {
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "signString");
+//
+//    jbyte *bytePrivKey = (*env)->GetByteArrayElements(env, privKey, 0);
+//    BRKey key;
+//    int res = BRKeySetPrivKey(&key, (const char *) bytePrivKey);
+//    const char *rawString = (*env)->GetStringUTFChars(env, stringToSign, 0);
+//    size_t strLen = (size_t) (*env)->GetStringUTFLength(env, stringToSign);
+//    UInt256 md32;
+//    BRSHA256_2(&md32, rawString, strLen);
+//    size_t sigLen = BRKeyCompactSign(&key, NULL, 0, md32);
+//    uint8_t compactSig[sigLen];
+//    sigLen = BRKeyCompactSign(&key, compactSig, sizeof(compactSig), md32);
+//    size_t base58len = BRBase58Encode(NULL, 0, compactSig, sigLen);
+//    char base58string[base58len];
+//    BRBase58Encode(base58string, base58len, compactSig, sigLen);
+//    return (*env)->NewStringUTF(env, base58string);
+//}
 
 JNIEXPORT jstring JNICALL Java_com_breadwallet_wallet_BRWalletManager_base58ofSha256(
         JNIEnv *env,
@@ -932,17 +932,4 @@ JNIEXPORT jstring JNICALL Java_com_breadwallet_wallet_BRWalletManager_base58ofSh
     BRBase58Encode(base58string, base58len, md32.u8, strLen);
     return (*env)->NewStringUTF(env, base58string);
 
-}
-
-JNIEXPORT jstring JNICALL Java_com_breadwallet_wallet_BRWalletManager_sha256Hex(
-        JNIEnv *env,
-        jobject thiz,
-        jbyteArray data){
-
-    jbyte *byteData = (*env)->GetByteArrayElements(env, data, 0);
-    char* charData = (char *) byteData;
-    UInt256 md32;
-    BRSHA256_2(&md32, charData, sizeof(charData));
-    char* hexData = u256_hex_encode(md32);
-    return (*env)->NewStringUTF(env, hexData);
 }

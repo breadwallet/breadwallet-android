@@ -1087,6 +1087,4 @@ public class BRWalletManager {
 
     public static native String base58ofSha256(String strToSign);
 
-    public static native String sha256Hex(byte[] data);
-
 }

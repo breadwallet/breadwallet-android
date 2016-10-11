@@ -103,7 +103,7 @@ public class FragmentAbout extends Fragment {
             public void run() {
                 APIClient apiClient = APIClient.getInstance();
                 apiClient.buyBitcoinMe();
-//                apiClient.updateBundle(getActivity(), APIClient.BREAD_BUY); //bread-buy-staging
+//                apiClient.updateBundle(getActivity()); //bread-buy-staging
             }
         }).start();
 
