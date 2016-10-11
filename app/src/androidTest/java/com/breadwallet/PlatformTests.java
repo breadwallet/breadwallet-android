@@ -5,10 +5,10 @@ import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
 import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
-import com.platform.HTTPRequestEntity;
 
+import org.apache.commons.io.IOUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
@@ -16,22 +16,17 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.security.SecureRandom;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.TimeZone;
-import java.util.UUID;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+import okhttp3.Request;
+import okhttp3.Response;
+
+import static com.platform.APIClient.BREAD_BUY;
+import static com.platform.APIClient.bytesToHex;
 
 
 /**
@@ -96,24 +91,81 @@ public class PlatformTests {
     }
 
 //    @Test
-//    public void bundleUpdateTest(){
+//    public void bundleUpdateTest() {
 //        APIClient apiClient = APIClient.getInstance();
-//        apiClient.updateBundle(mActivityRule.getActivity(), "bread-buy");
+//        Request request = new Request.Builder()
+//                .get()
+//                .url("https://s3.amazonaws.com/breadwallet-assets/bread-buy/7f5bc5c6cc005df224a6ea4567e508491acaffdc2e4769e5262a52f5b785e261.tar").build();
+//        Response response = apiClient.sendRequest(request, false);
+//        File bundleFile = new File(mActivityRule.getActivity().getFilesDir().getAbsolutePath() + APIClient.bundleFileName);
+//        apiClient.downloadBundle(response, bundleFile);
+////        String latestVersion = getLatestVersion();
+////        Assert.assertNotNull(latestVersion);
+////        String currentTarVersion = getCurrentVersion(bundleFile);
+////        Log.e(TAG, "bundleUpdateTest: latestVersion: " + latestVersion + ", currentTarVersion: " + currentTarVersion);
+////
+////        Assert.assertNotNull(currentTarVersion);
+////        Assert.assertNotEquals(latestVersion, currentTarVersion);
+////        apiClient.updateBundle(mActivityRule.getActivity());
+////        currentTarVersion = getCurrentVersion(bundleFile);
+////        Log.e(TAG, "bundleUpdateTest:AFTER UPDATE latestVersion: " + latestVersion + ", currentTarVersion: " + currentTarVersion);
+////
+////        Assert.assertEquals(latestVersion, currentTarVersion);
 //    }
 
+    private String getCurrentVersion(File bundleFile){
+        byte[] bFile;
+        String currentTarVersion = null;
+        try {
+            bFile = IOUtils.toByteArray(new FileInputStream(bundleFile));
+            Log.e(TAG, "bundleUpdateTest: bFile.length: "+ bFile.length);
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(bFile);
+            currentTarVersion = bytesToHex(hash);
+        } catch (IOException | NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return currentTarVersion;
+    }
+
+    private String getLatestVersion(){
+        APIClient apiClient = APIClient.getInstance();
+        String response = null;
+        try {
+            response = apiClient.sendRequest(new Request.Builder()
+                    .get()
+                    .url(String.format("%s/assets/bundles/%s/versions", BASE_URL, BREAD_BUY))
+                    .build(), false).body().string();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String respBody = "";
+        respBody = response;
+        Log.e(TAG, "updateBundle: response: " + respBody);
+        String latestVersion = null;
+        try {
+            JSONObject versionsJson = new JSONObject(respBody);
+            JSONArray jsonArray = versionsJson.getJSONArray("versions");
+            latestVersion = (String) jsonArray.get(jsonArray.length() - 1);
+            Log.e(TAG, "updateBundle: latestVersion: " + latestVersion);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return latestVersion;
+    }
+
     @Test
-    public void testGetToken(){
+    public void testGetToken() {
         APIClient apiClient = APIClient.getInstance();
         apiClient.getToken();
     }
 
     @Test
-    public void testMeRequest(){
+    public void testMeRequest() {
         APIClient apiClient = APIClient.getInstance();
-        String response = apiClient.buyBitcoinMe().toLowerCase().toString();
-        String expectedString = "invalid signature".toString();
+        String response = apiClient.buyBitcoinMe().toLowerCase();
+        String expectedString = "invalid signature";
         Assert.assertNotEquals(response, expectedString);
-
     }
 
 }

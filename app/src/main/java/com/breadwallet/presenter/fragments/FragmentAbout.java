@@ -1,4 +1,3 @@
-
 package com.breadwallet.presenter.fragments;
 
 import android.content.Intent;
@@ -95,16 +94,6 @@ public class FragmentAbout extends Fragment {
                     }
                 }
             });
-
-
-        //todo test , delete after!
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                APIClient apiClient = APIClient.getInstance();
-                apiClient.buyBitcoinMe();
-            }
-        }).start();
 
         return rootView;
     }
