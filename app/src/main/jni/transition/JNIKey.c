@@ -23,7 +23,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_jniwrappers_BRKey_compactSign(
     uint8_t compactSig[sigLen];
     sigLen = BRKeyCompactSign(&key, compactSig, sizeof(compactSig), md32);
 
-    jbyteArray result = (*env)->NewByteArray(env, sigLen);
-    (*env)->SetByteArrayRegion(env, result, 0, sigLen, (const jbyte *) compactSig);
+    jbyteArray result = (*env)->NewByteArray(env, (jsize) sigLen);
+    (*env)->SetByteArrayRegion(env, result, 0, (jsize) sigLen, (const jbyte *) compactSig);
     return result;
 }

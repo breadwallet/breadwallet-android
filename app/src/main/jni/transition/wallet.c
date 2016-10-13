@@ -27,14 +27,8 @@
 #include "BRPeerManager.h"
 #include "BRBIP39Mnemonic.h"
 #include "BRBase58.h"
-#include <android/log.h>
 #include <assert.h>
-#include <BRTransaction.h>
 #include <BRBIP38Key.h>
-#include <BRKey.h>
-#include <BRInt.h>
-#include "BRBIP32Sequence.h"
-#include "BRTransaction.h"
 
 static JavaVM *_jvmW;
 BRWallet *_wallet;
