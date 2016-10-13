@@ -12,6 +12,8 @@ import com.breadwallet.wallet.BRWalletManager;
 import com.jniwrappers.BRBase58;
 import com.jniwrappers.BRKey;
 
+import org.apache.commons.compress.archivers.ArchiveException;
+import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.CompressorException;
@@ -25,6 +27,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -93,7 +97,7 @@ public class APIClient {
 
     public static String bundlesFileName = String.format("/%s", BUNDLES);
     public static String bundleFileName = String.format("/%s/%s.tar", BUNDLES, BREAD_BUY);
-    public static String bundleFileNameExtracted = String.format("/%s/%s-extracted", BUNDLES, BREAD_BUY);
+    public static String extractedFolder = String.format("%s-extracted", BREAD_BUY);
     private Activity ctx;
 
     public static synchronized APIClient getInstance(Activity context) {
@@ -174,10 +178,8 @@ public class APIClient {
 
             JSONObject requestMessageJSON = new JSONObject();
             String base58PubKey = BRWalletManager.getAuthPublicKeyForAPI(KeyStoreManager.getAuthKey(ctx));
-//            Log.e(TAG, "getToken: base58PubKey: " + base58PubKey);
             requestMessageJSON.put("pubKey", base58PubKey);
             requestMessageJSON.put("deviceID", SharedPreferencesManager.getDeviceId(ctx));
-//            Log.e(TAG, "getToken: message: " + requestMessageJSON.toString());
 
             final MediaType JSON
                     = MediaType.parse("application/json; charset=utf-8");
@@ -280,27 +282,26 @@ public class APIClient {
     }
 
     public void updateBundle(Context context) {
-
         Log.e(TAG, "updateBundle");
 
-        File bundlesFolder = new File(context.getFilesDir().getAbsolutePath() + bundlesFileName);
+//        File bundlesFolder = new File(context.getFilesDir().getAbsolutePath() + bundlesFileName);
         File bundleFile = new File(context.getFilesDir().getAbsolutePath() + bundleFileName);
-        File bundleExtractedFolder = new File(context.getFilesDir().getAbsolutePath() + bundleFileNameExtracted);
-        FileOutputStream bundlesOutStream = null;
-        FileOutputStream extractedOutStream = null;
+//        File bundleExtractedFolder = new File(context.getFilesDir().getAbsolutePath() + bundleFileNameExtracted);
+//        FileOutputStream bundlesOutStream = null;
+//        FileOutputStream extractedOutStream = null;
 
-        //test
-        APIClient apiClient = APIClient.getInstance();
-        Request testRequest = new Request.Builder()
-                .get()
-                .url(String.format("%s/assets/bundles/%s/diff/%s", BASE_URL, BREAD_BUY, "6b8a9b11f89387902d4d30c22f08a62c9335de7f3e658173aa9e4111711ba5b0")).build();
-        Response testResponse = apiClient.sendRequest(testRequest, false);
-        apiClient.downloadBundle(testResponse, bundleFile);
-        //end test
+
+//        //test
+//        APIClient apiClient = APIClient.getInstance();
+//        Request testRequest = new Request.Builder()
+//                .get()
+//                .url(String.format("%s/assets/bundles/%s/", BASE_URL, BREAD_BUY)).build();
+//        Response testResponse = apiClient.sendRequest(testRequest, false);
+//        apiClient.downloadBundle(testResponse, bundleFile);
+//        //end test
 
         if (bundleFile.exists()) {
             Log.e(TAG, "updateBundle: exists");
-            tryExtractTar(bundleFile, bundleFileNameExtracted);
 
             byte[] bFile = new byte[0];
             try {
@@ -328,7 +329,6 @@ public class APIClient {
                 JSONArray jsonArray = versionsJson.getJSONArray("versions");
                 latestVersion = (String) jsonArray.get(jsonArray.length() - 1);
                 Log.e(TAG, "updateBundle: latestVersion: " + latestVersion);
-                //todo here is the problem with the version
                 MessageDigest digest = MessageDigest.getInstance("SHA-256");
                 byte[] hash = digest.digest(bFile);
                 currentTarVersion = bytesToHex(hash);
@@ -340,11 +340,12 @@ public class APIClient {
             if (latestVersion != null && currentTarVersion != null) {
                 if (latestVersion.equals(currentTarVersion)) {
                     Log.e(TAG, "updateBundle: have the latest version");
-                    tryExtractTar(bundleFile, bundleFileNameExtracted);
+                    tryExtractTar(bundleFile, extractedFolder);
                 } else {
                     Log.e(TAG, "updateBundle: don't have the most recent version, download diff");
                     Log.e(TAG, "downloadDiff: currentTarVersion: " + currentTarVersion);
                     downloadDiff(bundleFile, currentTarVersion);
+                    tryExtractTar(bundleFile, extractedFolder);
 
                 }
             } else {
@@ -360,7 +361,7 @@ public class APIClient {
             response = sendRequest(request, false);
             downloadBundle(response, bundleFile);
 
-            tryExtractTar(bundleFile, bundleFileNameExtracted);
+            tryExtractTar(bundleFile, extractedFolder);
 
             Log.e(TAG, "updateBundle: bundleFile.length(): " + bundleFile.length());
 
@@ -428,51 +429,64 @@ public class APIClient {
         }
     }
 
-    public void tryExtractTar(File tarFile, String toPath) {
-        Log.e(TAG, "tryExtractTar: tarFile: " + tarFile);
-        Log.e(TAG, "tryExtractTar: path: " + toPath);
-        TarArchiveInputStream myTarFile = null;
+    public boolean tryExtractTar(File inputFile, String folderName) {
+        //"/" + BUNDLES + "/" + folderName
+        File mydir = MainActivity.app.getDir(BUNDLES, Context.MODE_PRIVATE); //Creating an internal dir;
+        if (!mydir.exists()) {
+            mydir.mkdirs();
+        }
+
+        String extractFolderName = MainActivity.app.getFilesDir() + "/" + BUNDLES + "/" + folderName;
+        File temp = new File(extractFolderName);
+        temp.mkdirs();
+        Log.e(TAG, String.format("Untaring %s to dir name %s.", inputFile.getAbsolutePath(), folderName));
+        boolean result = false;
+        TarArchiveInputStream debInputStream = null;
         try {
-            myTarFile = new TarArchiveInputStream(new FileInputStream(tarFile));
+            final InputStream is = new FileInputStream(inputFile);
+            debInputStream = (TarArchiveInputStream) new ArchiveStreamFactory().createArchiveInputStream("tar", is);
             TarArchiveEntry entry = null;
-            String individualFiles;
-            int offset;
+            while ((entry = (TarArchiveEntry) debInputStream.getNextEntry()) != null) {
+                Log.e(TAG, "tryExtractTar: entry.getName(): " + entry.getName());
 
-            while ((entry = myTarFile.getNextTarEntry()) != null) {
-                individualFiles = entry.getName();
-                byte[] content = new byte[(int) entry.getSize()];
-                offset = 0;
-                System.out.println("File Name in TAR File is: " + individualFiles);
-                System.out.println("Size of the File is: " + entry.getSize());
-                System.out.println("Byte Array length: " + content.length);
-                myTarFile.read(content, offset, content.length - offset);
-                FileUtils.writeByteArrayToFile(new File(String.format("%s/%s", toPath, individualFiles)), content);
+                final String outPutFileName = entry.getName().replace("./", "");
+                final File outputFile = new File(extractFolderName, outPutFileName);
+                String outPutFileFullPath = extractFolderName + "/" + outputFile.getName();
+                if (entry.isDirectory()) {
+                    Log.e(TAG, String.format("Attempting to write output directory %s.", outputFile.getAbsolutePath()));
 
+                    File newDir = new File(outPutFileFullPath);
+                    if (!newDir.exists()) {
+                        newDir.mkdirs();
+                    }
+                } else {
+                    Log.e(TAG, String.format("Creating output file %s", outputFile.getAbsolutePath()));
+                    final OutputStream outputFileStream = new FileOutputStream(outPutFileFullPath);
+                    IOUtils.copy(debInputStream, outputFileStream);
+                    outputFileStream.close();
+                }
             }
-            Log.e(TAG, "tryExtractTar: SUCCESS!");
-        } catch (IOException e) {
+
+            result = true;
+        } catch (ArchiveException | IOException e) {
             e.printStackTrace();
         } finally {
             try {
-                if (myTarFile != null) {
-                    myTarFile.close();
-                }
+                debInputStream.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+        return result;
 
     }
 
-    final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
-    public static String bytesToHex(byte[] bytes) {
-        char[] hexChars = new char[bytes.length * 2];
-        for ( int j = 0; j < bytes.length; j++ ) {
-            int v = bytes[j] & 0xFF;
-            hexChars[j * 2] = hexArray[v >>> 4];
-            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+    public static String bytesToHex(byte[] in) {
+        final StringBuilder builder = new StringBuilder();
+        for (byte b : in) {
+            builder.append(String.format("%02x", b));
         }
-        return new String(hexChars);
+        return builder.toString();
     }
 
 }

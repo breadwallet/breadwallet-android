@@ -90,28 +90,28 @@ public class PlatformTests {
 
     }
 
-//    @Test
-//    public void bundleUpdateTest() {
-//        APIClient apiClient = APIClient.getInstance();
-//        Request request = new Request.Builder()
-//                .get()
-//                .url("https://s3.amazonaws.com/breadwallet-assets/bread-buy/7f5bc5c6cc005df224a6ea4567e508491acaffdc2e4769e5262a52f5b785e261.tar").build();
-//        Response response = apiClient.sendRequest(request, false);
-//        File bundleFile = new File(mActivityRule.getActivity().getFilesDir().getAbsolutePath() + APIClient.bundleFileName);
-//        apiClient.downloadBundle(response, bundleFile);
-////        String latestVersion = getLatestVersion();
-////        Assert.assertNotNull(latestVersion);
-////        String currentTarVersion = getCurrentVersion(bundleFile);
-////        Log.e(TAG, "bundleUpdateTest: latestVersion: " + latestVersion + ", currentTarVersion: " + currentTarVersion);
-////
-////        Assert.assertNotNull(currentTarVersion);
-////        Assert.assertNotEquals(latestVersion, currentTarVersion);
-////        apiClient.updateBundle(mActivityRule.getActivity());
-////        currentTarVersion = getCurrentVersion(bundleFile);
-////        Log.e(TAG, "bundleUpdateTest:AFTER UPDATE latestVersion: " + latestVersion + ", currentTarVersion: " + currentTarVersion);
-////
-////        Assert.assertEquals(latestVersion, currentTarVersion);
-//    }
+    @Test
+    public void bundleUpdateTest() {
+        APIClient apiClient = APIClient.getInstance();
+        Request request = new Request.Builder()
+                .get()
+                .url("https://s3.amazonaws.com/breadwallet-assets/bread-buy/7f5bc5c6cc005df224a6ea4567e508491acaffdc2e4769e5262a52f5b785e261.tar").build();
+        Response response = apiClient.sendRequest(request, false);
+        File bundleFile = new File(mActivityRule.getActivity().getFilesDir().getAbsolutePath() + APIClient.bundleFileName);
+        apiClient.downloadBundle(response, bundleFile);
+//        String latestVersion = getLatestVersion();
+//        Assert.assertNotNull(latestVersion);
+//        String currentTarVersion = getCurrentVersion(bundleFile);
+//        Log.e(TAG, "bundleUpdateTest: latestVersion: " + latestVersion + ", currentTarVersion: " + currentTarVersion);
+//
+//        Assert.assertNotNull(currentTarVersion);
+//        Assert.assertNotEquals(latestVersion, currentTarVersion);
+//        apiClient.updateBundle(mActivityRule.getActivity());
+//        currentTarVersion = getCurrentVersion(bundleFile);
+//        Log.e(TAG, "bundleUpdateTest:AFTER UPDATE latestVersion: " + latestVersion + ", currentTarVersion: " + currentTarVersion);
+//
+//        Assert.assertEquals(latestVersion, currentTarVersion);
+    }
 
     private String getCurrentVersion(File bundleFile){
         byte[] bFile;
