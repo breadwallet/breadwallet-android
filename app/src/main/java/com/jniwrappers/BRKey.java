@@ -27,18 +27,15 @@ package com.jniwrappers;
 public class BRKey {
     public static final String TAG = BRKey.class.getName();
 
-    public static BRKey instance;
-
     private BRKey() {
     }
 
-    public static BRKey getInstance() {
-        if (instance == null) {
-            instance = new BRKey();
-        }
-        return instance;
+    public BRKey(byte[] key) {
+        setPrivKey(key);
     }
 
-    public native byte[] compactSign(byte[] privKey, byte[] data);
+    private native void setPrivKey(byte[] privKey);
+
+    public native byte[] compactSign(byte[] data);
 
 }

@@ -29,6 +29,10 @@
 #ifndef BREADWALLET_PEERMANAGER_H
 #define BREADWALLET_PEERMANAGER_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern BRPeerManager *_peerManager;
 
 JNIEXPORT void JNICALL
@@ -64,5 +68,9 @@ JNIEXPORT jint JNICALL Java_com_breadwallet_wallet_BRPeerManager_getEstimatedBlo
 JNIEXPORT void JNICALL Java_com_breadwallet_wallet_BRPeerManager_peerManagerFreeEverything(JNIEnv *env, jobject thiz);
 
 JNIEXPORT void JNICALL Java_com_breadwallet_presenter_activities_IntroActivity_testCore(JNIEnv *env, jobject instance);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //BREADWALLET_PEERMANAGER_H
