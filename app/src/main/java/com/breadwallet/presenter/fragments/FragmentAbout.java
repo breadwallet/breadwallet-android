@@ -102,8 +102,8 @@ public class FragmentAbout extends Fragment {
             @Override
             public void run() {
                 APIClient apiClient = APIClient.getInstance();
-//                apiClient.buyBitcoinMe();
-                apiClient.updateBundle(getActivity()); //bread-buy-staging
+                apiClient.buyBitcoinMe();
+//                apiClient.updateBundle(getActivity()); //bread-buy-staging
             }
         }).start();
 

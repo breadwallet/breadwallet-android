@@ -28,6 +28,10 @@
 #ifndef BREADWALLET_WALLET_H
 #define BREADWALLET_WALLET_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern BRWallet *_wallet;
 extern jclass _walletManagerClass;
 
@@ -201,5 +205,9 @@ JNIEXPORT jstring JNICALL Java_com_breadwallet_wallet_BRWalletManager_base58ofSh
         JNIEnv *env,
         jobject thiz,
         jstring stringToEncode);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //BREADWALLET_WALLET_H

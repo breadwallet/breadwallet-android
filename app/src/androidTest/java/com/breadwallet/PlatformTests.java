@@ -5,6 +5,7 @@ import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.tools.util.Utils;
 import com.platform.APIClient;
 
 import org.apache.commons.io.IOUtils;
@@ -24,10 +25,6 @@ import java.security.NoSuchAlgorithmException;
 
 import okhttp3.Request;
 import okhttp3.Response;
-
-import static com.platform.APIClient.BREAD_BUY;
-import static com.platform.APIClient.bytesToHex;
-
 
 /**
  * BreadWallet
@@ -99,18 +96,18 @@ public class PlatformTests {
         Response response = apiClient.sendRequest(request, false);
         File bundleFile = new File(mActivityRule.getActivity().getFilesDir().getAbsolutePath() + APIClient.bundleFileName);
         apiClient.downloadBundle(response, bundleFile);
-//        String latestVersion = getLatestVersion();
-//        Assert.assertNotNull(latestVersion);
-//        String currentTarVersion = getCurrentVersion(bundleFile);
-//        Log.e(TAG, "bundleUpdateTest: latestVersion: " + latestVersion + ", currentTarVersion: " + currentTarVersion);
-//
-//        Assert.assertNotNull(currentTarVersion);
-//        Assert.assertNotEquals(latestVersion, currentTarVersion);
-//        apiClient.updateBundle(mActivityRule.getActivity());
-//        currentTarVersion = getCurrentVersion(bundleFile);
-//        Log.e(TAG, "bundleUpdateTest:AFTER UPDATE latestVersion: " + latestVersion + ", currentTarVersion: " + currentTarVersion);
-//
-//        Assert.assertEquals(latestVersion, currentTarVersion);
+        String latestVersion = apiClient.getLatestVersion();
+        Assert.assertNotNull(latestVersion);
+        String currentTarVersion = getCurrentVersion(bundleFile);
+        Log.e(TAG, "bundleUpdateTest: latestVersion: " + latestVersion + ", currentTarVersion: " + currentTarVersion);
+
+        Assert.assertNotNull(currentTarVersion);
+        Assert.assertNotEquals(latestVersion, currentTarVersion);
+        apiClient.updateBundle(mActivityRule.getActivity());
+        currentTarVersion = getCurrentVersion(bundleFile);
+        Log.e(TAG, "bundleUpdateTest:AFTER UPDATE latestVersion: " + latestVersion + ", currentTarVersion: " + currentTarVersion);
+
+        Assert.assertEquals(latestVersion, currentTarVersion);
     }
 
     private String getCurrentVersion(File bundleFile){
@@ -121,37 +118,11 @@ public class PlatformTests {
             Log.e(TAG, "bundleUpdateTest: bFile.length: "+ bFile.length);
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hash = digest.digest(bFile);
-            currentTarVersion = bytesToHex(hash);
+            currentTarVersion = Utils.bytesToHex(hash);
         } catch (IOException | NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
         return currentTarVersion;
-    }
-
-    private String getLatestVersion(){
-        APIClient apiClient = APIClient.getInstance();
-        String response = null;
-        try {
-            response = apiClient.sendRequest(new Request.Builder()
-                    .get()
-                    .url(String.format("%s/assets/bundles/%s/versions", BASE_URL, BREAD_BUY))
-                    .build(), false).body().string();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        String respBody = "";
-        respBody = response;
-        Log.e(TAG, "updateBundle: response: " + respBody);
-        String latestVersion = null;
-        try {
-            JSONObject versionsJson = new JSONObject(respBody);
-            JSONArray jsonArray = versionsJson.getJSONArray("versions");
-            latestVersion = (String) jsonArray.get(jsonArray.length() - 1);
-            Log.e(TAG, "updateBundle: latestVersion: " + latestVersion);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return latestVersion;
     }
 
     @Test

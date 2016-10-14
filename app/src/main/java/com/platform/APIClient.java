@@ -8,6 +8,7 @@ import android.util.Log;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 import com.jniwrappers.BRBase58;
 import com.jniwrappers.BRKey;
@@ -44,6 +45,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+
+import static com.breadwallet.tools.util.Utils.bytesToHex;
 
 
 /**
@@ -229,7 +232,8 @@ public class APIClient {
         }
         byte[] sha256First = digest.digest(request.getBytes(StandardCharsets.UTF_8));
         byte[] sha256Second = digest.digest(sha256First);
-        byte[] signedBytes = BRKey.getInstance().compactSign(KeyStoreManager.getAuthKey(ctx), sha256Second);
+        BRKey key = new BRKey(KeyStoreManager.getAuthKey(ctx));
+        byte[] signedBytes = key.compactSign(sha256Second);
         return BRBase58.getInstance().base58Encode(signedBytes);
 
     }
@@ -283,22 +287,7 @@ public class APIClient {
 
     public void updateBundle(Context context) {
         Log.e(TAG, "updateBundle");
-
-//        File bundlesFolder = new File(context.getFilesDir().getAbsolutePath() + bundlesFileName);
         File bundleFile = new File(context.getFilesDir().getAbsolutePath() + bundleFileName);
-//        File bundleExtractedFolder = new File(context.getFilesDir().getAbsolutePath() + bundleFileNameExtracted);
-//        FileOutputStream bundlesOutStream = null;
-//        FileOutputStream extractedOutStream = null;
-
-
-//        //test
-//        APIClient apiClient = APIClient.getInstance();
-//        Request testRequest = new Request.Builder()
-//                .get()
-//                .url(String.format("%s/assets/bundles/%s/", BASE_URL, BREAD_BUY)).build();
-//        Response testResponse = apiClient.sendRequest(testRequest, false);
-//        apiClient.downloadBundle(testResponse, bundleFile);
-//        //end test
 
         if (bundleFile.exists()) {
             Log.e(TAG, "updateBundle: exists");
@@ -310,32 +299,18 @@ public class APIClient {
                 e.printStackTrace();
             }
 
-            String response = null;
-            try {
-                response = sendRequest(new Request.Builder()
-                        .get()
-                        .url(String.format("%s/assets/bundles/%s/versions", BASE_URL, BREAD_BUY))
-                        .build(), false).body().string();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            String respBody = "";
-            respBody = response;
-            Log.e(TAG, "updateBundle: response: " + respBody);
-            String latestVersion = null;
+            String latestVersion = getLatestVersion();
             String currentTarVersion = null;
+            MessageDigest digest = null;
             try {
-                JSONObject versionsJson = new JSONObject(respBody);
-                JSONArray jsonArray = versionsJson.getJSONArray("versions");
-                latestVersion = (String) jsonArray.get(jsonArray.length() - 1);
-                Log.e(TAG, "updateBundle: latestVersion: " + latestVersion);
-                MessageDigest digest = MessageDigest.getInstance("SHA-256");
-                byte[] hash = digest.digest(bFile);
-                currentTarVersion = bytesToHex(hash);
-                Log.e(TAG, "updateBundle: version of the current tar: " + currentTarVersion);
-            } catch (JSONException | NoSuchAlgorithmException e) {
+                digest = MessageDigest.getInstance("SHA-256");
+            } catch (NoSuchAlgorithmException e) {
                 e.printStackTrace();
+                return;
             }
+            byte[] hash = digest.digest(bFile);
+            currentTarVersion = Utils.bytesToHex(hash);
+            Log.e(TAG, "updateBundle: version of the current tar: " + currentTarVersion);
 
             if (latestVersion != null && currentTarVersion != null) {
                 if (latestVersion.equals(currentTarVersion)) {
@@ -349,7 +324,8 @@ public class APIClient {
 
                 }
             } else {
-                Log.e(TAG, "updateBundle: something is null: latestVersion: " + latestVersion + ", currentTarVersion: " + currentTarVersion);
+                Log.e(TAG, "updateBundle: latestVersion or currentTarVersion is null: latestVersion: "
+                        + latestVersion + ", currentTarVersion: " + currentTarVersion);
             }
 
         } else {
@@ -362,11 +338,35 @@ public class APIClient {
             downloadBundle(response, bundleFile);
 
             tryExtractTar(bundleFile, extractedFolder);
-
-            Log.e(TAG, "updateBundle: bundleFile.length(): " + bundleFile.length());
-
         }
 
+    }
+
+    public String getLatestVersion() {
+        String latestVersion = null;
+        String response = null;
+        try {
+            response = sendRequest(new Request.Builder()
+                    .get()
+                    .url(String.format("%s/assets/bundles/%s/versions", BASE_URL, BREAD_BUY))
+                    .build(), false).body().string();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String respBody = "";
+        respBody = response;
+        Log.e(TAG, "updateBundle: response: " + respBody);
+        try {
+            JSONObject versionsJson = new JSONObject(respBody);
+            JSONArray jsonArray = versionsJson.getJSONArray("versions");
+            if (jsonArray.length() == 0) return null;
+            latestVersion = (String) jsonArray.get(jsonArray.length() - 1);
+            Log.e(TAG, "updateBundle: latestVersion: " + latestVersion);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return latestVersion;
     }
 
     public void downloadDiff(File bundleFile, String currentTarVersion) {
@@ -479,14 +479,6 @@ public class APIClient {
         }
         return result;
 
-    }
-
-    public static String bytesToHex(byte[] in) {
-        final StringBuilder builder = new StringBuilder();
-        for (byte b : in) {
-            builder.append(String.format("%02x", b));
-        }
-        return builder.toString();
     }
 
 }
