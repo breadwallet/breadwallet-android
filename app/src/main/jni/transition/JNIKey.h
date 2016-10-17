@@ -9,8 +9,6 @@
 extern "C" {
 #endif
 
-//extern BRKey _key;
-
 JNIEXPORT jbyteArray JNICALL Java_com_jniwrappers_BRKey_compactSign(
         JNIEnv *env,
         jobject thiz,

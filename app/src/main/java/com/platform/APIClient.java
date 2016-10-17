@@ -46,8 +46,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static com.breadwallet.tools.util.Utils.bytesToHex;
-
 
 /**
  * BreadWallet
@@ -252,9 +250,8 @@ public class APIClient {
             String httpDate = sdf.format(new Date(System.currentTimeMillis()));
 
             request = modifiedRequest.header("Date", httpDate.substring(0, httpDate.length() - 6)).build();
-            String requestString = createRequest(request.method(), base58Body, request.header("Content-Type"), request.header("Date"), "/me");
-
-            Log.e(TAG, "sendRequest: requestString: " + requestString);
+            String requestString = createRequest(request.method(), base58Body,
+                    request.header("Content-Type"), request.header("Date"), "/me");
 
             String signedRequest = signRequest(requestString);
 
@@ -265,7 +262,6 @@ public class APIClient {
                 return null;
             }
             String authValue = "bread " + token + ":" + signedRequest;
-            Log.e(TAG, "sendRequest: authValue: " + authValue);
             modifiedRequest = request.newBuilder();
             request = modifiedRequest.header("Authorization", authValue).build();
 
@@ -273,11 +269,7 @@ public class APIClient {
         Response response = null;
         try {
             OkHttpClient client = new OkHttpClient();
-            Log.e(TAG, "sendRequest: dateHeader: " + request.header("Date"));
-            Log.e(TAG, "sendRequest: Authorization: " + request.header("Authorization"));
             response = client.newCall(request).execute();
-            System.out.println("sendRequest: response code: " + response.code() + " for: " + request.url());
-            System.out.println("sendRequest: response message: " + response.message());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -315,12 +307,11 @@ public class APIClient {
             if (latestVersion != null && currentTarVersion != null) {
                 if (latestVersion.equals(currentTarVersion)) {
                     Log.e(TAG, "updateBundle: have the latest version");
-                    tryExtractTar(bundleFile, extractedFolder);
+                    tryExtractTar(bundleFile);
                 } else {
                     Log.e(TAG, "updateBundle: don't have the most recent version, download diff");
-                    Log.e(TAG, "downloadDiff: currentTarVersion: " + currentTarVersion);
                     downloadDiff(bundleFile, currentTarVersion);
-                    tryExtractTar(bundleFile, extractedFolder);
+                    tryExtractTar(bundleFile);
 
                 }
             } else {
@@ -335,9 +326,9 @@ public class APIClient {
                     .get().build();
             Response response = null;
             response = sendRequest(request, false);
-            downloadBundle(response, bundleFile);
+            writeBundleToFile(response, bundleFile);
 
-            tryExtractTar(bundleFile, extractedFolder);
+            tryExtractTar(bundleFile);
         }
 
     }
@@ -403,19 +394,19 @@ public class APIClient {
         Log.e(TAG, "downloadDiff: patchBytes.length: " + (patchBytes == null ? null : patchBytes.length));
     }
 
-    public void downloadBundle(Response response, File bundleFile) {
-        if (response == null) Log.e(TAG, "downloadBundle: WARNING: response is null");
+    public byte[] writeBundleToFile(Response response, File bundleFile) {
+        if (response == null) Log.e(TAG, "writeBundleToFile: WARNING: response is null");
         byte[] bodyBytes;
         FileOutputStream fileOutputStream = null;
         try {
             if (response == null) {
-                Log.e(TAG, "downloadBundle: WARNING, response is null");
-                return;
+                Log.e(TAG, "writeBundleToFile: WARNING, response is null");
+                return null;
             }
             bodyBytes = response.body().bytes();
             FileUtils.writeByteArrayToFile(bundleFile, bodyBytes);
-            Log.e(TAG, "downloadBundle: bodyBytes.length: " + bodyBytes.length);
-
+            Log.e(TAG, "writeBundleToFile: bodyBytes.length: " + bodyBytes.length);
+            return bodyBytes;
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -427,19 +418,15 @@ public class APIClient {
                 e.printStackTrace();
             }
         }
+        return null;
     }
 
-    public boolean tryExtractTar(File inputFile, String folderName) {
-        //"/" + BUNDLES + "/" + folderName
-        File mydir = MainActivity.app.getDir(BUNDLES, Context.MODE_PRIVATE); //Creating an internal dir;
-        if (!mydir.exists()) {
-            mydir.mkdirs();
-        }
+    public boolean tryExtractTar(File inputFile) {
 
-        String extractFolderName = MainActivity.app.getFilesDir() + "/" + BUNDLES + "/" + folderName;
+        String extractFolderName = MainActivity.app.getFilesDir() + "/" + BUNDLES + "/" + extractedFolder;
         File temp = new File(extractFolderName);
         temp.mkdirs();
-        Log.e(TAG, String.format("Untaring %s to dir name %s.", inputFile.getAbsolutePath(), folderName));
+        Log.e(TAG, String.format("Untaring %s to dir name %s.", inputFile.getAbsolutePath(), extractedFolder));
         boolean result = false;
         TarArchiveInputStream debInputStream = null;
         try {

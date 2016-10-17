@@ -77,6 +77,7 @@ dependencies {
 
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
     compile group: 'commons-io', name: 'commons-io', version: '2.0.1'
+    compile group: 'org.eclipse.jetty', name: 'jetty-server', version: '9.2.19.v20160908'
     compile 'org.apache.commons:commons-compress:1.4.1'
 
     compile 'io.sigpipe:jbsdiff:1.0'
