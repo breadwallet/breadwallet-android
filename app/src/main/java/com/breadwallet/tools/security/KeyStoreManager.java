@@ -9,6 +9,7 @@ import android.security.keystore.KeyProperties;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.util.Log;
 
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.tools.util.ByteReader;
@@ -194,9 +195,11 @@ public class KeyStoreManager {
             showAuthenticationScreen(context, request_code);
             if (alias.equalsIgnoreCase(CANARY_ALIAS) || alias.equalsIgnoreCase(PHRASE_ALIAS))
                 return NO_AUTH.getBytes();
-        } catch (IOException | CertificateException | NoSuchAlgorithmException | UnrecoverableKeyException | NullPointerException |
-                InvalidAlgorithmParameterException | NoSuchPaddingException | KeyStoreException | InvalidKeyException e) {
+        } catch (IOException | CertificateException | NullPointerException e) {
             e.printStackTrace();
+
+        } catch (UnrecoverableKeyException | InvalidKeyException | KeyStoreException | InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchPaddingException e) {
+            ((BreadWalletApp) context.getApplicationContext()).showCustomDialog("KeyStore Error", e.getMessage(), context.getString(R.string.ok));
         }
         return result;
     }
@@ -245,6 +248,7 @@ public class KeyStoreManager {
     public static byte[] getMasterPublicKey(final Activity context) {
         return getData(context, PUB_KEY_ALIAS, PUB_KEY_FILENAME, PUB_KEY_IV, 0);
     }
+
     public static boolean putAuthKey(byte[] authKey, Activity context) {
         return authKey != null && authKey.length != 0 && setData(context, authKey, AUTH_KEY_ALIAS, AUTH_KEY_FILENAME, AUTH_KEY_IV, 0, false);
     }
