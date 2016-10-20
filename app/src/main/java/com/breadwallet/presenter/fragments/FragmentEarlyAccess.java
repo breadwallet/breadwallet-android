@@ -70,7 +70,7 @@ public class FragmentEarlyAccess extends Fragment {
     public void onResume() {
         super.onResume();
         server.startServer();
-        webView.loadUrl("http://localhost:31120");
+        webView.loadUrl(HTTPServer.URL);
     }
 
     @Override

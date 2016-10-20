@@ -15,6 +15,7 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
@@ -55,13 +56,14 @@ public class HTTPServer {
     private Set<Middleware> middlewares;
     private Server server;
     public static final int PORT = 31120;
+    public static final String URL = "http://localhost:" + PORT;
 
     public HTTPServer() {
         init();
     }
 
     private void init() {
-        middlewares = new HashSet<>();
+        middlewares = new LinkedHashSet<>();
         server = new Server(PORT);
         server.setHandler(new ServerHandler());
 
@@ -90,15 +92,26 @@ public class HTTPServer {
 
     }
 
-    public class ServerHandler extends AbstractHandler {
+    private class ServerHandler extends AbstractHandler {
         public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
                 throws IOException, ServletException {
             Log.e(TAG, "handle: " + target);
-            response.setContentType("text/html;charset=utf-8");
-            response.setStatus(HttpServletResponse.SC_OK);
-            baseRequest.setHandled(true);
-            response.getWriter().println("<h1>Hello World</h1>");
+            boolean success;
+            success = dispatch(target, baseRequest, request, response);
+            if (!success) Log.e(TAG, "instance initializer: NO MIDDLEWARE HANDLED THE REQUEST!");
         }
+
+    }
+
+    private boolean dispatch(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
+        boolean result = false;
+        for (Middleware m : middlewares) {
+            Log.e(TAG, "dispatch: m: " + m.getClass().getName());
+            result = m.handle(target, baseRequest, request, response);
+            if (result) break;
+            else Log.e(TAG, "dispatch: " + m.toString() + " failed");
+        }
+        return result;
     }
 
     private void setupIntegrations() {
@@ -106,7 +119,6 @@ public class HTTPServer {
         middlewares.add(new HTTPRouter());
         middlewares.add(new HTTPFileMiddleware());
         middlewares.add(new HTTPIndexMiddleware());
-
     }
 
 }

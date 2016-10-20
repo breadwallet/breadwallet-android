@@ -164,6 +164,19 @@ public class MainActivity extends FragmentActivity implements Observer {
         BRAnimator.scaleView(pageIndicatorLeft, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f,
                 BRConstants.PAGE_INDICATOR_SCALE_UP);
         setStatusBarColor();
+
+        updateBundle();
+    }
+
+    private void updateBundle(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                APIClient apiClient = APIClient.getInstance();
+//                apiClient.buyBitcoinMe();
+                apiClient.updateBundle(app); //bread-buy-staging
+            }
+        }).start();
     }
 
     @Override

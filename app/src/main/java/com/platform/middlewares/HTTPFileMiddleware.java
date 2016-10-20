@@ -1,9 +1,23 @@
 package com.platform.middlewares;
 
+import android.util.Log;
+
+import com.breadwallet.presenter.activities.MainActivity;
 import com.platform.interfaces.Middleware;
+
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import okhttp3.Request;
 import okhttp3.Response;
+
+import static com.platform.APIClient.BUNDLES;
+import static com.platform.APIClient.extractedFolder;
 
 /**
  * BreadWallet
@@ -29,12 +43,30 @@ import okhttp3.Response;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class HTTPFileMiddleware implements Middleware{
+public class HTTPFileMiddleware implements Middleware {
     public static final String TAG = HTTPFileMiddleware.class.getName();
 
 
     @Override
-    public Response handle(Request request) {
-        return null;
+    public boolean handle(String target, org.eclipse.jetty.server.Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
+        Log.e(TAG, "handle: target: " + target);
+        String requestedFile = MainActivity.app.getFilesDir() + "/" + BUNDLES + "/" + extractedFolder + target;
+        boolean success = false;
+        if(target.equals("/")) return success;
+        response.setContentType("text/html;charset=utf-8");
+        response.setStatus(HttpServletResponse.SC_OK);
+        File temp = new File(requestedFile);
+        if (!temp.exists()) {
+            Log.e(TAG, "handle: FILE DOES NOT EXIST: " + temp.getAbsolutePath());
+            return success;
+        }
+        try {
+            response.getOutputStream().write(FileUtils.readFileToByteArray(temp));
+            success = true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        baseRequest.setHandled(success);
+        return success;
     }
 }
