@@ -1,5 +1,30 @@
 package com.platform;
 
+import android.util.Log;
+
+import com.platform.interfaces.Middleware;
+import com.platform.middlewares.APIProxy;
+import com.platform.middlewares.HTTPFileMiddleware;
+import com.platform.middlewares.HTTPIndexMiddleware;
+import com.platform.middlewares.HTTPRouter;
+
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.AbstractHandler;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.Stack;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import static com.breadwallet.R.string.request;
+
 /**
  * BreadWallet
  * <p/>
@@ -27,5 +52,61 @@ package com.platform;
 public class HTTPServer {
     public static final String TAG = HTTPServer.class.getName();
 
+    private Set<Middleware> middlewares;
+    private Server server;
+    public static final int PORT = 31120;
+
+    public HTTPServer() {
+        init();
+    }
+
+    private void init() {
+        middlewares = new HashSet<>();
+        server = new Server(PORT);
+        server.setHandler(new ServerHandler());
+
+        setupIntegrations();
+    }
+
+    public void startServer() {
+        Log.e(TAG, "startServer");
+        try {
+            if (server != null && !server.isStarted())
+                server.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void stopServer() {
+        Log.e(TAG, "stopServer");
+        try {
+            if (server != null)
+                server.stop();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public class ServerHandler extends AbstractHandler {
+        public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
+                throws IOException, ServletException {
+            Log.e(TAG, "handle: " + target);
+            response.setContentType("text/html;charset=utf-8");
+            response.setStatus(HttpServletResponse.SC_OK);
+            baseRequest.setHandled(true);
+            response.getWriter().println("<h1>Hello World</h1>");
+        }
+    }
+
+    private void setupIntegrations() {
+        middlewares.add(new APIProxy());
+        middlewares.add(new HTTPRouter());
+        middlewares.add(new HTTPFileMiddleware());
+        middlewares.add(new HTTPIndexMiddleware());
+
+    }
 
 }
