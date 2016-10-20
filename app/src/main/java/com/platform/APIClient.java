@@ -304,7 +304,7 @@ public class APIClient {
             currentTarVersion = Utils.bytesToHex(hash);
             Log.e(TAG, "updateBundle: version of the current tar: " + currentTarVersion);
 
-            if (latestVersion != null && currentTarVersion != null) {
+            if (latestVersion != null) {
                 if (latestVersion.equals(currentTarVersion)) {
                     Log.e(TAG, "updateBundle: have the latest version");
                     tryExtractTar(bundleFile);
@@ -315,8 +315,7 @@ public class APIClient {
 
                 }
             } else {
-                Log.e(TAG, "updateBundle: latestVersion or currentTarVersion is null: latestVersion: "
-                        + latestVersion + ", currentTarVersion: " + currentTarVersion);
+                Log.e(TAG, "updateBundle: latestVersion is: " + latestVersion);
             }
 
         } else {
@@ -344,7 +343,7 @@ public class APIClient {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        String respBody = "";
+        String respBody;
         respBody = response;
         Log.e(TAG, "updateBundle: response: " + respBody);
         try {

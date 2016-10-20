@@ -96,17 +96,6 @@ public class FragmentAbout extends Fragment {
                 }
             });
 
-
-        //todo test , delete after!
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                APIClient apiClient = APIClient.getInstance();
-                apiClient.buyBitcoinMe();
-//                apiClient.updateBundle(getActivity()); //bread-buy-staging
-            }
-        }).start();
-
         return rootView;
     }
 

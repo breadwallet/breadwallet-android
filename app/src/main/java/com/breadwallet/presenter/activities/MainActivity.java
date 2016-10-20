@@ -164,6 +164,19 @@ public class MainActivity extends FragmentActivity implements Observer {
         BRAnimator.scaleView(pageIndicatorLeft, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f,
                 BRConstants.PAGE_INDICATOR_SCALE_UP);
         setStatusBarColor();
+
+        updateBundle();
+    }
+
+    private void updateBundle(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                APIClient apiClient = APIClient.getInstance();
+//                apiClient.buyBitcoinMe();
+                apiClient.updateBundle(app); //bread-buy-staging
+            }
+        }).start();
     }
 
     @Override
@@ -698,11 +711,11 @@ public class MainActivity extends FragmentActivity implements Observer {
     }
 
     public void setProgress(int progress, String progressText) {
-        Log.e(TAG, "setProgress: progress:" + progress + ", progressText: " + progressText);
+//        Log.e(TAG, "setProgress: progress:" + progress + ", progressText: " + progressText);
         if (syncProgressBar == null || syncProgressText == null) return;
         syncProgressBar.setProgress(progress);
         syncProgressText.setText(progressText);
-        Log.e(TAG, "syncProgressBar.progress: " + syncProgressBar.getProgress());
+//        Log.e(TAG, "syncProgressBar.progress: " + syncProgressBar.getProgress());
     }
 
 }

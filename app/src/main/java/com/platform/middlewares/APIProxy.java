@@ -2,6 +2,9 @@ package com.platform.middlewares;
 
 import com.platform.interfaces.Middleware;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import okhttp3.Request;
 import okhttp3.Response;
 
@@ -33,7 +36,7 @@ public class APIProxy implements Middleware{
     public static final String TAG = APIProxy.class.getName();
 
     @Override
-    public Response handle(Request request) {
-        return null;
+    public boolean handle(String target, org.eclipse.jetty.server.Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
+        return false;
     }
 }
