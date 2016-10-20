@@ -1,4 +1,6 @@
-package com.platform.interfaces;
+package com.platform.middlewares;
+
+import com.platform.interfaces.Middleware;
 
 import okhttp3.Request;
 import okhttp3.Response;
@@ -6,7 +8,7 @@ import okhttp3.Response;
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail Gutan on <mihail@breadwallet.com> 10/18/16.
+ * Created by Mihail Gutan on <mihail@breadwallet.com> 10/19/16.
  * Copyright (c) 2016 breadwallet LLC
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,8 +29,11 @@ import okhttp3.Response;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public interface Middleware {
+public class HTTPIndexMiddleware  implements Middleware{
+    public static final String TAG = HTTPIndexMiddleware.class.getName();
 
-    Response handle(Request request);
-
+    @Override
+    public Response handle(Request request) {
+        return null;
+    }
 }

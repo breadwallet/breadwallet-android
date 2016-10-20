@@ -1,9 +1,14 @@
-package com.platform;
+package com.platform.middlewares;
+
+import com.platform.interfaces.Middleware;
+
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail Gutan on <mihail@breadwallet.com> 10/17/16.
+ * Created by Mihail Gutan on <mihail@breadwallet.com> 10/19/16.
  * Copyright (c) 2016 breadwallet LLC
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,8 +29,11 @@ package com.platform;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class HTTPFileMiddleware {
-    public static final String TAG = HTTPFileMiddleware.class.getName();
+public class HTTPRouter implements Middleware {
+    public static final String TAG = HTTPRouter.class.getName();
 
-
+    @Override
+    public Response handle(Request request) {
+        return null;
+    }
 }
