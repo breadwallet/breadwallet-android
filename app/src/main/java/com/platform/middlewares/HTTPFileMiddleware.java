@@ -6,15 +6,13 @@ import com.breadwallet.presenter.activities.MainActivity;
 import com.platform.interfaces.Middleware;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import okhttp3.Request;
-import okhttp3.Response;
 
 import static com.platform.APIClient.BUNDLES;
 import static com.platform.APIClient.extractedFolder;
@@ -49,17 +47,18 @@ public class HTTPFileMiddleware implements Middleware {
 
     @Override
     public boolean handle(String target, org.eclipse.jetty.server.Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
-        Log.e(TAG, "handle: target: " + target);
-        String requestedFile = MainActivity.app.getFilesDir() + "/" + BUNDLES + "/" + extractedFolder + target;
         boolean success = false;
-        if(target.equals("/")) return success;
-        response.setContentType("text/html;charset=utf-8");
-        response.setStatus(HttpServletResponse.SC_OK);
+        if (target.equals("/")) return success;
+        if (target.equals("/favicon.ico")) return true;
+        String requestedFile = MainActivity.app.getFilesDir() + "/" + BUNDLES + "/" + extractedFolder + target;
         File temp = new File(requestedFile);
         if (!temp.exists()) {
             Log.e(TAG, "handle: FILE DOES NOT EXIST: " + temp.getAbsolutePath());
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return success;
         }
+        response.setContentType(detectContentType(temp));
+        response.setStatus(HttpServletResponse.SC_OK);
         try {
             response.getOutputStream().write(FileUtils.readFileToByteArray(temp));
             success = true;
@@ -68,5 +67,36 @@ public class HTTPFileMiddleware implements Middleware {
         }
         baseRequest.setHandled(success);
         return success;
+    }
+
+    private String detectContentType(File file) {
+        String extension = FilenameUtils.getExtension(file.getAbsolutePath());
+        switch (extension) {
+            case "ttf":
+                return "application/font-truetype";
+            case "woff":
+                return "application/font-woff";
+            case "otf":
+                return "application/font-opentype";
+            case "svg":
+                return "image/svg+xml";
+            case "html":
+                return "text/html";
+            case "png":
+                return "image/png";
+            case "jpeg":
+                return "image/jpeg";
+            case "jpg":
+                return "image/jpeg";
+            case "css":
+                return "text/css";
+            case "js":
+                return "application/javascript";
+            case "json":
+                return "application/json";
+            default:
+                break;
+        }
+        return "application/octet-stream";
     }
 }

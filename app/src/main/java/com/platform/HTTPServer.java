@@ -98,7 +98,7 @@ public class HTTPServer {
             Log.e(TAG, "handle: " + target);
             boolean success;
             success = dispatch(target, baseRequest, request, response);
-            if (!success) Log.e(TAG, "instance initializer: NO MIDDLEWARE HANDLED THE REQUEST!");
+            if (!success) Log.e(TAG, "handle: NO MIDDLEWARE HANDLED THE REQUEST!");
         }
 
     }
@@ -106,10 +106,11 @@ public class HTTPServer {
     private boolean dispatch(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
         boolean result = false;
         for (Middleware m : middlewares) {
-            Log.e(TAG, "dispatch: m: " + m.getClass().getName());
             result = m.handle(target, baseRequest, request, response);
-            if (result) break;
-            else Log.e(TAG, "dispatch: " + m.toString() + " failed");
+            if (result) {
+                Log.e(TAG, "dispatch: " + m.getClass().getName().substring(m.getClass().getName().lastIndexOf(".")+1) + " succeeded");
+                break;
+            }
         }
         return result;
     }

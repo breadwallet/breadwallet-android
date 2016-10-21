@@ -1,5 +1,6 @@
 package com.platform.middlewares;
 
+import com.platform.APIClient;
 import com.platform.interfaces.Middleware;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,8 +33,28 @@ import okhttp3.Response;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class APIProxy implements Middleware{
+public class APIProxy implements Middleware {
     public static final String TAG = APIProxy.class.getName();
+
+    private APIClient apiInstance;
+    private final String SHOULD_VERIFY_HEADER = "x-should-verify";
+    private final String SHOULD_AUTHENTICATE = "x-should-authenticate";
+    private final String[] bannedSendHeaders = new String[]{
+            SHOULD_VERIFY_HEADER,
+            SHOULD_AUTHENTICATE,
+            "connection",
+            "authorization",
+            "host",
+            "user-agent"};
+
+    private final String[] bannedReceiveHeaders = new String[]{
+            "content-length",
+            "content-encoding",
+            "connection"};
+
+    public APIProxy() {
+        apiInstance = APIClient.getInstance();
+    }
 
     @Override
     public boolean handle(String target, org.eclipse.jetty.server.Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
