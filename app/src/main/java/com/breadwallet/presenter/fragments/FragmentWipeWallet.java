@@ -75,6 +75,7 @@ public class FragmentWipeWallet extends Fragment {
     private BRWalletManager m;
     private boolean allowWipeButtonPress = true;
     private AlertDialog alertDialog;
+    private InputMethodChangeReceiver mReceiver;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -208,7 +209,7 @@ public class FragmentWipeWallet extends Fragment {
         recoveryPhraseEditText.setEnabled(false);
         recoveryPhraseEditText.setHint(getString(R.string.insecure_keyboard_message));
         IntentFilter filter = new IntentFilter(Intent.ACTION_INPUT_METHOD_CHANGED);
-        FragmentWipeWallet.InputMethodChangeReceiver mReceiver = new FragmentWipeWallet.InputMethodChangeReceiver();
+        mReceiver = new InputMethodChangeReceiver();
         getActivity().registerReceiver(mReceiver, filter);
         showKeyBoard(false);
 
@@ -230,6 +231,11 @@ public class FragmentWipeWallet extends Fragment {
         recoveryPhraseEditText.setText("");
         continueButton.setVisibility(View.GONE);
         showKeyBoard(true);
+        try {
+            getActivity().unregisterReceiver(mReceiver);
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
     }
 
     public void showKeyBoard(boolean b) {

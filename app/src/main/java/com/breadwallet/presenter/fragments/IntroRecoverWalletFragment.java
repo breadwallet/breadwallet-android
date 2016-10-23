@@ -75,6 +75,7 @@ public class IntroRecoverWalletFragment extends Fragment {
     private EditText editText;
     private AlertDialog alertDialog;
     private Button continueButton;
+    private InputMethodChangeReceiver mReceiver;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -161,7 +162,7 @@ public class IntroRecoverWalletFragment extends Fragment {
         editText.setEnabled(false);
         editText.setHint(getString(R.string.insecure_keyboard_message));
         IntentFilter filter = new IntentFilter(Intent.ACTION_INPUT_METHOD_CHANGED);
-        InputMethodChangeReceiver mReceiver = new InputMethodChangeReceiver();
+        mReceiver = new InputMethodChangeReceiver();
         getActivity().registerReceiver(mReceiver, filter);
         showKeyBoard(false);
 
@@ -183,6 +184,12 @@ public class IntroRecoverWalletFragment extends Fragment {
         editText.setText("");
         continueButton.setVisibility(View.GONE);
         showKeyBoard(true);
+        try {
+            getActivity().unregisterReceiver(mReceiver);
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
+
     }
 
     @Override
