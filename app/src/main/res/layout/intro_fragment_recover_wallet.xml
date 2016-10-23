@@ -13,24 +13,6 @@
         android:textColor="@color/white"
         android:textSize="16sp" />
 
-    <EditText
-        android:id="@+id/recover_wallet_edit_text"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_below="@id/recover_wallet_text1"
-        android:layout_margin="16dp"
-        android:layout_marginTop="20dp"
-        android:background="@color/white_trans"
-        android:gravity="top"
-        android:imeOptions="actionDone"
-        android:inputType="textVisiblePassword|textMultiLine"
-        android:lines="5"
-        android:padding="20dp"
-        android:scrollHorizontally="false"
-        android:textColor="@color/wallet_orange"
-        android:textColorHint="@color/wallet_orange"
-        android:textSize="22sp" />
-
     <Button
         android:id="@+id/recover_button"
         android:layout_width="wrap_content"
@@ -43,4 +25,38 @@
         android:text="@string/recover_button"
         android:textAllCaps="false"
         android:textColor="@color/white" />
+
+    <EditText
+        android:id="@+id/recover_wallet_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/white_trans"
+        android:gravity="top"
+        android:imeOptions="actionDone"
+        android:inputType="textVisiblePassword|textMultiLine"
+        android:lines="5"
+        android:padding="20dp"
+        android:scrollHorizontally="false"
+        android:textColor="@color/wallet_orange"
+        android:textColorHint="@color/wallet_orange"
+        android:textSize="22sp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_below="@+id/recover_wallet_text1"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:text="@string/continue_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/continue_button"
+        android:textColor="@color/dark_blue"
+        android:textAllCaps="true"
+        android:layout_alignParentEnd="true"
+        android:textStyle="bold"
+        android:layout_alignBottom="@+id/recover_wallet_edit_text"
+        android:layout_marginEnd="30dp"
+        android:background="@android:color/transparent"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
 </RelativeLayout>

@@ -3,12 +3,16 @@ package com.breadwallet.presenter.fragments;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -16,9 +20,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
@@ -33,6 +39,8 @@ import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.util.List;
+
+import static android.content.Context.INPUT_METHOD_SERVICE;
 
 /**
  * BreadWallet
@@ -62,6 +70,7 @@ import java.util.List;
 public class FragmentWipeWallet extends Fragment {
     private static final String TAG = FragmentWipeWallet.class.getName();
     private EditText recoveryPhraseEditText;
+    private Button continueButton;
     private Button wipe;
     private BRWalletManager m;
     private boolean allowWipeButtonPress = true;
@@ -78,6 +87,7 @@ public class FragmentWipeWallet extends Fragment {
         Button close = (Button) rootView.findViewById(R.id.wipe_wallet_close);
         recoveryPhraseEditText = (EditText) rootView.findViewById(R.id.editText_phrase);
         wipe = (Button) rootView.findViewById(R.id.wipe_wallet_wipe);
+        continueButton = (Button) rootView.findViewById(R.id.continue_button);
         recoveryPhraseEditText.setText("");
         recoveryPhraseEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -184,30 +194,69 @@ public class FragmentWipeWallet extends Fragment {
         }
     }
 
-    private void disableEditText() {
-        recoveryPhraseEditText.setFocusable(false);
-        recoveryPhraseEditText.setHint(R.string.insecure_keyboard_message);
+    public void disableEditText() {
+        Log.e(TAG, "disableEditText: ");
 
-        new Handler().postDelayed(new Runnable() {
+        continueButton.setVisibility(View.VISIBLE);
+        continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void run() {
-                if (Utils.isUsingCustomInputMethod(getActivity())) {
-                    final Intent i = new Intent();
-                    i.setAction(Settings.ACTION_INPUT_METHOD_SETTINGS);
-                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                    i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                    getActivity().startActivity(i);
-                }
+            public void onClick(View v) {
+                Log.e(TAG, "onClick: ");
+                showSelectInputMethod();
             }
-        }, 2000);
+        });
+        recoveryPhraseEditText.setEnabled(false);
+        recoveryPhraseEditText.setHint(getString(R.string.insecure_keyboard_message));
+        IntentFilter filter = new IntentFilter(Intent.ACTION_INPUT_METHOD_CHANGED);
+        FragmentWipeWallet.InputMethodChangeReceiver mReceiver = new FragmentWipeWallet.InputMethodChangeReceiver();
+        getActivity().registerReceiver(mReceiver, filter);
+        showKeyBoard(false);
 
     }
 
+    private void showSelectInputMethod(){
+        InputMethodManager imeManager = (InputMethodManager) getActivity().getApplicationContext().getSystemService(INPUT_METHOD_SERVICE);
+        if (imeManager != null) {
+            imeManager.showInputMethodPicker();
+        } else {
+            Toast.makeText(getActivity(), "error showing the input method choosing dialog", Toast.LENGTH_LONG).show();
+        }
+    }
+
     private void enableEditText() {
-        recoveryPhraseEditText.setFocusable(true);
-        recoveryPhraseEditText.setFocusableInTouchMode(true);
+        Log.e(TAG, "enableEditText: ");
+        recoveryPhraseEditText.setEnabled(true);
         recoveryPhraseEditText.setHint("");
+        recoveryPhraseEditText.setText("");
+        continueButton.setVisibility(View.GONE);
+        showKeyBoard(true);
+    }
+
+    public void showKeyBoard(boolean b) {
+        if (b && !Utils.isUsingCustomInputMethod(getActivity())) {
+            if (recoveryPhraseEditText != null) {
+                recoveryPhraseEditText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
+                recoveryPhraseEditText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
+            }
+        } else {
+            ((BreadWalletApp) getActivity().getApplication()).hideKeyboard(getActivity());
+        }
+
+    }
+
+    public class InputMethodChangeReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (action.equals(Intent.ACTION_INPUT_METHOD_CHANGED)) {
+                if(Utils.isUsingCustomInputMethod(getActivity())){
+                    showSelectInputMethod();
+                } else {
+                    enableEditText();
+                }
+            /* You can check the package name of current IME here.*/
+            }
+        }
     }
 
     private void startIntroActivity() {

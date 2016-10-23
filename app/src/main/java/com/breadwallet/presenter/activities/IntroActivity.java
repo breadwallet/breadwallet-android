@@ -33,6 +33,7 @@ import com.breadwallet.tools.animation.BackgroundMovingAnimator;
 import com.breadwallet.tools.animation.DecelerateOvershootInterpolator;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 
 /**
@@ -264,7 +265,7 @@ public class IntroActivity extends FragmentActivity {
                 if (resultCode == RESULT_OK) {
                     PostAuthenticationProcessor.getInstance().onCreateWalletAuth(this);
                 } else {
-                    Log.e(TAG,"WARNING: resultCode != RESULT_OK");
+                    Log.e(TAG, "WARNING: resultCode != RESULT_OK");
                     BRWalletManager m = BRWalletManager.getInstance(this);
                     m.wipeKeyStore();
                     m.wipeWalletButKeystore(this);
@@ -335,6 +336,11 @@ public class IntroActivity extends FragmentActivity {
 
     // direction == 1 -> RIGHT, direction == 2 -> LEFT
     private void animateSlide(final Fragment from, final Fragment to, int direction) {
+        if (to instanceof IntroRecoverWalletFragment) {
+            Log.e(TAG, "animateSlide: to instanceof IntroRecoverWalletFragment");
+            if (Utils.isUsingCustomInputMethod(to.getActivity()))
+                ((IntroRecoverWalletFragment) to).disableEditText();
+        }
         int screenWidth = screenParametersPoint.x;
         int screenHeigth = screenParametersPoint.y;
 

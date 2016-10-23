@@ -54,7 +54,7 @@
     <!-- android -->
     <string name="allow_camera_access">allow camera access in \"Settings\" > \"Apps\" > \"breadwallet\" > \"Permissions\"</string>
     <!-- android -->
-    <string name="insecure_keyboard_message">Insecure keyboard detected\ngo to \"Settings\" > \"language &amp; input\" > \"keyboards\" and disable all custom input types</string>
+    <string name="insecure_keyboard_message">Custom keyboards are insecure and cannot be used to enter a recovery phrase. Press continue to select a Google keyboard.</string>
     <!-- android -->
     <string name="choose_an_email_client">Choose an Email client</string>
     <!-- android -->
