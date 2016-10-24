@@ -7,6 +7,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.ConsoleMessage;
+import android.webkit.WebChromeClient;
+import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
@@ -53,6 +56,7 @@ public class FragmentEarlyAccess extends Fragment {
                 R.layout.fragment_early_access, container, false);
         webView = (WebView) rootView.findViewById(R.id.early_access_web_view);
         webView.setWebViewClient(new BRWebViewClient());
+//        webView.setWebChromeClient(new BRWebChromeClient());
         server = new HTTPServer();
 
 //        webView.getSettings().setAllowFileAccessFromFileURLs(true);
@@ -79,6 +83,17 @@ public class FragmentEarlyAccess extends Fragment {
         server.stopServer();
     }
 
+    private class BRWebChromeClient extends WebChromeClient {
+
+        @Override
+        public boolean onConsoleMessage(ConsoleMessage cm) {
+            Log.e("WEBVIEW", cm.message() + " -- From line "
+                    + cm.lineNumber() + " of "
+                    + cm.sourceId() );
+            return true;
+        }
+    }
+
     private class BRWebViewClient extends WebViewClient {
 
         @Override
@@ -87,8 +102,15 @@ public class FragmentEarlyAccess extends Fragment {
         }
 
         @Override
+        public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+            super.onReceivedError(view, request, error);
+            Log.e(TAG, "onReceivedError: error:" + error.toString());
+        }
+
+        @Override
         public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
             return super.shouldInterceptRequest(view, url);
         }
+
     }
 }

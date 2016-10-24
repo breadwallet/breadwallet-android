@@ -458,7 +458,8 @@ public class APIClient {
             e.printStackTrace();
         } finally {
             try {
-                debInputStream.close();
+                if (debInputStream != null)
+                    debInputStream.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
