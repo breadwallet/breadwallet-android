@@ -2,7 +2,7 @@ apply plugin: 'com.android.model.application'
 
 model {
     android {
-        compileSdkVersion = 24
+        compileSdkVersion = 25
         buildToolsVersion = '24.0.3'
 
         defaultConfig {
@@ -72,7 +72,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:24.2.1'
-    compile 'com.android.support:support-v13:24.2.1'
+    compile 'com.android.support:appcompat-v7:25.0.0'
+    compile 'com.android.support:support-v13:25.0.0'
 
 }
