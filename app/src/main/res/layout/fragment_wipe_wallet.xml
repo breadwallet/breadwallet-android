@@ -29,9 +29,9 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="90dp"
-        android:textSize="18sp"
         android:text="@string/confirm_"
-        android:textColor="@color/light_gray" />
+        android:textColor="@color/light_gray"
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/textWipeWallet"
@@ -41,10 +41,10 @@
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:gravity="center"
-        android:textAlignment="center"
         android:layout_marginTop="20dp"
+        android:gravity="center"
         android:text="@string/wipewallet_instructions"
+        android:textAlignment="center"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textSize="18sp" />
 
@@ -60,23 +60,37 @@
         android:gravity="top"
         android:imeOptions="actionDone"
         android:inputType="textVisiblePassword|textMultiLine"
-        android:textSize="22sp"
         android:lines="5"
         android:scrollHorizontally="false"
-        android:textColorHint="@color/light_gray" />
+        android:textColorHint="@color/light_gray"
+        android:textSize="22sp" />
 
     <Button
-        android:text="@string/continue_button"
+        android:id="@+id/continue_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/continue_button"
-        android:textColor="@color/dark_blue"
-        android:textAllCaps="true"
-        android:layout_alignParentEnd="true"
-        android:textStyle="bold"
         android:layout_alignBottom="@+id/editText_phrase"
+        android:layout_alignParentEnd="true"
         android:layout_marginEnd="30dp"
         android:background="@android:color/transparent"
-        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
+        android:text="@string/continue_button"
+        android:textAllCaps="true"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+        android:textColor="@color/dark_blue"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/cancel_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/continue_button"
+        android:layout_centerHorizontal="true"
+        android:background="@android:color/transparent"
+        android:text="@string/cancel"
+        android:textAllCaps="true"
+        android:visibility="gone"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+        android:textColor="@color/light_gray"
+        android:textStyle="bold" />
 
 </RelativeLayout>

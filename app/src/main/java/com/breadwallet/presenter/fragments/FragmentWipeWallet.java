@@ -71,6 +71,7 @@ public class FragmentWipeWallet extends Fragment {
     private static final String TAG = FragmentWipeWallet.class.getName();
     private EditText recoveryPhraseEditText;
     private Button continueButton;
+    private Button cancelButton;
     private Button wipe;
     private BRWalletManager m;
     private boolean allowWipeButtonPress = true;
@@ -89,6 +90,7 @@ public class FragmentWipeWallet extends Fragment {
         recoveryPhraseEditText = (EditText) rootView.findViewById(R.id.editText_phrase);
         wipe = (Button) rootView.findViewById(R.id.wipe_wallet_wipe);
         continueButton = (Button) rootView.findViewById(R.id.continue_button);
+        cancelButton = (Button) rootView.findViewById(R.id.cancel_button);
         recoveryPhraseEditText.setText("");
         recoveryPhraseEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -97,6 +99,12 @@ public class FragmentWipeWallet extends Fragment {
                     wipe.performClick();
                 }
                 return false;
+            }
+        });
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().onBackPressed();
             }
         });
         close.setOnClickListener(new View.OnClickListener() {
@@ -199,6 +207,7 @@ public class FragmentWipeWallet extends Fragment {
         Log.e(TAG, "disableEditText: ");
 
         continueButton.setVisibility(View.VISIBLE);
+        cancelButton.setVisibility(View.VISIBLE);
         continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -230,6 +239,7 @@ public class FragmentWipeWallet extends Fragment {
         recoveryPhraseEditText.setHint("");
         recoveryPhraseEditText.setText("");
         continueButton.setVisibility(View.GONE);
+        cancelButton.setVisibility(View.GONE);
         showKeyBoard(true);
         try {
             getActivity().unregisterReceiver(mReceiver);

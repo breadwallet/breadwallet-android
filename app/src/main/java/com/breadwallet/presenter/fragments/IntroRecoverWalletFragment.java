@@ -75,6 +75,7 @@ public class IntroRecoverWalletFragment extends Fragment {
     private EditText editText;
     private AlertDialog alertDialog;
     private Button continueButton;
+    private Button cancelButton;
     private InputMethodChangeReceiver mReceiver;
 
     @Override
@@ -88,6 +89,7 @@ public class IntroRecoverWalletFragment extends Fragment {
         recoverButton = (Button) rootView.findViewById(R.id.recover_button);
         editText = (EditText) rootView.findViewById(R.id.recover_wallet_edit_text);
         continueButton = (Button) rootView.findViewById(R.id.continue_button);
+        cancelButton = (Button) rootView.findViewById(R.id.cancel_button);
         editText.setText("");
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -144,13 +146,19 @@ public class IntroRecoverWalletFragment extends Fragment {
                 }
             }
         });
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().onBackPressed();
+            }
+        });
 
         return rootView;
     }
 
     public void disableEditText() {
         Log.e(TAG, "disableEditText: ");
-
+        cancelButton.setVisibility(View.VISIBLE);
         continueButton.setVisibility(View.VISIBLE);
         continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -183,6 +191,7 @@ public class IntroRecoverWalletFragment extends Fragment {
         editText.setHint("");
         editText.setText("");
         continueButton.setVisibility(View.GONE);
+        cancelButton.setVisibility(View.GONE);
         showKeyBoard(true);
         try {
             getActivity().unregisterReceiver(mReceiver);

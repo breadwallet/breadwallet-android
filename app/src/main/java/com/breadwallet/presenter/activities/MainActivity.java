@@ -697,11 +697,11 @@ public class MainActivity extends FragmentActivity implements Observer {
     }
 
     public void setProgress(int progress, String progressText) {
-        Log.e(TAG, "setProgress: progress:" + progress + ", progressText: " + progressText);
+//        Log.e(TAG, "setProgress: progress:" + progress + ", progressText: " + progressText);
         if (syncProgressBar == null || syncProgressText == null) return;
         syncProgressBar.setProgress(progress);
         syncProgressText.setText(progressText);
-        Log.e(TAG, "syncProgressBar.progress: " + syncProgressBar.getProgress());
+//        Log.e(TAG, "syncProgressBar.progress: " + syncProgressBar.getProgress());
     }
 
 }

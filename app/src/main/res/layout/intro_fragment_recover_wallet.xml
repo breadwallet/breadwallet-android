@@ -30,6 +30,10 @@
         android:id="@+id/recover_wallet_edit_text"
         android:layout_width="match_parent"
         android:layout_height="200dp"
+        android:layout_below="@+id/recover_wallet_text1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
         android:background="@color/white_trans"
         android:gravity="top"
@@ -40,23 +44,33 @@
         android:scrollHorizontally="false"
         android:textColor="@color/wallet_orange"
         android:textColorHint="@color/wallet_orange"
-        android:textSize="22sp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_below="@+id/recover_wallet_text1"
-        android:layout_centerHorizontal="true" />
+        android:textSize="22sp" />
 
     <Button
-        android:text="@string/continue_button"
+        android:id="@+id/continue_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/continue_button"
-        android:textColor="@color/dark_blue"
-        android:textAllCaps="true"
-        android:layout_alignParentEnd="true"
-        android:textStyle="bold"
         android:layout_alignBottom="@+id/recover_wallet_edit_text"
+        android:layout_alignParentEnd="true"
         android:layout_marginEnd="30dp"
         android:background="@android:color/transparent"
-        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
+        android:text="@string/continue_button"
+        android:textAllCaps="true"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+        android:textColor="@color/dark_blue"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/cancel_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/continue_button"
+        android:layout_centerHorizontal="true"
+        android:background="@android:color/transparent"
+        android:text="@string/cancel"
+        android:textAllCaps="true"
+        android:visibility="gone"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+        android:textColor="@color/light_gray"
+        android:textStyle="bold" />
 </RelativeLayout>
