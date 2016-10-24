@@ -2,42 +2,22 @@ package com.breadwallet.presenter.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.tools.adapter.TransactionListAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.tools.util.BRStringFormatter;
-import com.breadwallet.tools.manager.CurrencyManager;
-import com.breadwallet.tools.util.CustomLogger;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
-import com.breadwallet.tools.util.Utils;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
-import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
 
 /**
  * BreadWallet
@@ -127,16 +107,11 @@ public class FragmentSettingsAll extends Fragment {
     }
 
     public static void refreshUI() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (BRAnimator.level != 1) return;
-                if (adapter != null) {
-                    adapter.updateData(transactionObjects);
-                    adapter.notifyDataSetChanged();
-                }
-            }
-        },1000);
+        if (BRAnimator.level != 1) return;
+        if (adapter != null) {
+            adapter.updateData(transactionObjects);
+            adapter.notifyDataSetChanged();
+        }
 
     }
 
