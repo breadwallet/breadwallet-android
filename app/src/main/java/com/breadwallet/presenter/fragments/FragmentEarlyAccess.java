@@ -18,6 +18,7 @@ import android.webkit.WebViewClient;
 import com.breadwallet.R;
 import com.platform.HTTPServer;
 
+
 /**
  * BreadWallet
  * <p>
@@ -56,9 +57,7 @@ public class FragmentEarlyAccess extends Fragment {
                 R.layout.fragment_early_access, container, false);
         webView = (WebView) rootView.findViewById(R.id.early_access_web_view);
         webView.setWebViewClient(new BRWebViewClient());
-//        webView.setWebChromeClient(new BRWebChromeClient());
         server = new HTTPServer();
-
 //        webView.getSettings().setAllowFileAccessFromFileURLs(true);
 //        webView.getSettings().setAllowUniversalAccessFromFileURLs(true);
 //        // Keeping these off is less critical but still a good idea, especially

@@ -6,8 +6,6 @@ import com.platform.interfaces.Middleware;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import okhttp3.Request;
-import okhttp3.Response;
 
 /**
  * BreadWallet
