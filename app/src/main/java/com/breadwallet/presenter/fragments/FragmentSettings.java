@@ -31,6 +31,7 @@ import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.security.PassCodeManager;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
+import com.platform.APIClient;
 
 /**
  * BreadWallet
@@ -84,6 +85,7 @@ public class FragmentSettings extends Fragment {
         RelativeLayout recoveryPhrase = (RelativeLayout) rootView.findViewById(R.id.recovery_phrase);
         RelativeLayout startRecoveryWallet = (RelativeLayout) rootView.findViewById(R.id.start_recovery_wallet);
         RelativeLayout fingerprintLimit = (RelativeLayout) rootView.findViewById(R.id.fingerprint_limit);
+        RelativeLayout earlyAccess = (RelativeLayout) rootView.findViewById(R.id.early_access);
         RelativeLayout line5 = (RelativeLayout) rootView.findViewById(R.id.settings_line_5);
         TextView theLimit = (TextView) rootView.findViewById(R.id.fingerprint_limit_text);
         RelativeLayout rescan = (RelativeLayout) rootView.findViewById(R.id.rescan_blockchain);
@@ -172,6 +174,15 @@ public class FragmentSettings extends Fragment {
                                   }
 
         );
+
+        earlyAccess.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (BRAnimator.checkTheMultipressingAvailability()) {
+                    BRAnimator.animateSlideToLeft(app, new FragmentEarlyAccess(), fragmentSettings);
+                }
+            }
+        });
 
         return rootView;
     }
