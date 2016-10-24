@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -126,11 +127,17 @@ public class FragmentSettingsAll extends Fragment {
     }
 
     public static void refreshUI() {
-        if (BRAnimator.level != 1) return;
-        if (adapter != null) {
-            adapter.updateData(transactionObjects);
-            adapter.notifyDataSetChanged();
-        }
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (BRAnimator.level != 1) return;
+                if (adapter != null) {
+                    adapter.updateData(transactionObjects);
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        },1000);
+
     }
 
     public static RelativeLayout getSeparationLine(int MODE, Activity ctx) {

@@ -241,10 +241,6 @@ public class BRPeerManager {
             running = true;
         }
 
-//        public void setRunning(boolean b) {
-//            running = b;
-//        }
-
         @Override
         public void run() {
             final MainActivity app = MainActivity.app;
@@ -264,8 +260,8 @@ public class BRPeerManager {
                 int startHeight = SharedPreferencesManager.getStartHeight(app);
                 while (running) {
                     progressStatus = syncProgress(startHeight);
-                    Log.e(TAG, String.format("Thread:%s, progressStatus: %.2f, sync: %b",
-                            Thread.currentThread().getName(), progressStatus, MiddleViewAdapter.getSyncing()));
+//                    Log.e(TAG, String.format("Thread:%s, progressStatus: %.2f, sync: %b",
+//                            Thread.currentThread().getName(), progressStatus, MiddleViewAdapter.getSyncing()));
                     if (progressStatus == 1) running = false;
                     app.runOnUiThread(new Runnable() {
                         @Override

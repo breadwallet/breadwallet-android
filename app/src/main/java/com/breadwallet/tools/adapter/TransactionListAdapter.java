@@ -2,6 +2,7 @@ package com.breadwallet.tools.adapter;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.admin.SystemUpdatePolicy;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -76,6 +77,10 @@ public class TransactionListAdapter extends BaseAdapter {
     private static int sentColor;
     private static int receivedColor;
     public static boolean showAllTx = false;
+    private static int unconfirmedTxCount;
+    private static int estimatedBlockHeight;
+    private static long estimatedBlockHeightTimeStamp;
+    private static long unconfirmedTxCountTimeStamp;
 
     public TransactionListAdapter(Activity a, TransactionListItem[] d) {
         activity = a;
@@ -103,7 +108,7 @@ public class TransactionListAdapter extends BaseAdapter {
     public int getCount() {
         final int EXTRA_ITEMS = 4;
         if (!BreadWalletApp.unlocked) {
-            int unconfirmedTxCount = getUnconfirmedCount(data);
+            updateUnconfirmedTxCount(data);
             return unconfirmedTxCount == 0 ? (EXTRA_ITEMS + 1) : unconfirmedTxCount == data.size()
                     ? (unconfirmedTxCount + EXTRA_ITEMS) : (unconfirmedTxCount + EXTRA_ITEMS + 1);
         }
@@ -171,7 +176,6 @@ public class TransactionListAdapter extends BaseAdapter {
         }
 
         if (!BreadWalletApp.unlocked) {
-            int unconfirmedTxCount = getUnconfirmedCount(data);
             if (unconfirmedTxCount == 0 && position == 0) {
                 RelativeLayout txHistory = (RelativeLayout) inflater.inflate(R.layout.button_transaction_history, null);
                 txHistory.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.getPixelsFromDps(activity, 40)));
@@ -228,7 +232,7 @@ public class TransactionListAdapter extends BaseAdapter {
 
     public static int getUnconfirmedCount(List<TransactionListItem> items) {
         int count = 0;
-        int estimatedBlockHeight = BRPeerManager.getEstimatedBlockHeight();
+        updateEstimatedBlockHeight();
         for (TransactionListItem t : items) {
             if (t == null) continue;
             int blockHeight = t.getBlockHeight();
@@ -238,6 +242,19 @@ public class TransactionListAdapter extends BaseAdapter {
             }
         }
         return count;
+    }
+    
+    private static void updateEstimatedBlockHeight(){
+        if(System.currentTimeMillis() - estimatedBlockHeightTimeStamp  < 300) return;
+        Log.e(TAG, "updateEstimatedBlockHeight: ");
+        estimatedBlockHeightTimeStamp = System.currentTimeMillis();
+        estimatedBlockHeight = BRPeerManager.getEstimatedBlockHeight();
+    }
+
+    private static void updateUnconfirmedTxCount(List<TransactionListItem> data){
+        if(System.currentTimeMillis() - unconfirmedTxCountTimeStamp  < 300) return;
+        unconfirmedTxCountTimeStamp = System.currentTimeMillis();
+        unconfirmedTxCount = getUnconfirmedCount(data);
     }
 
     @Override
@@ -275,7 +292,6 @@ public class TransactionListAdapter extends BaseAdapter {
 //                "TX getBalanceAfterTx", String.valueOf(item.getBalanceAfterTx()));
         int blockHeight = item.getBlockHeight();
 
-        int estimatedBlockHeight = BRPeerManager.getEstimatedBlockHeight();
         int confirms = blockHeight == Integer.MAX_VALUE ? 0 : estimatedBlockHeight - blockHeight + 1;
 //        Log.e(TAG, "confirms: " + confirms);
 
