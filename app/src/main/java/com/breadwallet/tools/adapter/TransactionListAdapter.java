@@ -254,9 +254,11 @@ public class TransactionListAdapter extends BaseAdapter {
             Log.e(TAG, "updateEstimatedBlockHeight: blockHeightUpdaterTask is null, creating one");
             blockHeightUpdaterTask = new BlockHeightUpdaterTask();
         }
-        if (!blockHeightUpdaterTask.isAlive())
+        if (!blockHeightUpdaterTask.isAlive()) {
+            blockHeightUpdaterTask.interrupt();
+            blockHeightUpdaterTask = new BlockHeightUpdaterTask();
             blockHeightUpdaterTask.start();
-
+        }
     }
 
     private static class BlockHeightUpdaterTask extends Thread {
