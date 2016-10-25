@@ -87,7 +87,13 @@ public class BRPeerManager {
         SharedPreferencesManager.putAllowSpend(ctx, true);
         stopSyncingProgressThread();
         if (ctx != null) {
-            SharedPreferencesManager.putStartHeight(ctx, getCurrentBlockHeight());
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    SharedPreferencesManager.putStartHeight(ctx, getCurrentBlockHeight());
+                }
+            }).start();
+
             ((MainActivity) ctx).hideAllBubbles();
         }
     }
@@ -294,35 +300,41 @@ public class BRPeerManager {
         final RelativeLayout networkErrorBar = (RelativeLayout) ctx.findViewById(R.id.main_internet_status_bar);
         if (networkErrorBar == null) return;
         final ConnectivityManager connectivityManager = ((ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE));
-        boolean isConnected = connectivityManager.getActiveNetworkInfo() != null &&
+        final boolean isConnected = connectivityManager.getActiveNetworkInfo() != null &&
                 connectivityManager.getActiveNetworkInfo().isConnected() &&
                 Settings.System.getInt(ctx.getContentResolver(),
                         Settings.Global.AIRPLANE_MODE_ON, 0) != 1;
-        BRPeerManager.getInstance(ctx).connect();
-        if (!isConnected) {
-            ctx.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    networkErrorBar.setVisibility(View.VISIBLE);
-                    BRPeerManager.stopSyncingProgressThread();
-                }
-            });
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                BRPeerManager.getInstance(ctx).connect();
+                if (!isConnected) {
+                    ctx.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            networkErrorBar.setVisibility(View.VISIBLE);
+                            BRPeerManager.stopSyncingProgressThread();
+                        }
+                    });
 
-            Log.e(TAG, "Network Not Available ");
+                    Log.e(TAG, "Network Not Available ");
 
-        } else {
-            ctx.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    networkErrorBar.setVisibility(View.GONE);
-                    double progress = BRPeerManager.syncProgress(SharedPreferencesManager.getStartHeight(ctx));
-                    if (progress < 1 && progress > 0) {
-                        BRPeerManager.startSyncingProgressThread();
-                    }
+                } else {
+                    ctx.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            networkErrorBar.setVisibility(View.GONE);
+                            double progress = BRPeerManager.syncProgress(SharedPreferencesManager.getStartHeight(ctx));
+                            if (progress < 1 && progress > 0) {
+                                BRPeerManager.startSyncingProgressThread();
+                            }
+                        }
+                    });
+                    Log.e(TAG, "Network Available ");
                 }
-            });
-            Log.e(TAG, "Network Available ");
-        }
+            }
+        }).start();
+
     }
 
     public native void createAndConnect(int earliestKeyTime, int blockCount, int peerCount);

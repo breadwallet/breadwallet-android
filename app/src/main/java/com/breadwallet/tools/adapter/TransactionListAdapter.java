@@ -248,7 +248,13 @@ public class TransactionListAdapter extends BaseAdapter {
         if(System.currentTimeMillis() - estimatedBlockHeightTimeStamp  < 300) return;
         Log.e(TAG, "updateEstimatedBlockHeight: ");
         estimatedBlockHeightTimeStamp = System.currentTimeMillis();
-        estimatedBlockHeight = BRPeerManager.getEstimatedBlockHeight();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                estimatedBlockHeight = BRPeerManager.getEstimatedBlockHeight();
+            }
+        }).start();
+
     }
 
     private static void updateUnconfirmedTxCount(List<TransactionListItem> data){
