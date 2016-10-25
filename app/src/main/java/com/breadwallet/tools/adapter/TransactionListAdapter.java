@@ -6,6 +6,7 @@ import android.app.admin.SystemUpdatePolicy;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.TypedValue;
@@ -81,6 +82,7 @@ public class TransactionListAdapter extends BaseAdapter {
     private static int estimatedBlockHeight;
     private static long estimatedBlockHeightTimeStamp;
     private static long unconfirmedTxCountTimeStamp;
+    private static BlockHeightUpdaterTask blockHeightUpdaterTask;
 
     public TransactionListAdapter(Activity a, TransactionListItem[] d) {
         activity = a;
@@ -91,6 +93,7 @@ public class TransactionListAdapter extends BaseAdapter {
         unconfirmedColor = ContextCompat.getColor(a, R.color.white);
         sentColor = Color.parseColor("#FF5454");
         receivedColor = Color.parseColor("#00BF00");
+        blockHeightUpdaterTask = new BlockHeightUpdaterTask();
     }
 
     public void updateData(TransactionListItem[] d) {
@@ -243,22 +246,30 @@ public class TransactionListAdapter extends BaseAdapter {
         }
         return count;
     }
-    
-    private static void updateEstimatedBlockHeight(){
-        if(System.currentTimeMillis() - estimatedBlockHeightTimeStamp  < 300) return;
+
+    private static void updateEstimatedBlockHeight() {
+        if (System.currentTimeMillis() - estimatedBlockHeightTimeStamp < 300) return;
         Log.e(TAG, "updateEstimatedBlockHeight: ");
         estimatedBlockHeightTimeStamp = System.currentTimeMillis();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                estimatedBlockHeight = BRPeerManager.getEstimatedBlockHeight();
-            }
-        }).start();
+        if (blockHeightUpdaterTask == null) {
+            Log.e(TAG, "updateEstimatedBlockHeight: blockHeightUpdaterTask is null, creating one");
+            blockHeightUpdaterTask = new BlockHeightUpdaterTask();
+        }
+        blockHeightUpdaterTask.execute();
 
     }
 
-    private static void updateUnconfirmedTxCount(List<TransactionListItem> data){
-        if(System.currentTimeMillis() - unconfirmedTxCountTimeStamp  < 300) return;
+    private static class BlockHeightUpdaterTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            estimatedBlockHeight = BRPeerManager.getEstimatedBlockHeight();
+            return null;
+        }
+    }
+
+    private static void updateUnconfirmedTxCount(List<TransactionListItem> data) {
+        if (System.currentTimeMillis() - unconfirmedTxCountTimeStamp < 300) return;
         unconfirmedTxCountTimeStamp = System.currentTimeMillis();
         unconfirmedTxCount = getUnconfirmedCount(data);
     }
@@ -317,8 +328,8 @@ public class TransactionListAdapter extends BaseAdapter {
             } else {
 //                Log.e(TAG, "item.getBlockHeight(): " + blockHeight + ", confirms: " + confirms + ", lastBlock: " + estimatedBlockHeight);
                 int confsNr = confirms >= 0 && confirms <= 5 ? confirms : 0;
-                String message = confsNr == 0? activity.getString(R.string.nr_confirmations0) :
-                        (confsNr == 1? activity.getString(R.string.nr_confirmations1) : String.format(activity.getString(R.string.nr_confirmations),confsNr));
+                String message = confsNr == 0 ? activity.getString(R.string.nr_confirmations0) :
+                        (confsNr == 1 ? activity.getString(R.string.nr_confirmations1) : String.format(activity.getString(R.string.nr_confirmations), confsNr));
 
                 sentReceivedTextView.setText(message);
             }
