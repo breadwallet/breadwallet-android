@@ -208,13 +208,20 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 Log.e(TAG, "No certificates!", e);
             } else {
                 if (app != null)
-                    if (!((BreadWalletApp) app.getApplication()).isNetworkAvailable(app))
-                        ((BreadWalletApp) app.getApplication()).
-                                showCustomDialog(app.getString(R.string.could_not_make_payment), app.getString(R.string.not_connected_network), app.getString(R.string.ok));
 
-                    else
-                        ((BreadWalletApp) app.getApplication()).
-                                showCustomDialog(app.getString(R.string.warning), app.getString(R.string.could_not_transmit_payment), app.getString(R.string.ok));
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (!((BreadWalletApp) app.getApplication()).hasInternetAccess()) {
+                                ((BreadWalletApp) app.getApplication()).
+                                        showCustomDialog(app.getString(R.string.could_not_make_payment), app.getString(R.string.not_connected_network), app.getString(R.string.ok));
+
+                            } else
+                                ((BreadWalletApp) app.getApplication()).
+                                        showCustomDialog(app.getString(R.string.warning), app.getString(R.string.could_not_transmit_payment), app.getString(R.string.ok));
+                        }
+                    }).start();
+
                 paymentRequest = null;
             }
             e.printStackTrace();
@@ -250,7 +257,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
             certification = certName + "\n";
         } else {
             if (certName == null || certName.isEmpty()) {
-                certification  = "\u274C " + certName + "\n";
+                certification = "\u274C " + certName + "\n";
                 new AlertDialog.Builder(app)
                         .setTitle("")
                         .setMessage(R.string.payee_not_certified)

@@ -3,16 +3,8 @@ package com.breadwallet.tools.util;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.util.Log;
-import android.view.View;
-import android.widget.RelativeLayout;
-
-import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.wallet.BRPeerManager;
-import com.breadwallet.wallet.BRWalletManager;
 
 /**
  * BreadWallet

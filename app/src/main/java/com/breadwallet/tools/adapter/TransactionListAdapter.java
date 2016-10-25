@@ -93,7 +93,6 @@ public class TransactionListAdapter extends BaseAdapter {
         unconfirmedColor = ContextCompat.getColor(a, R.color.white);
         sentColor = Color.parseColor("#FF5454");
         receivedColor = Color.parseColor("#00BF00");
-        blockHeightUpdaterTask = new BlockHeightUpdaterTask();
     }
 
     public void updateData(TransactionListItem[] d) {
@@ -255,16 +254,16 @@ public class TransactionListAdapter extends BaseAdapter {
             Log.e(TAG, "updateEstimatedBlockHeight: blockHeightUpdaterTask is null, creating one");
             blockHeightUpdaterTask = new BlockHeightUpdaterTask();
         }
-        blockHeightUpdaterTask.execute();
+        if (!blockHeightUpdaterTask.isAlive())
+            blockHeightUpdaterTask.start();
 
     }
 
-    private static class BlockHeightUpdaterTask extends AsyncTask<Void, Void, Void> {
-
+    private static class BlockHeightUpdaterTask extends Thread {
         @Override
-        protected Void doInBackground(Void... voids) {
+        public void run() {
             estimatedBlockHeight = BRPeerManager.getEstimatedBlockHeight();
-            return null;
+            Log.e(TAG, "BlockHeightUpdaterTask: estimatedBlockHeight: " + estimatedBlockHeight);
         }
     }
 

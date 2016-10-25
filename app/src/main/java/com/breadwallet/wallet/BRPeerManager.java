@@ -1,10 +1,6 @@
 package com.breadwallet.wallet;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -17,7 +13,6 @@ import com.breadwallet.presenter.entities.BlockEntity;
 import com.breadwallet.presenter.entities.PeerEntity;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.manager.CurrencyManager;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.sqlite.SQLiteManager;
@@ -144,7 +139,7 @@ public class BRPeerManager {
 
     public static boolean networkIsReachable() {
         Log.e(TAG, "networkIsReachable");
-        return ctx != null && ((BreadWalletApp) ctx.getApplication()).isNetworkAvailable(ctx);
+        return ctx != null && ((BreadWalletApp) ctx.getApplication()).hasInternetAccess();
     }
 
     public static void deleteBlocks() {
@@ -189,24 +184,30 @@ public class BRPeerManager {
         }
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) {
-            if (!((BreadWalletApp) ctx.getApplication()).isNetworkAvailable(ctx)) {
-                syncTask.interrupt();
-                syncTask = null;
-                return;
-            }
-            MiddleViewAdapter.setSyncing(ctx, true);
-            ctx.runOnUiThread(new Runnable() {
+            new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    try {
-                        ctx.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-                        if (BRAnimator.level == 0)
-                            ((MainActivity) ctx).showHideSyncProgressViews(true);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    if (!((BreadWalletApp) ctx.getApplication()).hasInternetAccess()) {
+                        syncTask.interrupt();
+                        syncTask = null;
+                        return;
                     }
+                    MiddleViewAdapter.setSyncing(ctx, true);
+                    ctx.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                ctx.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                                if (BRAnimator.level == 0)
+                                    ((MainActivity) ctx).showHideSyncProgressViews(true);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
                 }
-            });
+            }).start();
+
         }
 
     }
@@ -299,14 +300,12 @@ public class BRPeerManager {
     public void refreshConnection() {
         final RelativeLayout networkErrorBar = (RelativeLayout) ctx.findViewById(R.id.main_internet_status_bar);
         if (networkErrorBar == null) return;
-        final ConnectivityManager connectivityManager = ((ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE));
-        final boolean isConnected = connectivityManager.getActiveNetworkInfo() != null &&
-                connectivityManager.getActiveNetworkInfo().isConnected() &&
-                Settings.System.getInt(ctx.getContentResolver(),
-                        Settings.Global.AIRPLANE_MODE_ON, 0) != 1;
+
+
         new Thread(new Runnable() {
             @Override
             public void run() {
+                final boolean isConnected = ((BreadWalletApp) ctx.getApplication()).hasInternetAccess();
                 BRPeerManager.getInstance(ctx).connect();
                 if (!isConnected) {
                     ctx.runOnUiThread(new Runnable() {

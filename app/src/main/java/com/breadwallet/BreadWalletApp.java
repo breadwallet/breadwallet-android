@@ -1,7 +1,6 @@
 package com.breadwallet;
 
 import android.Manifest;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;
 import android.app.KeyguardManager;
@@ -12,7 +11,6 @@ import android.graphics.Point;
 import android.hardware.fingerprint.FingerprintManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Build;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
@@ -31,15 +29,16 @@ import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
-import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.presenter.fragments.FingerprintDialogFragment;
-import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.presenter.fragments.PasswordDialogFragment;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
-import com.breadwallet.tools.adapter.TransactionListAdapter;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.wallet.BRWalletManager;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 /**
  * BreadWallet
@@ -308,10 +307,33 @@ public class BreadWalletApp extends Application {
         }
     }
 
-    public boolean isNetworkAvailable(Activity context) {
-        if (context == null) return false;
+    public  boolean hasInternetAccess() {
+        Log.e(TAG, "hasInternetAccess");
+        if (isNetworkAvailable()) {
+            try {
+                HttpURLConnection urlc = (HttpURLConnection)
+                        (new URL("http://clients3.google.com/generate_204")
+                                .openConnection());
+                urlc.setRequestProperty("User-Agent", "Android");
+                urlc.setRequestProperty("Connection", "close");
+                urlc.setConnectTimeout(1000);
+                urlc.connect();
+                Log.e(TAG, "hasInternetAccess END yes");
+                return (urlc.getResponseCode() == 204 &&
+                        urlc.getContentLength() == 0);
+            } catch (IOException e) {
+                Log.e(TAG, "Error checking internet connection", e);
+            }
+        } else {
+            Log.d(TAG, "No network available!");
+        }
+        Log.e(TAG, "hasInternetAccess END no");
+        return false;
+    }
+
+    private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
-                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }

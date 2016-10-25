@@ -293,7 +293,7 @@ JNIEXPORT void JNICALL Java_com_breadwallet_wallet_BRPeerManager_connect(JNIEnv 
 JNIEXPORT void JNICALL
 Java_com_breadwallet_wallet_BRPeerManager_putBlock(JNIEnv *env, jobject thiz, jbyteArray block, int blockHeight)
 {
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "putBlock");
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "putBlock");
 
     if (!_blocks) {
         __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", " >>>>>>  _blocks is NULL");
@@ -309,7 +309,7 @@ Java_com_breadwallet_wallet_BRPeerManager_putBlock(JNIEnv *env, jobject thiz, jb
     b = BRMerkleBlockParse((const uint8_t *)blockBytes, (size_t)blockLength);
     if (!b) return;
     b->height = (uint32_t)blockHeight;
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "adding a block: blockhight: %d", b->height);
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "adding a block: blockhight: %d", b->height);
     _blocks[_blocksCounter++] = b;
 }
 

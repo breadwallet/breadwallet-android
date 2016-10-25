@@ -1,9 +1,6 @@
 package com.breadwallet.tools.manager;
 
 import android.app.Activity;
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
@@ -95,7 +92,7 @@ public class CurrencyManager extends Observable {
 
     private Set<CurrencyEntity> getCurrencies(Activity context) {
         Set<CurrencyEntity> set = new LinkedHashSet<>();
-        if (((BreadWalletApp)ctx.getApplication()).isNetworkAvailable(ctx)) {
+        if (((BreadWalletApp)ctx.getApplication()).hasInternetAccess()) {
             try {
                 JSONArray arr;
                 arr = JsonParser.getJSonArray(context);
