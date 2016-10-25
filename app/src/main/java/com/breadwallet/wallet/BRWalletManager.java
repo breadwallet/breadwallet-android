@@ -133,6 +133,7 @@ public class BRWalletManager {
         boolean success = KeyStoreManager.putKeyStorePhrase(strPhrase, ctx, BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE);
         if (!success) return false;
         byte[] authKey = getAuthPrivKeyForAPI(keyBytes);
+        if(authKey == null || authKey.length == 0) throw new IllegalArgumentException("authKey is invalid");
 //        Log.e(TAG,"authKey: " + Arrays.toString(authKey));
         KeyStoreManager.putAuthKey(authKey, ctx);
         KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), ctx);
@@ -1082,8 +1083,6 @@ public class BRWalletManager {
     public static native String getAuthPublicKeyForAPI(byte[] privKey);
 
     public static native byte[] getSeedFromPhrase(byte[] phrase);
-
-    public static native String signString(String strToSign, byte[] privKey);
 
     public static native String base58ofSha256(String strToSign);
 

@@ -59,7 +59,6 @@ public class FragmentSettingsAll extends Fragment {
 
         transactionList = (ListView) rootView.findViewById(R.id.transactions_list);
 
-
         adapter = new TransactionListAdapter(getActivity(), transactionObjects);
         if (transactionObjects != null) {
             if (transactionObjects.length == 0) transactionObjects = null;

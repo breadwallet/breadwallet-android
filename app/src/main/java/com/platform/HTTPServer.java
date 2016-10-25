@@ -56,7 +56,7 @@ public class HTTPServer {
     private Set<Middleware> middlewares;
     private Server server;
     public static final int PORT = 31120;
-    public static final String URL = "http://localhost:" + PORT;
+    public static final String URL_EA = "http://localhost:" + PORT + "/ea";
 
     public HTTPServer() {
         init();
@@ -108,7 +108,7 @@ public class HTTPServer {
         for (Middleware m : middlewares) {
             result = m.handle(target, baseRequest, request, response);
             if (result) {
-                Log.e(TAG, "dispatch: " + m.getClass().getName().substring(m.getClass().getName().lastIndexOf(".") + 1) + " succeeded");
+                Log.e(TAG, "dispatch: " + m.getClass().getName().substring(m.getClass().getName().lastIndexOf(".") + 1) + " succeeded\n" + request.getRequestURL());
                 break;
             }
         }

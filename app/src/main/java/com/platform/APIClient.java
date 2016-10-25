@@ -40,6 +40,7 @@ import java.util.TimeZone;
 
 import io.sigpipe.jbsdiff.InvalidHeaderException;
 import io.sigpipe.jbsdiff.ui.FileUI;
+import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -109,11 +110,6 @@ public class APIClient {
 
     private APIClient(Activity context) {
         ctx = context;
-    }
-
-    public static synchronized APIClient getInstance() {
-        if (ourInstance == null) ourInstance = new APIClient();
-        return ourInstance;
     }
 
     private APIClient() {
@@ -252,9 +248,9 @@ public class APIClient {
             request = modifiedRequest.header("Date", httpDate.substring(0, httpDate.length() - 6)).build();
             String requestString = createRequest(request.method(), base58Body,
                     request.header("Content-Type"), request.header("Date"), "/me");
-
+            Log.e(TAG, "sendRequest: requestString: " + requestString);
             String signedRequest = signRequest(requestString);
-
+            Log.e(TAG, "sendRequest: signedRequest: " + signedRequest);
             String token = new String(KeyStoreManager.getToken(ctx));
             if (token.isEmpty()) token = getToken();
             if (token == null || token.isEmpty()) {
@@ -262,6 +258,7 @@ public class APIClient {
                 return null;
             }
             String authValue = "bread " + token + ":" + signedRequest;
+            Log.e(TAG, "sendRequest: authValue: " + authValue);
             modifiedRequest = request.newBuilder();
             request = modifiedRequest.header("Authorization", authValue).build();
 
@@ -277,9 +274,9 @@ public class APIClient {
         return response;
     }
 
-    public void updateBundle(Context context) {
+    public void updateBundle() {
         Log.e(TAG, "updateBundle");
-        File bundleFile = new File(context.getFilesDir().getAbsolutePath() + bundleFileName);
+        File bundleFile = new File(ctx.getFilesDir().getAbsolutePath() + bundleFileName);
 
         if (bundleFile.exists()) {
             Log.e(TAG, "updateBundle: exists");
@@ -468,4 +465,7 @@ public class APIClient {
 
     }
 
+    public String buildUrl(String path) {
+        return BASE_URL + path;
+    }
 }

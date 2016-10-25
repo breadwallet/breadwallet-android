@@ -2,21 +2,30 @@
 package com.breadwallet.presenter.fragments;
 
 import android.app.Fragment;
+import android.content.Context;
+import android.net.http.SslError;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.ConsoleMessage;
+import android.webkit.HttpAuthHandler;
+import android.webkit.JavascriptInterface;
+import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.platform.HTTPServer;
+
+import static com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask.message;
 
 
 /**
@@ -57,6 +66,9 @@ public class FragmentEarlyAccess extends Fragment {
                 R.layout.fragment_early_access, container, false);
         webView = (WebView) rootView.findViewById(R.id.early_access_web_view);
         webView.setWebViewClient(new BRWebViewClient());
+        webView.setWebChromeClient(new BRWebChromeClient());
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
         server = new HTTPServer();
 //        webView.getSettings().setAllowFileAccessFromFileURLs(true);
 //        webView.getSettings().setAllowUniversalAccessFromFileURLs(true);
@@ -68,12 +80,11 @@ public class FragmentEarlyAccess extends Fragment {
         return rootView;
     }
 
-
     @Override
     public void onResume() {
         super.onResume();
         server.startServer();
-        webView.loadUrl(HTTPServer.URL);
+        webView.loadUrl(HTTPServer.URL_EA);
     }
 
     @Override
@@ -83,15 +94,13 @@ public class FragmentEarlyAccess extends Fragment {
     }
 
     private class BRWebChromeClient extends WebChromeClient {
-
         @Override
-        public boolean onConsoleMessage(ConsoleMessage cm) {
-            Log.e("WEBVIEW", cm.message() + " -- From line "
-                    + cm.lineNumber() + " of "
-                    + cm.sourceId() );
-            return true;
+        public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
+            Log.e(TAG, "onConsoleMessage: consoleMessage: " + consoleMessage.message());
+            return super.onConsoleMessage(consoleMessage);
         }
     }
+
 
     private class BRWebViewClient extends WebViewClient {
 
@@ -104,6 +113,32 @@ public class FragmentEarlyAccess extends Fragment {
         public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
             super.onReceivedError(view, request, error);
             Log.e(TAG, "onReceivedError: error:" + error.toString());
+        }
+
+        @Override
+        public void onReceivedHttpAuthRequest(WebView view, HttpAuthHandler handler, String host, String realm) {
+            super.onReceivedHttpAuthRequest(view, handler, host, realm);
+            Log.e(TAG, "onReceivedHttpAuthRequest: ");
+        }
+
+        @Override
+        public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+            super.onReceivedError(view, errorCode, description, failingUrl);
+            Log.e(TAG, "onReceivedError: failingUrl: " + failingUrl);
+        }
+
+        @Override
+        public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+            super.onReceivedSslError(view, handler, error);
+            Log.e(TAG, "onReceivedSslError: error: " + error);
+        }
+
+        @Override
+        public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
+            super.onReceivedHttpError(view, request, errorResponse);
+            Log.e(TAG, "onReceivedHttpError: request: " + request.getUrl());
+            Log.e(TAG, "onReceivedHttpError: getStatusCode: " + errorResponse.getStatusCode());
+            Log.e(TAG, "onReceivedHttpError: getReasonPhrase: " + errorResponse.getReasonPhrase());
         }
 
         @Override

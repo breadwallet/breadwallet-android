@@ -172,9 +172,9 @@ public class MainActivity extends FragmentActivity implements Observer {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                APIClient apiClient = APIClient.getInstance();
+                APIClient apiClient = APIClient.getInstance(app);
 //                apiClient.buyBitcoinMe();
-                apiClient.updateBundle(app); //bread-buy-staging
+                apiClient.updateBundle(); //bread-buy-staging
             }
         }).start();
     }

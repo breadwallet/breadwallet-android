@@ -1,10 +1,24 @@
 package com.platform.middlewares;
 
+import android.util.Log;
+
+import com.breadwallet.presenter.activities.MainActivity;
 import com.platform.APIClient;
 import com.platform.interfaces.Middleware;
 
+import org.apache.commons.io.IOUtils;
+
+import java.io.IOException;
+import java.util.Enumeration;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import okhttp3.FormBody;
+import okhttp3.MultipartBody;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 
 /**
@@ -35,6 +49,7 @@ public class APIProxy implements Middleware {
     public static final String TAG = APIProxy.class.getName();
 
     private APIClient apiInstance;
+    private static final String MOUNT_POINT = "/_api";
     private final String SHOULD_VERIFY_HEADER = "x-should-verify";
     private final String SHOULD_AUTHENTICATE = "x-should-authenticate";
     private final String[] bannedSendHeaders = new String[]{
@@ -51,11 +66,71 @@ public class APIProxy implements Middleware {
             "connection"};
 
     public APIProxy() {
-        apiInstance = APIClient.getInstance();
+        apiInstance = APIClient.getInstance(MainActivity.app);
     }
 
     @Override
     public boolean handle(String target, org.eclipse.jetty.server.Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
+        if (!target.startsWith(MOUNT_POINT)) return false;
+
+        Log.e(TAG, "handle: target: " + target);
+        String path = target.substring(MOUNT_POINT.length());
+        Log.e(TAG, "handle: path: " + path);
+        String queryString = baseRequest.getQueryString();
+        if (queryString != null && queryString.length() > 0)
+            path += "?" + queryString;
+        Log.e(TAG, "handle: path with queryString: " + path);
+        boolean auth = false;
+        Request req;
+        Request.Builder builder = new Request.Builder()
+                .url(apiInstance.buildUrl(path));
+
+        Enumeration<String> headerNames = baseRequest.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String hName = headerNames.nextElement();
+            builder.addHeader(hName, baseRequest.getHeader(hName));
+        }
+        switch (baseRequest.getMethod()) {
+            case "GET":
+                builder.get();
+                break;
+            case "DELETE":
+                builder.delete();
+                break;
+            case "POST":
+                byte[] postBodyText = new byte[0];
+                try {
+                    postBodyText = IOUtils.toByteArray(request.getInputStream());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                RequestBody postReqBody = RequestBody.create(null, postBodyText);
+                builder.post(postReqBody);
+                break;
+            case "PUT":
+                byte[] putBodyText = new byte[0];
+                try {
+                    putBodyText = IOUtils.toByteArray(request.getInputStream());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                RequestBody putReqBody = RequestBody.create(null, putBodyText);
+                builder.put(putReqBody);
+                break;
+        }
+
+        req = builder.build();
+        Log.e(TAG, "handle: req.url(): " + req.url());
+        if (baseRequest.getHeader(SHOULD_AUTHENTICATE).toLowerCase().equals("yes")) auth = true;
+        Response res = apiInstance.sendRequest(req, auth);
+        Log.e(TAG, "handle: res: " + res.code());
+        Log.e(TAG, "handle: message: " + res.message());
+        try {
+            Log.e(TAG, "handle: body: " + new String(res.body().bytes(), "UTF-8"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         return false;
     }
 }
