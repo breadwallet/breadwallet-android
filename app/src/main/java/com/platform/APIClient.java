@@ -150,10 +150,13 @@ public class APIClient {
                 .get()
                 .build();
         String response = null;
+        Response res = null;
         try {
-            response = sendRequest(request, true).body().string();
+            res = sendRequest(request, true);
+            response = res.body().string();
             if (response.isEmpty()) {
-                response = sendRequest(request, true).body().string();
+                res = sendRequest(request, true);
+                response = res.body().string();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -162,6 +165,12 @@ public class APIClient {
         if (response == null) throw new NullPointerException();
 
         Log.e(TAG, "buyBitcoinMe: response: " + response);
+        Log.e(TAG, "buyBitcoinMe: message: " + res.message());
+        try {
+            Log.e(TAG, "buyBitcoinMe: message: " + res.priorResponse().body().string());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         return response;
     }
@@ -243,7 +252,7 @@ public class APIClient {
             SimpleDateFormat sdf =
                     new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
             sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-            String httpDate = sdf.format(new Date(System.currentTimeMillis()));
+            String httpDate = sdf.format(new Date());
 
             request = modifiedRequest.header("Date", httpDate.substring(0, httpDate.length() - 6)).build();
             String requestString = createRequest(request.method(), base58Body,
