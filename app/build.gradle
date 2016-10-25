@@ -3,15 +3,15 @@ apply plugin: 'com.android.model.application'
 model {
     android {
         compileSdkVersion = 25
-        buildToolsVersion = '24.0.3'
+        buildToolsVersion = '25.0.0'
 
         defaultConfig {
             testInstrumentationRunner = 'android.support.test.runner.AndroidJUnitRunner'
             applicationId = 'com.breadwallet'
             minSdkVersion.apiLevel = 23
             targetSdkVersion.apiLevel = 24
-            versionCode = 28
-            versionName = "28"
+            versionCode = 29
+            versionName = "29"
         }
 
         ndk {
