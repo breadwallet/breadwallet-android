@@ -97,6 +97,7 @@ public class BRPeerManager {
         stopSyncingProgressThread();
         if (ctx != null && ctx instanceof MainActivity) {
             ((MainActivity) ctx).hideAllBubbles();
+            getInstance(ctx).refreshConnection();
         }
     }
 
@@ -184,29 +185,24 @@ public class BRPeerManager {
         }
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) {
-            new Thread(new Runnable() {
+            if (!((BreadWalletApp) ctx.getApplication()).hasInternetAccess()) {
+                syncTask.interrupt();
+                syncTask = null;
+                return;
+            }
+            MiddleViewAdapter.setSyncing(ctx, true);
+            ctx.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (!((BreadWalletApp) ctx.getApplication()).hasInternetAccess()) {
-                        syncTask.interrupt();
-                        syncTask = null;
-                        return;
+                    try {
+                        ctx.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                        if (BRAnimator.level == 0)
+                            ((MainActivity) ctx).showHideSyncProgressViews(true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                    MiddleViewAdapter.setSyncing(ctx, true);
-                    ctx.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                ctx.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-                                if (BRAnimator.level == 0)
-                                    ((MainActivity) ctx).showHideSyncProgressViews(true);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
                 }
-            }).start();
+            });
 
         }
 
@@ -285,7 +281,6 @@ public class BRPeerManager {
                             public void run() {
                                 progressStatus = 0;
                                 app.showHideSyncProgressViews(false);
-//                                MiddleViewAdapter.setSyncing(app, false);
                             }
                         });
                         e.printStackTrace();
@@ -301,39 +296,33 @@ public class BRPeerManager {
         final RelativeLayout networkErrorBar = (RelativeLayout) ctx.findViewById(R.id.main_internet_status_bar);
         if (networkErrorBar == null) return;
 
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                final boolean isConnected = ((BreadWalletApp) ctx.getApplication()).hasInternetAccess();
-                BRPeerManager.getInstance(ctx).connect();
-                if (!isConnected) {
-                    ctx.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            networkErrorBar.setVisibility(View.VISIBLE);
-                            BRPeerManager.stopSyncingProgressThread();
-                        }
-                    });
-
-                    Log.e(TAG, "Network Not Available ");
-
-                } else {
-                    final double progress = BRPeerManager.syncProgress(SharedPreferencesManager.getStartHeight(ctx));
-                    ctx.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            networkErrorBar.setVisibility(View.GONE);
-
-                            if (progress < 1 && progress > 0) {
-                                BRPeerManager.startSyncingProgressThread();
-                            }
-                        }
-                    });
-                    Log.e(TAG, "Network Available ");
+        final boolean isConnected = ((BreadWalletApp) ctx.getApplication()).hasInternetAccess();
+        BRPeerManager.getInstance(ctx).connect();
+        if (!isConnected) {
+            ctx.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    networkErrorBar.setVisibility(View.VISIBLE);
+                    BRPeerManager.stopSyncingProgressThread();
                 }
-            }
-        }).start();
+            });
+
+            Log.e(TAG, "Network Not Available ");
+
+        } else {
+            final double progress = BRPeerManager.syncProgress(SharedPreferencesManager.getStartHeight(ctx));
+            ctx.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    networkErrorBar.setVisibility(View.GONE);
+
+                    if (progress < 1 && progress > 0) {
+                        BRPeerManager.startSyncingProgressThread();
+                    }
+                }
+            });
+            Log.e(TAG, "Network Available ");
+        }
 
     }
 

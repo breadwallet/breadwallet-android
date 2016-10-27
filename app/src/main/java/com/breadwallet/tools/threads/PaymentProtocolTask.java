@@ -209,18 +209,13 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
             } else {
                 if (app != null)
 
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (!((BreadWalletApp) app.getApplication()).hasInternetAccess()) {
-                                ((BreadWalletApp) app.getApplication()).
-                                        showCustomDialog(app.getString(R.string.could_not_make_payment), app.getString(R.string.not_connected_network), app.getString(R.string.ok));
+                    if (!((BreadWalletApp) app.getApplication()).hasInternetAccess()) {
+                        ((BreadWalletApp) app.getApplication()).
+                                showCustomDialog(app.getString(R.string.could_not_make_payment), app.getString(R.string.not_connected_network), app.getString(R.string.ok));
 
-                            } else
-                                ((BreadWalletApp) app.getApplication()).
-                                        showCustomDialog(app.getString(R.string.warning), app.getString(R.string.could_not_transmit_payment), app.getString(R.string.ok));
-                        }
-                    }).start();
+                    } else
+                        ((BreadWalletApp) app.getApplication()).
+                                showCustomDialog(app.getString(R.string.warning), app.getString(R.string.could_not_transmit_payment), app.getString(R.string.ok));
 
                 paymentRequest = null;
             }

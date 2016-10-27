@@ -80,7 +80,7 @@ public class TransactionListAdapter extends BaseAdapter {
     public static boolean showAllTx = false;
     private static int unconfirmedTxCount;
     private static int estimatedBlockHeight;
-    private static long estimatedBlockHeightTimeStamp;
+//    private static long estimatedBlockHeightTimeStamp;
     private static BlockHeightUpdaterTask blockHeightUpdaterTask;
 
     public TransactionListAdapter(Activity a, TransactionListItem[] d) {
@@ -110,7 +110,7 @@ public class TransactionListAdapter extends BaseAdapter {
         Log.e(TAG, "getCount: unconfirmedTxCount: " + unconfirmedTxCount);
         final int EXTRA_ITEMS = 4;
         if (!BreadWalletApp.unlocked) {
-            updateUnconfirmedTxCount(data);
+            updateUnconfirmedTxCount();
             return unconfirmedTxCount == 0 ? (EXTRA_ITEMS + 1) : unconfirmedTxCount == data.size()
                     ? (unconfirmedTxCount + EXTRA_ITEMS) : (unconfirmedTxCount + EXTRA_ITEMS + 1);
         }
@@ -178,7 +178,7 @@ public class TransactionListAdapter extends BaseAdapter {
         }
 
         if (!BreadWalletApp.unlocked) {
-            updateUnconfirmedTxCount(data);
+            updateUnconfirmedTxCount();
             if (unconfirmedTxCount == 0 && position == 0) {
                 RelativeLayout txHistory = (RelativeLayout) inflater.inflate(R.layout.button_transaction_history, null);
                 txHistory.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.getPixelsFromDps(activity, 40)));
@@ -249,9 +249,8 @@ public class TransactionListAdapter extends BaseAdapter {
 
     private void updateEstimatedBlockHeight() {
         Log.e(TAG, "updateEstimatedBlockHeight: ");
-        if (System.currentTimeMillis() - estimatedBlockHeightTimeStamp < 300) return;
 
-        estimatedBlockHeightTimeStamp = System.currentTimeMillis();
+//        estimatedBlockHeightTimeStamp = System.currentTimeMillis();
         if (blockHeightUpdaterTask == null) {
             blockHeightUpdaterTask = new BlockHeightUpdaterTask();
         }
@@ -270,7 +269,7 @@ public class TransactionListAdapter extends BaseAdapter {
         }
     }
 
-    private void updateUnconfirmedTxCount(List<TransactionListItem> data) {
+    private void updateUnconfirmedTxCount() {
         updateEstimatedBlockHeight();
     }
 

@@ -345,19 +345,8 @@ public class MainActivity extends FragmentActivity implements Observer {
         currencyManager.deleteObservers();
         currencyManager.addObserver(this);
         MiddleViewAdapter.resetMiddleView(this, null);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                final boolean isNetworkAvailable = ((BreadWalletApp) getApplication()).hasInternetAccess();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        networkErrorBar.setVisibility(isNetworkAvailable ? View.GONE : View.VISIBLE);
-                    }
-                });
-            }
-        }).start();
-
+        final boolean isNetworkAvailable = ((BreadWalletApp) getApplication()).hasInternetAccess();
+        networkErrorBar.setVisibility(isNetworkAvailable ? View.GONE : View.VISIBLE);
 
         lockerButton.setVisibility(BreadWalletApp.unlocked ? View.INVISIBLE : View.VISIBLE);
         startStopReceiver(true);
