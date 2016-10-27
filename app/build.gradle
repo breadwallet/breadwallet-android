@@ -9,9 +9,9 @@ model {
             testInstrumentationRunner = 'android.support.test.runner.AndroidJUnitRunner'
             applicationId = 'com.breadwallet'
             minSdkVersion.apiLevel = 23
-            targetSdkVersion.apiLevel = 24
-            versionCode = 28
-            versionName = "28"
+            targetSdkVersion.apiLevel = 25
+            versionCode = 29
+            versionName = "29"
         }
 
         ndk {
@@ -58,7 +58,7 @@ model {
                 debuggable = true
                 minifyEnabled = false
                 ndk {
-//                    CFlags.addAll(['-DBITCOIN_TESTNET=1'])
+                    CFlags.addAll(['-DBITCOIN_TESTNET=1'])
                     minifyEnabled = false
                     debuggable = true
                 }

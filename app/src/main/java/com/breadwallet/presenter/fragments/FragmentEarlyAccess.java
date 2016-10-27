@@ -1,8 +1,10 @@
 
 package com.breadwallet.presenter.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.net.http.SslError;
 import android.os.Bundle;
 import android.util.Log;
@@ -59,6 +61,7 @@ public class FragmentEarlyAccess extends Fragment {
     HTTPServer server;
     WebView webView;
 
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -68,6 +71,8 @@ public class FragmentEarlyAccess extends Fragment {
         webView.setWebViewClient(new BRWebViewClient());
         webView.setWebChromeClient(new BRWebChromeClient());
         WebSettings webSettings = webView.getSettings();
+        if (0 != (getActivity().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE))
+            WebView.setWebContentsDebuggingEnabled(true);
         webSettings.setJavaScriptEnabled(true);
         server = new HTTPServer();
 //        webView.getSettings().setAllowFileAccessFromFileURLs(true);

@@ -166,11 +166,6 @@ public class APIClient {
 
         Log.e(TAG, "buyBitcoinMe: response: " + response);
         Log.e(TAG, "buyBitcoinMe: message: " + res.message());
-        try {
-            Log.e(TAG, "buyBitcoinMe: message: " + res.priorResponse().body().string());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         return response;
     }
@@ -256,7 +251,7 @@ public class APIClient {
 
             request = modifiedRequest.header("Date", httpDate.substring(0, httpDate.length() - 6)).build();
             String requestString = createRequest(request.method(), base58Body,
-                    request.header("Content-Type"), request.header("Date"), "/me");
+                    request.header("Content-Type"), request.header("Date"), request.url().encodedPath());
             Log.e(TAG, "sendRequest: requestString: " + requestString);
             String signedRequest = signRequest(requestString);
             Log.e(TAG, "sendRequest: signedRequest: " + signedRequest);
@@ -276,6 +271,7 @@ public class APIClient {
         try {
             OkHttpClient client = new OkHttpClient();
             response = client.newCall(request).execute();
+            Log.e(TAG, "sendRequest: date: " + response.header("Date"));
         } catch (IOException e) {
             e.printStackTrace();
         }

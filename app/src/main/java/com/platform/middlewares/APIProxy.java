@@ -5,8 +5,9 @@ import android.util.Log;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.platform.APIClient;
 import com.platform.interfaces.Middleware;
-
 import org.apache.commons.io.IOUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Enumeration;
@@ -14,11 +15,13 @@ import java.util.Enumeration;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import okhttp3.FormBody;
-import okhttp3.MultipartBody;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
+
+import static android.R.attr.path;
+import static com.breadwallet.R.string.request;
 
 
 /**
@@ -73,7 +76,6 @@ public class APIProxy implements Middleware {
     public boolean handle(String target, org.eclipse.jetty.server.Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
         if (!target.startsWith(MOUNT_POINT)) return false;
 
-        Log.e(TAG, "handle: target: " + target);
         String path = target.substring(MOUNT_POINT.length());
         Log.e(TAG, "handle: path: " + path);
         String queryString = baseRequest.getQueryString();
@@ -81,6 +83,41 @@ public class APIProxy implements Middleware {
             path += "?" + queryString;
         Log.e(TAG, "handle: path with queryString: " + path);
         boolean auth = false;
+        Request req = mapToOkhttpRequest(baseRequest, path, request);
+        if (baseRequest.getHeader(SHOULD_AUTHENTICATE).toLowerCase().equals("yes")) auth = true;
+        Response res = apiInstance.sendRequest(req, auth);
+        Log.e(TAG, "handle: res: " + res.code());
+        ResponseBody body = res.body();
+        String cType = body.contentType().toString();
+
+
+        String resString = null;
+        try {
+            resString = body.string();
+            Log.e(TAG, "handle: body: " + resString + ", at url: " + req.url());
+                JSONObject obj = new JSONObject(resString);
+            Log.e(TAG, "handle: obj: " + obj.toString());
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+        if (res.isSuccessful() && resString != null) {
+            try {
+                response.setContentType(cType);
+                response.setStatus(HttpServletResponse.SC_OK);
+                Log.e(TAG, "responseString: " + resString + "\ncType: " + cType);
+                response.getWriter().write(resString);
+                baseRequest.setHandled(true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private Request mapToOkhttpRequest(org.eclipse.jetty.server.Request baseRequest, String path, HttpServletRequest request){
         Request req;
         Request.Builder builder = new Request.Builder()
                 .url(apiInstance.buildUrl(path));
@@ -120,17 +157,6 @@ public class APIProxy implements Middleware {
         }
 
         req = builder.build();
-        Log.e(TAG, "handle: req.url(): " + req.url());
-        if (baseRequest.getHeader(SHOULD_AUTHENTICATE).toLowerCase().equals("yes")) auth = true;
-        Response res = apiInstance.sendRequest(req, auth);
-        Log.e(TAG, "handle: res: " + res.code());
-        Log.e(TAG, "handle: message: " + res.message());
-        try {
-            Log.e(TAG, "handle: body: " + new String(res.body().bytes(), "UTF-8"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return false;
+        return req;
     }
 }

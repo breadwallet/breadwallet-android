@@ -14,6 +14,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_jniwrappers_BRKey_compactSign(
         JNIEnv *env,
         jobject thiz,
         jbyteArray data){
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "compactSign, _key: %s", _key.secret);
     jbyte *byteData = (*env)->GetByteArrayElements(env, data, 0);
 
     uint8_t *uintData = (uint8_t *) byteData;
@@ -31,7 +32,9 @@ JNIEXPORT void JNICALL Java_com_jniwrappers_BRKey_setPrivKey(
         JNIEnv *env,
         jobject thiz,
         jbyteArray privKey){
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "key is not set yet, _key: %s", _key.secret);
 
     jbyte *bytePrivKey = (*env)->GetByteArrayElements(env, privKey, 0);
     int res = BRKeySetPrivKey(&_key, (const char *) bytePrivKey);
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "key is set, _key: %s", _key.secret);
 }

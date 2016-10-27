@@ -2,6 +2,7 @@ package com.platform;
 
 import android.util.Log;
 
+import com.breadwallet.presenter.activities.MainActivity;
 import com.platform.interfaces.Middleware;
 import com.platform.middlewares.APIProxy;
 import com.platform.middlewares.HTTPFileMiddleware;
@@ -95,20 +96,36 @@ public class HTTPServer {
     private class ServerHandler extends AbstractHandler {
         public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
                 throws IOException, ServletException {
-            Log.e(TAG, "handle: " + target);
             boolean success;
             success = dispatch(target, baseRequest, request, response);
-            if (!success) Log.e(TAG, "handle: NO MIDDLEWARE HANDLED THE REQUEST!");
+            if (!success) {
+                Log.e(TAG, "handle: NO MIDDLEWARE HANDLED THE REQUEST: " + target);
+            }
         }
 
     }
 
     private boolean dispatch(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
         boolean result = false;
+        if (target.equalsIgnoreCase("/_close")) {
+            final MainActivity app = MainActivity.app;
+            if (app != null) {
+                app.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        app.onBackPressed();
+                    }
+                });
+                response.setStatus(HttpServletResponse.SC_OK);
+                return true;
+            }
+
+            return false;
+        }
         for (Middleware m : middlewares) {
             result = m.handle(target, baseRequest, request, response);
             if (result) {
-                Log.e(TAG, "dispatch: " + m.getClass().getName().substring(m.getClass().getName().lastIndexOf(".") + 1) + " succeeded\n" + request.getRequestURL());
+                Log.e(TAG, "dispatch: " + m.getClass().getName().substring(m.getClass().getName().lastIndexOf(".") + 1) + " succeeded:" + request.getRequestURL());
                 break;
             }
         }
