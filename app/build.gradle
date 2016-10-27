@@ -9,7 +9,7 @@ model {
             testInstrumentationRunner = 'android.support.test.runner.AndroidJUnitRunner'
             applicationId = 'com.breadwallet'
             minSdkVersion.apiLevel = 23
-            targetSdkVersion.apiLevel = 24
+            targetSdkVersion.apiLevel = 25
             versionCode = 29
             versionName = "29"
         }

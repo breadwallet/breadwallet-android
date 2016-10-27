@@ -81,7 +81,6 @@ public class TransactionListAdapter extends BaseAdapter {
     private static int unconfirmedTxCount;
     private static int estimatedBlockHeight;
     private static long estimatedBlockHeightTimeStamp;
-    private static long unconfirmedTxCountTimeStamp;
     private static BlockHeightUpdaterTask blockHeightUpdaterTask;
 
     public TransactionListAdapter(Activity a, TransactionListItem[] d) {
@@ -108,6 +107,7 @@ public class TransactionListAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
+        Log.e(TAG, "getCount: unconfirmedTxCount: " + unconfirmedTxCount);
         final int EXTRA_ITEMS = 4;
         if (!BreadWalletApp.unlocked) {
             updateUnconfirmedTxCount(data);
@@ -178,6 +178,7 @@ public class TransactionListAdapter extends BaseAdapter {
         }
 
         if (!BreadWalletApp.unlocked) {
+            updateUnconfirmedTxCount(data);
             if (unconfirmedTxCount == 0 && position == 0) {
                 RelativeLayout txHistory = (RelativeLayout) inflater.inflate(R.layout.button_transaction_history, null);
                 txHistory.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.getPixelsFromDps(activity, 40)));
@@ -232,7 +233,7 @@ public class TransactionListAdapter extends BaseAdapter {
         }
     }
 
-    public static int getUnconfirmedCount(List<TransactionListItem> items) {
+    public int getUnconfirmedCount(List<TransactionListItem> items) {
         int count = 0;
         updateEstimatedBlockHeight();
         for (TransactionListItem t : items) {
@@ -246,12 +247,12 @@ public class TransactionListAdapter extends BaseAdapter {
         return count;
     }
 
-    private static void updateEstimatedBlockHeight() {
-        if (System.currentTimeMillis() - estimatedBlockHeightTimeStamp < 300) return;
+    private void updateEstimatedBlockHeight() {
         Log.e(TAG, "updateEstimatedBlockHeight: ");
+        if (System.currentTimeMillis() - estimatedBlockHeightTimeStamp < 300) return;
+
         estimatedBlockHeightTimeStamp = System.currentTimeMillis();
         if (blockHeightUpdaterTask == null) {
-            Log.e(TAG, "updateEstimatedBlockHeight: blockHeightUpdaterTask is null, creating one");
             blockHeightUpdaterTask = new BlockHeightUpdaterTask();
         }
         if (!blockHeightUpdaterTask.isAlive()) {
@@ -261,18 +262,16 @@ public class TransactionListAdapter extends BaseAdapter {
         }
     }
 
-    private static class BlockHeightUpdaterTask extends Thread {
+    private class BlockHeightUpdaterTask extends Thread {
         @Override
         public void run() {
             estimatedBlockHeight = BRPeerManager.getEstimatedBlockHeight();
-            Log.e(TAG, "BlockHeightUpdaterTask: estimatedBlockHeight: " + estimatedBlockHeight);
+            unconfirmedTxCount = getUnconfirmedCount(data);
         }
     }
 
-    private static void updateUnconfirmedTxCount(List<TransactionListItem> data) {
-        if (System.currentTimeMillis() - unconfirmedTxCountTimeStamp < 300) return;
-        unconfirmedTxCountTimeStamp = System.currentTimeMillis();
-        unconfirmedTxCount = getUnconfirmedCount(data);
+    private void updateUnconfirmedTxCount(List<TransactionListItem> data) {
+        updateEstimatedBlockHeight();
     }
 
     @Override
@@ -289,6 +288,7 @@ public class TransactionListAdapter extends BaseAdapter {
         TextView dollarsTotalTextView = (TextView) tmpLayout.findViewById(R.id.transaction_amount_dollars_total);
         Utils.overrideFonts(sentReceivedTextView, dateTextView, bitsTextView, dollarsTextView, bitsTotalTextView, dollarsTotalTextView);
         tmpLayout.setBackgroundResource(R.drawable.clickable_layout);
+        Log.e(TAG, "getTxView: data.size(): " + data.size() + ", position: " + position + ", count: " + getCount());
         final TransactionListItem item = data.get(position);
 
         tmpLayout.setOnClickListener(new View.OnClickListener() {

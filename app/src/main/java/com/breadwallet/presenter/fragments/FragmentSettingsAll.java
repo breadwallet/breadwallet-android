@@ -80,7 +80,7 @@ public class FragmentSettingsAll extends Fragment {
         super.onResume();
         MiddleViewAdapter.resetMiddleView(getActivity(), null);
         refreshUI();
-        adapter.notifyDataSetChanged();
+
     }
 
     public static void refreshTransactions(final Activity ctx) {
@@ -110,9 +110,7 @@ public class FragmentSettingsAll extends Fragment {
         if (BRAnimator.level != 1) return;
         if (adapter != null) {
             adapter.updateData(transactionObjects);
-            adapter.notifyDataSetChanged();
         }
-
     }
 
     public static RelativeLayout getSeparationLine(int MODE, Activity ctx) {

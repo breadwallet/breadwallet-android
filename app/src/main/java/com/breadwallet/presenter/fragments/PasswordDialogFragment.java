@@ -25,7 +25,6 @@ package com.breadwallet.presenter.fragments;
  * THE SOFTWARE.
  */
 
-import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
@@ -58,7 +57,6 @@ import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRStringFormatter;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
-import com.breadwallet.tools.adapter.CustomPagerAdapter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;

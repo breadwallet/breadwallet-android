@@ -83,7 +83,7 @@ public class BRStringFormatter {
     }
 
     public static String getFormattedCurrencyString(String isoCurrencyCode, long amount) {
-        Log.e(TAG, "amount: " + amount);
+//        Log.e(TAG, "amount: " + amount);
         DecimalFormat currencyFormat;
         BigDecimal result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100"));
 
@@ -139,7 +139,6 @@ public class BRStringFormatter {
     }
 
     public static String getFormattedCurrencyStringForKeyboard(String isoCurrencyCode, long amount) {
-        Log.e(TAG, "amount: " + amount);
         DecimalFormat currencyFormat;
         BigDecimal result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100"));
 

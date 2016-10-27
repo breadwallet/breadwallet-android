@@ -319,11 +319,12 @@ public class BRPeerManager {
                     Log.e(TAG, "Network Not Available ");
 
                 } else {
+                    final double progress = BRPeerManager.syncProgress(SharedPreferencesManager.getStartHeight(ctx));
                     ctx.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             networkErrorBar.setVisibility(View.GONE);
-                            double progress = BRPeerManager.syncProgress(SharedPreferencesManager.getStartHeight(ctx));
+
                             if (progress < 1 && progress > 0) {
                                 BRPeerManager.startSyncingProgressThread();
                             }

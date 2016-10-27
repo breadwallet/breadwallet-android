@@ -326,7 +326,7 @@ JNIEXPORT void JNICALL
 Java_com_breadwallet_wallet_BRPeerManager_putPeer(JNIEnv *env, jobject thiz, jbyteArray peerAddress,
                                                   jbyteArray peerPort, jbyteArray peerTimeStamp)
 {
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "putPeer");
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "putPeer");
 
     if (!_peers) {
         __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", " >>>>>>  _peers is NULL");
