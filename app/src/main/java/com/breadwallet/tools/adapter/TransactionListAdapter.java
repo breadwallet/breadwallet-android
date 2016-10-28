@@ -80,10 +80,10 @@ public class TransactionListAdapter extends BaseAdapter {
     public static boolean showAllTx = false;
     private static int unconfirmedTxCount;
     private static int estimatedBlockHeight;
-//    private static long estimatedBlockHeightTimeStamp;
     private static BlockHeightUpdaterTask blockHeightUpdaterTask;
 
     public TransactionListAdapter(Activity a, TransactionListItem[] d) {
+        updateEstimatedBlockHeight();
         activity = a;
         data = new ArrayList<>();
         if (d != null)
@@ -92,6 +92,7 @@ public class TransactionListAdapter extends BaseAdapter {
         unconfirmedColor = ContextCompat.getColor(a, R.color.white);
         sentColor = Color.parseColor("#FF5454");
         receivedColor = Color.parseColor("#00BF00");
+        Log.e(TAG, "TransactionListAdapter: estimatedBlockHeight: " + estimatedBlockHeight);
     }
 
     public void updateData(TransactionListItem[] d) {
@@ -247,10 +248,9 @@ public class TransactionListAdapter extends BaseAdapter {
         return count;
     }
 
-    private void updateEstimatedBlockHeight() {
+    public void updateEstimatedBlockHeight() {
         Log.e(TAG, "updateEstimatedBlockHeight: ");
 
-//        estimatedBlockHeightTimeStamp = System.currentTimeMillis();
         if (blockHeightUpdaterTask == null) {
             blockHeightUpdaterTask = new BlockHeightUpdaterTask();
         }
@@ -266,6 +266,14 @@ public class TransactionListAdapter extends BaseAdapter {
         public void run() {
             estimatedBlockHeight = BRPeerManager.getEstimatedBlockHeight();
             unconfirmedTxCount = getUnconfirmedCount(data);
+            if (activity != null) {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        notifyDataSetChanged();
+                    }
+                });
+            }
         }
     }
 

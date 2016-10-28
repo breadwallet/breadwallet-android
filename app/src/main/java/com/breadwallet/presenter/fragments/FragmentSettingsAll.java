@@ -59,7 +59,6 @@ public class FragmentSettingsAll extends Fragment {
 
         transactionList = (ListView) rootView.findViewById(R.id.transactions_list);
 
-
         adapter = new TransactionListAdapter(getActivity(), transactionObjects);
         if (transactionObjects != null) {
             if (transactionObjects.length == 0) transactionObjects = null;
@@ -80,7 +79,6 @@ public class FragmentSettingsAll extends Fragment {
         super.onResume();
         MiddleViewAdapter.resetMiddleView(getActivity(), null);
         refreshUI();
-
     }
 
     public static void refreshTransactions(final Activity ctx) {
