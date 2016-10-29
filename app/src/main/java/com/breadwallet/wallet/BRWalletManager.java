@@ -65,6 +65,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import static com.breadwallet.presenter.activities.MainActivity.app;
+
 /**
  * BreadWallet
  * <p/>
@@ -165,7 +167,7 @@ public class BRWalletManager {
 
     public static void refreshAddress() {
         Log.e(TAG, "refreshAddress: " + ctx);
-        if (ctx == null) ctx = MainActivity.app;
+        if (ctx == null) ctx = app;
         if (ctx != null) {
             MainFragmentQR mainFragmentQR = CustomPagerAdapter.adapter == null ? null : CustomPagerAdapter.adapter.mainFragmentQR;
             String tmpAddr = getReceiveAddress();
@@ -279,7 +281,7 @@ public class BRWalletManager {
 
     public static void showWritePhraseDialog(final boolean firstTime) {
 
-        if (ctx == null) ctx = MainActivity.app;
+        if (ctx == null) ctx = app;
         if (ctx != null) {
             ctx.runOnUiThread(new Runnable() {
                 @Override
@@ -431,7 +433,7 @@ public class BRWalletManager {
     public static void onBalanceChanged(final long balance) {
 
         Log.e(TAG, "in the BRWalletManager - onBalanceChanged:  " + balance);
-        if (ctx == null) ctx = MainActivity.app;
+        if (ctx == null) ctx = app;
         ctx.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -454,7 +456,7 @@ public class BRWalletManager {
                 }
             });
         }
-        if (ctx == null) ctx = MainActivity.app;
+        if (ctx == null) ctx = app;
         if (ctx != null) {
 
             ctx.runOnUiThread(new Runnable() {
@@ -497,7 +499,7 @@ public class BRWalletManager {
 
     private static void showSentReceivedToast(final String message) {
         messageId++;
-        if (ctx == null) ctx = MainActivity.app;
+        if (ctx == null) ctx = app;
         if (ctx != null) {
             ctx.runOnUiThread(new Runnable() {
                 @Override
@@ -528,7 +530,7 @@ public class BRWalletManager {
 
     public static void onTxUpdated(String hash, int blockHeight, int timeStamp) {
         Log.e(TAG, "in the BRWalletManager - onTxUpdated");
-        if (ctx == null) ctx = MainActivity.app;
+        if (ctx == null) ctx = app;
         if (ctx != null) {
             SQLiteManager.getInstance(ctx).updateTxByHash(hash, blockHeight, timeStamp);
         }
@@ -536,7 +538,7 @@ public class BRWalletManager {
 
     public static void onTxDeleted(String hash, int notifyUser, final int recommendRescan) {
         Log.e(TAG, "in the BRWalletManager - onTxDeleted");
-        if (ctx == null) ctx = MainActivity.app;
+        if (ctx == null) ctx = app;
         if (ctx != null) {
             SQLiteManager.getInstance(ctx).deleteTxByHash(hash);
             if (notifyUser == 1) {
@@ -613,7 +615,7 @@ public class BRWalletManager {
         if (((BreadWalletApp) ctx.getApplication()).hasInternetAccess()) {
 
 //
-            if (ctx == null) ctx = MainActivity.app;
+            if (ctx == null) ctx = app;
             if (ctx == null) return;
             boolean certified = false;
             if (request.cn != null && request.cn.length() != 0) {
@@ -705,9 +707,13 @@ public class BRWalletManager {
     public void pay(final String addressHolder, final BigDecimal bigDecimalAmount, final String cn, final boolean isAmountRequested) {
         if (addressHolder == null || bigDecimalAmount == null) return;
         if (addressHolder.length() < 20) return;
+        if (!SharedPreferencesManager.getAllowSpend(app)) {
+            showSpendNotAllowed(app);
+            return;
+        }
 
         int unit = BRConstants.CURRENT_UNIT_BITS;
-        Activity context = MainActivity.app;
+        Activity context = app;
         String divideBy = "100";
         if (context != null)
             unit = SharedPreferencesManager.getCurrencyUnit(context);
@@ -921,7 +927,7 @@ public class BRWalletManager {
 
     public void generateQR(String bitcoinURL, ImageView qrcode) {
         if (qrcode == null || bitcoinURL == null || bitcoinURL.isEmpty()) return;
-        if (ctx == null) ctx = MainActivity.app;
+        if (ctx == null) ctx = app;
         WindowManager manager = (WindowManager) ctx.getSystemService(Activity.WINDOW_SERVICE);
         Display display = manager.getDefaultDisplay();
         Point point = new Point();
@@ -1020,6 +1026,25 @@ public class BRWalletManager {
         if (!ctx.isDestroyed()) {
             ctx.finish();
         }
+    }
+
+    private static void showSpendNotAllowed(final MainActivity app) {
+        app.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                AlertDialog.Builder builder = new AlertDialog.Builder(app);
+                builder.setTitle(R.string.syncing_in_progress)
+                        .setMessage(R.string.wait_for_sync_to_finish)
+                        .setNegativeButton(app.getString(R.string.ok), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
+        });
     }
 
     private native byte[] encodeSeed(byte[] seed, String[] wordList);

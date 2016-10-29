@@ -52,10 +52,6 @@ public class RequestHandler {
     private static final Object lockObject = new Object();
 
     public static synchronized void processRequest(MainActivity app, String address) {
-        if (!SharedPreferencesManager.getAllowSpend(app)) {
-            showSpendNotAllowed(app);
-            return;
-        }
         try {
             RequestObject requestObject = getRequestFromString(address);
             if (requestObject == null) {
@@ -78,25 +74,6 @@ public class RequestHandler {
         } catch (InvalidAlgorithmParameterException e) {
             e.printStackTrace();
         }
-    }
-
-    private static void showSpendNotAllowed(final MainActivity app) {
-        app.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                AlertDialog.Builder builder = new AlertDialog.Builder(app);
-                builder.setTitle(R.string.syncing_in_progress)
-                        .setMessage(R.string.wait_for_sync_to_finish)
-                        .setNegativeButton(app.getString(R.string.ok), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        });
-                AlertDialog alert = builder.create();
-                alert.show();
-            }
-        });
     }
 
     public static RequestObject getRequestFromString(String str)
