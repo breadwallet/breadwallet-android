@@ -239,11 +239,11 @@ JNIEXPORT void JNICALL Java_com_breadwallet_wallet_BRPeerManager_rescan(JNIEnv *
 }
 
 JNIEXPORT void JNICALL
-Java_com_breadwallet_wallet_BRPeerManager_createAndConnect(JNIEnv *env, jobject thiz,
+Java_com_breadwallet_wallet_BRPeerManager_create(JNIEnv *env, jobject thiz,
                                                            int earliestKeyTime,
                                                            int blocksCount, int peersCount) {
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ",
-                        "createAndConnect| blocksCount: %d, peersCount: %d",
+                        "create| blocksCount: %d, peersCount: %d",
                         blocksCount, peersCount);
 
     jint rs = (*env)->GetJavaVM(env, &_jvmPM);
@@ -280,15 +280,12 @@ Java_com_breadwallet_wallet_BRPeerManager_createAndConnect(JNIEnv *env, jobject 
         __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "NULL: _peerManager");
         return;
     }
-
     jmethodID mid;
 
     //call java methods
     mid = (*env)->GetStaticMethodID(env, _peerManagerClass, "updateLastBlockHeight", "(I)V");
     (*env)->CallStaticVoidMethod(env, _peerManagerClass, mid,
                                  (jint) BRPeerManagerLastBlockHeight(_peerManager));
-
-    BRPeerManagerConnect(_peerManager);
 }
 
 JNIEXPORT void JNICALL Java_com_breadwallet_wallet_BRPeerManager_connect(JNIEnv *env,

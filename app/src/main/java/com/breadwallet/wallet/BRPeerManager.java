@@ -300,12 +300,12 @@ public class BRPeerManager {
     }
 
     public void refreshConnection() {
+        Log.e(TAG, "refreshConnection: ");
         final RelativeLayout networkErrorBar = (RelativeLayout) ctx.findViewById(R.id.main_internet_status_bar);
         if (networkErrorBar == null) return;
 
         final boolean isConnected = ((BreadWalletApp) ctx.getApplication()).hasInternetAccess();
-        if (!BRPeerManager.getInstance(ctx).isConnected())
-            BRPeerManager.getInstance(ctx).connect();
+        BRPeerManager.getInstance(ctx).connect();
         if (!isConnected) {
             ctx.runOnUiThread(new Runnable() {
                 @Override
@@ -341,7 +341,7 @@ public class BRPeerManager {
         SharedPreferencesManager.putLastBlockHeight(ctx, blockHeight);
     }
 
-    public native void createAndConnect(int earliestKeyTime, int blockCount, int peerCount);
+    public native void create(int earliestKeyTime, int blockCount, int peerCount);
 
     public native void connect();
 

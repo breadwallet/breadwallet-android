@@ -918,9 +918,16 @@ public class BRWalletManager {
             int walletTimeString = KeyStoreManager.getWalletCreationTime(ctx);
             final int earliestKeyTime = walletTimeString != 0 ? walletTimeString : 0;
             Log.e(TAG, "earliestKeyTime before connecting: " + earliestKeyTime);
-            pm.createAndConnect(earliestKeyTime > 0 ? earliestKeyTime : 0, blocksCount, peersCount);
+            pm.create(earliestKeyTime > 0 ? earliestKeyTime : 0, blocksCount, peersCount);
+            pm.connect();
+            Log.e(TAG, "setUpTheWallet: after createAndConnect");
             if (SharedPreferencesManager.getStartHeight(ctx) == 0)
-                SharedPreferencesManager.putStartHeight(ctx, BRPeerManager.getCurrentBlockHeight());
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        SharedPreferencesManager.putStartHeight(ctx, BRPeerManager.getCurrentBlockHeight());
+                    }
+                }).start();
 
         }
     }
