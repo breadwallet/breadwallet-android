@@ -144,6 +144,7 @@ public class BRConstants {
     public static final String PREFS_NAME = "MyPrefsFile";
     public static final String RECEIVE_ADDRESS = "receive_address";
     public static final String START_HEIGHT = "startHeight";
+    public static final String LAST_BLOCK_HEIGHT = "lastBlockHeight";
     public static final String TIPS_SHOWN = "tipsShown";
     public static final String CURRENT_UNIT = "currencyUnit";
     public static final String CURRENT_CURRENCY = "currentCurrency";

@@ -104,8 +104,15 @@ public class BRPeerManager {
     public static void txStatusUpdate() {
         Log.e(TAG, "txStatusUpdate");
         if (ctx == null) ctx = MainActivity.app;
-        if (ctx != null)
-            FragmentSettingsAll.refreshTransactions(ctx);
+        if (ctx == null) return;
+
+        FragmentSettingsAll.refreshTransactions(ctx);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                updateLastBlockHeight(getCurrentBlockHeight());
+            }
+        }).start();
 
     }
 
@@ -297,7 +304,8 @@ public class BRPeerManager {
         if (networkErrorBar == null) return;
 
         final boolean isConnected = ((BreadWalletApp) ctx.getApplication()).hasInternetAccess();
-        BRPeerManager.getInstance(ctx).connect();
+        if (!BRPeerManager.getInstance(ctx).isConnected())
+            BRPeerManager.getInstance(ctx).connect();
         if (!isConnected) {
             ctx.runOnUiThread(new Runnable() {
                 @Override
@@ -326,6 +334,13 @@ public class BRPeerManager {
 
     }
 
+    public static void updateLastBlockHeight(int blockHeight) {
+        if (ctx == null) ctx = MainActivity.app;
+        if (ctx == null) return;
+        Log.e(TAG, "updateLastBlockHeight: " + blockHeight);
+        SharedPreferencesManager.putLastBlockHeight(ctx, blockHeight);
+    }
+
     public native void createAndConnect(int earliestKeyTime, int blockCount, int peerCount);
 
     public native void connect();
@@ -345,6 +360,8 @@ public class BRPeerManager {
     public native static int getEstimatedBlockHeight();
 
     public native boolean isCreated();
+
+    public native boolean isConnected();
 
     public native void peerManagerFreeEverything();
 

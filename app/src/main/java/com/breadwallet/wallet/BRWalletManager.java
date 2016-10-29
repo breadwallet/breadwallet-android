@@ -180,8 +180,14 @@ public class BRWalletManager {
     }
 
     public void wipeWalletButKeystore(final Activity activity) {
-        BRPeerManager.getInstance(activity).peerManagerFreeEverything();
-        walletFreeEverything();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                BRPeerManager.getInstance(activity).peerManagerFreeEverything();
+                walletFreeEverything();
+            }
+        }).start();
+
         SQLiteManager sqLiteManager = SQLiteManager.getInstance(activity);
         sqLiteManager.deleteTransactions();
         sqLiteManager.deleteBlocks();

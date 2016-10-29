@@ -140,7 +140,7 @@ public class FragmentWipeWallet extends Fragment {
                     String message = getResources().getString(R.string.bad_recovery_phrase);
                     String[] words = cleanPhrase.split(" ");
                     if (words.length != 12) {
-                        message = String.format(getActivity().getString(R.string.recovery_phrase_must_have_12_words),12);
+                        message = String.format(getActivity().getString(R.string.recovery_phrase_must_have_12_words), 12);
                     } else {
                         List<String> allWords = WordsReader.getAllWordLists(getActivity());
 
@@ -224,7 +224,7 @@ public class FragmentWipeWallet extends Fragment {
 
     }
 
-    private void showSelectInputMethod(){
+    private void showSelectInputMethod() {
         InputMethodManager imeManager = (InputMethodManager) getActivity().getApplicationContext().getSystemService(INPUT_METHOD_SERVICE);
         if (imeManager != null) {
             imeManager.showInputMethodPicker();
@@ -243,7 +243,7 @@ public class FragmentWipeWallet extends Fragment {
         showKeyBoard(true);
         try {
             getActivity().unregisterReceiver(mReceiver);
-        } catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
@@ -265,7 +265,7 @@ public class FragmentWipeWallet extends Fragment {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (action.equals(Intent.ACTION_INPUT_METHOD_CHANGED)) {
-                if(Utils.isUsingCustomInputMethod(getActivity())){
+                if (Utils.isUsingCustomInputMethod(getActivity())) {
                     showSelectInputMethod();
                 } else {
                     enableEditText();

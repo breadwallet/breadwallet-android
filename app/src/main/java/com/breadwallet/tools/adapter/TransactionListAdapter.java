@@ -78,12 +78,8 @@ public class TransactionListAdapter extends BaseAdapter {
     private static int sentColor;
     private static int receivedColor;
     public static boolean showAllTx = false;
-    private static int unconfirmedTxCount;
-    private static int estimatedBlockHeight;
-    private static BlockHeightUpdaterTask blockHeightUpdaterTask;
 
     public TransactionListAdapter(Activity a, TransactionListItem[] d) {
-        updateEstimatedBlockHeight();
         activity = a;
         data = new ArrayList<>();
         if (d != null)
@@ -92,7 +88,6 @@ public class TransactionListAdapter extends BaseAdapter {
         unconfirmedColor = ContextCompat.getColor(a, R.color.white);
         sentColor = Color.parseColor("#FF5454");
         receivedColor = Color.parseColor("#00BF00");
-        Log.e(TAG, "TransactionListAdapter: estimatedBlockHeight: " + estimatedBlockHeight);
     }
 
     public void updateData(TransactionListItem[] d) {
@@ -108,12 +103,11 @@ public class TransactionListAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        Log.e(TAG, "getCount: unconfirmedTxCount: " + unconfirmedTxCount);
+        Log.e(TAG, "getCount: unconfirmedTxCount: " + getUnconfirmedCount(data));
         final int EXTRA_ITEMS = 4;
         if (!BreadWalletApp.unlocked) {
-            updateUnconfirmedTxCount();
-            return unconfirmedTxCount == 0 ? (EXTRA_ITEMS + 1) : unconfirmedTxCount == data.size()
-                    ? (unconfirmedTxCount + EXTRA_ITEMS) : (unconfirmedTxCount + EXTRA_ITEMS + 1);
+            return getUnconfirmedCount(data) == 0 ? (EXTRA_ITEMS + 1) : getUnconfirmedCount(data) == data.size()
+                    ? (getUnconfirmedCount(data) + EXTRA_ITEMS) : (getUnconfirmedCount(data) + EXTRA_ITEMS + 1);
         }
         if (data.size() == 0) return EXTRA_ITEMS + 1;
         return showAllTx ? (data.size() + EXTRA_ITEMS) : (data.size() > 5) ? (6 + EXTRA_ITEMS) : (data.size() + EXTRA_ITEMS);
@@ -179,8 +173,7 @@ public class TransactionListAdapter extends BaseAdapter {
         }
 
         if (!BreadWalletApp.unlocked) {
-            updateUnconfirmedTxCount();
-            if (unconfirmedTxCount == 0 && position == 0) {
+            if (getUnconfirmedCount(data) == 0 && position == 0) {
                 RelativeLayout txHistory = (RelativeLayout) inflater.inflate(R.layout.button_transaction_history, null);
                 txHistory.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.getPixelsFromDps(activity, 40)));
                 txHistory.setOnClickListener(new View.OnClickListener() {
@@ -194,7 +187,7 @@ public class TransactionListAdapter extends BaseAdapter {
                 });
                 return txHistory;
             } else {
-                if (position == unconfirmedTxCount) {
+                if (position == getUnconfirmedCount(data)) {
                     RelativeLayout moreAuth = (RelativeLayout) inflater.inflate(R.layout.button_more, null);
                     moreAuth.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.getPixelsFromDps(activity, 40)));
                     moreAuth.setOnClickListener(new View.OnClickListener() {
@@ -236,11 +229,10 @@ public class TransactionListAdapter extends BaseAdapter {
 
     public int getUnconfirmedCount(List<TransactionListItem> items) {
         int count = 0;
-        updateEstimatedBlockHeight();
         for (TransactionListItem t : items) {
             if (t == null) continue;
             int blockHeight = t.getBlockHeight();
-            int confirms = blockHeight == Integer.MAX_VALUE ? 0 : estimatedBlockHeight - blockHeight + 1;
+            int confirms = blockHeight == Integer.MAX_VALUE ? 0 : SharedPreferencesManager.getLastBlockHeight(activity) - blockHeight + 1;
             if (blockHeight != Integer.MAX_VALUE && confirms < 6) {
                 count++;
             }
@@ -248,38 +240,6 @@ public class TransactionListAdapter extends BaseAdapter {
         return count;
     }
 
-    public void updateEstimatedBlockHeight() {
-        Log.e(TAG, "updateEstimatedBlockHeight: ");
-
-        if (blockHeightUpdaterTask == null) {
-            blockHeightUpdaterTask = new BlockHeightUpdaterTask();
-        }
-        if (!blockHeightUpdaterTask.isAlive()) {
-            blockHeightUpdaterTask.interrupt();
-            blockHeightUpdaterTask = new BlockHeightUpdaterTask();
-            blockHeightUpdaterTask.start();
-        }
-    }
-
-    private class BlockHeightUpdaterTask extends Thread {
-        @Override
-        public void run() {
-            estimatedBlockHeight = BRPeerManager.getEstimatedBlockHeight();
-            unconfirmedTxCount = getUnconfirmedCount(data);
-            if (activity != null) {
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        notifyDataSetChanged();
-                    }
-                });
-            }
-        }
-    }
-
-    private void updateUnconfirmedTxCount() {
-        updateEstimatedBlockHeight();
-    }
 
     @Override
     public int getViewTypeCount() {
@@ -317,7 +277,7 @@ public class TransactionListAdapter extends BaseAdapter {
 //                "TX getBalanceAfterTx", String.valueOf(item.getBalanceAfterTx()));
         int blockHeight = item.getBlockHeight();
 
-        int confirms = blockHeight == Integer.MAX_VALUE ? 0 : estimatedBlockHeight - blockHeight + 1;
+        int confirms = blockHeight == Integer.MAX_VALUE ? 0 : SharedPreferencesManager.getLastBlockHeight(activity) - blockHeight + 1;
 //        Log.e(TAG, "confirms: " + confirms);
 
         if (item.getSent() > 0 && item.getSent() == item.getReceived()) {

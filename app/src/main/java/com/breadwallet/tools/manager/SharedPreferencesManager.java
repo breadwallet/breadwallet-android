@@ -257,6 +257,19 @@ public class SharedPreferencesManager {
         editor.apply();
     }
 
+    public static void putLastBlockHeight(Activity context, int lastHeight) {
+        if (context == null) return;
+        SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putInt(BRConstants.LAST_BLOCK_HEIGHT, lastHeight);
+        editor.apply();
+    }
+
+    public static int getLastBlockHeight(Activity context) {
+        SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
+        return settingsToGet.getInt(BRConstants.LAST_BLOCK_HEIGHT, 0);
+    }
+
     public static boolean getTipsShown(Activity context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         return settingsToGet.getBoolean(BRConstants.TIPS_SHOWN, false);

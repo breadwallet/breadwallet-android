@@ -84,6 +84,9 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
 
     @Override
     protected void onPostExecute(String s) {
+        if (importPrivKeyEntity == null) {
+            return;
+        }
         String sentBits = BRStringFormatter.getFormattedCurrencyString("BTC", importPrivKeyEntity.getAmount());
         String sentExchange = BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(app),
                 SharedPreferencesManager.getIso(app), new BigDecimal(importPrivKeyEntity.getAmount()), app);
