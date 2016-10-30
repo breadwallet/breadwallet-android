@@ -305,7 +305,13 @@ public class BRPeerManager {
         if (networkErrorBar == null) return;
 
         final boolean isConnected = ((BreadWalletApp) ctx.getApplication()).hasInternetAccess();
-        BRPeerManager.getInstance(ctx).connect();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                BRPeerManager.getInstance(ctx).connect();
+            }
+        }).start();
+
         if (!isConnected) {
             ctx.runOnUiThread(new Runnable() {
                 @Override

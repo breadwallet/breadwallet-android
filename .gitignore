@@ -62,3 +62,5 @@ obj/
 crash.txt
 /captures/
 /projectFilesBackup/
+/publishTODO.txt
+.idea/copyright/

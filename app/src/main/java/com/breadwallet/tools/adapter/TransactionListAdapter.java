@@ -103,7 +103,6 @@ public class TransactionListAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        Log.e(TAG, "getCount: unconfirmedTxCount: " + getUnconfirmedCount(data));
         final int EXTRA_ITEMS = 4;
         if (!BreadWalletApp.unlocked) {
             return getUnconfirmedCount(data) == 0 ? (EXTRA_ITEMS + 1) : getUnconfirmedCount(data) == data.size()
@@ -255,13 +254,11 @@ public class TransactionListAdapter extends BaseAdapter {
         TextView dollarsTotalTextView = (TextView) tmpLayout.findViewById(R.id.transaction_amount_dollars_total);
         Utils.overrideFonts(sentReceivedTextView, dateTextView, bitsTextView, dollarsTextView, bitsTotalTextView, dollarsTotalTextView);
         tmpLayout.setBackgroundResource(R.drawable.clickable_layout);
-        Log.e(TAG, "getTxView: data.size(): " + data.size() + ", position: " + position + ", count: " + getCount());
         final TransactionListItem item = data.get(position);
 
         tmpLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Log.e(TAG, "clicked: " + ((TextView) tmpLayout.findViewById(R.id.transaction_date)).getText().toString());
                 if (BRAnimator.checkTheMultipressingAvailability()) {
                     FragmentSettingsAll fragmentSettingsAll = (FragmentSettingsAll) activity.
                             getFragmentManager().findFragmentByTag(FragmentSettingsAll.class.getName());
@@ -273,12 +270,9 @@ public class TransactionListAdapter extends BaseAdapter {
         });
 
         boolean received = item.getSent() == 0;
-//        CustomLogger.logThis("TX getReceived", String.valueOf(item.getReceived()), "TX getSent", String.valueOf(item.getSent()),
-//                "TX getBalanceAfterTx", String.valueOf(item.getBalanceAfterTx()));
         int blockHeight = item.getBlockHeight();
 
         int confirms = blockHeight == Integer.MAX_VALUE ? 0 : SharedPreferencesManager.getLastBlockHeight(activity) - blockHeight + 1;
-//        Log.e(TAG, "confirms: " + confirms);
 
         if (item.getSent() > 0 && item.getSent() == item.getReceived()) {
             sentReceivedTextView.setBackgroundResource(R.drawable.unconfirmed_label);
@@ -294,7 +288,6 @@ public class TransactionListAdapter extends BaseAdapter {
             if (!BRWalletManager.getInstance(activity).transactionIsVerified(item.getHexId())) {
                 sentReceivedTextView.setText(R.string.unverified);
             } else {
-//                Log.e(TAG, "item.getBlockHeight(): " + blockHeight + ", confirms: " + confirms + ", lastBlock: " + estimatedBlockHeight);
                 int confsNr = confirms >= 0 && confirms <= 5 ? confirms : 0;
                 String message = confsNr == 0 ? activity.getString(R.string.nr_confirmations0) :
                         (confsNr == 1 ? activity.getString(R.string.nr_confirmations1) : String.format(activity.getString(R.string.nr_confirmations), confsNr));
@@ -304,7 +297,6 @@ public class TransactionListAdapter extends BaseAdapter {
         }
 
         long itemTimeStamp = item.getTimeStamp();
-//        Log.e(TAG, "item.getTimeStamp(): " + itemTimeStamp);
         dateTextView.setText(itemTimeStamp != 0 ? Utils.getFormattedDateFromLong(itemTimeStamp * 1000) : Utils.getFormattedDateFromLong(System.currentTimeMillis()));
 
         long satoshisAmount = received ? item.getReceived() : (item.getSent() - item.getReceived()) * -1;
