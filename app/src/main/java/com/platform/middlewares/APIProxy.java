@@ -86,10 +86,9 @@ public class APIProxy implements Middleware {
         Request req = mapToOkhttpRequest(baseRequest, path, request);
         if (baseRequest.getHeader(SHOULD_AUTHENTICATE).toLowerCase().equals("yes")) auth = true;
         Response res = apiInstance.sendRequest(req, auth);
-        Log.e(TAG, "handle: res: " + res.code());
+        Log.e(TAG, "handle: res: " + res.code() +":" +res.message());
         ResponseBody body = res.body();
         String cType = body.contentType().toString();
-
 
         String resString = null;
         try {

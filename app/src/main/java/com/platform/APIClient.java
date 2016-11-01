@@ -254,7 +254,7 @@ public class APIClient {
                     request.header("Content-Type"), request.header("Date"), request.url().encodedPath());
             Log.e(TAG, "sendRequest: requestString: " + requestString);
             String signedRequest = signRequest(requestString);
-            Log.e(TAG, "sendRequest: signedRequest: " + signedRequest);
+//            Log.e(TAG, "sendRequest: signedRequest: " + signedRequest);
             String token = new String(KeyStoreManager.getToken(ctx));
             if (token.isEmpty()) token = getToken();
             if (token == null || token.isEmpty()) {
@@ -262,7 +262,7 @@ public class APIClient {
                 return null;
             }
             String authValue = "bread " + token + ":" + signedRequest;
-            Log.e(TAG, "sendRequest: authValue: " + authValue);
+//            Log.e(TAG, "sendRequest: authValue: " + authValue);
             modifiedRequest = request.newBuilder();
             request = modifiedRequest.header("Authorization", authValue).build();
 
@@ -271,7 +271,7 @@ public class APIClient {
         try {
             OkHttpClient client = new OkHttpClient();
             response = client.newCall(request).execute();
-            Log.e(TAG, "sendRequest: date: " + response.header("Date"));
+//            Log.e(TAG, "sendRequest: date: " + response.header("Date"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -439,7 +439,7 @@ public class APIClient {
 
                 final String outPutFileName = entry.getName().replace("./", "");
                 final File outputFile = new File(extractFolderName, outPutFileName);
-                String outPutFileFullPath = extractFolderName + "/" + outputFile.getName();
+                String outPutFileFullPath = extractFolderName + "/" + outPutFileName;
                 if (entry.isDirectory()) {
                     Log.e(TAG, String.format("Attempting to write output directory %s.", outputFile.getAbsolutePath()));
 
