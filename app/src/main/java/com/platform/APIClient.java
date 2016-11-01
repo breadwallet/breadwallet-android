@@ -24,6 +24,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -37,15 +38,20 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.zip.GZIPInputStream;
 
 import io.sigpipe.jbsdiff.InvalidHeaderException;
 import io.sigpipe.jbsdiff.ui.FileUI;
 import okhttp3.HttpUrl;
+import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
+
+import static com.breadwallet.R.string.request;
 
 
 /**
@@ -242,6 +248,7 @@ public class APIClient {
             String base58Body = "";
             RequestBody body = request.body();
             if (body != null) {
+                Log.e(TAG, "sendRequest: body is not null: " + body.toString());
                 base58Body = BRWalletManager.base58ofSha256(body.toString());
             }
             SimpleDateFormat sdf =
@@ -269,14 +276,51 @@ public class APIClient {
         }
         Response response = null;
         try {
-            OkHttpClient client = new OkHttpClient();
+            OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new LoggingInterceptor()).build();
             response = client.newCall(request).execute();
 //            Log.e(TAG, "sendRequest: date: " + response.header("Date"));
         } catch (IOException e) {
             e.printStackTrace();
         }
+        if (response != null && response.header("content-encoding") != null && response.header("content-encoding").equalsIgnoreCase("gzip")) {
+            Log.e(TAG, "sendRequest: the content is gzip! UNZIPPING");
+            return extractGZIP(response);
+        }
 
         return response;
+    }
+
+    private Response extractGZIP(Response res) {
+        byte[] compressed = new byte[0];
+        try {
+            compressed = res.body().bytes();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (compressed.length == 0) return null;
+
+        final int BUFFER_SIZE = 32;
+        ByteArrayInputStream is = new ByteArrayInputStream(compressed);
+        StringBuilder string = null;
+        try {
+            GZIPInputStream gis = new GZIPInputStream(is, BUFFER_SIZE);
+            string = new StringBuilder();
+            byte[] data = new byte[BUFFER_SIZE];
+            int bytesRead;
+            while ((bytesRead = gis.read(data)) != -1) {
+                string.append(new String(data, 0, bytesRead));
+            }
+            gis.close();
+            is.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (string == null) return null;
+        String result = string.toString();
+        if (result.isEmpty()) return null;
+
+        ResponseBody postReqBody = ResponseBody.create(null, result.getBytes());
+        return res.newBuilder().body(postReqBody).build();
     }
 
     public void updateBundle() {
@@ -472,5 +516,24 @@ public class APIClient {
 
     public String buildUrl(String path) {
         return BASE_URL + path;
+    }
+
+    private class LoggingInterceptor implements Interceptor {
+        @Override
+        public Response intercept(Interceptor.Chain chain) throws IOException {
+            Request request = chain.request();
+
+            long t1 = System.nanoTime();
+            Log.e(TAG, String.format("Sending request %s on %s%n%s",
+                    request.url(), chain.connection(), request.headers()));
+
+            Response response = chain.proceed(request);
+
+            long t2 = System.nanoTime();
+            Log.e(TAG, String.format("Received response for %s in %.1fms%n%s",
+                    response.request().url(), (t2 - t1) / 1e6d, response.headers()));
+
+            return response;
+        }
     }
 }
