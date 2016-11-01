@@ -95,12 +95,12 @@ public class FragmentAbout extends Fragment {
                 }
             });
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                APIClient.getInstance(getActivity()).buyBitcoinMe();
-            }
-        }).start();
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                APIClient.getInstance(getActivity()).buyBitcoinMe();
+//            }
+//        }).start();
 
         return rootView;
     }

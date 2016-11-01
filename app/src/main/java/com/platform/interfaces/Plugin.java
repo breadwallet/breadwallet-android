@@ -1,21 +1,12 @@
-package com.platform.middlewares;
-
-import com.platform.interfaces.Middleware;
-import com.platform.interfaces.Plugin;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
+package com.platform.interfaces;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import okhttp3.Request;
-import okhttp3.Response;
-
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail Gutan on <mihail@breadwallet.com> 10/19/16.
+ * Created by Mihail Gutan on <mihail@breadwallet.com> 11/1/16.
  * Copyright (c) 2016 breadwallet LLC
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -36,25 +27,8 @@ import okhttp3.Response;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class HTTPRouter implements Middleware {
-    public static final String TAG = HTTPRouter.class.getName();
-    Set<Plugin> plugins;
+public interface Plugin {
+    public static final String TAG = Plugin.class.getName();
 
-    public HTTPRouter() {
-        plugins = new LinkedHashSet<>();
-    }
-
-    @Override
-    public boolean handle(String target, org.eclipse.jetty.server.Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
-        boolean success = false;
-        for (Plugin plugin : plugins) {
-            success = plugin.handle(target, baseRequest, request, response);
-            if(success) return true;
-        }
-        return false;
-    }
-
-    public void appendPlugin(Plugin plugin) {
-        plugins.add(plugin);
-    }
+    public boolean handle(String target, org.eclipse.jetty.server.Request baseRequest, HttpServletRequest request, HttpServletResponse response);
 }

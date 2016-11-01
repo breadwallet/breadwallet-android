@@ -92,7 +92,7 @@ public class PlatformTests {
 
     @Test
     public void testFeePerKbFetch() {
-        long fee = APIClient.getInstance().feePerKb();
+        long fee = APIClient.getInstance(mActivityRule.getActivity()).feePerKb();
         System.out.println("testFeePerKbFetch: fee: " + fee);
         Assert.assertNotSame(fee, (long) 0);
 
@@ -106,7 +106,7 @@ public class PlatformTests {
                 .get().build();
 
         Response response = null;
-        APIClient apiClient = APIClient.getInstance();
+        APIClient apiClient = APIClient.getInstance(mActivityRule.getActivity());
         response = apiClient.sendRequest(request, false);
         apiClient.writeBundleToFile(response, bundleFile);
         apiClient.tryExtractTar(bundleFile);
@@ -126,7 +126,7 @@ public class PlatformTests {
 
     @Test
     public void bundleDownloadTest() {
-        APIClient apiClient = APIClient.getInstance();
+        APIClient apiClient = APIClient.getInstance(mActivityRule.getActivity());
         Request request = new Request.Builder()
                 .get()
                 .url("https://s3.amazonaws.com/breadwallet-assets/bread-buy/7f5bc5c6cc005df224a6ea4567e508491acaffdc2e4769e5262a52f5b785e261.tar").build();
@@ -145,7 +145,7 @@ public class PlatformTests {
     @Test
     public void bundleUpdateTest() {
 
-        APIClient apiClient = APIClient.getInstance();
+        APIClient apiClient = APIClient.getInstance(mActivityRule.getActivity());
 
         Request request = new Request.Builder()
                 .get()
@@ -219,13 +219,13 @@ public class PlatformTests {
 
     @Test
     public void testGetToken() {
-        APIClient apiClient = APIClient.getInstance();
+        APIClient apiClient = APIClient.getInstance(mActivityRule.getActivity());
         apiClient.getToken();
     }
 
     @Test
     public void testMeRequest() {
-        APIClient apiClient = APIClient.getInstance();
+        APIClient apiClient = APIClient.getInstance(mActivityRule.getActivity());
         String response = apiClient.buyBitcoinMe().toLowerCase();
         String expectedString = "invalid signature";
         Assert.assertNotEquals(response, expectedString);

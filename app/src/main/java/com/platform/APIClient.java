@@ -101,7 +101,8 @@ public class APIClient {
     private static final String POST = "POST";
 
     public static final String BUNDLES = "bundles";
-    public static final String BREAD_BUY = "bread-buy";
+//    public static final String BREAD_BUY = "bread-buy";
+    public static final String BREAD_BUY = "bread-buy-staging";
 
     public static String bundlesFileName = String.format("/%s", BUNDLES);
     public static String bundleFileName = String.format("/%s/%s.tar", BUNDLES, BREAD_BUY);

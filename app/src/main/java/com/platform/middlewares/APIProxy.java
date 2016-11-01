@@ -28,7 +28,6 @@ import okhttp3.ResponseBody;
 import static android.R.attr.path;
 import static com.breadwallet.R.string.request;
 
-
 /**
  * BreadWallet
  * <p/>
@@ -115,11 +114,9 @@ public class APIProxy implements Middleware {
                 response.setContentLength(bodyBytes.length);
                 response.getOutputStream().write(bodyBytes);
                 baseRequest.setHandled(true);
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
             return true;
         }
 
