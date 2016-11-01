@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import okhttp3.Headers;
 import okhttp3.Interceptor;
+import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -94,11 +95,11 @@ public class APIProxy implements Middleware {
         ResponseBody body = res.body();
         String cType = body.contentType() == null ? null : body.contentType().toString();
         String resString = null;
+        byte[] bodyBytes = new byte[0];
         try {
-            resString = new String(body.bytes());
-            JSONObject obj = new JSONObject(resString);
-            Log.e(TAG, "handle: obj: " + obj.toString());
-        } catch (IOException | JSONException e) {
+            bodyBytes = body.bytes();
+            resString = new String(bodyBytes);
+        } catch (IOException e) {
             e.printStackTrace();
         }
         if (res.isSuccessful() && resString != null) {
@@ -111,9 +112,10 @@ public class APIProxy implements Middleware {
                     if (Arrays.asList(bannedReceiveHeaders).contains(s.toLowerCase())) continue;
                     response.addHeader(s, res.header(s));
                 }
-
-                response.getWriter().write(resString);
+                response.setContentLength(bodyBytes.length);
+                response.getOutputStream().write(bodyBytes);
                 baseRequest.setHandled(true);
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -135,6 +137,16 @@ public class APIProxy implements Middleware {
             if (Arrays.asList(bannedSendHeaders).contains(hName.toLowerCase())) continue;
             builder.addHeader(hName, baseRequest.getHeader(hName));
         }
+
+        byte[] bodyText = new byte[0];
+        try {
+            bodyText = IOUtils.toByteArray(request.getInputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String contentType = baseRequest.getContentType() == null ? null : baseRequest.getContentType();
+        RequestBody reqBody = RequestBody.create(contentType == null ? null : MediaType.parse(contentType), bodyText);
+
         switch (baseRequest.getMethod()) {
             case "GET":
                 builder.get();
@@ -143,24 +155,13 @@ public class APIProxy implements Middleware {
                 builder.delete();
                 break;
             case "POST":
-                byte[] postBodyText = new byte[0];
-                try {
-                    postBodyText = IOUtils.toByteArray(request.getInputStream());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                RequestBody postReqBody = RequestBody.create(null, postBodyText);
-                builder.post(postReqBody);
+                builder.post(reqBody);
                 break;
             case "PUT":
-                byte[] putBodyText = new byte[0];
-                try {
-                    putBodyText = IOUtils.toByteArray(request.getInputStream());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                RequestBody putReqBody = RequestBody.create(null, putBodyText);
-                builder.put(putReqBody);
+                builder.put(reqBody);
+                break;
+            default:
+                Log.e(TAG, "mapToOkhttpRequest: WARNING: method: " + baseRequest.getMethod());
                 break;
         }
         req = builder.build();
