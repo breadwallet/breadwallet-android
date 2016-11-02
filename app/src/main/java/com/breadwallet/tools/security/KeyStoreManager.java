@@ -3,6 +3,7 @@ package com.breadwallet.tools.security;
 import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
@@ -10,8 +11,10 @@ import android.security.keystore.UserNotAuthenticatedException;
 import android.util.Log;
 
 import com.breadwallet.BreadWalletApp;
-import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.IntroActivity;
+import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.util.ByteReader;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.util.TypesConverter;
@@ -168,9 +171,10 @@ public class KeyStoreManager {
         return false;
     }
 
-    private static byte[] getData(Activity context, String alias, String alias_file, String alias_iv, int request_code) {
+    private static byte[] getData(final Activity context, String alias, String alias_file, String alias_iv, int request_code) {
         if (alias.equals(alias_file) || alias.equals(alias_iv) || alias_file.equals(alias_iv))
             throw new IllegalArgumentException("mistake in parameters!");
+        Log.e(TAG, "getData: alias: " + alias);
         KeyStore keyStore;
         String filesDirectory = context.getFilesDir().getAbsolutePath();
         String encryptedDataFilePath = filesDirectory + File.separator + alias_file;
@@ -180,7 +184,11 @@ public class KeyStoreManager {
             keyStore.load(null);
             SecretKey secretKey = (SecretKey)
                     keyStore.getKey(alias, null);
-            if (secretKey == null) throw new NullPointerException("secretKey is null");
+//            if (keyStore != null) throw new IOException("some ");
+            if (secretKey == null) {
+                /** no such key */
+                throw new NullPointerException("secretKey is null");
+            }
             String path = filesDirectory + File.separator + alias_iv;
             byte[] iv = readBytesFromFile(path);
             Cipher outCipher;
@@ -190,16 +198,67 @@ public class KeyStoreManager {
             CipherInputStream cipherInputStream = new CipherInputStream(
                     new FileInputStream(encryptedDataFilePath), outCipher);
             result = ByteReader.readBytesFromStream(cipherInputStream);
-        } catch (UserNotAuthenticatedException e) {
-            Log.e(TAG, Log.getStackTraceString(e));
-            showAuthenticationScreen(context, request_code);
-            if (alias.equalsIgnoreCase(CANARY_ALIAS) || alias.equalsIgnoreCase(PHRASE_ALIAS))
-                return NO_AUTH.getBytes();
-        } catch (IOException | CertificateException | NullPointerException e) {
+        } catch (InvalidKeyException e) {
+            if (e instanceof UserNotAuthenticatedException) {
+                /**user not authenticated, ask the system for authentication*/
+                Log.e(TAG, Log.getStackTraceString(e));
+                showAuthenticationScreen(context, request_code);
+                if (alias.equalsIgnoreCase(CANARY_ALIAS) || alias.equalsIgnoreCase(PHRASE_ALIAS))
+                    return NO_AUTH.getBytes();
+            } else {
+                Log.e(TAG, "getData: InvalidKeyException");
+            }
+        } catch (NullPointerException e) {
+            /** the key is just simply not there */
+            if (alias.equalsIgnoreCase(PHRASE_ALIAS)) {
+                boolean phraseExists = new File(encryptedDataFilePath).exists();
+                Log.e(TAG, "getData: Phrase file exist: " + phraseExists);
+                if (phraseExists) {
+                    /** no key but the phrase is there, meaning the keys are gone but the wallet is present */
+                    showKeyStoreDialog("KeyStore Error", "Your Breadwallet encrypted data was recently invalidated because you disabled your Android lock screen. Please input your phrase to recover your Breadwallet now.", context.getString(R.string.ok), null,
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            }, null, new DialogInterface.OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialogInterface) {
+                                    if (context instanceof IntroActivity) {
+                                        if (BRAnimator.checkTheMultipressingAvailability()) {
+                                            ((IntroActivity) context).showRecoverWalletFragment();
+                                        }
+                                    }
+                                }
+                            });
+                }
+            }
             e.printStackTrace();
-
-        } catch (UnrecoverableKeyException | InvalidKeyException | KeyStoreException | InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchPaddingException e) {
-            ((BreadWalletApp) context.getApplicationContext()).showCustomDialog("KeyStore Error", e.getMessage(), context.getString(R.string.ok));
+        } catch (IOException | CertificateException | KeyStoreException e) {
+            /** keyStore.load(null) threw the Exception, meaning the keystore is unavailable */
+            if (e instanceof FileNotFoundException) {
+                Log.e(TAG, "getData: File not found exception");
+                throw new RuntimeException("the key is present but the phrase on the disk no???");
+            } else {
+                if (alias.equalsIgnoreCase(PHRASE_ALIAS))
+                    showKeyStoreDialog("KeyStore Error", "Failed to load KeyStore. Please try again later or enter your phrase to recover your Breadwallet now.", "recover now", "try later",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    if (BRAnimator.checkTheMultipressingAvailability()) {
+                                        ((IntroActivity) context).showRecoverWalletFragment();
+                                    }
+                                }
+                            }, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    context.finish();
+                                }
+                            },
+                            null);
+            }
+            e.printStackTrace();
+        } catch (UnrecoverableKeyException | InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchPaddingException e) {
+            /** if for any other reason the keystore fails, crash! */
+            Log.e(TAG, "getData: error: " + e.getClass().getSuperclass().getName());
+            throw new RuntimeException(e.getMessage());
         }
         return result;
     }
@@ -420,6 +479,33 @@ public class KeyStoreManager {
 
         }
         return false;
+    }
+
+    private static void showKeyStoreDialog(final String title, final String message, final String posButton, final String negButton,
+                                           final DialogInterface.OnClickListener posButtonListener,
+                                           final DialogInterface.OnClickListener negButtonListener,
+                                           final DialogInterface.OnDismissListener dismissListener) {
+        Log.e(TAG, "showKeyStoreDialog");
+        Activity app = MainActivity.app;
+        if (app == null) app = IntroActivity.app;
+        if (app == null) {
+            Log.e(TAG, "showCustomDialog: FAILED, context is null");
+            return;
+        }
+        final Activity finalApp = app;
+        app.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                new android.app.AlertDialog.Builder(finalApp)
+                        .setTitle(title)
+                        .setMessage(message)
+                        .setPositiveButton(posButton, posButtonListener)
+                        .setNegativeButton(negButton, negButtonListener)
+                        .setOnDismissListener(dismissListener)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+            }
+        });
     }
 
 }

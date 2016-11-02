@@ -253,12 +253,17 @@ public class BreadWalletApp extends Application {
 
     public void showCustomDialog(final String title, final String message, final String buttonText) {
         Log.e(TAG, "Showing a dialog!");
-        final MainActivity app = MainActivity.app;
-        if (app == null) return;
+        Activity app = MainActivity.app;
+        if (app == null) app = IntroActivity.app;
+        if (app == null) {
+            Log.e(TAG, "showCustomDialog: FAILED, context is null");
+            return;
+        }
+        final Activity finalApp = app;
         app.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                new android.app.AlertDialog.Builder(app)
+                new android.app.AlertDialog.Builder(finalApp)
                         .setTitle(title)
                         .setMessage(message)
                         .setPositiveButton(buttonText, new DialogInterface.OnClickListener() {
