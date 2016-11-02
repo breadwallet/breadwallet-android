@@ -562,14 +562,14 @@ Java_com_breadwallet_wallet_BRWalletManager_transactionIsVerified(JNIEnv *env, j
 JNIEXPORT jlong JNICALL
 Java_com_breadwallet_wallet_BRWalletManager_bitcoinAmount(JNIEnv *env, jobject thiz,
                                                           jlong localAmount, double price) {
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "bitcoinAmount");
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "bitcoinAmount: localAmount: %lli, price: %lf", localAmount, price);
     return (jlong) BRBitcoinAmount(localAmount, price);
 }
 
 JNIEXPORT jlong
 Java_com_breadwallet_wallet_BRWalletManager_localAmount(JNIEnv *env, jobject thiz, jlong amount,
                                                         double price) {
-//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "localAmount");
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "localAmount: amount: %lli, price: %lf", amount, price);
     return (jlong) BRLocalAmount(amount, price);
 }
 

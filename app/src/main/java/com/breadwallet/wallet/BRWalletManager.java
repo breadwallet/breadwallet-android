@@ -3,10 +3,12 @@ package com.breadwallet.wallet;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.KeyguardManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -512,8 +514,12 @@ public class BRWalletManager {
                                 if (!((BreadWalletApp) ctx.getApplication()).isToastShown()) {
                                     ((BreadWalletApp) ctx.getApplicationContext()).showCustomToast(ctx, message,
                                             BreadWalletApp.DISPLAY_HEIGHT_PX / 2, Toast.LENGTH_LONG, 1);
-                                    final MediaPlayer mp = MediaPlayer.create(ctx, R.raw.coinflip);
-                                    mp.start();
+                                    AudioManager audioManager = (AudioManager) ctx.getSystemService(Context.AUDIO_SERVICE);
+                                    if (audioManager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL) {
+                                        final MediaPlayer mp = MediaPlayer.create(ctx, R.raw.coinflip);
+                                        mp.start();
+
+                                    }
                                     messageId = 0;
                                     if (MainActivity.appInBackground)
                                         BRNotificationManager.sendNotification(ctx, R.drawable.notification_icon, ctx.getString(R.string.app_name), message, 1);

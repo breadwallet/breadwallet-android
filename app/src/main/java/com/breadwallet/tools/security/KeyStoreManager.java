@@ -10,7 +10,6 @@ import android.security.keystore.KeyProperties;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.util.Log;
 
-import com.breadwallet.BreadWalletApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
@@ -174,7 +173,6 @@ public class KeyStoreManager {
     private static byte[] getData(final Activity context, String alias, String alias_file, String alias_iv, int request_code) {
         if (alias.equals(alias_file) || alias.equals(alias_iv) || alias_file.equals(alias_iv))
             throw new IllegalArgumentException("mistake in parameters!");
-        Log.e(TAG, "getData: alias: " + alias);
         KeyStore keyStore;
         String filesDirectory = context.getFilesDir().getAbsolutePath();
         String encryptedDataFilePath = filesDirectory + File.separator + alias_file;
@@ -184,7 +182,6 @@ public class KeyStoreManager {
             keyStore.load(null);
             SecretKey secretKey = (SecretKey)
                     keyStore.getKey(alias, null);
-//            if (keyStore != null) throw new IOException("some ");
             if (secretKey == null) {
                 /** no such key */
                 throw new NullPointerException("secretKey is null");
