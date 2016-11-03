@@ -43,6 +43,7 @@ model {
         }
 
         buildTypes {
+            gitUpdateModules()
             release {
                 proguardFiles.add(file('proguard-rules.pro'))
                 minifyEnabled = false
@@ -65,6 +66,11 @@ model {
             }
         }
     }
+}
+
+def gitUpdateModules() {
+    ['sh', '-c', 'git submodule foreach git pull origin master'].execute().text.trim()
+    getLogger().debug("gitUpdateModules done!")
 }
 
 repositories {
