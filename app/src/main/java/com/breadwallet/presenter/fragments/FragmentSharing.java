@@ -29,6 +29,7 @@ import android.app.DialogFragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -41,6 +42,8 @@ import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRClipboardManager;
+
+import java.io.File;
 
 public class FragmentSharing extends DialogFragment {
 
@@ -61,7 +64,7 @@ public class FragmentSharing extends DialogFragment {
         TextView sendMessage = (TextView) view.findViewById(R.id.send_message);
         TextView requestAmount = (TextView) view.findViewById(R.id.request_amount);
         TextView sharingTitle = (TextView) view.findViewById(R.id.sharing_title);
-        sharingTitle.setText(String.format(getString(R.string.at_this_address), "\n"+theAddress));
+        sharingTitle.setText(String.format(getString(R.string.at_this_address), "\n" + theAddress));
 
         getDialog().getWindow().setBackgroundDrawableResource(R.drawable.rounded_dialog);
 
@@ -95,8 +98,8 @@ public class FragmentSharing extends DialogFragment {
                             "mailto", "", null));
                     emailIntent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.bitcoin_address));
                     emailIntent.putExtra(Intent.EXTRA_TEXT, "bitcoin:" + theAddress);
-                    Uri uri = Uri.parse("file://" + MainFragmentQR.qrCodeImageFile.getAbsolutePath());
-//                    Log.e(TAG, "The qrCodeImageFile.getAbsolutePath(): " + MainFragmentQR.qrCodeImageFile.getAbsolutePath());
+                    File qrFile = MainFragmentQR.getQRImage();
+                    Uri uri = qrFile == null ? null : Uri.fromFile(qrFile);
                     if (uri != null)
                         emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
                     startActivity(Intent.createChooser(emailIntent, getResources().getString(R.string.bitcoin_address)));

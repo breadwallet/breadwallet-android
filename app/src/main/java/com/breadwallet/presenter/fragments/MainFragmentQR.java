@@ -181,11 +181,12 @@ public class MainFragmentQR extends Fragment {
 
     private void saveBitmapToFile() {
         FileOutputStream out = null;
-        String path = Environment.getExternalStorageDirectory().toString();
-        qrCodeImageFile = new File(path, "qrImage" + ".jpeg");
+        String path = getActivity().getFilesDir() + "/" + "qrcodes";
+        Log.e(TAG, "saveBitmapToFile: path: " + path);
+        File qrCodeImageFile = new File(path, "qrImage" + ".jpeg");
+        Log.e(TAG, "saveBitmapToFile: qrCodeImageFile: " + qrCodeImageFile.getAbsolutePath());
         if (qrCodeImageFile.exists()) {
-            Log.d(TAG, "File exists! deleting");
-            qrCodeImageFile.delete();
+            Log.d(TAG, "File exists!");
         } else {
             Log.d(TAG, "File did not exist, creating a new one");
         }
@@ -204,6 +205,14 @@ public class MainFragmentQR extends Fragment {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static File getQRImage(){
+        MainActivity app = MainActivity.app;
+        if(app == null) return null;
+        String path = app.getFilesDir() + "/" + "qrcodes";
+        Log.e(TAG, "saveBitmapToFile: path: " + path);
+        return new File(path, "qrImage" + ".jpeg");
     }
 
     @Override

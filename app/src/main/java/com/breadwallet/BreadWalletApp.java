@@ -179,7 +179,6 @@ public class BreadWalletApp extends Application {
                 }
                 break;
         }
-        Log.e(TAG, "app.lockerPayFlipper: " + app.lockerPayFlipper.getDisplayedChild());
 
     }
 

@@ -81,4 +81,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.0.0'
     compile 'com.android.support:support-v13:25.0.0'
 
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
+
 }
