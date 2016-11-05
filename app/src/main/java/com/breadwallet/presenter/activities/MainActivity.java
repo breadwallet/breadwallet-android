@@ -41,7 +41,6 @@ import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.security.RequestHandler;
 import com.breadwallet.tools.security.RootHelper;
-import com.breadwallet.tools.adapter.AmountAdapter;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.adapter.ParallaxViewPager;
@@ -196,8 +195,7 @@ public class MainActivity extends FragmentActivity implements Observer {
             public void onClick(View v) {
                 if (BRAnimator.checkTheMultipressingAvailability()) {
                     hideAllBubbles();
-                    String amountHolder = FragmentScanResult.currentCurrencyPosition == BRConstants.BITCOIN_RIGHT ?
-                            AmountAdapter.getRightValue() : AmountAdapter.getLeftValue();
+                    String amountHolder = FragmentScanResult.instance.getBitcoinValue().value;
                     String addressHolder = FragmentScanResult.address;
                     String multiplyBy = "100";
                     int unit = SharedPreferencesManager.getCurrencyUnit(app);
@@ -552,8 +550,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     public void request(View view) {
         SpringAnimator.showAnimation(view);
         Intent intent;
-        String tempAmount = FragmentScanResult.currentCurrencyPosition == BRConstants.BITCOIN_RIGHT ?
-                AmountAdapter.getRightValue() : AmountAdapter.getLeftValue();
+        String tempAmount = FragmentScanResult.instance.getBitcoinValue().value;
         BRWalletManager m = BRWalletManager.getInstance(this);
         int unit = BRConstants.CURRENT_UNIT_BITS;
         Activity context = MainActivity.app;
@@ -698,11 +695,9 @@ public class MainActivity extends FragmentActivity implements Observer {
     }
 
     public void setProgress(int progress, String progressText) {
-//        Log.e(TAG, "setProgress: progress:" + progress + ", progressText: " + progressText);
         if (syncProgressBar == null || syncProgressText == null) return;
         syncProgressBar.setProgress(progress);
         syncProgressText.setText(progressText);
-//        Log.e(TAG, "syncProgressBar.progress: " + syncProgressBar.getProgress());
     }
 
 }

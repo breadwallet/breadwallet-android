@@ -1,35 +1,27 @@
 package com.breadwallet.tools.adapter.tests;
 
-import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.test.ActivityInstrumentationTestCase2;
-import android.test.suitebuilder.annotation.LargeTest;
-import android.test.suitebuilder.annotation.MediumTest;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.tools.adapter.AmountAdapter;
-import com.breadwallet.tools.manager.BRClipboardManager;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static android.R.attr.tag;
-import static android.R.attr.type;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.longClick;
-import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.action.ViewActions.typeText;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static org.junit.Assert.assertEquals;
-
+import static junit.framework.Assert.assertTrue;
 
 /**
  * BreadWallet
@@ -72,138 +64,208 @@ public class AmountAdapterTest {
         activity = mActivityRule.getActivity();
         copyAddressFromClipboard = (Button) activity.findViewById(R.id.main_button_pay_address_from_clipboard);
         onView(withId(R.id.address_edit_text)).perform(typeText(testAddress));
-        
+        onView(withId(R.id.main_button_pay_address_from_clipboard)).perform(click());
+
+
     }
 
     @Test
     public void testSeparator() {
-        onView(withId(R.id.main_button_pay_address_from_clipboard)).perform(click());
         onView(withText("0")).perform(click());//0
+        TextView rightValue = (TextView) mActivityRule.getActivity().findViewById(R.id.right_textview);
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("0"));
         onView(withText(".")).perform(click());//0.
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("0."));
         onView(withText("0")).perform(click());//0.0
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("0.0"));
         onView(withText("9")).perform(click());//0.09
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("0.09"));
+        onView(withText("7")).perform(click());//0.09
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("0.09"));
         onView(withId(R.id.keyboard_back_button)).perform(click());//0.0
-        onView(withText("0")).perform(click());//0.00
+        onView(withText("2")).perform(click());//0.02
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("0.02"));
         onView(withId(R.id.keyboard_back_button)).perform(click());//0.0
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("0.0"));
         onView(withId(R.id.keyboard_back_button)).perform(click());//0.
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("0."));
         onView(withText("1")).perform(click());//0.1
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("0.1"));
         onView(withText("2")).perform(click());//0.12
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("0.12"));
         onView(withText(".")).perform(click());//0.12
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("0.12"));
         onView(withText(".")).perform(click());//0.12
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("0.12"));
         onView(withText("0")).perform(click());//0.12
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("0.12"));
         onView(withText("0")).perform(click());//0.12
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("0.12"));
         onView(withText("0")).perform(click());//0.12
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("0.12"));
         onView(withText(".")).perform(click());//0.12
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("0.12"));
         onView(withText(".")).perform(click());//0.12
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("0.12"));
         onView(withText(".")).perform(click());//0.12
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("0.12"));
         onView(withText("4")).perform(click());//0.12
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("0.12"));
         onView(withText("5")).perform(click());//0.12
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("0.12"));
         onView(withId(R.id.keyboard_back_button)).perform(click());//0.1
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("0.1"));
         onView(withId(R.id.keyboard_back_button)).perform(click());//0.
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("0."));
         onView(withId(R.id.keyboard_back_button)).perform(click());//0
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("0"));
         onView(withText(".")).perform(click());//0.
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("0."));
         onView(withText("8")).perform(click());//0.8
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("0.8"));
         onView(withText("0")).perform(click());//0.80
-        onView(withId(R.id.amount_before_arrow)).perform(click());//0.8
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("0.80"));
+        onView(withId(R.id.keyboard_back_button)).perform(click());//0.8
         onView(withId(R.id.keyboard_back_button)).perform(click());//0.
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("0."));
         onView(withId(R.id.keyboard_back_button)).perform(click());//0
-        try {
-            System.out.println("WAITING 4 SECONDS");
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        assertEquals("0", AmountAdapter.getRightValue());
-        onView(withText("1")).perform(click());
-        onView(withText("2")).perform(click());
-        onView(withText("3")).perform(click());
-        onView(withText("4")).perform(click());
-        onView(withText("5")).perform(click());
-        onView(withText("6")).perform(click());
-        onView(withText("7")).perform(click());
-        onView(withText("8")).perform(click());
-        onView(withText("9")).perform(click());
-        onView(withText("0")).perform(click());
-        onView(withText("5")).perform(click());
-        onView(withText("4")).perform(click());
-        onView(withText("2")).perform(click());
-        onView(withText("8")).perform(click());
-        onView(withText(".")).perform(click());
-        onView(withText("0")).perform(click());
-        onView(withText("1")).perform(click());
-        onView(withText("0")).perform(click());
-        onView(withText(".")).perform(click());
-        onView(withText(".")).perform(click());
-        onView(withText(".")).perform(click());
-        onView(withText(".")).perform(click());
-        onView(withId(R.id.keyboard_back_button)).perform(click());
-        onView(withId(R.id.keyboard_back_button)).perform(click());
-        onView(withId(R.id.keyboard_back_button)).perform(click());
-        onView(withId(R.id.keyboard_back_button)).perform(click());
-        onView(withId(R.id.keyboard_back_button)).perform(click());
-        onView(withId(R.id.keyboard_back_button)).perform(click());
-
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("0"));
     }
 
     @Test
     public void testDigits() {
-        onView(withId(R.id.main_button_pay_address_from_clipboard)).perform(click());
+        TextView rightValue = (TextView) mActivityRule.getActivity().findViewById(R.id.right_textview);
+        onView(withText("1")).perform(click());
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("1"));
+        onView(withText("2")).perform(click());
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("12"));
+        onView(withText("3")).perform(click());
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("123"));
+        onView(withText("4")).perform(click());
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("1234"));
+        onView(withText("5")).perform(click());
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("12345"));
+        onView(withText("6")).perform(click());
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("123456"));
+        onView(withText("7")).perform(click());
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("1234567"));
+        onView(withText("8")).perform(click());
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("12345678"));
+        onView(withText("9")).perform(click());
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("123456789"));
+        onView(withText("0")).perform(click());
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("1234567890"));
+        onView(withText("5")).perform(click());
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("12345678905"));
+        onView(withText("4")).perform(click());
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("123456789054"));
+        onView(withText("2")).perform(click());
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("1234567890542"));
+        onView(withText("8")).perform(click());
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("12345678905428"));//21,000,000,000,000 Max
+        onView(withText("3")).perform(click());
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("12345678905428"));//should be same, no change, max reached
+        onView(withText(".")).perform(click());
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("12345678905428."));
+        onView(withText("0")).perform(click());
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("12345678905428.0"));
+        onView(withText("1")).perform(click());
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("12345678905428.01"));
+        onView(withText("0")).perform(click());
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("12345678905428.01"));
+        onView(withText(".")).perform(click());
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("12345678905428.01"));
+        onView(withText(".")).perform(click());
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("12345678905428.01"));
+        onView(withText(".")).perform(click());
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("12345678905428.01"));
+        onView(withText(".")).perform(click());
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("12345678905428.01"));
+        onView(withId(R.id.keyboard_back_button)).perform(click());
+        onView(withId(R.id.keyboard_back_button)).perform(click());
+        onView(withId(R.id.keyboard_back_button)).perform(click());
+        onView(withId(R.id.keyboard_back_button)).perform(click());
+        onView(withId(R.id.keyboard_back_button)).perform(click());
+        onView(withId(R.id.keyboard_back_button)).perform(click());
+        onView(withId(R.id.keyboard_back_button)).perform(click());
+        onView(withId(R.id.keyboard_back_button)).perform(click());
+        onView(withId(R.id.keyboard_back_button)).perform(click());
+        onView(withId(R.id.keyboard_back_button)).perform(click());
+        onView(withId(R.id.keyboard_back_button)).perform(click());
+        onView(withId(R.id.keyboard_back_button)).perform(click());
+        onView(withId(R.id.keyboard_back_button)).perform(click());
+        onView(withId(R.id.keyboard_back_button)).perform(click());
+        onView(withId(R.id.keyboard_back_button)).perform(click());
+        onView(withId(R.id.keyboard_back_button)).perform(click());
+        onView(withId(R.id.keyboard_back_button)).perform(click());
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("0"));
         onView(withText("0")).perform(click());
         onView(withText("0")).perform(click());
         onView(withText("0")).perform(click());
         onView(withText("0")).perform(click());
         onView(withText("0")).perform(click());
         onView(withText("2")).perform(click());
-        assertEquals(AmountAdapter.getRightValue(), "2");
-        onView(withId(R.id.keyboard_back_button)).perform(longClick());
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("2"));
 
     }
 
     @Test
     public void testBackPress() {
-        onView(withId(R.id.main_button_pay_address_from_clipboard)).perform(click());
+        TextView rightValue = (TextView) mActivityRule.getActivity().findViewById(R.id.right_textview);
         onView(withText("0")).perform(click());
         onView(withId(R.id.keyboard_back_button)).perform(click());
         onView(withId(R.id.keyboard_back_button)).perform(click());
-        assertEquals(AmountAdapter.getRightValue(), "0");
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("0"));
         onView(withText("0")).perform(click());
         onView(withText(".")).perform(click());
         onView(withId(R.id.keyboard_back_button)).perform(click());
-        assertEquals(AmountAdapter.getRightValue(), "0");
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("0"));
         onView(withId(R.id.keyboard_back_button)).perform(click());
         onView(withText(".")).perform(click());
-        assertEquals(AmountAdapter.getRightValue(), "0.");
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("0."));
         onView(withId(R.id.keyboard_back_button)).perform(click());
         onView(withId(R.id.keyboard_back_button)).perform(click());
         onView(withId(R.id.keyboard_back_button)).perform(click());
         onView(withText("1")).perform(click());
         onView(withText(".")).perform(click());
         onView(withId(R.id.keyboard_back_button)).perform(click());
-        assertEquals(AmountAdapter.getRightValue(), "1");
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("1"));
         onView(withText("1")).perform(click());
         onView(withText(".")).perform(click());
         onView(withText("0")).perform(click());
-        assertEquals(AmountAdapter.getRightValue(), "11.0");// check some failing
-        onView(withId(R.id.keyboard_back_button)).perform(longClick());
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase("11.0"));
 
     }
 
     @Test
     public void testCurrenciesSwitch() {
-        onView(withId(R.id.main_button_pay_address_from_clipboard)).perform(click());
-        onView(withText("1")).perform(click());
-        onView(withText(".")).perform(click());
-        onView(withText("0")).perform(click());
-        onView(withId(R.id.amount_before_arrow)).perform(click());//0.8
-        onView(withId(R.id.keyboard_back_button)).perform(click());
-        onView(withId(R.id.keyboard_back_button)).perform(click());
-        onView(withId(R.id.keyboard_back_button)).perform(click());
-        onView(withId(R.id.keyboard_back_button)).perform(click());
-        onView(withText(".")).perform(click());
-        onView(withText("0")).perform(click());
-        onView(withText("1")).perform(click());
-        onView(withText(".")).perform(click());
-        onView(withId(R.id.keyboard_back_button)).perform(longClick());
+        TextView rightValue = (TextView) mActivityRule.getActivity().findViewById(R.id.right_textview);
+        TextView leftValue = (TextView) mActivityRule.getActivity().findViewById(R.id.left_textview);
 
+        onView(withText("9")).perform(click());
+        onView(withText("2")).perform(click());
+        onView(withText("2")).perform(click());
+        onView(withText(".")).perform(click());
+        onView(withText("0")).perform(click());
+        String leftVal = getCleanValue(leftValue.getText().toString());
+        onView(withId(R.id.left_textview)).perform(click());
+        assertTrue(getCleanValue(leftValue.getText().toString()).equalsIgnoreCase("922.0"));
+        assertTrue(getCleanValue(rightValue.getText().toString()).equalsIgnoreCase(leftVal));
+
+        onView(withId(R.id.keyboard_back_button)).perform(click());
+        onView(withId(R.id.keyboard_back_button)).perform(click());
+        onView(withId(R.id.keyboard_back_button)).perform(click());
+        onView(withText("1")).perform(click());
+
+    }
+
+    private String getCleanValue(String str) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            if (Character.isDigit(c) || c == '.')
+                builder.append(c);
+        }
+        return builder.toString();
     }
 }

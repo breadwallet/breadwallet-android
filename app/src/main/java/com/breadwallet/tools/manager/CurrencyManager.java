@@ -59,7 +59,7 @@ public class CurrencyManager extends Observable {
     private TimerTask timerTask;
 
     private Handler handler;
-    public static boolean separatorNeedsToBeShown = false;
+//    public static boolean separatorNeedsToBeShown = false;
     private final CurrencyListAdapter currencyListAdapter;
     private static Activity ctx;
 

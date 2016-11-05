@@ -1,8 +1,9 @@
 package com.breadwallet.presenter.fragments;
 
-import android.animation.Animator;
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -22,10 +23,19 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRStringFormatter;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
-import com.breadwallet.tools.adapter.AmountAdapter;
 import com.breadwallet.tools.animation.SpringAnimator;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Currency;
+import java.util.Locale;
+import java.util.Objects;
+
+import static android.R.attr.value;
+import static com.breadwallet.tools.util.BRConstants.CURRENT_UNIT_BITS;
+import static com.breadwallet.tools.util.BRStringFormatter.getNumberOfDecimalPlaces;
 
 
 /**
@@ -57,16 +67,27 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
     private static final String TAG = FragmentScanResult.class.getName();
     private TextView scanResult;
     private RelativeLayout customKeyboardLayout;
-    public static TextView amountToPay;
-    private static TextView amountBeforeArrow;
+    private TextView rightTextView;
+    private TextView leftTextView;
     public static String address;
-    private static int unit = BRConstants.CURRENT_UNIT_BITS;
+    //amount stuff
+//    private boolean comaHasBeenInserted = false;
+    private boolean isTextColorGrey = true;
+    private ValueItem rightValue;
+    private ValueItem leftValue;
+    private int buttonCode = BRConstants.PAY_BUTTON;
+    private boolean pressAvailable = true;
+    private int unit = BRConstants.CURRENT_UNIT_BITS;
 
-    public static int currentCurrencyPosition = BRConstants.BITCOIN_RIGHT;
-    private static String ISO;
-    public static double rate = -1;
+    public static FragmentScanResult instance;
+    private String ISO;
+    public double rate = -1;
 
     public static boolean isARequest = false;
+
+    public FragmentScanResult() {
+        instance = this;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -76,10 +97,11 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         final View rootView = inflater.inflate(R.layout.fragment_scan_result, container, false);
         scanResult = (TextView) rootView.findViewById(R.id.scan_result);
         customKeyboardLayout = (RelativeLayout) rootView.findViewById(R.id.custom_keyboard_layout);
-        amountToPay = (TextView) rootView.findViewById(R.id.amount_to_pay);
-        amountBeforeArrow = (TextView) rootView.findViewById(R.id.amount_before_arrow);
+        rightTextView = (TextView) rootView.findViewById(R.id.right_textview);
+        leftTextView = (TextView) rootView.findViewById(R.id.left_textview);
         TextView doubleArrow = (TextView) rootView.findViewById(R.id.double_arrow_text);
-        unit = SharedPreferencesManager.getCurrencyUnit(getActivity());
+        rightValue = new ValueItem("0", true);
+        leftValue = new ValueItem("0", false);
         /**
          * This mess is for the custom keyboard to be created after the soft keyboard is hidden
          * (if it was previously shown) to prevent the wrong position of the keyboard layout placement
@@ -101,16 +123,16 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AmountAdapter.switchCurrencies();
-                SpringAnimator.showAnimation(amountBeforeArrow);
-                SpringAnimator.showAnimation(amountToPay);
+                switchCurrencies();
+                SpringAnimator.showAnimation(leftTextView);
+                SpringAnimator.showAnimation(rightTextView);
             }
         };
-        updateBothTextValues(new BigDecimal("0"), new BigDecimal("0"));
+        updateBothTextValues("0", "0");
         doubleArrow.setText(BRConstants.DOUBLE_ARROW);
         doubleArrow.setOnClickListener(listener);
-        amountBeforeArrow.setOnClickListener(listener);
-        amountToPay.setOnClickListener(listener);
+        leftTextView.setOnClickListener(listener);
+        rightTextView.setOnClickListener(listener);
         return rootView;
     }
 
@@ -124,9 +146,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         if (!isARequest && (address == null || address.length() < 20))
             throw new NullPointerException("address is corrupted");
         updateRateAndISO();
-        FragmentScanResult.currentCurrencyPosition = BRConstants.BITCOIN_RIGHT;
-        AmountAdapter.calculateAndPassValuesToFragment("0");
-
+        calculateAndPassValuesToFragment("0");
         scanResult.setText(isARequest ? "" : getString(R.string.to) + address);
 
         super.onResume();
@@ -135,7 +155,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
     @Override
     public void onPause() {
         super.onPause();
-        AmountAdapter.resetKeyboard();
+        resetKeyboard();
         ((BreadWalletApp) getActivity().getApplication()).setLockerPayButton(BRConstants.LOCKER_BUTTON);
         isARequest = false;
         BRAnimator.hideScanResultFragment();
@@ -147,7 +167,6 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
     }
 
     private void createCustomKeyboardButtons(int y) {
-
         int availableWidth = MainActivity.screenParametersPoint.x;
         int availableHeight = MainActivity.screenParametersPoint.y;
         int spaceNeededForRest = availableHeight / 14;
@@ -174,6 +193,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
             b.setHeight((int) buttonHeight);
             b.setTextSize(buttonTextSize);
             b.setTypeface(Typeface.create("sans-serif-thin", Typeface.NORMAL));
+
             //noinspection deprecation
             b.setTextColor(getResources().getColor(R.color.dark_blue));
             b.setBackgroundResource(R.drawable.button_regular_blue);
@@ -255,35 +275,358 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         } catch (ClassCastException ex) {
             tmp = "";
         }
-        AmountAdapter.preConditions(tmp);
+        preConditions(tmp);
     }
 
-    public static void updateBothTextValues(BigDecimal bitcoinValue, BigDecimal otherValue) {
-//        Log.e(TAG, "updateBothTextValues: bitcoinValue: " + bitcoinValue + ", otherValue: " + otherValue);
+    public void updateBothTextValues(String left, String right) {
+        Log.e(TAG, "updateBothTextValues: " + left + " : " + right);
         if (ISO == null) updateRateAndISO();
         if (ISO == null) ISO = "USD";
-        String multiplyBy = "100";
-//
-        if (unit == BRConstants.CURRENT_UNIT_MBITS) multiplyBy = "100000";
-        if (unit == BRConstants.CURRENT_UNIT_BITCOINS) multiplyBy = "100000000";
-        final String btcIso = "BTC";
-        if (currentCurrencyPosition == BRConstants.BITCOIN_RIGHT) {
-            amountToPay.setText(BRStringFormatter.getFormattedCurrencyStringForKeyboard(btcIso, bitcoinValue.multiply(new BigDecimal(multiplyBy)).longValue()));
-            amountBeforeArrow.setText(BRStringFormatter.getFormattedCurrencyStringForKeyboard(ISO, otherValue.multiply(new BigDecimal("100")).longValue()));
-        } else if (currentCurrencyPosition == BRConstants.BITCOIN_LEFT) {
-            amountToPay.setText(BRStringFormatter.getFormattedCurrencyStringForKeyboard(ISO, bitcoinValue.multiply(new BigDecimal("100")).longValue()));
-            amountBeforeArrow.setText(BRStringFormatter.getFormattedCurrencyStringForKeyboard(btcIso, otherValue.multiply(new BigDecimal(multiplyBy)).longValue()));
-        } else {
-            throw new IllegalArgumentException("currentPosition should be BITCOIN_LEFT or BITCOIN_RIGHT");
-        }
+        leftValue.value = left;
+        rightValue.value = right;
+        final String btcISO = "BTC";
+
+        String formattedRightVal = getFormattedCurrencyStringForKeyboard(rightValue.isBitcoin ? btcISO : ISO, rightValue.value, true);
+        String formattedLeftVal = getFormattedCurrencyStringForKeyboard(leftValue.isBitcoin ? btcISO : ISO, leftValue.value, false);
+        Log.e(TAG, "formatted: " + formattedLeftVal + " : " + formattedRightVal);
+
+//        String cleanRightValue = cleanRightValue(right, formattedRightVal);
+//        String cleanLeftValue = cleanLeftValue(left, formattedLeftVal);
+
+//        Log.e(TAG, "cleaned: " + cleanLeftValue + " : " + cleanRightValue);
+
+        rightTextView.setText(formattedRightVal);
+        leftTextView.setText(formattedLeftVal);
     }
 
-    private static void updateRateAndISO() {
+    private String getCleanValue(String value) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < value.length(); i++) {
+            char c = value.charAt(i);
+            if (c == '.' || Character.isDigit(c)) builder.append(c);
+        }
+        return builder.toString();
+    }
+
+//    private String cleanLeftValue(String value, String formattedValue) {
+//        if (value.equalsIgnoreCase("0.00")) {
+//            leftValue.value = "0";
+//            return formattedValue.replace("0.00", leftValue.value);
+//        }
+//        if (value.endsWith(".")) return formattedValue.replace(".", "");
+////        Log.e(TAG, "getFormattedCurrencyStringForKeyboard: strResult: " + strResult);
+////        Pattern p = Pattern.compile("\\.\\d0");
+////        Matcher m = p.matcher(strResult);
+////        if (m.find())
+////            strResult = strResult.substring(0, strResult.indexOf(".") + 1).
+////                    concat(strResult.substring(strResult.indexOf(".") + 1, strResult.length() - 1));
+////
+////        Log.e(TAG, "strResult: " + strResult);
+////        if (amount.endsWith("."))
+////            return strResult + ".";
+////        if (amount.endsWith(".0"))
+////            return strResult + ".0";
+//        return formattedValue;
+//    }
+
+//    private String cleanRightValue(String value, String formattedValue) {
+//        //clean: $12. to $12
+//        if (value.endsWith(".") || value.contains(".") && !Character.isDigit(value.charAt(value.indexOf(".") + 1)))
+//            return formattedValue.replace(value.charAt(value.length() - 1), value);
+//        return formattedValue;
+//    }
+
+    private void updateRateAndISO() {
         MainActivity app = MainActivity.app;
         if (app == null) return;
         ISO = SharedPreferencesManager.getIso(app);
+        getOtherValue().iso = ISO;
         rate = SharedPreferencesManager.getRate(app);
-//        Log.d(TAG, "ISO: " + ISO + ", rate: " + rate);
+    }
+
+    public void preConditions(String tmp) {
+        Activity context = MainActivity.app;
+        if (context != null)
+            unit = SharedPreferencesManager.getCurrencyUnit(context);
+        if (FragmentScanResult.isARequest) {
+            buttonCode = BRConstants.REQUEST_BUTTON;
+        } else {
+            buttonCode = BRConstants.PAY_BUTTON;
+        }
+        switch (tmp) {
+            case "":
+                doBackSpace();
+                break;
+            case ".":
+                insertSeparator();
+                break;
+            default:
+                insertDigit(tmp);
+                break;
+        }
+    }
+
+    private void doBackSpace() {
+        MainActivity app = MainActivity.app;
+        String amount = rightValue.value;
+        int length = amount.length();
+        if (length > 1) {
+            calculateAndPassValuesToFragment(rightValue.value.substring(0, length - 1));
+        } else {
+            ((BreadWalletApp) app.getApplication()).setLockerPayButton(BRConstants.LOCKER_BUTTON);
+            changeTextColor(2);
+            calculateAndPassValuesToFragment("0");
+        }
+    }
+
+    private void insertSeparator() {
+        MainActivity app = MainActivity.app;
+        if (isTextColorGrey) {
+            changeTextColor(1);
+            ((BreadWalletApp) app.getApplication()).setLockerPayButton(buttonCode);
+        }
+        String amount = rightValue.value;
+        int maxDigit = getMaxFractionDigits();
+
+        if (!amount.contains(".") && maxDigit != 0)
+            calculateAndPassValuesToFragment(amount + ".");
+    }
+
+    private void insertDigit(String tmp) {
+
+        MainActivity app = MainActivity.app;
+        String amount = rightValue.value;
+
+        int length = amount.length();
+        if (isTextColorGrey) {
+            changeTextColor(1);
+            ((BreadWalletApp) app.getApplication()).setLockerPayButton(buttonCode);
+        }
+        if (isDigitInsertingLegal(tmp)) {
+            if (length == 1 && amount.equals("0")) {
+                calculateAndPassValuesToFragment(tmp);
+            } else {
+                calculateAndPassValuesToFragment(rightValue.value + tmp);
+            }
+        }
+    }
+
+    private boolean isDigitInsertingLegal(String tmp) {
+        int maxDig = getMaxFractionDigits();
+        long limit = 21000000000000L;
+        if (unit == BRConstants.CURRENT_UNIT_MBITS)
+            limit = 21000000000L;
+        if (unit == BRConstants.CURRENT_UNIT_BITCOINS)
+            limit = 21000000L;
+
+        if (rightValue.isBitcoin) {
+            maxDig = BRConstants.MAX_DIGITS_AFTER_SEPARATOR_BITS;
+
+            if (unit == BRConstants.CURRENT_UNIT_MBITS)
+                maxDig = BRConstants.MAX_DIGITS_AFTER_SEPARATOR_MBITS;
+            if (unit == BRConstants.CURRENT_UNIT_BITCOINS)
+                maxDig = BRConstants.MAX_DIGITS_AFTER_SEPARATOR_BITCOINS;
+
+        }
+        boolean isFractionStarted = rightValue.value.contains(".");
+        int nrOfDecimals = getNumberOfDecimalPlaces(rightValue.value);
+        if (isFractionStarted)
+            return nrOfDecimals < maxDig;
+
+        long l = 0;
+        try {
+            l = Long.valueOf(rightValue.value + tmp);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return l < limit;
+
+    }
+
+    private int getMaxFractionDigits() {
+        try {
+            Currency currency = Currency.getInstance(rightValue.iso);
+            return currency.getDefaultFractionDigits();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 2;
+        }
+    }
+
+    /**
+     * Sets the textColor of the amount TextView to black or grey
+     *
+     * @param color the color of the textView: 1 Black, 2 Grey.
+     */
+    private void changeTextColor(int color) {
+        Activity context = MainActivity.app;
+        isTextColorGrey = color != 1;
+        rightTextView.setTextColor((color == 1) ? context.getColor(R.color.black)
+                : context.getColor(android.R.color.darker_gray));
+    }
+
+    public void resetKeyboard() {
+        isTextColorGrey = true;
+        rightValue.value = "0";
+        leftValue.value = "0";
+    }
+
+    public void calculateAndPassValuesToFragment(String valuePassed) {
+        String divideBy = "1000000";
+
+        Log.e(TAG, "calculateAndPassValuesToFragment: valuePassed: " + valuePassed);
+        if (unit == BRConstants.CURRENT_UNIT_MBITS) divideBy = "1000";
+        if (unit == BRConstants.CURRENT_UNIT_BITCOINS) divideBy = "1";
+        rightValue.value = valuePassed;
+        BigDecimal rightValueObject = new BigDecimal(valuePassed);
+        BigDecimal leftValueObject;
+        BigDecimal theRate = new BigDecimal(rate);
+
+        if (rightValue.isBitcoin) {
+            //from bits to other currency using rate
+            if (theRate.intValue() > 1) {
+                leftValueObject = theRate.multiply(rightValueObject.divide(new BigDecimal(divideBy)));
+            } else {
+                leftValueObject = new BigDecimal("0");
+            }
+        } else {
+            //from other currency to bits using rate
+            if (theRate.intValue() > 1) {
+                leftValueObject = rightValueObject.multiply(new BigDecimal(divideBy)).
+                        divide(theRate, 8, RoundingMode.HALF_UP);
+            } else {
+                leftValueObject = new BigDecimal("0");
+            }
+        }
+        updateBothTextValues(leftValueObject.toString(), valuePassed);
+
+
+    }
+
+    public void switchCurrencies() {
+        if (checkPressingAvailability()) {
+            rightValue.value = getCleanValue(rightTextView.getText().toString());
+            leftValue.value = getCleanValue(leftTextView.getText().toString());
+
+            ValueItem tmp = rightValue;
+            rightValue = leftValue;
+            leftValue = tmp;
+            updateBothTextValues(leftValue.value, rightValue.value);
+        }
+    }
+
+    public boolean checkPressingAvailability() {
+        if (pressAvailable) {
+            pressAvailable = false;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    pressAvailable = true;
+                }
+            }, 100);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public String getFormattedCurrencyStringForKeyboard(String isoCurrencyCode, String amount, boolean rightItem) {
+        MainActivity app = MainActivity.app;
+        int unit = app == null ? CURRENT_UNIT_BITS : SharedPreferencesManager.getCurrencyUnit(app);
+        if (amount == null) {
+//            Log.e(TAG, "getFormattedCurrencyStringForKeyboard: AMOUNT == null");
+            return "0";
+        }
+
+        String multiplyBy = "100";
+
+        if (unit == BRConstants.CURRENT_UNIT_MBITS) multiplyBy = "100000";
+        if (unit == BRConstants.CURRENT_UNIT_BITCOINS) multiplyBy = "100000000";
+
+        BigDecimal result;
+
+        if (isoCurrencyCode.equals("BTC")) {
+            result = new BigDecimal(amount).multiply(new BigDecimal(multiplyBy));
+        } else {
+            result = new BigDecimal(amount).multiply(new BigDecimal("100"));
+        }
+
+        DecimalFormat currencyFormat;
+        result = result.divide(new BigDecimal("100"));
+        currencyFormat = (DecimalFormat) DecimalFormat.getCurrencyInstance(Locale.getDefault());
+        DecimalFormatSymbols decimalFormatSymbols;
+        Currency currency;
+        String symbol = null;
+        decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
+        int decimalPoints = 0;
+        if (Objects.equals(isoCurrencyCode, "BTC")) {
+            String currencySymbolString = BRConstants.bitcoinLowercase;
+            if (app != null) {
+                currencyFormat.setMinimumFractionDigits(0);
+                switch (unit) {
+                    case CURRENT_UNIT_BITS:
+                        currencySymbolString = BRConstants.bitcoinLowercase;
+                        decimalPoints = 2;
+                        if (getNumberOfDecimalPlaces(result.toPlainString()) == 1)
+                            currencyFormat.setMinimumFractionDigits(1);
+                        break;
+                    case BRConstants.CURRENT_UNIT_MBITS:
+                        currencySymbolString = "m" + BRConstants.bitcoinUppercase;
+                        decimalPoints = 5;
+                        result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100000"));
+                        break;
+                    case BRConstants.CURRENT_UNIT_BITCOINS:
+                        currencySymbolString = BRConstants.bitcoinUppercase;
+                        decimalPoints = 8;
+                        result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100000000"));
+                        break;
+                }
+            }
+            symbol = currencySymbolString;
+        } else {
+            try {
+                currency = Currency.getInstance(isoCurrencyCode);
+            } catch (IllegalArgumentException e) {
+                currency = Currency.getInstance(Locale.getDefault());
+            }
+            symbol = currency.getSymbol();
+            decimalPoints = currency.getDefaultFractionDigits();
+        }
+        decimalFormatSymbols.setCurrencySymbol(symbol);
+        currencyFormat.setMaximumFractionDigits(decimalPoints);
+        int currNrOfDecimal = getNumberOfDecimalPlaces(amount);
+        currencyFormat.setMinimumFractionDigits(currNrOfDecimal > decimalPoints ? decimalPoints : currNrOfDecimal);
+        currencyFormat.setGroupingUsed(true);
+        if (rightItem && amount.endsWith("."))
+            currencyFormat.setDecimalSeparatorAlwaysShown(true);
+        currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
+        currencyFormat.setNegativePrefix(decimalFormatSymbols.getCurrencySymbol() + "-");
+        currencyFormat.setNegativeSuffix("");
+
+        return currencyFormat.format(result.doubleValue());
+    }
+
+    public ValueItem getBitcoinValue() {
+        if (rightValue.isBitcoin) return rightValue;
+        else return leftValue;
+    }
+
+    public ValueItem getOtherValue() {
+        if (!rightValue.isBitcoin) return rightValue;
+        else return leftValue;
+    }
+
+    public class ValueItem {
+        public String value;
+        public boolean isBitcoin;
+        public String iso;
+
+        public ValueItem(String value, boolean isBitcoin) {
+            this.value = value;
+            this.isBitcoin = isBitcoin;
+        }
+
     }
 
 }
