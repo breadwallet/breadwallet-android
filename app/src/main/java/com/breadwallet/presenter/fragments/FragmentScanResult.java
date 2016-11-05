@@ -21,7 +21,6 @@ import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.tools.util.BRStringFormatter;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.animation.SpringAnimator;
 
@@ -33,7 +32,6 @@ import java.util.Currency;
 import java.util.Locale;
 import java.util.Objects;
 
-import static android.R.attr.value;
 import static com.breadwallet.tools.util.BRConstants.CURRENT_UNIT_BITS;
 import static com.breadwallet.tools.util.BRStringFormatter.getNumberOfDecimalPlaces;
 
@@ -290,11 +288,6 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         String formattedLeftVal = getFormattedCurrencyStringForKeyboard(leftValue.isBitcoin ? btcISO : ISO, leftValue.value, false);
         Log.e(TAG, "formatted: " + formattedLeftVal + " : " + formattedRightVal);
 
-//        String cleanRightValue = cleanRightValue(right, formattedRightVal);
-//        String cleanLeftValue = cleanLeftValue(left, formattedLeftVal);
-
-//        Log.e(TAG, "cleaned: " + cleanLeftValue + " : " + cleanRightValue);
-
         rightTextView.setText(formattedRightVal);
         leftTextView.setText(formattedLeftVal);
     }
@@ -307,34 +300,6 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         }
         return builder.toString();
     }
-
-//    private String cleanLeftValue(String value, String formattedValue) {
-//        if (value.equalsIgnoreCase("0.00")) {
-//            leftValue.value = "0";
-//            return formattedValue.replace("0.00", leftValue.value);
-//        }
-//        if (value.endsWith(".")) return formattedValue.replace(".", "");
-////        Log.e(TAG, "getFormattedCurrencyStringForKeyboard: strResult: " + strResult);
-////        Pattern p = Pattern.compile("\\.\\d0");
-////        Matcher m = p.matcher(strResult);
-////        if (m.find())
-////            strResult = strResult.substring(0, strResult.indexOf(".") + 1).
-////                    concat(strResult.substring(strResult.indexOf(".") + 1, strResult.length() - 1));
-////
-////        Log.e(TAG, "strResult: " + strResult);
-////        if (amount.endsWith("."))
-////            return strResult + ".";
-////        if (amount.endsWith(".0"))
-////            return strResult + ".0";
-//        return formattedValue;
-//    }
-
-//    private String cleanRightValue(String value, String formattedValue) {
-//        //clean: $12. to $12
-//        if (value.endsWith(".") || value.contains(".") && !Character.isDigit(value.charAt(value.indexOf(".") + 1)))
-//            return formattedValue.replace(value.charAt(value.length() - 1), value);
-//        return formattedValue;
-//    }
 
     private void updateRateAndISO() {
         MainActivity app = MainActivity.app;
