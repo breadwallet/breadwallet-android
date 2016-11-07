@@ -351,5 +351,6 @@
     <string name="word_nr9">select the <b>9th</b> word of your recovery phrase from the list below</string>
     <string name="word_nr10">select the <b>10th</b> word of your recovery phrase from the list below</string>
     <string name="word_nr11">select the <b>11th</b> word of your recovery phrase from the list below</string>
+    <string name="early_access">early access</string>
 
 </resources>

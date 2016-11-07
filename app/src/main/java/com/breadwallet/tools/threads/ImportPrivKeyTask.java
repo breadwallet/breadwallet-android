@@ -154,7 +154,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
     }
 
     private static String callURL(String myURL) {
-//        System.out.println("Requested URL:" + myURL);
+//        System.out.println("Requested URL_EA:" + myURL);
         StringBuilder sb = new StringBuilder();
         URLConnection urlConn = null;
         InputStreamReader in = null;

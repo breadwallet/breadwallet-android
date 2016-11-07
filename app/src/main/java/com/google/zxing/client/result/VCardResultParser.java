@@ -74,7 +74,7 @@ public final class VCardResultParser extends ResultParser {
       birthday = null;
     }
     List<String> title = matchSingleVCardPrefixedField("TITLE", rawText, true, false);
-    List<List<String>> urls = matchVCardPrefixedField("URL", rawText, true, false);
+    List<List<String>> urls = matchVCardPrefixedField("URL_EA", rawText, true, false);
     List<String> instantMessenger = matchSingleVCardPrefixedField("IMPP", rawText, true, false);
     List<String> geoString = matchSingleVCardPrefixedField("GEO", rawText, true, false);
     String[] geo = geoString == null ? null : SEMICOLON_OR_COMMA.split(geoString.get(0));

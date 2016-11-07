@@ -61,7 +61,6 @@ import com.google.zxing.common.BitMatrix;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.security.SecureRandom;
-import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Locale;
@@ -135,11 +134,12 @@ public class BRWalletManager {
             throw new NullPointerException("failed to encodeSeed");
         boolean success = KeyStoreManager.putKeyStorePhrase(strPhrase, ctx, BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE);
         if (!success) return false;
+        byte[] authKey = getAuthPrivKeyForAPI(keyBytes);
+        if(authKey == null || authKey.length == 0) throw new IllegalArgumentException("authKey is invalid");
+//        Log.e(TAG,"authKey: " + Arrays.toString(authKey));
+        KeyStoreManager.putAuthKey(authKey, ctx);
         KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), ctx);
         byte[] strBytes = TypesConverter.getNullTerminatedPhrase(strPhrase);
-//        byte[] authKey = getAuthPrivKeyForAPI(strPhrase);
-//        Log.e(TAG,"authKey: " + Arrays.toString(authKey));
-//        KeyStoreManager.putAuthKey(authKey, ctx);
         byte[] pubKey = BRWalletManager.getInstance(ctx).getMasterPubKey(strBytes);
         KeyStoreManager.putMasterPublicKey(pubKey, ctx);
 
@@ -314,76 +314,6 @@ public class BRWalletManager {
                                         public void run() {
                                             dialog.dismiss();
                                             BRWalletManager.getInstance(ctx).animateSavePhraseFlow();
-//                                            final RelativeLayout tipsBlockPane = (RelativeLayout) app.findViewById(R.id.tips_block_pane);
-
-//                                            app.runOnUiThread(new Runnable() {
-//                                                @Override
-//                                                public void run() {
-//                                                    tipsBlockPane.setVisibility(View.VISIBLE);
-//                                                    new Handler().postDelayed(new Runnable() {
-//                                                        @Override
-//                                                        public void run() {
-//                                                            tipsBlockPane.setVisibility(View.GONE);
-//                                                        }
-//                                                    }, 5000);
-//                                                }
-//                                            });
-                                            //in case of an error assure the blockPane is gone anyway in 5 sec
-
-//                                            switch (BRAnimator.level) {
-//                                                case 0:
-//                                                    app.runOnUiThread(new Runnable() {
-//                                                        @Override
-//                                                        public void run() {
-//                                                            BRAnimator.pressMenuButton(app);
-//                                                        }
-//                                                    });
-//
-//                                                    try {
-//                                                        Thread.sleep(500);
-//                                                    } catch (InterruptedException e) {
-//                                                        e.printStackTrace();
-//                                                    }
-//                                                    app.runOnUiThread(new Runnable() {
-//                                                        @Override
-//                                                        public void run() {
-//                                                            FragmentSettingsAll fragmentSettingsAll = (FragmentSettingsAll) app.
-//                                                                    getFragmentManager().findFragmentByTag(FragmentSettingsAll.class.getName());
-//                                                            BRAnimator.animateSlideToLeft(app, new FragmentSettings(), fragmentSettingsAll);
-//                                                        }
-//                                                    });
-//
-//                                                    try {
-//                                                        Thread.sleep(500);
-//                                                    } catch (InterruptedException e) {
-//                                                        e.printStackTrace();
-//                                                    }
-//
-//                                                    app.runOnUiThread(new Runnable() {
-//                                                        @Override
-//                                                        public void run() {
-//                                                            new android.support.v7.app.AlertDialog.Builder(app)
-//                                                                    .setTitle(app.getResources().getString(R.string.warning))
-//                                                                    .setMessage(app.getResources().getString(R.string.warning_text1) +
-//                                                                            app.getResources().getString(R.string.warning_text2) +
-//                                                                            app.getResources().getString(R.string.warning_text3))
-//                                                                    .setPositiveButton(app.getResources().getString(R.string.show), new DialogInterface.OnClickListener() {
-//                                                                        public void onClick(DialogInterface dialog, int which) {
-//                                                                            PostAuthenticationProcessor.getInstance().onShowPhraseAuth(app);
-//                                                                        }
-//                                                                    })
-//                                                                    .setNegativeButton(app.getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
-//                                                                        public void onClick(DialogInterface dialog, int which) {
-//                                                                            dialog.dismiss();
-//                                                                        }
-//                                                                    })
-//                                                                    .show();
-//                                                            tipsBlockPane.setVisibility(View.GONE);
-//                                                        }
-//                                                    });
-
-//                                                    break;
-//                                            }
                                         }
                                     }).start();
                                 }
@@ -1128,8 +1058,12 @@ public class BRWalletManager {
 
     public native long getMinOutputAmountRequested();
 
-    public native byte[] getAuthPrivKeyForAPI(byte[] phrase);
+    public static native byte[] getAuthPrivKeyForAPI(byte[] seed);
 
-    public native String getAuthPublicKeyForAPI(byte[] privKey);
+    public static native String getAuthPublicKeyForAPI(byte[] privKey);
+
+    public static native byte[] getSeedFromPhrase(byte[] phrase);
+
+    public static native String base58ofSha256(String strToSign);
 
 }

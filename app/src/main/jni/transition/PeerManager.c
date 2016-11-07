@@ -240,8 +240,8 @@ JNIEXPORT void JNICALL Java_com_breadwallet_wallet_BRPeerManager_rescan(JNIEnv *
 
 JNIEXPORT void JNICALL
 Java_com_breadwallet_wallet_BRPeerManager_create(JNIEnv *env, jobject thiz,
-                                                           int earliestKeyTime,
-                                                           int blocksCount, int peersCount) {
+                                                 int earliestKeyTime,
+                                                 int blocksCount, int peersCount) {
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ",
                         "create| blocksCount: %d, peersCount: %d",
                         blocksCount, peersCount);
@@ -382,8 +382,9 @@ JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRPeerManager_isCreated(J
                         _peerManager ? "yes" : "no");
     return (jboolean) ((_peerManager) ? JNI_TRUE : JNI_FALSE);
 }
+
 JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRPeerManager_isConnected(JNIEnv *env,
-                                                                               jobject obj) {
+                                                                                 jobject obj) {
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "isConnected");
     return (jboolean) (_peerManager && BRPeerManagerIsConnected(_peerManager));
 }

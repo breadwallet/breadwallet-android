@@ -88,6 +88,7 @@ public class KeyStoreManager {
     public static final String SPENT_LIMIT_IV = "ivspendlimit";
     public static final String FAIL_TIMESTAMP_IV = "ivfailtimestamp";
     public static final String AUTH_KEY_IV = "ivauthkey";
+    public static final String TOKEN_IV = "ivtoken";
 
     public static final String PHRASE_ALIAS = "phrase";
     public static final String CANARY_ALIAS = "canary";
@@ -98,6 +99,7 @@ public class KeyStoreManager {
     public static final String SPEND_LIMIT_ALIAS = "spendlimit";
     public static final String FAIL_TIMESTAMP_ALIAS = "failTimeStamp";
     public static final String AUTH_KEY_ALIAS = "authKey";
+    public static final String TOKEN_ALIAS = "token";
 
     public static final String PHRASE_FILENAME = "my_phrase";
     public static final String CANARY_FILENAME = "my_canary";
@@ -108,6 +110,7 @@ public class KeyStoreManager {
     public static final String SPEND_LIMIT_FILENAME = "my_spend_limit";
     public static final String FAIL_TIMESTAMP_FILENAME = "my_fail_timestamp";
     public static final String AUTH_KEY_FILENAME = "my_auth_key";
+    public static final String TOKEN_FILENAME = "my_token";
 
     public static final int AUTH_DURATION_SEC = 300;
 
@@ -312,6 +315,13 @@ public class KeyStoreManager {
     public static byte[] getAuthKey(final Activity context) {
         return getData(context, AUTH_KEY_ALIAS, AUTH_KEY_FILENAME, AUTH_KEY_IV, 0);
     }
+    public static boolean putToken(byte[] token, Activity context) {
+        return token != null && token.length != 0 && setData(context, token, TOKEN_ALIAS, TOKEN_FILENAME, TOKEN_IV, 0, false);
+    }
+
+    public static byte[] getToken(final Activity context) {
+        return getData(context, TOKEN_ALIAS, TOKEN_FILENAME, TOKEN_IV, 0);
+    }
 
     public static boolean putWalletCreationTime(int creationTime, Activity context) {
         byte[] bytesToStore = TypesConverter.intToBytes(creationTime);
@@ -410,6 +420,7 @@ public class KeyStoreManager {
             keyStore.deleteEntry(PASS_CODE_ALIAS);
             keyStore.deleteEntry(FAIL_COUNT_ALIAS);
             keyStore.deleteEntry(FAIL_TIMESTAMP_ALIAS);
+            keyStore.deleteEntry(AUTH_KEY_ALIAS);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
             return false;

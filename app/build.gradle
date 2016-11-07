@@ -81,6 +81,17 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.0.0'
     compile 'com.android.support:support-v13:25.0.0'
 
+    compile 'com.squareup.okhttp3:okhttp:3.4.1'
+    compile group: 'commons-io', name: 'commons-io', version: '2.0.1'
+    compile group: 'org.eclipse.jetty', name: 'jetty-server', version: '9.2.19.v20160908'
+    compile 'org.apache.commons:commons-compress:1.4.1'
+
+    compile 'io.sigpipe:jbsdiff:1.0'
+
+    androidTestCompile 'com.android.support:support-annotations:25.0.0'
+    androidTestCompile 'com.android.support.test:runner:0.5'
+    androidTestCompile 'com.android.support.test:rules:0.5'
+    androidTestCompile 'junit:junit:4.12'
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
 
 }

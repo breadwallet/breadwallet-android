@@ -49,6 +49,7 @@ import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
+import com.platform.APIClient;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -162,6 +163,19 @@ public class MainActivity extends FragmentActivity implements Observer {
         BRAnimator.scaleView(pageIndicatorLeft, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f,
                 BRConstants.PAGE_INDICATOR_SCALE_UP);
         setStatusBarColor();
+
+        updateBundle();
+    }
+
+    private void updateBundle(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                APIClient apiClient = APIClient.getInstance(app);
+//                apiClient.buyBitcoinMe();
+                apiClient.updateBundle(); //bread-buy-staging
+            }
+        }).start();
     }
 
     @Override

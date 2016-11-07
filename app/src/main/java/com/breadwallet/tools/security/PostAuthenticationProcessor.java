@@ -16,6 +16,8 @@ import com.breadwallet.wallet.BRWalletManager;
 
 import java.util.Arrays;
 
+import static com.breadwallet.wallet.BRWalletManager.getSeedFromPhrase;
+
 /**
  * BreadWallet
  * <p/>
@@ -84,6 +86,9 @@ public class PostAuthenticationProcessor {
             if (phraseForKeyStore.length() != 0) {
                 SharedPreferencesManager.putPhraseWroteDown(app, true);
                 bytePhrase = TypesConverter.getNullTerminatedPhrase(phraseForKeyStore.getBytes());
+                byte[] seed = BRWalletManager.getSeedFromPhrase(bytePhrase);
+                byte[] authKey = BRWalletManager.getAuthPrivKeyForAPI(seed);
+                KeyStoreManager.putAuthKey(authKey, app);
                 byte[] pubKey = BRWalletManager.getInstance(app).getMasterPubKey(bytePhrase);
                 KeyStoreManager.putMasterPublicKey(pubKey, app);
                 app.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);

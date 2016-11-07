@@ -2,15 +2,11 @@ package com.breadwallet.tools.adapter;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.admin.SystemUpdatePolicy;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,17 +25,13 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRStringFormatter;
-import com.breadwallet.tools.util.CustomLogger;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 
-import org.w3c.dom.Text;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -238,7 +230,6 @@ public class TransactionListAdapter extends BaseAdapter {
         }
         return count;
     }
-
 
     @Override
     public int getViewTypeCount() {

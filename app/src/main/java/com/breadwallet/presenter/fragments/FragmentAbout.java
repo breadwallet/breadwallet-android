@@ -1,4 +1,3 @@
-
 package com.breadwallet.presenter.fragments;
 
 import android.content.Intent;
@@ -16,6 +15,7 @@ import com.breadwallet.R;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
+import com.platform.APIClient;
 
 import java.util.Locale;
 
@@ -94,6 +94,13 @@ public class FragmentAbout extends Fragment {
                     }
                 }
             });
+
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                APIClient.getInstance(getActivity()).buyBitcoinMe();
+//            }
+//        }).start();
 
         return rootView;
     }

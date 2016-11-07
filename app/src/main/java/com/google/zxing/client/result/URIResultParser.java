@@ -38,9 +38,9 @@ public final class URIResultParser extends ResultParser {
   @Override
   public URIParsedResult parse(Result result) {
     String rawText = getMassagedText(result);
-    // We specifically handle the odd "URL" scheme here for simplicity and add "URI" for fun
+    // We specifically handle the odd "URL_EA" scheme here for simplicity and add "URI" for fun
     // Assume anything starting this way really means to be a URI
-    if (rawText.startsWith("URL:") || rawText.startsWith("URI:")) {
+    if (rawText.startsWith("URL_EA:") || rawText.startsWith("URI:")) {
       return new URIParsedResult(rawText.substring(4).trim(), null);
     }
     rawText = rawText.trim();
