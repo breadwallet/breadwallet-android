@@ -32,7 +32,6 @@ import java.util.Currency;
 import java.util.Locale;
 import java.util.Objects;
 
-import static com.breadwallet.R.string.amount;
 import static com.breadwallet.tools.util.BRConstants.CURRENT_UNIT_BITS;
 import static com.breadwallet.tools.util.BRStringFormatter.getNumberOfDecimalPlaces;
 
@@ -70,7 +69,6 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
     private TextView leftTextView;
     public static String address;
     //amount stuff
-//    private boolean comaHasBeenInserted = false;
     private boolean isTextColorGrey = true;
     private ValueItem rightValue;
     private ValueItem leftValue;
@@ -143,12 +141,14 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
     public void onResume() {
         if (!isARequest && (address == null || address.length() < 20))
             throw new NullPointerException("address is corrupted");
-        updateRateAndISO();
-        calculateAndPassValuesToFragment("0");
-        scanResult.setText(isARequest ? "" : getString(R.string.to) + address);
         Activity app = getActivity();
         if (app != null)
             unit = SharedPreferencesManager.getCurrencyUnit(app);
+        updateRateAndISO();
+        calculateAndPassValuesToFragment("0");
+        scanResult.setText(isARequest ? "" : getString(R.string.to) + address);
+
+        Log.e(TAG, "onResume: unit: " + unit);
         super.onResume();
     }
 
@@ -318,7 +318,6 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
     public void preConditions(String tmp) {
         Activity app = getActivity();
         if(app == null) return;
-        unit = SharedPreferencesManager.getCurrencyUnit(app);
         if (FragmentScanResult.isARequest) {
             buttonCode = BRConstants.REQUEST_BUTTON;
         } else {
@@ -508,7 +507,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
     public String getFormattedCurrencyStringForKeyboard(String isoCurrencyCode, String amount, boolean rightItem) {
         Activity app = getActivity();
         if (amount == null || app == null) {
-//            Log.e(TAG, "getFormattedCurrencyStringForKeyboard: AMOUNT == null");
+            Log.e(TAG, "getFormattedCurrencyStringForKeyboard: AMOUNT == null");
             return "0";
         }
 
