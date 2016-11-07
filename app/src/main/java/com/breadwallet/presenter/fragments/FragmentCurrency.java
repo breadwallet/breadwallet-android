@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRStringFormatter;
 import com.breadwallet.tools.manager.CurrencyManager;
@@ -92,17 +93,20 @@ public class FragmentCurrency extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
+                Activity app = getActivity();
+                if (app == null) return;
                 currencyItemText = (TextView) view.findViewById(R.id.currency_item_text);
                 final String selectedCurrency = currencyItemText.getText().toString();
                 ISO = selectedCurrency.substring(0, 3);
                 lastItemsPosition = position;
-                rate = adapter.getItem(position).rate;
-                SharedPreferencesManager.putIso(getActivity(), ISO);
-                SharedPreferencesManager.putCurrencyListPosition(getActivity(), lastItemsPosition);
-                SharedPreferencesManager.putRate(getActivity(), rate);
-                String finalExchangeRate = BRStringFormatter.getMiddleTextExchangeString(rate, ISO, getActivity());
+                CurrencyEntity item = adapter.getItem(position);
+                rate = item == null ? 0 : item.rate;
+                SharedPreferencesManager.putIso(app, ISO);
+                SharedPreferencesManager.putCurrencyListPosition(app, lastItemsPosition);
+                SharedPreferencesManager.putRate(app, rate);
+                String finalExchangeRate = BRStringFormatter.getMiddleTextExchangeString(rate, ISO, app);
 
-                MiddleViewAdapter.resetMiddleView(getActivity(), finalExchangeRate);
+                MiddleViewAdapter.resetMiddleView(app, finalExchangeRate);
                 adapter.notifyDataSetChanged();
 
             }
@@ -121,23 +125,28 @@ public class FragmentCurrency extends Fragment {
                 tryAndSetAdapter();
             }
         }, 500);
-        allowChangeDisplayUnits((MainActivity) getActivity(), true);
+        Activity app = getActivity();
+        if (app != null)
+            allowChangeDisplayUnits((MainActivity) app, true);
     }
 
     private void setMiddleExchangeRate() {
+        Activity app = getActivity();
+        if (app == null) return;
         final String iso = SharedPreferencesManager.getIso(getActivity());
         float tmpRate;
-        tmpRate = (adapter != null && !adapter.isEmpty()) ?
-                adapter.getItem(SharedPreferencesManager.getCurrencyListPosition(getActivity())).rate
-                : SharedPreferencesManager.getRate(getActivity());
-        String readyText = BRStringFormatter.getMiddleTextExchangeString(tmpRate, iso, getActivity());
-        MiddleViewAdapter.resetMiddleView(getActivity(), readyText);
+        CurrencyEntity item = (adapter != null && !adapter.isEmpty()) ? adapter.getItem(SharedPreferencesManager.getCurrencyListPosition(app)) : null;
+        tmpRate = item == null ? SharedPreferencesManager.getRate(app) : item.rate;
+        String readyText = BRStringFormatter.getMiddleTextExchangeString(tmpRate, iso, app);
+        MiddleViewAdapter.resetMiddleView(app, readyText);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        allowChangeDisplayUnits((MainActivity) getActivity(), false);
+        Activity app = getActivity();
+        if (app != null)
+            allowChangeDisplayUnits((MainActivity) app, false);
     }
 
     private void allowChangeDisplayUnits(MainActivity app, boolean allow) {
@@ -161,14 +170,17 @@ public class FragmentCurrency extends Fragment {
     //0 - left, 1 - right
     private void changeUnitWithDirection() {
         MainActivity app = MainActivity.app;
-        if(app == null) return;
+        if (app == null) return;
         int unit = SharedPreferencesManager.getCurrencyUnit(app);
         switch (unit) {
-            case BRConstants.CURRENT_UNIT_BITS:  SharedPreferencesManager.putCurrencyUnit(app, BRConstants.CURRENT_UNIT_MBITS);
+            case BRConstants.CURRENT_UNIT_BITS:
+                SharedPreferencesManager.putCurrencyUnit(app, BRConstants.CURRENT_UNIT_MBITS);
                 break;
-            case BRConstants.CURRENT_UNIT_MBITS:  SharedPreferencesManager.putCurrencyUnit(app, BRConstants.CURRENT_UNIT_BITCOINS);
+            case BRConstants.CURRENT_UNIT_MBITS:
+                SharedPreferencesManager.putCurrencyUnit(app, BRConstants.CURRENT_UNIT_BITCOINS);
                 break;
-            case BRConstants.CURRENT_UNIT_BITCOINS:  SharedPreferencesManager.putCurrencyUnit(app, BRConstants.CURRENT_UNIT_BITS);
+            case BRConstants.CURRENT_UNIT_BITCOINS:
+                SharedPreferencesManager.putCurrencyUnit(app, BRConstants.CURRENT_UNIT_BITS);
                 break;
         }
 

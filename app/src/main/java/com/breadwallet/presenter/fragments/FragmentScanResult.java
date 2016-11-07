@@ -32,6 +32,7 @@ import java.util.Currency;
 import java.util.Locale;
 import java.util.Objects;
 
+import static com.breadwallet.R.string.amount;
 import static com.breadwallet.tools.util.BRConstants.CURRENT_UNIT_BITS;
 import static com.breadwallet.tools.util.BRStringFormatter.getNumberOfDecimalPlaces;
 
@@ -107,14 +108,13 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         customKeyboardLayout.getViewTreeObserver().addOnGlobalLayoutListener(
                 new ViewTreeObserver.OnGlobalLayoutListener() {
                     public void onGlobalLayout() {
-                        MainActivity app = MainActivity.app;
+                        MainActivity app = (MainActivity) getActivity();
                         if (app != null)
                             if (!app.isSoftKeyboardShown()) {
                                 int[] locations = new int[2];
                                 customKeyboardLayout.getLocationOnScreen(locations);
                                 customKeyboardLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                                 createCustomKeyboardButtons(locations[1]);
-
                             }
                     }
                 });
@@ -146,7 +146,9 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         updateRateAndISO();
         calculateAndPassValuesToFragment("0");
         scanResult.setText(isARequest ? "" : getString(R.string.to) + address);
-
+        Activity app = getActivity();
+        if (app != null)
+            unit = SharedPreferencesManager.getCurrencyUnit(app);
         super.onResume();
     }
 
@@ -154,7 +156,9 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
     public void onPause() {
         super.onPause();
         resetKeyboard();
-        ((BreadWalletApp) getActivity().getApplication()).setLockerPayButton(BRConstants.LOCKER_BUTTON);
+        Activity app = getActivity();
+        if (app != null)
+            ((BreadWalletApp) app.getApplication()).setLockerPayButton(BRConstants.LOCKER_BUTTON);
         isARequest = false;
         BRAnimator.hideScanResultFragment();
     }
@@ -165,6 +169,8 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
     }
 
     private void createCustomKeyboardButtons(int y) {
+        Activity app = getActivity();
+        if (app == null) return;
         int availableWidth = MainActivity.screenParametersPoint.x;
         int availableHeight = MainActivity.screenParametersPoint.y;
         int spaceNeededForRest = availableHeight / 14;
@@ -181,12 +187,12 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         }
         int minimumHeight = (int) (buttonHeight * 4 + interButtonGap * 4);
         if (customKeyboardLayout == null) {
-            customKeyboardLayout = (RelativeLayout) getActivity().findViewById(R.id.custom_keyboard_layout);
+            customKeyboardLayout = (RelativeLayout) app.findViewById(R.id.custom_keyboard_layout);
         }
         customKeyboardLayout.setMinimumHeight(minimumHeight);
         int childCount = 12;
         for (int i = 0; i < childCount; i++) {
-            Button b = new Button(getActivity());
+            Button b = new Button(app);
             b.setWidth((int) buttonWidth);
             b.setHeight((int) buttonHeight);
             b.setTextSize(buttonTextSize);
@@ -246,7 +252,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
                     b.setY(buttonHeight * 3 + interButtonGap * 3);
                     break;
                 case 11:
-                    imageB = new ImageButton(getActivity());
+                    imageB = new ImageButton(app);
                     imageB.setBackgroundResource(R.drawable.button_regular_blue);
                     imageB.setImageResource(R.drawable.deletetoleft);
                     imageB.setOnClickListener(this);
@@ -302,7 +308,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
     }
 
     private void updateRateAndISO() {
-        MainActivity app = MainActivity.app;
+        Activity app = getActivity();
         if (app == null) return;
         ISO = SharedPreferencesManager.getIso(app);
         getOtherValue().iso = ISO;
@@ -310,9 +316,9 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
     }
 
     public void preConditions(String tmp) {
-        Activity context = MainActivity.app;
-        if (context != null)
-            unit = SharedPreferencesManager.getCurrencyUnit(context);
+        Activity app = getActivity();
+        if(app == null) return;
+        unit = SharedPreferencesManager.getCurrencyUnit(app);
         if (FragmentScanResult.isARequest) {
             buttonCode = BRConstants.REQUEST_BUTTON;
         } else {
@@ -332,7 +338,8 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
     }
 
     private void doBackSpace() {
-        MainActivity app = MainActivity.app;
+        Activity app = getActivity();
+        if(app == null) return;
         String amount = rightValue.value;
         int length = amount.length();
         if (length > 1) {
@@ -345,7 +352,8 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
     }
 
     private void insertSeparator() {
-        MainActivity app = MainActivity.app;
+        Activity app = getActivity();
+        if(app == null) return;
         if (isTextColorGrey) {
             changeTextColor(1);
             ((BreadWalletApp) app.getApplication()).setLockerPayButton(buttonCode);
@@ -358,8 +366,8 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
     }
 
     private void insertDigit(String tmp) {
-
-        MainActivity app = MainActivity.app;
+        Activity app = getActivity();
+        if(app == null) return;
         String amount = rightValue.value;
 
         int length = amount.length();
@@ -425,10 +433,11 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
      * @param color the color of the textView: 1 Black, 2 Grey.
      */
     private void changeTextColor(int color) {
-        Activity context = MainActivity.app;
+        Activity app = getActivity();
+        if (app == null) return;
         isTextColorGrey = color != 1;
-        rightTextView.setTextColor((color == 1) ? context.getColor(R.color.black)
-                : context.getColor(android.R.color.darker_gray));
+        rightTextView.setTextColor((color == 1) ? app.getColor(R.color.black)
+                : app.getColor(android.R.color.darker_gray));
     }
 
     public void resetKeyboard() {
@@ -497,9 +506,8 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
     }
 
     public String getFormattedCurrencyStringForKeyboard(String isoCurrencyCode, String amount, boolean rightItem) {
-        MainActivity app = MainActivity.app;
-        int unit = app == null ? CURRENT_UNIT_BITS : SharedPreferencesManager.getCurrencyUnit(app);
-        if (amount == null) {
+        Activity app = getActivity();
+        if (amount == null || app == null) {
 //            Log.e(TAG, "getFormattedCurrencyStringForKeyboard: AMOUNT == null");
             return "0";
         }
@@ -527,26 +535,24 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         int decimalPoints = 0;
         if (Objects.equals(isoCurrencyCode, "BTC")) {
             String currencySymbolString = BRConstants.bitcoinLowercase;
-            if (app != null) {
-                currencyFormat.setMinimumFractionDigits(0);
-                switch (unit) {
-                    case CURRENT_UNIT_BITS:
-                        currencySymbolString = BRConstants.bitcoinLowercase;
-                        decimalPoints = 2;
-                        if (getNumberOfDecimalPlaces(result.toPlainString()) == 1)
-                            currencyFormat.setMinimumFractionDigits(1);
-                        break;
-                    case BRConstants.CURRENT_UNIT_MBITS:
-                        currencySymbolString = "m" + BRConstants.bitcoinUppercase;
-                        decimalPoints = 5;
-                        result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100000"));
-                        break;
-                    case BRConstants.CURRENT_UNIT_BITCOINS:
-                        currencySymbolString = BRConstants.bitcoinUppercase;
-                        decimalPoints = 8;
-                        result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100000000"));
-                        break;
-                }
+            currencyFormat.setMinimumFractionDigits(0);
+            switch (unit) {
+                case CURRENT_UNIT_BITS:
+                    currencySymbolString = BRConstants.bitcoinLowercase;
+                    decimalPoints = 2;
+                    if (getNumberOfDecimalPlaces(result.toPlainString()) == 1)
+                        currencyFormat.setMinimumFractionDigits(1);
+                    break;
+                case BRConstants.CURRENT_UNIT_MBITS:
+                    currencySymbolString = "m" + BRConstants.bitcoinUppercase;
+                    decimalPoints = 5;
+                    result = new BigDecimal(String.valueOf(result.doubleValue())).divide(new BigDecimal("1000"));
+                    break;
+                case BRConstants.CURRENT_UNIT_BITCOINS:
+                    currencySymbolString = BRConstants.bitcoinUppercase;
+                    decimalPoints = 8;
+                    result = new BigDecimal(String.valueOf(result.doubleValue())).divide(new BigDecimal("1000000"));
+                    break;
             }
             symbol = currencySymbolString;
         } else {
