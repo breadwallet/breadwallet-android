@@ -98,22 +98,6 @@ public class FragmentAbout extends Fragment {
                 }
             });
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                PlatformSqliteManager sqliteManager = PlatformSqliteManager.getInstance(getActivity());
-                List<KVEntity> kvs = sqliteManager.getKVs();
-                Log.e(TAG, "kvs test before: " + kvs.size());
-                sqliteManager.insertKv(1, 2, "key1", "somebytes".getBytes(), System.currentTimeMillis(), 0);
-                sqliteManager.insertKv(4, 4, "key2", "somebytes2".getBytes(), System.currentTimeMillis(), 1);
-                kvs = sqliteManager.getKVs();
-                Log.e(TAG, "kvs test after: " + kvs.size());
-                for (KVEntity kv : kvs){
-                    kv.printValues();
-                }
-            }
-        }).start();
-
         return rootView;
     }
 

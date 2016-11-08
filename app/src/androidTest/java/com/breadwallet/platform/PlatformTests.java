@@ -1,4 +1,4 @@
-package com.breadwallet;
+package com.breadwallet.platform;
 
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -7,9 +7,10 @@ import android.util.Log;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.util.Utils;
 import com.platform.APIClient;
+import com.platform.sqlite.KVEntity;
+import com.platform.sqlite.PlatformSqliteManager;
 
 import org.apache.commons.compress.compressors.CompressorException;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -22,12 +23,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
-import io.sigpipe.jbsdiff.DefaultDiffSettings;
-import io.sigpipe.jbsdiff.DiffSettings;
 import io.sigpipe.jbsdiff.InvalidHeaderException;
 import io.sigpipe.jbsdiff.Patch;
-import io.sigpipe.jbsdiff.ui.FileUI;
 import okhttp3.Request;
 import okhttp3.Response;
 
@@ -35,7 +34,6 @@ import static com.platform.APIClient.BREAD_BUY;
 import static com.platform.APIClient.BUNDLES;
 import static com.platform.APIClient.bundleFileName;
 import static com.platform.APIClient.extractedFolder;
-import static org.apache.commons.compress.compressors.CompressorStreamFactory.GZIP;
 
 /**
  * BreadWallet
@@ -229,6 +227,20 @@ public class PlatformTests {
         String response = apiClient.buyBitcoinMe().toLowerCase();
         String expectedString = "invalid signature";
         Assert.assertNotEquals(response, expectedString);
+    }
+
+    @Test
+    public void testKvStore() {
+        PlatformSqliteManager sqliteManager = PlatformSqliteManager.getInstance(mActivityRule.getActivity());
+        List<KVEntity> kvs = sqliteManager.getKVs();
+        Log.e(TAG, "kvs test before: " + kvs.size());
+        sqliteManager.insertKv(1, 2, "key1", "somebytes".getBytes(), System.currentTimeMillis(), 0);
+        sqliteManager.insertKv(4, 4, "key2", "somebytes2".getBytes(), System.currentTimeMillis(), 1);
+        kvs = sqliteManager.getKVs();
+        Log.e(TAG, "kvs test after: " + kvs.size());
+        for (KVEntity kv : kvs) {
+            kv.printValues();
+        }
     }
 
 }
