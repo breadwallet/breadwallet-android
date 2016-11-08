@@ -2,6 +2,11 @@ package com.platform.middlewares.plugins;
 
 import com.platform.interfaces.Plugin;
 
+import org.eclipse.jetty.server.Request;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * BreadWallet
  * <p/>
@@ -28,4 +33,9 @@ import com.platform.interfaces.Plugin;
  */
 public class KVStorePlugin implements Plugin{
     public static final String TAG = KVStorePlugin.class.getName();
+
+    @Override
+    public boolean handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
+        return false;
+    }
 }

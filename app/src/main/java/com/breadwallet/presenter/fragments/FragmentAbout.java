@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +17,10 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.platform.APIClient;
+import com.platform.sqlite.KVEntity;
+import com.platform.sqlite.PlatformSqliteManager;
 
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -45,7 +49,7 @@ import java.util.Locale;
  */
 
 public class FragmentAbout extends Fragment {
-
+    private static final String TAG = FragmentAbout.class.getName();
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -95,12 +99,21 @@ public class FragmentAbout extends Fragment {
                 }
             });
 
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                APIClient.getInstance(getActivity()).buyBitcoinMe();
-//            }
-//        }).start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                PlatformSqliteManager sqliteManager = PlatformSqliteManager.getInstance(getActivity());
+                List<KVEntity> kvs = sqliteManager.getKVs();
+                Log.e(TAG, "kvs test before: " + kvs.size());
+                sqliteManager.insertKv(1, 2, "key1", "somebytes".getBytes(), System.currentTimeMillis(), 0);
+                sqliteManager.insertKv(4, 4, "key2", "somebytes2".getBytes(), System.currentTimeMillis(), 1);
+                kvs = sqliteManager.getKVs();
+                Log.e(TAG, "kvs test after: " + kvs.size());
+                for (KVEntity kv : kvs){
+                    kv.printValues();
+                }
+            }
+        }).start();
 
         return rootView;
     }
