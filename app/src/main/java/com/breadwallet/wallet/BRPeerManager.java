@@ -192,17 +192,11 @@ public class BRPeerManager {
         }
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) {
-            if (!((BreadWalletApp) ctx.getApplication()).hasInternetAccess()) {
-                syncTask.interrupt();
-                syncTask = null;
-                return;
-            }
             MiddleViewAdapter.setSyncing(ctx, true);
             ctx.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        ctx.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                         if (BRAnimator.level == 0)
                             ((MainActivity) ctx).showHideSyncProgressViews(true);
                     } catch (Exception e) {
@@ -233,7 +227,6 @@ public class BRPeerManager {
 
         try {
             if (syncTask != null) {
-//                syncTask.setRunning(false);
                 syncTask.interrupt();
                 syncTask = null;
             }
@@ -257,6 +250,7 @@ public class BRPeerManager {
             progressStatus = 0;
             final DecimalFormat decimalFormat = new DecimalFormat("#.#");
             if (app != null) {
+                app.setProgress((int) (progressStatus * 100), String.format("%s%%", decimalFormat.format(progressStatus * 100)));
                 progressStatus = syncProgress(SharedPreferencesManager.getStartHeight(app));
                 app.runOnUiThread(new Runnable() {
                     @Override
@@ -270,8 +264,6 @@ public class BRPeerManager {
                 int startHeight = SharedPreferencesManager.getStartHeight(app);
                 while (running) {
                     progressStatus = syncProgress(startHeight);
-//                    Log.e(TAG, String.format("Thread:%s, progressStatus: %.2f, sync: %b",
-//                            Thread.currentThread().getName(), progressStatus, MiddleViewAdapter.getSyncing()));
                     if (progressStatus == 1) running = false;
                     app.runOnUiThread(new Runnable() {
                         @Override

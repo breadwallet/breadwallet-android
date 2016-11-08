@@ -93,7 +93,6 @@ public class FragmentAbout extends Fragment {
 
                         // need this to prompts email client only
                         email.setType("message/rfc822");
-
                         startActivity(Intent.createChooser(email, getActivity().getString(R.string.choose_an_email_client)));
                     }
                 }
