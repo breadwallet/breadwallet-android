@@ -31,11 +31,11 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 
-class PlatformSqliteHelper extends SQLiteOpenHelper {
+public class PlatformSqliteHelper extends SQLiteOpenHelper {
     private static final String TAG = PlatformSqliteHelper.class.getName();
 
-    private static final String DATABASE_NAME = "platform.db";
-    private static final int DATABASE_VERSION = 1;
+    public static final String DATABASE_NAME = "platform.db";
+    private static final int DATABASE_VERSION = 2;
 
     /**
      * KV Store table

@@ -32,7 +32,6 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,11 +73,10 @@ class KVDataSource {
     }
 
     public void putKV(KVEntity[] kvEntities) {
-        Log.e(TAG, "putKV: kvEntities.length: " + kvEntities.length);
+//        Log.e(TAG, "putKV: kvEntities.length: " + kvEntities.length);
         database.beginTransaction();
         try {
             for (KVEntity kv : kvEntities) {
-//                Log.e(TAG,"sqlite peer saved: " + Arrays.toString(p.getPeerTimeStamp()));
                 ContentValues values = new ContentValues();
                 values.put(PlatformSqliteHelper.KV_VERSION, kv.getVersion());
                 values.put(PlatformSqliteHelper.KV_REMOTE_VERSION, kv.getRemoteVersion());
@@ -88,7 +86,6 @@ class KVDataSource {
                 values.put(PlatformSqliteHelper.KV_DELETED, kv.getDeleted());
                 database.insert(PlatformSqliteHelper.KV_STORE_TABLE_NAME, null, values);
             }
-
             database.setTransactionSuccessful();
         } catch (Exception ex) {
             Log.e(TAG, "Error inserting into SQLite", ex);
@@ -100,11 +97,62 @@ class KVDataSource {
     }
 
     public void deleteKv(String key) {
-        Log.e(TAG, "kv deleted with key: " + key);
+//        Log.e(TAG, "kv deleted with key: " + key);
         database.delete(PlatformSqliteHelper.KV_STORE_TABLE_NAME, PlatformSqliteHelper.KV_KEY
                 + " = " + key, null);
     }
 
+
+    //get kv by key and version (version can be 0)
+    public KVEntity getKv(String key, long version) {
+        KVEntity kv = null;
+        Cursor cursor = null;
+        long curVer = 0;
+
+        //if no version, fine the version
+        if (version == 0) {
+            curVer = getVersionWithKey(key);
+        } else {
+            //if we have a version, check if it's correct
+            cursor = database.query(PlatformSqliteHelper.KV_STORE_TABLE_NAME,
+                    allColumns, "key = ? AND version = ?", new String[]{key, String.valueOf(version)},
+                    null, null, "version DESC", "1");
+            boolean success = cursor.moveToNext();
+            if (success)
+                curVer = cursor.getLong(0);
+            else
+                curVer = 0;
+        }
+
+        //if still 0 then version is non-existent or wrong.
+        if (curVer == 0) {
+            if (cursor != null)
+                cursor.close();
+            return null;
+        }
+
+        cursor = database.query(PlatformSqliteHelper.KV_STORE_TABLE_NAME,
+                allColumns, "key = ? AND version = ?", new String[]{key, String.valueOf(version)},
+                null, null, "version DESC", "1");
+        if (cursor.getCount() != 0) {
+            cursor.moveToNext();
+            kv = cursorToKv(cursor);
+        }
+
+        cursor.close();
+        return kv;
+    }
+
+    public long getVersionWithKey(String key) {
+        long version;
+        String selectQuery = "SELECT version, thetime FROM " + PlatformSqliteHelper.KV_STORE_TABLE_NAME + " WHERE key = ? ORDER BY version DESC LIMIT 1";
+        Cursor cursor = database.rawQuery(selectQuery, new String[]{key});
+        version = cursor.getLong(0);
+
+        cursor.close();
+        return version;
+
+    }
 //    public void deleteKv(KVEntity kv) {
 //        Log.e(TAG, "kv deleted with key: " + kv.getKey());
 //        database.delete(PlatformSqliteHelper.KV_STORE_TABLE_NAME, PlatformSqliteHelper.KV_KEY
@@ -120,10 +168,10 @@ class KVDataSource {
 
         Cursor cursor = database.query(PlatformSqliteHelper.KV_STORE_TABLE_NAME,
                 allColumns, null, null, null, null, null);
-
+        Log.e(TAG, "getAllKVs: cursor size: " + cursor.getCount());
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
-            KVEntity kvEntity = cursorToPeer(cursor);
+            KVEntity kvEntity = cursorToKv(cursor);
             kvs.add(kvEntity);
             cursor.moveToNext();
         }
@@ -134,27 +182,24 @@ class KVDataSource {
         return kvs;
     }
 
+    private KVEntity cursorToKv(Cursor cursor) {
+        long version = 0;
+        long remoteVersion = 0;
+        String key = null;
+        byte[] value = null;
+        long time = 0;
+        int deleted = 0;
 
-//    func _localVersion(_ key: String) throws -> (UInt64, Date) {
-//        var stmt: OpaquePointer? = nil
-//        defer {
-//            sqlite3_finalize(stmt)
-//        }
-//        try self.checkErr(sqlite3_prepare_v2(
-//                self.db, "SELECT version, thetime FROM kvstore WHERE key = ? ORDER BY version DESC LIMIT 1", -1,
-//                &stmt, nil
-//        ), s: "get version - prepare")
-//        sqlite3_bind_text(stmt, 1, NSString(string: key).utf8String, -1, nil)
-//        try self.checkErr(sqlite3_step(stmt), s: "get version - exec", r: SQLITE_ROW)
-//        return (
-//                UInt64(sqlite3_column_int64(stmt, 0)),
-//        Date.withMsTimestamp(UInt64(sqlite3_column_int64(stmt, 1)))
-//        )
-//    }
-
-    private KVEntity cursorToPeer(Cursor cursor) {
-        KVEntity kvEntity = new KVEntity(cursor.getLong(0), cursor.getLong(1), cursor.getString(2), cursor.getBlob(3), cursor.getLong(4), cursor.getInt(5));
-//        peerEntity.setId(cursor.getInt(0));
-        return kvEntity;
+        try {
+            version = cursor.getLong(0);
+            remoteVersion = cursor.getLong(1);
+            key = cursor.getString(2);
+            value = cursor.getBlob(3);
+            time = cursor.getLong(4);
+            deleted = cursor.getInt(5);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new KVEntity(version, remoteVersion, key, value, time, deleted);
     }
 }

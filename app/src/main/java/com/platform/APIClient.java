@@ -147,7 +147,7 @@ public class APIClient {
         return 0;
     }
 
-    public String buyBitcoinMe() {
+    public Response buyBitcoinMe() {
         if (ctx == null) ctx = MainActivity.app;
         if (ctx == null) return null;
         String strUtl = BASE_URL + ME;
@@ -174,7 +174,7 @@ public class APIClient {
         Log.e(TAG, "buyBitcoinMe: response: " + response);
         Log.e(TAG, "buyBitcoinMe: message: " + res.message());
 
-        return response;
+        return res;
     }
 
     public String getToken() {

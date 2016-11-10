@@ -29,6 +29,7 @@ import io.sigpipe.jbsdiff.InvalidHeaderException;
 import io.sigpipe.jbsdiff.Patch;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 import static com.platform.APIClient.BREAD_BUY;
 import static com.platform.APIClient.BUNDLES;
@@ -218,29 +219,16 @@ public class PlatformTests {
     @Test
     public void testGetToken() {
         APIClient apiClient = APIClient.getInstance(mActivityRule.getActivity());
-        apiClient.getToken();
+        String token = apiClient.getToken();
+        Assert.assertNotNull(token);
+        Assert.assertNotEquals(token.length(), 0);
     }
 
     @Test
     public void testMeRequest() {
         APIClient apiClient = APIClient.getInstance(mActivityRule.getActivity());
-        String response = apiClient.buyBitcoinMe().toLowerCase();
-        String expectedString = "invalid signature";
-        Assert.assertNotEquals(response, expectedString);
-    }
-
-    @Test
-    public void testKvStore() {
-        PlatformSqliteManager sqliteManager = PlatformSqliteManager.getInstance(mActivityRule.getActivity());
-        List<KVEntity> kvs = sqliteManager.getKVs();
-        Log.e(TAG, "kvs test before: " + kvs.size());
-        sqliteManager.insertKv(1, 2, "key1", "somebytes".getBytes(), System.currentTimeMillis(), 0);
-        sqliteManager.insertKv(4, 4, "key2", "somebytes2".getBytes(), System.currentTimeMillis(), 1);
-        kvs = sqliteManager.getKVs();
-        Log.e(TAG, "kvs test after: " + kvs.size());
-        for (KVEntity kv : kvs) {
-            kv.printValues();
-        }
+        Response response = apiClient.buyBitcoinMe();
+        Assert.assertTrue(response.isSuccessful());
     }
 
 }
