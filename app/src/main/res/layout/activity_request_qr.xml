@@ -3,22 +3,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@drawable/backgroundmain_cropped"
+    android:filterTouchesWhenObscured="true"
+    android:orientation="vertical"
     tools:context="com.breadwallet.presenter.activities.RequestQRActivity">
 
     <Button
         android:id="@+id/request_close"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:background="@drawable/x" />
+        android:background="@drawable/x"
+        android:filterTouchesWhenObscured="true" />
 
     <TextView
-        android:layout_marginTop="60dp"
         android:id="@+id/request_amount_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginTop="60dp"
+        android:filterTouchesWhenObscured="true"
         android:textSize="20sp" />
 
     <ImageView
@@ -26,23 +29,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="15dp" />
+        android:layout_marginTop="15dp"
+        android:filterTouchesWhenObscured="true" />
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/request_address_layout"
-        android:layout_marginTop="5dp"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:filterTouchesWhenObscured="true"
         android:orientation="vertical">
 
         <TextView
-            android:padding="15dp"
             android:id="@+id/request_address_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
+            android:filterTouchesWhenObscured="true"
             android:gravity="center"
+            android:padding="15dp"
             android:textSize="16sp" />
     </RelativeLayout>
 

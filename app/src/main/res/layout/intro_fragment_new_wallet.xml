@@ -2,20 +2,24 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:filterTouchesWhenObscured="true">
 
     <RelativeLayout
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:layout_height="wrap_content">
+        android:filterTouchesWhenObscured="true">
+
         <TextView
             android:id="@+id/intro_new_wallet_text1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:padding="20dp"
+            android:filterTouchesWhenObscured="true"
             android:gravity="center"
+            android:padding="20dp"
             android:text="@string/generate_phrase_text1"
             android:textAlignment="center"
             android:textColor="@color/white"
@@ -28,29 +32,31 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/intro_new_wallet_text1"
             android:layout_centerHorizontal="true"
-            android:padding="20dp"
+            android:filterTouchesWhenObscured="true"
             android:gravity="center"
+            android:padding="20dp"
+            android:stateListAnimator="@null"
             android:text="@string/generate_phrase_text2"
             android:textAlignment="center"
-            android:stateListAnimator="@null"
             android:textColor="@color/white"
             android:textSize="20sp" />
 
         <Button
             android:id="@+id/intro_new_wallet_generate"
-            android:padding="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/intro_new_wallet_text2"
-            android:stateListAnimator="@null"
             android:layout_centerHorizontal="true"
+            android:layout_marginBottom="30dp"
             android:layout_marginTop="80dp"
             android:background="@drawable/button_white"
+            android:filterTouchesWhenObscured="true"
+            android:padding="5dp"
+            android:stateListAnimator="@null"
             android:text="@string/generate_recovery_phrase"
             android:textAllCaps="false"
             android:textColor="@color/white"
-            android:textSize="20sp"
-            android:layout_marginBottom="30dp"/>
+            android:textSize="20sp" />
     </RelativeLayout>
 
 

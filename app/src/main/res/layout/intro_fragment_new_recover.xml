@@ -2,36 +2,40 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:filterTouchesWhenObscured="true">
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true">
+        android:layout_centerVertical="true"
+        android:filterTouchesWhenObscured="true">
 
         <Button
             android:id="@+id/intro_new_wallet"
             android:layout_width="220dp"
             android:layout_height="wrap_content"
             android:background="@drawable/button_white"
-            android:textAllCaps="false"
+            android:filterTouchesWhenObscured="true"
             android:stateListAnimator="@null"
             android:text="@string/new_wallet"
+            android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="20sp" />
 
         <Button
             android:id="@+id/intro_recover_wallet"
-            android:stateListAnimator="@null"
             android:layout_width="220dp"
             android:layout_height="wrap_content"
             android:layout_below="@+id/intro_new_wallet"
-            android:textAllCaps="false"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="60dp"
             android:background="@drawable/button_white"
+            android:filterTouchesWhenObscured="true"
+            android:stateListAnimator="@null"
             android:text="@string/recover_wallet"
+            android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="20sp" />
     </RelativeLayout>

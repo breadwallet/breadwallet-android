@@ -2,7 +2,8 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:filterTouchesWhenObscured="true">
 
 
     <TextView
@@ -10,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="140dp"
+        android:filterTouchesWhenObscured="true"
         android:gravity="center"
         android:text="@string/important"
         android:textSize="24sp"
@@ -22,8 +24,9 @@
         android:layout_below="@id/warning_flow"
         android:layout_centerHorizontal="true"
         android:layout_marginEnd="30dp"
-        android:layout_marginTop="20dp"
         android:layout_marginStart="30dp"
+        android:layout_marginTop="20dp"
+        android:filterTouchesWhenObscured="true"
         android:fontFamily="sans-serif-light"
         android:gravity="center"
         android:text="@string/warning_text1"
@@ -39,6 +42,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginEnd="30dp"
         android:layout_marginStart="30dp"
+        android:filterTouchesWhenObscured="true"
         android:fontFamily="sans-serif-light"
         android:gravity="center"
         android:text="@string/warning_text2"
@@ -54,6 +58,7 @@
         android:layout_alignParentEnd="true"
         android:layout_margin="20dp"
         android:background="@android:color/transparent"
+        android:filterTouchesWhenObscured="true"
         android:text="@string/show_phrase"
         android:textColor="@color/dark_blue"
         android:textSize="18sp" />

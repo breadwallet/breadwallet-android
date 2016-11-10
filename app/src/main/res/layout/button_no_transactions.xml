@@ -2,7 +2,8 @@
     android:layout_width="match_parent"
     android:layout_height="50dp"
     android:background="@color/white_trans"
-    android:clickable="false">
+    android:clickable="false"
+    android:filterTouchesWhenObscured="true">
 
     <TextView
         android:layout_width="wrap_content"
@@ -10,6 +11,7 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:layout_marginStart="20dp"
+        android:filterTouchesWhenObscured="true"
         android:gravity="center"
         android:text="@string/no_transactions"
         android:textAppearance="?android:attr/textAppearanceLarge"

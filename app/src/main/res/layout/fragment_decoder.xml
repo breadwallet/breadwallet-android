@@ -17,14 +17,9 @@
     android:id="@+id/fragment_decoder_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black">
+    android:background="@color/black"
+    android:filterTouchesWhenObscured="true">
 
-    <!--<com.breadwallet.tools.qrcode.AutoFitTextureView-->
-    <!--android:id="@+id/texture"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_alignParentStart="true"-->
-    <!--android:layout_alignParentTop="true" />-->
 
     <ImageView
         android:id="@+id/decoder_camera_guide_image"
@@ -32,6 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
+        android:filterTouchesWhenObscured="true"
         android:src="@drawable/cameraguide" />
 
     <TextView
@@ -41,17 +37,10 @@
         android:layout_above="@+id/decoder_camera_guide_image"
         android:layout_centerHorizontal="true"
         android:layout_margin="10dp"
+        android:filterTouchesWhenObscured="true"
         android:shadowColor="@color/black"
         android:shadowRadius="2"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@android:color/white" />
-
-    <!--<ImageButton-->
-        <!--android:id="@+id/button_flash"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--android:layout_alignParentEnd="true"-->
-        <!--android:background="@drawable/flash_off" />-->
 
 </RelativeLayout>

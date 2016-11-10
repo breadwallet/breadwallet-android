@@ -4,6 +4,7 @@
     android:layout_height="wrap_content"
     android:layout_gravity="bottom"
     android:background="@drawable/toast_layout_orange"
+    android:filterTouchesWhenObscured="true"
     android:orientation="horizontal"
     android:padding="8dp"
     android:showDividers="middle">
@@ -12,5 +13,6 @@
         android:id="@+id/toast_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:filterTouchesWhenObscured="true"
         android:textColor="#FFF" />
 </LinearLayout>

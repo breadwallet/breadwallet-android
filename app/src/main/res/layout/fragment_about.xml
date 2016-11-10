@@ -3,29 +3,34 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:filterTouchesWhenObscured="true"
     android:paddingTop="90dp">
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:filterTouchesWhenObscured="true">
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:filterTouchesWhenObscured="true"
             android:orientation="vertical">
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/separator_height"
                 android:layout_marginTop="70dp"
-                android:background="@color/gray" />
+                android:background="@color/gray"
+                android:filterTouchesWhenObscured="true" />
 
             <RelativeLayout
                 android:id="@+id/about"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/clickable_layout"
-                android:clickable="false">
+                android:clickable="false"
+                android:filterTouchesWhenObscured="true">
 
                 <TextView
                     android:id="@+id/about1"
@@ -33,6 +38,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="40dp"
+                    android:filterTouchesWhenObscured="true"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/dark_grey"
                     android:textSize="@dimen/text_size" />
@@ -43,6 +49,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/about1"
                     android:layout_centerHorizontal="true"
+                    android:filterTouchesWhenObscured="true"
                     android:text="@string/copyright_u00a9_2016_breadwallet_llc"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/dark_grey"
@@ -55,6 +62,7 @@
                     android:layout_below="@id/about2"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="20dp"
+                    android:filterTouchesWhenObscured="true"
                     android:text="@string/app_support"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/dark_grey"
@@ -67,9 +75,10 @@
                     android:layout_below="@id/about3"
                     android:layout_centerHorizontal="true"
                     android:autoLink="web"
+                    android:filterTouchesWhenObscured="true"
                     android:text="@string/support_website"
-                    android:textColor="@color/blue"
                     android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/blue"
                     android:textSize="@dimen/text_size" />
 
                 <TextView
@@ -79,6 +88,7 @@
                     android:layout_below="@id/about4"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="20dp"
+                    android:filterTouchesWhenObscured="true"
                     android:text="@string/exchange_rate_data_provided_by"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/dark_grey"
@@ -90,6 +100,7 @@
                     android:layout_below="@id/about5"
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="30dp"
+                    android:filterTouchesWhenObscured="true"
                     android:text="@string/bitpay_com_rates"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/dark_grey"
@@ -100,7 +111,8 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/separator_height"
-                android:background="@color/gray" />
+                android:background="@color/gray"
+                android:filterTouchesWhenObscured="true" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

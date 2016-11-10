@@ -4,16 +4,18 @@
     android:layout_gravity="bottom"
     android:background="@drawable/copy_button"
     android:elevation="2dp"
+    android:filterTouchesWhenObscured="true"
     android:orientation="horizontal">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:filterTouchesWhenObscured="true"
         android:padding="10dp"
-        android:textStyle="bold"
         android:paddingEnd="15dp"
         android:paddingStart="15dp"
         android:text="@string/copy"
         android:textAllCaps="true"
-        android:textColor="@color/black" />
+        android:textColor="@color/black"
+        android:textStyle="bold" />
 </LinearLayout>

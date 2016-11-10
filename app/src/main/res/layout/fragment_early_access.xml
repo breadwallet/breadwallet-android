@@ -4,6 +4,7 @@
     android:id="@+id/early_access_web_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:filterTouchesWhenObscured="true"
     android:paddingTop="90dp">
 
 </WebView>

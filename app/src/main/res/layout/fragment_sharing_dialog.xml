@@ -1,27 +1,30 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:paddingEnd="10dp"
-    android:paddingStart="10dp"
     android:layout_gravity="center"
-    android:orientation="vertical">
+    android:filterTouchesWhenObscured="true"
+    android:orientation="vertical"
+    android:paddingEnd="10dp"
+    android:paddingStart="10dp">
 
     <TextView
         android:id="@+id/sharing_title"
-        android:layout_marginTop="10dp"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:filterTouchesWhenObscured="true"
         android:gravity="center"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/gray"
-        android:layout_marginBottom="10dp"
         android:textSize="14sp" />
 
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/separator_height"
-        android:background="@color/gray" />
+        android:background="@color/gray"
+        android:filterTouchesWhenObscured="true" />
 
     <TextView
         android:id="@+id/copy_address"
@@ -29,6 +32,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/clickable_layout"
         android:clickable="true"
+        android:filterTouchesWhenObscured="true"
         android:gravity="center"
         android:padding="10dp"
         android:text="@string/copy_address_to_clipboard"
@@ -41,7 +45,8 @@
         android:layout_height="@dimen/separator_height"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:background="@color/gray" />
+        android:background="@color/gray"
+        android:filterTouchesWhenObscured="true" />
 
     <TextView
         android:id="@+id/send_message"
@@ -49,6 +54,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/clickable_layout"
         android:clickable="true"
+        android:filterTouchesWhenObscured="true"
         android:gravity="center"
         android:padding="10dp"
         android:text="@string/send_address_as_message"
@@ -61,7 +67,8 @@
         android:layout_height="@dimen/separator_height"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:background="@color/gray" />
+        android:background="@color/gray"
+        android:filterTouchesWhenObscured="true" />
 
     <TextView
         android:id="@+id/send_email"
@@ -69,6 +76,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/clickable_layout"
         android:clickable="true"
+        android:filterTouchesWhenObscured="true"
         android:gravity="center"
         android:padding="10dp"
         android:text="@string/send_address_as_email"
@@ -81,7 +89,8 @@
         android:layout_height="@dimen/separator_height"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:background="@color/gray" />
+        android:background="@color/gray"
+        android:filterTouchesWhenObscured="true" />
 
     <TextView
         android:id="@+id/request_amount"
@@ -89,6 +98,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/clickable_layout"
         android:clickable="true"
+        android:filterTouchesWhenObscured="true"
         android:gravity="center"
         android:padding="10dp"
         android:text="@string/request_an_amount"
@@ -99,7 +109,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/separator_height"
+        android:layout_marginBottom="5dp"
         android:background="@color/gray"
-        android:layout_marginBottom="5dp"/>
+        android:filterTouchesWhenObscured="true" />
 
 </LinearLayout>

@@ -3,19 +3,23 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black_trans">
+    android:background="@color/black_trans"
+    android:filterTouchesWhenObscured="true">
 
     <RelativeLayout
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:filterTouchesWhenObscured="true">
+
         <TextView
             android:id="@+id/intro_warning_text1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"
+            android:filterTouchesWhenObscured="true"
             android:text="@string/warning"
             android:textAlignment="center"
             android:textColor="@color/white"
@@ -28,6 +32,7 @@
             android:layout_below="@id/intro_warning_text1"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp"
+            android:filterTouchesWhenObscured="true"
             android:gravity="center"
             android:src="@drawable/no_eye" />
 
@@ -37,6 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/intro_warning_no_eye"
             android:layout_centerHorizontal="true"
+            android:filterTouchesWhenObscured="true"
             android:gravity="center"
             android:padding="10dp"
             android:text="@string/warning_text1"
@@ -50,6 +56,7 @@
             android:layout_below="@id/intro_warning_text2"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp"
+            android:filterTouchesWhenObscured="true"
             android:gravity="center"
             android:src="@drawable/no_key" />
 
@@ -58,6 +65,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/intro_warning_no_key"
             android:layout_centerHorizontal="true"
+            android:filterTouchesWhenObscured="true"
             android:gravity="center"
             android:padding="10dp"
             android:text="@string/warning_text2"
@@ -68,14 +76,15 @@
     <Button
         android:id="@+id/intro_warning_show_button"
         android:layout_width="wrap_content"
-        android:textAllCaps="false"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:textSize="16sp"
-        android:padding="20dp"
         android:background="@android:color/transparent"
+        android:filterTouchesWhenObscured="true"
+        android:padding="20dp"
         android:text="@string/show"
-        android:textColor="@color/white" />
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
 
 </RelativeLayout>

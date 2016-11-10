@@ -219,7 +219,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                 }
             }
         });
-
+        pay.setFilterTouchesWhenObscured(true);
         viewFlipper.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

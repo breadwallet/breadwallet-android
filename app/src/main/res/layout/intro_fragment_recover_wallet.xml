@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:filterTouchesWhenObscured="true">
 
     <TextView
         android:id="@+id/recover_wallet_text1"
@@ -9,6 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="80dp"
+        android:filterTouchesWhenObscured="true"
         android:text="@string/recovery_phrase"
         android:textColor="@color/white"
         android:textSize="16sp" />
@@ -21,6 +23,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="3dp"
         android:background="@android:color/transparent"
+        android:filterTouchesWhenObscured="true"
         android:padding="10dp"
         android:text="@string/recover_button"
         android:textAllCaps="false"
@@ -36,6 +39,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
         android:background="@color/white_trans"
+        android:filterTouchesWhenObscured="true"
         android:gravity="top"
         android:imeOptions="actionDone"
         android:inputType="textVisiblePassword|textMultiLine"
@@ -54,6 +58,7 @@
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="30dp"
         android:background="@android:color/transparent"
+        android:filterTouchesWhenObscured="true"
         android:text="@string/continue_button"
         android:textAllCaps="true"
         android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
@@ -67,10 +72,11 @@
         android:layout_alignTop="@+id/continue_button"
         android:layout_centerHorizontal="true"
         android:background="@android:color/transparent"
+        android:filterTouchesWhenObscured="true"
         android:text="@string/cancel"
         android:textAllCaps="true"
-        android:visibility="gone"
         android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
         android:textColor="@color/light_gray"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:visibility="gone" />
 </RelativeLayout>

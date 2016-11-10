@@ -2,18 +2,21 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="60dp">
+    android:layout_marginTop="60dp"
+    android:filterTouchesWhenObscured="true">
 
     <LinearLayout
         android:id="@+id/transactions_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:filterTouchesWhenObscured="true"
         android:orientation="vertical">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/separator_height"
-            android:background="@color/gray" />
+            android:background="@color/gray"
+            android:filterTouchesWhenObscured="true" />
 
         <RelativeLayout
             android:id="@+id/tx_id"
@@ -21,12 +24,14 @@
             android:layout_height="wrap_content"
             android:background="@drawable/clickable_layout"
             android:clickable="true"
+            android:filterTouchesWhenObscured="true"
             android:padding="@dimen/transaction_item_margin">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
+                android:filterTouchesWhenObscured="true"
                 android:text="@string/id"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@color/dark_grey"
@@ -36,10 +41,11 @@
                 android:id="@+id/tx_hash_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:clickable="false"
-                android:layout_centerVertical="true"
                 android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
                 android:layout_marginEnd="@dimen/transaction_item_margin"
+                android:clickable="false"
+                android:filterTouchesWhenObscured="true"
                 android:singleLine="false"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@color/gray"
@@ -51,7 +57,8 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/separator_height"
             android:layout_marginStart="@dimen/transaction_item_margin"
-            android:background="@color/gray" />
+            android:background="@color/gray"
+            android:filterTouchesWhenObscured="true" />
 
         <RelativeLayout
             android:id="@+id/tx_status"
@@ -59,6 +66,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/clickable_layout"
             android:clickable="true"
+            android:filterTouchesWhenObscured="true"
             android:padding="@dimen/transaction_item_margin">
 
 
@@ -66,6 +74,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
+                android:filterTouchesWhenObscured="true"
                 android:text="@string/status"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@color/dark_grey"
@@ -78,6 +87,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="@dimen/transaction_item_margin"
+                android:filterTouchesWhenObscured="true"
                 android:gravity="end"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@color/gray"
@@ -89,7 +99,8 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/separator_height"
             android:layout_marginStart="@dimen/transaction_item_margin"
-            android:background="@color/gray" />
+            android:background="@color/gray"
+            android:filterTouchesWhenObscured="true" />
 
         <RelativeLayout
             android:id="@+id/tx_amount"
@@ -97,12 +108,14 @@
             android:layout_height="wrap_content"
             android:background="@drawable/clickable_layout"
             android:clickable="true"
+            android:filterTouchesWhenObscured="true"
             android:padding="@dimen/transaction_item_margin">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
+                android:filterTouchesWhenObscured="true"
                 android:text="@string/amount"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@color/dark_grey"
@@ -115,10 +128,10 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="@dimen/transaction_item_margin"
+                android:filterTouchesWhenObscured="true"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@color/black"
-                android:textSize="18sp"
-                />
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/tx_exchange_text"
@@ -127,6 +140,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginStart="@dimen/transaction_item_margin"
                 android:layout_toStartOf="@id/tx_amount_text"
+                android:filterTouchesWhenObscured="true"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@color/gray"
                 android:textSize="15sp" />
@@ -136,7 +150,8 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/separator_height"
-            android:background="@color/gray" />
+            android:background="@color/gray"
+            android:filterTouchesWhenObscured="true" />
 
         <TextView
             android:id="@+id/tx_to_label"
@@ -144,6 +159,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/transaction_item_margin"
             android:layout_marginTop="20dp"
+            android:filterTouchesWhenObscured="true"
             android:text="@string/to"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/dark_grey"
@@ -153,19 +169,22 @@
             android:id="@+id/general_tx_to_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:filterTouchesWhenObscured="true"
             android:orientation="vertical" />
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/separator_height"
-            android:background="@color/gray" />
+            android:background="@color/gray"
+            android:filterTouchesWhenObscured="true" />
 
         <RelativeLayout
             android:id="@+id/tx_fee_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/clickable_layout"
-            android:clickable="true">
+            android:clickable="true"
+            android:filterTouchesWhenObscured="true">
 
 
             <TextView
@@ -174,6 +193,7 @@
                 android:layout_marginBottom="@dimen/transaction_item_margin"
                 android:layout_marginStart="@dimen/transaction_item_margin"
                 android:layout_marginTop="@dimen/transaction_item_margin"
+                android:filterTouchesWhenObscured="true"
                 android:text="@string/bitcoin_network_fee"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@color/gray"
@@ -187,10 +207,10 @@
                 android:layout_marginLeft="@dimen/transaction_item_margin"
                 android:layout_marginRight="@dimen/transaction_item_margin"
                 android:layout_marginTop="@dimen/transaction_item_margin"
+                android:filterTouchesWhenObscured="true"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@color/red_text"
-                android:textSize="12sp"
-                />
+                android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/tx_to_fee_exchange_text"
@@ -199,6 +219,7 @@
                 android:layout_alignBaseline="@+id/tx_to_fee_amount_text"
                 android:layout_marginStart="@dimen/transaction_item_margin"
                 android:layout_toStartOf="@id/tx_to_fee_amount_text"
+                android:filterTouchesWhenObscured="true"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@color/red_text"
                 android:textSize="12sp" />
@@ -208,7 +229,8 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/separator_height"
-            android:background="@color/gray" />
+            android:background="@color/gray"
+            android:filterTouchesWhenObscured="true" />
 
         <TextView
             android:id="@+id/tx_from_label"
@@ -216,6 +238,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/transaction_item_margin"
             android:layout_marginTop="@dimen/transaction_item_margin"
+            android:filterTouchesWhenObscured="true"
             android:text="@string/from"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/dark_grey"
@@ -225,6 +248,7 @@
             android:id="@+id/general_tx_from_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:filterTouchesWhenObscured="true"
             android:orientation="vertical" />
 
     </LinearLayout>

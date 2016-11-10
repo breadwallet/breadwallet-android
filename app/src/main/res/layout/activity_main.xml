@@ -6,13 +6,15 @@
     android:layout_height="match_parent"
     android:background="@android:color/transparent"
     android:descendantFocusability="beforeDescendants"
+    android:filterTouchesWhenObscured="true"
     android:focusableInTouchMode="true"
     tools:context="com.breadwallet.presenter.activities.MainActivity">
 
     <com.breadwallet.tools.adapter.ParallaxViewPager xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/main_viewpager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:filterTouchesWhenObscured="true" />
 
     <ViewFlipper
         android:id="@+id/middle_view_flipper"
@@ -20,19 +22,22 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
-        android:background="@android:color/transparent">
+        android:background="@android:color/transparent"
+        android:filterTouchesWhenObscured="true">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:background="@drawable/breadwalletupcentered"
+            android:filterTouchesWhenObscured="true"
             android:textAlignment="center" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:filterTouchesWhenObscured="true"
             android:text="@string/settings"
             android:textColor="@color/gray"
             android:textSize="14sp" />
@@ -42,9 +47,10 @@
         android:id="@+id/sync_progress_bar"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
-        android:indeterminateOnly="false"
         android:layout_height="2dp"
         android:layout_below="@+id/main_button_burger"
+        android:filterTouchesWhenObscured="true"
+        android:indeterminateOnly="false"
         android:progressDrawable="@drawable/progress_blue"
         android:visibility="gone" />
 
@@ -56,6 +62,7 @@
         android:layout_marginBottom="15dp"
         android:layout_marginStart="20dp"
         android:layout_toEndOf="@+id/middle_view_flipper"
+        android:filterTouchesWhenObscured="true"
         android:textColor="@color/light_gray"
         android:textSize="13sp"
         android:visibility="gone" />
@@ -65,26 +72,30 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_alignParentStart="true"
-        android:background="@drawable/burger" />
+        android:background="@drawable/burger"
+        android:filterTouchesWhenObscured="true" />
 
 
     <ViewFlipper
         android:id="@+id/locker_pay_flipper"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_alignParentEnd="true">
+        android:layout_alignParentEnd="true"
+        android:filterTouchesWhenObscured="true">
 
         <Button
             android:id="@+id/main_button_locker"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/locker" />
+            android:background="@drawable/locker"
+            android:filterTouchesWhenObscured="true" />
 
         <TextView
             android:id="@+id/main_button_pay"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clickable="true"
+            android:filterTouchesWhenObscured="true"
             android:gravity="center"
             android:text="@string/pay"
             android:textColor="@color/dark_blue"
@@ -95,6 +106,7 @@
             android:layout_height="match_parent"
             android:layout_marginEnd="10dp"
             android:clickable="true"
+            android:filterTouchesWhenObscured="true"
             android:gravity="center"
             android:onClick="request"
             android:text="@string/request"
@@ -109,6 +121,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:background="@color/pink"
+        android:filterTouchesWhenObscured="true"
         android:orientation="horizontal"
         android:visibility="visible">
 
@@ -116,7 +129,8 @@
             android:id="@+id/network_bar_line"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/separator_height"
-            android:background="@color/gray" />
+            android:background="@color/gray"
+            android:filterTouchesWhenObscured="true" />
 
         <TextView
             android:id="@+id/not_connected_text"
@@ -125,6 +139,7 @@
             android:layout_below="@+id/network_bar_line"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
+            android:filterTouchesWhenObscured="true"
             android:gravity="center"
             android:padding="2dp"
             android:text="@string/not_connected"
@@ -136,7 +151,8 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/separator_height"
             android:layout_below="@+id/not_connected_text"
-            android:background="@color/gray" />
+            android:background="@color/gray"
+            android:filterTouchesWhenObscured="true" />
 
     </RelativeLayout>
 
@@ -147,6 +163,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="20dp"
+        android:filterTouchesWhenObscured="true"
         android:orientation="horizontal">
 
         <ImageView
@@ -156,6 +173,7 @@
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:layout_marginStart="18dp"
+            android:filterTouchesWhenObscured="true"
             android:paddingBottom="@dimen/pager_indicator_shadow_padding"
             android:paddingLeft="@dimen/pager_indicator_shadow_padding"
             android:paddingRight="@dimen/pager_indicator_shadow_padding"
@@ -169,24 +187,13 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginEnd="18dp"
+            android:filterTouchesWhenObscured="true"
             android:paddingBottom="@dimen/pager_indicator_shadow_padding"
             android:paddingLeft="@dimen/pager_indicator_shadow_padding"
             android:paddingRight="@dimen/pager_indicator_shadow_padding"
             android:paddingTop="0dp"
             android:src="@drawable/circle_indicator" />
     </RelativeLayout>
-
-    <!--<TextView-->
-    <!--android:id="@+id/testnet"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_alignParentBottom="true"-->
-    <!--android:layout_alignParentEnd="true"-->
-    <!--android:alpha="0.7"-->
-    <!--android:padding="20dp"-->
-    <!--android:text="testnet"-->
-    <!--android:textAppearance="?android:attr/textAppearanceSmall"-->
-    <!--android:textColor="@color/dark_red" />-->
 
 
     <com.breadwallet.presenter.customviews.BubbleTextView
@@ -199,6 +206,7 @@
         android:layout_margin="10dp"
         android:layout_marginTop="10dp"
         android:background="@drawable/bubble_up"
+        android:filterTouchesWhenObscured="true"
         android:foregroundGravity="center"
         android:gravity="center"
         android:text="@string/middle_view_tip_first"
@@ -216,6 +224,7 @@
         android:layout_margin="10dp"
         android:layout_marginTop="10dp"
         android:background="@drawable/bubble_up"
+        android:filterTouchesWhenObscured="true"
         android:gravity="center"
         android:textColor="@android:color/white"
         android:textSize="16sp"
@@ -231,6 +240,7 @@
         android:layout_margin="10dp"
         android:layout_marginTop="10dp"
         android:background="@drawable/bubble_up"
+        android:filterTouchesWhenObscured="true"
         android:gravity="center"
         android:textColor="@android:color/white"
         android:textSize="16sp"
@@ -240,6 +250,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
+        android:filterTouchesWhenObscured="true"
         android:visibility="gone" />
 
 
@@ -249,6 +260,7 @@
         android:layout_height="match_parent"
         android:background="@android:color/transparent"
         android:clickable="true"
+        android:filterTouchesWhenObscured="true"
         android:visibility="gone">
 
     </RelativeLayout>

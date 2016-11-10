@@ -2,32 +2,35 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-android:layout_height="wrap_content"
-android:layout_below="@+id/tx_from_label"
-android:background="@drawable/clickable_layout"
-android:clickable="true">
-
-<TextView
-    android:id="@+id/tx_from_text"
-    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginStart="@dimen/transaction_item_margin"
-    android:layout_marginTop="@dimen/transaction_item_margin"
-    android:singleLine="true"
-    android:textAppearance="?android:attr/textAppearanceLarge"
-    android:textColor="@color/gray"
-    android:textSize="12sp" />
+    android:layout_below="@+id/tx_from_label"
+    android:background="@drawable/clickable_layout"
+    android:clickable="true"
+    android:filterTouchesWhenObscured="true">
 
-<TextView
-    android:id="@+id/tx_from_description"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_below="@+id/tx_from_text"
-    android:layout_marginBottom="@dimen/transaction_item_margin"
-    android:layout_marginStart="@dimen/transaction_item_margin"
-    android:text="@string/spent_address"
-    android:textAppearance="?android:attr/textAppearanceLarge"
-    android:textColor="@color/gray"
-    android:textSize="12sp" />
+    <TextView
+        android:id="@+id/tx_from_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/transaction_item_margin"
+        android:layout_marginTop="@dimen/transaction_item_margin"
+        android:filterTouchesWhenObscured="true"
+        android:singleLine="true"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/gray"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/tx_from_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tx_from_text"
+        android:layout_marginBottom="@dimen/transaction_item_margin"
+        android:layout_marginStart="@dimen/transaction_item_margin"
+        android:filterTouchesWhenObscured="true"
+        android:text="@string/spent_address"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/gray"
+        android:textSize="12sp" />
 
 </RelativeLayout>

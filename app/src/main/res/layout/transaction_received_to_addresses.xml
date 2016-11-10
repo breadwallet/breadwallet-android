@@ -5,7 +5,8 @@
     android:layout_height="wrap_content"
     android:layout_below="@+id/tx_to_label"
     android:background="@drawable/clickable_layout"
-    android:clickable="true">
+    android:clickable="true"
+    android:filterTouchesWhenObscured="true">
 
     <TextView
         android:id="@+id/tx_to_text"
@@ -13,6 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/transaction_item_margin"
         android:layout_marginTop="@dimen/transaction_item_margin"
+        android:filterTouchesWhenObscured="true"
         android:singleLine="true"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/gray"
@@ -25,6 +27,7 @@
         android:layout_below="@+id/tx_to_text"
         android:layout_marginBottom="@dimen/transaction_item_margin"
         android:layout_marginStart="@dimen/transaction_item_margin"
+        android:filterTouchesWhenObscured="true"
         android:text="@string/wallet_address"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/gray"
@@ -36,8 +39,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/tx_to_text"
-        android:layout_marginStart="@dimen/transaction_item_margin"
         android:layout_marginEnd="@dimen/transaction_item_margin"
+        android:layout_marginStart="@dimen/transaction_item_margin"
+        android:filterTouchesWhenObscured="true"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/green_text"
         android:textSize="14sp"
@@ -50,6 +54,7 @@
         android:layout_below="@+id/tx_to_text"
         android:layout_marginStart="@dimen/transaction_item_margin"
         android:layout_toStartOf="@id/tx_to_amount_text"
+        android:filterTouchesWhenObscured="true"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/green_text"
         android:textSize="13sp" />
