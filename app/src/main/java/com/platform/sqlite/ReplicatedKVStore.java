@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static android.R.attr.key;
 
 class ReplicatedKVStore {
     private static final String TAG = ReplicatedKVStore.class.getName();
@@ -45,6 +44,7 @@ class ReplicatedKVStore {
     private static final String KEY_REGEX = "^[^_][\\w-]{1,255}$";
 
     public boolean syncImmediately = true;
+    public boolean encrypted = false;
     private boolean syncRunning = false;
 
     // Database fields
@@ -88,18 +88,44 @@ class ReplicatedKVStore {
      */
     public void set(KVEntity[] kvEntities) {
 //        Log.e(TAG, "set: kvEntities.length: " + kvEntities.length);
+
+        for (KVEntity kv : kvEntities) {
+            boolean success = _set(kv);
+            if (syncImmediately && success) {
+                syncKey(kv.getKey());
+                Log.e(TAG, "setKv: key synced: " + kv.getKey());
+            }
+        }
+
+    }
+
+    public boolean _set(KVEntity kv) {
+        boolean success = false;
+        long curVer = kv.getVersion();
+        long newVer = 0;
+        String key = kv.getKey();
         database.beginTransaction();
         try {
-            for (KVEntity kv : kvEntities) {
-                ContentValues values = new ContentValues();
-                values.put(PlatformSqliteHelper.KV_VERSION, kv.getVersion());
-                values.put(PlatformSqliteHelper.KV_REMOTE_VERSION, kv.getRemoteVersion());
-                values.put(PlatformSqliteHelper.KV_KEY, kv.getKey());
-                values.put(PlatformSqliteHelper.KV_VALUE, kv.getValue());
-                values.put(PlatformSqliteHelper.KV_TIME, kv.getTime());
-                values.put(PlatformSqliteHelper.KV_DELETED, kv.getDeleted());
-                database.insert(PlatformSqliteHelper.KV_STORE_TABLE_NAME, null, values);
+            long localVer = _localVersion(key);
+            if (curVer != localVer) {
+                Log.e(TAG, String.format("set key %s conflict: version %d != current version %d", key, localVer, curVer));
+                return false;
             }
+            newVer = curVer + 1;
+            byte[] encryptionData = encrypted ? encrypt(kv.getValue()) : kv.getValue();
+
+            ContentValues values = new ContentValues();
+            values.put(PlatformSqliteHelper.KV_VERSION, newVer);
+            values.put(PlatformSqliteHelper.KV_REMOTE_VERSION, kv.getRemoteVersion());
+            values.put(PlatformSqliteHelper.KV_KEY, key);
+            values.put(PlatformSqliteHelper.KV_VALUE, encryptionData);
+            values.put(PlatformSqliteHelper.KV_TIME, kv.getTime());
+            values.put(PlatformSqliteHelper.KV_DELETED, kv.getDeleted());
+            if (localVer == 0)
+                database.insert(PlatformSqliteHelper.KV_STORE_TABLE_NAME, null, values);
+            else
+                database.update(PlatformSqliteHelper.KV_STORE_TABLE_NAME, values, "key=" + key, null);
+
             database.setTransactionSuccessful();
         } catch (Exception ex) {
             Log.e(TAG, "Error inserting into SQLite", ex);
@@ -107,12 +133,7 @@ class ReplicatedKVStore {
         } finally {
             database.endTransaction();
         }
-
-    }
-
-
-    public void _set(KVEntity kv) {
-
+        return success;
     }
 
     /**
@@ -170,12 +191,6 @@ class ReplicatedKVStore {
         return version;
 
     }
-
-//    public void deleteKv(KVEntity kv) {
-//        Log.e(TAG, "kv deleted with key: " + kv.getKey());
-//        database.delete(PlatformSqliteHelper.KV_STORE_TABLE_NAME, PlatformSqliteHelper.KV_KEY
-//                + " = " + kv.getKey(), null);
-//    }
 
     public void deleteAllKVs() {
         database.delete(PlatformSqliteHelper.KV_STORE_TABLE_NAME, PlatformSqliteHelper.KV_TIME + " <> -1", null);
@@ -283,10 +298,10 @@ class ReplicatedKVStore {
      * Mark a key as removed locally. If syncImmediately is true (the defualt) then immediately mark the key
      * as removed on the server as well. `localVer` must match the most recent version in the local database.
      */
-    private boolean delete(String key, long localVersion) {
-//        Log.e(TAG, "kv deleted with key: " + key);
-//        database.delete(PlatformSqliteHelper.KV_STORE_TABLE_NAME, PlatformSqliteHelper.KV_KEY
-//                + " = " + key, null);
+    public boolean delete(String key, long localVersion) {
+        Log.e(TAG, "kv deleted with key: " + key);
+        database.delete(PlatformSqliteHelper.KV_STORE_TABLE_NAME, PlatformSqliteHelper.KV_KEY
+                + " = " + key, null);
         return false;
     }
 
@@ -316,7 +331,7 @@ class ReplicatedKVStore {
     /**
      * encrypt some data using self.key
      */
-    private String encrypt(byte[] data) {
+    private byte[] encrypt(byte[] data) {
         return null;
     }
 
@@ -335,8 +350,8 @@ class ReplicatedKVStore {
         Matcher matcher = pattern.matcher(key);
         if (matcher.find()) {
             Log.e(TAG, "checkKey: found illegal patterns");
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 }

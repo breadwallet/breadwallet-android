@@ -51,6 +51,7 @@ import java.util.Map;
 @RunWith(AndroidJUnit4.class)
 public class KVStoreTests {
     public static final String TAG = KVStoreTests.class.getName();
+
     @Rule
     public ActivityTestRule<MainActivity> mActivityRule = new ActivityTestRule<>(MainActivity.class);
     PlatformSqliteManager sqliteManager;
@@ -62,13 +63,16 @@ public class KVStoreTests {
     public void setUp() {
         sqliteManager = PlatformSqliteManager.getInstance(mActivityRule.getActivity());
         kvs = new LinkedList<>();
-        kvs.add(new KVEntity(1, 2, "hello", "hello".getBytes(), System.currentTimeMillis(), 0));
-        kvs.add(new KVEntity(2, 2, "removed", "removed".getBytes(), System.currentTimeMillis(), 1));
+        kvs.add(new KVEntity(0, 2, "hello", "hello".getBytes(), System.currentTimeMillis(), 0));
+        kvs.add(new KVEntity(0, 2, "removed", "removed".getBytes(), System.currentTimeMillis(), 1));
         for (int i = 0; i < 20; i++) {
-            kvs.add(new KVEntity(1, 1, "testkey" + i, ("testkey" + i).getBytes(), System.currentTimeMillis(), 0));
+            kvs.add(new KVEntity(0, 1, "testkey" + i, ("testkey" + i).getBytes(), System.currentTimeMillis(), 0));
         }
         sqliteManager.setKv(kvs);
         Log.e(TAG, "setUp: size: " + sqliteManager.getKVs().size());
+        int freshSize = sqliteManager.getKVs().size();
+        Assert.assertEquals(22, kvs.size());
+        Assert.assertEquals(22, freshSize);
     }
 
     @After
@@ -87,20 +91,25 @@ public class KVStoreTests {
             if (kv.getDeleted() == 0)
                 remoteKV.put(kv.getKey(), kv.getValue());
         }
+        Assert.assertEquals(remoteKV.size(), 21);
 
         List<KVEntity> allLocalKeys = sqliteManager.getKVs();
+        Assert.assertEquals(allLocalKeys.size(), 22);
         Map<String, byte[]> localKV = new LinkedHashMap<>();
         for (KVEntity kv : allLocalKeys) {
             if (kv.getDeleted() == 0) {
-                localKV.put(kv.getKey(), sqliteManager.getKv(kv.getKey(), kv.getVersion()).getValue());
+                KVEntity tmpKv = sqliteManager.getKv(kv.getKey(), kv.getVersion());
+                localKV.put(kv.getKey(), tmpKv.getValue());
             }
         }
+
+        Assert.assertEquals(localKV.size(), 21);
 
         Iterator it = remoteKV.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
             byte[] val = (byte[]) pair.getValue();
-            byte[] valToAssert = localKV.get(pair.getKey());
+            byte[] valToAssert = localKV.get((String) pair.getKey());
 
             Assert.assertArrayEquals(val, valToAssert);
         }
@@ -119,12 +128,13 @@ public class KVStoreTests {
     public void testSetLocal() {
         sqliteManager.deleteKVs();
         sqliteManager.setKv(0, 1, "Key1", "Key1".getBytes(), System.currentTimeMillis(), 0);
-        sqliteManager.setKv(new KVEntity(2, 1, "Key2", "Key2".getBytes(), System.currentTimeMillis(), 2));
+        sqliteManager.setKv(0, 1, "Key1", "Key1".getBytes(), System.currentTimeMillis(), 0);
+        sqliteManager.setKv(new KVEntity(0, 1, "Key2", "Key2".getBytes(), System.currentTimeMillis(), 2));
         sqliteManager.setKv(new KVEntity[]{
-                new KVEntity(2, 4, "Key3", "Key3".getBytes(), System.currentTimeMillis(), 2),
-                new KVEntity(2, 2, "Key4", "Key4".getBytes(), System.currentTimeMillis(), 0)});
+                new KVEntity(0, 4, "Key3", "Key3".getBytes(), System.currentTimeMillis(), 2),
+                new KVEntity(0, 2, "Key4", "Key4".getBytes(), System.currentTimeMillis(), 0)});
         sqliteManager.setKv(Arrays.asList(new KVEntity[]{
-                new KVEntity(1, 4, "Key5", "Key5".getBytes(), System.currentTimeMillis(), 1),
+                new KVEntity(0, 4, "Key5", "Key5".getBytes(), System.currentTimeMillis(), 1),
                 new KVEntity(0, 5, "Key6", "Key6".getBytes(), System.currentTimeMillis(), 5)}));
         Assert.assertEquals(6, sqliteManager.getKVs().size());
     }

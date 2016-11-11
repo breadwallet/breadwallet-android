@@ -250,7 +250,12 @@ public class BRPeerManager {
             progressStatus = 0;
             final DecimalFormat decimalFormat = new DecimalFormat("#.#");
             if (app != null) {
-                app.setProgress((int) (progressStatus * 100), String.format("%s%%", decimalFormat.format(progressStatus * 100)));
+                app.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        app.setProgress((int) (progressStatus * 100), String.format("%s%%", decimalFormat.format(progressStatus * 100)));
+                    }
+                });
                 progressStatus = syncProgress(SharedPreferencesManager.getStartHeight(app));
                 app.runOnUiThread(new Runnable() {
                     @Override

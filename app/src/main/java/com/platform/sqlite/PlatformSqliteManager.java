@@ -85,19 +85,15 @@ public class PlatformSqliteManager {
     }
 
     public void setKv(long version, long remoteVersion, String key, byte[] value, long time, int deleted) {
-
         KVEntity entity = new KVEntity(version, remoteVersion, key, value, time, deleted);
         ReplicatedKVStore kvDataSource = null;
         try {
             kvDataSource = new ReplicatedKVStore(ctx);
             kvDataSource.open();
-            if(kvDataSource.isKeyValid(entity.getKey())){
-                if(kvDataSource.syncImmediately){
-                    kvDataSource.syncKey(entity.getKey());
-                    Log.e(TAG, "setKv: key synced: " + entity.getKey());
-                }
+            if (kvDataSource.isKeyValid(entity.getKey())) {
+                kvDataSource.set(entity);
             }
-            kvDataSource.set(entity);
+
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -127,7 +123,7 @@ public class PlatformSqliteManager {
         try {
             kvDataSource = new ReplicatedKVStore(ctx);
             kvDataSource.open();
-            kvDataSource.deleteKv(key);
+            kvDataSource.delete(key, 0);
 //            Log.e(TAG, "SQLiteManager - kv deleted with key: " + key);
         } catch (SQLException e) {
             e.printStackTrace();
