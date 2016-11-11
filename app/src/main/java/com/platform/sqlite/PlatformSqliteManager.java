@@ -1,7 +1,6 @@
 package com.platform.sqlite;
 
 import android.content.Context;
-import android.content.Entity;
 import android.database.SQLException;
 import android.util.Log;
 
@@ -53,10 +52,10 @@ public class PlatformSqliteManager {
 
     public List<KVEntity> getKVs() {
 
-        KVDataSource txDataSource = null;
+        ReplicatedKVStore txDataSource = null;
         List<KVEntity> kvValues = new ArrayList<>();
         try {
-            txDataSource = new KVDataSource(ctx);
+            txDataSource = new ReplicatedKVStore(ctx);
             txDataSource.open();
             kvValues = txDataSource.getAllKVs();
 
@@ -71,9 +70,9 @@ public class PlatformSqliteManager {
     }
 
     public void deleteKVs() {
-        KVDataSource kvDataSource = null;
+        ReplicatedKVStore kvDataSource = null;
         try {
-            kvDataSource = new KVDataSource(ctx);
+            kvDataSource = new ReplicatedKVStore(ctx);
             kvDataSource.open();
             kvDataSource.deleteAllKVs();
 //            Log.e(TAG, "deleteKVs");
@@ -85,13 +84,20 @@ public class PlatformSqliteManager {
         }
     }
 
-    public void insertKv(long version, long remoteVersion, String key, byte[] value, long time, int deleted) {
+    public void setKv(long version, long remoteVersion, String key, byte[] value, long time, int deleted) {
+
         KVEntity entity = new KVEntity(version, remoteVersion, key, value, time, deleted);
-        KVDataSource kvDataSource = null;
+        ReplicatedKVStore kvDataSource = null;
         try {
-            kvDataSource = new KVDataSource(ctx);
+            kvDataSource = new ReplicatedKVStore(ctx);
             kvDataSource.open();
-            kvDataSource.putKV(entity);
+            if(kvDataSource.isKeyValid(entity.getKey())){
+                if(kvDataSource.syncImmediately){
+                    kvDataSource.syncKey(entity.getKey());
+                    Log.e(TAG, "setKv: key synced: " + entity.getKey());
+                }
+            }
+            kvDataSource.set(entity);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -101,25 +107,25 @@ public class PlatformSqliteManager {
         }
     }
 
-    public void insertKv(KVEntity[] kvs) {
+    public void setKv(KVEntity[] kvs) {
         for (KVEntity kv : kvs)
-            insertKv(kv);
+            setKv(kv);
     }
 
-    public void insertKv(List<KVEntity> kvs) {
+    public void setKv(List<KVEntity> kvs) {
         for (KVEntity kv : kvs)
-            insertKv(kv);
+            setKv(kv);
     }
 
-    public void insertKv(KVEntity kv) {
-        insertKv(kv.getVersion(), kv.getRemoteVersion(), kv.getKey(), kv.getValue(), kv.getTime(), kv.getDeleted());
+    public void setKv(KVEntity kv) {
+        setKv(kv.getVersion(), kv.getRemoteVersion(), kv.getKey(), kv.getValue(), kv.getTime(), kv.getDeleted());
     }
 
     public void deleteKvByKey(String key) {
-        KVDataSource kvDataSource = null;
+        ReplicatedKVStore kvDataSource = null;
 
         try {
-            kvDataSource = new KVDataSource(ctx);
+            kvDataSource = new ReplicatedKVStore(ctx);
             kvDataSource.open();
             kvDataSource.deleteKv(key);
 //            Log.e(TAG, "SQLiteManager - kv deleted with key: " + key);
@@ -132,10 +138,10 @@ public class PlatformSqliteManager {
     }
 
     public KVEntity getKv(String key, long version) {
-        KVDataSource txDataSource = null;
+        ReplicatedKVStore txDataSource = null;
         KVEntity kv = null;
         try {
-            txDataSource = new KVDataSource(ctx);
+            txDataSource = new ReplicatedKVStore(ctx);
             txDataSource.open();
             kv = txDataSource.getKv(key, version);
 

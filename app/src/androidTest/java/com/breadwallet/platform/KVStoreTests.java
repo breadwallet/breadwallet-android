@@ -4,16 +4,11 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
-import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.tools.util.Utils;
-import com.platform.APIClient;
 import com.platform.sqlite.KVEntity;
 import com.platform.sqlite.PlatformSqliteHelper;
 import com.platform.sqlite.PlatformSqliteManager;
 
-import org.apache.commons.compress.compressors.CompressorException;
-import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -21,28 +16,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import io.sigpipe.jbsdiff.InvalidHeaderException;
-import io.sigpipe.jbsdiff.Patch;
-import okhttp3.Request;
-import okhttp3.Response;
-
-import static com.platform.APIClient.BREAD_BUY;
-import static com.platform.APIClient.BUNDLES;
-import static com.platform.APIClient.bundleFileName;
-import static com.platform.APIClient.extractedFolder;
 
 /**
  * BreadWallet
@@ -88,15 +67,16 @@ public class KVStoreTests {
         for (int i = 0; i < 20; i++) {
             kvs.add(new KVEntity(1, 1, "testkey" + i, ("testkey" + i).getBytes(), System.currentTimeMillis(), 0));
         }
-        sqliteManager.insertKv(kvs);
+        sqliteManager.setKv(kvs);
         Log.e(TAG, "setUp: size: " + sqliteManager.getKVs().size());
     }
 
     @After
     public void tearDown() {
         mActivityRule.getActivity().deleteDatabase(PlatformSqliteHelper.DATABASE_NAME);
+        Log.e(TAG, "tearDown: " + sqliteManager.getKVs().size());
         sqliteManager = null;
-        kvs = null;
+        kvs.clear();
     }
 
     @Test
@@ -133,6 +113,20 @@ public class KVStoreTests {
             Assert.assertArrayEquals(val, valToAssert);
         }
 
+    }
+
+    @Test
+    public void testSetLocal() {
+        sqliteManager.deleteKVs();
+        sqliteManager.setKv(0, 1, "Key1", "Key1".getBytes(), System.currentTimeMillis(), 0);
+        sqliteManager.setKv(new KVEntity(2, 1, "Key2", "Key2".getBytes(), System.currentTimeMillis(), 2));
+        sqliteManager.setKv(new KVEntity[]{
+                new KVEntity(2, 4, "Key3", "Key3".getBytes(), System.currentTimeMillis(), 2),
+                new KVEntity(2, 2, "Key4", "Key4".getBytes(), System.currentTimeMillis(), 0)});
+        sqliteManager.setKv(Arrays.asList(new KVEntity[]{
+                new KVEntity(1, 4, "Key5", "Key5".getBytes(), System.currentTimeMillis(), 1),
+                new KVEntity(0, 5, "Key6", "Key6".getBytes(), System.currentTimeMillis(), 5)}));
+        Assert.assertEquals(6, sqliteManager.getKVs().size());
     }
 
 }

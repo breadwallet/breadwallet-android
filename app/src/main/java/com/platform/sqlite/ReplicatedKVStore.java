@@ -34,9 +34,18 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-class KVDataSource {
-    private static final String TAG = KVDataSource.class.getName();
+import static android.R.attr.key;
+
+class ReplicatedKVStore {
+    private static final String TAG = ReplicatedKVStore.class.getName();
+
+    private static final String KEY_REGEX = "^[^_][\\w-]{1,255}$";
+
+    public boolean syncImmediately = true;
+    private boolean syncRunning = false;
 
     // Database fields
     private SQLiteDatabase database;
@@ -50,11 +59,11 @@ class KVDataSource {
             PlatformSqliteHelper.KV_DELETED
     };
 
-    private KVDataSource() {
+    private ReplicatedKVStore() {
         dbHelper = null;
     }
 
-    public KVDataSource(Context context) {
+    public ReplicatedKVStore(Context context) {
         dbHelper = new PlatformSqliteHelper(context);
     }
 
@@ -68,12 +77,17 @@ class KVDataSource {
         }
     }
 
-    public void putKV(KVEntity kv) {
-        putKV(new KVEntity[]{kv});
+    public void set(KVEntity kv) {
+        set(new KVEntity[]{kv});
     }
 
-    public void putKV(KVEntity[] kvEntities) {
-//        Log.e(TAG, "putKV: kvEntities.length: " + kvEntities.length);
+    /**
+     * Set the value of a key locally in the database. If syncImmediately is true (the default) then immediately
+     * after successfully saving locally, replicate to server. The `localVer` key must be the same as is currently
+     * stored in the database. To create a new key, pass `0` as `localVer`
+     */
+    public void set(KVEntity[] kvEntities) {
+//        Log.e(TAG, "set: kvEntities.length: " + kvEntities.length);
         database.beginTransaction();
         try {
             for (KVEntity kv : kvEntities) {
@@ -96,19 +110,20 @@ class KVDataSource {
 
     }
 
-    public void deleteKv(String key) {
-//        Log.e(TAG, "kv deleted with key: " + key);
-        database.delete(PlatformSqliteHelper.KV_STORE_TABLE_NAME, PlatformSqliteHelper.KV_KEY
-                + " = " + key, null);
+
+    public void _set(KVEntity kv) {
+
     }
 
-
-    //get kv by key and version (version can be 0)
+    /**
+     * get kv by key and version (version can be 0)
+     */
     public KVEntity getKv(String key, long version) {
         KVEntity kv = null;
         Cursor cursor = null;
         long curVer = 0;
 
+        database.beginTransaction();
         //if no version, fine the version
         if (version == 0) {
             curVer = getVersionWithKey(key);
@@ -128,6 +143,7 @@ class KVDataSource {
         if (curVer == 0) {
             if (cursor != null)
                 cursor.close();
+            database.endTransaction();
             return null;
         }
 
@@ -138,7 +154,8 @@ class KVDataSource {
             cursor.moveToNext();
             kv = cursorToKv(cursor);
         }
-
+        database.setTransactionSuccessful();
+        database.endTransaction();
         cursor.close();
         return kv;
     }
@@ -153,6 +170,7 @@ class KVDataSource {
         return version;
 
     }
+
 //    public void deleteKv(KVEntity kv) {
 //        Log.e(TAG, "kv deleted with key: " + kv.getKey());
 //        database.delete(PlatformSqliteHelper.KV_STORE_TABLE_NAME, PlatformSqliteHelper.KV_KEY
@@ -201,5 +219,124 @@ class KVDataSource {
             e.printStackTrace();
         }
         return new KVEntity(version, remoteVersion, key, value, time, deleted);
+    }
+
+    /**
+     * Sync an individual key. Normally this is only called internally and you should call syncAllKeys
+     */
+    public void syncKey(String key) {
+        if (syncRunning) return;
+        syncRunning = true;
+        try {
+
+        } catch (Exception ex) {
+            syncRunning = false;
+        }
+    }
+
+
+    /**
+     * Sync all keys to and from the remote kv store adaptor
+     */
+    private boolean syncAllKeys() {
+        return false;
+    }
+
+    /**
+     * Get the remote version for the key for the most recent local version of the key, if stored.
+     * If local key doesn't exist, return 0
+     * <p>
+     * func remoteVersion(key: String) throws -> UInt64 {
+     * return 0
+     * }
+     */
+    private long remoteVersion(String key) {
+        return 0;
+    }
+
+    /**
+     * Record the remote version for the object in a new version of the local key
+     */
+    private boolean setRemoteVersion(String key, long localVer, long remoteVer) {
+        return false;
+    }
+
+    /**
+     * the syncKey kernel - this is provided so syncAllKeys can provide get a bunch of key versions at once
+     * and fan out the _syncKey operations
+     */
+    private void _syncKey(String key, long remoteVersion, long remoteTime) {
+        // this is a basic last-write-wins strategy. data loss is possible but in general
+        // we will attempt to sync before making any local modifications to the data
+        // and concurrency will be so low that we don't really need a fancier solution than this.
+        // the strategy is:
+        //
+        // 1. get the remote version. this is our "lock"
+        // 2. along with the remote version will come the last-modified date of the remote object
+        // 3. if their last-modified date is newer than ours, overwrite ours
+        // 4. if their last-modified date is older than ours, overwrite theirs
+        if (!syncRunning) throw new IllegalArgumentException("how did we get here?");
+
+    }
+
+    /**
+     * Mark a key as removed locally. If syncImmediately is true (the defualt) then immediately mark the key
+     * as removed on the server as well. `localVer` must match the most recent version in the local database.
+     */
+    private boolean delete(String key, long localVersion) {
+//        Log.e(TAG, "kv deleted with key: " + key);
+//        database.delete(PlatformSqliteHelper.KV_STORE_TABLE_NAME, PlatformSqliteHelper.KV_KEY
+//                + " = " + key, null);
+        return false;
+    }
+
+    private boolean _delete(String key, long localVersion) {
+        return false;
+    }
+
+    /**
+     * Gets the local version of the provided key, or 0 if it doesn't exist
+     */
+    private long localVersion(String key) {
+        return 0;
+    }
+
+    private long _localVersion(String key) {
+        return 0;
+    }
+
+    /**
+     * generate a nonce using microseconds-since-epoch
+     */
+    private byte[] genNonce() {
+        return null;
+    }
+
+
+    /**
+     * encrypt some data using self.key
+     */
+    private String encrypt(byte[] data) {
+        return null;
+    }
+
+    /**
+     * decrypt some data using self.key
+     */
+    private String decrypt(byte[] data) {
+        return null;
+    }
+
+    /**
+     * validates the key. keys can not start with a _
+     */
+    public boolean isKeyValid(String key) {
+        Pattern pattern = Pattern.compile(KEY_REGEX);
+        Matcher matcher = pattern.matcher(key);
+        if (matcher.find()) {
+            Log.e(TAG, "checkKey: found illegal patterns");
+            return false;
+        }
+        return true;
     }
 }
