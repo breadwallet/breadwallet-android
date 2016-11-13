@@ -100,7 +100,6 @@ class ReplicatedKVStore {
     }
 
     public boolean _set(KVEntity kv) {
-        boolean success = false;
         long curVer = kv.getVersion();
         long newVer = 0;
         String key = kv.getKey();
@@ -125,15 +124,14 @@ class ReplicatedKVStore {
                 database.insert(PlatformSqliteHelper.KV_STORE_TABLE_NAME, null, values);
             else
                 database.update(PlatformSqliteHelper.KV_STORE_TABLE_NAME, values, "key=" + key, null);
-
             database.setTransactionSuccessful();
+            return true;
         } catch (Exception ex) {
             Log.e(TAG, "Error inserting into SQLite", ex);
-            //Error in between database transaction
         } finally {
             database.endTransaction();
         }
-        return success;
+        return false;
     }
 
     /**
