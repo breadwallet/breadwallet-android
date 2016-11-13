@@ -89,6 +89,7 @@ public class KeyStoreManager {
     public static final String FAIL_TIMESTAMP_IV = "ivfailtimestamp";
     public static final String AUTH_KEY_IV = "ivauthkey";
     public static final String TOKEN_IV = "ivtoken";
+    public static final String PASS_TIME_IV = "passtimetoken";
 
     public static final String PHRASE_ALIAS = "phrase";
     public static final String CANARY_ALIAS = "canary";
@@ -100,6 +101,7 @@ public class KeyStoreManager {
     public static final String FAIL_TIMESTAMP_ALIAS = "failTimeStamp";
     public static final String AUTH_KEY_ALIAS = "authKey";
     public static final String TOKEN_ALIAS = "token";
+    public static final String PASS_TIME_ALIAS = "passTime";
 
     public static final String PHRASE_FILENAME = "my_phrase";
     public static final String CANARY_FILENAME = "my_canary";
@@ -111,6 +113,7 @@ public class KeyStoreManager {
     public static final String FAIL_TIMESTAMP_FILENAME = "my_fail_timestamp";
     public static final String AUTH_KEY_FILENAME = "my_auth_key";
     public static final String TOKEN_FILENAME = "my_token";
+    public static final String PASS_TIME_FILENAME = "my_pass_time";
 
     public static final int AUTH_DURATION_SEC = 300;
 
@@ -392,6 +395,15 @@ public class KeyStoreManager {
 
     public static long getFailTimeStamp(final Activity context) {
         byte[] result = getData(context, FAIL_TIMESTAMP_ALIAS, FAIL_TIMESTAMP_FILENAME, FAIL_TIMESTAMP_IV, 0);
+        return result.length > 0 ? TypesConverter.byteArray2long(result) : 0;
+    }
+    public static boolean putLastPasscodeUsedTime(long time, Activity context) {
+        byte[] bytesToStore = TypesConverter.long2byteArray(time);
+        return bytesToStore.length != 0 && setData(context, bytesToStore, PASS_TIME_ALIAS, PASS_TIME_FILENAME, PASS_TIME_IV, 0, false);
+    }
+
+    public static long getLastPasscodeUsedTime(final Activity context) {
+        byte[] result = getData(context, PASS_TIME_ALIAS, PASS_TIME_FILENAME, PASS_TIME_IV, 0);
         return result.length > 0 ? TypesConverter.byteArray2long(result) : 0;
     }
 

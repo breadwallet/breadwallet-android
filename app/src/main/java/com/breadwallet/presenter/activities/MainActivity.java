@@ -57,6 +57,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.concurrent.TimeUnit;
 
 /**
  * BreadWallet
@@ -167,7 +168,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         updateBundle();
     }
 
-    private void updateBundle(){
+    private void updateBundle() {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -289,7 +290,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                     SpringAnimator.showAnimation(lockerButton);
                     if (!KeyStoreManager.getPassCode(app).isEmpty())
                         ((BreadWalletApp) getApplication()).promptForAuthentication(app,
-                                BRConstants.AUTH_FOR_GENERAL, null, null, null, null);
+                                BRConstants.AUTH_FOR_GENERAL, null, null, null, null, false);
                 }
 
             }
@@ -386,6 +387,7 @@ public class MainActivity extends FragmentActivity implements Observer {
             }
         }, 4000);
         BRWalletManager.refreshAddress();
+        checkUnlockedTooLong();
 
     }
 
@@ -448,6 +450,14 @@ public class MainActivity extends FragmentActivity implements Observer {
         middleBubbleBlocks = (BubbleTextView) findViewById(R.id.middle_bubble_blocks);
         qrBubble1 = (BubbleTextView) findViewById(R.id.qr_bubble1);
         qrBubble2 = (BubbleTextView) findViewById(R.id.qr_bubble2);
+    }
+
+    //check if the user hasn't used the passcode in 2 weeks or more and ask for it
+    private void checkUnlockedTooLong() {
+        long passTime = KeyStoreManager.getLastPasscodeUsedTime(this);
+        if (passTime + TimeUnit.MILLISECONDS.convert(14, TimeUnit.DAYS) <= System.currentTimeMillis()) {
+            ((BreadWalletApp) getApplication()).promptForAuthentication(this, BRConstants.AUTH_FOR_GENERAL, null, null, null, null, true);
+        }
     }
 
     @Override

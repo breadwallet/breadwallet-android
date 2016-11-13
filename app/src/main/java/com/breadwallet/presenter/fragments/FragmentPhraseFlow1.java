@@ -86,7 +86,7 @@ public class FragmentPhraseFlow1 extends Fragment {
                 if (app == null) return;
 
                 if (BRAnimator.checkTheMultipressingAvailability()) {
-                    ((BreadWalletApp) app.getApplicationContext()).promptForAuthentication(app, BRConstants.AUTH_FOR_PHRASE, null, null, null, null);
+                    ((BreadWalletApp) app.getApplicationContext()).promptForAuthentication(app, BRConstants.AUTH_FOR_PHRASE, null, null, null, null,false);
                 }
             }
         });

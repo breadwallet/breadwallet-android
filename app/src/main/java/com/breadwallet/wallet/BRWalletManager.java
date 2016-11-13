@@ -616,7 +616,7 @@ public class BRWalletManager {
                 @Override
                 public void run() {
                     ((BreadWalletApp) ctx.getApplicationContext()).promptForAuthentication(ctx,
-                            BRConstants.AUTH_FOR_PAY, request, message, "", null);
+                            BRConstants.AUTH_FOR_PAY, request, message, "", null, false);
                 }
             });
         } else {

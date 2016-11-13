@@ -108,7 +108,7 @@ public class FragmentSettings extends Fragment {
             public void onClick(View v) {
                 if (BRAnimator.checkTheMultipressingAvailability()) {
                     ((BreadWalletApp) getActivity().getApplicationContext()).promptForAuthentication(getActivity(),
-                            BRConstants.AUTH_FOR_LIMIT, null, null, null, null);
+                            BRConstants.AUTH_FOR_LIMIT, null, null, null, null,false);
                 }
             }
         });

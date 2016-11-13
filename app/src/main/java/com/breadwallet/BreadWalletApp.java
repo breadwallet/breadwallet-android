@@ -39,6 +39,7 @@ import com.breadwallet.wallet.BRWalletManager;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.concurrent.TimeUnit;
 
 /**
  * BreadWallet
@@ -182,7 +183,7 @@ public class BreadWalletApp extends Application {
 
     }
 
-    public void promptForAuthentication(Activity context, int mode, PaymentRequestEntity requestEntity, String message, String title, PaymentRequestWrapper paymentRequest) {
+    public void promptForAuthentication(Activity context, int mode, PaymentRequestEntity requestEntity, String message, String title, PaymentRequestWrapper paymentRequest, boolean forcePasscode) {
         Log.e(TAG, "promptForAuthentication: " + mode);
         if (context == null) return;
         KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Activity.KEYGUARD_SERVICE);
@@ -206,6 +207,11 @@ public class BreadWalletApp extends Application {
         if (KeyStoreManager.getFailCount(context) != 0) {
             useFingerPrint = false;
         }
+        long passTime = KeyStoreManager.getLastPasscodeUsedTime(context);
+        if (passTime + TimeUnit.MILLISECONDS.convert(2, TimeUnit.DAYS) <= System.currentTimeMillis()) {
+            useFingerPrint = false;
+        }
+        if (forcePasscode) useFingerPrint = false;
 
         if (keyguardManager.isKeyguardSecure()) {
             if (useFingerPrint) {

@@ -348,7 +348,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
         app.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                ((BreadWalletApp) app.getApplicationContext()).promptForAuthentication(app, BRConstants.AUTH_FOR_PAYMENT_PROTOCOL, request, message, "", paymentRequest);
+                ((BreadWalletApp) app.getApplicationContext()).promptForAuthentication(app, BRConstants.AUTH_FOR_PAYMENT_PROTOCOL, request, message, "", paymentRequest,false);
             }
         });
     }

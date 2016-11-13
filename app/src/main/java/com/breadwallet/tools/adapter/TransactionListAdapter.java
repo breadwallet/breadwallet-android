@@ -172,7 +172,7 @@ public class TransactionListAdapter extends BaseAdapter {
                     public void onClick(View v) {
                         if (BRAnimator.checkTheMultipressingAvailability()) {
                             ((BreadWalletApp) activity.getApplicationContext()).
-                                    promptForAuthentication(activity, BRConstants.AUTH_FOR_GENERAL, null, null, null, null);
+                                    promptForAuthentication(activity, BRConstants.AUTH_FOR_GENERAL, null, null, null, null,false);
                         }
                     }
                 });
@@ -186,7 +186,7 @@ public class TransactionListAdapter extends BaseAdapter {
                         public void onClick(View v) {
                             if (BRAnimator.checkTheMultipressingAvailability()) {
                                 ((BreadWalletApp) activity.getApplicationContext()).
-                                        promptForAuthentication(activity, BRConstants.AUTH_FOR_GENERAL, null, null, null, null);
+                                        promptForAuthentication(activity, BRConstants.AUTH_FOR_GENERAL, null, null, null, null,false);
                             }
                         }
                     });

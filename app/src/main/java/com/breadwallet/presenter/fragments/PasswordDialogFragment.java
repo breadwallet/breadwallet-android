@@ -65,6 +65,7 @@ import com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 public class PasswordDialogFragment extends DialogFragment {
 
@@ -118,7 +119,6 @@ public class PasswordDialogFragment extends DialogFragment {
         digit_2 = (TextView) view.findViewById(R.id.passcode_digit2);
         digit_3 = (TextView) view.findViewById(R.id.passcode_digit3);
         digit_4 = (TextView) view.findViewById(R.id.passcode_digit4);
-
 
         prevPass = "";
 
@@ -205,6 +205,11 @@ public class PasswordDialogFragment extends DialogFragment {
             title.setText(R.string.choose_new_passcode);
             currentMode = BRConstants.AUTH_MODE_NEW_PASS;
         }
+        long passTime = KeyStoreManager.getLastPasscodeUsedTime(getActivity());
+        if (passTime + TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES) <= System.currentTimeMillis()) {
+            cancel.setClickable(false);
+            cancel.setVisibility(View.GONE);
+        }
         if (verifyOnly) {
             title.setText(String.format(getResources().getString(R.string.enter_passcode), "\"" + BRConstants.bitcoinLowercase + "read\""));
         }
@@ -245,17 +250,6 @@ public class PasswordDialogFragment extends DialogFragment {
     public void onResume() {
         super.onResume();
         passcodeEditText.setText("");
-//        final Activity app = getActivity();
-//        if (app != null) {
-//            passcodeEditText.post(
-//                    new Runnable() {
-//                        public void run() {
-//                            InputMethodManager inputMethodManager = (InputMethodManager) app.getSystemService(Context.INPUT_METHOD_SERVICE);
-//                            inputMethodManager.toggleSoftInputFromWindow(passcodeEditText.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0);
-//                            passcodeEditText.requestFocus();
-//                        }
-//                    });
-//        }
     }
 
     @Override
@@ -345,6 +339,7 @@ public class PasswordDialogFragment extends DialogFragment {
                         InputMethodManager.HIDE_NOT_ALWAYS);
                 //reset the passcode after successful attempt
                 KeyStoreManager.putFailCount(0, getActivity());
+                KeyStoreManager.putLastPasscodeUsedTime(System.currentTimeMillis(), getActivity());
                 getDialog().cancel();
                 long totalSpent = BRWalletManager.getInstance(getActivity()).getTotalSent();
                 long spendLimit = totalSpent + PassCodeManager.getInstance().getLimit(getActivity()) + (request == null ? 0 : request.amount);
@@ -467,8 +462,11 @@ public class PasswordDialogFragment extends DialogFragment {
         int failCount = KeyStoreManager.getFailCount(getActivity());
 
         long secureTime = SharedPreferencesManager.getSecureTime(getActivity());
+        Log.e(TAG, "setWalletDisabled: secureTime: " + secureTime);
         long failTimestamp = KeyStoreManager.getFailTimeStamp(getActivity());
+        Log.e(TAG, "setWalletDisabled: failTimestamp: " + failTimestamp);
         double waitTime = (failTimestamp + Math.pow(6, failCount - 3) * 60.0 - secureTime) / 60.0;
+        Log.e(TAG, "setWalletDisabled: waitTime: " + waitTime);
         title.setText(R.string.wallet_disabled);
         description.setText("");
         passcodeEditText.setVisibility(View.GONE);
