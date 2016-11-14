@@ -2,6 +2,7 @@ package com.breadwallet.wallet;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.FragmentManager;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -36,7 +37,7 @@ import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.presenter.fragments.MainFragmentQR;
-import com.breadwallet.tools.threads.PassCodeTask;
+import com.breadwallet.presenter.fragments.PasswordDialogFragment;
 import com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.manager.BRNotificationManager;
@@ -57,6 +58,7 @@ import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
+import com.jniwrappers.BRKey;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -66,7 +68,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import static android.R.attr.mode;
 import static com.breadwallet.presenter.activities.MainActivity.app;
+import static com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask.message;
 
 /**
  * BreadWallet
@@ -135,7 +139,8 @@ public class BRWalletManager {
         boolean success = KeyStoreManager.putKeyStorePhrase(strPhrase, ctx, BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE);
         if (!success) return false;
         byte[] authKey = getAuthPrivKeyForAPI(keyBytes);
-        if(authKey == null || authKey.length == 0) throw new IllegalArgumentException("authKey is invalid");
+        if (authKey == null || authKey.length == 0)
+            throw new IllegalArgumentException("authKey is invalid");
 //        Log.e(TAG,"authKey: " + Arrays.toString(authKey));
         KeyStoreManager.putAuthKey(authKey, ctx);
         KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), ctx);
@@ -769,18 +774,11 @@ public class BRWalletManager {
     }
 
     public void askForPasscode() {
+        if (ctx == null) ctx = MainActivity.app;
         if (ctx == null) return;
         final String pass = KeyStoreManager.getPassCode(ctx);
         if (pass == null || pass.length() != 4) {
-            new Handler().post(new Runnable() {
-                @Override
-                public void run() {
-                    if (ctx != null) {
-                        Log.e(TAG, "PASSCODE: " + pass);
-                        new PassCodeTask(ctx).start();
-                    }
-                }
-            });
+            ((BreadWalletApp) ctx.getApplication()).promptForAuthentication(ctx, BRConstants.AUTH_FOR_GENERAL, null, null, null, null, true);
         }
 
     }

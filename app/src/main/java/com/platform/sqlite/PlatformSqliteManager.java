@@ -1,8 +1,11 @@
 package com.platform.sqlite;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.SQLException;
 
+import com.platform.APIClient;
+import com.platform.kvstore.RemoteKVStore;
 import com.platform.kvstore.ReplicatedKVStore;
 
 import java.util.ArrayList;
@@ -53,18 +56,19 @@ public class PlatformSqliteManager {
 
     public List<KVEntity> getKVs() {
 
-        ReplicatedKVStore txDataSource = null;
+        ReplicatedKVStore kvDataSource = null;
         List<KVEntity> kvValues = new ArrayList<>();
         try {
-            txDataSource = new ReplicatedKVStore(ctx);
-            txDataSource.open();
-            kvValues = txDataSource.getAllKVs();
+            RemoteKVStore remote = RemoteKVStore.getInstance(APIClient.getInstance((Activity) ctx));
+            kvDataSource = ReplicatedKVStore.getInstance(ctx, remote);
+            kvDataSource.open();
+            kvValues = kvDataSource.getAllKVs();
 
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if (txDataSource != null)
-                txDataSource.close();
+            if (kvDataSource != null)
+                kvDataSource.close();
         }
 //        Log.e(TAG, "getKVs: kvValues.size: " + kvValues.size());
         return kvValues;
@@ -73,7 +77,8 @@ public class PlatformSqliteManager {
     public void deleteKVs() {
         ReplicatedKVStore kvDataSource = null;
         try {
-            kvDataSource = new ReplicatedKVStore(ctx);
+            RemoteKVStore remote = RemoteKVStore.getInstance(APIClient.getInstance((Activity) ctx));
+            kvDataSource = ReplicatedKVStore.getInstance(ctx, remote);
             kvDataSource.open();
             kvDataSource.deleteAllKVs();
 //            Log.e(TAG, "deleteKVs");
@@ -89,7 +94,8 @@ public class PlatformSqliteManager {
         KVEntity entity = new KVEntity(version, remoteVersion, key, value, time, deleted);
         ReplicatedKVStore kvDataSource = null;
         try {
-            kvDataSource = new ReplicatedKVStore(ctx);
+            RemoteKVStore remote = RemoteKVStore.getInstance(APIClient.getInstance((Activity) ctx));
+            kvDataSource = ReplicatedKVStore.getInstance(ctx, remote);
             kvDataSource.open();
             if (kvDataSource.isKeyValid(entity.getKey())) {
                 kvDataSource.set(entity);
@@ -121,7 +127,8 @@ public class PlatformSqliteManager {
         ReplicatedKVStore kvDataSource = null;
 
         try {
-            kvDataSource = new ReplicatedKVStore(ctx);
+            RemoteKVStore remote = RemoteKVStore.getInstance(APIClient.getInstance((Activity) ctx));
+            kvDataSource = ReplicatedKVStore.getInstance(ctx, remote);
             kvDataSource.open();
             kvDataSource.delete(key, 0);
 //            Log.e(TAG, "SQLiteManager - kv deleted with key: " + key);
@@ -134,18 +141,19 @@ public class PlatformSqliteManager {
     }
 
     public KVEntity getKv(String key, long version) {
-        ReplicatedKVStore txDataSource = null;
+        ReplicatedKVStore kvDataSource = null;
         KVEntity kv = null;
         try {
-            txDataSource = new ReplicatedKVStore(ctx);
-            txDataSource.open();
-            kv = txDataSource.getKv(key, version);
+            RemoteKVStore remote = RemoteKVStore.getInstance(APIClient.getInstance((Activity) ctx));
+            kvDataSource = ReplicatedKVStore.getInstance(ctx, remote);
+            kvDataSource.open();
+            kv = kvDataSource.getKv(key, version);
 
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if (txDataSource != null)
-                txDataSource.close();
+            if (kvDataSource != null)
+                kvDataSource.close();
         }
 //        Log.e(TAG, "getKVs: kvValues.size: " + kvValues.size());
         return kv;

@@ -50,7 +50,7 @@ public class RemoteKVStore implements KVStoreAdaptor {
         return instance;
     }
 
-    public RemoteKVStore(APIClient apiClient) {
+    private RemoteKVStore(APIClient apiClient) {
         this.apiClient = apiClient;
     }
 

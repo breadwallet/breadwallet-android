@@ -42,7 +42,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-class ReplicatedKVStore {
+public class ReplicatedKVStore {
     private static final String TAG = ReplicatedKVStore.class.getName();
 
     private static final String KEY_REGEX = "^[^_][\\w-]{1,255}$";
@@ -51,6 +51,7 @@ class ReplicatedKVStore {
     public boolean encrypted = false;
     private boolean syncRunning = false;
     private KVStoreAdaptor remoteKvStore;
+    private static ReplicatedKVStore instance;
 
     // Database fields
     private SQLiteDatabase database;
@@ -64,7 +65,12 @@ class ReplicatedKVStore {
             PlatformSqliteHelper.KV_DELETED
     };
 
-    public ReplicatedKVStore(Context context, KVStoreAdaptor remoteKvStore) {
+    public static ReplicatedKVStore getInstance(Context context, KVStoreAdaptor remoteKvStore) {
+        if (instance == null) instance = new ReplicatedKVStore(context, remoteKvStore);
+        return instance;
+    }
+
+    private ReplicatedKVStore(Context context, KVStoreAdaptor remoteKvStore) {
         dbHelper = new PlatformSqliteHelper(context);
         this.remoteKvStore = remoteKvStore;
     }

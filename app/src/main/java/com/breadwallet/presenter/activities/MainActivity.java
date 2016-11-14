@@ -454,8 +454,9 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     //check if the user hasn't used the passcode in 2 weeks or more and ask for it
     private void checkUnlockedTooLong() {
+        String pass = KeyStoreManager.getPassCode(this);
         long passTime = KeyStoreManager.getLastPasscodeUsedTime(this);
-        if (passTime + TimeUnit.MILLISECONDS.convert(14, TimeUnit.DAYS) <= System.currentTimeMillis()) {
+        if (!pass.isEmpty() && (passTime + BRConstants.PASS_CODE_TIME_LIMIT <= System.currentTimeMillis())) {
             ((BreadWalletApp) getApplication()).promptForAuthentication(this, BRConstants.AUTH_FOR_GENERAL, null, null, null, null, true);
         }
     }

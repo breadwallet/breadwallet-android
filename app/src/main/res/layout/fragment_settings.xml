@@ -300,6 +300,7 @@
                 android:textSize="12sp" />
 
             <RelativeLayout
+                android:id="@+id/early_access_separator"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/separator_height"
                 android:layout_marginTop="10dp"
@@ -327,6 +328,7 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:id="@+id/early_access_separator2"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/separator_height"
                 android:background="@color/gray"

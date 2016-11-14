@@ -108,7 +108,7 @@ public class FragmentSettings extends Fragment {
             public void onClick(View v) {
                 if (BRAnimator.checkTheMultipressingAvailability()) {
                     ((BreadWalletApp) getActivity().getApplicationContext()).promptForAuthentication(getActivity(),
-                            BRConstants.AUTH_FOR_LIMIT, null, null, null, null,false);
+                            BRConstants.AUTH_FOR_LIMIT, null, null, null, null, false);
                 }
             }
         });
@@ -174,6 +174,10 @@ public class FragmentSettings extends Fragment {
                                   }
 
         );
+        //keep it hidden until finished
+        earlyAccess.setVisibility(View.GONE);
+        rootView.findViewById(R.id.early_access_separator).setVisibility(View.GONE);
+        rootView.findViewById(R.id.early_access_separator2).setVisibility(View.GONE);
 
         earlyAccess.setOnClickListener(new View.OnClickListener() {
             @Override

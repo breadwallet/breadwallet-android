@@ -1,5 +1,7 @@
 package com.breadwallet.tools.util;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * BreadWallet
  * <p/>
@@ -164,6 +166,8 @@ public class BRConstants {
 
     public static final String bitcoinLowercase = "\u0180";
     public static final String bitcoinUppercase = "\u0243";
+
+    public static final long PASS_CODE_TIME_LIMIT = TimeUnit.MILLISECONDS.convert(14, TimeUnit.DAYS);
 
     private BRConstants() {
     }

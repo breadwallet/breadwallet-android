@@ -27,6 +27,7 @@ package com.breadwallet.presenter.fragments;
 
 import android.app.DialogFragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -92,6 +93,7 @@ public class PasswordDialogFragment extends DialogFragment {
     private String prevPass;
     private String message;
     private TextView description;
+    private boolean forceDialogStayOn;
 
     private int mode = -1;
 
@@ -103,9 +105,29 @@ public class PasswordDialogFragment extends DialogFragment {
     }
 
     @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        long passTime = KeyStoreManager.getLastPasscodeUsedTime(getActivity());
+        if (!firstTime && forceDialogStayOn && (passTime + BRConstants.PASS_CODE_TIME_LIMIT <= System.currentTimeMillis())) {
+            ((BreadWalletApp) getActivity().getApplication()).promptForAuthentication(getActivity(), mode, request, message, title.getText().toString(), paymentRequest, forceDialogStayOn);
+        }
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        onDismiss(dialog);
+    }
+
+    @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_password_dialog, container);
+        String pass = KeyStoreManager.getPassCode(getActivity());
+        if (pass == null || pass.length() != 4) {
+            firstTime = true;
+            verifyOnly = false;
+            forceDialogStayOn = true;
+        }
         dialogFragment = this;
         passcodeEditText = (EditText) view.findViewById(R.id.edit_passcode);
         phraseEditText = (EditText) view.findViewById(R.id.edit_phrase);
@@ -206,9 +228,10 @@ public class PasswordDialogFragment extends DialogFragment {
             currentMode = BRConstants.AUTH_MODE_NEW_PASS;
         }
         long passTime = KeyStoreManager.getLastPasscodeUsedTime(getActivity());
-        if (passTime + TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES) <= System.currentTimeMillis()) {
+        if (passTime + BRConstants.PASS_CODE_TIME_LIMIT <= System.currentTimeMillis()) {
             cancel.setClickable(false);
             cancel.setVisibility(View.GONE);
+            forceDialogStayOn = true;
         }
         if (verifyOnly) {
             title.setText(String.format(getResources().getString(R.string.enter_passcode), "\"" + BRConstants.bitcoinLowercase + "read\""));
@@ -263,10 +286,6 @@ public class PasswordDialogFragment extends DialogFragment {
         }
     }
 
-    public void setFirstTimeTrue() {
-        firstTime = true;
-        verifyOnly = false;
-    }
 
     public void setVerifyOnlyTrue() {
         verifyOnly = true;

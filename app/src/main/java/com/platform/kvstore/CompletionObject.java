@@ -1,7 +1,5 @@
 package com.platform.kvstore;
 
-import static android.R.attr.version;
-
 /**
  * BreadWallet
  * <p/>
