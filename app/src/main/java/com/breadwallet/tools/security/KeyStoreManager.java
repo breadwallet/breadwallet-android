@@ -268,7 +268,6 @@ public class KeyStoreManager {
 
     public static boolean putKeyStorePhrase(byte[] strToStore, Activity context, int requestCode) {
         return !(strToStore == null || strToStore.length == 0) && setData(context, strToStore, PHRASE_ALIAS, PHRASE_FILENAME, PHRASE_IV, requestCode, true);
-
     }
 
     public static byte[] getKeyStorePhrase(final Activity context, int requestCode) {
@@ -372,7 +371,6 @@ public class KeyStoreManager {
 
     public static int getFailCount(final Activity context) {
         byte[] result = getData(context, FAIL_COUNT_ALIAS, FAIL_COUNT_FILENAME, FAIL_COUNT_IV, 0);
-//        Log.e(TAG, "getFailCount: " + (result.length > 0 ? TypesConverter.bytesToInt(result) : 0));
         return result.length > 0 ? TypesConverter.bytesToInt(result) : 0;
     }
 

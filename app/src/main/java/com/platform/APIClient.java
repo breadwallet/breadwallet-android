@@ -87,7 +87,7 @@ public class APIClient {
     // host is the server(s) on which the API is hosted
     private static final String HOST = "api.breadwallet.com";
     // convenience getter for the API endpoint
-    private static final String BASE_URL = PROTO + "://" + HOST;
+    public static final String BASE_URL = PROTO + "://" + HOST;
     //feePerKb url
     private static final String FEE_PER_KB_URL = "/v1/fee-per-kb";
     //token

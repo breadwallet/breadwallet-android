@@ -2,7 +2,8 @@ package com.platform.sqlite;
 
 import android.content.Context;
 import android.database.SQLException;
-import android.util.Log;
+
+import com.platform.kvstore.ReplicatedKVStore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,7 +94,6 @@ public class PlatformSqliteManager {
             if (kvDataSource.isKeyValid(entity.getKey())) {
                 kvDataSource.set(entity);
             }
-
 
         } catch (SQLException e) {
             e.printStackTrace();

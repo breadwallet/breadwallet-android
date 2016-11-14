@@ -462,11 +462,8 @@ public class PasswordDialogFragment extends DialogFragment {
         int failCount = KeyStoreManager.getFailCount(getActivity());
 
         long secureTime = SharedPreferencesManager.getSecureTime(getActivity());
-        Log.e(TAG, "setWalletDisabled: secureTime: " + secureTime);
         long failTimestamp = KeyStoreManager.getFailTimeStamp(getActivity());
-        Log.e(TAG, "setWalletDisabled: failTimestamp: " + failTimestamp);
         double waitTime = (failTimestamp + Math.pow(6, failCount - 3) * 60.0 - secureTime) / 60.0;
-        Log.e(TAG, "setWalletDisabled: waitTime: " + waitTime);
         title.setText(R.string.wallet_disabled);
         description.setText("");
         passcodeEditText.setVisibility(View.GONE);
