@@ -136,6 +136,11 @@ public class MainActivity extends FragmentActivity implements Observer {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 BRWalletManager.getInstance(app).setUpTheWallet();
             }
         });
@@ -165,7 +170,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                 BRConstants.PAGE_INDICATOR_SCALE_UP);
         setStatusBarColor();
 
-        updateBundle();
+//        updateBundle();
     }
 
     private void updateBundle() {
@@ -173,7 +178,6 @@ public class MainActivity extends FragmentActivity implements Observer {
             @Override
             public void run() {
                 APIClient apiClient = APIClient.getInstance(app);
-//                apiClient.buyBitcoinMe();
                 apiClient.updateBundle(); //bread-buy-staging
             }
         }).start();
