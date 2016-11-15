@@ -66,7 +66,8 @@ import com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.util.Locale;
-import java.util.concurrent.TimeUnit;
+
+import static com.breadwallet.tools.security.KeyStoreManager.putLastPasscodeUsedTime;
 
 public class PasswordDialogFragment extends DialogFragment {
 
@@ -108,14 +109,9 @@ public class PasswordDialogFragment extends DialogFragment {
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
         long passTime = KeyStoreManager.getLastPasscodeUsedTime(getActivity());
-        if (!firstTime && forceDialogStayOn && (passTime + BRConstants.PASS_CODE_TIME_LIMIT <= System.currentTimeMillis())) {
+        if (forceDialogStayOn && (passTime + BRConstants.PASS_CODE_TIME_LIMIT <= System.currentTimeMillis())) {
             ((BreadWalletApp) getActivity().getApplication()).promptForAuthentication(getActivity(), mode, request, message, title.getText().toString(), paymentRequest, forceDialogStayOn);
         }
-    }
-
-    @Override
-    public void onCancel(DialogInterface dialog) {
-        onDismiss(dialog);
     }
 
     @Override
@@ -150,7 +146,7 @@ public class PasswordDialogFragment extends DialogFragment {
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getDialog().cancel();
+                getDialog().dismiss();
                 passcodeEditText.setText("");
                 keyboard.hideSoftInputFromWindow(cancel.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
                 if (!BRAnimator.scanResultFragmentOn && mode == BRConstants.AUTH_FOR_PAY && request.isAmountRequested) {
@@ -358,8 +354,8 @@ public class PasswordDialogFragment extends DialogFragment {
                         InputMethodManager.HIDE_NOT_ALWAYS);
                 //reset the passcode after successful attempt
                 KeyStoreManager.putFailCount(0, getActivity());
-                KeyStoreManager.putLastPasscodeUsedTime(System.currentTimeMillis(), getActivity());
-                getDialog().cancel();
+                putLastPasscodeUsedTime(System.currentTimeMillis(), getActivity());
+                getDialog().dismiss();
                 long totalSpent = BRWalletManager.getInstance(getActivity()).getTotalSent();
                 long spendLimit = totalSpent + PassCodeManager.getInstance().getLimit(getActivity()) + (request == null ? 0 : request.amount);
                 KeyStoreManager.putSpendLimit(spendLimit, getActivity());
@@ -434,7 +430,7 @@ public class PasswordDialogFragment extends DialogFragment {
                     if (passToCheck.equals(tempPassToChange)) {
                         passCodeManager.setPassCode(tempPassToChange, getActivity());
                         tempPassToChange = "";
-                        getDialog().cancel();
+                        getDialog().dismiss();
                         String tmp = BRStringFormatter.getCurrentBalanceText(getActivity());
                         MiddleViewAdapter.resetMiddleView(getActivity(), tmp);
                         ((BreadWalletApp) getActivity().getApplicationContext()).setUnlocked(true);

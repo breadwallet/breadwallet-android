@@ -193,11 +193,11 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         int childCount = 12;
         for (int i = 0; i < childCount; i++) {
             Button b = new Button(app);
+            b.setFilterTouchesWhenObscured(true);
             b.setWidth((int) buttonWidth);
             b.setHeight((int) buttonHeight);
             b.setTextSize(buttonTextSize);
             b.setTypeface(Typeface.create("sans-serif-thin", Typeface.NORMAL));
-
             //noinspection deprecation
             b.setTextColor(getResources().getColor(R.color.dark_blue));
             b.setBackgroundResource(R.drawable.button_regular_blue);

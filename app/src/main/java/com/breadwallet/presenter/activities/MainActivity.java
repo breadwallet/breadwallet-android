@@ -456,7 +456,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     private void checkUnlockedTooLong() {
         String pass = KeyStoreManager.getPassCode(this);
         long passTime = KeyStoreManager.getLastPasscodeUsedTime(this);
-        if (!pass.isEmpty() && (passTime + BRConstants.PASS_CODE_TIME_LIMIT <= System.currentTimeMillis())) {
+        if (pass.length() == 4 && (passTime + BRConstants.PASS_CODE_TIME_LIMIT <= System.currentTimeMillis())) {
             ((BreadWalletApp) getApplication()).promptForAuthentication(this, BRConstants.AUTH_FOR_GENERAL, null, null, null, null, true);
         }
     }

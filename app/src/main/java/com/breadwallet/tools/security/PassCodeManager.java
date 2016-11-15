@@ -51,6 +51,7 @@ public class PassCodeManager {
 
     public void setPassCode(String pass, Activity context) {
         KeyStoreManager.putPassCode(pass, context);
+        KeyStoreManager.putLastPasscodeUsedTime(System.currentTimeMillis(), context);
         setSpendingLimitIfNotSet(context);
     }
 
