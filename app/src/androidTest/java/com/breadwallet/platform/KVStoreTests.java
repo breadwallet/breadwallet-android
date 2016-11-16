@@ -1,13 +1,16 @@
 package com.breadwallet.platform;
 
+import android.app.Activity;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
 import com.breadwallet.presenter.activities.MainActivity;
+import com.platform.APIClient;
+import com.platform.kvstore.RemoteKVStore;
+import com.platform.kvstore.ReplicatedKVStore;
 import com.platform.sqlite.KVEntity;
 import com.platform.sqlite.PlatformSqliteHelper;
-import com.platform.sqlite.PlatformSqliteManager;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -54,23 +57,25 @@ public class KVStoreTests {
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityRule = new ActivityTestRule<>(MainActivity.class);
-    PlatformSqliteManager sqliteManager;
     List<KVEntity> kvs;
+    RemoteKVStore remote;
+    ReplicatedKVStore store;
 
     private static final String KEY = "S6c56bnXQiBjk9mqSYE7ykVQ7NzrRy";
 
     @Before
     public void setUp() {
-        sqliteManager = PlatformSqliteManager.getInstance(mActivityRule.getActivity());
+        remote = RemoteKVStore.getInstance(APIClient.getInstance((Activity) mActivityRule.getActivity()));
+        store = ReplicatedKVStore.getInstance(mActivityRule.getActivity(), remote);
         kvs = new LinkedList<>();
         kvs.add(new KVEntity(0, 2, "hello", "hello".getBytes(), System.currentTimeMillis(), 0));
         kvs.add(new KVEntity(0, 2, "removed", "removed".getBytes(), System.currentTimeMillis(), 1));
         for (int i = 0; i < 20; i++) {
             kvs.add(new KVEntity(0, 1, "testkey" + i, ("testkey" + i).getBytes(), System.currentTimeMillis(), 0));
         }
-        sqliteManager.setKv(kvs);
-        Log.e(TAG, "setUp: size: " + sqliteManager.getKVs().size());
-        int freshSize = sqliteManager.getKVs().size();
+        store.set(kvs);
+        Log.e(TAG, "setUp: size: " + store.getAllKVs().size());
+        int freshSize = store.getAllKVs().size();
         Assert.assertEquals(22, kvs.size());
         Assert.assertEquals(22, freshSize);
     }
@@ -78,9 +83,11 @@ public class KVStoreTests {
     @After
     public void tearDown() {
         mActivityRule.getActivity().deleteDatabase(PlatformSqliteHelper.DATABASE_NAME);
-        Log.e(TAG, "tearDown: " + sqliteManager.getKVs().size());
-        sqliteManager = null;
+        Log.e(TAG, "tearDown: " + store.getAllKVs().size());
         kvs.clear();
+        store.deleteAllKVs();
+        Log.e(TAG, "tearDown: " + store.getAllKVs().size());
+
     }
 
     @Test
@@ -93,12 +100,12 @@ public class KVStoreTests {
         }
         Assert.assertEquals(remoteKV.size(), 21);
 
-        List<KVEntity> allLocalKeys = sqliteManager.getKVs();
+        List<KVEntity> allLocalKeys = store.getAllKVs();
         Assert.assertEquals(allLocalKeys.size(), 22);
         Map<String, byte[]> localKV = new LinkedHashMap<>();
         for (KVEntity kv : allLocalKeys) {
             if (kv.getDeleted() == 0) {
-                KVEntity tmpKv = sqliteManager.getKv(kv.getKey(), kv.getVersion());
+                KVEntity tmpKv = store.get(kv.getKey(), kv.getVersion());
                 localKV.put(kv.getKey(), tmpKv.getValue());
             }
         }
@@ -126,17 +133,22 @@ public class KVStoreTests {
 
     @Test
     public void testSetLocal() {
-        sqliteManager.deleteKVs();
-        sqliteManager.setKv(0, 1, "Key1", "Key1".getBytes(), System.currentTimeMillis(), 0);
-        sqliteManager.setKv(0, 1, "Key1", "Key1".getBytes(), System.currentTimeMillis(), 0);
-        sqliteManager.setKv(new KVEntity(0, 1, "Key2", "Key2".getBytes(), System.currentTimeMillis(), 2));
-        sqliteManager.setKv(new KVEntity[]{
+        store.set(0, 1, "Key1", "Key1".getBytes(), System.currentTimeMillis(), 0);
+        store.set(0, 1, "Key1", "Key1".getBytes(), System.currentTimeMillis(), 0);
+        store.set(new KVEntity(0, 1, "Key2", "Key2".getBytes(), System.currentTimeMillis(), 2));
+        store.set(new KVEntity[]{
                 new KVEntity(0, 4, "Key3", "Key3".getBytes(), System.currentTimeMillis(), 2),
                 new KVEntity(0, 2, "Key4", "Key4".getBytes(), System.currentTimeMillis(), 0)});
-        sqliteManager.setKv(Arrays.asList(new KVEntity[]{
+        store.set(Arrays.asList(new KVEntity[]{
                 new KVEntity(0, 4, "Key5", "Key5".getBytes(), System.currentTimeMillis(), 1),
                 new KVEntity(0, 5, "Key6", "Key6".getBytes(), System.currentTimeMillis(), 5)}));
-        Assert.assertEquals(6, sqliteManager.getKVs().size());
+        Assert.assertEquals(28, store.getAllKVs().size());
+    }
+
+    @Test
+    public void testSetLocalIncrementsVersion() {
+        store.deleteAllKVs();
+//        CompletionObject obj = store.set(0, 1, "Key1", "Key1".getBytes(), System.currentTimeMillis(), 0);
     }
 
 }

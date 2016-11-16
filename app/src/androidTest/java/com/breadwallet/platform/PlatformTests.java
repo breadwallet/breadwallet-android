@@ -7,8 +7,6 @@ import android.util.Log;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.util.Utils;
 import com.platform.APIClient;
-import com.platform.sqlite.KVEntity;
-import com.platform.sqlite.PlatformSqliteManager;
 
 import org.apache.commons.compress.compressors.CompressorException;
 import org.apache.commons.io.IOUtils;

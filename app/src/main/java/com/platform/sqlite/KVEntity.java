@@ -3,6 +3,8 @@ package com.platform.sqlite;
 
 import android.util.Log;
 
+import com.platform.kvstore.CompletionObject;
+
 /**
  * BreadWallet
  * <p>
@@ -37,7 +39,17 @@ public class KVEntity {
     private byte[] value;
     private long time;
     private int deleted;
+    private CompletionObject.RemoteKVStoreError err;
 
+    public KVEntity(long version, long remoteVersion, String key, byte[] value, long time, int deleted, CompletionObject.RemoteKVStoreError err) {
+        this.version = version;
+        this.remoteVersion = remoteVersion;
+        this.key = key;
+        this.value = value;
+        this.time = time;
+        this.deleted = deleted;
+        this.err = err;
+    }
     public KVEntity(long version, long remoteVersion, String key, byte[] value, long time, int deleted) {
         this.version = version;
         this.remoteVersion = remoteVersion;
@@ -60,6 +72,10 @@ public class KVEntity {
     private KVEntity() {
     }
 
+
+    public CompletionObject.RemoteKVStoreError getErr(){
+        return err;
+    }
     public long getVersion() {
         return version;
     }

@@ -151,7 +151,7 @@ public class RemoteKVStore implements KVStoreAdaptor {
             Log.e(TAG, "ver: [KV] KEYS err=" + (res == null ? null : res.code()));
             return new CompletionObject(0, 0, unknown);
         }
-        //todo finish this
+        //todo finish this, MAKE SURE TO USE the KVEntity constructor with err
         // data is encoded as:
         // LE32(num) + (num * (LEU8(keyLeng) + (keyLen * LEU32(char)) + LEU64(ver) + LEU64(msTs) + LEU8(del)))
         return null;

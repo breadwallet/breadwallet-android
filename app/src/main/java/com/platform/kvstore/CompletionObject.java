@@ -1,5 +1,9 @@
 package com.platform.kvstore;
 
+import com.platform.sqlite.KVEntity;
+
+import java.util.List;
+
 /**
  * BreadWallet
  * <p/>
@@ -38,6 +42,7 @@ public class CompletionObject {
     public long time;
     public RemoteKVStoreError err;
     public byte[] value;
+    public List<KVEntity> keys;
 
     public CompletionObject(long version, long time, RemoteKVStoreError err) {
         this.version = version;
@@ -49,6 +54,11 @@ public class CompletionObject {
         this.value = value;
         this.version = version;
         this.time = time;
+        this.err = err;
+    }
+
+    public CompletionObject(List<KVEntity> keys, RemoteKVStoreError err) {
+        this.keys = keys;
         this.err = err;
     }
 
