@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.breadwallet.presenter.activities.MainActivity;
 import com.platform.APIClient;
+import com.platform.kvstore.CompletionObject;
 import com.platform.kvstore.RemoteKVStore;
 import com.platform.kvstore.ReplicatedKVStore;
 import com.platform.sqlite.KVEntity;
@@ -66,7 +67,7 @@ public class KVStoreTests {
     @Before
     public void setUp() {
         remote = RemoteKVStore.getInstance(APIClient.getInstance((Activity) mActivityRule.getActivity()));
-        store = ReplicatedKVStore.getInstance(mActivityRule.getActivity(), remote);
+        store = new ReplicatedKVStore(mActivityRule.getActivity(), remote);
         kvs = new LinkedList<>();
         kvs.add(new KVEntity(0, 2, "hello", "hello".getBytes(), System.currentTimeMillis(), 0));
         kvs.add(new KVEntity(0, 2, "removed", "removed".getBytes(), System.currentTimeMillis(), 1));
@@ -148,7 +149,11 @@ public class KVStoreTests {
     @Test
     public void testSetLocalIncrementsVersion() {
         store.deleteAllKVs();
-//        CompletionObject obj = store.set(0, 1, "Key1", "Key1".getBytes(), System.currentTimeMillis(), 0);
+        CompletionObject obj = store.set(0, 0, "Key1", "Key1".getBytes(), System.currentTimeMillis(), 0);
+        List<KVEntity> test = store.getAllKVs();
+        Assert.assertEquals(test.size(), 1);
+        Assert.assertNull(obj.err);
+        Assert.assertEquals(1, store.localVersion("Key1"));
     }
 
 }

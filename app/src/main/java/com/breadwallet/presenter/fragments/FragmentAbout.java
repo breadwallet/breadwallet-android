@@ -16,11 +16,6 @@ import com.breadwallet.R;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
-import com.platform.APIClient;
-import com.platform.sqlite.KVEntity;
-import com.platform.sqlite.PlatformSqliteManager;
-
-import java.util.List;
 import java.util.Locale;
 
 /**
