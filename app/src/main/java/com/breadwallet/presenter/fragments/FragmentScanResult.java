@@ -2,7 +2,6 @@ package com.breadwallet.presenter.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -559,15 +558,15 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         }
         decimalFormatSymbols.setCurrencySymbol(symbol);
         currencyFormat.setMaximumFractionDigits(decimalPoints);
-        int currNrOfDecimal = getNumberOfDecimalPlaces(result.toEngineeringString());
-        currencyFormat.setMinimumFractionDigits(currNrOfDecimal > decimalPoints ? decimalPoints : currNrOfDecimal);
+        int currNrOfDecimal = getNumberOfDecimalPlaces(amount);
         currencyFormat.setGroupingUsed(true);
         if (rightItem && amount.endsWith("."))
             currencyFormat.setDecimalSeparatorAlwaysShown(true);
         currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
         currencyFormat.setNegativePrefix(decimalFormatSymbols.getCurrencySymbol() + "-");
         currencyFormat.setNegativeSuffix("");
-        Log.e(TAG, "result.doubleValue(): " + result.toEngineeringString());
+        Log.e(TAG, "toPattern: " + currencyFormat.toPattern());
+        currencyFormat.setMinimumFractionDigits(currNrOfDecimal > decimalPoints ? decimalPoints : currNrOfDecimal);
         return currencyFormat.format(result);
     }
 
