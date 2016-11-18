@@ -192,9 +192,10 @@ public class ReplicatedKVStore {
                 if (version == 0) {
                     curVer = localVersion(key);
                 } else {
+                    curVer = version;
                     //if we have a version, check if it's correct
                     cursor = database.query(PlatformSqliteHelper.KV_STORE_TABLE_NAME,
-                            allColumns, "key = ? AND version = ?", new String[]{key, String.valueOf(version)},
+                            allColumns, "key = ? AND version = ?", new String[]{key, String.valueOf(curVer)},
                             null, null, "version DESC", "1");
                     boolean success = cursor.moveToNext();
                     if (success)
@@ -211,7 +212,7 @@ public class ReplicatedKVStore {
                 }
 
                 cursor = database.query(PlatformSqliteHelper.KV_STORE_TABLE_NAME,
-                        allColumns, "key = ? AND version = ?", new String[]{key, String.valueOf(version)},
+                        allColumns, "key = ? AND version = ?", new String[]{key, String.valueOf(curVer)},
                         null, null, "version DESC", "1");
                 if (cursor.getCount() != 0) {
                     cursor.moveToNext();

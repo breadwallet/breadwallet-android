@@ -13,6 +13,7 @@ import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
@@ -316,7 +317,7 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     private void checkDeviceRooted() {
         final boolean hasBitcoin = CurrencyManager.getInstance(this).getBALANCE() > 0;
-        if (RootHelper.isDeviceRooted()) {
+        if (RootHelper.isDeviceRooted() ) {
 
             new Handler().postDelayed(new Runnable() {
                 @Override

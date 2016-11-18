@@ -25,6 +25,7 @@ package com.breadwallet.presenter.fragments;
  * THE SOFTWARE.
  */
 
+import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -108,9 +109,11 @@ public class PasswordDialogFragment extends DialogFragment {
     @Override
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
-        long passTime = KeyStoreManager.getLastPasscodeUsedTime(getActivity());
+        Activity app = getActivity();
+        if(app ==  null) return;
+        long passTime = KeyStoreManager.getLastPasscodeUsedTime(app);
         if (forceDialogStayOn && (passTime + BRConstants.PASS_CODE_TIME_LIMIT <= System.currentTimeMillis())) {
-            ((BreadWalletApp) getActivity().getApplication()).promptForAuthentication(getActivity(), mode, request, message, title.getText().toString(), paymentRequest, forceDialogStayOn);
+            ((BreadWalletApp) app.getApplication()).promptForAuthentication(app, mode, request, message, title.getText().toString(), paymentRequest, forceDialogStayOn);
         }
     }
 

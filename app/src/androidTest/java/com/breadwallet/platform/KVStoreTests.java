@@ -126,7 +126,7 @@ public class KVStoreTests {
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
             byte[] val = (byte[]) pair.getValue();
-            byte[] valToAssert = remoteKV.get(pair.getKey());
+            byte[] valToAssert = remoteKV.get((String) pair.getKey());
             Assert.assertArrayEquals(val, valToAssert);
         }
 
@@ -154,6 +154,26 @@ public class KVStoreTests {
         Assert.assertEquals(test.size(), 1);
         Assert.assertNull(obj.err);
         Assert.assertEquals(1, store.localVersion("Key1"));
+    }
+
+    @Test
+    public void testSetThenGet() {
+        byte[] value = "hello".getBytes();
+        store.deleteAllKVs();
+        CompletionObject setObj = store.set(0, 0, "hello", value, System.currentTimeMillis(), 0);
+        Assert.assertNull(setObj.err);
+        long v1 = setObj.version;
+        long t1 = setObj.time;
+        KVEntity kvNoVersion = store.get("hello", 0);
+        KVEntity kvWithVersion = store.get("hello", 1);
+        Assert.assertArrayEquals(value, kvNoVersion.getValue());
+        Assert.assertEquals(v1, kvNoVersion.getVersion());
+        Assert.assertEquals(t1, kvNoVersion.getTime(), 0.001);
+
+        Assert.assertArrayEquals(value, kvWithVersion.getValue());
+        Assert.assertEquals(v1, kvWithVersion.getVersion());
+        Assert.assertEquals(t1, kvWithVersion.getTime(), 0.001);
+
     }
 
 }

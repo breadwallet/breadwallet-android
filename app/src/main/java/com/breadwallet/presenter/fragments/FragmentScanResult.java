@@ -2,6 +2,7 @@ package com.breadwallet.presenter.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -124,7 +125,6 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
                 SpringAnimator.showAnimation(rightTextView);
             }
         };
-        updateBothTextValues("0", "0");
         doubleArrow.setText(BRConstants.DOUBLE_ARROW);
         doubleArrow.setOnClickListener(listener);
         leftTextView.setOnClickListener(listener);
@@ -317,7 +317,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
 
     public void preConditions(String tmp) {
         Activity app = getActivity();
-        if(app == null) return;
+        if (app == null) return;
         if (FragmentScanResult.isARequest) {
             buttonCode = BRConstants.REQUEST_BUTTON;
         } else {
@@ -338,7 +338,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
 
     private void doBackSpace() {
         Activity app = getActivity();
-        if(app == null) return;
+        if (app == null) return;
         String amount = rightValue.value;
         int length = amount.length();
         if (length > 1) {
@@ -352,7 +352,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
 
     private void insertSeparator() {
         Activity app = getActivity();
-        if(app == null) return;
+        if (app == null) return;
         if (isTextColorGrey) {
             changeTextColor(1);
             ((BreadWalletApp) app.getApplication()).setLockerPayButton(buttonCode);
@@ -366,7 +366,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
 
     private void insertDigit(String tmp) {
         Activity app = getActivity();
-        if(app == null) return;
+        if (app == null) return;
         String amount = rightValue.value;
 
         int length = amount.length();
@@ -413,7 +413,6 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         }
 
         return l < limit;
-
     }
 
     private int getMaxFractionDigits() {
@@ -447,7 +446,6 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
 
     public void calculateAndPassValuesToFragment(String valuePassed) {
         String divideBy = "1000000";
-
         Log.e(TAG, "calculateAndPassValuesToFragment: valuePassed: " + valuePassed);
         if (unit == BRConstants.CURRENT_UNIT_MBITS) divideBy = "1000";
         if (unit == BRConstants.CURRENT_UNIT_BITCOINS) divideBy = "1";
@@ -456,25 +454,20 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         BigDecimal leftValueObject;
         BigDecimal theRate = new BigDecimal(rate);
 
-        if (rightValue.isBitcoin) {
-            //from bits to other currency using rate
-            if (theRate.intValue() > 1) {
+        //from bits to other currency using rate
+        if (theRate.intValue() > 0 && rightValueObject.doubleValue() != 0) {
+            if (rightValue.isBitcoin) {
                 leftValueObject = theRate.multiply(rightValueObject.divide(new BigDecimal(divideBy)));
             } else {
-                leftValueObject = new BigDecimal("0");
-            }
-        } else {
-            //from other currency to bits using rate
-            if (theRate.intValue() > 1) {
+                //from other currency to bits using rate
                 leftValueObject = rightValueObject.multiply(new BigDecimal(divideBy)).
                         divide(theRate, 8, RoundingMode.HALF_UP);
-            } else {
-                leftValueObject = new BigDecimal("0");
             }
+        } else {
+            leftValueObject = new BigDecimal("0");
         }
+
         updateBothTextValues(leftValueObject.toString(), valuePassed);
-
-
     }
 
     public void switchCurrencies() {
@@ -505,6 +498,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
     }
 
     public String getFormattedCurrencyStringForKeyboard(String isoCurrencyCode, String amount, boolean rightItem) {
+        Log.e(TAG, "getFormattedCurrencyStringForKeyboard: amount:" + amount);
         Activity app = getActivity();
         if (amount == null || app == null) {
             Log.e(TAG, "getFormattedCurrencyStringForKeyboard: AMOUNT == null");
@@ -565,7 +559,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         }
         decimalFormatSymbols.setCurrencySymbol(symbol);
         currencyFormat.setMaximumFractionDigits(decimalPoints);
-        int currNrOfDecimal = getNumberOfDecimalPlaces(amount);
+        int currNrOfDecimal = getNumberOfDecimalPlaces(result.toEngineeringString());
         currencyFormat.setMinimumFractionDigits(currNrOfDecimal > decimalPoints ? decimalPoints : currNrOfDecimal);
         currencyFormat.setGroupingUsed(true);
         if (rightItem && amount.endsWith("."))
@@ -573,8 +567,8 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
         currencyFormat.setNegativePrefix(decimalFormatSymbols.getCurrencySymbol() + "-");
         currencyFormat.setNegativeSuffix("");
-
-        return currencyFormat.format(result.doubleValue());
+        Log.e(TAG, "result.doubleValue(): " + result.toEngineeringString());
+        return currencyFormat.format(result);
     }
 
     public ValueItem getBitcoinValue() {
