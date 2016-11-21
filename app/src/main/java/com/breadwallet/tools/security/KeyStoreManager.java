@@ -223,8 +223,30 @@ public class KeyStoreManager {
             SecretKey secretKey = (SecretKey)
                     keyStore.getKey(alias, null);
             if (secretKey == null) {
-                /** no such key */
-                throw new NullPointerException("secretKey is null");
+                /** no such key, the key is just simply not there */
+                boolean fileExists = new File(encryptedDataFilePath).exists();
+                Log.e(TAG, "_getData: Phrase file exist: " + fileExists);
+                if (!fileExists) return result; /** file also not there, fine then */
+                boolean success = false;
+                long startTime = System.currentTimeMillis();
+                while (!success || System.currentTimeMillis() - startTime < 1000 * 2) { /** while secret is still null or it's been less then 2 seconds*/
+                    Log.e(TAG, "_getData: the key is just simply not there");
+                    secretKey = (SecretKey) keyStore.getKey(alias, null);
+                    if (secretKey != null) {
+                        success = true;
+                    } else {
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                if (secretKey == null) {
+                    /** no key but the phrase is there, meaning the keys are gone but the wallet is present */
+                    showKeyStoreFailedToLoad(context);
+                    throw new BRKeystoreErrorException("no key but the phrase is there");
+                }
             }
             byte[] iv = readBytesFromFile(getEncryptedDataFilePath(alias_iv, context));
             Cipher outCipher;
@@ -262,17 +284,6 @@ public class KeyStoreManager {
                 showKeyStoreFailedToLoad(context);
                 throw new BRKeystoreErrorException("Key store error");
             }
-        } catch (NullPointerException e) {
-            /** the key is just simply not there */
-            Log.e(TAG, "_getData: the key is just simply not there");
-            boolean phraseExists = new File(encryptedDataFilePath).exists();
-            Log.e(TAG, "_getData: Phrase file exist: " + phraseExists);
-            if (phraseExists) {
-                /** no key but the phrase is there, meaning the keys are gone but the wallet is present */
-                showKeyStoreFailedToLoad(context);
-                throw new BRKeystoreErrorException("no key but the phrase is there");
-            }
-            return result;
         } catch (IOException | CertificateException | KeyStoreException e) {
             /** keyStore.load(null) threw the Exception, meaning the keystore is unavailable */
             Log.e(TAG, "_getData: keyStore.load(null) threw the Exception, meaning the keystore is unavailable", e);
@@ -289,6 +300,7 @@ public class KeyStoreManager {
             Log.e(TAG, "getData: error: " + e.getClass().getSuperclass().getName());
             throw new RuntimeException(e.getMessage());
         }
+
         return result;
     }
 
@@ -543,10 +555,10 @@ public class KeyStoreManager {
             StringBuilder str = new StringBuilder();
             for (String a : aliasObjectMap.keySet()) {
                 keyStore.deleteEntry(a);
-                boolean b1  = new File(getEncryptedDataFilePath(aliasObjectMap.get(a).datafileName, context)).delete();
-                if(!b1) str.append(" B1:" + a);
-                boolean b2  = new File(getEncryptedDataFilePath(aliasObjectMap.get(a).ivFileName, context)).delete();
-                if(!b2) str.append(" B2:" + a);
+                boolean b1 = new File(getEncryptedDataFilePath(aliasObjectMap.get(a).datafileName, context)).delete();
+                if (!b1) str.append(" B1:" + a);
+                boolean b2 = new File(getEncryptedDataFilePath(aliasObjectMap.get(a).ivFileName, context)).delete();
+                if (!b2) str.append(" B2:" + a);
                 count++;
             }
             Log.e(TAG, "resetWalletKeyStore: report: " + str.toString());

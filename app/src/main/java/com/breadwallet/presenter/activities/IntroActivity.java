@@ -267,7 +267,7 @@ public class IntroActivity extends FragmentActivity {
                 } else {
                     Log.e(TAG, "WARNING: resultCode != RESULT_OK");
                     BRWalletManager m = BRWalletManager.getInstance(this);
-                    m.wipeKeyStore(this);
+//                    m.wipeKeyStore(this);
                     m.wipeWalletButKeystore(this);
                     BRAnimator.resetFragmentAnimator();
                     finish();

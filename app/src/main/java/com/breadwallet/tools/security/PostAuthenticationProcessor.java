@@ -197,11 +197,7 @@ public class PostAuthenticationProcessor {
         String canary;
         try {
             canary = KeyStoreManager.getKeyStoreCanary(introActivity, BRConstants.CANARY_REQUEST_CODE);
-        } catch (UserNotAuthenticatedException e) {
-            e.printStackTrace();
-
-            return;
-        } catch (BRKeystoreErrorException e) {
+        } catch (UserNotAuthenticatedException | BRKeystoreErrorException e) {
             e.printStackTrace();
             return;
         }
