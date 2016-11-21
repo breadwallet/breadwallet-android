@@ -1,23 +1,21 @@
-package com.breadwallet.tools.exceptions;
-
-import java.security.GeneralSecurityException;
+package com.breadwallet.exceptions;
 
 /**
  * BreadWallet
- * <p>
- * Created by Mihail Gutan <mihail@breadwallet.com> on 11/16/15.
+ * <p/>
+ * Created by Mihail Gutan on <mihail@breadwallet.com> 11/20/16.
  * Copyright (c) 2016 breadwallet LLC
- * <p>
+ * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * <p>
+ * <p/>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * <p>
+ * <p/>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,25 +24,10 @@ import java.security.GeneralSecurityException;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+public class BRKeystoreErrorException extends Exception {
+    public static final String TAG = BRKeystoreErrorException.class.getName();
 
-public class CertificateChainNotFound extends GeneralSecurityException {
-    public static final String TAG = CertificateChainNotFound.class.getName();
-
-    private CertificateChainNotFound() {
-        super();
+    public BRKeystoreErrorException(String message) {
+        super(message);
     }
-
-    public CertificateChainNotFound(String msg) {
-        super(msg);
-    }
-
-    private CertificateChainNotFound(String msg, Throwable cause) {
-        super(msg, cause);
-    }
-
-    private CertificateChainNotFound(Throwable cause) {
-        super(cause);
-    }
-
 }
-

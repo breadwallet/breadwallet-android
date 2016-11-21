@@ -3,7 +3,7 @@ package com.breadwallet.tools.security;
 import android.util.Log;
 
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
-import com.breadwallet.tools.exceptions.CertificateChainNotFound;
+import com.breadwallet.exceptions.CertificateChainNotFound;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

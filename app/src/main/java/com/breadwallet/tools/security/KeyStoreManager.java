@@ -11,6 +11,7 @@ import android.security.keystore.UserNotAuthenticatedException;
 import android.util.Log;
 
 import com.breadwallet.R;
+import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -78,6 +79,7 @@ public class KeyStoreManager {
     public static final String ANDROID_KEY_STORE = "AndroidKeyStore";
 
     public static final String NO_AUTH = "noauth";
+    public static final String ERR = "err";
 
     public static final String PHRASE_IV = "ivphrase";
     public static final String CANARY_IV = "ivcanary";
@@ -176,9 +178,12 @@ public class KeyStoreManager {
         return false;
     }
 
-    private static byte[] getData(final Activity context, String alias, String alias_file, String alias_iv, int request_code) {
+    private static byte[] getData(final Activity context, String alias, String alias_file, String alias_iv, int request_code)
+            throws BRKeystoreErrorException, UserNotAuthenticatedException {
+
         if (alias.equals(alias_file) || alias.equals(alias_iv) || alias_file.equals(alias_iv))
             throw new IllegalArgumentException("mistake in parameters!");
+        Log.e(TAG, "getData: " + alias);
         KeyStore keyStore;
         String filesDirectory = context.getFilesDir().getAbsolutePath();
         String encryptedDataFilePath = filesDirectory + File.separator + alias_file;
@@ -202,17 +207,20 @@ public class KeyStoreManager {
                     new FileInputStream(encryptedDataFilePath), outCipher);
             result = ByteReader.readBytesFromStream(cipherInputStream);
         } catch (InvalidKeyException e) {
+            Log.e(TAG, "getData: InvalidKeyException");
             if (e instanceof UserNotAuthenticatedException) {
                 /**user not authenticated, ask the system for authentication*/
                 Log.e(TAG, Log.getStackTraceString(e));
                 showAuthenticationScreen(context, request_code);
-                if (alias.equalsIgnoreCase(CANARY_ALIAS) || alias.equalsIgnoreCase(PHRASE_ALIAS))
-                    return NO_AUTH.getBytes();
+                throw new UserNotAuthenticatedException(e.getMessage());
             } else {
-                Log.e(TAG, "getData: InvalidKeyException");
+                Log.e(TAG, "getData: InvalidKeyException", e);
+                showKeyStoreFailedToLoad(context);
+                throw new BRKeystoreErrorException("Key store error");
             }
         } catch (NullPointerException e) {
             /** the key is just simply not there */
+            Log.e(TAG, "getData: the key is just simply not there");
             if (alias.equalsIgnoreCase(PHRASE_ALIAS)) {
                 boolean phraseExists = new File(encryptedDataFilePath).exists();
                 Log.e(TAG, "getData: Phrase file exist: " + phraseExists);
@@ -235,29 +243,18 @@ public class KeyStoreManager {
                             });
                 }
             }
-            e.printStackTrace();
+            return result;
         } catch (IOException | CertificateException | KeyStoreException e) {
             /** keyStore.load(null) threw the Exception, meaning the keystore is unavailable */
+            Log.e(TAG, "getData: keyStore.load(null) threw the Exception, meaning the keystore is unavailable", e);
             if (e instanceof FileNotFoundException) {
-                Log.e(TAG, "getData: File not found exception");
+                Log.e(TAG, "getData: File not found exception", e);
                 throw new RuntimeException("the key is present but the phrase on the disk no???");
             } else {
-                if (alias.equalsIgnoreCase(PHRASE_ALIAS))
-                    showKeyStoreDialog("KeyStore Error", "Failed to load KeyStore. Please try again later or enter your phrase to recover your Breadwallet now.", "recover now", "try later",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    if (BRAnimator.checkTheMultipressingAvailability()) {
-                                        ((IntroActivity) context).showRecoverWalletFragment();
-                                    }
-                                }
-                            }, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    context.finish();
-                                }
-                            },
-                            null);
+                showKeyStoreFailedToLoad(context);
+                throw new BRKeystoreErrorException("Failed to load KeyStore");
             }
-            e.printStackTrace();
+
         } catch (UnrecoverableKeyException | InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchPaddingException e) {
             /** if for any other reason the keystore fails, crash! */
             Log.e(TAG, "getData: error: " + e.getClass().getSuperclass().getName());
@@ -266,15 +263,32 @@ public class KeyStoreManager {
         return result;
     }
 
+    private static void showKeyStoreFailedToLoad(final Activity context) {
+        showKeyStoreDialog("KeyStore Error", "Failed to load KeyStore. Please try again later or enter your phrase to recover your Breadwallet now.", "recover now", "try later",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (BRAnimator.checkTheMultipressingAvailability()) {
+                            ((IntroActivity) context).showRecoverWalletFragment();
+                        }
+                    }
+                }, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        context.finish();
+                    }
+                },
+                null);
+    }
+
     public static boolean putKeyStorePhrase(byte[] strToStore, Activity context, int requestCode) {
         return !(strToStore == null || strToStore.length == 0) && setData(context, strToStore, PHRASE_ALIAS, PHRASE_FILENAME, PHRASE_IV, requestCode, true);
     }
 
-    public static byte[] getKeyStorePhrase(final Activity context, int requestCode) {
+    public static byte[] getKeyStorePhrase(final Activity context, int requestCode)
+            throws UserNotAuthenticatedException, BRKeystoreErrorException {
 
         KeyguardManager myKM = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
         if (myKM.inKeyguardRestrictedInputMode())
-            return new byte[0];
+            throw new BRKeystoreErrorException("!inKeyguardRestrictedInputMode");
 
         return getData(context, PHRASE_ALIAS, PHRASE_FILENAME, PHRASE_IV, requestCode);
     }
@@ -291,7 +305,8 @@ public class KeyStoreManager {
         return strBytes.length != 0 && setData(context, strBytes, CANARY_ALIAS, CANARY_FILENAME, CANARY_IV, requestCode, true);
     }
 
-    public static String getKeyStoreCanary(final Activity context, int requestCode) {
+    public static String getKeyStoreCanary(final Activity context, int requestCode)
+            throws UserNotAuthenticatedException, BRKeystoreErrorException {
         byte[] data = getData(context, CANARY_ALIAS, CANARY_FILENAME, CANARY_IV, requestCode);
         String result = null;
         try {
@@ -307,7 +322,13 @@ public class KeyStoreManager {
     }
 
     public static byte[] getMasterPublicKey(final Activity context) {
-        return getData(context, PUB_KEY_ALIAS, PUB_KEY_FILENAME, PUB_KEY_IV, 0);
+        byte[] result = new byte[0];
+        try {
+            result =  getData(context, PUB_KEY_ALIAS, PUB_KEY_FILENAME, PUB_KEY_IV, 0);
+        } catch (BRKeystoreErrorException | UserNotAuthenticatedException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     public static boolean putAuthKey(byte[] authKey, Activity context) {
@@ -315,14 +336,28 @@ public class KeyStoreManager {
     }
 
     public static byte[] getAuthKey(final Activity context) {
-        return getData(context, AUTH_KEY_ALIAS, AUTH_KEY_FILENAME, AUTH_KEY_IV, 0);
+
+        byte[] result = new byte[0];
+        try {
+            result =  getData(context, AUTH_KEY_ALIAS, AUTH_KEY_FILENAME, AUTH_KEY_IV, 0);
+        } catch (BRKeystoreErrorException | UserNotAuthenticatedException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
+
     public static boolean putToken(byte[] token, Activity context) {
         return token != null && token.length != 0 && setData(context, token, TOKEN_ALIAS, TOKEN_FILENAME, TOKEN_IV, 0, false);
     }
 
-    public static byte[] getToken(final Activity context) {
-        return getData(context, TOKEN_ALIAS, TOKEN_FILENAME, TOKEN_IV, 0);
+    public static byte[] getToken(final Activity context)  {
+        byte[] result = new byte[0];
+        try {
+            result =  getData(context, TOKEN_ALIAS, TOKEN_FILENAME, TOKEN_IV, 0);
+        } catch (BRKeystoreErrorException | UserNotAuthenticatedException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     public static boolean putWalletCreationTime(int creationTime, Activity context) {
@@ -330,8 +365,13 @@ public class KeyStoreManager {
         return bytesToStore.length != 0 && setData(context, bytesToStore, WALLET_CREATION_TIME_ALIAS, WALLET_CREATION_TIME_FILENAME, TIME_IV, 0, false);
     }
 
-    public static int getWalletCreationTime(final Activity context) {
-        byte[] result = getData(context, WALLET_CREATION_TIME_ALIAS, WALLET_CREATION_TIME_FILENAME, TIME_IV, 0);
+    public static int getWalletCreationTime(final Activity context)  {
+        byte[] result = new byte[0];
+        try {
+            result =  getData(context, WALLET_CREATION_TIME_ALIAS, WALLET_CREATION_TIME_FILENAME, TIME_IV, 0);
+        } catch (BRKeystoreErrorException | UserNotAuthenticatedException e) {
+            e.printStackTrace();
+        }
         return result.length > 0 ? TypesConverter.bytesToInt(result) : 0;
     }
 
@@ -340,8 +380,14 @@ public class KeyStoreManager {
         return setData(context, bytesToStore, PASS_CODE_ALIAS, PASS_CODE_FILENAME, PASS_CODE_IV, 0, false);
     }
 
-    public static String getPassCode(final Activity context) {
-        byte[] result = getData(context, PASS_CODE_ALIAS, PASS_CODE_FILENAME, PASS_CODE_IV, 0);
+    public static String getPassCode(final Activity context){
+
+        byte[] result = new byte[0];
+        try {
+            result =  getData(context, PASS_CODE_ALIAS, PASS_CODE_FILENAME, PASS_CODE_IV, 0);
+        } catch (BRKeystoreErrorException | UserNotAuthenticatedException e) {
+            e.printStackTrace();
+        }
         String passCode = new String(result);
         try {
             int test = Integer.parseInt(passCode);
@@ -370,7 +416,13 @@ public class KeyStoreManager {
     }
 
     public static int getFailCount(final Activity context) {
-        byte[] result = getData(context, FAIL_COUNT_ALIAS, FAIL_COUNT_FILENAME, FAIL_COUNT_IV, 0);
+        byte[] result = new byte[0];
+        try {
+            result =  getData(context, FAIL_COUNT_ALIAS, FAIL_COUNT_FILENAME, FAIL_COUNT_IV, 0);
+        } catch (BRKeystoreErrorException | UserNotAuthenticatedException e) {
+            e.printStackTrace();
+        }
+
         return result.length > 0 ? TypesConverter.bytesToInt(result) : 0;
     }
 
@@ -381,7 +433,13 @@ public class KeyStoreManager {
     }
 
     public static long getSpendLimit(final Activity context) {
-        byte[] result = getData(context, SPEND_LIMIT_ALIAS, SPEND_LIMIT_FILENAME, SPENT_LIMIT_IV, 0);
+        byte[] result = new byte[0];
+        try {
+            result =  getData(context, SPEND_LIMIT_ALIAS, SPEND_LIMIT_FILENAME, SPENT_LIMIT_IV, 0);
+        } catch (BRKeystoreErrorException | UserNotAuthenticatedException e) {
+            e.printStackTrace();
+        }
+
         return result.length > 0 ? TypesConverter.byteArray2long(result) : 0;
     }
 
@@ -391,21 +449,34 @@ public class KeyStoreManager {
         return bytesToStore.length != 0 && setData(context, bytesToStore, FAIL_TIMESTAMP_ALIAS, FAIL_TIMESTAMP_FILENAME, FAIL_TIMESTAMP_IV, 0, false);
     }
 
-    public static long getFailTimeStamp(final Activity context) {
-        byte[] result = getData(context, FAIL_TIMESTAMP_ALIAS, FAIL_TIMESTAMP_FILENAME, FAIL_TIMESTAMP_IV, 0);
+    public static long getFailTimeStamp(final Activity context)  {
+        byte[] result = new byte[0];
+        try {
+            result =  getData(context, FAIL_TIMESTAMP_ALIAS, FAIL_TIMESTAMP_FILENAME, FAIL_TIMESTAMP_IV, 0);
+        } catch (BRKeystoreErrorException | UserNotAuthenticatedException e) {
+            e.printStackTrace();
+        }
+
         return result.length > 0 ? TypesConverter.byteArray2long(result) : 0;
     }
+
     public static boolean putLastPasscodeUsedTime(long time, Activity context) {
         byte[] bytesToStore = TypesConverter.long2byteArray(time);
         return bytesToStore.length != 0 && setData(context, bytesToStore, PASS_TIME_ALIAS, PASS_TIME_FILENAME, PASS_TIME_IV, 0, false);
     }
 
     public static long getLastPasscodeUsedTime(final Activity context) {
-        byte[] result = getData(context, PASS_TIME_ALIAS, PASS_TIME_FILENAME, PASS_TIME_IV, 0);
+
+        byte[] result = new byte[0];
+        try {
+            result =  getData(context, PASS_TIME_ALIAS, PASS_TIME_FILENAME, PASS_TIME_IV, 0);
+        } catch (BRKeystoreErrorException | UserNotAuthenticatedException e) {
+            e.printStackTrace();
+        }
         return result.length > 0 ? TypesConverter.byteArray2long(result) : 0;
     }
 
-    public static boolean phraseIsValid(String insertedPhrase, Activity activity) {
+    public static boolean phraseIsValid(String insertedPhrase, Activity activity)  {
         String normalizedPhrase = Normalizer.normalize(insertedPhrase.trim(), Normalizer.Form.NFKD);
         if (!BRWalletManager.getInstance(activity).validatePhrase(activity, normalizedPhrase))
             return false;
@@ -431,6 +502,10 @@ public class KeyStoreManager {
             keyStore.deleteEntry(FAIL_COUNT_ALIAS);
             keyStore.deleteEntry(FAIL_TIMESTAMP_ALIAS);
             keyStore.deleteEntry(AUTH_KEY_ALIAS);
+            keyStore.deleteEntry(SPEND_LIMIT_ALIAS);
+            keyStore.deleteEntry(TOKEN_ALIAS);
+            keyStore.deleteEntry(PASS_TIME_ALIAS);
+
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
             return false;
@@ -499,10 +574,10 @@ public class KeyStoreManager {
         return false;
     }
 
-    private static void showKeyStoreDialog(final String title, final String message, final String posButton, final String negButton,
-                                           final DialogInterface.OnClickListener posButtonListener,
-                                           final DialogInterface.OnClickListener negButtonListener,
-                                           final DialogInterface.OnDismissListener dismissListener) {
+    public static void showKeyStoreDialog(final String title, final String message, final String posButton, final String negButton,
+                                          final DialogInterface.OnClickListener posButtonListener,
+                                          final DialogInterface.OnClickListener negButtonListener,
+                                          final DialogInterface.OnDismissListener dismissListener) {
         Log.e(TAG, "showKeyStoreDialog");
         Activity app = MainActivity.app;
         if (app == null) app = IntroActivity.app;

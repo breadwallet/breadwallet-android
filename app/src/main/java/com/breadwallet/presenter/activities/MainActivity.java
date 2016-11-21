@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.net.Uri;
@@ -317,7 +318,8 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     private void checkDeviceRooted() {
         final boolean hasBitcoin = CurrencyManager.getInstance(this).getBALANCE() > 0;
-        if (RootHelper.isDeviceRooted() ) {
+        boolean isDebuggable = 0 != (getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE);
+        if (RootHelper.isDeviceRooted() && !isDebuggable) {
 
             new Handler().postDelayed(new Runnable() {
                 @Override

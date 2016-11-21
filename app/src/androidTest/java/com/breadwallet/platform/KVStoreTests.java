@@ -27,6 +27,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import static android.R.attr.value;
+
 /**
  * BreadWallet
  * <p/>
@@ -66,7 +68,7 @@ public class KVStoreTests {
 
     @Before
     public void setUp() {
-        remote = RemoteKVStore.getInstance(APIClient.getInstance((Activity) mActivityRule.getActivity()));
+        remote = RemoteKVStore.getInstance(APIClient.getInstance(mActivityRule.getActivity()));
         store = new ReplicatedKVStore(mActivityRule.getActivity(), remote);
         kvs = new LinkedList<>();
         kvs.add(new KVEntity(0, 2, "hello", "hello".getBytes(), System.currentTimeMillis(), 0));
@@ -158,8 +160,8 @@ public class KVStoreTests {
 
     @Test
     public void testSetThenGet() {
-        byte[] value = "hello".getBytes();
         store.deleteAllKVs();
+        byte[] value = "hello".getBytes();
         CompletionObject setObj = store.set(0, 0, "hello", value, System.currentTimeMillis(), 0);
         Assert.assertNull(setObj.err);
         long v1 = setObj.version;
@@ -175,5 +177,27 @@ public class KVStoreTests {
         Assert.assertEquals(t1, kvWithVersion.getTime(), 0.001);
 
     }
+
+    @Test
+    public void testSetThenSetIncrementsVersion() {
+        store.deleteAllKVs();
+        byte[] value = "hello".getBytes();
+        byte[] value2 = "hello2".getBytes();
+        CompletionObject setObj = store.set(0, 0, "hello", value, System.currentTimeMillis(), 0);
+        CompletionObject setObj2 = store.set(setObj.version, 0, "hello", value2, System.currentTimeMillis(), 0);
+        Assert.assertEquals(setObj2.version, setObj.version + 1);
+    }
+    @Test
+    public void testSetThenDel() {
+        store.deleteAllKVs();
+        byte[] value = "hello".getBytes();
+        CompletionObject setObj = store.set(0, 0, "hello", value, System.currentTimeMillis(), 0);
+        CompletionObject delObj = store.delete("hello", setObj.version);
+        Assert.assertNull(setObj.err);
+        Assert.assertNull(delObj.err);
+
+        Assert.assertEquals(delObj.version, setObj.version + 1);
+    }
+
 
 }

@@ -1,4 +1,4 @@
-package com.breadwallet;
+package com.breadwallet.wallet;
 
 import com.breadwallet.presenter.entities.RequestObject;
 import com.breadwallet.tools.security.RequestHandler;

@@ -1,8 +1,11 @@
 package com.breadwallet.tools.security;
 
+import android.content.DialogInterface;
+import android.security.keystore.UserNotAuthenticatedException;
 import android.util.Log;
 
 import com.breadwallet.R;
+import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.activities.PhraseFlowActivity;
@@ -14,6 +17,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.wallet.BRWalletManager;
 
+import java.security.Key;
 import java.util.Arrays;
 
 import static com.breadwallet.wallet.BRWalletManager.getSeedFromPhrase;
@@ -118,7 +122,13 @@ public class PostAuthenticationProcessor {
 
     public void onPublishTxAuth(MainActivity app) {
         BRWalletManager walletManager = BRWalletManager.getInstance(app);
-        byte[] rawSeed = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAY_REQUEST_CODE);
+        byte[] rawSeed;
+        try {
+            rawSeed = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAY_REQUEST_CODE);
+        } catch (UserNotAuthenticatedException | BRKeystoreErrorException e) {
+            e.printStackTrace();
+            return;
+        }
         if (rawSeed.length < 10) return;
         byte[] seed = TypesConverter.getNullTerminatedPhrase(rawSeed);
         try {
@@ -143,7 +153,13 @@ public class PostAuthenticationProcessor {
 
     public void onPaymentProtocolRequest(MainActivity app) {
 
-        byte[] rawSeed = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE);
+        byte[] rawSeed;
+        try {
+            rawSeed = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE);
+        } catch (UserNotAuthenticatedException | BRKeystoreErrorException e) {
+            e.printStackTrace();
+            return;
+        }
         if (rawSeed == null || rawSeed.length < 10 || paymentRequest.serializedTx == null)
             return;
         if (rawSeed.length < 10) return;
@@ -176,14 +192,44 @@ public class PostAuthenticationProcessor {
         this.paymentRequest = paymentRequest;
     }
 
-    public void onCanaryCheck(IntroActivity introActivity) {
-        String canary = KeyStoreManager.getKeyStoreCanary(introActivity, BRConstants.CANARY_REQUEST_CODE);
-        if (canary.equalsIgnoreCase(KeyStoreManager.NO_AUTH)) return;
+    public void onCanaryCheck(final IntroActivity introActivity) {
+        String canary;
+        try {
+            canary = KeyStoreManager.getKeyStoreCanary(introActivity, BRConstants.CANARY_REQUEST_CODE);
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+
+            return;
+        } catch (BRKeystoreErrorException e) {
+            e.printStackTrace();
+//
+//            KeyStoreManager.showKeyStoreDialog("KeyStore Error", "An error occurred when trying to load the keystore.", introActivity.getString(R.string.ok), null,
+//                    new DialogInterface.OnClickListener() {
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            dialog.cancel();
+//                        }
+//                    }, null, new DialogInterface.OnDismissListener() {
+//                        @Override
+//                        public void onDismiss(DialogInterface dialogInterface) {
+//                            if (BRAnimator.checkTheMultipressingAvailability()) {
+//                                if (!introActivity.isDestroyed())
+//                                    introActivity.finish();
+//                            }
+//                        }
+//                    });
+            return;
+        }
+
         if (!canary.equalsIgnoreCase(BRConstants.CANARY_STRING)) {
             Log.e(TAG, "!canary.equalsIgnoreCase(BRConstants.CANARY_STRING)");
-            byte[] phrase = KeyStoreManager.getKeyStorePhrase(introActivity, BRConstants.CANARY_REQUEST_CODE);
+            byte[] phrase;
+            try {
+                phrase = KeyStoreManager.getKeyStorePhrase(introActivity, BRConstants.CANARY_REQUEST_CODE);
+            } catch (UserNotAuthenticatedException | BRKeystoreErrorException e) {
+                e.printStackTrace();
+                return;
+            }
             String strPhrase = new String(phrase);
-            if (strPhrase.equalsIgnoreCase(KeyStoreManager.NO_AUTH)) return;
             if (strPhrase.isEmpty()) {
                 BRWalletManager m = BRWalletManager.getInstance(introActivity);
                 m.wipeKeyStore();

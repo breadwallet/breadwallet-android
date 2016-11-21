@@ -1,4 +1,4 @@
-package com.breadwallet.tools.adapter.tests;
+package com.breadwallet.presenter;
 
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -15,10 +15,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.longClick;
 import static android.support.test.espresso.action.ViewActions.typeText;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static junit.framework.Assert.assertTrue;
@@ -48,8 +47,8 @@ import static junit.framework.Assert.assertTrue;
  * THE SOFTWARE.
  */
 @RunWith(AndroidJUnit4.class)
-public class AmountAdapterTest {
-    private static final String TAG = AmountAdapterTest.class.getName();
+public class ScanResultTest {
+    private static final String TAG = ScanResultTest.class.getName();
     private String testAddress = "mhBmRiqosSHR9YnPTKc3xXcvhEcKtjet2p";
     MainActivity activity;
     Button copyAddressFromClipboard;
@@ -62,11 +61,10 @@ public class AmountAdapterTest {
     public void initStuff() {
         Log.e(TAG, "initStuff: ");
         activity = mActivityRule.getActivity();
+        onView(withId(R.id.address_edit_text)).perform(clearText());
         copyAddressFromClipboard = (Button) activity.findViewById(R.id.main_button_pay_address_from_clipboard);
         onView(withId(R.id.address_edit_text)).perform(typeText(testAddress));
         onView(withId(R.id.main_button_pay_address_from_clipboard)).perform(click());
-
-
     }
 
     @Test

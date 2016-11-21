@@ -33,6 +33,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.security.keystore.UserNotAuthenticatedException;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -48,6 +49,7 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
+import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.activities.PhraseFlowActivity;
@@ -111,7 +113,8 @@ public class PasswordDialogFragment extends DialogFragment {
         super.onDismiss(dialog);
         Activity app = getActivity();
         if(app ==  null) return;
-        long passTime = KeyStoreManager.getLastPasscodeUsedTime(app);
+        long passTime = 0;
+        passTime = KeyStoreManager.getLastPasscodeUsedTime(app);
         if (forceDialogStayOn && (passTime + BRConstants.PASS_CODE_TIME_LIMIT <= System.currentTimeMillis())) {
             ((BreadWalletApp) app.getApplication()).promptForAuthentication(app, mode, request, message, title.getText().toString(), paymentRequest, forceDialogStayOn);
         }
