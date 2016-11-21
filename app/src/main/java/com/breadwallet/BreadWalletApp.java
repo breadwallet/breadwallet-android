@@ -221,14 +221,16 @@ public class BreadWalletApp extends Application {
                 fingerprintDialogFragment.setPaymentRequestEntity(requestEntity, paymentRequest);
                 fingerprintDialogFragment.setMessage(message);
                 fingerprintDialogFragment.setTitle(message != null ? "" : title);
-                fingerprintDialogFragment.show(context.getFragmentManager(), FingerprintDialogFragment.class.getName());
+                if (!context.isDestroyed())
+                    fingerprintDialogFragment.show(context.getFragmentManager(), FingerprintDialogFragment.class.getName());
             } else {
                 PasswordDialogFragment passwordDialogFragment = new PasswordDialogFragment();
                 passwordDialogFragment.setMode(mode);
                 passwordDialogFragment.setPaymentRequestEntity(requestEntity, paymentRequest);
                 passwordDialogFragment.setVerifyOnlyTrue();
                 passwordDialogFragment.setMessage(message);
-                passwordDialogFragment.show(context.getFragmentManager(), PasswordDialogFragment.class.getName());
+                if (!context.isDestroyed())
+                    passwordDialogFragment.show(context.getFragmentManager(), PasswordDialogFragment.class.getName());
             }
         } else {
             showDeviceNotSecuredWarning(context);

@@ -152,8 +152,8 @@ public class BRWalletManager {
 
     }
 
-    public boolean wipeKeyStore() {
-        return KeyStoreManager.resetWalletKeyStore();
+    public boolean wipeKeyStore(Context context) {
+        return KeyStoreManager.resetWalletKeyStore(context);
     }
 
     /**

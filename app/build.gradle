@@ -78,8 +78,8 @@ repositories {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:25.0.0'
-    compile 'com.android.support:support-v13:25.0.0'
+    compile 'com.android.support:appcompat-v7:25.0.1'
+    compile 'com.android.support:support-v13:25.0.1'
 
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
     compile group: 'commons-io', name: 'commons-io', version: '2.0.1'
@@ -88,7 +88,7 @@ dependencies {
 
     compile 'io.sigpipe:jbsdiff:1.0'
 
-    androidTestCompile 'com.android.support:support-annotations:25.0.0'
+    androidTestCompile 'com.android.support:support-annotations:25.0.1'
     androidTestCompile 'com.android.support.test:runner:0.5'
     androidTestCompile 'com.android.support.test:rules:0.5'
     androidTestCompile 'junit:junit:4.12'

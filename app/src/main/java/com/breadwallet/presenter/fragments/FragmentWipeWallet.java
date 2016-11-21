@@ -130,7 +130,7 @@ public class FragmentWipeWallet extends Fragment {
                 }, 500);
                 String cleanPhrase = WordsReader.cleanPhrase(getActivity(), recoveryPhraseEditText.getText().toString().trim().toLowerCase());
                 if (KeyStoreManager.phraseIsValid(cleanPhrase, getActivity())) {
-                    m.wipeKeyStore();
+                    m.wipeKeyStore(getActivity());
                     m.wipeWalletButKeystore(getActivity());
                     BRPeerManager.stopSyncingProgressThread();
                     startIntroActivity();

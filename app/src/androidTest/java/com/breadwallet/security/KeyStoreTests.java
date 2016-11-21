@@ -184,6 +184,7 @@ public class KeyStoreTests {
         Assert.assertEquals(freshGet, freshGet);
     }
 
+    @Test
     public void testClearKeyStore() {
         KeyStoreManager.putKeyStorePhrase("axis husband project any sea patch drip tip spirit tide bring belt".getBytes(), mActivityRule.getActivity(), 0);
         KeyStoreManager.putKeyStoreCanary("canary", mActivityRule.getActivity(), 0);
@@ -196,8 +197,20 @@ public class KeyStoreTests {
         KeyStoreManager.putFailTimeStamp(1479686841, mActivityRule.getActivity());
         KeyStoreManager.putSpendLimit(10000000, mActivityRule.getActivity());
         KeyStoreManager.putLastPasscodeUsedTime(1479686841, mActivityRule.getActivity());
-        KeyStoreManager.resetWalletKeyStore();
 
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        KeyStoreManager.resetWalletKeyStore(mActivityRule.getActivity());
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         byte[] phrase = "some".getBytes();
         try {
@@ -226,6 +239,17 @@ public class KeyStoreTests {
         Assert.assertEquals(KeyStoreManager.getSpendLimit(mActivityRule.getActivity()), 0);
         Assert.assertEquals(KeyStoreManager.getLastPasscodeUsedTime(mActivityRule.getActivity()), 0);
 
+    }
+
+    @Test
+    public void testKeyStoreAuthTime() {
+        Assert.assertEquals(KeyStoreManager.AUTH_DURATION_SEC, 300);
+    }
+
+    @Test
+    public void testKeyStoreAliasMap() {
+        Assert.assertNotNull(KeyStoreManager.aliasObjectMap);
+        Assert.assertEquals(KeyStoreManager.aliasObjectMap.size(), 11);
     }
 
 }

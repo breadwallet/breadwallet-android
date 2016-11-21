@@ -101,7 +101,7 @@ public class APIClient {
     private static final String POST = "POST";
 
     public static final String BUNDLES = "bundles";
-//    public static final String BREAD_BUY = "bread-buy";
+    //    public static final String BREAD_BUY = "bread-buy";
     public static final String BREAD_BUY = "bread-buy-staging";
 
     public static String bundlesFileName = String.format("/%s", BUNDLES);
@@ -197,19 +197,21 @@ public class APIClient {
                     .header("Content-Type", "application/json")
                     .header("Accept", "application/json")
                     .post(requestBody).build();
-            String response = null;
+            String strResponse = null;
+            Response response;
             try {
-                response = sendRequest(request, false).body().string();
+                response = sendRequest(request, false);
+                if (response != null)
+                    strResponse = response.body().string();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            Log.e(TAG, "getToken: response: " + response);
-            if (response == null) return null;
+            Log.e(TAG, "getToken: response: " + strResponse);
+            if (strResponse == null) return null;
             JSONObject obj = null;
-            obj = new JSONObject(response);
+            obj = new JSONObject(strResponse);
             String token = obj.getString("token");
             KeyStoreManager.putToken(token.getBytes(), ctx);
-
             return token;
         } catch (JSONException e) {
             e.printStackTrace();

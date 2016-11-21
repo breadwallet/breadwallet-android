@@ -112,10 +112,11 @@ public class PostAuthenticationProcessor {
         byte[] phrase;
         try {
             phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.SHOW_PHRASE_REQUEST_CODE);
-            if (phrase.length < 10) return;
             app.showHideFragments(app.fragmentPhraseFlow1);
             app.fragmentPhraseFlow1.setPhrase(phrase);
-        } catch (Exception e) {
+        } catch (BRKeystoreErrorException e) {
+            e.printStackTrace();
+        } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
         }
     }
@@ -202,21 +203,6 @@ public class PostAuthenticationProcessor {
             return;
         } catch (BRKeystoreErrorException e) {
             e.printStackTrace();
-//
-//            KeyStoreManager.showKeyStoreDialog("KeyStore Error", "An error occurred when trying to load the keystore.", introActivity.getString(R.string.ok), null,
-//                    new DialogInterface.OnClickListener() {
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            dialog.cancel();
-//                        }
-//                    }, null, new DialogInterface.OnDismissListener() {
-//                        @Override
-//                        public void onDismiss(DialogInterface dialogInterface) {
-//                            if (BRAnimator.checkTheMultipressingAvailability()) {
-//                                if (!introActivity.isDestroyed())
-//                                    introActivity.finish();
-//                            }
-//                        }
-//                    });
             return;
         }
 
@@ -232,7 +218,7 @@ public class PostAuthenticationProcessor {
             String strPhrase = new String(phrase);
             if (strPhrase.isEmpty()) {
                 BRWalletManager m = BRWalletManager.getInstance(introActivity);
-                m.wipeKeyStore();
+                m.wipeKeyStore(introActivity);
                 m.wipeWalletButKeystore(introActivity);
                 BRAnimator.resetFragmentAnimator();
             } else {

@@ -115,7 +115,7 @@ public class IntroRecoverWalletFragment extends Fragment {
                     showKeyBoard(false);
                     BRWalletManager m = BRWalletManager.getInstance(getActivity());
                     m.wipeWalletButKeystore(getActivity());
-                    m.wipeKeyStore();
+                    m.wipeKeyStore(getActivity());
                     PostAuthenticationProcessor.getInstance().setPhraseForKeyStore(cleanPhrase);
                     PostAuthenticationProcessor.getInstance().onRecoverWalletAuth((IntroActivity) getActivity());
                     SharedPreferencesManager.putAllowSpend(getActivity(), false);

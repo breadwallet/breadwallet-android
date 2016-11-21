@@ -61,7 +61,7 @@ public class IntroNewWalletFragment extends Fragment {
                         public void run() {
                             BRWalletManager m = BRWalletManager.getInstance(getActivity());
                             m.wipeWalletButKeystore(getActivity());
-                            m.wipeKeyStore();
+                            m.wipeKeyStore(getActivity());
                             SharedPreferencesManager.putAllowSpend(getActivity(),true);
                             PostAuthenticationProcessor.getInstance().onCreateWalletAuth((IntroActivity) getActivity());
                         }

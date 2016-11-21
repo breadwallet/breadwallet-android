@@ -61,7 +61,7 @@ public class BRTipsManager {
             public void run() {
                 tryToGoToMainScreen = false;
             }
-        },1000);
+        }, 1000);
         app.parallaxViewPager.setCurrentItem(1);
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -120,7 +120,7 @@ public class BRTipsManager {
 
     public static void setQrBubblesPosition(int qr1, int qr2) {
         MainActivity app = MainActivity.app;
-        if (app != null) {
+        if (app != null && app.qrBubble1 != null && app.qrBubble2 != null) {
             app.qrBubble1.setY(qr1);
             app.qrBubble2.setY(qr2);
         }

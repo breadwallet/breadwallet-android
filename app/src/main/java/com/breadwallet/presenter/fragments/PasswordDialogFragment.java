@@ -467,7 +467,7 @@ public class PasswordDialogFragment extends DialogFragment {
         int attemptsRemaining = 8 - failCount;
         if (attemptsRemaining <= 0) {
             BRWalletManager m = BRWalletManager.getInstance(getActivity());
-            m.wipeKeyStore();
+            m.wipeKeyStore(getActivity());
             m.wipeWalletButKeystore(getActivity());
             startIntroActivity();
             BRAnimator.resetFragmentAnimator();
