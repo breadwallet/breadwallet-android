@@ -116,8 +116,6 @@ public class PostAuthenticationProcessor {
             app.fragmentPhraseFlow1.setPhrase(phrase);
         } catch (BRKeystoreErrorException e) {
             e.printStackTrace();
-        } catch (UserNotAuthenticatedException e) {
-            e.printStackTrace();
         }
     }
 
@@ -126,7 +124,7 @@ public class PostAuthenticationProcessor {
         byte[] rawSeed;
         try {
             rawSeed = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAY_REQUEST_CODE);
-        } catch (UserNotAuthenticatedException | BRKeystoreErrorException e) {
+        } catch (BRKeystoreErrorException e) {
             e.printStackTrace();
             return;
         }
@@ -153,11 +151,10 @@ public class PostAuthenticationProcessor {
     }
 
     public void onPaymentProtocolRequest(MainActivity app) {
-
         byte[] rawSeed;
         try {
             rawSeed = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE);
-        } catch (UserNotAuthenticatedException | BRKeystoreErrorException e) {
+        } catch (BRKeystoreErrorException e) {
             e.printStackTrace();
             return;
         }
@@ -197,7 +194,7 @@ public class PostAuthenticationProcessor {
         String canary;
         try {
             canary = KeyStoreManager.getKeyStoreCanary(introActivity, BRConstants.CANARY_REQUEST_CODE);
-        } catch (UserNotAuthenticatedException | BRKeystoreErrorException e) {
+        } catch (BRKeystoreErrorException e) {
             e.printStackTrace();
             return;
         }
@@ -207,7 +204,7 @@ public class PostAuthenticationProcessor {
             byte[] phrase;
             try {
                 phrase = KeyStoreManager.getKeyStorePhrase(introActivity, BRConstants.CANARY_REQUEST_CODE);
-            } catch (UserNotAuthenticatedException | BRKeystoreErrorException e) {
+            } catch (BRKeystoreErrorException e) {
                 e.printStackTrace();
                 return;
             }

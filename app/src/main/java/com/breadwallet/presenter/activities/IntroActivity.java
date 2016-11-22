@@ -259,7 +259,7 @@ public class IntroActivity extends FragmentActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        Log.e(TAG, "IntroActivity, onActivityResult: " + requestCode);
+        Log.e(TAG, "IntroActivity, onActivityResult: " + requestCode);
         switch (requestCode) {
             case BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {

@@ -10,7 +10,6 @@ import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.util.Log;
-import android.util.StringBuilderPrinter;
 
 import com.breadwallet.R;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
@@ -205,10 +204,10 @@ public class KeyStoreManager {
     }
 
     private static byte[] _getData(final Activity context, String alias, String alias_file, String alias_iv, int request_code)
-            throws BRKeystoreErrorException, UserNotAuthenticatedException {
+            throws BRKeystoreErrorException {
 
         if (alias.equals(alias_file) || alias.equals(alias_iv) || alias_file.equals(alias_iv))
-            throw new IllegalArgumentException("mistake in parameters!");
+            throw new RuntimeException("mistake in parameters!");
         Log.e(TAG, "_getData: " + alias);
         KeyStore keyStore;
 
@@ -255,14 +254,14 @@ public class KeyStoreManager {
 
             CipherInputStream cipherInputStream = new CipherInputStream(
                     new FileInputStream(encryptedDataFilePath), outCipher);
-            result = ByteReader.readBytesFromStream(cipherInputStream);
+            return ByteReader.readBytesFromStream(cipherInputStream);
         } catch (InvalidKeyException e) {
             Log.e(TAG, "_getData: InvalidKeyException");
             if (e instanceof UserNotAuthenticatedException) {
                 /**user not authenticated, ask the system for authentication*/
                 Log.e(TAG, Log.getStackTraceString(e));
                 showAuthenticationScreen(context, request_code);
-                throw new UserNotAuthenticatedException(e.getMessage());
+                throw new BRKeystoreErrorException(e.getMessage());
             } else if (e instanceof KeyPermanentlyInvalidatedException) {
                 showKeyStoreDialog("KeyStore Error", "Your Breadwallet encrypted data was recently invalidated because you disabled your Android lock screen. Please input your phrase to recover your Breadwallet now.", context.getString(R.string.ok), null,
                         new DialogInterface.OnClickListener() {
@@ -300,8 +299,8 @@ public class KeyStoreManager {
             Log.e(TAG, "getData: error: " + e.getClass().getSuperclass().getName());
             throw new RuntimeException(e.getMessage());
         }
-
-        return result;
+        showKeyStoreFailedToLoad(context);
+        throw new BRKeystoreErrorException("unknown");
     }
 
     private static String getEncryptedDataFilePath(String fileName, Context context) {
@@ -331,7 +330,7 @@ public class KeyStoreManager {
     }
 
     public static byte[] getKeyStorePhrase(final Activity context, int requestCode)
-            throws UserNotAuthenticatedException, BRKeystoreErrorException {
+            throws BRKeystoreErrorException {
         AliasObject obj = aliasObjectMap.get(PHRASE_ALIAS);
         return _getData(context, obj.alias, obj.datafileName, obj.ivFileName, requestCode);
     }
@@ -349,7 +348,7 @@ public class KeyStoreManager {
     }
 
     public static String getKeyStoreCanary(final Activity context, int requestCode)
-            throws UserNotAuthenticatedException, BRKeystoreErrorException {
+            throws BRKeystoreErrorException {
         AliasObject obj = aliasObjectMap.get(CANARY_ALIAS);
         byte[] data = _getData(context, obj.alias, obj.datafileName, obj.ivFileName, requestCode);
         String result = null;
@@ -371,7 +370,7 @@ public class KeyStoreManager {
         AliasObject obj = aliasObjectMap.get(PUB_KEY_ALIAS);
         try {
             result = _getData(context, obj.alias, obj.datafileName, obj.ivFileName, 0);
-        } catch (BRKeystoreErrorException | UserNotAuthenticatedException e) {
+        } catch (BRKeystoreErrorException e) {
             e.printStackTrace();
         }
         return result;
@@ -387,7 +386,7 @@ public class KeyStoreManager {
         byte[] result = new byte[0];
         try {
             result = _getData(context, obj.alias, obj.datafileName, obj.ivFileName, 0);
-        } catch (BRKeystoreErrorException | UserNotAuthenticatedException e) {
+        } catch (BRKeystoreErrorException e) {
             e.printStackTrace();
         }
         return result;
@@ -403,7 +402,7 @@ public class KeyStoreManager {
         byte[] result = new byte[0];
         try {
             result = _getData(context, obj.alias, obj.datafileName, obj.ivFileName, 0);
-        } catch (BRKeystoreErrorException | UserNotAuthenticatedException e) {
+        } catch (BRKeystoreErrorException e) {
             e.printStackTrace();
         }
         return result;
@@ -420,7 +419,7 @@ public class KeyStoreManager {
         byte[] result = new byte[0];
         try {
             result = _getData(context, obj.alias, obj.datafileName, obj.ivFileName, 0);
-        } catch (BRKeystoreErrorException | UserNotAuthenticatedException e) {
+        } catch (BRKeystoreErrorException e) {
             e.printStackTrace();
         }
         return result.length > 0 ? TypesConverter.bytesToInt(result) : 0;
@@ -437,14 +436,14 @@ public class KeyStoreManager {
         byte[] result = new byte[0];
         try {
             result = _getData(context, obj.alias, obj.datafileName, obj.ivFileName, 0);
-        } catch (BRKeystoreErrorException | UserNotAuthenticatedException e) {
+        } catch (BRKeystoreErrorException e) {
             e.printStackTrace();
         }
         String passCode = new String(result);
         try {
             int test = Integer.parseInt(passCode);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "getPassCode: " + e.getMessage());
             passCode = "";
             putPassCode(passCode, context);
             KeyStoreManager.putFailCount(0, context);
@@ -473,7 +472,7 @@ public class KeyStoreManager {
         byte[] result = new byte[0];
         try {
             result = _getData(context, obj.alias, obj.datafileName, obj.ivFileName, 0);
-        } catch (BRKeystoreErrorException | UserNotAuthenticatedException e) {
+        } catch (BRKeystoreErrorException e) {
             e.printStackTrace();
         }
 
@@ -491,7 +490,7 @@ public class KeyStoreManager {
         byte[] result = new byte[0];
         try {
             result = _getData(context, obj.alias, obj.datafileName, obj.ivFileName, 0);
-        } catch (BRKeystoreErrorException | UserNotAuthenticatedException e) {
+        } catch (BRKeystoreErrorException e) {
             e.printStackTrace();
         }
 
@@ -509,7 +508,7 @@ public class KeyStoreManager {
         byte[] result = new byte[0];
         try {
             result = _getData(context, obj.alias, obj.datafileName, obj.ivFileName, 0);
-        } catch (BRKeystoreErrorException | UserNotAuthenticatedException e) {
+        } catch (BRKeystoreErrorException e) {
             e.printStackTrace();
         }
 
@@ -527,7 +526,7 @@ public class KeyStoreManager {
         byte[] result = new byte[0];
         try {
             result = _getData(context, obj.alias, obj.datafileName, obj.ivFileName, 0);
-        } catch (BRKeystoreErrorException | UserNotAuthenticatedException e) {
+        } catch (BRKeystoreErrorException e) {
             e.printStackTrace();
         }
         return result.length > 0 ? TypesConverter.byteArray2long(result) : 0;
@@ -582,6 +581,7 @@ public class KeyStoreManager {
     public static void showAuthenticationScreen(Activity context, int requestCode) {
         // Create the Confirm Credentials screen. You can customize the title and description. Or
         // we will provide a generic one for you if you leave it null
+        Log.e(TAG, "showAuthenticationScreen: " + requestCode);
         KeyguardManager mKeyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
         Intent intent = mKeyguardManager.createConfirmDeviceCredentialIntent(context.getString(R.string.auth_required), context.getString(R.string.auth_message));
         if (intent != null) {
@@ -632,10 +632,10 @@ public class KeyStoreManager {
         return false;
     }
 
-    public static void showKeyStoreDialog(final String title, final String message, final String posButton, final String negButton,
-                                          final DialogInterface.OnClickListener posButtonListener,
-                                          final DialogInterface.OnClickListener negButtonListener,
-                                          final DialogInterface.OnDismissListener dismissListener) {
+    static void showKeyStoreDialog(final String title, final String message, final String posButton, final String negButton,
+                                   final DialogInterface.OnClickListener posButtonListener,
+                                   final DialogInterface.OnClickListener negButtonListener,
+                                   final DialogInterface.OnDismissListener dismissListener) {
         Log.e(TAG, "showKeyStoreDialog");
         Activity app = MainActivity.app;
         if (app == null) app = IntroActivity.app;
@@ -667,19 +667,16 @@ public class KeyStoreManager {
     }
 
     private static class AliasObject {
-        public String alias;
-        public String datafileName;
-        public String ivFileName;
+        String alias;
+        String datafileName;
+        String ivFileName;
 
-        public AliasObject(String alias, String datafileName, String ivFileName) {
+        AliasObject(String alias, String datafileName, String ivFileName) {
             this.alias = alias;
             this.datafileName = datafileName;
             this.ivFileName = ivFileName;
         }
 
-        private AliasObject() {
-
-        }
     }
 
 }

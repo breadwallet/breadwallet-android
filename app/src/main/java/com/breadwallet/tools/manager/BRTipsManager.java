@@ -112,7 +112,7 @@ public class BRTipsManager {
     public static void setSendBubblesPosition(int send1, int send2) {
 
         MainActivity app = MainActivity.app;
-        if (app != null) {
+        if (app != null && app.qrBubble1 != null && app.qrBubble2 != null) {
             app.sendBubble1.setY(send1);
             app.sendBubble2.setY(send2);
         }

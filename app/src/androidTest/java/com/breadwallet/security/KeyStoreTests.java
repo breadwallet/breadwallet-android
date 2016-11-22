@@ -1,6 +1,5 @@
 package com.breadwallet.security;
 
-import android.security.keystore.UserNotAuthenticatedException;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -53,7 +52,7 @@ public class KeyStoreTests {
         byte[] freshGet = new byte[0];
         try {
             freshGet = KeyStoreManager.getKeyStorePhrase(mActivityRule.getActivity(), 0);
-        } catch (UserNotAuthenticatedException | BRKeystoreErrorException e) {
+        } catch (BRKeystoreErrorException e) {
             e.printStackTrace();
         }
         Assert.assertArrayEquals(freshGet, phrase);
@@ -64,7 +63,7 @@ public class KeyStoreTests {
         byte[] freshJapGet = new byte[0];
         try {
             freshJapGet = KeyStoreManager.getKeyStorePhrase(mActivityRule.getActivity(), 0);
-        } catch (UserNotAuthenticatedException | BRKeystoreErrorException e) {
+        } catch (BRKeystoreErrorException e) {
             e.printStackTrace();
         }
         Assert.assertArrayEquals(freshJapGet, japPhrase);
@@ -77,7 +76,7 @@ public class KeyStoreTests {
         String freshGet = "";
         try {
             freshGet = KeyStoreManager.getKeyStoreCanary(mActivityRule.getActivity(), 0);
-        } catch (UserNotAuthenticatedException | BRKeystoreErrorException e) {
+        } catch (BRKeystoreErrorException e) {
             e.printStackTrace();
         }
         Assert.assertEquals(freshGet, canary);
@@ -198,24 +197,12 @@ public class KeyStoreTests {
         KeyStoreManager.putSpendLimit(10000000, mActivityRule.getActivity());
         KeyStoreManager.putLastPasscodeUsedTime(1479686841, mActivityRule.getActivity());
 
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
         KeyStoreManager.resetWalletKeyStore(mActivityRule.getActivity());
-
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
         byte[] phrase = "some".getBytes();
         try {
             phrase = KeyStoreManager.getKeyStorePhrase(mActivityRule.getActivity(), 0);
-        } catch (UserNotAuthenticatedException | BRKeystoreErrorException e) {
+        } catch (BRKeystoreErrorException e) {
             e.printStackTrace();
         }
 
@@ -223,7 +210,7 @@ public class KeyStoreTests {
 
         try {
             canary = KeyStoreManager.getKeyStoreCanary(mActivityRule.getActivity(), 0);
-        } catch (UserNotAuthenticatedException | BRKeystoreErrorException e) {
+        } catch (BRKeystoreErrorException e) {
             e.printStackTrace();
         }
 

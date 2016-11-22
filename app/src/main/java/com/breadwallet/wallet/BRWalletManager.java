@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
+import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.activities.PhraseFlowActivity;
@@ -62,6 +63,7 @@ import com.jniwrappers.BRKey;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.security.Key;
 import java.security.SecureRandom;
 import java.util.EnumMap;
 import java.util.List;
@@ -161,7 +163,21 @@ public class BRWalletManager {
      */
     public boolean noWallet(Activity ctx) {
         byte[] pubkey = KeyStoreManager.getMasterPublicKey(ctx);
-        return pubkey == null || pubkey.length == 0;
+
+        if (pubkey == null || pubkey.length == 0) {
+            byte[] phrase;
+            try {
+                phrase = KeyStoreManager.getKeyStorePhrase(ctx, 0);
+                if (phrase == null || phrase.length == 0) {
+                    return true;
+                }
+            } catch (BRKeystoreErrorException e) {
+                e.printStackTrace();
+                return false;
+            }
+
+        }
+        return false;
     }
 
     /**
@@ -801,24 +817,7 @@ public class BRWalletManager {
             }
 
             byte[] pubkeyEncoded = KeyStoreManager.getMasterPublicKey(ctx);
-            if (pubkeyEncoded == null || pubkeyEncoded.length == 0) {
 
-                ctx.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ((BreadWalletApp) ctx.getApplication()).showCustomToast(ctx,
-                                ctx.getString(R.string.keystore_unavailable),
-                                MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                ctx.finish();
-                            }
-                        }, 3500);
-                    }
-                });
-                return;
-            }
             //Save the first address for future check
             m.createWallet(transactionsCount, pubkeyEncoded);
             String firstAddress = BRWalletManager.getFirstAddress(pubkeyEncoded);
