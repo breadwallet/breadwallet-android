@@ -228,8 +228,8 @@ public class KeyStoreManager {
                 if (!fileExists) return result; /** file also not there, fine then */
                 boolean success = false;
                 long startTime = System.currentTimeMillis();
-                while (!success || System.currentTimeMillis() - startTime < 1000 * 2) { /** while secret is still null or it's been less then 2 seconds*/
-                    Log.e(TAG, "_getData: the key is just simply not there");
+                while (!success && ((System.currentTimeMillis() - startTime) < (1000 * 2))) { /** while secret is still null or it's been less then 2 seconds*/
+                    Log.e(TAG, "_getData: the key is just simply not there: " + success + " " + startTime + " " + System.currentTimeMillis());
                     secretKey = (SecretKey) keyStore.getKey(alias, null);
                     if (secretKey != null) {
                         success = true;
@@ -278,6 +278,7 @@ public class KeyStoreManager {
                                 }
                             }
                         });
+                throw new BRKeystoreErrorException("KeyPermanentlyInvalidatedException");
             } else {
                 Log.e(TAG, "_getData: InvalidKeyException", e);
                 showKeyStoreFailedToLoad(context);
@@ -299,8 +300,6 @@ public class KeyStoreManager {
             Log.e(TAG, "getData: error: " + e.getClass().getSuperclass().getName());
             throw new RuntimeException(e.getMessage());
         }
-        showKeyStoreFailedToLoad(context);
-        throw new BRKeystoreErrorException("unknown");
     }
 
     private static String getEncryptedDataFilePath(String fileName, Context context) {
