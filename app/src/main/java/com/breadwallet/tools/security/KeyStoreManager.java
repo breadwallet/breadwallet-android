@@ -41,6 +41,7 @@ import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.SynchronousQueue;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -150,7 +151,6 @@ public class KeyStoreManager {
         try {
             KeyStore keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
             keyStore.load(null);
-            int nBefore = keyStore.size();
             // Create the keys if necessary
             if (!keyStore.containsAlias(alias)) {
                 KeyGenerator keyGenerator = KeyGenerator.getInstance(
@@ -171,16 +171,14 @@ public class KeyStoreManager {
 
             }
 
-            int nAfter = keyStore.size();
-
-            String filesDirectory = context.getFilesDir().getAbsolutePath();
-            String encryptedDataFilePath = filesDirectory + File.separator + alias_file;
+            String encryptedDataFilePath = getEncryptedDataFilePath(alias_file, context);
 
             SecretKey secret = (SecretKey) keyStore.getKey(alias, null);
+            if (secret == null) return false;
             Cipher inCipher = Cipher.getInstance(CIPHER_ALGORITHM);
             inCipher.init(Cipher.ENCRYPT_MODE, secret);
             byte[] iv = inCipher.getIV();
-            String path = filesDirectory + File.separator + alias_iv;
+            String path = getEncryptedDataFilePath(alias_iv, context);
             boolean success = writeBytesToFile(path, iv);
             if (!success) throw new NullPointerException("FAILED TO WRITE BYTES TO FILE");
             CipherOutputStream cipherOutputStream = new CipherOutputStream(
@@ -211,9 +209,6 @@ public class KeyStoreManager {
         Log.e(TAG, "_getData: " + alias);
         KeyStore keyStore;
 
-        if (alias.equalsIgnoreCase(PHRASE_ALIAS)) {
-            System.out.println("some");
-        }
         String encryptedDataFilePath = getEncryptedDataFilePath(alias_file, context);
         byte[] result = new byte[0];
         try {
@@ -224,29 +219,18 @@ public class KeyStoreManager {
             if (secretKey == null) {
                 /** no such key, the key is just simply not there */
                 boolean fileExists = new File(encryptedDataFilePath).exists();
-                Log.e(TAG, "_getData: Phrase file exist: " + fileExists);
+                Log.e(TAG, "_getData: " + alias + " file exist: " + fileExists);
                 if (!fileExists) return result; /** file also not there, fine then */
-                boolean success = false;
-                long startTime = System.currentTimeMillis();
-                while (!success && ((System.currentTimeMillis() - startTime) < (1000 * 2))) { /** while secret is still null or it's been less then 2 seconds*/
-                    Log.e(TAG, "_getData: the key is just simply not there: " + success + " " + startTime + " " + System.currentTimeMillis());
-                    secretKey = (SecretKey) keyStore.getKey(alias, null);
-                    if (secretKey != null) {
-                        success = true;
-                    } else {
-                        try {
-                            Thread.sleep(50);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-                if (secretKey == null) {
-                    /** no key but the phrase is there, meaning the keys are gone but the wallet is present */
-                    showKeyStoreFailedToLoad(context);
-                    throw new BRKeystoreErrorException("no key but the phrase is there");
-                }
+                showKeyStoreFailedToLoad(context);
+                throw new BRKeystoreErrorException("no key but the phrase is there");
             }
+
+            if (!new File(getEncryptedDataFilePath(alias_iv, context)).exists() ||
+                    !new File(getEncryptedDataFilePath(alias_file, context)).exists()) {
+                removeAliasAndFiles(alias, context);
+                return result;
+            }
+
             byte[] iv = readBytesFromFile(getEncryptedDataFilePath(alias_iv, context));
             Cipher outCipher;
             outCipher = Cipher.getInstance(CIPHER_ALGORITHM);
@@ -263,7 +247,8 @@ public class KeyStoreManager {
                 showAuthenticationScreen(context, request_code);
                 throw new BRKeystoreErrorException(e.getMessage());
             } else if (e instanceof KeyPermanentlyInvalidatedException) {
-                showKeyStoreDialog("KeyStore Error", "Your Breadwallet encrypted data was recently invalidated because you disabled your Android lock screen. Please input your phrase to recover your Breadwallet now.", context.getString(R.string.ok), null,
+                showKeyStoreDialog("KeyStore Error", "Your Breadwallet encrypted data was recently invalidated because you " +
+                                "disabled your Android lock screen. Please input your phrase to recover your Breadwallet now.", context.getString(R.string.ok), null,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
@@ -309,13 +294,14 @@ public class KeyStoreManager {
 
     private static void showKeyStoreFailedToLoad(final Activity context) {
         showKeyStoreDialog("KeyStore Error", "Failed to load KeyStore. Please try again later or enter your phrase to recover your Breadwallet now.", "recover now", "try later",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (BRAnimator.checkTheMultipressingAvailability()) {
-                            ((IntroActivity) context).showRecoverWalletFragment();
-                        }
-                    }
-                }, new DialogInterface.OnClickListener() {
+                context instanceof IntroActivity ?
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (BRAnimator.checkTheMultipressingAvailability()) {
+                                    ((IntroActivity) context).showRecoverWalletFragment();
+                                }
+                            }
+                        } : null, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         context.finish();
                     }
@@ -408,6 +394,7 @@ public class KeyStoreManager {
     }
 
     public static boolean putWalletCreationTime(int creationTime, Activity context) {
+        Log.e(TAG, "putWalletCreationTime: " + creationTime);
         AliasObject obj = aliasObjectMap.get(WALLET_CREATION_TIME_ALIAS);
         byte[] bytesToStore = TypesConverter.intToBytes(creationTime);
         return bytesToStore.length != 0 && _setData(context, bytesToStore, obj.alias, obj.datafileName, obj.ivFileName, 0, false);
@@ -550,16 +537,10 @@ public class KeyStoreManager {
             keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
             keyStore.load(null);
             int count = 0;
-            StringBuilder str = new StringBuilder();
             for (String a : aliasObjectMap.keySet()) {
-                keyStore.deleteEntry(a);
-                boolean b1 = new File(getEncryptedDataFilePath(aliasObjectMap.get(a).datafileName, context)).delete();
-                if (!b1) str.append(" B1:" + a);
-                boolean b2 = new File(getEncryptedDataFilePath(aliasObjectMap.get(a).ivFileName, context)).delete();
-                if (!b2) str.append(" B2:" + a);
+                removeAliasAndFiles(a, context);
                 count++;
             }
-            Log.e(TAG, "resetWalletKeyStore: report: " + str.toString());
             Assert.assertEquals(count, 11);
 
         } catch (NoSuchAlgorithmException e) {
@@ -575,6 +556,21 @@ public class KeyStoreManager {
             e.printStackTrace();
         }
         return true;
+    }
+
+    public static void removeAliasAndFiles(String alias, Context context) {
+        KeyStore keyStore;
+        try {
+            boolean b1 = new File(getEncryptedDataFilePath(aliasObjectMap.get(alias).datafileName, context)).delete();
+            boolean b2 = new File(getEncryptedDataFilePath(aliasObjectMap.get(alias).ivFileName, context)).delete();
+            keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
+            keyStore.load(null);
+            keyStore.deleteEntry(alias);
+        } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     public static void showAuthenticationScreen(Activity context, int requestCode) {
@@ -631,10 +627,10 @@ public class KeyStoreManager {
         return false;
     }
 
-    static void showKeyStoreDialog(final String title, final String message, final String posButton, final String negButton,
-                                   final DialogInterface.OnClickListener posButtonListener,
-                                   final DialogInterface.OnClickListener negButtonListener,
-                                   final DialogInterface.OnDismissListener dismissListener) {
+    private static void showKeyStoreDialog(final String title, final String message, final String posButton, final String negButton,
+                                           final DialogInterface.OnClickListener posButtonListener,
+                                           final DialogInterface.OnClickListener negButtonListener,
+                                           final DialogInterface.OnDismissListener dismissListener) {
         Log.e(TAG, "showKeyStoreDialog");
         Activity app = MainActivity.app;
         if (app == null) app = IntroActivity.app;

@@ -243,8 +243,8 @@ Java_com_breadwallet_wallet_BRPeerManager_create(JNIEnv *env, jobject thiz,
                                                  int earliestKeyTime,
                                                  int blocksCount, int peersCount) {
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ",
-                        "create| blocksCount: %d, peersCount: %d",
-                        blocksCount, peersCount);
+                        "create| blocksCount: %d, peersCount: %d, earliestKeyTime: %d",
+                        blocksCount, peersCount, earliestKeyTime);
 
     jint rs = (*env)->GetJavaVM(env, &_jvmPM);
     jclass peerManagerClass = (*env)->FindClass(env, "com/breadwallet/wallet/BRPeerManager");
@@ -265,6 +265,8 @@ Java_com_breadwallet_wallet_BRPeerManager_create(JNIEnv *env, jobject thiz,
         __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "BRPeerManagerNew called: %zu",
                             ++_managerNewCounter);
         if (earliestKeyTime < BIP39_CREATION_TIME) earliestKeyTime = BIP39_CREATION_TIME;
+        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "earliestKeyTime: %d",
+                            earliestKeyTime);
         _peerManager = BRPeerManagerNew(_wallet, (uint32_t) earliestKeyTime, _blocks,
                                         (size_t) blocksCount,
                                         _peers, (size_t) peersCount);
@@ -272,9 +274,6 @@ Java_com_breadwallet_wallet_BRPeerManager_create(JNIEnv *env, jobject thiz,
                                   txStatusUpdate,
                                   saveBlocks, savePeers, networkIsReachable, threadCleanup);
     }
-
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "earliestKeyTime: %d",
-                        earliestKeyTime);
 
     if (_peerManager == NULL) {
         __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "NULL: _peerManager");
