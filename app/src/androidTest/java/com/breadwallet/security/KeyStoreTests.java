@@ -270,8 +270,8 @@ public class KeyStoreTests {
         Assert.assertTrue(new File(KeyStoreManager.getEncryptedDataFilePath(aliasObjectMap.get(alias).ivFileName, mActivityRule.getActivity())).exists());
     }
     public void assertFilesDontExist(String alias){
-        Assert.assertNotNull(new File(KeyStoreManager.getEncryptedDataFilePath(aliasObjectMap.get(alias).datafileName, mActivityRule.getActivity())).exists());
-        Assert.assertNotNull(new File(KeyStoreManager.getEncryptedDataFilePath(aliasObjectMap.get(alias).ivFileName, mActivityRule.getActivity())).exists());
+        Assert.assertFalse(new File(KeyStoreManager.getEncryptedDataFilePath(aliasObjectMap.get(alias).datafileName, mActivityRule.getActivity())).exists());
+        Assert.assertFalse(new File(KeyStoreManager.getEncryptedDataFilePath(aliasObjectMap.get(alias).ivFileName, mActivityRule.getActivity())).exists());
     }
 
 }
