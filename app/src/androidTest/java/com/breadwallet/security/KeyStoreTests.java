@@ -12,6 +12,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.File;
+
+import static com.breadwallet.tools.security.KeyStoreManager.aliasObjectMap;
+
 
 /**
  * BreadWallet
@@ -49,6 +53,8 @@ public class KeyStoreTests {
         //set get phrase
         byte[] phrase = "axis husband project any sea patch drip tip spirit tide bring belt".getBytes();
         KeyStoreManager.putKeyStorePhrase(phrase, mActivityRule.getActivity(), 0);
+        assertFilesExist(KeyStoreManager.PHRASE_ALIAS);
+
         byte[] freshGet = new byte[0];
         try {
             freshGet = KeyStoreManager.getKeyStorePhrase(mActivityRule.getActivity(), 0);
@@ -60,6 +66,7 @@ public class KeyStoreTests {
         //set get Japaneese phrase
         byte[] japPhrase = "こせき　ぎじにってい　けっこん　せつぞく　うんどう　ふこう　にっすう　こせい　きさま　なまみ　たきび　はかい".getBytes();
         KeyStoreManager.putKeyStorePhrase(japPhrase, mActivityRule.getActivity(), 0);
+        assertFilesExist(KeyStoreManager.PHRASE_ALIAS);
         byte[] freshJapGet = new byte[0];
         try {
             freshJapGet = KeyStoreManager.getKeyStorePhrase(mActivityRule.getActivity(), 0);
@@ -67,12 +74,14 @@ public class KeyStoreTests {
             e.printStackTrace();
         }
         Assert.assertArrayEquals(freshJapGet, japPhrase);
+
     }
 
     @Test
     public void setGetCanary() {
         String canary = "canary";
         KeyStoreManager.putKeyStoreCanary(canary, mActivityRule.getActivity(), 0);
+        assertFilesExist(KeyStoreManager.CANARY_ALIAS);
         String freshGet = "";
         try {
             freshGet = KeyStoreManager.getKeyStoreCanary(mActivityRule.getActivity(), 0);
@@ -85,8 +94,8 @@ public class KeyStoreTests {
     @Test
     public void setGetMasterPubKey() {
         byte[] pubKey = "26wZYDdvpmCrYZeUcxgqd1KquN4o6wXwLomBW5SjnwUqG".getBytes();
-
         KeyStoreManager.putMasterPublicKey(pubKey, mActivityRule.getActivity());
+        assertFilesExist(KeyStoreManager.PUB_KEY_ALIAS);
         byte[] freshGet;
         freshGet = KeyStoreManager.getMasterPublicKey(mActivityRule.getActivity());
         Assert.assertArrayEquals(freshGet, freshGet);
@@ -96,8 +105,8 @@ public class KeyStoreTests {
     @Test
     public void setGetAuthKey() {
         byte[] authKey = "26wZYDdvpmCrYZeUcxgqd1KquN4o6wXwLomBW5SjnwUqG".getBytes();
-
         KeyStoreManager.putAuthKey(authKey, mActivityRule.getActivity());
+        assertFilesExist(KeyStoreManager.AUTH_KEY_ALIAS);
         byte[] freshGet;
         freshGet = KeyStoreManager.getAuthKey(mActivityRule.getActivity());
         Assert.assertArrayEquals(freshGet, freshGet);
@@ -106,8 +115,8 @@ public class KeyStoreTests {
     @Test
     public void setGetToken() {
         byte[] token = "26wZYDdvpmCrYZeUcxgqd1KquN4o6wXwLomBW5SjnwUqG".getBytes();
-
         KeyStoreManager.putToken(token, mActivityRule.getActivity());
+        assertFilesExist(KeyStoreManager.TOKEN_ALIAS);
         byte[] freshGet;
         freshGet = KeyStoreManager.getToken(mActivityRule.getActivity());
         Assert.assertArrayEquals(freshGet, freshGet);
@@ -116,8 +125,8 @@ public class KeyStoreTests {
     @Test
     public void setGetWalletCreationTime() {
         int time = 1479686841;
-
         KeyStoreManager.putWalletCreationTime(time, mActivityRule.getActivity());
+        assertFilesExist(KeyStoreManager.WALLET_CREATION_TIME_ALIAS);
         int freshGet;
         freshGet = KeyStoreManager.getWalletCreationTime(mActivityRule.getActivity());
         Assert.assertEquals(freshGet, freshGet);
@@ -127,22 +136,26 @@ public class KeyStoreTests {
     public void setGetPassCode() {
         String passCode = "0124";
         KeyStoreManager.putPassCode(passCode, mActivityRule.getActivity());
+        assertFilesExist(KeyStoreManager.PASS_CODE_ALIAS);
         String freshGet;
         freshGet = KeyStoreManager.getPassCode(mActivityRule.getActivity());
         Assert.assertEquals(freshGet, freshGet);
 
         passCode = "0000";
         KeyStoreManager.putPassCode(passCode, mActivityRule.getActivity());
+        assertFilesExist(KeyStoreManager.PASS_CODE_ALIAS);
         freshGet = KeyStoreManager.getPassCode(mActivityRule.getActivity());
         Assert.assertEquals(freshGet, freshGet);
 
         passCode = "9999";
         KeyStoreManager.putPassCode(passCode, mActivityRule.getActivity());
+        assertFilesExist(KeyStoreManager.PASS_CODE_ALIAS);
         freshGet = KeyStoreManager.getPassCode(mActivityRule.getActivity());
         Assert.assertEquals(freshGet, freshGet);
 
         passCode = "9876";
         KeyStoreManager.putPassCode(passCode, mActivityRule.getActivity());
+        assertFilesExist(KeyStoreManager.PASS_CODE_ALIAS);
         freshGet = KeyStoreManager.getPassCode(mActivityRule.getActivity());
         Assert.assertEquals(freshGet, freshGet);
     }
@@ -151,6 +164,7 @@ public class KeyStoreTests {
     public void setGetFailCount() {
         int failCount = 2;
         KeyStoreManager.putFailCount(failCount, mActivityRule.getActivity());
+        assertFilesExist(KeyStoreManager.FAIL_COUNT_ALIAS);
         int freshGet;
         freshGet = KeyStoreManager.getFailCount(mActivityRule.getActivity());
         Assert.assertEquals(freshGet, freshGet);
@@ -160,6 +174,7 @@ public class KeyStoreTests {
     public void setGetSpendLimit() {
         long spendLimit = 100000;
         KeyStoreManager.putSpendLimit(spendLimit, mActivityRule.getActivity());
+        assertFilesExist(KeyStoreManager.SPEND_LIMIT_ALIAS);
         long freshGet;
         freshGet = KeyStoreManager.getSpendLimit(mActivityRule.getActivity());
         Assert.assertEquals(freshGet, freshGet);
@@ -169,6 +184,7 @@ public class KeyStoreTests {
     public void setGetSFailTimeStamp() {
         long failTime = 1479686841;
         KeyStoreManager.putFailTimeStamp(failTime, mActivityRule.getActivity());
+        assertFilesExist(KeyStoreManager.FAIL_TIMESTAMP_ALIAS);
         long freshGet;
         freshGet = KeyStoreManager.getFailTimeStamp(mActivityRule.getActivity());
         Assert.assertEquals(freshGet, freshGet);
@@ -178,6 +194,7 @@ public class KeyStoreTests {
     public void setGetLastPasscodeUsedTime() {
         long time = 1479686841;
         KeyStoreManager.putLastPasscodeUsedTime(time, mActivityRule.getActivity());
+        assertFilesExist(KeyStoreManager.PASS_TIME_ALIAS);
         long freshGet;
         freshGet = KeyStoreManager.getLastPasscodeUsedTime(mActivityRule.getActivity());
         Assert.assertEquals(freshGet, freshGet);
@@ -197,7 +214,16 @@ public class KeyStoreTests {
         KeyStoreManager.putSpendLimit(10000000, mActivityRule.getActivity());
         KeyStoreManager.putLastPasscodeUsedTime(1479686841, mActivityRule.getActivity());
 
+        for (String a : aliasObjectMap.keySet()) {
+            assertFilesExist(a);
+        }
+
         KeyStoreManager.resetWalletKeyStore(mActivityRule.getActivity());
+
+        for (String a : aliasObjectMap.keySet()) {
+            assertFilesDontExist(a);
+        }
+
 
         byte[] phrase = "some".getBytes();
         try {
@@ -235,8 +261,17 @@ public class KeyStoreTests {
 
     @Test
     public void testKeyStoreAliasMap() {
-        Assert.assertNotNull(KeyStoreManager.aliasObjectMap);
-        Assert.assertEquals(KeyStoreManager.aliasObjectMap.size(), 11);
+        Assert.assertNotNull(aliasObjectMap);
+        Assert.assertEquals(aliasObjectMap.size(), 11);
+    }
+
+    public void assertFilesExist(String alias){
+        Assert.assertTrue(new File(KeyStoreManager.getEncryptedDataFilePath(aliasObjectMap.get(alias).datafileName, mActivityRule.getActivity())).exists());
+        Assert.assertTrue(new File(KeyStoreManager.getEncryptedDataFilePath(aliasObjectMap.get(alias).ivFileName, mActivityRule.getActivity())).exists());
+    }
+    public void assertFilesDontExist(String alias){
+        Assert.assertNotNull(new File(KeyStoreManager.getEncryptedDataFilePath(aliasObjectMap.get(alias).datafileName, mActivityRule.getActivity())).exists());
+        Assert.assertNotNull(new File(KeyStoreManager.getEncryptedDataFilePath(aliasObjectMap.get(alias).ivFileName, mActivityRule.getActivity())).exists());
     }
 
 }

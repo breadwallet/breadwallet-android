@@ -287,7 +287,7 @@ public class KeyStoreManager {
         }
     }
 
-    private static String getEncryptedDataFilePath(String fileName, Context context) {
+    public static String getEncryptedDataFilePath(String fileName, Context context) {
         String filesDirectory = context.getFilesDir().getAbsolutePath();
         return filesDirectory + File.separator + fileName;
     }
@@ -661,10 +661,10 @@ public class KeyStoreManager {
         });
     }
 
-    private static class AliasObject {
-        String alias;
-        String datafileName;
-        String ivFileName;
+    public static class AliasObject {
+        public String alias;
+        public String datafileName;
+        public String ivFileName;
 
         AliasObject(String alias, String datafileName, String ivFileName) {
             this.alias = alias;
