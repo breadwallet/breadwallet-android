@@ -283,7 +283,7 @@ public class KeyStoreManager {
         } catch (UnrecoverableKeyException | InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchPaddingException e) {
             /** if for any other reason the keystore fails, crash! */
             Log.e(TAG, "getData: error: " + e.getClass().getSuperclass().getName());
-            throw new RuntimeException(e.getMessage());
+            throw new RuntimeException(e.getMessage() + " | class: " + e.getClass().getName());
         }
     }
 

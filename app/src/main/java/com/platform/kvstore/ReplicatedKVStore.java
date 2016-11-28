@@ -289,8 +289,10 @@ public class ReplicatedKVStore {
             Log.e(TAG, "getAllKVs: cursor size: " + cursor.getCount());
             cursor.moveToNext();
             while (!cursor.isAfterLast()) {
+                Log.e(TAG, "getAllKVs: kvs.size: " + kvs.size());
                 KVEntity kvEntity = cursorToKv(cursor);
                 kvs.add(kvEntity);
+                cursor.moveToNext();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -559,7 +561,7 @@ public class ReplicatedKVStore {
      * return 0
      * }
      */
-    private long remoteVersion(String key) {
+    public long remoteVersion(String key) {
         long version = 0;
         Cursor cursor = null;
         if (isKeyValid(key)) {
@@ -583,7 +585,7 @@ public class ReplicatedKVStore {
     /**
      * Record the remote version for the object in a new version of the local key
      */
-    private CompletionObject setRemoteVersion(String key, long localVer, long remoteVer) {
+    public CompletionObject setRemoteVersion(String key, long localVer, long remoteVer) {
         if (localVer < 1)
             return new CompletionObject(0, 0, CompletionObject.RemoteKVStoreError.conflict);
         if (isKeyValid(key)) {
@@ -680,7 +682,7 @@ public class ReplicatedKVStore {
             Log.e(TAG, String.format("DEL key: %s ver: %d", key, curVer));
             newVer = curVer + 1;
             cursor = database.query(PlatformSqliteHelper.KV_STORE_TABLE_NAME,
-                    new String[]{PlatformSqliteHelper.KV_VALUE}, "key = ? AND version = ?", new String[]{key, String.valueOf(version)},
+                    new String[]{PlatformSqliteHelper.KV_VALUE}, "key = ? AND version = ?", new String[]{key, String.valueOf(localVersion)},
                     null, null, "version DESC", "1");
             cursor.moveToNext();
             byte[] value = cursor.getBlob(0);

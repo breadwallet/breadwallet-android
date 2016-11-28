@@ -262,6 +262,11 @@ Java_com_breadwallet_wallet_BRPeerManager_create(JNIEnv *env, jobject thiz,
         __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "NULL: _wallet");
 
     if (!_peerManager) {
+        assert(_wallet);
+        if (peersCount > 0)
+            assert(_peers);
+        if (blocksCount > 0)
+            assert(_blocks);
         __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "BRPeerManagerNew called: %zu",
                             ++_managerNewCounter);
         if (earliestKeyTime < BIP39_CREATION_TIME) earliestKeyTime = BIP39_CREATION_TIME;

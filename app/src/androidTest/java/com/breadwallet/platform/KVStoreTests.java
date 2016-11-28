@@ -27,6 +27,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import static android.R.id.list;
+
 
 /**
  * BreadWallet
@@ -61,10 +63,9 @@ public class KVStoreTests {
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityRule = new ActivityTestRule<>(MainActivity.class);
-    List<KVEntity> kvs;
+    List<KVEntity> kvs = new LinkedList<>();
     RemoteKVStore remote;
     ReplicatedKVStore store;
-
 
     @Before
     public void setUp() {
@@ -86,9 +87,8 @@ public class KVStoreTests {
     @After
     public void tearDown() {
         mActivityRule.getActivity().deleteDatabase(PlatformSqliteHelper.DATABASE_NAME);
-        kvs.clear();
-        store.deleteAllKVs();
     }
+
 
     @Test
     public void testDatabasesAreSynced() {
@@ -184,6 +184,7 @@ public class KVStoreTests {
         CompletionObject setObj2 = store.set(setObj.version, 0, "hello", value2, System.currentTimeMillis(), 0);
         Assert.assertEquals(setObj2.version, setObj.version + 1);
     }
+
     @Test
     public void testSetThenDel() {
         store.deleteAllKVs();
@@ -194,6 +195,88 @@ public class KVStoreTests {
         Assert.assertNull(delObj.err);
 
         Assert.assertEquals(delObj.version, setObj.version + 1);
+    }
+
+    @Test
+    public void testSetThenDelThenGet() {
+        store.deleteAllKVs();
+        byte[] value = "hello".getBytes();
+        CompletionObject setObj = store.set(0, 0, "hello", value, System.currentTimeMillis(), 0);
+        CompletionObject delObj = store.delete("hello", setObj.version);
+        Assert.assertNull(setObj.err);
+        Assert.assertNull(delObj.err);
+
+        KVEntity getKv = store.get("hello", 0);
+
+        Assert.assertEquals(delObj.version, setObj.version + 1);
+        Assert.assertEquals(getKv.getVersion(), setObj.version + 1);
+    }
+
+    @Test
+    public void testSetWithIncorrectFirstVersionFails() {
+        store.deleteAllKVs();
+        byte[] value = "hello".getBytes();
+        CompletionObject setObj = store.set(1, 0, "hello", value, System.currentTimeMillis(), 0);
+        Assert.assertNotNull(setObj.err);
+    }
+
+    @Test
+    public void testSetWithStaleVersionFails() {
+        store.deleteAllKVs();
+        byte[] value = "hello".getBytes();
+        CompletionObject setObj = store.set(0, 0, "hello", value, System.currentTimeMillis(), 0);
+        CompletionObject setStaleObj = store.set(0, 0, "hello", value, System.currentTimeMillis(), 0);
+
+        Assert.assertNull(setObj.err);
+        Assert.assertNotNull(setStaleObj.err);
+    }
+
+    @Test
+    public void testGetNonExistentKeyFails() {
+        store.deleteAllKVs();
+        KVEntity getKv = store.get("hello", 0);
+
+        Assert.assertNull(getKv);
+    }
+
+    @Test
+    public void testGetNonExistentKeyVersionFails() {
+        store.deleteAllKVs();
+        KVEntity getKv = store.get("hello", 1);
+
+        Assert.assertNull(getKv);
+    }
+
+    @Test
+    public void testGetAllKeys() {
+        store.deleteAllKVs();
+        byte[] value = "hello".getBytes();
+        long time = System.currentTimeMillis();
+        CompletionObject setObj = store.set(0, 0, "hello", value, time, 0);
+        List<KVEntity> list = store.getAllKVs();
+
+        Assert.assertNotNull(list);
+        Assert.assertEquals(1, list.size());
+        Assert.assertEquals("hello", list.get(0).getKey());
+        Assert.assertEquals(setObj.version, list.get(0).getVersion());
+        Assert.assertEquals(setObj.time, list.get(0).getTime(), 0.001);
+        Assert.assertEquals(0, list.get(0).getRemoteVersion());
+        Assert.assertEquals(0, list.get(0).getDeleted());
+    }
+    @Test
+    public void testSetRemoteVersion() {
+        store.deleteAllKVs();
+        byte[] value = "hello".getBytes();
+        long time = System.currentTimeMillis();
+        CompletionObject setObj = store.set(0, 0, "hello", value, time, 0);
+        CompletionObject setRemoteVersionObj = store.setRemoteVersion("hello", setObj.version, 1);
+
+        Assert.assertEquals(setRemoteVersionObj.version, setObj.version + 1 );
+
+        long remoteVer = store.remoteVersion("hello");
+
+        Assert.assertEquals(1, remoteVer);
+
     }
 
 }
