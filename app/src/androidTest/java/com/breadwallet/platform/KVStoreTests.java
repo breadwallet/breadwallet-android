@@ -279,4 +279,28 @@ public class KVStoreTests {
 
     }
 
+    @Test
+    public void testBasicSyncGetAllObjects() {
+        store.deleteAllKVs();
+
+        CompletionObject test = remote.keys();
+
+        boolean success = store.syncAllKeys();
+        Assert.assertEquals(true, success);
+
+        List<KVEntity> list = store.getAllKVs();
+        CompletionObject obj = remote.keys();
+
+//        byte[] value = "hello".getBytes();
+//        long time = System.currentTimeMillis();
+//        CompletionObject setObj = store.set(0, 0, "hello", value, time, 0);
+//        CompletionObject setRemoteVersionObj = store.setRemoteVersion("hello", setObj.version, 1);
+//
+//        Assert.assertEquals(setRemoteVersionObj.version, setObj.version + 1);
+//
+//        long remoteVer = store.remoteVersion("hello");
+//
+//        Assert.assertEquals(1, remoteVer);
+
+    }
 }

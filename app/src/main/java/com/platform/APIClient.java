@@ -2,11 +2,11 @@ package com.platform;
 
 import android.app.Activity;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
@@ -42,7 +42,6 @@ import java.util.zip.GZIPInputStream;
 
 import io.sigpipe.jbsdiff.InvalidHeaderException;
 import io.sigpipe.jbsdiff.ui.FileUI;
-import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -50,8 +49,8 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
-
-import static com.breadwallet.R.string.request;
+import okio.Buffer;
+import okio.BufferedSink;
 
 
 /**
@@ -251,8 +250,15 @@ public class APIClient {
             String base58Body = "";
             RequestBody body = request.body();
             if (body != null) {
-                Log.e(TAG, "sendRequest: body is not null: " + body.toString());
-                base58Body = BRWalletManager.base58ofSha256(body.toString());
+                Log.e(TAG, "sendRequest: body is not null: " + body);
+                BufferedSink sink = new Buffer();
+                try {
+                    body.writeTo(sink);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                String bodyString = sink.buffer().readUtf8();
+                base58Body = CryptoHelper.base58ofSha256(bodyString);
             }
             SimpleDateFormat sdf =
                     new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);

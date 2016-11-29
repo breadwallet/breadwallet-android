@@ -43,8 +43,15 @@ public class CompletionObject {
     public RemoteKVStoreError err;
     public byte[] value;
     public List<KVEntity> keys;
+    public String key;
 
     public CompletionObject(long version, long time, RemoteKVStoreError err) {
+        this.version = version;
+        this.time = time;
+        this.err = err;
+    }
+    public CompletionObject(String key, long version, long time, RemoteKVStoreError err) {
+        this.key = key;
         this.version = version;
         this.time = time;
         this.err = err;

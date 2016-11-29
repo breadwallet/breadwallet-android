@@ -117,7 +117,6 @@ public class ReplicatedKVStore {
                 }
                 if (syncImmediately && obj.err == null) {
                     if (!syncRunning) {
-                        syncRunning = true;
                         syncKey(kv.getKey(), kv.getRemoteVersion(), kv.getTime());
                         Log.e(TAG, "set: key synced: " + kv.getKey());
                     }
@@ -495,7 +494,7 @@ public class ReplicatedKVStore {
     /**
      * Sync all keys to and from the remote kv store adaptor
      */
-    private boolean syncAllKeys() {
+    public boolean syncAllKeys() {
         // update all keys locally and on the remote server, replacing missing keys
         //
         // 1. get a list of all keys from the server
@@ -509,7 +508,6 @@ public class ReplicatedKVStore {
             CompletionObject obj = remoteKvStore.keys();
             if (obj.err != null || obj.keys == null) {
                 Log.e(TAG, String.format("Error fetching remote key data: %s", obj.err));
-                syncRunning = false;
                 return false;
             }
             List<KVEntity> localKvs;
@@ -520,7 +518,6 @@ public class ReplicatedKVStore {
             } catch (Exception e) {
                 e.printStackTrace();
                 Log.e(TAG, String.format("Error getting local key data: %s", e.getMessage()));
-                syncRunning = false;
                 return false;
             }
             List<KVEntity> allKvs = localKvs;
@@ -655,7 +652,6 @@ public class ReplicatedKVStore {
                 }
                 if (syncImmediately && obj.err == null) {
                     if (!syncRunning) {
-                        syncRunning = true;
                         syncKey(key, 0, 0);
                         Log.e(TAG, "set: key synced: " + key);
                     }

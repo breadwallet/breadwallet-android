@@ -6,12 +6,18 @@ import com.platform.APIClient;
 import com.platform.interfaces.KVStoreAdaptor;
 
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static android.R.attr.key;
 import static com.platform.kvstore.CompletionObject.RemoteKVStoreError.unknown;
 
 /**
@@ -38,6 +44,7 @@ import static com.platform.kvstore.CompletionObject.RemoteKVStoreError.unknown;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 public class RemoteKVStore implements KVStoreAdaptor {
     public static final String TAG = RemoteKVStore.class.getName();
 
@@ -151,10 +158,46 @@ public class RemoteKVStore implements KVStoreAdaptor {
             Log.e(TAG, "ver: [KV] KEYS err=" + (res == null ? null : res.code()));
             return new CompletionObject(0, 0, unknown);
         }
+        byte[] reqData = null;
+        try {
+            reqData = res.body().bytes();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (reqData == null) return new CompletionObject(0, 0, unknown);
+        ByteBuffer buffer = ByteBuffer.wrap(reqData).order(java.nio.ByteOrder.LITTLE_ENDIAN);
+
+//        int INTEGER_SIZE = Integer.SIZE / Byte.SIZE;
+//        int BYTE_SIZE = 1;
+//        int index = INTEGER_SIZE;
+
+        try {
+            int count = buffer.getInt();
+            List<CompletionObject> keys = new ArrayList<>();
+            for (int i = 0; i < count; i++) {
+                byte keyLen = buffer.get();
+
+                String key = null;
+                byte[] keyBytes = new byte[keyLen * 2];
+                buffer.get(keyBytes, 0, keyLen * 2);
+                try {
+                    key = new String(keyBytes, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                if (key == null || key.isEmpty()) return new CompletionObject(0, 0, unknown);
+//                read the key from bytes LEU32 (char)
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new CompletionObject(0, 0, unknown);
+        }
+
         //todo finish this, MAKE SURE TO USE the KVEntity constructor with err
         // data is encoded as:
         // LE32(num) + (num * (LEU8(keyLeng) + (keyLen * LEU32(char)) + LEU64(ver) + LEU64(msTs) + LEU8(del)))
-        return null;
+        return new CompletionObject(0, 0, unknown);
     }
 
     private long extractVersion(Response res) {

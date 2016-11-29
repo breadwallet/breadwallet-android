@@ -1062,6 +1062,4 @@ public class BRWalletManager {
 
     public static native byte[] getSeedFromPhrase(byte[] phrase);
 
-    public static native String base58ofSha256(String strToSign);
-
 }
