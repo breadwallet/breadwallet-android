@@ -151,10 +151,10 @@ public class KeyStoreManager {
         try {
             KeyStore keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
             keyStore.load(null);
-            // Create the kvs if necessary
+            // Create the keys if necessary
             if (!keyStore.containsAlias(alias)) {
                 KeyGenerator keyGenerator = KeyGenerator.getInstance(
-                        KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEY_STORE);
+                        KeyProperties.KEY_ALGORITgHM_AES, ANDROID_KEY_STORE);
 
                 // Set the alias of the entry in Android KeyStore where the key will appear
                 // and the constrains (purposes) in the constructor of the Builder

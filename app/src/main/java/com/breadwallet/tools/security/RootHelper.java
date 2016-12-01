@@ -36,7 +36,7 @@ public class RootHelper {
 
     private static boolean checkRootA() {
         String buildTags = android.os.Build.TAGS;
-        return buildTags != null && buildTags.contains("test-kvs");
+        return buildTags != null && buildTags.contains("test-keys");
     }
 
     private static boolean checkRootB() {
