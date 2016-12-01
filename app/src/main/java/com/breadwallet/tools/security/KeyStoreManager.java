@@ -154,7 +154,7 @@ public class KeyStoreManager {
             // Create the keys if necessary
             if (!keyStore.containsAlias(alias)) {
                 KeyGenerator keyGenerator = KeyGenerator.getInstance(
-                        KeyProperties.KEY_ALGORITgHM_AES, ANDROID_KEY_STORE);
+                        KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEY_STORE);
 
                 // Set the alias of the entry in Android KeyStore where the key will appear
                 // and the constrains (purposes) in the constructor of the Builder
