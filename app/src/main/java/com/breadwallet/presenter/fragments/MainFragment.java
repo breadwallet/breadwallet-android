@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentSender;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -22,13 +24,17 @@ import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.customviews.BubbleTextView;
+import com.breadwallet.presenter.entities.RequestObject;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.manager.BRTipsManager;
+import com.breadwallet.tools.security.RequestHandler;
 import com.breadwallet.wallet.BRWalletManager;
+
+import static com.breadwallet.tools.security.RequestHandler.getRequestFromString;
 
 /**
  * BreadWallet
@@ -135,23 +141,28 @@ public class MainFragment extends Fragment {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 ((MainActivity) getActivity()).hideAllBubbles();
                 if (BRAnimator.checkTheMultipressingAvailability()) {
-                    String tempAddress = BRClipboardManager.readFromClipboard(getActivity());
+
+                    String bitcoinUrl = BRClipboardManager.readFromClipboard(getActivity());
+                    String ifAddress = null;
+                    RequestObject obj = RequestHandler.getRequestFromString(bitcoinUrl);
                     if (!addressEditText.getText().toString().isEmpty()) {
-                        tempAddress = addressEditText.getText().toString();
+                        ifAddress = addressEditText.getText().toString();
+                    } else {
+                        ifAddress = obj.address;
                     }
-                    final String finalAddress = tempAddress;
+//                    final String finalAddress = tempAddress;
                     BRWalletManager wm = BRWalletManager.getInstance(getActivity());
 
-                    if (wm.isValidBitcoinPrivateKey(finalAddress) || wm.isValidBitcoinBIP38Key(finalAddress)) {
-                        BRWalletManager.getInstance(getActivity()).confirmSweep(getActivity(), finalAddress);
+                    if (wm.isValidBitcoinPrivateKey(ifAddress) || wm.isValidBitcoinBIP38Key(ifAddress)) {
+                        BRWalletManager.getInstance(getActivity()).confirmSweep(getActivity(), ifAddress);
                         addressEditText.setText("");
                         return;
                     }
 
-                    if (checkIfAddressIsValid(finalAddress)) {
-                        if (finalAddress != null) {
+                    if (checkIfAddressIsValid(obj.address)) {
+                        if (ifAddress != null) {
                             BRWalletManager m = BRWalletManager.getInstance(getActivity());
-                            if (m.addressContainedInWallet(finalAddress)) {
+                            if (m.addressContainedInWallet(ifAddress)) {
 
                                 //builder.setTitle(getResources().getString(R.string.alert));
                                 builder.setMessage(getResources().getString(R.string.address_already_in_your_wallet));
@@ -165,15 +176,16 @@ public class MainFragment extends Fragment {
                                 alert.show();
                                 BRClipboardManager.copyToClipboard(getActivity(), "");
                                 addressEditText.setText("");
-                            } else if (m.addressIsUsed(finalAddress)) {
+                            } else if (m.addressIsUsed(ifAddress)) {
                                 builder.setTitle(getResources().getString(R.string.warning));
 
                                 builder.setMessage(getResources().getString(R.string.address_already_used));
+                                final String finalIfAddress = ifAddress;
                                 builder.setPositiveButton(getResources().getString(R.string.ignore),
                                         new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int which) {
                                                 dialog.dismiss();
-                                                FragmentScanResult.address = finalAddress;
+                                                FragmentScanResult.address = finalIfAddress;
                                                 BRAnimator.animateScanResultFragment();
                                             }
                                         });
@@ -186,8 +198,9 @@ public class MainFragment extends Fragment {
                                 alert = builder.create();
                                 alert.show();
                             } else {
-                                FragmentScanResult.address = finalAddress;
-                                BRAnimator.animateScanResultFragment();
+//                                FragmentScanResult.address = finalAddress;
+//                                BRAnimator.animateScanResultFragment();
+                                RequestHandler.processRequest((MainActivity) getActivity(), bitcoinUrl);
                             }
                         } else {
                             throw new NullPointerException();

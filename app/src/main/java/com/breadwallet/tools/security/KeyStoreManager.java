@@ -151,7 +151,7 @@ public class KeyStoreManager {
         try {
             KeyStore keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
             keyStore.load(null);
-            // Create the keys if necessary
+            // Create the kvs if necessary
             if (!keyStore.containsAlias(alias)) {
                 KeyGenerator keyGenerator = KeyGenerator.getInstance(
                         KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEY_STORE);

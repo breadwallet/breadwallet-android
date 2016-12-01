@@ -4,20 +4,20 @@ import android.util.Log;
 
 import com.platform.APIClient;
 import com.platform.interfaces.KVStoreAdaptor;
+import com.platform.sqlite.KVEntity;
 
-
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static android.R.attr.key;
+import static com.platform.kvstore.CompletionObject.RemoteKVStoreError.notFound;
 import static com.platform.kvstore.CompletionObject.RemoteKVStoreError.unknown;
 
 /**
@@ -72,7 +72,7 @@ public class RemoteKVStore implements KVStoreAdaptor {
         res = apiClient.sendRequest(request, true);
         if (res == null || !res.isSuccessful()) {
             Log.e(TAG, "ver: [KV] HEAD key=" + key + ", err=" + (res == null ? null : res.code()));
-            return new CompletionObject(0, 0, unknown);
+            return new CompletionObject(0, 0, notFound);
         }
         long v = extractVersion(res);
         long t = extractDate(res);
@@ -90,8 +90,7 @@ public class RemoteKVStore implements KVStoreAdaptor {
                 .addHeader("Content-Type", "application/octet-stream")
                 .addHeader("Content-Length", String.valueOf(value.length))
                 .build();
-        Response res = null;
-        res = apiClient.sendRequest(request, true);
+        Response res = apiClient.sendRequest(request, true);
         if (res == null || !res.isSuccessful()) {
             Log.e(TAG, "ver: [KV] PUT key=" + key + ", err=" + (res == null ? null : res.code()));
             return new CompletionObject(0, 0, unknown);
@@ -164,40 +163,44 @@ public class RemoteKVStore implements KVStoreAdaptor {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        Log.e(TAG, "kvs: reqData: " + Arrays.toString(reqData));
 
         if (reqData == null) return new CompletionObject(0, 0, unknown);
         ByteBuffer buffer = ByteBuffer.wrap(reqData).order(java.nio.ByteOrder.LITTLE_ENDIAN);
 
-//        int INTEGER_SIZE = Integer.SIZE / Byte.SIZE;
-//        int BYTE_SIZE = 1;
-//        int index = INTEGER_SIZE;
-
+        List<KVEntity> keys = new ArrayList<>();
         try {
             int count = buffer.getInt();
-            List<CompletionObject> keys = new ArrayList<>();
-            for (int i = 0; i < count; i++) {
-                byte keyLen = buffer.get();
 
+            for (int i = 0; i < count; i++) {
                 String key = null;
-                byte[] keyBytes = new byte[keyLen * 2];
-                buffer.get(keyBytes, 0, keyLen * 2);
+                long version = 0;
+                long time = 0;
+                byte deleted = 0;
+
+                int keyLen = buffer.getInt();
+
+                byte[] keyBytes = new byte[keyLen];
+                buffer.get(keyBytes, 0, keyLen);
                 try {
                     key = new String(keyBytes, "UTF-8");
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
+
+                version = buffer.getLong();
+                time = buffer.getLong();
+                deleted = buffer.get();
                 if (key == null || key.isEmpty()) return new CompletionObject(0, 0, unknown);
-//                read the key from bytes LEU32 (char)
+                keys.add(new KVEntity(0,version, key, null,time, deleted));
+
             }
         } catch (Exception e) {
             e.printStackTrace();
             return new CompletionObject(0, 0, unknown);
         }
-
-        //todo finish this, MAKE SURE TO USE the KVEntity constructor with err
-        // data is encoded as:
-        // LE32(num) + (num * (LEU8(keyLeng) + (keyLen * LEU32(char)) + LEU64(ver) + LEU64(msTs) + LEU8(del)))
-        return new CompletionObject(0, 0, unknown);
+        Log.e(TAG, "kvs: " + keys.size());
+        return new CompletionObject(keys, null);
     }
 
     private long extractVersion(Response res) {

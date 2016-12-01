@@ -51,33 +51,30 @@ public class RequestHandler {
     private static final String TAG = RequestHandler.class.getName();
     private static final Object lockObject = new Object();
 
-    public static synchronized void processRequest(MainActivity app, String address) {
-        try {
-            RequestObject requestObject = getRequestFromString(address);
-            if (requestObject == null) {
-                if (app != null) {
-                    ((BreadWalletApp) app.getApplication()).showCustomDialog(app.getString(R.string.warning),
-                            app.getString(R.string.invalid_address), app.getString(R.string.ok));
-                }
-                return;
+    public static synchronized boolean processRequest(MainActivity app, String address) {
+        RequestObject requestObject = getRequestFromString(address);
+        if (requestObject == null) {
+            if (app != null) {
+                ((BreadWalletApp) app.getApplication()).showCustomDialog(app.getString(R.string.warning),
+                        app.getString(R.string.invalid_address), app.getString(R.string.ok));
             }
-            if (requestObject.r != null) {
-                tryAndProcessRequestURL(requestObject);
-            } else if (requestObject.address != null) {
-                tryAndProcessBitcoinURL(requestObject, app);
-            } else {
-                if (app != null) {
-                    ((BreadWalletApp) app.getApplication()).showCustomDialog(app.getString(R.string.warning),
-                            app.getString(R.string.bad_payment_request), app.getString(R.string.ok));
-                }
+            return false;
+        }
+        if (requestObject.r != null) {
+            return tryAndProcessRequestURL(requestObject);
+        } else if (requestObject.address != null) {
+            return tryAndProcessBitcoinURL(requestObject, app);
+        } else {
+            if (app != null) {
+                ((BreadWalletApp) app.getApplication()).showCustomDialog(app.getString(R.string.warning),
+                        app.getString(R.string.bad_payment_request), app.getString(R.string.ok));
             }
-        } catch (InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
+            return false;
         }
     }
 
     public static RequestObject getRequestFromString(String str)
-            throws InvalidAlgorithmParameterException {
+            {
         if (str == null || str.isEmpty()) return null;
         RequestObject obj = new RequestObject();
 
@@ -131,7 +128,7 @@ public class RequestHandler {
         return obj;
     }
 
-    private static void tryAndProcessRequestURL(RequestObject requestObject) {
+    private static boolean tryAndProcessRequestURL(RequestObject requestObject) {
         String theURL = null;
         String url = requestObject.r;
         synchronized (lockObject) {
@@ -139,10 +136,11 @@ public class RequestHandler {
                 theURL = URLDecoder.decode(url, "UTF-8");
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
+                return false;
             }
             new PaymentProtocolTask().execute(theURL, requestObject.label);
         }
-
+        return true;
     }
 
     private static boolean tryAndProcessBitcoinURL(RequestObject requestObject, MainActivity app) {

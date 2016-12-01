@@ -76,15 +76,11 @@ public class RequestQRActivity extends Activity {
         BRWalletManager.getInstance(this).generateQR(finalAddress,qrcode);
         String address = "";
         String amount = "";
-        try {
-            RequestObject obj = RequestHandler.getRequestFromString(finalAddress);
-            address = obj.address;
-            final String iso = SharedPreferencesManager.getIso(this);
-            final float rate = SharedPreferencesManager.getRate(this);
-            amount = BRStringFormatter.getBitsAndExchangeString(rate, iso, new BigDecimal(obj.amount), this);
-        } catch (InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
-        }
+        RequestObject obj = RequestHandler.getRequestFromString(finalAddress);
+        address = obj.address;
+        final String iso = SharedPreferencesManager.getIso(this);
+        final float rate = SharedPreferencesManager.getRate(this);
+        amount = BRStringFormatter.getBitsAndExchangeString(rate, iso, new BigDecimal(obj.amount), this);
         final Intent intent = new Intent(this, MainActivity.class);
         close.setOnClickListener(new View.OnClickListener() {
             @Override

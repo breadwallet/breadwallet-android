@@ -160,18 +160,13 @@ public class MainActivity extends FragmentActivity implements Observer {
             Log.e(TAG, "DEBUG MODE!!!!!!");
         }
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                setUrlHandler();
-            }
-        }, 1000);
 
         setListeners();
         BRAnimator.scaleView(pageIndicatorLeft, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f,
                 BRConstants.PAGE_INDICATOR_SCALE_UP);
         setStatusBarColor();
 
+        setUrlHandler(getIntent());
 //        updateBundle();
     }
 
@@ -196,11 +191,13 @@ public class MainActivity extends FragmentActivity implements Observer {
         window.setStatusBarColor(getColor(R.color.status_bar));
     }
 
-    private void setUrlHandler() {
-        Intent intent = getIntent();
+    private void setUrlHandler(Intent intent) {
+        Log.e(TAG, "setUrlHandler");
         Uri data = intent.getData();
         if (data == null) return;
         String scheme = data.getScheme();
+        Log.e(TAG, "setUrlHandler: scheme: " + scheme);
+        Log.e(TAG, "setUrlHandler: data: " + data);
         if (scheme != null && scheme.startsWith("bitcoin")) {
             Log.e(TAG, "bitcoin url");
             String str = intent.getDataString();
@@ -208,6 +205,14 @@ public class MainActivity extends FragmentActivity implements Observer {
         } else {
             Log.e(TAG, "No bitcoin url");
         }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Log.e(TAG, "onNewIntent: ");
+        setUrlHandler(intent);
+
     }
 
     private void setListeners() {
@@ -395,7 +400,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         }, 4000);
         BRWalletManager.refreshAddress();
         checkUnlockedTooLong();
-
     }
 
     @Override

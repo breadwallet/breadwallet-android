@@ -345,6 +345,7 @@ public class BRWalletManager {
                                     dialog.dismiss();
                                 }
                             });
+                    builder.setCancelable(false);
                     alert = builder.create();
                     alert.show();
                 }
@@ -597,6 +598,21 @@ public class BRWalletManager {
             long feeForTx = m.feeForTransaction(request.addresses[0], request.amount);
             if (feeForTx == 0) {
                 long maxAmountDouble = m.getMaxOutputAmount();
+                if(maxAmountDouble == 0){
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+                    builder.setMessage("")
+                            .setTitle(R.string.insufficient_funds_for_fee)
+                            .setCancelable(false)
+                            .setNegativeButton(ctx.getString(R.string.ok), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                    return;
+                }
                 feeForTx = m.feeForTransaction(request.addresses[0], maxAmountDouble);
                 feeForTx += (CurrencyManager.getInstance(ctx).getBALANCE() - request.amount) % 100;
             }

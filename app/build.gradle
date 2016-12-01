@@ -60,7 +60,7 @@ model {
                 debuggable = true
                 minifyEnabled = false
                 ndk {
-//                    CFlags.addAll(['-DBITCOIN_TESTNET=1'])
+                    CFlags.addAll(['-DBITCOIN_TESTNET=1'])
                     minifyEnabled = false
                     debuggable = true
                 }

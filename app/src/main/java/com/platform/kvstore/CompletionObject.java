@@ -1,5 +1,6 @@
 package com.platform.kvstore;
 
+import com.platform.interfaces.KVStoreAdaptor;
 import com.platform.sqlite.KVEntity;
 
 import java.util.List;
@@ -38,11 +39,12 @@ public class CompletionObject {
         unknown
     }
 
+    public KVEntity kv;
     public long version;
     public long time;
     public RemoteKVStoreError err;
     public byte[] value;
-    public List<KVEntity> keys;
+    public List<KVEntity> kvs;
     public String key;
 
     public CompletionObject(long version, long time, RemoteKVStoreError err) {
@@ -65,7 +67,14 @@ public class CompletionObject {
     }
 
     public CompletionObject(List<KVEntity> keys, RemoteKVStoreError err) {
-        this.keys = keys;
+        this.kvs = keys;
+        this.err = err;
+    }
+    public CompletionObject(KVEntity key, RemoteKVStoreError err) {
+        this.kv = key;
+        this.err = err;
+    }
+    public CompletionObject( RemoteKVStoreError err) {
         this.err = err;
     }
 

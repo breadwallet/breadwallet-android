@@ -196,7 +196,7 @@ public class IntroRecoverWalletFragment extends Fragment {
         try {
             getActivity().unregisterReceiver(mReceiver);
         } catch (Exception ex){
-            ex.printStackTrace();
+            Log.e(TAG, "enableEditText: " + ex.getMessage());
         }
 
     }

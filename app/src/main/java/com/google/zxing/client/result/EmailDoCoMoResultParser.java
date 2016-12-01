@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 /**
  * Implements the "MATMSG" email message entry format.
  *
- * Supported keys: TO, SUB, BODY
+ * Supported kvs: TO, SUB, BODY
  *
  * @author Sean Owen
  */

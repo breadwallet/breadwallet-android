@@ -84,7 +84,7 @@ public final class Result {
   }
 
   /**
-   * @return {@link Map} mapping {@link ResultMetadataType} keys to values. May be
+   * @return {@link Map} mapping {@link ResultMetadataType} kvs to values. May be
    *   {@code null}. This contains optional metadata about what was detected about the barcode,
    *   like orientation.
    */

@@ -27,8 +27,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static android.R.id.list;
-
 
 /**
  * BreadWallet
@@ -63,24 +61,28 @@ public class KVStoreTests {
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityRule = new ActivityTestRule<>(MainActivity.class);
-    List<KVEntity> kvs = new LinkedList<>();
-    RemoteKVStore remote;
-    ReplicatedKVStore store;
+    private List<KVEntity> kvs = new LinkedList<>();
+    private RemoteKVStore remote;
+    private ReplicatedKVStore store;
 
     @Before
     public void setUp() {
         remote = RemoteKVStore.getInstance(APIClient.getInstance(mActivityRule.getActivity()));
         store = new ReplicatedKVStore(mActivityRule.getActivity(), remote);
         kvs = new LinkedList<>();
-        kvs.add(new KVEntity(0, 2, "hello", "hello".getBytes(), System.currentTimeMillis(), 0));
-        kvs.add(new KVEntity(0, 2, "removed", "removed".getBytes(), System.currentTimeMillis(), 1));
-        for (int i = 0; i < 20; i++) {
-            kvs.add(new KVEntity(0, 1, "testkey" + i, ("testkey" + i).getBytes(), System.currentTimeMillis(), 0));
+        kvs.add(new KVEntity(0, 0, "hello", "hello".getBytes(), System.currentTimeMillis(), 0));
+        kvs.add(new KVEntity(0, 0, "removed", "removed".getBytes(), System.currentTimeMillis(), 1));
+        for (int i = 0; i < 3; i++) {
+            kvs.add(new KVEntity(0, 0, "testkey" + i, ("testkey" + i).getBytes(), System.currentTimeMillis(), 0));
         }
         store.set(kvs);
-        Log.e(TAG, "setUp: size: " + store.getAllKVs().size());
-        int freshSize = store.getAllKVs().size();
+        List<KVEntity> fetchedKvs = store.getAllKVs();
+        Log.e(TAG, "setUp: size: " + fetchedKvs.size());
+        int freshSize = fetchedKvs.size();
         Assert.assertEquals(22, kvs.size());
+        if (freshSize != 22) {
+            Log.e(TAG, "setUp: ");
+        }
         Assert.assertEquals(22, freshSize);
     }
 
@@ -88,7 +90,6 @@ public class KVStoreTests {
     public void tearDown() {
         mActivityRule.getActivity().deleteDatabase(PlatformSqliteHelper.DATABASE_NAME);
     }
-
 
     @Test
     public void testDatabasesAreSynced() {
@@ -105,7 +106,8 @@ public class KVStoreTests {
         Map<String, byte[]> localKV = new LinkedHashMap<>();
         for (KVEntity kv : allLocalKeys) {
             if (kv.getDeleted() == 0) {
-                KVEntity tmpKv = store.get(kv.getKey(), kv.getVersion());
+                CompletionObject object = store.get(kv.getKey(), kv.getVersion());
+                KVEntity tmpKv = object.kv;
                 localKV.put(kv.getKey(), tmpKv.getValue());
             }
         }
@@ -163,8 +165,10 @@ public class KVStoreTests {
         Assert.assertNull(setObj.err);
         long v1 = setObj.version;
         long t1 = setObj.time;
-        KVEntity kvNoVersion = store.get("hello", 0);
-        KVEntity kvWithVersion = store.get("hello", 1);
+        CompletionObject obj = store.get("hello", 0);
+        KVEntity kvNoVersion = obj.kv;
+        obj = store.get("hello", 1);
+        KVEntity kvWithVersion = obj.kv;
         Assert.assertArrayEquals(value, kvNoVersion.getValue());
         Assert.assertEquals(v1, kvNoVersion.getVersion());
         Assert.assertEquals(t1, kvNoVersion.getTime(), 0.001);
@@ -206,7 +210,8 @@ public class KVStoreTests {
         Assert.assertNull(setObj.err);
         Assert.assertNull(delObj.err);
 
-        KVEntity getKv = store.get("hello", 0);
+        CompletionObject object = store.get("hello", 0);
+        KVEntity getKv = object.kv;
 
         Assert.assertEquals(delObj.version, setObj.version + 1);
         Assert.assertEquals(getKv.getVersion(), setObj.version + 1);
@@ -234,7 +239,8 @@ public class KVStoreTests {
     @Test
     public void testGetNonExistentKeyFails() {
         store.deleteAllKVs();
-        KVEntity getKv = store.get("hello", 0);
+        CompletionObject object = store.get("hello", 0);
+        KVEntity getKv = object.kv;
 
         Assert.assertNull(getKv);
     }
@@ -242,7 +248,8 @@ public class KVStoreTests {
     @Test
     public void testGetNonExistentKeyVersionFails() {
         store.deleteAllKVs();
-        KVEntity getKv = store.get("hello", 1);
+        CompletionObject object = store.get("hello", 1);
+        KVEntity getKv = object.kv;
 
         Assert.assertNull(getKv);
     }
@@ -263,6 +270,7 @@ public class KVStoreTests {
         Assert.assertEquals(0, list.get(0).getRemoteVersion());
         Assert.assertEquals(0, list.get(0).getDeleted());
     }
+
     @Test
     public void testSetRemoteVersion() {
         store.deleteAllKVs();
@@ -270,37 +278,25 @@ public class KVStoreTests {
         long time = System.currentTimeMillis();
         CompletionObject setObj = store.set(0, 0, "hello", value, time, 0);
         CompletionObject setRemoteVersionObj = store.setRemoteVersion("hello", setObj.version, 1);
-
-        Assert.assertEquals(setRemoteVersionObj.version, setObj.version + 1 );
-
+        Assert.assertEquals(setRemoteVersionObj.version, setObj.version + 1);
         long remoteVer = store.remoteVersion("hello");
-
         Assert.assertEquals(1, remoteVer);
 
     }
 
     @Test
     public void testBasicSyncGetAllObjects() {
-        store.deleteAllKVs();
+//        CompletionObject putObj2 = remote.put("veryverybigkey", "veryverybigkey".getBytes(),1);
 
-        CompletionObject test = remote.keys();
+        CompletionObject obj = remote.keys();
 
         boolean success = store.syncAllKeys();
         Assert.assertEquals(true, success);
 
-        List<KVEntity> list = store.getAllKVs();
-        CompletionObject obj = remote.keys();
-
-//        byte[] value = "hello".getBytes();
-//        long time = System.currentTimeMillis();
-//        CompletionObject setObj = store.set(0, 0, "hello", value, time, 0);
-//        CompletionObject setRemoteVersionObj = store.setRemoteVersion("hello", setObj.version, 1);
-//
-//        Assert.assertEquals(setRemoteVersionObj.version, setObj.version + 1);
-//
-//        long remoteVer = store.remoteVersion("hello");
-//
-//        Assert.assertEquals(1, remoteVer);
+        List<KVEntity> localKeys = store.getAllKVs();
+        obj = remote.keys();
+        List<KVEntity> keys = obj.kvs;
+        Assert.assertEquals(keys.size() - 1, localKeys.size());
 
     }
 }
