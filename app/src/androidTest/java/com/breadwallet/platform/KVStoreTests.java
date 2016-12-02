@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.breadwallet.presenter.activities.MainActivity;
 import com.platform.APIClient;
+import com.platform.interfaces.KVStoreAdaptor;
 import com.platform.kvstore.CompletionObject;
 import com.platform.kvstore.RemoteKVStore;
 import com.platform.kvstore.ReplicatedKVStore;
@@ -20,10 +21,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -61,25 +63,81 @@ public class KVStoreTests {
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityRule = new ActivityTestRule<>(MainActivity.class);
-    private List<KVEntity> kvs = new LinkedList<>();
-    private RemoteKVStore remote;
+    private KVStoreAdaptor remote;
     private ReplicatedKVStore store;
+
+    public class MockUpAdapter implements KVStoreAdaptor {
+        private Map<String, KVEntity> remoteKVs = new HashMap<>();
+
+        @Override
+        public CompletionObject ver(String key) {
+            KVEntity result = remoteKVs.get(key);
+            return result == null ? new CompletionObject(CompletionObject.RemoteKVStoreError.notFound) : new CompletionObject(result.getVersion(), result.getTime(), null);
+        }
+
+        @Override
+        public CompletionObject put(String key, byte[] value, long version) {
+            KVEntity result = remoteKVs.get(key);
+            if (result == null) {
+                if (version != 0)
+                    return new CompletionObject(CompletionObject.RemoteKVStoreError.notFound);
+                KVEntity newObj = new KVEntity(1, 1, key, value, System.currentTimeMillis(), 0);
+                remoteKVs.put(key, newObj);
+                 return new CompletionObject(1, newObj.getTime(), null);
+            }
+            if (version != result.getRemoteVersion())
+                return new CompletionObject(CompletionObject.RemoteKVStoreError.conflict);
+            KVEntity newObj = new KVEntity(result.getVersion() + 1, +result.getRemoteVersion() + 1, key, value, System.currentTimeMillis(), 0);
+            remoteKVs.put(newObj.getKey(), newObj);
+            return new CompletionObject(newObj.getRemoteVersion(), newObj.getTime(), null);
+        }
+
+        @Override
+        public CompletionObject del(String key, long version) {
+            KVEntity result = remoteKVs.get(key);
+            if (result == null)
+                return new CompletionObject(CompletionObject.RemoteKVStoreError.notFound);
+            if (result.getRemoteVersion() != version)
+                return new CompletionObject(CompletionObject.RemoteKVStoreError.conflict);
+            KVEntity newObj = new KVEntity(result.getVersion() + 1, result.getRemoteVersion() + 1, result.getKey(), result.getValue(), result.getTime(), 1);
+            remoteKVs.put(newObj.getKey(), newObj);
+            return new CompletionObject(newObj.getRemoteVersion(), newObj.getTime(), null);
+        }
+
+        @Override
+        public CompletionObject get(String key, long version) {
+            KVEntity result = remoteKVs.get(key);
+            if (result == null)
+                return new CompletionObject(CompletionObject.RemoteKVStoreError.notFound);
+            if (version != result.getRemoteVersion())
+                return new CompletionObject(CompletionObject.RemoteKVStoreError.conflict);
+            return new CompletionObject(result, result.getDeleted() > 0 ? CompletionObject.RemoteKVStoreError.tombstone : null);
+        }
+
+        @Override
+        public CompletionObject keys() {
+            return new CompletionObject(new ArrayList<>(remoteKVs.values()), null);
+        }
+
+        public void putKv(KVEntity kv){
+            remoteKVs.put(kv.getKey(), kv);
+        }
+
+    }
 
     @Before
     public void setUp() {
-        remote = RemoteKVStore.getInstance(APIClient.getInstance(mActivityRule.getActivity()));
+        remote = new MockUpAdapter();
         store = new ReplicatedKVStore(mActivityRule.getActivity(), remote);
-        kvs = new LinkedList<>();
-        kvs.add(new KVEntity(0, 0, "hello", "hello".getBytes(), System.currentTimeMillis(), 0));
-        kvs.add(new KVEntity(0, 0, "removed", "removed".getBytes(), System.currentTimeMillis(), 1));
-        for (int i = 0; i < 3; i++) {
-            kvs.add(new KVEntity(0, 0, "testkey" + i, ("testkey" + i).getBytes(), System.currentTimeMillis(), 0));
+        ((MockUpAdapter)remote).putKv(new KVEntity(0, 0, "hello", "hello".getBytes(), System.currentTimeMillis(), 0));
+        ((MockUpAdapter)remote).putKv(new KVEntity(0, 0, "removed", "removed".getBytes(), System.currentTimeMillis(), 1));
+        for (int i = 0; i < 20; i++) {
+            ((MockUpAdapter)remote).putKv(new KVEntity(0, 0, "testkey" + i, ("testkey" + i).getBytes(), System.currentTimeMillis(), 0));
         }
-        store.set(kvs);
+        store.set(remote.keys().kvs);
         List<KVEntity> fetchedKvs = store.getAllKVs();
-        Log.e(TAG, "setUp: size: " + fetchedKvs.size());
         int freshSize = fetchedKvs.size();
-        Assert.assertEquals(22, kvs.size());
+        Assert.assertEquals(22, remote.keys().kvs.size());
         if (freshSize != 22) {
             Log.e(TAG, "setUp: ");
         }
@@ -94,7 +152,7 @@ public class KVStoreTests {
     @Test
     public void testDatabasesAreSynced() {
         Map<String, byte[]> remoteKV = new LinkedHashMap<>();
-
+        List<KVEntity> kvs = remote.keys().kvs;
         for (KVEntity kv : kvs) {
             if (kv.getDeleted() == 0)
                 remoteKV.put(kv.getKey(), kv.getValue());
@@ -297,6 +355,11 @@ public class KVStoreTests {
         obj = remote.keys();
         List<KVEntity> keys = obj.kvs;
         Assert.assertEquals(keys.size() - 1, localKeys.size());
+        testDatabasesAreSynced();
+    }
 
+    @Test
+    public void testSyncTenTimes() {
+        int n = 10;
     }
 }

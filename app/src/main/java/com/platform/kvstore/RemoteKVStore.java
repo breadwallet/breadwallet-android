@@ -219,7 +219,8 @@ public class RemoteKVStore implements KVStoreAdaptor {
         long remoteTime = 0;
         try {
             if (res != null) {
-                remoteTime = Date.valueOf(res.header("Last-Modified")).getTime();
+                String lastModified = res.header("Last-Modified");
+                remoteTime = Date.parse(lastModified);
             }
         } catch (Exception e) {
             e.printStackTrace();
