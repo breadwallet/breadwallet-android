@@ -145,6 +145,21 @@ public class MainFragment extends Fragment {
                     String bitcoinUrl = BRClipboardManager.readFromClipboard(getActivity());
                     String ifAddress = null;
                     RequestObject obj = RequestHandler.getRequestFromString(bitcoinUrl);
+                    if (obj == null) {
+                        //builder.setTitle(getResources().getString(R.string.alert));
+                        builder.setMessage(getResources().getString(R.string.mainfragment_clipboard_invalid_data));
+                        builder.setNeutralButton(getResources().getString(R.string.ok),
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                        alert = builder.create();
+                        alert.show();
+                        BRClipboardManager.copyToClipboard(getActivity(), "");
+                        addressEditText.setText("");
+                        return;
+                    }
                     if (!addressEditText.getText().toString().isEmpty()) {
                         ifAddress = addressEditText.getText().toString();
                     } else {

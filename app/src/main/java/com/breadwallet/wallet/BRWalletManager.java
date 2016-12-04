@@ -598,7 +598,10 @@ public class BRWalletManager {
             long feeForTx = m.feeForTransaction(request.addresses[0], request.amount);
             if (feeForTx == 0) {
                 long maxAmountDouble = m.getMaxOutputAmount();
-                if(maxAmountDouble == 0){
+                if (maxAmountDouble == -1) {
+                    throw new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL");
+                }
+                if (maxAmountDouble == 0) {
                     final AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
                     builder.setMessage("")
                             .setTitle(R.string.insufficient_funds_for_fee)
@@ -721,6 +724,9 @@ public class BRWalletManager {
 
         if (tmpTx == null && bigDecimalAmount.longValue() <= cm.getBALANCE() && bigDecimalAmount.longValue() > 0) {
             final long maxAmountDouble = m.getMaxOutputAmount();
+            if (maxAmountDouble == -1) {
+                throw new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL");
+            }
             if (maxAmountDouble < getMinOutputAmount()) {
                 final AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
                 builder.setMessage("")

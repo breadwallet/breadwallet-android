@@ -6,10 +6,8 @@ import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
 import com.breadwallet.presenter.activities.MainActivity;
-import com.platform.APIClient;
 import com.platform.interfaces.KVStoreAdaptor;
 import com.platform.kvstore.CompletionObject;
-import com.platform.kvstore.RemoteKVStore;
 import com.platform.kvstore.ReplicatedKVStore;
 import com.platform.sqlite.KVEntity;
 import com.platform.sqlite.PlatformSqliteHelper;
@@ -83,7 +81,7 @@ public class KVStoreTests {
                     return new CompletionObject(CompletionObject.RemoteKVStoreError.notFound);
                 KVEntity newObj = new KVEntity(1, 1, key, value, System.currentTimeMillis(), 0);
                 remoteKVs.put(key, newObj);
-                 return new CompletionObject(1, newObj.getTime(), null);
+                return new CompletionObject(1, newObj.getTime(), null);
             }
             if (version != result.getRemoteVersion())
                 return new CompletionObject(CompletionObject.RemoteKVStoreError.conflict);
@@ -119,7 +117,7 @@ public class KVStoreTests {
             return new CompletionObject(new ArrayList<>(remoteKVs.values()), null);
         }
 
-        public void putKv(KVEntity kv){
+        public void putKv(KVEntity kv) {
             remoteKVs.put(kv.getKey(), kv);
         }
 
@@ -129,10 +127,10 @@ public class KVStoreTests {
     public void setUp() {
         remote = new MockUpAdapter();
         store = new ReplicatedKVStore(mActivityRule.getActivity(), remote);
-        ((MockUpAdapter)remote).putKv(new KVEntity(0, 0, "hello", "hello".getBytes(), System.currentTimeMillis(), 0));
-        ((MockUpAdapter)remote).putKv(new KVEntity(0, 0, "removed", "removed".getBytes(), System.currentTimeMillis(), 1));
+        ((MockUpAdapter) remote).putKv(new KVEntity(0, 0, "hello", "hello".getBytes(), System.currentTimeMillis(), 0));
+        ((MockUpAdapter) remote).putKv(new KVEntity(0, 0, "removed", "removed".getBytes(), System.currentTimeMillis(), 1));
         for (int i = 0; i < 20; i++) {
-            ((MockUpAdapter)remote).putKv(new KVEntity(0, 0, "testkey" + i, ("testkey" + i).getBytes(), System.currentTimeMillis(), 0));
+            ((MockUpAdapter) remote).putKv(new KVEntity(0, 0, "testkey" + i, ("testkey" + i).getBytes(), System.currentTimeMillis(), 0));
         }
         store.set(remote.keys().kvs);
         List<KVEntity> fetchedKvs = store.getAllKVs();

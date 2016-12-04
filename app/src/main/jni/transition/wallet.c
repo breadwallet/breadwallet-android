@@ -491,6 +491,8 @@ Java_com_breadwallet_wallet_BRWalletManager_addressIsUsed(JNIEnv *env, jobject o
 JNIEXPORT jlong JNICALL
 Java_com_breadwallet_wallet_BRWalletManager_getMaxOutputAmount(JNIEnv *env, jobject obj) {
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "getMaxOutputAmount");
+    assert(_wallet);
+    if(!_wallet) return -1;
     return (jlong) BRWalletMaxOutputAmount(_wallet);
 }
 
