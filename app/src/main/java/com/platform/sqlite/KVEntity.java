@@ -33,13 +33,13 @@ import com.platform.kvstore.CompletionObject;
 public class KVEntity {
     public static final String TAG = KVEntity.class.getName();
 
-    private long version;
-    private long remoteVersion;
-    private String key;
-    private byte[] value;
-    private long time;
-    private int deleted;
-    private CompletionObject.RemoteKVStoreError err;
+    public  long version;
+    public long remoteVersion;
+    public String key;
+    public byte[] value;
+    public long time;
+    public int deleted;
+    public CompletionObject.RemoteKVStoreError err;
 
     public KVEntity(long version, long remoteVersion, String key, byte[] value, long time, int deleted, CompletionObject.RemoteKVStoreError err) {
         this.version = version;
