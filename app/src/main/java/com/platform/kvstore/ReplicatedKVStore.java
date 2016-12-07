@@ -48,6 +48,7 @@ public class ReplicatedKVStore {
     private static final String KEY_REGEX = "^[^_][\\w-]{1,255}$";
 
     public boolean encrypted = false;
+    public boolean encryptedReplication = true;
     private boolean syncRunning = false;
     private KVStoreAdaptor remoteKvStore;
 
@@ -201,6 +202,9 @@ public class ReplicatedKVStore {
                     cursor.moveToNext();
                     kv = cursorToKv(cursor);
                 }
+
+                if (encrypted && kv != null)
+                    kv.value = decrypt(kv.getValue());
                 database.setTransactionSuccessful();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -398,7 +402,7 @@ public class ReplicatedKVStore {
         }
 
         if (completionObject.err == null) {
-            locVal = encrypted ? encrypt(localKv.getValue()) : localKv.getValue();
+            locVal = encryptedReplication ? encrypt(localKv.getValue()) : localKv.getValue();
             localKv.value = locVal;
         }
 
@@ -469,7 +473,7 @@ public class ReplicatedKVStore {
                         Log.e(TAG, String.format("Error fetching the remote value for key %s, error: %s", key, err));
                         return false;
                     }
-                    byte[] decryptedValue = encrypted ? decrypt(kv.getValue()) : kv.getValue();
+                    byte[] decryptedValue = encryptedReplication ? decrypt(kv.getValue()) : kv.getValue();
                     CompletionObject setObj = new CompletionObject(0, 0, CompletionObject.RemoteKVStoreError.unknown);
                     database.beginTransaction();
                     try {
@@ -509,7 +513,7 @@ public class ReplicatedKVStore {
         long startTime = System.currentTimeMillis();
         try {
             CompletionObject obj = remoteKvStore.keys();
-            if (obj.err != null ) {
+            if (obj.err != null) {
                 Log.e(TAG, String.format("Error fetching remote key data: %s", obj.err));
                 syncRunning = false;
                 return false;
@@ -742,19 +746,19 @@ public class ReplicatedKVStore {
         return false;
     }
 
-    //for testing only
-    public List<KVEntity> getAllLocalKeysForTesting() {
-        List<KVEntity> list = new ArrayList<>();
-        open();
-        Cursor cursor = database.rawQuery("select * from " + PlatformSqliteHelper.KV_STORE_TABLE_NAME, null);
-        Log.e(TAG, "printAllKvs: SIZE: " + cursor.getCount());
-        cursor.moveToNext();
-        while (!cursor.isAfterLast()) {
-            KVEntity kv = cursorToKv(cursor);
-            list.add(kv);
-            cursor.moveToNext();
-        }
-        cursor.close();
-        return list;
-    }
+//    //for testing only
+//    public List<KVEntity> getAllLocalKeysForTesting() {
+//        List<KVEntity> list = new ArrayList<>();
+//        open();
+//        Cursor cursor = database.rawQuery("select * from " + PlatformSqliteHelper.KV_STORE_TABLE_NAME, null);
+//        Log.e(TAG, "printAllKvs: SIZE: " + cursor.getCount());
+//        cursor.moveToNext();
+//        while (!cursor.isAfterLast()) {
+//            KVEntity kv = cursorToKv(cursor);
+//            list.add(kv);
+//            cursor.moveToNext();
+//        }
+//        cursor.close();
+//        return list;
+//    }
 }

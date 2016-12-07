@@ -432,7 +432,41 @@ public class KVStoreTests {
         assertDatabasesAreSynced();
 
     }
+    @Test
+    public void testRemoteUpdateReplicates() {
+        boolean success = store.syncAllKeys();
+        Assert.assertTrue(success);
+        assertDatabasesAreSynced();
 
+        KVEntity kv = ((MockUpAdapter) remote).remoteKVs.get("hello");
+        ((MockUpAdapter) remote).remoteKVs.put("hello", new KVEntity(kv.getVersion() + 1, kv.getRemoteVersion() + 1, kv.getKey(), "newVal".getBytes(), System.currentTimeMillis(), 0));
+        success = store.syncAllKeys();
+        Assert.assertTrue(success);
+        assertDatabasesAreSynced();
+
+        CompletionObject getObj = store.get("hello", 0);
+        Assert.assertNull(getObj.err);
+        Assert.assertArrayEquals(getObj.kv.getValue(), "newVal".getBytes());
+        success = store.syncAllKeys();
+        Assert.assertTrue(success);
+        assertDatabasesAreSynced();
+
+    }
+
+
+    @Test
+    public void testEnableEncryptedReplication(){
+        ((MockUpAdapter) remote).remoteKVs.clear();
+        store.encrypted = true;
+
+        CompletionObject setObj = store.set(new KVEntity(0, 0, "derp", "derp".getBytes(), System.currentTimeMillis(), 0));
+        Assert.assertNull(setObj.err);
+        boolean success = store.syncAllKeys();
+        Assert.assertTrue(success);
+        CompletionObject obj = remote.get("derp", 1);
+        Assert.assertArrayEquals(obj.kv.getValue(), "derp".getBytes());
+
+    }
     //((MockUpAdapter) remote).remoteKVs.size()
 
 }
