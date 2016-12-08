@@ -25,6 +25,7 @@ package com.platform.kvstore;
  * THE SOFTWARE.
  */
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -32,10 +33,15 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.tools.security.KeyStoreManager;
+import com.jniwrappers.BRKey;
 import com.platform.interfaces.KVStoreAdaptor;
 import com.platform.sqlite.KVEntity;
 import com.platform.sqlite.PlatformSqliteHelper;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -51,7 +57,7 @@ public class ReplicatedKVStore {
     public boolean encryptedReplication = true;
     private boolean syncRunning = false;
     private KVStoreAdaptor remoteKvStore;
-
+    private Context context;
     // Database fields
     private SQLiteDatabase database;
     private final PlatformSqliteHelper dbHelper;
@@ -65,7 +71,7 @@ public class ReplicatedKVStore {
     };
 
     public ReplicatedKVStore(Context context, KVStoreAdaptor remoteKvStore) {
-//        this.context = context;
+        this.context = context;
         this.remoteKvStore = remoteKvStore;
         dbHelper = new PlatformSqliteHelper(context);
     }
@@ -714,23 +720,45 @@ public class ReplicatedKVStore {
     /**
      * generate a nonce using microseconds-since-epoch
      */
-    private byte[] genNonce() {
-        return null;
-    }
+    public byte[] getNonce() {
+        byte[] nonce = new byte[12];
+        ByteBuffer buffer = ByteBuffer.allocate(8);
+        long t = System.nanoTime() / 1000;
+        buffer.order(ByteOrder.LITTLE_ENDIAN);
+        buffer.putLong(t);
+        byte[] byteTime = buffer.array();
+        System.arraycopy(byteTime, 0, nonce, 4, byteTime.length);
 
+        return nonce;
+    }
 
     /**
      * encrypt some data using self.key
      */
-    private byte[] encrypt(byte[] data) {
-        return data;
+    public byte[] encrypt(byte[] data) {
+        Context app = context;
+        if (app == null) app = MainActivity.app;
+        if (app == null) return null;
+        BRKey key = new BRKey(KeyStoreManager.getAuthKey((Activity) app));
+        byte[] nonce = getNonce();
+        byte[] encryptedData = key.encryptNative(data, nonce);
+        //result is nonce + encryptedData
+        byte[] result = new byte[nonce.length + encryptedData.length];
+        System.arraycopy(nonce, 0, result, 0, nonce.length);
+        System.arraycopy(encryptedData, 0, result, nonce.length, encryptedData.length);
+        return result;
     }
 
     /**
      * decrypt some data using self.key
      */
-    private byte[] decrypt(byte[] data) {
-        return data;
+    public byte[] decrypt(byte[] data) {
+        Context app = context;
+        if (app == null) app = MainActivity.app;
+        if (app == null) return null;
+        BRKey key = new BRKey(KeyStoreManager.getAuthKey((Activity) app));
+        //12 bytes is the nonce
+        return key.decryptNative(Arrays.copyOfRange(data, 12, data.length ), Arrays.copyOfRange(data, 0, 12));
     }
 
     /**

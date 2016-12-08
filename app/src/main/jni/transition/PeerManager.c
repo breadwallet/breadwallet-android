@@ -329,6 +329,7 @@ Java_com_breadwallet_wallet_BRPeerManager_createBlockArrayWithCount(JNIEnv *env,
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ",
                         "block array created with count: %zu", blockCount);
     _blocks = calloc(blockCount, sizeof(*_blocks));
+    _blocksCounter = 0;
     // need to call free();
 }
 
@@ -362,6 +363,7 @@ Java_com_breadwallet_wallet_BRPeerManager_createPeerArrayWithCount(JNIEnv *env, 
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "peer array created with count: %zu",
                         peerCount);
     _peers = calloc(peerCount, sizeof(BRPeer));
+    _peersCounter = 0;
     // need to call free();
 }
 

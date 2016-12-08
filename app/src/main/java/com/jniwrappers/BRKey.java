@@ -1,5 +1,7 @@
 package com.jniwrappers;
 
+import static android.R.attr.data;
+
 /**
  * BreadWallet
  * <p/>
@@ -27,9 +29,6 @@ package com.jniwrappers;
 public class BRKey {
     public static final String TAG = BRKey.class.getName();
 
-    private BRKey() {
-    }
-
     public BRKey(byte[] key) {
         setPrivKey(key);
     }
@@ -37,5 +36,9 @@ public class BRKey {
     private native void setPrivKey(byte[] privKey);
 
     public native byte[] compactSign(byte[] data);
+
+    public native byte[] encryptNative(byte[] data, byte[] nonce);
+
+    public native byte[] decryptNative(byte[] data, byte[] nonce);
 
 }

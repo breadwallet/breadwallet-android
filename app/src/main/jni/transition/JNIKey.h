@@ -9,15 +9,19 @@
 extern "C" {
 #endif
 
-JNIEXPORT jbyteArray JNICALL Java_com_jniwrappers_BRKey_compactSign(
-        JNIEnv *env,
-        jobject thiz,
-        jbyteArray data);
+JNIEXPORT jbyteArray JNICALL Java_com_jniwrappers_BRKey_compactSign(JNIEnv *env, jobject thiz,
+                                                                    jbyteArray data);
 
-JNIEXPORT void JNICALL Java_com_jniwrappers_BRKey_setPrivKey(
-        JNIEnv *env,
-        jobject thiz,
-        jbyteArray privKey);
+JNIEXPORT void JNICALL Java_com_jniwrappers_BRKey_setPrivKey(JNIEnv *env, jobject thiz,
+                                                             jbyteArray privKey);
+
+JNIEXPORT jbyteArray JNICALL Java_com_jniwrappers_BRKey_encryptNative(JNIEnv *env, jobject thiz,
+                                                                      jbyteArray data,
+                                                                      jbyteArray nonce);
+
+JNIEXPORT jbyteArray JNICALL Java_com_jniwrappers_BRKey_decryptNative(JNIEnv *env, jobject thiz,
+                                                                      jbyteArray data,
+                                                                      jbyteArray nonce);
 
 #ifdef __cplusplus
 }
