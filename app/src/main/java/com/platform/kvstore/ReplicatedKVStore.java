@@ -758,7 +758,7 @@ public class ReplicatedKVStore {
         if (app == null) return null;
         BRKey key = new BRKey(KeyStoreManager.getAuthKey((Activity) app));
         //12 bytes is the nonce
-        return key.decryptNative(Arrays.copyOfRange(data, 12, data.length ), Arrays.copyOfRange(data, 0, 12));
+        return key.decryptNative(Arrays.copyOfRange(data, 12, data.length), Arrays.copyOfRange(data, 0, 12));
     }
 
     /**

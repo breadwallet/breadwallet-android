@@ -7,8 +7,6 @@ import com.platform.APIClient;
 import com.platform.interfaces.Middleware;
 
 import org.apache.commons.io.IOUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -18,15 +16,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import okhttp3.Headers;
-import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
-import static android.R.attr.path;
-import static com.breadwallet.R.string.request;
 
 /**
  * BreadWallet
@@ -90,6 +85,15 @@ public class APIProxy implements Middleware {
         Request req = mapToOkhttpRequest(baseRequest, path, request);
         if (baseRequest.getHeader(SHOULD_AUTHENTICATE).toLowerCase().equals("yes")) auth = true;
         Response res = apiInstance.sendRequest(req, auth);
+        if(res.code() == 599) {
+            Log.e(TAG, "handle: time out!");
+            try {
+                response.sendError(599);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return true;
+        }
         Log.e(TAG, "handle: res: " + res.code() + ":" + res.message());
         ResponseBody body = res.body();
         String cType = body.contentType() == null ? null : body.contentType().toString();

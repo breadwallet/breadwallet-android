@@ -243,7 +243,7 @@ public class KeyStoreManager {
             Log.e(TAG, "_getData: InvalidKeyException");
             if (e instanceof UserNotAuthenticatedException) {
                 /**user not authenticated, ask the system for authentication*/
-                Log.e(TAG, Log.getStackTraceString(e));
+                Log.e(TAG, "USER NOT AUTHENTICATED, ASKING SYSTEM FOR AUTH");
                 showAuthenticationScreen(context, request_code);
                 throw new BRKeystoreErrorException(e.getMessage());
             } else if (e instanceof KeyPermanentlyInvalidatedException) {

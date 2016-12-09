@@ -52,6 +52,8 @@ import okhttp3.ResponseBody;
 import okio.Buffer;
 import okio.BufferedSink;
 
+import static com.breadwallet.R.string.request;
+
 
 /**
  * BreadWallet
@@ -290,22 +292,28 @@ public class APIClient {
 //            Log.e(TAG, "sendRequest: date: " + response.header("Date"));
         } catch (IOException e) {
             e.printStackTrace();
+            return new Response.Builder().code(599).build();
         }
-        if (response != null && response.header("content-encoding") != null && response.header("content-encoding").equalsIgnoreCase("gzip")) {
-            Log.e(TAG, "sendRequest: the content is gzip! UNZIPPING");
-            return extractGZIP(response);
-        }
-
-        return response;
-    }
-
-    private Response extractGZIP(Response res) {
-        byte[] compressed = new byte[0];
+        byte[] data = new byte[0];
         try {
-            compressed = res.body().bytes();
+            data = response.body().bytes();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        if (response.header("content-encoding") != null && response.header("content-encoding").equalsIgnoreCase("gzip")) {
+            Log.e(TAG, "sendRequest: the content is gzip! UNZIPPING");
+            byte[] decompressed = extractGZIP(data);
+            ResponseBody postReqBody = ResponseBody.create(null, decompressed);
+
+            return response.newBuilder().body(postReqBody).build();
+        }
+        ResponseBody postReqBody = ResponseBody.create(null, data);
+        return response.newBuilder().body(postReqBody).build();
+    }
+
+    public static byte[] extractGZIP(byte[] compressed) {
+
         if (compressed.length == 0) return null;
 
         final int BUFFER_SIZE = 32;
@@ -324,12 +332,10 @@ public class APIClient {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (string == null) return null;
+        assert (string != null);
         String result = string.toString();
-        if (result.isEmpty()) return null;
-
-        ResponseBody postReqBody = ResponseBody.create(null, result.getBytes());
-        return res.newBuilder().body(postReqBody).build();
+        assert(!result.isEmpty());
+        return result.getBytes();
     }
 
     public void updateBundle() {
@@ -375,11 +381,13 @@ public class APIClient {
 
         } else {
             Log.e(TAG, "updateBundle: bundle doesn't exist, downloading new copy");
+            long startTime = System.currentTimeMillis();
             Request request = new Request.Builder()
                     .url(String.format("%s/assets/bundles/%s/download", BASE_URL, BREAD_BUY))
                     .get().build();
             Response response = null;
             response = sendRequest(request, false);
+            Log.e(TAG, "updateBundle: Downloaded, took: " + (System.currentTimeMillis() - startTime));
             writeBundleToFile(response, bundleFile);
 
             tryExtractTar(bundleFile);
@@ -449,9 +457,10 @@ public class APIClient {
     }
 
     public byte[] writeBundleToFile(Response response, File bundleFile) {
-        if (response == null) Log.e(TAG, "writeBundleToFile: WARNING: response is null");
+        Log.e(TAG, "writeBundleToFile");
         byte[] bodyBytes;
         FileOutputStream fileOutputStream = null;
+        assert (response != null);
         try {
             if (response == null) {
                 Log.e(TAG, "writeBundleToFile: WARNING, response is null");

@@ -67,6 +67,7 @@ public class FragmentEarlyAccess extends Fragment {
 
         View rootView = inflater.inflate(
                 R.layout.fragment_early_access, container, false);
+        Log.e(TAG, "onCreateView: ");
         webView = (WebView) rootView.findViewById(R.id.early_access_web_view);
         webView.setWebViewClient(new BRWebViewClient());
         webView.setWebChromeClient(new BRWebChromeClient());

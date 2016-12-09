@@ -30,6 +30,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
+import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.customviews.BubbleTextView;
@@ -167,7 +168,12 @@ public class MainActivity extends FragmentActivity implements Observer {
         setStatusBarColor();
 
         setUrlHandler(getIntent());
-//        updateBundle();
+        if (BuildConfig.DEBUG) {
+            // do something for a debug build
+            Log.e(TAG, "onCreate: ");
+            updateBundle();
+        }
+
     }
 
     private void updateBundle() {
