@@ -161,7 +161,6 @@ public class MainActivity extends FragmentActivity implements Observer {
             Log.e(TAG, "DEBUG MODE!!!!!!");
         }
 
-
         setListeners();
         BRAnimator.scaleView(pageIndicatorLeft, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f,
                 BRConstants.PAGE_INDICATOR_SCALE_UP);
@@ -170,7 +169,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         setUrlHandler(getIntent());
         if (BuildConfig.DEBUG) {
             // do something for a debug build
-            Log.e(TAG, "onCreate: ");
+            Log.e(TAG, "updateBundle: ");
             updateBundle();
         }
 

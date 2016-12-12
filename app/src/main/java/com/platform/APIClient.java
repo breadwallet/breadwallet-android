@@ -20,6 +20,7 @@ import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.CompressorException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,6 +40,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import io.sigpipe.jbsdiff.InvalidHeaderException;
 import io.sigpipe.jbsdiff.ui.FileUI;
@@ -312,32 +314,6 @@ public class APIClient {
         return response.newBuilder().body(postReqBody).build();
     }
 
-    public static byte[] extractGZIP(byte[] compressed) {
-
-        if (compressed.length == 0) return null;
-
-        final int BUFFER_SIZE = 32;
-        ByteArrayInputStream is = new ByteArrayInputStream(compressed);
-        StringBuilder string = null;
-        try {
-            GZIPInputStream gis = new GZIPInputStream(is, BUFFER_SIZE);
-            string = new StringBuilder();
-            byte[] data = new byte[BUFFER_SIZE];
-            int bytesRead;
-            while ((bytesRead = gis.read(data)) != -1) {
-                string.append(new String(data, 0, bytesRead));
-            }
-            gis.close();
-            is.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        assert (string != null);
-        String result = string.toString();
-        assert(!result.isEmpty());
-        return result.getBytes();
-    }
-
     public void updateBundle() {
         Log.e(TAG, "updateBundle");
         File bundleFile = new File(ctx.getFilesDir().getAbsolutePath() + bundleFileName);
@@ -553,5 +529,56 @@ public class APIClient {
 
             return response;
         }
+    }
+
+    public static byte[] extractGZIP(byte[] compressed) {
+
+        if (compressed.length == 0) return null;
+
+        final int BUFFER_SIZE = 32;
+        ByteArrayInputStream is = new ByteArrayInputStream(compressed);
+        StringBuilder string = null;
+        try {
+            GZIPInputStream gis = new GZIPInputStream(is, BUFFER_SIZE);
+            string = new StringBuilder();
+            byte[] data = new byte[BUFFER_SIZE];
+            int bytesRead;
+            while ((bytesRead = gis.read(data)) != -1) {
+                string.append(new String(data, 0, bytesRead));
+            }
+            gis.close();
+            is.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        assert (string != null);
+        String result = string.toString();
+        assert (!result.isEmpty());
+        return result.getBytes();
+    }
+
+    public static byte[] compressGZIP(byte[] data) {
+        byte[] compressedData = null;
+        try {
+            ByteArrayOutputStream byteStream =
+                    new ByteArrayOutputStream(data.length);
+            try {
+                GZIPOutputStream zipStream =
+                        new GZIPOutputStream(byteStream);
+                try {
+                    zipStream.write(data);
+                } finally {
+                    zipStream.close();
+                }
+            } finally {
+                byteStream.close();
+            }
+
+            compressedData = byteStream.toByteArray();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return compressedData;
     }
 }

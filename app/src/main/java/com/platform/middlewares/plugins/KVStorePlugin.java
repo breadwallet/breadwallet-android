@@ -62,7 +62,7 @@ public class KVStorePlugin implements Plugin {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                return false;
+                return true;
             }
             if (key.isEmpty()) {
                 Log.e(TAG, "handle: missing key argument");
@@ -71,7 +71,7 @@ public class KVStorePlugin implements Plugin {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                return false;
+                return true;
             }
 
             RemoteKVStore remote = RemoteKVStore.getInstance(APIClient.getInstance(app));
@@ -87,20 +87,19 @@ public class KVStorePlugin implements Plugin {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                        return false;
+                        return true;
                     }
-                    JSONObject obj = new JSONObject();
+
                     try {
-                        obj.put("v", new String(kv.getValue()));
+                        new JSONObject(new String(kv.getValue()));//just check for validity
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        Log.e(TAG, "handle: WARNING failed to create JSON");
                         try {
                             response.sendError(500);
-                        } catch (IOException e1) {
-                            e1.printStackTrace();
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
                         }
-                        return false;
+                        return true;
                     }
                     response.setHeader("ETag", String.valueOf(kv.getVersion()));
                     SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss:SSS Z", Locale.getDefault());
@@ -113,16 +112,30 @@ public class KVStorePlugin implements Plugin {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                        return true;
                     }
                     response.setHeader("Content-Type", "application/json");
+                    byte[] decompressedData = APIClient.extractGZIP(kv.getValue());
+                    assert (decompressedData != null);
+                    try {
+                        response.getOutputStream().write(decompressedData);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        try {
+                            response.sendError(500);
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                        return true;
+                    }
                     response.setStatus(200);
-                    break;
+                    return true;
                 case "PUT":
                     // Read from request
-                    String rawData = null;
+                    byte[] rawData = null;
                     try {
                         InputStream body = request.getInputStream();
-                        rawData = IOUtils.toString(body);
+                        rawData = IOUtils.toByteArray(body);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -133,15 +146,9 @@ public class KVStorePlugin implements Plugin {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                        return false;
+                        return true;
                     }
 
-                    if ("gzip".equalsIgnoreCase(request.getHeader("content-encoding"))) {
-                        Log.e(TAG, "sendRequest: the content is gzip! UNZIPPING");
-                        byte[] decompressed = APIClient.extractGZIP(rawData.getBytes());
-                        assert (decompressed != null);
-                        rawData = new String(decompressed);
-                    }
 
                     String strVersion = request.getHeader("if-none-match");
                     if (strVersion == null) {
@@ -151,7 +158,7 @@ public class KVStorePlugin implements Plugin {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                        return false;
+                        return true;
                     }
                     String ct = request.getHeader("content-type");
                     if (ct == null || !ct.equalsIgnoreCase("application/json")) {
@@ -161,47 +168,30 @@ public class KVStorePlugin implements Plugin {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                        return false;
+                        return true;
                     }
 
                     long version = Long.valueOf(strVersion);
 
-                    JSONObject jVal = null;
-                    try {
-                        jVal = new JSONObject(rawData);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    if (jVal == null) return false;
+                    byte[] compressedData = APIClient.compressGZIP(rawData);
+                    assert (compressedData != null);
 
-
-                    try {
-                        byte[] value = jVal.getString("v").getBytes();
-                        CompletionObject setObj = store.set(new KVEntity(version, 0, key, value, System.currentTimeMillis(), 0));
-                        if (setObj.err != null) {
-                            int errCode = transformErrorToResponseCode(setObj.err);
-                            try {
-                                response.sendError(errCode);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                    CompletionObject setObj = store.set(new KVEntity(version, 0, key, compressedData, System.currentTimeMillis(), 0));
+                    if (setObj.err != null) {
+                        int errCode = transformErrorToResponseCode(setObj.err);
+                        try {
+                            response.sendError(errCode);
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
+                    }
 
-                        response.setHeader("ETag", String.valueOf(setObj.version));
-                        dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss:SSS Z", Locale.getDefault());
-                        date = dateFormat.format(setObj.time);
-                        response.setHeader("Last-Modified", date);
-                        response.setStatus(204);
-                        return true;
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        response.sendError(500);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    return false;
+                    response.setHeader("ETag", String.valueOf(setObj.version));
+                    dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss:SSS Z", Locale.getDefault());
+                    date = dateFormat.format(setObj.time);
+                    response.setHeader("Last-Modified", date);
+                    response.setStatus(204);
+                    return true;
                 case "DELETE":
                     strVersion = request.getHeader("if-none-match");
                     if (strVersion == null) {
@@ -211,7 +201,7 @@ public class KVStorePlugin implements Plugin {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                        return false;
+                        return true;
                     }
                     CompletionObject delObj = null;
                     try {
@@ -228,7 +218,7 @@ public class KVStorePlugin implements Plugin {
                         } catch (IOException e1) {
                             e1.printStackTrace();
                         }
-                        return false;
+                        return true;
                     }
                     response.setHeader("ETag", String.valueOf(delObj.version));
                     dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss:SSS Z", Locale.getDefault());
