@@ -20,12 +20,10 @@ import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.CompressorException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -39,8 +37,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
 import io.sigpipe.jbsdiff.InvalidHeaderException;
 import io.sigpipe.jbsdiff.ui.FileUI;
@@ -54,7 +50,7 @@ import okhttp3.ResponseBody;
 import okio.Buffer;
 import okio.BufferedSink;
 
-import static com.breadwallet.R.string.request;
+import static com.breadwallet.tools.util.BRCompressor.gZipExtract;
 
 
 /**
@@ -305,7 +301,7 @@ public class APIClient {
 
         if (response.header("content-encoding") != null && response.header("content-encoding").equalsIgnoreCase("gzip")) {
             Log.e(TAG, "sendRequest: the content is gzip! UNZIPPING");
-            byte[] decompressed = extractGZIP(data);
+            byte[] decompressed = gZipExtract(data);
             ResponseBody postReqBody = ResponseBody.create(null, decompressed);
 
             return response.newBuilder().body(postReqBody).build();
@@ -531,54 +527,4 @@ public class APIClient {
         }
     }
 
-    public static byte[] extractGZIP(byte[] compressed) {
-
-        if (compressed.length == 0) return null;
-
-        final int BUFFER_SIZE = 32;
-        ByteArrayInputStream is = new ByteArrayInputStream(compressed);
-        StringBuilder string = null;
-        try {
-            GZIPInputStream gis = new GZIPInputStream(is, BUFFER_SIZE);
-            string = new StringBuilder();
-            byte[] data = new byte[BUFFER_SIZE];
-            int bytesRead;
-            while ((bytesRead = gis.read(data)) != -1) {
-                string.append(new String(data, 0, bytesRead));
-            }
-            gis.close();
-            is.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        assert (string != null);
-        String result = string.toString();
-        assert (!result.isEmpty());
-        return result.getBytes();
-    }
-
-    public static byte[] compressGZIP(byte[] data) {
-        byte[] compressedData = null;
-        try {
-            ByteArrayOutputStream byteStream =
-                    new ByteArrayOutputStream(data.length);
-            try {
-                GZIPOutputStream zipStream =
-                        new GZIPOutputStream(byteStream);
-                try {
-                    zipStream.write(data);
-                } finally {
-                    zipStream.close();
-                }
-            } finally {
-                byteStream.close();
-            }
-
-            compressedData = byteStream.toByteArray();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return compressedData;
-    }
 }

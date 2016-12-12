@@ -5,6 +5,7 @@ import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.tools.util.BRCompressor;
 import com.breadwallet.tools.util.Utils;
 import com.platform.APIClient;
 
@@ -21,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.List;
 
 import io.sigpipe.jbsdiff.InvalidHeaderException;
@@ -29,6 +31,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
+import static android.R.attr.data;
 import static com.platform.APIClient.BREAD_BUY;
 import static com.platform.APIClient.BUNDLES;
 import static com.platform.APIClient.bundleFileName;
@@ -192,6 +195,7 @@ public class PlatformTests {
             e.printStackTrace();
         } finally {
             boolean delete = patch.delete();
+            Log.e(TAG, "WARNING bundleUpdateTest: deleting patch, file deleted: " + delete);
         }
         Log.e(TAG, "bundleUpdateTest: oldFileBytes: " + oldFileBytes.length + ", correctFileBytes: " + correctFileBytes.length);
         Assert.assertArrayEquals(oldFileBytes, correctFileBytes);
@@ -231,15 +235,33 @@ public class PlatformTests {
 
     @Test
     public void testGZIP(){
-        String data = "Ladies and Gentlemen of the class of '99: If I could offer you only one tip for the future, " +
+        String data = "Ladies and Gentlemen of the class of '99: If I could offer you only one tip 11111111for the future, " +
                 "sunscreen would be it.";
-        byte[] compressedData = APIClient.compressGZIP(data.getBytes());
+        Assert.assertFalse(BRCompressor.isGZIPStream(data.getBytes()));
+        byte[] compressedData = BRCompressor.gZipCompress(data.getBytes());
+        Assert.assertTrue(BRCompressor.isGZIPStream(compressedData));
+        Log.e(TAG, "testGZIP: " + new String(compressedData));
+        Assert.assertNotNull(compressedData);
+        Assert.assertTrue(compressedData.length > 0);
+        byte[] decompressedData = BRCompressor.gZipExtract(compressedData);
+        Assert.assertFalse(BRCompressor.isGZIPStream(decompressedData));
+        Assert.assertNotNull(decompressedData);
+        Assert.assertEquals(new String (decompressedData), data);
+        Assert.assertNotEquals(compressedData.length, decompressedData.length);
+    }
+
+    @Test
+    public void testBZip2(){
+        String data = "Ladies and Gentlemen of the class of '99: If I could offer you only one tip 11111111for the future, " +
+                "sunscreen would be it.";
+        byte[] compressedData = BRCompressor.bz2Compress(data.getBytes());
 
         Assert.assertNotNull(compressedData);
         Assert.assertTrue(compressedData.length > 0);
-        byte[] decompressedData = APIClient.extractGZIP(compressedData);
+        byte[] decompressedData = BRCompressor.bz2Extract(compressedData);
         Assert.assertNotNull(decompressedData);
         Assert.assertEquals(new String (decompressedData), data);
+        Assert.assertNotEquals(compressedData.length, decompressedData.length);
     }
 
 }

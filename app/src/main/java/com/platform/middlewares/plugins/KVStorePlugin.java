@@ -3,6 +3,7 @@ package com.platform.middlewares.plugins;
 import android.util.Log;
 
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.tools.util.BRCompressor;
 import com.platform.APIClient;
 import com.platform.interfaces.Plugin;
 import com.platform.kvstore.CompletionObject;
@@ -52,7 +53,6 @@ public class KVStorePlugin implements Plugin {
 
     @Override
     public boolean handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
-
         if (target.startsWith("/_kv/")) {
             String key = target.replace("/_kv/", "");
             MainActivity app = MainActivity.app;
@@ -115,7 +115,7 @@ public class KVStorePlugin implements Plugin {
                         return true;
                     }
                     response.setHeader("Content-Type", "application/json");
-                    byte[] decompressedData = APIClient.extractGZIP(kv.getValue());
+                    byte[] decompressedData = BRCompressor.bz2Extract(kv.getValue());
                     assert (decompressedData != null);
                     try {
                         response.getOutputStream().write(decompressedData);
@@ -149,7 +149,6 @@ public class KVStorePlugin implements Plugin {
                         return true;
                     }
 
-
                     String strVersion = request.getHeader("if-none-match");
                     if (strVersion == null) {
                         Log.e(TAG, "handle: missing If-None-Match header, set to `0` if creating a new key");
@@ -173,7 +172,7 @@ public class KVStorePlugin implements Plugin {
 
                     long version = Long.valueOf(strVersion);
 
-                    byte[] compressedData = APIClient.compressGZIP(rawData);
+                    byte[] compressedData = BRCompressor.bz2Compress(rawData);
                     assert (compressedData != null);
 
                     CompletionObject setObj = store.set(new KVEntity(version, 0, key, compressedData, System.currentTimeMillis(), 0));
