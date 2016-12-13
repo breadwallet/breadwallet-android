@@ -167,22 +167,9 @@ public class MainActivity extends FragmentActivity implements Observer {
         setStatusBarColor();
 
         setUrlHandler(getIntent());
-        if (BuildConfig.DEBUG) {
-            // do something for a debug build
-            Log.e(TAG, "updateBundle: ");
-            updateBundle();
-        }
+        APIClient.getInstance(this).updatePlatform();
 
-    }
 
-    private void updateBundle() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                APIClient apiClient = APIClient.getInstance(app);
-                apiClient.updateBundle(); //bread-buy-staging
-            }
-        }).start();
     }
 
     @Override

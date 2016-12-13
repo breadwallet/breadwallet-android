@@ -76,17 +76,20 @@ public class APIProxy implements Middleware {
         if (!target.startsWith(MOUNT_POINT)) return false;
 
         String path = target.substring(MOUNT_POINT.length());
-        Log.e(TAG, "handle: path: " + path);
+        if(path.equalsIgnoreCase("_api/me")){
+            Log.e(TAG, "handle: ");
+        }
+//        Log.e(TAG, "handle: path: " + path);
         String queryString = baseRequest.getQueryString();
         if (queryString != null && queryString.length() > 0)
             path += "?" + queryString;
-        Log.e(TAG, "handle: path with queryString: " + path);
+//        Log.e(TAG, "handle: path with queryString: " + path);
         boolean auth = false;
         Request req = mapToOkhttpRequest(baseRequest, path, request);
         if (baseRequest.getHeader(SHOULD_AUTHENTICATE).toLowerCase().equals("yes")) auth = true;
         Response res = apiInstance.sendRequest(req, auth);
         if(res.code() == 599) {
-            Log.e(TAG, "handle: time out!");
+//            Log.e(TAG, "handle: time out!");
             try {
                 response.sendError(599);
             } catch (IOException e) {
@@ -94,7 +97,7 @@ public class APIProxy implements Middleware {
             }
             return true;
         }
-        Log.e(TAG, "handle: res: " + res.code() + ":" + res.message());
+//        Log.e(TAG, "handle: res: " + res.code() + ":" + res.message());
         ResponseBody body = res.body();
         String cType = body.contentType() == null ? null : body.contentType().toString();
         String resString = null;
@@ -104,12 +107,13 @@ public class APIProxy implements Middleware {
             resString = new String(bodyBytes);
         } catch (IOException e) {
             e.printStackTrace();
+
         }
         if (res.isSuccessful() && resString != null) {
             try {
                 response.setContentType(cType);
                 response.setStatus(HttpServletResponse.SC_OK);
-                Log.e(TAG, "responseString: " + resString + "\ncType: " + cType);
+//                Log.e(TAG, "responseString: " + resString + "\ncType: " + cType);
                 Headers headers = res.headers();
                 for (String s : headers.names()) {
                     if (Arrays.asList(bannedReceiveHeaders).contains(s.toLowerCase())) continue;
@@ -124,7 +128,7 @@ public class APIProxy implements Middleware {
             return true;
         }
 
-        return false;
+        return true;
     }
 
     private Request mapToOkhttpRequest(org.eclipse.jetty.server.Request baseRequest, String path, HttpServletRequest request) {

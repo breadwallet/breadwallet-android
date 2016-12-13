@@ -80,6 +80,7 @@ public class KVStorePlugin implements Plugin {
                 case "GET":
                     CompletionObject getObj = store.get(key, 0);
                     KVEntity kv = getObj.kv;
+
                     if (kv == null) {
                         Log.e(TAG, "handle: missing key argument");
                         try {
@@ -89,9 +90,10 @@ public class KVStorePlugin implements Plugin {
                         }
                         return true;
                     }
-
+                    byte[] decompressedData = BRCompressor.bz2Extract(kv.getValue());
+                    assert (decompressedData != null);
                     try {
-                        new JSONObject(new String(kv.getValue()));//just check for validity
+                        new JSONObject(new String(decompressedData));//just check for validity
                     } catch (JSONException e) {
                         e.printStackTrace();
                         try {
@@ -115,8 +117,7 @@ public class KVStorePlugin implements Plugin {
                         return true;
                     }
                     response.setHeader("Content-Type", "application/json");
-                    byte[] decompressedData = BRCompressor.bz2Extract(kv.getValue());
-                    assert (decompressedData != null);
+
                     try {
                         response.getOutputStream().write(decompressedData);
                     } catch (IOException e) {

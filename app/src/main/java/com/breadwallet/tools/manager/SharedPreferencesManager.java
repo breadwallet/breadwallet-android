@@ -148,6 +148,18 @@ public class SharedPreferencesManager {
         editor.apply();
     }
 
+    public static boolean getFeatureEnabled(Activity activity, String feature) {
+        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getBoolean(feature, false);
+    }
+
+    public static void putFeatureEnabled(Activity activity, boolean enabled, String feature) {
+        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(feature, enabled);
+        editor.apply();
+    }
+
     public static void putIso(Activity context, String code) {
         SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();

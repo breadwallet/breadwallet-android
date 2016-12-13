@@ -2,8 +2,10 @@ package com.platform;
 
 import android.app.Activity;
 
+import android.content.Context;
 import android.util.Log;
 
+import com.breadwallet.BuildConfig;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.crypto.CryptoHelper;
@@ -50,6 +52,7 @@ import okhttp3.ResponseBody;
 import okio.Buffer;
 import okio.BufferedSink;
 
+import static android.R.attr.path;
 import static com.breadwallet.tools.util.BRCompressor.gZipExtract;
 
 
@@ -106,7 +109,30 @@ public class APIClient {
     public static String bundlesFileName = String.format("/%s", BUNDLES);
     public static String bundleFileName = String.format("/%s/%s.tar", BUNDLES, BREAD_BUY);
     public static String extractedFolder = String.format("%s-extracted", BREAD_BUY);
+
     private Activity ctx;
+
+    public enum FeatureFlags {
+        STRING_ONE("buy-bitcoin"),
+        STRING_TWO("early-access");
+
+        private final String text;
+
+        /**
+         * @param text
+         */
+        private FeatureFlags(final String text) {
+            this.text = text;
+        }
+
+        /* (non-Javadoc)
+         * @see java.lang.Enum#toString()
+         */
+        @Override
+        public String toString() {
+            return text;
+        }
+    }
 
     public static synchronized APIClient getInstance(Activity context) {
 
@@ -504,6 +530,54 @@ public class APIClient {
 
     }
 
+    public void updateFeatureFlag() {
+        String furl = "/me/features";
+        Request req = new Request.Builder()
+                .url(buildUrl(furl))
+                .get().build();
+        Response res = sendRequest(req, true);
+        if (res == null) {
+            Log.e(TAG, "updateFeatureFlag: error fetching features");
+            return;
+        }
+
+        if (!res.isSuccessful()) {
+            Log.e(TAG, "updateFeatureFlag: request was unsuccessful");
+            return;
+        }
+
+        try {
+            String j = res.body().string();
+            if (j.isEmpty()) {
+                Log.e(TAG, "updateFeatureFlag: JSON empty");
+                return;
+            }
+
+            JSONArray arr = new JSONArray(j);
+            for (int i = 0; i < arr.length(); i++) {
+                try {
+                    JSONObject obj = arr.getJSONObject(i);
+                    String name = obj.getString("name");
+                    String description = obj.getString("description");
+                    boolean selected = obj.getBoolean("selected");
+                    boolean enabled = obj.getBoolean("enabled");
+                    SharedPreferencesManager.putFeatureEnabled(ctx, enabled, name);
+                } catch (Exception e) {
+                    Log.e(TAG, "malformed feature at position: " + i + ", whole json: " + j, e);
+                }
+
+            }
+        } catch (IOException | JSONException e) {
+            Log.e(TAG, "updateFeatureFlag: failed to pull up features");
+            e.printStackTrace();
+        }
+
+    }
+
+    public boolean isFeatureEnabled(String feature) {
+        return SharedPreferencesManager.getFeatureEnabled(ctx, feature);
+    }
+
     public String buildUrl(String path) {
         return BASE_URL + path;
     }
@@ -525,6 +599,21 @@ public class APIClient {
 
             return response;
         }
+    }
+
+    public void updatePlatform() {
+        if (BuildConfig.DEBUG) {
+            Log.e(TAG, "updatePlatform: DEBUG, updating platform");
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    APIClient apiClient = APIClient.getInstance(ctx);
+                    apiClient.updateBundle(); //bread-buy-staging
+                    apiClient.updateFeatureFlag();
+                }
+            }).start();
+        }
+
     }
 
 }
