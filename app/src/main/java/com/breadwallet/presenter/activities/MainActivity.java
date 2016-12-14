@@ -136,20 +136,6 @@ public class MainActivity extends FragmentActivity implements Observer {
 
         Utils.printPhoneSpecs();
 
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                BRWalletManager.getInstance(app).setUpTheWallet();
-            }
-        });
-        t.setPriority(Thread.MIN_PRIORITY);
-        t.start();
-
         registerScreenLockReceiver();
 
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
@@ -355,6 +341,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         appInBackground = false;
         middleViewState = 0;
         middleBubbleBlocksCount = 0;
+        BRWalletManager.getInstance(app).setUpTheWallet();
         app = this;
         final BRWalletManager m = BRWalletManager.getInstance(this);
         CurrencyManager currencyManager = CurrencyManager.getInstance(this);

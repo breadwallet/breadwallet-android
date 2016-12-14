@@ -1,8 +1,11 @@
 package com.platform.middlewares.plugins;
 
+import com.breadwallet.presenter.activities.MainActivity;
 import com.platform.interfaces.Plugin;
 
 import org.eclipse.jetty.server.Request;
+
+import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,6 +39,22 @@ public class CameraPlugin implements Plugin {
 
     @Override
     public boolean handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
-        return false;
+        if (target.startsWith("/_camera/take_picture")) {
+            MainActivity app = MainActivity.app;
+            if (app == null) {
+                try {
+                    response.sendError(500, "context is null");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return true;
+            }
+
+            return true;
+        } else if (target.startsWith("/_camera/picture/")) {
+
+
+            return true;
+        } else return false;
     }
 }

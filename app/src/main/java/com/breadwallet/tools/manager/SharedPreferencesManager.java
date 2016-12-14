@@ -24,6 +24,8 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.breadwallet.tools.util.BRConstants.GEO_PERMISSIONS_REQUESTED;
+
 /**
  * BreadWallet
  * <p>
@@ -157,6 +159,17 @@ public class SharedPreferencesManager {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(feature, enabled);
+        editor.apply();
+    }
+    public static boolean getGeoPermissionsRequested(Activity activity) {
+        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getBoolean(GEO_PERMISSIONS_REQUESTED, false);
+    }
+
+    public static void putGeoPermissionsRequested(Activity activity, boolean requested) {
+        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(GEO_PERMISSIONS_REQUESTED, requested);
         editor.apply();
     }
 

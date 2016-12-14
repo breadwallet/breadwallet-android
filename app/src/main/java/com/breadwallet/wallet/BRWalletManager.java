@@ -844,11 +844,10 @@ public class BRWalletManager {
             m.createWallet(transactionsCount, pubkeyEncoded);
             String firstAddress = BRWalletManager.getFirstAddress(pubkeyEncoded);
             SharedPreferencesManager.putFirstAddress(ctx, firstAddress);
+            long fee = SharedPreferencesManager.getFeePerKb(ctx);
+            if (fee == 0) fee = BRConstants.DEFAULT_FEE_PER_KB;
+            BRWalletManager.getInstance(ctx).setFeePerKb(fee);
         }
-
-        long fee = SharedPreferencesManager.getFeePerKb(ctx);
-        if (fee == 0) fee = BRConstants.DEFAULT_FEE_PER_KB;
-        BRWalletManager.getInstance(ctx).setFeePerKb(fee);
 
         if (!pm.isCreated()) {
             List<BRMerkleBlockEntity> blocks = sqLiteManager.getBlocks();

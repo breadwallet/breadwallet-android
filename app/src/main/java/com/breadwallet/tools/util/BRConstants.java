@@ -156,6 +156,7 @@ public class BRConstants {
     public static final String LIMIT_PREFS = "fingerprintLimit";
     public static final String ALLOW_SPEND = "allowSpend";
     public static final String USER_ID = "userId";
+    public static final String GEO_PERMISSIONS_REQUESTED = "geoPermissionsRequested";
 
     /**
      * Currency units
