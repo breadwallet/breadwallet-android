@@ -51,6 +51,7 @@
         android:layout_below="@+id/main_button_burger"
         android:filterTouchesWhenObscured="true"
         android:indeterminateOnly="false"
+        android:keepScreenOn="true"
         android:progressDrawable="@drawable/progress_blue"
         android:visibility="gone" />
 

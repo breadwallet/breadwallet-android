@@ -291,7 +291,6 @@ public class BreadWalletApp extends Application {
             app.lockerButton.setVisibility(b ? View.GONE : View.VISIBLE);
             app.lockerButton.setClickable(!b);
             MiddleViewAdapter.resetMiddleView(app, null);
-
         }
     }
 

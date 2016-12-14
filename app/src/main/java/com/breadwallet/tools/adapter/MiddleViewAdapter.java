@@ -99,13 +99,11 @@ public class MiddleViewAdapter {
         Log.e(TAG,"setSyncing: " + b);
         if (app == null) app = MainActivity.app;
         final Activity finalApp = app;
-        if (app == null) return;
-        final Activity finalApp1 = app;
+        if (finalApp == null) return;
         app.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 syncing = b;
-                if (!b) finalApp1.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                 resetMiddleView(finalApp, null);
             }
         });

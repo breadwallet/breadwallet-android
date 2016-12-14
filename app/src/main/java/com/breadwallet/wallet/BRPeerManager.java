@@ -77,7 +77,6 @@ public class BRPeerManager {
     }
 
     public static void syncSucceeded() {
-        Log.e(TAG, "syncSucceeded");
         if (ctx == null) ctx = MainActivity.app;
         SharedPreferencesManager.putAllowSpend(ctx, true);
         stopSyncingProgressThread();
@@ -102,7 +101,6 @@ public class BRPeerManager {
     }
 
     public static void txStatusUpdate() {
-        Log.e(TAG, "txStatusUpdate");
         if (ctx == null) ctx = MainActivity.app;
         if (ctx == null) return;
 
@@ -132,7 +130,7 @@ public class BRPeerManager {
     }
 
     public static void savePeers(final PeerEntity[] peerEntities) {
-        Log.e(TAG, "savePeers");
+        Log.e(TAG, "savePeers: " + peerEntities.length);
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) {
             new Thread(new Runnable() {
@@ -179,6 +177,7 @@ public class BRPeerManager {
     }
 
     public static void startSyncingProgressThread() {
+        Log.e(TAG, "startSyncingProgressThread");
         try {
             if (syncTask != null) {
                 syncTask.interrupt();
@@ -210,6 +209,7 @@ public class BRPeerManager {
     }
 
     public static void stopSyncingProgressThread() {
+        Log.e(TAG, "stopSyncingProgressThread");
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) {
             MiddleViewAdapter.setSyncing(ctx, false);

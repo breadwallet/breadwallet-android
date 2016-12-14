@@ -61,6 +61,8 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.jniwrappers.BRKey;
 
+import junit.framework.Assert;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.security.Key;
@@ -822,7 +824,7 @@ public class BRWalletManager {
     }
 
     public void setUpTheWallet() {
-        if (ctx == null) return;
+        Assert.assertNotNull(ctx);
         BRWalletManager m = BRWalletManager.getInstance(ctx);
         final BRPeerManager pm = BRPeerManager.getInstance(ctx);
 
@@ -873,16 +875,16 @@ public class BRWalletManager {
 //            final int earliestKeyTime = walletTimeString != 0 ? walletTimeString : 0;
             Log.e(TAG, "setUpTheWallet: walletTimeString: " + walletTimeString);
             pm.create(walletTimeString, blocksCount, peersCount);
-            pm.connect();
-            if (SharedPreferencesManager.getStartHeight(ctx) == 0)
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        SharedPreferencesManager.putStartHeight(ctx, BRPeerManager.getCurrentBlockHeight());
-                    }
-                }).start();
 
         }
+        pm.connect();
+        if (SharedPreferencesManager.getStartHeight(ctx) == 0)
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    SharedPreferencesManager.putStartHeight(ctx, BRPeerManager.getCurrentBlockHeight());
+                }
+            }).start();
     }
 
     public void generateQR(String bitcoinURL, ImageView qrcode) {

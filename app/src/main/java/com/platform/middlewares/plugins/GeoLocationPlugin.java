@@ -141,22 +141,12 @@ public class GeoLocationPlugin implements Plugin {
                         e.printStackTrace();
                         response.setStatus(400);
                     }
-                    // Read from request
                     return true;
                 default:
-                    throw new RuntimeException("something has gone wrong");
+                    return true;
 
             }
         } else if (target.startsWith("/_geo")) {
-            MainActivity app = MainActivity.app;
-            if (app == null) {
-                try {
-                    response.sendError(500, "context is null");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return true;
-            }
             // GET /_geo
             //
             // Calling this method will query CoreLocation for a location object. The returned value may not be returned
@@ -170,6 +160,16 @@ public class GeoLocationPlugin implements Plugin {
             // "description" = "a string representation of this object"
             // "timestamp" = "ISO-8601 timestamp of when this location was generated"
             // "horizontal_accuracy" = double
+            MainActivity app = MainActivity.app;
+            if (app == null) {
+                try {
+                    response.sendError(500, "context is null");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return true;
+            }
+
             if (request.getMethod().equalsIgnoreCase("GET")) {
                 JSONObject obj = getAuthorizationError(app);
                 if (obj != null) {
@@ -181,7 +181,7 @@ public class GeoLocationPlugin implements Plugin {
                     return true;
                 }
             }
-        } else if (target.startsWith("/_geosocket")){
+        } else if (target.startsWith("/_geosocket")) {
             // GET /_geosocket
             //
             // This opens up a websocket to the location manager. It will return a new location every so often (but with no

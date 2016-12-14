@@ -53,7 +53,6 @@ public class CameraPlugin implements Plugin {
             return true;
         } else if (target.startsWith("/_camera/picture/")) {
 
-
             return true;
         } else return false;
     }

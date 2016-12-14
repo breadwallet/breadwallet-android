@@ -419,7 +419,6 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
             Currency currency = Currency.getInstance(rightValue.iso);
             return currency.getDefaultFractionDigits();
         } catch (Exception e) {
-            e.printStackTrace();
             return 2;
         }
     }

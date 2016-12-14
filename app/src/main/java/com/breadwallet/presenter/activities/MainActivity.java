@@ -127,16 +127,14 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if (savedInstanceState != null)
-            savedInstanceState.clear();
-        super.onCreate(savedInstanceState);
+//        if (savedInstanceState != null)
+//            savedInstanceState.clear();
+        super.onCreate(null);
         setContentView(R.layout.activity_main);
         app = this;
         initializeViews();
 
         Utils.printPhoneSpecs();
-
-        registerScreenLockReceiver();
 
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
 
@@ -154,7 +152,6 @@ public class MainActivity extends FragmentActivity implements Observer {
 
         setUrlHandler(getIntent());
         APIClient.getInstance(this).updatePlatform();
-
 
     }
 
@@ -338,17 +335,29 @@ public class MainActivity extends FragmentActivity implements Observer {
     protected void onResume() {
         super.onResume();
         Log.e(TAG, "onResume");
+        ((BreadWalletApp) getApplicationContext()).setUnlocked(false);
         appInBackground = false;
         middleViewState = 0;
         middleBubbleBlocksCount = 0;
-        BRWalletManager.getInstance(app).setUpTheWallet();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                BRWalletManager.getInstance(app).setUpTheWallet();
+            }
+        }).start();
+
         app = this;
         final BRWalletManager m = BRWalletManager.getInstance(this);
         CurrencyManager currencyManager = CurrencyManager.getInstance(this);
         currencyManager.startTimer();
         currencyManager.deleteObservers();
         currencyManager.addObserver(this);
-        MiddleViewAdapter.resetMiddleView(this, null);
         final boolean isNetworkAvailable = ((BreadWalletApp) getApplication()).hasInternetAccess();
         networkErrorBar.setVisibility(isNetworkAvailable ? View.GONE : View.VISIBLE);
 
@@ -639,27 +648,6 @@ public class MainActivity extends FragmentActivity implements Observer {
     @Override
     public void update(Observable observable, Object data) {
         MiddleViewAdapter.resetMiddleView(this, null);
-    }
-
-
-    private void registerScreenLockReceiver() {
-        final IntentFilter theFilter = new IntentFilter();
-        /** System Defined Broadcast */
-        theFilter.addAction(Intent.ACTION_SCREEN_ON);
-        theFilter.addAction(Intent.ACTION_SCREEN_OFF);
-
-        mPowerKeyReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                String strAction = intent.getAction();
-
-                if (strAction.equals(Intent.ACTION_SCREEN_OFF)) {
-                    ((BreadWalletApp) getApplicationContext()).setUnlocked(false);
-                }
-            }
-        };
-
-        getApplicationContext().registerReceiver(mPowerKeyReceiver, theFilter);
     }
 
     private void unregisterScreenLockReceiver() {
