@@ -4,17 +4,16 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Debug;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
@@ -30,7 +29,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
-import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.customviews.BubbleTextView;
@@ -53,8 +51,7 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
-import com.platform.kvstore.RemoteKVStore;
-import com.platform.kvstore.ReplicatedKVStore;
+import com.platform.middlewares.plugins.CameraPlugin;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -62,7 +59,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.concurrent.TimeUnit;
 
 import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
 
@@ -623,6 +619,15 @@ public class MainActivity extends FragmentActivity implements Observer {
             case BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
                     PostAuthenticationProcessor.getInstance().onPaymentProtocolRequest(this);
+                }
+                break;
+            case BRConstants.REQUEST_IMAGE_CAPTURE:
+                if (resultCode == RESULT_OK) {
+                    Bundle extras = data.getExtras();
+                    Bitmap imageBitmap = (Bitmap) extras.get("data");
+                    CameraPlugin.handleCameraImageTaken(this, imageBitmap);
+                } else {
+                    CameraPlugin.handleCameraImageTaken(this, null);
                 }
                 break;
 

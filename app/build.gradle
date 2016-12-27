@@ -87,6 +87,7 @@ dependencies {
     compile 'org.apache.commons:commons-compress:1.4.1'
 
     compile 'io.sigpipe:jbsdiff:1.0'
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.22'
 
     androidTestCompile 'com.android.support:support-annotations:25.1.0'
     androidTestCompile 'com.android.support.test:runner:0.5'
