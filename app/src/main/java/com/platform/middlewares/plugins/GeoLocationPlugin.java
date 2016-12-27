@@ -3,7 +3,10 @@ package com.platform.middlewares.plugins;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -20,6 +23,7 @@ import com.platform.sqlite.KVEntity;
 
 import org.apache.commons.io.IOUtils;
 import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.Response;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -28,6 +32,9 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
+import javax.servlet.AsyncContext;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -106,6 +113,11 @@ public class GeoLocationPlugin implements Plugin {
                         jsonResult.put("user_queried", SharedPreferencesManager.getGeoPermissionsRequested(app));
                         jsonResult.put("location_enabled", enabled);
                         response.setStatus(200);
+                        try {
+                            response.getWriter().write(jsonResult.toString());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                         try {
@@ -180,6 +192,9 @@ public class GeoLocationPlugin implements Plugin {
                     }
                     return true;
                 }
+                AsyncContext async = request.startAsync();
+                async.setTimeout(15000);
+                GeoLocationManager.getLatestLocation(async, response, baseRequest);
             }
         } else if (target.startsWith("/_geosocket")) {
             // GET /_geosocket
@@ -230,6 +245,90 @@ public class GeoLocationPlugin implements Plugin {
         } else {
             return null;
         }
+
+    }
+
+    private static class GeoLocationManager {
+
+        //        private static Location latestLocation;
+        private static HttpServletResponse response;
+        private static AsyncContext async;
+        private static Request baseRequest;
+        // Acquire a reference to the system Location Manager
+        static LocationManager locationManager;
+        static int count;
+
+        // Define a listener that responds to location updates
+        static LocationListener locationListener = new LocationListener() {
+            public void onLocationChanged(Location location) {
+                // Called when a new location is found by the network location provider.
+                count++;
+                if (count > 10) {
+                    count = 0;
+                    handleLocation(location);
+                }
+            }
+
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+            }
+
+            public void onProviderEnabled(String provider) {
+            }
+
+            public void onProviderDisabled(String provider) {
+            }
+        };
+
+        // Register the listener with the Location Manager to receive location updates
+        public static void getLatestLocation(AsyncContext as, HttpServletResponse rs, Request req) {
+            Log.e(TAG, "getLatestLocation: ");
+            async = as;
+            response = rs;
+            baseRequest = req;
+
+            MainActivity app = MainActivity.app;
+            if (app == null)
+                return;
+            locationManager = (LocationManager) app.getSystemService(Context.LOCATION_SERVICE);
+            if (ActivityCompat.checkSelfPermission(app, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(app, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                throw new RuntimeException("can't happen");
+            }
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+        }
+
+        private static void handleLocation(Location location) {
+            try {
+                if (response == null) {
+                    Log.e(TAG, "handleLocation: WARNING: response is null");
+                    return;
+                }
+                JSONObject responseJson = new JSONObject();
+
+                JSONObject coordObj = new JSONObject();
+                coordObj.put("latitude", location.getLatitude());
+                coordObj.put("longitude", location.getLongitude());
+
+                responseJson.put("timestamp", location.getTime());
+                responseJson.put("coordinate", coordObj);
+                responseJson.put("altitude", location.getAltitude());
+                responseJson.put("horizontal_accuracy", location.getAccuracy());
+                responseJson.put("description", "");
+                response.getWriter().write(responseJson.toString());
+                response.setStatus(200);
+                baseRequest.setHandled(true);
+            } catch (JSONException e) {
+                Log.e(TAG, "handleLocation: Failed to create json response");
+                e.printStackTrace();
+            } catch (IOException e) {
+                Log.e(TAG, "handleLocation: Failed to response getWriter");
+                e.printStackTrace();
+            } finally {
+                if (async != null)
+                    async.complete();
+            }
+
+        }
+
 
     }
 }

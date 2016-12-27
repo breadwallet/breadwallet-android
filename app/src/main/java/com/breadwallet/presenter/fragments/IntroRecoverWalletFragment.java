@@ -157,13 +157,11 @@ public class IntroRecoverWalletFragment extends Fragment {
     }
 
     public void disableEditText() {
-        Log.e(TAG, "disableEditText: ");
         cancelButton.setVisibility(View.VISIBLE);
         continueButton.setVisibility(View.VISIBLE);
         continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e(TAG, "onClick: ");
                 showSelectInputMethod();
             }
         });
@@ -186,7 +184,6 @@ public class IntroRecoverWalletFragment extends Fragment {
     }
 
     private void enableEditText() {
-        Log.e(TAG, "enableEditText: ");
         editText.setEnabled(true);
         editText.setHint("");
         editText.setText("");
@@ -203,11 +200,9 @@ public class IntroRecoverWalletFragment extends Fragment {
 
     @Override
     public void onResume() {
-        Log.e(TAG, "onResume");
         if (Utils.isUsingCustomInputMethod(getActivity()) && this.isVisible()) {
             disableEditText();
         } else {
-            Log.e(TAG, "onResume: !isUsingCustomInputMethod");
             enableEditText();
         }
 
@@ -236,7 +231,6 @@ public class IntroRecoverWalletFragment extends Fragment {
                 } else {
                     enableEditText();
                 }
-            /* You can check the package name of current IME here.*/
             }
         }
     }

@@ -191,7 +191,7 @@ public class KeyStoreManager {
             }
             return true;
         } catch (UserNotAuthenticatedException e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Log.e(TAG, "User not Authenticated, requesting...");
             showAuthenticationScreen(context, request_code);
         } catch (CertificateException | NoSuchAlgorithmException | InvalidKeyException | NullPointerException
                 | NoSuchPaddingException | KeyStoreException | UnrecoverableKeyException |
@@ -206,7 +206,6 @@ public class KeyStoreManager {
 
         if (alias.equals(alias_file) || alias.equals(alias_iv) || alias_file.equals(alias_iv))
             throw new RuntimeException("mistake in parameters!");
-        Log.e(TAG, "_getData: " + alias);
         KeyStore keyStore;
 
         String encryptedDataFilePath = getEncryptedDataFilePath(alias_file, context);

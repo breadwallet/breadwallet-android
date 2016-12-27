@@ -825,6 +825,7 @@ public class BRWalletManager {
 
     public void setUpTheWallet() {
         Assert.assertNotNull(ctx);
+        if(ctx == null) return;
         BRWalletManager m = BRWalletManager.getInstance(ctx);
         final BRPeerManager pm = BRPeerManager.getInstance(ctx);
 

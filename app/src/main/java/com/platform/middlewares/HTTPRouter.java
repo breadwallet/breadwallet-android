@@ -1,5 +1,7 @@
 package com.platform.middlewares;
 
+import android.util.Log;
+
 import com.platform.interfaces.Middleware;
 import com.platform.interfaces.Plugin;
 
@@ -46,10 +48,13 @@ public class HTTPRouter implements Middleware {
 
     @Override
     public boolean handle(String target, org.eclipse.jetty.server.Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
-        boolean success = false;
         for (Plugin plugin : plugins) {
-            success = plugin.handle(target, baseRequest, request, response);
-            if(success) return true;
+            boolean success = plugin.handle(target, baseRequest, request, response);
+            if(success) {
+                Log.e(TAG, "plugin: " + plugin.getClass().getName().substring(plugin.getClass().getName().lastIndexOf(".") + 1) + " succeeded:" + request.getRequestURL());
+
+                return true;
+            }
         }
         return false;
     }

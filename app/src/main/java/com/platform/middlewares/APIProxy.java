@@ -74,11 +74,7 @@ public class APIProxy implements Middleware {
     @Override
     public boolean handle(String target, org.eclipse.jetty.server.Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
         if (!target.startsWith(MOUNT_POINT)) return false;
-
         String path = target.substring(MOUNT_POINT.length());
-        if(path.equalsIgnoreCase("_api/me")){
-            Log.e(TAG, "handle: ");
-        }
 //        Log.e(TAG, "handle: path: " + path);
         String queryString = baseRequest.getQueryString();
         if (queryString != null && queryString.length() > 0)
@@ -88,7 +84,7 @@ public class APIProxy implements Middleware {
         Request req = mapToOkhttpRequest(baseRequest, path, request);
         if (baseRequest.getHeader(SHOULD_AUTHENTICATE).toLowerCase().equals("yes")) auth = true;
         Response res = apiInstance.sendRequest(req, auth);
-        if(res.code() == 599) {
+        if (res.code() == 599) {
 //            Log.e(TAG, "handle: time out!");
             try {
                 response.sendError(599);
@@ -112,7 +108,6 @@ public class APIProxy implements Middleware {
         if (res.isSuccessful() && resString != null) {
             try {
                 response.setContentType(cType);
-                response.setStatus(HttpServletResponse.SC_OK);
 //                Log.e(TAG, "responseString: " + resString + "\ncType: " + cType);
                 Headers headers = res.headers();
                 for (String s : headers.names()) {
@@ -120,8 +115,10 @@ public class APIProxy implements Middleware {
                     response.addHeader(s, res.header(s));
                 }
                 response.setContentLength(bodyBytes.length);
-                response.getOutputStream().write(bodyBytes);
+                response.setStatus(response.getStatus());
                 baseRequest.setHandled(true);
+                response.getOutputStream().write(bodyBytes);
+                response.getOutputStream().flush();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -169,6 +166,7 @@ public class APIProxy implements Middleware {
                 Log.e(TAG, "mapToOkhttpRequest: WARNING: method: " + baseRequest.getMethod());
                 break;
         }
+
         req = builder.build();
         return req;
     }

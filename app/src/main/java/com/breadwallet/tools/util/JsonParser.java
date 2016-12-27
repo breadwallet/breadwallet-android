@@ -63,7 +63,7 @@ public class JsonParser {
             SharedPreferencesManager.putSecureTime(activity, date);
             Log.e(TAG, "Secure time set to: " + date);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "getJSonArray error: " + e.getMessage());
         }
         return jsonArray == null ? getBackUpJSonArray(activity) : jsonArray;
     }

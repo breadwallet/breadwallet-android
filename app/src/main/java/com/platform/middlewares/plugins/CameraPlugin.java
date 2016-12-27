@@ -1,5 +1,7 @@
 package com.platform.middlewares.plugins;
 
+import android.util.Log;
+
 import com.breadwallet.presenter.activities.MainActivity;
 import com.platform.interfaces.Plugin;
 

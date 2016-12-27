@@ -3,6 +3,7 @@ package com.platform.middlewares;
 import android.util.Log;
 
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.tools.util.TypesConverter;
 import com.platform.interfaces.Middleware;
 
 
@@ -11,6 +12,8 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -48,26 +51,51 @@ public class HTTPFileMiddleware implements Middleware {
 
     @Override
     public boolean handle(String target, org.eclipse.jetty.server.Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
-        boolean success = false;
-        if (target.equals("/")) return success;
-        if (target.equals("/favicon.ico")) return true;
+        if (target.equals("/")) return false;
+        if (target.equals("/favicon.ico")) {
+            baseRequest.setHandled(true);
+            return true;
+        }
+
         String requestedFile = MainActivity.app.getFilesDir() + "/" + BUNDLES + "/" + extractedFolder + target;
         File temp = new File(requestedFile);
         if (!temp.exists()) {
-            Log.e(TAG, "handle: FILE DOES NOT EXIST: " + temp.getAbsolutePath());
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            return success;
+            return false;
         }
-        response.setContentType(detectContentType(temp));
-        response.setStatus(HttpServletResponse.SC_OK);
+        boolean modified = true;
+        StringBuilder sb = new StringBuilder();
         try {
-            response.getOutputStream().write(FileUtils.readFileToByteArray(temp));
-            success = true;
-        } catch (IOException e) {
+            MessageDigest digest = MessageDigest.getInstance("MD5");
+            byte[] md5 = digest.digest(TypesConverter.long2byteArray(temp.lastModified()));
+
+            for (byte b : md5) {
+                sb.append(String.format("%02X", b));
+            }
+            response.setHeader("ETag", sb.toString());
+        } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
+            throw new RuntimeException("should not throw");
         }
-        baseRequest.setHandled(success);
-        return success;
+        if (sb.toString().isEmpty()) throw new RuntimeException("can't happen");
+
+        // if the client sends an if-none-match header, determine if we have a newer version of the file
+        String etag = request.getHeader("if-none-match");
+        if (etag != null && etag.equalsIgnoreCase(sb.toString())) modified = false;
+        response.setContentType(detectContentType(temp));
+//        if (modified) {
+            try {
+                response.setStatus(200);
+                response.getOutputStream().write(FileUtils.readFileToByteArray(temp));
+                response.getOutputStream().flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return true;
+//        } else {
+//            response.setStatus(304);
+//            return true;
+//        }
+        //todo finish the implementation
     }
 
     private String detectContentType(File file) {

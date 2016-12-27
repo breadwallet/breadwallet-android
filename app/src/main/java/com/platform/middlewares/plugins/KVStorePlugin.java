@@ -11,6 +11,8 @@ import com.platform.kvstore.RemoteKVStore;
 import com.platform.kvstore.ReplicatedKVStore;
 import com.platform.sqlite.KVEntity;
 
+import junit.framework.Assert;
+
 import org.apache.commons.io.IOUtils;
 import org.eclipse.jetty.server.Request;
 import org.json.JSONException;
@@ -78,22 +80,24 @@ public class KVStorePlugin implements Plugin {
             ReplicatedKVStore store = new ReplicatedKVStore(app, remote);
             switch (request.getMethod()) {
                 case "GET":
+                    Log.e(TAG, "handle: GET: " + key);
                     CompletionObject getObj = store.get(key, 0);
                     KVEntity kv = getObj.kv;
 
                     if (kv == null) {
-                        Log.e(TAG, "handle: missing key argument");
+                        Log.e(TAG, "handle: kv store does not contain the kv: " + key);
                         try {
-                            response.sendError(400);
+                            response.sendError(404);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                         return true;
                     }
                     byte[] decompressedData = BRCompressor.bz2Extract(kv.getValue());
-                    assert (decompressedData != null);
+                    Assert.assertNotNull(decompressedData);
                     try {
-                        new JSONObject(new String(decompressedData));//just check for validity
+                        JSONObject test = new JSONObject(new String(decompressedData)); //just check for validity
+                        Log.e(TAG, "handle: " + test.toString());
                     } catch (JSONException e) {
                         e.printStackTrace();
                         try {
@@ -119,19 +123,15 @@ public class KVStorePlugin implements Plugin {
                     response.setHeader("Content-Type", "application/json");
 
                     try {
+                        baseRequest.setHandled(true);
+                        response.setStatus(200);
                         response.getOutputStream().write(decompressedData);
                     } catch (IOException e) {
                         e.printStackTrace();
-                        try {
-                            response.sendError(500);
-                        } catch (IOException ex) {
-                            ex.printStackTrace();
-                        }
-                        return true;
                     }
-                    response.setStatus(200);
                     return true;
                 case "PUT":
+                    Log.e(TAG, "handle: PUT: " + key);
                     // Read from request
                     byte[] rawData = null;
                     try {
@@ -177,6 +177,7 @@ public class KVStorePlugin implements Plugin {
                     assert (compressedData != null);
 
                     CompletionObject setObj = store.set(new KVEntity(version, 0, key, compressedData, System.currentTimeMillis(), 0));
+                    Log.e(TAG, "handle: setObj.err: " + setObj.err);
                     if (setObj.err != null) {
                         int errCode = transformErrorToResponseCode(setObj.err);
                         try {
@@ -190,9 +191,11 @@ public class KVStorePlugin implements Plugin {
                     dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss:SSS Z", Locale.getDefault());
                     date = dateFormat.format(setObj.time);
                     response.setHeader("Last-Modified", date);
+                    baseRequest.setHandled(true);
                     response.setStatus(204);
                     return true;
                 case "DELETE":
+                    Log.e(TAG, "handle: DELETE: " + key);
                     strVersion = request.getHeader("if-none-match");
                     if (strVersion == null) {
                         Log.e(TAG, "handle: missing If-None-Match header");
@@ -224,8 +227,9 @@ public class KVStorePlugin implements Plugin {
                     dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss:SSS Z", Locale.getDefault());
                     date = dateFormat.format(delObj.time);
                     response.setHeader("Last-Modified", date);
+                    baseRequest.setHandled(true);
                     response.setStatus(204);
-                    break;
+                    return true;
 
             }
         }
@@ -244,4 +248,5 @@ public class KVStorePlugin implements Plugin {
                 return 500;
         }
     }
+
 }

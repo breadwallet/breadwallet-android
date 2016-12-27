@@ -107,7 +107,6 @@ public class FragmentEarlyAccess extends Fragment {
         }
     }
 
-
     private class BRWebViewClient extends WebViewClient {
 
         @Override
@@ -142,9 +141,9 @@ public class FragmentEarlyAccess extends Fragment {
         @Override
         public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
             super.onReceivedHttpError(view, request, errorResponse);
-            Log.e(TAG, "onReceivedHttpError: request: " + request.getUrl());
-            Log.e(TAG, "onReceivedHttpError: getStatusCode: " + errorResponse.getStatusCode());
-            Log.e(TAG, "onReceivedHttpError: getReasonPhrase: " + errorResponse.getReasonPhrase());
+
+            Log.e(TAG, String.format("ERROR: onReceivedHttpError: (%s) %s %s %d", request.getMethod(), request.getUrl(),
+                    errorResponse.getReasonPhrase(), errorResponse.getStatusCode()));
         }
 
         @Override

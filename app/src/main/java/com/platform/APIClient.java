@@ -14,6 +14,8 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 import com.jniwrappers.BRBase58;
 import com.jniwrappers.BRKey;
+import com.platform.kvstore.RemoteKVStore;
+import com.platform.kvstore.ReplicatedKVStore;
 
 import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
@@ -52,6 +54,7 @@ import okhttp3.ResponseBody;
 import okio.Buffer;
 import okio.BufferedSink;
 
+import static android.R.attr.end;
 import static android.R.attr.path;
 import static com.breadwallet.tools.util.BRCompressor.gZipExtract;
 
@@ -275,16 +278,20 @@ public class APIClient {
             Request.Builder modifiedRequest = request.newBuilder();
             String base58Body = "";
             RequestBody body = request.body();
-            if (body != null) {
-                Log.e(TAG, "sendRequest: body is not null: " + body);
-                BufferedSink sink = new Buffer();
-                try {
-                    body.writeTo(sink);
-                } catch (IOException e) {
-                    e.printStackTrace();
+            try {
+                if (body != null && body.contentLength() != 0) {
+    //                Log.e(TAG, "sendRequest: body is not null: " + body);
+                    BufferedSink sink = new Buffer();
+                    try {
+                        body.writeTo(sink);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    String bodyString = sink.buffer().readUtf8();
+                    base58Body = CryptoHelper.base58ofSha256(bodyString);
                 }
-                String bodyString = sink.buffer().readUtf8();
-                base58Body = CryptoHelper.base58ofSha256(bodyString);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
             SimpleDateFormat sdf =
                     new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
@@ -294,7 +301,7 @@ public class APIClient {
             request = modifiedRequest.header("Date", httpDate.substring(0, httpDate.length() - 6)).build();
             String requestString = createRequest(request.method(), base58Body,
                     request.header("Content-Type"), request.header("Date"), request.url().encodedPath());
-            Log.e(TAG, "sendRequest: requestString: " + requestString);
+//            Log.e(TAG, "sendRequest: requestString: " + requestString);
             String signedRequest = signRequest(requestString);
 //            Log.e(TAG, "sendRequest: signedRequest: " + signedRequest);
             String token = new String(KeyStoreManager.getToken(ctx));
@@ -487,7 +494,7 @@ public class APIClient {
         String extractFolderName = MainActivity.app.getFilesDir() + "/" + BUNDLES + "/" + extractedFolder;
         File temp = new File(extractFolderName);
         temp.mkdirs();
-        Log.e(TAG, String.format("Untaring %s to dir name %s.", inputFile.getAbsolutePath(), extractedFolder));
+//        Log.e(TAG, String.format("Untaring %s to dir name %s.", inputFile.getAbsolutePath(), extractedFolder));
         boolean result = false;
         TarArchiveInputStream debInputStream = null;
         try {
@@ -495,20 +502,20 @@ public class APIClient {
             debInputStream = (TarArchiveInputStream) new ArchiveStreamFactory().createArchiveInputStream("tar", is);
             TarArchiveEntry entry = null;
             while ((entry = (TarArchiveEntry) debInputStream.getNextEntry()) != null) {
-                Log.e(TAG, "tryExtractTar: entry.getName(): " + entry.getName());
+//                Log.e(TAG, "tryExtractTar: entry.getName(): " + entry.getName());
 
                 final String outPutFileName = entry.getName().replace("./", "");
                 final File outputFile = new File(extractFolderName, outPutFileName);
                 String outPutFileFullPath = extractFolderName + "/" + outPutFileName;
                 if (entry.isDirectory()) {
-                    Log.e(TAG, String.format("Attempting to write output directory %s.", outputFile.getAbsolutePath()));
+//                    Log.e(TAG, String.format("Attempting to write output directory %s.", outputFile.getAbsolutePath()));
 
                     File newDir = new File(outPutFileFullPath);
                     if (!newDir.exists()) {
                         newDir.mkdirs();
                     }
                 } else {
-                    Log.e(TAG, String.format("Creating output file %s", outputFile.getAbsolutePath()));
+//                    Log.e(TAG, String.format("Creating output file %s", outputFile.getAbsolutePath()));
                     final OutputStream outputFileStream = new FileOutputStream(outPutFileFullPath);
                     IOUtils.copy(debInputStream, outputFileStream);
                     outputFileStream.close();
@@ -526,6 +533,7 @@ public class APIClient {
                 e.printStackTrace();
             }
         }
+        Log.e(TAG, "tryExtractTar: result: " + result);
         return result;
 
     }
@@ -603,17 +611,40 @@ public class APIClient {
 
     public void updatePlatform() {
         if (BuildConfig.DEBUG) {
-            Log.e(TAG, "updatePlatform: DEBUG, updating platform");
+            final long startTime = System.currentTimeMillis();
+            Log.e(TAG, "updatePlatform: updating platform...");
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     APIClient apiClient = APIClient.getInstance(ctx);
                     apiClient.updateBundle(); //bread-buy-staging
                     apiClient.updateFeatureFlag();
+                    apiClient.syncKvStore();
+                    long endTime = System.currentTimeMillis();
+                    Log.e(TAG, "updatePlatform: DONE in " + (endTime - startTime) + "ms");
                 }
             }).start();
         }
 
+    }
+
+    public void syncKvStore() {
+        final APIClient client = this;
+        if (BuildConfig.DEBUG) {
+            final long startTime = System.currentTimeMillis();
+            Log.e(TAG, "syncKvStore: DEBUG, syncing kv store...");
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    //sync the kv stores
+                    RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(client);
+                    ReplicatedKVStore kvStore = new ReplicatedKVStore(ctx, remoteKVStore);
+                    kvStore.syncAllKeys();
+                    long endTime = System.currentTimeMillis();
+                    Log.e(TAG, "syncKvStore: DONE in " + (endTime - startTime) + "ms");
+                }
+            }).start();
+        }
     }
 
 }

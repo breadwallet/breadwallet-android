@@ -768,9 +768,9 @@ public class ReplicatedKVStore {
         Pattern pattern = Pattern.compile(KEY_REGEX);
         Matcher matcher = pattern.matcher(key);
         if (matcher.find()) {
-            Log.e(TAG, "checkKey: found illegal patterns:key: " + key);
             return true;
         }
+        Log.e(TAG, "checkKey: found illegal patterns, key: " + key);
         return false;
     }
 

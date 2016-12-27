@@ -136,6 +136,7 @@ public class BreadWalletApp extends Application {
 
     public void setTopMiddleView(int view, String text) {
         MainActivity app = MainActivity.app;
+        if(app == null) return;
         switch (view) {
             case BRConstants.BREAD_WALLET_IMAGE:
                 if (app.viewFlipper.getDisplayedChild() == 1) {

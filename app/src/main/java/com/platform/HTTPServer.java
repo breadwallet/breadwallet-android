@@ -95,6 +95,7 @@ public class HTTPServer {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        server = null;
 
     }
 
@@ -111,6 +112,7 @@ public class HTTPServer {
     }
 
     private boolean dispatch(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
+        Log.e(TAG, "TRYING TO HANDLE: " + target + " (" + request.getMethod() + ")");
         boolean result = false;
         if (target.equalsIgnoreCase("/_close")) {
             final MainActivity app = MainActivity.app;
@@ -121,7 +123,8 @@ public class HTTPServer {
                         app.onBackPressed();
                     }
                 });
-                response.setStatus(HttpServletResponse.SC_OK);
+                response.setStatus(200);
+                baseRequest.setHandled(true);
                 return true;
             }
 

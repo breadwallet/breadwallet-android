@@ -5,6 +5,8 @@ import android.util.Log;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.platform.interfaces.Middleware;
 
+import junit.framework.Assert;
+
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -43,7 +45,7 @@ import static com.platform.APIClient.extractedFolder;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class HTTPIndexMiddleware  implements Middleware{
+public class HTTPIndexMiddleware implements Middleware {
     public static final String TAG = HTTPIndexMiddleware.class.getName();
 
     @Override
@@ -51,18 +53,28 @@ public class HTTPIndexMiddleware  implements Middleware{
 
         String indexFile = MainActivity.app.getFilesDir() + "/" + BUNDLES + "/" + extractedFolder + "/index.html";
         response.setContentType("text/html;charset=utf-8");
-        response.setStatus(HttpServletResponse.SC_OK);
-        baseRequest.setHandled(true);
+
         File temp = new File(indexFile);
-        if(!temp.exists()) {
+        if (!temp.exists()) {
             Log.e(TAG, "handle: FILE DOES NOT EXIST: " + temp.getAbsolutePath());
             return false;
         }
+
         try {
-            response.getOutputStream().write(FileUtils.readFileToByteArray(temp));
+            byte[] body = FileUtils.readFileToByteArray(temp);
+            Assert.assertNotNull(body);
+            Assert.assertNotSame(body.length, 0);
+            response.setStatus(200);
+            response.getOutputStream().write(body);
+            response.getOutputStream().flush();
             return true;
         } catch (IOException e) {
             e.printStackTrace();
+            try {
+                response.sendError(500);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
         }
 
         return false;

@@ -53,6 +53,8 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
+import com.platform.kvstore.RemoteKVStore;
+import com.platform.kvstore.ReplicatedKVStore;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -61,6 +63,8 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.TimeUnit;
+
+import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
 
 /**
  * BreadWallet
@@ -151,7 +155,8 @@ public class MainActivity extends FragmentActivity implements Observer {
         setStatusBarColor();
 
         setUrlHandler(getIntent());
-        APIClient.getInstance(this).updatePlatform();
+        if (PLATFORM_ON)
+            APIClient.getInstance(this).updatePlatform();
 
     }
 
@@ -412,6 +417,9 @@ public class MainActivity extends FragmentActivity implements Observer {
         CurrencyManager.getInstance(this).stopTimerTask();
 //        Log.e(TAG, "Activity Destroyed!");
         unregisterScreenLockReceiver();
+        //sync the kv stores
+        if (PLATFORM_ON)
+            APIClient.getInstance(this).syncKvStore();
 
     }
 
@@ -690,8 +698,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                 });
                 try {
                     Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                } catch (InterruptedException ignored) {
                 }
             }
         }

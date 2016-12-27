@@ -195,7 +195,7 @@ public class PostAuthenticationProcessor {
         try {
             canary = KeyStoreManager.getKeyStoreCanary(introActivity, BRConstants.CANARY_REQUEST_CODE);
         } catch (BRKeystoreErrorException e) {
-            e.printStackTrace();
+            Log.e(TAG, "onCanaryCheck: " + e.getMessage());
             return;
         }
 
@@ -205,7 +205,7 @@ public class PostAuthenticationProcessor {
             try {
                 phrase = KeyStoreManager.getKeyStorePhrase(introActivity, BRConstants.CANARY_REQUEST_CODE);
             } catch (BRKeystoreErrorException e) {
-                e.printStackTrace();
+                Log.e(TAG, "onCanaryCheck: " + e.getMessage());
                 return;
             }
             String strPhrase = new String(phrase);

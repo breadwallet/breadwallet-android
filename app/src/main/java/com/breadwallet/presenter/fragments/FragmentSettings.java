@@ -34,6 +34,8 @@ import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
 
+import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
+
 /**
  * BreadWallet
  * <p>
@@ -182,7 +184,7 @@ public class FragmentSettings extends Fragment {
 
         );
         //keep it hidden until finished
-        if (!BuildConfig.DEBUG) {
+        if (!PLATFORM_ON) {
             earlyAccess.setVisibility(View.GONE);
             rootView.findViewById(R.id.early_access_separator).setVisibility(View.GONE);
             rootView.findViewById(R.id.early_access_separator2).setVisibility(View.GONE);
