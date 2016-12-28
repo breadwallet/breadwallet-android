@@ -1,8 +1,12 @@
 package com.breadwallet.tools.crypto;
 
+import com.jniwrappers.BRBase58;
+
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
+import static android.R.attr.name;
 
 /**
  * BreadWallet
@@ -31,21 +35,17 @@ import java.security.NoSuchAlgorithmException;
 public class CryptoHelper {
     public static final String TAG = CryptoHelper.class.getName();
 
-    public static String base58ofSha256(String strToSign) {
-
-        MessageDigest md = null;
-        byte[] digest = null;
+    public static String base58ofSha256(byte[] toEncode) {
+        MessageDigest digest = null;
         try {
-            md = MessageDigest.getInstance("SHA-256");
-
-            md.update(strToSign.getBytes("UTF-8")); // Change this to "UTF-16" if needed
-            digest = md.digest();
-        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+            digest = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
             return null;
         }
-        if(digest == null) return null;
-        return Base58.encode(digest);
+
+        byte[] sha256First = digest.digest(toEncode);
+        return BRBase58.getInstance().base58Encode(sha256First);
 
     }
 }

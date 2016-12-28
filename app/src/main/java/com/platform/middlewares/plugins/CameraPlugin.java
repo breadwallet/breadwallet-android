@@ -11,6 +11,7 @@ import android.support.v4.content.FileProvider;
 import android.util.Log;
 
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.jniwrappers.BRBase58;
 import com.jniwrappers.BRKey;
@@ -203,15 +204,9 @@ public class CameraPlugin implements Plugin {
 //            out = new FileOutputStream(image);
             img.compress(Bitmap.CompressFormat.JPEG, 50, out); // bmp is your Bitmap instance
 
-            MessageDigest digest = null;
-            try {
-                digest = MessageDigest.getInstance("SHA-256");
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-                return null;
-            }
-            byte[] sha256First = digest.digest(out.toByteArray());
-            name = BRBase58.getInstance().base58Encode(sha256First);
+            name = CryptoHelper.base58ofSha256(out.toByteArray());
+
+
             File storageDir = new File(context.getFilesDir().getAbsolutePath() + "/pictures/");
             File image = File.createTempFile(
                     name,  /* prefix */

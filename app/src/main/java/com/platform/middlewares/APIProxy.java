@@ -81,7 +81,7 @@ public class APIProxy implements Middleware {
             path += "?" + queryString;
 //        Log.e(TAG, "handle: path with queryString: " + path);
         boolean auth = false;
-        Request req = mapToOkhttpRequest(baseRequest, path, request);
+        Request req = mapToOkHttpRequest(baseRequest, path, request);
         if (baseRequest.getHeader(SHOULD_AUTHENTICATE).toLowerCase().equals("yes")) auth = true;
         Response res = apiInstance.sendRequest(req, auth);
         if (res.code() == 599) {
@@ -103,8 +103,8 @@ public class APIProxy implements Middleware {
             resString = new String(bodyBytes);
         } catch (IOException e) {
             e.printStackTrace();
-
         }
+
         if (res.isSuccessful() && resString != null) {
             try {
                 response.setContentType(cType);
@@ -123,12 +123,14 @@ public class APIProxy implements Middleware {
                 e.printStackTrace();
             }
             return true;
+        } else {
+            Log.e(TAG, "handle: Warning something went wrong");
         }
 
         return true;
     }
 
-    private Request mapToOkhttpRequest(org.eclipse.jetty.server.Request baseRequest, String path, HttpServletRequest request) {
+    private Request mapToOkHttpRequest(org.eclipse.jetty.server.Request baseRequest, String path, HttpServletRequest request) {
         Request req;
         Request.Builder builder = new Request.Builder()
                 .url(apiInstance.buildUrl(path));
@@ -163,7 +165,7 @@ public class APIProxy implements Middleware {
                 builder.put(reqBody);
                 break;
             default:
-                Log.e(TAG, "mapToOkhttpRequest: WARNING: method: " + baseRequest.getMethod());
+                Log.e(TAG, "mapToOkHttpRequest: WARNING: method: " + baseRequest.getMethod());
                 break;
         }
 

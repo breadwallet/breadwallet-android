@@ -112,6 +112,7 @@ public class GeoLocationPlugin implements Plugin {
                         jsonResult.put("status", status);
                         jsonResult.put("user_queried", SharedPreferencesManager.getGeoPermissionsRequested(app));
                         jsonResult.put("location_enabled", enabled);
+                        baseRequest.setHandled(true);
                         response.setStatus(200);
                         try {
                             response.getWriter().write(jsonResult.toString());
@@ -127,19 +128,14 @@ public class GeoLocationPlugin implements Plugin {
                         }
                     }
                     return true;
-                // GET /_geo
+                // POST /_permissions/geo
                 //
-                // Calling this method will query CoreLocation for a location object. The returned value may not be returned
-                // very quick (sometimes getting a geo lock takes some time) so be sure to display to the user some status
-                // while waiting for a response.
-                //
-                // Response Object:
-                //
-                // "coordinates" = { "latitude": double, "longitude": double }
-                // "altitude" = double
-                // "description" = "a string representation of this object"
-                // "timestamp" = "ISO-8601 timestamp of when this location was generated"
-                // "horizontal_accuracy" = double
+                // Call this method to request the geo permission from the user.
+                // The request body should be a JSON dictionary containing a single key, "style"
+                // the value of which should be either "inuse" or "always" - these correspond to the
+                // two ways the user can authorize geo access to the app. "inuse" will request
+                // geo availability to the app when the app is foregrounded, and "always" will request
+                // full time geo availability to the app
                 case "POST":
                     try {
                         if (ContextCompat.checkSelfPermission(app, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -328,7 +324,6 @@ public class GeoLocationPlugin implements Plugin {
             }
 
         }
-
 
     }
 }

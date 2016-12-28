@@ -2,7 +2,6 @@ package com.platform;
 
 import android.app.Activity;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.breadwallet.BuildConfig;
@@ -54,8 +53,6 @@ import okhttp3.ResponseBody;
 import okio.Buffer;
 import okio.BufferedSink;
 
-import static android.R.attr.end;
-import static android.R.attr.path;
 import static com.breadwallet.tools.util.BRCompressor.gZipExtract;
 
 
@@ -280,7 +277,7 @@ public class APIClient {
             RequestBody body = request.body();
             try {
                 if (body != null && body.contentLength() != 0) {
-    //                Log.e(TAG, "sendRequest: body is not null: " + body);
+                    //                Log.e(TAG, "sendRequest: body is not null: " + body);
                     BufferedSink sink = new Buffer();
                     try {
                         body.writeTo(sink);
@@ -288,7 +285,7 @@ public class APIClient {
                         e.printStackTrace();
                     }
                     String bodyString = sink.buffer().readUtf8();
-                    base58Body = CryptoHelper.base58ofSha256(bodyString);
+                    base58Body = CryptoHelper.base58ofSha256(bodyString.getBytes());
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -340,6 +337,13 @@ public class APIClient {
             return response.newBuilder().body(postReqBody).build();
         }
         ResponseBody postReqBody = ResponseBody.create(null, data);
+        if(needsAuth && isBreadChallenge(response)){
+            Log.e(TAG, "sendRequest: got authentication challenge from API - will attempt to get token");
+            String token = getToken();
+            //todo finish
+
+        }
+
         return response.newBuilder().body(postReqBody).build();
     }
 
@@ -580,6 +584,11 @@ public class APIClient {
             e.printStackTrace();
         }
 
+    }
+
+    public boolean isBreadChallenge(Response resp) {
+        String challenge = resp.header("www-authenticate");
+        return challenge != null && challenge.startsWith("bread");
     }
 
     public boolean isFeatureEnabled(String feature) {
