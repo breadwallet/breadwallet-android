@@ -3,7 +3,6 @@ package com.breadwallet.presenter.fragments;
 
 import android.annotation.SuppressLint;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.net.http.SslError;
 import android.os.Bundle;
@@ -13,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.ConsoleMessage;
 import android.webkit.HttpAuthHandler;
-import android.webkit.JavascriptInterface;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
@@ -22,12 +20,9 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.platform.HTTPServer;
-
-import static com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask.message;
 
 
 /**
@@ -55,11 +50,14 @@ import static com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask.messa
  * THE SOFTWARE.
  */
 
-public class FragmentEarlyAccess extends Fragment {
-    public static final String TAG = FragmentEarlyAccess.class.getName();
+public class FragmentWebView extends Fragment {
+    public static final String TAG = FragmentWebView.class.getName();
+
+    private int mode = 0; // default 0 - EA, 1 - buy bitcoin
 
     HTTPServer server;
     WebView webView;
+    String theUrl = HTTPServer.URL_EA;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -72,8 +70,10 @@ public class FragmentEarlyAccess extends Fragment {
         webView.setWebViewClient(new BRWebViewClient());
         webView.setWebChromeClient(new BRWebChromeClient());
         WebSettings webSettings = webView.getSettings();
-        if (0 != (getActivity().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE))
+        if (mode == 1) theUrl = HTTPServer.URL_BUY_BITCOIN;
+        if (0 != (getActivity().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)) {
             WebView.setWebContentsDebuggingEnabled(true);
+        }
         webSettings.setJavaScriptEnabled(true);
         server = new HTTPServer();
 //        webView.getSettings().setAllowFileAccessFromFileURLs(true);
@@ -90,7 +90,7 @@ public class FragmentEarlyAccess extends Fragment {
     public void onResume() {
         super.onResume();
         server.startServer();
-        webView.loadUrl(HTTPServer.URL_EA);
+        webView.loadUrl(theUrl);
     }
 
     @Override
@@ -151,5 +151,9 @@ public class FragmentEarlyAccess extends Fragment {
             return super.shouldInterceptRequest(view, url);
         }
 
+    }
+
+    public void setMode(int mode) {
+        this.mode = mode;
     }
 }

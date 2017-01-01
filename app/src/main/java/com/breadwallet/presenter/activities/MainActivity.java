@@ -50,8 +50,10 @@ import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.platform.APIClient;
 import com.platform.middlewares.plugins.CameraPlugin;
+import com.platform.middlewares.plugins.GeoLocationPlugin;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -60,6 +62,7 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
+import static android.app.Activity.RESULT_OK;
 import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
 
 /**
@@ -118,6 +121,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     public BubbleTextView sendBubble1;
     public BubbleTextView sendBubble2;
     private ToastUpdater toastUpdater;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     public static boolean appInBackground = false;
 
@@ -130,6 +134,8 @@ public class MainActivity extends FragmentActivity implements Observer {
 //        if (savedInstanceState != null)
 //            savedInstanceState.clear();
         super.onCreate(null);
+        // Obtain the FirebaseAnalytics instance.
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         setContentView(R.layout.activity_main);
         app = this;
         initializeViews();
@@ -645,6 +651,16 @@ public class MainActivity extends FragmentActivity implements Observer {
 
                 }
                 return;
+            }
+            case BRConstants.GEO_REQUEST_ID: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    GeoLocationPlugin.handleGeoPermission(true);
+                    Log.e(TAG, "Geo permissions: GRANTED");
+                } else {
+                    GeoLocationPlugin.handleGeoPermission(false);
+                    Log.e(TAG, "Geo permissions: REFUSED");
+                }
             }
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);

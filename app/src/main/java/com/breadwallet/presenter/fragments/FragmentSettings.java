@@ -3,26 +3,20 @@ package com.breadwallet.presenter.fragments;
 import android.Manifest;
 import android.app.Fragment;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.security.KeyStoreManager;
-import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRStringFormatter;
 import com.breadwallet.tools.manager.CurrencyManager;
@@ -32,7 +26,6 @@ import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.security.PassCodeManager;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
-import com.platform.APIClient;
 
 import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
 
@@ -194,7 +187,8 @@ public class FragmentSettings extends Fragment {
                 @Override
                 public void onClick(View v) {
                     if (BRAnimator.checkTheMultipressingAvailability()) {
-                        BRAnimator.animateSlideToLeft(app, new FragmentEarlyAccess(), fragmentSettings);
+
+                        BRAnimator.animateSlideToLeft(app, new FragmentWebView(), fragmentSettings);
                     }
                 }
             });

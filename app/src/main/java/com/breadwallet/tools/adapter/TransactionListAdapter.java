@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
+import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,19 +22,21 @@ import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.presenter.fragments.FragmentSettings;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.presenter.fragments.FragmentTransactionExpanded;
+import com.breadwallet.presenter.fragments.FragmentWebView;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRStringFormatter;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
+import com.platform.APIClient;
 
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 
 /**
  * BreadWallet
@@ -70,6 +73,8 @@ public class TransactionListAdapter extends BaseAdapter {
     private static int sentColor;
     private static int receivedColor;
     public static boolean showAllTx = false;
+    public boolean buyBitcoinEnabled = false;
+//    private List<Layout> extraItems = new LinkedList<>();
 
     public TransactionListAdapter(Activity a, TransactionListItem[] d) {
         activity = a;
@@ -80,6 +85,8 @@ public class TransactionListAdapter extends BaseAdapter {
         unconfirmedColor = ContextCompat.getColor(a, R.color.white);
         sentColor = Color.parseColor("#FF5454");
         receivedColor = Color.parseColor("#00BF00");
+        buyBitcoinEnabled = APIClient.getInstance(a).isFeatureEnabled(APIClient.FeatureFlags.BUY_BITCOIN.toString());
+        buyBitcoinEnabled = true; //todo delete
     }
 
     public void updateData(TransactionListItem[] d) {
@@ -95,7 +102,7 @@ public class TransactionListAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        final int EXTRA_ITEMS = 4;
+        final int EXTRA_ITEMS = buyBitcoinEnabled ? 5 : 4;
         if (!BreadWalletApp.unlocked) {
             return getUnconfirmedCount(data) == 0 ? (EXTRA_ITEMS + 1) : getUnconfirmedCount(data) == data.size()
                     ? (getUnconfirmedCount(data) + EXTRA_ITEMS) : (getUnconfirmedCount(data) + EXTRA_ITEMS + 1);
@@ -121,11 +128,25 @@ public class TransactionListAdapter extends BaseAdapter {
             RelativeLayout noTransactions = (RelativeLayout) inflater.inflate(R.layout.button_no_transactions, null);
             noTransactions.setLayoutParams(new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.getPixelsFromDps(activity, 70)));
             return noTransactions;
-        } else if (position == getCount() - 4) {
+        } else if (position == getCount() - 5) {
             View separator = new View(activity);
             separator.setLayoutParams(new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.getPixelsFromDps(activity, 30)));
             separator.setBackgroundResource(android.R.color.transparent);
             return separator;
+        } else if (buyBitcoinEnabled && position == getCount() - 4) {
+            RelativeLayout buyBitcoinLayout = (RelativeLayout) inflater.inflate(R.layout.button_buy_bitcoin, null);
+            buyBitcoinLayout.setLayoutParams(new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.getPixelsFromDps(activity, 50)));
+            buyBitcoinLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (BRAnimator.checkTheMultipressingAvailability()) {
+                        FragmentWebView fragmentWebView = new FragmentWebView();
+                        fragmentWebView.setMode(1);
+                        BRAnimator.animateSlideToLeft((MainActivity) activity, fragmentWebView, FragmentSettingsAll.instantiate(activity, FragmentSettingsAll.class.getName()));
+                    }
+                }
+            });
+            return buyBitcoinLayout;
         } else if (position == getCount() - 3) {
             RelativeLayout importPrivateKeys = (RelativeLayout) inflater.inflate(R.layout.button_import_privkey, null);
             importPrivateKeys.setLayoutParams(new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.getPixelsFromDps(activity, 50)));
@@ -172,7 +193,7 @@ public class TransactionListAdapter extends BaseAdapter {
                     public void onClick(View v) {
                         if (BRAnimator.checkTheMultipressingAvailability()) {
                             ((BreadWalletApp) activity.getApplicationContext()).
-                                    promptForAuthentication(activity, BRConstants.AUTH_FOR_GENERAL, null, null, null, null,false);
+                                    promptForAuthentication(activity, BRConstants.AUTH_FOR_GENERAL, null, null, null, null, false);
                         }
                     }
                 });
@@ -186,7 +207,7 @@ public class TransactionListAdapter extends BaseAdapter {
                         public void onClick(View v) {
                             if (BRAnimator.checkTheMultipressingAvailability()) {
                                 ((BreadWalletApp) activity.getApplicationContext()).
-                                        promptForAuthentication(activity, BRConstants.AUTH_FOR_GENERAL, null, null, null, null,false);
+                                        promptForAuthentication(activity, BRConstants.AUTH_FOR_GENERAL, null, null, null, null, false);
                             }
                         }
                     });

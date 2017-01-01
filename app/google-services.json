@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1057484747823-u1njkb7kuk529ddod5ipqm9ejffrji96.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.breadwallet",
+            "certificate_hash": "F29C30B418EB982B9C042828E5A625E0E294EC71"
+          }
+        },
+        {
           "client_id": "1057484747823-p3g1b9o0nvbkn6ius2fc985hfe0v4tqe.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +37,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1057484747823-p3g1b9o0nvbkn6ius2fc985hfe0v4tqe.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2

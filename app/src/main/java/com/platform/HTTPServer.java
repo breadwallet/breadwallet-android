@@ -64,6 +64,7 @@ public class HTTPServer {
     private Server server;
     public static final int PORT = 31120;
     public static final String URL_EA = "http://localhost:" + PORT + "/ea";
+    public static final String URL_BUY_BITCOIN = "http://localhost:" + PORT + "/buy";
 
     public HTTPServer() {
         init();

@@ -250,6 +250,7 @@
     <string name="transaction_history">transaction history</string>
     <!-- checked -->
     <string name="import_private_key">import private key</string>
+    <string name="buy_bitcoin">Buy Bitcoin</string>
     <!-- checked -->
     <string name="rescan_blockchain">rescan blockchain</string>
     <!-- checked -->

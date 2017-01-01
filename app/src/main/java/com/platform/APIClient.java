@@ -2,6 +2,7 @@ package com.platform;
 
 import android.app.Activity;
 
+import android.content.pm.ApplicationInfo;
 import android.util.Log;
 
 import com.breadwallet.BuildConfig;
@@ -103,8 +104,8 @@ public class APIClient {
     private static final String POST = "POST";
 
     public static final String BUNDLES = "bundles";
-    //    public static final String BREAD_BUY = "bread-buy";
-    public static final String BREAD_BUY = "bread-buy-staging";
+    //    public static final String BREAD_BUY = "bread-buy-staging";
+    public static String BREAD_BUY = "bread-buy";
 
     public static String bundlesFileName = String.format("/%s", BUNDLES);
     public static String bundleFileName = String.format("/%s/%s.tar", BUNDLES, BREAD_BUY);
@@ -113,8 +114,8 @@ public class APIClient {
     private Activity ctx;
 
     public enum FeatureFlags {
-        STRING_ONE("buy-bitcoin"),
-        STRING_TWO("early-access");
+        BUY_BITCOIN("buy-bitcoin"),
+        EARLY_ACCESS("early-access");
 
         private final String text;
 
@@ -142,6 +143,9 @@ public class APIClient {
 
     private APIClient(Activity context) {
         ctx = context;
+        if (0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)) {
+            BREAD_BUY = "bread-buy-staging";
+        }
     }
 
     private APIClient() {

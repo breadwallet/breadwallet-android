@@ -13,34 +13,21 @@ import android.util.Log;
 
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
-import com.breadwallet.tools.util.BRCompressor;
-import com.platform.APIClient;
+import com.breadwallet.tools.util.BRConstants;
 import com.platform.interfaces.Plugin;
-import com.platform.kvstore.CompletionObject;
-import com.platform.kvstore.RemoteKVStore;
-import com.platform.kvstore.ReplicatedKVStore;
-import com.platform.sqlite.KVEntity;
 
-import org.apache.commons.io.IOUtils;
+import org.eclipse.jetty.continuation.Continuation;
+import org.eclipse.jetty.continuation.ContinuationSupport;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
 
 import javax.servlet.AsyncContext;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import static android.R.attr.enabled;
-import static android.R.attr.key;
-import static com.breadwallet.R.string.status;
 
 /**
  * BreadWallet
@@ -68,6 +55,58 @@ import static com.breadwallet.R.string.status;
  */
 public class GeoLocationPlugin implements Plugin {
     public static final String TAG = GeoLocationPlugin.class.getName();
+
+    private static Continuation continuation;
+
+    public static void handleGeoPermission(boolean granted) {
+        if (continuation == null) {
+            Log.e(TAG, "handleGeoPermission: WARNING continuation is null");
+            return;
+        }
+
+        try {
+            if (granted) {
+                ((HttpServletResponse) continuation.getServletResponse()).setStatus(204);
+
+            } else {
+                try {
+                    ((HttpServletResponse) continuation.getServletResponse()).sendError(400);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        } finally {
+            continuation.complete();
+            continuation = null;
+        }
+
+    }
+
+//    public static void handleGeo(String respStr) {
+//        if (continuation == null) {
+//            Log.e(TAG, "handleGeoPermission: WARNING continuation is null");
+//            return;
+//        }
+//
+//        try {
+//            if (respStr != null && !respStr.isEmpty()) {
+//                try {
+//                    continuation.getServletResponse().getWriter().write(respStr);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//
+//
+//            } else {
+//                Log.e(TAG, "handleGeo: WARNING respStr is null!");
+//            }
+//        } finally {
+//            ((HttpServletResponse) continuation.getServletResponse()).setStatus(204);
+//            continuation.complete();
+//            continuation = null;
+//        }
+//
+//    }
 
     @Override
     public boolean handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
@@ -137,24 +176,18 @@ public class GeoLocationPlugin implements Plugin {
                 // geo availability to the app when the app is foregrounded, and "always" will request
                 // full time geo availability to the app
                 case "POST":
-                    try {
-                        if (ContextCompat.checkSelfPermission(app, Manifest.permission.ACCESS_FINE_LOCATION)
-                                != PackageManager.PERMISSION_GRANTED) {
+                    if (ContextCompat.checkSelfPermission(app, Manifest.permission.ACCESS_FINE_LOCATION)
+                            != PackageManager.PERMISSION_GRANTED) {
 
-                            ActivityCompat.requestPermissions(app, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
-                        }
-                        SharedPreferencesManager.putGeoPermissionsRequested(app, true);
-                        response.setStatus(204);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        response.setStatus(400);
+                        ActivityCompat.requestPermissions(app, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, BRConstants.GEO_REQUEST_ID);
                     }
-                    return true;
-                default:
+                    SharedPreferencesManager.putGeoPermissionsRequested(app, true);
+                    continuation = ContinuationSupport.getContinuation(baseRequest);
+                    continuation.suspend(response);
                     return true;
 
             }
-        } else if (target.startsWith("/_geo")) {
+        } else if (target.startsWith("/_geo") && !target.startsWith("/_geosocket")) {
             // GET /_geo
             //
             // Calling this method will query CoreLocation for a location object. The returned value may not be returned
@@ -188,9 +221,45 @@ public class GeoLocationPlugin implements Plugin {
                     }
                     return true;
                 }
-                AsyncContext async = request.startAsync();
-                async.setTimeout(15000);
-                GeoLocationManager.getLatestLocation(async, response, baseRequest);
+                String locationProvider = LocationManager.NETWORK_PROVIDER;
+                // Or use LocationManager.GPS_PROVIDER
+
+                LocationManager locationManager = (LocationManager) app.getSystemService(Context.LOCATION_SERVICE);
+                Location location = locationManager.getLastKnownLocation(locationProvider);
+
+                try {
+                    JSONObject responseJson = new JSONObject();
+
+                    JSONObject coordObj = new JSONObject();
+                    coordObj.put("latitude", location.getLatitude());
+                    coordObj.put("longitude", location.getLongitude());
+
+                    responseJson.put("timestamp", location.getTime());
+                    responseJson.put("coordinate", coordObj);
+                    responseJson.put("altitude", location.getAltitude());
+                    responseJson.put("horizontal_accuracy", location.getAccuracy());
+                    responseJson.put("description", "none");
+                    try {
+                        baseRequest.setHandled(true);
+                        response.setStatus(200);
+                        response.getWriter().write(responseJson.toString());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+//                    handleGeo(responseJson.toString());
+                } catch (JSONException e) {
+                    Log.e(TAG, "handleLocation: Failed to create json response");
+                    e.printStackTrace();
+//                    continuation.resume();
+//                    continuation.complete();
+//                    continuation = null;
+                }
+
+//                if(continuation != null) return true;
+//                continuation = ContinuationSupport.getContinuation(baseRequest);
+//                continuation.suspend(response);
+////                AsyncContext async = request.startAsync();
+//                GeoLocationManager.getLatestLocation();
             }
         } else if (target.startsWith("/_geosocket")) {
             // GET /_geosocket
@@ -205,6 +274,7 @@ public class GeoLocationPlugin implements Plugin {
 
         return false;
     }
+
 
     private JSONObject getAuthorizationError(Context app) {
         String error = null;
@@ -246,84 +316,68 @@ public class GeoLocationPlugin implements Plugin {
 
     private static class GeoLocationManager {
 
-        //        private static Location latestLocation;
-        private static HttpServletResponse response;
-        private static AsyncContext async;
-        private static Request baseRequest;
-        // Acquire a reference to the system Location Manager
-        static LocationManager locationManager;
-        static int count;
-
-        // Define a listener that responds to location updates
-        static LocationListener locationListener = new LocationListener() {
-            public void onLocationChanged(Location location) {
-                // Called when a new location is found by the network location provider.
-                count++;
-                if (count > 10) {
-                    count = 0;
-                    handleLocation(location);
-                }
-            }
-
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-            }
-
-            public void onProviderEnabled(String provider) {
-            }
-
-            public void onProviderDisabled(String provider) {
-            }
-        };
+//        static LocationManager locationManager;
+//        static int count;
+//
+//        // Define a listener that responds to location updates
+//        static LocationListener locationListener = new LocationListener() {
+//            public void onLocationChanged(Location location) {
+//                Log.e(TAG, "onLocationChanged: ");
+//                // Called when a new location is found by the network location provider.
+////                count++;
+////                if (count > 10) {
+////                    count = 0;
+//                    handleLocation(location);
+////                }
+//            }
+//
+//            public void onStatusChanged(String provider, int status, Bundle extras) {
+//            }
+//
+//            public void onProviderEnabled(String provider) {
+//            }
+//
+//            public void onProviderDisabled(String provider) {
+//            }
+//        };
 
         // Register the listener with the Location Manager to receive location updates
-        public static void getLatestLocation(AsyncContext as, HttpServletResponse rs, Request req) {
-            Log.e(TAG, "getLatestLocation: ");
-            async = as;
-            response = rs;
-            baseRequest = req;
+//        public static void getLatestLocation() {
+//            Log.e(TAG, "getLatestLocation: ");
+//
+//            MainActivity app = MainActivity.app;
+//            if (app == null)
+//                return;
+//            locationManager = (LocationManager) app.getSystemService(Context.LOCATION_SERVICE);
+//            if (ActivityCompat.checkSelfPermission(app, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(app, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//                throw new RuntimeException("can't happen");
+//            }
+//            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+//        }
 
-            MainActivity app = MainActivity.app;
-            if (app == null)
-                return;
-            locationManager = (LocationManager) app.getSystemService(Context.LOCATION_SERVICE);
-            if (ActivityCompat.checkSelfPermission(app, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(app, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                throw new RuntimeException("can't happen");
-            }
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-        }
-
-        private static void handleLocation(Location location) {
-            try {
-                if (response == null) {
-                    Log.e(TAG, "handleLocation: WARNING: response is null");
-                    return;
-                }
-                JSONObject responseJson = new JSONObject();
-
-                JSONObject coordObj = new JSONObject();
-                coordObj.put("latitude", location.getLatitude());
-                coordObj.put("longitude", location.getLongitude());
-
-                responseJson.put("timestamp", location.getTime());
-                responseJson.put("coordinate", coordObj);
-                responseJson.put("altitude", location.getAltitude());
-                responseJson.put("horizontal_accuracy", location.getAccuracy());
-                responseJson.put("description", "");
-                response.getWriter().write(responseJson.toString());
-                response.setStatus(200);
-                baseRequest.setHandled(true);
-            } catch (JSONException e) {
-                Log.e(TAG, "handleLocation: Failed to create json response");
-                e.printStackTrace();
-            } catch (IOException e) {
-                Log.e(TAG, "handleLocation: Failed to response getWriter");
-                e.printStackTrace();
-            } finally {
-                if (async != null)
-                    async.complete();
-            }
-
-        }
+//        private static void handleLocation(Location location) {
+//            try {
+//                JSONObject responseJson = new JSONObject();
+//
+//                JSONObject coordObj = new JSONObject();
+//                coordObj.put("latitude", location.getLatitude());
+//                coordObj.put("longitude", location.getLongitude());
+//
+//                responseJson.put("timestamp", location.getTime());
+//                responseJson.put("coordinate", coordObj);
+//                responseJson.put("altitude", location.getAltitude());
+//                responseJson.put("horizontal_accuracy", location.getAccuracy());
+//                responseJson.put("description", "");
+//                handleGeo(responseJson.toString());
+//            } catch (JSONException e) {
+//                Log.e(TAG, "handleLocation: Failed to create json response");
+//                e.printStackTrace();
+//                continuation.resume();
+//                continuation.complete();
+//                continuation = null;
+//            }
+//
+//        }
 
     }
 }

@@ -1,0 +1,32 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/import_private_key"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:background="@drawable/clickable_layout"
+    android:clickable="true"
+    android:filterTouchesWhenObscured="true">
+
+    <ImageView
+        android:id="@+id/camera_guide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="20dp"
+        android:background="@drawable/bitcoin_buy_blue"
+        android:filterTouchesWhenObscured="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="20dp"
+        android:layout_toEndOf="@+id/camera_guide"
+        android:filterTouchesWhenObscured="true"
+        android:text="@string/buy_bitcoin"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/dark_blue"
+        android:textSize="@dimen/text_size" />
+
+
+</RelativeLayout>
