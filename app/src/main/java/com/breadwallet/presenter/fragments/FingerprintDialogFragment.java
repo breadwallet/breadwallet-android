@@ -143,7 +143,8 @@ public class FingerprintDialogFragment extends DialogFragment
     private void goToBackup() {
 
         // Fingerprint is not used anymore. Stop listening for it.
-        getDialog().cancel();
+        if (getDialog() != null)
+            getDialog().cancel();
         PasswordDialogFragment passwordDialogFragment = new PasswordDialogFragment();
         passwordDialogFragment.setMode(mode);
         passwordDialogFragment.setPaymentRequestEntity(request, paymentRequest);

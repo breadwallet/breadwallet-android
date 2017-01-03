@@ -20,6 +20,7 @@ import com.breadwallet.tools.util.ByteReader;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.wallet.BRWalletManager;
+import com.google.firebase.crash.FirebaseCrash;
 
 import junit.framework.Assert;
 
@@ -581,7 +582,8 @@ public class KeyStoreManager {
         if (intent != null) {
             context.startActivityForResult(intent, requestCode);
         } else {
-            throw new NullPointerException("no passcode is set");
+            FirebaseCrash.report(new NullPointerException("o passcode is set"));
+            context.finish();
         }
     }
 

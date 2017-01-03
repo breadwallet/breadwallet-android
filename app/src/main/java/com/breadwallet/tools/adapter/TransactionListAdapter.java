@@ -86,7 +86,7 @@ public class TransactionListAdapter extends BaseAdapter {
         sentColor = Color.parseColor("#FF5454");
         receivedColor = Color.parseColor("#00BF00");
         buyBitcoinEnabled = APIClient.getInstance(a).isFeatureEnabled(APIClient.FeatureFlags.BUY_BITCOIN.toString());
-        buyBitcoinEnabled = true; //todo delete
+        buyBitcoinEnabled = BRConstants.PLATFORM_ON; //todo delete
     }
 
     public void updateData(TransactionListItem[] d) {
@@ -128,7 +128,7 @@ public class TransactionListAdapter extends BaseAdapter {
             RelativeLayout noTransactions = (RelativeLayout) inflater.inflate(R.layout.button_no_transactions, null);
             noTransactions.setLayoutParams(new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.getPixelsFromDps(activity, 70)));
             return noTransactions;
-        } else if (position == getCount() - 5) {
+        } else if (position == getCount() - (buyBitcoinEnabled ? 5 : 4)) {
             View separator = new View(activity);
             separator.setLayoutParams(new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.getPixelsFromDps(activity, 30)));
             separator.setBackgroundResource(android.R.color.transparent);

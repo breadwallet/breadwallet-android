@@ -241,8 +241,9 @@ public class GeoLocationPlugin implements Plugin {
                     responseJson.put("description", "none");
                     try {
                         baseRequest.setHandled(true);
+//                        response.getWriter().write(responseJson.toString());
+                        response.getOutputStream().write(responseJson.toString().getBytes());
                         response.setStatus(200);
-                        response.getWriter().write(responseJson.toString());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

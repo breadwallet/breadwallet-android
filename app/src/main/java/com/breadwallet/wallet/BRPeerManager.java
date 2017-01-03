@@ -96,8 +96,21 @@ public class BRPeerManager {
         stopSyncingProgressThread();
         if (ctx != null && ctx instanceof MainActivity) {
             ((MainActivity) ctx).hideAllBubbles();
-            getInstance(ctx).refreshConnection();
+            final RelativeLayout networkErrorBar = (RelativeLayout) ctx.findViewById(R.id.main_internet_status_bar);
+            if (networkErrorBar == null) return;
+
+            ctx.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    networkErrorBar.setVisibility(View.VISIBLE);
+                    BRPeerManager.stopSyncingProgressThread();
+                }
+            });
+
+            Log.e(TAG, "Network Not Available ");
+
         }
+
     }
 
     public static void txStatusUpdate() {
@@ -321,18 +334,24 @@ public class BRPeerManager {
             Log.e(TAG, "Network Not Available ");
 
         } else {
-            final double progress = BRPeerManager.syncProgress(SharedPreferencesManager.getStartHeight(ctx));
-            ctx.runOnUiThread(new Runnable() {
+            new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    networkErrorBar.setVisibility(View.GONE);
+                    final double progress = BRPeerManager.syncProgress(SharedPreferencesManager.getStartHeight(ctx));
+                    ctx.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            networkErrorBar.setVisibility(View.GONE);
 
-                    if (progress < 1 && progress > 0) {
-                        BRPeerManager.startSyncingProgressThread();
-                    }
+                            if (progress < 1 && progress > 0) {
+                                BRPeerManager.startSyncingProgressThread();
+                            }
+                        }
+                    });
+                    Log.e(TAG, "Network Available ");
                 }
-            });
-            Log.e(TAG, "Network Available ");
+            }).start();
+
         }
 
     }
