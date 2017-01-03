@@ -165,6 +165,21 @@ public class MainFragment extends Fragment {
                     } else {
                         ifAddress = obj.address;
                     }
+                    if(ifAddress == null) {
+                        //builder.setTitle(getResources().getString(R.string.alert));
+                        builder.setMessage(getResources().getString(R.string.mainfragment_clipboard_invalid_data));
+                        builder.setNeutralButton(getResources().getString(R.string.ok),
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                        alert = builder.create();
+                        alert.show();
+                        BRClipboardManager.copyToClipboard(getActivity(), "");
+                        addressEditText.setText("");
+                        return;
+                    }
 //                    final String finalAddress = tempAddress;
                     BRWalletManager wm = BRWalletManager.getInstance(getActivity());
 
