@@ -47,6 +47,7 @@ import io.sigpipe.jbsdiff.ui.FileUI;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
+import okhttp3.Protocol;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -324,7 +325,7 @@ public class APIClient {
 //            Log.e(TAG, "sendRequest: date: " + response.header("Date"));
         } catch (IOException e) {
             e.printStackTrace();
-            return new Response.Builder().code(599).build();
+            return new Response.Builder().code(599).request(request).body(ResponseBody.create(null, new byte[0])).protocol(Protocol.HTTP_1_1).build();
         }
         byte[] data = new byte[0];
         try {
@@ -458,7 +459,7 @@ public class APIClient {
 
             FileUtils.writeByteArrayToFile(bundleFile, updatedBundleBytes);
 
-        } catch (IOException | InvalidHeaderException | CompressorException e) {
+        } catch (IOException | InvalidHeaderException | CompressorException | NullPointerException e) {
             e.printStackTrace();
         } finally {
             if (patchFile != null)

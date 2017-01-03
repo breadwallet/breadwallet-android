@@ -63,6 +63,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import static android.app.Activity.RESULT_OK;
+import static com.breadwallet.tools.manager.SharedPreferencesManager.getLastBlockHeight;
 import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
 
 /**
@@ -706,6 +707,18 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     public class ToastUpdater extends Thread {
         public void run() {
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    //first set, for when the internet is not available, fixes the blank toast
+                    int latestBlockKnown =  SharedPreferencesManager.getLastBlockHeight(MainActivity.this);
+                    int currBlock = SharedPreferencesManager.getStartHeight(MainActivity.this);
+                    String formattedBlockInfo = String.format(getString(R.string.blocks), currBlock, latestBlockKnown);
+                    middleBubbleBlocks.setText(formattedBlockInfo);
+                }
+            });
+
             while (middleBubbleBlocks.getVisibility() == View.VISIBLE) {
                 final int latestBlockKnown = BRPeerManager.getEstimatedBlockHeight();
                 android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
