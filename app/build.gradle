@@ -85,7 +85,6 @@ dependencies {
 
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.22'
 
-    compile 'com.google.firebase:firebase-crash:10.0.1'
     compile 'com.android.support:appcompat-v7:25.1.0'
     compile 'com.android.support:support-v13:25.1.0'
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
