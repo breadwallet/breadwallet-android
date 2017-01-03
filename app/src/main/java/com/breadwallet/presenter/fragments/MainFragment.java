@@ -165,7 +165,7 @@ public class MainFragment extends Fragment {
                     } else {
                         ifAddress = obj.address;
                     }
-                    if(ifAddress == null) {
+                    if (ifAddress == null) {
                         //builder.setTitle(getResources().getString(R.string.alert));
                         builder.setMessage(getResources().getString(R.string.mainfragment_clipboard_invalid_data));
                         builder.setNeutralButton(getResources().getString(R.string.ok),
@@ -189,51 +189,47 @@ public class MainFragment extends Fragment {
                         return;
                     }
 
-                    if (checkIfAddressIsValid(obj.address)) {
-                        if (ifAddress != null) {
-                            BRWalletManager m = BRWalletManager.getInstance(getActivity());
-                            if (m.addressContainedInWallet(ifAddress)) {
+                    if (checkIfAddressIsValid(ifAddress)) {
+                        BRWalletManager m = BRWalletManager.getInstance(getActivity());
+                        if (m.addressContainedInWallet(ifAddress)) {
 
-                                //builder.setTitle(getResources().getString(R.string.alert));
-                                builder.setMessage(getResources().getString(R.string.address_already_in_your_wallet));
-                                builder.setNeutralButton(getResources().getString(R.string.ok),
-                                        new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                dialog.dismiss();
-                                            }
-                                        });
-                                alert = builder.create();
-                                alert.show();
-                                BRClipboardManager.copyToClipboard(getActivity(), "");
-                                addressEditText.setText("");
-                            } else if (m.addressIsUsed(ifAddress)) {
-                                builder.setTitle(getResources().getString(R.string.warning));
+                            //builder.setTitle(getResources().getString(R.string.alert));
+                            builder.setMessage(getResources().getString(R.string.address_already_in_your_wallet));
+                            builder.setNeutralButton(getResources().getString(R.string.ok),
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                            alert = builder.create();
+                            alert.show();
+                            BRClipboardManager.copyToClipboard(getActivity(), "");
+                            addressEditText.setText("");
+                        } else if (m.addressIsUsed(ifAddress)) {
+                            builder.setTitle(getResources().getString(R.string.warning));
 
-                                builder.setMessage(getResources().getString(R.string.address_already_used));
-                                final String finalIfAddress = ifAddress;
-                                builder.setPositiveButton(getResources().getString(R.string.ignore),
-                                        new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                dialog.dismiss();
-                                                FragmentScanResult.address = finalIfAddress;
-                                                BRAnimator.animateScanResultFragment();
-                                            }
-                                        });
-                                builder.setNegativeButton(getResources().getString(R.string.cancel),
-                                        new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                dialog.dismiss();
-                                            }
-                                        });
-                                alert = builder.create();
-                                alert.show();
-                            } else {
+                            builder.setMessage(getResources().getString(R.string.address_already_used));
+                            final String finalIfAddress = ifAddress;
+                            builder.setPositiveButton(getResources().getString(R.string.ignore),
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                            FragmentScanResult.address = finalIfAddress;
+                                            BRAnimator.animateScanResultFragment();
+                                        }
+                                    });
+                            builder.setNegativeButton(getResources().getString(R.string.cancel),
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                            alert = builder.create();
+                            alert.show();
+                        } else {
 //                                FragmentScanResult.address = finalAddress;
 //                                BRAnimator.animateScanResultFragment();
-                                RequestHandler.processRequest((MainActivity) getActivity(), bitcoinUrl);
-                            }
-                        } else {
-                            throw new NullPointerException();
+                            RequestHandler.processRequest((MainActivity) getActivity(), bitcoinUrl);
                         }
                     } else {
                         //builder.setTitle(getResources().getString(R.string.alert));
