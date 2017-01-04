@@ -87,6 +87,7 @@ public class APIProxy implements Middleware {
         if (res.code() == 599) {
 //            Log.e(TAG, "handle: time out!");
             try {
+                baseRequest.setHandled(true);
                 response.sendError(599);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -105,26 +106,25 @@ public class APIProxy implements Middleware {
             e.printStackTrace();
         }
 
-        if (res.isSuccessful() && resString != null) {
-            try {
-                response.setContentType(cType);
+        try {
+            response.setContentType(cType);
 //                Log.e(TAG, "responseString: " + resString + "\ncType: " + cType);
-                Headers headers = res.headers();
-                for (String s : headers.names()) {
-                    if (Arrays.asList(bannedReceiveHeaders).contains(s.toLowerCase())) continue;
-                    response.addHeader(s, res.header(s));
-                }
-                response.setContentLength(bodyBytes.length);
-                response.setStatus(response.getStatus());
-                baseRequest.setHandled(true);
-                response.getOutputStream().write(bodyBytes);
-                response.getOutputStream().flush();
-            } catch (IOException e) {
-                e.printStackTrace();
+            Headers headers = res.headers();
+            for (String s : headers.names()) {
+                if (Arrays.asList(bannedReceiveHeaders).contains(s.toLowerCase())) continue;
+                response.addHeader(s, res.header(s));
             }
-            return true;
-        } else {
-            Log.e(TAG, "handle: Warning something went wrong");
+            response.setContentLength(bodyBytes.length);
+            if (res.isSuccessful())
+                response.setStatus(res.code());
+            else {
+                response.sendError(res.code());
+            }
+            baseRequest.setHandled(true);
+            response.getOutputStream().write(bodyBytes);
+            response.getOutputStream().flush();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         return true;

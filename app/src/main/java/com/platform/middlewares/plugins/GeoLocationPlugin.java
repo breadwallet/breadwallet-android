@@ -243,6 +243,7 @@ public class GeoLocationPlugin implements Plugin {
                         baseRequest.setHandled(true);
 //                        response.getWriter().write(responseJson.toString());
                         response.getOutputStream().write(responseJson.toString().getBytes());
+
                         response.setStatus(200);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -255,7 +256,7 @@ public class GeoLocationPlugin implements Plugin {
 //                    continuation.complete();
 //                    continuation = null;
                 }
-
+                return true;
 //                if(continuation != null) return true;
 //                continuation = ContinuationSupport.getContinuation(baseRequest);
 //                continuation.suspend(response);

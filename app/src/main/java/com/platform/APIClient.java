@@ -55,6 +55,7 @@ import okhttp3.ResponseBody;
 import okio.Buffer;
 import okio.BufferedSink;
 
+import static android.R.attr.path;
 import static com.breadwallet.tools.util.BRCompressor.gZipExtract;
 
 
@@ -301,8 +302,12 @@ public class APIClient {
             String httpDate = sdf.format(new Date());
 
             request = modifiedRequest.header("Date", httpDate.substring(0, httpDate.length() - 6)).build();
+
+            String queryString = request.url().encodedQuery();
+
             String requestString = createRequest(request.method(), base58Body,
-                    request.header("Content-Type"), request.header("Date"), request.url().encodedPath());
+                    request.header("Content-Type"), request.header("Date"), request.url().encodedPath()
+                            + ((queryString != null && !queryString.isEmpty()) ? ("?"+queryString) : ""));
 //            Log.e(TAG, "sendRequest: requestString: " + requestString);
             String signedRequest = signRequest(requestString);
 //            Log.e(TAG, "sendRequest: signedRequest: " + signedRequest);
