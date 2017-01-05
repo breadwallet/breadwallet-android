@@ -292,6 +292,7 @@ public class BRPeerManager {
                     try {
                         Thread.sleep(300);
                     } catch (InterruptedException e) {
+                        Log.e(TAG, "run: Thread.sleep was Interrupted");
                         running = false;
                         app.runOnUiThread(new Runnable() {
                             @Override
@@ -300,7 +301,6 @@ public class BRPeerManager {
                                 app.showHideSyncProgressViews(false);
                             }
                         });
-                        e.printStackTrace();
                     }
                 }
 

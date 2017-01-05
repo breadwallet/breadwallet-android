@@ -58,27 +58,36 @@ public class GeoLocationPlugin implements Plugin {
 
     private static Continuation continuation;
 
-    public static void handleGeoPermission(boolean granted) {
-        if (continuation == null) {
-            Log.e(TAG, "handleGeoPermission: WARNING continuation is null");
-            return;
-        }
+    public static void handleGeoPermission(final boolean granted) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (continuation == null) {
+                    Log.e(TAG, "handleGeoPermission: WARNING continuation is null");
+                    return;
+                }
 
-        try {
-            if (granted) {
-                ((HttpServletResponse) continuation.getServletResponse()).setStatus(204);
-
-            } else {
                 try {
-                    ((HttpServletResponse) continuation.getServletResponse()).sendError(400);
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "run: granted: " + granted);
+
+                    if (granted) {
+                        ((HttpServletResponse) continuation.getServletResponse()).setStatus(204);
+
+                    } else {
+                        try {
+                            ((HttpServletResponse) continuation.getServletResponse()).sendError(400);
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } finally {
+                    continuation.resume();
+//                    continuation = null;
                 }
             }
-        } finally {
-            continuation.complete();
-            continuation = null;
-        }
+        }).start();
+
 
     }
 
@@ -182,7 +191,7 @@ public class GeoLocationPlugin implements Plugin {
                         ActivityCompat.requestPermissions(app, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, BRConstants.GEO_REQUEST_ID);
                     }
                     SharedPreferencesManager.putGeoPermissionsRequested(app, true);
-                    continuation = ContinuationSupport.getContinuation(baseRequest);
+                    continuation = ContinuationSupport.getContinuation(request);
                     continuation.suspend(response);
                     return true;
 

@@ -169,16 +169,7 @@ public class BRAnimator {
             final FragmentManager fragmentManager = context.getFragmentManager();
             if (level == 0) {
                 if (PLATFORM_ON)
-                    try {
-                        if (server != null && server.isStarted()) {
-                            server.stopServer();
-                            server = null;
-                        }
-                        server = new HTTPServer();
-                        server.startServer();
-                    } catch (Exception ignored) {
-
-                    }
+                    HTTPServer.startServer();
                 level++;
                 CustomPagerAdapter.adapter.showFragments(false, context);
                 context.setBurgerButtonImage(BRConstants.CLOSE);
@@ -209,11 +200,7 @@ public class BRAnimator {
                             mainFragment.addressEditText.getWindowToken(), 0);
             } else if (level == 1) {
                 if (PLATFORM_ON)
-                    try {
-                        if (server != null && server.isStarted()) server.stopServer();
-                    } catch (Exception ignored) {
-
-                    }
+                    HTTPServer.stopServer();
                 level--;
                 context.setBurgerButtonImage(BRConstants.BURGER);
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();

@@ -3,7 +3,6 @@ package com.breadwallet.tools.util;
 import android.app.Activity;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.util.Log;
 
 import com.breadwallet.presenter.activities.MainActivity;
@@ -16,8 +15,8 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.Locale;
@@ -53,25 +52,17 @@ public class JsonParser {
     public static JSONArray getJSonArray(Activity activity) {
         String jsonString = callURL("https://api.breadwallet.com/rates");
         JSONArray jsonArray = null;
-        try {
-            JSONObject obj = new JSONObject(jsonString);
-            jsonArray = obj.getJSONArray("body");
-            JSONObject headers = obj.getJSONObject("headers");
-            String secureDate = headers.getString("Date");
-            @SuppressWarnings("deprecation") long date = Date.parse(secureDate) / 1000;
 
-            SharedPreferencesManager.putSecureTime(activity, date);
-            Log.e(TAG, "Secure time set to: " + date);
-        } catch (JSONException e) {
-            Log.e(TAG, "getJSonArray error: " + e.getMessage());
-        }
         return jsonArray == null ? getBackUpJSonArray(activity) : jsonArray;
     }
 
     public static JSONArray getBackUpJSonArray(Activity activity) {
         String jsonString = callURL("https://bitpay.com/rates");
         //        System.out.println("\n\njsonString: " + jsonString);
+
+
         JSONArray jsonArray = null;
+        if (jsonString == null) return null;
         try {
             JSONObject obj = new JSONObject(jsonString);
 
@@ -108,13 +99,22 @@ public class JsonParser {
     private static String callURL(String myURL) {
 //        System.out.println("Requested URL_EA:" + myURL);
         StringBuilder sb = new StringBuilder();
-        URLConnection urlConn = null;
+        HttpURLConnection urlConn = null;
         InputStreamReader in = null;
         try {
             URL url = new URL(myURL);
-            urlConn = url.openConnection();
-            int versionNumber = 0;
+            urlConn = (HttpURLConnection) url.openConnection();
+            String strDate = urlConn.getHeaderField("date");
             MainActivity app = MainActivity.app;
+            if (strDate == null || app == null) {
+                Log.e(TAG, "callURL: strDate == null!!!");
+            } else {
+                @SuppressWarnings("deprecation") long date = Date.parse(strDate) / 1000;
+                SharedPreferencesManager.putSecureTime(app, date);
+                Log.e(TAG, "Secure time set to: " + date);
+            }
+            int versionNumber = 0;
+            app = MainActivity.app;
             if (app != null) {
                 try {
                     PackageInfo pInfo = null;

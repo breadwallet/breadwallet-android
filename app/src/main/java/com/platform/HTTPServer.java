@@ -40,6 +40,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import static com.breadwallet.R.string.request;
+import static com.platform.APIClient.server;
 
 /**
  * BreadWallet
@@ -68,8 +69,8 @@ import static com.breadwallet.R.string.request;
 public class HTTPServer {
     public static final String TAG = HTTPServer.class.getName();
 
-    private Set<Middleware> middlewares;
-    private Server server;
+    private static Set<Middleware> middlewares;
+    private static Server server;
     public static final int PORT = 31120;
     public static final String URL_EA = "http://localhost:" + PORT + "/ea";
     public static final String URL_BUY_BITCOIN = "http://localhost:" + PORT + "/buy";
@@ -78,33 +79,35 @@ public class HTTPServer {
         init();
     }
 
-    private void init() {
+    private static void init() {
         middlewares = new LinkedHashSet<>();
         server = new Server(PORT);
         server.setHandler(new ServerHandler());
-        WebSocketHandler wsHandler = new WebSocketHandler() {
-            @Override
-            public void configure(WebSocketServletFactory factory) {
-                factory.register(MyWebSocketHandler.class);
-            }
-        };
-        server.setHandler(wsHandler);
+//        WebSocketHandler wsHandler = new WebSocketHandler() {
+//            @Override
+//            public void configure(WebSocketServletFactory factory) {
+//                factory.register(MyWebSocketHandler.class);
+//            }
+//        };
+//        server.setHandler(wsHandler);
         setupIntegrations();
 
     }
 
-    public void startServer() {
+    public static void startServer() {
         Log.e(TAG, "startServer");
         try {
-            if (server != null && !server.isStarted())
-                server.start();
-        } catch (Exception e) {
-            e.printStackTrace();
+            if (server != null && server.isStarted()) {
+                return;
+            }
+            if (server == null) init();
+            server.start();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-
     }
 
-    public void stopServer() {
+    public static void stopServer() {
         Log.e(TAG, "stopServer");
         try {
             if (server != null)
@@ -113,14 +116,13 @@ public class HTTPServer {
             e.printStackTrace();
         }
         server = null;
-
     }
 
     public boolean isStarted() {
         return server.isStarted();
     }
 
-    private class ServerHandler extends AbstractHandler {
+    private static class ServerHandler extends AbstractHandler {
         public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
                 throws IOException, ServletException {
             boolean success;
@@ -131,7 +133,7 @@ public class HTTPServer {
         }
     }
 
-    private boolean dispatch(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
+    private static boolean dispatch(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
         Log.e(TAG, "TRYING TO HANDLE: " + target + " (" + request.getMethod() + ")");
         boolean result = false;
         if (target.equalsIgnoreCase("/_close")) {
@@ -161,7 +163,7 @@ public class HTTPServer {
         return result;
     }
 
-    private void setupIntegrations() {
+    private static void setupIntegrations() {
         // proxy api for signing and verification
         APIProxy apiProxy = new APIProxy();
         middlewares.add(apiProxy);
