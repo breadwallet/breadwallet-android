@@ -169,7 +169,12 @@ public class BRAnimator {
             final FragmentManager fragmentManager = context.getFragmentManager();
             if (level == 0) {
                 if (PLATFORM_ON)
-                    HTTPServer.startServer();
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            HTTPServer.startServer();
+                        }
+                    }).start();
                 level++;
                 CustomPagerAdapter.adapter.showFragments(false, context);
                 context.setBurgerButtonImage(BRConstants.CLOSE);
@@ -200,7 +205,13 @@ public class BRAnimator {
                             mainFragment.addressEditText.getWindowToken(), 0);
             } else if (level == 1) {
                 if (PLATFORM_ON)
-                    HTTPServer.stopServer();
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            HTTPServer.stopServer();
+                        }
+                    }).start();
+
                 level--;
                 context.setBurgerButtonImage(BRConstants.BURGER);
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();

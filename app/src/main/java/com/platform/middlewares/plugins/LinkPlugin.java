@@ -7,6 +7,8 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.breadwallet.presenter.activities.MainActivity;
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.crash.FirebaseCrash;
 import com.platform.interfaces.Plugin;
 
 import junit.framework.Assert;
@@ -51,6 +53,8 @@ public class LinkPlugin implements Plugin {
     @Override
     public boolean handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
         if (target.startsWith("/_open_url")) {
+            String url = request.getParameter("url");
+
             MainActivity app = MainActivity.app;
             if (app == null) {
                 try {
@@ -60,8 +64,14 @@ public class LinkPlugin implements Plugin {
                 }
                 return true;
             }
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(target));
-            app.startActivity(intent);
+
+            if (url != null && url.startsWith("tel")) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url.replace("/","")));
+                app.startActivity(intent);
+            } else {
+                FirebaseCrash.log("could not handle url: " + url);
+            }
+
             return true;
         } else if (target.startsWith("/_open_maps")) {
             MainActivity app = MainActivity.app;
@@ -85,7 +95,7 @@ public class LinkPlugin implements Plugin {
             }
             Assert.assertTrue(destLatitude != 0);
             Assert.assertTrue(destLongitude != 0);
-
+            //todo finish
 //            String uri = "http://maps.google.com/maps?f=d&hl=en&saddr=" + latitude1 + "," + longitude1 + "&daddr=" + destLatitude + "," + destLongitude;
 //            Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
 //            startActivity(Intent.createChooser(intent, "Select an application"));

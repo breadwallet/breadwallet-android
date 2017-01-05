@@ -82,6 +82,11 @@ public class HTTPServer {
     private static void init() {
         middlewares = new LinkedHashSet<>();
         server = new Server(PORT);
+        try {
+            server.dump(System.err);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         server.setHandler(new ServerHandler());
 //        WebSocketHandler wsHandler = new WebSocketHandler() {
 //            @Override
@@ -102,6 +107,7 @@ public class HTTPServer {
             }
             if (server == null) init();
             server.start();
+            server.join();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -119,7 +125,7 @@ public class HTTPServer {
     }
 
     public boolean isStarted() {
-        return server.isStarted();
+        return server == null || server.isStarted();
     }
 
     private static class ServerHandler extends AbstractHandler {
