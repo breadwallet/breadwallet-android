@@ -113,6 +113,8 @@ public class APIClient {
     public static String bundleFileName = String.format("/%s/%s.tar", BUNDLES, BREAD_BUY);
     public static String extractedFolder = String.format("%s-extracted", BREAD_BUY);
 
+    public static HTTPServer server;
+
     private Activity ctx;
 
     public enum FeatureFlags {
@@ -307,7 +309,7 @@ public class APIClient {
 
             String requestString = createRequest(request.method(), base58Body,
                     request.header("Content-Type"), request.header("Date"), request.url().encodedPath()
-                            + ((queryString != null && !queryString.isEmpty()) ? ("?"+queryString) : ""));
+                            + ((queryString != null && !queryString.isEmpty()) ? ("?" + queryString) : ""));
 //            Log.e(TAG, "sendRequest: requestString: " + requestString);
             String signedRequest = signRequest(requestString);
 //            Log.e(TAG, "sendRequest: signedRequest: " + signedRequest);
@@ -347,7 +349,7 @@ public class APIClient {
             return response.newBuilder().body(postReqBody).build();
         }
         ResponseBody postReqBody = ResponseBody.create(null, data);
-        if(needsAuth && isBreadChallenge(response)){
+        if (needsAuth && isBreadChallenge(response)) {
             Log.e(TAG, "sendRequest: got authentication challenge from API - will attempt to get token");
             String token = getToken();
             //todo finish
@@ -649,21 +651,14 @@ public class APIClient {
 
     public void syncKvStore() {
         final APIClient client = this;
-        if (BuildConfig.DEBUG) {
-            final long startTime = System.currentTimeMillis();
-            Log.e(TAG, "syncKvStore: DEBUG, syncing kv store...");
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    //sync the kv stores
-                    RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(client);
-                    ReplicatedKVStore kvStore = new ReplicatedKVStore(ctx, remoteKVStore);
-                    kvStore.syncAllKeys();
-                    long endTime = System.currentTimeMillis();
-                    Log.e(TAG, "syncKvStore: DONE in " + (endTime - startTime) + "ms");
-                }
-            }).start();
-        }
+        final long startTime = System.currentTimeMillis();
+        Log.e(TAG, "syncKvStore: DEBUG, syncing kv store...");
+        //sync the kv stores
+        RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(client);
+        ReplicatedKVStore kvStore = new ReplicatedKVStore(ctx, remoteKVStore);
+        kvStore.syncAllKeys();
+        long endTime = System.currentTimeMillis();
+        Log.e(TAG, "syncKvStore: DONE in " + (endTime - startTime) + "ms");
     }
 
 }

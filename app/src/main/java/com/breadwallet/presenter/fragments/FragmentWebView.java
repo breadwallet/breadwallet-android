@@ -55,7 +55,6 @@ public class FragmentWebView extends Fragment {
 
     private int mode = 0; // default 0 - EA, 1 - buy bitcoin
 
-    HTTPServer server;
     WebView webView;
     String theUrl = HTTPServer.URL_EA;
 
@@ -75,7 +74,8 @@ public class FragmentWebView extends Fragment {
             WebView.setWebContentsDebuggingEnabled(true);
         }
         webSettings.setJavaScriptEnabled(true);
-        server = new HTTPServer();
+
+        webView.loadUrl(theUrl);
 //        webView.getSettings().setAllowFileAccessFromFileURLs(true);
 //        webView.getSettings().setAllowUniversalAccessFromFileURLs(true);
 //        // Keeping these off is less critical but still a good idea, especially
@@ -89,14 +89,12 @@ public class FragmentWebView extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        server.startServer();
-        webView.loadUrl(theUrl);
+
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        server.stopServer();
     }
 
     private class BRWebChromeClient extends WebChromeClient {

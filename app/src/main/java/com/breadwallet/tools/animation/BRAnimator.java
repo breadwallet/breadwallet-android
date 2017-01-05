@@ -34,8 +34,12 @@ import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
+import com.platform.HTTPServer;
 
 import java.util.Stack;
+
+import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
+import static com.platform.APIClient.server;
 
 /**
  * BreadWallet
@@ -164,6 +168,17 @@ public class BRAnimator {
             ((BreadWalletApp) context.getApplication()).cancelToast();
             final FragmentManager fragmentManager = context.getFragmentManager();
             if (level == 0) {
+                if (PLATFORM_ON)
+                    try {
+                        if (server != null && server.isStarted()) {
+                            server.stopServer();
+                            server = null;
+                        }
+                        server = new HTTPServer();
+                        server.startServer();
+                    } catch (Exception ignored) {
+
+                    }
                 level++;
                 CustomPagerAdapter.adapter.showFragments(false, context);
                 context.setBurgerButtonImage(BRConstants.CLOSE);
@@ -193,6 +208,12 @@ public class BRAnimator {
                     keyboard.hideSoftInputFromWindow(CustomPagerAdapter.adapter.
                             mainFragment.addressEditText.getWindowToken(), 0);
             } else if (level == 1) {
+                if (PLATFORM_ON)
+                    try {
+                        if (server != null && server.isStarted()) server.stopServer();
+                    } catch (Exception ignored) {
+
+                    }
                 level--;
                 context.setBurgerButtonImage(BRConstants.BURGER);
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -211,6 +232,7 @@ public class BRAnimator {
     /**
      * Animate the transition on wipe wallet fragment
      */
+
     public static void pressWipeWallet(final MainActivity context, final Fragment to) {
         try {
             if (!wipeWalletOpen) {
@@ -532,10 +554,6 @@ public class BRAnimator {
             });
             v.startAnimation(animation);
         }
-
-    }
-
-    public static void animateSavePhraseFlow() {
 
     }
 

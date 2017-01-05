@@ -18,6 +18,14 @@ import com.platform.middlewares.plugins.WalletPlugin;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.eclipse.jetty.websocket.api.Session;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
+import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import org.eclipse.jetty.websocket.server.WebSocketHandler;
+import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -74,7 +82,15 @@ public class HTTPServer {
         middlewares = new LinkedHashSet<>();
         server = new Server(PORT);
         server.setHandler(new ServerHandler());
+        WebSocketHandler wsHandler = new WebSocketHandler() {
+            @Override
+            public void configure(WebSocketServletFactory factory) {
+                factory.register(MyWebSocketHandler.class);
+            }
+        };
+        server.setHandler(wsHandler);
         setupIntegrations();
+
     }
 
     public void startServer() {
@@ -100,6 +116,10 @@ public class HTTPServer {
 
     }
 
+    public boolean isStarted() {
+        return server.isStarted();
+    }
+
     private class ServerHandler extends AbstractHandler {
         public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
                 throws IOException, ServletException {
@@ -109,7 +129,6 @@ public class HTTPServer {
                 Log.e(TAG, "handle: NO MIDDLEWARE HANDLED THE REQUEST: " + target);
             }
         }
-
     }
 
     private boolean dispatch(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
@@ -131,6 +150,7 @@ public class HTTPServer {
 
             return false;
         }
+
         for (Middleware m : middlewares) {
             result = m.handle(target, baseRequest, request, response);
             if (result) {
@@ -177,6 +197,35 @@ public class HTTPServer {
         // kvstore plugin provides access to the shared replicated kv store
         Plugin kvStorePlugin = new KVStorePlugin();
         httpRouter.appendPlugin(kvStorePlugin);
+    }
+
+    @WebSocket
+    public class MyWebSocketHandler {
+
+        @OnWebSocketClose
+        public void onClose(int statusCode, String reason) {
+            System.out.println("Close: statusCode=" + statusCode + ", reason=" + reason);
+        }
+
+        @OnWebSocketError
+        public void onError(Throwable t) {
+            System.out.println("Error: " + t.getMessage());
+        }
+
+        @OnWebSocketConnect
+        public void onConnect(Session session) {
+            System.out.println("Connect: " + session.getRemoteAddress().getAddress());
+            try {
+                session.getRemote().sendString("Hello Webbrowser");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @OnWebSocketMessage
+        public void onMessage(String message) {
+            System.out.println("Message: " + message);
+        }
     }
 
 }
