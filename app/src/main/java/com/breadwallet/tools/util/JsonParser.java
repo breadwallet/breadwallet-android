@@ -72,7 +72,6 @@ public class JsonParser {
             @SuppressWarnings("deprecation") long date = Date.parse(secureDate) / 1000;
 
             SharedPreferencesManager.putSecureTime(activity, date);
-//            Log.e(TAG,"\n\njsonArray: " + jsonArray);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -81,6 +80,10 @@ public class JsonParser {
 
     public static void updateFeePerKb(Activity activity) {
         String jsonString = callURL("https://api.breadwallet.com/fee-per-kb");
+        if (jsonString == null || jsonString.isEmpty()) {
+            Log.e(TAG, "updateFeePerKb: failed to update fee, response string: " + jsonString);
+            return;
+        }
         long fee;
         try {
             JSONObject obj = new JSONObject(jsonString);

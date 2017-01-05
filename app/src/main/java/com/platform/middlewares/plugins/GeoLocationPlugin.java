@@ -20,6 +20,7 @@ import org.eclipse.jetty.continuation.Continuation;
 import org.eclipse.jetty.continuation.ContinuationSupport;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
+import org.eclipse.jetty.server.session.SessionHandler;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -28,6 +29,7 @@ import java.io.IOException;
 import javax.servlet.AsyncContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * BreadWallet
@@ -57,6 +59,7 @@ public class GeoLocationPlugin implements Plugin {
     public static final String TAG = GeoLocationPlugin.class.getName();
 
     private static Continuation continuation;
+    private static Request globalBaseRequest;
 
     public static void handleGeoPermission(final boolean granted) {
         new Thread(new Runnable() {
@@ -71,19 +74,21 @@ public class GeoLocationPlugin implements Plugin {
                     Log.e(TAG, "run: granted: " + granted);
 
                     if (granted) {
+                        globalBaseRequest.setHandled(true);
                         ((HttpServletResponse) continuation.getServletResponse()).setStatus(204);
 
                     } else {
                         try {
+                            globalBaseRequest.setHandled(true);
                             ((HttpServletResponse) continuation.getServletResponse()).sendError(400);
-
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
                 } finally {
-                    continuation.resume();
-//                    continuation = null;
+                    continuation.complete();
+                    continuation = null;
+                    globalBaseRequest = null;
                 }
             }
         }).start();
@@ -193,6 +198,7 @@ public class GeoLocationPlugin implements Plugin {
                     SharedPreferencesManager.putGeoPermissionsRequested(app, true);
                     continuation = ContinuationSupport.getContinuation(request);
                     continuation.suspend(response);
+                    globalBaseRequest = baseRequest;
                     return true;
 
             }

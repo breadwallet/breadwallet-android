@@ -59,7 +59,7 @@ public class CurrencyManager extends Observable {
     private TimerTask timerTask;
 
     private Handler handler;
-//    public static boolean separatorNeedsToBeShown = false;
+    //    public static boolean separatorNeedsToBeShown = false;
     private final CurrencyListAdapter currencyListAdapter;
     private static Activity ctx;
 
@@ -78,7 +78,6 @@ public class CurrencyManager extends Observable {
     }
 
 
-
     public void setBalance(long balance) {
         Log.e(TAG, "in the setBalance, BALANCE:  " + BALANCE);
         BALANCE = balance;
@@ -92,36 +91,38 @@ public class CurrencyManager extends Observable {
 
     private Set<CurrencyEntity> getCurrencies(Activity context) {
         Set<CurrencyEntity> set = new LinkedHashSet<>();
-        if (((BreadWalletApp)ctx.getApplication()).hasInternetAccess()) {
+        if (((BreadWalletApp) ctx.getApplication()).hasInternetAccess()) {
             try {
-                JSONArray arr;
-                arr = JsonParser.getJSonArray(context);
+                JSONArray arr = JsonParser.getJSonArray(context);
                 JsonParser.updateFeePerKb(context);
 //                Log.e(TAG, "JSONArray arr.length(): " + arr.length());
-
-                int length = arr.length();
-                for (int i = 1; i < length; i++) {
-                    CurrencyEntity tmp = new CurrencyEntity();
-                    try {
-                        JSONObject tmpObj = (JSONObject) arr.get(i);
-                        tmp.name = tmpObj.getString("name");
-                        tmp.code = tmpObj.getString("code");
-                        tmp.codeAndName = tmp.code + " - " + tmp.name;
-                        tmp.rate = (float) tmpObj.getDouble("rate");
-                        String selectedISO = SharedPreferencesManager.getIso(context);
+                if (arr != null) {
+                    int length = arr.length();
+                    for (int i = 1; i < length; i++) {
+                        CurrencyEntity tmp = new CurrencyEntity();
+                        try {
+                            JSONObject tmpObj = (JSONObject) arr.get(i);
+                            tmp.name = tmpObj.getString("name");
+                            tmp.code = tmpObj.getString("code");
+                            tmp.codeAndName = tmp.code + " - " + tmp.name;
+                            tmp.rate = (float) tmpObj.getDouble("rate");
+                            String selectedISO = SharedPreferencesManager.getIso(context);
 //                        Log.e(TAG,"selectedISO: " + selectedISO);
-                        if (tmp.code.equalsIgnoreCase(selectedISO)) {
+                            if (tmp.code.equalsIgnoreCase(selectedISO)) {
 //                            Log.e(TAG, "theIso : " + theIso);
 //                                Log.e(TAG, "Putting the shit in the shared preffs");
-                            SharedPreferencesManager.putIso(context, tmp.code);
-                            SharedPreferencesManager.putCurrencyListPosition(context, i - 1);
+                                SharedPreferencesManager.putIso(context, tmp.code);
+                                SharedPreferencesManager.putCurrencyListPosition(context, i - 1);
 //                            Log.e(TAG,"position set: " + (i - 1));
-                            SharedPreferencesManager.putRate(context, tmp.rate);
+                                SharedPreferencesManager.putRate(context, tmp.rate);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                        set.add(tmp);
                     }
-                    set.add(tmp);
+                } else {
+                    Log.e(TAG, "getCurrencies: failed to get currencies, response string: " + arr);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
