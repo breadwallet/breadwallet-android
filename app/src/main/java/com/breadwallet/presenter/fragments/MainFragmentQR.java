@@ -1,9 +1,13 @@
 
 package com.breadwallet.presenter.fragments;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -27,9 +31,15 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.wallet.BRWalletManager;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+import static android.R.attr.path;
 
 /**
  * BreadWallet
@@ -180,36 +190,38 @@ public class MainFragmentQR extends Fragment {
     }
 
     private void saveBitmapToFile() {
-        FileOutputStream out = null;
-        String path = getActivity().getFilesDir() + "/" + "qrcodes";
-        File qrCodeImageFile = new File(path, "qrImage" + ".jpeg");
-        if (qrCodeImageFile.exists()) {
-            Log.d(TAG, "File exists: " + qrCodeImageFile);
-        } else {
-            Log.d(TAG, "File did not exist, creating a new one: " +  qrCodeImageFile);
-        }
+
+
+        ContextWrapper cw = new ContextWrapper(getActivity());
+        // path to /data/data/yourapp/app_data/imageDir
+        File directory = cw.getDir("qrcodes", Context.MODE_PRIVATE);
+        // Create imageDir
+        File mypath = new File(directory, "qrImage.jpeg");
+
+        FileOutputStream fos = null;
         try {
-            out = new FileOutputStream(qrCodeImageFile);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out); // bmp is your Bitmap instance
-            // PNG is a lossless format, the compression factor (100) is ignored
+            fos = new FileOutputStream(mypath);
+            // Use the compress method on the BitMap object to write image to the OutputStream
+            if (bitmap != null)
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             try {
-                if (out != null) {
-                    out.close();
-                }
+                fos.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+
     }
 
-    public static File getQRImage(){
-        MainActivity app = MainActivity.app;
-        if(app == null) return null;
-        String path = app.getFilesDir() + "/" + "qrcodes";
-        return new File(path, "qrImage" + ".jpeg");
+    public static File getQRImageFile(Activity app) {
+        ContextWrapper cw = new ContextWrapper(app);
+        // path to /data/data/yourapp/app_data/imageDir
+        File directory = cw.getDir("qrcodes", Context.MODE_PRIVATE);
+        return new File(directory, "qrImage.jpeg");
+
     }
 
     @Override
@@ -227,7 +239,7 @@ public class MainFragmentQR extends Fragment {
         }
 //        Log.e(TAG, "refreshAddress: receiveAddress: " + receiveAddress);
         String bitcoinUrl = "bitcoin:" + receiveAddress;
-        if(mainAddressText == null) return;
+        if (mainAddressText == null) return;
         mainAddressText.setText(receiveAddress);
         BRWalletManager.getInstance(getActivity()).generateQR(bitcoinUrl, qrcode);
     }

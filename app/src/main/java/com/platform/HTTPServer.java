@@ -18,6 +18,8 @@ import com.platform.middlewares.plugins.WalletPlugin;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
@@ -87,7 +89,19 @@ public class HTTPServer {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        server.setHandler(new ServerHandler());
+
+        // Setup the basic application "context" for this application at "/"
+        // This is also known as the handler tree (in jetty speak)
+        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+        context.setContextPath("/");
+
+        server.setHandler(context);
+
+        // Add a websocket to a specific path spec
+        ServletHolder holderEvents = new ServletHolder("geo_servlet", BRWebSocketServlet.class);
+        context.addServlet(holderEvents, "/_geosocket/*");
+
+//        server.setHandler(new ServerHandler());
 //        WebSocketHandler wsHandler = new WebSocketHandler() {
 //            @Override
 //            public void configure(WebSocketServletFactory factory) {

@@ -29,9 +29,7 @@ import android.app.DialogFragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -98,7 +96,7 @@ public class FragmentSharing extends DialogFragment {
                             "mailto", "", null));
                     emailIntent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.bitcoin_address));
                     emailIntent.putExtra(Intent.EXTRA_TEXT, "bitcoin:" + theAddress);
-                    File qrFile = MainFragmentQR.getQRImage();
+                    File qrFile = MainFragmentQR.getQRImageFile(getActivity());
                     Uri uri = qrFile == null ? null : Uri.fromFile(qrFile);
                     if (uri != null)
                         emailIntent.putExtra(Intent.EXTRA_STREAM, uri);

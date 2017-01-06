@@ -113,17 +113,8 @@ public class JsonParser {
         try {
             URL url = new URL(myURL);
             urlConn = (HttpURLConnection) url.openConnection();
-            String strDate = urlConn.getHeaderField("date");
-            MainActivity app = MainActivity.app;
-            if (strDate == null || app == null) {
-                Log.e(TAG, "callURL: strDate == null!!!");
-            } else {
-                @SuppressWarnings("deprecation") long date = Date.parse(strDate) / 1000;
-                SharedPreferencesManager.putSecureTime(app, date);
-                Log.e(TAG, "Secure time set to: " + date);
-            }
             int versionNumber = 0;
-            app = MainActivity.app;
+            MainActivity app = MainActivity.app;
             if (app != null) {
                 try {
                     PackageInfo pInfo = null;
@@ -142,6 +133,18 @@ public class JsonParser {
             String message = String.format(Locale.getDefault(), "%s/%d/%s", appName.isEmpty() ? "breadwallet" : appName, versionNumber, System.getProperty("http.agent"));
             urlConn.setRequestProperty("User-agent", message);
             urlConn.setReadTimeout(60 * 1000);
+
+
+            String strDate = urlConn.getHeaderField("date");
+
+            if (strDate == null || app == null) {
+                Log.e(TAG, "callURL: strDate == null!!!");
+            } else {
+                @SuppressWarnings("deprecation") long date = Date.parse(strDate) / 1000;
+                SharedPreferencesManager.putSecureTime(app, date);
+                Log.e(TAG, "Secure time set to: " + date);
+            }
+
             if (urlConn.getInputStream() != null) {
                 in = new InputStreamReader(urlConn.getInputStream(),
                         Charset.defaultCharset());
