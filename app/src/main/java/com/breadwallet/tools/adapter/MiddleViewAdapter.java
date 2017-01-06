@@ -42,7 +42,6 @@ public class MiddleViewAdapter {
     private static boolean syncing = false;
 
     public static void resetMiddleView(Activity app, String text) {
-//        Log.e(TAG, "in the resetMiddleView: " + text);
         if (syncing && (BRAnimator.level == 0 || BRAnimator.level == 1)) {
             try {
                 ((BreadWalletApp) app.getApplication()).setTopMiddleView(BRConstants.BREAD_WALLET_TEXT, app.getString(R.string.syncing));
@@ -96,7 +95,6 @@ public class MiddleViewAdapter {
     }
 
     public static void setSyncing(Activity app, final boolean b) {
-        Log.e(TAG,"setSyncing: " + b);
         if (app == null) app = MainActivity.app;
         final Activity finalApp = app;
         if (finalApp == null) return;

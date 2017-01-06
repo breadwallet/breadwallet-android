@@ -34,6 +34,7 @@ import android.util.Log;
 
 import com.breadwallet.presenter.entities.BRPeerEntity;
 import com.breadwallet.presenter.entities.PeerEntity;
+import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,6 +84,7 @@ class PeerDataSource {
 
             database.setTransactionSuccessful();
         } catch (Exception ex) {
+            FirebaseCrash.report(ex);
             Log.e(TAG, "Error inserting into SQLite", ex);
             //Error in between database transaction
         } finally {

@@ -2,6 +2,8 @@ package com.breadwallet.tools.qrcode;
 
 import android.hardware.Camera;
 
+import com.google.firebase.crash.FirebaseCrash;
+
 import java.util.List;
 
 /**
@@ -36,7 +38,9 @@ public class CameraSingleton {
 
     private CameraSingleton(Camera camera, int cameraId) {
         if (camera == null) {
-            throw new NullPointerException("Camera cannot be null");
+            RuntimeException ex = new NullPointerException("Camera cannot be null");
+            FirebaseCrash.report(ex);
+            throw ex;
         }
         this.camera = camera;
         this.cameraId = cameraId;

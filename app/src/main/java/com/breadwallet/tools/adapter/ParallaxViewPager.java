@@ -77,7 +77,6 @@ public class ParallaxViewPager extends ViewPager {
         scaleType = FIT_HEIGHT;
         overlap = OVERLAP_HALF;
 
-
         //noinspection deprecation
         setOnPageChangeListener(new OnPageChangeListener() {
             @Override

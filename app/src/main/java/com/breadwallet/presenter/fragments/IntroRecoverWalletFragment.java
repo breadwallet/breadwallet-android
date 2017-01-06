@@ -37,6 +37,7 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.tools.util.WordsReader;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.wallet.BRWalletManager;
+import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.List;
 
@@ -179,6 +180,7 @@ public class IntroRecoverWalletFragment extends Fragment {
         if (imeManager != null) {
             imeManager.showInputMethodPicker();
         } else {
+            FirebaseCrash.log("error showing the input method choosing dialog");
             Toast.makeText(getActivity(), "error showing the input method choosing dialog", Toast.LENGTH_LONG).show();
         }
     }

@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetManager;
 
+import com.google.firebase.crash.FirebaseCrash;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,7 +46,6 @@ public class WordsReader {
 
     public static List<String> getWordList(Context context, String languageCode) throws IOException {
 
-//        Log.e(TAG, "The language is: " + languageCode);
         String fileName = "words/" + languageCode + "-BIP39Words.txt";
         List<String> wordList = new ArrayList<>();
         BufferedReader reader = null;
@@ -58,13 +59,16 @@ public class WordsReader {
             }
         } catch (Exception ex) {
             ex.printStackTrace();
-
+            FirebaseCrash.report(ex);
         } finally {
             assert reader != null;
             reader.close();
         }
-        if (wordList.size() != WORD_LIST_SIZE)
-            throw new IllegalArgumentException("The list should have " + WORD_LIST_SIZE + " items");
+        if (wordList.size() != WORD_LIST_SIZE) {
+            RuntimeException ex = new IllegalArgumentException("The list should have " + WORD_LIST_SIZE + " items");
+            FirebaseCrash.report(ex);
+            throw ex;
+        }
         return wordList;
     }
 
@@ -98,8 +102,11 @@ public class WordsReader {
                     e.printStackTrace();
                 }
             }
-            if (wordList.size() != WORD_LIST_SIZE)
-                throw new IllegalArgumentException("The list should have " + WORD_LIST_SIZE + " items");
+            if (wordList.size() != WORD_LIST_SIZE) {
+                RuntimeException ex = new IllegalArgumentException("The list should have " + WORD_LIST_SIZE + " items");
+                FirebaseCrash.report(ex);
+                throw ex;
+            }
             if (wordList.contains(incorrect)) {
                 lang = l;
             }
@@ -154,8 +161,6 @@ public class WordsReader {
                 }
             }
         }
-//        Log.e(TAG, "normalizedPhrase|" + phrase + "|");
-//        Log.e(TAG, "phraseToCheck|" + phraseToCheck + "|");
         return phrase;
     }
 
@@ -188,8 +193,11 @@ public class WordsReader {
                     e.printStackTrace();
                 }
             }
-            if (wordList.size() != WORD_LIST_SIZE)
-                throw new IllegalArgumentException("The list should have " + WORD_LIST_SIZE + " items");
+            if (wordList.size() != WORD_LIST_SIZE){
+                RuntimeException ex = new IllegalArgumentException("The list should have " + WORD_LIST_SIZE + " items");
+                FirebaseCrash.report(ex);
+                throw ex;
+            }
             result.addAll(wordList);
 
         }

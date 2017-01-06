@@ -8,6 +8,7 @@ import android.util.Log;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.wallet.BRWalletManager;
+import com.google.firebase.crash.FirebaseCrash;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -52,14 +53,18 @@ public class JsonParser {
     public static JSONArray getJSonArray(Activity activity) {
         String jsonString = callURL("https://api.breadwallet.com/rates");
         JSONArray jsonArray = null;
+        try {
+            JSONObject obj = new JSONObject(jsonString);
+            jsonArray = obj.getJSONArray("body");
 
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         return jsonArray == null ? getBackUpJSonArray(activity) : jsonArray;
     }
 
     public static JSONArray getBackUpJSonArray(Activity activity) {
         String jsonString = callURL("https://bitpay.com/rates");
-        //        System.out.println("\n\njsonString: " + jsonString);
-
 
         JSONArray jsonArray = null;
         if (jsonString == null) return null;
@@ -95,6 +100,7 @@ public class JsonParser {
                 Log.e(TAG, "fee set to: " + fee);
             }
         } catch (JSONException e) {
+            FirebaseCrash.report(e);
             e.printStackTrace();
         }
     }

@@ -9,6 +9,7 @@ import com.breadwallet.presenter.entities.BRPeerEntity;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.presenter.entities.BlockEntity;
 import com.breadwallet.presenter.entities.PeerEntity;
+import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,8 +99,8 @@ public class SQLiteManager {
             TXdataSource = new TransactionDataSource(ctx);
             TXdataSource.open();
             TXdataSource.createTransaction(entity);
-
         } catch (SQLException e) {
+            FirebaseCrash.report(e);
             e.printStackTrace();
         } finally {
             if (TXdataSource != null)

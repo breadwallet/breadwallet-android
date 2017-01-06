@@ -84,7 +84,6 @@ public class FragmentSettingsAll extends Fragment {
     public static void refreshTransactions(final Activity ctx) {
         if (refreshTransactionAvailable) {
             refreshTransactionAvailable = false;
-            Log.e(TAG, "refreshTransactions");
             new Thread(new Runnable() {
                 @Override
                 public void run() {

@@ -79,7 +79,6 @@ public class CurrencyManager extends Observable {
 
 
     public void setBalance(long balance) {
-        Log.e(TAG, "in the setBalance, BALANCE:  " + BALANCE);
         BALANCE = balance;
         setChanged();
         notifyObservers();

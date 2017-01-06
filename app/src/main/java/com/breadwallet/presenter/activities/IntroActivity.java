@@ -35,6 +35,7 @@ import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
+import com.google.firebase.crash.FirebaseCrash;
 
 /**
  * BreadWallet
@@ -96,8 +97,11 @@ public class IntroActivity extends FragmentActivity {
         setContentView(R.layout.activity_intro);
         app = this;
 
-        if (!BuildConfig.DEBUG && KeyStoreManager.AUTH_DURATION_SEC != 300)
-            throw new IllegalArgumentException("AUTH_DURATION_SEC should be 300");
+        if (!BuildConfig.DEBUG && KeyStoreManager.AUTH_DURATION_SEC != 300) {
+            Log.e(TAG, "onCreate: KeyStoreManager.AUTH_DURATION_SEC != 300");
+            throw new RuntimeException("AUTH_DURATION_SEC should be 300");
+        }
+
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
         leftButton = (Button) findViewById(R.id.intro_left_button);
         leftButton.setVisibility(View.GONE);
@@ -114,9 +118,10 @@ public class IntroActivity extends FragmentActivity {
         if (masterPubKey != null && masterPubKey.length != 0) {
             isFirstAddressCorrect = checkFirstAddress(masterPubKey);
         }
-        Log.e(TAG, "isFirstAddressCorrect: " + isFirstAddressCorrect);
+//        Log.e(TAG, "isFirstAddressCorrect: " + isFirstAddressCorrect);
         if (!isFirstAddressCorrect) {
-            Log.e(TAG, "CLEARING THE WALLET");
+            Log.e(TAG, "WARNING: isFirstAddressCorrect - false: CLEARING THE WALLET");
+            FirebaseCrash.log("isFirstAddressCorrect - false");
             BRWalletManager.getInstance(this).wipeWalletButKeystore(this);
         }
         createFragments();
@@ -185,8 +190,6 @@ public class IntroActivity extends FragmentActivity {
     public boolean checkFirstAddress(byte[] mpk) {
         String addressFromPrefs = SharedPreferencesManager.getFirstAddress(this);
         String generatedAddress = BRWalletManager.getFirstAddress(mpk);
-//        Log.e(TAG, "addressFromPrefs: " + addressFromPrefs);
-//        Log.e(TAG, "generatedAddress: " + generatedAddress);
         return addressFromPrefs.equals(generatedAddress);
     }
 
@@ -259,7 +262,6 @@ public class IntroActivity extends FragmentActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.e(TAG, "IntroActivity, onActivityResult: " + requestCode);
         switch (requestCode) {
             case BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
@@ -267,7 +269,6 @@ public class IntroActivity extends FragmentActivity {
                 } else {
                     Log.e(TAG, "WARNING: resultCode != RESULT_OK");
                     BRWalletManager m = BRWalletManager.getInstance(this);
-//                    m.wipeKeyStore(this);
                     m.wipeWalletButKeystore(this);
                     BRAnimator.resetFragmentAnimator();
                     finish();
@@ -337,7 +338,6 @@ public class IntroActivity extends FragmentActivity {
     // direction == 1 -> RIGHT, direction == 2 -> LEFT
     private void animateSlide(final Fragment from, final Fragment to, int direction) {
         if (to instanceof IntroRecoverWalletFragment) {
-            Log.e(TAG, "animateSlide: to instanceof IntroRecoverWalletFragment");
             if (Utils.isUsingCustomInputMethod(to.getActivity()))
                 ((IntroRecoverWalletFragment) to).disableEditText();
         }

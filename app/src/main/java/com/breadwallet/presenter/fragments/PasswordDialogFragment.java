@@ -365,7 +365,6 @@ public class PasswordDialogFragment extends DialogFragment {
                 long totalSpent = BRWalletManager.getInstance(getActivity()).getTotalSent();
                 long spendLimit = totalSpent + PassCodeManager.getInstance().getLimit(getActivity()) + (request == null ? 0 : request.amount);
                 KeyStoreManager.putSpendLimit(spendLimit, getActivity());
-                Log.e(TAG, "Setting the new limit: " + spendLimit + ", totalSpent was: " + totalSpent);
 
                 ((BreadWalletApp) getActivity().getApplicationContext()).setUnlocked(true);
                 FragmentSettingsAll.refreshUI();
@@ -373,7 +372,6 @@ public class PasswordDialogFragment extends DialogFragment {
                 ((BreadWalletApp) getActivity().getApplicationContext()).allowKeyStoreAccessForSeconds();
                 getDialog().dismiss();
                 passcodeEditText.setText("");
-                Log.e(TAG, "mode: " + mode + " request: " + request);
                 if (mode == BRConstants.AUTH_FOR_PHRASE) {
                     PhraseFlowActivity app = ((PhraseFlowActivity) getActivity());
                     if (SharedPreferencesManager.getPhraseWroteDown(app)) {

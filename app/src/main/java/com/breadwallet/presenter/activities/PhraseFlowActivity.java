@@ -161,10 +161,8 @@ public class PhraseFlowActivity extends Activity {
         switch (requestCode) {
             case BRConstants.SHOW_PHRASE_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
-                    Log.e(TAG, "RESULT_OK");
                     PostAuthenticationProcessor.getInstance().onShowPhraseFlowAuth(this);
                 } else {
-                    Log.e(TAG, "NOT RESULT_OK NOT");
                     onBackPressed();
                 }
                 break;
@@ -209,11 +207,5 @@ public class PhraseFlowActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-//        Intent intent;
-//        intent = new Intent(this, MainActivity.class);
-//        startActivity(intent);
-//        if (!isDestroyed()) {
-//            finish();
-//        }
     }
 }

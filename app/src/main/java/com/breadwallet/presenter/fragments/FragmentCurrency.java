@@ -28,6 +28,7 @@ import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.adapter.CurrencyListAdapter;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.SpringAnimator;
+import com.google.firebase.crash.FirebaseCrash;
 
 /**
  * BreadWallet
@@ -150,21 +151,26 @@ public class FragmentCurrency extends Fragment {
     }
 
     private void allowChangeDisplayUnits(MainActivity app, boolean allow) {
-        if (allow)
-            app.viewFlipper.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(final View view, final MotionEvent event) {
-                    gdt.onTouchEvent(event);
-                    return true;
-                }
-            });
-        else
-            app.viewFlipper.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(final View view, final MotionEvent event) {
-                    return false;
-                }
-            });
+        try {
+            if (allow)
+                app.viewFlipper.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(final View view, final MotionEvent event) {
+                        gdt.onTouchEvent(event);
+                        return true;
+                    }
+                });
+            else
+                app.viewFlipper.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(final View view, final MotionEvent event) {
+                        return false;
+                    }
+                });
+        } catch (Exception e) {
+            FirebaseCrash.log("allowChangeDisplayUnits: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     //0 - left, 1 - right

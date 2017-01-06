@@ -73,10 +73,12 @@ public class BRPeerManager {
      */
 
     public static void syncStarted() {
+        Log.e(TAG, "syncStarted");
         BRPeerManager.getInstance(ctx).refreshConnection();
     }
 
     public static void syncSucceeded() {
+        Log.e(TAG, "syncSucceeded");
         if (ctx == null) ctx = MainActivity.app;
         SharedPreferencesManager.putAllowSpend(ctx, true);
         stopSyncingProgressThread();
@@ -93,8 +95,10 @@ public class BRPeerManager {
     }
 
     public static void syncFailed() {
+        Log.e(TAG, "syncFailed");
         stopSyncingProgressThread();
         if (ctx != null && ctx instanceof MainActivity) {
+            Log.e(TAG, "Network Not Available, showing not connected bar  ");
             ((MainActivity) ctx).hideAllBubbles();
             final RelativeLayout networkErrorBar = (RelativeLayout) ctx.findViewById(R.id.main_internet_status_bar);
             if (networkErrorBar == null) return;
@@ -103,17 +107,16 @@ public class BRPeerManager {
                 @Override
                 public void run() {
                     networkErrorBar.setVisibility(View.VISIBLE);
-                    BRPeerManager.stopSyncingProgressThread();
+
                 }
             });
-
-            Log.e(TAG, "Network Not Available ");
-
+            BRPeerManager.stopSyncingProgressThread();
         }
 
     }
 
     public static void txStatusUpdate() {
+        Log.e(TAG, "txStatusUpdate");
         if (ctx == null) ctx = MainActivity.app;
         if (ctx == null) return;
 
@@ -327,10 +330,9 @@ public class BRPeerManager {
                 @Override
                 public void run() {
                     networkErrorBar.setVisibility(View.VISIBLE);
-                    BRPeerManager.stopSyncingProgressThread();
                 }
             });
-
+            BRPeerManager.stopSyncingProgressThread();
             Log.e(TAG, "Network Not Available ");
 
         } else {
@@ -343,11 +345,12 @@ public class BRPeerManager {
                         public void run() {
                             networkErrorBar.setVisibility(View.GONE);
 
-                            if (progress < 1 && progress > 0) {
-                                BRPeerManager.startSyncingProgressThread();
-                            }
                         }
                     });
+
+                    if (progress < 1 && progress > 0) {
+                        BRPeerManager.startSyncingProgressThread();
+                    }
                     Log.e(TAG, "Network Available ");
                 }
             }).start();
@@ -359,7 +362,6 @@ public class BRPeerManager {
     public static void updateLastBlockHeight(int blockHeight) {
         if (ctx == null) ctx = MainActivity.app;
         if (ctx == null) return;
-        Log.e(TAG, "updateLastBlockHeight: " + blockHeight);
         SharedPreferencesManager.putLastBlockHeight(ctx, blockHeight);
     }
 

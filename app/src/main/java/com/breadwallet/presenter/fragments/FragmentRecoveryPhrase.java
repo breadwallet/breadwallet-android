@@ -25,7 +25,9 @@ import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
+import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.Arrays;
 
@@ -97,7 +99,7 @@ public class FragmentRecoveryPhrase extends Fragment {
         if (phrase == null) return;
         this.phrase = phrase;
 
-        if (0 != (getActivity().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)) {
+        if (Utils.isEmulatorOrDebug(getActivity())) {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -124,6 +126,7 @@ public class FragmentRecoveryPhrase extends Fragment {
         if (cleanPhrase.split(" ").length == 12 && cleanPhrase.charAt(cleanPhrase.length() - 1) == '\0') {
             ((BreadWalletApp) getActivity().getApplication()).showCustomDialog(getString(R.string.warning),
                     getActivity().getString(R.string.phrase_error), getString(R.string.ok));
+            FirebaseCrash.log(getActivity().getString(R.string.phrase_error));
         }
 
         thePhrase.setText(cleanPhrase);

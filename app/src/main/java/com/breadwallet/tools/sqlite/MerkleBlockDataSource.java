@@ -36,6 +36,7 @@ import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
 import com.breadwallet.presenter.entities.BlockEntity;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,6 +84,7 @@ class MerkleBlockDataSource {
             }
             database.setTransactionSuccessful();
         } catch (Exception ex) {
+            FirebaseCrash.report(ex);
             Log.e(TAG, "Error inserting into SQLite", ex);
             //Error in between database transaction
         } finally {

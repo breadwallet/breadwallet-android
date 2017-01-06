@@ -77,13 +77,6 @@ public class FragmentTransactionExpanded extends Fragment {
             }
         });
 
-//        TextView fromText = (TextView) rootView.findViewById(R.id.tx_from_text);
-//        TextView fromDescription = (TextView) rootView.findViewById(R.id.tx_from_description);
-//        TextView toText = (TextView) rootView.findViewById(R.id.tx_to_text);
-//        TextView toDescription = (TextView) rootView.findViewById(R.id.tx_to_description);
-//        TextView toAmountText = (TextView) rootView.findViewById(R.id.tx_to_amount_text);
-//        TextView toExchangeText = (TextView) rootView.findViewById(R.id.tx_to_exchange_text);
-
         LinearLayout generalTxFrom = (LinearLayout) rootView.findViewById(R.id.general_tx_from_layout);
         LinearLayout generalTxTo = (LinearLayout) rootView.findViewById(R.id.general_tx_to_layout);
         CurrencyManager m = CurrencyManager.getInstance(getActivity());

@@ -23,6 +23,7 @@ import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.activities.PhraseFlowActivity;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.Arrays;
 
@@ -82,7 +83,9 @@ public class FragmentPhraseFlow2 extends Fragment {
     }
 
     public void setPhrase(final byte[] phrase) {
-        if(phrase.length == 0) throw new RuntimeException("phrase is empty what??");
+        if(phrase.length == 0) {
+            throw new RuntimeException("phrase is empty what??");
+        }
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {

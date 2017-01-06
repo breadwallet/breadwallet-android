@@ -95,13 +95,13 @@ public class Utils {
         Log.e(specsTag, "");
     }
 
-    public static boolean isEmulatorOrDebug() {
+    public static boolean isEmulatorOrDebug(Activity app) {
         String fing = Build.FINGERPRINT;
         boolean isEmulator = false;
         if (fing != null) {
             isEmulator = fing.contains("vbox") || fing.contains("generic");
         }
-        return isEmulator;
+        return isEmulator || (0 != (app.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE));
     }
 
     public static String getFormattedDateFromLong(long time) {

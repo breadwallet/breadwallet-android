@@ -69,7 +69,6 @@ public class PostAuthenticationProcessor {
     }
 
     public void onCreateWalletAuth(IntroActivity app) {
-        Log.e(TAG, "onCreateWalletAuth");
         boolean success = BRWalletManager.getInstance(app).generateRandomSeed();
         if (success) {
             app.showWarningFragment();
@@ -78,7 +77,6 @@ public class PostAuthenticationProcessor {
     }
 
     public void onRecoverWalletAuth(IntroActivity app) {
-        Log.e(TAG, "onRecoverWalletAuth");
         if (phraseForKeyStore == null) return;
         byte[] bytePhrase = new byte[0];
 
@@ -108,7 +106,6 @@ public class PostAuthenticationProcessor {
     }
 
     public void onShowPhraseFlowAuth(PhraseFlowActivity app) {
-        Log.e(TAG, "onShowPhraseAuth");
         byte[] phrase;
         try {
             phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.SHOW_PHRASE_REQUEST_CODE);
@@ -172,12 +169,10 @@ public class PostAuthenticationProcessor {
     }
 
     public void setPhraseForKeyStore(String phraseForKeyStore) {
-        Log.e(TAG, "setPhraseForKeyStore");
         this.phraseForKeyStore = phraseForKeyStore;
     }
 
     public void setTmpTx(byte[] tmpTx) {
-        Log.e(TAG, "tmpTx: " + Arrays.toString(tmpTx));
         this.tmpTx = tmpTx;
     }
 
@@ -195,7 +190,7 @@ public class PostAuthenticationProcessor {
         try {
             canary = KeyStoreManager.getKeyStoreCanary(introActivity, BRConstants.CANARY_REQUEST_CODE);
         } catch (BRKeystoreErrorException e) {
-            Log.e(TAG, "onCanaryCheck: " + e.getMessage());
+            Log.e(TAG, "onCanaryCheck: error:  " + e.getMessage());
             return;
         }
 
@@ -205,7 +200,7 @@ public class PostAuthenticationProcessor {
             try {
                 phrase = KeyStoreManager.getKeyStorePhrase(introActivity, BRConstants.CANARY_REQUEST_CODE);
             } catch (BRKeystoreErrorException e) {
-                Log.e(TAG, "onCanaryCheck: " + e.getMessage());
+                Log.e(TAG, "onCanaryCheck: error: " + e.getMessage());
                 return;
             }
             String strPhrase = new String(phrase);

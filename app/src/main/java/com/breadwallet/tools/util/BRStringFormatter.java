@@ -60,7 +60,6 @@ public class BRStringFormatter {
         if (rate == 0) rate = 1;
         long exchange = BRWalletManager.getInstance(ctx).localAmount(target.longValue(),
                 new BigDecimal(String.valueOf(rate)).multiply(new BigDecimal("100")).doubleValue());
-        Log.e(TAG, "result of the exchange rate calculation: " + exchange);
         return getFormattedCurrencyString("BTC", target.longValue()) + " = " +
                 getFormattedCurrencyString(iso, exchange);
     }
@@ -87,7 +86,6 @@ public class BRStringFormatter {
 //        Log.e(TAG, "amount: " + amount);
         DecimalFormat currencyFormat;
         BigDecimal result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100"));
-        Log.e(TAG, "getFormattedCurrencyString: result: " + result.toString());
         // This formats currency values as the user expects to read them (default locale).
         currencyFormat = (DecimalFormat) DecimalFormat.getCurrencyInstance(Locale.getDefault());
         // This specifies the actual currency that the value is in, and provide

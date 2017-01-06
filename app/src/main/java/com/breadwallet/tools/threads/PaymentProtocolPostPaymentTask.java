@@ -71,7 +71,6 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
         try {
             waiting = true;
             sent = false;
-            Log.e(TAG, "the uri: " + paymentRequest.paymentURL);
             URL url = new URL(paymentRequest.paymentURL);
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestProperty("Content-Type", "application/bitcoin-payment");

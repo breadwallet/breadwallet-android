@@ -225,7 +225,8 @@ static int networkIsReachable(void *info) {
 }
 
 static void threadCleanup(void *info) {
-    (*_jvmPM)->DetachCurrentThread(_jvmPM);
+    if (_jvmPM)
+        (*_jvmPM)->DetachCurrentThread(_jvmPM);
 }
 
 JNIEXPORT void JNICALL Java_com_breadwallet_wallet_BRPeerManager_rescan(JNIEnv *env, jobject thiz) {

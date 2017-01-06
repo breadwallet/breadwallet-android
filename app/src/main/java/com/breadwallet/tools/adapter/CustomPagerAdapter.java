@@ -116,11 +116,9 @@ public class CustomPagerAdapter extends FragmentPagerAdapter {
                     set.addAnimation(animation);
                     if (main != null) {
                         main.startAnimation(set);
-//                            main.startAnimation(animation);
                     }
                     if (mainQR != null) {
                         mainQR.startAnimation(set);
-//                            mainQR.startAnimation(animation);
                     }
                     app.pageIndicator.setVisibility(View.VISIBLE);
                     if (MiddleViewAdapter.getSyncing()) {

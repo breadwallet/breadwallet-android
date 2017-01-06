@@ -51,6 +51,7 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.crash.FirebaseCrash;
 import com.platform.APIClient;
 import com.platform.middlewares.plugins.CameraPlugin;
 import com.platform.middlewares.plugins.GeoLocationPlugin;
@@ -147,9 +148,9 @@ public class MainActivity extends FragmentActivity implements Observer {
 
         checkDeviceRooted();
 
-        if (Utils.isEmulatorOrDebug()) {
+        if (Utils.isEmulatorOrDebug(this)) {
             MODE = BRConstants.DEBUG;
-            Log.e(TAG, "DEBUG MODE!!!!!!");
+            Log.e(TAG, "DEBUG MODE!");
         }
 
         setListeners();
@@ -175,25 +176,20 @@ public class MainActivity extends FragmentActivity implements Observer {
     }
 
     private void setUrlHandler(Intent intent) {
-        Log.e(TAG, "setUrlHandler");
         Uri data = intent.getData();
         if (data == null) return;
         String scheme = data.getScheme();
-        Log.e(TAG, "setUrlHandler: scheme: " + scheme);
-        Log.e(TAG, "setUrlHandler: data: " + data);
         if (scheme != null && scheme.startsWith("bitcoin")) {
-            Log.e(TAG, "bitcoin url");
             String str = intent.getDataString();
             RequestHandler.processRequest(this, str);
         } else {
-            Log.e(TAG, "No bitcoin url");
+            Log.e(TAG, "No bitcoin uri: " + data);
         }
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        Log.e(TAG, "onNewIntent: ");
         setUrlHandler(intent);
 
     }
@@ -220,7 +216,6 @@ public class MainActivity extends FragmentActivity implements Observer {
             public void onClick(View v) {
                 if (BRAnimator.scanResultFragmentOn)
                     return;
-
                 if (MiddleViewAdapter.getSyncing() && BRAnimator.level == 0) {
                     hideAllBubbles();
                     if (middleBubbleBlocksCount == 0) {
@@ -312,7 +307,10 @@ public class MainActivity extends FragmentActivity implements Observer {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if (app == null) return;
+                    if (app == null) {
+                        Log.e(TAG, "WARNING: checkDeviceRooted: app - null");
+                        return;
+                    }
                     AlertDialog.Builder builder = new AlertDialog.Builder(app);
                     builder.setTitle(R.string.device_security_compromised)
                             .setMessage(String.format(getString(R.string.rooted_message),
@@ -342,7 +340,6 @@ public class MainActivity extends FragmentActivity implements Observer {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.e(TAG, "onResume");
         ((BreadWalletApp) getApplicationContext()).setUnlocked(false);
         appInBackground = false;
         middleViewState = 0;
@@ -388,8 +385,6 @@ public class MainActivity extends FragmentActivity implements Observer {
                 if (SharedPreferencesManager.getPhraseWroteDown(app)) return;
                 long balance = CurrencyManager.getInstance(app).getBALANCE();
                 long limit = SharedPreferencesManager.getLimit(app);
-                Log.e(TAG, "balance: " + balance);
-                Log.e(TAG, "limit: " + limit);
                 if (balance > limit)
                     BRWalletManager.getInstance(app).animateSavePhraseFlow();
             }
@@ -418,7 +413,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         finish();
         BRAnimator.level = 0;
         CurrencyManager.getInstance(this).stopTimerTask();
-//        Log.e(TAG, "Activity Destroyed!");
         unregisterScreenLockReceiver();
         //sync the kv stores
         if (PLATFORM_ON)
@@ -487,7 +481,6 @@ public class MainActivity extends FragmentActivity implements Observer {
     @Override
     public void onBackPressed() {
         if (BRAnimator.checkTheMultipressingAvailability()) {
-            Log.e(TAG, "onBackPressed!");
             if (BRAnimator.wipeWalletOpen) {
                 BRAnimator.pressWipeWallet(this, new FragmentSettings());
                 activityButtonsEnable(true);
@@ -533,6 +526,7 @@ public class MainActivity extends FragmentActivity implements Observer {
             BRAnimator.scaleView(pageIndicatorRight, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP);
             BRAnimator.scaleView(pageIndicatorLeft, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f);
         } else {
+            FirebaseCrash.log("Something went wrong setting the circle pageIndicator");
             Log.e(TAG, "Something went wrong setting the circle pageIndicator");
         }
     }
@@ -657,10 +651,8 @@ public class MainActivity extends FragmentActivity implements Observer {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     GeoLocationPlugin.handleGeoPermission(true);
-                    Log.e(TAG, "Geo permissions: GRANTED");
                 } else {
                     GeoLocationPlugin.handleGeoPermission(false);
-                    Log.e(TAG, "Geo permissions: REFUSED");
                 }
             }
         }

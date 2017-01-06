@@ -64,7 +64,6 @@ public class FragmentWebView extends Fragment {
 
         View rootView = inflater.inflate(
                 R.layout.fragment_early_access, container, false);
-        Log.e(TAG, "onCreateView: ");
         webView = (WebView) rootView.findViewById(R.id.early_access_web_view);
         webView.setWebViewClient(new BRWebViewClient());
         webView.setWebChromeClient(new BRWebChromeClient());
@@ -76,12 +75,6 @@ public class FragmentWebView extends Fragment {
         webSettings.setJavaScriptEnabled(true);
 
         webView.loadUrl(theUrl);
-//        webView.getSettings().setAllowFileAccessFromFileURLs(true);
-//        webView.getSettings().setAllowUniversalAccessFromFileURLs(true);
-//        // Keeping these off is less critical but still a good idea, especially
-//        // if your app is not using file:// or content:// URLs.
-//        webView.getSettings().setAllowFileAccess(true);
-//        webView.getSettings().setAllowContentAccess(true);
 
         return rootView;
     }

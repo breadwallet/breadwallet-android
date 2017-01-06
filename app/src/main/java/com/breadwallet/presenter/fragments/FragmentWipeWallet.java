@@ -37,6 +37,7 @@ import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.WordsReader;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
+import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.List;
 
@@ -204,14 +205,12 @@ public class FragmentWipeWallet extends Fragment {
     }
 
     public void disableEditText() {
-        Log.e(TAG, "disableEditText: ");
 
         continueButton.setVisibility(View.VISIBLE);
         cancelButton.setVisibility(View.VISIBLE);
         continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e(TAG, "onClick: ");
                 showSelectInputMethod();
             }
         });
@@ -229,12 +228,12 @@ public class FragmentWipeWallet extends Fragment {
         if (imeManager != null) {
             imeManager.showInputMethodPicker();
         } else {
+            FirebaseCrash.log("error showing the input method choosing dialog");
             Toast.makeText(getActivity(), "error showing the input method choosing dialog", Toast.LENGTH_LONG).show();
         }
     }
 
     private void enableEditText() {
-        Log.e(TAG, "enableEditText: ");
         recoveryPhraseEditText.setEnabled(true);
         recoveryPhraseEditText.setHint("");
         recoveryPhraseEditText.setText("");
@@ -270,7 +269,6 @@ public class FragmentWipeWallet extends Fragment {
                 } else {
                     enableEditText();
                 }
-            /* You can check the package name of current IME here.*/
             }
         }
     }

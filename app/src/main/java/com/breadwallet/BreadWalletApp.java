@@ -125,7 +125,6 @@ public class BreadWalletApp extends Application {
 
     public void cancelToast() {
         if (toast != null) {
-            Log.e(TAG, "Toast canceled");
             toast.cancel();
         }
     }
@@ -260,7 +259,6 @@ public class BreadWalletApp extends Application {
 
 
     public void showCustomDialog(final String title, final String message, final String buttonText) {
-        Log.e(TAG, "Showing a dialog!");
         Activity app = MainActivity.app;
         if (app == null) app = IntroActivity.app;
         if (app == null) {
@@ -315,8 +313,10 @@ public class BreadWalletApp extends Application {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 Log.e(TAG, "keyboard hidden");
+                return;
             }
         }
+        Log.e(TAG, "hideKeyboard: FAILED");
     }
 
     public boolean hasInternetAccess() {

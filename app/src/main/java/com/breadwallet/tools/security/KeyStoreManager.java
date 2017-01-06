@@ -147,8 +147,12 @@ public class KeyStoreManager {
     private static android.app.AlertDialog dialog;
 
     private static boolean _setData(Activity context, byte[] data, String alias, String alias_file, String alias_iv, int request_code, boolean auth_required) {
-        if (alias.equals(alias_file) || alias.equals(alias_iv) || alias_file.equals(alias_iv))
-            throw new IllegalArgumentException("mistake in parameters!");
+        if (alias.equals(alias_file) || alias.equals(alias_iv) || alias_file.equals(alias_iv)) {
+            RuntimeException ex = new IllegalArgumentException("mistake in parameters!");
+            FirebaseCrash.report(ex);
+            throw ex;
+        }
+
         try {
             KeyStore keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
             keyStore.load(null);
@@ -181,7 +185,11 @@ public class KeyStoreManager {
             byte[] iv = inCipher.getIV();
             String path = getEncryptedDataFilePath(alias_iv, context);
             boolean success = writeBytesToFile(path, iv);
-            if (!success) throw new NullPointerException("FAILED TO WRITE BYTES TO FILE");
+            if (!success) {
+                RuntimeException ex = new NullPointerException("FAILED TO WRITE BYTES TO FILE");
+                FirebaseCrash.report(ex);
+                throw ex;
+            }
             CipherOutputStream cipherOutputStream = new CipherOutputStream(
                     new FileOutputStream(encryptedDataFilePath), inCipher);
             cipherOutputStream.write(data);
@@ -197,6 +205,7 @@ public class KeyStoreManager {
         } catch (CertificateException | NoSuchAlgorithmException | InvalidKeyException | NullPointerException
                 | NoSuchPaddingException | KeyStoreException | UnrecoverableKeyException |
                 InvalidAlgorithmParameterException | NoSuchProviderException | IOException e) {
+            FirebaseCrash.report(e);
             e.printStackTrace();
         }
         return false;
@@ -205,8 +214,11 @@ public class KeyStoreManager {
     private static byte[] _getData(final Activity context, String alias, String alias_file, String alias_iv, int request_code)
             throws BRKeystoreErrorException {
 
-        if (alias.equals(alias_file) || alias.equals(alias_iv) || alias_file.equals(alias_iv))
-            throw new RuntimeException("mistake in parameters!");
+        if (alias.equals(alias_file) || alias.equals(alias_iv) || alias_file.equals(alias_iv)) {
+            RuntimeException ex = new IllegalArgumentException("mistake in parameters!");
+            FirebaseCrash.report(ex);
+            throw ex;
+        }
         KeyStore keyStore;
 
         String encryptedDataFilePath = getEncryptedDataFilePath(alias_file, context);
@@ -228,6 +240,7 @@ public class KeyStoreManager {
             if (!new File(getEncryptedDataFilePath(alias_iv, context)).exists() ||
                     !new File(getEncryptedDataFilePath(alias_file, context)).exists()) {
                 removeAliasAndFiles(alias, context);
+                FirebaseCrash.log("removed alias and file: " + alias);
                 return result;
             }
 
@@ -247,6 +260,7 @@ public class KeyStoreManager {
                 showAuthenticationScreen(context, request_code);
                 throw new BRKeystoreErrorException(e.getMessage());
             } else if (e instanceof KeyPermanentlyInvalidatedException) {
+                FirebaseCrash.log("KeyStore Error, Your Breadwallet encrypted data was recently invalidated because you disabled your Android lock screen. Please input your phrase to recover your Breadwallet now.");
                 showKeyStoreDialog("KeyStore Error", "Your Breadwallet encrypted data was recently invalidated because you " +
                                 "disabled your Android lock screen. Please input your phrase to recover your Breadwallet now.", context.getString(R.string.ok), null,
                         new DialogInterface.OnClickListener() {
@@ -266,6 +280,7 @@ public class KeyStoreManager {
                 throw new BRKeystoreErrorException("KeyPermanentlyInvalidatedException");
             } else {
                 Log.e(TAG, "_getData: InvalidKeyException", e);
+                FirebaseCrash.report(e);
                 showKeyStoreFailedToLoad(context);
                 throw new BRKeystoreErrorException("Key store error");
             }
@@ -274,15 +289,19 @@ public class KeyStoreManager {
             Log.e(TAG, "_getData: keyStore.load(null) threw the Exception, meaning the keystore is unavailable", e);
             if (e instanceof FileNotFoundException) {
                 Log.e(TAG, "_getData: File not found exception", e);
-                throw new RuntimeException("the key is present but the phrase on the disk no???");
+                RuntimeException ex = new RuntimeException("the key is present but the phrase on the disk no???");
+                FirebaseCrash.report(ex);
+                throw ex;
             } else {
                 showKeyStoreFailedToLoad(context);
+                FirebaseCrash.log("Failed to load KeyStore, showKeyStoreFailedToLoad");
                 throw new BRKeystoreErrorException("Failed to load KeyStore");
             }
 
         } catch (UnrecoverableKeyException | InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchPaddingException e) {
             /** if for any other reason the keystore fails, crash! */
             Log.e(TAG, "getData: error: " + e.getClass().getSuperclass().getName());
+            FirebaseCrash.report(e);
             throw new RuntimeException(e.getMessage() + " | class: " + e.getClass().getName());
         }
     }
@@ -394,7 +413,6 @@ public class KeyStoreManager {
     }
 
     public static boolean putWalletCreationTime(int creationTime, Activity context) {
-        Log.e(TAG, "putWalletCreationTime: " + creationTime);
         AliasObject obj = aliasObjectMap.get(WALLET_CREATION_TIME_ALIAS);
         byte[] bytesToStore = TypesConverter.intToBytes(creationTime);
         return bytesToStore.length != 0 && _setData(context, bytesToStore, obj.alias, obj.datafileName, obj.ivFileName, 0, false);
@@ -429,7 +447,6 @@ public class KeyStoreManager {
         try {
             int test = Integer.parseInt(passCode);
         } catch (Exception e) {
-            Log.e(TAG, "getPassCode: " + e.getMessage());
             passCode = "";
             putPassCode(passCode, context);
             KeyStoreManager.putFailCount(0, context);
@@ -576,13 +593,13 @@ public class KeyStoreManager {
     public static void showAuthenticationScreen(Activity context, int requestCode) {
         // Create the Confirm Credentials screen. You can customize the title and description. Or
         // we will provide a generic one for you if you leave it null
-        Log.e(TAG, "showAuthenticationScreen: " + requestCode);
         KeyguardManager mKeyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
         Intent intent = mKeyguardManager.createConfirmDeviceCredentialIntent(context.getString(R.string.auth_required), context.getString(R.string.auth_message));
         if (intent != null) {
             context.startActivityForResult(intent, requestCode);
         } else {
-            FirebaseCrash.report(new NullPointerException("o passcode is set"));
+            Log.e(TAG, "showAuthenticationScreen: failed to create intent for auth");
+            FirebaseCrash.log("showAuthenticationScreen: failed to create intent for auth");
             context.finish();
         }
     }
@@ -632,11 +649,9 @@ public class KeyStoreManager {
                                            final DialogInterface.OnClickListener posButtonListener,
                                            final DialogInterface.OnClickListener negButtonListener,
                                            final DialogInterface.OnDismissListener dismissListener) {
-        Log.e(TAG, "showKeyStoreDialog");
         Activity app = MainActivity.app;
         if (app == null) app = IntroActivity.app;
         if (app == null) {
-            Log.e(TAG, "showCustomDialog: FAILED, context is null");
             return;
         }
         final Activity finalApp = app;
@@ -644,7 +659,6 @@ public class KeyStoreManager {
             @Override
             public void run() {
                 if (dialog != null && dialog.isShowing()) {
-                    System.out.println("some");
                     if (dialog.getOwnerActivity() != null && !dialog.getOwnerActivity().isDestroyed())
                         dialog.dismiss();
                     else

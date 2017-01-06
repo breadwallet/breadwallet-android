@@ -23,6 +23,7 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.animation.SpringAnimator;
+import com.google.firebase.crash.FirebaseCrash;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -138,8 +139,9 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
 
     @Override
     public void onResume() {
-        if (!isARequest && (address == null || address.length() < 20))
-            throw new NullPointerException("address is corrupted");
+        if (!isARequest && (address == null || address.length() < 20)) {
+            throw new RuntimeException("address is corrupted: " + address);
+        }
         Activity app = getActivity();
         if (app != null)
             unit = SharedPreferencesManager.getCurrencyUnit(app);
@@ -147,7 +149,6 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         calculateAndPassValuesToFragment("0");
         scanResult.setText(isARequest ? "" : getString(R.string.to) + address);
 
-        Log.e(TAG, "onResume: unit: " + unit);
         super.onResume();
     }
 
@@ -282,7 +283,6 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
     }
 
     public void updateBothTextValues(String left, String right) {
-        Log.e(TAG, "updateBothTextValues: " + left + " : " + right);
         if (ISO == null) updateRateAndISO();
         if (ISO == null) ISO = "USD";
         leftValue.value = left;
@@ -291,7 +291,6 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
 
         String formattedRightVal = getFormattedCurrencyStringForKeyboard(rightValue.isBitcoin ? btcISO : ISO, rightValue.value, true);
         String formattedLeftVal = getFormattedCurrencyStringForKeyboard(leftValue.isBitcoin ? btcISO : ISO, leftValue.value, false);
-        Log.e(TAG, "formatted: " + formattedLeftVal + " : " + formattedRightVal);
 
         rightTextView.setText(formattedRightVal);
         leftTextView.setText(formattedLeftVal);
@@ -444,7 +443,6 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
 
     public void calculateAndPassValuesToFragment(String valuePassed) {
         String divideBy = "1000000";
-        Log.e(TAG, "calculateAndPassValuesToFragment: valuePassed: " + valuePassed);
         if (unit == BRConstants.CURRENT_UNIT_MBITS) divideBy = "1000";
         if (unit == BRConstants.CURRENT_UNIT_BITCOINS) divideBy = "1";
         rightValue.value = valuePassed;
@@ -496,9 +494,9 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
     }
 
     public String getFormattedCurrencyStringForKeyboard(String isoCurrencyCode, String amount, boolean rightItem) {
-        Log.e(TAG, "getFormattedCurrencyStringForKeyboard: amount:" + amount);
         Activity app = getActivity();
         if (amount == null || app == null) {
+            FirebaseCrash.log("getFormattedCurrencyStringForKeyboard: AMOUNT == null");
             Log.e(TAG, "getFormattedCurrencyStringForKeyboard: AMOUNT == null");
             return "0";
         }
@@ -564,7 +562,6 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
         currencyFormat.setNegativePrefix(decimalFormatSymbols.getCurrencySymbol() + "-");
         currencyFormat.setNegativeSuffix("");
-        Log.e(TAG, "toPattern: " + currencyFormat.toPattern());
         currencyFormat.setMinimumFractionDigits(currNrOfDecimal > decimalPoints ? decimalPoints : currNrOfDecimal);
         return currencyFormat.format(result);
     }
