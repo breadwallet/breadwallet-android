@@ -4,10 +4,8 @@ import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
-import android.util.Log;
 
 import com.breadwallet.presenter.activities.MainActivity;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crash.FirebaseCrash;
 import com.platform.interfaces.Plugin;
 
@@ -16,7 +14,6 @@ import junit.framework.Assert;
 import org.eclipse.jetty.server.Request;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.List;
 import java.util.Locale;
 
@@ -69,7 +66,7 @@ public class LinkPlugin implements Plugin {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url.replace("/","")));
                 app.startActivity(intent);
             } else {
-                FirebaseCrash.log("could not handle url: " + url);
+//                FirebaseCrash.log("could not handle url: " + url);
             }
 
             return true;

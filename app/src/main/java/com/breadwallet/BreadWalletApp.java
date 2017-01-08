@@ -36,9 +36,6 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.wallet.BRWalletManager;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -76,9 +73,11 @@ public class BreadWalletApp extends Application {
     public static int DISPLAY_HEIGHT_PX;
     FingerprintManager mFingerprintManager;
 
+
     @Override
     public void onCreate() {
         super.onCreate();
+
         WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         Point size = new Point();

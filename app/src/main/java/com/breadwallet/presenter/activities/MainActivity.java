@@ -50,7 +50,6 @@ import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crash.FirebaseCrash;
 import com.platform.APIClient;
 import com.platform.middlewares.plugins.CameraPlugin;
@@ -63,8 +62,6 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
-import static android.app.Activity.RESULT_OK;
-import static com.breadwallet.tools.manager.SharedPreferencesManager.getLastBlockHeight;
 import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
 
 /**
@@ -123,7 +120,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     public BubbleTextView sendBubble1;
     public BubbleTextView sendBubble2;
     private ToastUpdater toastUpdater;
-    private FirebaseAnalytics mFirebaseAnalytics;
+
 
     public static boolean appInBackground = false;
 
@@ -136,11 +133,12 @@ public class MainActivity extends FragmentActivity implements Observer {
 //        if (savedInstanceState != null)
 //            savedInstanceState.clear();
         super.onCreate(null);
-        // Obtain the FirebaseAnalytics instance.
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+
         setContentView(R.layout.activity_main);
         app = this;
         initializeViews();
+
+//        FirebaseCrash.log("test");
 
         Utils.printPhoneSpecs();
 
@@ -526,7 +524,7 @@ public class MainActivity extends FragmentActivity implements Observer {
             BRAnimator.scaleView(pageIndicatorRight, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP);
             BRAnimator.scaleView(pageIndicatorLeft, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f);
         } else {
-            FirebaseCrash.log("Something went wrong setting the circle pageIndicator");
+//            FirebaseCrash.log("Something went wrong setting the circle pageIndicator");
             Log.e(TAG, "Something went wrong setting the circle pageIndicator");
         }
     }

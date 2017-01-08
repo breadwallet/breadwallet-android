@@ -126,7 +126,7 @@ public class FragmentRecoveryPhrase extends Fragment {
         if (cleanPhrase.split(" ").length == 12 && cleanPhrase.charAt(cleanPhrase.length() - 1) == '\0') {
             ((BreadWalletApp) getActivity().getApplication()).showCustomDialog(getString(R.string.warning),
                     getActivity().getString(R.string.phrase_error), getString(R.string.ok));
-            FirebaseCrash.log(getActivity().getString(R.string.phrase_error));
+//            FirebaseCrash.log(getActivity().getString(R.string.phrase_error));
         }
 
         thePhrase.setText(cleanPhrase);

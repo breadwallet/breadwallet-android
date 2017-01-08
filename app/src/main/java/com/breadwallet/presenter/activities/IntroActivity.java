@@ -35,6 +35,8 @@ import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crash.FirebaseCrash;
 
 /**
@@ -88,7 +90,6 @@ public class IntroActivity extends FragmentActivity {
     protected void onRestart() {
         super.onRestart();  // Always call the superclass method first
         app = this;
-        // Activity being restarted from stopped state
     }
 
     @Override
@@ -99,8 +100,12 @@ public class IntroActivity extends FragmentActivity {
 
         if (!BuildConfig.DEBUG && KeyStoreManager.AUTH_DURATION_SEC != 300) {
             Log.e(TAG, "onCreate: KeyStoreManager.AUTH_DURATION_SEC != 300");
-            throw new RuntimeException("AUTH_DURATION_SEC should be 300");
+            RuntimeException ex = new RuntimeException("AUTH_DURATION_SEC should be 300");
+//            FirebaseCrash.report(ex);
+            throw ex;
         }
+
+//        FirebaseCrash.log("test");
 
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
         leftButton = (Button) findViewById(R.id.intro_left_button);
@@ -121,7 +126,7 @@ public class IntroActivity extends FragmentActivity {
 //        Log.e(TAG, "isFirstAddressCorrect: " + isFirstAddressCorrect);
         if (!isFirstAddressCorrect) {
             Log.e(TAG, "WARNING: isFirstAddressCorrect - false: CLEARING THE WALLET");
-            FirebaseCrash.log("isFirstAddressCorrect - false");
+
             BRWalletManager.getInstance(this).wipeWalletButKeystore(this);
         }
         createFragments();

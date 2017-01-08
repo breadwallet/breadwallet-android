@@ -100,7 +100,7 @@ public class JsonParser {
                 Log.e(TAG, "fee set to: " + fee);
             }
         } catch (JSONException e) {
-            FirebaseCrash.report(e);
+//            FirebaseCrash.report(e);
             e.printStackTrace();
         }
     }

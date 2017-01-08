@@ -100,7 +100,7 @@ public class SQLiteManager {
             TXdataSource.open();
             TXdataSource.createTransaction(entity);
         } catch (SQLException e) {
-            FirebaseCrash.report(e);
+//            FirebaseCrash.report(e);
             e.printStackTrace();
         } finally {
             if (TXdataSource != null)

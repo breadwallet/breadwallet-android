@@ -59,14 +59,14 @@ public class WordsReader {
             }
         } catch (Exception ex) {
             ex.printStackTrace();
-            FirebaseCrash.report(ex);
+//            FirebaseCrash.report(ex);
         } finally {
             assert reader != null;
             reader.close();
         }
         if (wordList.size() != WORD_LIST_SIZE) {
             RuntimeException ex = new IllegalArgumentException("The list should have " + WORD_LIST_SIZE + " items");
-            FirebaseCrash.report(ex);
+//            FirebaseCrash.report(ex);
             throw ex;
         }
         return wordList;
@@ -104,7 +104,7 @@ public class WordsReader {
             }
             if (wordList.size() != WORD_LIST_SIZE) {
                 RuntimeException ex = new IllegalArgumentException("The list should have " + WORD_LIST_SIZE + " items");
-                FirebaseCrash.report(ex);
+//                FirebaseCrash.report(ex);
                 throw ex;
             }
             if (wordList.contains(incorrect)) {
@@ -195,7 +195,7 @@ public class WordsReader {
             }
             if (wordList.size() != WORD_LIST_SIZE){
                 RuntimeException ex = new IllegalArgumentException("The list should have " + WORD_LIST_SIZE + " items");
-                FirebaseCrash.report(ex);
+//                FirebaseCrash.report(ex);
                 throw ex;
             }
             result.addAll(wordList);

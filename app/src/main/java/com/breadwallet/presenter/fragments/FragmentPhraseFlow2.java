@@ -10,22 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.breadwallet.BreadWalletApp;
-import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.IntroActivity;
-import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.activities.PhraseFlowActivity;
-import com.breadwallet.tools.manager.BRClipboardManager;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
-import com.google.firebase.crash.FirebaseCrash;
-
-import java.util.Arrays;
 
 /**
  * BreadWallet

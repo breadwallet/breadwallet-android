@@ -149,7 +149,7 @@ public class KeyStoreManager {
     private static boolean _setData(Activity context, byte[] data, String alias, String alias_file, String alias_iv, int request_code, boolean auth_required) {
         if (alias.equals(alias_file) || alias.equals(alias_iv) || alias_file.equals(alias_iv)) {
             RuntimeException ex = new IllegalArgumentException("mistake in parameters!");
-            FirebaseCrash.report(ex);
+//            FirebaseCrash.report(ex);
             throw ex;
         }
 
@@ -187,7 +187,7 @@ public class KeyStoreManager {
             boolean success = writeBytesToFile(path, iv);
             if (!success) {
                 RuntimeException ex = new NullPointerException("FAILED TO WRITE BYTES TO FILE");
-                FirebaseCrash.report(ex);
+//                FirebaseCrash.report(ex);
                 throw ex;
             }
             CipherOutputStream cipherOutputStream = new CipherOutputStream(
@@ -205,7 +205,7 @@ public class KeyStoreManager {
         } catch (CertificateException | NoSuchAlgorithmException | InvalidKeyException | NullPointerException
                 | NoSuchPaddingException | KeyStoreException | UnrecoverableKeyException |
                 InvalidAlgorithmParameterException | NoSuchProviderException | IOException e) {
-            FirebaseCrash.report(e);
+//            FirebaseCrash.report(e);
             e.printStackTrace();
         }
         return false;
@@ -216,7 +216,7 @@ public class KeyStoreManager {
 
         if (alias.equals(alias_file) || alias.equals(alias_iv) || alias_file.equals(alias_iv)) {
             RuntimeException ex = new IllegalArgumentException("mistake in parameters!");
-            FirebaseCrash.report(ex);
+//            FirebaseCrash.report(ex);
             throw ex;
         }
         KeyStore keyStore;
@@ -240,7 +240,7 @@ public class KeyStoreManager {
             if (!new File(getEncryptedDataFilePath(alias_iv, context)).exists() ||
                     !new File(getEncryptedDataFilePath(alias_file, context)).exists()) {
                 removeAliasAndFiles(alias, context);
-                FirebaseCrash.log("removed alias and file: " + alias);
+//                FirebaseCrash.log("removed alias and file: " + alias);
                 return result;
             }
 
@@ -260,7 +260,7 @@ public class KeyStoreManager {
                 showAuthenticationScreen(context, request_code);
                 throw new BRKeystoreErrorException(e.getMessage());
             } else if (e instanceof KeyPermanentlyInvalidatedException) {
-                FirebaseCrash.log("KeyStore Error, Your Breadwallet encrypted data was recently invalidated because you disabled your Android lock screen. Please input your phrase to recover your Breadwallet now.");
+//                FirebaseCrash.log("KeyStore Error, Your Breadwallet encrypted data was recently invalidated because you disabled your Android lock screen. Please input your phrase to recover your Breadwallet now.");
                 showKeyStoreDialog("KeyStore Error", "Your Breadwallet encrypted data was recently invalidated because you " +
                                 "disabled your Android lock screen. Please input your phrase to recover your Breadwallet now.", context.getString(R.string.ok), null,
                         new DialogInterface.OnClickListener() {
@@ -280,7 +280,7 @@ public class KeyStoreManager {
                 throw new BRKeystoreErrorException("KeyPermanentlyInvalidatedException");
             } else {
                 Log.e(TAG, "_getData: InvalidKeyException", e);
-                FirebaseCrash.report(e);
+//                FirebaseCrash.report(e);
                 showKeyStoreFailedToLoad(context);
                 throw new BRKeystoreErrorException("Key store error");
             }
@@ -290,18 +290,18 @@ public class KeyStoreManager {
             if (e instanceof FileNotFoundException) {
                 Log.e(TAG, "_getData: File not found exception", e);
                 RuntimeException ex = new RuntimeException("the key is present but the phrase on the disk no???");
-                FirebaseCrash.report(ex);
+//                FirebaseCrash.report(ex);
                 throw ex;
             } else {
                 showKeyStoreFailedToLoad(context);
-                FirebaseCrash.log("Failed to load KeyStore, showKeyStoreFailedToLoad");
+//                FirebaseCrash.log("Failed to load KeyStore, showKeyStoreFailedToLoad");
                 throw new BRKeystoreErrorException("Failed to load KeyStore");
             }
 
         } catch (UnrecoverableKeyException | InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchPaddingException e) {
             /** if for any other reason the keystore fails, crash! */
             Log.e(TAG, "getData: error: " + e.getClass().getSuperclass().getName());
-            FirebaseCrash.report(e);
+//            FirebaseCrash.report(e);
             throw new RuntimeException(e.getMessage() + " | class: " + e.getClass().getName());
         }
     }
@@ -599,7 +599,7 @@ public class KeyStoreManager {
             context.startActivityForResult(intent, requestCode);
         } else {
             Log.e(TAG, "showAuthenticationScreen: failed to create intent for auth");
-            FirebaseCrash.log("showAuthenticationScreen: failed to create intent for auth");
+//            FirebaseCrash.log("showAuthenticationScreen: failed to create intent for auth");
             context.finish();
         }
     }
