@@ -655,25 +655,28 @@ public class KeyStoreManager {
             return;
         }
         final Activity finalApp = app;
-        finalApp.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (dialog != null && dialog.isShowing()) {
-                    if (dialog.getOwnerActivity() != null && !dialog.getOwnerActivity().isDestroyed())
-                        dialog.dismiss();
-                    else
-                        return;
+        if (finalApp != null)
+            finalApp.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (finalApp != null) {
+                        if (dialog != null && dialog.isShowing()) {
+                            if (dialog.getOwnerActivity() != null && !dialog.getOwnerActivity().isDestroyed())
+                                dialog.dismiss();
+                            else
+                                return;
+                        }
+                        dialog = new android.app.AlertDialog.Builder(finalApp).
+                                setTitle(title)
+                                .setMessage(message)
+                                .setPositiveButton(posButton, posButtonListener)
+                                .setNegativeButton(negButton, negButtonListener)
+                                .setOnDismissListener(dismissListener)
+                                .setIcon(android.R.drawable.ic_dialog_alert)
+                                .show();
+                    }
                 }
-                dialog = new android.app.AlertDialog.Builder(finalApp).
-                        setTitle(title)
-                        .setMessage(message)
-                        .setPositiveButton(posButton, posButtonListener)
-                        .setNegativeButton(negButton, negButtonListener)
-                        .setOnDismissListener(dismissListener)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .show();
-            }
-        });
+            });
     }
 
     public static class AliasObject {

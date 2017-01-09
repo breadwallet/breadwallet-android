@@ -81,6 +81,10 @@ public class ReplicatedKVStore {
             database = dbHelper.getWritableDatabase();
     }
 
+    public void close() {
+        if (database != null) database.close();
+    }
+
     /**
      * Set the value of a key locally in the database. If syncImmediately is true (the default) then immediately
      * after successfully saving locally, replicate to server. The `localVer` key must be the same as is currently
@@ -120,6 +124,8 @@ public class ReplicatedKVStore {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            close();
         }
         return new CompletionObject(0, 0, CompletionObject.RemoteKVStoreError.unknown);
     }
@@ -223,6 +229,7 @@ public class ReplicatedKVStore {
             if (cursor != null) {
                 cursor.close();
             }
+            close();
         }
 
         return new CompletionObject(kv, null);
@@ -256,6 +263,7 @@ public class ReplicatedKVStore {
         } finally {
             if (cursor != null)
                 cursor.close();
+            close();
         }
         return version;
     }
@@ -267,6 +275,8 @@ public class ReplicatedKVStore {
             database.delete(PlatformSqliteHelper.KV_STORE_TABLE_NAME, PlatformSqliteHelper.KV_TIME + " <> -1", null);
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            close();
         }
 
     }
@@ -302,6 +312,7 @@ public class ReplicatedKVStore {
             if (cursor != null) {
                 cursor.close();
             }
+            close();
         }
         Log.e(TAG, "kvs: " + kvs.size());
 
@@ -640,6 +651,8 @@ public class ReplicatedKVStore {
             } catch (Exception e) {
                 e.printStackTrace();
 
+            } finally {
+                close();
             }
         } else {
             Log.e(TAG, "Key is invalid: " + key);
@@ -676,6 +689,8 @@ public class ReplicatedKVStore {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            close();
         }
         return new CompletionObject(0, 0, CompletionObject.RemoteKVStoreError.unknown);
     }
