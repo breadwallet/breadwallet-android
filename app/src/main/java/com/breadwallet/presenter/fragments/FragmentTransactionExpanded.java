@@ -211,7 +211,6 @@ public class FragmentTransactionExpanded extends Fragment {
         for (int i = 0; i < addresses.length; i++) {
             RelativeLayout addressBlock = (RelativeLayout) inflater.inflate(R.layout.
                     transaction_received_to_addresses, null);
-            CurrencyManager m = CurrencyManager.getInstance(getActivity());
             final double rate = SharedPreferencesManager.getRate(getActivity());
             final String iso = SharedPreferencesManager.getIso(getActivity());
 

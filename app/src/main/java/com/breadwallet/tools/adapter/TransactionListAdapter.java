@@ -266,6 +266,12 @@ public class TransactionListAdapter extends BaseAdapter {
         TextView dollarsTotalTextView = (TextView) tmpLayout.findViewById(R.id.transaction_amount_dollars_total);
         Utils.overrideFonts(sentReceivedTextView, dateTextView, bitsTextView, dollarsTextView, bitsTotalTextView, dollarsTotalTextView);
         tmpLayout.setBackgroundResource(R.drawable.clickable_layout);
+
+        bitsTextView.setVisibility(BreadWalletApp.unlocked ? View.VISIBLE : View.INVISIBLE);
+        bitsTotalTextView.setVisibility(BreadWalletApp.unlocked ? View.VISIBLE : View.INVISIBLE);
+        dollarsTextView.setVisibility(BreadWalletApp.unlocked ? View.VISIBLE : View.INVISIBLE);
+        dollarsTotalTextView.setVisibility(BreadWalletApp.unlocked ? View.VISIBLE : View.INVISIBLE);
+
         final TransactionListItem item = data.get(position);
 
         tmpLayout.setOnClickListener(new View.OnClickListener() {

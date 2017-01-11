@@ -101,7 +101,7 @@ public class PhraseFlowActivity extends Activity {
 
         showHideFragments();
         fragmentTransaction.commitAllowingStateLoss();
-        PostAuthenticationProcessor.getInstance().onShowPhraseFlowAuth(phraseFlowActivity);
+        PostAuthenticationProcessor.getInstance().onShowPhraseFlowAuth(phraseFlowActivity, false);
 
     }
 
@@ -161,7 +161,7 @@ public class PhraseFlowActivity extends Activity {
         switch (requestCode) {
             case BRConstants.SHOW_PHRASE_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
-                    PostAuthenticationProcessor.getInstance().onShowPhraseFlowAuth(this);
+                    PostAuthenticationProcessor.getInstance().onShowPhraseFlowAuth(this, true);
                 } else {
                     onBackPressed();
                 }

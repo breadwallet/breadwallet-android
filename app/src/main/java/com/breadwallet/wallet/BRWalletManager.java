@@ -148,7 +148,12 @@ public class BRWalletManager {
 //            FirebaseCrash.report(ex);
             throw ex;
         }
-        boolean success = KeyStoreManager.putKeyStorePhrase(strPhrase, ctx, BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE);
+        boolean success = false;
+        try {
+            success = KeyStoreManager.putKeyStorePhrase(strPhrase, ctx, BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE);
+        } catch (BRKeystoreErrorException e) {
+            e.printStackTrace();
+        }
         if (!success) return false;
         byte[] authKey = getAuthPrivKeyForAPI(keyBytes);
         if (authKey == null || authKey.length == 0) {

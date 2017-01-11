@@ -384,7 +384,7 @@ public class PasswordDialogFragment extends DialogFragment {
                 } else if (mode == BRConstants.AUTH_FOR_LIMIT) {
                     BRAnimator.animateSlideToLeft((MainActivity) getActivity(), new FragmentSpendLimit(), new FragmentSettings());
                 } else if (mode == BRConstants.AUTH_FOR_PAY && request != null) {
-                    PostAuthenticationProcessor.getInstance().onPublishTxAuth((MainActivity) getActivity());
+                    PostAuthenticationProcessor.getInstance().onPublishTxAuth((MainActivity) getActivity(),false);
                 } else if (mode == BRConstants.AUTH_FOR_PAYMENT_PROTOCOL && paymentRequest != null) {
                     if (paymentRequest.paymentURL == null || paymentRequest.paymentURL.isEmpty())
                         return false;

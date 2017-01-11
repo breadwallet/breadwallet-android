@@ -63,7 +63,7 @@ public class IntroNewWalletFragment extends Fragment {
                             m.wipeWalletButKeystore(getActivity());
                             m.wipeKeyStore(getActivity());
                             SharedPreferencesManager.putAllowSpend(getActivity(), true);
-                            PostAuthenticationProcessor.getInstance().onCreateWalletAuth((IntroActivity) getActivity());
+                            PostAuthenticationProcessor.getInstance().onCreateWalletAuth((IntroActivity) getActivity(), false);
                         }
                     });
                 }

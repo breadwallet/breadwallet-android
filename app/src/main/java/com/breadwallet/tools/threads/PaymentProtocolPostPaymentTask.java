@@ -99,7 +99,7 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
 
             message = RequestHandler.parsePaymentACK(serializedBytes);
             PostAuthenticationProcessor.getInstance().setTmpPaymentRequest(paymentRequest);
-            PostAuthenticationProcessor.getInstance().onPaymentProtocolRequest(app);
+            PostAuthenticationProcessor.getInstance().onPaymentProtocolRequest(app,false);
         } catch (Exception e) {
             if (e instanceof java.net.UnknownHostException) {
                 if (app != null) {

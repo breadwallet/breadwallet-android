@@ -133,7 +133,7 @@ public class IntroActivity extends FragmentActivity {
 
         setStatusBarColor(0);
 
-        PostAuthenticationProcessor.getInstance().onCanaryCheck(this);
+        PostAuthenticationProcessor.getInstance().onCanaryCheck(this, false);
 
     }
 
@@ -270,7 +270,7 @@ public class IntroActivity extends FragmentActivity {
         switch (requestCode) {
             case BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
-                    PostAuthenticationProcessor.getInstance().onCreateWalletAuth(this);
+                    PostAuthenticationProcessor.getInstance().onCreateWalletAuth(this, true);
                 } else {
                     Log.e(TAG, "WARNING: resultCode != RESULT_OK");
                     BRWalletManager m = BRWalletManager.getInstance(this);
@@ -281,14 +281,14 @@ public class IntroActivity extends FragmentActivity {
                 break;
             case BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
-                    PostAuthenticationProcessor.getInstance().onRecoverWalletAuth(this);
+                    PostAuthenticationProcessor.getInstance().onRecoverWalletAuth(this, true);
                 } else {
                     finish();
                 }
                 break;
             case BRConstants.CANARY_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
-                    PostAuthenticationProcessor.getInstance().onCanaryCheck(this);
+                    PostAuthenticationProcessor.getInstance().onCanaryCheck(this, true);
                 } else {
                     finish();
                 }

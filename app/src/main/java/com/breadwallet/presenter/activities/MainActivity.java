@@ -612,12 +612,12 @@ public class MainActivity extends FragmentActivity implements Observer {
         switch (requestCode) {
             case BRConstants.PAY_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
-                    PostAuthenticationProcessor.getInstance().onPublishTxAuth(this);
+                    PostAuthenticationProcessor.getInstance().onPublishTxAuth(this, true);
                 }
                 break;
             case BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
-                    PostAuthenticationProcessor.getInstance().onPaymentProtocolRequest(this);
+                    PostAuthenticationProcessor.getInstance().onPaymentProtocolRequest(this,true);
                 }
                 break;
             case BRConstants.REQUEST_IMAGE_CAPTURE:

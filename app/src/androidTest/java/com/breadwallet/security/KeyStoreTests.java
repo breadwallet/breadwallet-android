@@ -52,7 +52,12 @@ public class KeyStoreTests {
     public void setGetPhrase() {
         //set get phrase
         byte[] phrase = "axis husband project any sea patch drip tip spirit tide bring belt".getBytes();
-        KeyStoreManager.putKeyStorePhrase(phrase, mActivityRule.getActivity(), 0);
+        try {
+            KeyStoreManager.putKeyStorePhrase(phrase, mActivityRule.getActivity(), 0);
+        } catch (BRKeystoreErrorException e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
         assertFilesExist(KeyStoreManager.PHRASE_ALIAS);
 
         byte[] freshGet = new byte[0];
@@ -65,7 +70,12 @@ public class KeyStoreTests {
 
         //set get Japaneese phrase
         byte[] japPhrase = "こせき　ぎじにってい　けっこん　せつぞく　うんどう　ふこう　にっすう　こせい　きさま　なまみ　たきび　はかい".getBytes();
-        KeyStoreManager.putKeyStorePhrase(japPhrase, mActivityRule.getActivity(), 0);
+        try {
+            KeyStoreManager.putKeyStorePhrase(japPhrase, mActivityRule.getActivity(), 0);
+        } catch (BRKeystoreErrorException e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
         assertFilesExist(KeyStoreManager.PHRASE_ALIAS);
         byte[] freshJapGet = new byte[0];
         try {
@@ -80,7 +90,12 @@ public class KeyStoreTests {
     @Test
     public void setGetCanary() {
         String canary = "canary";
-        KeyStoreManager.putKeyStoreCanary(canary, mActivityRule.getActivity(), 0);
+        try {
+            KeyStoreManager.putKeyStoreCanary(canary, mActivityRule.getActivity(), 0);
+        } catch (BRKeystoreErrorException e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
         assertFilesExist(KeyStoreManager.CANARY_ALIAS);
         String freshGet = "";
         try {
@@ -202,8 +217,18 @@ public class KeyStoreTests {
 
     @Test
     public void testClearKeyStore() {
-        KeyStoreManager.putKeyStorePhrase("axis husband project any sea patch drip tip spirit tide bring belt".getBytes(), mActivityRule.getActivity(), 0);
-        KeyStoreManager.putKeyStoreCanary("canary", mActivityRule.getActivity(), 0);
+        try {
+            KeyStoreManager.putKeyStorePhrase("axis husband project any sea patch drip tip spirit tide bring belt".getBytes(), mActivityRule.getActivity(), 0);
+        } catch (BRKeystoreErrorException e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+        try {
+            KeyStoreManager.putKeyStoreCanary("canary", mActivityRule.getActivity(), 0);
+        } catch (BRKeystoreErrorException e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
         KeyStoreManager.putMasterPublicKey("26wZYDdvpmCrYZeUcxgqd1KquN4o6wXwLomBW5SjnwUqG".getBytes(), mActivityRule.getActivity());
         KeyStoreManager.putAuthKey("26wZYDdvpmCrYZeUcxgqd1KquN4o6wXwLomBW5SjnwUqG".getBytes(), mActivityRule.getActivity());
         KeyStoreManager.putToken("26wZYDdvpmCrYZeUcxgqd1KquN4o6wXwLomBW5SjnwUqG".getBytes(), mActivityRule.getActivity());
@@ -265,11 +290,12 @@ public class KeyStoreTests {
         Assert.assertEquals(aliasObjectMap.size(), 11);
     }
 
-    public void assertFilesExist(String alias){
+    public void assertFilesExist(String alias) {
         Assert.assertTrue(new File(KeyStoreManager.getEncryptedDataFilePath(aliasObjectMap.get(alias).datafileName, mActivityRule.getActivity())).exists());
         Assert.assertTrue(new File(KeyStoreManager.getEncryptedDataFilePath(aliasObjectMap.get(alias).ivFileName, mActivityRule.getActivity())).exists());
     }
-    public void assertFilesDontExist(String alias){
+
+    public void assertFilesDontExist(String alias) {
         Assert.assertFalse(new File(KeyStoreManager.getEncryptedDataFilePath(aliasObjectMap.get(alias).datafileName, mActivityRule.getActivity())).exists());
         Assert.assertFalse(new File(KeyStoreManager.getEncryptedDataFilePath(aliasObjectMap.get(alias).ivFileName, mActivityRule.getActivity())).exists());
     }
