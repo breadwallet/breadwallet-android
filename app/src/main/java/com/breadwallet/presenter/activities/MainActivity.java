@@ -50,6 +50,7 @@ import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.crash.FirebaseCrash;
 import com.platform.APIClient;
 import com.platform.middlewares.plugins.CameraPlugin;
@@ -121,7 +122,6 @@ public class MainActivity extends FragmentActivity implements Observer {
     public BubbleTextView sendBubble2;
     private ToastUpdater toastUpdater;
 
-
     public static boolean appInBackground = false;
 
     static {
@@ -138,7 +138,8 @@ public class MainActivity extends FragmentActivity implements Observer {
         app = this;
         initializeViews();
 
-//        FirebaseCrash.log("test");
+        FirebaseCrash.log("test log");
+        FirebaseCrash.report(new RuntimeException("test exception"));
 
         Utils.printPhoneSpecs();
 
@@ -617,7 +618,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                 break;
             case BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
-                    PostAuthenticationProcessor.getInstance().onPaymentProtocolRequest(this,true);
+                    PostAuthenticationProcessor.getInstance().onPaymentProtocolRequest(this, true);
                 }
                 break;
             case BRConstants.REQUEST_IMAGE_CAPTURE:
@@ -702,7 +703,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                 @Override
                 public void run() {
                     //first set, for when the internet is not available, fixes the blank toast
-                    int latestBlockKnown =  SharedPreferencesManager.getLastBlockHeight(MainActivity.this);
+                    int latestBlockKnown = SharedPreferencesManager.getLastBlockHeight(MainActivity.this);
                     int currBlock = SharedPreferencesManager.getStartHeight(MainActivity.this);
                     String formattedBlockInfo = String.format(getString(R.string.blocks), currBlock, latestBlockKnown);
                     middleBubbleBlocks.setText(formattedBlockInfo);

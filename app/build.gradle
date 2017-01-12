@@ -1,7 +1,5 @@
 apply plugin: 'com.android.model.application'
 
-//apply plugin: 'com.google.firebase.firebase-crash'
-
 model {
     android {
         compileSdkVersion = 25
@@ -12,8 +10,8 @@ model {
             applicationId = 'com.breadwallet'
             minSdkVersion.apiLevel = 23
             targetSdkVersion.apiLevel = 25
-            versionCode = 35
-            versionName = "35"
+            versionCode = 36
+            versionName = "36"
         }
 
         ndk {
@@ -87,8 +85,6 @@ dependencies {
     compile group: 'org.eclipse.jetty', name: 'jetty-continuation', version: '9.2.19.v20160908'
 
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.22'
-
-
     //    compile 'org.apache.commons:commons-compress:1.8.1'
 
     compile 'com.android.support:appcompat-v7:25.1.0'

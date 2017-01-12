@@ -36,8 +36,12 @@ import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crash.FirebaseCrash;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 /**
  * BreadWallet
@@ -104,8 +108,8 @@ public class IntroActivity extends FragmentActivity {
 //            FirebaseCrash.report(ex);
             throw ex;
         }
-
-//        FirebaseCrash.log("test");
+        FirebaseCrash.log("intro test log");
+        FirebaseCrash.report(new RuntimeException("intro test exception"));
 
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
         leftButton = (Button) findViewById(R.id.intro_left_button);
