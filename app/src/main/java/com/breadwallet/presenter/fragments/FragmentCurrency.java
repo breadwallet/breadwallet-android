@@ -168,7 +168,7 @@ public class FragmentCurrency extends Fragment {
                     }
                 });
         } catch (Exception e) {
-//            FirebaseCrash.log("allowChangeDisplayUnits: " + e.getMessage());
+            FirebaseCrash.report(new RuntimeException("allowChangeDisplayUnits: " + e.getMessage()));
             e.printStackTrace();
         }
     }

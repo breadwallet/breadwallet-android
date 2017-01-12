@@ -525,7 +525,6 @@ public class MainActivity extends FragmentActivity implements Observer {
             BRAnimator.scaleView(pageIndicatorRight, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP);
             BRAnimator.scaleView(pageIndicatorLeft, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f);
         } else {
-//            FirebaseCrash.log("Something went wrong setting the circle pageIndicator");
             Log.e(TAG, "Something went wrong setting the circle pageIndicator");
         }
     }

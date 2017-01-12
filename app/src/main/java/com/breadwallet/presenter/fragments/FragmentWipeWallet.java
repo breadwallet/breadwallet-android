@@ -228,7 +228,7 @@ public class FragmentWipeWallet extends Fragment {
         if (imeManager != null) {
             imeManager.showInputMethodPicker();
         } else {
-//            FirebaseCrash.log("error showing the input method choosing dialog");
+            FirebaseCrash.report(new RuntimeException("error showing the input method choosing dialog"));
             Toast.makeText(getActivity(), "error showing the input method choosing dialog", Toast.LENGTH_LONG).show();
         }
     }

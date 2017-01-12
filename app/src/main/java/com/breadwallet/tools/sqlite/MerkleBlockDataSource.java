@@ -84,7 +84,7 @@ class MerkleBlockDataSource {
             }
             database.setTransactionSuccessful();
         } catch (Exception ex) {
-//            FirebaseCrash.report(ex);
+            FirebaseCrash.report(ex);
             Log.e(TAG, "Error inserting into SQLite", ex);
             //Error in between database transaction
         } finally {

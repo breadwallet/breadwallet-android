@@ -53,7 +53,7 @@ public class BRCompressor {
             InputStream isr = new GZIPInputStream(new ByteArrayInputStream(compressed));
             return IOUtils.toByteArray(isr);
         } catch (IOException e) {
-//            FirebaseCrash.report(e);
+            FirebaseCrash.report(e);
             e.printStackTrace();
         }
         return null;
@@ -86,7 +86,7 @@ public class BRCompressor {
             }
             compressedData = byteStream.toByteArray();
         } catch (Exception e) {
-//            FirebaseCrash.report(e);
+            FirebaseCrash.report(e);
             e.printStackTrace();
         }
         return compressedData;
@@ -145,7 +145,7 @@ public class BRCompressor {
             compressedData = byteStream.toByteArray();
         } catch (Exception e) {
             e.printStackTrace();
-//            FirebaseCrash.report(e);
+            FirebaseCrash.report(e);
         }
         return compressedData;
 

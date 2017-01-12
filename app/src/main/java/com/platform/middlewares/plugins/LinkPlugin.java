@@ -66,7 +66,7 @@ public class LinkPlugin implements Plugin {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url.replace("/","")));
                 app.startActivity(intent);
             } else {
-//                FirebaseCrash.log("could not handle url: " + url);
+                FirebaseCrash.report(new RuntimeException("could not handle url: " + url));
             }
 
             return true;

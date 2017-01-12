@@ -105,7 +105,7 @@ public class IntroActivity extends FragmentActivity {
         if (!BuildConfig.DEBUG && KeyStoreManager.AUTH_DURATION_SEC != 300) {
             Log.e(TAG, "onCreate: KeyStoreManager.AUTH_DURATION_SEC != 300");
             RuntimeException ex = new RuntimeException("AUTH_DURATION_SEC should be 300");
-//            FirebaseCrash.report(ex);
+            FirebaseCrash.report(ex);
             throw ex;
         }
         FirebaseCrash.log("intro test log");

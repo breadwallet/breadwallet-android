@@ -39,7 +39,7 @@ public class CameraSingleton {
     private CameraSingleton(Camera camera, int cameraId) {
         if (camera == null) {
             RuntimeException ex = new NullPointerException("Camera cannot be null");
-//            FirebaseCrash.report(ex);
+            FirebaseCrash.report(ex);
             throw ex;
         }
         this.camera = camera;

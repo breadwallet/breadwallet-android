@@ -138,14 +138,14 @@ public class BRWalletManager {
         byte[] keyBytes = sr.generateSeed(16);
         if (words.length < 2000) {
             RuntimeException ex = new IllegalArgumentException("the list is wrong, size: " + words.length);
-//            FirebaseCrash.report(ex);
+            FirebaseCrash.report(ex);
             throw ex;
         }
         if (keyBytes.length == 0) throw new NullPointerException("failed to create the seed");
         byte[] strPhrase = encodeSeed(keyBytes, words);
         if (strPhrase == null || strPhrase.length == 0) {
             RuntimeException ex = new NullPointerException("failed to encodeSeed");
-//            FirebaseCrash.report(ex);
+            FirebaseCrash.report(ex);
             throw ex;
         }
         boolean success = false;
@@ -158,7 +158,7 @@ public class BRWalletManager {
         byte[] authKey = getAuthPrivKeyForAPI(keyBytes);
         if (authKey == null || authKey.length == 0) {
             RuntimeException ex = new IllegalArgumentException("authKey is invalid");
-//            FirebaseCrash.report(ex);
+            FirebaseCrash.report(ex);
             throw ex;
         }
         KeyStoreManager.putAuthKey(authKey, ctx);
@@ -217,7 +217,7 @@ public class BRWalletManager {
             mainFragmentQR.refreshAddress(tmpAddr);
         } else {
             RuntimeException ex = new NullPointerException("Cannot be null");
-//            FirebaseCrash.report(ex);
+            FirebaseCrash.report(ex);
             throw ex;
         }
     }
@@ -585,7 +585,7 @@ public class BRWalletManager {
         }
         if (words.length != 2048) {
             RuntimeException ex = new IllegalArgumentException("words.length is not 2048");
-//            FirebaseCrash.report(ex);
+            FirebaseCrash.report(ex);
             throw ex;
         }
         return validateRecoveryPhrase(cleanWordList, phrase);
@@ -621,7 +621,7 @@ public class BRWalletManager {
                 long maxAmountDouble = m.getMaxOutputAmount();
                 if (maxAmountDouble == -1) {
                     RuntimeException ex = new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL");
-//                    FirebaseCrash.report(ex);
+                    FirebaseCrash.report(ex);
                     throw ex;
                 }
                 if (maxAmountDouble == 0) {
@@ -750,7 +750,7 @@ public class BRWalletManager {
             final long maxAmountDouble = m.getMaxOutputAmount();
             if (maxAmountDouble == -1) {
                 RuntimeException ex = new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL");
-//                FirebaseCrash.report(ex);
+                FirebaseCrash.report(ex);
                 throw ex;
             }
             if (maxAmountDouble < getMinOutputAmount()) {
