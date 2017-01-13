@@ -101,7 +101,7 @@ public class HTTPServer {
         ServletHolder holderEvents = new ServletHolder("geo_servlet", BRWebSocketServlet.class);
         context.addServlet(holderEvents, "/_geosocket/*");
 
-//        server.setHandler(new ServerHandler());
+        server.setHandler(new ServerHandler());
 //        WebSocketHandler wsHandler = new WebSocketHandler() {
 //            @Override
 //            public void configure(WebSocketServletFactory factory) {

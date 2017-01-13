@@ -1,5 +1,7 @@
 package com.platform;
 
+import com.platform.middlewares.plugins.GeoLocationPlugin;
+
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketAdapter;
 
@@ -27,11 +29,13 @@ import org.eclipse.jetty.websocket.api.WebSocketAdapter;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 public class GeoSocket extends WebSocketAdapter {
     @Override
-    public void onWebSocketConnect(Session sess) {
+    public void onWebSocketConnect(final Session sess) {
         super.onWebSocketConnect(sess);
         System.out.println("Socket Connected: " + sess);
+        GeoLocationManager.getInstance().startGeoSocket(sess);
     }
 
     @Override

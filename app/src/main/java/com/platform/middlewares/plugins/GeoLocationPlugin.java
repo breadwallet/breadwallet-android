@@ -21,6 +21,7 @@ import org.eclipse.jetty.continuation.ContinuationSupport;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
 import org.eclipse.jetty.server.session.SessionHandler;
+import org.eclipse.jetty.websocket.api.Session;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -331,72 +332,7 @@ public class GeoLocationPlugin implements Plugin {
 
     }
 
-    private static class GeoLocationManager {
 
-//        static LocationManager locationManager;
-//        static int count;
-//
-//        // Define a listener that responds to location updates
-//        static LocationListener locationListener = new LocationListener() {
-//            public void onLocationChanged(Location location) {
-//                Log.e(TAG, "onLocationChanged: ");
-//                // Called when a new location is found by the network location provider.
-////                count++;
-////                if (count > 10) {
-////                    count = 0;
-//                    handleLocation(location);
-////                }
-//            }
-//
-//            public void onStatusChanged(String provider, int status, Bundle extras) {
-//            }
-//
-//            public void onProviderEnabled(String provider) {
-//            }
-//
-//            public void onProviderDisabled(String provider) {
-//            }
-//        };
-
-        // Register the listener with the Location Manager to receive location updates
-//        public static void getLatestLocation() {
-//            Log.e(TAG, "getLatestLocation: ");
-//
-//            MainActivity app = MainActivity.app;
-//            if (app == null)
-//                return;
-//            locationManager = (LocationManager) app.getSystemService(Context.LOCATION_SERVICE);
-//            if (ActivityCompat.checkSelfPermission(app, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(app, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//                throw new RuntimeException("can't happen");
-//            }
-//            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-//        }
-
-//        private static void handleLocation(Location location) {
-//            try {
-//                JSONObject responseJson = new JSONObject();
-//
-//                JSONObject coordObj = new JSONObject();
-//                coordObj.put("latitude", location.getLatitude());
-//                coordObj.put("longitude", location.getLongitude());
-//
-//                responseJson.put("timestamp", location.getTime());
-//                responseJson.put("coordinate", coordObj);
-//                responseJson.put("altitude", location.getAltitude());
-//                responseJson.put("horizontal_accuracy", location.getAccuracy());
-//                responseJson.put("description", "");
-//                handleGeo(responseJson.toString());
-//            } catch (JSONException e) {
-//                Log.e(TAG, "handleLocation: Failed to create json response");
-//                e.printStackTrace();
-//                continuation.resume();
-//                continuation.complete();
-//                continuation = null;
-//            }
-//
-//        }
-
-    }
 
 
 }

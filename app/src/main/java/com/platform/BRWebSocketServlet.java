@@ -3,6 +3,8 @@ package com.platform;
 import org.eclipse.jetty.websocket.servlet.WebSocketServlet;
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 
+import javax.servlet.annotation.WebServlet;
+
 
 /**
  * BreadWallet
@@ -29,6 +31,7 @@ import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
  * THE SOFTWARE.
  */
 @SuppressWarnings("serial")
+@WebServlet(name = "Geo Socket", urlPatterns = { "/_geosocket" })
 public class BRWebSocketServlet extends WebSocketServlet {
     @Override
     public void configure(WebSocketServletFactory factory) {

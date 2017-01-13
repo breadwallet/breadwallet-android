@@ -50,7 +50,6 @@ import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.crash.FirebaseCrash;
 import com.platform.APIClient;
 import com.platform.middlewares.plugins.CameraPlugin;
