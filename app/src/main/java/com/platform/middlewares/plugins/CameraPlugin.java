@@ -18,6 +18,8 @@ import com.jniwrappers.BRKey;
 import com.platform.interfaces.Plugin;
 
 import org.apache.commons.compress.utils.IOUtils;
+import org.eclipse.jetty.continuation.Continuation;
+import org.eclipse.jetty.continuation.ContinuationSupport;
 import org.eclipse.jetty.server.Request;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -68,9 +70,8 @@ import static com.platform.APIClient.bundleFileName;
 public class CameraPlugin implements Plugin {
     public static final String TAG = CameraPlugin.class.getName();
 
-    private static HttpServletResponse globalResponse;
-    private static AsyncContext async;
     private static Request globalBaseRequest;
+    private static Continuation continuation;
 
     @Override
     public boolean handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
@@ -95,12 +96,12 @@ public class CameraPlugin implements Plugin {
             return true;
         }
         if (target.startsWith("/_camera/take_picture")) {
-
-            if (globalResponse != null) {
+            Log.e(TAG, "handle: /_camera/take_picture");
+            if (globalBaseRequest != null) {
                 try {
                     Log.e(TAG, "handle: already taking a picture");
-                    baseRequest.setHandled(true);
                     response.sendError(423);
+                    baseRequest.setHandled(true);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -125,12 +126,13 @@ public class CameraPlugin implements Plugin {
                 app.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
             }
 
-            globalResponse = response;
-            async = request.startAsync();
+            continuation = ContinuationSupport.getContinuation(request);
+            continuation.suspend(response);
             globalBaseRequest = baseRequest;
 
             return true;
         } else if (target.startsWith("/_camera/picture/")) {
+            Log.e(TAG, "handle: /_camera/picture/");
             String id = target.replace("/_camera/picture/", "");
             byte[] pictureBytes = readPictureForId(app, id);
             if (pictureBytes == null) {
@@ -153,11 +155,16 @@ public class CameraPlugin implements Plugin {
     }
 
     public static void handleCameraImageTaken(Context context, Bitmap img) {
+        Log.e(TAG, "handleCameraImageTaken: ");
+        if (globalBaseRequest == null || continuation == null) {
 
+            Log.e(TAG, "handleCameraImageTaken: WARNING: " + continuation + " " + globalBaseRequest);
+            return;
+        }
         try {
             if (img == null) {
                 globalBaseRequest.setHandled(true);
-                globalResponse.setStatus(204);
+                ((HttpServletResponse) continuation.getServletResponse()).setStatus(204);
                 return;
             }
             String id = writeToFile(context, img);
@@ -170,9 +177,8 @@ public class CameraPlugin implements Plugin {
                 }
                 Log.e(TAG, "handleCameraImageTaken: wrote image to: " + id);
                 try {
-                    globalResponse.getWriter().write(respJson.toString());
-                    globalBaseRequest.setHandled(true);
-                    globalResponse.setStatus(200);
+                    continuation.getServletResponse().getWriter().write(respJson.toString());
+                    ((HttpServletResponse) continuation.getServletResponse()).setStatus(200);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -180,18 +186,17 @@ public class CameraPlugin implements Plugin {
             } else {
                 Log.e(TAG, "handleCameraImageTaken: error writing image");
                 try {
-                    globalBaseRequest.setHandled(true);
-                    globalResponse.sendError(500);
+                    ((HttpServletResponse) continuation.getServletResponse()).sendError(500);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         } finally {
-            if (async != null)
-                async.complete();
-            async = null;
+            globalBaseRequest.setHandled(true);
+            if (continuation != null)
+                continuation.complete();
             globalBaseRequest = null;
-            globalResponse = null;
+            continuation = null;
         }
 
     }
@@ -202,12 +207,12 @@ public class CameraPlugin implements Plugin {
         FileOutputStream fileOutputStream = null;
         try {
 //            out = new FileOutputStream(image);
-            img.compress(Bitmap.CompressFormat.JPEG, 50, out); // bmp is your Bitmap instance
+            img.compress(Bitmap.CompressFormat.JPEG, 50, out);
 
             name = CryptoHelper.base58ofSha256(out.toByteArray());
 
-
             File storageDir = new File(context.getFilesDir().getAbsolutePath() + "/pictures/");
+            storageDir.mkdir();
             File image = File.createTempFile(
                     name,  /* prefix */
                     ".jpeg",         /* suffix */
@@ -216,7 +221,7 @@ public class CameraPlugin implements Plugin {
 
             fileOutputStream = new FileOutputStream(image);
             fileOutputStream.write(out.toByteArray());
-
+            return name;
             // PNG is a lossless format, the compression factor (100) is ignored
         } catch (Exception e) {
             e.printStackTrace();
@@ -228,7 +233,7 @@ public class CameraPlugin implements Plugin {
                 e.printStackTrace();
             }
         }
-        return name;
+        return null;
     }
 
     public byte[] readPictureForId(Context context, String id) {

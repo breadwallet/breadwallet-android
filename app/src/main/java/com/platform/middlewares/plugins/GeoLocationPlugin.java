@@ -253,6 +253,7 @@ public class GeoLocationPlugin implements Plugin {
             // It will start the location manager when there is at least one client connected and stop the location manager
             // when the last client disconnects.
 
+            return true;
         }
 
         return false;

@@ -99,7 +99,7 @@ public class HTTPServer {
 
         // Add a websocket to a specific path spec
         ServletHolder holderEvents = new ServletHolder("geo_servlet", BRWebSocketServlet.class);
-        context.addServlet(holderEvents, "/_geosocket/*");
+        context.addServlet(holderEvents, "/_geosocket");
 
         server.setHandler(new ServerHandler());
 //        WebSocketHandler wsHandler = new WebSocketHandler() {
