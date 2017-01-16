@@ -1,5 +1,6 @@
 package com.platform.middlewares.plugins;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -7,12 +8,18 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.breadwallet.BreadWalletApp;
+import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.util.BRConstants;
 import com.jniwrappers.BRBase58;
 import com.jniwrappers.BRKey;
 import com.platform.interfaces.Plugin;
@@ -74,7 +81,7 @@ public class CameraPlugin implements Plugin {
     private static Continuation continuation;
 
     @Override
-    public boolean handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
+    public boolean handle(String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) {
         // GET /_camera/take_picture
         //
         // Optionally pass ?overlay=<id> (see overlay ids below) to show an overlay
@@ -86,7 +93,7 @@ public class CameraPlugin implements Plugin {
         //   - 404: Camera is not available on this device
         //   - 423: Multiple concurrent take_picture requests. Only one take_picture request may be in flight at once.
         //
-        MainActivity app = MainActivity.app;
+        final MainActivity app = MainActivity.app;
         if (app == null) {
             try {
                 response.sendError(500, "context is null");
@@ -120,15 +127,36 @@ public class CameraPlugin implements Plugin {
                 }
                 return true;
             }
+//            app.runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+                    if (ContextCompat.checkSelfPermission(app,
+                            Manifest.permission.CAMERA)
+                            != PackageManager.PERMISSION_GRANTED) {
+                        // Should we show an explanation?
+                        if (ActivityCompat.shouldShowRequestPermissionRationale(app,
+                                Manifest.permission.CAMERA)) {
+                            ((BreadWalletApp) app.getApplication()).showCustomToast(app,
+                                    app.getString(R.string.allow_camera_access),
+                                    MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
+                        } else {
+                            // No explanation needed, we can request the permission.
+                            ActivityCompat.requestPermissions(app,
+                                    new String[]{Manifest.permission.CAMERA},
+                                    BRConstants.CAMERA_REQUEST_GLIDERA_ID);
+                        }
+                    } else {
+                        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        if (takePictureIntent.resolveActivity(app.getPackageManager()) != null) {
+                            app.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                        }
 
-            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            if (takePictureIntent.resolveActivity(app.getPackageManager()) != null) {
-                app.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-            }
-
-            continuation = ContinuationSupport.getContinuation(request);
-            continuation.suspend(response);
-            globalBaseRequest = baseRequest;
+                        continuation = ContinuationSupport.getContinuation(request);
+                        continuation.suspend(response);
+                        globalBaseRequest = baseRequest;
+                    }
+//                }
+//            });
 
             return true;
         } else if (target.startsWith("/_camera/picture/")) {
