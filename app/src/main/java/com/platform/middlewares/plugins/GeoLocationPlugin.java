@@ -14,6 +14,7 @@ import android.util.Log;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.util.BRConstants;
+import com.platform.GeoLocationManager;
 import com.platform.interfaces.Plugin;
 
 import org.eclipse.jetty.continuation.Continuation;
@@ -237,47 +238,11 @@ public class GeoLocationPlugin implements Plugin {
                     }
                     return true;
                 }
-                String locationProvider = LocationManager.NETWORK_PROVIDER;
-                // Or use LocationManager.GPS_PROVIDER
 
-                LocationManager locationManager = (LocationManager) app.getSystemService(Context.LOCATION_SERVICE);
-                Location location = locationManager.getLastKnownLocation(locationProvider);
-
-                try {
-                    JSONObject responseJson = new JSONObject();
-
-                    JSONObject coordObj = new JSONObject();
-                    coordObj.put("latitude", location.getLatitude());
-                    coordObj.put("longitude", location.getLongitude());
-
-                    responseJson.put("timestamp", location.getTime());
-                    responseJson.put("coordinate", coordObj);
-                    responseJson.put("altitude", location.getAltitude());
-                    responseJson.put("horizontal_accuracy", location.getAccuracy());
-                    responseJson.put("description", "none");
-                    try {
-                        baseRequest.setHandled(true);
-//                        response.getWriter().write(responseJson.toString());
-                        response.getOutputStream().write(responseJson.toString().getBytes());
-
-                        response.setStatus(200);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-//                    handleGeo(responseJson.toString());
-                } catch (JSONException e) {
-                    Log.e(TAG, "handleLocation: Failed to create json response");
-                    e.printStackTrace();
-//                    continuation.resume();
-//                    continuation.complete();
-//                    continuation = null;
-                }
+                continuation = ContinuationSupport.getContinuation(request);
+                continuation.suspend(response);
+                GeoLocationManager.getInstance().getOneTimeGeoLocation(continuation, baseRequest);
                 return true;
-//                if(continuation != null) return true;
-//                continuation = ContinuationSupport.getContinuation(baseRequest);
-//                continuation.suspend(response);
-////                AsyncContext async = request.startAsync();
-//                GeoLocationManager.getLatestLocation();
             }
         } else if (target.startsWith("/_geosocket")) {
             // GET /_geosocket
@@ -303,12 +268,12 @@ public class GeoLocationPlugin implements Plugin {
 
         try {
             gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
 
         try {
             network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
         if (!gps_enabled && !network_enabled) {
             error = "Location services are disabled";

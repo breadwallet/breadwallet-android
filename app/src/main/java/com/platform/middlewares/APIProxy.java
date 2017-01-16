@@ -120,10 +120,10 @@ public class APIProxy implements Middleware {
             else {
                 response.sendError(res.code());
             }
-            baseRequest.setHandled(true);
             response.getOutputStream().write(bodyBytes);
-            response.getOutputStream().flush();
+            baseRequest.setHandled(true);
         } catch (IOException e) {
+            Log.e(TAG, "IOException: " + target);
             e.printStackTrace();
         }
 
