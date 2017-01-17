@@ -4,7 +4,6 @@ package com.breadwallet.presenter.fragments;
 import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.pm.ApplicationInfo;
-import android.graphics.Bitmap;
 import android.net.http.SslError;
 import android.os.Bundle;
 import android.util.Log;
@@ -69,26 +68,6 @@ public class FragmentWebView extends Fragment {
         webView = (WebView) rootView.findViewById(R.id.early_access_web_view);
         webView.setWebViewClient(new BRWebViewClient());
         webView.setWebChromeClient(new BRWebChromeClient());
-//        webView.addJavascriptInterface(new JavaScriptInterface() {
-//            public void emit(String event, String data, String callback) {
-//                if("null".equals(data)) {
-//                    mSocket.emit(event, new BridgeCallback(mWebView, mContext, callback));
-//                } else {
-//                    Object json = null;
-//                    try {
-//                        json = new JSONObject(data);
-//                    } catch (JSONException e) {
-//                        try {
-//                            json = new JSONArray(data);
-//                        } catch (JSONException e1) {
-//                            // TODO Auto-generated catch block
-//                            e1.printStackTrace();
-//                        }
-//                    }
-//                    mSocket.emit(event, new BridgeCallback(mWebView, mContext, callback), json);
-//                }
-//            }
-//        }, "Android");
         WebSettings webSettings = webView.getSettings();
         if (mode == 1) theUrl = HTTPServer.URL_BUY_BITCOIN;
         if (0 != (getActivity().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)) {
@@ -159,49 +138,6 @@ public class FragmentWebView extends Fragment {
                     errorResponse.getReasonPhrase(), errorResponse.getStatusCode()));
         }
 
-        @Override
-        public void onPageStarted(WebView view, String url, Bitmap favicon) {
-            super.onPageStarted(view, url, favicon);
-//            SocketIO socket;
-//            try {
-//                socket = new SocketIO(hostUri.toString());
-//            } catch (MalformedURLException e) {
-//                // TODO Auto-generated catch block
-//                e.printStackTrace();
-//            }
-//            socket.connect(new IOCallback() {
-//                @Override
-//                public void onMessage(JSONObject json, IOAcknowledge ack) {
-//                    try {
-//                        System.out.println("Server said:" + json.toString(2));
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//                @Override
-//                public void onMessage(String data, IOAcknowledge ack) {
-//                    System.out.println("Server said: " + data);
-//                }
-//                @Override
-//                public void onError(SocketIOException socketIOException) {
-//                    System.out.println("an Error occured");
-//                    socketIOException.printStackTrace();
-//                }
-//                @Override
-//                public void onDisconnect() {
-//                    System.out.println("Connection terminated.");
-//                }
-//                @Override
-//                public void onConnect() {
-//                    System.out.println("Connection established");
-//                }
-//                @Override
-//                public void on(String event, IOAcknowledge ack, Object... args) {
-//                    new BridgeCallback(webView, this, "window.socketCallbacks[\"" + event + "\"]").ack(args);
-//                    webView.loadUrl(callback);
-//                }
-//            });
-        }
 
         @Override
         public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
@@ -209,19 +145,6 @@ public class FragmentWebView extends Fragment {
         }
 
     }
-
-//    class BridgeCallback implements IOAcknowledge, IOCallback {
-//        @Override
-//        public void ack(Object... args) {
-//            String argsStr = TextUtils.join(",", args);
-//            final String callback = "javascript:" + mCallback + "(" + argsStr + ");";
-//            ((MainActivity)mContext).runOnUiThread(new Runnable() {
-//                public void run() {
-//                    mWebView.loadUrl(callback);
-//                }
-//            });
-//        }
-//    }
 
     public void setMode(int mode) {
         this.mode = mode;
