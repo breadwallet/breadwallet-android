@@ -73,12 +73,12 @@ public class BRPeerManager {
      */
 
     public static void syncStarted() {
-        Log.e(TAG, "syncStarted");
+        Log.d(TAG, "syncStarted");
         BRPeerManager.getInstance(ctx).refreshConnection();
     }
 
     public static void syncSucceeded() {
-        Log.e(TAG, "syncSucceeded");
+        Log.d(TAG, "syncSucceeded");
         if (ctx == null) ctx = MainActivity.app;
         SharedPreferencesManager.putAllowSpend(ctx, true);
         stopSyncingProgressThread();
@@ -95,7 +95,7 @@ public class BRPeerManager {
     }
 
     public static void syncFailed() {
-        Log.e(TAG, "syncFailed");
+        Log.d(TAG, "syncFailed");
         stopSyncingProgressThread();
         if (ctx != null && ctx instanceof MainActivity) {
             Log.e(TAG, "Network Not Available, showing not connected bar  ");
@@ -116,7 +116,7 @@ public class BRPeerManager {
     }
 
     public static void txStatusUpdate() {
-        Log.e(TAG, "txStatusUpdate");
+        Log.d(TAG, "txStatusUpdate");
         if (ctx == null) ctx = MainActivity.app;
         if (ctx == null) return;
 
@@ -131,7 +131,7 @@ public class BRPeerManager {
     }
 
     public static void saveBlocks(final BlockEntity[] blockEntities) {
-        Log.e(TAG, "saveBlocks: " + blockEntities.length);
+        Log.d(TAG, "saveBlocks: " + blockEntities.length);
 
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) {
@@ -146,7 +146,7 @@ public class BRPeerManager {
     }
 
     public static void savePeers(final PeerEntity[] peerEntities) {
-        Log.e(TAG, "savePeers: " + peerEntities.length);
+        Log.d(TAG, "savePeers: " + peerEntities.length);
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) {
             new Thread(new Runnable() {
@@ -160,12 +160,12 @@ public class BRPeerManager {
     }
 
     public static boolean networkIsReachable() {
-        Log.e(TAG, "networkIsReachable");
+        Log.d(TAG, "networkIsReachable");
         return ctx != null && ((BreadWalletApp) ctx.getApplication()).hasInternetAccess();
     }
 
     public static void deleteBlocks() {
-        Log.e(TAG, "deleteBlocks");
+        Log.d(TAG, "deleteBlocks");
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) {
             new Thread(new Runnable() {
@@ -179,7 +179,7 @@ public class BRPeerManager {
     }
 
     public static void deletePeers() {
-        Log.e(TAG, "deletePeers");
+        Log.d(TAG, "deletePeers");
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) {
             new Thread(new Runnable() {
@@ -193,7 +193,7 @@ public class BRPeerManager {
     }
 
     public static void startSyncingProgressThread() {
-        Log.e(TAG, "startSyncingProgressThread");
+        Log.d(TAG, "startSyncingProgressThread");
         try {
             if (syncTask != null) {
                 syncTask.interrupt();
@@ -225,7 +225,7 @@ public class BRPeerManager {
     }
 
     public static void stopSyncingProgressThread() {
-        Log.e(TAG, "stopSyncingProgressThread");
+        Log.d(TAG, "stopSyncingProgressThread");
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) {
             MiddleViewAdapter.setSyncing(ctx, false);
@@ -317,7 +317,6 @@ public class BRPeerManager {
     }
 
     public void refreshConnection() {
-        Log.e(TAG, "refreshConnection: ");
         final RelativeLayout networkErrorBar = (RelativeLayout) ctx.findViewById(R.id.main_internet_status_bar);
         if (networkErrorBar == null) return;
 
@@ -355,7 +354,7 @@ public class BRPeerManager {
                     if (progress < 1 && progress > 0) {
                         BRPeerManager.startSyncingProgressThread();
                     }
-                    Log.e(TAG, "Network Available ");
+                    Log.d(TAG, "Network Available ");
                 }
             }).start();
 

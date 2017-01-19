@@ -242,7 +242,7 @@ public class BRWalletManager {
     public boolean confirmSweep(final Activity activity, final String privKey) {
         if (activity == null) return false;
         if (isValidBitcoinBIP38Key(privKey)) {
-            Log.e(TAG, "isValidBitcoinBIP38Key true");
+            Log.d(TAG, "isValidBitcoinBIP38Key true");
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -313,7 +313,7 @@ public class BRWalletManager {
             });
             return true;
         } else if (isValidBitcoinPrivateKey(privKey)) {
-            Log.e(TAG, "isValidBitcoinPrivateKey true");
+            Log.d(TAG, "isValidBitcoinPrivateKey true");
             new ImportPrivKeyTask(activity).execute(privKey);
             return true;
         } else {
@@ -404,7 +404,7 @@ public class BRWalletManager {
 
     public static void onBalanceChanged(final long balance) {
 
-        Log.e(TAG, "onBalanceChanged:  " + balance);
+        Log.d(TAG, "onBalanceChanged:  " + balance);
         if (ctx == null) ctx = app;
         ctx.runOnUiThread(new Runnable() {
             @Override
@@ -418,7 +418,7 @@ public class BRWalletManager {
     }
 
     public static void onTxAdded(byte[] tx, int blockHeight, long timestamp, final long amount, String hash) {
-        Log.e(TAG, "onTxAdded: " + String.format("tx.length: %d, blockHeight: %d, timestamp: %d, amount: %d, hash: %s", tx.length, blockHeight, timestamp, amount, hash));
+        Log.d(TAG, "onTxAdded: " + String.format("tx.length: %d, blockHeight: %d, timestamp: %d, amount: %d, hash: %s", tx.length, blockHeight, timestamp, amount, hash));
         final RequestQRActivity requestApp = RequestQRActivity.requestApp;
         if (requestApp != null && !requestApp.activityIsInBackground) {
             requestApp.runOnUiThread(new Runnable() {
@@ -505,7 +505,7 @@ public class BRWalletManager {
     }
 
     public static void onTxUpdated(String hash, int blockHeight, int timeStamp) {
-        Log.e(TAG, "onTxUpdated: " + String.format("hash: %s, blockHeight: %d, timestamp: %d", hash, blockHeight, timeStamp));
+        Log.d(TAG, "onTxUpdated: " + String.format("hash: %s, blockHeight: %d, timestamp: %d", hash, blockHeight, timeStamp));
         if (ctx == null) ctx = app;
         if (ctx != null) {
             SQLiteManager.getInstance(ctx).updateTxByHash(hash, blockHeight, timeStamp);
@@ -820,13 +820,13 @@ public class BRWalletManager {
 
         }
         PostAuthenticationProcessor.getInstance().setTmpTx(tmpTx);
-        Log.e(TAG, "pay: feeForTx: " + feeForTx + ", amountAsDouble: " + bigDecimalAmount.longValue() +
+        Log.d(TAG, "pay: feeForTx: " + feeForTx + ", amountAsDouble: " + bigDecimalAmount.longValue() +
                 ", CurrencyManager.getInstance(this).getBALANCE(): " + cm.getBALANCE());
         if ((feeForTx != 0 && bigDecimalAmount.longValue() + feeForTx < cm.getBALANCE()) || (isAmountRequested && !BreadWalletApp.unlocked)) {
-            Log.e(TAG, "pay: SUCCESS: going to confirmPay");
+            Log.d(TAG, "pay: SUCCESS: going to confirmPay");
             confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, bigDecimalAmount.longValue(), cn, tmpTx, isAmountRequested));
         } else {
-            Log.e(TAG, "pay: FAIL: insufficient funds");
+            Log.d(TAG, "pay: FAIL: insufficient funds");
             AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
             builder.setMessage(ctx.getString(R.string.insufficient_funds))
                     .setCancelable(false)
@@ -852,7 +852,7 @@ public class BRWalletManager {
     }
 
     public void setUpTheWallet() {
-        Log.e(TAG, "setUpTheWallet...");
+        Log.d(TAG, "setUpTheWallet...");
         Assert.assertNotNull(ctx);
         if (ctx == null) return;
         BRWalletManager m = BRWalletManager.getInstance(ctx);
@@ -898,8 +898,8 @@ public class BRWalletManager {
                     pm.putPeer(entity.getAddress(), entity.getPort(), entity.getTimeStamp());
                 }
             }
-            Log.e(TAG, "blocksCount before connecting: " + blocksCount);
-            Log.e(TAG, "peersCount before connecting: " + peersCount);
+            Log.d(TAG, "blocksCount before connecting: " + blocksCount);
+            Log.d(TAG, "peersCount before connecting: " + peersCount);
 
             int walletTimeString = KeyStoreManager.getWalletCreationTime(ctx);
             Log.e(TAG, "setUpTheWallet: walletTimeString: " + walletTimeString);
@@ -1018,7 +1018,7 @@ public class BRWalletManager {
     }
 
     private static void showSpendNotAllowed(final MainActivity app) {
-        Log.e(TAG, "showSpendNotAllowed");
+        Log.d(TAG, "showSpendNotAllowed");
         app.runOnUiThread(new Runnable() {
             @Override
             public void run() {

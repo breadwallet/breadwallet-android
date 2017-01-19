@@ -150,7 +150,7 @@ public class KeyStoreManager {
     private static android.app.AlertDialog dialog;
 
     private static boolean _setData(Activity context, byte[] data, String alias, String alias_file, String alias_iv, int request_code, boolean auth_required) throws BRKeystoreErrorException {
-        Log.e(TAG, "_setData: " + alias);
+//        Log.e(TAG, "_setData: " + alias);
         if (alias.equals(alias_file) || alias.equals(alias_iv) || alias_file.equals(alias_iv)) {
             RuntimeException ex = new IllegalArgumentException("mistake in parameters!");
             FirebaseCrash.report(ex);
@@ -218,7 +218,7 @@ public class KeyStoreManager {
 
     private static byte[] _getData(final Activity context, String alias, String alias_file, String alias_iv, int request_code)
             throws BRKeystoreErrorException {
-        Log.e(TAG, "_getData: " + alias);
+//        Log.e(TAG, "_getData: " + alias);
 
         if (alias.equals(alias_file) || alias.equals(alias_iv) || alias_file.equals(alias_iv)) {
             RuntimeException ex = new IllegalArgumentException("mistake in parameters!");

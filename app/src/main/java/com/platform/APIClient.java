@@ -164,12 +164,10 @@ public class APIClient {
             String body = null;
             try {
                 Response response = sendRequest(request, false);
-                Log.e(TAG, "feePerKb: ");
                 body = response.body().string();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            Log.e(TAG, "feePerKb: response: " + body);
             JSONObject object = null;
             object = new JSONObject(body);
             return (long) object.getInt("fee_per_kb");
@@ -184,7 +182,6 @@ public class APIClient {
         if (ctx == null) ctx = MainActivity.app;
         if (ctx == null) return null;
         String strUtl = BASE_URL + ME;
-        Log.e(TAG, "buyBitcoinMe: strUrl: " + strUtl);
         Request request = new Request.Builder()
                 .url(strUtl)
                 .get()
@@ -204,14 +201,10 @@ public class APIClient {
 
         if (response == null) throw new NullPointerException();
 
-        Log.e(TAG, "buyBitcoinMe: response: " + response);
-        Log.e(TAG, "buyBitcoinMe: message: " + res.message());
-
         return res;
     }
 
     public String getToken() {
-        Log.e(TAG, "getToken");
         if (ctx == null) ctx = MainActivity.app;
         if (ctx == null) return null;
         try {
@@ -239,7 +232,6 @@ public class APIClient {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            Log.e(TAG, "getToken: response: " + strResponse);
             if (strResponse == null) return null;
             JSONObject obj = null;
             obj = new JSONObject(strResponse);
@@ -342,7 +334,7 @@ public class APIClient {
         }
 
         if (response.header("content-encoding") != null && response.header("content-encoding").equalsIgnoreCase("gzip")) {
-            Log.e(TAG, "sendRequest: the content is gzip! UNZIPPING");
+            Log.d(TAG, "sendRequest: the content is gzip, unzipping");
             byte[] decompressed = gZipExtract(data);
             ResponseBody postReqBody = ResponseBody.create(null, decompressed);
 
@@ -360,11 +352,10 @@ public class APIClient {
     }
 
     public void updateBundle() {
-        Log.e(TAG, "updateBundle");
         File bundleFile = new File(ctx.getFilesDir().getAbsolutePath() + bundleFileName);
 
         if (bundleFile.exists()) {
-            Log.e(TAG, "updateBundle: exists");
+            Log.d(TAG, "updateBundle: exists");
 
             byte[] bFile = new byte[0];
             try {
@@ -388,27 +379,27 @@ public class APIClient {
 
             if (latestVersion != null) {
                 if (latestVersion.equals(currentTarVersion)) {
-                    Log.e(TAG, "updateBundle: have the latest version");
+                    Log.d(TAG, "updateBundle: have the latest version");
                     tryExtractTar(bundleFile);
                 } else {
-                    Log.e(TAG, "updateBundle: don't have the most recent version, download diff");
+                    Log.d(TAG, "updateBundle: don't have the most recent version, download diff");
                     downloadDiff(bundleFile, currentTarVersion);
                     tryExtractTar(bundleFile);
 
                 }
             } else {
-                Log.e(TAG, "updateBundle: latestVersion is: " + latestVersion);
+                Log.d(TAG, "updateBundle: latestVersion is: " + latestVersion);
             }
 
         } else {
-            Log.e(TAG, "updateBundle: bundle doesn't exist, downloading new copy");
+            Log.d(TAG, "updateBundle: bundle doesn't exist, downloading new copy");
             long startTime = System.currentTimeMillis();
             Request request = new Request.Builder()
                     .url(String.format("%s/assets/bundles/%s/download", BASE_URL, BREAD_BUY))
                     .get().build();
             Response response = null;
             response = sendRequest(request, false);
-            Log.e(TAG, "updateBundle: Downloaded, took: " + (System.currentTimeMillis() - startTime));
+            Log.d(TAG, "updateBundle: Downloaded, took: " + (System.currentTimeMillis() - startTime));
             writeBundleToFile(response, bundleFile);
 
             tryExtractTar(bundleFile);
@@ -429,13 +420,11 @@ public class APIClient {
         }
         String respBody;
         respBody = response;
-        Log.e(TAG, "updateBundle: response: " + respBody);
         try {
             JSONObject versionsJson = new JSONObject(respBody);
             JSONArray jsonArray = versionsJson.getJSONArray("versions");
             if (jsonArray.length() == 0) return null;
             latestVersion = (String) jsonArray.get(jsonArray.length() - 1);
-            Log.e(TAG, "updateBundle: latestVersion: " + latestVersion);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -444,7 +433,6 @@ public class APIClient {
     }
 
     public void downloadDiff(File bundleFile, String currentTarVersion) {
-        Log.e(TAG, "downloadDiff");
         Request diffRequest = new Request.Builder()
                 .url(String.format("%s/assets/bundles/%s/diff/%s", BASE_URL, BREAD_BUY, currentTarVersion))
                 .get().build();
@@ -474,11 +462,9 @@ public class APIClient {
             if (tempFile != null)
                 tempFile.delete();
         }
-        Log.e(TAG, "downloadDiff: patchBytes.length: " + (patchBytes == null ? null : patchBytes.length));
     }
 
     public byte[] writeBundleToFile(Response response, File bundleFile) {
-        Log.e(TAG, "writeBundleToFile");
         byte[] bodyBytes;
         FileOutputStream fileOutputStream = null;
         assert (response != null);
@@ -489,7 +475,6 @@ public class APIClient {
             }
             bodyBytes = response.body().bytes();
             FileUtils.writeByteArrayToFile(bundleFile, bodyBytes);
-            Log.e(TAG, "writeBundleToFile: bodyBytes.length: " + bodyBytes.length);
             return bodyBytes;
         } catch (IOException e) {
             e.printStackTrace();
@@ -549,7 +534,6 @@ public class APIClient {
                 e.printStackTrace();
             }
         }
-        Log.e(TAG, "tryExtractTar: result: " + result);
         return result;
 
     }
@@ -617,13 +601,13 @@ public class APIClient {
             Request request = chain.request();
 
             long t1 = System.nanoTime();
-            Log.e(TAG, String.format("Sending request %s on %s%n%s",
+            Log.d(TAG, String.format("Sending request %s on %s%n%s",
                     request.url(), chain.connection(), request.headers()));
 
             Response response = chain.proceed(request);
 
             long t2 = System.nanoTime();
-            Log.e(TAG, String.format("Received response for %s in %.1fms%n%s",
+            Log.d(TAG, String.format("Received response for %s in %.1fms%n%s",
                     response.request().url(), (t2 - t1) / 1e6d, response.headers()));
 
             return response;
@@ -633,7 +617,7 @@ public class APIClient {
     public void updatePlatform() {
         if (BuildConfig.DEBUG) {
             final long startTime = System.currentTimeMillis();
-            Log.e(TAG, "updatePlatform: updating platform...");
+            Log.d(TAG, "updatePlatform: updating platform...");
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -652,13 +636,13 @@ public class APIClient {
     public void syncKvStore() {
         final APIClient client = this;
         final long startTime = System.currentTimeMillis();
-        Log.e(TAG, "syncKvStore: DEBUG, syncing kv store...");
+        Log.d(TAG, "syncKvStore: DEBUG, syncing kv store...");
         //sync the kv stores
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(client);
         ReplicatedKVStore kvStore = new ReplicatedKVStore(ctx, remoteKVStore);
         kvStore.syncAllKeys();
         long endTime = System.currentTimeMillis();
-        Log.e(TAG, "syncKvStore: DONE in " + (endTime - startTime) + "ms");
+        Log.d(TAG, "syncKvStore: DONE in " + (endTime - startTime) + "ms");
     }
 
 }

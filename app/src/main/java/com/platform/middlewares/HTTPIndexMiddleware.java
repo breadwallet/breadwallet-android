@@ -12,12 +12,14 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import okhttp3.Request;
 import okhttp3.Response;
 
+import static android.R.attr.path;
 import static com.platform.APIClient.BUNDLES;
 import static com.platform.APIClient.extractedFolder;
 
@@ -50,9 +52,8 @@ public class HTTPIndexMiddleware implements Middleware {
 
     @Override
     public boolean handle(String target, org.eclipse.jetty.server.Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
-
+        Log.e(TAG, "handling: " + target + " " + baseRequest.getMethod());
         String indexFile = MainActivity.app.getFilesDir() + "/" + BUNDLES + "/" + extractedFolder + "/index.html";
-        response.setContentType("text/html;charset=utf-8");
 
         File temp = new File(indexFile);
         if (!temp.exists()) {
@@ -64,14 +65,18 @@ public class HTTPIndexMiddleware implements Middleware {
             byte[] body = FileUtils.readFileToByteArray(temp);
             Assert.assertNotNull(body);
             Assert.assertNotSame(body.length, 0);
+            ServletOutputStream out = response.getOutputStream();
+            response.setContentType("text/html;charset=utf-8");
+            response.setHeader("Content-Length", String.valueOf(body.length));
             response.setStatus(200);
-            response.getOutputStream().write(body);
-            response.getOutputStream().flush();
+            out.write(body);
+            baseRequest.setHandled(true);
             return true;
         } catch (IOException e) {
             e.printStackTrace();
             try {
                 response.sendError(500);
+                baseRequest.setHandled(true);
             } catch (IOException e1) {
                 e1.printStackTrace();
             }

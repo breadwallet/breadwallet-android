@@ -1,5 +1,7 @@
 package com.platform;
 
+import android.util.Log;
+
 import com.platform.middlewares.plugins.GeoLocationPlugin;
 
 import org.eclipse.jetty.websocket.api.Session;
@@ -31,28 +33,30 @@ import org.eclipse.jetty.websocket.api.WebSocketAdapter;
  */
 
 public class GeoSocket extends WebSocketAdapter {
+    private static final String TAG = GeoSocket.class.getName();
     @Override
     public void onWebSocketConnect(final Session sess) {
         super.onWebSocketConnect(sess);
-        System.out.println("Socket Connected: " + sess);
+        Log.e(TAG, "Socket Connected: " + sess);
         GeoLocationManager.getInstance().startGeoSocket(sess);
     }
 
     @Override
     public void onWebSocketText(String message) {
         super.onWebSocketText(message);
-        System.out.println("Received TEXT message: " + message);
+        Log.e(TAG, "Received TEXT message: " + message);
     }
 
     @Override
     public void onWebSocketClose(int statusCode, String reason) {
         super.onWebSocketClose(statusCode, reason);
-        System.out.println("Socket Closed: [" + statusCode + "] " + reason);
+        Log.e(TAG, "Socket Closed: [" + statusCode + "] " + reason);
     }
 
     @Override
     public void onWebSocketError(Throwable cause) {
         super.onWebSocketError(cause);
+        Log.e(TAG, "onWebSocketError: ");
         cause.printStackTrace(System.err);
     }
 }

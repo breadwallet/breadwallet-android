@@ -62,6 +62,7 @@ public class HTTPFileMiddleware implements Middleware {
         if (!temp.exists()) {
             return false;
         }
+        Log.e(TAG, "handling: " + target + " " + baseRequest.getMethod());
         boolean modified = true;
         StringBuilder sb = new StringBuilder();
         try {
@@ -86,7 +87,7 @@ public class HTTPFileMiddleware implements Middleware {
             try {
                 response.setStatus(200);
                 response.getOutputStream().write(FileUtils.readFileToByteArray(temp));
-                response.getOutputStream().flush();
+                baseRequest.setHandled(true);
             } catch (IOException e) {
                 e.printStackTrace();
             }

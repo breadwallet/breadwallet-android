@@ -4,26 +4,18 @@ package com.breadwallet.presenter.fragments;
 import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.pm.ApplicationInfo;
-import android.net.http.SslError;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.ConsoleMessage;
-import android.webkit.HttpAuthHandler;
-import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
-import android.webkit.WebResourceError;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 
 import com.breadwallet.R;
 import com.platform.HTTPServer;
-
 
 
 /**
@@ -65,8 +57,9 @@ public class FragmentWebView extends Fragment {
 
         View rootView = inflater.inflate(
                 R.layout.fragment_early_access, container, false);
+        if (webView != null) webView.destroy();
         webView = (WebView) rootView.findViewById(R.id.early_access_web_view);
-        webView.setWebViewClient(new BRWebViewClient());
+//        webView.setWebViewClient(new BRWebViewClient());
         webView.setWebChromeClient(new BRWebChromeClient());
         WebSettings webSettings = webView.getSettings();
         if (mode == 1) theUrl = HTTPServer.URL_BUY_BITCOIN;
@@ -97,54 +90,55 @@ public class FragmentWebView extends Fragment {
             Log.e(TAG, "onConsoleMessage: consoleMessage: " + consoleMessage.message());
             return super.onConsoleMessage(consoleMessage);
         }
-    }
-
-    private class BRWebViewClient extends WebViewClient {
-
-        @Override
-        public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-            return super.shouldInterceptRequest(view, request);
-        }
-
-        @Override
-        public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-            super.onReceivedError(view, request, error);
-            Log.e(TAG, "onReceivedError: error:" + error.toString());
-        }
-
-        @Override
-        public void onReceivedHttpAuthRequest(WebView view, HttpAuthHandler handler, String host, String realm) {
-            super.onReceivedHttpAuthRequest(view, handler, host, realm);
-            Log.e(TAG, "onReceivedHttpAuthRequest: ");
-        }
-
-        @Override
-        public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-            super.onReceivedError(view, errorCode, description, failingUrl);
-            Log.e(TAG, "onReceivedError: failingUrl: " + failingUrl);
-        }
-
-        @Override
-        public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-            super.onReceivedSslError(view, handler, error);
-            Log.e(TAG, "onReceivedSslError: error: " + error);
-        }
-
-        @Override
-        public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
-            super.onReceivedHttpError(view, request, errorResponse);
-
-            Log.e(TAG, String.format("ERROR: onReceivedHttpError: (%s) %s %s %d", request.getMethod(), request.getUrl(),
-                    errorResponse.getReasonPhrase(), errorResponse.getStatusCode()));
-        }
-
-
-        @Override
-        public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-            return super.shouldInterceptRequest(view, url);
-        }
 
     }
+
+//    private class BRWebViewClient extends WebViewClient {
+//
+//        @Override
+//        public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+//            return super.shouldInterceptRequest(view, request);
+//        }
+//
+//        @Override
+//        public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+//            super.onReceivedError(view, request, error);
+//            Log.e(TAG, "onReceivedError: error:" + error.toString());
+//        }
+//
+//        @Override
+//        public void onReceivedHttpAuthRequest(WebView view, HttpAuthHandler handler, String host, String realm) {
+//            super.onReceivedHttpAuthRequest(view, handler, host, realm);
+//            Log.e(TAG, "onReceivedHttpAuthRequest: ");
+//        }
+//
+//        @Override
+//        public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+//            super.onReceivedError(view, errorCode, description, failingUrl);
+//            Log.e(TAG, "onReceivedError: failingUrl: " + failingUrl);
+//        }
+//
+//        @Override
+//        public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+//            super.onReceivedSslError(view, handler, error);
+//            Log.e(TAG, "onReceivedSslError: error: " + error);
+//        }
+//
+//        @Override
+//        public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
+//            super.onReceivedHttpError(view, request, errorResponse);
+//
+//            Log.e(TAG, String.format("ERROR: onReceivedHttpError: (%s) %s %s %d", request.getMethod(), request.getUrl(),
+//                    errorResponse.getReasonPhrase(), errorResponse.getStatusCode()));
+//        }
+//
+//
+//        @Override
+//        public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
+//            return super.shouldInterceptRequest(view, url);
+//        }
+//
+//    }
 
     public void setMode(int mode) {
         this.mode = mode;

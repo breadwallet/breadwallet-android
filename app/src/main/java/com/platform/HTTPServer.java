@@ -18,6 +18,9 @@ import com.platform.middlewares.plugins.WalletPlugin;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.eclipse.jetty.server.handler.DefaultHandler;
+import org.eclipse.jetty.server.handler.HandlerCollection;
+import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.websocket.api.Session;
@@ -90,31 +93,40 @@ public class HTTPServer {
             e.printStackTrace();
         }
 
-        // Setup the basic application "context" for this application at "/"
-        // This is also known as the handler tree (in jetty speak)
-        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        context.setContextPath("/");
+//        // Setup the basic application "context" for this application at "/"
+//        // This is also known as the handler tree (in jetty speak)
+//        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+//        context.setContextPath("/");
+//
+//        // Add a websocket to a specific path spec
+//        ServletHolder holderEvents = new ServletHolder("geo_servlet", BRWebSocketServlet.class);
+//        context.addServlet(holderEvents, "/_geosocket");
+//
+//        HandlerList handlers = new HandlerList();
+//        handlers.addHandler(new ServerHandler());
+//        handlers.addHandler(context);
+//        server.setHandler(handlers);
 
-        server.setHandler(context);
+        HandlerCollection handlerCollection = new HandlerCollection();
 
-        // Add a websocket to a specific path spec
-        ServletHolder holderEvents = new ServletHolder("geo_servlet", BRWebSocketServlet.class);
-        context.addServlet(holderEvents, "/_geosocket");
+//        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+//        context.setContextPath("/");
+////
+////         Add websocket servlet
+//        ServletHolder wsHolder = new ServletHolder("GeoSocket", new BRWebSocketServlet());
+//        context.addServlet(wsHolder, "/_geosocket");
 
-        server.setHandler(new ServerHandler());
-//        WebSocketHandler wsHandler = new WebSocketHandler() {
-//            @Override
-//            public void configure(WebSocketServletFactory factory) {
-//                factory.register(MyWebSocketHandler.class);
-//            }
-//        };
-//        server.setHandler(wsHandler);
+        handlerCollection.addHandler(new ServerHandler());
+//        handlerCollection.addHandler(context);
+
+        server.setHandler(handlerCollection);
+
         setupIntegrations();
 
     }
 
     public static void startServer() {
-        Log.e(TAG, "startServer");
+        Log.d(TAG, "startServer");
         try {
             if (server != null && server.isStarted()) {
                 return;
@@ -128,7 +140,7 @@ public class HTTPServer {
     }
 
     public static void stopServer() {
-        Log.e(TAG, "stopServer");
+        Log.d(TAG, "stopServer");
         try {
             if (server != null)
                 server.stop();
@@ -154,7 +166,7 @@ public class HTTPServer {
     }
 
     private static boolean dispatch(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
-        Log.e(TAG, "TRYING TO HANDLE: " + target + " (" + request.getMethod() + ")");
+        Log.d(TAG, "TRYING TO HANDLE: " + target + " (" + request.getMethod() + ")");
         boolean result = false;
         if (target.equalsIgnoreCase("/_close")) {
             final MainActivity app = MainActivity.app;
@@ -176,7 +188,9 @@ public class HTTPServer {
         for (Middleware m : middlewares) {
             result = m.handle(target, baseRequest, request, response);
             if (result) {
-                Log.e(TAG, "dispatch: " + m.getClass().getName().substring(m.getClass().getName().lastIndexOf(".") + 1) + " succeeded:" + request.getRequestURL());
+                String className = m.getClass().getName().substring(m.getClass().getName().lastIndexOf(".") + 1);
+                if (!className.contains("HTTPRouter"))
+                    Log.d(TAG, "dispatch: " + className + " succeeded:" + request.getRequestURL());
                 break;
             }
         }
@@ -219,35 +233,6 @@ public class HTTPServer {
         // kvstore plugin provides access to the shared replicated kv store
         Plugin kvStorePlugin = new KVStorePlugin();
         httpRouter.appendPlugin(kvStorePlugin);
-    }
-
-    @WebSocket
-    public class MyWebSocketHandler {
-
-        @OnWebSocketClose
-        public void onClose(int statusCode, String reason) {
-            System.out.println("Close: statusCode=" + statusCode + ", reason=" + reason);
-        }
-
-        @OnWebSocketError
-        public void onError(Throwable t) {
-            System.out.println("Error: " + t.getMessage());
-        }
-
-        @OnWebSocketConnect
-        public void onConnect(Session session) {
-            System.out.println("Connect: " + session.getRemoteAddress().getAddress());
-            try {
-                session.getRemote().sendString("Hello Webbrowser");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        @OnWebSocketMessage
-        public void onMessage(String message) {
-            System.out.println("Message: " + message);
-        }
     }
 
 }

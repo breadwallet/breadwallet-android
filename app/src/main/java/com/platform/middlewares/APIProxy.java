@@ -74,6 +74,7 @@ public class APIProxy implements Middleware {
     @Override
     public boolean handle(String target, org.eclipse.jetty.server.Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
         if (!target.startsWith(MOUNT_POINT)) return false;
+        Log.e(TAG, "handling: " + target + " " + baseRequest.getMethod());
         String path = target.substring(MOUNT_POINT.length());
 //        Log.e(TAG, "handle: path: " + path);
         String queryString = baseRequest.getQueryString();

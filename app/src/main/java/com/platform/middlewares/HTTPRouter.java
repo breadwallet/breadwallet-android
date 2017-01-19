@@ -52,7 +52,6 @@ public class HTTPRouter implements Middleware {
             boolean success = plugin.handle(target, baseRequest, request, response);
             if(success) {
                 Log.e(TAG, "plugin: " + plugin.getClass().getName().substring(plugin.getClass().getName().lastIndexOf(".") + 1) + " succeeded:" + request.getRequestURL());
-
                 return true;
             }
         }

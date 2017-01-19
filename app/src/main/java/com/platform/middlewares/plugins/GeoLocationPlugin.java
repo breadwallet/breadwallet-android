@@ -128,10 +128,12 @@ public class GeoLocationPlugin implements Plugin {
     public boolean handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
 
         if (target.startsWith("/_permissions/geo")) {
+            Log.e(TAG, "handling: " + target + " " + baseRequest.getMethod());
             MainActivity app = MainActivity.app;
             if (app == null) {
                 try {
                     response.sendError(500, "context is null");
+                    baseRequest.setHandled(true);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -167,10 +169,10 @@ public class GeoLocationPlugin implements Plugin {
                         jsonResult.put("status", status);
                         jsonResult.put("user_queried", SharedPreferencesManager.getGeoPermissionsRequested(app));
                         jsonResult.put("location_enabled", enabled);
-                        baseRequest.setHandled(true);
                         response.setStatus(200);
                         try {
                             response.getWriter().write(jsonResult.toString());
+                            baseRequest.setHandled(true);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -178,6 +180,7 @@ public class GeoLocationPlugin implements Plugin {
                         e.printStackTrace();
                         try {
                             response.sendError(500);
+                            baseRequest.setHandled(true);
                         } catch (IOException e1) {
                             e1.printStackTrace();
                         }
@@ -205,6 +208,7 @@ public class GeoLocationPlugin implements Plugin {
 
             }
         } else if (target.startsWith("/_geo") && !target.startsWith("/_geosocket")) {
+            Log.e(TAG, "handling: " + target + " " + baseRequest.getMethod());
             // GET /_geo
             //
             // Calling this method will query CoreLocation for a location object. The returned value may not be returned
@@ -222,6 +226,7 @@ public class GeoLocationPlugin implements Plugin {
             if (app == null) {
                 try {
                     response.sendError(500, "context is null");
+                    baseRequest.setHandled(true);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -233,6 +238,7 @@ public class GeoLocationPlugin implements Plugin {
                 if (obj != null) {
                     try {
                         response.getWriter().write(obj.toString());
+                        baseRequest.setHandled(true);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -242,9 +248,11 @@ public class GeoLocationPlugin implements Plugin {
                 continuation = ContinuationSupport.getContinuation(request);
                 continuation.suspend(response);
                 GeoLocationManager.getInstance().getOneTimeGeoLocation(continuation, baseRequest);
+                Log.e(TAG, "handle: suspended the request");
                 return true;
             }
         } else if (target.startsWith("/_geosocket")) {
+            Log.e(TAG, "handling: " + target + " " + baseRequest.getMethod());
             // GET /_geosocket
             //
             // This opens up a websocket to the location manager. It will return a new location every so often (but with no
@@ -258,7 +266,6 @@ public class GeoLocationPlugin implements Plugin {
 
         return false;
     }
-
 
     private JSONObject getAuthorizationError(Context app) {
         String error = null;
@@ -297,8 +304,5 @@ public class GeoLocationPlugin implements Plugin {
         }
 
     }
-
-
-
 
 }

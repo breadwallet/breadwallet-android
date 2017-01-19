@@ -46,6 +46,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import static android.R.attr.key;
+import static android.R.attr.name;
 import static com.breadwallet.R.string.request;
 import static com.breadwallet.tools.util.BRConstants.REQUEST_IMAGE_CAPTURE;
 import static com.platform.APIClient.bundleFileName;
@@ -82,6 +83,7 @@ public class CameraPlugin implements Plugin {
 
     @Override
     public boolean handle(String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) {
+
         // GET /_camera/take_picture
         //
         // Optionally pass ?overlay=<id> (see overlay ids below) to show an overlay
@@ -93,17 +95,19 @@ public class CameraPlugin implements Plugin {
         //   - 404: Camera is not available on this device
         //   - 423: Multiple concurrent take_picture requests. Only one take_picture request may be in flight at once.
         //
-        final MainActivity app = MainActivity.app;
-        if (app == null) {
-            try {
-                response.sendError(500, "context is null");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return true;
-        }
+
         if (target.startsWith("/_camera/take_picture")) {
-            Log.e(TAG, "handle: /_camera/take_picture");
+            Log.e(TAG, "handling: " + target + " " + baseRequest.getMethod());
+            final MainActivity app = MainActivity.app;
+            if (app == null) {
+                try {
+                    response.sendError(500, "context is null");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return true;
+            }
+
             if (globalBaseRequest != null) {
                 try {
                     Log.e(TAG, "handle: already taking a picture");
@@ -160,7 +164,16 @@ public class CameraPlugin implements Plugin {
 
             return true;
         } else if (target.startsWith("/_camera/picture/")) {
-            Log.e(TAG, "handle: /_camera/picture/");
+            Log.e(TAG, "handling: " + target + " " + baseRequest.getMethod());
+            final MainActivity app = MainActivity.app;
+            if (app == null) {
+                try {
+                    response.sendError(500, "context is null");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return true;
+            }
             String id = target.replace("/_camera/picture/", "");
             byte[] pictureBytes = readPictureForId(app, id);
             if (pictureBytes == null) {
@@ -230,6 +243,7 @@ public class CameraPlugin implements Plugin {
     }
 
     private static String writeToFile(Context context, Bitmap img) {
+        Log.e(TAG, "writeToFile");
         String name = null;
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         FileOutputStream fileOutputStream = null;
@@ -265,7 +279,7 @@ public class CameraPlugin implements Plugin {
     }
 
     public byte[] readPictureForId(Context context, String id) {
-
+        Log.e(TAG, "readPictureForId: " + id);
         try {
             //create FileInputStream object
             FileInputStream fin = new FileInputStream(new File(context.getFilesDir().getAbsolutePath() + "/pictures/" + id));

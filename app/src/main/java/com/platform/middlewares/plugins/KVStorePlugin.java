@@ -56,11 +56,13 @@ public class KVStorePlugin implements Plugin {
     @Override
     public boolean handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
         if (target.startsWith("/_kv/")) {
+            Log.e(TAG, "handling: " + target + " " + baseRequest.getMethod());
             String key = target.replace("/_kv/", "");
             MainActivity app = MainActivity.app;
             if (app == null) {
                 try {
                     response.sendError(500, "context is null");
+                    baseRequest.setHandled(true);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -70,6 +72,7 @@ public class KVStorePlugin implements Plugin {
                 Log.e(TAG, "handle: missing key argument");
                 try {
                     response.sendError(400);
+                    baseRequest.setHandled(true);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -88,6 +91,7 @@ public class KVStorePlugin implements Plugin {
                         Log.e(TAG, "handle: kv store does not contain the kv: " + key);
                         try {
                             response.sendError(404);
+                            baseRequest.setHandled(true);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -102,6 +106,7 @@ public class KVStorePlugin implements Plugin {
                         e.printStackTrace();
                         try {
                             response.sendError(500);
+                            baseRequest.setHandled(true);
                         } catch (IOException ex) {
                             ex.printStackTrace();
                         }
@@ -115,6 +120,7 @@ public class KVStorePlugin implements Plugin {
                     if (kv.getDeleted() > 0) {
                         try {
                             response.sendError(410, "Gone");
+                            baseRequest.setHandled(true);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -123,9 +129,9 @@ public class KVStorePlugin implements Plugin {
                     response.setHeader("Content-Type", "application/json");
 
                     try {
-                        baseRequest.setHandled(true);
                         response.setStatus(200);
                         response.getOutputStream().write(decompressedData);
+                        baseRequest.setHandled(true);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -144,6 +150,7 @@ public class KVStorePlugin implements Plugin {
                         Log.e(TAG, "handle: missing request body");
                         try {
                             response.sendError(400);
+                            baseRequest.setHandled(true);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -155,6 +162,7 @@ public class KVStorePlugin implements Plugin {
                         Log.e(TAG, "handle: missing If-None-Match header, set to `0` if creating a new key");
                         try {
                             response.sendError(400);
+                            baseRequest.setHandled(true);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -165,6 +173,7 @@ public class KVStorePlugin implements Plugin {
                         Log.e(TAG, "handle: can only set application/json request bodies");
                         try {
                             response.sendError(400);
+                            baseRequest.setHandled(true);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -182,6 +191,7 @@ public class KVStorePlugin implements Plugin {
                         int errCode = transformErrorToResponseCode(setObj.err);
                         try {
                             response.sendError(errCode);
+                            baseRequest.setHandled(true);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -191,8 +201,8 @@ public class KVStorePlugin implements Plugin {
                     dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss:SSS Z", Locale.getDefault());
                     date = dateFormat.format(setObj.time);
                     response.setHeader("Last-Modified", date);
-                    baseRequest.setHandled(true);
                     response.setStatus(204);
+                    baseRequest.setHandled(true);
                     return true;
                 case "DELETE":
                     Log.e(TAG, "handle: DELETE: " + key);
@@ -201,6 +211,7 @@ public class KVStorePlugin implements Plugin {
                         Log.e(TAG, "handle: missing If-None-Match header");
                         try {
                             response.sendError(400);
+                            baseRequest.setHandled(true);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -218,6 +229,7 @@ public class KVStorePlugin implements Plugin {
                             err = transformErrorToResponseCode(delObj.err);
                         try {
                             response.sendError(err);
+                            baseRequest.setHandled(true);
                         } catch (IOException e1) {
                             e1.printStackTrace();
                         }
@@ -227,8 +239,8 @@ public class KVStorePlugin implements Plugin {
                     dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss:SSS Z", Locale.getDefault());
                     date = dateFormat.format(delObj.time);
                     response.setHeader("Last-Modified", date);
-                    baseRequest.setHandled(true);
                     response.setStatus(204);
+                    baseRequest.setHandled(true);
                     return true;
 
             }

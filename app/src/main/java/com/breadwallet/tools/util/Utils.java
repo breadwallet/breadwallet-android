@@ -15,6 +15,8 @@ import com.breadwallet.presenter.activities.MainActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -120,6 +122,18 @@ public class Utils {
         String result = formatter.format(calendar.getTime()).toLowerCase().replace("am", "a").replace("pm", "p");
         if (is24HoursFormat) result += "h";
         return result;
+    }
+
+    public static boolean isNullOrEmpty(String str){
+        return str == null || str.isEmpty();
+    }
+
+    public static boolean isNullOrEmpty(byte[] arr){
+        return arr == null || arr.length == 0;
+    }
+
+    public static boolean isNullOrEmpty(Collection collection) {
+        return collection == null || collection.size() == 0;
     }
 
     public static int getPixelsFromDps(Context context, int dps){

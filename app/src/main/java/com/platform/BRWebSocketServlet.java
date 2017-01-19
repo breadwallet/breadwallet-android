@@ -1,5 +1,7 @@
 package com.platform;
 
+import android.util.Log;
+
 import org.eclipse.jetty.websocket.servlet.WebSocketServlet;
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 
@@ -33,10 +35,15 @@ import javax.servlet.annotation.WebServlet;
 @SuppressWarnings("serial")
 @WebServlet(name = "Geo Socket", urlPatterns = { "/_geosocket" })
 public class BRWebSocketServlet extends WebSocketServlet {
+    private static final String TAG = BRWebSocketServlet.class.getName();
     @Override
     public void configure(WebSocketServletFactory factory) {
-
+        Log.e(TAG, "configure: ");
         // register MyEchoSocket as the WebSocket to create on Upgrade
+
+        // set a 10 second timeout
+        factory.getPolicy().setIdleTimeout(10000);
+
         factory.register(GeoSocket.class);
     }
 }

@@ -12,6 +12,7 @@ import android.util.Log;
 
 
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.tools.util.Utils;
 import com.google.firebase.crash.FirebaseCrash;
 
 import org.eclipse.jetty.continuation.Continuation;
@@ -93,19 +94,27 @@ public class GeoLocationManager {
     }
 
     public void startGeoSocket(Session sess) {
-//        session = sess;
-//        Log.e(TAG, "getLatestLocation: ");
-//
-//        MainActivity app = MainActivity.app;
-//        if (app == null)
-//            return;
-//        LocationManager locationManager = (LocationManager) app.getSystemService(Context.LOCATION_SERVICE);
-//        if (ActivityCompat.checkSelfPermission(app, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(app, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            RuntimeException ex = new RuntimeException("startGeoSocket, can't happen");
-//            FirebaseCrash.report(ex);
-//            throw ex;
-//        }
-//        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, socketLocationListener);
+        Log.e(TAG, "startGeoSocket: ");
+        session = sess;
+
+        final MainActivity app = MainActivity.app;
+        if (app == null)
+            return;
+        final LocationManager locationManager = (LocationManager) app.getSystemService(Context.LOCATION_SERVICE);
+
+        Log.e(TAG, "starting geo updates...");
+        app.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (ActivityCompat.checkSelfPermission(app, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(app, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    RuntimeException ex = new RuntimeException("startGeoSocket, can't happen");
+                    FirebaseCrash.report(ex);
+                    throw ex;
+                }
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, socketLocationListener);
+
+            }
+        });
     }
 
     // Define a listener that responds to location updates
@@ -116,6 +125,7 @@ public class GeoLocationManager {
             if (session != null && session.isOpen()) {
                 String jsonLocation = getJsonLocation(location);
                 try {
+                    Log.e(TAG, "sending location to socket ");
                     session.getRemote().sendString(jsonLocation);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -134,58 +144,61 @@ public class GeoLocationManager {
         }
     };
 
-
     private LocationListener locationListener = new LocationListener() {
+        private boolean processing;
 
         public void onLocationChanged(final Location location) {
             Log.e(TAG, "onLocationChanged: ");
+            if (processing) return;
+            processing = true;
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    Log.e(TAG, "run: "  + location.getLatitude());
+                    Log.e(TAG, "run: " + location.getLatitude());
                     // Called when a new location is found by the network location provider.
                     if (continuation != null && baseRequest != null) {
                         String jsonLocation = getJsonLocation(location);
                         try {
-                            if (jsonLocation != null && !jsonLocation.isEmpty()) {
+                            if (!Utils.isNullOrEmpty(jsonLocation)) {
                                 try {
                                     ((HttpServletResponse) continuation.getServletResponse()).setStatus(200);
-                                    continuation.getServletResponse().getWriter().write(jsonLocation);
+                                    continuation.getServletResponse().getOutputStream().write(jsonLocation.getBytes("UTF-8"));
                                     baseRequest.setHandled(true);
-                                    Log.e(TAG, "onLocationChanged: returned location...");
-                                    return;
+                                    continuation.complete();
+                                    continuation = null;
+                                    Log.d(TAG, "onLocationChanged: returned location...");
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
-
                             } else {
                                 try {
                                     ((HttpServletResponse) continuation.getServletResponse()).sendError(500);
-                                    baseRequest.setHandled(true);
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
                                 FirebaseCrash.report(new NullPointerException("onLocationChanged: " + jsonLocation));
                                 Log.e(TAG, "onLocationChanged: WARNING respStr is null or empty: " + jsonLocation);
                             }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         } finally {
-                            continuation.complete();
-                            continuation = null;
+
+                            processing = false;
+                            if (MainActivity.app == null || ActivityCompat.checkSelfPermission(MainActivity.app, Manifest.permission.ACCESS_FINE_LOCATION)
+                                    != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MainActivity.app,
+                                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                                Log.e(TAG, "onLocationChanged: PERMISSION DENIED for removeUpdates");
+                            } else {
+                                Log.d(TAG, "onLocationChanged: removing location listener");
+                                locationManager.removeUpdates(locationListener);
+
+                            }
 
                         }
 
                     }
                 }
             }).start();
-
-            if (MainActivity.app == null || ActivityCompat.checkSelfPermission(MainActivity.app, Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MainActivity.app,
-                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                Log.e(TAG, "onLocationChanged: PERMISSION DENIED for removeUpdates");
-            } else {
-                Log.e(TAG, "onLocationChanged: removing location listener");
-                locationManager.removeUpdates(locationListener);
-            }
 
         }
 

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
+import android.util.Log;
 
 import com.breadwallet.presenter.activities.MainActivity;
 import com.google.firebase.crash.FirebaseCrash;
@@ -50,12 +51,14 @@ public class LinkPlugin implements Plugin {
     @Override
     public boolean handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
         if (target.startsWith("/_open_url")) {
+            Log.e(TAG, "handling: " + target + " " + baseRequest.getMethod());
             String url = request.getParameter("url");
 
             MainActivity app = MainActivity.app;
             if (app == null) {
                 try {
                     response.sendError(500, "context is null");
+                    baseRequest.setHandled(true);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -71,10 +74,12 @@ public class LinkPlugin implements Plugin {
 
             return true;
         } else if (target.startsWith("/_open_maps")) {
+            Log.e(TAG, "handling: " + target + " " + baseRequest.getMethod());
             MainActivity app = MainActivity.app;
             if (app == null) {
                 try {
                     response.sendError(500, "context is null");
+                    baseRequest.setHandled(true);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
