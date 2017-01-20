@@ -319,7 +319,7 @@ public class APIClient {
         }
         Response response = null;
         try {
-            OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new LoggingInterceptor()).build();
+            OkHttpClient client = new OkHttpClient.Builder()/*.addInterceptor(new LoggingInterceptor())*/.build();
             response = client.newCall(request).execute();
 //            Log.e(TAG, "sendRequest: date: " + response.header("Date"));
         } catch (IOException e) {

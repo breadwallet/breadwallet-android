@@ -64,7 +64,6 @@ public class GeoLocationManager {
     }
 
     public void getOneTimeGeoLocation(Continuation cont, Request req) {
-        Log.e(TAG, "getOneTimeGeoLocation: ");
         this.continuation = cont;
         this.baseRequest = req;
         final MainActivity app = MainActivity.app;
@@ -81,13 +80,12 @@ public class GeoLocationManager {
                 if (ActivityCompat.checkSelfPermission(app, Manifest.permission.ACCESS_FINE_LOCATION) !=
                         PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(app, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     RuntimeException ex = new RuntimeException("getOneTimeGeoLocation, can't happen");
-                    Log.e(TAG, "run: " + ex.getMessage());
+                    Log.e(TAG, "run: getOneTimeGeoLocation, can't happen");
                     FirebaseCrash.report(ex);
                     return;
                 }
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-                Log.e(TAG, "getOneTimeGeoLocation: registered for location update");
             }
         });
 
@@ -102,16 +100,39 @@ public class GeoLocationManager {
             return;
         final LocationManager locationManager = (LocationManager) app.getSystemService(Context.LOCATION_SERVICE);
 
-        Log.e(TAG, "starting geo updates...");
+        Log.d(TAG, "starting geo updates for socket...");
         app.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (ActivityCompat.checkSelfPermission(app, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(app, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     RuntimeException ex = new RuntimeException("startGeoSocket, can't happen");
+                    Log.e(TAG, "run: startGeoSocket, can't happen");
                     FirebaseCrash.report(ex);
                     throw ex;
                 }
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, socketLocationListener);
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, socketLocationListener);
+
+            }
+        });
+    }
+
+    public void stopGeoSocket() {
+        Log.e(TAG, "stopGeoSocket");
+        final MainActivity app = MainActivity.app;
+        if (app == null)
+            return;
+        final LocationManager locationManager = (LocationManager) app.getSystemService(Context.LOCATION_SERVICE);
+
+        app.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (ActivityCompat.checkSelfPermission(app, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(app, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    RuntimeException ex = new RuntimeException("stopGeoSocket, can't happen");
+                    FirebaseCrash.report(ex);
+                    throw ex;
+                }
+                locationManager.removeUpdates(socketLocationListener);
 
             }
         });
@@ -119,18 +140,31 @@ public class GeoLocationManager {
 
     // Define a listener that responds to location updates
     private LocationListener socketLocationListener = new LocationListener() {
-        public void onLocationChanged(Location location) {
-            Log.e(TAG, "onLocationChanged: ");
-            // Called when a new location is found by the network location provider.
-            if (session != null && session.isOpen()) {
-                String jsonLocation = getJsonLocation(location);
-                try {
-                    Log.e(TAG, "sending location to socket ");
-                    session.getRemote().sendString(jsonLocation);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        private boolean sending;
 
+        public void onLocationChanged(Location location) {
+            // Called when a new location is found by the network location provider.
+            if (sending) return;
+            sending = true;
+            if (session != null && session.isOpen()) {
+                final String jsonLocation = getJsonLocation(location);
+                Log.e(TAG, "sending location to socket ");
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            session.getRemote().sendString(jsonLocation);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } finally {
+                            sending = false;
+                        }
+                        Log.d(TAG, "onLocationChanged: sent");
+                    }
+                }).start();
+
+            } else {
+                sending = false;
             }
         }
 

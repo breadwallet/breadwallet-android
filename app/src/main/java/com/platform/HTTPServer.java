@@ -15,9 +15,12 @@ import com.platform.middlewares.plugins.KVStorePlugin;
 import com.platform.middlewares.plugins.LinkPlugin;
 import com.platform.middlewares.plugins.WalletPlugin;
 
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.handler.HandlerList;
@@ -93,31 +96,17 @@ public class HTTPServer {
             e.printStackTrace();
         }
 
-//        // Setup the basic application "context" for this application at "/"
-//        // This is also known as the handler tree (in jetty speak)
-//        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
-//        context.setContextPath("/");
-//
-//        // Add a websocket to a specific path spec
-//        ServletHolder holderEvents = new ServletHolder("geo_servlet", BRWebSocketServlet.class);
-//        context.addServlet(holderEvents, "/_geosocket");
-//
-//        HandlerList handlers = new HandlerList();
-//        handlers.addHandler(new ServerHandler());
-//        handlers.addHandler(context);
-//        server.setHandler(handlers);
-
         HandlerCollection handlerCollection = new HandlerCollection();
 
-//        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
-//        context.setContextPath("/");
-////
-////         Add websocket servlet
-//        ServletHolder wsHolder = new ServletHolder("GeoSocket", new BRWebSocketServlet());
-//        context.addServlet(wsHolder, "/_geosocket");
+        WebSocketHandler wsHandler = new WebSocketHandler() {
+            @Override
+            public void configure(WebSocketServletFactory factory) {
+                factory.register(BRGeoWebSocketHandler.class);
+            }
+        };
 
         handlerCollection.addHandler(new ServerHandler());
-//        handlerCollection.addHandler(context);
+        handlerCollection.addHandler(wsHandler);
 
         server.setHandler(handlerCollection);
 
