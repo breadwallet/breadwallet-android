@@ -32,7 +32,7 @@
     <!-- android -->
     <string name="auth_required">Authentication required</string>
     <!-- android -->
-    <string name="auth_message">Please complete your device\'s authentication to continue.</string>
+    <string name="auth_message">Please unlock your device to continue.</string>
     <!-- android -->
     <string name="camera_configuration_failed">camera configuration failed</string>
     <!-- android -->
