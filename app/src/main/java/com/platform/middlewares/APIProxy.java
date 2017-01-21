@@ -83,7 +83,8 @@ public class APIProxy implements Middleware {
 //        Log.e(TAG, "handle: path with queryString: " + path);
         boolean auth = false;
         Request req = mapToOkHttpRequest(baseRequest, path, request);
-        if (baseRequest.getHeader(SHOULD_AUTHENTICATE).toLowerCase().equals("yes")) auth = true;
+        String authHeader = baseRequest.getHeader(SHOULD_AUTHENTICATE);
+        if (authHeader != null && authHeader.toLowerCase().equals("yes")) auth = true;
         Response res = apiInstance.sendRequest(req, auth);
         if (res.code() == 599) {
 //            Log.e(TAG, "handle: time out!");

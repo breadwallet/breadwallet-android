@@ -207,6 +207,9 @@ public class GeoLocationManager {
                             } else {
                                 try {
                                     ((HttpServletResponse) continuation.getServletResponse()).sendError(500);
+                                    baseRequest.setHandled(true);
+                                    continuation.complete();
+                                    continuation = null;
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }

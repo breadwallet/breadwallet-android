@@ -134,31 +134,31 @@ public class CameraPlugin implements Plugin {
 //            app.runOnUiThread(new Runnable() {
 //                @Override
 //                public void run() {
-                    if (ContextCompat.checkSelfPermission(app,
-                            Manifest.permission.CAMERA)
-                            != PackageManager.PERMISSION_GRANTED) {
-                        // Should we show an explanation?
-                        if (ActivityCompat.shouldShowRequestPermissionRationale(app,
-                                Manifest.permission.CAMERA)) {
-                            ((BreadWalletApp) app.getApplication()).showCustomToast(app,
-                                    app.getString(R.string.allow_camera_access),
-                                    MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
-                        } else {
-                            // No explanation needed, we can request the permission.
-                            ActivityCompat.requestPermissions(app,
-                                    new String[]{Manifest.permission.CAMERA},
-                                    BRConstants.CAMERA_REQUEST_GLIDERA_ID);
-                        }
-                    } else {
-                        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        if (takePictureIntent.resolveActivity(app.getPackageManager()) != null) {
-                            app.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-                        }
+            if (ContextCompat.checkSelfPermission(app,
+                    Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED) {
+                // Should we show an explanation?
+                if (ActivityCompat.shouldShowRequestPermissionRationale(app,
+                        Manifest.permission.CAMERA)) {
+                    ((BreadWalletApp) app.getApplication()).showCustomToast(app,
+                            app.getString(R.string.allow_camera_access),
+                            MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
+                } else {
+                    // No explanation needed, we can request the permission.
+                    ActivityCompat.requestPermissions(app,
+                            new String[]{Manifest.permission.CAMERA},
+                            BRConstants.CAMERA_REQUEST_GLIDERA_ID);
+                }
+            } else {
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (takePictureIntent.resolveActivity(app.getPackageManager()) != null) {
+                    app.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                }
 
-                        continuation = ContinuationSupport.getContinuation(request);
-                        continuation.suspend(response);
-                        globalBaseRequest = baseRequest;
-                    }
+                continuation = ContinuationSupport.getContinuation(request);
+                continuation.suspend(response);
+                globalBaseRequest = baseRequest;
+            }
 //                }
 //            });
 
@@ -169,6 +169,7 @@ public class CameraPlugin implements Plugin {
             if (app == null) {
                 try {
                     response.sendError(500, "context is null");
+                    baseRequest.setHandled(true);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -180,6 +181,7 @@ public class CameraPlugin implements Plugin {
                 Log.e(TAG, "handle: WARNING pictureBytes is null");
                 try {
                     response.sendError(500);
+                    baseRequest.setHandled(true);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -187,58 +189,71 @@ public class CameraPlugin implements Plugin {
             }
             try {
                 response.getOutputStream().write(pictureBytes);
+                response.setStatus(200);
+                baseRequest.setHandled(true);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            response.setStatus(200);
+
             return true;
         } else return false;
     }
 
-    public static void handleCameraImageTaken(Context context, Bitmap img) {
+    public static void handleCameraImageTaken(final Context context, final Bitmap img) {
         Log.e(TAG, "handleCameraImageTaken: ");
-        if (globalBaseRequest == null || continuation == null) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (globalBaseRequest == null || continuation == null) {
 
-            Log.e(TAG, "handleCameraImageTaken: WARNING: " + continuation + " " + globalBaseRequest);
-            return;
-        }
-        try {
-            if (img == null) {
-                globalBaseRequest.setHandled(true);
-                ((HttpServletResponse) continuation.getServletResponse()).setStatus(204);
-                return;
-            }
-            String id = writeToFile(context, img);
-            if (id != null) {
-                JSONObject respJson = new JSONObject();
-                try {
-                    respJson.put("id", id);
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "handleCameraImageTaken: WARNING: " + continuation + " " + globalBaseRequest);
+                    return;
                 }
-                Log.e(TAG, "handleCameraImageTaken: wrote image to: " + id);
                 try {
-                    continuation.getServletResponse().getWriter().write(respJson.toString());
-                    ((HttpServletResponse) continuation.getServletResponse()).setStatus(200);
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    if (img == null) {
+                        ((HttpServletResponse) continuation.getServletResponse()).setStatus(204);
+                        globalBaseRequest.setHandled(true);
+                        continuation.complete();
+                        continuation = null;
+                        return;
+                    }
+                    String id = writeToFile(context, img);
+                    if (id != null) {
+                        JSONObject respJson = new JSONObject();
+                        try {
+                            respJson.put("id", id);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        Log.e(TAG, "handleCameraImageTaken: wrote image to: " + id);
+                        try {
+                            ((HttpServletResponse) continuation.getServletResponse()).setStatus(200);
+                            continuation.getServletResponse().getWriter().write(respJson.toString());
+                            globalBaseRequest.setHandled(true);
+                            continuation.complete();
+                            continuation = null;
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                    } else {
+                        Log.e(TAG, "handleCameraImageTaken: error writing image");
+                        try {
+                            ((HttpServletResponse) continuation.getServletResponse()).sendError(500);
+                            globalBaseRequest.setHandled(true);
+                            continuation.complete();
+                            continuation = null;
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } finally {
+                    globalBaseRequest = null;
+                    continuation = null;
                 }
 
-            } else {
-                Log.e(TAG, "handleCameraImageTaken: error writing image");
-                try {
-                    ((HttpServletResponse) continuation.getServletResponse()).sendError(500);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
             }
-        } finally {
-            globalBaseRequest.setHandled(true);
-            if (continuation != null)
-                continuation.complete();
-            globalBaseRequest = null;
-            continuation = null;
-        }
+        }).start();
 
     }
 
@@ -255,11 +270,12 @@ public class CameraPlugin implements Plugin {
 
             File storageDir = new File(context.getFilesDir().getAbsolutePath() + "/pictures/");
             storageDir.mkdir();
-            File image = File.createTempFile(
-                    name,  /* prefix */
-                    ".jpeg",         /* suffix */
-                    storageDir      /* directory */
-            );
+//            File image = File.createTempFile(
+//                    name,  /* prefix */
+//                    ".jpeg",         /* suffix */
+//                    storageDir      /* directory */
+//            );
+            File image = new File(storageDir, name + ".jpeg");
 
             fileOutputStream = new FileOutputStream(image);
             fileOutputStream.write(out.toByteArray());
@@ -282,7 +298,7 @@ public class CameraPlugin implements Plugin {
         Log.e(TAG, "readPictureForId: " + id);
         try {
             //create FileInputStream object
-            FileInputStream fin = new FileInputStream(new File(context.getFilesDir().getAbsolutePath() + "/pictures/" + id));
+            FileInputStream fin = new FileInputStream(new File(context.getFilesDir().getAbsolutePath() + "/pictures/" + id + ".jpeg"));
 
             //create string from byte array
             return IOUtils.toByteArray(fin);
