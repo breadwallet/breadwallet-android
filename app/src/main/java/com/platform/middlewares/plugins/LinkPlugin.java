@@ -21,6 +21,8 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import static com.breadwallet.presenter.fragments.FragmentScanResult.address;
+
 /**
  * BreadWallet
  * <p/>
@@ -66,7 +68,7 @@ public class LinkPlugin implements Plugin {
             }
 
             if (url != null && url.startsWith("tel")) {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url.replace("/","")));
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url.replace("/", "")));
                 app.startActivity(intent);
             } else {
                 FirebaseCrash.report(new RuntimeException("could not handle url: " + url));
@@ -85,22 +87,20 @@ public class LinkPlugin implements Plugin {
                 }
                 return true;
             }
-            double destLatitude = 0;
-            double destLongitude = 0;
-            Geocoder geocoder = new Geocoder(app, Locale.getDefault());
-            try {
-                List<Address> list = geocoder.getFromLocationName("", 1);
-                destLatitude = list.get(0).getLatitude();
-                destLongitude = list.get(0).getLongitude();
-            } catch (IOException e) {
-                e.printStackTrace();
+            String address =  baseRequest.getParameter("address");
+            String fromPoint = baseRequest.getParameter("from_point");
+            if(address == null || fromPoint == null) {
+                try {
+                    response.sendError(500, "bad request");
+                    baseRequest.setHandled(true);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return true;
             }
-            Assert.assertTrue(destLatitude != 0);
-            Assert.assertTrue(destLongitude != 0);
-            //todo finish
-//            String uri = "http://maps.google.com/maps?f=d&hl=en&saddr=" + latitude1 + "," + longitude1 + "&daddr=" + destLatitude + "," + destLongitude;
-//            Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
-//            startActivity(Intent.createChooser(intent, "Select an application"));
+            String uri = "http://maps.google.com/maps?q=" +fromPoint + "&daddr=" + address + "&mode=driving";
+            Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
+            app.startActivity(Intent.createChooser(intent, "Select an application"));
             return true;
         } else return false;
 
