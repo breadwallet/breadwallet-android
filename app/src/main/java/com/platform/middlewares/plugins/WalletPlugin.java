@@ -1,6 +1,8 @@
 package com.platform.middlewares.plugins;
 
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.tools.util.BRStringFormatter;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.interfaces.Plugin;
 
@@ -9,10 +11,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import static com.breadwallet.tools.util.BRStringFormatter.getFormattedCurrencyString;
 import static com.google.firebase.analytics.FirebaseAnalytics.getInstance;
 
 /**
@@ -85,7 +90,32 @@ public class WalletPlugin implements Plugin {
 
             return true;
         } else if (target.startsWith("/_wallet/format")) {
+            String amount = request.getParameter("amount");
+            if (Utils.isNullOrEmpty(amount)) {
+                try {
+                    response.sendError(400);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                baseRequest.setHandled(true);
+                return true;
+            }
+            long satAmount;
 
+            if (amount.contains(".")) {
+                // assume full bitcoins
+                satAmount = new BigDecimal(amount).multiply(new BigDecimal("100000000")).longValue();
+            } else {
+                satAmount = Long.valueOf(amount);
+            }
+
+            try {
+                response.setStatus(200);
+                response.getWriter().write(BRStringFormatter.getFormattedCurrencyString(Locale.getDefault().getISO3Language(), satAmount));
+                baseRequest.setHandled(true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return true;
         }
         return false;
