@@ -177,7 +177,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         Uri data = intent.getData();
         if (data == null) return;
         String scheme = data.getScheme();
-        if (scheme != null && scheme.startsWith("bitcoin")) {
+        if (scheme != null && (scheme.startsWith("bitcoin") || scheme.startsWith("bitid"))) {
             String str = intent.getDataString();
             RequestHandler.processRequest(this, str);
         } else {
@@ -626,6 +626,11 @@ public class MainActivity extends FragmentActivity implements Observer {
                     CameraPlugin.handleCameraImageTaken(this, imageBitmap);
                 } else {
                     CameraPlugin.handleCameraImageTaken(this, null);
+                }
+                break;
+            case BRConstants.REQUEST_PHRASE_BITID:
+                if (resultCode == RESULT_OK) {
+                    RequestHandler.processBitIdResponse(this);
                 }
                 break;
 

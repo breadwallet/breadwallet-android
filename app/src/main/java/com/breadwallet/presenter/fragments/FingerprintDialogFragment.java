@@ -15,21 +15,17 @@ package com.breadwallet.presenter.fragments;/*
  */
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
-import android.content.DialogInterface;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
@@ -41,12 +37,14 @@ import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
+import com.breadwallet.tools.security.RequestHandler;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.security.FingerprintUiHelper;
-import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask;
 import com.breadwallet.wallet.BRWalletManager;
+
+import static com.breadwallet.tools.util.BRConstants.AUTH_FOR_BIT_ID;
 
 /**
  * A dialog which uses fingerprint APIs to authenticate the user, and falls back to password
@@ -181,6 +179,8 @@ public class FingerprintDialogFragment extends DialogFragment
         } else if (mode == BRConstants.AUTH_FOR_PAYMENT_PROTOCOL && paymentRequest != null) {
             if (paymentRequest.paymentURL == null || paymentRequest.paymentURL.isEmpty()) return;
             new PaymentProtocolPostPaymentTask(paymentRequest).execute();
+        } else if (mode == AUTH_FOR_BIT_ID){
+            RequestHandler.processBitIdResponse(getActivity());
         }
         dismiss();
     }

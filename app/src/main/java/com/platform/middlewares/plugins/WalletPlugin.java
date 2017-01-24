@@ -1,11 +1,14 @@
 package com.platform.middlewares.plugins;
 
+import android.util.Log;
+
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.util.BRStringFormatter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.interfaces.Plugin;
 
+import org.apache.commons.compress.utils.IOUtils;
 import org.eclipse.jetty.server.Request;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import static com.breadwallet.tools.util.BRStringFormatter.getFormattedCurrencyString;
 import static com.google.firebase.analytics.FirebaseAnalytics.getInstance;
+import static org.eclipse.jetty.http.HttpMethod.POST;
 
 /**
  * BreadWallet
@@ -49,8 +53,9 @@ public class WalletPlugin implements Plugin {
 
     @Override
     public boolean handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
+        if (!target.startsWith("/_wallet")) return false;
 
-        if (target.startsWith("/_wallet/info")) {
+        if (target.startsWith("/_wallet/info") && request.getMethod().equalsIgnoreCase("get")) {
             final MainActivity app = MainActivity.app;
             if (app == null) {
                 try {
@@ -89,7 +94,7 @@ public class WalletPlugin implements Plugin {
             }
 
             return true;
-        } else if (target.startsWith("/_wallet/format")) {
+        } else if (target.startsWith("/_wallet/format") && request.getMethod().equalsIgnoreCase("get")) {
             String amount = request.getParameter("amount");
             if (Utils.isNullOrEmpty(amount)) {
                 try {
@@ -117,7 +122,66 @@ public class WalletPlugin implements Plugin {
                 e.printStackTrace();
             }
             return true;
+        } else if (target.startsWith("/_wallet/sign_bitid") && request.getMethod().equalsIgnoreCase("post")) {
+            /**
+             * POST /_wallet/sign_bitid
+
+             Sign a message using the user's BitID private key. Calling this WILL trigger authentication
+
+             Request body: application/json
+             {
+             "prompt_string": "Sign in to My Service", // shown to the user in the authentication prompt
+             "string_to_sign": "https://bitid.org/bitid?x=2783408723", // the string to sign
+             "bitid_url": "https://bitid.org/bitid", // the bitid url for deriving the private key
+             "bitid_index": "0" // the bitid index as a string (just pass "0")
+             }
+
+             Response body: application/json
+             {
+             "signature": "oibwaeofbawoefb" // base64-encoded signature
+             }
+             */
+            String contentType = request.getHeader("content-type");
+            if (contentType == null || !contentType.equalsIgnoreCase("application/json")) {
+                try {
+                    response.sendError(400);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                baseRequest.setHandled(true);
+                return true;
+            }
+            String strResp = null;
+            try {
+                strResp = new String(IOUtils.toByteArray(request.getInputStream()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (Utils.isNullOrEmpty(strResp)) {
+                try {
+                    response.sendError(400);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                baseRequest.setHandled(true);
+                return true;
+            }
+
+            String stringToSign = null;
+            String bitIdUrl = null;
+            int bitIdIndex = 0;
+
+            try {
+                JSONObject obj = new JSONObject(strResp);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return true;
         }
-        return false;
+
+        Log.e(TAG, "handle: WALLET PLUGIN DID NOT HANDLE: " + target + " (" + request.getMethod() + ")");
+        return true;
     }
 }

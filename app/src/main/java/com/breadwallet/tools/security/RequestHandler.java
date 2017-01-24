@@ -1,26 +1,34 @@
 package com.breadwallet.tools.security;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.app.Activity;
 import android.os.Handler;
 import android.util.Log;
 
 import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
+import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.presenter.entities.RequestObject;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
+import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.wallet.BRWalletManager;
+import com.jniwrappers.BRBIP32Sequence;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLDecoder;
-import java.security.InvalidAlgorithmParameterException;
+import java.security.Key;
+import java.util.Arrays;
+import java.util.Collections;
+
+import static com.breadwallet.tools.util.BRConstants.AUTH_FOR_BIT_ID;
+import static com.breadwallet.tools.util.BRConstants.REQUEST_PHRASE_BITID;
+import static com.breadwallet.tools.util.TypesConverter.getNullTerminatedPhrase;
 
 /**
  * BreadWallet
@@ -51,8 +59,10 @@ public class RequestHandler {
     private static final String TAG = RequestHandler.class.getName();
     private static final Object lockObject = new Object();
 
-    public static synchronized boolean processRequest(MainActivity app, String address) {
-        RequestObject requestObject = getRequestFromString(address);
+    public static synchronized boolean processRequest(MainActivity app, String uri) {
+        if (uri == null) return false;
+
+        RequestObject requestObject = getRequestFromString(uri);
         if (requestObject == null) {
             if (app != null) {
                 ((BreadWalletApp) app.getApplication()).showCustomDialog(app.getString(R.string.warning),
@@ -73,8 +83,70 @@ public class RequestHandler {
         }
     }
 
-    public static RequestObject getRequestFromString(String str)
-            {
+    public static boolean tryBitIdUri(Activity app, String uri, String title, String message) {
+        if (uri == null) return false;
+
+        URI bitIdUri = null;
+        Log.e(TAG, "tryBitIdUri: uri: " + uri);
+        try {
+            bitIdUri = new URI(uri);
+            Log.e(TAG, "tryBitIdUri: bitIdUri: " + bitIdUri);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
+        if (bitIdUri != null && "bitid".equals(bitIdUri.getScheme())) {
+            if (app == null) {
+                Log.e(TAG, "tryBitIdUri: app is null, returning true still");
+                return true;
+            }
+
+            //ask for phrase, will system auth if needed
+            byte[] phrase = null;
+            try {
+                phrase = KeyStoreManager.getKeyStorePhrase(app, REQUEST_PHRASE_BITID);
+                ((BreadWalletApp) app.getApplicationContext()).promptForAuthentication(app, AUTH_FOR_BIT_ID, null, message, title, null, false);
+            } catch (BRKeystoreErrorException e) {
+                //asked the system, no need for local auth
+                e.printStackTrace();
+            } finally {
+                //free the phrase
+                if (phrase != null) Arrays.fill(phrase, (byte) 0);
+            }
+
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+    public static void processBitIdResponse(Activity app) {
+        if (app == null) {
+            Log.e(TAG, "processBitIdResponse: app is null");
+            return;
+        }
+        try {
+            byte[] phrase = KeyStoreManager.getKeyStorePhrase(app, REQUEST_PHRASE_BITID);
+            byte[] nulTermPhrase = TypesConverter.getNullTerminatedPhrase(phrase);
+            byte[] seed = BRWalletManager.getSeedFromPhrase(nulTermPhrase);
+            if (seed == null) {
+                Log.e(TAG, "processBitIdResponse: seed is null!");
+                return;
+            }
+            byte[] bitIdPrivKey = BRBIP32Sequence.getInstance().bip32BitIDKey(seed);
+            if (bitIdPrivKey == null) {
+                Log.d(TAG, "processBitIdResponse: bitIdPrivKey is null!");
+                return;
+            }
+
+        } catch (BRKeystoreErrorException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static RequestObject getRequestFromString(String str) {
         if (str == null || str.isEmpty()) return null;
         RequestObject obj = new RequestObject();
 

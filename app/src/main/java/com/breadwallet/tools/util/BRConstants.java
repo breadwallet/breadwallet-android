@@ -43,6 +43,7 @@ public class BRConstants {
     public static final int AUTH_FOR_GENERAL = 13;
     public static final int AUTH_FOR_LIMIT = 14;
     public static final int AUTH_FOR_PAYMENT_PROTOCOL = 15;
+    public static final int AUTH_FOR_BIT_ID = 16;
 
     /**
      * BlockHeight prefs
@@ -57,7 +58,7 @@ public class BRConstants {
     public static final int CAMERA_REQUEST_GLIDERA_ID = 36;
 
     /**
-     * Request codes
+     * Request codes for auth
      */
     public static final int SHOW_PHRASE_REQUEST_CODE = 111;
     public static final int PAY_REQUEST_CODE = 112;
@@ -65,7 +66,12 @@ public class BRConstants {
     public static final int PUT_PHRASE_NEW_WALLET_REQUEST_CODE = 114;
     public static final int PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE = 115;
     public static final int PAYMENT_PROTOCOL_REQUEST_CODE = 116;
-    public static final int REQUEST_IMAGE_CAPTURE = 117;
+    public static final int REQUEST_PHRASE_BITID = 117;
+
+    /**
+     * Request codes for take picture
+     */
+    public static final int REQUEST_IMAGE_CAPTURE = 111;
 
     public static final String CANARY_STRING = "canary";
     public static final String FIRST_ADDRESS = "firstAddress";

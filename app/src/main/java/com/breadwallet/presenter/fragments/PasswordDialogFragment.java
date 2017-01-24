@@ -33,10 +33,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.security.keystore.UserNotAuthenticatedException;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -49,7 +47,6 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
-import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.activities.PhraseFlowActivity;
@@ -58,6 +55,7 @@ import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRTipsManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
+import com.breadwallet.tools.security.RequestHandler;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRStringFormatter;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
@@ -71,6 +69,7 @@ import com.breadwallet.wallet.BRWalletManager;
 import java.util.Locale;
 
 import static com.breadwallet.tools.security.KeyStoreManager.putLastPasscodeUsedTime;
+import static com.breadwallet.tools.util.BRConstants.AUTH_FOR_BIT_ID;
 
 public class PasswordDialogFragment extends DialogFragment {
 
@@ -112,7 +111,7 @@ public class PasswordDialogFragment extends DialogFragment {
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
         Activity app = getActivity();
-        if(app ==  null) return;
+        if (app == null) return;
         long passTime = 0;
         passTime = KeyStoreManager.getLastPasscodeUsedTime(app);
         if (forceDialogStayOn && (passTime + BRConstants.PASS_CODE_TIME_LIMIT <= System.currentTimeMillis())) {
@@ -384,11 +383,13 @@ public class PasswordDialogFragment extends DialogFragment {
                 } else if (mode == BRConstants.AUTH_FOR_LIMIT) {
                     BRAnimator.animateSlideToLeft((MainActivity) getActivity(), new FragmentSpendLimit(), new FragmentSettings());
                 } else if (mode == BRConstants.AUTH_FOR_PAY && request != null) {
-                    PostAuthenticationProcessor.getInstance().onPublishTxAuth((MainActivity) getActivity(),false);
+                    PostAuthenticationProcessor.getInstance().onPublishTxAuth((MainActivity) getActivity(), false);
                 } else if (mode == BRConstants.AUTH_FOR_PAYMENT_PROTOCOL && paymentRequest != null) {
                     if (paymentRequest.paymentURL == null || paymentRequest.paymentURL.isEmpty())
                         return false;
                     new PaymentProtocolPostPaymentTask(paymentRequest).execute();
+                } else if (mode == AUTH_FOR_BIT_ID) {
+                    RequestHandler.processBitIdResponse(getActivity());
                 }
             } else {
                 SpringAnimator.failShakeAnimation(getActivity(), dialogFragment.getView());
