@@ -108,7 +108,7 @@ public class GeoLocationManager {
                     RuntimeException ex = new RuntimeException("startGeoSocket, can't happen");
                     Log.e(TAG, "run: startGeoSocket, can't happen");
                     FirebaseCrash.report(ex);
-                    throw ex;
+                    return;
                 }
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, socketLocationListener);
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, socketLocationListener);

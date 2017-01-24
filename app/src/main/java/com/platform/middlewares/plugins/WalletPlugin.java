@@ -1,11 +1,19 @@
 package com.platform.middlewares.plugins;
 
+import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.wallet.BRWalletManager;
 import com.platform.interfaces.Plugin;
 
 import org.eclipse.jetty.server.Request;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import static com.google.firebase.analytics.FirebaseAnalytics.getInstance;
 
 /**
  * BreadWallet
@@ -36,6 +44,50 @@ public class WalletPlugin implements Plugin {
 
     @Override
     public boolean handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
+
+        if (target.startsWith("/_wallet/info")) {
+            final MainActivity app = MainActivity.app;
+            if (app == null) {
+                try {
+                    response.sendError(500, "context is null");
+                    baseRequest.setHandled(true);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return true;
+            }
+            BRWalletManager wm = BRWalletManager.getInstance(app);
+            JSONObject jsonResp = new JSONObject();
+            try {
+                jsonResp.put("no_wallet", wm.noWalletForPlatform(app));
+                jsonResp.put("watch_only", false);
+                jsonResp.put("receive_address", BRWalletManager.getReceiveAddress());
+                response.setStatus(200);
+                response.getWriter().write(jsonResp.toString());
+                baseRequest.setHandled(true);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                try {
+                    response.sendError(500, "json error");
+                    baseRequest.setHandled(true);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                try {
+                    response.sendError(500, "IO exception: " + e.getMessage());
+                    baseRequest.setHandled(true);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+
+            return true;
+        } else if (target.startsWith("/_wallet/format")) {
+
+            return true;
+        }
         return false;
     }
 }

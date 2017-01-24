@@ -198,6 +198,11 @@ public class BRWalletManager {
         return false;
     }
 
+    public boolean noWalletForPlatform(Activity ctx) {
+        byte[] pubkey = KeyStoreManager.getMasterPublicKey(ctx);
+        return pubkey == null || pubkey.length == 0;
+    }
+
     /**
      * true if device passcode is enabled
      */
