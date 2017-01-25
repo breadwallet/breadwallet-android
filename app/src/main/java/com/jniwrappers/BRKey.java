@@ -41,6 +41,6 @@ public class BRKey {
 
     public native byte[] decryptNative(byte[] data, byte[] nonce);
 
-    public native String addressForKey(byte[] key);
+    public native String address();
 
 }

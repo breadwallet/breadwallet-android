@@ -17,6 +17,7 @@ import com.breadwallet.tools.threads.PaymentProtocolTask;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.wallet.BRWalletManager;
 import com.jniwrappers.BRBIP32Sequence;
+import com.jniwrappers.BRKey;
 import com.platform.tools.BRBitId;
 
 import org.json.JSONException;
@@ -196,17 +197,19 @@ public class RequestHandler {
             }
 
             byte[] key = BRBIP32Sequence.getInstance().bip32BitIDKey(seed, _index, _bitUri);
-            String sig = BRBitId.signMessage(_strToSign, key);
 
             if (key == null) {
                 Log.d(TAG, "processBitIdResponse: key is null!");
                 return;
             }
-            Log.e(TAG, "processBitIdResponse: " + uri);
-            Log.e(TAG, "processBitIdResponse: getScheme: " + uri.getScheme());
-            Log.e(TAG, "processBitIdResponse: getHost: " + uri.getHost());
-            Log.e(TAG, "processBitIdResponse: getPath: " + uri.getPath());
-            Log.e(TAG, "processBitIdResponse: getQuery: " + uri.getQuery());
+
+            String sig = BRBitId.signMessage(_strToSign, key);
+            String address = new BRKey(key).address();
+            Log.e(TAG, "processBitIdResponse: sig:" + sig);
+            Log.e(TAG, "processBitIdResponse: address:" + address);
+
+            String callbackUrl = uri.getHost() + uri.getPath();
+            Log.e(TAG, "processBitIdResponse: callbackUrl: " + callbackUrl);
 
         } catch (BRKeystoreErrorException e) {
             e.printStackTrace();

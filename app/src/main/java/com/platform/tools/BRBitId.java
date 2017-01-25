@@ -40,7 +40,7 @@ public class BRBitId {
         return BRBase58.getInstance().base58Encode(signature);
     }
 
-    public static byte[] formatMessageForBitcoinSigning(String message){
+    public static byte[] formatMessageForBitcoinSigning(String message) {
         byte[] headerBytes = null;
         byte[] messageBytes = null;
         try {
@@ -53,7 +53,7 @@ public class BRBitId {
         assert (messageBytes != null);
         if (headerBytes == null || messageBytes == null) return new byte[0];
 
-        ByteBuffer dataBuffer = ByteBuffer.allocate(0);     //allocate 0 bytes
+        ByteBuffer dataBuffer = ByteBuffer.allocate(1 + headerBytes.length + 4 + messageBytes.length);
         dataBuffer.put((byte) headerBytes.length);          //put header count
         dataBuffer.put(headerBytes);                        //put the header
         dataBuffer.putInt(messageBytes.length);             //put message count
