@@ -7,6 +7,7 @@
 #include <BRKey.h>
 #include <android/log.h>
 #include <BRCrypto.h>
+#include <BRAddress.h>
 #include "JNIKey.h"
 
 static BRKey _key;
@@ -52,7 +53,8 @@ JNIEXPORT jbyteArray JNICALL Java_com_jniwrappers_BRKey_encryptNative(JNIEnv *en
     uint8_t out[16 + dataSize];
 
     size_t outSize = BRChacha20Poly1305AEADEncrypt(out, sizeof(out), &_key, (uint8_t *) byteNonce,
-                                                   (uint8_t *) byteData, (size_t) dataSize, NULL, 0);
+                                                   (uint8_t *) byteData, (size_t) dataSize, NULL,
+                                                   0);
 
     jbyteArray result = (*env)->NewByteArray(env, (jsize) outSize);
     (*env)->SetByteArrayRegion(env, result, 0, (jsize) outSize, (const jbyte *) out);
@@ -72,7 +74,8 @@ JNIEXPORT jbyteArray JNICALL Java_com_jniwrappers_BRKey_decryptNative(JNIEnv *en
 
     uint8_t out[dataSize];
 
-    size_t outSize = BRChacha20Poly1305AEADDecrypt(out, sizeof(out), &_key, (uint8_t *) byteNonce, (uint8_t *) byteData,
+    size_t outSize = BRChacha20Poly1305AEADDecrypt(out, sizeof(out), &_key, (uint8_t *) byteNonce,
+                                                   (uint8_t *) byteData,
                                                    (size_t) (dataSize), NULL, 0);
     jbyteArray result = (*env)->NewByteArray(env, (jsize) outSize);
     (*env)->SetByteArrayRegion(env, result, 0, (jsize) outSize, (const jbyte *) out);
@@ -80,6 +83,14 @@ JNIEXPORT jbyteArray JNICALL Java_com_jniwrappers_BRKey_decryptNative(JNIEnv *en
     (*env)->ReleaseByteArrayElements(env, data, byteData, 0);
     (*env)->ReleaseByteArrayElements(env, nonce, byteNonce, 0);
     return result;
+}
+
+
+JNIEXPORT jbyteArray JNICALL Java_com_jniwrappers_BRKey_addressForKey(JNIEnv *env, jobject thiz) {
+
+    BRAddress address = BR_ADDRESS_NONE;
+    BRKeyAddress(&_key, address.s, sizeof(address));
+    return (*env)->NewStringUTF(env, address.s);
 }
 
 //// chacha20-poly1305 authenticated encryption with associated data (AEAD): https://tools.ietf.org/html/rfc7539

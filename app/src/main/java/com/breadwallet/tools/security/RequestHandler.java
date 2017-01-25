@@ -197,6 +197,7 @@ public class RequestHandler {
 
             byte[] key = BRBIP32Sequence.getInstance().bip32BitIDKey(seed, _index, _bitUri);
             String sig = BRBitId.signMessage(_strToSign, key);
+
             if (key == null) {
                 Log.d(TAG, "processBitIdResponse: key is null!");
                 return;
@@ -206,7 +207,6 @@ public class RequestHandler {
             Log.e(TAG, "processBitIdResponse: getHost: " + uri.getHost());
             Log.e(TAG, "processBitIdResponse: getPath: " + uri.getPath());
             Log.e(TAG, "processBitIdResponse: getQuery: " + uri.getQuery());
-
 
         } catch (BRKeystoreErrorException e) {
             e.printStackTrace();
