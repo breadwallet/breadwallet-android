@@ -1,5 +1,8 @@
 package com.platform.tools;
 
+import com.jniwrappers.BRBase58;
+import com.jniwrappers.BRKey;
+
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 
@@ -29,13 +32,12 @@ import java.nio.ByteBuffer;
  */
 public class BRBitId {
     public static final String TAG = BRBitId.class.getName();
-
     public static final String BITCOIN_SIGNED_MESSAGE_HEADER = "Bitcoin Signed Message:\n";
 
-
-    public static byte[] signMessage(String message, byte[] key) {
-//        byte[] signingData = formatMessageForBitcoinSigning(message);
-
+    public static String signMessage(String message, byte[] key) {
+        byte[] signingData = formatMessageForBitcoinSigning(message);
+        byte[] signature = new BRKey(key).compactSign(signingData);
+        return BRBase58.getInstance().base58Encode(signature);
     }
 
     public static byte[] formatMessageForBitcoinSigning(String message){

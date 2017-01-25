@@ -196,7 +196,7 @@ public class RequestHandler {
             }
 
             byte[] key = BRBIP32Sequence.getInstance().bip32BitIDKey(seed, _index, _bitUri);
-            byte[] sig = BRBitId.signMessage(_strToSign, key);
+            String sig = BRBitId.signMessage(_strToSign, key);
             if (key == null) {
                 Log.d(TAG, "processBitIdResponse: key is null!");
                 return;
