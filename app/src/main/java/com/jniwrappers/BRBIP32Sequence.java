@@ -39,5 +39,5 @@ public class BRBIP32Sequence {
         return instance;
     }
 
-    public native byte[] bip32BitIDKey(byte[] seed);
+    public native byte[] bip32BitIDKey(byte[] seed, int index, String uri);
 }

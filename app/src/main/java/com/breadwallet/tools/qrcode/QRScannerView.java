@@ -215,7 +215,7 @@ public class QRScannerView extends FrameLayout implements Camera.PreviewCallback
                     });
                     return;
                 }
-                boolean isBitIdUri = RequestHandler.tryBitIdUri(app, resultedText, null, null);
+                boolean isBitIdUri = RequestHandler.tryBitIdUri(app, resultedText, null);
                 if (isBitIdUri) {
                     app.runOnUiThread(new Runnable() {
                         @Override
