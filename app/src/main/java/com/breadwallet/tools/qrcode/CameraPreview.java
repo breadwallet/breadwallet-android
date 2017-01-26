@@ -120,23 +120,16 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     }
 
     public void stopCameraPreview() {
-        if (cameraSingleton != null) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        previewing = false;
-                        getHolder().removeCallback(CameraPreview.this);
-                        cameraSingleton.camera.cancelAutoFocus();
-                        cameraSingleton.camera.setOneShotPreviewCallback(null);
-                        cameraSingleton.camera.stopPreview();
-                    } catch (Exception e) {
-                        Log.e(TAG, e.toString(), e);
-                    }
-                }
-            }).start();
-
+        try {
+            previewing = false;
+            getHolder().removeCallback(CameraPreview.this);
+            cameraSingleton.camera.cancelAutoFocus();
+            cameraSingleton.camera.setOneShotPreviewCallback(null);
+            cameraSingleton.camera.stopPreview();
+        } catch (Exception e) {
+            Log.e(TAG, e.toString(), e);
         }
+
     }
 
     public void setupCameraParameters() {

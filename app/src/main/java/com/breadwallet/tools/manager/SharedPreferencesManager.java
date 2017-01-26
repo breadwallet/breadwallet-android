@@ -3,6 +3,7 @@ package com.breadwallet.tools.manager;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Base64;
 import android.util.Base64InputStream;
 import android.util.Base64OutputStream;
@@ -14,12 +15,16 @@ import com.breadwallet.presenter.fragments.FragmentCurrency;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.BRWalletManager;
 
+import org.json.JSONArray;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Currency;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
@@ -175,6 +180,33 @@ public class SharedPreferencesManager {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt(BRConstants.LIMIT_PREFS, limit);
+        editor.apply();
+    }
+
+    public static List<Integer> getBitIdNonces(Activity activity, String key) {
+        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        String result = prefs.getString(key, null);
+        List<Integer> list = new ArrayList<>();
+        try {
+            JSONArray arr = new JSONArray(result);
+            for (int i = 0; i < arr.length(); i++) {
+                int a = arr.getInt(i);
+                Log.d("found a nonce: ", a + "");
+                list.add(a);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public static void putBitIdNonces(Activity activity, List<Integer> nonces, String key) {
+        JSONArray arr = new JSONArray();
+        arr.put(nonces);
+        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(key, arr.toString());
         editor.apply();
     }
 

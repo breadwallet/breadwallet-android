@@ -13,11 +13,13 @@ import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.presenter.entities.RequestObject;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.wallet.BRWalletManager;
 import com.jniwrappers.BRBIP32Sequence;
 import com.jniwrappers.BRKey;
+import com.platform.APIClient;
 import com.platform.tools.BRBitId;
 
 import org.json.JSONException;
@@ -31,8 +33,16 @@ import java.net.URLDecoder;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Locale;
+
+import okhttp3.HttpUrl;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 import static android.R.attr.data;
+import static android.R.attr.value;
+import static android.R.attr.version;
 import static com.breadwallet.R.string.request;
 import static com.breadwallet.presenter.fragments.FragmentPhraseFlow1.phrase;
 import static com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask.message;
@@ -169,58 +179,113 @@ public class RequestHandler {
 
     }
 
-    public static void processBitIdResponse(Activity app) {
-        byte[] phrase = null;
-        byte[] nulTermPhrase = null;
-        byte[] seed = null;
-        try {
-            if (app == null) {
-                Log.e(TAG, "processBitIdResponse: app is null");
-                return;
-            }
-            if (_bitUri == null) {
-                Log.e(TAG, "processBitIdResponse: _bitUri is null");
-                return;
-            }
-
-            Uri uri = Uri.parse(_bitUri);
-            phrase = KeyStoreManager.getKeyStorePhrase(app, REQUEST_PHRASE_BITID);
-            nulTermPhrase = TypesConverter.getNullTerminatedPhrase(phrase);
-            seed = BRWalletManager.getSeedFromPhrase(nulTermPhrase);
-            if (seed == null) {
-                Log.e(TAG, "processBitIdResponse: seed is null!");
-                return;
-            }
-            if (_strToSign == null) {
-                Log.e(TAG, "processBitIdResponse: _strToSign is null!");
-                return;
-            }
-
-            byte[] key = BRBIP32Sequence.getInstance().bip32BitIDKey(seed, _index, _bitUri);
-
-            if (key == null) {
-                Log.d(TAG, "processBitIdResponse: key is null!");
-                return;
-            }
-
-            String sig = BRBitId.signMessage(_strToSign, key);
-            String address = new BRKey(key).address();
-            Log.e(TAG, "processBitIdResponse: sig:" + sig);
-            Log.e(TAG, "processBitIdResponse: address:" + address);
-
-            String callbackUrl = uri.getHost() + uri.getPath();
-            Log.e(TAG, "processBitIdResponse: callbackUrl: " + callbackUrl);
-
-        } catch (BRKeystoreErrorException e) {
-            e.printStackTrace();
-        } finally {
-            //release everything
-            _bitUri = null;
-            if (phrase != null) Arrays.fill(phrase, (byte) 0);
-            if (nulTermPhrase != null) Arrays.fill(nulTermPhrase, (byte) 0);
-            if (seed != null) Arrays.fill(seed, (byte) 0);
+    public static void processBitIdResponse(final Activity app) {
+        final byte[] phrase;
+        final byte[] nulTermPhrase;
+        final byte[] seed;
+        if (app == null) {
+            Log.e(TAG, "processBitIdResponse: app is null");
+            return;
+        }
+        if (_bitUri == null) {
+            Log.e(TAG, "processBitIdResponse: _bitUri is null");
+            return;
         }
 
+        final Uri uri = Uri.parse(_bitUri);
+        try {
+            phrase = KeyStoreManager.getKeyStorePhrase(app, REQUEST_PHRASE_BITID);
+        } catch (BRKeystoreErrorException e) {
+            e.printStackTrace();
+            return;
+        }
+        nulTermPhrase = TypesConverter.getNullTerminatedPhrase(phrase);
+        seed = BRWalletManager.getSeedFromPhrase(nulTermPhrase);
+        if (seed == null) {
+            Log.e(TAG, "processBitIdResponse: seed is null!");
+            return;
+        }
+        if (_strToSign == null) {
+            Log.e(TAG, "processBitIdResponse: _strToSign is null!");
+            return;
+        }
+
+        byte[] key = BRBIP32Sequence.getInstance().bip32BitIDKey(seed, _index, _bitUri);
+
+        if (key == null) {
+            Log.d(TAG, "processBitIdResponse: key is null!");
+            return;
+        }
+
+        final String sig = BRBitId.signMessage(_strToSign, key);
+        final String address = new BRKey(key).address();
+        Log.e(TAG, "processBitIdResponse: sig:" + sig);
+        Log.e(TAG, "processBitIdResponse: address:" + address);
+
+        //run the callback
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String nonce = null;
+                    String scheme = "https";
+                    String query = uri.getQuery();
+                    if (query == null) {
+                        Log.e(TAG, "run: Malformed URI");
+                        return;
+                    }
+
+                    String u = uri.getQueryParameter("u");
+                    if (u != null) {
+                        scheme = "http";
+                    }
+
+                    String x = uri.getQueryParameter("x");
+                    if (x != null) {
+                        nonce = x;              // service is providing a nonce
+                    } else {
+                        nonce = newNonce(uri.getHost() + uri.getPath());     // we are generating our own nonce
+                    }
+
+                    String callbackUrl = String.format("%s://%s%s", scheme, uri.getHost(), uri.getPath());
+                    // build a payload consisting of the signature, address and signed uri
+                    String uriWithNonce = String.format("bitid://%s%s?x=%s", uri.getHost(), uri.getPath(), nonce);
+
+
+                    JSONObject postBody = new JSONObject();
+                    try {
+                        postBody.put("address", address);
+                        postBody.put("signature", sig);
+                        postBody.put("uri", uriWithNonce);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+//
+//
+                    RequestBody requestBody = RequestBody.create(null, postBody.toString());
+                    okhttp3.Request request = new okhttp3.Request.Builder()
+                            .url(HttpUrl.parse(callbackUrl))
+                            .post(requestBody)
+                            .header("Content-Type", "application/json")
+                            .build();
+                    Response res = APIClient.getInstance(app).sendRequest(request, true);
+                    Log.e(TAG, "processBitIdResponse: res.code: " + res.code());
+                } catch (BRKeystoreErrorException e) {
+                    e.printStackTrace();
+                } finally {
+                    //release everything
+                    _bitUri = null;
+                    if (phrase != null) Arrays.fill(phrase, (byte) 0);
+                    if (nulTermPhrase != null) Arrays.fill(nulTermPhrase, (byte) 0);
+                    if (seed != null) Arrays.fill(seed, (byte) 0);
+                }
+            }
+        }).start();
+
+    }
+
+    public static String newNonce(String nonceKey) {
+        SharedPreferencesManager.putBitIdNonces();
     }
 
     public static RequestObject getRequestFromString(String str) {
