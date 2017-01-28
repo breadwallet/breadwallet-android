@@ -1,6 +1,7 @@
 package com.breadwallet.tools.security;
 
 import android.app.Activity;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Handler;
 import android.util.Log;
@@ -25,14 +26,17 @@ import com.platform.tools.BRBitId;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.security.Key;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
 import okhttp3.HttpUrl;
@@ -193,6 +197,8 @@ public class RequestHandler {
         }
 
         final Uri uri = Uri.parse(_bitUri);
+        Log.e(TAG, "processBitIdResponse: _bitUri: " + _bitUri);
+        Log.e(TAG, "processBitIdResponse: uri: " + uri);
         try {
             phrase = KeyStoreManager.getKeyStorePhrase(app, REQUEST_PHRASE_BITID);
         } catch (BRKeystoreErrorException e) {
@@ -210,17 +216,12 @@ public class RequestHandler {
             return;
         }
 
-        byte[] key = BRBIP32Sequence.getInstance().bip32BitIDKey(seed, _index, _bitUri);
+        final byte[] key = BRBIP32Sequence.getInstance().bip32BitIDKey(seed, _index, _bitUri);
 
         if (key == null) {
             Log.d(TAG, "processBitIdResponse: key is null!");
             return;
         }
-
-        final String sig = BRBitId.signMessage(_strToSign, key);
-        final String address = new BRKey(key).address();
-        Log.e(TAG, "processBitIdResponse: sig:" + sig);
-        Log.e(TAG, "processBitIdResponse: address:" + address);
 
         //run the callback
         new Thread(new Runnable() {
@@ -244,13 +245,22 @@ public class RequestHandler {
                     if (x != null) {
                         nonce = x;              // service is providing a nonce
                     } else {
-                        nonce = newNonce(uri.getHost() + uri.getPath());     // we are generating our own nonce
+                        nonce = newNonce(app, uri.getHost() + uri.getPath());     // we are generating our own nonce
                     }
 
+                    //the callback for the post
                     String callbackUrl = String.format("%s://%s%s", scheme, uri.getHost(), uri.getPath());
                     // build a payload consisting of the signature, address and signed uri
+
                     String uriWithNonce = String.format("bitid://%s%s?x=%s", uri.getHost(), uri.getPath(), nonce);
 
+                    Log.e(TAG, "run: callbackUrl: " + callbackUrl);
+                    Log.e(TAG, "run: uriWithNonce: " + uriWithNonce);
+
+                    final String sig = BRBitId.signMessage(_strToSign, key);
+                    final String address = new BRKey(key).address();
+                    Log.e(TAG, "processBitIdResponse: sig:" + sig);
+                    Log.e(TAG, "processBitIdResponse: address:" + address);
 
                     JSONObject postBody = new JSONObject();
                     try {
@@ -260,18 +270,22 @@ public class RequestHandler {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-//
-//
+
                     RequestBody requestBody = RequestBody.create(null, postBody.toString());
-                    okhttp3.Request request = new okhttp3.Request.Builder()
-                            .url(HttpUrl.parse(callbackUrl))
+                    Request request = new Request.Builder()
+                            .url(callbackUrl + "?x=" + nonce)
                             .post(requestBody)
                             .header("Content-Type", "application/json")
                             .build();
+                    Log.e(TAG, "run: sending request with url: " + request.url());
                     Response res = APIClient.getInstance(app).sendRequest(request, true);
                     Log.e(TAG, "processBitIdResponse: res.code: " + res.code());
-                } catch (BRKeystoreErrorException e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "processBitIdResponse: res.code: " + res.message());
+                    try {
+                        Log.e(TAG, "run: body: " + res.body().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 } finally {
                     //release everything
                     _bitUri = null;
@@ -284,8 +298,19 @@ public class RequestHandler {
 
     }
 
-    public static String newNonce(String nonceKey) {
-        SharedPreferencesManager.putBitIdNonces();
+    public static String newNonce(Activity app, String nonceKey) {
+        // load previous nonces. we save all nonces generated for each service
+        // so they are not used twice from the same device
+        List<Integer> existingNonces = SharedPreferencesManager.getBitIdNonces(app, nonceKey);
+
+        String nonce = "";
+        while (existingNonces.contains(nonce)) {
+            nonce = String.valueOf(System.currentTimeMillis() / 1000);
+        }
+        existingNonces.add(Integer.valueOf(nonce));
+        SharedPreferencesManager.putBitIdNonces(app, existingNonces, nonceKey);
+
+        return nonce;
     }
 
     public static RequestObject getRequestFromString(String str) {

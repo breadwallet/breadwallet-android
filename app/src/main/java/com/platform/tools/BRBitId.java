@@ -1,10 +1,13 @@
 package com.platform.tools;
 
+import android.util.Log;
+
 import com.jniwrappers.BRBase58;
 import com.jniwrappers.BRKey;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 /**
  * BreadWallet
@@ -41,8 +44,12 @@ public class BRBitId {
     }
 
     public static byte[] formatMessageForBitcoinSigning(String message) {
+        Log.e(TAG, "formatMessageForBitcoinSigning: ");
         byte[] headerBytes = null;
         byte[] messageBytes = null;
+        Log.e(TAG, "head: " + BITCOIN_SIGNED_MESSAGE_HEADER);
+        Log.e(TAG, "message: " + message);
+
         try {
             headerBytes = BITCOIN_SIGNED_MESSAGE_HEADER.getBytes("UTF-8");
             messageBytes = message.getBytes("UTF-8");
@@ -53,12 +60,18 @@ public class BRBitId {
         assert (messageBytes != null);
         if (headerBytes == null || messageBytes == null) return new byte[0];
 
-        ByteBuffer dataBuffer = ByteBuffer.allocate(1 + headerBytes.length + 4 + messageBytes.length);
+        int cap = 1 + headerBytes.length + 4 + messageBytes.length;
+        Log.e(TAG, "cap: " + cap);
+        Log.e(TAG, "messageBytes: " + Arrays.toString(messageBytes));
+        Log.e(TAG, "headerBytes: " + Arrays.toString(headerBytes));
+        ByteBuffer dataBuffer = ByteBuffer.allocate(cap).order(java.nio.ByteOrder.LITTLE_ENDIAN);
         dataBuffer.put((byte) headerBytes.length);          //put header count
         dataBuffer.put(headerBytes);                        //put the header
         dataBuffer.putInt(messageBytes.length);             //put message count
         dataBuffer.put(messageBytes);                       //put the message
-
-        return dataBuffer.array();
+        byte[] result = dataBuffer.array();
+        Log.e(TAG, "result.length: " + result.length);
+        Log.e(TAG, "result: " + Arrays.toString(result));
+        return result;
     }
 }

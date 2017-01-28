@@ -442,6 +442,7 @@ public class APIClient {
         byte[] patchBytes = null;
         try {
             patchFile = new File(String.format("/%s/%s.diff", BUNDLES, "patch"));
+            patchFile.mkdirs();
             patchBytes = diffResponse.body().bytes();
             FileUtils.writeByteArrayToFile(patchFile, patchBytes);
 
@@ -451,7 +452,7 @@ public class APIClient {
             FileUI.diff(bundleFile, tempFile, patchFile, compression);
 
             byte[] updatedBundleBytes = IOUtils.toByteArray(new FileInputStream(tempFile));
-
+            boolean a = bundleFile.mkdirs();
             FileUtils.writeByteArrayToFile(bundleFile, updatedBundleBytes);
 
         } catch (IOException | InvalidHeaderException | CompressorException | NullPointerException e) {
@@ -474,6 +475,7 @@ public class APIClient {
                 return null;
             }
             bodyBytes = response.body().bytes();
+            bundleFile.mkdirs();
             FileUtils.writeByteArrayToFile(bundleFile, bodyBytes);
             return bodyBytes;
         } catch (IOException e) {
