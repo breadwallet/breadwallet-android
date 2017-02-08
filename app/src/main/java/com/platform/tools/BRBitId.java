@@ -1,13 +1,23 @@
 package com.platform.tools;
 
+import android.util.Base64;
 import android.util.Log;
 
+import com.breadwallet.tools.security.KeyStoreManager;
 import com.jniwrappers.BRBase58;
 import com.jniwrappers.BRKey;
 
+import junit.framework.Assert;
+
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+
+import static com.breadwallet.R.string.request;
 
 /**
  * BreadWallet
@@ -39,16 +49,24 @@ public class BRBitId {
 
     public static String signMessage(String message, byte[] key) {
         byte[] signingData = formatMessageForBitcoinSigning(message);
-        byte[] signature = new BRKey(key).compactSign(signingData);
-        return BRBase58.getInstance().base58Encode(signature);
+
+        MessageDigest digest = null;
+        try {
+            digest = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
+        }
+        byte[] sha256First = digest.digest(signingData);
+        byte[] sha256Second = digest.digest(sha256First);
+        byte[] signature = new BRKey(key).compactSign(sha256Second);
+
+        return Base64.encodeToString(signature, Base64.DEFAULT);
     }
 
     public static byte[] formatMessageForBitcoinSigning(String message) {
-        Log.e(TAG, "formatMessageForBitcoinSigning: ");
         byte[] headerBytes = null;
         byte[] messageBytes = null;
-        Log.e(TAG, "head: " + BITCOIN_SIGNED_MESSAGE_HEADER);
-        Log.e(TAG, "message: " + message);
 
         try {
             headerBytes = BITCOIN_SIGNED_MESSAGE_HEADER.getBytes("UTF-8");
@@ -60,18 +78,48 @@ public class BRBitId {
         assert (messageBytes != null);
         if (headerBytes == null || messageBytes == null) return new byte[0];
 
-        int cap = 1 + headerBytes.length + 4 + messageBytes.length;
-        Log.e(TAG, "cap: " + cap);
-        Log.e(TAG, "messageBytes: " + Arrays.toString(messageBytes));
-        Log.e(TAG, "headerBytes: " + Arrays.toString(headerBytes));
-        ByteBuffer dataBuffer = ByteBuffer.allocate(cap).order(java.nio.ByteOrder.LITTLE_ENDIAN);
+        int cap = 1 + headerBytes.length + varIntSize(messageBytes.length) + messageBytes.length;
+
+        ByteBuffer dataBuffer = ByteBuffer.allocate(cap)/*.order(ByteOrder.LITTLE_ENDIAN)*/;
         dataBuffer.put((byte) headerBytes.length);          //put header count
         dataBuffer.put(headerBytes);                        //put the header
-        dataBuffer.putInt(messageBytes.length);             //put message count
+        putVarInt(message.length(), dataBuffer);            //put message count
         dataBuffer.put(messageBytes);                       //put the message
         byte[] result = dataBuffer.array();
-        Log.e(TAG, "result.length: " + result.length);
-        Log.e(TAG, "result: " + Arrays.toString(result));
+
+        Assert.assertEquals(cap, result.length);
+
         return result;
+    }
+
+    /** Returns the encoding size in bytes of its input value.
+     * @param i the integer to be measured
+     * @return the encoding size in bytes of its input value
+     */
+    public static int varIntSize(int i) {
+        int result = 0;
+        do {
+            result++;
+            i >>>= 7;
+        } while (i != 0);
+        return result;
+    }
+
+    /**
+     * Encodes an integer in a variable-length encoding, 7 bits per byte, to a
+     * ByteBuffer sink.
+     * @param v the value to encode
+     * @param sink the ByteBuffer to add the encoded value
+     */
+    public static void putVarInt(int v, ByteBuffer sink) {
+        while (true) {
+            int bits = v & 0x7f;
+            v >>>= 7;
+            if (v == 0) {
+                sink.put((byte) bits);
+                return;
+            }
+            sink.put((byte) (bits | 0x80));
+        }
     }
 }

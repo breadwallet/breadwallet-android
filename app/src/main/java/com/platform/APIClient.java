@@ -2,6 +2,7 @@ package com.platform;
 
 import android.app.Activity;
 
+import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.util.Log;
 
@@ -442,7 +443,6 @@ public class APIClient {
         byte[] patchBytes = null;
         try {
             patchFile = new File(String.format("/%s/%s.diff", BUNDLES, "patch"));
-            patchFile.mkdirs();
             patchBytes = diffResponse.body().bytes();
             FileUtils.writeByteArrayToFile(patchFile, patchBytes);
 
@@ -452,7 +452,6 @@ public class APIClient {
             FileUI.diff(bundleFile, tempFile, patchFile, compression);
 
             byte[] updatedBundleBytes = IOUtils.toByteArray(new FileInputStream(tempFile));
-            boolean a = bundleFile.mkdirs();
             FileUtils.writeByteArrayToFile(bundleFile, updatedBundleBytes);
 
         } catch (IOException | InvalidHeaderException | CompressorException | NullPointerException e) {
@@ -475,7 +474,6 @@ public class APIClient {
                 return null;
             }
             bodyBytes = response.body().bytes();
-            bundleFile.mkdirs();
             FileUtils.writeByteArrayToFile(bundleFile, bodyBytes);
             return bodyBytes;
         } catch (IOException e) {
@@ -493,10 +491,7 @@ public class APIClient {
     }
 
     public boolean tryExtractTar(File inputFile) {
-
-        String extractFolderName = MainActivity.app.getFilesDir() + "/" + BUNDLES + "/" + extractedFolder;
-        File temp = new File(extractFolderName);
-        temp.mkdirs();
+        String extractFolderName = MainActivity.app.getFilesDir().getAbsolutePath() + bundlesFileName + "/" + extractedFolder;
 //        Log.e(TAG, String.format("Untaring %s to dir name %s.", inputFile.getAbsolutePath(), extractedFolder));
         boolean result = false;
         TarArchiveInputStream debInputStream = null;
@@ -509,24 +504,14 @@ public class APIClient {
 
                 final String outPutFileName = entry.getName().replace("./", "");
                 final File outputFile = new File(extractFolderName, outPutFileName);
-                String outPutFileFullPath = extractFolderName + "/" + outPutFileName;
-                if (entry.isDirectory()) {
-//                    Log.e(TAG, String.format("Attempting to write output directory %s.", outputFile.getAbsolutePath()));
-
-                    File newDir = new File(outPutFileFullPath);
-                    if (!newDir.exists()) {
-                        newDir.mkdirs();
-                    }
-                } else {
-//                    Log.e(TAG, String.format("Creating output file %s", outputFile.getAbsolutePath()));
-                    final OutputStream outputFileStream = new FileOutputStream(outPutFileFullPath);
-                    IOUtils.copy(debInputStream, outputFileStream);
-                    outputFileStream.close();
+//                String outPutFileFullPath = extractFolderName + "/" + outPutFileName;
+                if (!entry.isDirectory()) {
+                    FileUtils.writeByteArrayToFile(outputFile, org.apache.commons.compress.utils.IOUtils.toByteArray(debInputStream));
                 }
             }
 
             result = true;
-        } catch (ArchiveException | IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
             try {

@@ -1,6 +1,5 @@
 package com.jniwrappers;
 
-import static android.R.attr.data;
 
 /**
  * BreadWallet

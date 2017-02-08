@@ -7,7 +7,7 @@
 #include <BRBIP32Sequence.h>
 #include "JNIBIP32Sequence.h"
 
-JNIEXPORT jstring JNICALL Java_com_jniwrappers_BRBIP32Sequence_bip32BitIDKey(JNIEnv *env, jobject thiz,
+JNIEXPORT jbyteArray JNICALL Java_com_jniwrappers_BRBIP32Sequence_bip32BitIDKey(JNIEnv *env, jobject thiz,
                                                                       jbyteArray seed, jint index, jstring strUri) {
     int seedLength = (*env)->GetArrayLength(env, seed);
     const char *uri = (*env)->GetStringUTFChars(env, strUri, NULL);
@@ -20,5 +20,6 @@ JNIEXPORT jstring JNICALL Java_com_jniwrappers_BRBIP32Sequence_bip32BitIDKey(JNI
     BRKeyPrivKey(&key, rawKey, sizeof(rawKey));
     jbyteArray result = (*env)->NewByteArray(env, (jsize) sizeof(rawKey));
     (*env)->SetByteArrayRegion(env, result, 0, (jsize) sizeof(rawKey), (jbyte *) rawKey);
+
     return result;
 }

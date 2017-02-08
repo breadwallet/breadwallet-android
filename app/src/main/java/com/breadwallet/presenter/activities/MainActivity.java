@@ -137,9 +137,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         app = this;
         initializeViews();
 
-        FirebaseCrash.log("test log");
-        FirebaseCrash.report(new RuntimeException("test exception"));
-
         Utils.printPhoneSpecs();
 
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
@@ -148,7 +145,7 @@ public class MainActivity extends FragmentActivity implements Observer {
 
         if (Utils.isEmulatorOrDebug(this)) {
             MODE = BRConstants.DEBUG;
-            Log.e(TAG, "DEBUG MODE!");
+            Log.i(TAG, "DEBUG MODE!");
         }
 
         setListeners();
@@ -180,8 +177,6 @@ public class MainActivity extends FragmentActivity implements Observer {
         if (scheme != null && (scheme.startsWith("bitcoin") || scheme.startsWith("bitid"))) {
             String str = intent.getDataString();
             RequestHandler.processRequest(this, str);
-        } else {
-            Log.e(TAG, "No bitcoin uri: " + data);
         }
     }
 
@@ -516,11 +511,9 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     public void setPagerIndicator(int x) {
         if (x == 0) {
-//            Log.d(TAG, "Left Indicator changed");
             BRAnimator.scaleView(pageIndicatorLeft, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP);
             BRAnimator.scaleView(pageIndicatorRight, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f);
         } else if (x == 1) {
-//            Log.d(TAG, "Right Indicator changed");
             BRAnimator.scaleView(pageIndicatorRight, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP);
             BRAnimator.scaleView(pageIndicatorLeft, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f);
         } else {

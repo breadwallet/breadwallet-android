@@ -117,16 +117,18 @@ public class APIProxy implements Middleware {
                 response.addHeader(s, res.header(s));
             }
             response.setContentLength(bodyBytes.length);
-            if (res.isSuccessful())
+            if (res.isSuccessful()) {
                 response.setStatus(res.code());
-            else {
-                response.sendError(res.code());
+            } else {
+                Log.e(TAG, "handle: " +target +": "+ res.code() + "(" + res.message() + ")" + ", body: " + res.body().string());
+                return true;
             }
             response.getOutputStream().write(bodyBytes);
-            baseRequest.setHandled(true);
         } catch (IOException e) {
             Log.e(TAG, "IOException: " + target);
             e.printStackTrace();
+        } finally {
+            baseRequest.setHandled(true);
         }
 
         return true;

@@ -10,6 +10,8 @@ import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.wallet.BRWalletManager;
 import com.google.firebase.crash.FirebaseCrash;
 
+import junit.framework.Assert;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,6 +23,8 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.Locale;
+
+import static android.R.attr.data;
 
 /**
  * BreadWallet
@@ -97,7 +101,6 @@ public class JsonParser {
 
                 SharedPreferencesManager.putFeePerKb(activity, fee);
                 BRWalletManager.getInstance(activity).setFeePerKb(fee);
-                Log.e(TAG, "fee set to: " + fee);
             }
         } catch (JSONException e) {
             FirebaseCrash.report(e);
@@ -142,7 +145,7 @@ public class JsonParser {
             } else {
                 @SuppressWarnings("deprecation") long date = Date.parse(strDate) / 1000;
                 SharedPreferencesManager.putSecureTime(app, date);
-                Log.e(TAG, "Secure time set to: " + date);
+                Assert.assertTrue(date != 0);
             }
 
             if (urlConn.getInputStream() != null) {

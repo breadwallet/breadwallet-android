@@ -17,10 +17,12 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
 import com.breadwallet.tools.util.TypesConverter;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 import com.jniwrappers.BRBIP32Sequence;
 import com.jniwrappers.BRKey;
 import com.platform.APIClient;
+import com.platform.middlewares.plugins.WalletPlugin;
 import com.platform.tools.BRBitId;
 
 import org.json.JSONException;
@@ -44,15 +46,8 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static android.R.attr.data;
-import static android.R.attr.value;
-import static android.R.attr.version;
-import static com.breadwallet.R.string.request;
-import static com.breadwallet.presenter.fragments.FragmentPhraseFlow1.phrase;
-import static com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask.message;
 import static com.breadwallet.tools.util.BRConstants.AUTH_FOR_BIT_ID;
 import static com.breadwallet.tools.util.BRConstants.REQUEST_PHRASE_BITID;
-import static com.breadwallet.tools.util.TypesConverter.getNullTerminatedPhrase;
 
 /**
  * BreadWallet
@@ -84,7 +79,9 @@ public class RequestHandler {
     private static final Object lockObject = new Object();
 
     private static String _bitUri;
+    private static String _bitCallback;
     private static String _strToSign = null;
+    private static String _authString = null;
     private static int _index = 0;
 
     public static synchronized boolean processRequest(MainActivity app, String uri) {
@@ -111,34 +108,26 @@ public class RequestHandler {
         }
     }
 
-    public static boolean tryBitIdUri(final Activity app, String uri, String jsonBody) {
+    public static boolean tryBitIdUri(final Activity app, String uri, JSONObject jsonBody) {
         if (uri == null) return false;
         boolean isBitUri = false;
 
         URI bitIdUri = null;
-        Log.e(TAG, "tryBitIdUri: uri: " + uri);
         try {
             bitIdUri = new URI(uri);
-            Log.e(TAG, "tryBitIdUri: bitIdUri: " + bitIdUri);
             if ("bitid".equals(bitIdUri.getScheme())) isBitUri = true;
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
 
-        if (jsonBody != null) {
-            JSONObject obj = null;
-            try {
-                obj = new JSONObject(jsonBody);
-            } catch (JSONException e) {
-                e.printStackTrace();
-                Log.e(TAG, "tryBitIdUri: failed to create Json");
-                return isBitUri;
-            }
+        _bitUri = uri;
 
+        if (jsonBody != null) {
             try {
-                _bitUri = obj.getString("bitid_url");
-                _index = obj.getInt("bitid_index");
-                _strToSign = obj.getString("string_to_sign");
+                _authString = jsonBody.getString("prompt_string");
+                _bitCallback = jsonBody.getString("bitid_url");
+                _index = jsonBody.getInt("bitid_index");
+                _strToSign = jsonBody.getString("string_to_sign");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -150,11 +139,12 @@ public class RequestHandler {
 
             //ask for phrase, will system auth if needed
 
-            _bitUri = uri;
-            _strToSign = uri;
-            _index = 0;
-
+            _authString = "BitID Authentication Request";
         }
+
+//        Log.e(TAG, "tryBitIdUri: _bitUri: " + _bitUri);
+//        Log.e(TAG, "tryBitIdUri: _strToSign: " + _strToSign);
+//        Log.e(TAG, "tryBitIdUri: _index: " + _index);
 
         new Thread(new Runnable() {
             @Override
@@ -168,7 +158,7 @@ public class RequestHandler {
                 Uri tmpUri = Uri.parse(_bitUri);
                 try {
                     phrase = KeyStoreManager.getKeyStorePhrase(app, REQUEST_PHRASE_BITID);
-                    ((BreadWalletApp) app.getApplicationContext()).promptForAuthentication(app, AUTH_FOR_BIT_ID, null, tmpUri.getHost(), "BitID Authentication Request", null, false);
+                    ((BreadWalletApp) app.getApplicationContext()).promptForAuthentication(app, AUTH_FOR_BIT_ID, null, tmpUri.getHost(), _authString, null, false);
                 } catch (BRKeystoreErrorException e) {
                     //asked the system, no need for local auth
                     e.printStackTrace();
@@ -197,8 +187,6 @@ public class RequestHandler {
         }
 
         final Uri uri = Uri.parse(_bitUri);
-        Log.e(TAG, "processBitIdResponse: _bitUri: " + _bitUri);
-        Log.e(TAG, "processBitIdResponse: uri: " + uri);
         try {
             phrase = KeyStoreManager.getKeyStorePhrase(app, REQUEST_PHRASE_BITID);
         } catch (BRKeystoreErrorException e) {
@@ -211,84 +199,110 @@ public class RequestHandler {
             Log.e(TAG, "processBitIdResponse: seed is null!");
             return;
         }
-        if (_strToSign == null) {
-            Log.e(TAG, "processBitIdResponse: _strToSign is null!");
-            return;
-        }
 
-        final byte[] key = BRBIP32Sequence.getInstance().bip32BitIDKey(seed, _index, _bitUri);
-
-        if (key == null) {
-            Log.d(TAG, "processBitIdResponse: key is null!");
-            return;
-        }
 
         //run the callback
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    String nonce = null;
-                    String scheme = "https";
-                    String query = uri.getQuery();
-                    if (query == null) {
-                        Log.e(TAG, "run: Malformed URI");
-                        return;
-                    }
+                    if (_strToSign == null) {
+                        //meaning it's a link handling
+                        String nonce = null;
+                        String scheme = "https";
+                        String query = uri.getQuery();
+                        if (query == null) {
+                            Log.e(TAG, "run: Malformed URI");
+                            return;
+                        }
 
-                    String u = uri.getQueryParameter("u");
-                    if (u != null) {
-                        scheme = "http";
-                    }
+                        String u = uri.getQueryParameter("u");
+                        if (u != null && u.equalsIgnoreCase("1")) {
+                            scheme = "http";
+                        }
 
-                    String x = uri.getQueryParameter("x");
-                    if (x != null) {
-                        nonce = x;              // service is providing a nonce
+                        String x = uri.getQueryParameter("x");
+                        if (Utils.isNullOrEmpty(x)) {
+
+                            nonce = newNonce(app, uri.getHost() + uri.getPath());     // we are generating our own nonce
+                        } else {
+                            nonce = x;              // service is providing a nonce
+                        }
+
+                        String callbackUrl = String.format("%s://%s%s", scheme, uri.getHost(), uri.getPath());
+
+                        // build a payload consisting of the signature, address and signed uri
+
+                        String uriWithNonce = String.format("bitid://%s%s?x=%s", uri.getHost(), uri.getPath(), nonce);
+
+
+                        final byte[] key = BRBIP32Sequence.getInstance().bip32BitIDKey(seed, _index, callbackUrl);
+
+                        if (key == null) {
+                            Log.d(TAG, "processBitIdResponse: key is null!");
+                            return;
+                        }
+
+//                    Log.e(TAG, "run: uriWithNonce: " + uriWithNonce);
+
+                        final String sig = BRBitId.signMessage(_strToSign == null ? uriWithNonce : _strToSign, key);
+                        final String address = new BRKey(key).address();
+
+                        JSONObject postJson = new JSONObject();
+                        try {
+                            postJson.put("address", address);
+                            postJson.put("signature", sig);
+                            if (_strToSign == null)
+                                postJson.put("uri", uriWithNonce);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        RequestBody requestBody = RequestBody.create(null, postJson.toString());
+                        Request request = new Request.Builder()
+                                .url(callbackUrl + "?x=" + nonce)
+                                .post(requestBody)
+                                .header("Content-Type", "application/json")
+                                .build();
+                        Response res = APIClient.getInstance(app).sendRequest(request, true);
+                        Log.e(TAG, "processBitIdResponse: res.code: " + res.code());
+                        Log.e(TAG, "processBitIdResponse: res.code: " + res.message());
+                        try {
+                            Log.e(TAG, "processBitIdResponse: body: " + res.body().string());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     } else {
-                        nonce = newNonce(app, uri.getHost() + uri.getPath());     // we are generating our own nonce
+                        //meaning its the wallet plugin, glidera auth
+                        String biUri = uri.getHost() == null ? uri.toString() : uri.getHost();
+                        final byte[] key = BRBIP32Sequence.getInstance().bip32BitIDKey(seed, _index, biUri);
+                        if (key == null) {
+                            Log.d(TAG, "processBitIdResponse: key is null!");
+                            return;
+                        }
+
+//                    Log.e(TAG, "run: uriWithNonce: " + uriWithNonce);
+
+                        final String sig = BRBitId.signMessage(_strToSign, key);
+                        final String address = new BRKey(key).address();
+
+                        JSONObject postJson = new JSONObject();
+                        try {
+                            postJson.put("address", address);
+                            postJson.put("signature", sig);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        WalletPlugin.handleBitId(postJson);
                     }
 
-                    //the callback for the post
-                    String callbackUrl = String.format("%s://%s%s", scheme, uri.getHost(), uri.getPath());
-                    // build a payload consisting of the signature, address and signed uri
-
-                    String uriWithNonce = String.format("bitid://%s%s?x=%s", uri.getHost(), uri.getPath(), nonce);
-
-                    Log.e(TAG, "run: callbackUrl: " + callbackUrl);
-                    Log.e(TAG, "run: uriWithNonce: " + uriWithNonce);
-
-                    final String sig = BRBitId.signMessage(_strToSign, key);
-                    final String address = new BRKey(key).address();
-                    Log.e(TAG, "processBitIdResponse: sig:" + sig);
-                    Log.e(TAG, "processBitIdResponse: address:" + address);
-
-                    JSONObject postBody = new JSONObject();
-                    try {
-                        postBody.put("address", address);
-                        postBody.put("signature", sig);
-                        postBody.put("uri", uriWithNonce);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    RequestBody requestBody = RequestBody.create(null, postBody.toString());
-                    Request request = new Request.Builder()
-                            .url(callbackUrl + "?x=" + nonce)
-                            .post(requestBody)
-                            .header("Content-Type", "application/json")
-                            .build();
-                    Log.e(TAG, "run: sending request with url: " + request.url());
-                    Response res = APIClient.getInstance(app).sendRequest(request, true);
-                    Log.e(TAG, "processBitIdResponse: res.code: " + res.code());
-                    Log.e(TAG, "processBitIdResponse: res.code: " + res.message());
-                    try {
-                        Log.e(TAG, "run: body: " + res.body().string());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
                 } finally {
                     //release everything
                     _bitUri = null;
+                    _strToSign = null;
+                    _bitCallback = null;
+                    _authString = null;
+                    _index = 0;
                     if (phrase != null) Arrays.fill(phrase, (byte) 0);
                     if (nulTermPhrase != null) Arrays.fill(nulTermPhrase, (byte) 0);
                     if (seed != null) Arrays.fill(seed, (byte) 0);

@@ -97,7 +97,7 @@ public class CameraPlugin implements Plugin {
         //
 
         if (target.startsWith("/_camera/take_picture")) {
-            Log.e(TAG, "handling: " + target + " " + baseRequest.getMethod());
+            Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
             final MainActivity app = MainActivity.app;
             if (app == null) {
                 try {
@@ -164,7 +164,7 @@ public class CameraPlugin implements Plugin {
 
             return true;
         } else if (target.startsWith("/_camera/picture/")) {
-            Log.e(TAG, "handling: " + target + " " + baseRequest.getMethod());
+            Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
             final MainActivity app = MainActivity.app;
             if (app == null) {
                 try {
@@ -200,12 +200,10 @@ public class CameraPlugin implements Plugin {
     }
 
     public static void handleCameraImageTaken(final Context context, final Bitmap img) {
-        Log.e(TAG, "handleCameraImageTaken: ");
         new Thread(new Runnable() {
             @Override
             public void run() {
                 if (globalBaseRequest == null || continuation == null) {
-
                     Log.e(TAG, "handleCameraImageTaken: WARNING: " + continuation + " " + globalBaseRequest);
                     return;
                 }

@@ -87,15 +87,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_jniwrappers_BRKey_decryptNative(JNIEnv *en
 
 
 JNIEXPORT jbyteArray JNICALL Java_com_jniwrappers_BRKey_address(JNIEnv *env, jobject thiz) {
-
     BRAddress address = BR_ADDRESS_NONE;
     BRKeyAddress(&_key, address.s, sizeof(address));
     return (*env)->NewStringUTF(env, address.s);
 }
-
-//// chacha20-poly1305 authenticated encryption with associated data (AEAD): https://tools.ietf.org/html/rfc7539
-//size_t BRChacha20Poly1305AEADEncrypt(void *out, size_t outLen, const void *key32, const void *nonce12,
-//                                     const void *data, size_t dataLen, const void *ad, size_t adLen);
-//
-//size_t BRChacha20Poly1305AEADDecrypt(void *out, size_t outLen, const void *key32, const void *nonce12,
-//                                     const void *data, size_t dataLen, const void *ad, size_t adLen);

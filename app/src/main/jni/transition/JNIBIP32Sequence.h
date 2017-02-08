@@ -10,7 +10,7 @@ extern "C" {
 #endif
 
 
-JNIEXPORT jstring JNICALL Java_com_jniwrappers_BRBIP32Sequence_bip32BitIDKey(JNIEnv *env,
+JNIEXPORT jbyteArray JNICALL Java_com_jniwrappers_BRBIP32Sequence_bip32BitIDKey(JNIEnv *env,
                                                                              jobject thiz,
                                                                              jbyteArray seed,
                                                                              jint index,

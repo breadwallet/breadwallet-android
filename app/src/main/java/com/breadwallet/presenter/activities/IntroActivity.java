@@ -108,8 +108,6 @@ public class IntroActivity extends FragmentActivity {
             FirebaseCrash.report(ex);
             throw ex;
         }
-        FirebaseCrash.log("intro test log");
-        FirebaseCrash.report(new RuntimeException("intro test exception"));
 
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
         leftButton = (Button) findViewById(R.id.intro_left_button);
@@ -194,7 +192,6 @@ public class IntroActivity extends FragmentActivity {
             window.setStatusBarColor(getColor(R.color.warning_status_bar));
         }
     }
-
 
     public boolean checkFirstAddress(byte[] mpk) {
         String addressFromPrefs = SharedPreferencesManager.getFirstAddress(this);
