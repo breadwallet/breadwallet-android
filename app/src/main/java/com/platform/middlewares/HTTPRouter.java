@@ -50,8 +50,8 @@ public class HTTPRouter implements Middleware {
     public boolean handle(String target, org.eclipse.jetty.server.Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
         for (Plugin plugin : plugins) {
             boolean success = plugin.handle(target, baseRequest, request, response);
-            if(success) {
-                Log.e(TAG, "plugin: " + plugin.getClass().getName().substring(plugin.getClass().getName().lastIndexOf(".") + 1) + " succeeded:" + request.getRequestURL());
+            if (success) {
+                Log.i(TAG, "plugin: " + plugin.getClass().getName().substring(plugin.getClass().getName().lastIndexOf(".") + 1) + " succeeded:" + request.getRequestURL());
                 return true;
             }
         }

@@ -42,7 +42,7 @@ public class BRGeoWebSocketHandler {
 
     @OnWebSocketClose
     public void onClose(int statusCode, String reason) {
-        Log.e(TAG, "GeoSocketClosed: statusCode=" + statusCode + ", reason=" + reason);
+        Log.d(TAG, "GeoSocketClosed: statusCode=" + statusCode + ", reason=" + reason);
         GeoLocationManager.getInstance().stopGeoSocket();
     }
 
@@ -54,12 +54,12 @@ public class BRGeoWebSocketHandler {
 
     @OnWebSocketConnect
     public void onConnect(Session session) {
-        Log.e(TAG, "GeoSocketConnected: " + session.getRemoteAddress().getAddress());
+        Log.d(TAG, "GeoSocketConnected: " + session.getRemoteAddress().getAddress());
         GeoLocationManager.getInstance().startGeoSocket(session);
     }
 
     @OnWebSocketMessage
     public void onMessage(String message) {
-        Log.e(TAG, "GeoSocketMessage: " + message);
+        Log.d(TAG, "GeoSocketMessage: " + message);
     }
 }

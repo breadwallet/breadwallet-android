@@ -92,7 +92,6 @@ public class GeoLocationManager {
     }
 
     public void startGeoSocket(Session sess) {
-        Log.e(TAG, "startGeoSocket: ");
         session = sess;
 
         final MainActivity app = MainActivity.app;
@@ -100,7 +99,6 @@ public class GeoLocationManager {
             return;
         final LocationManager locationManager = (LocationManager) app.getSystemService(Context.LOCATION_SERVICE);
 
-        Log.d(TAG, "starting geo updates for socket...");
         app.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -118,7 +116,6 @@ public class GeoLocationManager {
     }
 
     public void stopGeoSocket() {
-        Log.e(TAG, "stopGeoSocket");
         final MainActivity app = MainActivity.app;
         if (app == null)
             return;
@@ -128,6 +125,7 @@ public class GeoLocationManager {
             @Override
             public void run() {
                 if (ActivityCompat.checkSelfPermission(app, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(app, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    Log.e(TAG, "stopGeoSocket, can't happen");
                     RuntimeException ex = new RuntimeException("stopGeoSocket, can't happen");
                     FirebaseCrash.report(ex);
                     throw ex;
@@ -148,7 +146,6 @@ public class GeoLocationManager {
             sending = true;
             if (session != null && session.isOpen()) {
                 final String jsonLocation = getJsonLocation(location);
-                Log.e(TAG, "sending location to socket ");
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -159,7 +156,6 @@ public class GeoLocationManager {
                         } finally {
                             sending = false;
                         }
-                        Log.d(TAG, "onLocationChanged: sent");
                     }
                 }).start();
 
@@ -182,13 +178,11 @@ public class GeoLocationManager {
         private boolean processing;
 
         public void onLocationChanged(final Location location) {
-            Log.e(TAG, "onLocationChanged: ");
             if (processing) return;
             processing = true;
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    Log.e(TAG, "run: " + location.getLatitude());
                     // Called when a new location is found by the network location provider.
                     if (continuation != null && baseRequest != null) {
                         String jsonLocation = getJsonLocation(location);
@@ -200,7 +194,6 @@ public class GeoLocationManager {
                                     baseRequest.setHandled(true);
                                     continuation.complete();
                                     continuation = null;
-                                    Log.d(TAG, "onLocationChanged: returned location...");
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
@@ -226,7 +219,6 @@ public class GeoLocationManager {
                                     Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                                 Log.e(TAG, "onLocationChanged: PERMISSION DENIED for removeUpdates");
                             } else {
-                                Log.d(TAG, "onLocationChanged: removing location listener");
                                 locationManager.removeUpdates(locationListener);
 
                             }
@@ -240,15 +232,12 @@ public class GeoLocationManager {
         }
 
         public void onStatusChanged(String provider, int status, Bundle extras) {
-            Log.e(TAG, "onStatusChanged: " + provider);
         }
 
         public void onProviderEnabled(String provider) {
-            Log.e(TAG, "onProviderEnabled: " + provider);
         }
 
         public void onProviderDisabled(String provider) {
-            Log.e(TAG, "onProviderDisabled: " + provider);
         }
     };
 

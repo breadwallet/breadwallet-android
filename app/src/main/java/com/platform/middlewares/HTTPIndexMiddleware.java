@@ -52,7 +52,7 @@ public class HTTPIndexMiddleware implements Middleware {
 
     @Override
     public boolean handle(String target, org.eclipse.jetty.server.Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
-        Log.e(TAG, "handling: " + target + " " + baseRequest.getMethod());
+        Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
         String indexFile = MainActivity.app.getFilesDir() + "/" + BUNDLES + "/" + extractedFolder + "/index.html";
 
         File temp = new File(indexFile);
@@ -75,6 +75,7 @@ public class HTTPIndexMiddleware implements Middleware {
         } catch (IOException e) {
             e.printStackTrace();
             try {
+                Log.d(TAG, "handle: error sending response: " + target + " " + baseRequest.getMethod());
                 response.sendError(500);
                 baseRequest.setHandled(true);
             } catch (IOException e1) {

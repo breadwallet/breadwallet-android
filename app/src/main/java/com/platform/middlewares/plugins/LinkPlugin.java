@@ -21,6 +21,7 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import static android.R.attr.handle;
 import static com.breadwallet.presenter.fragments.FragmentScanResult.address;
 
 /**
@@ -53,12 +54,13 @@ public class LinkPlugin implements Plugin {
     @Override
     public boolean handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
         if (target.startsWith("/_open_url")) {
-            Log.e(TAG, "handling: " + target + " " + baseRequest.getMethod());
+            Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
             String url = request.getParameter("url");
 
             MainActivity app = MainActivity.app;
             if (app == null) {
                 try {
+                    Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
                     response.sendError(500, "context is null");
                     baseRequest.setHandled(true);
                 } catch (IOException e) {
@@ -71,15 +73,17 @@ public class LinkPlugin implements Plugin {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url.replace("/", "")));
                 app.startActivity(intent);
             } else {
+                Log.e(TAG, "handle: could not handle url: " + url);
                 FirebaseCrash.report(new RuntimeException("could not handle url: " + url));
             }
 
             return true;
         } else if (target.startsWith("/_open_maps")) {
-            Log.e(TAG, "handling: " + target + " " + baseRequest.getMethod());
+            Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
             MainActivity app = MainActivity.app;
             if (app == null) {
                 try {
+                    Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
                     response.sendError(500, "context is null");
                     baseRequest.setHandled(true);
                 } catch (IOException e) {
@@ -91,6 +95,7 @@ public class LinkPlugin implements Plugin {
             String fromPoint = baseRequest.getParameter("from_point");
             if(address == null || fromPoint == null) {
                 try {
+                    Log.e(TAG, "handle: bad request: " + target + " " + baseRequest.getMethod());
                     response.sendError(500, "bad request");
                     baseRequest.setHandled(true);
                 } catch (IOException e) {

@@ -170,7 +170,6 @@ public class RequestHandler {
         }).start();
         return isBitUri;
 
-
     }
 
     public static void processBitIdResponse(final Activity app) {
@@ -190,7 +189,7 @@ public class RequestHandler {
         try {
             phrase = KeyStoreManager.getKeyStorePhrase(app, REQUEST_PHRASE_BITID);
         } catch (BRKeystoreErrorException e) {
-            e.printStackTrace();
+            Log.e(TAG, "processBitIdResponse: failed to getKeyStorePhrase: " + e.getCause().getMessage());
             return;
         }
         nulTermPhrase = TypesConverter.getNullTerminatedPhrase(phrase);
@@ -199,7 +198,6 @@ public class RequestHandler {
             Log.e(TAG, "processBitIdResponse: seed is null!");
             return;
         }
-
 
         //run the callback
         new Thread(new Runnable() {
@@ -282,7 +280,6 @@ public class RequestHandler {
                         }
 
 //                    Log.e(TAG, "run: uriWithNonce: " + uriWithNonce);
-
                         final String sig = BRBitId.signMessage(_strToSign, key);
                         final String address = new BRKey(key).address();
 
@@ -318,7 +315,7 @@ public class RequestHandler {
         List<Integer> existingNonces = SharedPreferencesManager.getBitIdNonces(app, nonceKey);
 
         String nonce = "";
-        while (existingNonces.contains(nonce)) {
+        while (existingNonces.contains(Integer.valueOf(nonce))) {
             nonce = String.valueOf(System.currentTimeMillis() / 1000);
         }
         existingNonces.add(Integer.valueOf(nonce));

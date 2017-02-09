@@ -56,11 +56,12 @@ public class KVStorePlugin implements Plugin {
     @Override
     public boolean handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
         if (target.startsWith("/_kv/")) {
-            Log.e(TAG, "handling: " + target + " " + baseRequest.getMethod());
+            Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
             String key = target.replace("/_kv/", "");
             MainActivity app = MainActivity.app;
             if (app == null) {
                 try {
+                    Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
                     response.sendError(500, "context is null");
                     baseRequest.setHandled(true);
                 } catch (IOException e) {
@@ -69,7 +70,7 @@ public class KVStorePlugin implements Plugin {
                 return true;
             }
             if (key.isEmpty()) {
-                Log.e(TAG, "handle: missing key argument");
+                Log.e(TAG, "handle: missing key argument: " + target + " " + baseRequest.getMethod());
                 try {
                     response.sendError(400);
                     baseRequest.setHandled(true);
@@ -83,7 +84,7 @@ public class KVStorePlugin implements Plugin {
             ReplicatedKVStore store = new ReplicatedKVStore(app, remote);
             switch (request.getMethod()) {
                 case "GET":
-                    Log.e(TAG, "handle: GET: " + key);
+                    Log.i(TAG, "handle: " + target + " " + baseRequest.getMethod() + ", key: " + key);
                     CompletionObject getObj = store.get(key, 0);
                     KVEntity kv = getObj.kv;
 
@@ -101,10 +102,10 @@ public class KVStorePlugin implements Plugin {
                     Assert.assertNotNull(decompressedData);
                     try {
                         JSONObject test = new JSONObject(new String(decompressedData)); //just check for validity
-                        Log.e(TAG, "handle: " + test.toString());
                     } catch (JSONException e) {
                         e.printStackTrace();
                         try {
+                            Log.e(TAG, "handle: the json is not valid: " + target + " " + baseRequest.getMethod());
                             response.sendError(500);
                             baseRequest.setHandled(true);
                         } catch (IOException ex) {
@@ -119,6 +120,7 @@ public class KVStorePlugin implements Plugin {
 
                     if (kv.getDeleted() > 0) {
                         try {
+                            Log.w(TAG, "handle: the key is gone: " + target + " " + baseRequest.getMethod());
                             response.sendError(410, "Gone");
                             baseRequest.setHandled(true);
                         } catch (IOException e) {
@@ -137,7 +139,7 @@ public class KVStorePlugin implements Plugin {
                     }
                     return true;
                 case "PUT":
-                    Log.e(TAG, "handle: PUT: " + key);
+                    Log.i(TAG, "handle:" + target + " " + baseRequest.getMethod() + ", key: " + key);
                     // Read from request
                     byte[] rawData = null;
                     try {
@@ -147,7 +149,7 @@ public class KVStorePlugin implements Plugin {
                         e.printStackTrace();
                     }
                     if (rawData == null) {
-                        Log.e(TAG, "handle: missing request body");
+                        Log.e(TAG, "handle: missing request body: " + target + " " + baseRequest.getMethod());
                         try {
                             response.sendError(400);
                             baseRequest.setHandled(true);
@@ -159,7 +161,7 @@ public class KVStorePlugin implements Plugin {
 
                     String strVersion = request.getHeader("if-none-match");
                     if (strVersion == null) {
-                        Log.e(TAG, "handle: missing If-None-Match header, set to `0` if creating a new key");
+                        Log.e(TAG, "handle: missing If-None-Match header, set to `0` if creating a new key: " + target + " " + baseRequest.getMethod());
                         try {
                             response.sendError(400);
                             baseRequest.setHandled(true);
@@ -170,7 +172,7 @@ public class KVStorePlugin implements Plugin {
                     }
                     String ct = request.getHeader("content-type");
                     if (ct == null || !ct.equalsIgnoreCase("application/json")) {
-                        Log.e(TAG, "handle: can only set application/json request bodies");
+                        Log.e(TAG, "handle: can only set application/json request bodies: " + target + " " + baseRequest.getMethod());
                         try {
                             response.sendError(400);
                             baseRequest.setHandled(true);
@@ -186,8 +188,8 @@ public class KVStorePlugin implements Plugin {
                     assert (compressedData != null);
 
                     CompletionObject setObj = store.set(new KVEntity(version, 0, key, compressedData, System.currentTimeMillis(), 0));
-                    Log.e(TAG, "handle: setObj.err: " + setObj.err);
                     if (setObj.err != null) {
+                        Log.e(TAG, "handle: error setting the key: " + key + ", err: " + setObj.err);
                         int errCode = transformErrorToResponseCode(setObj.err);
                         try {
                             response.sendError(errCode);
@@ -205,10 +207,10 @@ public class KVStorePlugin implements Plugin {
                     baseRequest.setHandled(true);
                     return true;
                 case "DELETE":
-                    Log.e(TAG, "handle: DELETE: " + key);
+                    Log.i(TAG, "handle: : " + target + " " + baseRequest.getMethod() + ", key: " + key);
                     strVersion = request.getHeader("if-none-match");
                     if (strVersion == null) {
-                        Log.e(TAG, "handle: missing If-None-Match header");
+                        Log.e(TAG, "handle: missing If-None-Match header: " + target + " " + baseRequest.getMethod());
                         try {
                             response.sendError(400);
                             baseRequest.setHandled(true);
@@ -222,11 +224,17 @@ public class KVStorePlugin implements Plugin {
                         delObj = store.delete(key, Long.parseLong(strVersion));
                     } catch (NumberFormatException e) {
                         e.printStackTrace();
+                        return true;
                     }
                     if (delObj == null || delObj.err != null) {
                         int err = 500;
-                        if (delObj != null)
+
+                        if (delObj != null) {
+                            Log.e(TAG, "handle: error deleting key: " + key + ", err: " + delObj.err);
                             err = transformErrorToResponseCode(delObj.err);
+                        } else {
+                            Log.e(TAG, "handle: error deleting key: " + key + ", delObj is null");
+                        }
                         try {
                             response.sendError(err);
                             baseRequest.setHandled(true);

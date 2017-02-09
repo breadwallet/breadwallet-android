@@ -101,6 +101,7 @@ public class CameraPlugin implements Plugin {
             final MainActivity app = MainActivity.app;
             if (app == null) {
                 try {
+                    Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
                     response.sendError(500, "context is null");
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -110,7 +111,7 @@ public class CameraPlugin implements Plugin {
 
             if (globalBaseRequest != null) {
                 try {
-                    Log.e(TAG, "handle: already taking a picture");
+                    Log.e(TAG, "handle: already taking a picture: " + target + " " + baseRequest.getMethod());
                     response.sendError(423);
                     baseRequest.setHandled(true);
                 } catch (IOException e) {
@@ -122,7 +123,7 @@ public class CameraPlugin implements Plugin {
             PackageManager pm = app.getPackageManager();
 
             if (!pm.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
-                Log.e(TAG, "handle: no camera available");
+                Log.e(TAG, "handle: no camera available: ");
                 baseRequest.setHandled(true);
                 try {
                     response.sendError(402);
@@ -131,15 +132,13 @@ public class CameraPlugin implements Plugin {
                 }
                 return true;
             }
-//            app.runOnUiThread(new Runnable() {
-//                @Override
-//                public void run() {
             if (ContextCompat.checkSelfPermission(app,
                     Manifest.permission.CAMERA)
                     != PackageManager.PERMISSION_GRANTED) {
                 // Should we show an explanation?
                 if (ActivityCompat.shouldShowRequestPermissionRationale(app,
                         Manifest.permission.CAMERA)) {
+                    Log.e(TAG, "handle: no camera access, showing instructions");
                     ((BreadWalletApp) app.getApplication()).showCustomToast(app,
                             app.getString(R.string.allow_camera_access),
                             MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
@@ -159,8 +158,6 @@ public class CameraPlugin implements Plugin {
                 continuation.suspend(response);
                 globalBaseRequest = baseRequest;
             }
-//                }
-//            });
 
             return true;
         } else if (target.startsWith("/_camera/picture/")) {
@@ -168,7 +165,7 @@ public class CameraPlugin implements Plugin {
             final MainActivity app = MainActivity.app;
             if (app == null) {
                 try {
-                    response.sendError(500, "context is null");
+                    response.sendError(500, "context is null: " + target + " " + baseRequest.getMethod());
                     baseRequest.setHandled(true);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -178,7 +175,7 @@ public class CameraPlugin implements Plugin {
             String id = target.replace("/_camera/picture/", "");
             byte[] pictureBytes = readPictureForId(app, id);
             if (pictureBytes == null) {
-                Log.e(TAG, "handle: WARNING pictureBytes is null");
+                Log.e(TAG, "handle: WARNING pictureBytes is null: "  + target + " " + baseRequest.getMethod());
                 try {
                     response.sendError(500);
                     baseRequest.setHandled(true);
@@ -222,8 +219,9 @@ public class CameraPlugin implements Plugin {
                             respJson.put("id", id);
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            return;
                         }
-                        Log.e(TAG, "handleCameraImageTaken: wrote image to: " + id);
+                        Log.i(TAG, "handleCameraImageTaken: wrote image to: " + id);
                         try {
                             ((HttpServletResponse) continuation.getServletResponse()).setStatus(200);
                             continuation.getServletResponse().getWriter().write(respJson.toString());
@@ -256,7 +254,6 @@ public class CameraPlugin implements Plugin {
     }
 
     private static String writeToFile(Context context, Bitmap img) {
-        Log.e(TAG, "writeToFile");
         String name = null;
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         FileOutputStream fileOutputStream = null;
@@ -267,12 +264,6 @@ public class CameraPlugin implements Plugin {
             name = CryptoHelper.base58ofSha256(out.toByteArray());
 
             File storageDir = new File(context.getFilesDir().getAbsolutePath() + "/pictures/");
-            storageDir.mkdir();
-//            File image = File.createTempFile(
-//                    name,  /* prefix */
-//                    ".jpeg",         /* suffix */
-//                    storageDir      /* directory */
-//            );
             File image = new File(storageDir, name + ".jpeg");
 
             fileOutputStream = new FileOutputStream(image);
@@ -293,7 +284,7 @@ public class CameraPlugin implements Plugin {
     }
 
     public byte[] readPictureForId(Context context, String id) {
-        Log.e(TAG, "readPictureForId: " + id);
+        Log.i(TAG, "readPictureForId: " + id);
         try {
             //create FileInputStream object
             FileInputStream fin = new FileInputStream(new File(context.getFilesDir().getAbsolutePath() + "/pictures/" + id + ".jpeg"));
@@ -302,9 +293,9 @@ public class CameraPlugin implements Plugin {
             return IOUtils.toByteArray(fin);
 
         } catch (FileNotFoundException e) {
-            System.out.println("File not found" + e);
+            Log.e(TAG, "File not found " + e);
         } catch (IOException ioe) {
-            System.out.println("Exception while reading the file " + ioe);
+            Log.e(TAG, "Exception while reading the file " + ioe);
         }
         return null;
     }

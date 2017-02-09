@@ -62,7 +62,7 @@ public class HTTPFileMiddleware implements Middleware {
         if (!temp.exists()) {
             return false;
         }
-        Log.e(TAG, "handling: " + target + " " + baseRequest.getMethod());
+        Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
         boolean modified = true;
         StringBuilder sb = new StringBuilder();
         try {

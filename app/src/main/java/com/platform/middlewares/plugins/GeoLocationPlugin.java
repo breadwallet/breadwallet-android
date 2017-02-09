@@ -73,14 +73,13 @@ public class GeoLocationPlugin implements Plugin {
                 }
 
                 try {
-                    Log.e(TAG, "run: granted: " + granted);
-
                     if (granted) {
                         globalBaseRequest.setHandled(true);
                         ((HttpServletResponse) continuation.getServletResponse()).setStatus(204);
 
                     } else {
                         try {
+                            Log.e(TAG, "handleGeoPermission: granted: " + granted);
                             globalBaseRequest.setHandled(true);
                             ((HttpServletResponse) continuation.getServletResponse()).sendError(400);
                         } catch (IOException e) {
@@ -98,40 +97,16 @@ public class GeoLocationPlugin implements Plugin {
 
     }
 
-//    public static void handleGeo(String respStr) {
-//        if (continuation == null) {
-//            Log.e(TAG, "handleGeoPermission: WARNING continuation is null");
-//            return;
-//        }
-//
-//        try {
-//            if (respStr != null && !respStr.isEmpty()) {
-//                try {
-//                    continuation.getServletResponse().getWriter().write(respStr);
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//
-//
-//            } else {
-//                Log.e(TAG, "handleGeo: WARNING respStr is null!");
-//            }
-//        } finally {
-//            ((HttpServletResponse) continuation.getServletResponse()).setStatus(204);
-//            continuation.complete();
-//            continuation = null;
-//        }
-//
-//    }
 
     @Override
     public boolean handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
 
         if (target.startsWith("/_permissions/geo")) {
-            Log.e(TAG, "handling: " + target + " " + baseRequest.getMethod());
+            Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
             MainActivity app = MainActivity.app;
             if (app == null) {
                 try {
+                    Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
                     response.sendError(500, "context is null");
                     baseRequest.setHandled(true);
                 } catch (IOException e) {
@@ -162,6 +137,7 @@ public class GeoLocationPlugin implements Plugin {
                         status = "always";
                         enabled = true;
                     } else {
+                        Log.e(TAG, "handle: sending permission denied: " + target + " " + baseRequest.getMethod());
                         status = "denied";
                         enabled = false;
                     }
@@ -179,6 +155,7 @@ public class GeoLocationPlugin implements Plugin {
                     } catch (JSONException e) {
                         e.printStackTrace();
                         try {
+                            Log.e(TAG, "handle: failed to send permission status: " + target + " " + baseRequest.getMethod());
                             response.sendError(500);
                             baseRequest.setHandled(true);
                         } catch (IOException e1) {
@@ -197,7 +174,7 @@ public class GeoLocationPlugin implements Plugin {
                 case "POST":
                     if (ContextCompat.checkSelfPermission(app, Manifest.permission.ACCESS_FINE_LOCATION)
                             != PackageManager.PERMISSION_GRANTED) {
-
+                        Log.e(TAG, "handle: requesting permissions: " + target + " " + baseRequest.getMethod());
                         ActivityCompat.requestPermissions(app, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, BRConstants.GEO_REQUEST_ID);
                     }
                     SharedPreferencesManager.putGeoPermissionsRequested(app, true);
@@ -208,7 +185,7 @@ public class GeoLocationPlugin implements Plugin {
 
             }
         } else if (target.startsWith("/_geo") && !target.startsWith("/_geosocket")) {
-            Log.e(TAG, "handling: " + target + " " + baseRequest.getMethod());
+            Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
             // GET /_geo
             //
             // Calling this method will query CoreLocation for a location object. The returned value may not be returned
@@ -225,6 +202,7 @@ public class GeoLocationPlugin implements Plugin {
             MainActivity app = MainActivity.app;
             if (app == null) {
                 try {
+                    Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
                     response.sendError(500, "context is null");
                     baseRequest.setHandled(true);
                 } catch (IOException e) {
@@ -237,6 +215,7 @@ public class GeoLocationPlugin implements Plugin {
                 JSONObject obj = getAuthorizationError(app);
                 if (obj != null) {
                     try {
+                        Log.e(TAG, "handle: error getting location: " + obj.toString() +", " + target + " " + baseRequest.getMethod());
                         response.getWriter().write(obj.toString());
                         baseRequest.setHandled(true);
                     } catch (IOException e) {
@@ -248,11 +227,10 @@ public class GeoLocationPlugin implements Plugin {
                 continuation = ContinuationSupport.getContinuation(request);
                 continuation.suspend(response);
                 GeoLocationManager.getInstance().getOneTimeGeoLocation(continuation, baseRequest);
-                Log.e(TAG, "handle: suspended the request");
                 return true;
             }
         } else if (target.startsWith("/_geosocket")) {
-            Log.e(TAG, "handling: " + target + " " + baseRequest.getMethod());
+            Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
             // GET /_geosocket
             //
             // This opens up a websocket to the location manager. It will return a new location every so often (but with no

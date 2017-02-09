@@ -278,7 +278,6 @@ public class APIClient {
             RequestBody body = request.body();
             try {
                 if (body != null && body.contentLength() != 0) {
-                    //                Log.e(TAG, "sendRequest: body is not null: " + body);
                     BufferedSink sink = new Buffer();
                     try {
                         body.writeTo(sink);
@@ -303,9 +302,7 @@ public class APIClient {
             String requestString = createRequest(request.method(), base58Body,
                     request.header("Content-Type"), request.header("Date"), request.url().encodedPath()
                             + ((queryString != null && !queryString.isEmpty()) ? ("?" + queryString) : ""));
-//            Log.e(TAG, "sendRequest: requestString: " + requestString);
             String signedRequest = signRequest(requestString);
-//            Log.e(TAG, "sendRequest: signedRequest: " + signedRequest);
             String token = new String(KeyStoreManager.getToken(ctx));
             if (token.isEmpty()) token = getToken();
             if (token == null || token.isEmpty()) {
@@ -322,7 +319,6 @@ public class APIClient {
         try {
             OkHttpClient client = new OkHttpClient.Builder()/*.addInterceptor(new LoggingInterceptor())*/.build();
             response = client.newCall(request).execute();
-//            Log.e(TAG, "sendRequest: date: " + response.header("Date"));
         } catch (IOException e) {
             e.printStackTrace();
             return new Response.Builder().code(599).request(request).body(ResponseBody.create(null, new byte[0])).protocol(Protocol.HTTP_1_1).build();
@@ -389,7 +385,7 @@ public class APIClient {
 
                 }
             } else {
-                Log.d(TAG, "updateBundle: latestVersion is: " + latestVersion);
+                Log.d(TAG, "updateBundle: latestVersion is null");
             }
 
         } else {
@@ -492,7 +488,6 @@ public class APIClient {
 
     public boolean tryExtractTar(File inputFile) {
         String extractFolderName = MainActivity.app.getFilesDir().getAbsolutePath() + bundlesFileName + "/" + extractedFolder;
-//        Log.e(TAG, String.format("Untaring %s to dir name %s.", inputFile.getAbsolutePath(), extractedFolder));
         boolean result = false;
         TarArchiveInputStream debInputStream = null;
         try {
@@ -500,11 +495,9 @@ public class APIClient {
             debInputStream = (TarArchiveInputStream) new ArchiveStreamFactory().createArchiveInputStream("tar", is);
             TarArchiveEntry entry = null;
             while ((entry = (TarArchiveEntry) debInputStream.getNextEntry()) != null) {
-//                Log.e(TAG, "tryExtractTar: entry.getName(): " + entry.getName());
 
                 final String outPutFileName = entry.getName().replace("./", "");
                 final File outputFile = new File(extractFolderName, outPutFileName);
-//                String outPutFileFullPath = extractFolderName + "/" + outPutFileName;
                 if (!entry.isDirectory()) {
                     FileUtils.writeByteArrayToFile(outputFile, org.apache.commons.compress.utils.IOUtils.toByteArray(debInputStream));
                 }
