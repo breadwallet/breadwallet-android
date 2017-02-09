@@ -164,7 +164,7 @@ public class APIClient {
             Request request = new Request.Builder().url(strUtl).get().build();
             String body = null;
             try {
-                Response response = sendRequest(request, false);
+                Response response = sendRequest(request, false, 0);
                 body = response.body().string();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -190,10 +190,10 @@ public class APIClient {
         String response = null;
         Response res = null;
         try {
-            res = sendRequest(request, true);
+            res = sendRequest(request, true, 0);
             response = res.body().string();
             if (response.isEmpty()) {
-                res = sendRequest(request, true);
+                res = sendRequest(request, true, 0);
                 response = res.body().string();
             }
         } catch (IOException e) {
@@ -227,7 +227,7 @@ public class APIClient {
             String strResponse = null;
             Response response;
             try {
-                response = sendRequest(request, false);
+                response = sendRequest(request, false, 0);
                 if (response != null)
                     strResponse = response.body().string();
             } catch (IOException e) {
@@ -271,7 +271,9 @@ public class APIClient {
 
     }
 
-    public Response sendRequest(Request request, boolean needsAuth) {
+    public Response sendRequest(Request request, boolean needsAuth, int retryCount) {
+        if (retryCount > 1)
+            throw new RuntimeException("sendRequest: WOWOWOW retryCount is: " + retryCount);
         if (needsAuth) {
             Request.Builder modifiedRequest = request.newBuilder();
             String base58Body = "";
@@ -340,9 +342,10 @@ public class APIClient {
         ResponseBody postReqBody = ResponseBody.create(null, data);
         if (needsAuth && isBreadChallenge(response)) {
             Log.e(TAG, "sendRequest: got authentication challenge from API - will attempt to get token");
-            String token = getToken();
-            //todo finish
-
+            getToken();
+            if (retryCount < 1) {
+                sendRequest(request, true, retryCount + 1);
+            }
         }
 
         return response.newBuilder().body(postReqBody).build();
@@ -395,7 +398,7 @@ public class APIClient {
                     .url(String.format("%s/assets/bundles/%s/download", BASE_URL, BREAD_BUY))
                     .get().build();
             Response response = null;
-            response = sendRequest(request, false);
+            response = sendRequest(request, false, 0);
             Log.d(TAG, "updateBundle: Downloaded, took: " + (System.currentTimeMillis() - startTime));
             writeBundleToFile(response, bundleFile);
 
@@ -411,7 +414,7 @@ public class APIClient {
             response = sendRequest(new Request.Builder()
                     .get()
                     .url(String.format("%s/assets/bundles/%s/versions", BASE_URL, BREAD_BUY))
-                    .build(), false).body().string();
+                    .build(), false, 0).body().string();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -433,7 +436,7 @@ public class APIClient {
         Request diffRequest = new Request.Builder()
                 .url(String.format("%s/assets/bundles/%s/diff/%s", BASE_URL, BREAD_BUY, currentTarVersion))
                 .get().build();
-        Response diffResponse = sendRequest(diffRequest, false);
+        Response diffResponse = sendRequest(diffRequest, false, 0);
         File patchFile = null;
         File tempFile = null;
         byte[] patchBytes = null;
@@ -523,7 +526,7 @@ public class APIClient {
         Request req = new Request.Builder()
                 .url(buildUrl(furl))
                 .get().build();
-        Response res = sendRequest(req, true);
+        Response res = sendRequest(req, true, 0);
         if (res == null) {
             Log.e(TAG, "updateFeatureFlag: error fetching features");
             return;

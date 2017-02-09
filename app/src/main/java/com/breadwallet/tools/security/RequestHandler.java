@@ -262,7 +262,7 @@ public class RequestHandler {
                                 .post(requestBody)
                                 .header("Content-Type", "application/json")
                                 .build();
-                        Response res = APIClient.getInstance(app).sendRequest(request, true);
+                        Response res = APIClient.getInstance(app).sendRequest(request, true, 0);
                         Log.e(TAG, "processBitIdResponse: res.code: " + res.code());
                         Log.e(TAG, "processBitIdResponse: res.code: " + res.message());
                         try {

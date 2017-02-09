@@ -107,7 +107,7 @@ public class PlatformTests {
 
         Response response = null;
         APIClient apiClient = APIClient.getInstance(mActivityRule.getActivity());
-        response = apiClient.sendRequest(request, false);
+        response = apiClient.sendRequest(request, false, 0);
         apiClient.writeBundleToFile(response, bundleFile);
         apiClient.tryExtractTar(bundleFile);
         String extractFolderName = MainActivity.app.getFilesDir() + "/" + BUNDLES + "/" + extractedFolder;
@@ -130,7 +130,7 @@ public class PlatformTests {
         Request request = new Request.Builder()
                 .get()
                 .url("https://s3.amazonaws.com/breadwallet-assets/bread-buy/7f5bc5c6cc005df224a6ea4567e508491acaffdc2e4769e5262a52f5b785e261.tar").build();
-        Response response = apiClient.sendRequest(request, false);
+        Response response = apiClient.sendRequest(request, false, 0);
         File bundleFile = new File(mActivityRule.getActivity().getFilesDir().getAbsolutePath() + bundleFileName);
         apiClient.writeBundleToFile(response, bundleFile);
         String latestVersion = apiClient.getLatestVersion();
@@ -150,21 +150,21 @@ public class PlatformTests {
         Request request = new Request.Builder()
                 .get()
                 .url("https://s3.amazonaws.com/breadwallet-assets/bread-buy/bundle.tar").build();
-        Response response = apiClient.sendRequest(request, false);
+        Response response = apiClient.sendRequest(request, false, 0);
         File bundleFileOld = new File(mActivityRule.getActivity().getFilesDir().getAbsolutePath() + String.format("/%s/%s.tar", BUNDLES, BREAD_BUY));
         byte[] bundleFileOldBytes = apiClient.writeBundleToFile(response, bundleFileOld);
 
         request = new Request.Builder()
                 .get()
                 .url("https://s3.amazonaws.com/breadwallet-assets/bread-buy/bundle2.tar").build();
-        response = apiClient.sendRequest(request, false);
+        response = apiClient.sendRequest(request, false, 0);
         File bundleFileLatest = new File(mActivityRule.getActivity().getFilesDir().getAbsolutePath() + String.format("/%s/%s.tar", BUNDLES, BREAD_BUY + "-test"));
         apiClient.writeBundleToFile(response, bundleFileLatest);
 
         request = new Request.Builder()
                 .get()
                 .url("https://s3.amazonaws.com/breadwallet-assets/bread-buy/bundle_bundle2.bspatch").build();
-        response = apiClient.sendRequest(request, false);
+        response = apiClient.sendRequest(request, false, 0);
         File patch = new File(mActivityRule.getActivity().getFilesDir().getAbsolutePath() + String.format("/%s/%s.bspatch", BUNDLES, "patch"));
         byte[] patchBytes = apiClient.writeBundleToFile(response, patch);
 

@@ -69,7 +69,7 @@ public class RemoteKVStore implements KVStoreAdaptor {
                 .head()
                 .build();
         Response res = null;
-        res = apiClient.sendRequest(request, true);
+        res = apiClient.sendRequest(request, true, 0);
         if (res == null || !res.isSuccessful()) {
             Log.e(TAG, "ver: [KV] HEAD key=" + key + ", err=" + (res == null ? null : res.code()));
             return new CompletionObject(0, 0, notFound);
@@ -90,7 +90,7 @@ public class RemoteKVStore implements KVStoreAdaptor {
                 .addHeader("Content-Type", "application/octet-stream")
                 .addHeader("Content-Length", String.valueOf(value.length))
                 .build();
-        Response res = apiClient.sendRequest(request, true);
+        Response res = apiClient.sendRequest(request, true, 0);
         if (res == null || !res.isSuccessful()) {
             Log.e(TAG, "ver: [KV] PUT key=" + key + ", err=" + (res == null ? null : res.code()));
             return new CompletionObject(0, 0, unknown);
@@ -109,7 +109,7 @@ public class RemoteKVStore implements KVStoreAdaptor {
                 .addHeader("If-None-Match", String.valueOf(version))
                 .build();
         Response res = null;
-        res = apiClient.sendRequest(request, true);
+        res = apiClient.sendRequest(request, true, 0);
         if (res == null || !res.isSuccessful()) {
             Log.e(TAG, "ver: [KV] DELETE key=" + key + ", err=" + (res == null ? null : res.code()));
             return new CompletionObject(0, 0, unknown);
@@ -128,7 +128,7 @@ public class RemoteKVStore implements KVStoreAdaptor {
                 .addHeader("If-None-Match", String.valueOf(version))
                 .build();
         Response res = null;
-        res = apiClient.sendRequest(request, true);
+        res = apiClient.sendRequest(request, true, 0);
         if (res == null || !res.isSuccessful()) {
             Log.e(TAG, "ver: [KV] GET key=" + key + ", err=" + (res == null ? null : res.code()));
             return new CompletionObject(0, 0, unknown);
@@ -152,7 +152,7 @@ public class RemoteKVStore implements KVStoreAdaptor {
                 .get()
                 .build();
         Response res = null;
-        res = apiClient.sendRequest(request, true);
+        res = apiClient.sendRequest(request, true, 0);
         if (res == null || !res.isSuccessful()) {
             Log.e(TAG, "ver: [KV] KEYS err=" + (res == null ? null : res.code()));
             return new CompletionObject(0, 0, unknown);
