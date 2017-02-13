@@ -397,7 +397,6 @@ public class MainActivity extends FragmentActivity implements Observer {
     @Override
     protected void onStop() {
         super.onStop();
-        CurrencyManager.getInstance(this).stopTimerTask();
 
     }
 

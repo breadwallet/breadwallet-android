@@ -5,6 +5,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Handler;
 import android.util.Log;
+import android.webkit.URLUtil;
 
 import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
@@ -329,6 +330,7 @@ public class RequestHandler {
         RequestObject obj = new RequestObject();
 
         String tmp = str.trim().replaceAll("\n", "").replaceAll(" ", "%20");
+        if (!URLUtil.isValidUrl(tmp)) return null;
         URI uri = URI.create(tmp);
 
         if (uri.getScheme() == null || !uri.getScheme().equals("bitcoin")) {

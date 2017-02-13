@@ -59,6 +59,7 @@ import okio.BufferedSink;
 
 import static android.R.attr.path;
 import static com.breadwallet.R.string.request;
+import static com.breadwallet.R.string.rescan;
 import static com.breadwallet.tools.util.BRCompressor.gZipExtract;
 
 
@@ -276,9 +277,11 @@ public class APIClient {
 
     }
 
-    public Response sendRequest(Request request, boolean needsAuth, int retryCount) {
+    public Response sendRequest(Request locRequest, boolean needsAuth, int retryCount) {
         if (retryCount > 1)
             throw new RuntimeException("sendRequest: Warning retryCount is: " + retryCount);
+        boolean isTestVersion = BREAD_BUY.equalsIgnoreCase("bread-buy-staging");
+        Request request = locRequest.newBuilder().header("X-Testflight", isTestVersion ? "true" : "false").build();
         if (needsAuth) {
             Request.Builder modifiedRequest = request.newBuilder();
             String base58Body = "";
@@ -319,6 +322,7 @@ public class APIClient {
             String authValue = "bread " + token + ":" + signedRequest;
 //            Log.e(TAG, "sendRequest: authValue: " + authValue);
             modifiedRequest = request.newBuilder();
+
             request = modifiedRequest.header("Authorization", authValue).build();
 
         }
@@ -326,6 +330,7 @@ public class APIClient {
         byte[] data = new byte[0];
         try {
             OkHttpClient client = new OkHttpClient.Builder().followRedirects(false)/*.addInterceptor(new LoggingInterceptor())*/.build();
+            Log.e(TAG, "sendRequest: before executing the request: " + request.headers().toString());
             response = client.newCall(request).execute();
             try {
                 data = response.body().bytes();
