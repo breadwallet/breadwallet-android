@@ -330,7 +330,7 @@ public class APIClient {
         byte[] data = new byte[0];
         try {
             OkHttpClient client = new OkHttpClient.Builder().followRedirects(false)/*.addInterceptor(new LoggingInterceptor())*/.build();
-            Log.e(TAG, "sendRequest: before executing the request: " + request.headers().toString());
+//            Log.e(TAG, "sendRequest: before executing the request: " + request.headers().toString());
             response = client.newCall(request).execute();
             try {
                 data = response.body().bytes();
