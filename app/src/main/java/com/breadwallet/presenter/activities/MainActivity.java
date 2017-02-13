@@ -390,6 +390,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     protected void onPause() {
         super.onPause();
         appInBackground = true;
+        CurrencyManager.getInstance(this).stopTimerTask();
         startStopReceiver(false);
     }
 
@@ -405,7 +406,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         super.onDestroy();
         finish();
         BRAnimator.level = 0;
-        CurrencyManager.getInstance(this).stopTimerTask();
+
         unregisterScreenLockReceiver();
         //sync the kv stores
         if (PLATFORM_ON)
