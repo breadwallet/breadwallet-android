@@ -51,25 +51,13 @@ public class TransactionDataSource {
             BRSQLiteHelper.TX_TIME_STAMP
     };
 
-    private TransactionDataSource() {
-        dbHelper = null;
-    }
 
     public TransactionDataSource(Context context) {
         dbHelper = new BRSQLiteHelper(context);
     }
 
-    public void open() throws SQLException {
-        database = dbHelper != null ? dbHelper.getWritableDatabase() : null;
-    }
-
-    public void close() {
-        if (dbHelper != null) {
-            dbHelper.close();
-        }
-    }
-
     public BRTransactionEntity createTransaction(BRTransactionEntity transactionEntity) {
+        database = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(BRSQLiteHelper.TX_COLUMN_ID, transactionEntity.getTxHash());
         values.put(BRSQLiteHelper.TX_BUFF, transactionEntity.getBuff());
@@ -99,6 +87,7 @@ public class TransactionDataSource {
     }
 
     public void deleteTransaction(BRTransactionEntity transaction) {
+        database = dbHelper.getWritableDatabase();
         String strHash = transaction.getTxHash();
         Log.e(TAG, "transaction deleted with id: " + strHash);
         database.delete(BRSQLiteHelper.TX_TABLE_NAME, BRSQLiteHelper.TX_COLUMN_ID
@@ -106,10 +95,12 @@ public class TransactionDataSource {
     }
 
     public void deleteAllTransactions() {
+        database = dbHelper.getWritableDatabase();
         database.delete(BRSQLiteHelper.TX_TABLE_NAME, null, null);
     }
 
     public List<BRTransactionEntity> getAllTransactions() {
+        database = dbHelper.getReadableDatabase();
         List<BRTransactionEntity> transactions = new ArrayList<>();
 
         Cursor cursor = database.query(BRSQLiteHelper.TX_TABLE_NAME,
@@ -133,6 +124,7 @@ public class TransactionDataSource {
     }
 
     public void updateTxBlockHeight(String hash, int blockHeight, int timeStamp) {
+        database = dbHelper.getWritableDatabase();
         Log.e(TAG, "transaction deleted with id: " + hash);
         String strFilter = "_id=\'" + hash + "\'";
         ContentValues args = new ContentValues();
@@ -143,6 +135,7 @@ public class TransactionDataSource {
     }
 
     public void deleteTxByHash(String hash) {
+        database = dbHelper.getWritableDatabase();
         Log.e(TAG, "transaction deleted with id: " + hash);
         database.delete(BRSQLiteHelper.TX_TABLE_NAME, BRSQLiteHelper.TX_COLUMN_ID
                 + " = \'" + hash + "\'", null);

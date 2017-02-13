@@ -52,25 +52,12 @@ class PeerDataSource {
             BRSQLiteHelper.PEER_TIMESTAMP
     };
 
-    private PeerDataSource() {
-        dbHelper = null;
-    }
-
     public PeerDataSource(Context context) {
         dbHelper = new BRSQLiteHelper(context);
     }
 
-    public void open() throws SQLException {
-        database = dbHelper != null ? dbHelper.getWritableDatabase() : null;
-    }
-
-    public void close() {
-        if (dbHelper != null) {
-            dbHelper.close();
-        }
-    }
-
     public void putPeers(PeerEntity[] peerEntities) {
+        database = dbHelper.getWritableDatabase();
         database.beginTransaction();
         try {
             for (PeerEntity p : peerEntities) {
@@ -94,6 +81,7 @@ class PeerDataSource {
     }
 
     public void deletePeer(BRPeerEntity peerEntity) {
+        database = dbHelper.getWritableDatabase();
         long id = peerEntity.getId();
         Log.e(TAG, "Peer deleted with id: " + id);
         database.delete(BRSQLiteHelper.PEER_TABLE_NAME, BRSQLiteHelper.PEER_COLUMN_ID
@@ -101,10 +89,12 @@ class PeerDataSource {
     }
 
     public void deleteAllPeers() {
+        database = dbHelper.getWritableDatabase();
         database.delete(BRSQLiteHelper.PEER_TABLE_NAME, BRSQLiteHelper.PEER_COLUMN_ID + " <> -1", null);
     }
 
     public List<BRPeerEntity> getAllPeers() {
+        database = dbHelper.getReadableDatabase();
         List<BRPeerEntity> peers = new ArrayList<>();
 
         Cursor cursor = database.query(BRSQLiteHelper.PEER_TABLE_NAME,

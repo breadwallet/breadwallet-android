@@ -53,27 +53,12 @@ class MerkleBlockDataSource {
             BRSQLiteHelper.MB_HEIGHT
     };
 
-    private MerkleBlockDataSource() {
-        dbHelper = null;
-    }
-
     public MerkleBlockDataSource(Context context) {
         dbHelper = new BRSQLiteHelper(context);
     }
 
-    public void open() throws SQLException {
-        if (dbHelper != null) {
-            database = dbHelper.getWritableDatabase();
-        }
-    }
-
-    public void close() {
-        if (dbHelper != null) {
-            dbHelper.close();
-        }
-    }
-
     public void putMerkleBlocks(BlockEntity[] blockEntities) {
+        database = dbHelper.getWritableDatabase();
         database.beginTransaction();
         try {
             for (BlockEntity b : blockEntities) {
@@ -93,10 +78,12 @@ class MerkleBlockDataSource {
     }
 
     public void deleteAllBlocks() {
+        database = dbHelper.getWritableDatabase();
         database.delete(BRSQLiteHelper.MB_TABLE_NAME, BRSQLiteHelper.MB_COLUMN_ID + " <> -1", null);
     }
 
     public void deleteMerkleBlock(BRMerkleBlockEntity merkleBlock) {
+        database = dbHelper.getWritableDatabase();
         long id = merkleBlock.getId();
         Log.e(TAG, "MerkleBlock deleted with id: " + id);
         database.delete(BRSQLiteHelper.MB_TABLE_NAME, BRSQLiteHelper.MB_COLUMN_ID
@@ -104,6 +91,7 @@ class MerkleBlockDataSource {
     }
 
     public List<BRMerkleBlockEntity> getAllMerkleBlocks() {
+        database = dbHelper.getReadableDatabase();
         List<BRMerkleBlockEntity> merkleBlocks = new ArrayList<>();
 
         Cursor cursor = database.query(BRSQLiteHelper.MB_TABLE_NAME,

@@ -43,205 +43,125 @@ public class SQLiteManager {
     private static final String TAG = SQLiteManager.class.getName();
 
     private static SQLiteManager instance;
-    private static Context ctx;
+    private Context ctx;
 
-    private SQLiteManager() {
+    private SQLiteManager(Context ctx) {
+        this.ctx = ctx;
     }
 
     public static SQLiteManager getInstance(Context context) {
-        ctx = context;
         if (instance == null) {
-            instance = new SQLiteManager();
+            instance = new SQLiteManager(context);
         }
         return instance;
     }
 
     public List<BRTransactionEntity> getTransactions() {
 
-        TransactionDataSource TXdataSource = null;
         List<BRTransactionEntity> txValues = new ArrayList<>();
         try {
-            TXdataSource = new TransactionDataSource(ctx);
-            TXdataSource.open();
-            txValues = TXdataSource.getAllTransactions();
+            txValues = new TransactionDataSource(ctx).getAllTransactions();
 
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            if (TXdataSource != null)
-                TXdataSource.close();
         }
         return txValues;
     }
 
     public void deleteTransactions() {
-        TransactionDataSource TXdataSource = null;
         try {
-            TXdataSource = new TransactionDataSource(ctx);
-            TXdataSource.open();
-            TXdataSource.deleteAllTransactions();
-
+            new TransactionDataSource(ctx).deleteAllTransactions();
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            if (TXdataSource != null)
-                TXdataSource.close();
         }
     }
 
     public void insertTransaction(byte[] transaction, int blockheight, long timestamp, String txHash) {
-        BRTransactionEntity entity = new BRTransactionEntity(transaction, blockheight, timestamp, txHash);
-        TransactionDataSource TXdataSource = null;
-
         Log.e(TAG, "SQLiteManager - transaction inserted with timestamp: " + timestamp);
+        BRTransactionEntity entity = new BRTransactionEntity(transaction, blockheight, timestamp, txHash);
 
         try {
-            TXdataSource = new TransactionDataSource(ctx);
-            TXdataSource.open();
-            TXdataSource.createTransaction(entity);
+            new TransactionDataSource(ctx).createTransaction(entity);
         } catch (SQLException e) {
             FirebaseCrash.report(e);
             e.printStackTrace();
-        } finally {
-            if (TXdataSource != null)
-                TXdataSource.close();
         }
     }
 
     public List<BRMerkleBlockEntity> getBlocks() {
-        MerkleBlockDataSource BKdataSource = null;
         List<BRMerkleBlockEntity> BkValues = new ArrayList<>();
 
         try {
-            BKdataSource = new MerkleBlockDataSource(ctx);
-            BKdataSource.open();
-            BkValues = BKdataSource.getAllMerkleBlocks();
+            BkValues = new MerkleBlockDataSource(ctx).getAllMerkleBlocks();
 
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            if (BKdataSource != null)
-                BKdataSource.close();
         }
 
         return BkValues;
     }
 
     public void deleteBlocks() {
-        MerkleBlockDataSource BKdataSource = null;
-
         try {
-            BKdataSource = new MerkleBlockDataSource(ctx);
-            BKdataSource.open();
-            BKdataSource.deleteAllBlocks();
+            new MerkleBlockDataSource(ctx).deleteAllBlocks();
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            if (BKdataSource != null)
-                BKdataSource.close();
         }
     }
 
     public void insertMerkleBlocks(BlockEntity[] blockEntities) {
-        MerkleBlockDataSource BKdataSource = null;
-
-//        Log.e(TAG, "SQLiteManager - merkleBlock inserted");
-
         try {
-            BKdataSource = new MerkleBlockDataSource(ctx);
-            BKdataSource.open();
-            BKdataSource.putMerkleBlocks(blockEntities);
+            new MerkleBlockDataSource(ctx).putMerkleBlocks(blockEntities);
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            if (BKdataSource != null)
-                BKdataSource.close();
         }
     }
 
     public List<BRPeerEntity> getPeers() {
-        PeerDataSource PRdataSource = null;
         List<BRPeerEntity> PRValues = new ArrayList<>();
 
         try {
-            PRdataSource = new PeerDataSource(ctx);
-            PRdataSource.open();
-            PRValues = PRdataSource.getAllPeers();
+            PRValues = new PeerDataSource(ctx).getAllPeers();
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            if (PRdataSource != null)
-                PRdataSource.close();
         }
         return PRValues;
     }
 
     public void deletePeers() {
-        PeerDataSource PRdataSource = null;
-
         try {
-            PRdataSource = new PeerDataSource(ctx);
-            PRdataSource.open();
-            PRdataSource.deleteAllPeers();
+            new PeerDataSource(ctx).deleteAllPeers();
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            if (PRdataSource != null)
-                PRdataSource.close();
         }
     }
 
     public void insertPeer(PeerEntity[] peerEntities) {
-
-
-        PeerDataSource PRdataSource = null;
-
-//        Log.e(TAG, "SQLiteManager - peer inserted");
-
         try {
-            PRdataSource = new PeerDataSource(ctx);
-            PRdataSource.open();
-            PRdataSource.putPeers(peerEntities);
+            new PeerDataSource(ctx).putPeers(peerEntities);
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            if (PRdataSource != null)
-                PRdataSource.close();
         }
     }
 
     public void updateTxByHash(String hash, int blockHeight, int timeStamp) {
-        TransactionDataSource TXdataSource = null;
-
         Log.e(TAG, "SQLiteManager - transaction updated");
 
         try {
-            TXdataSource = new TransactionDataSource(ctx);
-            TXdataSource.open();
-            TXdataSource.updateTxBlockHeight(hash, blockHeight, timeStamp);
+            new TransactionDataSource(ctx).updateTxBlockHeight(hash, blockHeight, timeStamp);
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            if (TXdataSource != null)
-                TXdataSource.close();
         }
     }
 
 
     public void deleteTxByHash(String hash) {
-        TransactionDataSource TXdataSource = null;
-
         Log.e(TAG, "SQLiteManager - transaction inserted");
 
         try {
-            TXdataSource = new TransactionDataSource(ctx);
-            TXdataSource.open();
-            TXdataSource.deleteTxByHash(hash);
+            new TransactionDataSource(ctx).deleteTxByHash(hash);
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            if (TXdataSource != null)
-                TXdataSource.close();
         }
     }
 }
