@@ -105,7 +105,8 @@ public class HTTPServer {
             }
         };
 
-        handlerCollection.addHandler(new ServerHandler());
+        ServerHandler serverHandler = new ServerHandler();
+        handlerCollection.addHandler(serverHandler);
         handlerCollection.addHandler(wsHandler);
 
         server.setHandler(handlerCollection);

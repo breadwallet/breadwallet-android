@@ -311,7 +311,6 @@ public class BreadWalletApp extends Application {
             if (view != null) {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                Log.e(TAG, "keyboard hidden");
                 return;
             }
         }

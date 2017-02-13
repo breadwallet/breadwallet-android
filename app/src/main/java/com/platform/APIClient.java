@@ -7,6 +7,7 @@ import android.content.pm.ApplicationInfo;
 import android.util.Log;
 
 import com.breadwallet.BuildConfig;
+import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.crypto.CryptoHelper;
@@ -57,6 +58,7 @@ import okio.Buffer;
 import okio.BufferedSink;
 
 import static android.R.attr.path;
+import static com.breadwallet.R.string.request;
 import static com.breadwallet.tools.util.BRCompressor.gZipExtract;
 
 
@@ -108,7 +110,7 @@ public class APIClient {
 
     public static final String BUNDLES = "bundles";
     //    public static final String BREAD_BUY = "bread-buy-staging";
-    public static String BREAD_BUY = "bread-buy";
+    public static String BREAD_BUY = "bread-buy-staging";
 
     public static String bundlesFileName = String.format("/%s", BUNDLES);
     public static String bundleFileName = String.format("/%s/%s.tar", BUNDLES, BREAD_BUY);
@@ -233,7 +235,10 @@ public class APIClient {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if (strResponse == null) return null;
+            if (Utils.isNullOrEmpty(strResponse)) {
+                Log.e(TAG, "getToken: retrieving token failed");
+                return null;
+            }
             JSONObject obj = null;
             obj = new JSONObject(strResponse);
             String token = obj.getString("token");
@@ -273,7 +278,7 @@ public class APIClient {
 
     public Response sendRequest(Request request, boolean needsAuth, int retryCount) {
         if (retryCount > 1)
-            throw new RuntimeException("sendRequest: WOWOWOW retryCount is: " + retryCount);
+            throw new RuntimeException("sendRequest: Warning retryCount is: " + retryCount);
         if (needsAuth) {
             Request.Builder modifiedRequest = request.newBuilder();
             String base58Body = "";
@@ -318,18 +323,28 @@ public class APIClient {
 
         }
         Response response = null;
+        byte[] data = new byte[0];
         try {
-            OkHttpClient client = new OkHttpClient.Builder()/*.addInterceptor(new LoggingInterceptor())*/.build();
+            OkHttpClient client = new OkHttpClient.Builder().followRedirects(false)/*.addInterceptor(new LoggingInterceptor())*/.build();
             response = client.newCall(request).execute();
+            try {
+                data = response.body().bytes();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (!response.isSuccessful())
+                Log.e(TAG, "sendRequest: " + String.format(Locale.getDefault(), "url (%s), code (%d), mess (%s), body (%s)",
+                        request.url(), response.code(), response.message(), new String(data)));
+            if (response.isRedirect()) {
+                String newLocation = request.url().scheme() + "://" + request.url().host() + response.header("location");
+                Log.e(TAG, "redirect: " + request.url() + " >>> " + newLocation);
+                //todo hardcoded get for now, find a way to specify later
+                return sendRequest(new Request.Builder().url(newLocation).get().build(), needsAuth, 0);
+
+            }
         } catch (IOException e) {
             e.printStackTrace();
             return new Response.Builder().code(599).request(request).body(ResponseBody.create(null, new byte[0])).protocol(Protocol.HTTP_1_1).build();
-        }
-        byte[] data = new byte[0];
-        try {
-            data = response.body().bytes();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
 
         if (response.header("content-encoding") != null && response.header("content-encoding").equalsIgnoreCase("gzip")) {

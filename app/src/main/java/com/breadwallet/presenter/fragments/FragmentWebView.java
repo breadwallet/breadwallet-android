@@ -4,19 +4,24 @@ package com.breadwallet.presenter.fragments;
 import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.pm.ApplicationInfo;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.ConsoleMessage;
+import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import com.breadwallet.R;
 import com.platform.HTTPServer;
 
+import static com.breadwallet.R.color.red;
 
 /**
  * BreadWallet
@@ -59,13 +64,28 @@ public class FragmentWebView extends Fragment {
                 R.layout.fragment_early_access, container, false);
         if (webView != null) webView.destroy();
         webView = (WebView) rootView.findViewById(R.id.early_access_web_view);
-//        webView.setWebViewClient(new BRWebViewClient());
         webView.setWebChromeClient(new BRWebChromeClient());
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                Log.e(TAG, "shouldOverrideUrlLoading: " + request.getUrl());
+                Log.e(TAG, "shouldOverrideUrlLoading: " + request.getMethod());
+                return true;
+            }
+
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                Log.e(TAG, "onPageStarted: " + url);
+                super.onPageStarted(view, url, favicon);
+            }
+        });
+
         WebSettings webSettings = webView.getSettings();
         if (mode == 1) theUrl = HTTPServer.URL_BUY_BITCOIN;
         if (0 != (getActivity().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)) {
             WebView.setWebContentsDebuggingEnabled(true);
         }
+        webSettings.setDomStorageEnabled(true);
         webSettings.setJavaScriptEnabled(true);
 
         webView.loadUrl(theUrl);
@@ -90,6 +110,14 @@ public class FragmentWebView extends Fragment {
             Log.e(TAG, "onConsoleMessage: consoleMessage: " + consoleMessage.message());
             return super.onConsoleMessage(consoleMessage);
         }
+
+        @Override
+        public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
+            Log.e(TAG, "onJsAlert: " + message + ", url: " + url);
+            return super.onJsAlert(view, url, message, result);
+
+        }
+
 
     }
 

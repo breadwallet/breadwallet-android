@@ -84,6 +84,7 @@ public class APIProxy implements Middleware {
         String authHeader = baseRequest.getHeader(SHOULD_AUTHENTICATE);
         if (authHeader != null && authHeader.toLowerCase().equals("yes")) auth = true;
         Response res = apiInstance.sendRequest(req, auth, 0);
+
         if (res.code() == 599) {
             try {
                 Log.e(TAG, "handle: code 599: " + target + " " + baseRequest.getMethod());
@@ -116,7 +117,8 @@ public class APIProxy implements Middleware {
             if (res.isSuccessful()) {
                 response.setStatus(res.code());
             } else {
-                Log.e(TAG, "handle: " + target + ": " + res.code() + "(" + res.message() + ")" + ", body: " + res.body().string());
+                response.sendError(res.code());
+                Log.e(TAG, "RES IS NOT SUCCESSFUL: " + res.request().url() + ": " + res.code() + "(" + res.message() + ")");
                 return true;
             }
             response.getOutputStream().write(bodyBytes);
