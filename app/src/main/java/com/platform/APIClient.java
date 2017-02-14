@@ -343,7 +343,6 @@ public class APIClient {
             if (response.isRedirect()) {
                 String newLocation = request.url().scheme() + "://" + request.url().host() + response.header("location");
                 Log.e(TAG, "redirect: " + request.url() + " >>> " + newLocation);
-                //todo hardcoded get for now, find a way to specify later
                 return sendRequest(new Request.Builder().url(newLocation).get().build(), needsAuth, 0);
 
             }

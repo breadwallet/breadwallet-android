@@ -77,7 +77,7 @@ public class FragmentPhraseFlow1 extends Fragment {
             app.fragmentPhraseFlow2.setPhrase(phrase);
         }
 
-        long limit = SharedPreferencesManager.getLimit(getActivity());
+        int limit = SharedPreferencesManager.getLimit(getActivity());
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override

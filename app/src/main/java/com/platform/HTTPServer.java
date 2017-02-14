@@ -141,7 +141,7 @@ public class HTTPServer {
     }
 
     public boolean isStarted() {
-        return server == null || server.isStarted();
+        return server != null && server.isStarted();
     }
 
     private static class ServerHandler extends AbstractHandler {
