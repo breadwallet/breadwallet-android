@@ -257,7 +257,7 @@ public class SharedPreferencesManager {
         }
         Set<CurrencyEntity> result = null;
         ByteArrayInputStream byteArray = new ByteArrayInputStream(bytes);
-        Base64InputStream base64InputStream = new Base64InputStream(byteArray, Base64.DEFAULT);
+        Base64InputStream base64InputStream = new Base64InputStream(byteArray, Base64.NO_WRAP);
         ObjectInputStream in;
         try {
             in = new ObjectInputStream(base64InputStream);
@@ -283,7 +283,7 @@ public class SharedPreferencesManager {
             objectOutput.close();
             arrayOutputStream.close();
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            Base64OutputStream b64 = new Base64OutputStream(out, Base64.DEFAULT);
+            Base64OutputStream b64 = new Base64OutputStream(out, Base64.NO_WRAP);
             b64.write(data);
             b64.close();
             out.close();

@@ -11,6 +11,7 @@ import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -25,6 +26,7 @@ import com.jniwrappers.BRKey;
 import com.platform.interfaces.Plugin;
 
 import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.io.FileUtils;
 import org.eclipse.jetty.continuation.Continuation;
 import org.eclipse.jetty.continuation.ContinuationSupport;
 import org.eclipse.jetty.server.Request;
@@ -37,6 +39,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -184,8 +187,24 @@ public class CameraPlugin implements Plugin {
                 }
                 return true;
             }
+            byte[] imgBytes = pictureBytes;
+            String b64opt = request.getParameter("base64");
+            String contentType = "image/jpeg";
+            if(b64opt != null && !b64opt.isEmpty()){
+                contentType = "text/plain";
+                String b64 = "data:image/jpeg;base64," + Base64.encodeToString(pictureBytes, Base64.NO_WRAP);
+                try {
+                    imgBytes = b64.getBytes("UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                    response.setStatus(500);
+                    baseRequest.setHandled(true);
+                    return true;
+                }
+            }
             try {
-                response.getOutputStream().write(pictureBytes);
+                response.setContentType(contentType);
+                response.getOutputStream().write(imgBytes);
                 response.setStatus(200);
                 baseRequest.setHandled(true);
             } catch (IOException e) {
@@ -256,7 +275,6 @@ public class CameraPlugin implements Plugin {
     private static String writeToFile(Context context, Bitmap img) {
         String name = null;
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        FileOutputStream fileOutputStream = null;
         try {
 //            out = new FileOutputStream(image);
             img.compress(Bitmap.CompressFormat.JPEG, 50, out);
@@ -265,16 +283,13 @@ public class CameraPlugin implements Plugin {
 
             File storageDir = new File(context.getFilesDir().getAbsolutePath() + "/pictures/");
             File image = new File(storageDir, name + ".jpeg");
-
-            fileOutputStream = new FileOutputStream(image);
-            fileOutputStream.write(out.toByteArray());
+            FileUtils.writeByteArrayToFile(image,out.toByteArray());
             return name;
             // PNG is a lossless format, the compression factor (100) is ignored
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             try {
-                if (fileOutputStream != null) fileOutputStream.close();
                 out.close();
             } catch (IOException e) {
                 e.printStackTrace();
