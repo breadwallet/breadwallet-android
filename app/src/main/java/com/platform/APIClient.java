@@ -9,6 +9,7 @@ import android.util.Log;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.tools.crypto.Base58;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.security.KeyStoreManager;
@@ -273,7 +274,7 @@ public class APIClient {
         byte[] sha256Second = digest.digest(sha256First);
         BRKey key = new BRKey(KeyStoreManager.getAuthKey(ctx));
         byte[] signedBytes = key.compactSign(sha256Second);
-        return BRBase58.getInstance().base58Encode(signedBytes);
+        return Base58.encode(signedBytes);
 
     }
 
@@ -281,7 +282,8 @@ public class APIClient {
         if (retryCount > 1)
             throw new RuntimeException("sendRequest: Warning retryCount is: " + retryCount);
         boolean isTestVersion = BREAD_BUY.equalsIgnoreCase("bread-buy-staging");
-        Request request = locRequest.newBuilder().header("X-Testflight", isTestVersion ? "true" : "false").build();
+        //todo delete X-Bitcoin-Testnet header from the bottom line
+        Request request = locRequest.newBuilder().header("X-Testflight", isTestVersion ? "true" : "false").header("X-Bitcoin-Testnet", "true").build();
         if (needsAuth) {
             Request.Builder modifiedRequest = request.newBuilder();
             String base58Body = "";

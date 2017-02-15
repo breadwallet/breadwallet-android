@@ -45,5 +45,5 @@ public class BRBase58 {
         return instance;
     }
 
-    public native String base58Encode(byte[] data);
+//    public native String base58Encode(byte[] data);
 }

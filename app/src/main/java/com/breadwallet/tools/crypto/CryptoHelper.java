@@ -45,7 +45,9 @@ public class CryptoHelper {
         }
 
         byte[] sha256First = digest.digest(toEncode);
-        return BRBase58.getInstance().base58Encode(sha256First);
 
+        return Base58.encode(sha256First);
     }
+
+
 }

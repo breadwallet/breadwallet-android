@@ -132,18 +132,19 @@ public class GeoLocationPlugin implements Plugin {
                     JSONObject jsonResult = new JSONObject();
                     String status;
                     boolean enabled;
+                    boolean permRequested = SharedPreferencesManager.getGeoPermissionsRequested(app);
                     int permissionCheck = ContextCompat.checkSelfPermission(app, Manifest.permission.ACCESS_FINE_LOCATION);
                     if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
                         status = "always";
                         enabled = true;
                     } else {
                         Log.e(TAG, "handle: sending permission denied: " + target + " " + baseRequest.getMethod());
-                        status = "denied";
+                        status = permRequested? "denied" : "undetermined";
                         enabled = false;
                     }
                     try {
                         jsonResult.put("status", status);
-                        jsonResult.put("user_queried", SharedPreferencesManager.getGeoPermissionsRequested(app));
+                        jsonResult.put("user_queried", permRequested);
                         jsonResult.put("location_enabled", enabled);
                         response.setStatus(200);
                         try {
