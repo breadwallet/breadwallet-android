@@ -280,9 +280,9 @@ public class PlatformTests {
         String expectedSig = "ICWek6XEVxu/1/x+TtWk178t6uFcToH019RWNnS+JEeJOr2XGkZKQwsSqEvJ7l3sfhUoX1jm4uWP7nmlyG5Y10E=";
         String sig = BRBitId.signMessage(message, key);
         Log.e(TAG, "sig: " + sig);
-
         String expectedAddress = "mjBrDFeeX9moESGiRZZGeYrsUSNuvgwDVV";
         String address = key.address();
+        Log.e(TAG, "address: " + address);
         Assert.assertEquals(expectedAddress, address);
         Assert.assertNotNull(sig);
         Assert.assertEquals(expectedSig.length(), sig.length());

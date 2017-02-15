@@ -61,7 +61,7 @@ public class BRBitId {
         byte[] sha256Second = digest.digest(sha256First);
         byte[] signature = key.compactSign(sha256Second);
 
-        return Base64.encodeToString(signature, Base64.DEFAULT);
+        return Base64.encodeToString(signature, Base64.NO_WRAP);
     }
 
     public static byte[] formatMessageForBitcoinSigning(String message) {
