@@ -47,7 +47,7 @@ public class BRBitId {
     public static final String TAG = BRBitId.class.getName();
     public static final String BITCOIN_SIGNED_MESSAGE_HEADER = "Bitcoin Signed Message:\n";
 
-    public static String signMessage(String message, byte[] key) {
+    public static String signMessage(String message, BRKey key) {
         byte[] signingData = formatMessageForBitcoinSigning(message);
 
         MessageDigest digest = null;
@@ -59,7 +59,7 @@ public class BRBitId {
         }
         byte[] sha256First = digest.digest(signingData);
         byte[] sha256Second = digest.digest(sha256First);
-        byte[] signature = new BRKey(key).compactSign(sha256Second);
+        byte[] signature = key.compactSign(sha256Second);
 
         return Base64.encodeToString(signature, Base64.DEFAULT);
     }
@@ -80,7 +80,7 @@ public class BRBitId {
 
         int cap = 1 + headerBytes.length + varIntSize(messageBytes.length) + messageBytes.length;
 
-        ByteBuffer dataBuffer = ByteBuffer.allocate(cap)/*.order(ByteOrder.LITTLE_ENDIAN)*/;
+        ByteBuffer dataBuffer = ByteBuffer.allocate(cap).order(ByteOrder.LITTLE_ENDIAN);
         dataBuffer.put((byte) headerBytes.length);          //put header count
         dataBuffer.put(headerBytes);                        //put the header
         putVarInt(message.length(), dataBuffer);            //put message count

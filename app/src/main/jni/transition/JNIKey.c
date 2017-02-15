@@ -8,6 +8,7 @@
 #include <android/log.h>
 #include <BRCrypto.h>
 #include <BRAddress.h>
+#include <assert.h>
 #include "JNIKey.h"
 
 static BRKey _key;
@@ -39,6 +40,16 @@ JNIEXPORT void JNICALL Java_com_jniwrappers_BRKey_setPrivKey(
 
     jbyte *bytePrivKey = (*env)->GetByteArrayElements(env, privKey, 0);
     int res = BRKeySetPrivKey(&_key, (const char *) bytePrivKey);
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "key is set, _key: %s", _key.secret);
+}
+JNIEXPORT void JNICALL Java_com_jniwrappers_BRKey_setSecret(
+        JNIEnv *env,
+        jobject thiz,
+        jbyteArray privKey) {
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "key is not set yet, _key: %s", _key.secret);
+
+    jbyte *bytePrivKey = (*env)->GetByteArrayElements(env, privKey, 0);
+    int res = BRKeySetSecret(&_key, (const UInt256 *) bytePrivKey, 1);
 //    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "key is set, _key: %s", _key.secret);
 }
 
@@ -89,5 +100,6 @@ JNIEXPORT jbyteArray JNICALL Java_com_jniwrappers_BRKey_decryptNative(JNIEnv *en
 JNIEXPORT jbyteArray JNICALL Java_com_jniwrappers_BRKey_address(JNIEnv *env, jobject thiz) {
     BRAddress address = BR_ADDRESS_NONE;
     BRKeyAddress(&_key, address.s, sizeof(address));
+    assert(address.s[0] != '\0');
     return (*env)->NewStringUTF(env, address.s);
 }

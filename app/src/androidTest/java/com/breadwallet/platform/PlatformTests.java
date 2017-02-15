@@ -1,5 +1,6 @@
 package com.breadwallet.platform;
 
+import android.net.Uri;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
@@ -7,7 +8,10 @@ import android.util.Log;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.util.BRCompressor;
 import com.breadwallet.tools.util.Utils;
+import com.jniwrappers.BRBIP32Sequence;
+import com.jniwrappers.BRKey;
 import com.platform.APIClient;
+import com.platform.tools.BRBitId;
 
 import org.apache.commons.compress.compressors.CompressorException;
 import org.apache.commons.io.IOUtils;
@@ -20,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -32,10 +37,14 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 import static android.R.attr.data;
+import static android.R.attr.key;
+import static android.R.attr.left;
+import static com.breadwallet.presenter.fragments.FragmentScanResult.address;
 import static com.platform.APIClient.BREAD_BUY;
 import static com.platform.APIClient.BUNDLES;
 import static com.platform.APIClient.bundleFileName;
 import static com.platform.APIClient.extractedFolder;
+import static com.platform.tools.BRBitId.signMessage;
 
 /**
  * BreadWallet
@@ -234,7 +243,7 @@ public class PlatformTests {
     }
 
     @Test
-    public void testGZIP(){
+    public void testGZIP() {
         String data = "Ladies and Gentlemen of the class of '99: If I could offer you only one tip 11111111for the future, " +
                 "sunscreen would be it.";
         Assert.assertFalse(BRCompressor.isGZIPStream(data.getBytes()));
@@ -246,12 +255,12 @@ public class PlatformTests {
         byte[] decompressedData = BRCompressor.gZipExtract(compressedData);
         Assert.assertFalse(BRCompressor.isGZIPStream(decompressedData));
         Assert.assertNotNull(decompressedData);
-        Assert.assertEquals(new String (decompressedData), data);
+        Assert.assertEquals(new String(decompressedData), data);
         Assert.assertNotEquals(compressedData.length, decompressedData.length);
     }
 
     @Test
-    public void testBZip2(){
+    public void testBZip2() {
         String data = "Ladies and Gentlemen of the class of '99: If I could offer you only one tip 11111111for the future, " +
                 "sunscreen would be it.";
         byte[] compressedData = BRCompressor.bz2Compress(data.getBytes());
@@ -260,8 +269,24 @@ public class PlatformTests {
         Assert.assertTrue(compressedData.length > 0);
         byte[] decompressedData = BRCompressor.bz2Extract(compressedData);
         Assert.assertNotNull(decompressedData);
-        Assert.assertEquals(new String (decompressedData), data);
+        Assert.assertEquals(new String(decompressedData), data);
         Assert.assertNotEquals(compressedData.length, decompressedData.length);
+    }
+
+    @Test
+    public void testBitIdSignature() {
+        BRKey key = new BRKey("c4c9b99b714074736b65d9faab39145949894233a09d8100b91104750a82d31f");
+        String message = "https://breadwallet.com/bitid?nonce=123456789";
+        String expectedSig = "ICWek6XEVxu/1/x+TtWk178t6uFcToH019RWNnS+JEeJOr2XGkZKQwsSqEvJ7l3sfhUoX1jm4uWP7nmlyG5Y10E=";
+        String sig = BRBitId.signMessage(message, key);
+        Log.e(TAG, "sig: " + sig);
+
+        String expectedAddress = "mjBrDFeeX9moESGiRZZGeYrsUSNuvgwDVV";
+        String address = key.address();
+        Assert.assertEquals(expectedAddress, address);
+        Assert.assertNotNull(sig);
+        Assert.assertEquals(expectedSig.length(), sig.length());
+        Assert.assertEquals(expectedSig, sig);
     }
 
 }

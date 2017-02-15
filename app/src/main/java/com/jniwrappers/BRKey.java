@@ -1,6 +1,8 @@
 package com.jniwrappers;
 
 
+import com.breadwallet.tools.util.Utils;
+
 /**
  * BreadWallet
  * <p/>
@@ -32,7 +34,13 @@ public class BRKey {
         setPrivKey(key);
     }
 
+    public BRKey(String hexSecret) {
+        setSecret(Utils.hexToBytes(hexSecret));
+    }
+
     private native void setPrivKey(byte[] privKey);
+
+    private native void setSecret(byte[] secret);
 
     public native byte[] compactSign(byte[] data);
 

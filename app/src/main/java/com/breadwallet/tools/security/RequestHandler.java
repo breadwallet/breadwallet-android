@@ -244,7 +244,7 @@ public class RequestHandler {
 
 //                    Log.e(TAG, "run: uriWithNonce: " + uriWithNonce);
 
-                        final String sig = BRBitId.signMessage(_strToSign == null ? uriWithNonce : _strToSign, key);
+                        final String sig = BRBitId.signMessage(_strToSign == null ? uriWithNonce : _strToSign, new BRKey(key));
                         final String address = new BRKey(key).address();
 
                         JSONObject postJson = new JSONObject();
@@ -281,7 +281,7 @@ public class RequestHandler {
                         }
 
 //                    Log.e(TAG, "run: uriWithNonce: " + uriWithNonce);
-                        final String sig = BRBitId.signMessage(_strToSign, key);
+                        final String sig = BRBitId.signMessage(_strToSign, new BRKey(key));
                         final String address = new BRKey(key).address();
 
                         JSONObject postJson = new JSONObject();
