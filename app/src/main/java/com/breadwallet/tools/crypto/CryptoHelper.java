@@ -60,4 +60,15 @@ public class CryptoHelper {
         return digest.digest(data);
     }
 
+    public static byte[] md5(byte[] data){
+        MessageDigest digest = null;
+        try {
+            digest = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return digest.digest(data);
+    }
+
 }
