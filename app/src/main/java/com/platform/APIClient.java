@@ -4,6 +4,7 @@ import android.app.Activity;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
+import android.net.Uri;
 import android.util.Log;
 
 import com.breadwallet.BuildConfig;
@@ -337,9 +338,16 @@ public class APIClient {
                         request.url(), response.code(), response.message(), new String(data)));
             if (response.isRedirect()) {
                 String newLocation = request.url().scheme() + "://" + request.url().host() + response.header("location");
-                Log.w(TAG, "redirect: " + request.url() + " >>> " + newLocation);
-                return sendRequest(new Request.Builder().url(newLocation).get().build(), needsAuth, 0);
-
+                Uri newUri = Uri.parse(newLocation);
+                if (newUri == null) {
+                    Log.e(TAG, "sendRequest: redirect uri is null");
+                } else if (!newUri.getHost().equalsIgnoreCase(HOST)  || !newUri.getScheme().equalsIgnoreCase(PROTO)) {
+                    Log.e(TAG, "sendRequest: WARNING: redirect is NOT safe: " + newLocation);
+                } else {
+                    Log.w(TAG, "redirecting: " + request.url() + " >>> " + newLocation);
+                    return sendRequest(new Request.Builder().url(newLocation).get().build(), needsAuth, 0);
+                }
+                return new Response.Builder().code(500).request(request).body(ResponseBody.create(null, new byte[0])).protocol(Protocol.HTTP_1_1).build();
             }
         } catch (IOException e) {
             e.printStackTrace();
