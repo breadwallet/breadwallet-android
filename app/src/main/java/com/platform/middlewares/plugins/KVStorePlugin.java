@@ -5,6 +5,7 @@ import android.util.Log;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.util.BRCompressor;
 import com.platform.APIClient;
+import com.platform.BRHTTPHelper;
 import com.platform.interfaces.Plugin;
 import com.platform.kvstore.CompletionObject;
 import com.platform.kvstore.RemoteKVStore;
@@ -60,24 +61,12 @@ public class KVStorePlugin implements Plugin {
             String key = target.replace("/_kv/", "");
             MainActivity app = MainActivity.app;
             if (app == null) {
-                try {
-                    Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
-                    response.sendError(500, "context is null");
-                    baseRequest.setHandled(true);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return true;
+                Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
+                return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
             }
             if (key.isEmpty()) {
                 Log.e(TAG, "handle: missing key argument: " + target + " " + baseRequest.getMethod());
-                try {
-                    response.sendError(400);
-                    baseRequest.setHandled(true);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return true;
+                return BRHTTPHelper.handleError(400, null, baseRequest, response);
             }
 
             RemoteKVStore remote = RemoteKVStore.getInstance(APIClient.getInstance(app));
@@ -90,13 +79,7 @@ public class KVStorePlugin implements Plugin {
 
                     if (kv == null) {
                         Log.e(TAG, "handle: kv store does not contain the kv: " + key);
-                        try {
-                            response.sendError(404);
-                            baseRequest.setHandled(true);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        return true;
+                        return BRHTTPHelper.handleError(400, null, baseRequest, response);
                     }
                     byte[] decompressedData = BRCompressor.bz2Extract(kv.getValue());
                     Assert.assertNotNull(decompressedData);
@@ -104,14 +87,9 @@ public class KVStorePlugin implements Plugin {
                         JSONObject test = new JSONObject(new String(decompressedData)); //just check for validity
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        try {
-                            Log.e(TAG, "handle: the json is not valid: " + target + " " + baseRequest.getMethod());
-                            response.sendError(500);
-                            baseRequest.setHandled(true);
-                        } catch (IOException ex) {
-                            ex.printStackTrace();
-                        }
-                        return true;
+                        Log.e(TAG, "handle: the json is not valid: " + target + " " + baseRequest.getMethod());
+
+                        return BRHTTPHelper.handleError(500, null, baseRequest, response);
                     }
                     response.setHeader("ETag", String.valueOf(kv.getVersion()));
                     SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss:SSS Z", Locale.getDefault());
@@ -119,25 +97,10 @@ public class KVStorePlugin implements Plugin {
                     response.setHeader("Last-Modified", date);
 
                     if (kv.getDeleted() > 0) {
-                        try {
-                            Log.w(TAG, "handle: the key is gone: " + target + " " + baseRequest.getMethod());
-                            response.sendError(410, "Gone");
-                            baseRequest.setHandled(true);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        return true;
+                        Log.w(TAG, "handle: the key is gone: " + target + " " + baseRequest.getMethod());
+                        return BRHTTPHelper.handleError(410, "Gone", baseRequest, response);
                     }
-                    response.setHeader("Content-Type", "application/json");
-
-                    try {
-                        response.setStatus(200);
-                        response.getOutputStream().write(decompressedData);
-                        baseRequest.setHandled(true);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    return true;
+                    return BRHTTPHelper.handleSuccess(200, decompressedData, baseRequest, response, "application/json");
                 case "PUT":
                     Log.i(TAG, "handle:" + target + " " + baseRequest.getMethod() + ", key: " + key);
                     // Read from request
@@ -148,38 +111,21 @@ public class KVStorePlugin implements Plugin {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+
                     if (rawData == null) {
                         Log.e(TAG, "handle: missing request body: " + target + " " + baseRequest.getMethod());
-                        try {
-                            response.sendError(400);
-                            baseRequest.setHandled(true);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        return true;
+                        return BRHTTPHelper.handleError(400, null, baseRequest, response);
                     }
 
                     String strVersion = request.getHeader("if-none-match");
                     if (strVersion == null) {
                         Log.e(TAG, "handle: missing If-None-Match header, set to `0` if creating a new key: " + target + " " + baseRequest.getMethod());
-                        try {
-                            response.sendError(400);
-                            baseRequest.setHandled(true);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        return true;
+                        return BRHTTPHelper.handleError(400, null, baseRequest, response);
                     }
                     String ct = request.getHeader("content-type");
                     if (ct == null || !ct.equalsIgnoreCase("application/json")) {
                         Log.e(TAG, "handle: can only set application/json request bodies: " + target + " " + baseRequest.getMethod());
-                        try {
-                            response.sendError(400);
-                            baseRequest.setHandled(true);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        return true;
+                        return BRHTTPHelper.handleError(400, null, baseRequest, response);
                     }
 
                     long version = Long.valueOf(strVersion);
@@ -191,40 +137,29 @@ public class KVStorePlugin implements Plugin {
                     if (setObj.err != null) {
                         Log.e(TAG, "handle: error setting the key: " + key + ", err: " + setObj.err);
                         int errCode = transformErrorToResponseCode(setObj.err);
-                        try {
-                            response.sendError(errCode);
-                            baseRequest.setHandled(true);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                        return BRHTTPHelper.handleError(errCode, null, baseRequest, response);
                     }
 
                     response.setHeader("ETag", String.valueOf(setObj.version));
                     dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss:SSS Z", Locale.getDefault());
                     date = dateFormat.format(setObj.time);
                     response.setHeader("Last-Modified", date);
-                    response.setStatus(204);
-                    baseRequest.setHandled(true);
-                    return true;
+                    return BRHTTPHelper.handleSuccess(204, null, baseRequest, response, null);
                 case "DELETE":
                     Log.i(TAG, "handle: : " + target + " " + baseRequest.getMethod() + ", key: " + key);
                     strVersion = request.getHeader("if-none-match");
+                    Log.e(TAG, "handle: missing If-None-Match header: " + target + " " + baseRequest.getMethod());
+
                     if (strVersion == null) {
-                        Log.e(TAG, "handle: missing If-None-Match header: " + target + " " + baseRequest.getMethod());
-                        try {
-                            response.sendError(400);
-                            baseRequest.setHandled(true);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        return true;
+                        return BRHTTPHelper.handleError(400, null, baseRequest, response);
                     }
+
                     CompletionObject delObj = null;
                     try {
                         delObj = store.delete(key, Long.parseLong(strVersion));
                     } catch (NumberFormatException e) {
                         e.printStackTrace();
-                        return true;
+                        return BRHTTPHelper.handleError(500, null, baseRequest, response);
                     }
                     if (delObj == null || delObj.err != null) {
                         int err = 500;
@@ -235,21 +170,13 @@ public class KVStorePlugin implements Plugin {
                         } else {
                             Log.e(TAG, "handle: error deleting key: " + key + ", delObj is null");
                         }
-                        try {
-                            response.sendError(err);
-                            baseRequest.setHandled(true);
-                        } catch (IOException e1) {
-                            e1.printStackTrace();
-                        }
-                        return true;
+                        return BRHTTPHelper.handleError(err, null, baseRequest, response);
                     }
                     response.setHeader("ETag", String.valueOf(delObj.version));
                     dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss:SSS Z", Locale.getDefault());
                     date = dateFormat.format(delObj.time);
                     response.setHeader("Last-Modified", date);
-                    response.setStatus(204);
-                    baseRequest.setHandled(true);
-                    return true;
+                    return BRHTTPHelper.handleSuccess(204, null, baseRequest, response, null);
 
             }
         }

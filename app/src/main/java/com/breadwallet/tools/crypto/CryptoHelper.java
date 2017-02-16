@@ -3,10 +3,12 @@ package com.breadwallet.tools.crypto;
 import com.jniwrappers.BRBase58;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import static android.R.attr.name;
+import static com.breadwallet.R.string.request;
 
 /**
  * BreadWallet
@@ -47,6 +49,18 @@ public class CryptoHelper {
         byte[] sha256First = digest.digest(toEncode);
 
         return Base58.encode(sha256First);
+    }
+
+    public static byte[] doubleSha256(byte[] data){
+        MessageDigest digest = null;
+        try {
+            digest = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
+        }
+        byte[] sha256First = digest.digest(data);
+        return digest.digest(sha256First);
     }
 
 

@@ -14,6 +14,7 @@ import android.util.Log;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.util.BRConstants;
+import com.platform.BRHTTPHelper;
 import com.platform.GeoLocationManager;
 import com.platform.interfaces.Plugin;
 
@@ -79,7 +80,7 @@ public class GeoLocationPlugin implements Plugin {
 
                     } else {
                         try {
-                            Log.e(TAG, "handleGeoPermission: granted: " + granted);
+                            Log.e(TAG, "handleGeoPermission: granted is false");
                             globalBaseRequest.setHandled(true);
                             ((HttpServletResponse) continuation.getServletResponse()).sendError(400);
                         } catch (IOException e) {
@@ -100,19 +101,12 @@ public class GeoLocationPlugin implements Plugin {
 
     @Override
     public boolean handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
-
         if (target.startsWith("/_permissions/geo")) {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
             MainActivity app = MainActivity.app;
             if (app == null) {
-                try {
-                    Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
-                    response.sendError(500, "context is null");
-                    baseRequest.setHandled(true);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return true;
+                Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
+                return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
             }
             switch (request.getMethod()) {
                 // GET /_permissions/geo
@@ -139,31 +133,19 @@ public class GeoLocationPlugin implements Plugin {
                         enabled = true;
                     } else {
                         Log.e(TAG, "handle: sending permission denied: " + target + " " + baseRequest.getMethod());
-                        status = permRequested? "denied" : "undetermined";
+                        status = permRequested ? "denied" : "undetermined";
                         enabled = false;
                     }
                     try {
                         jsonResult.put("status", status);
                         jsonResult.put("user_queried", permRequested);
                         jsonResult.put("location_enabled", enabled);
-                        response.setStatus(200);
-                        try {
-                            response.getWriter().write(jsonResult.toString());
-                            baseRequest.setHandled(true);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                        return BRHTTPHelper.handleSuccess(200, jsonResult.toString().getBytes(), baseRequest, response, null);
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        try {
-                            Log.e(TAG, "handle: failed to send permission status: " + target + " " + baseRequest.getMethod());
-                            response.sendError(500);
-                            baseRequest.setHandled(true);
-                        } catch (IOException e1) {
-                            e1.printStackTrace();
-                        }
+                        Log.e(TAG, "handle: failed to send permission status: " + target + " " + baseRequest.getMethod());
+                        return BRHTTPHelper.handleError(500, null, baseRequest, response);
                     }
-                    return true;
                 // POST /_permissions/geo
                 //
                 // Call this method to request the geo permission from the user.
@@ -201,28 +183,14 @@ public class GeoLocationPlugin implements Plugin {
             // "timestamp" = "ISO-8601 timestamp of when this location was generated"
             // "horizontal_accuracy" = double
             MainActivity app = MainActivity.app;
-            if (app == null) {
-                try {
-                    Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
-                    response.sendError(500, "context is null");
-                    baseRequest.setHandled(true);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return true;
+            if (app == null) {                    Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
+                return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
             }
 
             if (request.getMethod().equalsIgnoreCase("GET")) {
                 JSONObject obj = getAuthorizationError(app);
-                if (obj != null) {
-                    try {
-                        Log.e(TAG, "handle: error getting location: " + obj.toString() +", " + target + " " + baseRequest.getMethod());
-                        response.getWriter().write(obj.toString());
-                        baseRequest.setHandled(true);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    return true;
+                if (obj != null) {                        Log.e(TAG, "handle: error getting location: " + obj.toString() + ", " + target + " " + baseRequest.getMethod());
+                    return BRHTTPHelper.handleError(500, obj.toString(), baseRequest, response);
                 }
 
                 continuation = ContinuationSupport.getContinuation(request);

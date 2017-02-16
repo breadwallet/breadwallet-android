@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.util.TypesConverter;
+import com.platform.BRHTTPHelper;
 import com.platform.interfaces.Middleware;
 
 
@@ -53,8 +54,7 @@ public class HTTPFileMiddleware implements Middleware {
     public boolean handle(String target, org.eclipse.jetty.server.Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
         if (target.equals("/")) return false;
         if (target.equals("/favicon.ico")) {
-            baseRequest.setHandled(true);
-            return true;
+            return BRHTTPHelper.handleSuccess(200, null, baseRequest, response, null);
         }
 
         String requestedFile = MainActivity.app.getFilesDir() + "/" + BUNDLES + "/" + extractedFolder + target;
@@ -84,14 +84,12 @@ public class HTTPFileMiddleware implements Middleware {
         if (etag != null && etag.equalsIgnoreCase(sb.toString())) modified = false;
         response.setContentType(detectContentType(temp));
 //        if (modified) {
-            try {
-                response.setStatus(200);
-                response.getOutputStream().write(FileUtils.readFileToByteArray(temp));
-                baseRequest.setHandled(true);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return true;
+        try {
+            return BRHTTPHelper.handleSuccess(200, FileUtils.readFileToByteArray(temp), baseRequest, response, null);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return BRHTTPHelper.handleError(500, "failed to read file: " + temp.getAbsolutePath(), baseRequest, response);
+        }
 //        } else {
 //            response.setStatus(304);
 //            return true;

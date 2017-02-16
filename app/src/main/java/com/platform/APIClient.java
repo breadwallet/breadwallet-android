@@ -58,6 +58,7 @@ import okhttp3.ResponseBody;
 import okio.Buffer;
 import okio.BufferedSink;
 
+import static android.R.attr.key;
 import static android.R.attr.path;
 import static com.breadwallet.R.string.request;
 import static com.breadwallet.R.string.rescan;
@@ -263,17 +264,9 @@ public class APIClient {
     }
 
     public String signRequest(String request) {
-        MessageDigest digest = null;
-        try {
-            digest = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            return null;
-        }
-        byte[] sha256First = digest.digest(request.getBytes(StandardCharsets.UTF_8));
-        byte[] sha256Second = digest.digest(sha256First);
+        byte[] doubleSha256 = CryptoHelper.doubleSha256(request.getBytes(StandardCharsets.UTF_8));
         BRKey key = new BRKey(KeyStoreManager.getAuthKey(ctx));
-        byte[] signedBytes = key.compactSign(sha256Second);
+        byte[] signedBytes = key.compactSign(doubleSha256);
         return Base58.encode(signedBytes);
 
     }

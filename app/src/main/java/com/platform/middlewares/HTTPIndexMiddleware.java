@@ -3,6 +3,7 @@ package com.platform.middlewares;
 import android.util.Log;
 
 import com.breadwallet.presenter.activities.MainActivity;
+import com.platform.BRHTTPHelper;
 import com.platform.interfaces.Middleware;
 
 import junit.framework.Assert;
@@ -65,24 +66,13 @@ public class HTTPIndexMiddleware implements Middleware {
             byte[] body = FileUtils.readFileToByteArray(temp);
             Assert.assertNotNull(body);
             Assert.assertNotSame(body.length, 0);
-            ServletOutputStream out = response.getOutputStream();
-            response.setContentType("text/html;charset=utf-8");
             response.setHeader("Content-Length", String.valueOf(body.length));
-            response.setStatus(200);
-            out.write(body);
-            baseRequest.setHandled(true);
-            return true;
+            return BRHTTPHelper.handleSuccess(200, body, baseRequest, response, "text/html;charset=utf-8");
         } catch (IOException e) {
             e.printStackTrace();
-            try {
-                Log.d(TAG, "handle: error sending response: " + target + " " + baseRequest.getMethod());
-                response.sendError(500);
-                baseRequest.setHandled(true);
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
+            Log.d(TAG, "handle: error sending response: " + target + " " + baseRequest.getMethod());
+            return BRHTTPHelper.handleError(500, null, baseRequest, response);
         }
 
-        return false;
     }
 }

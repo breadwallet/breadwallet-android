@@ -23,6 +23,7 @@ import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.jniwrappers.BRBase58;
 import com.jniwrappers.BRKey;
+import com.platform.BRHTTPHelper;
 import com.platform.interfaces.Plugin;
 
 import org.apache.commons.compress.utils.IOUtils;
@@ -103,37 +104,22 @@ public class CameraPlugin implements Plugin {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
             final MainActivity app = MainActivity.app;
             if (app == null) {
-                try {
-                    Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
-                    response.sendError(500, "context is null");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return true;
+                Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
+
+                return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
             }
 
             if (globalBaseRequest != null) {
-                try {
-                    Log.e(TAG, "handle: already taking a picture: " + target + " " + baseRequest.getMethod());
-                    response.sendError(423);
-                    baseRequest.setHandled(true);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return true;
+                Log.e(TAG, "handle: already taking a picture: " + target + " " + baseRequest.getMethod());
+
+                return BRHTTPHelper.handleError(423, null, baseRequest, response);
             }
 
             PackageManager pm = app.getPackageManager();
 
             if (!pm.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
                 Log.e(TAG, "handle: no camera available: ");
-                baseRequest.setHandled(true);
-                try {
-                    response.sendError(402);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return true;
+                return BRHTTPHelper.handleError(402, null, baseRequest, response);
             }
             if (ContextCompat.checkSelfPermission(app,
                     Manifest.permission.CAMERA)
@@ -167,51 +153,29 @@ public class CameraPlugin implements Plugin {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
             final MainActivity app = MainActivity.app;
             if (app == null) {
-                try {
-                    response.sendError(500, "context is null: " + target + " " + baseRequest.getMethod());
-                    baseRequest.setHandled(true);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return true;
+                Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
+                return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
             }
             String id = target.replace("/_camera/picture/", "");
             byte[] pictureBytes = readPictureForId(app, id);
             if (pictureBytes == null) {
-                Log.e(TAG, "handle: WARNING pictureBytes is null: "  + target + " " + baseRequest.getMethod());
-                try {
-                    response.sendError(500);
-                    baseRequest.setHandled(true);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return true;
+                Log.e(TAG, "handle: WARNING pictureBytes is null: " + target + " " + baseRequest.getMethod());
+                return BRHTTPHelper.handleError(500, "pictureBytes is null", baseRequest, response);
             }
             byte[] imgBytes = pictureBytes;
             String b64opt = request.getParameter("base64");
             String contentType = "image/jpeg";
-            if(b64opt != null && !b64opt.isEmpty()){
+            if (b64opt != null && !b64opt.isEmpty()) {
                 contentType = "text/plain";
                 String b64 = "data:image/jpeg;base64," + Base64.encodeToString(pictureBytes, Base64.NO_WRAP);
                 try {
                     imgBytes = b64.getBytes("UTF-8");
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
-                    response.setStatus(500);
-                    baseRequest.setHandled(true);
-                    return true;
+                    return BRHTTPHelper.handleError(500, null, baseRequest, response);
                 }
             }
-            try {
-                response.setContentType(contentType);
-                response.getOutputStream().write(imgBytes);
-                response.setStatus(200);
-                baseRequest.setHandled(true);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return true;
+            return BRHTTPHelper.handleSuccess(200, null, baseRequest, response, contentType);
         } else return false;
     }
 
@@ -225,8 +189,8 @@ public class CameraPlugin implements Plugin {
                 }
                 try {
                     if (img == null) {
-                        ((HttpServletResponse) continuation.getServletResponse()).setStatus(204);
                         globalBaseRequest.setHandled(true);
+                        ((HttpServletResponse) continuation.getServletResponse()).setStatus(204);
                         continuation.complete();
                         continuation = null;
                         return;
@@ -238,6 +202,14 @@ public class CameraPlugin implements Plugin {
                             respJson.put("id", id);
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            globalBaseRequest.setHandled(true);
+                            try {
+                                ((HttpServletResponse) continuation.getServletResponse()).sendError(500);
+                            } catch (IOException e1) {
+                                e1.printStackTrace();
+                            }
+                            continuation.complete();
+                            continuation = null;
                             return;
                         }
                         Log.i(TAG, "handleCameraImageTaken: wrote image to: " + id);
@@ -254,8 +226,8 @@ public class CameraPlugin implements Plugin {
                     } else {
                         Log.e(TAG, "handleCameraImageTaken: error writing image");
                         try {
-                            ((HttpServletResponse) continuation.getServletResponse()).sendError(500);
                             globalBaseRequest.setHandled(true);
+                            ((HttpServletResponse) continuation.getServletResponse()).sendError(500);
                             continuation.complete();
                             continuation = null;
                         } catch (IOException e) {
@@ -276,14 +248,11 @@ public class CameraPlugin implements Plugin {
         String name = null;
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
-//            out = new FileOutputStream(image);
             img.compress(Bitmap.CompressFormat.JPEG, 50, out);
-
             name = CryptoHelper.base58ofSha256(out.toByteArray());
-
             File storageDir = new File(context.getFilesDir().getAbsolutePath() + "/pictures/");
             File image = new File(storageDir, name + ".jpeg");
-            FileUtils.writeByteArrayToFile(image,out.toByteArray());
+            FileUtils.writeByteArrayToFile(image, out.toByteArray());
             return name;
             // PNG is a lossless format, the compression factor (100) is ignored
         } catch (Exception e) {

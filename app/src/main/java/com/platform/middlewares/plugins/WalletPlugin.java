@@ -9,6 +9,7 @@ import com.breadwallet.tools.security.RequestHandler;
 import com.breadwallet.tools.util.BRStringFormatter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
+import com.platform.BRHTTPHelper;
 import com.platform.interfaces.Plugin;
 
 import org.apache.commons.compress.utils.IOUtils;
@@ -66,14 +67,8 @@ public class WalletPlugin implements Plugin {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
             final MainActivity app = MainActivity.app;
             if (app == null) {
-                try {
-                    Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
-                    response.sendError(500, "context is null");
-                    baseRequest.setHandled(true);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return true;
+                Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
+                return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
             }
             BRWalletManager wm = BRWalletManager.getInstance(app);
             JSONObject jsonResp = new JSONObject();
@@ -81,41 +76,19 @@ public class WalletPlugin implements Plugin {
                 jsonResp.put("no_wallet", wm.noWalletForPlatform(app));
                 jsonResp.put("watch_only", false);
                 jsonResp.put("receive_address", BRWalletManager.getReceiveAddress());
-                response.setStatus(200);
-                response.getWriter().write(jsonResp.toString());
+                return BRHTTPHelper.handleSuccess(200, jsonResp.toString().getBytes(), baseRequest, response, null);
             } catch (JSONException e) {
                 e.printStackTrace();
-                try {
-                    Log.e(TAG, "handle: json error: " + target + " " + baseRequest.getMethod());
-                    response.sendError(500, "json error");
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                try {
-                    Log.e(TAG, "handle: io exception: " + target + " " + baseRequest.getMethod());
-                    response.sendError(500, "IO exception: " + e.getMessage());
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            } finally {
-                baseRequest.setHandled(true);
+                Log.e(TAG, "handle: json error: " + target + " " + baseRequest.getMethod());
+                return BRHTTPHelper.handleError(500, "json error", baseRequest, response);
             }
 
-            return true;
         } else if (target.startsWith("/_wallet/format") && request.getMethod().equalsIgnoreCase("get")) {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
             String amount = request.getParameter("amount");
             if (Utils.isNullOrEmpty(amount)) {
-                try {
-                    Log.e(TAG, "handle: amount is not specified: " + target + " " + baseRequest.getMethod());
-                    response.sendError(400);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                baseRequest.setHandled(true);
-                return true;
+                Log.e(TAG, "handle: amount is not specified: " + target + " " + baseRequest.getMethod());
+                return BRHTTPHelper.handleError(400, null, baseRequest, response);
             }
             long satAmount;
 
@@ -125,15 +98,7 @@ public class WalletPlugin implements Plugin {
             } else {
                 satAmount = Long.valueOf(amount);
             }
-
-            try {
-                response.setStatus(200);
-                response.getWriter().write(BRStringFormatter.getFormattedCurrencyString(Locale.getDefault().getISO3Language(), satAmount));
-                baseRequest.setHandled(true);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return true;
+            return BRHTTPHelper.handleSuccess(200, BRStringFormatter.getFormattedCurrencyString(Locale.getDefault().getISO3Language(), satAmount).getBytes(), baseRequest, response, null);
         } else if (target.startsWith("/_wallet/sign_bitid") && request.getMethod().equalsIgnoreCase("post")) {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
             /**
@@ -156,25 +121,13 @@ public class WalletPlugin implements Plugin {
              */
             final MainActivity app = MainActivity.app;
             if (app == null) {
-                try {
-                    Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
-                    response.sendError(500, "context is null");
-                    baseRequest.setHandled(true);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return true;
+                Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
+                return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
             }
             String contentType = request.getHeader("content-type");
             if (contentType == null || !contentType.equalsIgnoreCase("application/json")) {
-                try {
-                    Log.e(TAG, "handle: content type is not application/json: " + target + " " + baseRequest.getMethod());
-                    response.sendError(400);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                baseRequest.setHandled(true);
-                return true;
+                Log.e(TAG, "handle: content type is not application/json: " + target + " " + baseRequest.getMethod());
+                return BRHTTPHelper.handleError(400, null, baseRequest, response);
             }
             String reqBody = null;
             try {
@@ -183,14 +136,8 @@ public class WalletPlugin implements Plugin {
                 e.printStackTrace();
             }
             if (Utils.isNullOrEmpty(reqBody)) {
-                try {
-                    Log.e(TAG, "handle: reqBody is empty: " + target + " " + baseRequest.getMethod());
-                    response.sendError(400);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                baseRequest.setHandled(true);
-                return true;
+                Log.e(TAG, "handle: reqBody is empty: " + target + " " + baseRequest.getMethod());
+                return BRHTTPHelper.handleError(400, null, baseRequest, response);
             }
 
             try {
@@ -214,7 +161,7 @@ public class WalletPlugin implements Plugin {
 
 
     public static void handleBitId(final JSONObject restJson) {
-        if(restJson == null) {
+        if (restJson == null) {
             Log.e(TAG, "handleBitId: WARNING restJson is null");
             return;
         }

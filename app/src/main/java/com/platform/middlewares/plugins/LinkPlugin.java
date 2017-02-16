@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.breadwallet.presenter.activities.MainActivity;
 import com.google.firebase.crash.FirebaseCrash;
+import com.platform.BRHTTPHelper;
 import com.platform.interfaces.Plugin;
 
 import junit.framework.Assert;
@@ -59,14 +60,8 @@ public class LinkPlugin implements Plugin {
 
             MainActivity app = MainActivity.app;
             if (app == null) {
-                try {
-                    Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
-                    response.sendError(500, "context is null");
-                    baseRequest.setHandled(true);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return true;
+                Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
+                return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
             }
 
             if (url != null && url.startsWith("tel")) {
@@ -82,28 +77,16 @@ public class LinkPlugin implements Plugin {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
             MainActivity app = MainActivity.app;
             if (app == null) {
-                try {
-                    Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
-                    response.sendError(500, "context is null");
-                    baseRequest.setHandled(true);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return true;
+                Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
+                return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
             }
-            String address =  baseRequest.getParameter("address");
+            String address = baseRequest.getParameter("address");
             String fromPoint = baseRequest.getParameter("from_point");
-            if(address == null || fromPoint == null) {
-                try {
-                    Log.e(TAG, "handle: bad request: " + target + " " + baseRequest.getMethod());
-                    response.sendError(500, "bad request");
-                    baseRequest.setHandled(true);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return true;
+            if (address == null || fromPoint == null) {
+                Log.e(TAG, "handle: bad request: " + target + " " + baseRequest.getMethod());
+                return BRHTTPHelper.handleError(500, "bad request", baseRequest, response);
             }
-            String uri = "http://maps.google.com/maps?q=" +fromPoint + "&daddr=" + address + "&mode=driving";
+            String uri = "http://maps.google.com/maps?q=" + fromPoint + "&daddr=" + address + "&mode=driving";
             Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
             app.startActivity(Intent.createChooser(intent, "Select an application"));
             return true;

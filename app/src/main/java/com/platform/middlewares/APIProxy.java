@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.breadwallet.presenter.activities.MainActivity;
 import com.platform.APIClient;
+import com.platform.BRHTTPHelper;
 import com.platform.interfaces.Middleware;
 
 import org.apache.commons.io.IOUtils;
@@ -86,14 +87,8 @@ public class APIProxy implements Middleware {
         Response res = apiInstance.sendRequest(req, auth, 0);
 
         if (res.code() == 599) {
-            try {
-                Log.e(TAG, "handle: code 599: " + target + " " + baseRequest.getMethod());
-                baseRequest.setHandled(true);
-                response.sendError(599);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return true;
+            Log.e(TAG, "handle: code 599: " + target + " " + baseRequest.getMethod());
+            return BRHTTPHelper.handleError(599, null, baseRequest, response);
         }
         ResponseBody body = res.body();
         String cType = body.contentType() == null ? null : body.contentType().toString();
@@ -106,30 +101,20 @@ public class APIProxy implements Middleware {
             e.printStackTrace();
         }
 
-        try {
-            response.setContentType(cType);
-            Headers headers = res.headers();
-            for (String s : headers.names()) {
-                if (Arrays.asList(bannedReceiveHeaders).contains(s.toLowerCase())) continue;
-                response.addHeader(s, res.header(s));
-            }
-            response.setContentLength(bodyBytes.length);
-            if (res.isSuccessful()) {
-                response.setStatus(res.code());
-            } else {
-                response.sendError(res.code());
-                Log.e(TAG, "RES IS NOT SUCCESSFUL: " + res.request().url() + ": " + res.code() + "(" + res.message() + ")");
-                return true;
-            }
-            response.getOutputStream().write(bodyBytes);
-        } catch (IOException e) {
-            Log.e(TAG, "IOException: " + target + " " + baseRequest.getMethod());
-            e.printStackTrace();
-        } finally {
-            baseRequest.setHandled(true);
+        response.setContentType(cType);
+        Headers headers = res.headers();
+        for (String s : headers.names()) {
+            if (Arrays.asList(bannedReceiveHeaders).contains(s.toLowerCase())) continue;
+            response.addHeader(s, res.header(s));
+        }
+        response.setContentLength(bodyBytes.length);
+        if (res.isSuccessful()) {
+            return BRHTTPHelper.handleSuccess(res.code(), bodyBytes, baseRequest, response, null);
+        } else {
+            Log.e(TAG, "RES IS NOT SUCCESSFUL: " + res.request().url() + ": " + res.code() + "(" + res.message() + ")");
+            return BRHTTPHelper.handleError(res.code(), null, baseRequest, response);
         }
 
-        return true;
     }
 
     private Request mapToOkHttpRequest(org.eclipse.jetty.server.Request baseRequest, String path, HttpServletRequest request) {
