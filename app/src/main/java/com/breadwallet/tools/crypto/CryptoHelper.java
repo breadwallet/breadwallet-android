@@ -7,8 +7,10 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import static android.R.attr.data;
 import static android.R.attr.name;
 import static com.breadwallet.R.string.request;
+import static com.breadwallet.R.string.to;
 
 /**
  * BreadWallet
@@ -38,20 +40,16 @@ public class CryptoHelper {
     public static final String TAG = CryptoHelper.class.getName();
 
     public static String base58ofSha256(byte[] toEncode) {
-        MessageDigest digest = null;
-        try {
-            digest = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        byte[] sha256First = digest.digest(toEncode);
-
+        byte[] sha256First = sha256(toEncode);
         return Base58.encode(sha256First);
     }
 
-    public static byte[] doubleSha256(byte[] data){
+    public static byte[] doubleSha256(byte[] data) {
+        byte[] sha256First = sha256(data);
+        return sha256(sha256First);
+    }
+
+    public static byte[] sha256(byte[] data) {
         MessageDigest digest = null;
         try {
             digest = MessageDigest.getInstance("SHA-256");
@@ -59,9 +57,7 @@ public class CryptoHelper {
             e.printStackTrace();
             return null;
         }
-        byte[] sha256First = digest.digest(data);
-        return digest.digest(sha256First);
+        return digest.digest(data);
     }
-
 
 }

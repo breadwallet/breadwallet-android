@@ -337,7 +337,7 @@ public class APIClient {
                         request.url(), response.code(), response.message(), new String(data)));
             if (response.isRedirect()) {
                 String newLocation = request.url().scheme() + "://" + request.url().host() + response.header("location");
-                Log.e(TAG, "redirect: " + request.url() + " >>> " + newLocation);
+                Log.w(TAG, "redirect: " + request.url() + " >>> " + newLocation);
                 return sendRequest(new Request.Builder().url(newLocation).get().build(), needsAuth, 0);
 
             }
@@ -380,14 +380,8 @@ public class APIClient {
 
             String latestVersion = getLatestVersion();
             String currentTarVersion = null;
-            MessageDigest digest = null;
-            try {
-                digest = MessageDigest.getInstance("SHA-256");
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-                return;
-            }
-            byte[] hash = digest.digest(bFile);
+            byte[] hash = CryptoHelper.sha256(bFile);
+
             currentTarVersion = Utils.bytesToHex(hash);
             Log.e(TAG, "updateBundle: version of the current tar: " + currentTarVersion);
 
@@ -547,7 +541,7 @@ public class APIClient {
         }
 
         if (!res.isSuccessful()) {
-            Log.e(TAG, "updateFeatureFlag: request was unsuccessful");
+            Log.e(TAG, "updateFeatureFlag: request was unsuccessful: " + res.code() + ":" + res.message());
             return;
         }
 
