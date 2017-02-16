@@ -1,3 +1,0 @@
--recover phrase
--copy phrase
--main net

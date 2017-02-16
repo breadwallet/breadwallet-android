@@ -489,7 +489,7 @@ JNIEXPORT jlong JNICALL
 Java_com_breadwallet_wallet_BRWalletManager_getMaxOutputAmount(JNIEnv *env, jobject obj) {
     __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "getMaxOutputAmount");
     assert(_wallet);
-    if(!_wallet) return -1;
+    if (!_wallet) return -1;
     return (jlong) BRWalletMaxOutputAmount(_wallet);
 }
 
@@ -556,14 +556,16 @@ Java_com_breadwallet_wallet_BRWalletManager_transactionIsVerified(JNIEnv *env, j
 JNIEXPORT jlong JNICALL
 Java_com_breadwallet_wallet_BRWalletManager_bitcoinAmount(JNIEnv *env, jobject thiz,
                                                           jlong localAmount, double price) {
-    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "bitcoinAmount: localAmount: %lli, price: %lf", localAmount, price);
+    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ",
+                        "bitcoinAmount: localAmount: %lli, price: %lf", localAmount, price);
     return (jlong) BRBitcoinAmount(localAmount, price);
 }
 
 JNIEXPORT jlong
 Java_com_breadwallet_wallet_BRWalletManager_localAmount(JNIEnv *env, jobject thiz, jlong amount,
                                                         double price) {
-    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "localAmount: amount: %lli, price: %lf", amount, price);
+    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ",
+                        "localAmount: amount: %lli, price: %lf", amount, price);
     return (jlong) BRLocalAmount(amount, price);
 }
 
@@ -885,3 +887,10 @@ JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getSeed
     (*env)->SetByteArrayRegion(env, result, 0, (jsize) sizeof(key), (jbyte *) &key);
     return result;
 }
+
+JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRWalletManager_isTestNet(JNIEnv *env,
+                                                                                 jobject thiz) {
+    return BITCOIN_TESTNET ? JNI_TRUE : JNI_FALSE;
+}
+
+

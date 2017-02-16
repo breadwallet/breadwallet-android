@@ -48,6 +48,13 @@ model {
                 proguardFiles.add(file('proguard-rules.pro'))
                 minifyEnabled = false
                 debuggable = false
+                buildConfigFields.with {
+                    create() {
+                        type = "boolean"
+                        name = "BITCOIN_TESTNET"
+                        value = "false"
+                    }
+                }
                 ndk {
                     CFlags.addAll(['-DBITCOIN_TESTNET=0'])
                     minifyEnabled = false
@@ -58,6 +65,13 @@ model {
                 proguardFiles.add(file('proguard-rules.pro'))
                 debuggable = true
                 minifyEnabled = false
+                buildConfigFields.with {
+                    create() {
+                        type = "boolean"
+                        name = "BITCOIN_TESTNET"
+                        value = "true"
+                    }
+                }
                 ndk {
                     CFlags.addAll(['-DBITCOIN_TESTNET=1'])
                     minifyEnabled = false
