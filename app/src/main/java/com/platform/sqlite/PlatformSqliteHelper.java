@@ -35,7 +35,7 @@ public class PlatformSqliteHelper extends SQLiteOpenHelper {
     private static final String TAG = PlatformSqliteHelper.class.getName();
 
     public static final String DATABASE_NAME = "platform.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 1;
 
     /**
      * KV Store table

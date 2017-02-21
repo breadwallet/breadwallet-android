@@ -86,8 +86,8 @@ public class FragmentCurrency extends Fragment {
         currencyRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tryAndSetAdapter();
                 SpringAnimator.showAnimation(v);
+                tryAndSetAdapter();
             }
         });
         currencyList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
