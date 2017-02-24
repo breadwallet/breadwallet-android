@@ -73,8 +73,8 @@ public class FragmentPhraseFlow1 extends Fragment {
         fragmentPhraseFlow1 = this;
         if (KeyStoreManager.getPassCode(getActivity()).isEmpty()) {
             PhraseFlowActivity app = ((PhraseFlowActivity) getActivity());
-            app.showHideFragments(app.fragmentPhraseFlow2);
-            app.fragmentPhraseFlow2.setPhrase(phrase);
+//            app.showHideFragments(app.fragmentPhraseFlow2);
+//            app.fragmentPhraseFlow2.setPhrase(phrase);
         }
 
         int limit = SharedPreferencesManager.getLimit(getActivity());

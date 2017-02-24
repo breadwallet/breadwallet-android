@@ -66,8 +66,8 @@ public class SpringAnimator {
      */
     public static void showAnimation(final View view) {
         if (view == null) return;
-        ScaleAnimation trans = new ScaleAnimation(0.6f, 1f, 0.6f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        trans.setDuration(500);
+        ScaleAnimation trans = new ScaleAnimation(0.8f, 1f, 0.8f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        trans.setDuration(1000);
         trans.setInterpolator(new DecelerateOvershootInterpolator(1.3f, 3f));
         view.setVisibility(View.VISIBLE);
         view.startAnimation(trans);

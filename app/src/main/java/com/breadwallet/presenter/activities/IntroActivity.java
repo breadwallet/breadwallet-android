@@ -1,47 +1,27 @@
 
 package com.breadwallet.presenter.activities;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
 import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.EditText;
 
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
-import com.breadwallet.BreadWalletApp;
-import com.breadwallet.presenter.fragments.IntroNewRecoverFragment;
-import com.breadwallet.presenter.fragments.IntroNewWalletFragment;
-import com.breadwallet.presenter.fragments.IntroRecoverWalletFragment;
-import com.breadwallet.presenter.fragments.IntroWarningFragment;
-import com.breadwallet.presenter.fragments.IntroWelcomeFragment;
-import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
-import com.breadwallet.tools.animation.BackgroundMovingAnimator;
-import com.breadwallet.tools.animation.DecelerateOvershootInterpolator;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
-import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crash.FirebaseCrash;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 
 /**
  * BreadWallet
@@ -71,23 +51,14 @@ import java.io.FileNotFoundException;
 public class IntroActivity extends FragmentActivity {
     private static final String TAG = IntroActivity.class.getName();
     public static IntroActivity app;
-    private Button leftButton;
-    public static final int RIGHT = 1;
-    public static final int LEFT = 2;
-
-    private int newRecoverNoneFlag = 0;//0 - in IntroNewRecoverFragment, 1 - in IntroNewWalletFragment, 2 - IntroRecoverWalletFragment
+    public Button newWalletButton;
+    public Button recoverWalletButton;
 
     //loading the native library
     static {
         System.loadLibrary("core");
     }
 
-    private boolean backNotAllowed = false;
-    private IntroWelcomeFragment introWelcomeFragment;
-    private IntroNewRecoverFragment introNewRecoverFragment;
-    private IntroRecoverWalletFragment introRecoverWalletFragment;
-    private IntroNewWalletFragment introNewWalletFragment;
-    private IntroWarningFragment introWarningFragment;
     public static final Point screenParametersPoint = new Point();
 
     @Override
@@ -100,6 +71,10 @@ public class IntroActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
+        newWalletButton = (Button) findViewById(R.id.button_new_wallet);
+        recoverWalletButton = (Button) findViewById(R.id.button_recover_wallet);
+        setListeners();
+
         app = this;
 
         if (!BuildConfig.DEBUG && KeyStoreManager.AUTH_DURATION_SEC != 300) {
@@ -110,15 +85,6 @@ public class IntroActivity extends FragmentActivity {
         }
 
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
-        leftButton = (Button) findViewById(R.id.intro_left_button);
-        leftButton.setVisibility(View.GONE);
-        leftButton.setClickable(false);
-        leftButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
 
         byte[] masterPubKey = KeyStoreManager.getMasterPublicKey(this);
         boolean isFirstAddressCorrect = false;
@@ -131,66 +97,40 @@ public class IntroActivity extends FragmentActivity {
 
             BRWalletManager.getInstance(this).wipeWalletButKeystore(this);
         }
-        createFragments();
-
-        setStatusBarColor(0);
+        setStatusBarColor(android.R.color.transparent);
 
         PostAuthenticationProcessor.getInstance().onCanaryCheck(this, false);
 
     }
 
-    private void createFragments() {
-        introWelcomeFragment = new IntroWelcomeFragment();
-        introNewRecoverFragment = new IntroNewRecoverFragment();
-        introNewWalletFragment = new IntroNewWalletFragment();
-        introRecoverWalletFragment = new IntroRecoverWalletFragment();
-        introWarningFragment = new IntroWarningFragment();
+    private void setListeners() {
+        newWalletButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SpringAnimator.showAnimation(v);
+                Intent intent = new Intent(IntroActivity.this, IntroSetPitActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+            }
+        });
 
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-        fragmentTransaction.add(R.id.intro_layout, introWelcomeFragment,
-                IntroWelcomeFragment.class.getName());
-        fragmentTransaction.add(R.id.intro_layout, introNewRecoverFragment,
-                IntroNewRecoverFragment.class.getName());
-        fragmentTransaction.add(R.id.intro_layout, introNewWalletFragment,
-                IntroNewWalletFragment.class.getName());
-        fragmentTransaction.add(R.id.intro_layout, introRecoverWalletFragment,
-                IntroRecoverWalletFragment.class.getName());
-        fragmentTransaction.add(R.id.intro_layout, introWarningFragment,
-                IntroWarningFragment.class.getName());
-
-        showHideFragments(introWelcomeFragment);
-        newRecoverNoneFlag = 0;
-        fragmentTransaction.commitAllowingStateLoss();
+        recoverWalletButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SpringAnimator.showAnimation(v);
+                Intent intent = new Intent(IntroActivity.this, IntroRecoverActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+            }
+        });
     }
 
-    private void showHideFragments(Fragment... fragments) {
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.hide(introWelcomeFragment);
-        fragmentTransaction.hide(introNewRecoverFragment);
-        fragmentTransaction.hide(introNewWalletFragment);
-        fragmentTransaction.hide(introRecoverWalletFragment);
-        fragmentTransaction.hide(introWarningFragment);
-        for (Fragment f : fragments) {
-            fragmentTransaction.show(f);
-        }
-        fragmentTransaction.commitAllowingStateLoss();
-    }
 
-    private void setStatusBarColor(int mode) {
-        if (mode == 0) {
-            Window window = getWindow();
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(getColor(R.color.intro_status_bar));
-        } else {
-            Window window = getWindow();
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(getColor(R.color.warning_status_bar));
-        }
+    private void setStatusBarColor(int color) {
+        Window window = getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(getColor(color));
     }
 
     public boolean checkFirstAddress(byte[] mpk) {
@@ -203,17 +143,12 @@ public class IntroActivity extends FragmentActivity {
     protected void onResume() {
         super.onResume();
         app = this;
-        //animates the orange BW background moving.
-        ImageView background = (ImageView) findViewById(R.id.intro_bread_wallet_image);
-        background.setScaleType(ImageView.ScaleType.MATRIX);
-        BackgroundMovingAnimator.animateBackgroundMoving(background);
 
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        BackgroundMovingAnimator.stopBackgroundMoving();
     }
 
     @Override
@@ -221,35 +156,6 @@ public class IntroActivity extends FragmentActivity {
 
     }
 
-    private void showNewRecoverWalletFragment() {
-        animateSlide(introWelcomeFragment, introNewRecoverFragment, RIGHT);
-
-    }
-
-    public void showNewWalletFragment() {
-        newRecoverNoneFlag = 1;
-        leftButton.setVisibility(View.VISIBLE);
-        leftButton.setClickable(true);
-        animateSlide(introNewRecoverFragment, introNewWalletFragment, RIGHT);
-    }
-
-    public void showRecoverWalletFragment() {
-        newRecoverNoneFlag = 2;
-        leftButton.setVisibility(View.VISIBLE);
-        leftButton.setClickable(true);
-        animateSlide(introNewRecoverFragment, introRecoverWalletFragment, RIGHT);
-        introRecoverWalletFragment.showKeyBoard(true);
-    }
-
-    public void showWarningFragment() {
-        setStatusBarColor(1);
-        newRecoverNoneFlag = 0;
-        introNewWalletFragment.introGenerate.setClickable(false);
-        leftButton.setVisibility(View.GONE);
-        leftButton.setClickable(false);
-        backNotAllowed = true;
-        showHideFragments(introWarningFragment);
-    }
 
     @Override
     protected void onStop() {
@@ -269,31 +175,31 @@ public class IntroActivity extends FragmentActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE:
-                if (resultCode == RESULT_OK) {
-                    PostAuthenticationProcessor.getInstance().onCreateWalletAuth(this, true);
-                } else {
-                    Log.e(TAG, "WARNING: resultCode != RESULT_OK");
-                    BRWalletManager m = BRWalletManager.getInstance(this);
-                    m.wipeWalletButKeystore(this);
-                    BRAnimator.resetFragmentAnimator();
-                    finish();
-                }
-                break;
-            case BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE:
-                if (resultCode == RESULT_OK) {
-                    PostAuthenticationProcessor.getInstance().onRecoverWalletAuth(this, true);
-                } else {
-                    finish();
-                }
-                break;
-            case BRConstants.CANARY_REQUEST_CODE:
-                if (resultCode == RESULT_OK) {
-                    PostAuthenticationProcessor.getInstance().onCanaryCheck(this, true);
-                } else {
-                    finish();
-                }
-                break;
+//            case BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE:
+//                if (resultCode == RESULT_OK) {
+//                    PostAuthenticationProcessor.getInstance().onCreateWalletAuth(this, true);
+//                } else {
+//                    Log.e(TAG, "WARNING: resultCode != RESULT_OK");
+//                    BRWalletManager m = BRWalletManager.getInstance(this);
+//                    m.wipeWalletButKeystore(this);
+//                    BRAnimator.resetFragmentAnimator();
+//                    finish();
+//                }
+//                break;
+//            case BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE:
+//                if (resultCode == RESULT_OK) {
+//                    PostAuthenticationProcessor.getInstance().onRecoverWalletAuth(this, true);
+//                } else {
+//                    finish();
+//                }
+//                break;
+//            case BRConstants.CANARY_REQUEST_CODE:
+//                if (resultCode == RESULT_OK) {
+//                    PostAuthenticationProcessor.getInstance().onCanaryCheck(this, true);
+//                } else {
+//                    finish();
+//                }
+//                break;
 
         }
 
@@ -301,22 +207,24 @@ public class IntroActivity extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
-        if (backNotAllowed) return;
-        if (newRecoverNoneFlag == 1) {
-            leftButton.setVisibility(View.GONE);
-            leftButton.setClickable(false);
-            animateSlide(introNewWalletFragment, introNewRecoverFragment, LEFT);
-            newRecoverNoneFlag = 0;
-        } else if (newRecoverNoneFlag == 2) {
-            showHideFragments(introRecoverWalletFragment, introNewRecoverFragment);
-            leftButton.setVisibility(View.GONE);
-            leftButton.setClickable(false);
-            animateSlide(introRecoverWalletFragment, introNewRecoverFragment, LEFT);
-            newRecoverNoneFlag = 0;
-            introRecoverWalletFragment.showKeyBoard(false);
-        } else {
-            super.onBackPressed();
-        }
+        super.onBackPressed();
+
+//        if (backNotAllowed) return;
+//        if (newRecoverNoneFlag == 1) {
+//            leftButton.setVisibility(View.GONE);
+//            leftButton.setClickable(false);
+//            animateSlide(introNewWalletFragment, introNewRecoverFragment, LEFT);
+//            newRecoverNoneFlag = 0;
+//        } else if (newRecoverNoneFlag == 2) {
+//            showHideFragments(introRecoverWalletFragment, introNewRecoverFragment);
+//            leftButton.setVisibility(View.GONE);
+//            leftButton.setClickable(false);
+//            animateSlide(introRecoverWalletFragment, introNewRecoverFragment, LEFT);
+//            newRecoverNoneFlag = 0;
+//            introRecoverWalletFragment.showKeyBoard(false);
+//        } else {
+//            super.onBackPressed();
+//        }
 
     }
 
@@ -327,59 +235,11 @@ public class IntroActivity extends FragmentActivity {
             ((BreadWalletApp) getApplication()).showDeviceNotSecuredWarning(this);
         } else {
             if (m.noWallet(app)) {
-                //now check if there is a wallet or should we create/restore one.
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        showNewRecoverWalletFragment();
-                    }
-                }, 800);
+                Log.d(TAG, "startTheWalletIfExists: no wallet, showing intro screen");
             } else {
                 startMainActivity();
             }
 
         }
-    }
-
-    // direction == 1 -> RIGHT, direction == 2 -> LEFT
-    private void animateSlide(final Fragment from, final Fragment to, int direction) {
-        if (to instanceof IntroRecoverWalletFragment) {
-            if (Utils.isUsingCustomInputMethod(to.getActivity()))
-                ((IntroRecoverWalletFragment) to).disableEditText();
-        }
-        int screenWidth = screenParametersPoint.x;
-        int screenHeigth = screenParametersPoint.y;
-
-        showHideFragments(from, to);
-        TranslateAnimation transFrom = direction == RIGHT ?
-                new TranslateAnimation(0, -screenWidth, 0, 0) : new TranslateAnimation(0, screenWidth, 0, 0);
-        transFrom.setDuration(BRAnimator.horizontalSlideDuration);
-        transFrom.setInterpolator(new DecelerateOvershootInterpolator(1f, 0.5f));
-        View fromView = from.getView();
-        if (fromView != null)
-            fromView.startAnimation(transFrom);
-        TranslateAnimation transTo = direction == RIGHT ?
-                new TranslateAnimation(screenWidth, 0, 0, 0) : new TranslateAnimation(-screenWidth, 0, 0, 0);
-        transTo.setDuration(BRAnimator.horizontalSlideDuration);
-        transTo.setInterpolator(new DecelerateOvershootInterpolator(1f, 0.5f));
-        transTo.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                showHideFragments(to);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-        View toView = to.getView();
-        if (toView != null)
-            toView.startAnimation(transTo);
     }
 }

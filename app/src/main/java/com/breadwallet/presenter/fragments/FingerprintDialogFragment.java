@@ -168,11 +168,11 @@ public class FingerprintDialogFragment extends DialogFragment
         if (mode == BRConstants.AUTH_FOR_PHRASE) {
             PhraseFlowActivity app = ((PhraseFlowActivity) getActivity());
             if (SharedPreferencesManager.getPhraseWroteDown(app)) {
-                app.animateSlide(app.fragmentPhraseFlow1, app.fragmentRecoveryPhrase, IntroActivity.RIGHT);
-                app.fragmentRecoveryPhrase.setPhrase(FragmentPhraseFlow1.phrase);
+//                app.animateSlide(app.fragmentPhraseFlow1, app.fragmentRecoveryPhrase, IntroActivity.RIGHT);
+//                app.fragmentRecoveryPhrase.setPhrase(FragmentPhraseFlow1.phrase);
             } else {
-                app.animateSlide(app.fragmentPhraseFlow1, app.fragmentPhraseFlow2, IntroActivity.RIGHT);
-                app.fragmentPhraseFlow2.setPhrase(FragmentPhraseFlow1.phrase);
+//                app.animateSlide(app.fragmentPhraseFlow1, app.fragmentPhraseFlow2, IntroActivity.RIGHT);
+//                app.fragmentPhraseFlow2.setPhrase(FragmentPhraseFlow1.phrase);
             }
         } else if (mode == BRConstants.AUTH_FOR_PAY && request != null) {
             PostAuthenticationProcessor.getInstance().onPublishTxAuth((MainActivity) getActivity(),false);

@@ -30,7 +30,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-
 public class PlatformSqliteHelper extends SQLiteOpenHelper {
     private static final String TAG = PlatformSqliteHelper.class.getName();
 

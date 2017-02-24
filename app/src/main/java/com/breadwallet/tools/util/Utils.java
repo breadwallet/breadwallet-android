@@ -3,6 +3,7 @@ package com.breadwallet.tools.util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.provider.Settings;
@@ -64,7 +65,7 @@ public class Utils {
     }
 
     public static boolean isUsingCustomInputMethod(Activity context) {
-        if(context == null) return false;
+        if (context == null) return false;
         InputMethodManager imm = (InputMethodManager) context.getSystemService(
                 Context.INPUT_METHOD_SERVICE);
         List<InputMethodInfo> mInputMethodProperties = imm.getEnabledInputMethodList();
@@ -124,11 +125,11 @@ public class Utils {
         return result;
     }
 
-    public static boolean isNullOrEmpty(String str){
+    public static boolean isNullOrEmpty(String str) {
         return str == null || str.isEmpty();
     }
 
-    public static boolean isNullOrEmpty(byte[] arr){
+    public static boolean isNullOrEmpty(byte[] arr) {
         return arr == null || arr.length == 0;
     }
 
@@ -136,7 +137,7 @@ public class Utils {
         return collection == null || collection.size() == 0;
     }
 
-    public static int getPixelsFromDps(Context context, int dps){
+    public static int getPixelsFromDps(Context context, int dps) {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (dps * scale + 0.5f);
     }
@@ -154,8 +155,10 @@ public class Utils {
         byte[] data = new byte[len / 2];
         for (int i = 0; i < len; i += 2) {
             data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
-                    + Character.digit(s.charAt(i+1), 16));
+                    + Character.digit(s.charAt(i + 1), 16));
         }
         return data;
     }
+
+
 }

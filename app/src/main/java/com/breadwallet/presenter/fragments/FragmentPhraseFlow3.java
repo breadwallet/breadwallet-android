@@ -88,278 +88,278 @@ public class FragmentPhraseFlow3 extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_phrase_flow3, container, false);
-        Button skipButton = (Button) rootView.findViewById(R.id.skip_button);
-        textFlow = (TextView) rootView.findViewById(R.id.textFlow3);
-        stepsTextView = (TextView) rootView.findViewById(R.id.step);
-        word1 = (Button) rootView.findViewById(R.id.word1);
-        word2 = (Button) rootView.findViewById(R.id.word2);
-        word3 = (Button) rootView.findViewById(R.id.word3);
-        word4 = (Button) rootView.findViewById(R.id.word4);
-        word5 = (Button) rootView.findViewById(R.id.word5);
-        word6 = (Button) rootView.findViewById(R.id.word6);
-        tableLayout = (TableLayout) rootView.findViewById(R.id.words_layout);
-        backButton = (Button) rootView.findViewById(R.id.back_button);
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getActivity().onBackPressed();
-            }
-        });
-        rootView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return true;
-            }
-        });
-        if (CurrencyManager.getInstance(getActivity()).getBALANCE() > SharedPreferencesManager.getLimit(getActivity())) {
-            skipButton.setVisibility(View.GONE);
-        }
-        skipButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent;
-                Activity app = getActivity();
-                intent = new Intent(app, MainActivity.class);
-                startActivity(intent);
-                if (!app.isDestroyed()) {
-                    app.finish();
-                }
-            }
-        });
+//        Button skipButton = (Button) rootView.findViewById(R.id.skip_button);
+//        textFlow = (TextView) rootView.findViewById(R.id.textFlow3);
+//        stepsTextView = (TextView) rootView.findViewById(R.id.step);
+//        word1 = (Button) rootView.findViewById(R.id.word1);
+//        word2 = (Button) rootView.findViewById(R.id.word2);
+//        word3 = (Button) rootView.findViewById(R.id.word3);
+//        word4 = (Button) rootView.findViewById(R.id.word4);
+//        word5 = (Button) rootView.findViewById(R.id.word5);
+//        word6 = (Button) rootView.findViewById(R.id.word6);
+//        tableLayout = (TableLayout) rootView.findViewById(R.id.words_layout);
+//        backButton = (Button) rootView.findViewById(R.id.back_button);
+//        backButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                getActivity().onBackPressed();
+//            }
+//        });
+//        rootView.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                return true;
+//            }
+//        });
+//        if (CurrencyManager.getInstance(getActivity()).getBALANCE() > SharedPreferencesManager.getLimit(getActivity())) {
+//            skipButton.setVisibility(View.GONE);
+//        }
+//        skipButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent;
+//                Activity app = getActivity();
+//                intent = new Intent(app, MainActivity.class);
+//                startActivity(intent);
+//                if (!app.isDestroyed()) {
+//                    app.finish();
+//                }
+//            }
+//        });
 
         return rootView;
     }
-
-    public void setPhrase(byte[] phrase) {
-        this.phrase = phrase;
-        pressAvailable = true;
-        step = 2;
-        updateStepsText(step);
-        sixWords = new ArrayList<>();
-        sixButtons = new Button[6];
-        listener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!pressAvailable) return;
-                pressAvailable = false;
-                final Button b = ((Button) view);
-                if (b.getText().toString().equalsIgnoreCase(wordToCheck)) {
-                    b.setTextColor(getActivity().getColor(R.color.green_text));
-                    SpringAnimator.showAnimation(b);
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            nextTry();
-                        }
-                    }, 800);
-                } else {
-                    b.setTextColor(getActivity().getColor(R.color.red_text));
-                    SpringAnimator.failShakeAnimation(getActivity(), b);
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            goBack();
-                        }
-                    }, 800);
-                }
-
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        b.setTextColor(getActivity().getColor(R.color.dark_blue));
-                    }
-                }, 500);
-
-            }
-        };
-
-        sixButtons[0] = word1;
-        sixButtons[1] = word2;
-        sixButtons[2] = word3;
-        sixButtons[3] = word4;
-        sixButtons[4] = word5;
-        sixButtons[5] = word6;
-        String cleanPhrase = phrase == null? "" : new String(phrase);
-        if (cleanPhrase.split(" ").length == 12 && cleanPhrase.charAt(cleanPhrase.length() - 1) == '\0') {
-            ((BreadWalletApp) getActivity().getApplication()).showCustomDialog(getString(R.string.warning),
-                    getActivity().getString(R.string.phrase_error), getString(R.string.ok));
-        }
-        phraseWords = cleanPhrase.split(" ");
-        startOver();
-    }
-
-    private void startOver() {
-        sixWords.clear();
-        setTextWithRandomNr();
-        fillWordsArray();
-        setButtons();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        ((BreadWalletApp) getActivity().getApplication()).hideKeyboard(getActivity());
-    }
-
-
-    private void setTextWithRandomNr() {
-        if (textFlow == null) return;
-        final Random random = new Random();
-        int n = random.nextInt(10) + 1;
-        String oldWord = wordToCheck;
-        wordToCheck = phraseWords[n];
-        while (oldWord.equalsIgnoreCase(wordToCheck)) {
-            n = random.nextInt(10) + 1;
-            wordToCheck = phraseWords[n];
-        }
-        String placeHolder;
-        switch (n) {
-            case 0:
-                throw new IllegalArgumentException("Cannot be 0");
-            case 11:
-                throw new IllegalArgumentException("Cannot be 11");
-            case 1:
-                textFlow.setText(getText(R.string.word_nr2));
-                break;
-            case 2:
-                textFlow.setText(getText(R.string.word_nr3));
-                break;
-            case 3:
-                textFlow.setText(getText(R.string.word_nr4));
-                break;
-            case 4:
-                textFlow.setText(getText(R.string.word_nr5));
-                break;
-            case 5:
-                textFlow.setText(getText(R.string.word_nr6));
-                break;
-            case 6:
-                textFlow.setText(getText(R.string.word_nr7));
-                break;
-            case 7:
-                textFlow.setText(getText(R.string.word_nr8));
-                break;
-            case 8:
-                textFlow.setText(getText(R.string.word_nr9));
-                break;
-            case 9:
-                textFlow.setText(getText(R.string.word_nr10));
-                break;
-            case 10:
-                textFlow.setText(getText(R.string.word_nr11));
-                break;
-            default:
-                throw new IllegalArgumentException("cannot be other");
-
-        }
-
-    }
-
-    private void fillWordsArray() {
-        final Random random = new Random();
-        sixWords.add(wordToCheck);
-        for (int i = 1; i < 6; i++) {
-            int n = random.nextInt(12);
-            String randWord = phraseWords[n];
-            while (sixWords.contains(randWord)) {
-                int w = random.nextInt(12);
-                randWord = phraseWords[w];
-            }
-            sixWords.add(randWord);
-        }
-        Collections.shuffle(sixWords);
-
-    }
-
-    private void setButtons() {
-        for (int i = 0; i < 6; i++) {
-            String word = sixWords.get(i);
-            sixButtons[i].setText(word);
-            sixButtons[i].setOnClickListener(listener);
-        }
-    }
-
-    private void nextTry() {
-        if (step == STEPS_LIMIT) {
-            SharedPreferencesManager.putPhraseWroteDown(getActivity(), true);
-            finishFlow();
-            return;
-        }
-        stepsTextView.setVisibility(View.GONE);
-        updateStepsText(++step);
-        for (int i = 0; i < 6; i++) {
-            sixButtons[i].setVisibility(View.GONE);
-        }
-
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                startOver();
-                for (int i = 0; i < 6; i++) {
-                    sixButtons[i].setVisibility(View.VISIBLE);
-                }
-                for (int i = 0; i < 6; i++) {
-                    SpringAnimator.showAnimation(sixButtons[i]);
-                }
-                stepsTextView.setVisibility(View.VISIBLE);
-                SpringAnimator.showAnimation(stepsTextView);
-                SpringAnimator.showAnimation(textFlow);
-                pressAvailable = true;
-            }
-        });
-
-    }
-
-    private void goBack() {
-        if (this.isVisible()) {
-            PhraseFlowActivity app = (PhraseFlowActivity) getActivity();
-            app.animateSlide(app.fragmentPhraseFlow3, app.fragmentPhraseFlow2, IntroActivity.LEFT);
-            app.fragmentPhraseFlow2.setPhrase(phrase);
-        }
-    }
-
-    private void updateStepsText(int steps) {
-        stepsTextView.setText(String.format(getString(R.string.step_holder), steps, STEPS_LIMIT));
-    }
-
-    private void finishFlow() {
-        Toast toast = new Toast(getActivity());
-
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        View layout = inflater.inflate(R.layout.toast,
-                (ViewGroup) getActivity().findViewById(R.id.toast_layout_root));
-        layout.setBackgroundResource(R.drawable.toast_layout_black);
-        TextView text = (TextView) layout.findViewById(R.id.toast_text);
-        text.setText(R.string.recovery_phrase_set);
-        text.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
-        text.setPadding(20, 40, 20, 40);
-        toast.setGravity(Gravity.BOTTOM, 0, PhraseFlowActivity.screenParametersPoint.y / 2);
-        toast.setDuration(Toast.LENGTH_SHORT);
-        toast.setView(layout);
-        toast.show();
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                PhraseFlowActivity app = (PhraseFlowActivity) getActivity();
-                Intent intent;
-                intent = new Intent(app, MainActivity.class);
-                startActivity(intent);
-                if (!app.isDestroyed()) {
-                    app.finish();
-                }
-            }
-        }, 1000);
-
-    }
-
-    public void releasePhrase() {
-        if (phrase != null)
-            Arrays.fill(phrase, (byte) 0);
-    }
-
-    public byte[] getPhrase() {
-        return phrase;
-    }
+//
+//    public void setPhrase(byte[] phrase) {
+//        this.phrase = phrase;
+//        pressAvailable = true;
+//        step = 2;
+//        updateStepsText(step);
+//        sixWords = new ArrayList<>();
+//        sixButtons = new Button[6];
+//        listener = new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (!pressAvailable) return;
+//                pressAvailable = false;
+//                final Button b = ((Button) view);
+//                if (b.getText().toString().equalsIgnoreCase(wordToCheck)) {
+//                    b.setTextColor(getActivity().getColor(R.color.green_text));
+//                    SpringAnimator.showAnimation(b);
+//                    new Handler().postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            nextTry();
+//                        }
+//                    }, 800);
+//                } else {
+//                    b.setTextColor(getActivity().getColor(R.color.red_text));
+//                    SpringAnimator.failShakeAnimation(getActivity(), b);
+//                    new Handler().postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            goBack();
+//                        }
+//                    }, 800);
+//                }
+//
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        b.setTextColor(getActivity().getColor(R.color.dark_blue));
+//                    }
+//                }, 500);
+//
+//            }
+//        };
+//
+//        sixButtons[0] = word1;
+//        sixButtons[1] = word2;
+//        sixButtons[2] = word3;
+//        sixButtons[3] = word4;
+//        sixButtons[4] = word5;
+//        sixButtons[5] = word6;
+//        String cleanPhrase = phrase == null? "" : new String(phrase);
+//        if (cleanPhrase.split(" ").length == 12 && cleanPhrase.charAt(cleanPhrase.length() - 1) == '\0') {
+//            ((BreadWalletApp) getActivity().getApplication()).showCustomDialog(getString(R.string.warning),
+//                    getActivity().getString(R.string.phrase_error), getString(R.string.ok));
+//        }
+//        phraseWords = cleanPhrase.split(" ");
+//        startOver();
+//    }
+//
+//    private void startOver() {
+//        sixWords.clear();
+//        setTextWithRandomNr();
+//        fillWordsArray();
+//        setButtons();
+//    }
+//
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        ((BreadWalletApp) getActivity().getApplication()).hideKeyboard(getActivity());
+//    }
+//
+//
+//    private void setTextWithRandomNr() {
+//        if (textFlow == null) return;
+//        final Random random = new Random();
+//        int n = random.nextInt(10) + 1;
+//        String oldWord = wordToCheck;
+//        wordToCheck = phraseWords[n];
+//        while (oldWord.equalsIgnoreCase(wordToCheck)) {
+//            n = random.nextInt(10) + 1;
+//            wordToCheck = phraseWords[n];
+//        }
+//        String placeHolder;
+//        switch (n) {
+//            case 0:
+//                throw new IllegalArgumentException("Cannot be 0");
+//            case 11:
+//                throw new IllegalArgumentException("Cannot be 11");
+//            case 1:
+//                textFlow.setText(getText(R.string.word_nr2));
+//                break;
+//            case 2:
+//                textFlow.setText(getText(R.string.word_nr3));
+//                break;
+//            case 3:
+//                textFlow.setText(getText(R.string.word_nr4));
+//                break;
+//            case 4:
+//                textFlow.setText(getText(R.string.word_nr5));
+//                break;
+//            case 5:
+//                textFlow.setText(getText(R.string.word_nr6));
+//                break;
+//            case 6:
+//                textFlow.setText(getText(R.string.word_nr7));
+//                break;
+//            case 7:
+//                textFlow.setText(getText(R.string.word_nr8));
+//                break;
+//            case 8:
+//                textFlow.setText(getText(R.string.word_nr9));
+//                break;
+//            case 9:
+//                textFlow.setText(getText(R.string.word_nr10));
+//                break;
+//            case 10:
+//                textFlow.setText(getText(R.string.word_nr11));
+//                break;
+//            default:
+//                throw new IllegalArgumentException("cannot be other");
+//
+//        }
+//
+//    }
+//
+//    private void fillWordsArray() {
+//        final Random random = new Random();
+//        sixWords.add(wordToCheck);
+//        for (int i = 1; i < 6; i++) {
+//            int n = random.nextInt(12);
+//            String randWord = phraseWords[n];
+//            while (sixWords.contains(randWord)) {
+//                int w = random.nextInt(12);
+//                randWord = phraseWords[w];
+//            }
+//            sixWords.add(randWord);
+//        }
+//        Collections.shuffle(sixWords);
+//
+//    }
+//
+//    private void setButtons() {
+//        for (int i = 0; i < 6; i++) {
+//            String word = sixWords.get(i);
+//            sixButtons[i].setText(word);
+//            sixButtons[i].setOnClickListener(listener);
+//        }
+//    }
+//
+//    private void nextTry() {
+//        if (step == STEPS_LIMIT) {
+//            SharedPreferencesManager.putPhraseWroteDown(getActivity(), true);
+//            finishFlow();
+//            return;
+//        }
+//        stepsTextView.setVisibility(View.GONE);
+//        updateStepsText(++step);
+//        for (int i = 0; i < 6; i++) {
+//            sixButtons[i].setVisibility(View.GONE);
+//        }
+//
+//        new Handler().post(new Runnable() {
+//            @Override
+//            public void run() {
+//                startOver();
+//                for (int i = 0; i < 6; i++) {
+//                    sixButtons[i].setVisibility(View.VISIBLE);
+//                }
+//                for (int i = 0; i < 6; i++) {
+//                    SpringAnimator.showAnimation(sixButtons[i]);
+//                }
+//                stepsTextView.setVisibility(View.VISIBLE);
+//                SpringAnimator.showAnimation(stepsTextView);
+//                SpringAnimator.showAnimation(textFlow);
+//                pressAvailable = true;
+//            }
+//        });
+//
+//    }
+//
+////    private void goBack() {
+////        if (this.isVisible()) {
+////            PhraseFlowActivity app = (PhraseFlowActivity) getActivity();
+////            app.animateSlide(app.fragmentPhraseFlow3, app.fragmentPhraseFlow2, IntroActivity.LEFT);
+////            app.fragmentPhraseFlow2.setPhrase(phrase);
+////        }
+////    }
+//
+//    private void updateStepsText(int steps) {
+//        stepsTextView.setText(String.format(getString(R.string.step_holder), steps, STEPS_LIMIT));
+//    }
+//
+//    private void finishFlow() {
+//        Toast toast = new Toast(getActivity());
+//
+//        LayoutInflater inflater = getActivity().getLayoutInflater();
+//        View layout = inflater.inflate(R.layout.toast,
+//                (ViewGroup) getActivity().findViewById(R.id.toast_layout_root));
+//        layout.setBackgroundResource(R.drawable.toast_layout_black);
+//        TextView text = (TextView) layout.findViewById(R.id.toast_text);
+//        text.setText(R.string.recovery_phrase_set);
+//        text.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+//        text.setPadding(20, 40, 20, 40);
+//        toast.setGravity(Gravity.BOTTOM, 0, PhraseFlowActivity.screenParametersPoint.y / 2);
+//        toast.setDuration(Toast.LENGTH_SHORT);
+//        toast.setView(layout);
+//        toast.show();
+//
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                PhraseFlowActivity app = (PhraseFlowActivity) getActivity();
+//                Intent intent;
+//                intent = new Intent(app, MainActivity.class);
+//                startActivity(intent);
+//                if (!app.isDestroyed()) {
+//                    app.finish();
+//                }
+//            }
+//        }, 1000);
+//
+//    }
+//
+//    public void releasePhrase() {
+//        if (phrase != null)
+//            Arrays.fill(phrase, (byte) 0);
+//    }
+//
+//    public byte[] getPhrase() {
+//        return phrase;
+//    }
 
 }

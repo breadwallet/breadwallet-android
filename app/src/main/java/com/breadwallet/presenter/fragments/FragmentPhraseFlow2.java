@@ -70,36 +70,36 @@ public class FragmentPhraseFlow2 extends Fragment {
 
         return rootView;
     }
-
-    public void setPhrase(final byte[] phrase) {
-        if(phrase.length == 0) {
-            throw new RuntimeException("phrase is empty what??");
-        }
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                String cleanPhrase = new String(phrase);
-                if (cleanPhrase.split(" ").length == 12 && cleanPhrase.charAt(cleanPhrase.length() - 1) == '\0') {
-                    ((BreadWalletApp) getActivity().getApplication()).showCustomDialog(getString(R.string.warning),
-                            getActivity().getString(R.string.phrase_error), getString(R.string.ok));
-                }
-                thePhrase.setText(cleanPhrase);
-                if (cleanPhrase.charAt(0) > 0x3000)
-                    thePhrase.setText(cleanPhrase.replace(" ", "\u3000"));
-
-                continueButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        PhraseFlowActivity app = ((PhraseFlowActivity) getActivity());
-                        if(app == null) return;
-                        app.animateSlide(app.fragmentPhraseFlow2, app.fragmentPhraseFlow3, IntroActivity.RIGHT);
-                        app.fragmentPhraseFlow3.setPhrase(phrase);
-                    }
-                });
-            }
-        }, 50);
-
-    }
+//
+//    public void setPhrase(final byte[] phrase) {
+//        if(phrase.length == 0) {
+//            throw new RuntimeException("phrase is empty what??");
+//        }
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                String cleanPhrase = new String(phrase);
+//                if (cleanPhrase.split(" ").length == 12 && cleanPhrase.charAt(cleanPhrase.length() - 1) == '\0') {
+//                    ((BreadWalletApp) getActivity().getApplication()).showCustomDialog(getString(R.string.warning),
+//                            getActivity().getString(R.string.phrase_error), getString(R.string.ok));
+//                }
+//                thePhrase.setText(cleanPhrase);
+//                if (cleanPhrase.charAt(0) > 0x3000)
+//                    thePhrase.setText(cleanPhrase.replace(" ", "\u3000"));
+//
+//                continueButton.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        PhraseFlowActivity app = ((PhraseFlowActivity) getActivity());
+//                        if(app == null) return;
+//                        app.animateSlide(app.fragmentPhraseFlow2, app.fragmentPhraseFlow3, IntroActivity.RIGHT);
+//                        app.fragmentPhraseFlow3.setPhrase(phrase);
+//                    }
+//                });
+//            }
+//        }, 50);
+//
+//    }
 
 
 }

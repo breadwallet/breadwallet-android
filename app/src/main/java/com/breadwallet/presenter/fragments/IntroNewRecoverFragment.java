@@ -47,27 +47,27 @@ public class IntroNewRecoverFragment extends Fragment {
         // properly.
         View rootView = inflater.inflate(
                 R.layout.intro_fragment_new_recover, container, false);
-        Button newWallet = (Button) rootView.findViewById(R.id.intro_new_wallet);
-        Button recoverWallet = (Button) rootView.findViewById(R.id.intro_recover_wallet);
-
-        newWallet.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (BRAnimator.checkTheMultipressingAvailability()) {
-                    ((IntroActivity) getActivity()).showNewWalletFragment();
-                }
-            }
-        });
-
-        recoverWallet.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (BRAnimator.checkTheMultipressingAvailability()) {
-                    ((IntroActivity) getActivity()).showRecoverWalletFragment();
-                }
-            }
-        });
-        SharedPreferencesManager.putReceiveAddress(getActivity(), null);
+//        Button newWallet = (Button) rootView.findViewById(R.id.intro_new_wallet);
+//        Button recoverWallet = (Button) rootView.findViewById(R.id.intro_recover_wallet);
+//
+//        newWallet.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (BRAnimator.checkTheMultipressingAvailability()) {
+//                    ((IntroActivity) getActivity()).showNewWalletFragment();
+//                }
+//            }
+//        });
+//
+//        recoverWallet.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (BRAnimator.checkTheMultipressingAvailability()) {
+//                    ((IntroActivity) getActivity()).showRecoverWalletFragment();
+//                }
+//            }
+//        });
+//        SharedPreferencesManager.putReceiveAddress(getActivity(), null);
         return rootView;
     }
 }

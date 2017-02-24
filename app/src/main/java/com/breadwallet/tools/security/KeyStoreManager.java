@@ -276,11 +276,11 @@ public class KeyStoreManager {
                         }, null, new DialogInterface.OnDismissListener() {
                             @Override
                             public void onDismiss(DialogInterface dialogInterface) {
-                                if (context instanceof IntroActivity) {
-                                    if (BRAnimator.checkTheMultipressingAvailability()) {
-                                        ((IntroActivity) context).showRecoverWalletFragment();
-                                    }
-                                }
+//                                if (context instanceof IntroActivity) {
+//                                    if (BRAnimator.checkTheMultipressingAvailability()) {
+//                                        ((IntroActivity) context).showRecoverWalletFragment();
+//                                    }
+//                                }
                             }
                         });
                 throw new BRKeystoreErrorException("KeyPermanentlyInvalidatedException");
@@ -323,7 +323,7 @@ public class KeyStoreManager {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 if (BRAnimator.checkTheMultipressingAvailability()) {
-                                    ((IntroActivity) context).showRecoverWalletFragment();
+//                                    ((IntroActivity) context).showRecoverWalletFragment();
                                 }
                             }
                         } : null, new DialogInterface.OnClickListener() {

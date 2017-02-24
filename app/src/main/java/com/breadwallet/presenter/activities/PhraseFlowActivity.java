@@ -71,141 +71,141 @@ public class PhraseFlowActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_phrase_flow);
 
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE);
-
-        Window window = getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(getColor(R.color.status_bar));
-
-        phraseFlowActivity = this;
-
-        fragmentPhraseFlow1 = new FragmentPhraseFlow1();
-        fragmentPhraseFlow2 = new FragmentPhraseFlow2();
-        fragmentPhraseFlow3 = new FragmentPhraseFlow3();
-        fragmentRecoveryPhrase = new FragmentRecoveryPhrase();
-        int layoutID = R.id.main_layout;
-
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-        fragmentTransaction.add(layoutID, fragmentPhraseFlow1,
-                IntroWelcomeFragment.class.getName());
-        fragmentTransaction.add(layoutID, fragmentPhraseFlow2,
-                IntroNewRecoverFragment.class.getName());
-        fragmentTransaction.add(layoutID, fragmentPhraseFlow3,
-                IntroNewWalletFragment.class.getName());
-        fragmentTransaction.add(layoutID, fragmentRecoveryPhrase,
-                IntroNewWalletFragment.class.getName());
-
-        showHideFragments();
-        fragmentTransaction.commitAllowingStateLoss();
-        PostAuthenticationProcessor.getInstance().onShowPhraseFlowAuth(phraseFlowActivity, false);
-
-    }
-
-    // direction == 1 -> RIGHT, direction == 2 -> LEFT
-    public void animateSlide(final Fragment from, final Fragment to, int direction) {
-        int screenWidth = screenParametersPoint.x;
-        int screenHeigth = screenParametersPoint.y;
-
-        showHideFragments(from, to);
-        TranslateAnimation transFrom = direction == IntroActivity.RIGHT ?
-                new TranslateAnimation(0, -screenWidth, 0, 0) : new TranslateAnimation(0, screenWidth, 0, 0);
-        transFrom.setDuration(BRAnimator.horizontalSlideDuration);
-        transFrom.setInterpolator(new DecelerateOvershootInterpolator(1f, 0.5f));
-        View fromView = from.getView();
-        if (fromView != null)
-            fromView.startAnimation(transFrom);
-        TranslateAnimation transTo = direction == IntroActivity.RIGHT ?
-                new TranslateAnimation(screenWidth, 0, 0, 0) : new TranslateAnimation(-screenWidth, 0, 0, 0);
-        transTo.setDuration(BRAnimator.horizontalSlideDuration);
-        transTo.setInterpolator(new DecelerateOvershootInterpolator(1f, 0.5f));
-        transTo.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                showHideFragments(to);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-        View toView = to.getView();
-        if (toView != null)
-            toView.startAnimation(transTo);
-    }
-
-    public void showHideFragments(Fragment... fragments) {
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.hide(fragmentPhraseFlow1);
-        fragmentTransaction.hide(fragmentPhraseFlow2);
-        fragmentTransaction.hide(fragmentPhraseFlow3);
-        fragmentTransaction.hide(fragmentRecoveryPhrase);
-        for (Fragment f : fragments) {
-            fragmentTransaction.show(f);
-        }
-        fragmentTransaction.commitAllowingStateLoss();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case BRConstants.SHOW_PHRASE_REQUEST_CODE:
-                if (resultCode == RESULT_OK) {
-                    PostAuthenticationProcessor.getInstance().onShowPhraseFlowAuth(this, true);
-                } else {
-                    onBackPressed();
-                }
-                break;
-
-        }
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (fragmentPhraseFlow3 != null && fragmentPhraseFlow3.isVisible()) {
-            animateSlide(fragmentPhraseFlow3, fragmentPhraseFlow2, IntroActivity.LEFT);
-            fragmentPhraseFlow2.setPhrase(fragmentPhraseFlow3.getPhrase());
-        } else {
-            if (CurrencyManager.getInstance(this).getBALANCE() > SharedPreferencesManager.getLimit(this)
-                    && !SharedPreferencesManager.getPhraseWroteDown(this)) {
-                super.onBackPressed();
-            } else {
-                Intent intent;
-                intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
-                if (!isDestroyed()) {
-                    finish();
-                }
-            }
-        }
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+//                WindowManager.LayoutParams.FLAG_SECURE);
+//
+//        Window window = getWindow();
+//        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+//        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+//        window.setStatusBarColor(getColor(R.color.status_bar));
+//
+//        phraseFlowActivity = this;
+//
+//        fragmentPhraseFlow1 = new FragmentPhraseFlow1();
+//        fragmentPhraseFlow2 = new FragmentPhraseFlow2();
+//        fragmentPhraseFlow3 = new FragmentPhraseFlow3();
+//        fragmentRecoveryPhrase = new FragmentRecoveryPhrase();
+//        int layoutID = R.id.main_layout;
+//
+//        FragmentManager fragmentManager = getFragmentManager();
+//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//
+//        fragmentTransaction.add(layoutID, fragmentPhraseFlow1,
+//                IntroWelcomeFragment.class.getName());
+//        fragmentTransaction.add(layoutID, fragmentPhraseFlow2,
+//                IntroNewRecoverFragment.class.getName());
+//        fragmentTransaction.add(layoutID, fragmentPhraseFlow3,
+//                IntroNewWalletFragment.class.getName());
+//        fragmentTransaction.add(layoutID, fragmentRecoveryPhrase,
+//                IntroNewWalletFragment.class.getName());
+//
+//        showHideFragments();
+//        fragmentTransaction.commitAllowingStateLoss();
+//        PostAuthenticationProcessor.getInstance().onShowPhraseFlowAuth(phraseFlowActivity, false);
 
     }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        releasePhrase();
-
-    }
-
-    private void releasePhrase() {
-        fragmentPhraseFlow1.releasePhrase();
-        fragmentPhraseFlow3.releasePhrase();
-        fragmentRecoveryPhrase.releasePhrase();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
+//
+//    // direction == 1 -> RIGHT, direction == 2 -> LEFT
+//    public void animateSlide(final Fragment from, final Fragment to, int direction) {
+//        int screenWidth = screenParametersPoint.x;
+//        int screenHeigth = screenParametersPoint.y;
+//
+//        showHideFragments(from, to);
+//        TranslateAnimation transFrom = direction == IntroActivity.RIGHT ?
+//                new TranslateAnimation(0, -screenWidth, 0, 0) : new TranslateAnimation(0, screenWidth, 0, 0);
+//        transFrom.setDuration(BRAnimator.horizontalSlideDuration);
+//        transFrom.setInterpolator(new DecelerateOvershootInterpolator(1f, 0.5f));
+//        View fromView = from.getView();
+//        if (fromView != null)
+//            fromView.startAnimation(transFrom);
+//        TranslateAnimation transTo = direction == IntroActivity.RIGHT ?
+//                new TranslateAnimation(screenWidth, 0, 0, 0) : new TranslateAnimation(-screenWidth, 0, 0, 0);
+//        transTo.setDuration(BRAnimator.horizontalSlideDuration);
+//        transTo.setInterpolator(new DecelerateOvershootInterpolator(1f, 0.5f));
+//        transTo.setAnimationListener(new Animation.AnimationListener() {
+//            @Override
+//            public void onAnimationStart(Animation animation) {
+//
+//            }
+//
+//            @Override
+//            public void onAnimationEnd(Animation animation) {
+//                showHideFragments(to);
+//            }
+//
+//            @Override
+//            public void onAnimationRepeat(Animation animation) {
+//
+//            }
+//        });
+//        View toView = to.getView();
+//        if (toView != null)
+//            toView.startAnimation(transTo);
+//    }
+//
+//    public void showHideFragments(Fragment... fragments) {
+//        FragmentManager fragmentManager = getFragmentManager();
+//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//        fragmentTransaction.hide(fragmentPhraseFlow1);
+//        fragmentTransaction.hide(fragmentPhraseFlow2);
+//        fragmentTransaction.hide(fragmentPhraseFlow3);
+//        fragmentTransaction.hide(fragmentRecoveryPhrase);
+//        for (Fragment f : fragments) {
+//            fragmentTransaction.show(f);
+//        }
+//        fragmentTransaction.commitAllowingStateLoss();
+//    }
+//
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        switch (requestCode) {
+//            case BRConstants.SHOW_PHRASE_REQUEST_CODE:
+//                if (resultCode == RESULT_OK) {
+//                    PostAuthenticationProcessor.getInstance().onShowPhraseFlowAuth(this, true);
+//                } else {
+//                    onBackPressed();
+//                }
+//                break;
+//
+//        }
+//    }
+//
+//    @Override
+//    public void onBackPressed() {
+//        if (fragmentPhraseFlow3 != null && fragmentPhraseFlow3.isVisible()) {
+//            animateSlide(fragmentPhraseFlow3, fragmentPhraseFlow2, IntroActivity.LEFT);
+//            fragmentPhraseFlow2.setPhrase(fragmentPhraseFlow3.getPhrase());
+//        } else {
+//            if (CurrencyManager.getInstance(this).getBALANCE() > SharedPreferencesManager.getLimit(this)
+//                    && !SharedPreferencesManager.getPhraseWroteDown(this)) {
+//                super.onBackPressed();
+//            } else {
+//                Intent intent;
+//                intent = new Intent(this, MainActivity.class);
+//                startActivity(intent);
+//                if (!isDestroyed()) {
+//                    finish();
+//                }
+//            }
+//        }
+//
+//    }
+//
+//    @Override
+//    public void onDestroy() {
+//        super.onDestroy();
+//        releasePhrase();
+//
+//    }
+//
+//    private void releasePhrase() {
+//        fragmentPhraseFlow1.releasePhrase();
+//        fragmentPhraseFlow3.releasePhrase();
+//        fragmentRecoveryPhrase.releasePhrase();
+//    }
+//
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//    }
 }

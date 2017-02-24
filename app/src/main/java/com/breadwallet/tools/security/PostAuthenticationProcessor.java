@@ -73,7 +73,7 @@ public class PostAuthenticationProcessor {
     public void onCreateWalletAuth(IntroActivity app, boolean authAsked) {
         boolean success = BRWalletManager.getInstance(app).generateRandomSeed();
         if (success) {
-            app.showWarningFragment();
+//            app.showWarningFragment();
         } else {
             if (authAsked) {
                 showBugAuthLoopErrorMessage(app);
@@ -129,7 +129,7 @@ public class PostAuthenticationProcessor {
         byte[] phrase;
         try {
             phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.SHOW_PHRASE_REQUEST_CODE);
-            app.showHideFragments(app.fragmentPhraseFlow1);
+//            app.showHideFragments(app.fragmentPhraseFlow1);
             app.fragmentPhraseFlow1.setPhrase(phrase);
         } catch (BRKeystoreErrorException e) {
             e.printStackTrace();

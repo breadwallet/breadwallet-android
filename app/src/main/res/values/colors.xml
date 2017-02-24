@@ -23,6 +23,21 @@
     <item name="intro_status_bar" type="color">#ffbf7f</item>
     <item name="warning_status_bar" type="color">#7f5225</item>
 
+
+    <item name="logo_gradient_start" type="color">#F8A445</item>
+    <item name="logo_gradient_end" type="color">#fc5394</item>
+
+    <item name="recover_gradient_start" type="color">#FFFFFF</item>
+    <item name="recover_gradient_end" type="color">#D17DF5</item>
+
+    <item name="pin_pad_text" type="color">#A3A8AE</item>
+
+
+    <item name="button_primary_normal" type="color">#4C98FD</item>
+    <item name="button_secondary" type="color">#F5F8FA</item>
+    <item name="button_secondary_text" type="color">#232426</item>
+
+
     //fingerprint
     <color name="warning_color">#f4511e</color>
     <color name="hint_color">#42000000</color>
