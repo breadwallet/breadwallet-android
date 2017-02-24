@@ -7,6 +7,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -17,7 +18,6 @@ import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,12 +25,11 @@ import android.widget.Toast;
 import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.fragments.FragmentBreadSignal;
 import com.breadwallet.presenter.fragments.FragmentDecoder;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.presenter.fragments.FragmentSettings;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
-import com.breadwallet.presenter.fragments.MainFragment;
-import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
@@ -39,7 +38,6 @@ import com.platform.HTTPServer;
 import java.util.Stack;
 
 import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
-import static com.platform.APIClient.server;
 
 /**
  * BreadWallet
@@ -77,6 +75,8 @@ public class BRAnimator {
     public static int horizontalSlideDuration = 300;
     private static boolean horizontalSlideAvailable = true;
     private static View copy;
+
+    private static FragmentBreadSignal fragmentSignal;
 
     public static void animateDecoderFragment() {
 
@@ -569,6 +569,20 @@ public class BRAnimator {
             return myView.getTop();
         else
             return myView.getTop() + getRelativeTop((View) myView.getParent());
+    }
+
+    public static void showCheckMark(Activity activity, String title, String iconDescription, int drawableId) {
+        if (fragmentSignal == null) fragmentSignal = new FragmentBreadSignal();
+        Bundle bundle = new Bundle();
+        bundle.putString(FragmentBreadSignal.TITLE, title);
+        bundle.putString(FragmentBreadSignal.ICON_DESCRIPTION, iconDescription);
+        bundle.putInt(FragmentBreadSignal.RES_ID, drawableId);
+        fragmentSignal.setArguments(bundle);
+        FragmentTransaction transaction = activity.getFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_bottom, R.animator.from_bottom, R.animator.to_bottom);
+        transaction.add(android.R.id.content, fragmentSignal, fragmentSignal.getClass().getName());
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
 }

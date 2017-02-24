@@ -131,7 +131,7 @@ public class IntroSetPitActivity extends Activity {
                     pin = new StringBuilder("");
                     startingNextActivity = false;
                 }
-            }, 200);
+            }, 100);
 
         }
 

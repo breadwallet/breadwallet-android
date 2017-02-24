@@ -1,6 +1,8 @@
 package com.breadwallet.presenter.activities;
 
 import android.app.Activity;
+import android.app.FragmentTransaction;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,12 +13,14 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRSoftKeyboard;
+import com.breadwallet.presenter.fragments.FragmentBreadSignal;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.util.Utils;
 
 import static android.R.attr.tag;
 
-public class IntroReEnterPinActivity extends Activity {
+public class IntroReEnterPinActivity extends FragmentActivity {
     private static final String TAG = IntroReEnterPinActivity.class.getName();
     private BRSoftKeyboard keyboard;
     private View dot1;
@@ -29,6 +33,8 @@ public class IntroReEnterPinActivity extends Activity {
     private TextView title;
     private int pinLimit = 6;
     private String firstPIN;
+    private boolean isPressAllowed = true;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +73,7 @@ public class IntroReEnterPinActivity extends Activity {
     }
 
     private void handleClick(String key) {
+        if (!isPressAllowed) return;
         if (key == null) {
             Log.e(TAG, "handleClick: key is null! ");
             return;
@@ -133,17 +140,19 @@ public class IntroReEnterPinActivity extends Activity {
     }
 
     private void verifyPin() {
-        try {
-            if (firstPIN.equalsIgnoreCase(pin.toString())) {
-                Log.e(TAG, "verifyPin: SUCCESS");
-            } else {
-                Log.e(TAG, "verifyPin: FAIL: firs: " + firstPIN + ", reEnter: " + pin.toString());
-                title.setText("Wrong PIN, please try again");
-                SpringAnimator.failShakeAnimation(this, title);
-            }
-        } finally {
+        if (firstPIN.equalsIgnoreCase(pin.toString())) {
+            Log.e(TAG, "verifyPin: SUCCESS");
+            isPressAllowed = false;
+            BRAnimator.showCheckMark(this, "PIN Set", "Use your PIN to login and send money.", R.drawable.ic_check_mark);
+        } else {
+            Log.e(TAG, "verifyPin: FAIL: firs: " + firstPIN + ", reEnter: " + pin.toString());
+            title.setText("Wrong PIN, please try again");
+            SpringAnimator.failShakeAnimation(this, title);
             pin = new StringBuilder();
+            updateDots();
         }
 
     }
+
+
 }
