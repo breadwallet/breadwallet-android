@@ -1,9 +1,7 @@
 package com.breadwallet.presenter.customviews;
 
 import android.content.Context;
-import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 /**

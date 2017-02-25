@@ -2,6 +2,8 @@ package com.breadwallet.presenter.activities;
 
 import android.app.Activity;
 import android.app.FragmentTransaction;
+import android.content.Intent;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,6 +18,7 @@ import com.breadwallet.presenter.customviews.BRSoftKeyboard;
 import com.breadwallet.presenter.fragments.FragmentBreadSignal;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.Utils;
 
 import static android.R.attr.tag;
@@ -143,10 +146,12 @@ public class IntroReEnterPinActivity extends FragmentActivity {
         if (firstPIN.equalsIgnoreCase(pin.toString())) {
             Log.e(TAG, "verifyPin: SUCCESS");
             isPressAllowed = false;
+            KeyStoreManager.putPassCode(pin.toString(), this);
             BRAnimator.showCheckMark(this, "PIN Set", "Use your PIN to login and send money.", R.drawable.ic_check_mark);
+            showWriteDownPhrase();
         } else {
             Log.e(TAG, "verifyPin: FAIL: firs: " + firstPIN + ", reEnter: " + pin.toString());
-            title.setText("Wrong PIN, please try again");
+            title.setText("Wrong PIN,\nplease try again");
             SpringAnimator.failShakeAnimation(this, title);
             pin = new StringBuilder();
             updateDots();
@@ -154,5 +159,17 @@ public class IntroReEnterPinActivity extends FragmentActivity {
 
     }
 
+    private void showWriteDownPhrase() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(IntroReEnterPinActivity.this, IntroWriteDownActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                pin = new StringBuilder("");
+            }
+        }, 2000);
+
+    }
 
 }

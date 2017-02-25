@@ -478,6 +478,7 @@ public class KeyStoreManager {
         try {
             int test = Integer.parseInt(passCode);
         } catch (Exception e) {
+            Log.e(TAG, "getPassCode: WARNING passcode isn't a number");
             passCode = "";
             putPassCode(passCode, context);
             KeyStoreManager.putFailCount(0, context);
