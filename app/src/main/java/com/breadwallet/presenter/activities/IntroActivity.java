@@ -156,7 +156,6 @@ public class IntroActivity extends FragmentActivity {
 
     }
 
-
     @Override
     protected void onStop() {
         super.onStop();
@@ -237,7 +236,8 @@ public class IntroActivity extends FragmentActivity {
             if (m.noWallet(app)) {
                 Log.d(TAG, "startTheWalletIfExists: no wallet, showing intro screen");
             } else {
-                startMainActivity();
+                //todo comment for now
+//                startMainActivity();
             }
 
         }

@@ -76,6 +76,8 @@
         </activity>
         <activity android:name=".presenter.activities.IntroWriteDownActivity">
         </activity>
+        <activity android:name=".presenter.activities.IntroPhraseCheckActivity">
+        </activity>
     </application>
 
 </manifest>

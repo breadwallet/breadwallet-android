@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:filterTouchesWhenObscured="true"
+              android:orientation="horizontal">
+
+    <Button
+        android:id="@+id/word_button"
+        android:layout_width="136dp"
+        android:layout_height="96dp"
+        android:background="@drawable/rounded_phrase_word"
+        android:clickable="false"
+        android:layout_alignParentBottom="true"
+        android:focusable="false"
+        android:layout_centerHorizontal="true"
+        android:text="Button"
+        android:textAlignment="center"
+        android:textColor="@color/white"/>
+
+</RelativeLayout>

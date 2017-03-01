@@ -2,6 +2,7 @@ package com.breadwallet.tools.security;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.util.Log;
 
@@ -9,6 +10,8 @@ import com.breadwallet.BreadWalletApp;
 import com.breadwallet.R;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.activities.IntroActivity;
+import com.breadwallet.presenter.activities.IntroPhraseCheckActivity;
+import com.breadwallet.presenter.activities.IntroWriteDownActivity;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.activities.PhraseFlowActivity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
@@ -70,15 +73,20 @@ public class PostAuthenticationProcessor {
         return instance;
     }
 
-    public void onCreateWalletAuth(IntroActivity app, boolean authAsked) {
+    public void onCreateWalletAuth(Activity app, boolean authAsked) {
+        long start = System.currentTimeMillis();
         boolean success = BRWalletManager.getInstance(app).generateRandomSeed();
+        Log.e(TAG, "generateRandomSeed: took: " + (System.currentTimeMillis() - start));
         if (success) {
-//            app.showWarningFragment();
+            Intent intent = new Intent(app, IntroPhraseCheckActivity.class);
+            app.startActivity(intent);
+            app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
         } else {
             if (authAsked) {
                 showBugAuthLoopErrorMessage(app);
                 Log.e(TAG, "onCreateWalletAuth,!success && authAsked");
             }
+            Log.e(TAG, "onCreateWalletAuth: Failed to generateSeed");
 
         }
     }
