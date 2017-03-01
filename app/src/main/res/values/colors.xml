@@ -29,7 +29,7 @@
     <item name="recover_gradient_start" type="color">#1effffff</item>
     <item name="recover_gradient_end" type="color">#d17df5</item>
 
-    <item name="write_phrase_gradient_start" type="color">#fc9fc3</item>
+    <item name="write_phrase_gradient_start" type="color">#fc84b2</item>
     <item name="write_phrase_gradient_end" type="color">#fd5394</item>
 
     <item name="pin_pad_text" type="color">#A3A8AE</item>

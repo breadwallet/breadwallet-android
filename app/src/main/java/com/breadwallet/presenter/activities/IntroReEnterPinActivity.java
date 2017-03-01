@@ -1,11 +1,8 @@
 package com.breadwallet.presenter.activities;
 
-import android.app.Activity;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,13 +12,10 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRSoftKeyboard;
-import com.breadwallet.presenter.fragments.FragmentBreadSignal;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.Utils;
-
-import static android.R.attr.tag;
 
 public class IntroReEnterPinActivity extends FragmentActivity {
     private static final String TAG = IntroReEnterPinActivity.class.getName();
@@ -147,7 +141,7 @@ public class IntroReEnterPinActivity extends FragmentActivity {
             Log.e(TAG, "verifyPin: SUCCESS");
             isPressAllowed = false;
             KeyStoreManager.putPassCode(pin.toString(), this);
-            BRAnimator.showCheckMark(this, "PIN Set", "Use your PIN to login and send money.", R.drawable.ic_check_mark);
+            BRAnimator.showBreadDialog(this, "PIN Set", "Use your PIN to login and send money.", R.drawable.ic_check_mark);
             showWriteDownPhrase();
         } else {
             Log.e(TAG, "verifyPin: FAIL: firs: " + firstPIN + ", reEnter: " + pin.toString());

@@ -3,6 +3,7 @@ package com.breadwallet.presenter.activities;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
@@ -116,6 +117,9 @@ public class IntroPhraseCheckActivity extends Activity {
             setButtonEnabled(true);
             if (currentIndex >= 11) {
                 Log.e(TAG, "proceed: Proceding to the next screen!");
+                Intent intent = new Intent(IntroPhraseCheckActivity.this, IntroPhraseProveActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             } else {
                 wordViewPager.setCurrentItem(currentIndex + 1);
             }

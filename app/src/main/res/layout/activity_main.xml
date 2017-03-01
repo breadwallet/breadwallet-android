@@ -254,7 +254,6 @@
         android:filterTouchesWhenObscured="true"
         android:visibility="gone" />
 
-
     <RelativeLayout
         android:id="@+id/tips_block_pane"
         android:layout_width="match_parent"
