@@ -572,7 +572,7 @@ public class BRAnimator {
     }
 
     public static void showBreadDialog(Activity activity, String title, String iconDescription, int drawableId) {
-        if (fragmentSignal == null) fragmentSignal = new FragmentBreadSignal();
+        fragmentSignal = new FragmentBreadSignal();
         Bundle bundle = new Bundle();
         bundle.putString(FragmentBreadSignal.TITLE, title);
         bundle.putString(FragmentBreadSignal.ICON_DESCRIPTION, iconDescription);

@@ -26,7 +26,7 @@
     <item name="logo_gradient_start" type="color">#F8A445</item>
     <item name="logo_gradient_end" type="color">#fc5394</item>
 
-    <item name="recover_gradient_start" type="color">#1effffff</item>
+    <item name="recover_gradient_start" type="color">#e5affc</item>
     <item name="recover_gradient_end" type="color">#d17df5</item>
 
     <item name="write_phrase_gradient_start" type="color">#fc84b2</item>

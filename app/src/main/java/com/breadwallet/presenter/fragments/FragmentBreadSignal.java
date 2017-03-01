@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -99,6 +100,13 @@ public class FragmentBreadSignal extends Fragment {
         } else {
             Log.e(TAG, "onCreateView: bundle is null!");
         }
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (getActivity() != null)
+                    getActivity().getFragmentManager().popBackStack();
+            }
+        }, 1000);
 
         return rootView;
     }
