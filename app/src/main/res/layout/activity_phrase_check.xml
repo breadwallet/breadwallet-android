@@ -70,10 +70,10 @@
             android:layout_marginTop="8dp"
             android:layout_weight="1"
             android:background="@drawable/button_recover_wallet"
-            android:elevation="8dp"
+            android:elevation="0dp"
             android:enabled="false"
             android:text="Previous"
-            android:textColor="@color/button_secondary_text"
+            android:textColor="@color/extra_light_grey"
             android:textSize="18sp"
             />
 

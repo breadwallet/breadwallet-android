@@ -3,11 +3,13 @@ package com.breadwallet.presenter.activities;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.util.SparseArray;
+import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -25,6 +27,7 @@ import com.breadwallet.tools.util.Utils;
 import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.Locale;
+
 
 public class IntroPhraseCheckActivity extends Activity {
     private static final String TAG = IntroPhraseCheckActivity.class.getName();
@@ -109,9 +112,8 @@ public class IntroPhraseCheckActivity extends Activity {
 
     private void updateWordView(boolean isNext) {
         int currentIndex = wordViewPager.getCurrentItem();
-        Log.e(TAG, "updateWordView: currentIndex: " + currentIndex);
         if (isNext) {
-            previousButton.setEnabled(true);
+            setButtonEnabled(true);
             if (currentIndex >= 11) {
                 Log.e(TAG, "proceed: Proceding to the next screen!");
             } else {
@@ -120,12 +122,19 @@ public class IntroPhraseCheckActivity extends Activity {
         } else {
             if (currentIndex <= 1) {
                 wordViewPager.setCurrentItem(currentIndex - 1);
-                previousButton.setEnabled(false);
+                setButtonEnabled(false);
             } else {
                 wordViewPager.setCurrentItem(currentIndex - 1);
             }
         }
+    }
 
+    private void setButtonEnabled(boolean b) {
+        previousButton.setTextColor(getColor(b ? R.color.button_secondary_text : R.color.extra_light_grey));
+        Resources r = getResources();
+        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, b ? 8 : 0, r.getDisplayMetrics());
+        previousButton.setElevation(px);
+        previousButton.setEnabled(b);
     }
 
     private void updateItemIndexText() {
