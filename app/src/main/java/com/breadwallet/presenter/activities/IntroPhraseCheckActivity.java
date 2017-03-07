@@ -153,6 +153,12 @@ public class IntroPhraseCheckActivity extends Activity {
         window.setStatusBarColor(getColor(color));
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+
+    }
 
     private class WordPagerAdapter extends FragmentPagerAdapter {
 

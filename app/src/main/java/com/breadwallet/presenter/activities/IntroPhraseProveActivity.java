@@ -64,10 +64,10 @@ public class IntroPhraseProveActivity extends Activity {
                 String edit2 = wordEditSecond.getText().toString().replaceAll("[^a-zA-Z]", "");
                 if (edit1.isEmpty() || edit2.isEmpty()) {
                     if (edit1.isEmpty()) {
-                        SpringAnimator.failShakeAnimation(IntroPhraseProveActivity.this, wordEditFirst);
+                        SpringAnimator.failShakeAnimation(IntroPhraseProveActivity.this, wordTextFirst);
                     }
                     if (edit2.isEmpty()) {
-                        SpringAnimator.failShakeAnimation(IntroPhraseProveActivity.this, wordEditSecond);
+                        SpringAnimator.failShakeAnimation(IntroPhraseProveActivity.this, wordTextSecond);
                     }
                 } else {
                     if (edit1.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(0))) && edit2.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(1)))) {
@@ -112,6 +112,12 @@ public class IntroPhraseProveActivity extends Activity {
 
         }
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
     }
 
     private void randomWordsSetUp(String[] words) {
