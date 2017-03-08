@@ -67,7 +67,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1.0"
-            android:background="@drawable/button_half_cornered"
+            android:background="@drawable/button_half_left"
             android:text="12-Word"
             android:textStyle="bold"/>
 
@@ -76,7 +76,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1.0"
-            android:background="@drawable/button_half_cornered"
+            android:background="@drawable/button_half_right"
             android:text="24-Word"
             android:textStyle="bold"/>
     </LinearLayout>
