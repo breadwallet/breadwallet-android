@@ -21,6 +21,7 @@ import com.breadwallet.presenter.customviews.BRSoftKeyboard;
 import com.breadwallet.tools.animation.SpringAnimator;
 
 import static com.breadwallet.R.color.dark_blue;
+import static com.breadwallet.R.color.extra_light_grey;
 import static com.breadwallet.R.color.light_gray;
 import static com.breadwallet.R.id.view;
 
@@ -28,6 +29,7 @@ public class IntroRecoverWordsActivity extends Activity {
     private static final String TAG = IntroRecoverWordsActivity.class.getName();
     private Button leftButton;
     private Button rightButton;
+    private Button nextButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +39,7 @@ public class IntroRecoverWordsActivity extends Activity {
 
         leftButton = (Button) findViewById(R.id.left_button);
         rightButton = (Button) findViewById(R.id.right_button);
+        nextButton = (Button) findViewById(R.id.next_button);
 
         chooseWordsSize(true);
 
@@ -54,11 +57,21 @@ public class IntroRecoverWordsActivity extends Activity {
             }
         });
 
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e(TAG, "onClick: NEXT");
+            }
+        });
+
     }
 
     private void chooseWordsSize(boolean isLeft) {
+        int activeColor = getColor(dark_blue);
+        int nonActiveColor = getColor(extra_light_grey);
         GradientDrawable leftDrawable = (GradientDrawable) leftButton.getBackground().getCurrent();
         GradientDrawable rightDrawable = (GradientDrawable) rightButton.getBackground().getCurrent();
+
         int rad = 30;
         int stoke = 3;
 
@@ -66,15 +79,15 @@ public class IntroRecoverWordsActivity extends Activity {
         rightDrawable.setCornerRadii(new float[]{0, 0, rad, rad, rad, rad, 0, 0});
 
         if (isLeft) {
-            leftDrawable.setStroke(stoke, getColor(dark_blue), 0, 0);
-            rightDrawable.setStroke(stoke, getColor(light_gray), 0, 0);
-            leftButton.setTextColor(getColor(dark_blue));
-            rightButton.setTextColor(getColor(light_gray));
+            leftDrawable.setStroke(stoke, activeColor, 0, 0);
+            rightDrawable.setStroke(stoke, nonActiveColor, 0, 0);
+            leftButton.setTextColor(activeColor);
+            rightButton.setTextColor(nonActiveColor);
         } else {
-            leftDrawable.setStroke(stoke, getColor(light_gray), 0, 0);
-            rightDrawable.setStroke(stoke, getColor(dark_blue), 0, 0);
-            leftButton.setTextColor(getColor(light_gray));
-            rightButton.setTextColor(getColor(dark_blue));
+            leftDrawable.setStroke(stoke, nonActiveColor, 0, 0);
+            rightDrawable.setStroke(stoke, activeColor, 0, 0);
+            leftButton.setTextColor(nonActiveColor);
+            rightButton.setTextColor(activeColor);
         }
 
     }
