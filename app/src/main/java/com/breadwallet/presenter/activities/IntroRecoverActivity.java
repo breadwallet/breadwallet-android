@@ -1,13 +1,18 @@
 package com.breadwallet.presenter.activities;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 
 import com.breadwallet.R;
+import com.breadwallet.tools.animation.SpringAnimator;
 
 public class IntroRecoverActivity extends Activity {
+    private Button nextButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -15,6 +20,18 @@ public class IntroRecoverActivity extends Activity {
         setContentView(R.layout.activity_intro_recover);
 
         setStatusBarColor(android.R.color.transparent);
+
+        nextButton = (Button) findViewById(R.id.button_next);
+
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SpringAnimator.showAnimation(v);
+                Intent intent = new Intent(IntroRecoverActivity.this, IntroRecoverWordsActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+            }
+        });
     }
 
     private void setStatusBarColor(int color) {

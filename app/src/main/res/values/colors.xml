@@ -9,10 +9,10 @@
     <item name="gray" type="color">#ff787878</item>
     <item name="light_gray" type="color">#ff9d9d9d</item>
     <item name="page_indicator_gray" type="color">#ff9d9d9d</item>
-    <item name="extra_light_grey" type="color">#e1e1e1</item>
+    <item name="extra_light_grey" type="color">#D6DAE1</item>
     <item name="dark_grey" type="color">#65696E</item>
     <item name="almost_black" type="color">#303030</item>
-    <item name="dark_blue" type="color">#2893ff</item>
+    <item name="dark_blue" type="color">#4C98FD</item>
     <item name="wallet_orange" type="color">#ff8000</item>
     <item name="white_trans" type="color">#77ffffff</item>
     <item name="black_trans" type="color">#b54a2500</item>
@@ -33,6 +33,7 @@
     <item name="write_phrase_gradient_end" type="color">#fd5394</item>
 
     <item name="pin_pad_text" type="color">#A3A8AE</item>
+    <item name="extra_light_blue_background" type="color">#F5F8FA</item>
 
     <item name="button_primary_normal" type="color">#4C98FD</item>
     <item name="button_secondary" type="color">#F5F8FA</item>

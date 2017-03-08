@@ -98,6 +98,11 @@
             android:launchMode="singleInstance"
             android:screenOrientation="portrait">
         </activity>
+        <activity
+            android:name=".presenter.activities.IntroRecoverWordsActivity"
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait">
+        </activity>
     </application>
 
 </manifest>
