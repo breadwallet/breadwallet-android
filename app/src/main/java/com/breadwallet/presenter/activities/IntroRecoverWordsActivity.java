@@ -39,7 +39,7 @@ public class IntroRecoverWordsActivity extends Activity {
 
         leftButton = (Button) findViewById(R.id.left_button);
         rightButton = (Button) findViewById(R.id.right_button);
-        nextButton = (Button) findViewById(R.id.next_button);
+        nextButton = (Button) findViewById(R.id.button_next);
 
         chooseWordsSize(true);
 
