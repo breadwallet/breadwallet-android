@@ -21,9 +21,9 @@
         android:text="Next"
         android:textColor="@color/white"
         android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintRight_toRightOf="parent"/>
 
     <RelativeLayout
         android:id="@+id/relativeLayout"
@@ -56,39 +56,50 @@
             android:id="@+id/imageView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:elevation="4dp"
-            android:src="@drawable/ic_white_wallet"
             android:layout_below="@+id/imageView4"
-            android:layout_centerHorizontal="true"/>
+            android:layout_centerHorizontal="true"
+            android:elevation="4dp"
+            android:src="@drawable/ic_white_wallet"/>
 
         <ImageView
             android:id="@+id/imageView4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_black_wallet"
+            android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true"/>
+            android:elevation="4dp"
+            android:src="@drawable/ic_black_wallet"/>
 
         <ImageView
             android:id="@+id/imageView5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_arrow_body"
-            android:layout_marginTop="9dp"
             android:layout_alignTop="@+id/imageView4"
-            android:layout_toStartOf="@+id/imageView2"/>
+            android:layout_marginTop="9dp"
+            android:layout_toStartOf="@+id/imageView2"
+            android:elevation="4dp"
+            android:src="@drawable/ic_arrow_body"/>
 
         <TextView
             android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
             android:layout_marginBottom="22dp"
+            android:elevation="4dp"
             android:text="Recovery Wallet"
             android:textColor="@color/black"
             android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"/>
+            android:textStyle="bold"/>
+
+        <ImageView
+            android:id="@+id/imageView7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/imageView5"
+            android:layout_alignStart="@+id/textView3"
+            android:src="@drawable/ic_arrow_head"/>
 
     </RelativeLayout>
 
