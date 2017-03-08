@@ -228,15 +228,13 @@ public class PostAuthenticationProcessor {
     }
 
     public void onCanaryCheck(final IntroActivity introActivity, boolean authAsked) {
-
-
         String canary;
         try {
             canary = KeyStoreManager.getKeyStoreCanary(introActivity, BRConstants.CANARY_REQUEST_CODE);
         } catch (BRKeystoreErrorException e) {
             if (authAsked) {
                 showBugAuthLoopErrorMessage(introActivity);
-                Log.e(TAG, "onPublishTxAuth,!success && authAsked");
+                Log.e(TAG, "onCanaryCheck: !success && authAsked");
             }
             return;
         }

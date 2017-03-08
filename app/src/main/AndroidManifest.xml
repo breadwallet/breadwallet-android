@@ -52,7 +52,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".presenter.activities.MainActivity"
+            android:name=".presenter.activities.BreadActivity"
             android:label="@string/app_name"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"

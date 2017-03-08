@@ -19,6 +19,7 @@ import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.BRWalletManager;
 import com.google.firebase.crash.FirebaseCrash;
 
@@ -164,7 +165,7 @@ public class IntroActivity extends FragmentActivity {
 
     public void startMainActivity() {
         Intent intent;
-        intent = new Intent(this, MainActivity.class);
+        intent = new Intent(this, BreadActivity.class);
         startActivity(intent);
         if (!IntroActivity.this.isDestroyed()) {
             finish();
@@ -192,13 +193,13 @@ public class IntroActivity extends FragmentActivity {
 //                    finish();
 //                }
 //                break;
-//            case BRConstants.CANARY_REQUEST_CODE:
-//                if (resultCode == RESULT_OK) {
-//                    PostAuthenticationProcessor.getInstance().onCanaryCheck(this, true);
-//                } else {
-//                    finish();
-//                }
-//                break;
+            case BRConstants.CANARY_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    PostAuthenticationProcessor.getInstance().onCanaryCheck(this, true);
+                } else {
+                    finish();
+                }
+                break;
 
         }
 
@@ -233,11 +234,8 @@ public class IntroActivity extends FragmentActivity {
             //Device passcode/password should be enabled for the app to work
             ((BreadWalletApp) getApplication()).showDeviceNotSecuredWarning(this);
         } else {
-            if (m.noWallet(app)) {
-                Log.d(TAG, "startTheWalletIfExists: no wallet, showing intro screen");
-            } else {
-                //todo comment for now
-//                startMainActivity();
+            if (!m.noWallet(app)) {
+                startMainActivity();
             }
 
         }

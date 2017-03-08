@@ -85,7 +85,7 @@ public class RequestHandler {
     private static String _authString = null;
     private static int _index = 0;
 
-    public static synchronized boolean processRequest(MainActivity app, String uri) {
+    public static synchronized boolean processRequest(Activity app, String uri) {
         if (uri == null) return false;
 
         RequestObject requestObject = getRequestFromString(uri);
@@ -395,7 +395,7 @@ public class RequestHandler {
         return true;
     }
 
-    private static boolean tryAndProcessBitcoinURL(RequestObject requestObject, MainActivity app) {
+    private static boolean tryAndProcessBitcoinURL(RequestObject requestObject, Activity app) {
         /** use the C implementation to check it */
         final String str = requestObject.address;
         if (str == null) return false;
