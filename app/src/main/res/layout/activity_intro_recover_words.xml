@@ -317,10 +317,9 @@
                 android:layout_gravity="fill_horizontal"
                 android:layout_weight="1"
                 android:hint="12"
-                android:imeOptions="actionNext"
+                android:imeOptions="actionDone"
                 android:inputType="textVisiblePassword"
                 android:lines="1"
-                android:nextFocusForward="@+id/next_button"
                 android:textColor="@color/almost_black"
                 android:textColorHint="@color/extra_light_grey"
                 />

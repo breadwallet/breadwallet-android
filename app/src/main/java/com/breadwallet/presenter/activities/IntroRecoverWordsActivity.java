@@ -11,10 +11,14 @@ import android.graphics.drawable.shapes.Shape;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRSoftKeyboard;
@@ -31,6 +35,19 @@ public class IntroRecoverWordsActivity extends Activity {
     private Button rightButton;
     private Button nextButton;
 
+    private EditText word1;
+    private EditText word2;
+    private EditText word3;
+    private EditText word4;
+    private EditText word5;
+    private EditText word6;
+    private EditText word7;
+    private EditText word8;
+    private EditText word9;
+    private EditText word10;
+    private EditText word11;
+    private EditText word12;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +57,28 @@ public class IntroRecoverWordsActivity extends Activity {
         leftButton = (Button) findViewById(R.id.left_button);
         rightButton = (Button) findViewById(R.id.right_button);
         nextButton = (Button) findViewById(R.id.button_next);
+
+        word1 = (EditText) findViewById(R.id.word1);
+        word2 = (EditText) findViewById(R.id.word2);
+        word3 = (EditText) findViewById(R.id.word3);
+        word4 = (EditText) findViewById(R.id.word4);
+        word5 = (EditText) findViewById(R.id.word5);
+        word6 = (EditText) findViewById(R.id.word6);
+        word7 = (EditText) findViewById(R.id.word7);
+        word8 = (EditText) findViewById(R.id.word8);
+        word9 = (EditText) findViewById(R.id.word9);
+        word10 = (EditText) findViewById(R.id.word10);
+        word11 = (EditText) findViewById(R.id.word11);
+        word12 = (EditText) findViewById(R.id.word12);
+
+        word12.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+                    nextButton.performClick();
+                }
+                return false;
+            }
+        });
 
         chooseWordsSize(true);
 
