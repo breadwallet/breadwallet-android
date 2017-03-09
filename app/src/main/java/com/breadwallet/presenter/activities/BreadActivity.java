@@ -3,22 +3,17 @@ package com.breadwallet.presenter.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 
-import com.breadwallet.BreadWalletApp;
 import com.breadwallet.R;
-import com.breadwallet.tools.adapter.MiddleViewAdapter;
-import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.CurrencyManager;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.RequestHandler;
-import com.breadwallet.wallet.BRPeerManager;
-import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
 
 import java.util.Observable;
@@ -55,6 +50,9 @@ public class BreadActivity extends AppCompatActivity implements Observer {
     private static final String TAG = BreadActivity.class.getName();
 
     public static BreadActivity app;
+    private LinearLayout sendButton;
+    private LinearLayout receiveButton;
+    private LinearLayout menuButton;
 //    public RelativeLayout pageIndicator;
 //    private ImageView pageIndicatorLeft;
 //    private ImageView pageIndicatorRight;
@@ -99,6 +97,9 @@ public class BreadActivity extends AppCompatActivity implements Observer {
         Toolbar tb = (Toolbar) findViewById(R.id.bread_bar);
         setSupportActionBar(tb);
 
+        initializeViews();
+        setListeners();
+
         // Get the ActionBar here to configure the way it behaves.
 //        final ActionBar ab = getSupportActionBar();
         //ab.setHomeAsUpIndicator(R.drawable.ic_menu); // set a custom icon for the default home button
@@ -107,7 +108,7 @@ public class BreadActivity extends AppCompatActivity implements Observer {
 //        ab.setDisplayShowCustomEnabled(true); // enable overriding the default toolbar layout
 //        ab.setDisplayShowTitleEnabled(false);
 //        app = this;
-//        initializeViews();
+
 //
 //        Utils.printPhoneSpecs();
 //
@@ -120,7 +121,7 @@ public class BreadActivity extends AppCompatActivity implements Observer {
 //            Log.i(TAG, "DEBUG MODE!");
 //        }
 //
-//        setListeners();
+
 //        BRAnimator.scaleView(pageIndicatorLeft, 1f, BRConstants.PAGE_INDICATOR_SCALE_UP, 1f,
 //                BRConstants.PAGE_INDICATOR_SCALE_UP);
 //        setStatusBarColor();
@@ -159,8 +160,30 @@ public class BreadActivity extends AppCompatActivity implements Observer {
 
     }
 
-//    private void setListeners() {
-//        pay.setOnClickListener(new View.OnClickListener() {
+    private void setListeners() {
+        sendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SpringAnimator.showAnimation(v);
+            }
+        });
+
+        receiveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SpringAnimator.showAnimation(v);
+            }
+        });
+
+        menuButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SpringAnimator.showAnimation(v);
+            }
+        });
+    }
+
+    //        pay.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
 //                if (BRAnimator.checkTheMultipressingAvailability()) {
@@ -374,13 +397,19 @@ public class BreadActivity extends AppCompatActivity implements Observer {
             APIClient.getInstance(this).syncKvStore();
 
     }
-//
+
+    //
 //    /**
 //     * Initializes all the views and components
 //     */
 //
-//    private void initializeViews() {
-//        pay = (TextView) findViewById(R.id.main_button_pay);
+    private void initializeViews() {
+        sendButton = (LinearLayout) findViewById(R.id.send_layout);
+        receiveButton = (LinearLayout) findViewById(R.id.receive_layout);
+        menuButton = (LinearLayout) findViewById(R.id.menu_layout);
+    }
+
+    //        pay = (TextView) findViewById(R.id.main_button_pay);
 //        networkErrorBar = (RelativeLayout) findViewById(R.id.main_internet_status_bar);
 //        burgerButton = (Button) findViewById(R.id.main_button_burger);
 //        lockerPayFlipper = (ViewFlipper) findViewById(R.id.locker_pay_flipper);
