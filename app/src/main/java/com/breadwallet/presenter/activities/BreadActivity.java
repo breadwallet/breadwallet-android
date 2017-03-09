@@ -183,142 +183,6 @@ public class BreadActivity extends AppCompatActivity implements Observer {
         });
     }
 
-    //        pay.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (BRAnimator.checkTheMultipressingAvailability()) {
-//                    hideAllBubbles();
-//                    String amountHolder = FragmentScanResult.instance.getBitcoinValue().value;
-//                    String addressHolder = FragmentScanResult.address;
-//                    String multiplyBy = "100";
-//                    int unit = SharedPreferencesManager.getCurrencyUnit(app);
-//                    if (unit == BRConstants.CURRENT_UNIT_MBITS) multiplyBy = "100000";
-//                    if (unit == BRConstants.CURRENT_UNIT_BITCOINS) multiplyBy = "100000000";
-//                    BRWalletManager.getInstance(app).pay(addressHolder, new BigDecimal(amountHolder).multiply(new BigDecimal(multiplyBy)), null, false);
-//                }
-//            }
-//        });
-//        pay.setFilterTouchesWhenObscured(true);
-//        viewFlipper.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (BRAnimator.scanResultFragmentOn)
-//                    return;
-//                if (MiddleViewAdapter.getSyncing() && BRAnimator.level == 0) {
-//                    hideAllBubbles();
-//                    if (middleBubbleBlocksCount == 0) {
-//                        middleBubbleBlocksCount = 1;
-//                        middleBubbleBlocks.setVisibility(View.VISIBLE);
-//                        SpringAnimator.showBubbleAnimation(middleBubbleBlocks);
-//                        if (toastUpdater != null) {
-//                            toastUpdater.interrupt();
-//                        }
-//                        toastUpdater = null;
-//                        toastUpdater = new ToastUpdater();
-//                        toastUpdater.start();
-//                    } else {
-//                        middleBubbleBlocksCount = 0;
-//                        middleBubbleBlocks.setVisibility(View.GONE);
-//                    }
-//                    return;
-//                }
-//                if (BRAnimator.level == 0 && BreadWalletApp.unlocked) {
-//                    hideAllBubbles();
-//                    if (middleViewState == 0) {
-//                        middleBubble2.setVisibility(View.GONE);
-//                        middleBubble1.setVisibility(View.VISIBLE);
-//                        SpringAnimator.showBubbleAnimation(middleBubble1);
-//                        middleViewState++;
-//                    } else if (middleViewState == 1) {
-//                        middleBubble2.setVisibility(View.VISIBLE);
-//                        SpringAnimator.showBubbleAnimation(middleBubble2);
-//                        middleBubble1.setVisibility(View.GONE);
-//                        middleViewState++;
-//                    } else {
-//                        hideAllBubbles();
-//                        middleViewState = 0;
-//                    }
-//
-//                }
-//            }
-//        });
-//
-//        burgerButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                hideAllBubbles();
-//                SpringAnimator.showAnimation(burgerButton);
-//                if (BRAnimator.level > 1 || BRAnimator.scanResultFragmentOn || BRAnimator.decoderFragmentOn) {
-//                    onBackPressed();
-//                } else {
-//                    //check multi pressing availability here, because method onBackPressed does the checking as well.
-//                    if (BRAnimator.checkTheMultipressingAvailability()) {
-//                        BRAnimator.pressMenuButton(app);
-//                    }
-//                }
-//            }
-//        });
-//        lockerButton.setOnClickListener(new View.OnClickListener() {
-//            @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-//            @Override
-//            public void onClick(View v) {
-//                hideAllBubbles();
-//                if (BRAnimator.checkTheMultipressingAvailability()) {
-//                    SpringAnimator.showAnimation(lockerButton);
-//                    if (!KeyStoreManager.getPassCode(app).isEmpty())
-//                        ((BreadWalletApp) getApplication()).promptForAuthentication(app,
-//                                BRConstants.AUTH_FOR_GENERAL, null, null, null, null, false);
-//                }
-//
-//            }
-//        });
-//        networkErrorBar.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                view.setVisibility(View.GONE);
-//                new Handler().postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        BRPeerManager.getInstance(app).refreshConnection();
-//                    }
-//                }, 400);
-//
-//            }
-//        });
-//    }
-//
-//    private void checkDeviceRooted() {
-//        final boolean hasBitcoin = CurrencyManager.getInstance(this).getBALANCE() > 0;
-//        boolean isDebuggable = 0 != (getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE);
-//        if (RootHelper.isDeviceRooted() && !isDebuggable) {
-//
-//            new Handler().postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    if (app == null) {
-//                        Log.e(TAG, "WARNING: checkDeviceRooted: app - null");
-//                        return;
-//                    }
-//                    AlertDialog.Builder builder = new AlertDialog.Builder(app);
-//                    builder.setTitle(R.string.device_security_compromised)
-//                            .setMessage(String.format(getString(R.string.rooted_message),
-//                                    hasBitcoin ? getString(R.string.rooted_message_holder1) : ""))
-//                            .setCancelable(false)
-//                            .setNegativeButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-//                                @Override
-//                                public void onClick(DialogInterface dialog, int which) {
-//                                    dialog.cancel();
-//                                }
-//                            });
-//                    AlertDialog alert = builder.create();
-//                    if (app != null && !app.isDestroyed())
-//                        alert.show();
-//                }
-//            }, 10000);
-//
-//        }
-//    }
-//
     @Override
     protected void onRestart() {
         super.onRestart();
@@ -328,10 +192,8 @@ public class BreadActivity extends AppCompatActivity implements Observer {
     @Override
     protected void onResume() {
         super.onResume();
-//        ((BreadWalletApp) getApplicationContext()).setUnlocked(false);
         appInBackground = false;
-//        middleViewState = 0;
-//        middleBubbleBlocksCount = 0;
+        app = this;
 
 //        new Thread(new Runnable() {
 //            @Override
@@ -340,7 +202,8 @@ public class BreadActivity extends AppCompatActivity implements Observer {
 //            }
 //        }).start();
 
-        app = this;
+
+
 //        final BRWalletManager m = BRWalletManager.getInstance(this);
 //        CurrencyManager currencyManager = CurrencyManager.getInstance(this);
 //        currencyManager.startTimer();

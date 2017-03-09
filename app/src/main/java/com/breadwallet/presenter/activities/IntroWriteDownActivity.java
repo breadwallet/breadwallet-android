@@ -37,8 +37,7 @@ public class IntroWriteDownActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+        BRWalletManager.getInstance(this).startBreadActivity(this);
 
     }
 

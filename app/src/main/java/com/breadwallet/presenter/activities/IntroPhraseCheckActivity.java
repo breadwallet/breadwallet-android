@@ -25,6 +25,7 @@ import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.fragments.FragmentPhraseWord;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.BRWalletManager;
 import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.Locale;
@@ -155,8 +156,7 @@ public class IntroPhraseCheckActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+        BRWalletManager.getInstance(this).startBreadActivity(this);
 
     }
 

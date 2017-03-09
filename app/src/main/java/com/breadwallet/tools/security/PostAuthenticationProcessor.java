@@ -119,7 +119,7 @@ public class PostAuthenticationProcessor {
                     byte[] pubKey = BRWalletManager.getInstance(app).getMasterPubKey(bytePhrase);
                     KeyStoreManager.putMasterPublicKey(pubKey, app);
                     app.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                    app.startMainActivity();
+                    BRWalletManager.getInstance(app).startBreadActivity(app);
                     if (!app.isDestroyed()) app.finish();
                     phraseForKeyStore = null;
                 }

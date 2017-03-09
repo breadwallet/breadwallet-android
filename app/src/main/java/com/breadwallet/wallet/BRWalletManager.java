@@ -25,9 +25,11 @@ import android.widget.Toast;
 import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
+import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.activities.PhraseFlowActivity;
+import com.breadwallet.presenter.activities.PinActivity;
 import com.breadwallet.presenter.activities.RequestQRActivity;
 import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
 import com.breadwallet.presenter.entities.BRPeerEntity;
@@ -1040,6 +1042,16 @@ public class BRWalletManager {
                 alert.show();
             }
         });
+    }
+
+
+    public void startBreadActivity(Activity from) {
+        Intent intent;
+        intent = new Intent(from, PinActivity.class);
+        from.startActivity(intent);
+        if (!from.isDestroyed()) {
+            from.finish();
+        }
     }
 
     private native byte[] encodeSeed(byte[] seed, String[] wordList);

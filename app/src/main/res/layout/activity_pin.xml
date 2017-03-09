@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_intro_set_pit"
     android:layout_width="match_parent"
-    android:background="@color/extra_light_blue_background"
+    android:background="@drawable/bread_gradient"
     android:layout_height="match_parent"
     tools:context="com.breadwallet.presenter.activities.IntroSetPitActivity">
 
@@ -14,73 +14,64 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="64dp"
-        android:text="Set PIN"
+        android:text="bread"
         android:textSize="30sp"
+        android:textColor="@color/white"
+        android:gravity="center_horizontal"
         android:textStyle="normal|bold"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginStart="32dp"/>
-
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="296dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
-        android:layout_marginTop="32dp"
-        android:text="Your PIN will be used to unlock your Bread and send money."
-        android:textSize="18sp"
-        app:layout_constraintLeft_toLeftOf="@+id/title"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title"
-        app:layout_constraintHorizontal_bias="0.0"/>
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        app:layout_constraintRight_toRightOf="parent"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="64dp"
         android:orientation="horizontal"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4"
-        android:id="@+id/pinLayout">
+        android:id="@+id/pinLayout"
+        android:layout_marginBottom="96dp"
+        app:layout_constraintBottom_toTopOf="@+id/brkeyboard">
 
         <View
             android:id="@+id/dot1"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:background="@drawable/ic_pin_dot_gray"/>
+            android:background="@color/white"/>
 
         <View
             android:id="@+id/dot2"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:background="@drawable/ic_pin_dot_gray"/>
+            android:background="@color/white"/>
 
         <View
             android:id="@+id/dot3"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:background="@drawable/ic_pin_dot_gray"/>
+            android:background="@color/white"/>
 
         <View
             android:id="@+id/dot4"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:background="@drawable/ic_pin_dot_gray"/>
+            android:background="@color/white"/>
 
         <View
             android:id="@+id/dot5"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:background="@drawable/ic_pin_dot_gray"/>
+            android:background="@color/white"/>
 
         <View
             android:id="@+id/dot6"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:background="@drawable/ic_pin_dot_gray"/>
+            android:background="@color/white"/>
     </LinearLayout>
 
     <com.breadwallet.presenter.customviews.BRSoftKeyboard
@@ -88,25 +79,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginEnd="32dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginBottom="16dp"
         android:layout_height="240dp"
         android:id="@+id/brkeyboard"/>
-
-    <TextView
-        android:text="Write down your PIN and store it in a place you can access even if your phone is broken or lost"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView5"
-        app:layout_constraintBottom_toTopOf="@+id/brkeyboard"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintLeft_toLeftOf="@+id/textView4"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/pinLayout"
-        app:layout_constraintVertical_bias="1.0"
-        android:layout_marginEnd="32dp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"/>
 
 </android.support.constraint.ConstraintLayout>

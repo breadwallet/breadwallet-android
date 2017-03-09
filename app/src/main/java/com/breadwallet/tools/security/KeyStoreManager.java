@@ -456,6 +456,7 @@ public class KeyStoreManager {
     }
 
     public static boolean putPassCode(String passcode, Activity context) {
+        Log.e(TAG, "putPassCode: " + passcode);
         AliasObject obj = aliasObjectMap.get(PASS_CODE_ALIAS);
         byte[] bytesToStore = passcode.getBytes();
         try {
@@ -475,17 +476,18 @@ public class KeyStoreManager {
             e.printStackTrace();
         }
         String passCode = new String(result);
+        if(passCode.isEmpty()) return "";
         try {
             int test = Integer.parseInt(passCode);
         } catch (Exception e) {
-            Log.e(TAG, "getPassCode: WARNING passcode isn't a number");
+            Log.e(TAG, "getPassCode: WARNING passcode isn't a number: " + passCode);
             passCode = "";
             putPassCode(passCode, context);
             KeyStoreManager.putFailCount(0, context);
             KeyStoreManager.putFailTimeStamp(0, context);
             return passCode;
         }
-        if (passCode.length() != 4) {
+        if (passCode.length() != 6) {
             passCode = "";
             putPassCode(passCode, context);
         }

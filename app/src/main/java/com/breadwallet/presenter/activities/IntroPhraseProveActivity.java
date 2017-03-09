@@ -28,6 +28,7 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.BRWalletManager;
 import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.HashMap;
@@ -76,8 +77,7 @@ public class IntroPhraseProveActivity extends Activity {
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                Intent intent = new Intent(IntroPhraseProveActivity.this, MainActivity.class);
-                                startActivity(intent);
+                                BRWalletManager.getInstance(IntroPhraseProveActivity.this).startBreadActivity(IntroPhraseProveActivity.this);
                                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                             }
                         }, 1000);

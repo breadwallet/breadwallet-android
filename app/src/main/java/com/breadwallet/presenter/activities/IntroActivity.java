@@ -163,14 +163,6 @@ public class IntroActivity extends FragmentActivity {
     }
 
 
-    public void startMainActivity() {
-        Intent intent;
-        intent = new Intent(this, BreadActivity.class);
-        startActivity(intent);
-        if (!IntroActivity.this.isDestroyed()) {
-            finish();
-        }
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -235,7 +227,7 @@ public class IntroActivity extends FragmentActivity {
             ((BreadWalletApp) getApplication()).showDeviceNotSecuredWarning(this);
         } else {
             if (!m.noWallet(app)) {
-                startMainActivity();
+                BRWalletManager.getInstance(this).startBreadActivity(this);
             }
 
         }

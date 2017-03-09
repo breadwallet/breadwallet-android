@@ -143,4 +143,33 @@ public class BRSoftKeyboard extends LinearLayout implements View.OnClickListener
         void onClick(String key);
     }
 
+    public void setBRButtonTextColor(int color){
+        num0.setTextColor(getContext().getColor(color));
+        num1.setTextColor(getContext().getColor(color));
+        num2.setTextColor(getContext().getColor(color));
+        num3.setTextColor(getContext().getColor(color));
+        num4.setTextColor(getContext().getColor(color));
+        num5.setTextColor(getContext().getColor(color));
+        num6.setTextColor(getContext().getColor(color));
+        num7.setTextColor(getContext().getColor(color));
+        num8.setTextColor(getContext().getColor(color));
+        num9.setTextColor(getContext().getColor(color));
+        numDelete.setColorFilter(getContext().getColor(color));
+        invalidate();
+    }
+
+    public void setBRButtonBackgroundColor(int color) {
+        num0.setBackgroundColor(getContext().getColor(color));
+        num1.setBackgroundColor(getContext().getColor(color));
+        num2.setBackgroundColor(getContext().getColor(color));
+        num3.setBackgroundColor(getContext().getColor(color));
+        num4.setBackgroundColor(getContext().getColor(color));
+        num5.setBackgroundColor(getContext().getColor(color));
+        num6.setBackgroundColor(getContext().getColor(color));
+        num7.setBackgroundColor(getContext().getColor(color));
+        num8.setBackgroundColor(getContext().getColor(color));
+        num9.setBackgroundColor(getContext().getColor(color));
+        invalidate();
+    }
+
 }
