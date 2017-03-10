@@ -49,7 +49,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView4"/>
 
     <LinearLayout
-        android:id="@+id/linearLayout2"
+        android:id="@+id/buttons_layout"
         android:layout_width="0dp"
         android:layout_height="40dp"
         android:layout_marginEnd="16dp"
@@ -112,7 +112,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+        app:layout_constraintTop_toBottomOf="@+id/buttons_layout"
         app:layout_constraintVertical_bias="0.26">
 
         <LinearLayout
