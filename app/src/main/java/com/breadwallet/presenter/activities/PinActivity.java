@@ -2,19 +2,24 @@ package com.breadwallet.presenter.activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRSoftKeyboard;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
-import com.breadwallet.wallet.BRWalletManager;
+
+import static com.breadwallet.R.color.dark_blue;
+import static com.breadwallet.R.color.extra_light_grey;
+import static com.breadwallet.R.color.white;
 
 public class PinActivity extends Activity {
     private static final String TAG = PinActivity.class.getName();
@@ -28,6 +33,9 @@ public class PinActivity extends Activity {
     private View dot6;
     private StringBuilder pin = new StringBuilder();
     private int pinLimit = 6;
+
+    private Button leftButton;
+    private Button rightButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +60,27 @@ public class PinActivity extends Activity {
         });
         keyboard.setBRButtonBackgroundColor(R.color.white_trans);
         keyboard.setBRButtonTextColor(R.color.white);
+
+        leftButton = (Button) findViewById(R.id.left_button);
+        rightButton = (Button) findViewById(R.id.right_button);
+
+        chooseWordsSize(true);
+
+        leftButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SpringAnimator.showAnimation(leftButton);
+                chooseWordsSize(true);
+            }
+        });
+
+        rightButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SpringAnimator.showAnimation(rightButton);
+                chooseWordsSize(false);
+            }
+        });
 
     }
 
@@ -135,7 +164,8 @@ public class PinActivity extends Activity {
                 public void run() {
                     String actualPin = KeyStoreManager.getPassCode(PinActivity.this);
                     if (actualPin.equalsIgnoreCase(pin.toString())) {
-                        BRWalletManager.getInstance(PinActivity.this).startBreadActivity(PinActivity.this);
+                        Intent intent = new Intent(PinActivity.this, BreadActivity.class);
+                        startActivity(intent);
                         pin = new StringBuilder("");
                     } else {
                         SpringAnimator.failShakeAnimation(PinActivity.this, pinLayout);
@@ -151,6 +181,32 @@ public class PinActivity extends Activity {
                 }
             }, 100);
 
+        }
+
+    }
+
+    private void chooseWordsSize(boolean isLeft) {
+        int activeColor = getColor(white);
+        int nonActiveColor = getColor(white);
+        GradientDrawable leftDrawable = (GradientDrawable) leftButton.getBackground().getCurrent();
+        GradientDrawable rightDrawable = (GradientDrawable) rightButton.getBackground().getCurrent();
+
+        int rad = 30;
+        int stoke = 2;
+
+        leftDrawable.setCornerRadii(new float[]{rad, rad, 0, 0, 0, 0, rad, rad});
+        rightDrawable.setCornerRadii(new float[]{0, 0, rad, rad, rad, rad, 0, 0});
+
+        if (isLeft) {
+            leftDrawable.setStroke(stoke, activeColor, 0, 0);
+            rightDrawable.setStroke(stoke, nonActiveColor, 0, 0);
+            leftButton.setTextColor(activeColor);
+            rightButton.setTextColor(nonActiveColor);
+        } else {
+            leftDrawable.setStroke(stoke, nonActiveColor, 0, 0);
+            rightDrawable.setStroke(stoke, activeColor, 0, 0);
+            leftButton.setTextColor(nonActiveColor);
+            rightButton.setTextColor(activeColor);
         }
 
     }

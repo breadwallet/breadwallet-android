@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<com.breadwallet.presenter.customviews.BRLockScreenConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_intro_set_pit"
+    android:id="@+id/activity_pit"
     android:layout_width="match_parent"
     android:background="@drawable/bread_gradient"
     android:layout_height="match_parent"
-    tools:context="com.breadwallet.presenter.activities.IntroSetPitActivity">
+    tools:context="com.breadwallet.presenter.activities.PinActivity">
 
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="96dp"
         android:text="bread"
         android:textSize="30sp"
         android:textColor="@color/white"
@@ -21,8 +21,6 @@
         android:textStyle="normal|bold"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="0dp"
         app:layout_constraintRight_toRightOf="parent"/>
 
     <LinearLayout
@@ -41,37 +39,37 @@
             android:id="@+id/dot1"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:background="@color/white"/>
+            android:background="@drawable/ic_pin_dot_white"/>
 
         <View
             android:id="@+id/dot2"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:background="@color/white"/>
+            android:background="@drawable/ic_pin_dot_white"/>
 
         <View
             android:id="@+id/dot3"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:background="@color/white"/>
+            android:background="@drawable/ic_pin_dot_white"/>
 
         <View
             android:id="@+id/dot4"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:background="@color/white"/>
+            android:background="@drawable/ic_pin_dot_white"/>
 
         <View
             android:id="@+id/dot5"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:background="@color/white"/>
+            android:background="@drawable/ic_pin_dot_white"/>
 
         <View
             android:id="@+id/dot6"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:background="@color/white"/>
+            android:background="@drawable/ic_pin_dot_white"/>
     </LinearLayout>
 
     <com.breadwallet.presenter.customviews.BRSoftKeyboard
@@ -82,4 +80,51 @@
         android:layout_height="240dp"
         android:id="@+id/brkeyboard"/>
 
-</android.support.constraint.ConstraintLayout>
+    <TextView
+        android:id="@+id/textView10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="Enter Pin"
+        app:layout_constraintBottom_toTopOf="@+id/pinLayout"
+        app:layout_constraintLeft_toLeftOf="@+id/pinLayout"
+        app:layout_constraintRight_toRightOf="@+id/pinLayout"/>
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:orientation="horizontal"
+        android:weightSum="2.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <Button
+            android:id="@+id/left_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.0"
+            android:textColor="@color/white"
+            android:background="@drawable/button_half_left"
+            android:text="My address"
+            />
+
+        <Button
+            android:id="@+id/right_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.0"
+            android:textColor="@color/white"
+            android:background="@drawable/button_half_right"
+            android:text="Scan"
+            />
+    </LinearLayout>
+
+</com.breadwallet.presenter.customviews.BRLockScreenConstraintLayout>

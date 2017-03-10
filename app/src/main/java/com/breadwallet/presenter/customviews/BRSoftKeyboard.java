@@ -108,7 +108,6 @@ public class BRSoftKeyboard extends LinearLayout implements View.OnClickListener
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        Log.e(TAG, "onSizeChanged: ");
         super.onSizeChanged(w, h, oldw, oldh);
         invalidate();
 
