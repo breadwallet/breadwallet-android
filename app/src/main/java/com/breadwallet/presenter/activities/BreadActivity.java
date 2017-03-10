@@ -3,17 +3,21 @@ package com.breadwallet.presenter.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.CurrencyManager;
 import com.breadwallet.tools.security.RequestHandler;
+import com.breadwallet.tools.util.Utils;
+import com.google.firebase.crash.FirebaseCrash;
 import com.platform.APIClient;
 
 import java.util.Observable;
@@ -53,6 +57,9 @@ public class BreadActivity extends AppCompatActivity implements Observer {
     private LinearLayout sendButton;
     private LinearLayout receiveButton;
     private LinearLayout menuButton;
+
+    private TextView primaryPrice;
+    private TextView secondaryPrice;
 //    public RelativeLayout pageIndicator;
 //    private ImageView pageIndicatorLeft;
 //    private ImageView pageIndicatorRight;
@@ -181,6 +188,18 @@ public class BreadActivity extends AppCompatActivity implements Observer {
                 SpringAnimator.showAnimation(v);
             }
         });
+        primaryPrice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                togglePriceTexts();
+            }
+        });
+        secondaryPrice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                togglePriceTexts();
+            }
+        });
     }
 
     @Override
@@ -270,6 +289,40 @@ public class BreadActivity extends AppCompatActivity implements Observer {
         sendButton = (LinearLayout) findViewById(R.id.send_layout);
         receiveButton = (LinearLayout) findViewById(R.id.receive_layout);
         menuButton = (LinearLayout) findViewById(R.id.menu_layout);
+        primaryPrice = (TextView) findViewById(R.id.primary_price);
+        secondaryPrice = (TextView) findViewById(R.id.secondary_price);
+    }
+
+    private void togglePriceTexts() {
+
+//        String tmp = leftIso;
+//        leftIso = rightIso;
+//        rightIso = tmp;
+
+    }
+
+    //returns x-pos relative to root layout
+    private float getRelativeX(View myView) {
+        if (myView.getParent() == myView.getRootView())
+            return myView.getX();
+        else
+            return myView.getX() + getRelativeX((View) myView.getParent());
+    }
+
+    //returns y-pos relative to root layout
+    private float getRelativeY(View myView) {
+        if (myView.getParent() == myView.getRootView())
+            return myView.getY();
+        else
+            return myView.getY() + getRelativeY((View) myView.getParent());
+    }
+
+    //0 crypto is left, 1 crypto is right
+    private int getSwapPosition() {
+        if (primaryPrice == null || secondaryPrice == null) {
+            return 0;
+        }
+        return getRelativeX(primaryPrice) < getRelativeX(secondaryPrice) ? 0 : 1;
     }
 
     //        pay = (TextView) findViewById(R.id.main_button_pay);
