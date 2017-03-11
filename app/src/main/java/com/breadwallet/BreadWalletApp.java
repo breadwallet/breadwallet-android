@@ -94,7 +94,7 @@ public class BreadWalletApp extends Application {
      * @param message the message to be shown in the custom toast
      */
 
-    public void showCustomToast(Activity app, String message, int yOffSet, int duration, int color) {
+    public void showCustomToast(Context app, String message, int yOffSet, int duration, int color) {
         if (toast == null) toast = new Toast(getApplicationContext());
         if (MainActivity.appInBackground) return;
 

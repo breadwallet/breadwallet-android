@@ -590,15 +590,15 @@ public class KeyStoreManager {
         return result.length > 0 ? TypesConverter.byteArray2long(result) : 0;
     }
 
-    public static boolean phraseIsValid(String insertedPhrase, Context activity) {
+    public static boolean phraseIsValid(String insertedPhrase, Context ctx) {
         String normalizedPhrase = Normalizer.normalize(insertedPhrase.trim(), Normalizer.Form.NFKD);
-        if (!BRWalletManager.getInstance().validatePhrase(activity, normalizedPhrase))
+        if (!BRWalletManager.getInstance().validatePhrase(ctx, normalizedPhrase))
             return false;
         BRWalletManager m = BRWalletManager.getInstance();
         byte[] rawPhrase = normalizedPhrase.getBytes();
         byte[] bytePhrase = TypesConverter.getNullTerminatedPhrase(rawPhrase);
         byte[] pubKey = m.getMasterPubKey(bytePhrase);
-        byte[] pubKeyFromKeyStore = KeyStoreManager.getMasterPublicKey(activity);
+        byte[] pubKeyFromKeyStore = KeyStoreManager.getMasterPublicKey(ctx);
         Arrays.fill(bytePhrase, (byte) 0);
         return Arrays.equals(pubKey, pubKeyFromKeyStore);
     }

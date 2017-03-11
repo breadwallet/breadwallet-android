@@ -1,6 +1,7 @@
 package com.breadwallet.tools.util;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.manager.CurrencyManager;
@@ -63,7 +64,7 @@ public class BRStringFormatter {
                 getFormattedCurrencyString(iso, exchange);
     }
 
-    public static String getExchangeForAmount(double rate, String iso, BigDecimal target, Activity ctx) {
+    public static String getExchangeForAmount(double rate, String iso, BigDecimal target, Context ctx) {
         if (rate == 0) rate = 1;
         long exchange = BRWalletManager.getInstance(ctx).localAmount(target.longValue(),
                 new BigDecimal(String.valueOf(rate)).multiply(new BigDecimal("100")).doubleValue());
