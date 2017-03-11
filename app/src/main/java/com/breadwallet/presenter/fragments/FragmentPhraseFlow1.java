@@ -2,32 +2,21 @@
 package com.breadwallet.presenter.fragments;
 
 import android.app.Fragment;
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.IntroActivity;
-import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.activities.PhraseFlowActivity;
-import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.manager.CurrencyManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.KeyStoreManager;
-import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRStringFormatter;
 import com.breadwallet.wallet.BRWalletManager;
@@ -98,7 +87,7 @@ public class FragmentPhraseFlow1 extends Fragment {
                 return true;
             }
         });
-        if (BRWalletManager.getInstance(getActivity()).getBALANCE() > limit
+        if (BRWalletManager.getInstance(getActivity()).getBalance() > limit
                 && !SharedPreferencesManager.getPhraseWroteDown(getActivity())) {
             TextView title = (TextView) rootView.findViewById(R.id.warning_flow);
             TextView textFlow1 = (TextView) rootView.findViewById(R.id.textFlow1);

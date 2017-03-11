@@ -50,7 +50,6 @@ import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
-import com.google.firebase.crash.FirebaseCrash;
 import com.platform.APIClient;
 import com.platform.middlewares.plugins.CameraPlugin;
 import com.platform.middlewares.plugins.GeoLocationPlugin;
@@ -293,7 +292,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     }
 
     private void checkDeviceRooted() {
-        final boolean hasBitcoin = BRWalletManager.getInstance(this).getBALANCE() > 0;
+        final boolean hasBitcoin = BRWalletManager.getInstance(this).getBalance() > 0;
         boolean isDebuggable = 0 != (getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE);
         if (RootHelper.isDeviceRooted() && !isDebuggable) {
 
@@ -375,7 +374,7 @@ public class MainActivity extends FragmentActivity implements Observer {
             @Override
             public void run() {
                 if (SharedPreferencesManager.getPhraseWroteDown(app)) return;
-                long balance = BRWalletManager.getInstance(app).getBALANCE();
+                long balance = BRWalletManager.getInstance(app).getBalance();
                 int limit = SharedPreferencesManager.getLimit(app);
                 if (balance > limit)
                     BRWalletManager.getInstance(app).animateSavePhraseFlow();

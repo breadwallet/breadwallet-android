@@ -77,11 +77,6 @@ public class CurrencyManager  {
         return instance;
     }
 
-
-
-
-
-
     private Set<CurrencyEntity> getCurrencies(Activity context) {
         Set<CurrencyEntity> set = new LinkedHashSet<>();
         if (((BreadWalletApp) ctx.getApplication()).hasInternetAccess()) {

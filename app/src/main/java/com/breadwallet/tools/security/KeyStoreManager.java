@@ -149,7 +149,7 @@ public class KeyStoreManager {
 
     private static android.app.AlertDialog dialog;
 
-    private static boolean _setData(Activity context, byte[] data, String alias, String alias_file, String alias_iv, int request_code, boolean auth_required) throws BRKeystoreErrorException {
+    private static boolean _setData(Context context, byte[] data, String alias, String alias_file, String alias_iv, int request_code, boolean auth_required) throws BRKeystoreErrorException {
 //        Log.e(TAG, "_setData: " + alias);
         if (alias.equals(alias_file) || alias.equals(alias_iv) || alias_file.equals(alias_iv)) {
             RuntimeException ex = new IllegalArgumentException("mistake in parameters!");
@@ -216,7 +216,7 @@ public class KeyStoreManager {
         return false;
     }
 
-    private static byte[] _getData(final Activity context, String alias, String alias_file, String alias_iv, int request_code)
+    private static byte[] _getData(final Context context, String alias, String alias_file, String alias_iv, int request_code)
             throws BRKeystoreErrorException {
 //        Log.e(TAG, "_getData: " + alias);
 
@@ -267,7 +267,7 @@ public class KeyStoreManager {
                 throw new BRKeystoreErrorException(e.getMessage());
             } else if (e instanceof KeyPermanentlyInvalidatedException) {
                 FirebaseCrash.report(new RuntimeException("KeyStore Error, Your Breadwallet encrypted data was recently invalidated because you disabled your Android lock screen. Please input your phrase to recover your Breadwallet now."));
-                showKeyStoreDialog("KeyStore Error", "Your Breadwallet encrypted data was recently invalidated because you " +
+                showKeyStoreDialog(context,"KeyStore Error", "Your Breadwallet encrypted data was recently invalidated because you " +
                                 "disabled your Android lock screen. Please input your phrase to recover your Breadwallet now.", context.getString(R.string.ok), null,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
@@ -317,35 +317,36 @@ public class KeyStoreManager {
         return filesDirectory + File.separator + fileName;
     }
 
-    private static void showKeyStoreFailedToLoad(final Activity context) {
-        showKeyStoreDialog("KeyStore Error", "Failed to load KeyStore. Please try again later or enter your phrase to recover your Breadwallet now.", "recover now", "try later",
-                context instanceof IntroActivity ?
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                if (BRAnimator.checkTheMultipressingAvailability()) {
-//                                    ((IntroActivity) context).showRecoverWalletFragment();
-                                }
-                            }
-                        } : null, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        context.finish();
-                    }
-                },
-                null);
+    private static void showKeyStoreFailedToLoad(final Context context) {
+        //todo finish
+//        showKeyStoreDialog(context,"KeyStore Error", "Failed to load KeyStore. Please try again later or enter your phrase to recover your Breadwallet now.", "recover now", "try later",
+//                context instanceof IntroActivity ?
+//                        new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                if (BRAnimator.checkTheMultipressingAvailability()) {
+////                                    ((IntroActivity) context).showRecoverWalletFragment();
+//                                }
+//                            }
+//                        } : null, new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        context.finish();
+//                    }
+//                },
+//                null);
     }
 
-    public static boolean putKeyStorePhrase(byte[] strToStore, Activity context, int requestCode) throws BRKeystoreErrorException {
+    public static boolean putKeyStorePhrase(byte[] strToStore, Context context, int requestCode) throws BRKeystoreErrorException {
         AliasObject obj = aliasObjectMap.get(PHRASE_ALIAS);
         return !(strToStore == null || strToStore.length == 0) && _setData(context, strToStore, obj.alias, obj.datafileName, obj.ivFileName, requestCode, true);
     }
 
-    public static byte[] getKeyStorePhrase(final Activity context, int requestCode)
+    public static byte[] getKeyStorePhrase(final Context context, int requestCode)
             throws BRKeystoreErrorException {
         AliasObject obj = aliasObjectMap.get(PHRASE_ALIAS);
         return _getData(context, obj.alias, obj.datafileName, obj.ivFileName, requestCode);
     }
 
-    public static boolean putKeyStoreCanary(String strToStore, Activity context, int requestCode) throws BRKeystoreErrorException {
+    public static boolean putKeyStoreCanary(String strToStore, Context context, int requestCode) throws BRKeystoreErrorException {
         if (strToStore == null || strToStore.isEmpty()) return false;
         AliasObject obj = aliasObjectMap.get(CANARY_ALIAS);
         byte[] strBytes = new byte[0];
@@ -357,7 +358,7 @@ public class KeyStoreManager {
         return strBytes.length != 0 && _setData(context, strBytes, obj.alias, obj.datafileName, obj.ivFileName, requestCode, true);
     }
 
-    public static String getKeyStoreCanary(final Activity context, int requestCode)
+    public static String getKeyStoreCanary(final Context context, int requestCode)
             throws BRKeystoreErrorException {
         AliasObject obj = aliasObjectMap.get(CANARY_ALIAS);
         byte[] data = _getData(context, obj.alias, obj.datafileName, obj.ivFileName, requestCode);
@@ -370,7 +371,7 @@ public class KeyStoreManager {
         return result;
     }
 
-    public static boolean putMasterPublicKey(byte[] masterPubKey, Activity context) {
+    public static boolean putMasterPublicKey(byte[] masterPubKey, Context context) {
         AliasObject obj = aliasObjectMap.get(PUB_KEY_ALIAS);
         try {
             return masterPubKey != null && masterPubKey.length != 0 && _setData(context, masterPubKey, obj.alias, obj.datafileName, obj.ivFileName, 0, false);
@@ -380,7 +381,7 @@ public class KeyStoreManager {
         return false;
     }
 
-    public static byte[] getMasterPublicKey(final Activity context) {
+    public static byte[] getMasterPublicKey(final Context context) {
         byte[] result = new byte[0];
         AliasObject obj = aliasObjectMap.get(PUB_KEY_ALIAS);
         try {
@@ -391,7 +392,7 @@ public class KeyStoreManager {
         return result;
     }
 
-    public static boolean putAuthKey(byte[] authKey, Activity context) {
+    public static boolean putAuthKey(byte[] authKey, Context context) {
         AliasObject obj = aliasObjectMap.get(AUTH_KEY_ALIAS);
         try {
             return authKey != null && authKey.length != 0 && _setData(context, authKey, obj.alias, obj.datafileName, obj.ivFileName, 0, false);
@@ -401,7 +402,7 @@ public class KeyStoreManager {
         return false;
     }
 
-    public static byte[] getAuthKey(final Activity context) {
+    public static byte[] getAuthKey(final Context context) {
         AliasObject obj = aliasObjectMap.get(AUTH_KEY_ALIAS);
         byte[] result = new byte[0];
         try {
@@ -412,7 +413,7 @@ public class KeyStoreManager {
         return result;
     }
 
-    public static boolean putToken(byte[] token, Activity context) {
+    public static boolean putToken(byte[] token, Context context) {
         AliasObject obj = aliasObjectMap.get(TOKEN_ALIAS);
         try {
             return token != null && token.length != 0 && _setData(context, token, obj.alias, obj.datafileName, obj.ivFileName, 0, false);
@@ -422,7 +423,7 @@ public class KeyStoreManager {
         return false;
     }
 
-    public static byte[] getToken(final Activity context) {
+    public static byte[] getToken(final Context context) {
         AliasObject obj = aliasObjectMap.get(TOKEN_ALIAS);
         byte[] result = new byte[0];
         try {
@@ -433,7 +434,7 @@ public class KeyStoreManager {
         return result;
     }
 
-    public static boolean putWalletCreationTime(int creationTime, Activity context) {
+    public static boolean putWalletCreationTime(int creationTime, Context context) {
         AliasObject obj = aliasObjectMap.get(WALLET_CREATION_TIME_ALIAS);
         byte[] bytesToStore = TypesConverter.intToBytes(creationTime);
         try {
@@ -444,7 +445,7 @@ public class KeyStoreManager {
         return false;
     }
 
-    public static int getWalletCreationTime(final Activity context) {
+    public static int getWalletCreationTime(final Context context) {
         AliasObject obj = aliasObjectMap.get(WALLET_CREATION_TIME_ALIAS);
         byte[] result = new byte[0];
         try {
@@ -455,7 +456,7 @@ public class KeyStoreManager {
         return result.length > 0 ? TypesConverter.bytesToInt(result) : 0;
     }
 
-    public static boolean putPassCode(String passcode, Activity context) {
+    public static boolean putPassCode(String passcode, Context context) {
         Log.e(TAG, "putPassCode: " + passcode);
         AliasObject obj = aliasObjectMap.get(PASS_CODE_ALIAS);
         byte[] bytesToStore = passcode.getBytes();
@@ -467,7 +468,7 @@ public class KeyStoreManager {
         return false;
     }
 
-    public static String getPassCode(final Activity context) {
+    public static String getPassCode(final Context context) {
         AliasObject obj = aliasObjectMap.get(PASS_CODE_ALIAS);
         byte[] result = new byte[0];
         try {
@@ -494,7 +495,7 @@ public class KeyStoreManager {
         return passCode;
     }
 
-    public static boolean putFailCount(int failCount, Activity context) {
+    public static boolean putFailCount(int failCount, Context context) {
         AliasObject obj = aliasObjectMap.get(FAIL_COUNT_ALIAS);
         if (failCount >= 3) {
             long time = SharedPreferencesManager.getSecureTime(context);
@@ -509,7 +510,7 @@ public class KeyStoreManager {
         return false;
     }
 
-    public static int getFailCount(final Activity context) {
+    public static int getFailCount(final Context context) {
         AliasObject obj = aliasObjectMap.get(FAIL_COUNT_ALIAS);
         byte[] result = new byte[0];
         try {
@@ -521,7 +522,7 @@ public class KeyStoreManager {
         return result.length > 0 ? TypesConverter.bytesToInt(result) : 0;
     }
 
-    public static boolean putSpendLimit(long spendLimit, Activity context) {
+    public static boolean putSpendLimit(long spendLimit, Context context) {
         AliasObject obj = aliasObjectMap.get(SPEND_LIMIT_ALIAS);
         byte[] bytesToStore = TypesConverter.long2byteArray(spendLimit);
         try {
@@ -532,7 +533,7 @@ public class KeyStoreManager {
         return false;
     }
 
-    public static long getSpendLimit(final Activity context) {
+    public static long getSpendLimit(final Context context) {
         AliasObject obj = aliasObjectMap.get(SPEND_LIMIT_ALIAS);
         byte[] result = new byte[0];
         try {
@@ -544,7 +545,7 @@ public class KeyStoreManager {
         return result.length > 0 ? TypesConverter.byteArray2long(result) : 0;
     }
 
-    public static boolean putFailTimeStamp(long spendLimit, Activity context) {
+    public static boolean putFailTimeStamp(long spendLimit, Context context) {
         AliasObject obj = aliasObjectMap.get(FAIL_TIMESTAMP_ALIAS);
         byte[] bytesToStore = TypesConverter.long2byteArray(spendLimit);
         try {
@@ -555,7 +556,7 @@ public class KeyStoreManager {
         return false;
     }
 
-    public static long getFailTimeStamp(final Activity context) {
+    public static long getFailTimeStamp(final Context context) {
         AliasObject obj = aliasObjectMap.get(FAIL_TIMESTAMP_ALIAS);
         byte[] result = new byte[0];
         try {
@@ -567,7 +568,7 @@ public class KeyStoreManager {
         return result.length > 0 ? TypesConverter.byteArray2long(result) : 0;
     }
 
-    public static boolean putLastPasscodeUsedTime(long time, Activity context) {
+    public static boolean putLastPasscodeUsedTime(long time, Context context) {
         AliasObject obj = aliasObjectMap.get(PASS_TIME_ALIAS);
         byte[] bytesToStore = TypesConverter.long2byteArray(time);
         try {
@@ -578,7 +579,7 @@ public class KeyStoreManager {
         return false;
     }
 
-    public static long getLastPasscodeUsedTime(final Activity context) {
+    public static long getLastPasscodeUsedTime(final Context context) {
         AliasObject obj = aliasObjectMap.get(PASS_TIME_ALIAS);
         byte[] result = new byte[0];
         try {
@@ -589,11 +590,11 @@ public class KeyStoreManager {
         return result.length > 0 ? TypesConverter.byteArray2long(result) : 0;
     }
 
-    public static boolean phraseIsValid(String insertedPhrase, Activity activity) {
+    public static boolean phraseIsValid(String insertedPhrase, Context activity) {
         String normalizedPhrase = Normalizer.normalize(insertedPhrase.trim(), Normalizer.Form.NFKD);
-        if (!BRWalletManager.getInstance(activity).validatePhrase(activity, normalizedPhrase))
+        if (!BRWalletManager.getInstance().validatePhrase(activity, normalizedPhrase))
             return false;
-        BRWalletManager m = BRWalletManager.getInstance(activity);
+        BRWalletManager m = BRWalletManager.getInstance();
         byte[] rawPhrase = normalizedPhrase.getBytes();
         byte[] bytePhrase = TypesConverter.getNullTerminatedPhrase(rawPhrase);
         byte[] pubKey = m.getMasterPubKey(bytePhrase);
@@ -612,7 +613,7 @@ public class KeyStoreManager {
                 removeAliasAndFiles(keyStore.aliases().nextElement(), context);
                 count++;
             }
-//            Assert.assertEquals(count, 11);
+            Assert.assertEquals(count, 11);
 
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -644,17 +645,17 @@ public class KeyStoreManager {
 
     }
 
-    public static void showAuthenticationScreen(Activity context, int requestCode) {
+    public static void showAuthenticationScreen(Context context, int requestCode) {
         // Create the Confirm Credentials screen. You can customize the title and description. Or
         // we will provide a generic one for you if you leave it null
         KeyguardManager mKeyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
         Intent intent = mKeyguardManager.createConfirmDeviceCredentialIntent(context.getString(R.string.auth_required), context.getString(R.string.auth_message));
         if (intent != null) {
-            context.startActivityForResult(intent, requestCode);
+            ((Activity)context).startActivityForResult(intent, requestCode);
         } else {
             Log.e(TAG, "showAuthenticationScreen: failed to create intent for auth");
             FirebaseCrash.report(new RuntimeException("showAuthenticationScreen: failed to create intent for auth"));
-            context.finish();
+            ((Activity)context).finish();
         }
     }
 
@@ -699,16 +700,14 @@ public class KeyStoreManager {
         return false;
     }
 
-    public static void showKeyStoreDialog(final String title, final String message, final String posButton, final String negButton,
+    public static void showKeyStoreDialog(Context app,final String title, final String message, final String posButton, final String negButton,
                                           final DialogInterface.OnClickListener posButtonListener,
                                           final DialogInterface.OnClickListener negButtonListener,
                                           final DialogInterface.OnDismissListener dismissListener) {
-        Activity app = MainActivity.app;
-        if (app == null) app = IntroActivity.app;
         if (app == null) {
             return;
         }
-        final Activity finalApp = app;
+        final Activity finalApp = (Activity) app;
         if (finalApp != null)
             finalApp.runOnUiThread(new Runnable() {
                 @Override

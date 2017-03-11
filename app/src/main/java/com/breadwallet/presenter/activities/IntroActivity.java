@@ -23,6 +23,8 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.BRWalletManager;
 import com.google.firebase.crash.FirebaseCrash;
 
+import static com.breadwallet.presenter.activities.MainActivity.app;
+
 
 /**
  * BreadWallet
@@ -51,7 +53,6 @@ import com.google.firebase.crash.FirebaseCrash;
 
 public class IntroActivity extends FragmentActivity {
     private static final String TAG = IntroActivity.class.getName();
-    public static IntroActivity app;
     public Button newWalletButton;
     public Button recoverWalletButton;
 
@@ -65,7 +66,6 @@ public class IntroActivity extends FragmentActivity {
     @Override
     protected void onRestart() {
         super.onRestart();  // Always call the superclass method first
-        app = this;
     }
 
     @Override
@@ -75,8 +75,6 @@ public class IntroActivity extends FragmentActivity {
         newWalletButton = (Button) findViewById(R.id.button_new_wallet);
         recoverWalletButton = (Button) findViewById(R.id.button_recover_wallet);
         setListeners();
-
-        app = this;
 
         if (!BuildConfig.DEBUG && KeyStoreManager.AUTH_DURATION_SEC != 300) {
             Log.e(TAG, "onCreate: KeyStoreManager.AUTH_DURATION_SEC != 300");
@@ -143,7 +141,6 @@ public class IntroActivity extends FragmentActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        app = this;
 
     }
 
@@ -226,7 +223,7 @@ public class IntroActivity extends FragmentActivity {
             //Device passcode/password should be enabled for the app to work
             ((BreadWalletApp) getApplication()).showDeviceNotSecuredWarning(this);
         } else {
-            if (!m.noWallet(app)) {
+            if (!m.noWallet(this)) {
                 BRWalletManager.getInstance(this).startBreadActivity(this);
             }
 

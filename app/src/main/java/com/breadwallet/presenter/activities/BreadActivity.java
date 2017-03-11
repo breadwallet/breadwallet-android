@@ -53,7 +53,6 @@ import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
 public class BreadActivity extends AppCompatActivity implements Observer {
     private static final String TAG = BreadActivity.class.getName();
 
-    public static BreadActivity app;
     private LinearLayout sendButton;
     private LinearLayout receiveButton;
     private LinearLayout menuButton;
@@ -205,14 +204,12 @@ public class BreadActivity extends AppCompatActivity implements Observer {
     @Override
     protected void onRestart() {
         super.onRestart();
-        app = this;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         appInBackground = false;
-        app = this;
 
 //        new Thread(new Runnable() {
 //            @Override
@@ -247,7 +244,7 @@ public class BreadActivity extends AppCompatActivity implements Observer {
 //            @Override
 //            public void run() {
 //                if (SharedPreferencesManager.getPhraseWroteDown(app)) return;
-//                long balance = CurrencyManager.getInstance(app).getBALANCE();
+//                long balance = CurrencyManager.getInstance(app).getBalance();
 //                int limit = SharedPreferencesManager.getLimit(app);
 //                if (balance > limit)
 //                    BRWalletManager.getInstance(app).animateSavePhraseFlow();

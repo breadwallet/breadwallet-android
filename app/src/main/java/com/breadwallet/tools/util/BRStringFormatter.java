@@ -1,7 +1,6 @@
 package com.breadwallet.tools.util;
 
 import android.app.Activity;
-import android.util.Log;
 
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.manager.CurrencyManager;
@@ -75,10 +74,10 @@ public class BRStringFormatter {
         CurrencyManager cm = CurrencyManager.getInstance(ctx);
         String iso = SharedPreferencesManager.getIso(ctx);
         double rate = SharedPreferencesManager.getRate(ctx);
-        long exchange = BRWalletManager.getInstance(ctx).localAmount(BRWalletManager.getInstance(ctx).getBALANCE(),
+        long exchange = BRWalletManager.getInstance(ctx).localAmount(BRWalletManager.getInstance(ctx).getBalance(),
                 new BigDecimal(String.valueOf(rate)).multiply(new BigDecimal("100")).doubleValue());
 
-        return getFormattedCurrencyString("BTC", BRWalletManager.getInstance(ctx).getBALANCE()) + " (" +
+        return getFormattedCurrencyString("BTC", BRWalletManager.getInstance(ctx).getBalance()) + " (" +
                 getFormattedCurrencyString(iso, exchange) + ")";
     }
 

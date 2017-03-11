@@ -271,7 +271,7 @@ public class PostAuthenticationProcessor {
             m.wipeKeyStore(app);
             m.wipeWalletButKeystore(app);
             BRAnimator.resetFragmentAnimator();
-            KeyStoreManager.showKeyStoreDialog("Keystore invalidated", "Disable lock screen and all fingerprints, and re-enable to continue.", app.getString(R.string.ok), null,
+            KeyStoreManager.showKeyStoreDialog(app, "Keystore invalidated", "Disable lock screen and all fingerprints, and re-enable to continue.", app.getString(R.string.ok), null,
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.cancel();

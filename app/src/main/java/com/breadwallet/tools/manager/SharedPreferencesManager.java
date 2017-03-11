@@ -60,12 +60,12 @@ public class SharedPreferencesManager {
     public static final String TAG = SharedPreferencesManager.class.getName();
 
 
-    public static String getIso(Activity context) {
+    public static String getIso(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         return settingsToGet.getString(BRConstants.CURRENT_CURRENCY, Currency.getInstance(Locale.getDefault()).getCurrencyCode());
     }
 
-    public static void putIso(Activity context, String code) {
+    public static void putIso(Context context, String code) {
         SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putString(BRConstants.CURRENT_CURRENCY, code.equalsIgnoreCase(Locale.getDefault().getISO3Language()) ? null : code);
@@ -73,25 +73,25 @@ public class SharedPreferencesManager {
 
     }
 
-    public static float getRate(Activity context) {
+    public static float getRate(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         return settingsToGet.getFloat(BRConstants.RATE, 1);
     }
 
-    public static void putRate(Activity context, float rate) {
+    public static void putRate(Context context, float rate) {
         SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putFloat(BRConstants.RATE, rate);
         editor.apply();
     }
 
-    public static boolean getPhraseWroteDown(Activity context) {
+    public static boolean getPhraseWroteDown(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getBoolean(BRConstants.PHRASE_WRITTEN, false);
 
     }
 
-    public static void putPhraseWroteDown(Activity context, boolean check) {
+    public static void putPhraseWroteDown(Context context, boolean check) {
         SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(BRConstants.PHRASE_WRITTEN, check);
@@ -103,87 +103,87 @@ public class SharedPreferencesManager {
         return settings.getInt(BRConstants.POSITION, 0);
     }
 
-    public static void putCurrencyListPosition(Activity context, int lastItemsPosition) {
+    public static void putCurrencyListPosition(Context context, int lastItemsPosition) {
         SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putInt(BRConstants.POSITION, lastItemsPosition);
         editor.apply();
     }
 
-    public static String getReceiveAddress(Activity context) {
+    public static String getReceiveAddress(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getString(BRConstants.RECEIVE_ADDRESS, "");
     }
 
-    public static void putReceiveAddress(Activity ctx, String tmpAddr) {
+    public static void putReceiveAddress(Context ctx, String tmpAddr) {
         SharedPreferences.Editor editor = ctx.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE).edit();
         editor.putString(BRConstants.RECEIVE_ADDRESS, tmpAddr);
         editor.apply();
     }
 
-    public static String getFirstAddress(Activity context) {
+    public static String getFirstAddress(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getString(BRConstants.FIRST_ADDRESS, "");
     }
 
-    public static void putFirstAddress(Activity context, String firstAddress) {
+    public static void putFirstAddress(Context context, String firstAddress) {
         SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(BRConstants.FIRST_ADDRESS, firstAddress);
         editor.apply();
     }
 
-    public static long getFeePerKb(Activity context) {
+    public static long getFeePerKb(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getLong(BRConstants.FEE_KB_PREFS, 0);
     }
 
-    public static void putFeePerKb(Activity context, long fee) {
+    public static void putFeePerKb(Context context, long fee) {
         SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putLong(BRConstants.FEE_KB_PREFS, fee);
         editor.apply();
     }
 
-    public static long getSecureTime(Activity activity) {
+    public static long getSecureTime(Context activity) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getLong(BRConstants.SECURE_TIME_PREFS, System.currentTimeMillis() / 1000);
     }
 
     //secure time from the server
-    public static void putSecureTime(Activity activity, long date) {
+    public static void putSecureTime(Context activity, long date) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putLong(BRConstants.SECURE_TIME_PREFS, date);
         editor.apply();
     }
 
-    public static long getPhraseWarningTime(Activity activity) {
+    public static long getPhraseWarningTime(Context activity) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getLong(BRConstants.PHRASE_WARNING_TIME, 0);
     }
 
 
-    public static void putPhraseWarningTime(Activity activity, long phraseWarningTime) {
+    public static void putPhraseWarningTime(Context activity, long phraseWarningTime) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putLong(BRConstants.PHRASE_WARNING_TIME, phraseWarningTime);
         editor.apply();
     }
 
-    public static int getLimit(Activity activity) {
+    public static int getLimit(Context activity) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getInt(BRConstants.LIMIT_PREFS, BRConstants.HUNDRED_BITS);
     }
 
-    public static void putLimit(Activity activity, int limit) {
+    public static void putLimit(Context activity, int limit) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt(BRConstants.LIMIT_PREFS, limit);
         editor.apply();
     }
 
-    public static List<Integer> getBitIdNonces(Activity activity, String key) {
+    public static List<Integer> getBitIdNonces(Context activity, String key) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         String result = prefs.getString(key, null);
         List<Integer> list = new ArrayList<>();
@@ -201,7 +201,7 @@ public class SharedPreferencesManager {
         return list;
     }
 
-    public static void putBitIdNonces(Activity activity, List<Integer> nonces, String key) {
+    public static void putBitIdNonces(Context activity, List<Integer> nonces, String key) {
         JSONArray arr = new JSONArray();
         arr.put(nonces);
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
@@ -210,36 +210,36 @@ public class SharedPreferencesManager {
         editor.apply();
     }
 
-    public static boolean getAllowSpend(Activity activity) {
+    public static boolean getAllowSpend(Context activity) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getBoolean(BRConstants.ALLOW_SPEND, true);
     }
 
-    public static void putAllowSpend(Activity activity, boolean allow) {
+    public static void putAllowSpend(Context activity, boolean allow) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(BRConstants.ALLOW_SPEND, allow);
         editor.apply();
     }
 
-    public static boolean getFeatureEnabled(Activity activity, String feature) {
+    public static boolean getFeatureEnabled(Context activity, String feature) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getBoolean(feature, false);
     }
 
-    public static void putFeatureEnabled(Activity activity, boolean enabled, String feature) {
+    public static void putFeatureEnabled(Context activity, boolean enabled, String feature) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(feature, enabled);
         editor.apply();
     }
 
-    public static boolean getGeoPermissionsRequested(Activity activity) {
+    public static boolean getGeoPermissionsRequested(Context activity) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getBoolean(GEO_PERMISSIONS_REQUESTED, false);
     }
 
-    public static void putGeoPermissionsRequested(Activity activity, boolean requested) {
+    public static void putGeoPermissionsRequested(Context activity, boolean requested) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(GEO_PERMISSIONS_REQUESTED, requested);
@@ -248,7 +248,7 @@ public class SharedPreferencesManager {
 
 
     @SuppressWarnings("unchecked")
-    public static Set<CurrencyEntity> getExchangeRates(Activity context) {
+    public static Set<CurrencyEntity> getExchangeRates(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
 
         byte[] bytes = prefs.getString(BRConstants.EXCHANGE_RATES, "{}").getBytes();
@@ -269,7 +269,7 @@ public class SharedPreferencesManager {
         return result;
     }
 
-    public static void putExchangeRates(Activity activity, Set<CurrencyEntity> rates) {
+    public static void putExchangeRates(Context activity, Set<CurrencyEntity> rates) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.remove(BRConstants.EXCHANGE_RATES);
@@ -297,12 +297,12 @@ public class SharedPreferencesManager {
     }
 
 
-    public static int getStartHeight(Activity context) {
+    public static int getStartHeight(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         return settingsToGet.getInt(BRConstants.START_HEIGHT, 0);
     }
 
-    public static void putStartHeight(Activity context, int startHeight) {
+    public static void putStartHeight(Context context, int startHeight) {
         if (context == null) return;
         SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
@@ -310,12 +310,12 @@ public class SharedPreferencesManager {
         editor.apply();
     }
 
-    public static int getLastBlockHeight(Activity context) {
+    public static int getLastBlockHeight(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         return settingsToGet.getInt(BRConstants.LAST_BLOCK_HEIGHT, 0);
     }
 
-    public static void putLastBlockHeight(Activity context, int lastHeight) {
+    public static void putLastBlockHeight(Context context, int lastHeight) {
         if (context == null) return;
         SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
@@ -323,12 +323,12 @@ public class SharedPreferencesManager {
         editor.apply();
     }
 
-    public static boolean getTipsShown(Activity context) {
+    public static boolean getTipsShown(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         return settingsToGet.getBoolean(BRConstants.TIPS_SHOWN, false);
     }
 
-    public static void putTipsShown(Activity context, boolean tipsShown) {
+    public static void putTipsShown(Context context, boolean tipsShown) {
         if (context == null) return;
         SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
@@ -336,12 +336,12 @@ public class SharedPreferencesManager {
         editor.apply();
     }
 
-    public static int getCurrencyUnit(Activity context) {
+    public static int getCurrencyUnit(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         return settingsToGet.getInt(BRConstants.CURRENT_UNIT, BRConstants.CURRENT_UNIT_BITS);
     }
 
-    public static void putCurrencyUnit(Activity context, int unit) {
+    public static void putCurrencyUnit(Context context, int unit) {
         if (context == null) return;
         SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
@@ -349,14 +349,14 @@ public class SharedPreferencesManager {
         editor.apply();
     }
 
-    public static String getDeviceId(Activity context) {
+    public static String getDeviceId(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         String deviceId = settingsToGet.getString(BRConstants.USER_ID, "");
         if (deviceId.isEmpty()) setDeviceId(context, UUID.randomUUID().toString());
         return (settingsToGet.getString(BRConstants.USER_ID, ""));
     }
 
-    private static void setDeviceId(Activity context, String uuid) {
+    private static void setDeviceId(Context context, String uuid) {
         if (context == null) return;
         SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
@@ -364,7 +364,7 @@ public class SharedPreferencesManager {
         editor.apply();
     }
 
-    public static void clearAllPrefs(Activity activity) {
+    public static void clearAllPrefs(Context activity) {
         SharedPreferences.Editor editor = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE).edit();
         editor.clear();
         editor.apply();
