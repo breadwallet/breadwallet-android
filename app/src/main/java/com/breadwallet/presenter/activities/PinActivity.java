@@ -198,71 +198,27 @@ public class PinActivity extends Activity {
     private void unlockWallet() {
         pin = new StringBuilder("");
         int duration = 2000;
-//        TranslateAnimation translateUp = new TranslateAnimation(offlineButtonsLayout.getX(), offlineButtonsLayout.getX(), offlineButtonsLayout.getY(), -200);
-//        translateUp.setDuration(duration);
-//        translateUp.setInterpolator(new AccelerateInterpolator());
-//        setAnimationListenerToView(offlineButtonsLayout, translateUp);
-//        offlineButtonsLayout.startAnimation(translateUp);
         offlineButtonsLayout.animate().translationY(-600).setInterpolator(new AccelerateInterpolator());
         pinLayout.animate().translationY(-2000).setInterpolator(new AccelerateInterpolator());
         enterPinLabel.animate().translationY(-1800).setInterpolator(new AccelerateInterpolator());
         keyboard.animate().translationY(600).setInterpolator(new AccelerateInterpolator());
-        unlockedImage.animate().alpha(1f).setDuration(1000).setListener(new AnimatorListenerAdapter() {
+        unlockedImage.animate().alpha(1f).setListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                Intent intent = new Intent(PinActivity.this, BreadActivity.class);
-                startActivity(intent);
-                if (!PinActivity.this.isDestroyed()) {
-                    PinActivity.this.finish();
-                }
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Intent intent = new Intent(PinActivity.this, BreadActivity.class);
+                        startActivity(intent);
+                        if (!PinActivity.this.isDestroyed()) {
+                            PinActivity.this.finish();
+                        }
+                    }
+                },700);
             }
         });
         unlockedText.animate().alpha(1f);
-
-//        TranslateAnimation translateUp2 = new TranslateAnimation(pinLayout.getX(), pinLayout.getX(), pinLayout.getY(), -200);
-//        translateUp2.setDuration(duration);
-//        translateUp2.setInterpolator(new AccelerateInterpolator());
-//        setAnimationListenerToView(pinLayout, translateUp2);
-//        pinLayout.startAnimation(translateUp2);
-//
-//        TranslateAnimation translateUp3 = new TranslateAnimation(enterPinLabel.getX(), enterPinLabel.getX(), enterPinLabel.getY(), -200);
-//        translateUp3.setDuration(duration);
-//        translateUp3.setInterpolator(new AccelerateInterpolator());
-//        setAnimationListenerToView(enterPinLabel, translateUp3);
-//        enterPinLabel.startAnimation(translateUp3);
-//
-//        TranslateAnimation translateDown = new TranslateAnimation(keyboard.getX(), keyboard.getX(), keyboard.getY(), 2000);
-//        translateDown.setDuration(duration);
-//        translateDown.setInterpolator(new AccelerateInterpolator());
-//        setAnimationListenerToView(keyboard, translateDown);
-//        keyboard.startAnimation(translateDown);
-//
-//        AlphaAnimation alphaAnimation = new AlphaAnimation(0, 1);
-//        alphaAnimation.setDuration(duration);
-//        alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
-//            @Override
-//            public void onAnimationStart(Animation animation) {
-//
-//            }
-//
-//            @Override
-//            public void onAnimationEnd(Animation animation) {
-//                Intent intent = new Intent(PinActivity.this, BreadActivity.class);
-//                startActivity(intent);
-//                unlockedImage.setAlpha(1f);
-//                unlockedText.setAlpha(1f);
-//            }
-//
-//            @Override
-//            public void onAnimationRepeat(Animation animation) {
-//
-//            }
-//        });
-//        unlockedText.startAnimation(alphaAnimation);
-//        unlockedImage.startAnimation(alphaAnimation);
-
-
     }
 
     private void setAnimationListenerToView(final View v, Animation animation) {
