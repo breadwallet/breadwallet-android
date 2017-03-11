@@ -213,6 +213,9 @@ public class PinActivity extends Activity {
                 super.onAnimationEnd(animation);
                 Intent intent = new Intent(PinActivity.this, BreadActivity.class);
                 startActivity(intent);
+                if (!PinActivity.this.isDestroyed()) {
+                    PinActivity.this.finish();
+                }
             }
         });
         unlockedText.animate().alpha(1f);

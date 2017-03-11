@@ -50,12 +50,12 @@ import java.util.TimerTask;
  * THE SOFTWARE.
  */
 
-public class CurrencyManager extends Observable {
+public class CurrencyManager  {
     private static final String TAG = CurrencyManager.class.getName();
 
     private static CurrencyManager instance;
     private Timer timer;
-    private long BALANCE = 0;
+
     private TimerTask timerTask;
 
     private Handler handler;
@@ -78,15 +78,9 @@ public class CurrencyManager extends Observable {
     }
 
 
-    public void setBalance(long balance) {
-        BALANCE = balance;
-        setChanged();
-        notifyObservers();
-    }
 
-    public long getBALANCE() {
-        return BALANCE;
-    }
+
+
 
     private Set<CurrencyEntity> getCurrencies(Activity context) {
         Set<CurrencyEntity> set = new LinkedHashSet<>();

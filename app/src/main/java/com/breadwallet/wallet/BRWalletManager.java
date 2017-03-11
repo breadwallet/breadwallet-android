@@ -2,7 +2,6 @@ package com.breadwallet.wallet;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.FragmentManager;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -74,11 +73,9 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Observable;
 
-import static android.R.attr.mode;
-import static android.R.attr.theme;
 import static com.breadwallet.presenter.activities.MainActivity.app;
-import static com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask.message;
 
 /**
  * BreadWallet
@@ -105,13 +102,25 @@ import static com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask.messa
  * THE SOFTWARE.
  */
 
-public class BRWalletManager {
+public class BRWalletManager extends Observable {
     private static final String TAG = BRWalletManager.class.getName();
 
     private static BRWalletManager instance;
     private static Activity ctx;
     private static final int WHITE = 0xFFFFFFFF;
     private static final int BLACK = 0xFF000000;
+
+    private long BALANCE = 0;
+
+    public void setBalance(long balance) {
+        BALANCE = balance;
+        setChanged();
+        notifyObservers();
+    }
+
+    public long getBALANCE() {
+        return BALANCE;
+    }
 
     private static int messageId = 0;
 
@@ -342,7 +351,7 @@ public class BRWalletManager {
                     long lastMessageShow = SharedPreferencesManager.getPhraseWarningTime(ctx);
                     if (lastMessageShow == 0 || (!firstTime && lastMessageShow > (now - 36 * 60 * 60)))
                         return;//36 * 60 * 60//
-                    if (CurrencyManager.getInstance(ctx).getBALANCE() > SharedPreferencesManager.getLimit(ctx)) {
+                    if (BRWalletManager.getInstance(ctx).getBALANCE() > SharedPreferencesManager.getLimit(ctx)) {
 //                        getInstance(ctx).animateSavePhraseFlow();
                         return;
                     }
@@ -416,7 +425,7 @@ public class BRWalletManager {
         ctx.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                CurrencyManager.getInstance(ctx).setBalance(balance);
+                BRWalletManager.getInstance(ctx).setBalance(balance);
                 refreshAddress();
                 FragmentSettingsAll.refreshTransactions(ctx);
             }
@@ -647,7 +656,7 @@ public class BRWalletManager {
                     return;
                 }
                 feeForTx = m.feeForTransaction(request.addresses[0], maxAmountDouble);
-                feeForTx += (CurrencyManager.getInstance(ctx).getBALANCE() - request.amount) % 100;
+                feeForTx += (getBALANCE() - request.amount) % 100;
             }
             final long total = request.amount + feeForTx;
             final String message = certification + allAddresses.toString() + "\n\n" + "amount: " + BRStringFormatter.getFormattedCurrencyString("BTC", request.amount)
@@ -753,7 +762,7 @@ public class BRWalletManager {
         byte[] tmpTx = m.tryTransaction(addressHolder, bigDecimalAmount.longValue());
         long feeForTx = m.feeForTransaction(addressHolder, bigDecimalAmount.longValue());
 
-        if (tmpTx == null && bigDecimalAmount.longValue() <= cm.getBALANCE() && bigDecimalAmount.longValue() > 0) {
+        if (tmpTx == null && bigDecimalAmount.longValue() <= getBALANCE() && bigDecimalAmount.longValue() > 0) {
             final long maxAmountDouble = m.getMaxOutputAmount();
             if (maxAmountDouble == -1) {
                 RuntimeException ex = new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL");
@@ -811,7 +820,7 @@ public class BRWalletManager {
             alert.show();
             alert.getButton(AlertDialog.BUTTON_POSITIVE).setAllCaps(false);
             return;
-        } else if (tmpTx == null && bigDecimalAmount.longValue() >= cm.getBALANCE() && bigDecimalAmount.longValue() > 0) {
+        } else if (tmpTx == null && bigDecimalAmount.longValue() >= getBALANCE() && bigDecimalAmount.longValue() > 0) {
 
             FragmentScanResult.address = addressHolder;
             if (!BreadWalletApp.unlocked) {
@@ -828,8 +837,8 @@ public class BRWalletManager {
         }
         PostAuthenticationProcessor.getInstance().setTmpTx(tmpTx);
         Log.d(TAG, "pay: feeForTx: " + feeForTx + ", amountAsDouble: " + bigDecimalAmount.longValue() +
-                ", CurrencyManager.getInstance(this).getBALANCE(): " + cm.getBALANCE());
-        if ((feeForTx != 0 && bigDecimalAmount.longValue() + feeForTx < cm.getBALANCE()) || (isAmountRequested && !BreadWalletApp.unlocked)) {
+                ", CurrencyManager.getInstance(this).getBALANCE(): " + getBALANCE());
+        if ((feeForTx != 0 && bigDecimalAmount.longValue() + feeForTx < getBALANCE()) || (isAmountRequested && !BreadWalletApp.unlocked)) {
             Log.d(TAG, "pay: SUCCESS: going to confirmPay");
             confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, bigDecimalAmount.longValue(), cn, tmpTx, isAmountRequested));
         } else {

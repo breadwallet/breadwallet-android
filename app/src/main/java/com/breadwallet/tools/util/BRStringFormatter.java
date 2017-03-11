@@ -75,10 +75,10 @@ public class BRStringFormatter {
         CurrencyManager cm = CurrencyManager.getInstance(ctx);
         String iso = SharedPreferencesManager.getIso(ctx);
         double rate = SharedPreferencesManager.getRate(ctx);
-        long exchange = BRWalletManager.getInstance(ctx).localAmount(cm.getBALANCE(),
+        long exchange = BRWalletManager.getInstance(ctx).localAmount(BRWalletManager.getInstance(ctx).getBALANCE(),
                 new BigDecimal(String.valueOf(rate)).multiply(new BigDecimal("100")).doubleValue());
 
-        return getFormattedCurrencyString("BTC", cm.getBALANCE()) + " (" +
+        return getFormattedCurrencyString("BTC", BRWalletManager.getInstance(ctx).getBALANCE()) + " (" +
                 getFormattedCurrencyString(iso, exchange) + ")";
     }
 

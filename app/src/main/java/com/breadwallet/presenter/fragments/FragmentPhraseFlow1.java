@@ -30,6 +30,7 @@ import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRStringFormatter;
+import com.breadwallet.wallet.BRWalletManager;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -97,7 +98,7 @@ public class FragmentPhraseFlow1 extends Fragment {
                 return true;
             }
         });
-        if (CurrencyManager.getInstance(getActivity()).getBALANCE() > limit
+        if (BRWalletManager.getInstance(getActivity()).getBALANCE() > limit
                 && !SharedPreferencesManager.getPhraseWroteDown(getActivity())) {
             TextView title = (TextView) rootView.findViewById(R.id.warning_flow);
             TextView textFlow1 = (TextView) rootView.findViewById(R.id.textFlow1);

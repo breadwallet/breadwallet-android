@@ -293,7 +293,7 @@ public class MainActivity extends FragmentActivity implements Observer {
     }
 
     private void checkDeviceRooted() {
-        final boolean hasBitcoin = CurrencyManager.getInstance(this).getBALANCE() > 0;
+        final boolean hasBitcoin = BRWalletManager.getInstance(this).getBALANCE() > 0;
         boolean isDebuggable = 0 != (getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE);
         if (RootHelper.isDeviceRooted() && !isDebuggable) {
 
@@ -354,8 +354,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         final BRWalletManager m = BRWalletManager.getInstance(this);
         CurrencyManager currencyManager = CurrencyManager.getInstance(this);
         currencyManager.startTimer();
-        currencyManager.deleteObservers();
-        currencyManager.addObserver(this);
+        m.addObserver(this);
         final boolean isNetworkAvailable = ((BreadWalletApp) getApplication()).hasInternetAccess();
         networkErrorBar.setVisibility(isNetworkAvailable ? View.GONE : View.VISIBLE);
 
@@ -376,7 +375,7 @@ public class MainActivity extends FragmentActivity implements Observer {
             @Override
             public void run() {
                 if (SharedPreferencesManager.getPhraseWroteDown(app)) return;
-                long balance = CurrencyManager.getInstance(app).getBALANCE();
+                long balance = BRWalletManager.getInstance(app).getBALANCE();
                 int limit = SharedPreferencesManager.getLimit(app);
                 if (balance > limit)
                     BRWalletManager.getInstance(app).animateSavePhraseFlow();
