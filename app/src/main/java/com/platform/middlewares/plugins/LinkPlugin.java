@@ -6,7 +6,7 @@ import android.location.Geocoder;
 import android.net.Uri;
 import android.util.Log;
 
-import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.activities.BreadActivity;
 import com.google.firebase.crash.FirebaseCrash;
 import com.platform.BRHTTPHelper;
 import com.platform.interfaces.Plugin;
@@ -23,7 +23,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import static android.R.attr.handle;
-import static com.breadwallet.presenter.fragments.FragmentScanResult.address;
 
 /**
  * BreadWallet
@@ -58,7 +57,7 @@ public class LinkPlugin implements Plugin {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
             String url = request.getParameter("url");
 
-            MainActivity app = MainActivity.app;
+            BreadActivity app = BreadActivity.app;
             if (app == null) {
                 Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
@@ -75,7 +74,7 @@ public class LinkPlugin implements Plugin {
             return true;
         } else if (target.startsWith("/_open_maps")) {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
-            MainActivity app = MainActivity.app;
+            BreadActivity app = BreadActivity.app;
             if (app == null) {
                 Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);

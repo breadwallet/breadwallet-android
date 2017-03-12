@@ -12,7 +12,7 @@ import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
-import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.activities.BreadActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -41,7 +41,6 @@ import java.util.Locale;
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
@@ -89,7 +88,7 @@ public class Utils {
         String specsTag = "PHONE SPECS";
         Log.e(specsTag, "");
         Log.e(specsTag, "***************************PHONE SPECS***************************");
-        Log.e(specsTag, "* screen X: " + MainActivity.screenParametersPoint.x + " , screen Y: " + MainActivity.screenParametersPoint.y);
+        Log.e(specsTag, "* screen X: " + BreadActivity.screenParametersPoint.x + " , screen Y: " + BreadActivity.screenParametersPoint.y);
         Log.e(specsTag, "* Build.CPU_ABI: " + Build.CPU_ABI);
         Runtime rt = Runtime.getRuntime();
         long maxMemory = rt.maxMemory();
@@ -107,9 +106,8 @@ public class Utils {
         return isEmulator || (0 != (app.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE));
     }
 
-    public static String getFormattedDateFromLong(long time) {
+    public static String getFormattedDateFromLong(Context app, long time) {
 
-        MainActivity app = MainActivity.app;
         SimpleDateFormat formatter = new SimpleDateFormat("M/d@ha", Locale.getDefault());
         boolean is24HoursFormat = false;
         if (app != null) {

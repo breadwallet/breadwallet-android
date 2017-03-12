@@ -9,12 +9,8 @@ import android.widget.RelativeLayout;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
-import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.BlockEntity;
 import com.breadwallet.presenter.entities.PeerEntity;
-import com.breadwallet.presenter.fragments.FragmentSettingsAll;
-import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.sqlite.SQLiteManager;
 
@@ -201,7 +197,7 @@ public class BRPeerManager {
         }
         final BreadActivity ctx = BreadActivity.app;
         if (ctx == null) return;
-        MiddleViewAdapter.setSyncing(ctx, true);
+//        MiddleViewAdapter.setSyncing(ctx, true);
 //        ctx.runOnUiThread(new Runnable() {
 //            @Override
 //            public void run() {
@@ -221,7 +217,7 @@ public class BRPeerManager {
         Log.d(TAG, "stopSyncingProgressThread");
         final BreadActivity ctx = BreadActivity.app;
         if (ctx == null) return;
-        MiddleViewAdapter.setSyncing(ctx, false);
+//        MiddleViewAdapter.setSyncing(ctx, false);
 //        ctx.runOnUiThread(new Runnable() {
 //            @Override
 //            public void run() {
@@ -254,56 +250,56 @@ public class BRPeerManager {
 
         @Override
         public void run() {
-            final MainActivity app = MainActivity.app;
-            progressStatus = 0;
-            final DecimalFormat decimalFormat = new DecimalFormat("#.#");
-            if (app != null) {
-                app.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        app.setProgress((int) (progressStatus * 100), String.format("%s%%", decimalFormat.format(progressStatus * 100)));
-                    }
-                });
-                progressStatus = syncProgress(SharedPreferencesManager.getStartHeight(app));
-                app.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (BRAnimator.level == 0)
-                            app.showHideSyncProgressViews(true);
-
-                        app.setProgress((int) (progressStatus * 100), String.format("%s%%", decimalFormat.format(progressStatus * 100)));
-                    }
-                });
-                int startHeight = SharedPreferencesManager.getStartHeight(app);
-                while (running) {
-                    progressStatus = syncProgress(startHeight);
-//                    Log.e(TAG, "run: progressStatus: " + progressStatus);
-                    if (progressStatus == 1) {
-                        running = false;
-                        continue;
-                    }
-                    app.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            app.setProgress((int) (progressStatus * 100), String.format("%s%%", decimalFormat.format(progressStatus * 100)));
-                        }
-                    });
-                    try {
-                        Thread.sleep(300);
-                    } catch (InterruptedException e) {
-                        Log.e(TAG, "run: Thread.sleep was Interrupted");
-                        running = false;
-                        app.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                progressStatus = 0;
-                                app.showHideSyncProgressViews(false);
-                            }
-                        });
-                    }
-                }
-
-            }
+//            final MainActivity app = MainActivity.app;
+//            progressStatus = 0;
+//            final DecimalFormat decimalFormat = new DecimalFormat("#.#");
+//            if (app != null) {
+//                app.runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        app.setProgress((int) (progressStatus * 100), String.format("%s%%", decimalFormat.format(progressStatus * 100)));
+//                    }
+//                });
+//                progressStatus = syncProgress(SharedPreferencesManager.getStartHeight(app));
+//                app.runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        if (BRAnimator.level == 0)
+//                            app.showHideSyncProgressViews(true);
+//
+//                        app.setProgress((int) (progressStatus * 100), String.format("%s%%", decimalFormat.format(progressStatus * 100)));
+//                    }
+//                });
+//                int startHeight = SharedPreferencesManager.getStartHeight(app);
+//                while (running) {
+//                    progressStatus = syncProgress(startHeight);
+////                    Log.e(TAG, "run: progressStatus: " + progressStatus);
+//                    if (progressStatus == 1) {
+//                        running = false;
+//                        continue;
+//                    }
+//                    app.runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            app.setProgress((int) (progressStatus * 100), String.format("%s%%", decimalFormat.format(progressStatus * 100)));
+//                        }
+//                    });
+//                    try {
+//                        Thread.sleep(300);
+//                    } catch (InterruptedException e) {
+//                        Log.e(TAG, "run: Thread.sleep was Interrupted");
+//                        running = false;
+//                        app.runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                progressStatus = 0;
+//                                app.showHideSyncProgressViews(false);
+//                            }
+//                        });
+//                    }
+//                }
+//
+//            }
 
         }
     }

@@ -3,7 +3,6 @@ package com.breadwallet.tools.util;
 import android.app.Activity;
 import android.content.Context;
 
-import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.manager.CurrencyManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.wallet.BRWalletManager;
@@ -46,29 +45,29 @@ public class BRStringFormatter {
     public static final String TAG = BRStringFormatter.class.getName();
 
 
-    public static String getMiddleTextExchangeString(double rate, String iso, Activity ctx) {
-//        Log.e(TAG, "result of the exchange rate calculation: " + result);
-        if (rate == 0) rate = 1;
-        if (ctx == null) ctx = MainActivity.app;
-        if (ctx == null) return null;
-        long result = BRWalletManager.getInstance().bitcoinAmount(100, new BigDecimal(String.valueOf(rate)).multiply(new BigDecimal("100")).doubleValue());
-        return getFormattedCurrencyString(iso, 100) + " = " +
-                getFormattedCurrencyString("BTC", result);
-    }
+//    public static String getMiddleTextExchangeString(double rate, String iso, Activity ctx) {
+////        Log.e(TAG, "result of the exchange rate calculation: " + result);
+//        if (rate == 0) rate = 1;
+//        if (ctx == null) ctx = MainActivity.app;
+//        if (ctx == null) return null;
+//        long result = BRWalletManager.getInstance().bitcoinAmount(100, new BigDecimal(String.valueOf(rate)).multiply(new BigDecimal("100")).doubleValue());
+//        return getFormattedCurrencyString(iso, 100) + " = " +
+//                getFormattedCurrencyString("BTC", result);
+//    }
 
     public static String getBitsAndExchangeString(double rate, String iso, BigDecimal target, Activity ctx) {
         if (rate == 0) rate = 1;
         long exchange = BRWalletManager.getInstance().localAmount(target.longValue(),
                 new BigDecimal(String.valueOf(rate)).multiply(new BigDecimal("100")).doubleValue());
-        return getFormattedCurrencyString("BTC", target.longValue()) + " = " +
-                getFormattedCurrencyString(iso, exchange);
+        return getFormattedCurrencyString(ctx,"BTC", target.longValue()) + " = " +
+                getFormattedCurrencyString(ctx,iso, exchange);
     }
 
     public static String getExchangeForAmount(double rate, String iso, BigDecimal target, Context ctx) {
         if (rate == 0) rate = 1;
         long exchange = BRWalletManager.getInstance().localAmount(target.longValue(),
                 new BigDecimal(String.valueOf(rate)).multiply(new BigDecimal("100")).doubleValue());
-        return getFormattedCurrencyString(iso, exchange);
+        return getFormattedCurrencyString(ctx,iso, exchange);
     }
 
     public static String getCurrentBalanceText(Activity ctx) {
@@ -78,11 +77,11 @@ public class BRStringFormatter {
         long exchange = BRWalletManager.getInstance().localAmount(BRWalletManager.getInstance().getBalance(),
                 new BigDecimal(String.valueOf(rate)).multiply(new BigDecimal("100")).doubleValue());
 
-        return getFormattedCurrencyString("BTC", BRWalletManager.getInstance().getBalance()) + " (" +
-                getFormattedCurrencyString(iso, exchange) + ")";
+        return getFormattedCurrencyString(ctx,"BTC", BRWalletManager.getInstance().getBalance()) + " (" +
+                getFormattedCurrencyString(ctx,iso, exchange) + ")";
     }
 
-    public static String getFormattedCurrencyString(String isoCurrencyCode, long amount) {
+    public static String getFormattedCurrencyString(Context app,String isoCurrencyCode, long amount) {
 //        Log.e(TAG, "amount: " + amount);
         DecimalFormat currencyFormat;
         BigDecimal result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100"));
@@ -97,7 +96,6 @@ public class BRStringFormatter {
         int decimalPoints = 0;
         if (Objects.equals(isoCurrencyCode, "BTC")) {
             String currencySymbolString = BRConstants.bitcoinLowercase;
-            MainActivity app = MainActivity.app;
             if (app != null) {
                 int unit = SharedPreferencesManager.getCurrencyUnit(app);
                 currencyFormat.setMinimumFractionDigits(0);

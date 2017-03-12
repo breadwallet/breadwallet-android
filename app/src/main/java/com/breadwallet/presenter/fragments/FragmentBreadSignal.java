@@ -2,9 +2,6 @@ package com.breadwallet.presenter.fragments;
 
 import android.Manifest;
 import android.app.Fragment;
-import android.content.Context;
-import android.content.pm.PackageManager;
-import android.hardware.fingerprint.FingerprintManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
@@ -17,25 +14,10 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.breadwallet.BreadWalletApp;
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.tools.adapter.CurrencyListAdapter;
-import com.breadwallet.tools.adapter.MiddleViewAdapter;
-import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.manager.CurrencyManager;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
-import com.breadwallet.tools.security.PassCodeManager;
-import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.tools.util.BRStringFormatter;
-import com.breadwallet.wallet.BRPeerManager;
-import com.breadwallet.wallet.BRWalletManager;
 
 import junit.framework.Assert;
 
-import static android.R.attr.defaultValue;
-import static com.breadwallet.presenter.activities.MainActivity.app;
-import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
 
 /**
  * BreadWallet

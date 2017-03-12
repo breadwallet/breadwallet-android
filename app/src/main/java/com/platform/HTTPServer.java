@@ -2,7 +2,6 @@ package com.platform;
 
 import android.util.Log;
 
-import com.breadwallet.presenter.activities.MainActivity;
 import com.platform.interfaces.Middleware;
 import com.platform.interfaces.Plugin;
 import com.platform.middlewares.APIProxy;
@@ -48,6 +47,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import static com.breadwallet.R.string.request;
+import static com.breadwallet.presenter.activities.BreadActivity.app;
 import static com.platform.APIClient.server;
 
 /**
@@ -159,7 +159,6 @@ public class HTTPServer {
         Log.d(TAG, "TRYING TO HANDLE: " + target + " (" + request.getMethod() + ")");
         boolean result = false;
         if (target.equalsIgnoreCase("/_close")) {
-            final MainActivity app = MainActivity.app;
             if (app != null) {
                 app.runOnUiThread(new Runnable() {
                     @Override

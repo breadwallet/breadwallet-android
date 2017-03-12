@@ -8,7 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.NotificationCompat;
 
-import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.activities.BreadActivity;
 
 
 /**
@@ -39,7 +39,7 @@ import com.breadwallet.presenter.activities.MainActivity;
 public class BRNotificationManager {
     public static final String TAG = BRNotificationManager.class.getName();
 
-    public static void sendNotification(Activity ctx, int icon, String title, String message, int mId) {
+    public static void sendNotification(Context ctx, int icon, String title, String message, int mId) {
         if (ctx == null) return;
         android.support.v4.app.NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(ctx)
@@ -47,7 +47,7 @@ public class BRNotificationManager {
                         .setContentTitle(title)
                         .setContentText(message);
         // Creates an explicit intent for an Activity in your app
-        Intent resultIntent = new Intent(ctx, MainActivity.class);
+        Intent resultIntent = new Intent(ctx, BreadActivity.class);
 
         // The stack builder object will contain an artificial back stack for the
         // started Activity.
@@ -55,7 +55,7 @@ public class BRNotificationManager {
         // your application to the Home screen.
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(ctx);
         // Adds the back stack for the Intent (but not the Intent itself)
-        stackBuilder.addParentStack(MainActivity.class);
+        stackBuilder.addParentStack(BreadActivity.class);
         // Adds the Intent that starts the Activity to the top of the stack
         stackBuilder.addNextIntent(resultIntent);
         PendingIntent resultPendingIntent =

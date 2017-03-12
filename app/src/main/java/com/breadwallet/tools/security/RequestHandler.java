@@ -10,11 +10,8 @@ import android.webkit.URLUtil;
 import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
-import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.presenter.entities.RequestObject;
-import com.breadwallet.presenter.fragments.FragmentScanResult;
-import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
 import com.breadwallet.tools.util.TypesConverter;
@@ -91,7 +88,7 @@ public class RequestHandler {
         RequestObject requestObject = getRequestFromString(uri);
         if (requestObject == null) {
             if (app != null) {
-                ((BreadWalletApp) app.getApplication()).showCustomDialog(app.getString(R.string.warning),
+                ((BreadWalletApp) app.getApplication()).showCustomDialog(app, app.getString(R.string.warning),
                         app.getString(R.string.invalid_address), app.getString(R.string.ok));
             }
             return false;
@@ -102,7 +99,7 @@ public class RequestHandler {
             return tryAndProcessBitcoinURL(requestObject, app);
         } else {
             if (app != null) {
-                ((BreadWalletApp) app.getApplication()).showCustomDialog(app.getString(R.string.warning),
+                ((BreadWalletApp) app.getApplication()).showCustomDialog(app, app.getString(R.string.warning),
                         app.getString(R.string.bad_payment_request), app.getString(R.string.ok));
             }
             return false;
@@ -408,12 +405,12 @@ public class RequestHandler {
                 app.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        FragmentScanResult.address = str;
+//                        FragmentScanResult.address = str;
                         //TODO find a better way
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                BRAnimator.animateScanResultFragment();
+//                                BRAnimator.animateScanResultFragment();
                             }
                         }, 500);
 
@@ -423,20 +420,20 @@ public class RequestHandler {
             }
             String strAmount = String.valueOf(amount);
             if (app != null) {
-                BRWalletManager.getInstance(app).pay(addresses[0], new BigDecimal(strAmount), null, true);
+                BRWalletManager.getInstance().pay(app,addresses[0], new BigDecimal(strAmount), null, true);
             }
         } else {
             if (app != null)
                 app.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        FragmentScanResult.address = str;
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                BRAnimator.animateScanResultFragment();
-                            }
-                        }, 1000);
+//                        FragmentScanResult.address = str;
+//                        new Handler().postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                BRAnimator.animateScanResultFragment();
+//                            }
+//                        }, 1000);
                     }
                 });
         }

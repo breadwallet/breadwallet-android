@@ -2,7 +2,7 @@ package com.platform.middlewares;
 
 import android.util.Log;
 
-import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.activities.BreadActivity;
 import com.platform.APIClient;
 import com.platform.BRHTTPHelper;
 import com.platform.interfaces.Middleware;
@@ -69,7 +69,7 @@ public class APIProxy implements Middleware {
             "connection"};
 
     public APIProxy() {
-        apiInstance = APIClient.getInstance(MainActivity.app);
+        apiInstance = APIClient.getInstance(BreadActivity.app);
     }
 
     @Override

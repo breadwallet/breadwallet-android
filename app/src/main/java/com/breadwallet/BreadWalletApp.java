@@ -25,20 +25,18 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.activities.IntroActivity;
-import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.presenter.fragments.FingerprintDialogFragment;
-import com.breadwallet.presenter.fragments.PasswordDialogFragment;
-import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.util.concurrent.TimeUnit;
 
-import static com.breadwallet.presenter.activities.MainActivity.app;
+import static com.breadwallet.presenter.activities.BreadActivity.app;
 
 /**
  * BreadWallet
@@ -98,7 +96,7 @@ public class BreadWalletApp extends Application {
 
     public void showCustomToast(Context app, String message, int yOffSet, int duration, int color) {
         if (toast == null) toast = new Toast(getApplicationContext());
-        if (MainActivity.appInBackground) return;
+        if (BreadActivity.appInBackground) return;
 
         if (customToastAvailable || !oldMessage.equals(message)) {
             oldMessage = message;
@@ -134,106 +132,106 @@ public class BreadWalletApp extends Application {
         return toast != null && toast.getView() != null && toast.getView().isShown();
     }
 
-    public void setTopMiddleView(int view, String text) {
-        if(app == null) return;
-        switch (view) {
-            case BRConstants.BREAD_WALLET_IMAGE:
-                if (app.viewFlipper.getDisplayedChild() == 1) {
-                    app.viewFlipper.showPrevious();
-                }
-                break;
-            case BRConstants.BREAD_WALLET_TEXT:
-                if (app.viewFlipper.getDisplayedChild() == 0) {
-                    app.viewFlipper.showNext();
-                }
-                ((TextView) app.viewFlipper.getCurrentView()).setText(text);
-                ((TextView) app.viewFlipper.getCurrentView()).setTextSize(20);
-                break;
-        }
-    }
+//    public void setTopMiddleView(int view, String text) {
+//        if(app == null) return;
+//        switch (view) {
+//            case BRConstants.BREAD_WALLET_IMAGE:
+//                if (app.viewFlipper.getDisplayedChild() == 1) {
+//                    app.viewFlipper.showPrevious();
+//                }
+//                break;
+//            case BRConstants.BREAD_WALLET_TEXT:
+//                if (app.viewFlipper.getDisplayedChild() == 0) {
+//                    app.viewFlipper.showNext();
+//                }
+//                ((TextView) app.viewFlipper.getCurrentView()).setText(text);
+//                ((TextView) app.viewFlipper.getCurrentView()).setTextSize(20);
+//                break;
+//        }
+//    }
 
-    public void setLockerPayButton(int view) {
-        switch (view) {
-            case BRConstants.LOCKER_BUTTON:
-                if (app.lockerPayFlipper.getDisplayedChild() == 1) {
-                    app.lockerPayFlipper.showPrevious();
+//    public void setLockerPayButton(int view) {
+//        switch (view) {
+//            case BRConstants.LOCKER_BUTTON:
+//                if (app.lockerPayFlipper.getDisplayedChild() == 1) {
+//                    app.lockerPayFlipper.showPrevious();
+//
+//                } else if (app.lockerPayFlipper.getDisplayedChild() == 2) {
+//                    app.lockerPayFlipper.showPrevious();
+//                    app.lockerPayFlipper.showPrevious();
+//                }
+//                app.lockerButton.setVisibility(unlocked ? View.INVISIBLE : View.VISIBLE);
+//                break;
+//            case BRConstants.PAY_BUTTON:
+//                if (app.lockerPayFlipper.getDisplayedChild() == 0)
+//                    app.lockerPayFlipper.showNext();
+//                if (app.lockerPayFlipper.getDisplayedChild() == 2)
+//                    app.lockerPayFlipper.showPrevious();
+//                break;
+//            case BRConstants.REQUEST_BUTTON:
+//                if (app.lockerPayFlipper.getDisplayedChild() == 0) {
+//                    app.lockerPayFlipper.showNext();
+//                    app.lockerPayFlipper.showNext();
+//                } else if (app.lockerPayFlipper.getDisplayedChild() == 1) {
+//                    app.lockerPayFlipper.showNext();
+//                }
+//                break;
+//        }
+//
+//    }
 
-                } else if (app.lockerPayFlipper.getDisplayedChild() == 2) {
-                    app.lockerPayFlipper.showPrevious();
-                    app.lockerPayFlipper.showPrevious();
-                }
-                app.lockerButton.setVisibility(unlocked ? View.INVISIBLE : View.VISIBLE);
-                break;
-            case BRConstants.PAY_BUTTON:
-                if (app.lockerPayFlipper.getDisplayedChild() == 0)
-                    app.lockerPayFlipper.showNext();
-                if (app.lockerPayFlipper.getDisplayedChild() == 2)
-                    app.lockerPayFlipper.showPrevious();
-                break;
-            case BRConstants.REQUEST_BUTTON:
-                if (app.lockerPayFlipper.getDisplayedChild() == 0) {
-                    app.lockerPayFlipper.showNext();
-                    app.lockerPayFlipper.showNext();
-                } else if (app.lockerPayFlipper.getDisplayedChild() == 1) {
-                    app.lockerPayFlipper.showNext();
-                }
-                break;
-        }
-
-    }
-
-    public void promptForAuthentication(Activity context, int mode, PaymentRequestEntity requestEntity, String message, String title, PaymentRequestWrapper paymentRequest, boolean forcePasscode) {
+    public void promptForAuthentication(Context context, int mode, PaymentRequestEntity requestEntity, String message, String title, PaymentRequestWrapper paymentRequest, boolean forcePasscode) {
         Log.e(TAG, "promptForAuthentication: " + mode);
         if (context == null) return;
-        KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Activity.KEYGUARD_SERVICE);
-
-        boolean useFingerPrint = ActivityCompat.checkSelfPermission(this, Manifest.permission.USE_FINGERPRINT) ==
-                PackageManager.PERMISSION_GRANTED && mFingerprintManager.isHardwareDetected() && mFingerprintManager.hasEnrolledFingerprints();
-        if (mode == BRConstants.AUTH_FOR_PAY) {
-            long limit = KeyStoreManager.getSpendLimit(context);
-            long totalSent = BRWalletManager.getInstance().getTotalSent();
-
-            if (requestEntity != null)
-                if (limit <= totalSent + requestEntity.amount) {
-                    useFingerPrint = false;
-                }
-        }
-
-        if (mode == BRConstants.AUTH_FOR_LIMIT || mode == BRConstants.AUTH_FOR_PHRASE) {
-            useFingerPrint = false;
-        }
-
-        if (KeyStoreManager.getFailCount(context) != 0) {
-            useFingerPrint = false;
-        }
-        long passTime = KeyStoreManager.getLastPasscodeUsedTime(context);
-        if (passTime + TimeUnit.MILLISECONDS.convert(2, TimeUnit.DAYS) <= System.currentTimeMillis()) {
-            useFingerPrint = false;
-        }
-        if (forcePasscode) useFingerPrint = false;
-
-        if (keyguardManager.isKeyguardSecure()) {
-            if (useFingerPrint) {
-                // This happens when no fingerprints are registered.
-                FingerprintDialogFragment fingerprintDialogFragment = new FingerprintDialogFragment();
-                fingerprintDialogFragment.setMode(mode);
-                fingerprintDialogFragment.setPaymentRequestEntity(requestEntity, paymentRequest);
-                fingerprintDialogFragment.setMessage(message);
-                fingerprintDialogFragment.setTitle(message != null ? "" : title);
-                if (!context.isDestroyed())
-                    fingerprintDialogFragment.show(context.getFragmentManager(), FingerprintDialogFragment.class.getName());
-            } else {
-                PasswordDialogFragment passwordDialogFragment = new PasswordDialogFragment();
-                passwordDialogFragment.setMode(mode);
-                passwordDialogFragment.setPaymentRequestEntity(requestEntity, paymentRequest);
-                passwordDialogFragment.setVerifyOnlyTrue();
-                passwordDialogFragment.setMessage(message);
-                if (!context.isDestroyed())
-                    passwordDialogFragment.show(context.getFragmentManager(), PasswordDialogFragment.class.getName());
-            }
-        } else {
-            showDeviceNotSecuredWarning(context);
-        }
+//        KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Activity.KEYGUARD_SERVICE);
+//
+//        boolean useFingerPrint = ActivityCompat.checkSelfPermission(this, Manifest.permission.USE_FINGERPRINT) ==
+//                PackageManager.PERMISSION_GRANTED && mFingerprintManager.isHardwareDetected() && mFingerprintManager.hasEnrolledFingerprints();
+//        if (mode == BRConstants.AUTH_FOR_PAY) {
+//            long limit = KeyStoreManager.getSpendLimit(context);
+//            long totalSent = BRWalletManager.getInstance().getTotalSent();
+//
+//            if (requestEntity != null)
+//                if (limit <= totalSent + requestEntity.amount) {
+//                    useFingerPrint = false;
+//                }
+//        }
+//
+//        if (mode == BRConstants.AUTH_FOR_LIMIT || mode == BRConstants.AUTH_FOR_PHRASE) {
+//            useFingerPrint = false;
+//        }
+//
+//        if (KeyStoreManager.getFailCount(context) != 0) {
+//            useFingerPrint = false;
+//        }
+//        long passTime = KeyStoreManager.getLastPasscodeUsedTime(context);
+//        if (passTime + TimeUnit.MILLISECONDS.convert(2, TimeUnit.DAYS) <= System.currentTimeMillis()) {
+//            useFingerPrint = false;
+//        }
+//        if (forcePasscode) useFingerPrint = false;
+//
+//        if (keyguardManager.isKeyguardSecure()) {
+//            if (useFingerPrint) {
+//                // This happens when no fingerprints are registered.
+//                FingerprintDialogFragment fingerprintDialogFragment = new FingerprintDialogFragment();
+//                fingerprintDialogFragment.setMode(mode);
+//                fingerprintDialogFragment.setPaymentRequestEntity(requestEntity, paymentRequest);
+//                fingerprintDialogFragment.setMessage(message);
+//                fingerprintDialogFragment.setTitle(message != null ? "" : title);
+//                if (!context.isDestroyed())
+//                    fingerprintDialogFragment.show(context.getFragmentManager(), FingerprintDialogFragment.class.getName());
+//            } else {
+//                PasswordDialogFragment passwordDialogFragment = new PasswordDialogFragment();
+//                passwordDialogFragment.setMode(mode);
+//                passwordDialogFragment.setPaymentRequestEntity(requestEntity, paymentRequest);
+//                passwordDialogFragment.setVerifyOnlyTrue();
+//                passwordDialogFragment.setMessage(message);
+//                if (!context.isDestroyed())
+//                    passwordDialogFragment.show(context.getFragmentManager(), PasswordDialogFragment.class.getName());
+//            }
+//        } else {
+//            showDeviceNotSecuredWarning(context);
+//        }
 
     }
 
@@ -280,12 +278,12 @@ public class BreadWalletApp extends Application {
     }
 
     public void setUnlocked(boolean b) {
-        unlocked = b;
-        if (app != null) {
-            app.lockerButton.setVisibility(b ? View.GONE : View.VISIBLE);
-            app.lockerButton.setClickable(!b);
-            MiddleViewAdapter.resetMiddleView(app, null);
-        }
+//        unlocked = b;
+//        if (app != null) {
+//            app.lockerButton.setVisibility(b ? View.GONE : View.VISIBLE);
+//            app.lockerButton.setClickable(!b);
+//            MiddleViewAdapter.resetMiddleView(app, null);
+//        }
     }
 
     public void allowKeyStoreAccessForSeconds() {

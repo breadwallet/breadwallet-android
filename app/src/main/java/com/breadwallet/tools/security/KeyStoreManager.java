@@ -14,9 +14,6 @@ import android.util.Log;
 
 import com.breadwallet.R;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
-import com.breadwallet.presenter.activities.IntroActivity;
-import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.util.ByteReader;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.util.TypesConverter;

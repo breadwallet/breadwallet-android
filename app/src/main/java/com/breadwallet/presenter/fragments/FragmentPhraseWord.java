@@ -13,13 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.tools.adapter.MiddleViewAdapter;
-import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.util.BRConstants;
 
-import java.util.Locale;
-
-import static com.breadwallet.R.id.word_button;
 
 /**
  * BreadWallet

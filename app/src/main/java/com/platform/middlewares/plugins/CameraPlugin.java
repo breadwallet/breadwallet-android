@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.BRConstants;
@@ -102,7 +102,7 @@ public class CameraPlugin implements Plugin {
 
         if (target.startsWith("/_camera/take_picture")) {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
-            final MainActivity app = MainActivity.app;
+            final BreadActivity app = BreadActivity.app;
             if (app == null) {
                 Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
 
@@ -130,7 +130,7 @@ public class CameraPlugin implements Plugin {
                     Log.e(TAG, "handle: no camera access, showing instructions");
                     ((BreadWalletApp) app.getApplication()).showCustomToast(app,
                             app.getString(R.string.allow_camera_access),
-                            MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
+                            BreadActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
                 } else {
                     // No explanation needed, we can request the permission.
                     ActivityCompat.requestPermissions(app,
@@ -151,7 +151,7 @@ public class CameraPlugin implements Plugin {
             return true;
         } else if (target.startsWith("/_camera/picture/")) {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
-            final MainActivity app = MainActivity.app;
+            final BreadActivity app = BreadActivity.app;
             if (app == null) {
                 Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);

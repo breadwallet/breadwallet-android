@@ -1,6 +1,7 @@
 package com.breadwallet.presenter.activities;
 
 import android.content.Intent;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -57,6 +58,7 @@ public class BreadActivity extends AppCompatActivity implements Observer {
     private LinearLayout receiveButton;
     private LinearLayout menuButton;
     public static BreadActivity app;
+    public static final Point screenParametersPoint = new Point();
 
     private TextView primaryPrice;
     private TextView secondaryPrice;
@@ -100,7 +102,7 @@ public class BreadActivity extends AppCompatActivity implements Observer {
 
         setContentView(R.layout.activity_bread);
         app = this;
-
+        getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
         // Always cast your custom Toolbar here, and set it as the ActionBar.
         Toolbar tb = (Toolbar) findViewById(R.id.bread_bar);
         setSupportActionBar(tb);

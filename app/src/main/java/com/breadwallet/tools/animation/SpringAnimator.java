@@ -12,7 +12,6 @@ import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 
 /**
  * BreadWallet

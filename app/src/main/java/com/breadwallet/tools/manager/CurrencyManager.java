@@ -8,9 +8,6 @@ import android.util.Log;
 
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.entities.CurrencyEntity;
-import com.breadwallet.tools.adapter.CurrencyListAdapter;
-import com.breadwallet.tools.adapter.MiddleViewAdapter;
-import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.util.JsonParser;
 
 import org.json.JSONArray;
@@ -62,11 +59,11 @@ public class CurrencyManager  {
 
     private Handler handler;
     //    public static boolean separatorNeedsToBeShown = false;
-    private final CurrencyListAdapter currencyListAdapter;
+//    private final CurrencyListAdapter currencyListAdapter;
 
     private CurrencyManager(Context ctx) {
         this.context = ctx;
-        currencyListAdapter = new CurrencyListAdapter(ctx);
+//        currencyListAdapter = new CurrencyListAdapter(ctx);
         handler = new Handler();
     }
 
@@ -156,10 +153,10 @@ public class CurrencyManager  {
         }
     }
 
-    public CurrencyListAdapter getCurrencyAdapterIfReady() {
-//        new GetCurrenciesTask().execute();
-        return currencyListAdapter;
-    }
+//    public CurrencyListAdapter getCurrencyAdapterIfReady() {
+////        new GetCurrenciesTask().execute();
+//        return currencyListAdapter;
+//    }
 
     private void initializeTimerTask() {
 

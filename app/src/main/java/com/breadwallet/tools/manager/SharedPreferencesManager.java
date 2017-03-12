@@ -9,11 +9,8 @@ import android.util.Base64InputStream;
 import android.util.Base64OutputStream;
 import android.util.Log;
 
-import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
-import com.breadwallet.presenter.fragments.FragmentCurrency;
 import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.wallet.BRWalletManager;
 
 import org.json.JSONArray;
 

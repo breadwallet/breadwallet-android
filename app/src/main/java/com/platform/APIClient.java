@@ -9,7 +9,7 @@ import android.util.Log;
 
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.tools.crypto.Base58;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.crypto.CryptoHelper;
@@ -46,6 +46,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import static com.breadwallet.presenter.activities.BreadActivity.app;
 import io.sigpipe.jbsdiff.InvalidHeaderException;
 import io.sigpipe.jbsdiff.ui.FileUI;
 import okhttp3.Interceptor;
@@ -59,10 +60,6 @@ import okhttp3.ResponseBody;
 import okio.Buffer;
 import okio.BufferedSink;
 
-import static android.R.attr.key;
-import static android.R.attr.path;
-import static com.breadwallet.R.string.request;
-import static com.breadwallet.R.string.rescan;
 import static com.breadwallet.tools.util.BRCompressor.gZipExtract;
 
 
@@ -186,7 +183,7 @@ public class APIClient {
     }
 
     public Response buyBitcoinMe() {
-        if (ctx == null) ctx = MainActivity.app;
+        if (ctx == null) ctx = app;
         if (ctx == null) return null;
         String strUtl = BASE_URL + ME;
         Request request = new Request.Builder()
@@ -212,7 +209,7 @@ public class APIClient {
     }
 
     public String getToken() {
-        if (ctx == null) ctx = MainActivity.app;
+        if (ctx == null) ctx = app;
         if (ctx == null) return null;
         try {
             String strUtl = BASE_URL + TOKEN;
@@ -506,7 +503,7 @@ public class APIClient {
     }
 
     public boolean tryExtractTar(File inputFile) {
-        String extractFolderName = MainActivity.app.getFilesDir().getAbsolutePath() + bundlesFileName + "/" + extractedFolder;
+        String extractFolderName = app.getFilesDir().getAbsolutePath() + bundlesFileName + "/" + extractedFolder;
         boolean result = false;
         TarArchiveInputStream debInputStream = null;
         try {

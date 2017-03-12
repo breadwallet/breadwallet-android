@@ -1,11 +1,11 @@
 package com.breadwallet.tools.util;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.util.Log;
 
-import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.wallet.BRWalletManager;
 import com.google.firebase.crash.FirebaseCrash;
@@ -55,7 +55,7 @@ public class JsonParser {
     public static final String TAG = JsonParser.class.getName();
 
     public static JSONArray getJSonArray(Activity activity) {
-        String jsonString = callURL("https://api.breadwallet.com/rates");
+        String jsonString = callURL(activity,"https://api.breadwallet.com/rates");
         JSONArray jsonArray = null;
         try {
             JSONObject obj = new JSONObject(jsonString);
@@ -68,7 +68,7 @@ public class JsonParser {
     }
 
     public static JSONArray getBackUpJSonArray(Activity activity) {
-        String jsonString = callURL("https://bitpay.com/rates");
+        String jsonString = callURL(activity,"https://bitpay.com/rates");
 
         JSONArray jsonArray = null;
         if (jsonString == null) return null;
@@ -88,7 +88,7 @@ public class JsonParser {
     }
 
     public static void updateFeePerKb(Activity activity) {
-        String jsonString = callURL("https://api.breadwallet.com/fee-per-kb");
+        String jsonString = callURL(activity,"https://api.breadwallet.com/fee-per-kb");
         if (jsonString == null || jsonString.isEmpty()) {
             Log.e(TAG, "updateFeePerKb: failed to update fee, response string: " + jsonString);
             return;
@@ -100,7 +100,7 @@ public class JsonParser {
             if (fee != 0 && fee < BRConstants.MAX_FEE_PER_KB) {
 
                 SharedPreferencesManager.putFeePerKb(activity, fee);
-                BRWalletManager.getInstance(activity).setFeePerKb(fee);
+                BRWalletManager.getInstance().setFeePerKb(fee);
             }
         } catch (JSONException e) {
             FirebaseCrash.report(e);
@@ -108,7 +108,7 @@ public class JsonParser {
         }
     }
 
-    private static String callURL(String myURL) {
+    private static String callURL(Context app,String myURL) {
 //        System.out.println("Requested URL_EA:" + myURL);
         StringBuilder sb = new StringBuilder();
         HttpURLConnection urlConn = null;
@@ -117,7 +117,6 @@ public class JsonParser {
             URL url = new URL(myURL);
             urlConn = (HttpURLConnection) url.openConnection();
             int versionNumber = 0;
-            MainActivity app = MainActivity.app;
             if (app != null) {
                 try {
                     PackageInfo pInfo = null;

@@ -2,7 +2,6 @@ package com.platform.middlewares;
 
 import android.util.Log;
 
-import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
@@ -25,6 +24,7 @@ import java.util.Arrays;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import static com.breadwallet.presenter.activities.BreadActivity.app;
 import okhttp3.Request;
 
 import static android.R.attr.baseline;
@@ -67,7 +67,7 @@ public class HTTPFileMiddleware implements Middleware {
             return BRHTTPHelper.handleSuccess(200, null, baseRequest, response, null);
         }
 
-        String requestedFile = MainActivity.app.getFilesDir() + "/" + BUNDLES + "/" + extractedFolder + target;
+        String requestedFile = app.getFilesDir() + "/" + BUNDLES + "/" + extractedFolder + target;
         File temp = new File(requestedFile);
         if (!temp.exists()) {
             return false;

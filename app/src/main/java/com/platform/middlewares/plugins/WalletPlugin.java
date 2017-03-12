@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
-import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.tools.security.RequestHandler;
 import com.breadwallet.tools.util.BRStringFormatter;
 import com.breadwallet.tools.util.Utils;
@@ -26,6 +26,7 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import static com.breadwallet.presenter.activities.BreadActivity.app;
 import static com.breadwallet.tools.util.BRStringFormatter.getFormattedCurrencyString;
 import static com.google.firebase.analytics.FirebaseAnalytics.getInstance;
 import static org.eclipse.jetty.http.HttpMethod.POST;
@@ -65,12 +66,11 @@ public class WalletPlugin implements Plugin {
 
         if (target.startsWith("/_wallet/info") && request.getMethod().equalsIgnoreCase("get")) {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
-            final MainActivity app = MainActivity.app;
             if (app == null) {
                 Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
             }
-            BRWalletManager wm = BRWalletManager.getInstance(app);
+            BRWalletManager wm = BRWalletManager.getInstance();
             JSONObject jsonResp = new JSONObject();
             try {
                 jsonResp.put("no_wallet", wm.noWalletForPlatform(app));
@@ -98,7 +98,7 @@ public class WalletPlugin implements Plugin {
             } else {
                 satAmount = Long.valueOf(amount);
             }
-            return BRHTTPHelper.handleSuccess(200, BRStringFormatter.getFormattedCurrencyString(Locale.getDefault().getISO3Language(), satAmount).getBytes(), baseRequest, response, null);
+            return BRHTTPHelper.handleSuccess(200, BRStringFormatter.getFormattedCurrencyString(app,Locale.getDefault().getISO3Language(), satAmount).getBytes(), baseRequest, response, null);
         } else if (target.startsWith("/_wallet/sign_bitid") && request.getMethod().equalsIgnoreCase("post")) {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
             /**
@@ -119,7 +119,7 @@ public class WalletPlugin implements Plugin {
              "signature": "oibwaeofbawoefb" // base64-encoded signature
              }
              */
-            final MainActivity app = MainActivity.app;
+            final BreadActivity app = BreadActivity.app;
             if (app == null) {
                 Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);

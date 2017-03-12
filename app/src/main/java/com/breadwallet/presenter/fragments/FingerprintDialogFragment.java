@@ -29,22 +29,13 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
-import com.breadwallet.presenter.activities.IntroActivity;
-import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.presenter.activities.PhraseFlowActivity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
-import com.breadwallet.tools.security.PostAuthenticationProcessor;
-import com.breadwallet.tools.security.RequestHandler;
 import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.security.FingerprintUiHelper;
-import com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask;
 import com.breadwallet.wallet.BRWalletManager;
 
-import static com.breadwallet.tools.util.BRConstants.AUTH_FOR_BIT_ID;
 
 /**
  * A dialog which uses fingerprint APIs to authenticate the user, and falls back to password
@@ -102,8 +93,8 @@ public class FingerprintDialogFragment extends DialogFragment
             @Override
             public void onClick(View view) {
                 if (!BRAnimator.scanResultFragmentOn && mode == BRConstants.AUTH_FOR_PAY && request.isAmountRequested) {
-                    FragmentScanResult.address = request.addresses[0];
-                    BRWalletManager.getInstance(getActivity()).offerToChangeTheAmount(getActivity(), "");
+//                    FragmentScanResult.address = request.addresses[0];
+                    BRWalletManager.getInstance().offerToChangeTheAmount(getActivity(), "");
                 }
                 dismiss();
             }
@@ -140,16 +131,16 @@ public class FingerprintDialogFragment extends DialogFragment
      */
     private void goToBackup() {
 
-        // Fingerprint is not used anymore. Stop listening for it.
-        if (getDialog() != null)
-            getDialog().cancel();
-        PasswordDialogFragment passwordDialogFragment = new PasswordDialogFragment();
-        passwordDialogFragment.setMode(mode);
-        passwordDialogFragment.setPaymentRequestEntity(request, paymentRequest);
-        passwordDialogFragment.setVerifyOnlyTrue();
-        passwordDialogFragment.setMessage(message);
-        FragmentManager fm = getActivity().getFragmentManager();
-        passwordDialogFragment.show(fm, PasswordDialogFragment.class.getName());
+//        // Fingerprint is not used anymore. Stop listening for it.
+//        if (getDialog() != null)
+//            getDialog().cancel();
+//        PasswordDialogFragment passwordDialogFragment = new PasswordDialogFragment();
+//        passwordDialogFragment.setMode(mode);
+//        passwordDialogFragment.setPaymentRequestEntity(request, paymentRequest);
+//        passwordDialogFragment.setVerifyOnlyTrue();
+//        passwordDialogFragment.setMessage(message);
+//        FragmentManager fm = getActivity().getFragmentManager();
+//        passwordDialogFragment.show(fm, PasswordDialogFragment.class.getName());
         if (mFingerprintUiHelper != null)
             mFingerprintUiHelper.stopListening();
     }
@@ -159,29 +150,29 @@ public class FingerprintDialogFragment extends DialogFragment
         Dialog d = getDialog();
         if (d == null) return;
         d.cancel();
-
-        ((BreadWalletApp) getActivity().getApplicationContext()).setUnlocked(true);
-        FragmentSettingsAll.refreshUI();
-        MiddleViewAdapter.resetMiddleView(getActivity(), null);
-        ((BreadWalletApp) getActivity().getApplicationContext()).allowKeyStoreAccessForSeconds();
-        getDialog().dismiss();
-        if (mode == BRConstants.AUTH_FOR_PHRASE) {
-            PhraseFlowActivity app = ((PhraseFlowActivity) getActivity());
-            if (SharedPreferencesManager.getPhraseWroteDown(app)) {
-//                app.animateSlide(app.fragmentPhraseFlow1, app.fragmentRecoveryPhrase, IntroActivity.RIGHT);
-//                app.fragmentRecoveryPhrase.setPhrase(FragmentPhraseFlow1.phrase);
-            } else {
-//                app.animateSlide(app.fragmentPhraseFlow1, app.fragmentPhraseFlow2, IntroActivity.RIGHT);
-//                app.fragmentPhraseFlow2.setPhrase(FragmentPhraseFlow1.phrase);
-            }
-        } else if (mode == BRConstants.AUTH_FOR_PAY && request != null) {
-            PostAuthenticationProcessor.getInstance().onPublishTxAuth((MainActivity) getActivity(),false);
-        } else if (mode == BRConstants.AUTH_FOR_PAYMENT_PROTOCOL && paymentRequest != null) {
-            if (paymentRequest.paymentURL == null || paymentRequest.paymentURL.isEmpty()) return;
-            new PaymentProtocolPostPaymentTask(paymentRequest).execute();
-        } else if (mode == AUTH_FOR_BIT_ID){
-            RequestHandler.processBitIdResponse(getActivity());
-        }
+//
+//        ((BreadWalletApp) getActivity().getApplicationContext()).setUnlocked(true);
+//        FragmentSettingsAll.refreshUI();
+//        MiddleViewAdapter.resetMiddleView(getActivity(), null);
+//        ((BreadWalletApp) getActivity().getApplicationContext()).allowKeyStoreAccessForSeconds();
+//        getDialog().dismiss();
+//        if (mode == BRConstants.AUTH_FOR_PHRASE) {
+//            PhraseFlowActivity app = ((PhraseFlowActivity) getActivity());
+//            if (SharedPreferencesManager.getPhraseWroteDown(app)) {
+////                app.animateSlide(app.fragmentPhraseFlow1, app.fragmentRecoveryPhrase, IntroActivity.RIGHT);
+////                app.fragmentRecoveryPhrase.setPhrase(FragmentPhraseFlow1.phrase);
+//            } else {
+////                app.animateSlide(app.fragmentPhraseFlow1, app.fragmentPhraseFlow2, IntroActivity.RIGHT);
+////                app.fragmentPhraseFlow2.setPhrase(FragmentPhraseFlow1.phrase);
+//            }
+//        } else if (mode == BRConstants.AUTH_FOR_PAY && request != null) {
+//            PostAuthenticationProcessor.getInstance().onPublishTxAuth((MainActivity) getActivity(),false);
+//        } else if (mode == BRConstants.AUTH_FOR_PAYMENT_PROTOCOL && paymentRequest != null) {
+//            if (paymentRequest.paymentURL == null || paymentRequest.paymentURL.isEmpty()) return;
+//            new PaymentProtocolPostPaymentTask(paymentRequest).execute();
+//        } else if (mode == AUTH_FOR_BIT_ID){
+//            RequestHandler.processBitIdResponse(getActivity());
+//        }
         dismiss();
     }
 

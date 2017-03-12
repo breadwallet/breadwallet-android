@@ -6,7 +6,7 @@ import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
-import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.ByteReader;
@@ -20,6 +20,8 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.breadwallet.presenter.activities.BreadActivity.app;
 
 /**
  * BreadWallet
@@ -67,7 +69,6 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
     @Override
     protected String doInBackground(String... uri) {
         InputStream in;
-        final MainActivity app = MainActivity.app;
         try {
             waiting = true;
             sent = false;
@@ -98,8 +99,8 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
             }
 
             message = RequestHandler.parsePaymentACK(serializedBytes);
-            PostAuthenticationProcessor.getInstance().setTmpPaymentRequest(paymentRequest);
-            PostAuthenticationProcessor.getInstance().onPaymentProtocolRequest(app,false);
+//            PostAuthenticationProcessor.getInstance().setTmpPaymentRequest(paymentRequest);
+//            PostAuthenticationProcessor.getInstance().onPaymentProtocolRequest(app,false);
         } catch (Exception e) {
             if (e instanceof java.net.UnknownHostException) {
                 if (app != null) {
@@ -122,7 +123,7 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
                     pendingErrorMessages.put(MESSAGE, app.getString(R.string.could_not_transmit_payment));
                     if (!((BreadWalletApp) app.getApplication()).hasInternetAccess())
                         ((BreadWalletApp) app.getApplication()).
-                                showCustomDialog(app.getString(R.string.could_not_make_payment), app.getString(R.string.not_connected_network), app.getString(R.string.ok));
+                                showCustomDialog(app,app.getString(R.string.could_not_make_payment), app.getString(R.string.not_connected_network), app.getString(R.string.ok));
 
                 }
 
@@ -144,15 +145,14 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
     }
 
     public static void handleMessage() {
-        final MainActivity app = MainActivity.app;
         if (app != null && message != null) {
             if (!message.isEmpty()) {
                 ((BreadWalletApp) app.getApplication()).
-                        showCustomToast(app, message, MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 1);
+                        showCustomToast(app, message, BreadActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 1);
             } else {
                 if (!waiting && !sent && pendingErrorMessages.get(MESSAGE) != null) {
                     ((BreadWalletApp) app.getApplication()).
-                            showCustomDialog(pendingErrorMessages.get(TITLE), pendingErrorMessages.get(MESSAGE), app.getString(R.string.ok));
+                            showCustomDialog(app,pendingErrorMessages.get(TITLE), pendingErrorMessages.get(MESSAGE), app.getString(R.string.ok));
                     pendingErrorMessages = null;
                 }
             }

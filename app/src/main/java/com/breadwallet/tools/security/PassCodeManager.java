@@ -68,7 +68,7 @@ public class PassCodeManager {
         if (activity == null) return;
         long limit = KeyStoreManager.getSpendLimit(activity);
         if (limit == 0) {
-            long totalSpent = BRWalletManager.getInstance(activity).getTotalSent();
+            long totalSpent = BRWalletManager.getInstance().getTotalSent();
             long spendLimit = totalSpent + PassCodeManager.getInstance().getLimit(activity);
             KeyStoreManager.putSpendLimit(spendLimit, activity);
         }
