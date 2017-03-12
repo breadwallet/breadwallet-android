@@ -77,7 +77,7 @@ public class IntroPhraseProveActivity extends Activity {
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                BRWalletManager.getInstance(IntroPhraseProveActivity.this).startBreadActivity(IntroPhraseProveActivity.this);
+                                BRWalletManager.getInstance().startBreadActivity(IntroPhraseProveActivity.this);
                                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                             }
                         }, 1000);
@@ -103,7 +103,7 @@ public class IntroPhraseProveActivity extends Activity {
         String wordArray[] = cleanPhrase.split(" ");
 
         if (wordArray.length == 12 && cleanPhrase.charAt(cleanPhrase.length() - 1) == '\0') {
-            ((BreadWalletApp) getApplication()).showCustomDialog(getString(R.string.warning),
+            ((BreadWalletApp) getApplication()).showCustomDialog(this,getString(R.string.warning),
                     getString(R.string.phrase_error), getString(R.string.ok));
             FirebaseCrash.report(new IllegalArgumentException(getString(R.string.phrase_error)));
 
