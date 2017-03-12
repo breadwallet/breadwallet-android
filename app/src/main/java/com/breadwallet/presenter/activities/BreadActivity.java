@@ -56,6 +56,7 @@ public class BreadActivity extends AppCompatActivity implements Observer {
     private LinearLayout sendButton;
     private LinearLayout receiveButton;
     private LinearLayout menuButton;
+    public static BreadActivity app;
 
     private TextView primaryPrice;
     private TextView secondaryPrice;
@@ -98,6 +99,7 @@ public class BreadActivity extends AppCompatActivity implements Observer {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_bread);
+        app = this;
 
         // Always cast your custom Toolbar here, and set it as the ActionBar.
         Toolbar tb = (Toolbar) findViewById(R.id.bread_bar);
@@ -204,12 +206,14 @@ public class BreadActivity extends AppCompatActivity implements Observer {
     @Override
     protected void onRestart() {
         super.onRestart();
+        app = this;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         appInBackground = false;
+        app = this;
 
 //        new Thread(new Runnable() {
 //            @Override

@@ -87,7 +87,7 @@ public class FragmentSettingsAll extends Fragment {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    transactionObjects = BRWalletManager.getInstance(ctx).getTransactions();
+                    transactionObjects = BRWalletManager.getInstance().getTransactions();
                     if (ctx != null && ctx instanceof MainActivity) {
                         ctx.runOnUiThread(new Runnable() {
                             @Override

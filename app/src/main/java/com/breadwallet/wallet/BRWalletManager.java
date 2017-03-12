@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
+import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.activities.PhraseFlowActivity;
@@ -256,14 +257,14 @@ public class BRWalletManager extends Observable {
         if (ctx == null) return false;
         if (isValidBitcoinBIP38Key(privKey)) {
             Log.d(TAG, "isValidBitcoinBIP38Key true");
-            ((Activity)ctx).runOnUiThread(new Runnable() {
+            ((Activity) ctx).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
 
                     final AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
 //                    builder.setTitle("password protected key");
 
-                    final View input = ((Activity)ctx).getLayoutInflater().inflate(R.layout.view_bip38password_dialog, null);
+                    final View input = ((Activity) ctx).getLayoutInflater().inflate(R.layout.view_bip38password_dialog, null);
                     // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
                     builder.setView(input);
 
@@ -281,11 +282,11 @@ public class BRWalletManager extends Observable {
                     builder.setPositiveButton(ctx.getString(R.string.ok), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            if (!((BreadWalletApp) ((Activity)ctx).getApplication()).hasInternetAccess()) {
-                                ((Activity)ctx).runOnUiThread(new Runnable() {
+                            if (!((BreadWalletApp) ((Activity) ctx).getApplication()).hasInternetAccess()) {
+                                ((Activity) ctx).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        ((BreadWalletApp) ((Activity)ctx).getApplication()).showCustomDialog(activity.getString(R.string.warning),
+                                        ((BreadWalletApp) ((Activity) ctx).getApplication()).showCustomDialog(activity.getString(R.string.warning),
                                                 activity.getString(R.string.not_connected), activity.getString(R.string.ok));
                                     }
                                 });
@@ -293,10 +294,10 @@ public class BRWalletManager extends Observable {
                                 return;
                             }
                             if (ctx != null)
-                                ((Activity)ctx).runOnUiThread(new Runnable() {
+                                ((Activity) ctx).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        ((BreadWalletApp) ((Activity)ctx).getApplication()).showCustomToast(ctx,
+                                        ((BreadWalletApp) ((Activity) ctx).getApplication()).showCustomToast(ctx,
                                                 activity.getString(R.string.checking_privkey_balance), MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 1);
                                     }
                                 });
@@ -327,7 +328,7 @@ public class BRWalletManager extends Observable {
             return true;
         } else if (isValidBitcoinPrivateKey(privKey)) {
             Log.d(TAG, "isValidBitcoinPrivateKey true");
-            new ImportPrivKeyTask(ctx).execute(privKey);
+            new ImportPrivKeyTask(((Activity) ctx)).execute(privKey);
             return true;
         } else {
             Log.e(TAG, "confirmSweep: !isValidBitcoinPrivateKey && !isValidBitcoinBIP38Key");
@@ -338,7 +339,7 @@ public class BRWalletManager extends Observable {
     public static void showWritePhraseDialog(final Context ctx, final boolean firstTime) {
 
         if (ctx != null) {
-            ((Activity)ctx).runOnUiThread(new Runnable() {
+            ((Activity) ctx).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     boolean phraseWroteDown = SharedPreferencesManager.getPhraseWroteDown(ctx);
@@ -364,7 +365,7 @@ public class BRWalletManager extends Observable {
                                         @Override
                                         public void run() {
                                             dialog.dismiss();
-                                            BRWalletManager.getInstance(ctx).animateSavePhraseFlow();
+//                                            BRWalletManager.getInstance().animateSavePhraseFlow();
                                         }
                                     }).start();
                                 }
@@ -389,17 +390,17 @@ public class BRWalletManager extends Observable {
      * Wallet callbacks
      */
 
-    public static void publishCallback(Context ctx,final String message, int error) {
+    public static void publishCallback(Context ctx, final String message, int error) {
         PaymentProtocolPostPaymentTask.waiting = false;
         if (error != 0) {
             if (!PaymentProtocolPostPaymentTask.waiting && !PaymentProtocolPostPaymentTask.sent) {
                 if (PaymentProtocolPostPaymentTask.pendingErrorMessages.get(PaymentProtocolPostPaymentTask.MESSAGE) != null) {
-                    ((BreadWalletApp) ((Activity)ctx).getApplication()).
-                            showCustomDialog(PaymentProtocolPostPaymentTask.pendingErrorMessages.get(PaymentProtocolPostPaymentTask.TITLE),
+                    ((BreadWalletApp) ((Activity) ctx).getApplication()).
+                            showCustomDialog(ctx, PaymentProtocolPostPaymentTask.pendingErrorMessages.get(PaymentProtocolPostPaymentTask.TITLE),
                                     PaymentProtocolPostPaymentTask.pendingErrorMessages.get(PaymentProtocolPostPaymentTask.MESSAGE), ctx.getString(R.string.ok));
                     PaymentProtocolPostPaymentTask.pendingErrorMessages = null;
                 } else {
-                    ((BreadWalletApp) ((Activity)ctx).getApplication()).showCustomToast(ctx, message,
+                    ((BreadWalletApp) ((Activity) ctx).getApplication()).showCustomToast(ctx, message,
                             MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 1);
                 }
             }
@@ -425,6 +426,7 @@ public class BRWalletManager extends Observable {
                 }
             });
         }
+        final BreadActivity ctx = BreadActivity.app;
         if (ctx != null) {
 
             ctx.runOnUiThread(new Runnable() {
@@ -438,14 +440,14 @@ public class BRWalletManager extends Observable {
                                             SharedPreferencesManager.getIso(ctx), new BigDecimal(absAmount), ctx))) :
                             ctx.getString(R.string.sent_exclaimed);
 
-                    showSentReceivedToast(strToShow);
+                    showSentReceivedToast(ctx,strToShow);
                 }
 
             });
 
         }
 
-        if (getInstance(ctx).getTxCount() <= 1) {
+        if (getInstance().getTxCount() <= 1) {
             SharedPreferencesManager.putPhraseWarningTime(ctx, System.currentTimeMillis() / 1000);
             ctx.runOnUiThread(new Runnable() {
                 @Override
@@ -453,7 +455,7 @@ public class BRWalletManager extends Observable {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            showWritePhraseDialog(true);
+                            showWritePhraseDialog(ctx,true);
                         }
                     }, 2000);
                 }
@@ -468,7 +470,7 @@ public class BRWalletManager extends Observable {
     private static void showSentReceivedToast(final Context ctx, final String message) {
         messageId++;
         if (ctx != null) {
-            ((Activity)ctx).runOnUiThread(new Runnable() {
+            ((Activity) ctx).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     final int temp = messageId;
@@ -476,7 +478,7 @@ public class BRWalletManager extends Observable {
                         @Override
                         public void run() {
                             if (temp == messageId) {
-                                if (!((BreadWalletApp) ((Activity)ctx).getApplication()).isToastShown()) {
+                                if (!((BreadWalletApp) ((Activity) ctx).getApplication()).isToastShown()) {
                                     ((BreadWalletApp) ctx.getApplicationContext()).showCustomToast(ctx, message,
                                             BreadWalletApp.DISPLAY_HEIGHT_PX / 2, Toast.LENGTH_LONG, 1);
                                     AudioManager audioManager = (AudioManager) ctx.getSystemService(Context.AUDIO_SERVICE);
@@ -501,6 +503,7 @@ public class BRWalletManager extends Observable {
 
     public static void onTxUpdated(String hash, int blockHeight, int timeStamp) {
         Log.d(TAG, "onTxUpdated: " + String.format("hash: %s, blockHeight: %d, timestamp: %d", hash, blockHeight, timeStamp));
+        BreadActivity ctx = BreadActivity.app;
         if (ctx != null) {
             SQLiteManager.getInstance(ctx).updateTxByHash(hash, blockHeight, timeStamp);
         }
@@ -508,7 +511,7 @@ public class BRWalletManager extends Observable {
 
     public static void onTxDeleted(String hash, int notifyUser, final int recommendRescan) {
         Log.e(TAG, "onTxDeleted: " + String.format("hash: %s, notifyUser: %d, recommendRescan: %d", hash, notifyUser, recommendRescan));
-
+        final BreadActivity ctx = BreadActivity.app;
         if (ctx != null) {
             SQLiteManager.getInstance(ctx).deleteTxByHash(hash);
             if (notifyUser == 1) {
@@ -585,7 +588,7 @@ public class BRWalletManager extends Observable {
     }
 
     public void confirmPay(final Context ctx, final PaymentRequestEntity request) {
-        if (((BreadWalletApp) ((Activity)ctx).getApplication()).hasInternetAccess()) {
+        if (((BreadWalletApp) ((Activity) ctx).getApplication()).hasInternetAccess()) {
 
             if (ctx == null) return;
             boolean certified = false;
@@ -649,7 +652,7 @@ public class BRWalletManager extends Observable {
             if (request.amount < minOutput) {
                 final String bitcoinMinMessage = String.format(Locale.getDefault(), ctx.getString(R.string.bitcoin_payment_cant_be_less),
                         BRConstants.bitcoinLowercase + new BigDecimal(minOutput).divide(new BigDecimal("100")));
-                ((Activity)ctx).runOnUiThread(new Runnable() {
+                ((Activity) ctx).runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         new android.app.AlertDialog.Builder(ctx)
@@ -667,7 +670,7 @@ public class BRWalletManager extends Observable {
                 return;
             }
 
-            ((Activity)ctx).runOnUiThread(new Runnable() {
+            ((Activity) ctx).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     ((BreadWalletApp) ctx.getApplicationContext()).promptForAuthentication(ctx,
@@ -675,7 +678,7 @@ public class BRWalletManager extends Observable {
                 }
             });
         } else {
-            ((Activity)ctx).runOnUiThread(new Runnable() {
+            ((Activity) ctx).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
@@ -783,10 +786,10 @@ public class BRWalletManager extends Observable {
                             byte[] tmpTx2 = m.tryTransaction(addressHolder, bigDecimalAmount.longValue() - amountToReduce);
                             if (tmpTx2 != null) {
                                 PostAuthenticationProcessor.getInstance().setTmpTx(tmpTx2);
-                                confirmPay(ctx,new PaymentRequestEntity(new String[]{addressHolder}, bigDecimalAmount.longValue() - amountToReduce, cn, tmpTx2, isAmountRequested));
+                                confirmPay(ctx, new PaymentRequestEntity(new String[]{addressHolder}, bigDecimalAmount.longValue() - amountToReduce, cn, tmpTx2, isAmountRequested));
                             } else {
                                 Log.e(TAG, "tmpTxObject2 is null!");
-                                ((BreadWalletApp) ((Activity)ctx).getApplication()).showCustomToast(ctx, ctx.getString(R.string.insufficient_funds),
+                                ((BreadWalletApp) ((Activity) ctx).getApplication()).showCustomToast(ctx, ctx.getString(R.string.insufficient_funds),
                                         MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
                             }
                         }
@@ -801,7 +804,7 @@ public class BRWalletManager extends Observable {
             if (!BreadWalletApp.unlocked) {
                 Log.e(TAG, "pay: FAIL: insufficient funds, but let the user auth first then tell");
                 //let it fail but the after the auth let the user know there is not enough money
-                confirmPay(ctx,new PaymentRequestEntity(new String[]{addressHolder}, bigDecimalAmount.longValue(), cn, null, isAmountRequested));
+                confirmPay(ctx, new PaymentRequestEntity(new String[]{addressHolder}, bigDecimalAmount.longValue(), cn, null, isAmountRequested));
                 return;
             } else {
                 Log.e(TAG, "pay: FAIL: offer To Change The Amount.");
@@ -815,7 +818,7 @@ public class BRWalletManager extends Observable {
                 ", CurrencyManager.getInstance(this).getBalance(): " + getBalance());
         if ((feeForTx != 0 && bigDecimalAmount.longValue() + feeForTx < getBalance()) || (isAmountRequested && !BreadWalletApp.unlocked)) {
             Log.d(TAG, "pay: SUCCESS: going to confirmPay");
-            confirmPay(ctx,new PaymentRequestEntity(new String[]{addressHolder}, bigDecimalAmount.longValue(), cn, tmpTx, isAmountRequested));
+            confirmPay(ctx, new PaymentRequestEntity(new String[]{addressHolder}, bigDecimalAmount.longValue(), cn, tmpTx, isAmountRequested));
         } else {
             Log.d(TAG, "pay: FAIL: insufficient funds");
             AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
@@ -836,7 +839,7 @@ public class BRWalletManager extends Observable {
         if (ctx == null) return;
         final String pass = KeyStoreManager.getPassCode(ctx);
         if (pass == null || pass.length() != 4) {
-            ((BreadWalletApp) ((Activity)ctx).getApplication()).promptForAuthentication(ctx, BRConstants.AUTH_FOR_GENERAL, null, null, null, null, true);
+            ((BreadWalletApp) ((Activity) ctx).getApplication()).promptForAuthentication(ctx, BRConstants.AUTH_FOR_GENERAL, null, null, null, null, true);
         }
 
     }
@@ -906,7 +909,7 @@ public class BRWalletManager extends Observable {
             }).start();
     }
 
-    public void generateQR(Context ctx,String bitcoinURL, ImageView qrcode) {
+    public void generateQR(Context ctx, String bitcoinURL, ImageView qrcode) {
         if (qrcode == null || bitcoinURL == null || bitcoinURL.isEmpty()) return;
         WindowManager manager = (WindowManager) ctx.getSystemService(Activity.WINDOW_SERVICE);
         Display display = manager.getDefaultDisplay();
@@ -964,7 +967,7 @@ public class BRWalletManager extends Observable {
 
     private static void showSpendNotAllowed(final Context app) {
         Log.d(TAG, "showSpendNotAllowed");
-        ((Activity)ctx).runOnUiThread(new Runnable() {
+        ((Activity) ctx).runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 AlertDialog.Builder builder = new AlertDialog.Builder(app);

@@ -38,6 +38,8 @@ import com.breadwallet.wallet.BRWalletManager;
 
 import java.util.concurrent.TimeUnit;
 
+import static com.breadwallet.presenter.activities.MainActivity.app;
+
 /**
  * BreadWallet
  * <p/>
@@ -107,9 +109,9 @@ public class BreadWalletApp extends Application {
                     customToastAvailable = true;
                 }
             }, 1000);
-            LayoutInflater inflater = app.getLayoutInflater();
+            LayoutInflater inflater = ((Activity)app).getLayoutInflater();
             View layout = inflater.inflate(R.layout.toast,
-                    (ViewGroup) app.findViewById(R.id.toast_layout_root));
+                    (ViewGroup) ((Activity)app).findViewById(R.id.toast_layout_root));
             if (color == 1) {
                 layout.setBackgroundResource(R.drawable.toast_layout_black);
             }
@@ -133,7 +135,6 @@ public class BreadWalletApp extends Application {
     }
 
     public void setTopMiddleView(int view, String text) {
-        MainActivity app = MainActivity.app;
         if(app == null) return;
         switch (view) {
             case BRConstants.BREAD_WALLET_IMAGE:
@@ -152,7 +153,6 @@ public class BreadWalletApp extends Application {
     }
 
     public void setLockerPayButton(int view) {
-        MainActivity app = MainActivity.app;
         switch (view) {
             case BRConstants.LOCKER_BUTTON:
                 if (app.lockerPayFlipper.getDisplayedChild() == 1) {
@@ -191,7 +191,7 @@ public class BreadWalletApp extends Application {
                 PackageManager.PERMISSION_GRANTED && mFingerprintManager.isHardwareDetected() && mFingerprintManager.hasEnrolledFingerprints();
         if (mode == BRConstants.AUTH_FOR_PAY) {
             long limit = KeyStoreManager.getSpendLimit(context);
-            long totalSent = BRWalletManager.getInstance(context).getTotalSent();
+            long totalSent = BRWalletManager.getInstance().getTotalSent();
 
             if (requestEntity != null)
                 if (limit <= totalSent + requestEntity.amount) {
@@ -257,18 +257,15 @@ public class BreadWalletApp extends Application {
     }
 
 
-    public void showCustomDialog(final String title, final String message, final String buttonText) {
-        Activity app = MainActivity.app;
-        if (app == null) app = IntroActivity.app;
+    public void showCustomDialog(final Context app, final String title, final String message, final String buttonText) {
         if (app == null) {
             Log.e(TAG, "showCustomDialog: FAILED, context is null");
             return;
         }
-        final Activity finalApp = app;
-        app.runOnUiThread(new Runnable() {
+        ((Activity)app).runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                new android.app.AlertDialog.Builder(finalApp)
+                new android.app.AlertDialog.Builder(app)
                         .setTitle(title)
                         .setMessage(message)
                         .setPositiveButton(buttonText, new DialogInterface.OnClickListener() {
@@ -284,7 +281,6 @@ public class BreadWalletApp extends Application {
 
     public void setUnlocked(boolean b) {
         unlocked = b;
-        MainActivity app = MainActivity.app;
         if (app != null) {
             app.lockerButton.setVisibility(b ? View.GONE : View.VISIBLE);
             app.lockerButton.setClickable(!b);
@@ -302,12 +298,9 @@ public class BreadWalletApp extends Application {
         }, 2 * 1000);
     }
 
-    public void hideKeyboard(Activity act) {
-        Activity activity = act;
-        if (activity == null) activity = MainActivity.app;
-        if (activity == null) activity = IntroActivity.app;
-        if (activity != null) {
-            View view = activity.getCurrentFocus();
+    public void hideKeyboard(Context app) {
+        if (app != null) {
+            View view = ((Activity)app).getCurrentFocus();
             if (view != null) {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);

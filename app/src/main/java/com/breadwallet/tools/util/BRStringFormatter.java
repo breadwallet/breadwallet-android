@@ -51,14 +51,14 @@ public class BRStringFormatter {
         if (rate == 0) rate = 1;
         if (ctx == null) ctx = MainActivity.app;
         if (ctx == null) return null;
-        long result = BRWalletManager.getInstance(ctx).bitcoinAmount(100, new BigDecimal(String.valueOf(rate)).multiply(new BigDecimal("100")).doubleValue());
+        long result = BRWalletManager.getInstance().bitcoinAmount(100, new BigDecimal(String.valueOf(rate)).multiply(new BigDecimal("100")).doubleValue());
         return getFormattedCurrencyString(iso, 100) + " = " +
                 getFormattedCurrencyString("BTC", result);
     }
 
     public static String getBitsAndExchangeString(double rate, String iso, BigDecimal target, Activity ctx) {
         if (rate == 0) rate = 1;
-        long exchange = BRWalletManager.getInstance(ctx).localAmount(target.longValue(),
+        long exchange = BRWalletManager.getInstance().localAmount(target.longValue(),
                 new BigDecimal(String.valueOf(rate)).multiply(new BigDecimal("100")).doubleValue());
         return getFormattedCurrencyString("BTC", target.longValue()) + " = " +
                 getFormattedCurrencyString(iso, exchange);
@@ -66,7 +66,7 @@ public class BRStringFormatter {
 
     public static String getExchangeForAmount(double rate, String iso, BigDecimal target, Context ctx) {
         if (rate == 0) rate = 1;
-        long exchange = BRWalletManager.getInstance(ctx).localAmount(target.longValue(),
+        long exchange = BRWalletManager.getInstance().localAmount(target.longValue(),
                 new BigDecimal(String.valueOf(rate)).multiply(new BigDecimal("100")).doubleValue());
         return getFormattedCurrencyString(iso, exchange);
     }
@@ -75,10 +75,10 @@ public class BRStringFormatter {
         CurrencyManager cm = CurrencyManager.getInstance(ctx);
         String iso = SharedPreferencesManager.getIso(ctx);
         double rate = SharedPreferencesManager.getRate(ctx);
-        long exchange = BRWalletManager.getInstance(ctx).localAmount(BRWalletManager.getInstance(ctx).getBalance(),
+        long exchange = BRWalletManager.getInstance().localAmount(BRWalletManager.getInstance().getBalance(),
                 new BigDecimal(String.valueOf(rate)).multiply(new BigDecimal("100")).doubleValue());
 
-        return getFormattedCurrencyString("BTC", BRWalletManager.getInstance(ctx).getBalance()) + " (" +
+        return getFormattedCurrencyString("BTC", BRWalletManager.getInstance().getBalance()) + " (" +
                 getFormattedCurrencyString(iso, exchange) + ")";
     }
 
