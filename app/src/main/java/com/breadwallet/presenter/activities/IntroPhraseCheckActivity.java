@@ -96,7 +96,7 @@ public class IntroPhraseCheckActivity extends Activity {
         String wordArray[] = cleanPhrase.split(" ");
 
         if (wordArray.length == 12 && cleanPhrase.charAt(cleanPhrase.length() - 1) == '\0') {
-            ((BreadWalletApp) getApplication()).showCustomDialog(getString(R.string.warning),
+            ((BreadWalletApp) getApplication()).showCustomDialog(this,getString(R.string.warning),
                     getString(R.string.phrase_error), getString(R.string.ok));
             FirebaseCrash.report(new IllegalArgumentException(getString(R.string.phrase_error)));
 
@@ -156,7 +156,7 @@ public class IntroPhraseCheckActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        BRWalletManager.getInstance(this).startBreadActivity(this);
+        BRWalletManager.getInstance().startBreadActivity(this);
 
     }
 
