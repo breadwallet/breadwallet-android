@@ -23,8 +23,6 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.BRWalletManager;
 import com.google.firebase.crash.FirebaseCrash;
 
-import static com.breadwallet.presenter.activities.MainActivity.app;
-
 
 /**
  * BreadWallet
@@ -94,7 +92,7 @@ public class IntroActivity extends FragmentActivity {
         if (!isFirstAddressCorrect) {
             Log.e(TAG, "WARNING: isFirstAddressCorrect - false: CLEARING THE WALLET");
 
-            BRWalletManager.getInstance(this).wipeWalletButKeystore(this);
+            BRWalletManager.getInstance().wipeWalletButKeystore(this);
         }
         setStatusBarColor(android.R.color.transparent);
 
@@ -218,13 +216,13 @@ public class IntroActivity extends FragmentActivity {
     }
 
     public void startTheWalletIfExists() {
-        final BRWalletManager m = BRWalletManager.getInstance(this);
+        final BRWalletManager m = BRWalletManager.getInstance();
         if (!m.isPasscodeEnabled(this)) {
             //Device passcode/password should be enabled for the app to work
             ((BreadWalletApp) getApplication()).showDeviceNotSecuredWarning(this);
         } else {
             if (!m.noWallet(this)) {
-                BRWalletManager.getInstance(this).startBreadActivity(this);
+                BRWalletManager.getInstance().startBreadActivity(this);
             }
 
         }
