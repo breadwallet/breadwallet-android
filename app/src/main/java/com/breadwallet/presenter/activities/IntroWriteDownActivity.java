@@ -37,7 +37,7 @@ public class IntroWriteDownActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        BRWalletManager.getInstance(this).startBreadActivity(this);
+        BRWalletManager.getInstance().startBreadActivity(this);
 
     }
 
@@ -51,7 +51,7 @@ public class IntroWriteDownActivity extends Activity {
                     PostAuthenticationProcessor.getInstance().onCreateWalletAuth(this, true);
                 } else {
                     Log.e(TAG, "WARNING: resultCode != RESULT_OK");
-                    BRWalletManager m = BRWalletManager.getInstance(this);
+                    BRWalletManager m = BRWalletManager.getInstance();
                     m.wipeWalletButKeystore(this);
                     BRAnimator.resetFragmentAnimator();
                     finish();
