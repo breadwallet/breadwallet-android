@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:filterTouchesWhenObscured="true"
+                android:orientation="horizontal"
+    >
+
+    <TextView
+        android:id="@+id/item_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="32dp"
+        android:layout_toRightOf="@+id/check_mark"
+        android:text="Test"
+        android:textColor="@color/light_gray"
+        android:textStyle="bold"/>
+
+</RelativeLayout>

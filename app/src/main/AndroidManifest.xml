@@ -94,6 +94,11 @@
             android:screenOrientation="portrait">
         </activity>
         <activity
+            android:name=".presenter.activities.SettingsActivity"
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
             android:name=".presenter.activities.IntroWriteDownActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait">

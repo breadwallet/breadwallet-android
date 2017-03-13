@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
@@ -33,6 +34,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.SettingsActivity;
 import com.breadwallet.presenter.entities.BRMenuItem;
 import com.breadwallet.tools.animation.BRAnimator;
 
@@ -109,6 +111,10 @@ public class FragmentBreadMenu extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.e(TAG, "onClick: Settings");
+                Intent intent = new Intent(getActivity(), SettingsActivity.class);
+                getActivity().onBackPressed();
+                startActivity(intent);
+//                getActivity().overridePendingTransition(R.anim.enter_from_bottom, 0);
             }
         }));
         itemList.add(new BRMenuItem("Lock Wallet", R.drawable.ic_lock, new View.OnClickListener() {
