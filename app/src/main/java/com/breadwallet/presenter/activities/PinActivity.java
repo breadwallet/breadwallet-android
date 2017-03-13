@@ -12,9 +12,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -25,9 +22,6 @@ import com.breadwallet.presenter.customviews.BRSoftKeyboard;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
 
-import static android.R.attr.duration;
-import static com.breadwallet.R.color.dark_blue;
-import static com.breadwallet.R.color.extra_light_grey;
 import static com.breadwallet.R.color.white;
 
 public class PinActivity extends Activity {
@@ -172,7 +166,7 @@ public class PinActivity extends Activity {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    String actualPin = KeyStoreManager.getPassCode(PinActivity.this);
+                    String actualPin = KeyStoreManager.getPinCode(PinActivity.this);
                     if (actualPin.equalsIgnoreCase(pin.toString())) {
                         unlockWallet();
                     } else {

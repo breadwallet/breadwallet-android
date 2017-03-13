@@ -1,7 +1,6 @@
 package com.breadwallet.tools.security;
 
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -40,7 +39,6 @@ import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.SynchronousQueue;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -49,8 +47,6 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
-
-import static android.content.Context.ACTIVITY_SERVICE;
 
 /**
  * BreadWallet
@@ -453,8 +449,8 @@ public class KeyStoreManager {
         return result.length > 0 ? TypesConverter.bytesToInt(result) : 0;
     }
 
-    public static boolean putPassCode(String passcode, Context context) {
-        Log.e(TAG, "putPassCode: " + passcode);
+    public static boolean putPinCode(String passcode, Context context) {
+        Log.e(TAG, "putPinCode: " + passcode);
         AliasObject obj = aliasObjectMap.get(PASS_CODE_ALIAS);
         byte[] bytesToStore = passcode.getBytes();
         try {
@@ -465,7 +461,7 @@ public class KeyStoreManager {
         return false;
     }
 
-    public static String getPassCode(final Context context) {
+    public static String getPinCode(final Context context) {
         AliasObject obj = aliasObjectMap.get(PASS_CODE_ALIAS);
         byte[] result = new byte[0];
         try {
@@ -478,16 +474,16 @@ public class KeyStoreManager {
         try {
             int test = Integer.parseInt(passCode);
         } catch (Exception e) {
-            Log.e(TAG, "getPassCode: WARNING passcode isn't a number: " + passCode);
+            Log.e(TAG, "getPinCode: WARNING passcode isn't a number: " + passCode);
             passCode = "";
-            putPassCode(passCode, context);
+            putPinCode(passCode, context);
             KeyStoreManager.putFailCount(0, context);
             KeyStoreManager.putFailTimeStamp(0, context);
             return passCode;
         }
         if (passCode.length() != 6) {
             passCode = "";
-            putPassCode(passCode, context);
+            putPinCode(passCode, context);
         }
         return passCode;
     }

@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
@@ -31,14 +32,16 @@ public class IntroReEnterPinActivity extends FragmentActivity {
     private int pinLimit = 6;
     private String firstPIN;
     private boolean isPressAllowed = true;
+    private LinearLayout pinLayout;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_intro_set_pit);
+        setContentView(R.layout.activity_pin_template);
         setStatusBarColor(android.R.color.transparent);
         keyboard = (BRSoftKeyboard) findViewById(R.id.brkeyboard);
+        pinLayout = (LinearLayout) findViewById(R.id.pinLayout);
 
         title = (TextView) findViewById(R.id.title);
         title.setText("Re-Enter PIN");
@@ -140,13 +143,13 @@ public class IntroReEnterPinActivity extends FragmentActivity {
         if (firstPIN.equalsIgnoreCase(pin.toString())) {
             Log.e(TAG, "verifyPin: SUCCESS");
             isPressAllowed = false;
-            KeyStoreManager.putPassCode(pin.toString(), this);
+            KeyStoreManager.putPinCode(pin.toString(), this);
             BRAnimator.showBreadDialog(this, "PIN Set", "Use your PIN to login and send money.", R.drawable.ic_check_mark_white);
             showWriteDownPhrase();
         } else {
             Log.e(TAG, "verifyPin: FAIL: firs: " + firstPIN + ", reEnter: " + pin.toString());
             title.setText("Wrong PIN,\nplease try again");
-            SpringAnimator.failShakeAnimation(this, title);
+            SpringAnimator.failShakeAnimation(this, pinLayout);
             pin = new StringBuilder();
             updateDots();
         }

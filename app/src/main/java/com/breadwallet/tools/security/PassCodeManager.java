@@ -1,7 +1,6 @@
 package com.breadwallet.tools.security;
 
 import android.app.Activity;
-import android.util.Log;
 
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.wallet.BRWalletManager;
@@ -45,12 +44,12 @@ public class PassCodeManager {
     }
 
     public boolean checkAuth(CharSequence passcode, Activity context) {
-        String pass = KeyStoreManager.getPassCode(context);
+        String pass = KeyStoreManager.getPinCode(context);
         return pass != null && passcode.equals(pass);
     }
 
     public void setPassCode(String pass, Activity context) {
-        KeyStoreManager.putPassCode(pass, context);
+        KeyStoreManager.putPinCode(pass, context);
         KeyStoreManager.putLastPasscodeUsedTime(System.currentTimeMillis(), context);
         setSpendingLimitIfNotSet(context);
     }

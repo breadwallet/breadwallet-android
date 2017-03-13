@@ -37,34 +37,25 @@ import com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.manager.BRNotificationManager;
 import com.breadwallet.tools.util.BRStringFormatter;
-import com.breadwallet.tools.manager.CurrencyManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.WordsReader;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
-import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.sqlite.SQLiteManager;
 import com.breadwallet.tools.threads.ImportPrivKeyTask;
 import com.google.firebase.crash.FirebaseCrash;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.EncodeHintType;
-import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
 
 import junit.framework.Assert;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.security.SecureRandom;
-import java.util.EnumMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Observable;
 
-import static com.breadwallet.R.string.amount;
 import static com.breadwallet.presenter.activities.BreadActivity.app;
 
 
@@ -831,7 +822,7 @@ public class BRWalletManager extends Observable {
 
     public void askForPasscode(Context ctx) {
         if (ctx == null) return;
-        final String pass = KeyStoreManager.getPassCode(ctx);
+        final String pass = KeyStoreManager.getPinCode(ctx);
         if (pass == null || pass.length() != 4) {
             ((BreadWalletApp) ((Activity) ctx).getApplication()).promptForAuthentication(ctx, BRConstants.AUTH_FOR_GENERAL, null, null, null, null, true);
         }

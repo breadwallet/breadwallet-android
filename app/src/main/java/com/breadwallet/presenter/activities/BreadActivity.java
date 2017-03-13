@@ -362,7 +362,7 @@ public class BreadActivity extends AppCompatActivity implements Observer {
 //
 //    //check if the user hasn't used the passcode in 2 weeks or more and ask for it
 //    private void checkUnlockedTooLong() {
-//        String pass = KeyStoreManager.getPassCode(this);
+//        String pass = KeyStoreManager.getPinCode(this);
 //        long passTime = KeyStoreManager.getLastPasscodeUsedTime(this);
 //        if (pass.length() == 4 && (passTime + BRConstants.PASS_CODE_TIME_LIMIT <= System.currentTimeMillis())) {
 //            ((BreadWalletApp) getApplication()).promptForAuthentication(this, BRConstants.AUTH_FOR_GENERAL, null, null, null, null, true);

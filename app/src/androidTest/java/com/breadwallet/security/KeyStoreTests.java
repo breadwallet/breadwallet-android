@@ -150,28 +150,28 @@ public class KeyStoreTests {
     @Test
     public void setGetPassCode() {
         String passCode = "0124";
-        KeyStoreManager.putPassCode(passCode, mActivityRule.getActivity());
+        KeyStoreManager.putPinCode(passCode, mActivityRule.getActivity());
         assertFilesExist(KeyStoreManager.PASS_CODE_ALIAS);
         String freshGet;
-        freshGet = KeyStoreManager.getPassCode(mActivityRule.getActivity());
+        freshGet = KeyStoreManager.getPinCode(mActivityRule.getActivity());
         Assert.assertEquals(freshGet, freshGet);
 
         passCode = "0000";
-        KeyStoreManager.putPassCode(passCode, mActivityRule.getActivity());
+        KeyStoreManager.putPinCode(passCode, mActivityRule.getActivity());
         assertFilesExist(KeyStoreManager.PASS_CODE_ALIAS);
-        freshGet = KeyStoreManager.getPassCode(mActivityRule.getActivity());
+        freshGet = KeyStoreManager.getPinCode(mActivityRule.getActivity());
         Assert.assertEquals(freshGet, freshGet);
 
         passCode = "9999";
-        KeyStoreManager.putPassCode(passCode, mActivityRule.getActivity());
+        KeyStoreManager.putPinCode(passCode, mActivityRule.getActivity());
         assertFilesExist(KeyStoreManager.PASS_CODE_ALIAS);
-        freshGet = KeyStoreManager.getPassCode(mActivityRule.getActivity());
+        freshGet = KeyStoreManager.getPinCode(mActivityRule.getActivity());
         Assert.assertEquals(freshGet, freshGet);
 
         passCode = "9876";
-        KeyStoreManager.putPassCode(passCode, mActivityRule.getActivity());
+        KeyStoreManager.putPinCode(passCode, mActivityRule.getActivity());
         assertFilesExist(KeyStoreManager.PASS_CODE_ALIAS);
-        freshGet = KeyStoreManager.getPassCode(mActivityRule.getActivity());
+        freshGet = KeyStoreManager.getPinCode(mActivityRule.getActivity());
         Assert.assertEquals(freshGet, freshGet);
     }
 
@@ -233,7 +233,7 @@ public class KeyStoreTests {
         KeyStoreManager.putAuthKey("26wZYDdvpmCrYZeUcxgqd1KquN4o6wXwLomBW5SjnwUqG".getBytes(), mActivityRule.getActivity());
         KeyStoreManager.putToken("26wZYDdvpmCrYZeUcxgqd1KquN4o6wXwLomBW5SjnwUqG".getBytes(), mActivityRule.getActivity());
         KeyStoreManager.putWalletCreationTime(1479686841, mActivityRule.getActivity());
-        KeyStoreManager.putPassCode("0123", mActivityRule.getActivity());
+        KeyStoreManager.putPinCode("0123", mActivityRule.getActivity());
         KeyStoreManager.putFailCount(3, mActivityRule.getActivity());
         KeyStoreManager.putFailTimeStamp(1479686841, mActivityRule.getActivity());
         KeyStoreManager.putSpendLimit(10000000, mActivityRule.getActivity());
@@ -271,7 +271,7 @@ public class KeyStoreTests {
         Assert.assertArrayEquals(KeyStoreManager.getAuthKey(mActivityRule.getActivity()), new byte[0]);
         Assert.assertArrayEquals(KeyStoreManager.getToken(mActivityRule.getActivity()), new byte[0]);
         Assert.assertEquals(KeyStoreManager.getWalletCreationTime(mActivityRule.getActivity()), 0);
-        Assert.assertEquals(KeyStoreManager.getPassCode(mActivityRule.getActivity()), "");
+        Assert.assertEquals(KeyStoreManager.getPinCode(mActivityRule.getActivity()), "");
         Assert.assertEquals(KeyStoreManager.getFailCount(mActivityRule.getActivity()), 0);
         Assert.assertEquals(KeyStoreManager.getFailTimeStamp(mActivityRule.getActivity()), 0);
         Assert.assertEquals(KeyStoreManager.getSpendLimit(mActivityRule.getActivity()), 0);

@@ -5,6 +5,7 @@ import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.LayoutRes;
@@ -21,6 +22,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.IntroSetPitActivity;
+import com.breadwallet.presenter.activities.UpdatePitActivity;
 import com.breadwallet.presenter.entities.BRMenuItem;
 import com.breadwallet.presenter.entities.BRSecurityCenterItem;
 
@@ -72,6 +75,8 @@ public class FragmentSecurityCenter extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.e(TAG, "onClick: 6-Digit PIN");
+                Intent intent = new Intent(getActivity(), UpdatePitActivity.class);
+                startActivity(intent);
             }
         }));
         itemList.add(new BRSecurityCenterItem("Touch ID", "Unlocks your Bread, authorizes send money to set limit.", R.drawable.ic_check_mark_grey, new View.OnClickListener() {

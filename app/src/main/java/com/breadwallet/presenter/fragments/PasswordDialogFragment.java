@@ -120,7 +120,7 @@
 //    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
 //                             Bundle savedInstanceState) {
 //        View view = inflater.inflate(R.layout.fragment_password_dialog, container);
-//        String pass = KeyStoreManager.getPassCode(getActivity());
+//        String pass = KeyStoreManager.getPinCode(getActivity());
 //        if (pass == null || pass.length() != 4) {
 //            firstTime = true;
 //            verifyOnly = false;
