@@ -1,6 +1,8 @@
 package com.breadwallet.tools.animation;
 
 import android.Manifest;
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -18,12 +20,14 @@ import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
+import com.breadwallet.presenter.fragments.FragmentBreadMenu;
 import com.breadwallet.presenter.fragments.FragmentBreadSignal;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.util.BRConstants;
@@ -31,6 +35,7 @@ import com.platform.HTTPServer;
 
 import java.util.Stack;
 
+import static com.breadwallet.R.id.textView;
 import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
 
 /**
@@ -71,6 +76,7 @@ public class BRAnimator {
     private static View copy;
 
     private static FragmentBreadSignal fragmentSignal;
+    private static FragmentBreadMenu fragmentMenu;
 
 //    public static void animateDecoderFragment() {
 //
@@ -577,6 +583,24 @@ public class BRAnimator {
         transaction.add(android.R.id.content, fragmentSignal, fragmentSignal.getClass().getName());
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    public static void showBreadMenu(Activity activity) {
+        fragmentMenu = new FragmentBreadMenu();
+
+//        BlurAnimation.
+
+//        Bundle bundle = new Bundle();
+//        bundle.putString(FragmentBreadSignal.TITLE, title);
+//        bundle.putString(FragmentBreadSignal.ICON_DESCRIPTION, iconDescription);
+//        bundle.putInt(FragmentBreadSignal.RES_ID, drawableId);
+//        fragmentSignal.setArguments(bundle);
+        FragmentTransaction transaction = activity.getFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_bottom, R.animator.from_bottom, R.animator.to_bottom);
+        transaction.add(android.R.id.content, fragmentMenu, fragmentMenu.getClass().getName());
+        transaction.addToBackStack(null);
+        transaction.commit();
+
     }
 
 }

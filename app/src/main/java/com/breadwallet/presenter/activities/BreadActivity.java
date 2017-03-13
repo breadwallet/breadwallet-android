@@ -24,6 +24,7 @@ import com.platform.APIClient;
 import java.util.Observable;
 import java.util.Observer;
 
+import static com.breadwallet.tools.animation.BRAnimator.showBreadMenu;
 import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
 
 /**
@@ -118,7 +119,6 @@ public class BreadActivity extends AppCompatActivity implements Observer {
 //        ab.setDisplayShowCustomEnabled(true); // enable overriding the default toolbar layout
 //        ab.setDisplayShowTitleEnabled(false);
 //        app = this;
-
 //
 //        Utils.printPhoneSpecs();
 //
@@ -189,6 +189,7 @@ public class BreadActivity extends AppCompatActivity implements Observer {
             @Override
             public void onClick(View v) {
                 SpringAnimator.showAnimation(v);
+                showBreadMenu(BreadActivity.this);
             }
         });
         primaryPrice.setOnClickListener(new View.OnClickListener() {

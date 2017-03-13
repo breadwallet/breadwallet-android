@@ -55,13 +55,11 @@ public class FragmentBreadSignal extends Fragment {
     public ImageView mIcon;
 
     @Override
-    public View onCreateView(LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // The last two arguments ensure LayoutParams are inflated
         // properly.
 
-        View rootView = inflater.inflate(
-                R.layout.fragment_signal, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_signal, container, false);
         mTitle = (TextView) rootView.findViewById(R.id.title);
         mDescription = (TextView) rootView.findViewById(R.id.description);
         mIcon = (ImageView) rootView.findViewById(R.id.icon_view);
@@ -88,7 +86,7 @@ public class FragmentBreadSignal extends Fragment {
                 if (getActivity() != null)
                     getActivity().getFragmentManager().popBackStack();
             }
-        }, 1000);
+        }, 2000);
 
         return rootView;
     }

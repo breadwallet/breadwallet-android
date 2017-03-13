@@ -141,15 +141,6 @@ public class PinActivity extends Activity {
         updateDots();
     }
 
-    public void startBreadActivity(Activity from) {
-        Intent intent;
-        intent = new Intent(from, BreadActivity.class);
-        from.startActivity(intent);
-        if (!from.isDestroyed()) {
-            from.finish();
-        }
-    }
-
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -201,7 +192,7 @@ public class PinActivity extends Activity {
         offlineButtonsLayout.animate().translationY(-600).setInterpolator(new AccelerateInterpolator());
         pinLayout.animate().translationY(-2000).setInterpolator(new AccelerateInterpolator());
         enterPinLabel.animate().translationY(-1800).setInterpolator(new AccelerateInterpolator());
-        keyboard.animate().translationY(600).setInterpolator(new AccelerateInterpolator());
+        keyboard.animate().translationY(1000).setInterpolator(new AccelerateInterpolator());
         unlockedImage.animate().alpha(1f).setListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
@@ -221,24 +212,6 @@ public class PinActivity extends Activity {
         unlockedText.animate().alpha(1f);
     }
 
-    private void setAnimationListenerToView(final View v, Animation animation) {
-        animation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                v.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-    }
 
     private void showFailedToUnlock() {
         SpringAnimator.failShakeAnimation(PinActivity.this, pinLayout);
