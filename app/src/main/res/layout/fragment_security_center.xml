@@ -1,0 +1,57 @@
+<com.breadwallet.presenter.customviews.BRLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                      android:id="@+id/layout"
+                                                      android:layout_width="match_parent"
+                                                      android:layout_height="match_parent"
+                                                      android:background="@color/white"
+                                                      android:filterTouchesWhenObscured="true"
+                                                      android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:background="@drawable/bread_gradient"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Security Center"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_marginTop="40dp"
+            android:src="@drawable/ic_shield_white"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/linearLayout"
+        android:layout_margin="32dp"
+        android:text="@string/security_description_text"
+        android:textColor="@color/almost_black"
+        android:textSize="18sp"/>
+
+    <ListView
+        android:id="@+id/menu_listview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView10">
+
+    </ListView>
+
+</com.breadwallet.presenter.customviews.BRLinearLayout>

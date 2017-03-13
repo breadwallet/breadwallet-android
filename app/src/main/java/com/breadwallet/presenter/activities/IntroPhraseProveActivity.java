@@ -1,23 +1,15 @@
 package com.breadwallet.presenter.activities;
 
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v13.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.util.SparseArray;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.breadwallet.BreadWalletApp;
@@ -30,9 +22,6 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 import com.google.firebase.crash.FirebaseCrash;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
 import java.util.Random;
 
 
@@ -72,7 +61,7 @@ public class IntroPhraseProveActivity extends Activity {
                 } else {
                     if (edit1.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(0))) && edit2.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(1)))) {
                         Log.e(TAG, "onClick: Success!");
-                        BRAnimator.showBreadDialog(IntroPhraseProveActivity.this, "Paper Key Set", "Awesome!", R.drawable.ic_check_mark);
+                        BRAnimator.showBreadDialog(IntroPhraseProveActivity.this, "Paper Key Set", "Awesome!", R.drawable.ic_check_mark_white);
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {

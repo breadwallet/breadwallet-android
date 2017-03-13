@@ -353,5 +353,6 @@
     <string name="word_nr10">select the <b>10th</b> word of your recovery phrase from the list below</string>
     <string name="word_nr11">select the <b>11th</b> word of your recovery phrase from the list below</string>
     <string name="early_access">early access</string>
+    <string name="security_description_text">Breadwallet provides security features for protecting your money. Click each feature below to learn more.</string>
 
 </resources>

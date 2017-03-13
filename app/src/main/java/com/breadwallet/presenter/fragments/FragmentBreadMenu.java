@@ -34,6 +34,7 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.entities.BRMenuItem;
+import com.breadwallet.tools.animation.BRAnimator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,6 +95,8 @@ public class FragmentBreadMenu extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.e(TAG, "onClick: Security Center");
+                getActivity().onBackPressed();
+                BRAnimator.showSecurityCenter(getActivity());
             }
         }));
         itemList.add(new BRMenuItem("Support", R.drawable.ic_question_mark, new View.OnClickListener() {
