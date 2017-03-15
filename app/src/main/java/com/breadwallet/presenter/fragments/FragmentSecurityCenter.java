@@ -23,6 +23,7 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.IntroSetPitActivity;
+import com.breadwallet.presenter.activities.IntroWriteDownActivity;
 import com.breadwallet.presenter.activities.UpdatePitActivity;
 import com.breadwallet.presenter.entities.BRMenuItem;
 import com.breadwallet.presenter.entities.BRSecurityCenterItem;
@@ -79,7 +80,7 @@ public class FragmentSecurityCenter extends Fragment {
                 startActivity(intent);
             }
         }));
-        itemList.add(new BRSecurityCenterItem("Touch ID", "Unlocks your Bread, authorizes send money to set limit.", R.drawable.ic_check_mark_grey, new View.OnClickListener() {
+        itemList.add(new BRSecurityCenterItem("FingerPrint", "Unlocks your Bread, authorizes send money to set limit.", R.drawable.ic_check_mark_grey, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.e(TAG, "onClick: Touch ID");
@@ -89,6 +90,9 @@ public class FragmentSecurityCenter extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.e(TAG, "onClick: Paper Key");
+                Intent intent = new Intent(getActivity(), IntroWriteDownActivity.class);
+                getActivity().startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_right);
             }
         }));
 

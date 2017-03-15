@@ -260,7 +260,7 @@ public class KeyStoreManager {
                 throw new BRKeystoreErrorException(e.getMessage());
             } else if (e instanceof KeyPermanentlyInvalidatedException) {
                 FirebaseCrash.report(new RuntimeException("KeyStore Error, Your Breadwallet encrypted data was recently invalidated because you disabled your Android lock screen. Please input your phrase to recover your Breadwallet now."));
-                showKeyStoreDialog(context,"KeyStore Error", "Your Breadwallet encrypted data was recently invalidated because you " +
+                showKeyStoreDialog(context, "KeyStore Error", "Your Breadwallet encrypted data was recently invalidated because you " +
                                 "disabled your Android lock screen. Please input your phrase to recover your Breadwallet now.", context.getString(R.string.ok), null,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
@@ -470,7 +470,7 @@ public class KeyStoreManager {
             e.printStackTrace();
         }
         String passCode = new String(result);
-        if(passCode.isEmpty()) return "";
+        if (passCode.isEmpty()) return "";
         try {
             int test = Integer.parseInt(passCode);
         } catch (Exception e) {
@@ -561,7 +561,7 @@ public class KeyStoreManager {
         return result.length > 0 ? TypesConverter.byteArray2long(result) : 0;
     }
 
-    public static boolean putLastPasscodeUsedTime(long time, Context context) {
+    public static boolean putLastPinUsedTime(long time, Context context) {
         AliasObject obj = aliasObjectMap.get(PASS_TIME_ALIAS);
         byte[] bytesToStore = TypesConverter.long2byteArray(time);
         try {
@@ -606,7 +606,7 @@ public class KeyStoreManager {
                 removeAliasAndFiles(keyStore.aliases().nextElement(), context);
                 count++;
             }
-            Assert.assertEquals(count, 11);
+//            Assert.assertEquals(count, 11);
 
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -644,11 +644,11 @@ public class KeyStoreManager {
         KeyguardManager mKeyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
         Intent intent = mKeyguardManager.createConfirmDeviceCredentialIntent(context.getString(R.string.auth_required), context.getString(R.string.auth_message));
         if (intent != null) {
-            ((Activity)context).startActivityForResult(intent, requestCode);
+            ((Activity) context).startActivityForResult(intent, requestCode);
         } else {
             Log.e(TAG, "showAuthenticationScreen: failed to create intent for auth");
             FirebaseCrash.report(new RuntimeException("showAuthenticationScreen: failed to create intent for auth"));
-            ((Activity)context).finish();
+            ((Activity) context).finish();
         }
     }
 
@@ -693,7 +693,7 @@ public class KeyStoreManager {
         return false;
     }
 
-    public static void showKeyStoreDialog(Context app,final String title, final String message, final String posButton, final String negButton,
+    public static void showKeyStoreDialog(Context app, final String title, final String message, final String posButton, final String negButton,
                                           final DialogInterface.OnClickListener posButtonListener,
                                           final DialogInterface.OnClickListener negButtonListener,
                                           final DialogInterface.OnDismissListener dismissListener) {

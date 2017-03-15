@@ -1,7 +1,6 @@
 package com.breadwallet.tools.security;
 
 import android.app.Activity;
-import android.content.Context;
 import android.net.Uri;
 import android.os.Handler;
 import android.util.Log;
@@ -32,14 +31,9 @@ import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
-import java.security.Key;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
-import okhttp3.HttpUrl;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -144,28 +138,28 @@ public class RequestHandler {
 //        Log.e(TAG, "tryBitIdUri: _strToSign: " + _strToSign);
 //        Log.e(TAG, "tryBitIdUri: _index: " + _index);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                byte[] phrase = null;
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                Uri tmpUri = Uri.parse(_bitUri);
-                try {
-                    phrase = KeyStoreManager.getKeyStorePhrase(app, REQUEST_PHRASE_BITID);
-                    ((BreadWalletApp) app.getApplicationContext()).promptForAuthentication(app, AUTH_FOR_BIT_ID, null, tmpUri.getHost(), _authString, null, false);
-                } catch (BRKeystoreErrorException e) {
-                    //asked the system, no need for local auth
-                    e.printStackTrace();
-                } finally {
-                    //free the phrase
-                    if (phrase != null) Arrays.fill(phrase, (byte) 0);
-                }
-            }
-        }).start();
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                byte[] phrase = null;
+//                try {
+//                    Thread.sleep(500);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//                Uri tmpUri = Uri.parse(_bitUri);
+//                try {
+//                    phrase = KeyStoreManager.getKeyStorePhrase(app, REQUEST_PHRASE_BITID);
+//                    ((BreadWalletApp) app.getApplicationContext()).authPrompt(app, AUTH_FOR_BIT_ID, null, tmpUri.getHost(), _authString, null, false);
+//                } catch (BRKeystoreErrorException e) {
+//                    //asked the system, no need for local auth
+//                    e.printStackTrace();
+//                } finally {
+//                    //free the phrase
+//                    if (phrase != null) Arrays.fill(phrase, (byte) 0);
+//                }
+//            }
+//        }).start();
         return isBitUri;
 
     }

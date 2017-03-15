@@ -19,7 +19,7 @@
 //import com.breadwallet.tools.manager.CurrencyManager;
 //import com.breadwallet.tools.manager.SharedPreferencesManager;
 //import com.breadwallet.tools.adapter.MiddleViewAdapter;
-//import com.breadwallet.tools.security.PassCodeManager;
+//import com.breadwallet.tools.security.AuthManager;
 //
 //import java.math.BigDecimal;
 //
@@ -130,25 +130,25 @@
 //        switch (mode) {
 //            case 1:
 //                checkMark1.setVisibility(View.VISIBLE);
-//                PassCodeManager.getInstance().setLimit(getActivity(), 0);
+//                AuthManager.getInstance().setLimit(getActivity(), 0);
 //                break;
 //            case 2:
 //                checkMark2.setVisibility(View.VISIBLE);
-//                PassCodeManager.getInstance().setLimit(getActivity(), BRConstants.limit1);
+//                AuthManager.getInstance().setLimit(getActivity(), BRConstants.limit1);
 //                break;
 //            case 3:
 //                checkMark3.setVisibility(View.VISIBLE);
-//                PassCodeManager.getInstance().setLimit(getActivity(), BRConstants.limit2);
+//                AuthManager.getInstance().setLimit(getActivity(), BRConstants.limit2);
 //                break;
 //            case 4:
 //                checkMark4.setVisibility(View.VISIBLE);
-//                PassCodeManager.getInstance().setLimit(getActivity(), BRConstants.limit3);
+//                AuthManager.getInstance().setLimit(getActivity(), BRConstants.limit3);
 //                break;
 //        }
 //    }
 //
 //    private void setInitialCheckMark() {
-//        int limit = PassCodeManager.getInstance().getLimit(getActivity());
+//        int limit = AuthManager.getInstance().getLimit(getActivity());
 //        switch (limit) {
 //            case 0:
 //                checkMark1.setVisibility(View.VISIBLE);

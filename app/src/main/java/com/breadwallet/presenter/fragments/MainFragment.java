@@ -146,8 +146,8 @@
 //                    String ifAddress = null;
 //                    RequestObject obj = RequestHandler.getRequestFromString(bitcoinUrl);
 //                    if (obj == null) {
-//                        //builder.setTitle(getResources().getString(R.string.alert));
-//                        builder.setMessage(getResources().getString(R.string.mainfragment_clipboard_invalid_data));
+//                        //builder.setmTitle(getResources().getString(R.string.alert));
+//                        builder.setmMessage(getResources().getString(R.string.mainfragment_clipboard_invalid_data));
 //                        builder.setNeutralButton(getResources().getString(R.string.ok),
 //                                new DialogInterface.OnClickListener() {
 //                                    public void onClick(DialogInterface dialog, int which) {
@@ -166,8 +166,8 @@
 //                        ifAddress = obj.address;
 //                    }
 //                    if (ifAddress == null) {
-//                        //builder.setTitle(getResources().getString(R.string.alert));
-//                        builder.setMessage(getResources().getString(R.string.mainfragment_clipboard_invalid_data));
+//                        //builder.setmTitle(getResources().getString(R.string.alert));
+//                        builder.setmMessage(getResources().getString(R.string.mainfragment_clipboard_invalid_data));
 //                        builder.setNeutralButton(getResources().getString(R.string.ok),
 //                                new DialogInterface.OnClickListener() {
 //                                    public void onClick(DialogInterface dialog, int which) {
@@ -193,8 +193,8 @@
 //                        BRWalletManager m = BRWalletManager.getInstance(getActivity());
 //                        if (m.addressContainedInWallet(ifAddress)) {
 //
-//                            //builder.setTitle(getResources().getString(R.string.alert));
-//                            builder.setMessage(getResources().getString(R.string.address_already_in_your_wallet));
+//                            //builder.setmTitle(getResources().getString(R.string.alert));
+//                            builder.setmMessage(getResources().getString(R.string.address_already_in_your_wallet));
 //                            builder.setNeutralButton(getResources().getString(R.string.ok),
 //                                    new DialogInterface.OnClickListener() {
 //                                        public void onClick(DialogInterface dialog, int which) {
@@ -206,9 +206,9 @@
 //                            BRClipboardManager.copyToClipboard(getActivity(), "");
 //                            addressEditText.setText("");
 //                        } else if (m.addressIsUsed(ifAddress)) {
-//                            builder.setTitle(getResources().getString(R.string.warning));
+//                            builder.setmTitle(getResources().getString(R.string.warning));
 //
-//                            builder.setMessage(getResources().getString(R.string.address_already_used));
+//                            builder.setmMessage(getResources().getString(R.string.address_already_used));
 //                            final String finalIfAddress = ifAddress;
 //                            builder.setPositiveButton(getResources().getString(R.string.ignore),
 //                                    new DialogInterface.OnClickListener() {
@@ -232,8 +232,8 @@
 //                            RequestHandler.processRequest((MainActivity) getActivity(), bitcoinUrl);
 //                        }
 //                    } else {
-//                        //builder.setTitle(getResources().getString(R.string.alert));
-//                        builder.setMessage(getResources().getString(R.string.mainfragment_clipboard_invalid_data));
+//                        //builder.setmTitle(getResources().getString(R.string.alert));
+//                        builder.setmMessage(getResources().getString(R.string.mainfragment_clipboard_invalid_data));
 //                        builder.setNeutralButton(getResources().getString(R.string.ok),
 //                                new DialogInterface.OnClickListener() {
 //                                    public void onClick(DialogInterface dialog, int which) {

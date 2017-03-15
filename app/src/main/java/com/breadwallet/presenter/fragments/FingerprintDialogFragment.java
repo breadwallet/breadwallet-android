@@ -138,7 +138,7 @@ public class FingerprintDialogFragment extends DialogFragment
 //        passwordDialogFragment.setMode(mode);
 //        passwordDialogFragment.setPaymentRequestEntity(request, paymentRequest);
 //        passwordDialogFragment.setVerifyOnlyTrue();
-//        passwordDialogFragment.setMessage(message);
+//        passwordDialogFragment.setmMessage(message);
 //        FragmentManager fm = getActivity().getFragmentManager();
 //        passwordDialogFragment.show(fm, PasswordDialogFragment.class.getName());
         if (mFingerprintUiHelper != null)

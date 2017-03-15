@@ -58,14 +58,14 @@
 //import com.breadwallet.tools.manager.SharedPreferencesManager;
 //import com.breadwallet.tools.animation.SpringAnimator;
 //import com.breadwallet.tools.security.KeyStoreManager;
-//import com.breadwallet.tools.security.PassCodeManager;
+//import com.breadwallet.tools.security.AuthManager;
 //import com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask;
 //import com.breadwallet.wallet.BRWalletManager;
 //
 //import java.util.Locale;
 //
 //import static com.breadwallet.presenter.activities.BreadActivity.app;
-//import static com.breadwallet.tools.security.KeyStoreManager.putLastPasscodeUsedTime;
+//import static com.breadwallet.tools.security.KeyStoreManager.putLastPinUsedTime;
 //import static com.breadwallet.tools.util.BRConstants.AUTH_FOR_BIT_ID;
 //
 //public class PasswordDialogFragment extends DialogFragment {
@@ -112,7 +112,7 @@
 //        long passTime = 0;
 //        passTime = KeyStoreManager.getLastPasscodeUsedTime(app);
 //        if (forceDialogStayOn && (passTime + BRConstants.PASS_CODE_TIME_LIMIT <= System.currentTimeMillis())) {
-//            ((BreadWalletApp) app.getApplication()).promptForAuthentication(app, mode, request, message, title.getText().toString(), paymentRequest, forceDialogStayOn);
+//            ((BreadWalletApp) app.getApplication()).authPrompt(app, mode, request, message, title.getText().toString(), paymentRequest, forceDialogStayOn);
 //        }
 //    }
 //
@@ -179,7 +179,7 @@
 //                    if (!phraseEditText.getText().toString().isEmpty() && KeyStoreManager.phraseIsValid(phraseEditText.getText().toString().toLowerCase(), getActivity())) {
 //                        KeyStoreManager.putFailCount(0, getActivity());
 //                        KeyStoreManager.putFailTimeStamp(0, getActivity());
-//                        PassCodeManager.getInstance().setPassCode("", getActivity());
+//                        AuthManager.getInstance().setPinCode("", getActivity());
 //                        BRWalletManager.getInstance().askForPasscode(getActivity());
 //                        getDialog().dismiss();
 //                    } else {
@@ -291,7 +291,7 @@
 //    }
 //
 //    private boolean validatePassCode(CharSequence s) {
-////        PassCodeManager passCodeManager = PassCodeManager.getInstance();
+////        AuthManager passCodeManager = AuthManager.getInstance();
 ////
 ////        //Set and confirm the new passcode
 ////        if (firstTime) {
@@ -305,7 +305,7 @@
 ////                case BRConstants.AUTH_MODE_CONFIRM_PASS:
 ////                    String passToCheck = s.toString();
 ////                    if (passToCheck.equals(tempPassToChange)) {
-////                        passCodeManager.setPassCode(tempPassToChange, getActivity());
+////                        passCodeManager.setPinCode(tempPassToChange, getActivity());
 ////                        tempPassToChange = "";
 ////                        try {
 ////                            getDialog().dismiss();
@@ -356,10 +356,10 @@
 ////                        InputMethodManager.HIDE_NOT_ALWAYS);
 ////                //reset the passcode after successful attempt
 ////                KeyStoreManager.putFailCount(0, getActivity());
-////                putLastPasscodeUsedTime(System.currentTimeMillis(), getActivity());
+////                putLastPinUsedTime(System.currentTimeMillis(), getActivity());
 ////                getDialog().dismiss();
 ////                long totalSpent = BRWalletManager.getInstance().getTotalSent();
-////                long spendLimit = totalSpent + PassCodeManager.getInstance().getLimit(getActivity()) + (request == null ? 0 : request.amount);
+////                long spendLimit = totalSpent + AuthManager.getInstance().getLimit(getActivity()) + (request == null ? 0 : request.amount);
 ////                KeyStoreManager.putSpendLimit(spendLimit, getActivity());
 ////
 ////                ((BreadWalletApp) getActivity().getApplicationContext()).setUnlocked(true);
@@ -430,7 +430,7 @@
 ////                case BRConstants.AUTH_MODE_CONFIRM_PASS:
 ////                    String passToCheck = s.toString();
 ////                    if (passToCheck.equals(tempPassToChange)) {
-////                        passCodeManager.setPassCode(tempPassToChange, getActivity());
+////                        passCodeManager.setPinCode(tempPassToChange, getActivity());
 ////                        tempPassToChange = "";
 ////                        getDialog().dismiss();
 ////                        String tmp = BRStringFormatter.getCurrentBalanceText(getActivity());
@@ -536,7 +536,7 @@
 //        }
 //    }
 //
-//    public void setMessage(String message) {
+//    public void setmMessage(String message) {
 //        this.message = message;
 //    }
 //

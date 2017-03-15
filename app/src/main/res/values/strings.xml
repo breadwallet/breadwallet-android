@@ -46,7 +46,7 @@
     <!-- android -->
     <string name="failed_to_sign_tx">Failed to sign transaction</string>
     <!-- android -->
-    <string name="payment_request_message_too_large">PaymentRequest message is too large</string>
+    <string name="payment_request_message_too_large">PaymentRequest mMessage is too large</string>
     <!-- android -->
     <string name="expired_request">Expired request</string>
     <!-- android -->
@@ -159,7 +159,7 @@
     <!-- checked -->
     <string name="send_address_as_email">send address as email</string>
     <!-- checked -->
-    <string name="send_address_as_message">send address as message</string>
+    <string name="send_address_as_message">send address as mMessage</string>
     <!-- checked -->
     <string name="copy_address_to_clipboard">copy address to clipboard</string>
     <!-- checked -->

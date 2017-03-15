@@ -23,7 +23,7 @@
 //import com.breadwallet.tools.manager.SharedPreferencesManager;
 //import com.breadwallet.tools.adapter.CurrencyListAdapter;
 //import com.breadwallet.tools.adapter.MiddleViewAdapter;
-//import com.breadwallet.tools.security.PassCodeManager;
+//import com.breadwallet.tools.security.AuthManager;
 //import com.breadwallet.wallet.BRPeerManager;
 //import com.breadwallet.wallet.BRWalletManager;
 //
@@ -86,7 +86,7 @@
 //        RelativeLayout rescan = (RelativeLayout) rootView.findViewById(R.id.rescan_blockchain);
 //
 //
-//        theLimit.setText(BRStringFormatter.getFormattedCurrencyString("BTC", PassCodeManager.getInstance().getLimit(getActivity())));
+//        theLimit.setText(BRStringFormatter.getFormattedCurrencyString("BTC", AuthManager.getInstance().getLimit(getActivity())));
 //        FingerprintManager mFingerprintManager;
 //        mFingerprintManager = (FingerprintManager) getActivity().getSystemService(Context.FINGERPRINT_SERVICE);
 //        boolean useFingerPrint;

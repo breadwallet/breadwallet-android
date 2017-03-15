@@ -153,7 +153,7 @@
 //                    }
 //
 //                    //don't use
-//                    alertDialog.setMessage(message);
+//                    alertDialog.setmMessage(message);
 //                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getResources().getString(R.string.ok),
 //                            new DialogInterface.OnClickListener() {
 //                                public void onClick(DialogInterface dialog, int which) {

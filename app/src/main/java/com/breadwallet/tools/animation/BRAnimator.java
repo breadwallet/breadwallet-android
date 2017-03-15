@@ -588,13 +588,6 @@ public class BRAnimator {
     public static void showBreadMenu(Activity activity) {
         fragmentMenu = new FragmentBreadMenu();
 
-//        BlurAnimation.
-
-//        Bundle bundle = new Bundle();
-//        bundle.putString(FragmentBreadSignal.TITLE, title);
-//        bundle.putString(FragmentBreadSignal.ICON_DESCRIPTION, iconDescription);
-//        bundle.putInt(FragmentBreadSignal.RES_ID, drawableId);
-//        fragmentSignal.setArguments(bundle);
         FragmentTransaction transaction = activity.getFragmentManager().beginTransaction();
         transaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_bottom, R.animator.from_bottom, R.animator.to_bottom);
         transaction.add(android.R.id.content, fragmentMenu, fragmentMenu.getClass().getName());
@@ -605,13 +598,6 @@ public class BRAnimator {
     public static void showSecurityCenter(Activity activity) {
         fragmentSecurityCenter = new FragmentSecurityCenter();
 
-//        BlurAnimation.
-
-//        Bundle bundle = new Bundle();
-//        bundle.putString(FragmentBreadSignal.TITLE, title);
-//        bundle.putString(FragmentBreadSignal.ICON_DESCRIPTION, iconDescription);
-//        bundle.putInt(FragmentBreadSignal.RES_ID, drawableId);
-//        fragmentSignal.setArguments(bundle);
         FragmentTransaction transaction = activity.getFragmentManager().beginTransaction();
         transaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_bottom, R.animator.from_bottom, R.animator.to_bottom);
         transaction.add(android.R.id.content, fragmentSecurityCenter, fragmentSecurityCenter.getClass().getName());

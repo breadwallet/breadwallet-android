@@ -30,12 +30,15 @@ import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.presenter.fragments.FingerprintDialogFragment;
+import com.breadwallet.presenter.fragments.FragmentBreadPin;
+import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.util.concurrent.TimeUnit;
 
+import static android.R.attr.mode;
 import static com.breadwallet.presenter.activities.BreadActivity.app;
 
 /**
@@ -107,9 +110,9 @@ public class BreadWalletApp extends Application {
                     customToastAvailable = true;
                 }
             }, 1000);
-            LayoutInflater inflater = ((Activity)app).getLayoutInflater();
+            LayoutInflater inflater = ((Activity) app).getLayoutInflater();
             View layout = inflater.inflate(R.layout.toast,
-                    (ViewGroup) ((Activity)app).findViewById(R.id.toast_layout_root));
+                    (ViewGroup) ((Activity) app).findViewById(R.id.toast_layout_root));
             if (color == 1) {
                 layout.setBackgroundResource(R.drawable.toast_layout_black);
             }
@@ -180,61 +183,6 @@ public class BreadWalletApp extends Application {
 //
 //    }
 
-    public void promptForAuthentication(Context context, int mode, PaymentRequestEntity requestEntity, String message, String title, PaymentRequestWrapper paymentRequest, boolean forcePasscode) {
-        Log.e(TAG, "promptForAuthentication: " + mode);
-        if (context == null) return;
-//        KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Activity.KEYGUARD_SERVICE);
-//
-//        boolean useFingerPrint = ActivityCompat.checkSelfPermission(this, Manifest.permission.USE_FINGERPRINT) ==
-//                PackageManager.PERMISSION_GRANTED && mFingerprintManager.isHardwareDetected() && mFingerprintManager.hasEnrolledFingerprints();
-//        if (mode == BRConstants.AUTH_FOR_PAY) {
-//            long limit = KeyStoreManager.getSpendLimit(context);
-//            long totalSent = BRWalletManager.getInstance().getTotalSent();
-//
-//            if (requestEntity != null)
-//                if (limit <= totalSent + requestEntity.amount) {
-//                    useFingerPrint = false;
-//                }
-//        }
-//
-//        if (mode == BRConstants.AUTH_FOR_LIMIT || mode == BRConstants.AUTH_FOR_PHRASE) {
-//            useFingerPrint = false;
-//        }
-//
-//        if (KeyStoreManager.getFailCount(context) != 0) {
-//            useFingerPrint = false;
-//        }
-//        long passTime = KeyStoreManager.getLastPasscodeUsedTime(context);
-//        if (passTime + TimeUnit.MILLISECONDS.convert(2, TimeUnit.DAYS) <= System.currentTimeMillis()) {
-//            useFingerPrint = false;
-//        }
-//        if (forcePasscode) useFingerPrint = false;
-//
-//        if (keyguardManager.isKeyguardSecure()) {
-//            if (useFingerPrint) {
-//                // This happens when no fingerprints are registered.
-//                FingerprintDialogFragment fingerprintDialogFragment = new FingerprintDialogFragment();
-//                fingerprintDialogFragment.setMode(mode);
-//                fingerprintDialogFragment.setPaymentRequestEntity(requestEntity, paymentRequest);
-//                fingerprintDialogFragment.setMessage(message);
-//                fingerprintDialogFragment.setTitle(message != null ? "" : title);
-//                if (!context.isDestroyed())
-//                    fingerprintDialogFragment.show(context.getFragmentManager(), FingerprintDialogFragment.class.getName());
-//            } else {
-//                PasswordDialogFragment passwordDialogFragment = new PasswordDialogFragment();
-//                passwordDialogFragment.setMode(mode);
-//                passwordDialogFragment.setPaymentRequestEntity(requestEntity, paymentRequest);
-//                passwordDialogFragment.setVerifyOnlyTrue();
-//                passwordDialogFragment.setMessage(message);
-//                if (!context.isDestroyed())
-//                    passwordDialogFragment.show(context.getFragmentManager(), PasswordDialogFragment.class.getName());
-//            }
-//        } else {
-//            showDeviceNotSecuredWarning(context);
-//        }
-
-    }
-
     public void showDeviceNotSecuredWarning(final Activity context) {
         Log.e(TAG, "WARNING device is not secured!");
         new AlertDialog.Builder(context)
@@ -260,7 +208,7 @@ public class BreadWalletApp extends Application {
             Log.e(TAG, "showCustomDialog: FAILED, context is null");
             return;
         }
-        ((Activity)app).runOnUiThread(new Runnable() {
+        ((Activity) app).runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 new android.app.AlertDialog.Builder(app)
@@ -298,7 +246,7 @@ public class BreadWalletApp extends Application {
 
     public void hideKeyboard(Context app) {
         if (app != null) {
-            View view = ((Activity)app).getCurrentFocus();
+            View view = ((Activity) app).getCurrentFocus();
             if (view != null) {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);

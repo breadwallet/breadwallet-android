@@ -303,8 +303,8 @@
 //                        return;
 //                    }
 //                    AlertDialog.Builder builder = new AlertDialog.Builder(app);
-//                    builder.setTitle(R.string.device_security_compromised)
-//                            .setMessage(String.format(getString(R.string.rooted_message),
+//                    builder.setmTitle(R.string.device_security_compromised)
+//                            .setmMessage(String.format(getString(R.string.rooted_message),
 //                                    hasBitcoin ? getString(R.string.rooted_message_holder1) : ""))
 //                            .setCancelable(false)
 //                            .setNegativeButton(getString(R.string.ok), new DialogInterface.OnClickListener() {

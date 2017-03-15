@@ -365,7 +365,7 @@ public class BreadActivity extends AppCompatActivity implements Observer {
 //        String pass = KeyStoreManager.getPinCode(this);
 //        long passTime = KeyStoreManager.getLastPasscodeUsedTime(this);
 //        if (pass.length() == 4 && (passTime + BRConstants.PASS_CODE_TIME_LIMIT <= System.currentTimeMillis())) {
-//            ((BreadWalletApp) getApplication()).promptForAuthentication(this, BRConstants.AUTH_FOR_GENERAL, null, null, null, null, true);
+//            ((BreadWalletApp) getApplication()).authPrompt(this, BRConstants.AUTH_FOR_GENERAL, null, null, null, null, true);
 //        }
 //    }
 //

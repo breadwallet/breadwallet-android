@@ -344,12 +344,12 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 + " (" + BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(paymentRequest.fee), app) + ")" + "\ntotal: " + BRStringFormatter.getFormattedCurrencyString(app,"BTC", total)
                 + " (" + BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(total), app) + ")";
 
-        app.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                ((BreadWalletApp) app.getApplicationContext()).promptForAuthentication(app, BRConstants.AUTH_FOR_PAYMENT_PROTOCOL, request, message, "", paymentRequest, false);
-            }
-        });
+//        app.runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                ((BreadWalletApp) app.getApplicationContext()).authPrompt(app, BRConstants.AUTH_FOR_PAYMENT_PROTOCOL, request, message, "", paymentRequest, false);
+//            }
+//        });
     }
 
 }

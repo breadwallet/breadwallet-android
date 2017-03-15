@@ -208,7 +208,7 @@ public class KeyStoreTests {
     @Test
     public void setGetLastPasscodeUsedTime() {
         long time = 1479686841;
-        KeyStoreManager.putLastPasscodeUsedTime(time, mActivityRule.getActivity());
+        KeyStoreManager.putLastPinUsedTime(time, mActivityRule.getActivity());
         assertFilesExist(KeyStoreManager.PASS_TIME_ALIAS);
         long freshGet;
         freshGet = KeyStoreManager.getLastPasscodeUsedTime(mActivityRule.getActivity());
@@ -237,7 +237,7 @@ public class KeyStoreTests {
         KeyStoreManager.putFailCount(3, mActivityRule.getActivity());
         KeyStoreManager.putFailTimeStamp(1479686841, mActivityRule.getActivity());
         KeyStoreManager.putSpendLimit(10000000, mActivityRule.getActivity());
-        KeyStoreManager.putLastPasscodeUsedTime(1479686841, mActivityRule.getActivity());
+        KeyStoreManager.putLastPinUsedTime(1479686841, mActivityRule.getActivity());
 
         for (String a : aliasObjectMap.keySet()) {
             assertFilesExist(a);

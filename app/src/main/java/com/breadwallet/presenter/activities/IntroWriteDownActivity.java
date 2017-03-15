@@ -10,7 +10,9 @@ import android.view.WindowManager;
 import android.widget.Button;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.BRWalletManager;
@@ -29,15 +31,25 @@ public class IntroWriteDownActivity extends Activity {
         writeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PostAuthenticationProcessor.getInstance().onCreateWalletAuth(IntroWriteDownActivity.this, false);
-
+                AuthManager.getInstance().authPrompt(IntroWriteDownActivity.this, "PIN Required", "Please enter your PIN to authorize this transaction.", true, new BRAuthCompletion() {
+                    @Override
+                    public void onComplete() {
+                        PostAuthenticationProcessor.getInstance().onCreateWalletAuth(IntroWriteDownActivity.this, false);
+                    }
+                });
             }
         });
     }
 
     @Override
     public void onBackPressed() {
-        BRWalletManager.getInstance().startBreadActivity(this);
+        int count = getFragmentManager().getBackStackEntryCount();
+        if (count == 0) {
+            BRWalletManager.getInstance().startBreadActivity(this);
+            //additional code
+        } else {
+            getFragmentManager().popBackStack();
+        }
 
     }
 
