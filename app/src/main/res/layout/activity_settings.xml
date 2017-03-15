@@ -36,5 +36,4 @@
         app:layout_constraintHorizontal_bias="0.0"
         android:layout_marginBottom="8dp"/>
 
-
 </android.support.constraint.ConstraintLayout>

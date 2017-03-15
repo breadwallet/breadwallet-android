@@ -1,16 +1,13 @@
-package com.breadwallet.presenter.activities;
+package com.breadwallet.presenter.activities.settings;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,26 +15,17 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.customviews.BRSoftKeyboard;
-import com.breadwallet.presenter.entities.BRSecurityCenterItem;
 import com.breadwallet.presenter.entities.BRSettingsItem;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.R.attr.listDivider;
-import static android.R.drawable.divider_horizontal_bright;
-import static android.R.drawable.divider_horizontal_dark;
-import static com.breadwallet.R.id.dot3;
-import static com.breadwallet.R.id.dot5;
 import static com.breadwallet.R.layout.settings_list_item;
 import static com.breadwallet.R.layout.settings_list_section;
-import static java.security.AccessController.getContext;
 
 public class SettingsActivity extends Activity {
     private static final String TAG = SettingsActivity.class.getName();
@@ -76,9 +64,7 @@ public class SettingsActivity extends Activity {
         @Override
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 
-//            Log.e(TAG, "getView: pos: " + position + ", item: " + items.get(position));
-
-            View v = convertView;
+            View v;
             BRSettingsItem item = items.get(position);
             LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
 
@@ -136,6 +122,7 @@ public class SettingsActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Log.e(TAG, "onClick: Import Wallet");
+
             }
         }, false));
 
@@ -152,6 +139,10 @@ public class SettingsActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Log.e(TAG, "onClick: Notifications");
+                Intent intent = new Intent(SettingsActivity.this, NotificationActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+
             }
         }, false));
         items.add(new BRSettingsItem("FingerPrint Spending Limit", "", new View.OnClickListener() {

@@ -94,7 +94,12 @@
             android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name=".presenter.activities.SettingsActivity"
+            android:name=".presenter.activities.settings.SettingsActivity"
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name=".presenter.activities.settings.NotificationActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait">
         </activity>
