@@ -85,7 +85,6 @@ public class IntroPhraseCheckActivity extends Activity {
         try {
             cleanPhrase = new String(KeyStoreManager.getKeyStorePhrase(this, 0));
             //todo DELETE THIS LOG
-            Log.e(TAG, "onCreate: success: " + cleanPhrase);
         } catch (BRKeystoreErrorException e) {
             e.printStackTrace();
         }
@@ -96,7 +95,7 @@ public class IntroPhraseCheckActivity extends Activity {
         String wordArray[] = cleanPhrase.split(" ");
 
         if (wordArray.length == 12 && cleanPhrase.charAt(cleanPhrase.length() - 1) == '\0') {
-            ((BreadWalletApp) getApplication()).showCustomDialog(this,getString(R.string.warning),
+            ((BreadWalletApp) getApplication()).showCustomDialog(this, getString(R.string.warning),
                     getString(R.string.phrase_error), getString(R.string.ok));
             FirebaseCrash.report(new IllegalArgumentException(getString(R.string.phrase_error)));
 
@@ -117,7 +116,6 @@ public class IntroPhraseCheckActivity extends Activity {
         if (isNext) {
             setButtonEnabled(true);
             if (currentIndex >= 11) {
-                Log.e(TAG, "proceed: Proceding to the next screen!");
                 Intent intent = new Intent(IntroPhraseCheckActivity.this, IntroPhraseProveActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);

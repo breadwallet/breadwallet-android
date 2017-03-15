@@ -3,17 +3,20 @@ package com.breadwallet.presenter.activities;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -27,6 +30,9 @@ import com.breadwallet.presenter.entities.BRSettingsItem;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.R.attr.listDivider;
+import static android.R.drawable.divider_horizontal_bright;
+import static android.R.drawable.divider_horizontal_dark;
 import static com.breadwallet.R.id.dot3;
 import static com.breadwallet.R.id.dot5;
 import static com.breadwallet.R.layout.settings_list_item;
@@ -49,7 +55,10 @@ public class SettingsActivity extends Activity {
         populateItems();
 
         listView.setAdapter(new SettingsListAdapter(this, settings_list_item, items));
-
+        View v = new View(this);
+        v.setBackgroundColor(getColor(R.color.extra_light_grey));
+        v.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, listView.getDividerHeight()));
+        listView.addFooterView(v);
     }
 
     public class SettingsListAdapter extends ArrayAdapter<String> {

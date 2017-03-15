@@ -114,7 +114,7 @@ public class FragmentBreadMenu extends Fragment {
                 Intent intent = new Intent(getActivity(), SettingsActivity.class);
                 getActivity().onBackPressed();
                 startActivity(intent);
-//                getActivity().overridePendingTransition(R.anim.enter_from_bottom, 0);
+                getActivity().overridePendingTransition(R.anim.enter_from_bottom, 0);
             }
         }));
         itemList.add(new BRMenuItem("Lock Wallet", R.drawable.ic_lock, new View.OnClickListener() {
