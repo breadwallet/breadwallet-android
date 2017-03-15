@@ -1,39 +1,34 @@
 package com.breadwallet.presenter.activities.settings;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.IntroReEnterPinActivity;
-import com.breadwallet.presenter.customviews.BRSoftKeyboard;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 
-public class NotificationActivity extends Activity {
-    private static final String TAG = NotificationActivity.class.getName();
-    private ToggleButton toggleButton;
+import static com.breadwallet.R.id.toggleButton;
+
+public class SyncBlockchainActivity extends Activity {
+    private static final String TAG = SyncBlockchainActivity.class.getName();
+    private Button scanButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_notification);
+        setContentView(R.layout.activity_sync_blockchain);
         setStatusBarColor(android.R.color.transparent);
 
-        toggleButton = (ToggleButton) findViewById(R.id.toggleButton);
-        toggleButton.setChecked(SharedPreferencesManager.getShowNotification(this));
-        toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-
+        scanButton = (Button) findViewById(R.id.button_scan);
+        scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                SharedPreferencesManager.putShowNotification(NotificationActivity.this, isChecked);
+            public void onClick(View v) {
+
             }
         });
 
