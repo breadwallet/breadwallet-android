@@ -83,8 +83,8 @@ public class RequestHandler {
         RequestObject requestObject = getRequestFromString(uri);
         if (requestObject == null) {
             if (app != null) {
-                BreadDialog.showCustomDialog(app, app.getString(R.string.warning),
-                        app.getString(R.string.invalid_address), app.getString(R.string.ok));
+//                BreadDialog.showCustomDialog(app, app.getString(R.string.warning),
+//                        app.getString(R.string.invalid_address), app.getString(R.string.ok));
             }
             return false;
         }
@@ -94,8 +94,8 @@ public class RequestHandler {
             return tryAndProcessBitcoinURL(requestObject, app);
         } else {
             if (app != null) {
-                BreadDialog.showCustomDialog(app, app.getString(R.string.warning),
-                        app.getString(R.string.bad_payment_request), app.getString(R.string.ok));
+//                BreadDialog.showCustomDialog(app, app.getString(R.string.warning),
+//                        app.getString(R.string.bad_payment_request), app.getString(R.string.ok));
             }
             return false;
         }

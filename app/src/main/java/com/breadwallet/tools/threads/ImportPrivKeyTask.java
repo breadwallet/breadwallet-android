@@ -73,8 +73,8 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
             app.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    BreadDialog.showCustomDialog(app, app.getString(R.string.warning),
-                            app.getString(R.string.priv_key_empty), app.getString(R.string.ok));
+//                    BreadDialog.showCustomDialog(app, app.getString(R.string.warning),
+//                            app.getString(R.string.priv_key_empty), app.getString(R.string.ok));
                 }
             });
         }
@@ -101,8 +101,8 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
                     public void onClick(DialogInterface dialog, int which) {
                         boolean result = BRWalletManager.getInstance().confirmKeySweep(importPrivKeyEntity.getTx(), key);
                         if (!result) {
-                            BreadDialog.showCustomDialog(app,app.getString(R.string.warning),
-                                    app.getString(R.string.could_not_sweep_the_balance), app.getString(R.string.ok));
+//                            BreadDialog.showCustomDialog(app,app.getString(R.string.warning),
+//                                    app.getString(R.string.could_not_sweep_the_balance), app.getString(R.string.ok));
                         }
                     }
                 })

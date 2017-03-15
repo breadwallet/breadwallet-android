@@ -3,6 +3,7 @@ package com.breadwallet.tools.animation;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 /**
@@ -32,7 +33,15 @@ import android.util.Log;
 public class BreadDialog {
     private static final String TAG = BreadDialog.class.getName();
 
-    public static void showCustomDialog(final Context app, final String title, final String message, final String buttonText) {
+
+    /**
+     * Safe from any threads
+     *
+     * @param app needs to be activity
+     */
+    public static void showCustomDialog(@NonNull final Context app, @NonNull final String title, @NonNull final String message,
+                                        @NonNull final String posButton, final String negButton, final DialogInterface.OnClickListener posListener,
+                                        final DialogInterface.OnClickListener negListener, final DialogInterface.OnDismissListener dismissListener, final int iconRes) {
         if (app == null) {
             Log.e(TAG, "showCustomDialog: FAILED, context is null");
             return;
@@ -40,16 +49,19 @@ public class BreadDialog {
         ((Activity) app).runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                new android.app.AlertDialog.Builder(app)
+                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(app)
                         .setTitle(title)
                         .setMessage(message)
-                        .setPositiveButton(buttonText, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        })
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .show();
+                        .setPositiveButton(posButton, posListener);
+                if (iconRes != 0)
+                    builder.setIcon(iconRes);
+
+                if (negListener != null && negButton != null)
+                    builder.setNegativeButton(negButton, negListener);
+                if (dismissListener != null)
+                    builder.setOnDismissListener(dismissListener);
+
+                builder.show();
             }
         });
     }

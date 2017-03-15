@@ -122,9 +122,9 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
                 if (app != null) {
                     pendingErrorMessages.put(TITLE, app.getString(R.string.warning));
                     pendingErrorMessages.put(MESSAGE, app.getString(R.string.could_not_transmit_payment));
-                    if (!((BreadWalletApp) app.getApplication()).hasInternetAccess())
-                        BreadDialog.
-                                showCustomDialog(app,app.getString(R.string.could_not_make_payment), app.getString(R.string.not_connected_network), app.getString(R.string.ok));
+//                    if (!((BreadWalletApp) app.getApplication()).hasInternetAccess())
+//                        BreadDialog.
+//                                showCustomDialog(app,app.getString(R.string.could_not_make_payment), app.getString(R.string.not_connected_network), app.getString(R.string.ok));
 
                 }
 
@@ -152,8 +152,8 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
                         showCustomToast(app, message, BreadActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 1);
             } else {
                 if (!waiting && !sent && pendingErrorMessages.get(MESSAGE) != null) {
-                    BreadDialog.
-                            showCustomDialog(app,pendingErrorMessages.get(TITLE), pendingErrorMessages.get(MESSAGE), app.getString(R.string.ok));
+//                    BreadDialog.
+//                            showCustomDialog(app,pendingErrorMessages.get(TITLE), pendingErrorMessages.get(MESSAGE), app.getString(R.string.ok));
                     pendingErrorMessages = null;
                 }
             }

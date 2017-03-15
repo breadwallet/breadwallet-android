@@ -93,62 +93,27 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
 
             if (paymentRequest == null || paymentRequest.error == PaymentRequestWrapper.INVALID_REQUEST_ERROR) {
                 Log.e(TAG, "paymentRequest is null!!!");
-                if (app != null) {
-                    app.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            BreadDialog.showCustomDialog(app, "", app.getString(R.string.invalid_request), app.getString(R.string.ok));
-                        }
-                    });
-                }
+//                            BreadDialog.showCustomDialog(app, "", app.getString(R.string.invalid_request), app.getString(R.string.ok));
                 paymentRequest = null;
                 return null;
             } else if (paymentRequest.error == PaymentRequestWrapper.INSUFFICIENT_FUNDS_ERROR) {
                 Log.e(TAG, "insufficient amount!!!");
-                if (app != null) {
-                    app.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            BreadDialog.showCustomDialog(app, "", app.getString(R.string.insufficient_funds), app.getString(R.string.ok));
-                        }
-                    });
-                }
+//                            BreadDialog.showCustomDialog(app, "", app.getString(R.string.insufficient_funds), app.getString(R.string.ok));
                 paymentRequest = null;
                 return null;
             } else if (paymentRequest.error == PaymentRequestWrapper.SIGNING_FAILED_ERROR) {
                 Log.e(TAG, "failed to sign tx!!!");
-                if (app != null) {
-                    app.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            BreadDialog.showCustomDialog(app, "", app.getString(R.string.failed_to_sign_tx), app.getString(R.string.ok));
-                        }
-                    });
-                }
+//                            BreadDialog.showCustomDialog(app, "", app.getString(R.string.failed_to_sign_tx), app.getString(R.string.ok));
                 paymentRequest = null;
                 return null;
             } else if (paymentRequest.error == PaymentRequestWrapper.REQUEST_TOO_LONG_ERROR) {
                 Log.e(TAG, "failed to sign tx!!!");
-                if (app != null) {
-                    app.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            BreadDialog.showCustomDialog(app, "", app.getString(R.string.payment_request_message_too_large), app.getString(R.string.ok));
-                        }
-                    });
-                }
+//                            BreadDialog.showCustomDialog(app, "", app.getString(R.string.payment_request_message_too_large), app.getString(R.string.ok));
                 paymentRequest = null;
                 return null;
             } else if (paymentRequest.error == PaymentRequestWrapper.AMOUNTS_ERROR) {
                 Log.e(TAG, "failed to sign tx!!!");
-                if (app != null) {
-                    app.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            BreadDialog.showCustomDialog(app, "", app.getString(R.string.could_not_transmit_payment), app.getString(R.string.ok));
-                        }
-                    });
-                }
+//                            BreadDialog.showCustomDialog(app, "", app.getString(R.string.could_not_transmit_payment), app.getString(R.string.ok));
                 paymentRequest = null;
                 return null;
             }
@@ -159,10 +124,10 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
 //                allAddresses.append(s).append(", ");
                 if (!BRWalletManager.validateAddress(s)) {
                     if (app != null)
-                        BreadDialog.
-                                showCustomDialog(app, app.getString(R.string.error),
-                                        String.format(app.getString(R.string.invalid_address_with_holder), s),
-                                        app.getString(R.string.ok));
+//                        BreadDialog.
+//                                showCustomDialog(app, app.getString(R.string.error),
+//                                        String.format(app.getString(R.string.invalid_address_with_holder), s),
+//                                        app.getString(R.string.ok));
                     paymentRequest = null;
                     return null;
                 }
@@ -180,9 +145,9 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
             if (paymentRequest.expires != 0 && paymentRequest.time > paymentRequest.expires) {
                 Log.e(TAG, "Request is expired");
                 if (app != null)
-                    BreadDialog.
-                            showCustomDialog(app, app.getString(R.string.error), app.getString(R.string.expired_request),
-                                    app.getString(R.string.ok));
+//                    BreadDialog.
+//                            showCustomDialog(app, app.getString(R.string.error), app.getString(R.string.expired_request),
+//                                    app.getString(R.string.ok));
                 paymentRequest = null;
                 return null;
             }
@@ -192,18 +157,18 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
         } catch (Exception e) {
             if (e instanceof java.net.UnknownHostException) {
                 if (app != null)
-                    BreadDialog.
-                            showCustomDialog(app, app.getString(R.string.error), app.getString(R.string.unknown_host), app.getString(R.string.ok));
+//                    BreadDialog.
+//                            showCustomDialog(app, app.getString(R.string.error), app.getString(R.string.unknown_host), app.getString(R.string.ok));
                 paymentRequest = null;
             } else if (e instanceof FileNotFoundException) {
                 if (app != null)
-                    BreadDialog.
-                            showCustomDialog(app, app.getString(R.string.warning), app.getString(R.string.bad_payment_request), app.getString(R.string.ok));
+//                    BreadDialog.
+//                            showCustomDialog(app, app.getString(R.string.warning), app.getString(R.string.bad_payment_request), app.getString(R.string.ok));
                 paymentRequest = null;
             } else if (e instanceof SocketTimeoutException) {
                 if (app != null)
-                    BreadDialog.
-                            showCustomDialog(app, app.getString(R.string.warning), app.getString(R.string.connection_timed_out), app.getString(R.string.ok));
+//                    BreadDialog.
+//                            showCustomDialog(app, app.getString(R.string.warning), app.getString(R.string.connection_timed_out), app.getString(R.string.ok));
                 paymentRequest = null;
             } else if (e instanceof CertificateChainNotFound) {
                 Log.e(TAG, "No certificates!", e);
@@ -211,12 +176,12 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 if (app != null)
 
                     if (!((BreadWalletApp) app.getApplication()).hasInternetAccess()) {
-                        BreadDialog.
-                                showCustomDialog(app, app.getString(R.string.could_not_make_payment), app.getString(R.string.not_connected_network), app.getString(R.string.ok));
+//                        BreadDialog.
+//                                showCustomDialog(app, app.getString(R.string.could_not_make_payment), app.getString(R.string.not_connected_network), app.getString(R.string.ok));
 
                     } else
-                        BreadDialog.
-                                showCustomDialog(app, app.getString(R.string.warning), app.getString(R.string.could_not_transmit_payment), app.getString(R.string.ok));
+//                        BreadDialog.
+//                                showCustomDialog(app, app.getString(R.string.warning), app.getString(R.string.could_not_transmit_payment), app.getString(R.string.ok));
 
                 paymentRequest = null;
             }
@@ -341,8 +306,8 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
         final long total = paymentRequest.amount + paymentRequest.fee;
         final PaymentRequestEntity request = new PaymentRequestEntity(paymentRequest.addresses, paymentRequest.amount, certName, paymentRequest.serializedTx, false);
         final String message = certification + memo + allAddresses.toString() + "\n\n" + "amount: " + BRStringFormatter.getFormattedCurrencyString(app, "BTC", paymentRequest.amount)
-                + " (" + BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(paymentRequest.amount), app) + ")" + "\nnetwork fee: +" + BRStringFormatter.getFormattedCurrencyString(app,"BTC", paymentRequest.fee)
-                + " (" + BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(paymentRequest.fee), app) + ")" + "\ntotal: " + BRStringFormatter.getFormattedCurrencyString(app,"BTC", total)
+                + " (" + BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(paymentRequest.amount), app) + ")" + "\nnetwork fee: +" + BRStringFormatter.getFormattedCurrencyString(app, "BTC", paymentRequest.fee)
+                + " (" + BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(paymentRequest.fee), app) + ")" + "\ntotal: " + BRStringFormatter.getFormattedCurrencyString(app, "BTC", total)
                 + " (" + BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(total), app) + ")";
 
 //        app.runOnUiThread(new Runnable() {

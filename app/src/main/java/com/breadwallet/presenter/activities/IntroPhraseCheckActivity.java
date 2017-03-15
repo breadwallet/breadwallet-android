@@ -3,6 +3,7 @@ package com.breadwallet.presenter.activities;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -97,7 +98,12 @@ public class IntroPhraseCheckActivity extends Activity {
 
         if (wordArray.length == 12 && cleanPhrase.charAt(cleanPhrase.length() - 1) == '\0') {
             BreadDialog.showCustomDialog(this, getString(R.string.warning),
-                    getString(R.string.phrase_error), getString(R.string.ok));
+                    getString(R.string.phrase_error), getString(R.string.ok), null, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    }, null, null, 0);
             FirebaseCrash.report(new IllegalArgumentException(getString(R.string.phrase_error)));
 
         } else {

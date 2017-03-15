@@ -272,8 +272,8 @@ public class BRWalletManager extends Observable {
                                 ((Activity) ctx).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        BreadDialog.showCustomDialog(ctx, ctx.getString(R.string.warning),
-                                                ctx.getString(R.string.not_connected), ctx.getString(R.string.ok));
+//                                        BreadDialog.showCustomDialog(ctx, ctx.getString(R.string.warning),
+//                                                ctx.getString(R.string.not_connected), ctx.getString(R.string.ok));
                                     }
                                 });
 
@@ -381,8 +381,8 @@ public class BRWalletManager extends Observable {
         if (error != 0) {
             if (!PaymentProtocolPostPaymentTask.waiting && !PaymentProtocolPostPaymentTask.sent) {
                 if (PaymentProtocolPostPaymentTask.pendingErrorMessages.get(PaymentProtocolPostPaymentTask.MESSAGE) != null) {
-                    BreadDialog.showCustomDialog(ctx, PaymentProtocolPostPaymentTask.pendingErrorMessages.get(PaymentProtocolPostPaymentTask.TITLE),
-                                    PaymentProtocolPostPaymentTask.pendingErrorMessages.get(PaymentProtocolPostPaymentTask.MESSAGE), ctx.getString(R.string.ok));
+//                    BreadDialog.showCustomDialog(ctx, PaymentProtocolPostPaymentTask.pendingErrorMessages.get(PaymentProtocolPostPaymentTask.TITLE),
+//                            PaymentProtocolPostPaymentTask.pendingErrorMessages.get(PaymentProtocolPostPaymentTask.MESSAGE), ctx.getString(R.string.ok));
                     PaymentProtocolPostPaymentTask.pendingErrorMessages = null;
                 } else {
                     ((BreadWalletApp) ((Activity) ctx).getApplication()).showCustomToast(ctx, message,

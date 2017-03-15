@@ -138,7 +138,6 @@ public class SettingsActivity extends Activity {
         items.add(new BRSettingsItem("Notifications", "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e(TAG, "onClick: Notifications");
                 Intent intent = new Intent(SettingsActivity.this, NotificationActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
@@ -160,7 +159,9 @@ public class SettingsActivity extends Activity {
         items.add(new BRSettingsItem("Sync Blockchain", "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e(TAG, "onClick: Sync Blockchain");
+                Intent intent = new Intent(SettingsActivity.this, SyncBlockchainActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         }, false));
 
