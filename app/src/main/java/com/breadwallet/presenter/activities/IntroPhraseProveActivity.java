@@ -16,6 +16,7 @@ import com.breadwallet.BreadWalletApp;
 import com.breadwallet.R;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.Utils;
@@ -91,7 +92,7 @@ public class IntroPhraseProveActivity extends Activity {
         String wordArray[] = cleanPhrase.split(" ");
 
         if (wordArray.length == 12 && cleanPhrase.charAt(cleanPhrase.length() - 1) == '\0') {
-            ((BreadWalletApp) getApplication()).showCustomDialog(this,getString(R.string.warning),
+            BreadDialog.showCustomDialog(this,getString(R.string.warning),
                     getString(R.string.phrase_error), getString(R.string.ok));
             FirebaseCrash.report(new IllegalArgumentException(getString(R.string.phrase_error)));
 

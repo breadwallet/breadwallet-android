@@ -8,6 +8,7 @@ import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
+import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.ByteReader;
 import com.breadwallet.tools.security.RequestHandler;
@@ -122,7 +123,7 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
                     pendingErrorMessages.put(TITLE, app.getString(R.string.warning));
                     pendingErrorMessages.put(MESSAGE, app.getString(R.string.could_not_transmit_payment));
                     if (!((BreadWalletApp) app.getApplication()).hasInternetAccess())
-                        ((BreadWalletApp) app.getApplication()).
+                        BreadDialog.
                                 showCustomDialog(app,app.getString(R.string.could_not_make_payment), app.getString(R.string.not_connected_network), app.getString(R.string.ok));
 
                 }
@@ -151,7 +152,7 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
                         showCustomToast(app, message, BreadActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 1);
             } else {
                 if (!waiting && !sent && pendingErrorMessages.get(MESSAGE) != null) {
-                    ((BreadWalletApp) app.getApplication()).
+                    BreadDialog.
                             showCustomDialog(app,pendingErrorMessages.get(TITLE), pendingErrorMessages.get(MESSAGE), app.getString(R.string.ok));
                     pendingErrorMessages = null;
                 }

@@ -203,27 +203,7 @@ public class BreadWalletApp extends Application {
     }
 
 
-    public void showCustomDialog(final Context app, final String title, final String message, final String buttonText) {
-        if (app == null) {
-            Log.e(TAG, "showCustomDialog: FAILED, context is null");
-            return;
-        }
-        ((Activity) app).runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                new android.app.AlertDialog.Builder(app)
-                        .setTitle(title)
-                        .setMessage(message)
-                        .setPositiveButton(buttonText, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        })
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .show();
-            }
-        });
-    }
+
 
     public void setUnlocked(boolean b) {
 //        unlocked = b;

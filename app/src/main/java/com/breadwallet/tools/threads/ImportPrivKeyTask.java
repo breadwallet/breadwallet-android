@@ -9,6 +9,7 @@ import android.util.Log;
 import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.entities.ImportPrivKeyEntity;
+import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.util.BRStringFormatter;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.wallet.BRWalletManager;
@@ -72,7 +73,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
             app.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    ((BreadWalletApp) app.getApplication()).showCustomDialog(app, app.getString(R.string.warning),
+                    BreadDialog.showCustomDialog(app, app.getString(R.string.warning),
                             app.getString(R.string.priv_key_empty), app.getString(R.string.ok));
                 }
             });
@@ -100,7 +101,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
                     public void onClick(DialogInterface dialog, int which) {
                         boolean result = BRWalletManager.getInstance().confirmKeySweep(importPrivKeyEntity.getTx(), key);
                         if (!result) {
-                            ((BreadWalletApp) app.getApplication()).showCustomDialog(app,app.getString(R.string.warning),
+                            BreadDialog.showCustomDialog(app,app.getString(R.string.warning),
                                     app.getString(R.string.could_not_sweep_the_balance), app.getString(R.string.ok));
                         }
                     }

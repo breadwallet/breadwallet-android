@@ -11,6 +11,7 @@ import com.breadwallet.BreadWalletApp;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.presenter.entities.RequestObject;
+import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
 import com.breadwallet.tools.util.TypesConverter;
@@ -82,7 +83,7 @@ public class RequestHandler {
         RequestObject requestObject = getRequestFromString(uri);
         if (requestObject == null) {
             if (app != null) {
-                ((BreadWalletApp) app.getApplication()).showCustomDialog(app, app.getString(R.string.warning),
+                BreadDialog.showCustomDialog(app, app.getString(R.string.warning),
                         app.getString(R.string.invalid_address), app.getString(R.string.ok));
             }
             return false;
@@ -93,7 +94,7 @@ public class RequestHandler {
             return tryAndProcessBitcoinURL(requestObject, app);
         } else {
             if (app != null) {
-                ((BreadWalletApp) app.getApplication()).showCustomDialog(app, app.getString(R.string.warning),
+                BreadDialog.showCustomDialog(app, app.getString(R.string.warning),
                         app.getString(R.string.bad_payment_request), app.getString(R.string.ok));
             }
             return false;

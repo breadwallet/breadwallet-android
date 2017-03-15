@@ -32,6 +32,7 @@ import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.presenter.entities.ImportPrivKeyEntity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.TransactionListItem;
+import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.qrcode.QRUtils;
 import com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask;
 import com.breadwallet.tools.util.BRConstants;
@@ -271,7 +272,7 @@ public class BRWalletManager extends Observable {
                                 ((Activity) ctx).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        ((BreadWalletApp) ((Activity) ctx).getApplication()).showCustomDialog(ctx, ctx.getString(R.string.warning),
+                                        BreadDialog.showCustomDialog(ctx, ctx.getString(R.string.warning),
                                                 ctx.getString(R.string.not_connected), ctx.getString(R.string.ok));
                                     }
                                 });
@@ -380,8 +381,7 @@ public class BRWalletManager extends Observable {
         if (error != 0) {
             if (!PaymentProtocolPostPaymentTask.waiting && !PaymentProtocolPostPaymentTask.sent) {
                 if (PaymentProtocolPostPaymentTask.pendingErrorMessages.get(PaymentProtocolPostPaymentTask.MESSAGE) != null) {
-                    ((BreadWalletApp) ((Activity) ctx).getApplication()).
-                            showCustomDialog(ctx, PaymentProtocolPostPaymentTask.pendingErrorMessages.get(PaymentProtocolPostPaymentTask.TITLE),
+                    BreadDialog.showCustomDialog(ctx, PaymentProtocolPostPaymentTask.pendingErrorMessages.get(PaymentProtocolPostPaymentTask.TITLE),
                                     PaymentProtocolPostPaymentTask.pendingErrorMessages.get(PaymentProtocolPostPaymentTask.MESSAGE), ctx.getString(R.string.ok));
                     PaymentProtocolPostPaymentTask.pendingErrorMessages = null;
                 } else {
