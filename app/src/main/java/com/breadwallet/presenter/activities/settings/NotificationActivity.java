@@ -8,14 +8,18 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.IntroReEnterPinActivity;
 import com.breadwallet.presenter.customviews.BRSoftKeyboard;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
 
 public class NotificationActivity extends Activity {
     private static final String TAG = NotificationActivity.class.getName();
+    private ToggleButton toggleButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +27,15 @@ public class NotificationActivity extends Activity {
         setContentView(R.layout.activity_notification);
         setStatusBarColor(android.R.color.transparent);
 
+        toggleButton = (ToggleButton) findViewById(R.id.toggleButton);
+        toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferencesManager.putShowNotification(NotificationActivity.this, isChecked);
+
+            }
+        });
 
     }
 

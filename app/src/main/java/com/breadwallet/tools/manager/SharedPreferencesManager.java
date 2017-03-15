@@ -366,4 +366,17 @@ public class SharedPreferencesManager {
         editor.clear();
         editor.apply();
     }
+
+    public static boolean getShowNotification(Context context) {
+        SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
+        return settingsToGet.getBoolean("showNotification", false);
+    }
+
+    public static void putShowNotification(Context context, boolean show) {
+        if (context == null) return;
+        SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putBoolean("showNotification", show);
+        editor.apply();
+    }
 }
