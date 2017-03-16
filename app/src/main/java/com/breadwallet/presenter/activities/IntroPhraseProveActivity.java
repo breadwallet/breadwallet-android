@@ -23,10 +23,15 @@ import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.tools.util.WordsReader;
 import com.breadwallet.wallet.BRWalletManager;
 import com.google.firebase.crash.FirebaseCrash;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Random;
+
+import static android.R.id.list;
 
 
 public class IntroPhraseProveActivity extends Activity {
@@ -55,29 +60,38 @@ public class IntroPhraseProveActivity extends Activity {
             public void onClick(View v) {
                 String edit1 = wordEditFirst.getText().toString().replaceAll("[^a-zA-Z]", "");
                 String edit2 = wordEditSecond.getText().toString().replaceAll("[^a-zA-Z]", "");
-                if (edit1.isEmpty() || edit2.isEmpty()) {
-                    if (edit1.isEmpty()) {
+
+                if (edit1.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(0))) && edit2.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(1)))) {
+                    Log.e(TAG, "onClick: Success!");
+                    SharedPreferencesManager.putPhraseWroteDown(IntroPhraseProveActivity.this, true);
+                    BRAnimator.showBreadDialog(IntroPhraseProveActivity.this, "Paper Key Set", "Awesome!", R.drawable.ic_check_mark_white);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            BRWalletManager.getInstance().startBreadActivity(IntroPhraseProveActivity.this);
+                            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                        }
+                    }, 1000);
+                } else {
+                    String languageCode = getString(R.string.lang);
+                    List<String> list;
+                    try {
+                        list = WordsReader.getWordList(IntroPhraseProveActivity.this, languageCode);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        throw new NullPointerException("No word list");
+                    }
+                    Log.e(TAG, "onClick: FAIL");
+                    if (!list.contains(edit1) || edit1.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(0)))) {
                         SpringAnimator.failShakeAnimation(IntroPhraseProveActivity.this, wordTextFirst);
                     }
-                    if (edit2.isEmpty()) {
+
+                    if (!list.contains(edit2) || edit2.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(1)))) {
                         SpringAnimator.failShakeAnimation(IntroPhraseProveActivity.this, wordTextSecond);
                     }
-                } else {
-                    if (edit1.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(0))) && edit2.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(1)))) {
-                        Log.e(TAG, "onClick: Success!");
-                        SharedPreferencesManager.putPhraseWroteDown(IntroPhraseProveActivity.this, true);
-                        BRAnimator.showBreadDialog(IntroPhraseProveActivity.this, "Paper Key Set", "Awesome!", R.drawable.ic_check_mark_white);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                BRWalletManager.getInstance().startBreadActivity(IntroPhraseProveActivity.this);
-                                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                            }
-                        }, 1000);
-                    } else {
-                        Log.e(TAG, "onClick: FAIL");
-                    }
                 }
+
+
             }
         });
         String cleanPhrase = null;
