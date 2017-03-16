@@ -43,10 +43,6 @@ public class SettingsActivity extends Activity {
         populateItems();
 
         listView.setAdapter(new SettingsListAdapter(this, settings_list_item, items));
-        View v = new View(this);
-        v.setBackgroundColor(getColor(R.color.extra_light_grey));
-        v.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, listView.getDividerHeight()));
-        listView.addFooterView(v);
     }
 
     public class SettingsListAdapter extends ArrayAdapter<String> {
