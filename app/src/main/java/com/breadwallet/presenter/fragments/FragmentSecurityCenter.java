@@ -1,17 +1,13 @@
 package com.breadwallet.presenter.fragments;
 
 import android.Manifest;
-import android.animation.ArgbEvaluator;
-import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.fingerprint.FingerprintManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -27,10 +23,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.IntroSetPitActivity;
 import com.breadwallet.presenter.activities.IntroWriteDownActivity;
 import com.breadwallet.presenter.activities.UpdatePitActivity;
-import com.breadwallet.presenter.entities.BRMenuItem;
 import com.breadwallet.presenter.entities.BRSecurityCenterItem;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.KeyStoreManager;
@@ -71,17 +65,13 @@ public class FragmentSecurityCenter extends Fragment {
     public List<BRSecurityCenterItem> itemList;
 
     @Override
-    public View onCreateView(LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // The last two arguments ensure LayoutParams are inflated
         // properly.
 
         View rootView = inflater.inflate(R.layout.fragment_security_center, container, false);
-
         itemList = new ArrayList<>();
-
         mListView = (ListView) rootView.findViewById(R.id.menu_listview);
-
         updateList();
 
         return rootView;
@@ -134,8 +124,7 @@ public class FragmentSecurityCenter extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
-
+        updateList();
     }
 
     @Override
@@ -143,7 +132,7 @@ public class FragmentSecurityCenter extends Fragment {
         super.onPause();
     }
 
-    private void updateList(){
+    private void updateList() {
         boolean isPinSet = KeyStoreManager.getPinCode(getContext()).length() == 6;
         itemList.clear();
         itemList.add(new BRSecurityCenterItem("6-Digit PIN", "Unlocks your Bread, authorizes send money.",
