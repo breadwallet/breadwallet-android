@@ -1,16 +1,21 @@
 package com.breadwallet.presenter.fragments;
 
+import android.Manifest;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.hardware.fingerprint.FingerprintManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +32,8 @@ import com.breadwallet.presenter.activities.IntroWriteDownActivity;
 import com.breadwallet.presenter.activities.UpdatePitActivity;
 import com.breadwallet.presenter.entities.BRMenuItem;
 import com.breadwallet.presenter.entities.BRSecurityCenterItem;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.security.KeyStoreManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,32 +79,10 @@ public class FragmentSecurityCenter extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_security_center, container, false);
 
         itemList = new ArrayList<>();
-        itemList.add(new BRSecurityCenterItem("6-Digit PIN", "Unlocks your Bread, authorizes send money.", R.drawable.ic_check_mark_blue, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.e(TAG, "onClick: 6-Digit PIN");
-                Intent intent = new Intent(getActivity(), UpdatePitActivity.class);
-                startActivity(intent);
-            }
-        }));
-        itemList.add(new BRSecurityCenterItem("FingerPrint", "Unlocks your Bread, authorizes send money to set limit.", R.drawable.ic_check_mark_grey, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.e(TAG, "onClick: Touch ID");
-            }
-        }));
-        itemList.add(new BRSecurityCenterItem("Paper Key", "Restores your Bread on new devices and after software updates.", R.drawable.ic_check_mark_grey, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.e(TAG, "onClick: Paper Key");
-                Intent intent = new Intent(getActivity(), IntroWriteDownActivity.class);
-                getActivity().startActivity(intent);
-                getActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_right);
-            }
-        }));
 
         mListView = (ListView) rootView.findViewById(R.id.menu_listview);
-        mListView.setAdapter(new SecurityCenterListAdapter(getContext(), R.layout.menu_list_item, itemList));
+
+        updateList();
 
         return rootView;
     }
@@ -149,6 +134,8 @@ public class FragmentSecurityCenter extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
+
     }
 
     @Override
@@ -156,5 +143,62 @@ public class FragmentSecurityCenter extends Fragment {
         super.onPause();
     }
 
+    private void updateList(){
+        boolean isPinSet = KeyStoreManager.getPinCode(getContext()).length() == 6;
+        itemList.clear();
+        itemList.add(new BRSecurityCenterItem("6-Digit PIN", "Unlocks your Bread, authorizes send money.",
+                isPinSet ? R.drawable.ic_check_mark_blue : R.drawable.ic_check_mark_grey, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e(TAG, "onClick: 6-Digit PIN");
+                Intent intent = new Intent(getActivity(), UpdatePitActivity.class);
+                startActivity(intent);
+            }
+        }));
+
+        boolean isFingerPrintAvailable = false;
+        // Check if we're running on Android 6.0 (M) or higher
+        //Fingerprint API only available on from Android 6.0 (M)
+        FingerprintManager fingerprintManager = (FingerprintManager) getActivity().getSystemService(Context.FINGERPRINT_SERVICE);
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            if (!fingerprintManager.isHardwareDetected()) {
+                // Device doesn't support fingerprint authentication
+            } else if (!fingerprintManager.hasEnrolledFingerprints()) {
+                // User hasn't enrolled any fingerprints to authenticate with
+            } else {
+                // Everything is ready for fingerprint authentication
+                isFingerPrintAvailable = true;
+            }
+        }
+
+        itemList.add(new BRSecurityCenterItem("FingerPrint", "Unlocks your Bread, authorizes send money to set limit.",
+                isFingerPrintAvailable ? R.drawable.ic_check_mark_blue : R.drawable.ic_check_mark_grey, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e(TAG, "onClick: Touch ID");
+            }
+        }));
+
+        boolean isPaperKeySet = SharedPreferencesManager.getPhraseWroteDown(getContext());
+        itemList.add(new BRSecurityCenterItem("Paper Key", "Restores your Bread on new devices and after software updates.",
+                isPaperKeySet ? R.drawable.ic_check_mark_blue : R.drawable.ic_check_mark_grey, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e(TAG, "onClick: Paper Key");
+                Intent intent = new Intent(getActivity(), IntroWriteDownActivity.class);
+                getActivity().startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_right);
+            }
+        }));
+
+        mListView.setAdapter(new SecurityCenterListAdapter(getContext(), R.layout.menu_list_item, itemList));
+    }
 
 }

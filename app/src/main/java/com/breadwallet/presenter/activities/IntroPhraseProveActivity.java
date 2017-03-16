@@ -20,6 +20,7 @@ import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
@@ -64,6 +65,7 @@ public class IntroPhraseProveActivity extends Activity {
                 } else {
                     if (edit1.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(0))) && edit2.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(1)))) {
                         Log.e(TAG, "onClick: Success!");
+                        SharedPreferencesManager.putPhraseWroteDown(IntroPhraseProveActivity.this, true);
                         BRAnimator.showBreadDialog(IntroPhraseProveActivity.this, "Paper Key Set", "Awesome!", R.drawable.ic_check_mark_white);
                         new Handler().postDelayed(new Runnable() {
                             @Override
@@ -90,6 +92,7 @@ public class IntroPhraseProveActivity extends Activity {
         if (Utils.isNullOrEmpty(cleanPhrase)) {
             throw new RuntimeException(TAG + ": cleanPhrase is null");
         }
+        Log.e(TAG, "onCreate: " + cleanPhrase);
 
         String wordArray[] = cleanPhrase.split(" ");
 

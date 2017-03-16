@@ -35,7 +35,6 @@ import com.breadwallet.presenter.customviews.BRDialogView;
 public class BreadDialog {
     private static final String TAG = BreadDialog.class.getName();
 
-
     /**
      * Safe from any threads
      *
@@ -64,7 +63,6 @@ public class BreadDialog {
                 dialog.show(((Activity) app).getFragmentManager(), dialog.getClass().getName());
             }
         });
-
 
     }
 }

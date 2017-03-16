@@ -109,7 +109,6 @@ public class SettingsActivity extends Activity {
         window.setStatusBarColor(getColor(color));
     }
 
-
     private void populateItems() {
 
         items.add(new BRSettingsItem("Wallet", "", null, true));
