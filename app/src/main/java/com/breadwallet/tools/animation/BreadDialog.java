@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.breadwallet.presenter.customviews.BRDialogView;
+
 /**
  * BreadWallet
  * <p/>
@@ -40,29 +42,29 @@ public class BreadDialog {
      * @param app needs to be activity
      */
     public static void showCustomDialog(@NonNull final Context app, @NonNull final String title, @NonNull final String message,
-                                        @NonNull final String posButton, final String negButton, final DialogInterface.OnClickListener posListener,
-                                        final DialogInterface.OnClickListener negListener, final DialogInterface.OnDismissListener dismissListener, final int iconRes) {
+                                        @NonNull final String posButton, final String negButton, final BRDialogView.BROnClickListener posListener,
+                                        final BRDialogView.BROnClickListener negListener, final DialogInterface.OnDismissListener dismissListener, final int iconRes) {
         if (app == null) {
             Log.e(TAG, "showCustomDialog: FAILED, context is null");
             return;
         }
+
         ((Activity) app).runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(app)
-                        .setTitle(title)
-                        .setMessage(message)
-                        .setPositiveButton(posButton, posListener);
-                if (iconRes != 0)
-                    builder.setIcon(iconRes);
-
-                if (negListener != null && negButton != null)
-                    builder.setNegativeButton(negButton, negListener);
-                if (dismissListener != null)
-                    builder.setOnDismissListener(dismissListener);
-
-                builder.show();
+                BRDialogView dialog = new BRDialogView();
+                dialog.setTitle(title);
+                dialog.setMessage(message);
+                dialog.setPosButton(posButton);
+                dialog.setNegButton(negButton);
+                dialog.setPosListener(posListener);
+                dialog.setNegListener(negListener);
+                dialog.setDismissListener(dismissListener);
+                dialog.setIconRes(iconRes);
+                dialog.show(((Activity) app).getFragmentManager(), dialog.getClass().getName());
             }
         });
+
+
     }
 }

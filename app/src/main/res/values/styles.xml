@@ -20,4 +20,5 @@
         <item name="android:textColor">@color/dark_blue</item>
 
     </style>
+
 </resources>

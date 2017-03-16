@@ -12,6 +12,7 @@ import android.widget.CompoundButton;
 import android.widget.ToggleButton;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 
@@ -31,17 +32,19 @@ public class SyncBlockchainActivity extends Activity {
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BreadDialog.showCustomDialog(SyncBlockchainActivity.this, "Sync with Blockchain?", "You will not be able to send money while syncing.", "Sync", "Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Log.e(TAG, "onClick: Start syncing");
-                    }
-                }, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                }, null, 0);
+                BreadDialog.showCustomDialog(SyncBlockchainActivity.this, "Sync with Blockchain?",
+                        "You will not be able to send money while syncing.", "Sync", "Cancel",
+                        new BRDialogView.BROnClickListener() {
+                            @Override
+                            public void onClick(BRDialogView brDialogView) {
+                                Log.e(TAG, "onClick: Starting syncing...");
+                            }
+                        }, new BRDialogView.BROnClickListener() {
+                            @Override
+                            public void onClick(BRDialogView brDialogView) {
+                                brDialogView.dismissWithAnimation();
+                            }
+                        }, null, 0);
             }
         });
 
