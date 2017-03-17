@@ -973,6 +973,7 @@ public class BRWalletManager extends Observable {
 
 
     public void startBreadActivity(Activity from) {
+        Log.e(TAG, "startBreadActivity: from: " + from);
         Intent intent;
         intent = new Intent(from, PinActivity.class);
         from.startActivity(intent);

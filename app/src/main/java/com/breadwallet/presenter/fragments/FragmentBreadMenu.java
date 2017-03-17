@@ -112,11 +112,13 @@ public class FragmentBreadMenu extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.e(TAG, "onClick: Lock Wallet");
+                final Activity from = getActivity();
+                from.getFragmentManager().popBackStack();
                 BRAnimator.showBreadDialog(getActivity(), "Wallet Locked", "Wallet Locked", R.drawable.ic_wallet_locked);
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        BRWalletManager.getInstance().startBreadActivity(getActivity());
+                        BRWalletManager.getInstance().startBreadActivity(from);
                     }
                 },1000);
             }
