@@ -18,6 +18,7 @@ import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.CurrencyManager;
 import com.breadwallet.tools.security.RequestHandler;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.BRWalletManager;
 import com.google.firebase.crash.FirebaseCrash;
 import com.platform.APIClient;
 
@@ -218,18 +219,16 @@ public class BreadActivity extends AppCompatActivity implements Observer {
         appInBackground = false;
         app = this;
 
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                BRWalletManager.getInstance(app).setUpTheWallet();
-//            }
-//        }).start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                BRWalletManager.getInstance().setUpTheWallet(BreadActivity.this);
+            }
+        }).start();
 
-
-
-//        final BRWalletManager m = BRWalletManager.getInstance(this);
-//        CurrencyManager currencyManager = CurrencyManager.getInstance(this);
-//        currencyManager.startTimer();
+//        final BRWalletManager m = BRWalletManager.getInstance();
+        CurrencyManager currencyManager = CurrencyManager.getInstance(this);
+        currencyManager.startTimer();
 //        currencyManager.deleteObservers();
 //        currencyManager.addObserver(this);
 //        final boolean isNetworkAvailable = ((BreadWalletApp) getApplication()).hasInternetAccess();

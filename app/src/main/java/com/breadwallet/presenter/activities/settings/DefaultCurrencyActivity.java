@@ -23,6 +23,8 @@ import com.breadwallet.tools.util.BRStringFormatter;
 
 import org.w3c.dom.Text;
 
+import java.math.BigDecimal;
+
 import static com.breadwallet.R.id.currencyRefresh;
 import static com.breadwallet.R.id.exchange_text;
 import static com.breadwallet.presenter.activities.BreadActivity.app;
@@ -60,8 +62,8 @@ public class DefaultCurrencyActivity extends Activity {
                 SharedPreferencesManager.putIso(app, ISO);
                 SharedPreferencesManager.putCurrencyListPosition(DefaultCurrencyActivity.this, position);
                 SharedPreferencesManager.putRate(app, rate);
-                String finalExchangeRate = BRStringFormatter.getExchangeForAmount(rate, ISO, DefaultCurrencyActivity.this, ISO, 1);
-
+                String finalExchangeRate = BRStringFormatter.getExchangeForAmount(new BigDecimal(rate), ISO, new BigDecimal(1), DefaultCurrencyActivity.this);
+                exchangeText.setText(finalExchangeRate);
 //                MiddleViewAdapter.resetMiddleView(app, finalExchangeRate);
                 adapter.notifyDataSetChanged();
 

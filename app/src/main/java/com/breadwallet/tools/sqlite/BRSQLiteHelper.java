@@ -45,7 +45,7 @@ class BRSQLiteHelper extends SQLiteOpenHelper {
 
     public static final String MB_COLUMN_ID = "_id";
 
-    private static final String MB_DATABASE_CREATE = "create table " + MB_TABLE_NAME + "(" +
+    private static final String MB_DATABASE_CREATE = "create table if not exist " + MB_TABLE_NAME + "(" +
             MB_COLUMN_ID + " integer primary key autoincrement, " +
             MB_BUFF + " blob, " +
             MB_HEIGHT + " integer);";
@@ -60,7 +60,7 @@ class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String TX_BLOCK_HEIGHT = "transactionBlockHeight";
     public static final String TX_TIME_STAMP = "transactionTimeStamp";
 
-    private static final String TX_DATABASE_CREATE = "create table " + TX_TABLE_NAME + "(" +
+    private static final String TX_DATABASE_CREATE = "create table if not exist " + TX_TABLE_NAME + "(" +
             TX_COLUMN_ID + " text, " +
             TX_BUFF + " blob, " +
             TX_BLOCK_HEIGHT + " integer, " +
@@ -76,7 +76,22 @@ class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String PEER_PORT = "peerPort";
     public static final String PEER_TIMESTAMP = "peerTimestamp";
 
-    private static final String PEER_DATABASE_CREATE = "create table " + PEER_TABLE_NAME + "(" +
+    private static final String PEER_DATABASE_CREATE = "create table if not exist " + PEER_TABLE_NAME + "(" +
+            PEER_COLUMN_ID + " integer primary key autoincrement, " +
+            PEER_ADDRESS + " blob," +
+            PEER_PORT + " blob," +
+            PEER_TIMESTAMP + " blob );";
+    /**
+     * Currency table
+     */
+
+    public static final String CURRENCY_TABLE_NAME = "currencyTable";
+    public static final String CURRENCY_COLUMN_ID = "_id";
+    public static final String CURRENCY_ADDRESS = "peerAddress";
+    public static final String CURRENCY_PORT = "peerPort";
+    public static final String CURRENCY_TIMESTAMP = "peerTimestamp";
+
+    private static final String PEER_DATABASE_CREATE = "create table if not exist " + PEER_TABLE_NAME + "(" +
             PEER_COLUMN_ID + " integer primary key autoincrement, " +
             PEER_ADDRESS + " blob," +
             PEER_PORT + " blob," +
@@ -99,10 +114,11 @@ class BRSQLiteHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.e(TAG, "Upgrading database from version " + oldVersion + " to "
                 + newVersion + ", which will destroy all old data");
-        db.execSQL("DROP TABLE IF EXISTS " + MB_TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXISTS " + TX_TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXISTS " + PEER_TABLE_NAME);
+//        db.execSQL("DROP TABLE IF EXISTS " + MB_TABLE_NAME);
+//        db.execSQL("DROP TABLE IF EXISTS " + TX_TABLE_NAME);
+//        db.execSQL("DROP TABLE IF EXISTS " + PEER_TABLE_NAME);
         //recreate the dbs
-        onCreate(db);
+//        onCreate(db);
+
     }
 }

@@ -63,9 +63,9 @@ public class BRStringFormatter {
                 getFormattedCurrencyString(ctx, iso, new BigDecimal(exchange));
     }
 
-    public static String getExchangeForAmount(BigDecimal rate, String iso, BigDecimal target, Context ctx) {
+    public static String getExchangeForAmount(BigDecimal rate, String iso, BigDecimal targetAmount, Context ctx) {
         if (rate.doubleValue() == 0) rate = new BigDecimal("1");
-        long exchange = BRWalletManager.getInstance().localAmount(target.longValue(),
+        long exchange = BRWalletManager.getInstance().localAmount(targetAmount.longValue(),
                 new BigDecimal(String.valueOf(rate)).multiply(new BigDecimal("100")).doubleValue());
         return getFormattedCurrencyString(ctx, iso, new BigDecimal(exchange));
     }

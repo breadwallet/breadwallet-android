@@ -236,9 +236,9 @@ public class BreadWalletApp extends Application {
         Log.e(TAG, "hideKeyboard: FAILED");
     }
 
-    public boolean hasInternetAccess() {
-        return isNetworkAvailable();
-    }
+//    public boolean hasInternetAccess() {
+//        return isNetworkAvailable();
+//    }
 
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager

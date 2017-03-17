@@ -2,23 +2,34 @@ package com.breadwallet.tools.manager;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
 
-import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.entities.CurrencyEntity;
-import com.breadwallet.tools.util.JsonParser;
+import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.wallet.BRWalletManager;
+import com.google.firebase.crash.FirebaseCrash;
+
+import junit.framework.Assert;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Observable;
+import java.util.Locale;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -48,7 +59,7 @@ import java.util.TimerTask;
  * THE SOFTWARE.
  */
 
-public class CurrencyManager  {
+public class CurrencyManager {
     private static final String TAG = CurrencyManager.class.getName();
 
     private static CurrencyManager instance;
@@ -77,43 +88,43 @@ public class CurrencyManager  {
 
     private Set<CurrencyEntity> getCurrencies(Activity context) {
         Set<CurrencyEntity> set = new LinkedHashSet<>();
-        if (((BreadWalletApp) context.getApplication()).hasInternetAccess()) {
-            try {
-                JSONArray arr = JsonParser.getJSonArray(context);
-                JsonParser.updateFeePerKb(context);
+//        if (((BreadWalletApp) context.getApplication()).hasInternetAccess()) {
+        try {
+            JSONArray arr = getJSonArray(context);
+            updateFeePerKb(context);
 //                Log.e(TAG, "JSONArray arr.length(): " + arr.length());
-                if (arr != null) {
-                    int length = arr.length();
-                    for (int i = 1; i < length; i++) {
-                        CurrencyEntity tmp = new CurrencyEntity();
-                        try {
-                            JSONObject tmpObj = (JSONObject) arr.get(i);
-                            tmp.name = tmpObj.getString("name");
-                            tmp.code = tmpObj.getString("code");
-                            tmp.codeAndName = tmp.code + " - " + tmp.name;
-                            tmp.rate = (float) tmpObj.getDouble("rate");
-                            String selectedISO = SharedPreferencesManager.getIso(context);
+            if (arr != null) {
+                int length = arr.length();
+                for (int i = 1; i < length; i++) {
+                    CurrencyEntity tmp = new CurrencyEntity();
+                    try {
+                        JSONObject tmpObj = (JSONObject) arr.get(i);
+                        tmp.name = tmpObj.getString("name");
+                        tmp.code = tmpObj.getString("code");
+                        tmp.codeAndName = tmp.code + " - " + tmp.name;
+                        tmp.rate = (float) tmpObj.getDouble("rate");
+                        String selectedISO = SharedPreferencesManager.getIso(context);
 //                        Log.e(TAG,"selectedISO: " + selectedISO);
-                            if (tmp.code.equalsIgnoreCase(selectedISO)) {
+                        if (tmp.code.equalsIgnoreCase(selectedISO)) {
 //                            Log.e(TAG, "theIso : " + theIso);
 //                                Log.e(TAG, "Putting the shit in the shared preffs");
-                                SharedPreferencesManager.putIso(context, tmp.code);
-                                SharedPreferencesManager.putCurrencyListPosition(context, i - 1);
+                            SharedPreferencesManager.putIso(context, tmp.code);
+                            SharedPreferencesManager.putCurrencyListPosition(context, i - 1);
 //                            Log.e(TAG,"position set: " + (i - 1));
-                                SharedPreferencesManager.putRate(context, tmp.rate);
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                            SharedPreferencesManager.putRate(context, tmp.rate);
                         }
-                        set.add(tmp);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } else {
-                    Log.e(TAG, "getCurrencies: failed to get currencies, response string: " + arr);
+                    set.add(tmp);
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+            } else {
+                Log.e(TAG, "getCurrencies: failed to get currencies, response string: " + arr);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+//        }
         List tempList = new ArrayList<>(set);
         Collections.reverse(tempList);
         return new LinkedHashSet<>(set);
@@ -123,7 +134,7 @@ public class CurrencyManager  {
         Set<CurrencyEntity> tmp;
         private Context context;
 
-        public GetCurrenciesTask(Context ctx){
+        public GetCurrenciesTask(Context ctx) {
             this.context = ctx;
         }
 
@@ -189,6 +200,120 @@ public class CurrencyManager  {
             timer.cancel();
             timer = null;
         }
+    }
+
+
+    public static JSONArray getJSonArray(Activity activity) {
+        String jsonString = callURL(activity,"https://api.breadwallet.com/rates");
+        JSONArray jsonArray = null;
+        try {
+            JSONObject obj = new JSONObject(jsonString);
+            jsonArray = obj.getJSONArray("body");
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonArray == null ? getBackUpJSonArray(activity) : jsonArray;
+    }
+
+    public static JSONArray getBackUpJSonArray(Activity activity) {
+        String jsonString = callURL(activity,"https://bitpay.com/rates");
+
+        JSONArray jsonArray = null;
+        if (jsonString == null) return null;
+        try {
+            JSONObject obj = new JSONObject(jsonString);
+
+            jsonArray = obj.getJSONArray("data");
+            JSONObject headers = obj.getJSONObject("headers");
+            String secureDate = headers.getString("Date");
+            @SuppressWarnings("deprecation") long date = Date.parse(secureDate) / 1000;
+
+            SharedPreferencesManager.putSecureTime(activity, date);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonArray;
+    }
+
+    public static void updateFeePerKb(Activity activity) {
+        String jsonString = callURL(activity,"https://api.breadwallet.com/fee-per-kb");
+        if (jsonString == null || jsonString.isEmpty()) {
+            Log.e(TAG, "updateFeePerKb: failed to update fee, response string: " + jsonString);
+            return;
+        }
+        long fee;
+        try {
+            JSONObject obj = new JSONObject(jsonString);
+            fee = obj.getLong("fee_per_kb");
+            if (fee != 0 && fee < BRConstants.MAX_FEE_PER_KB) {
+
+                SharedPreferencesManager.putFeePerKb(activity, fee);
+                BRWalletManager.getInstance().setFeePerKb(fee);
+            }
+        } catch (JSONException e) {
+            FirebaseCrash.report(e);
+            e.printStackTrace();
+        }
+    }
+
+    private static String callURL(Context app,String myURL) {
+//        System.out.println("Requested URL_EA:" + myURL);
+        StringBuilder sb = new StringBuilder();
+        HttpURLConnection urlConn = null;
+        InputStreamReader in = null;
+        try {
+            URL url = new URL(myURL);
+            urlConn = (HttpURLConnection) url.openConnection();
+            int versionNumber = 0;
+            if (app != null) {
+                try {
+                    PackageInfo pInfo = null;
+                    pInfo = app.getPackageManager().getPackageInfo(app.getPackageName(), 0);
+                    versionNumber = pInfo.versionCode;
+                } catch (PackageManager.NameNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+            int stringId = 0;
+            String appName = "";
+            if (app != null) {
+                stringId = app.getApplicationInfo().labelRes;
+                appName = app.getString(stringId);
+            }
+            String message = String.format(Locale.getDefault(), "%s/%d/%s", appName.isEmpty() ? "breadwallet" : appName, versionNumber, System.getProperty("http.agent"));
+            urlConn.setRequestProperty("User-agent", message);
+            urlConn.setReadTimeout(60 * 1000);
+
+
+            String strDate = urlConn.getHeaderField("date");
+
+            if (strDate == null || app == null) {
+                Log.e(TAG, "callURL: strDate == null!!!");
+            } else {
+                @SuppressWarnings("deprecation") long date = Date.parse(strDate) / 1000;
+                SharedPreferencesManager.putSecureTime(app, date);
+                Assert.assertTrue(date != 0);
+            }
+
+            if (urlConn.getInputStream() != null) {
+                in = new InputStreamReader(urlConn.getInputStream(),
+                        Charset.defaultCharset());
+                BufferedReader bufferedReader = new BufferedReader(in);
+
+                int cp;
+                while ((cp = bufferedReader.read()) != -1) {
+                    sb.append((char) cp);
+                }
+                bufferedReader.close();
+            }
+            assert in != null;
+            in.close();
+        } catch (Exception e) {
+            return null;
+        }
+
+        return sb.toString();
     }
 
 }
