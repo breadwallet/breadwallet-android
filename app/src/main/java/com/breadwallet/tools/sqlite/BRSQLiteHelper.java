@@ -55,7 +55,7 @@ class BRSQLiteHelper extends SQLiteOpenHelper {
 
     public static final String MB_COLUMN_ID = "_id";
 
-    private static final String MB_DATABASE_CREATE = "create table if not exist " + MB_TABLE_NAME + "(" +
+    private static final String MB_DATABASE_CREATE = "create table if not exists " + MB_TABLE_NAME + "(" +
             MB_COLUMN_ID + " integer primary key autoincrement, " +
             MB_BUFF + " blob, " +
             MB_HEIGHT + " integer);";
@@ -70,7 +70,7 @@ class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String TX_BLOCK_HEIGHT = "transactionBlockHeight";
     public static final String TX_TIME_STAMP = "transactionTimeStamp";
 
-    private static final String TX_DATABASE_CREATE = "create table if not exist " + TX_TABLE_NAME + "(" +
+    private static final String TX_DATABASE_CREATE = "create table if not exists " + TX_TABLE_NAME + "(" +
             TX_COLUMN_ID + " text, " +
             TX_BUFF + " blob, " +
             TX_BLOCK_HEIGHT + " integer, " +
@@ -86,7 +86,7 @@ class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String PEER_PORT = "peerPort";
     public static final String PEER_TIMESTAMP = "peerTimestamp";
 
-    private static final String PEER_DATABASE_CREATE = "create table if not exist " + PEER_TABLE_NAME + "(" +
+    private static final String PEER_DATABASE_CREATE = "create table if not exists " + PEER_TABLE_NAME + "(" +
             PEER_COLUMN_ID + " integer primary key autoincrement, " +
             PEER_ADDRESS + " blob," +
             PEER_PORT + " blob," +
@@ -101,7 +101,7 @@ class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String CURRENCY_NAME = "name";
     public static final String CURRENCY_RATE = "rate";
 
-    private static final String CURRENCY_DATABASE_CREATE = "create table if not exist " + CURRENCY_TABLE_NAME + "(" +
+    private static final String CURRENCY_DATABASE_CREATE = "create table if not exists " + CURRENCY_TABLE_NAME + "(" +
             CURRENCY_COLUMN_ID + " integer primary key autoincrement, " +
             CURRENCY_CODE + " text," +
             CURRENCY_NAME + " text," +

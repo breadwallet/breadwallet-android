@@ -37,7 +37,9 @@ import com.breadwallet.presenter.entities.PeerEntity;
 import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 public class CurrencyDataSource {
     private static final String TAG = CurrencyDataSource.class.getName();
@@ -65,7 +67,7 @@ public class CurrencyDataSource {
         dbHelper = BRSQLiteHelper.getInstance(context);
     }
 
-    public void putCurrencies(CurrencyEntity[] currencyEntities) {
+    public void putCurrencies(Collection<CurrencyEntity> currencyEntities) {
         if(currencyEntities == null) return;
         database = dbHelper.getWritableDatabase();
         database.beginTransaction();
@@ -76,7 +78,11 @@ public class CurrencyDataSource {
                 values.put(BRSQLiteHelper.CURRENCY_CODE, c.code);
                 values.put(BRSQLiteHelper.CURRENCY_NAME, c.name);
                 values.put(BRSQLiteHelper.CURRENCY_RATE, c.rate);
-                database.insert(BRSQLiteHelper.CURRENCY_TABLE_NAME, null, values);
+                int id = (int) database.insertWithOnConflict(BRSQLiteHelper.CURRENCY_TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+                if (id == -1) {
+                    database.update(BRSQLiteHelper.CURRENCY_TABLE_NAME, values, "_id=?", new String[] {String.valueOf(c.id)});
+                }
+
             }
 
             database.setTransactionSuccessful();
@@ -89,6 +95,30 @@ public class CurrencyDataSource {
         }
 
     }
+//    public void putCurrencies(Set<CurrencyEntity> currencyEntities) {
+//        if(currencyEntities == null) return;
+//        database = dbHelper.getWritableDatabase();
+//        database.beginTransaction();
+//        try {
+//            for (CurrencyEntity c : currencyEntities) {
+////                Log.e(TAG,"sqlite peer saved: " + Arrays.toString(p.getPeerTimeStamp()));
+//                ContentValues values = new ContentValues();
+//                values.put(BRSQLiteHelper.CURRENCY_CODE, c.code);
+//                values.put(BRSQLiteHelper.CURRENCY_NAME, c.name);
+//                values.put(BRSQLiteHelper.CURRENCY_RATE, c.rate);
+//                database.insert(BRSQLiteHelper.CURRENCY_TABLE_NAME, null, values);
+//            }
+//
+//            database.setTransactionSuccessful();
+//        } catch (Exception ex) {
+//            FirebaseCrash.report(ex);
+//            Log.e(TAG, "Error inserting into SQLite", ex);
+//            //Error in between database transaction
+//        } finally {
+//            database.endTransaction();
+//        }
+//
+//    }
 
 //    public void deleteCurrency(BRPeerEntity peerEntity) {
 //        database = dbHelper.getWritableDatabase();

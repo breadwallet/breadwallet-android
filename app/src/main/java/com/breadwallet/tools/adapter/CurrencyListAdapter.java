@@ -13,11 +13,14 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.entities.CurrencyEntity;
-import com.breadwallet.tools.manager.CurrencyManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.util.Utils;
 
-import static com.breadwallet.R.id.currencyRefresh;
+import java.util.Currency;
+import java.util.Locale;
+
+import static android.R.attr.checkMark;
+
 
 /**
  * BreadWallet
@@ -51,7 +54,6 @@ public class CurrencyListAdapter extends ArrayAdapter<CurrencyEntity> {
     private final int layoutResourceId;
     private TextView textViewItem;
     private final Point displayParameters = new Point();
-//    public static CurrencyListAdapter currencyListAdapter;
 
     public CurrencyListAdapter(Context mContext) {
 
@@ -73,10 +75,15 @@ public class CurrencyListAdapter extends ArrayAdapter<CurrencyEntity> {
             convertView = inflater.inflate(layoutResourceId, parent, false);
         }
         // get the TextView and then set the text (item name) and tag (item ID) values
-        textViewItem = null;
         textViewItem = (TextView) convertView.findViewById(R.id.currency_item_text);
         Utils.overrideFonts(textViewItem);
-        textViewItem.setText(this.getItem(position).codeAndName);
+        String iso = getItem(position).code;
+        Currency c = null;
+        try {
+            c = Currency.getInstance(iso);
+        } catch (IllegalArgumentException ignored) {
+        }
+        textViewItem.setText(c == null ? iso : String.format("%s (%s)", iso, c.getSymbol()));
         ImageView checkMark = (ImageView) convertView.findViewById(R.id.currency_checkmark);
 
         if (position == tmp) {
@@ -87,6 +94,11 @@ public class CurrencyListAdapter extends ArrayAdapter<CurrencyEntity> {
         normalizeTextView();
         return convertView;
 
+    }
+
+    @Override
+    public int getCount() {
+        return super.getCount();
     }
 
     @Override
@@ -113,6 +125,5 @@ public class CurrencyListAdapter extends ArrayAdapter<CurrencyEntity> {
         }
         return (count > 0);
     }
-
 
 }

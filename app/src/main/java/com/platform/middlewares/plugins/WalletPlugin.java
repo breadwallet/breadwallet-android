@@ -98,7 +98,7 @@ public class WalletPlugin implements Plugin {
             } else {
                 satAmount = Long.valueOf(amount);
             }
-            return BRHTTPHelper.handleSuccess(200, BRStringFormatter.getFormattedCurrencyString(app,Locale.getDefault().getISO3Language(), satAmount).getBytes(), baseRequest, response, null);
+            return BRHTTPHelper.handleSuccess(200, BRStringFormatter.getFormattedCurrencyString(app,Locale.getDefault().getISO3Language(), new BigDecimal(satAmount)).getBytes(), baseRequest, response, null);
         } else if (target.startsWith("/_wallet/sign_bitid") && request.getMethod().equalsIgnoreCase("post")) {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
             /**

@@ -19,6 +19,7 @@ import com.breadwallet.tools.adapter.CurrencyListAdapter;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.manager.CurrencyManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.util.BRStringFormatter;
 
 import org.w3c.dom.Text;
@@ -47,7 +48,8 @@ public class DefaultCurrencyActivity extends Activity {
 
         exchangeText = (TextView) findViewById(R.id.exchange_text);
         listView = (ListView) findViewById(R.id.currency_list_view);
-
+        adapter = new CurrencyListAdapter(this);
+        adapter.addAll(CurrencyDataSource.getInstance(this).getAllCurrencies());
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -62,14 +64,17 @@ public class DefaultCurrencyActivity extends Activity {
                 SharedPreferencesManager.putIso(app, ISO);
                 SharedPreferencesManager.putCurrencyListPosition(DefaultCurrencyActivity.this, position);
                 SharedPreferencesManager.putRate(app, rate);
-                String finalExchangeRate = BRStringFormatter.getExchangeForAmount(new BigDecimal(rate), ISO, new BigDecimal(1), DefaultCurrencyActivity.this);
-                exchangeText.setText(finalExchangeRate);
+                String finalExchangeRate = BRStringFormatter.getFormattedCurrencyString(DefaultCurrencyActivity.this, ISO, new BigDecimal(rate));
+                exchangeText.setText(finalExchangeRate + " = 1BTC");
 //                MiddleViewAdapter.resetMiddleView(app, finalExchangeRate);
                 adapter.notifyDataSetChanged();
 
             }
 
         });
+        listView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+        Log.e(TAG, "onCreate: " + listView.getCount());
 
     }
 
@@ -91,18 +96,4 @@ public class DefaultCurrencyActivity extends Activity {
         window.setStatusBarColor(getColor(color));
     }
 
-    private void tryAndSetAdapter() {
-        adapter = CurrencyManager.getInstance(this).getCurrencyAdapterIfReady();
-        if (adapter.getCount() > 0) {
-            currencyList.setAdapter(adapter);
-            currencyRefresh.clearAnimation();
-            currencyRefresh.setVisibility(View.GONE);
-            noInternetConnection.setVisibility(View.GONE);
-            currencyProgressBar.setVisibility(View.GONE);
-        } else {
-            currencyRefresh.setVisibility(View.VISIBLE);
-            noInternetConnection.setVisibility(View.VISIBLE);
-            currencyProgressBar.setVisibility(View.GONE);
-        }
-    }
 }

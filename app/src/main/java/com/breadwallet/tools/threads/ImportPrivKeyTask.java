@@ -86,28 +86,28 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
         if (importPrivKeyEntity == null) {
             return;
         }
-        String sentBits = BRStringFormatter.getFormattedCurrencyString(app,"BTC", importPrivKeyEntity.getAmount());
-        String sentExchange = BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(app),
-                SharedPreferencesManager.getIso(app), new BigDecimal(importPrivKeyEntity.getAmount()), app);
-        String feeBits = BRStringFormatter.getFormattedCurrencyString(app,"BTC", importPrivKeyEntity.getFee());
-        String feeExchange = BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(app),
-                SharedPreferencesManager.getIso(app), new BigDecimal(importPrivKeyEntity.getFee()), app);
-        if (app == null || importPrivKeyEntity == null) return;
-        String message = String.format(app.getString(R.string.send_money_from_privkey_message), sentBits, sentExchange, feeBits, feeExchange);
-        new AlertDialog.Builder(app)
-                .setTitle("")
-                .setMessage(message)
-                .setPositiveButton(String.format("%s (%s)", sentBits, sentExchange), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        boolean result = BRWalletManager.getInstance().confirmKeySweep(importPrivKeyEntity.getTx(), key);
-                        if (!result) {
-//                            BreadDialog.showCustomDialog(app,app.getString(R.string.warning),
-//                                    app.getString(R.string.could_not_sweep_the_balance), app.getString(R.string.ok));
-                        }
-                    }
-                })
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
+//        String sentBits = BRStringFormatter.getFormattedCurrencyString(app,"BTC", importPrivKeyEntity.getAmount());
+//        String sentExchange = BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(app),
+//                SharedPreferencesManager.getIso(app), new BigDecimal(importPrivKeyEntity.getAmount()), app);
+//        String feeBits = BRStringFormatter.getFormattedCurrencyString(app,"BTC", importPrivKeyEntity.getFee());
+//        String feeExchange = BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(app),
+//                SharedPreferencesManager.getIso(app), new BigDecimal(importPrivKeyEntity.getFee()), app);
+//        if (app == null || importPrivKeyEntity == null) return;
+//        String message = String.format(app.getString(R.string.send_money_from_privkey_message), sentBits, sentExchange, feeBits, feeExchange);
+//        new AlertDialog.Builder(app)
+//                .setTitle("")
+//                .setMessage(message)
+//                .setPositiveButton(String.format("%s (%s)", sentBits, sentExchange), new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        boolean result = BRWalletManager.getInstance().confirmKeySweep(importPrivKeyEntity.getTx(), key);
+//                        if (!result) {
+////                            BreadDialog.showCustomDialog(app,app.getString(R.string.warning),
+////                                    app.getString(R.string.could_not_sweep_the_balance), app.getString(R.string.ok));
+//                        }
+//                    }
+//                })
+//                .setIcon(android.R.drawable.ic_dialog_alert)
+//                .show();
         super.onPostExecute(s);
     }
 

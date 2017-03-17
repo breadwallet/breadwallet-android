@@ -34,7 +34,6 @@ public class CurrencyEntity implements Serializable {
     private static final long serialVersionUID = 7526472295622776147L;
 
     public static final String TAG = CurrencyEntity.class.getName();
-    public String codeAndName;
     public int id;
     public String code;
     public String name;

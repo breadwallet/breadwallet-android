@@ -149,6 +149,9 @@ public class SettingsActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Log.e(TAG, "onClick: Default Currency");
+                Intent intent = new Intent(SettingsActivity.this, DefaultCurrencyActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         }, false));
         items.add(new BRSettingsItem("Sync Blockchain", "", new View.OnClickListener() {

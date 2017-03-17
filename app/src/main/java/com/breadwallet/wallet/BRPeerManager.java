@@ -152,8 +152,9 @@ public class BRPeerManager {
 
     public static boolean networkIsReachable() {
         Log.d(TAG, "networkIsReachable");
-        final BreadActivity ctx = BreadActivity.app;
-        return ctx != null && ((BreadWalletApp) ctx.getApplication()).hasInternetAccess();
+//        final BreadActivity ctx = BreadActivity.app;
+//        return ctx != null && ((BreadWalletApp) ctx.getApplication()).hasInternetAccess();
+        return true;
     }
 
     public static void deleteBlocks() {

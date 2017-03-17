@@ -53,7 +53,7 @@ public class TransactionDataSource {
 
 
     public TransactionDataSource(Context context) {
-        dbHelper = new BRSQLiteHelper(context);
+        dbHelper = BRSQLiteHelper.getInstance(context);
     }
 
     public BRTransactionEntity createTransaction(BRTransactionEntity transactionEntity) {

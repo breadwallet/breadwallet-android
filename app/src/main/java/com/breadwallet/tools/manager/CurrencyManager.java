@@ -11,6 +11,7 @@ import android.util.Log;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.adapter.CurrencyListAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.BRWalletManager;
 import com.google.firebase.crash.FirebaseCrash;
@@ -27,6 +28,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashSet;
@@ -103,7 +105,6 @@ public class CurrencyManager {
                         JSONObject tmpObj = (JSONObject) arr.get(i);
                         tmp.name = tmpObj.getString("name");
                         tmp.code = tmpObj.getString("code");
-                        tmp.codeAndName = tmp.code + " - " + tmp.name;
                         tmp.rate = (float) tmpObj.getDouble("rate");
                         String selectedISO = SharedPreferencesManager.getIso(context);
 //                        Log.e(TAG,"selectedISO: " + selectedISO);
@@ -149,19 +150,7 @@ public class CurrencyManager {
         @Override
         protected void onPostExecute(Object o) {
             if (tmp.size() > 0) {
-//                currencyListAdapter.clear();
-//                currencyListAdapter.addAll(tmp);
-//                currencyListAdapter.notifyDataSetChanged();
-//                Currency.putExchangeRates(context, tmp);
-//                if (BRAnimator.level <= 2)
-//                    MiddleViewAdapter.resetMiddleView(context, null);
-            } else {
-//                currencyListAdapter.clear();
-//                Set<CurrencyEntity> currencyEntitySet = SharedPreferencesManager.getExchangeRates(ctx);
-//                if (currencyEntitySet == null || currencyEntitySet.isEmpty()) return;
-//                currencyListAdapter.addAll(currencyEntitySet);
-//                currencyListAdapter.notifyDataSetChanged();
-//                Log.e(TAG, "Adapter Not Changed, data is empty");
+                CurrencyDataSource.getInstance(context).putCurrencies(tmp);
             }
         }
     }
@@ -206,7 +195,7 @@ public class CurrencyManager {
 
 
     public static JSONArray getJSonArray(Activity activity) {
-        String jsonString = callURL(activity,"https://api.breadwallet.com/rates");
+        String jsonString = callURL(activity, "https://api.breadwallet.com/rates");
         JSONArray jsonArray = null;
         try {
             JSONObject obj = new JSONObject(jsonString);
@@ -219,7 +208,7 @@ public class CurrencyManager {
     }
 
     public static JSONArray getBackUpJSonArray(Activity activity) {
-        String jsonString = callURL(activity,"https://bitpay.com/rates");
+        String jsonString = callURL(activity, "https://bitpay.com/rates");
 
         JSONArray jsonArray = null;
         if (jsonString == null) return null;
@@ -239,7 +228,7 @@ public class CurrencyManager {
     }
 
     public static void updateFeePerKb(Activity activity) {
-        String jsonString = callURL(activity,"https://api.breadwallet.com/fee-per-kb");
+        String jsonString = callURL(activity, "https://api.breadwallet.com/fee-per-kb");
         if (jsonString == null || jsonString.isEmpty()) {
             Log.e(TAG, "updateFeePerKb: failed to update fee, response string: " + jsonString);
             return;
@@ -259,7 +248,7 @@ public class CurrencyManager {
         }
     }
 
-    private static String callURL(Context app,String myURL) {
+    private static String callURL(Context app, String myURL) {
 //        System.out.println("Requested URL_EA:" + myURL);
         StringBuilder sb = new StringBuilder();
         HttpURLConnection urlConn = null;

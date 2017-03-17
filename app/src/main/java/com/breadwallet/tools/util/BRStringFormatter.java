@@ -84,7 +84,7 @@ public class BRStringFormatter {
     public static String getFormattedCurrencyString(Context app, String isoCurrencyCode, BigDecimal amount) {
 //        Log.e(TAG, "amount: " + amount);
         DecimalFormat currencyFormat;
-        BigDecimal result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100"));
+        BigDecimal result = amount ;
         // This formats currency values as the user expects to read them (default locale).
         currencyFormat = (DecimalFormat) DecimalFormat.getCurrencyInstance(Locale.getDefault());
         // This specifies the actual currency that the value is in, and provide
