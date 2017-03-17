@@ -22,6 +22,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.settings.AboutActivity;
+import com.breadwallet.presenter.activities.settings.SecurityCenterActivity;
 import com.breadwallet.presenter.activities.settings.SettingsActivity;
 import com.breadwallet.presenter.entities.BRMenuItem;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -85,7 +87,9 @@ public class FragmentBreadMenu extends Fragment {
             public void onClick(View v) {
                 Log.e(TAG, "onClick: Security Center");
                 getActivity().onBackPressed();
-                BRAnimator.showSecurityCenter(getActivity());
+                Intent intent = new Intent(getActivity(), SecurityCenterActivity.class);
+                startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.enter_from_bottom, R.anim.exit_to_bottom);
             }
         }));
         itemList.add(new BRMenuItem("Support", R.drawable.ic_question_mark, new View.OnClickListener() {

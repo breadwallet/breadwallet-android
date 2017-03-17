@@ -29,10 +29,6 @@ import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.fragments.FragmentBreadMenu;
 import com.breadwallet.presenter.fragments.FragmentBreadSignal;
-import com.breadwallet.presenter.fragments.FragmentSecurityCenter;
-import com.breadwallet.tools.manager.BRClipboardManager;
-import com.breadwallet.tools.util.BRConstants;
-import com.platform.HTTPServer;
 
 import java.util.Stack;
 
@@ -76,7 +72,6 @@ public class BRAnimator {
 
     private static FragmentBreadSignal fragmentSignal;
     private static FragmentBreadMenu fragmentMenu;
-    private static FragmentSecurityCenter fragmentSecurityCenter;
 
 //    public static void animateDecoderFragment() {
 //
@@ -591,16 +586,6 @@ public class BRAnimator {
         FragmentTransaction transaction = activity.getFragmentManager().beginTransaction();
         transaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_bottom, R.animator.from_bottom, R.animator.to_bottom);
         transaction.add(android.R.id.content, fragmentMenu, fragmentMenu.getClass().getName());
-        transaction.addToBackStack(null);
-        transaction.commit();
-
-    }
-    public static void showSecurityCenter(Activity activity) {
-        fragmentSecurityCenter = new FragmentSecurityCenter();
-
-        FragmentTransaction transaction = activity.getFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_bottom, R.animator.from_bottom, R.animator.to_bottom);
-        transaction.add(android.R.id.content, fragmentSecurityCenter, fragmentSecurityCenter.getClass().getName());
         transaction.addToBackStack(null);
         transaction.commit();
 
