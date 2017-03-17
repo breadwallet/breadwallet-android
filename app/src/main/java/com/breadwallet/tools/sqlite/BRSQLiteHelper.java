@@ -32,6 +32,16 @@ import android.util.Log;
 
 class BRSQLiteHelper extends SQLiteOpenHelper {
     private static final String TAG = BRSQLiteHelper.class.getName();
+    private static BRSQLiteHelper instance;
+
+    private BRSQLiteHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+
+    public static BRSQLiteHelper getInstance(Context context) {
+        if (instance == null) instance = new BRSQLiteHelper(context);
+        return instance;
+    }
 
     private static final String DATABASE_NAME = "breadwallet.db";
     private static final int DATABASE_VERSION = 11;
@@ -97,10 +107,6 @@ class BRSQLiteHelper extends SQLiteOpenHelper {
             CURRENCY_NAME + " text," +
             CURRENCY_RATE + " integer );";
 
-
-    public BRSQLiteHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
-    }
 
     @Override
     public void onCreate(SQLiteDatabase database) {

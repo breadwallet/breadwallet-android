@@ -39,7 +39,7 @@ import com.google.firebase.crash.FirebaseCrash;
 import java.util.ArrayList;
 import java.util.List;
 
-class CurrencyDataSource {
+public class CurrencyDataSource {
     private static final String TAG = CurrencyDataSource.class.getName();
 
     // Database fields
@@ -52,8 +52,17 @@ class CurrencyDataSource {
             BRSQLiteHelper.CURRENCY_RATE
     };
 
+    private static CurrencyDataSource instance;
+
+    public static CurrencyDataSource getInstance(Context context) {
+        if (instance == null) {
+            instance = new CurrencyDataSource(context);
+        }
+        return instance;
+    }
+
     public CurrencyDataSource(Context context) {
-        dbHelper = new BRSQLiteHelper(context);
+        dbHelper = BRSQLiteHelper.getInstance(context);
     }
 
     public void putCurrencies(CurrencyEntity[] currencyEntities) {
