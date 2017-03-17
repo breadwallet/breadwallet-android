@@ -181,6 +181,9 @@ public class SettingsActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Log.e(TAG, "onClick: About");
+                Intent intent = new Intent(SettingsActivity.this, AboutActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         }, false));
 
