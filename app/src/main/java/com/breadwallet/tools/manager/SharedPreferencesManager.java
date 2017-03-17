@@ -328,4 +328,16 @@ public class SharedPreferencesManager {
         editor.putBoolean("showNotification", show);
         editor.apply();
     }
+    public static boolean getShareData(Context context) {
+        SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        return settingsToGet.getBoolean("shareData", false);
+    }
+
+    public static void putShareData(Context context, boolean show) {
+        if (context == null) return;
+        SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putBoolean("shareData", show);
+        editor.apply();
+    }
 }

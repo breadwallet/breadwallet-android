@@ -169,6 +169,9 @@ public class SettingsActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Log.e(TAG, "onClick: Share Anonymous Data");
+                Intent intent = new Intent(SettingsActivity.this, ShareDataActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         }, false));
         items.add(new BRSettingsItem("Join Early Access Program", "", new View.OnClickListener() {

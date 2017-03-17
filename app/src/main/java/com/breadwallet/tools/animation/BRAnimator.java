@@ -582,7 +582,6 @@ public class BRAnimator {
 
     public static void showBreadMenu(Activity activity) {
         fragmentMenu = new FragmentBreadMenu();
-
         FragmentTransaction transaction = activity.getFragmentManager().beginTransaction();
         transaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_bottom, R.animator.from_bottom, R.animator.to_bottom);
         transaction.add(android.R.id.content, fragmentMenu, fragmentMenu.getClass().getName());
