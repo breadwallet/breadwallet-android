@@ -34,7 +34,7 @@ class BRSQLiteHelper extends SQLiteOpenHelper {
     private static final String TAG = BRSQLiteHelper.class.getName();
 
     private static final String DATABASE_NAME = "breadwallet.db";
-    private static final int DATABASE_VERSION = 10;
+    private static final int DATABASE_VERSION = 11;
 
     /**
      * MerkleBlock table
@@ -87,16 +87,15 @@ class BRSQLiteHelper extends SQLiteOpenHelper {
 
     public static final String CURRENCY_TABLE_NAME = "currencyTable";
     public static final String CURRENCY_COLUMN_ID = "_id";
-    public static final String CURRENCY_ADDRESS = "peerAddress";
-    public static final String CURRENCY_PORT = "peerPort";
-    public static final String CURRENCY_TIMESTAMP = "peerTimestamp";
+    public static final String CURRENCY_CODE = "code";
+    public static final String CURRENCY_NAME = "name";
+    public static final String CURRENCY_RATE = "rate";
 
-    private static final String PEER_DATABASE_CREATE = "create table if not exist " + PEER_TABLE_NAME + "(" +
-            PEER_COLUMN_ID + " integer primary key autoincrement, " +
-            PEER_ADDRESS + " blob," +
-            PEER_PORT + " blob," +
-            PEER_TIMESTAMP + " blob );";
-
+    private static final String CURRENCY_DATABASE_CREATE = "create table if not exist " + CURRENCY_TABLE_NAME + "(" +
+            CURRENCY_COLUMN_ID + " integer primary key autoincrement, " +
+            CURRENCY_CODE + " text," +
+            CURRENCY_NAME + " text," +
+            CURRENCY_RATE + " integer );";
 
 
     public BRSQLiteHelper(Context context) {
@@ -108,6 +107,7 @@ class BRSQLiteHelper extends SQLiteOpenHelper {
         database.execSQL(MB_DATABASE_CREATE);
         database.execSQL(TX_DATABASE_CREATE);
         database.execSQL(PEER_DATABASE_CREATE);
+        database.execSQL(CURRENCY_DATABASE_CREATE);
     }
 
     @Override
@@ -119,6 +119,8 @@ class BRSQLiteHelper extends SQLiteOpenHelper {
 //        db.execSQL("DROP TABLE IF EXISTS " + PEER_TABLE_NAME);
         //recreate the dbs
 //        onCreate(db);
+        if (oldVersion < 11)
+            db.execSQL(CURRENCY_DATABASE_CREATE);
 
     }
 }

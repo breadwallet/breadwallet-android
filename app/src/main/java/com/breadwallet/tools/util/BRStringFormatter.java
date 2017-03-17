@@ -97,26 +97,26 @@ public class BRStringFormatter {
         if (Objects.equals(isoCurrencyCode, "BTC")) {
             String currencySymbolString = BRConstants.bitcoinLowercase;
             if (app != null) {
-//                int unit = SharedPreferencesManager.getCurrencyUnit(app);
+                int unit = SharedPreferencesManager.getCurrencyUnit(app);
                 currencyFormat.setMinimumFractionDigits(0);
-//                switch (unit) {
-//                    case CURRENT_UNIT_BITS:
+                switch (unit) {
+                    case CURRENT_UNIT_BITS:
                 currencySymbolString = BRConstants.bitcoinLowercase;
                 decimalPoints = 2;
                 if (getNumberOfDecimalPlaces(result.toPlainString()) == 1)
                     currencyFormat.setMinimumFractionDigits(1);
-//                        break;
-//                    case BRConstants.CURRENT_UNIT_MBITS:
-//                        currencySymbolString = "m" + BRConstants.bitcoinUppercase;
-//                        decimalPoints = 5;
-//                        result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100000"));
-//                        break;
-//                    case BRConstants.CURRENT_UNIT_BITCOINS:
-//                        currencySymbolString = BRConstants.bitcoinUppercase;
-//                        decimalPoints = 8;
-//                        result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100000000"));
-//                        break;
-//                }
+                        break;
+                    case BRConstants.CURRENT_UNIT_MBITS:
+                        currencySymbolString = "m" + BRConstants.bitcoinUppercase;
+                        decimalPoints = 5;
+                        result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100000"));
+                        break;
+                    case BRConstants.CURRENT_UNIT_BITCOINS:
+                        currencySymbolString = BRConstants.bitcoinUppercase;
+                        decimalPoints = 8;
+                        result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100000000"));
+                        break;
+                }
             }
             symbol = currencySymbolString;
         } else {

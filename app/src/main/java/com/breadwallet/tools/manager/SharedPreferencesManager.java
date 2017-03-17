@@ -244,54 +244,54 @@ public class SharedPreferencesManager {
     }
 
 
-    @SuppressWarnings("unchecked")
-    public static Set<CurrencyEntity> getExchangeRates(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+//    @SuppressWarnings("unchecked")
+//    public static Set<CurrencyEntity> getExchangeRates(Context context) {
+//        SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+//
+//        byte[] bytes = prefs.getString(BRConstants.EXCHANGE_RATES, "{}").getBytes();
+//        if (bytes.length == 0) {
+//            return null;
+//        }
+//        Set<CurrencyEntity> result = null;
+//        ByteArrayInputStream byteArray = new ByteArrayInputStream(bytes);
+//        Base64InputStream base64InputStream = new Base64InputStream(byteArray, Base64.NO_WRAP);
+//        ObjectInputStream in;
+//        try {
+//            in = new ObjectInputStream(base64InputStream);
+//
+//            result = (Set<CurrencyEntity>) in.readObject();
+//        } catch (IOException | ClassNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//        return result;
+//    }
 
-        byte[] bytes = prefs.getString(BRConstants.EXCHANGE_RATES, "{}").getBytes();
-        if (bytes.length == 0) {
-            return null;
-        }
-        Set<CurrencyEntity> result = null;
-        ByteArrayInputStream byteArray = new ByteArrayInputStream(bytes);
-        Base64InputStream base64InputStream = new Base64InputStream(byteArray, Base64.NO_WRAP);
-        ObjectInputStream in;
-        try {
-            in = new ObjectInputStream(base64InputStream);
-
-            result = (Set<CurrencyEntity>) in.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
-    public static void putExchangeRates(Context activity, Set<CurrencyEntity> rates) {
-        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.remove(BRConstants.EXCHANGE_RATES);
-        ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
-
-        ObjectOutputStream objectOutput;
-        try {
-            objectOutput = new ObjectOutputStream(arrayOutputStream);
-            objectOutput.writeObject(rates);
-            byte[] data = arrayOutputStream.toByteArray();
-            objectOutput.close();
-            arrayOutputStream.close();
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            Base64OutputStream b64 = new Base64OutputStream(out, Base64.NO_WRAP);
-            b64.write(data);
-            b64.close();
-            out.close();
-            editor.putString(BRConstants.EXCHANGE_RATES, new String(out.toByteArray()));
-
-            editor.apply();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
+//    public static void putExchangeRates(Context activity, Set<CurrencyEntity> rates) {
+//        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+//        SharedPreferences.Editor editor = prefs.edit();
+//        editor.remove(BRConstants.EXCHANGE_RATES);
+//        ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
+//
+//        ObjectOutputStream objectOutput;
+//        try {
+//            objectOutput = new ObjectOutputStream(arrayOutputStream);
+//            objectOutput.writeObject(rates);
+//            byte[] data = arrayOutputStream.toByteArray();
+//            objectOutput.close();
+//            arrayOutputStream.close();
+//            ByteArrayOutputStream out = new ByteArrayOutputStream();
+//            Base64OutputStream b64 = new Base64OutputStream(out, Base64.NO_WRAP);
+//            b64.write(data);
+//            b64.close();
+//            out.close();
+//            editor.putString(BRConstants.EXCHANGE_RATES, new String(out.toByteArray()));
+//
+//            editor.apply();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//    }
 
 
     public static int getStartHeight(Context context) {
@@ -333,18 +333,18 @@ public class SharedPreferencesManager {
         editor.apply();
     }
 
-//    public static int getCurrencyUnit(Context context) {
-//        SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
-//        return settingsToGet.getInt(BRConstants.CURRENT_UNIT, BRConstants.CURRENT_UNIT_BITS);
-//    }
-//
-//    public static void putCurrencyUnit(Context context, int unit) {
-//        if (context == null) return;
-//        SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
-//        SharedPreferences.Editor editor = settings.edit();
-//        editor.putInt(BRConstants.CURRENT_UNIT, unit);
-//        editor.apply();
-//    }
+    public static int getCurrencyUnit(Context context) {
+        SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
+        return settingsToGet.getInt(BRConstants.CURRENT_UNIT, BRConstants.CURRENT_UNIT_BITS);
+    }
+
+    public static void putCurrencyUnit(Context context, int unit) {
+        if (context == null) return;
+        SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putInt(BRConstants.CURRENT_UNIT, unit);
+        editor.apply();
+    }
 
     public static String getDeviceId(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);

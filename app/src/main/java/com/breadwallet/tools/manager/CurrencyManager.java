@@ -9,6 +9,8 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.breadwallet.presenter.entities.CurrencyEntity;
+import com.breadwallet.tools.adapter.CurrencyListAdapter;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.BRWalletManager;
 import com.google.firebase.crash.FirebaseCrash;
@@ -146,21 +148,21 @@ public class CurrencyManager {
 
         @Override
         protected void onPostExecute(Object o) {
-//            if (tmp.size() > 0) {
+            if (tmp.size() > 0) {
 //                currencyListAdapter.clear();
 //                currencyListAdapter.addAll(tmp);
 //                currencyListAdapter.notifyDataSetChanged();
-//                SharedPreferencesManager.putExchangeRates(context, tmp);
+//                Currency.putExchangeRates(context, tmp);
 //                if (BRAnimator.level <= 2)
 //                    MiddleViewAdapter.resetMiddleView(context, null);
-//            } else {
+            } else {
 //                currencyListAdapter.clear();
 //                Set<CurrencyEntity> currencyEntitySet = SharedPreferencesManager.getExchangeRates(ctx);
 //                if (currencyEntitySet == null || currencyEntitySet.isEmpty()) return;
 //                currencyListAdapter.addAll(currencyEntitySet);
 //                currencyListAdapter.notifyDataSetChanged();
 //                Log.e(TAG, "Adapter Not Changed, data is empty");
-//            }
+            }
         }
     }
 

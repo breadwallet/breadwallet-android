@@ -35,7 +35,19 @@ public class CurrencyEntity implements Serializable {
 
     public static final String TAG = CurrencyEntity.class.getName();
     public String codeAndName;
-    public String name;
+    public int id;
     public String code;
+    public String name;
     public float rate;
+
+    public CurrencyEntity(int id, String code, String name, float rate) {
+        this.id = id;
+        this.code = code;
+        this.name = name;
+        this.rate = rate;
+    }
+
+    public CurrencyEntity() {
+
+    }
 }
