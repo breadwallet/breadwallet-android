@@ -25,6 +25,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.settings.SettingsActivity;
 import com.breadwallet.presenter.entities.BRMenuItem;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.wallet.BRWalletManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -107,6 +108,14 @@ public class FragmentBreadMenu extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.e(TAG, "onClick: Lock Wallet");
+                getActivity().onBackPressed();
+                BRAnimator.showBreadDialog(getActivity(), "Wallet Locked", "Wallet Locked", R.drawable.ic_wallet_locked);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        BRWalletManager.getInstance().startBreadActivity(getActivity());
+                    }
+                },1000);
             }
         }));
 

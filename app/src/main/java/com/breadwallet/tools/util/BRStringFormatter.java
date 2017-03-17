@@ -55,19 +55,19 @@ public class BRStringFormatter {
 //                getFormattedCurrencyString("BTC", result);
 //    }
 
-    public static String getBitsAndExchangeString(double rate, String iso, BigDecimal target, Activity ctx) {
-        if (rate == 0) rate = 1;
+    public static String getBitsAndExchangeString(BigDecimal rate, String iso, BigDecimal target, Activity ctx) {
+        if (rate.doubleValue() == 0) rate = new BigDecimal("1");
         long exchange = BRWalletManager.getInstance().localAmount(target.longValue(),
                 new BigDecimal(String.valueOf(rate)).multiply(new BigDecimal("100")).doubleValue());
-        return getFormattedCurrencyString(ctx,"BTC", target.longValue()) + " = " +
-                getFormattedCurrencyString(ctx,iso, exchange);
+        return getFormattedCurrencyString(ctx, "BTC", target) + " = " +
+                getFormattedCurrencyString(ctx, iso, new BigDecimal(exchange));
     }
 
-    public static String getExchangeForAmount(double rate, String iso, BigDecimal target, Context ctx) {
-        if (rate == 0) rate = 1;
+    public static String getExchangeForAmount(BigDecimal rate, String iso, BigDecimal target, Context ctx) {
+        if (rate.doubleValue() == 0) rate = new BigDecimal("1");
         long exchange = BRWalletManager.getInstance().localAmount(target.longValue(),
                 new BigDecimal(String.valueOf(rate)).multiply(new BigDecimal("100")).doubleValue());
-        return getFormattedCurrencyString(ctx,iso, exchange);
+        return getFormattedCurrencyString(ctx, iso, new BigDecimal(exchange));
     }
 
     public static String getCurrentBalanceText(Activity ctx) {
@@ -77,11 +77,11 @@ public class BRStringFormatter {
         long exchange = BRWalletManager.getInstance().localAmount(BRWalletManager.getInstance().getBalance(),
                 new BigDecimal(String.valueOf(rate)).multiply(new BigDecimal("100")).doubleValue());
 
-        return getFormattedCurrencyString(ctx,"BTC", BRWalletManager.getInstance().getBalance()) + " (" +
-                getFormattedCurrencyString(ctx,iso, exchange) + ")";
+        return getFormattedCurrencyString(ctx, "BTC", new BigDecimal(BRWalletManager.getInstance().getBalance())) + " (" +
+                getFormattedCurrencyString(ctx, iso, new BigDecimal(exchange)) + ")";
     }
 
-    public static String getFormattedCurrencyString(Context app,String isoCurrencyCode, long amount) {
+    public static String getFormattedCurrencyString(Context app, String isoCurrencyCode, BigDecimal amount) {
 //        Log.e(TAG, "amount: " + amount);
         DecimalFormat currencyFormat;
         BigDecimal result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100"));
@@ -97,26 +97,26 @@ public class BRStringFormatter {
         if (Objects.equals(isoCurrencyCode, "BTC")) {
             String currencySymbolString = BRConstants.bitcoinLowercase;
             if (app != null) {
-                int unit = SharedPreferencesManager.getCurrencyUnit(app);
+//                int unit = SharedPreferencesManager.getCurrencyUnit(app);
                 currencyFormat.setMinimumFractionDigits(0);
-                switch (unit) {
-                    case CURRENT_UNIT_BITS:
-                        currencySymbolString = BRConstants.bitcoinLowercase;
-                        decimalPoints = 2;
-                        if (getNumberOfDecimalPlaces(result.toPlainString()) == 1)
-                            currencyFormat.setMinimumFractionDigits(1);
-                        break;
-                    case BRConstants.CURRENT_UNIT_MBITS:
-                        currencySymbolString = "m" + BRConstants.bitcoinUppercase;
-                        decimalPoints = 5;
-                        result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100000"));
-                        break;
-                    case BRConstants.CURRENT_UNIT_BITCOINS:
-                        currencySymbolString = BRConstants.bitcoinUppercase;
-                        decimalPoints = 8;
-                        result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100000000"));
-                        break;
-                }
+//                switch (unit) {
+//                    case CURRENT_UNIT_BITS:
+                currencySymbolString = BRConstants.bitcoinLowercase;
+                decimalPoints = 2;
+                if (getNumberOfDecimalPlaces(result.toPlainString()) == 1)
+                    currencyFormat.setMinimumFractionDigits(1);
+//                        break;
+//                    case BRConstants.CURRENT_UNIT_MBITS:
+//                        currencySymbolString = "m" + BRConstants.bitcoinUppercase;
+//                        decimalPoints = 5;
+//                        result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100000"));
+//                        break;
+//                    case BRConstants.CURRENT_UNIT_BITCOINS:
+//                        currencySymbolString = BRConstants.bitcoinUppercase;
+//                        decimalPoints = 8;
+//                        result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100000000"));
+//                        break;
+//                }
             }
             symbol = currencySymbolString;
         } else {

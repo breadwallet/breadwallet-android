@@ -333,18 +333,18 @@ public class SharedPreferencesManager {
         editor.apply();
     }
 
-    public static int getCurrencyUnit(Context context) {
-        SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
-        return settingsToGet.getInt(BRConstants.CURRENT_UNIT, BRConstants.CURRENT_UNIT_BITS);
-    }
-
-    public static void putCurrencyUnit(Context context, int unit) {
-        if (context == null) return;
-        SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putInt(BRConstants.CURRENT_UNIT, unit);
-        editor.apply();
-    }
+//    public static int getCurrencyUnit(Context context) {
+//        SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
+//        return settingsToGet.getInt(BRConstants.CURRENT_UNIT, BRConstants.CURRENT_UNIT_BITS);
+//    }
+//
+//    public static void putCurrencyUnit(Context context, int unit) {
+//        if (context == null) return;
+//        SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
+//        SharedPreferences.Editor editor = settings.edit();
+//        editor.putInt(BRConstants.CURRENT_UNIT, unit);
+//        editor.apply();
+//    }
 
     public static String getDeviceId(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
@@ -368,13 +368,13 @@ public class SharedPreferencesManager {
     }
 
     public static boolean getShowNotification(Context context) {
-        SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
+        SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return settingsToGet.getBoolean("showNotification", false);
     }
 
     public static void putShowNotification(Context context, boolean show) {
         if (context == null) return;
-        SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
+        SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
         editor.putBoolean("showNotification", show);
         editor.apply();

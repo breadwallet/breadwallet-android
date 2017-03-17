@@ -30,7 +30,6 @@ public class NotificationActivity extends Activity {
         toggleButton = (ToggleButton) findViewById(R.id.toggleButton);
         toggleButton.setChecked(SharedPreferencesManager.getShowNotification(this));
         toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 SharedPreferencesManager.putShowNotification(NotificationActivity.this, isChecked);

@@ -200,7 +200,7 @@ public class PinActivity extends Activity {
                             PinActivity.this.finish();
                         }
                     }
-                },700);
+                }, 700);
             }
         });
         unlockedText.animate().alpha(1f);
