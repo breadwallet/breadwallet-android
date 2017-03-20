@@ -148,7 +148,7 @@ public class FragmentBreadMenu extends Fragment {
             public void run() {
                 colorAnimation.start();
             }
-        }, quick ? 0 : 400);
+        }, quick ? 0 : 250);
 
     }
 
