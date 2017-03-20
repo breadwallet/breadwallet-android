@@ -73,7 +73,7 @@
             android:elevation="0dp"
             android:enabled="false"
             android:text="Previous"
-            android:textColor="@color/extra_light_grey"
+            android:textColor="@color/extra_light_gray"
             android:textSize="18sp"
             />
 
@@ -102,7 +102,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
         android:text="1 of 12"
-        android:textColor="@color/dark_grey"/>
+        android:textColor="@color/dark_gray"/>
 
 
 </RelativeLayout>

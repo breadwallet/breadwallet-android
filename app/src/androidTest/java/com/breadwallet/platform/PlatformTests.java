@@ -8,7 +8,6 @@ import android.util.Log;
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.tools.util.BRCompressor;
 import com.breadwallet.tools.util.Utils;
-import com.jniwrappers.BRBIP32Sequence;
 import com.jniwrappers.BRKey;
 import com.platform.APIClient;
 import com.platform.tools.BRBitId;

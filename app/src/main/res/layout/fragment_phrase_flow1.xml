@@ -31,7 +31,7 @@
         android:gravity="center"
         android:text="@string/warning_text1"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/dark_grey"
+        android:textColor="@color/dark_gray"
         android:textSize="18sp" />
 
     <TextView
@@ -47,7 +47,7 @@
         android:gravity="center"
         android:text="@string/warning_text2"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/dark_grey"
+        android:textColor="@color/dark_gray"
         android:textSize="18sp" />
 
     <Button

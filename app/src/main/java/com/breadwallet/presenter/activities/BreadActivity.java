@@ -1,5 +1,6 @@
 package com.breadwallet.presenter.activities;
 
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Point;
 import android.net.Uri;
@@ -13,7 +14,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.fragments.FragmentBreadSignal;
 import com.breadwallet.presenter.fragments.FragmentReceive;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.CurrencyManager;
 import com.breadwallet.tools.security.RequestHandler;
@@ -125,7 +128,9 @@ public class BreadActivity extends AppCompatActivity implements Observer {
             @Override
             public void onClick(View v) {
                 SpringAnimator.showAnimation(v);
-                getFragmentManager().beginTransaction().add(new FragmentReceive(), FragmentReceive.class.getName()).addToBackStack(null).commit();
+                BreadActivity.this.getFragmentManager().beginTransaction().add(android.R.id.content, new FragmentReceive(), FragmentReceive.class.getName())
+                        .setCustomAnimations(R.animator.to_bottom,R.animator.to_bottom, R.animator.to_bottom,  R.animator.to_bottom)
+                        .addToBackStack(FragmentReceive.class.getName()).commit();
             }
         });
 

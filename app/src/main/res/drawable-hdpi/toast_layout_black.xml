@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:layout_width="wrap_content">
 
-    <solid android:color="@color/dark_grey" />
+    <solid android:color="@color/dark_gray" />
 
     <corners android:radius="10dip" />
 

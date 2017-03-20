@@ -34,7 +34,7 @@
                 android:filterTouchesWhenObscured="true"
                 android:text="@string/id"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/dark_grey"
+                android:textColor="@color/dark_gray"
                 android:textSize="15sp" />
 
             <TextView
@@ -76,7 +76,7 @@
                 android:filterTouchesWhenObscured="true"
                 android:text="@string/status"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/dark_grey"
+                android:textColor="@color/dark_gray"
                 android:textSize="15sp" />
 
             <TextView
@@ -117,7 +117,7 @@
                 android:filterTouchesWhenObscured="true"
                 android:text="@string/amount"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/dark_grey"
+                android:textColor="@color/dark_gray"
                 android:textSize="15sp" />
 
             <TextView
@@ -161,7 +161,7 @@
             android:filterTouchesWhenObscured="true"
             android:text="@string/from"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/dark_grey"
+            android:textColor="@color/dark_gray"
             android:textSize="15sp" />
 
         <LinearLayout
@@ -182,7 +182,7 @@
             android:filterTouchesWhenObscured="true"
             android:text="@string/to"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/dark_grey"
+            android:textColor="@color/dark_gray"
             android:textSize="15sp" />
 
         <LinearLayout

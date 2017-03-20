@@ -29,7 +29,7 @@
         android:layout_marginTop="24dp"
         android:text="Exchange Rate"
         android:textSize="16sp"
-        android:textColor="@color/extra_light_grey"
+        android:textColor="@color/extra_light_gray"
         android:textStyle="bold"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="@+id/title"

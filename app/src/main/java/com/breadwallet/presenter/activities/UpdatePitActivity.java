@@ -161,7 +161,7 @@ public class UpdatePitActivity extends Activity {
                 if (curNewPin.equalsIgnoreCase(pin.toString())) {
                     Log.e(TAG, "goNext: SUCCESS");
                     KeyStoreManager.putPinCode(pin.toString(), this);
-                    BRAnimator.showBreadDialog(this, "PIN Set", "Use your PIN to login and send money.", R.drawable.ic_check_mark_white);
+                    BRAnimator.showBreadSignal(this, "PIN Set", "Use your PIN to login and send money.", R.drawable.ic_check_mark_white);
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {

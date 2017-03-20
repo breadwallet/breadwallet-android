@@ -17,7 +17,7 @@
         android:fontFamily="sans-serif-medium"
         android:gravity="center"
         android:padding="20dp"
-        android:textColor="@color/dark_grey"
+        android:textColor="@color/dark_gray"
         android:textSize="17sp" />
 
 
@@ -123,7 +123,7 @@
         android:layout_marginTop="20dp"
         android:filterTouchesWhenObscured="true"
         android:gravity="center"
-        android:textColor="@color/dark_grey" />
+        android:textColor="@color/dark_gray" />
 
     <Button
         android:id="@+id/done_button"

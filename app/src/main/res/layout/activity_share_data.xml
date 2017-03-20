@@ -37,7 +37,7 @@
     <View
         android:layout_width="0dp"
         android:layout_margin="16dp"
-        android:background="@color/extra_light_grey"
+        android:background="@color/extra_light_gray"
         android:layout_height="1dp"
         android:layout_marginRight="16dp"
         app:layout_constraintRight_toRightOf="parent"

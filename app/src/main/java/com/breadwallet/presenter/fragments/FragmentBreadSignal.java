@@ -1,17 +1,13 @@
 package com.breadwallet.presenter.fragments;
 
-import android.Manifest;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
@@ -62,7 +58,7 @@ public class FragmentBreadSignal extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_signal, container, false);
         mTitle = (TextView) rootView.findViewById(R.id.title);
         mDescription = (TextView) rootView.findViewById(R.id.description);
-        mIcon = (ImageView) rootView.findViewById(R.id.icon_view);
+        mIcon = (ImageView) rootView.findViewById(R.id.qr_image);
 
         Bundle bundle = this.getArguments();
 

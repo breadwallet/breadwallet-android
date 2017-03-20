@@ -40,6 +40,7 @@ import com.breadwallet.tools.manager.BRNotificationManager;
 import com.breadwallet.tools.util.BRStringFormatter;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.util.TypesConverter;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.tools.util.WordsReader;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
@@ -98,7 +99,8 @@ public class BRWalletManager extends Observable {
         this.balance = balance;
         setChanged();
         notifyObservers();
-        refreshAddress();
+
+        refreshAddress(BreadActivity.app);
 //        FragmentSettingsAll.refreshTransactions(ctx);
         //todo add transactions as an observer
     }
@@ -206,20 +208,13 @@ public class BRWalletManager extends Observable {
         return keyguardManager.isKeyguardSecure();
     }
 
-    public static void refreshAddress() {
-        //todo finish
-//        if (ctx != null) {
-//            MainFragmentQR mainFragmentQR = CustomPagerAdapter.adapter == null ? null : CustomPagerAdapter.adapter.mainFragmentQR;
-//            String tmpAddr = getReceiveAddress();
-//            if (tmpAddr == null || tmpAddr.isEmpty()) return;
-//            SharedPreferencesManager.putReceiveAddress(ctx, tmpAddr);
-//            if (mainFragmentQR == null) return;
-//            mainFragmentQR.refreshAddress(tmpAddr);
-//        } else {
-//            RuntimeException ex = new NullPointerException("Cannot be null");
-//            FirebaseCrash.report(ex);
-//            throw ex;
-//        }
+    public static boolean refreshAddress(Context ctx) {
+        if (ctx == null) return false;
+        String address = getReceiveAddress();
+        if (Utils.isNullOrEmpty(address)) return false;
+        SharedPreferencesManager.putReceiveAddress(ctx, address);
+        return true;
+
     }
 
     public void wipeWalletButKeystore(final Context ctx) {
@@ -895,8 +890,8 @@ public class BRWalletManager extends Observable {
             }).start();
     }
 
-    public void generateQR(Context ctx, String bitcoinURL, ImageView qrcode) {
-        if (qrcode == null || bitcoinURL == null || bitcoinURL.isEmpty()) return;
+    public boolean generateQR(Context ctx, String bitcoinURL, ImageView qrcode) {
+        if (qrcode == null || bitcoinURL == null || bitcoinURL.isEmpty()) return false;
         WindowManager manager = (WindowManager) ctx.getSystemService(Activity.WINDOW_SERVICE);
         Display display = manager.getDefaultDisplay();
         Point point = new Point();
@@ -904,16 +899,18 @@ public class BRWalletManager extends Observable {
         int width = point.x;
         int height = point.y;
         int smallerDimension = width < height ? width : height;
-        smallerDimension = (int) (smallerDimension * 0.7f);
+        smallerDimension = (int) (smallerDimension * 0.5f);
         Bitmap bitmap = null;
         try {
             bitmap = QRUtils.encodeAsBitmap(bitcoinURL, smallerDimension);
         } catch (WriterException e) {
             e.printStackTrace();
+            return false;
         }
-        qrcode.setPadding(1, 1, 1, 1);
-        qrcode.setBackgroundResource(R.color.gray);
+//        qrcode.setPadding(1, 1, 1, 1);
+//        qrcode.setBackgroundResource(R.color.gray);
         qrcode.setImageBitmap(bitmap);
+        return true;
 
     }
 

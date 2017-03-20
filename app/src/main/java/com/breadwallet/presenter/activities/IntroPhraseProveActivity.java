@@ -1,7 +1,6 @@
 package com.breadwallet.presenter.activities;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -13,7 +12,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.breadwallet.BreadWalletApp;
 import com.breadwallet.R;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.customviews.BRDialogView;
@@ -30,8 +28,6 @@ import com.google.firebase.crash.FirebaseCrash;
 import java.io.IOException;
 import java.util.List;
 import java.util.Random;
-
-import static android.R.id.list;
 
 
 public class IntroPhraseProveActivity extends Activity {
@@ -64,7 +60,7 @@ public class IntroPhraseProveActivity extends Activity {
                 if (edit1.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(0))) && edit2.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(1)))) {
                     Log.e(TAG, "onClick: Success!");
                     SharedPreferencesManager.putPhraseWroteDown(IntroPhraseProveActivity.this, true);
-                    BRAnimator.showBreadDialog(IntroPhraseProveActivity.this, "Paper Key Set", "Awesome!", R.drawable.ic_check_mark_white);
+                    BRAnimator.showBreadSignal(IntroPhraseProveActivity.this, "Paper Key Set", "Awesome!", R.drawable.ic_check_mark_white);
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {

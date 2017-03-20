@@ -566,7 +566,7 @@ public class BRAnimator {
 //            return myView.getTop() + getRelativeTop((View) myView.getParent());
 //    }
 
-    public static void showBreadDialog(Activity activity, String title, String iconDescription, int drawableId) {
+    public static void showBreadSignal(Activity activity, String title, String iconDescription, int drawableId) {
         fragmentSignal = new FragmentBreadSignal();
         Bundle bundle = new Bundle();
         bundle.putString(FragmentBreadSignal.TITLE, title);

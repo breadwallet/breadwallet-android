@@ -24,7 +24,7 @@
         android:fontFamily="sans-serif-medium"
         android:gravity="center"
         android:text="@string/dialog_recovery_phrase_warning"
-        android:textColor="@color/dark_grey"
+        android:textColor="@color/dark_gray"
         android:textSize="17sp" />
 
     <TextView
@@ -39,7 +39,7 @@
         android:fontFamily="sans-serif-light"
         android:text="@string/please_write_it_down"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/dark_grey"
+        android:textColor="@color/dark_gray"
         android:textSize="17sp" />
 
 

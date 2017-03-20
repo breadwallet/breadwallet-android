@@ -1,14 +1,29 @@
 package com.breadwallet.presenter.fragments;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.animation.Interpolator;
+import android.view.animation.OvershootInterpolator;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.wallet.BRWalletManager;
+
+import static android.R.attr.dialogLayout;
 
 
 /**
@@ -39,12 +54,14 @@ import com.breadwallet.R;
 public class FragmentReceive extends Fragment {
     private static final String TAG = FragmentReceive.class.getName();
 
-    public static final String TITLE = "title";
-    public static final String ICON_DESCRIPTION = "iconDescription";
-    public static final String RES_ID = "resId";
     public TextView mTitle;
-    public TextView mDescription;
-    public ImageView mIcon;
+    public TextView mAddress;
+    public ImageView mQrImage;
+    public LinearLayout backgroundLayout;
+    public ConstraintLayout signalLayout;
+    public static final int ANIMATION_DURATION = 300;
+    private String receiveAddress;
+    private Button shareButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -53,36 +70,76 @@ public class FragmentReceive extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_receive, container, false);
         mTitle = (TextView) rootView.findViewById(R.id.title);
-        mDescription = (TextView) rootView.findViewById(R.id.description);
-        mIcon = (ImageView) rootView.findViewById(R.id.icon_view);
+        mAddress = (TextView) rootView.findViewById(R.id.address_text);
+        mQrImage = (ImageView) rootView.findViewById(R.id.qr_image);
+        backgroundLayout = (LinearLayout) rootView.findViewById(R.id.background_layout);
+        signalLayout = (ConstraintLayout) rootView.findViewById(R.id.signal_layout);
+        shareButton = (Button) rootView.findViewById(R.id.share_button);
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SpringAnimator.showAnimation(v);
+            }
+        });
+        boolean success = BRWalletManager.refreshAddress(getActivity());
+        if (!success) throw new RuntimeException("failed to retrieve address");
 
-//        Bundle bundle = this.getArguments();
-
-//        if (bundle != null) {
-//            String title = bundle.getString(TITLE, "");
-//            String description = bundle.getString(ICON_DESCRIPTION, "");
-//            int resId = bundle.getInt(RES_ID, 0);
-//            Assert.assertNotSame(title, "");
-//            Assert.assertNotSame(description, "");
-//            Assert.assertNotSame(resId, 0);
-//
-//            mTitle.setText(title);
-//            mDescription.setText(description);
-//            mIcon.setImageResource(resId);
-//        } else {
-//            Log.e(TAG, "onCreateView: bundle is null!");
-//        }
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                if (getActivity() != null)
-//                    getActivity().getFragmentManager().popBackStack();
-//            }
-//        }, 2000);
+        receiveAddress = SharedPreferencesManager.getReceiveAddress(getActivity());
+        mAddress.setText(receiveAddress);
+        boolean generated = BRWalletManager.getInstance().generateQR(getActivity(), "bitcoin:" + receiveAddress, mQrImage);
+        if (!generated) throw new RuntimeException("failed to generate qr image for address");
 
         return rootView;
     }
 
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        final ViewTreeObserver observer = signalLayout.getViewTreeObserver();
+        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                observer.removeGlobalOnLayoutListener(this);
+                animateBackgroundDim();
+                animateSignalSlide();
+            }
+        });
+
+    }
+
+    private void animateSignalSlide() {
+        float translationY = signalLayout.getTranslationY();
+        float signalHeight = signalLayout.getHeight();
+        Log.e(TAG, "onViewCreated: signalHeight: " + signalHeight);
+        signalLayout.setTranslationY(translationY + signalHeight);
+        signalLayout.animate().translationY(translationY).setDuration(ANIMATION_DURATION).setInterpolator(new OvershootInterpolator(0.7f));
+    }
+
+    private void animateBackgroundDim() {
+        int transColor = android.R.color.transparent;
+        int blackTransColor = R.color.black_trans;
+
+        ValueAnimator anim = new ValueAnimator();
+        anim.setIntValues(transColor, blackTransColor);
+        anim.setEvaluator(new ArgbEvaluator());
+        anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                backgroundLayout.setBackgroundColor((Integer) valueAnimator.getAnimatedValue());
+            }
+        });
+
+        anim.setDuration(ANIMATION_DURATION);
+        anim.start();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+//        if (backgroundLayout != null)
+//            backgroundLayout.setBackgroundColor(getActivity().getColor(android.R.color.transparent));
+    }
 
     @Override
     public void onResume() {

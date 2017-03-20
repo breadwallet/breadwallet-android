@@ -2,7 +2,6 @@ package com.breadwallet.presenter.customviews;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -62,7 +61,7 @@ public class BRLockScreenConstraintLayout extends ConstraintLayout {
         trianglePath = new Path();
         trianglesPaint = new Paint();
         setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-        trianglesPaint.setShadowLayer(14f, 0, 0, getContext().getColor(R.color.dark_grey));
+        trianglesPaint.setShadowLayer(14f, 0, 0, getContext().getColor(R.color.dark_gray));
         trianglesPaint.setAntiAlias(true);
 
     }

@@ -144,7 +144,7 @@ public class IntroReEnterPinActivity extends FragmentActivity {
             Log.e(TAG, "verifyPin: SUCCESS");
             isPressAllowed = false;
             KeyStoreManager.putPinCode(pin.toString(), this);
-            BRAnimator.showBreadDialog(this, "PIN Set", "Use your PIN to login and send money.", R.drawable.ic_check_mark_white);
+            BRAnimator.showBreadSignal(this, "PIN Set", "Use your PIN to login and send money.", R.drawable.ic_check_mark_white);
             showWriteDownPhrase();
         } else {
             Log.e(TAG, "verifyPin: FAIL: firs: " + firstPIN + ", reEnter: " + pin.toString());

@@ -1,15 +1,8 @@
 package com.breadwallet.presenter.activities;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.RoundRectShape;
-import android.graphics.drawable.shapes.Shape;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -21,13 +14,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.customviews.BRSoftKeyboard;
-import com.breadwallet.tools.animation.SpringAnimator;
 
 import static com.breadwallet.R.color.dark_blue;
-import static com.breadwallet.R.color.extra_light_grey;
-import static com.breadwallet.R.color.light_gray;
-import static com.breadwallet.R.id.view;
+import static com.breadwallet.R.color.extra_light_gray;
 
 public class IntroRecoverWordsActivity extends Activity {
     private static final String TAG = IntroRecoverWordsActivity.class.getName();
@@ -107,7 +96,7 @@ public class IntroRecoverWordsActivity extends Activity {
 
     private void chooseWordsSize(boolean isLeft) {
         int activeColor = getColor(dark_blue);
-        int nonActiveColor = getColor(extra_light_grey);
+        int nonActiveColor = getColor(extra_light_gray);
         GradientDrawable leftDrawable = (GradientDrawable) leftButton.getBackground().getCurrent();
         GradientDrawable rightDrawable = (GradientDrawable) rightButton.getBackground().getCurrent();
 

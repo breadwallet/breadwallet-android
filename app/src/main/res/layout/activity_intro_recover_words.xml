@@ -133,7 +133,7 @@
                 android:lines="1"
                 android:nextFocusForward="@+id/word2"
                 android:textColor="@color/almost_black"
-                android:textColorHint="@color/extra_light_grey"
+                android:textColorHint="@color/extra_light_gray"
                 />
 
             <EditText
@@ -148,7 +148,7 @@
                 android:lines="1"
                 android:nextFocusForward="@+id/word3"
                 android:textColor="@color/almost_black"
-                android:textColorHint="@color/extra_light_grey"
+                android:textColorHint="@color/extra_light_gray"
                 />
 
             <EditText
@@ -163,7 +163,7 @@
                 android:lines="1"
                 android:nextFocusForward="@+id/word4"
                 android:textColor="@color/almost_black"
-                android:textColorHint="@color/extra_light_grey"
+                android:textColorHint="@color/extra_light_gray"
                 />
 
         </LinearLayout>
@@ -186,7 +186,7 @@
                 android:lines="1"
                 android:nextFocusForward="@+id/word5"
                 android:textColor="@color/almost_black"
-                android:textColorHint="@color/extra_light_grey"
+                android:textColorHint="@color/extra_light_gray"
                 />
 
             <EditText
@@ -201,7 +201,7 @@
                 android:lines="1"
                 android:nextFocusForward="@+id/word6"
                 android:textColor="@color/almost_black"
-                android:textColorHint="@color/extra_light_grey"
+                android:textColorHint="@color/extra_light_gray"
                 />
 
             <EditText
@@ -216,7 +216,7 @@
                 android:lines="1"
                 android:nextFocusForward="@+id/word7"
                 android:textColor="@color/almost_black"
-                android:textColorHint="@color/extra_light_grey"
+                android:textColorHint="@color/extra_light_gray"
                 />
 
         </LinearLayout>
@@ -239,7 +239,7 @@
                 android:lines="1"
                 android:nextFocusForward="@+id/word8"
                 android:textColor="@color/almost_black"
-                android:textColorHint="@color/extra_light_grey"
+                android:textColorHint="@color/extra_light_gray"
                 />
 
             <EditText
@@ -254,7 +254,7 @@
                 android:lines="1"
                 android:nextFocusForward="@+id/word9"
                 android:textColor="@color/almost_black"
-                android:textColorHint="@color/extra_light_grey"
+                android:textColorHint="@color/extra_light_gray"
                 />
 
             <EditText
@@ -269,7 +269,7 @@
                 android:lines="1"
                 android:nextFocusForward="@+id/word10"
                 android:textColor="@color/almost_black"
-                android:textColorHint="@color/extra_light_grey"
+                android:textColorHint="@color/extra_light_gray"
                 />
 
         </LinearLayout>
@@ -293,7 +293,7 @@
                 android:lines="1"
                 android:nextFocusForward="@+id/word11"
                 android:textColor="@color/almost_black"
-                android:textColorHint="@color/extra_light_grey"
+                android:textColorHint="@color/extra_light_gray"
                 />
 
             <EditText
@@ -308,7 +308,7 @@
                 android:lines="1"
                 android:nextFocusForward="@+id/word12"
                 android:textColor="@color/almost_black"
-                android:textColorHint="@color/extra_light_grey"/>
+                android:textColorHint="@color/extra_light_gray"/>
 
             <EditText
                 android:id="@+id/word12"
@@ -321,7 +321,7 @@
                 android:inputType="textVisiblePassword"
                 android:lines="1"
                 android:textColor="@color/almost_black"
-                android:textColorHint="@color/extra_light_grey"
+                android:textColorHint="@color/extra_light_gray"
                 />
 
         </LinearLayout>

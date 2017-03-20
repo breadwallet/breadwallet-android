@@ -40,7 +40,7 @@
                     android:layout_marginTop="40dp"
                     android:filterTouchesWhenObscured="true"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@color/dark_grey"
+                    android:textColor="@color/dark_gray"
                     android:textSize="@dimen/text_size" />
 
                 <TextView
@@ -52,7 +52,7 @@
                     android:filterTouchesWhenObscured="true"
                     android:text="@string/copyright_u00a9_2016_breadwallet_llc"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@color/dark_grey"
+                    android:textColor="@color/dark_gray"
                     android:textSize="@dimen/text_size" />
 
                 <TextView
@@ -65,7 +65,7 @@
                     android:filterTouchesWhenObscured="true"
                     android:text="@string/app_support"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@color/dark_grey"
+                    android:textColor="@color/dark_gray"
                     android:textSize="@dimen/text_size" />
 
                 <TextView
@@ -91,7 +91,7 @@
                     android:filterTouchesWhenObscured="true"
                     android:text="@string/exchange_rate_data_provided_by"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@color/dark_grey"
+                    android:textColor="@color/dark_gray"
                     android:textSize="@dimen/text_size" />
 
                 <TextView
@@ -103,7 +103,7 @@
                     android:filterTouchesWhenObscured="true"
                     android:text="@string/bitpay_com_rates"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@color/dark_grey"
+                    android:textColor="@color/dark_gray"
                     android:textSize="@dimen/text_size" />
 
             </RelativeLayout>

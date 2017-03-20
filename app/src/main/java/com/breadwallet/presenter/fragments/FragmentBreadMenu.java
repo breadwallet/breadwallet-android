@@ -22,7 +22,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.settings.AboutActivity;
 import com.breadwallet.presenter.activities.settings.SecurityCenterActivity;
 import com.breadwallet.presenter.activities.settings.SettingsActivity;
 import com.breadwallet.presenter.entities.BRMenuItem;
@@ -114,7 +113,7 @@ public class FragmentBreadMenu extends Fragment {
                 Log.e(TAG, "onClick: Lock Wallet");
                 final Activity from = getActivity();
                 from.getFragmentManager().popBackStack();
-                BRAnimator.showBreadDialog(getActivity(), "Wallet Locked", "Wallet Locked", R.drawable.ic_wallet_locked);
+                BRAnimator.showBreadSignal(getActivity(), "Wallet Locked", "Wallet Locked", R.drawable.ic_wallet_locked);
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
