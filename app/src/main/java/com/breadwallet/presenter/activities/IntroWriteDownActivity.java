@@ -45,7 +45,7 @@ public class IntroWriteDownActivity extends Activity {
     public void onBackPressed() {
         int count = getFragmentManager().getBackStackEntryCount();
         if (count == 0) {
-            BRWalletManager.getInstance().startBreadActivity(this);
+            BRWalletManager.getInstance().startBreadActivity(this, false);
             //additional code
         } else {
             getFragmentManager().popBackStack();

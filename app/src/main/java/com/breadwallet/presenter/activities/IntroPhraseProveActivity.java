@@ -68,7 +68,7 @@ public class IntroPhraseProveActivity extends Activity {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            BRWalletManager.getInstance().startBreadActivity(IntroPhraseProveActivity.this);
+                            BRWalletManager.getInstance().startBreadActivity(IntroPhraseProveActivity.this, false);
                             overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                         }
                     }, 1000);

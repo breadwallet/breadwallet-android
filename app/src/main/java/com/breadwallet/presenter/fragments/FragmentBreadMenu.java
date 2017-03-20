@@ -118,9 +118,9 @@ public class FragmentBreadMenu extends Fragment {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        BRWalletManager.getInstance().startBreadActivity(from);
+                        BRWalletManager.getInstance().startBreadActivity(from, true);
                     }
-                },1000);
+                }, 1000);
             }
         }));
 

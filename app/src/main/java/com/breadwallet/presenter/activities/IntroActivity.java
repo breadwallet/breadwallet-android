@@ -158,7 +158,6 @@ public class IntroActivity extends FragmentActivity {
     }
 
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
@@ -222,7 +221,7 @@ public class IntroActivity extends FragmentActivity {
             ((BreadWalletApp) getApplication()).showDeviceNotSecuredWarning(this);
         } else {
             if (!m.noWallet(this)) {
-                BRWalletManager.getInstance().startBreadActivity(this);
+                BRWalletManager.getInstance().startBreadActivity(this, true);
             }
 
         }

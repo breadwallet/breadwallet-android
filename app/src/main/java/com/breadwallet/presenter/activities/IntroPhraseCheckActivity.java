@@ -162,7 +162,7 @@ public class IntroPhraseCheckActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        BRWalletManager.getInstance().startBreadActivity(this);
+        BRWalletManager.getInstance().startBreadActivity(this, false);
 
     }
 

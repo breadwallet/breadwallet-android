@@ -972,13 +972,21 @@ public class BRWalletManager extends Observable {
     }
 
 
-    public void startBreadActivity(Activity from) {
+    public void startBreadActivity(Activity from, boolean auth) {
         Log.e(TAG, "startBreadActivity: from: " + from);
         Intent intent;
-        intent = new Intent(from, PinActivity.class);
-        from.startActivity(intent);
-        if (!from.isDestroyed()) {
-            from.finish();
+        if (auth) {
+            intent = new Intent(from, PinActivity.class);
+            from.startActivity(intent);
+            if (!from.isDestroyed()) {
+                from.finish();
+            }
+        } else {
+            intent = new Intent(from, BreadActivity.class);
+            from.startActivity(intent);
+            if (!from.isDestroyed()) {
+                from.finish();
+            }
         }
     }
 
