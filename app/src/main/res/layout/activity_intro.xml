@@ -53,7 +53,7 @@
         android:layout_marginBottom="32dp"
         android:layout_marginEnd="24dp"
         android:layout_marginStart="24dp"
-        android:background="@drawable/button_recover_wallet"
+        android:background="@drawable/button_secondary_gray_stroke"
         android:elevation="8dp"
         android:padding="10dp"
         android:text="Recover Wallet"

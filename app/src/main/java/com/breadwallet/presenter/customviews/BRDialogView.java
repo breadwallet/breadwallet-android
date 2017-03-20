@@ -139,16 +139,7 @@ public class BRDialogView extends DialogFragment {
     }
 
     public void dismissWithAnimation() {
-//        float scaleX = mainLayout.getScaleX();
-//        float scaleY = mainLayout.getScaleY();
-//        mainLayout.animate().scaleX(scaleX / 2);
-//        mainLayout.animate().scaleY(scaleY / 2).setListener(new AnimatorListenerAdapter() {
-//            @Override
-//            public void onAnimationEnd(Animator animation) {
-//                super.onAnimationEnd(animation);
         BRDialogView.this.dismiss();
-//            }
-//        });
 
 
     }

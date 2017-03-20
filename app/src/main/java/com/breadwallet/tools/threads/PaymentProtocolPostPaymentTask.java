@@ -7,6 +7,7 @@ import android.widget.Toast;
 import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.BreadActivity;
+import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
@@ -148,8 +149,8 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
     public static void handleMessage() {
         if (app != null && message != null) {
             if (!message.isEmpty()) {
-                ((BreadWalletApp) app.getApplication()).
-                        showCustomToast(app, message, BreadActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 1);
+                BRToast.
+                        showCustomToast(app, message, BreadActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, R.drawable.toast_layout_black);
             } else {
                 if (!waiting && !sent && pendingErrorMessages.get(MESSAGE) != null) {
 //                    BreadDialog.

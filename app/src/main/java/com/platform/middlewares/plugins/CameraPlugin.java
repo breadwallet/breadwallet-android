@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
+import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.BRConstants;
@@ -128,9 +129,9 @@ public class CameraPlugin implements Plugin {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(app,
                         Manifest.permission.CAMERA)) {
                     Log.e(TAG, "handle: no camera access, showing instructions");
-                    ((BreadWalletApp) app.getApplication()).showCustomToast(app,
+                    BRToast.showCustomToast(app,
                             app.getString(R.string.allow_camera_access),
-                            BreadActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
+                            BreadActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, R.drawable.toast_layout_blue);
                 } else {
                     // No explanation needed, we can request the permission.
                     ActivityCompat.requestPermissions(app,

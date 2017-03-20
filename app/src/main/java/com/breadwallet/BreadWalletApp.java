@@ -69,10 +69,7 @@ import static com.breadwallet.presenter.activities.BreadActivity.app;
 public class BreadWalletApp extends Application {
     private static final String TAG = BreadWalletApp.class.getName();
     public static boolean unlocked = false;
-    private boolean customToastAvailable = true;
     public boolean allowKeyStoreAccess;
-    private String oldMessage;
-    private Toast toast;
     public static int DISPLAY_HEIGHT_PX;
     FingerprintManager mFingerprintManager;
 
@@ -91,49 +88,7 @@ public class BreadWalletApp extends Application {
 
     }
 
-    /**
-     * Shows a custom toast using the given string as a paramater,
-     *
-     * @param message the message to be shown in the custom toast
-     */
 
-    public void showCustomToast(Context app, String message, int yOffSet, int duration, int color) {
-        if (toast == null) toast = new Toast(getApplicationContext());
-        if (BreadActivity.appInBackground) return;
-
-        if (customToastAvailable || !oldMessage.equals(message)) {
-            oldMessage = message;
-            customToastAvailable = false;
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    customToastAvailable = true;
-                }
-            }, 1000);
-            LayoutInflater inflater = ((Activity) app).getLayoutInflater();
-            View layout = inflater.inflate(R.layout.toast,
-                    (ViewGroup) ((Activity) app).findViewById(R.id.toast_layout_root));
-            if (color == 1) {
-                layout.setBackgroundResource(R.drawable.toast_layout_black);
-            }
-            TextView text = (TextView) layout.findViewById(R.id.toast_text);
-            text.setText(message);
-            toast.setGravity(Gravity.BOTTOM, 0, yOffSet);
-            toast.setDuration(duration);
-            toast.setView(layout);
-            toast.show();
-        }
-    }
-
-    public void cancelToast() {
-        if (toast != null) {
-            toast.cancel();
-        }
-    }
-
-    public boolean isToastShown() {
-        return toast != null && toast.getView() != null && toast.getView().isShown();
-    }
 
 //    public void setTopMiddleView(int view, String text) {
 //        if(app == null) return;

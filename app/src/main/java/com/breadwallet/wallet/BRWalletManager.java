@@ -26,6 +26,7 @@ import com.breadwallet.BreadWalletApp;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.activities.PinActivity;
+import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
 import com.breadwallet.presenter.entities.BRPeerEntity;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
@@ -59,6 +60,7 @@ import java.util.Locale;
 import java.util.Observable;
 
 import static com.breadwallet.presenter.activities.BreadActivity.app;
+import static com.breadwallet.presenter.customviews.BRToast.showCustomToast;
 
 
 /**
@@ -381,8 +383,8 @@ public class BRWalletManager extends Observable {
 //                            PaymentProtocolPostPaymentTask.pendingErrorMessages.get(PaymentProtocolPostPaymentTask.MESSAGE), ctx.getString(R.string.ok));
                     PaymentProtocolPostPaymentTask.pendingErrorMessages = null;
                 } else {
-                    ((BreadWalletApp) ((Activity) ctx).getApplication()).showCustomToast(ctx, message,
-                            BreadActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 1);
+                    BRToast.showCustomToast(ctx, message,
+                            BreadActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, R.drawable.toast_layout_black);
                 }
             }
         } else {
@@ -459,9 +461,9 @@ public class BRWalletManager extends Observable {
                         @Override
                         public void run() {
                             if (temp == messageId) {
-                                if (!((BreadWalletApp) ((Activity) ctx).getApplication()).isToastShown()) {
-                                    ((BreadWalletApp) ctx.getApplicationContext()).showCustomToast(ctx, message,
-                                            BreadWalletApp.DISPLAY_HEIGHT_PX / 2, Toast.LENGTH_LONG, 1);
+                                if (BRToast.isToastShown()) {
+                                    BRToast.showCustomToast(ctx, message,
+                                            BreadWalletApp.DISPLAY_HEIGHT_PX / 2, Toast.LENGTH_LONG, R.drawable.toast_layout_black);
                                     AudioManager audioManager = (AudioManager) ctx.getSystemService(Context.AUDIO_SERVICE);
                                     if (audioManager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL) {
                                         final MediaPlayer mp = MediaPlayer.create(ctx, R.raw.coinflip);
