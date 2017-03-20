@@ -4,7 +4,7 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.breadwallet.exceptions.BRKeystoreErrorException;
-import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.tools.security.KeyStoreManager;
 
 import org.junit.Assert;
@@ -46,7 +46,7 @@ public class KeyStoreTests {
     public static final String TAG = KeyStoreTests.class.getName();
 
     @Rule
-    public ActivityTestRule<MainActivity> mActivityRule = new ActivityTestRule<>(MainActivity.class);
+    public ActivityTestRule<BreadActivity> mActivityRule = new ActivityTestRule<>(BreadActivity.class);
 
     @Test
     public void setGetPhrase() {

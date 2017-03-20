@@ -4,7 +4,7 @@ import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.activities.BreadActivity;
 import com.platform.interfaces.KVStoreAdaptor;
 import com.platform.kvstore.CompletionObject;
 import com.platform.kvstore.ReplicatedKVStore;
@@ -61,7 +61,7 @@ public class KVStoreTests {
     public static final String TAG = KVStoreTests.class.getName();
 
     @Rule
-    public ActivityTestRule<MainActivity> mActivityRule = new ActivityTestRule<>(MainActivity.class);
+    public ActivityTestRule<BreadActivity> mActivityRule = new ActivityTestRule<>(BreadActivity.class);
     private KVStoreAdaptor remote;
     private ReplicatedKVStore store;
 

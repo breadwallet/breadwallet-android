@@ -5,7 +5,7 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
-import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.tools.util.BRCompressor;
 import com.breadwallet.tools.util.Utils;
 import com.jniwrappers.BRBIP32Sequence;
@@ -36,15 +36,10 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
-import static android.R.attr.data;
-import static android.R.attr.key;
-import static android.R.attr.left;
-import static com.breadwallet.presenter.fragments.FragmentScanResult.address;
 import static com.platform.APIClient.BREAD_BUY;
 import static com.platform.APIClient.BUNDLES;
 import static com.platform.APIClient.bundleFileName;
 import static com.platform.APIClient.extractedFolder;
-import static com.platform.tools.BRBitId.signMessage;
 
 /**
  * BreadWallet
@@ -75,8 +70,8 @@ import static com.platform.tools.BRBitId.signMessage;
 public class PlatformTests {
     public static final String TAG = PlatformTests.class.getName();
     @Rule
-    public ActivityTestRule<MainActivity> mActivityRule = new ActivityTestRule<>(
-            MainActivity.class);
+    public ActivityTestRule<BreadActivity> mActivityRule = new ActivityTestRule<>(
+            BreadActivity.class);
 
     // proto is the transport protocol to use for talking to the API (either http or https)
     private static final String PROTO = "https";
@@ -119,7 +114,7 @@ public class PlatformTests {
         response = apiClient.sendRequest(request, false, 0);
         apiClient.writeBundleToFile(response, bundleFile);
         apiClient.tryExtractTar(bundleFile);
-        String extractFolderName = MainActivity.app.getFilesDir() + "/" + BUNDLES + "/" + extractedFolder;
+        String extractFolderName = BreadActivity.app.getFilesDir() + "/" + BUNDLES + "/" + extractedFolder;
         File temp = new File(extractFolderName);
         int filesExtracted = temp.listFiles().length;
         Log.e(TAG, "bundleExtractTest: filesExtracted: " + filesExtracted);
