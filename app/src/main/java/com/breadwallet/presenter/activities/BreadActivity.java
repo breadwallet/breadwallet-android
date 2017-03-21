@@ -10,21 +10,28 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.presenter.fragments.FragmentReceive;
+import com.breadwallet.tools.adapter.TransactionListAdapter;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.CurrencyManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.RequestHandler;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
+import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.tools.util.BRStringFormatter;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static com.breadwallet.tools.animation.BRAnimator.showBreadMenu;
 import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
@@ -67,6 +74,8 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     private TextView secondaryPrice;
     private TextView emptyTip;
     private ProgressBar progressBar;
+    private ListView txList;
+    private TransactionListAdapter adapter;
 
     public static boolean appInBackground = false;
 
@@ -90,11 +99,30 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         setListeners();
 
         progressBar.setProgress(80);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                setUpTxList();
+            }
+        }).start();
 
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+    }
+
+    private void setUpTxList() {
+        TransactionListItem[] arr = BRWalletManager.getInstance().getTransactions();
+
+        if (arr == null) {
+            txList.setVisibility(View.GONE);
+        } else {
+            txList.setVisibility(View.VISIBLE);
+            adapter = new TransactionListAdapter(this, Arrays.asList(arr));
+            adapter.notifyDataSetChanged();
+        }
+
     }
 
     private void setStatusBarColor() {
@@ -201,16 +229,19 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         super.onDestroy();
 
         //sync the kv stores
-        if (PLATFORM_ON)
-            APIClient.getInstance(this).syncKvStore();
+
+        if (PLATFORM_ON) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    APIClient.getInstance(BreadActivity.this).syncKvStore();
+                }
+            }).start();
+
+        }
 
     }
 
-    //
-//    /**
-//     * Initializes all the views and components
-//     */
-//
     private void initializeViews() {
         sendButton = (LinearLayout) findViewById(R.id.send_layout);
         receiveButton = (LinearLayout) findViewById(R.id.receive_layout);
@@ -219,13 +250,10 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         secondaryPrice = (TextView) findViewById(R.id.secondary_price);
         emptyTip = (TextView) findViewById(R.id.empty_tx_tip);
         progressBar = (ProgressBar) findViewById(R.id.load_wallet_progress);
+        txList = (ListView) findViewById(R.id.tx_listview);
     }
 
     private void togglePriceTexts() {
-
-//        String tmp = leftIso;
-//        leftIso = rightIso;
-//        rightIso = tmp;
 
     }
 
@@ -266,6 +294,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
                 secondaryPrice.setText(bits);
                 SpringAnimator.showAnimation(primaryPrice);
                 SpringAnimator.showAnimation(secondaryPrice);
+                setUpTxList();
             }
         });
 

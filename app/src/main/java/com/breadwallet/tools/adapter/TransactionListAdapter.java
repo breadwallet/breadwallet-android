@@ -3,6 +3,7 @@ package com.breadwallet.tools.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
+import android.text.format.DateUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,14 +16,19 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.util.BRStringFormatter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Currency;
 import java.util.List;
+
+import static android.text.format.DateUtils.MINUTE_IN_MILLIS;
+import static com.breadwallet.tools.manager.SharedPreferencesManager.getPriceSetToBitcoin;
 
 
 /**
@@ -94,55 +100,30 @@ public class TransactionListAdapter extends ArrayAdapter<TransactionListItem> {
         TextView sentReceived = (TextView) convertView.findViewById(R.id.sent_received);
         TextView amount = (TextView) convertView.findViewById(R.id.amount);
         TextView toFrom = (TextView) convertView.findViewById(R.id.to_from);
-        TextView account = (TextView) convertView.findViewById(R.id.account);
+//        TextView account = (TextView) convertView.findViewById(R.id.account);
         TextView confirmation = (TextView) convertView.findViewById(R.id.confirmation);
         TextView timestamp = (TextView) convertView.findViewById(R.id.timestamp);
-        TextView comment = (TextView) convertView.findViewById(R.id.comment);
+//        TextView comment = (TextView) convertView.findViewById(R.id.comment);
 
         TransactionListItem item = itemFeed.get(position);
 
         boolean received = item.getSent() == 0;
         sentReceived.setText(received ? "Received" : "Sent");
+        toFrom.setText(received ? "from" : "to");
         int blockHeight = item.getBlockHeight();
         int confirms = blockHeight == Integer.MAX_VALUE ? 0 : SharedPreferencesManager.getLastBlockHeight(mContext) - blockHeight + 1;
         confirmation.setText((confirms >= 6) ? "Completed" : "Waiting to be confirmed");
 
-
-//        if (item.getSent() > 0 && item.getSent() == item.getReceived()) {
-//            sentReceivedTextView.setBackgroundResource(R.drawable.unconfirmed_label);
-//            sentReceivedTextView.setText(R.string.moved);
-//            sentReceivedTextView.setTextColor(unconfirmedColor);
-//        } else if (blockHeight != Integer.MAX_VALUE && confirms >= 6) {
-//            sentReceivedTextView.setBackgroundResource(received ? R.drawable.received_label : R.drawable.sent_label);
-//            sentReceivedTextView.setText(received ? R.string.received : R.string.sent);
-//            sentReceivedTextView.setTextColor(received ? receivedColor : sentColor);
-//        } else {
-//            sentReceivedTextView.setBackgroundResource(R.drawable.unconfirmed_label);
-//            sentReceivedTextView.setTextColor(unconfirmedColor);
-//            if (!BRWalletManager.getInstance(activity).transactionIsVerified(item.getHexId())) {
-//                sentReceivedTextView.setText(R.string.unverified);
-//            } else {
-//                int confsNr = confirms >= 0 && confirms <= 5 ? confirms : 0;
-//                String message = confsNr == 0 ? activity.getString(R.string.nr_confirmations0) :
-//                        (confsNr == 1 ? activity.getString(R.string.nr_confirmations1) : String.format(activity.getString(R.string.nr_confirmations), confsNr));
-//
-//                sentReceivedTextView.setText(message);
-//            }
-//        }
-
-//        long itemTimeStamp = item.getTimeStamp();
-//        dateTextView.setText(itemTimeStamp != 0 ? Utils.getFormattedDateFromLong(itemTimeStamp * 1000) : Utils.getFormattedDateFromLong(System.currentTimeMillis()));
-//
-//        long satoshisAmount = received ? item.getReceived() : (item.getSent() - item.getReceived()) * -1;
-//
-//        bitsTextView.setText(BRStringFormatter.getFormattedCurrencyString("BTC", satoshisAmount));
-//        dollarsTextView.setText(String.format("(%s)", BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(activity),
-//                SharedPreferencesManager.getIso(activity), new BigDecimal(satoshisAmount), activity)));
-//        long satoshisAfterTx = item.getBalanceAfterTx();
-//
-//        bitsTotalTextView.setText(BRStringFormatter.getFormattedCurrencyString("BTC", satoshisAfterTx));
-//        dollarsTotalTextView.setText(String.format("(%s)", BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(activity),
-//                SharedPreferencesManager.getIso(activity), new BigDecimal(satoshisAfterTx), activity)));
+        boolean priceInBtc = SharedPreferencesManager.getPriceSetToBitcoin(mContext);
+        long satoshisAmount = received ? item.getReceived() : (item.getSent() - item.getReceived()) * -1;
+        if (priceInBtc) {
+            amount.setText(BRStringFormatter.getFormattedCurrencyString(mContext, "BTC", new BigDecimal(satoshisAmount)));
+        } else {
+            String iso = SharedPreferencesManager.getIso(mContext);
+            BigDecimal exchangeRate = new BigDecimal(CurrencyDataSource.getInstance(mContext).getCurrencyByIso(iso).rate);
+            amount.setText(BRStringFormatter.getExchangeForAmount(exchangeRate, iso, new BigDecimal(satoshisAmount), mContext));
+        }
+        timestamp.setText(DateUtils.getRelativeTimeSpanString(item.getTimeStamp(), System.currentTimeMillis(), MINUTE_IN_MILLIS));
 
     }
 

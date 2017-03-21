@@ -12,7 +12,8 @@ import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.entities.BlockEntity;
 import com.breadwallet.presenter.entities.PeerEntity;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
-import com.breadwallet.tools.sqlite.SQLiteManager;
+import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
+import com.breadwallet.tools.sqlite.PeerDataSource;
 
 import java.text.DecimalFormat;
 
@@ -131,7 +132,7 @@ public class BRPeerManager {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                SQLiteManager.getInstance(ctx).insertMerkleBlocks(blockEntities);
+                MerkleBlockDataSource.getInstance(ctx).putMerkleBlocks(blockEntities);
             }
         }).start();
 
@@ -144,7 +145,7 @@ public class BRPeerManager {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                SQLiteManager.getInstance(ctx).insertPeer(peerEntities);
+                PeerDataSource.getInstance(ctx).putPeers(peerEntities);
             }
         }).start();
 
@@ -164,7 +165,7 @@ public class BRPeerManager {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                SQLiteManager.getInstance(ctx).deleteBlocks();
+                MerkleBlockDataSource.getInstance(ctx).deleteAllBlocks();
             }
         }).start();
 
@@ -177,7 +178,7 @@ public class BRPeerManager {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                SQLiteManager.getInstance(ctx).deletePeers();
+                PeerDataSource.getInstance(ctx).deleteAllPeers();
             }
         }).start();
 

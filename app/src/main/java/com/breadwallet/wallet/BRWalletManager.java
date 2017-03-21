@@ -11,13 +11,9 @@ import android.graphics.Point;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Handler;
-import android.os.SystemClock;
 import android.util.Log;
 import android.view.Display;
-import android.view.MotionEvent;
-import android.view.View;
 import android.view.WindowManager;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -33,20 +29,18 @@ import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.presenter.entities.ImportPrivKeyEntity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.TransactionListItem;
-import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.qrcode.QRUtils;
+import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
+import com.breadwallet.tools.sqlite.PeerDataSource;
+import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.manager.BRNotificationManager;
-import com.breadwallet.tools.util.BRStringFormatter;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.tools.util.WordsReader;
-import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
-import com.breadwallet.tools.sqlite.SQLiteManager;
-import com.breadwallet.tools.threads.ImportPrivKeyTask;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.zxing.WriterException;
 
@@ -57,11 +51,8 @@ import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.Observable;
 
 import static com.breadwallet.presenter.activities.BreadActivity.app;
-import static com.breadwallet.presenter.customviews.BRToast.showCustomToast;
 
 
 /**
@@ -234,10 +225,9 @@ public class BRWalletManager {
             }
         }).start();
 
-        SQLiteManager sqLiteManager = SQLiteManager.getInstance(ctx);
-        sqLiteManager.deleteTransactions();
-        sqLiteManager.deleteBlocks();
-        sqLiteManager.deletePeers();
+        TransactionDataSource.getInstance(ctx).deleteAllTransactions();
+        MerkleBlockDataSource.getInstance(ctx).deleteAllBlocks();
+        PeerDataSource.getInstance(ctx).deleteAllPeers();
         SharedPreferencesManager.clearAllPrefs(ctx);
     }
 
@@ -451,8 +441,7 @@ public class BRWalletManager {
 
         }
 
-        SQLiteManager sqLiteManager = SQLiteManager.getInstance(ctx);
-        sqLiteManager.insertTransaction(tx, blockHeight, timestamp, hash);
+        TransactionDataSource.getInstance(ctx).putTransaction(new BRTransactionEntity(tx, blockHeight, timestamp, hash));
     }
 
     private static void showSentReceivedToast(final Context ctx, final String message) {
@@ -493,7 +482,7 @@ public class BRWalletManager {
         Log.d(TAG, "onTxUpdated: " + String.format("hash: %s, blockHeight: %d, timestamp: %d", hash, blockHeight, timeStamp));
         BreadActivity ctx = app;
         if (ctx != null) {
-            SQLiteManager.getInstance(ctx).updateTxByHash(hash, blockHeight, timeStamp);
+            TransactionDataSource.getInstance(ctx).updateTxBlockHeight(hash, blockHeight, timeStamp);
         }
     }
 
@@ -501,7 +490,7 @@ public class BRWalletManager {
         Log.e(TAG, "onTxDeleted: " + String.format("hash: %s, notifyUser: %d, recommendRescan: %d", hash, notifyUser, recommendRescan));
         final BreadActivity ctx = app;
         if (ctx != null) {
-            SQLiteManager.getInstance(ctx).deleteTxByHash(hash);
+            TransactionDataSource.getInstance(ctx).deleteTxByHash(hash);
             if (notifyUser == 1) {
                 ctx.runOnUiThread(new Runnable() {
                     @Override
@@ -839,10 +828,8 @@ public class BRWalletManager {
         BRWalletManager m = BRWalletManager.getInstance();
         final BRPeerManager pm = BRPeerManager.getInstance();
 
-        SQLiteManager sqLiteManager = SQLiteManager.getInstance(ctx);
-
         if (!m.isCreated()) {
-            List<BRTransactionEntity> transactions = sqLiteManager.getTransactions();
+            List<BRTransactionEntity> transactions = TransactionDataSource.getInstance(ctx).getAllTransactions();
             int transactionsCount = transactions.size();
             if (transactionsCount > 0) {
                 m.createTxArrayWithCount(transactionsCount);
@@ -863,8 +850,8 @@ public class BRWalletManager {
         }
 
         if (!pm.isCreated()) {
-            List<BRMerkleBlockEntity> blocks = sqLiteManager.getBlocks();
-            List<BRPeerEntity> peers = sqLiteManager.getPeers();
+            List<BRMerkleBlockEntity> blocks = MerkleBlockDataSource.getInstance(ctx).getAllMerkleBlocks();
+            List<BRPeerEntity> peers = PeerDataSource.getInstance(ctx).getAllPeers();
             final int blocksCount = blocks.size();
             final int peersCount = peers.size();
             if (blocksCount > 0) {

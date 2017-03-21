@@ -51,12 +51,21 @@ public class TransactionDataSource {
             BRSQLiteHelper.TX_TIME_STAMP
     };
 
+    private static TransactionDataSource instance;
 
-    public TransactionDataSource(Context context) {
+    public static TransactionDataSource getInstance(Context context) {
+        if (instance == null) {
+            instance = new TransactionDataSource(context);
+        }
+        return instance;
+    }
+
+
+    private TransactionDataSource(Context context) {
         dbHelper = BRSQLiteHelper.getInstance(context);
     }
 
-    public BRTransactionEntity createTransaction(BRTransactionEntity transactionEntity) {
+    public BRTransactionEntity putTransaction(BRTransactionEntity transactionEntity) {
         database = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(BRSQLiteHelper.TX_COLUMN_ID, transactionEntity.getTxHash());

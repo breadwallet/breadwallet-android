@@ -46,7 +46,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="40dp"
                 android:layout_marginLeft="16dp"
-                android:text="$120.55"
+                android:text="$0"
                 android:textColor="@color/white"
                 android:textSize="26sp"
                 android:textStyle="bold"
@@ -254,5 +254,15 @@
             app:layout_constraintTop_toBottomOf="@+id/textView19"/>
 
     </android.support.constraint.ConstraintLayout>
+
+    <ListView
+        android:id="@+id/tx_listview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottom_toolbar_layout1"
+        android:layout_below="@+id/loading_wallet_layout"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"/>
 
 </RelativeLayout>

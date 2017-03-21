@@ -207,6 +207,18 @@ public class SharedPreferencesManager {
         editor.apply();
     }
 
+    public static boolean getPriceSetToBitcoin(Context activity) {
+        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getBoolean("priceSetToBitcoin", false);
+    }
+
+    public static void putPriceSetToBitcoin(Context activity, boolean allow) {
+        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("priceSetToBitcoin", allow);
+        editor.apply();
+    }
+
     public static boolean getFeatureEnabled(Context activity, String feature) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getBoolean(feature, false);

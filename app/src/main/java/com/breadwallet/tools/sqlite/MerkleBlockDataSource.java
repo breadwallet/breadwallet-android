@@ -40,7 +40,7 @@ import com.google.firebase.crash.FirebaseCrash;
 import java.util.ArrayList;
 import java.util.List;
 
-class MerkleBlockDataSource {
+public class MerkleBlockDataSource {
     private static final String TAG = MerkleBlockDataSource.class.getName();
 
     // Database fields
@@ -52,7 +52,16 @@ class MerkleBlockDataSource {
             BRSQLiteHelper.MB_HEIGHT
     };
 
-    public MerkleBlockDataSource(Context context) {
+    private static MerkleBlockDataSource instance;
+
+    public static MerkleBlockDataSource getInstance(Context context) {
+        if (instance == null) {
+            instance = new MerkleBlockDataSource(context);
+        }
+        return instance;
+    }
+
+    private MerkleBlockDataSource(Context context) {
         dbHelper = BRSQLiteHelper.getInstance(context);
     }
 

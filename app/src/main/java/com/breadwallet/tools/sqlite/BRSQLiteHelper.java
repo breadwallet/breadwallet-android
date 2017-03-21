@@ -30,7 +30,7 @@ import android.util.Log;
  * THE SOFTWARE.
  */
 
-class BRSQLiteHelper extends SQLiteOpenHelper {
+public class BRSQLiteHelper extends SQLiteOpenHelper {
     private static final String TAG = BRSQLiteHelper.class.getName();
     private static BRSQLiteHelper instance;
 

@@ -39,7 +39,7 @@ import com.google.firebase.crash.FirebaseCrash;
 import java.util.ArrayList;
 import java.util.List;
 
-class PeerDataSource {
+public class PeerDataSource {
     private static final String TAG = PeerDataSource.class.getName();
 
     // Database fields
@@ -52,7 +52,16 @@ class PeerDataSource {
             BRSQLiteHelper.PEER_TIMESTAMP
     };
 
-    public PeerDataSource(Context context) {
+    private static PeerDataSource instance;
+
+    public static PeerDataSource getInstance(Context context) {
+        if (instance == null) {
+            instance = new PeerDataSource(context);
+        }
+        return instance;
+    }
+
+    private PeerDataSource(Context context) {
         dbHelper = BRSQLiteHelper.getInstance(context);
     }
 
