@@ -1,6 +1,5 @@
 package com.breadwallet.presenter.activities;
 
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Point;
 import android.net.Uri;
@@ -15,9 +14,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.fragments.FragmentBreadSignal;
 import com.breadwallet.presenter.fragments.FragmentReceive;
-import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.CurrencyManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
@@ -28,8 +25,6 @@ import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
 
 import java.math.BigDecimal;
-import java.util.Observable;
-import java.util.Observer;
 
 import static com.breadwallet.tools.animation.BRAnimator.showBreadMenu;
 import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
@@ -263,14 +258,14 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         final String bits = BRStringFormatter.getFormattedCurrencyString(this, "BTC", new BigDecimal(balance));
         String iso = SharedPreferencesManager.getIso(this);
         float rateForIso = CurrencyDataSource.getInstance(this).getCurrencyByIso(iso).rate;
-        final String amount = BRStringFormatter.getExchangeForAmount(new BigDecimal(rateForIso), iso, new BigDecimal(balance), this); //todo test if it shows the right balance
+        final String amount = BRStringFormatter.getExchangeForAmount(new BigDecimal(rateForIso), iso, new BigDecimal(balance), this);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-
-//        String amount = BRStringFormatter.getExchangeForAmount(this, SharedPreferencesManager.getIso(this), new BigDecimal(balance));
                 primaryPrice.setText(amount);
                 secondaryPrice.setText(bits);
+                SpringAnimator.showAnimation(primaryPrice);
+                SpringAnimator.showAnimation(secondaryPrice);
             }
         });
 

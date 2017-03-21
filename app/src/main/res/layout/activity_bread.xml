@@ -218,7 +218,7 @@
         android:id="@+id/loading_wallet_layout"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:layout_marginTop="1dp"
+        android:layout_marginTop="1px"
         android:layout_below="@+id/bread_bar"
         android:background="@drawable/loading_wallet_layout">
 
