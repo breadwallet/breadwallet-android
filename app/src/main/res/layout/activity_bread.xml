@@ -14,10 +14,10 @@
     <android.support.v7.widget.Toolbar
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/bread_bar"
-        android:padding="0dp"
         android:layout_width="match_parent"
         android:layout_height="160dp"
         android:background="@drawable/bread_gradient"
+        android:padding="0dp"
         app:layout_collapseMode="pin"
         app:layout_scrollFlags="scroll|enterAlways">
 
@@ -106,30 +106,31 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/primary_price"/>
 
+
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.Toolbar>
 
     <View
+        android:id="@+id/view6"
         android:layout_width="match_parent"
         android:layout_height="1px"
         android:layout_above="@+id/bottom_toolbar_layout1"
-        android:background="@color/light_gray"
-        android:id="@+id/view6"/>
+        android:background="@color/light_gray"/>
 
     <LinearLayout
         android:id="@+id/bottom_toolbar_layout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="8dp"
+        android:gravity="center"
         android:orientation="horizontal"
         android:weightSum="3">
 
         <LinearLayout
+            android:id="@+id/send_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/send_layout"
             android:layout_weight="1"
             android:gravity="center_horizontal|center_vertical"
             android:orientation="vertical">
@@ -151,9 +152,9 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/receive_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/receive_layout"
             android:layout_weight="1"
             android:gravity="center_horizontal|center_vertical"
             android:orientation="vertical">
@@ -176,8 +177,8 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
             android:id="@+id/menu_layout"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_horizontal|center_vertical"
@@ -207,18 +208,50 @@
         android:id="@+id/empty_tx_tip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="19dp"
-        android:textColor="@color/light_gray"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:text="Your transactions will appear here."/>
+        android:layout_marginBottom="19dp"
+        android:text="Your transactions will appear here."
+        android:textColor="@color/light_gray"/>
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/loading_wallet_layout"
         android:layout_width="match_parent"
         android:layout_height="60dp"
+        android:layout_marginTop="1dp"
         android:layout_below="@+id/bread_bar"
         android:background="@drawable/loading_wallet_layout">
+
+        <TextView
+            android:id="@+id/textView19"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Loading Wallet"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.501"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.35000002"/>
+
+        <ProgressBar
+            android:id="@+id/load_wallet_progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="4dp"
+            android:layout_marginLeft="96dp"
+            android:layout_marginRight="96dp"
+            android:layout_marginTop="4dp"
+            android:progressDrawable="@drawable/load_wallet_progress"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView19"/>
 
     </android.support.constraint.ConstraintLayout>
 

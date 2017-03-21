@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.breadwallet.R;
@@ -70,6 +71,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     private TextView primaryPrice;
     private TextView secondaryPrice;
     private TextView emptyTip;
+    private ProgressBar progressBar;
 
     public static boolean appInBackground = false;
 
@@ -91,6 +93,8 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
 
         initializeViews();
         setListeners();
+
+        progressBar.setProgress(80);
 
     }
 
@@ -219,6 +223,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         primaryPrice = (TextView) findViewById(R.id.primary_price);
         secondaryPrice = (TextView) findViewById(R.id.secondary_price);
         emptyTip = (TextView) findViewById(R.id.empty_tx_tip);
+        progressBar = (ProgressBar) findViewById(R.id.load_wallet_progress);
     }
 
     private void togglePriceTexts() {
@@ -271,7 +276,4 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
 
     }
 
-    public void showEmptyTip(boolean b) {
-        emptyTip.setVisibility(b ? View.VISIBLE : View.GONE);
-    }
 }
