@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -25,6 +26,7 @@ import com.breadwallet.tools.security.RequestHandler;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.tools.util.BRStringFormatter;
+import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
 
@@ -61,7 +63,7 @@ import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
  * THE SOFTWARE.
  */
 
-public class BreadActivity extends AppCompatActivity implements BRWalletManager.OnBalanceChanged {
+public class BreadActivity extends AppCompatActivity implements BRWalletManager.OnBalanceChanged, BRPeerManager.OnTxStatusUpdate {
     private static final String TAG = BreadActivity.class.getName();
 
     private LinearLayout sendButton;
@@ -89,6 +91,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
 
         setContentView(R.layout.activity_bread);
         BRWalletManager.getInstance().addBalanceChangedListener(this);
+        BRPeerManager.getInstance().addStatusUpdateListener(this);
         app = this;
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
         // Always cast your custom Toolbar here, and set it as the ActionBar.
@@ -113,15 +116,23 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     }
 
     private void setUpTxList() {
-        TransactionListItem[] arr = BRWalletManager.getInstance().getTransactions();
-
-        if (arr == null) {
-            txList.setVisibility(View.GONE);
-        } else {
-            txList.setVisibility(View.VISIBLE);
-            adapter = new TransactionListAdapter(this, Arrays.asList(arr));
-            adapter.notifyDataSetChanged();
-        }
+        final TransactionListItem[] arr = BRWalletManager.getInstance().getTransactions();
+        Log.e(TAG, "setUpTxList: arr.size: " + Arrays.toString(arr));
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (arr == null) {
+                    txList.setVisibility(View.GONE);
+                    emptyTip.setVisibility(View.VISIBLE);
+                } else {
+                    txList.setVisibility(View.VISIBLE);
+                    emptyTip.setVisibility(View.GONE);
+                    adapter = new TransactionListAdapter(BreadActivity.this, Arrays.asList(arr));
+                    txList.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        });
 
     }
 
@@ -294,10 +305,14 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
                 secondaryPrice.setText(bits);
                 SpringAnimator.showAnimation(primaryPrice);
                 SpringAnimator.showAnimation(secondaryPrice);
-                setUpTxList();
+
             }
         });
 
     }
 
+    @Override
+    public void onStatusUpdate() {
+        setUpTxList();
+    }
 }

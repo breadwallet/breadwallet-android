@@ -983,7 +983,7 @@ public class BRWalletManager {
 
     public void addBalanceChangedListener(OnBalanceChanged listener) {
         if (balanceListeners == null) {
-            Log.e(TAG, "addBalanceChangedListener: balanceListeners is null");
+            Log.e(TAG, "addBalanceChangedListener: statusUpdateListeners is null");
             return;
         }
         if (!balanceListeners.contains(listener))
@@ -992,7 +992,7 @@ public class BRWalletManager {
 
     public void removeListener(OnBalanceChanged listener) {
         if (balanceListeners == null) {
-            Log.e(TAG, "addBalanceChangedListener: balanceListeners is null");
+            Log.e(TAG, "addBalanceChangedListener: statusUpdateListeners is null");
             return;
         }
         balanceListeners.remove(listener);

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,7 +62,6 @@ public class TransactionListAdapter extends ArrayAdapter<TransactionListItem> {
 
     private final Context mContext;
     private final int layoutResourceId;
-    private TextView textViewItem;
     private List<TransactionListItem> itemFeed;
 
     public TransactionListAdapter(Context mContext, List<TransactionListItem> items) {

@@ -1,13 +1,7 @@
 package com.breadwallet.wallet;
 
-import android.app.Activity;
 import android.util.Log;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.RelativeLayout;
 
-import com.breadwallet.BreadWalletApp;
-import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.entities.BlockEntity;
 import com.breadwallet.presenter.entities.PeerEntity;
@@ -15,7 +9,8 @@ import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.PeerDataSource;
 
-import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -48,7 +43,10 @@ public class BRPeerManager {
     private static BRPeerManager instance;
     private static SyncProgressTask syncTask;
 
+    public static List<OnTxStatusUpdate> statusUpdateListeners;
+
     private BRPeerManager() {
+        statusUpdateListeners = new ArrayList<>();
     }
 
     public static BRPeerManager getInstance() {
@@ -114,6 +112,9 @@ public class BRPeerManager {
     public static void txStatusUpdate() {
         Log.d(TAG, "txStatusUpdate");
 
+        for (OnTxStatusUpdate listener : statusUpdateListeners) {
+            if (listener != null) listener.onStatusUpdate();
+        }
 //        FragmentSettingsAll.refreshTransactions(ctx);
 //        new Thread(new Runnable() {
 //            @Override
@@ -351,6 +352,29 @@ public class BRPeerManager {
 //
 //        }
 
+    }
+
+
+    public void addStatusUpdateListener(OnTxStatusUpdate listener) {
+        if (statusUpdateListeners == null) {
+            Log.e(TAG, "addBalanceChangedListener: statusUpdateListeners is null");
+            return;
+        }
+        if (!statusUpdateListeners.contains(listener))
+            statusUpdateListeners.add(listener);
+    }
+
+    public void removeListener(OnTxStatusUpdate listener) {
+        if (statusUpdateListeners == null) {
+            Log.e(TAG, "addBalanceChangedListener: statusUpdateListeners is null");
+            return;
+        }
+        statusUpdateListeners.remove(listener);
+
+    }
+
+    public interface OnTxStatusUpdate {
+        void onStatusUpdate();
     }
 
     public static void updateLastBlockHeight(int blockHeight) {
