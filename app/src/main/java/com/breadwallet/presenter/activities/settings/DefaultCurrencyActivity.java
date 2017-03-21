@@ -63,7 +63,7 @@ public class DefaultCurrencyActivity extends Activity {
                 rate = item == null ? 0 : item.rate;
                 SharedPreferencesManager.putIso(app, ISO);
                 SharedPreferencesManager.putCurrencyListPosition(DefaultCurrencyActivity.this, position);
-                SharedPreferencesManager.putRate(app, rate);
+//                SharedPreferencesManager.putRate(app, rate);
                 String finalExchangeRate = BRStringFormatter.getFormattedCurrencyString(DefaultCurrencyActivity.this, ISO, new BigDecimal(rate));
                 exchangeText.setText(finalExchangeRate + " = 1BTC");
 //                MiddleViewAdapter.resetMiddleView(app, finalExchangeRate);

@@ -254,14 +254,15 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     @Override
     public void onBalanceChanged(final long balance) {
         final String bits = BRStringFormatter.getFormattedCurrencyString(this, "BTC", new BigDecimal(balance));
-        String rateForIso = CurrencyDataSource.getInstance(this).get
-        final String amount = BRStringFormatter.getExchangeForAmount();
+        String iso = SharedPreferencesManager.getIso(this);
+        float rateForIso = CurrencyDataSource.getInstance(this).getCurrencyByIso(iso).rate;
+        final String amount = BRStringFormatter.getExchangeForAmount(new BigDecimal(rateForIso), iso, new BigDecimal(balance), this);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
 
 //        String amount = BRStringFormatter.getExchangeForAmount(this, SharedPreferencesManager.getIso(this), new BigDecimal(balance));
-//        primaryPrice.setText();
+                primaryPrice.setText(amount);
                 secondaryPrice.setText(bits);
             }
         });
