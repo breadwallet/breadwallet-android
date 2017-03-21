@@ -69,6 +69,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
 
     private TextView primaryPrice;
     private TextView secondaryPrice;
+    private TextView emptyTip;
 
     public static boolean appInBackground = false;
 
@@ -217,6 +218,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         menuButton = (LinearLayout) findViewById(R.id.menu_layout);
         primaryPrice = (TextView) findViewById(R.id.primary_price);
         secondaryPrice = (TextView) findViewById(R.id.secondary_price);
+        emptyTip = (TextView) findViewById(R.id.empty_tx_tip);
     }
 
     private void togglePriceTexts() {
@@ -256,7 +258,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         final String bits = BRStringFormatter.getFormattedCurrencyString(this, "BTC", new BigDecimal(balance));
         String iso = SharedPreferencesManager.getIso(this);
         float rateForIso = CurrencyDataSource.getInstance(this).getCurrencyByIso(iso).rate;
-        final String amount = BRStringFormatter.getExchangeForAmount(new BigDecimal(rateForIso), iso, new BigDecimal(balance), this);
+        final String amount = BRStringFormatter.getExchangeForAmount(new BigDecimal(rateForIso), iso, new BigDecimal(balance), this); //todo test if it shows the right balance
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -267,5 +269,9 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
             }
         });
 
+    }
+
+    public void showEmptyTip(boolean b) {
+        emptyTip.setVisibility(b ? View.VISIBLE : View.GONE);
     }
 }

@@ -14,6 +14,7 @@
     <android.support.v7.widget.Toolbar
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/bread_bar"
+        android:padding="0dp"
         android:layout_width="match_parent"
         android:layout_height="160dp"
         android:background="@drawable/bread_gradient"
@@ -21,6 +22,7 @@
         app:layout_scrollFlags="scroll|enterAlways">
 
         <android.support.constraint.ConstraintLayout
+            android:id="@+id/bread_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -55,13 +57,14 @@
                 android:id="@+id/secondary_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="0dp"
+                android:layout_marginBottom="4dp"
                 android:layout_marginLeft="4dp"
                 android:text="= b0.415"
                 android:textColor="@color/almost_black"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="@+id/primary_price"
-                app:layout_constraintLeft_toRightOf="@+id/primary_price"/>
+                app:layout_constraintLeft_toRightOf="@+id/primary_price"
+                />
 
             <TextView
                 android:id="@+id/price_change_text"
@@ -110,7 +113,8 @@
         android:layout_width="match_parent"
         android:layout_height="1px"
         android:layout_above="@+id/bottom_toolbar_layout1"
-        android:background="@color/light_gray"/>
+        android:background="@color/light_gray"
+        android:id="@+id/view6"/>
 
     <LinearLayout
         android:id="@+id/bottom_toolbar_layout1"
@@ -198,5 +202,24 @@
 
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/empty_tx_tip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="19dp"
+        android:textColor="@color/light_gray"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text="Your transactions will appear here."/>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/loading_wallet_layout"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_below="@+id/bread_bar"
+        android:background="@drawable/loading_wallet_layout">
+
+    </android.support.constraint.ConstraintLayout>
 
 </RelativeLayout>

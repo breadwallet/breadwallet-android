@@ -15,7 +15,10 @@ import java.util.Currency;
 import java.util.Locale;
 import java.util.Objects;
 
+import static com.breadwallet.R.string.amount;
+import static com.breadwallet.presenter.activities.BreadActivity.app;
 import static com.breadwallet.tools.util.BRConstants.CURRENT_UNIT_BITS;
+import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
 
 /**
  * BreadWallet
@@ -86,7 +89,7 @@ public class BRStringFormatter {
 //        Log.e(TAG, "amount: " + amount);
         DecimalFormat currencyFormat;
 
-        BigDecimal result  = amount;
+        BigDecimal result = getBitcoinAmount(amount);
         // This formats currency values as the user expects to read them (default locale).
         currencyFormat = (DecimalFormat) DecimalFormat.getCurrencyInstance(Locale.getDefault());
         // This specifies the actual currency that the value is in, and provide
@@ -95,29 +98,23 @@ public class BRStringFormatter {
         Currency currency;
         String symbol = null;
         decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
-        int decimalPoints = 0;
+//        int decimalPoints = 0;
         if (Objects.equals(isoCurrencyCode, "BTC")) {
-            result =  new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100"), RoundingMode.HALF_EVEN);
             String currencySymbolString = BRConstants.bitcoinLowercase;
             if (app != null) {
                 int unit = SharedPreferencesManager.getCurrencyUnit(app);
-                currencyFormat.setMinimumFractionDigits(0);
                 switch (unit) {
                     case CURRENT_UNIT_BITS:
-                currencySymbolString = BRConstants.bitcoinLowercase;
-                decimalPoints = 2;
-                if (getNumberOfDecimalPlaces(result.toPlainString()) == 1)
-                    currencyFormat.setMinimumFractionDigits(1);
+                        currencySymbolString = BRConstants.bitcoinLowercase;
+//                        decimalPoints = 2;
+                        if (getNumberOfDecimalPlaces(result.toPlainString()) == 1)
+                            currencyFormat.setMinimumFractionDigits(1);
                         break;
                     case BRConstants.CURRENT_UNIT_MBITS:
                         currencySymbolString = "m" + BRConstants.bitcoinUppercase;
-                        decimalPoints = 5;
-                        result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100000"));
                         break;
                     case BRConstants.CURRENT_UNIT_BITCOINS:
                         currencySymbolString = BRConstants.bitcoinUppercase;
-                        decimalPoints = 8;
-                        result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100000000"));
                         break;
                 }
             }
@@ -129,15 +126,32 @@ public class BRStringFormatter {
                 currency = Currency.getInstance(Locale.getDefault());
             }
             symbol = currency.getSymbol();
-            decimalPoints = currency.getDefaultFractionDigits();
+//            decimalPoints = currency.getDefaultFractionDigits();
         }
         decimalFormatSymbols.setCurrencySymbol(symbol);
-        currencyFormat.setMaximumFractionDigits(decimalPoints);
+//        currencyFormat.setMaximumFractionDigits(decimalPoints);
         currencyFormat.setGroupingUsed(true);
         currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
         currencyFormat.setNegativePrefix(decimalFormatSymbols.getCurrencySymbol() + "-");
         currencyFormat.setNegativeSuffix("");
         return currencyFormat.format(result.doubleValue());
+    }
+
+    public static BigDecimal getBitcoinAmount(BigDecimal amount) {
+        BigDecimal result = new BigDecimal(0);
+        int unit = SharedPreferencesManager.getCurrencyUnit(app);
+        switch (unit) {
+            case CURRENT_UNIT_BITS:
+                result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100"), 2, ROUNDING_MODE);
+                break;
+            case BRConstants.CURRENT_UNIT_MBITS:
+                result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100000"), 5, ROUNDING_MODE);
+                break;
+            case BRConstants.CURRENT_UNIT_BITCOINS:
+                result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100000000"), 8, ROUNDING_MODE);
+                break;
+        }
+        return result;
     }
 
     public static int getNumberOfDecimalPlaces(String amount) {
