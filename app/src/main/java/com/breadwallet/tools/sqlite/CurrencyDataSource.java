@@ -153,21 +153,21 @@ public class CurrencyDataSource {
     }
     public CurrencyEntity getCurrencyByIso(String iso) {
         database = dbHelper.getReadableDatabase();
-        List<CurrencyEntity> currencies = new ArrayList<>();
 
         Cursor cursor = database.query(BRSQLiteHelper.CURRENCY_TABLE_NAME,
-                allColumns, null, null, null, null, null);
+                allColumns, BRSQLiteHelper.CURRENCY_CODE + "=\'" + iso + "\'", null, null, null, null);
 
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            CurrencyEntity curEntity = cursorToCurrency(cursor);
-            currencies.add(curEntity);
-            cursor.moveToNext();
+        try {
+            cursor.moveToFirst();
+            if (!cursor.isAfterLast()) {
+                return cursorToCurrency(cursor);
+            }
+        } finally {
+            if (cursor != null)
+                cursor.close();
         }
-        // make sure to close the cursor
 
-        cursor.close();
-        return currencies;
+        return null;
     }
 
     private CurrencyEntity cursorToCurrency(Cursor cursor) {
