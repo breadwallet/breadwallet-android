@@ -19,10 +19,14 @@ import com.breadwallet.presenter.fragments.FragmentReceive;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.CurrencyManager;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.RequestHandler;
+import com.breadwallet.tools.sqlite.CurrencyDataSource;
+import com.breadwallet.tools.util.BRStringFormatter;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
 
+import java.math.BigDecimal;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -54,7 +58,7 @@ import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
  * THE SOFTWARE.
  */
 
-public class BreadActivity extends AppCompatActivity implements Observer {
+public class BreadActivity extends AppCompatActivity implements BRWalletManager.OnBalanceChanged {
     private static final String TAG = BreadActivity.class.getName();
 
     private LinearLayout sendButton;
@@ -77,6 +81,7 @@ public class BreadActivity extends AppCompatActivity implements Observer {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_bread);
+        BRWalletManager.getInstance().addBalanceChangedListener(this);
         app = this;
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
         // Always cast your custom Toolbar here, and set it as the ActionBar.
@@ -129,7 +134,7 @@ public class BreadActivity extends AppCompatActivity implements Observer {
             public void onClick(View v) {
                 SpringAnimator.showAnimation(v);
                 BreadActivity.this.getFragmentManager().beginTransaction().add(android.R.id.content, new FragmentReceive(), FragmentReceive.class.getName())
-                        .setCustomAnimations(R.animator.to_bottom,R.animator.to_bottom, R.animator.to_bottom,  R.animator.to_bottom)
+                        .setCustomAnimations(R.animator.to_bottom, R.animator.to_bottom, R.animator.to_bottom, R.animator.to_bottom)
                         .addToBackStack(FragmentReceive.class.getName()).commit();
             }
         });
@@ -247,8 +252,19 @@ public class BreadActivity extends AppCompatActivity implements Observer {
     }
 
     @Override
-    public void update(Observable observable, Object data) {
+    public void onBalanceChanged(final long balance) {
+        final String bits = BRStringFormatter.getFormattedCurrencyString(this, "BTC", new BigDecimal(balance));
+        String rateForIso = CurrencyDataSource.getInstance(this).get
+        final String amount = BRStringFormatter.getExchangeForAmount();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+//        String amount = BRStringFormatter.getExchangeForAmount(this, SharedPreferencesManager.getIso(this), new BigDecimal(balance));
+//        primaryPrice.setText();
+                secondaryPrice.setText(bits);
+            }
+        });
 
     }
-
 }

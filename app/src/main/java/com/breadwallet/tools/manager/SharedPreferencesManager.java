@@ -70,18 +70,6 @@ public class SharedPreferencesManager {
 
     }
 
-    public static float getRate(Context context) {
-        SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
-        return settingsToGet.getFloat(BRConstants.RATE, 1);
-    }
-
-    public static void putRate(Context context, float rate) {
-        SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putFloat(BRConstants.RATE, rate);
-        editor.apply();
-    }
-
     public static boolean getPhraseWroteDown(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getBoolean(BRConstants.PHRASE_WRITTEN, false);

@@ -171,7 +171,6 @@ public class FragmentReceive extends Fragment {
     private void animateSignalSlide() {
         float translationY = signalLayout.getTranslationY();
         float signalHeight = signalLayout.getHeight();
-        Log.e(TAG, "onViewCreated: signalHeight: " + signalHeight);
         signalLayout.setTranslationY(translationY + signalHeight);
         signalLayout.animate().translationY(translationY).setDuration(ANIMATION_DURATION).setInterpolator(new OvershootInterpolator(0.7f));
     }

@@ -55,6 +55,7 @@ import junit.framework.Assert;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Observable;
@@ -88,21 +89,24 @@ import static com.breadwallet.presenter.customviews.BRToast.showCustomToast;
  * THE SOFTWARE.
  */
 
-public class BRWalletManager extends Observable {
+public class BRWalletManager {
     private static final String TAG = BRWalletManager.class.getName();
 
     private static BRWalletManager instance;
     private static final int WHITE = 0xFFFFFFFF;
     private static final int BLACK = 0xFF000000;
+    public List<OnBalanceChanged> balanceListeners;
+
 
     private long balance = 0;
 
     public void setBalance(long balance) {
         this.balance = balance;
-        setChanged();
-        notifyObservers();
 
         refreshAddress(BreadActivity.app);
+        for (OnBalanceChanged listener : balanceListeners) {
+            if (listener != null) listener.onBalanceChanged(balance);
+        }
 //        FragmentSettingsAll.refreshTransactions(ctx);
         //todo add transactions as an observer
     }
@@ -114,6 +118,7 @@ public class BRWalletManager extends Observable {
     private static int messageId = 0;
 
     private BRWalletManager() {
+        balanceListeners = new ArrayList<>();
     }
 
     public static BRWalletManager getInstance() {
@@ -987,6 +992,28 @@ public class BRWalletManager extends Observable {
                 from.finish();
             }
         }
+    }
+
+    public void addBalanceChangedListener(OnBalanceChanged listener) {
+        if (balanceListeners == null) {
+            Log.e(TAG, "addBalanceChangedListener: balanceListeners is null");
+            return;
+        }
+        if (!balanceListeners.contains(listener))
+            balanceListeners.add(listener);
+    }
+
+    public void removeListener(OnBalanceChanged listener) {
+        if (balanceListeners == null) {
+            Log.e(TAG, "addBalanceChangedListener: balanceListeners is null");
+            return;
+        }
+        balanceListeners.remove(listener);
+
+    }
+
+    public interface OnBalanceChanged {
+        void onBalanceChanged(long balance);
     }
 
     private native byte[] encodeSeed(byte[] seed, String[] wordList);

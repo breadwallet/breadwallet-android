@@ -8,6 +8,7 @@ import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Currency;
@@ -70,21 +71,22 @@ public class BRStringFormatter {
         return getFormattedCurrencyString(ctx, iso, new BigDecimal(exchange));
     }
 
-    public static String getCurrentBalanceText(Activity ctx) {
-        CurrencyManager cm = CurrencyManager.getInstance(ctx);
-        String iso = SharedPreferencesManager.getIso(ctx);
-        double rate = SharedPreferencesManager.getRate(ctx);
-        long exchange = BRWalletManager.getInstance().localAmount(BRWalletManager.getInstance().getBalance(),
-                new BigDecimal(String.valueOf(rate)).multiply(new BigDecimal("100")).doubleValue());
-
-        return getFormattedCurrencyString(ctx, "BTC", new BigDecimal(BRWalletManager.getInstance().getBalance())) + " (" +
-                getFormattedCurrencyString(ctx, iso, new BigDecimal(exchange)) + ")";
-    }
+//    public static String getCurrentBalanceText(Activity ctx) {
+//        CurrencyManager cm = CurrencyManager.getInstance(ctx);
+//        String iso = SharedPreferencesManager.getIso(ctx);
+////        double rate = SharedPreferencesManager.getRate(ctx);
+//        long exchange = BRWalletManager.getInstance().localAmount(BRWalletManager.getInstance().getBalance(),
+//                new BigDecimal(String.valueOf(rate)).multiply(new BigDecimal("100")).doubleValue());
+//
+//        return getFormattedCurrencyString(ctx, "BTC", new BigDecimal(BRWalletManager.getInstance().getBalance())) + " (" +
+//                getFormattedCurrencyString(ctx, iso, new BigDecimal(exchange)) + ")";
+//    }
 
     public static String getFormattedCurrencyString(Context app, String isoCurrencyCode, BigDecimal amount) {
 //        Log.e(TAG, "amount: " + amount);
         DecimalFormat currencyFormat;
-        BigDecimal result = amount ;
+
+        BigDecimal result  = amount;
         // This formats currency values as the user expects to read them (default locale).
         currencyFormat = (DecimalFormat) DecimalFormat.getCurrencyInstance(Locale.getDefault());
         // This specifies the actual currency that the value is in, and provide
@@ -95,6 +97,7 @@ public class BRStringFormatter {
         decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
         int decimalPoints = 0;
         if (Objects.equals(isoCurrencyCode, "BTC")) {
+            result =  new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100"), RoundingMode.HALF_EVEN);
             String currencySymbolString = BRConstants.bitcoinLowercase;
             if (app != null) {
                 int unit = SharedPreferencesManager.getCurrencyUnit(app);

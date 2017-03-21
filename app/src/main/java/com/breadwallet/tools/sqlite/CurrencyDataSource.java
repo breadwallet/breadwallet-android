@@ -151,6 +151,24 @@ public class CurrencyDataSource {
         cursor.close();
         return currencies;
     }
+    public CurrencyEntity getCurrencyByIso(String iso) {
+        database = dbHelper.getReadableDatabase();
+        List<CurrencyEntity> currencies = new ArrayList<>();
+
+        Cursor cursor = database.query(BRSQLiteHelper.CURRENCY_TABLE_NAME,
+                allColumns, null, null, null, null, null);
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            CurrencyEntity curEntity = cursorToCurrency(cursor);
+            currencies.add(curEntity);
+            cursor.moveToNext();
+        }
+        // make sure to close the cursor
+
+        cursor.close();
+        return currencies;
+    }
 
     private CurrencyEntity cursorToCurrency(Cursor cursor) {
         return new CurrencyEntity(cursor.getInt(0),cursor.getString(1), cursor.getString(2), cursor.getFloat(3));
