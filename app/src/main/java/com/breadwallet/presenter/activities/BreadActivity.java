@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.presenter.fragments.FragmentReceive;
+import com.breadwallet.presenter.fragments.FragmentSend;
 import com.breadwallet.tools.adapter.TransactionListAdapter;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.CurrencyManager;
@@ -165,6 +166,9 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
             @Override
             public void onClick(View v) {
                 SpringAnimator.showAnimation(v);
+                BreadActivity.this.getFragmentManager().beginTransaction().add(android.R.id.content, new FragmentSend(), FragmentSend.class.getName())
+                        .setCustomAnimations(R.animator.to_bottom, R.animator.to_bottom, R.animator.to_bottom, R.animator.to_bottom)
+                        .addToBackStack(FragmentSend.class.getName()).commit();
             }
         });
 

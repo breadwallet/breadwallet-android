@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.customviews.BRSoftKeyboard;
 import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRClipboardManager;
@@ -53,97 +54,102 @@ import com.breadwallet.wallet.BRWalletManager;
  * THE SOFTWARE.
  */
 
-public class FragmentReceive extends Fragment {
-    private static final String TAG = FragmentReceive.class.getName();
-
-    public TextView mTitle;
-    public TextView mAddress;
-    public ImageView mQrImage;
+public class FragmentSend extends Fragment {
+    private static final String TAG = FragmentSend.class.getName();
+//
+//    public TextView mTitle;
+//    public TextView mAddress;
+//    public ImageView mQrImage;
     public LinearLayout backgroundLayout;
     public ConstraintLayout signalLayout;
     public static final int ANIMATION_DURATION = 300;
-    private String receiveAddress;
-    private Button shareButton;
-    private Button shareEmail;
-    private Button shareTextMessage;
-    private LinearLayout shareButtonsLayout;
-    private boolean shareButtonsShown = false;
+//    private String receiveAddress;
+//    private Button shareButton;
+//    private Button shareEmail;
+//    private Button shareTextMessage;
+//    private LinearLayout shareButtonsLayout;
+//    private boolean shareButtonsShown = false;
+    private BRSoftKeyboard keyboard;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // The last two arguments ensure LayoutParams are inflated
         // properly.
 
-        View rootView = inflater.inflate(R.layout.fragment_receive, container, false);
-        mTitle = (TextView) rootView.findViewById(R.id.title);
-        mAddress = (TextView) rootView.findViewById(R.id.address_text);
-        mQrImage = (ImageView) rootView.findViewById(R.id.qr_image);
+        View rootView = inflater.inflate(R.layout.fragment_send, container, false);
+//        mTitle = (TextView) rootView.findViewById(R.id.title);
+//        mAddress = (TextView) rootView.findViewById(R.id.address_text);
+//        mQrImage = (ImageView) rootView.findViewById(R.id.qr_image);
         backgroundLayout = (LinearLayout) rootView.findViewById(R.id.background_layout);
         signalLayout = (ConstraintLayout) rootView.findViewById(R.id.signal_layout);
-        shareButton = (Button) rootView.findViewById(R.id.share_button);
-        shareEmail = (Button) rootView.findViewById(R.id.share_email);
-        shareTextMessage = (Button) rootView.findViewById(R.id.paste_button);
-        shareButtonsLayout = (LinearLayout) rootView.findViewById(R.id.share_buttons_layout);
-        LayoutTransition layoutTransition = signalLayout.getLayoutTransition();
-        layoutTransition.enableTransitionType(LayoutTransition.CHANGING);
-        setListeners();
+        keyboard = (BRSoftKeyboard) rootView.findViewById(R.id.keyboard);
+        keyboard.setBRButtonBackgroundColor(R.color.white);
+        keyboard.setBRKeyboardColor(R.color.white);
 
-        boolean success = BRWalletManager.refreshAddress(getActivity());
-        if (!success) throw new RuntimeException("failed to retrieve address");
-
-        receiveAddress = SharedPreferencesManager.getReceiveAddress(getActivity());
-        mAddress.setText(receiveAddress);
-        boolean generated = BRWalletManager.getInstance().generateQR(getActivity(), "bitcoin:" + receiveAddress, mQrImage);
-        if (!generated) throw new RuntimeException("failed to generate qr image for address");
+//        shareButton = (Button) rootView.findViewById(R.id.share_button);
+//        shareEmail = (Button) rootView.findViewById(R.id.share_email);
+//        shareTextMessage = (Button) rootView.findViewById(R.id.paste_button);
+//        shareButtonsLayout = (LinearLayout) rootView.findViewById(R.id.share_buttons_layout);
+//        LayoutTransition layoutTransition = signalLayout.getLayoutTransition();
+//        layoutTransition.enableTransitionType(LayoutTransition.CHANGING);
+//        setListeners();
+//
+//        boolean success = BRWalletManager.refreshAddress(getActivity());
+//        if (!success) throw new RuntimeException("failed to retrieve address");
+//
+//        receiveAddress = SharedPreferencesManager.getReceiveAddress(getActivity());
+//        mAddress.setText(receiveAddress);
+//        boolean generated = BRWalletManager.getInstance().generateQR(getActivity(), "bitcoin:" + receiveAddress, mQrImage);
+//        if (!generated) throw new RuntimeException("failed to generate qr image for address");
 
         return rootView;
     }
 
-    private void setListeners() {
-        shareEmail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SpringAnimator.showAnimation(v);
+//    private void setListeners() {
+//        shareEmail.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                SpringAnimator.showAnimation(v);
+//
+//            }
+//        });
+//        shareTextMessage.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                SpringAnimator.showAnimation(v);
+//            }
+//        });
+//        shareButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                SpringAnimator.showAnimation(v);
+//                toggleShareButtonsVisibility();
+//            }
+//        });
+//        mAddress.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                BRClipboardManager.copyToClipboard(getContext(), mAddress.getText().toString());
+//                BRToast.showCustomToast(getActivity(), "Copied to Clipboard.", (int) mAddress.getY(), Toast.LENGTH_SHORT, R.drawable.toast_layout_blue);
+//            }
+//        });
+//    }
 
-            }
-        });
-        shareTextMessage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SpringAnimator.showAnimation(v);
-            }
-        });
-        shareButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SpringAnimator.showAnimation(v);
-                toggleShareButtonsVisibility();
-            }
-        });
-        mAddress.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                BRClipboardManager.copyToClipboard(getContext(), mAddress.getText().toString());
-                BRToast.showCustomToast(getActivity(), "Copied to Clipboard.", (int) mAddress.getY(), Toast.LENGTH_SHORT, R.drawable.toast_layout_blue);
-            }
-        });
-    }
-
-    private void toggleShareButtonsVisibility() {
-
-        if (shareButtonsShown) {
-//            shareButton.setBackground(getResources().getDrawable(R.drawable.button_secondary_gray_stroke));
-//            shareButton.setCompoundDrawables(getResources().getDrawable(R.drawable.ic_share_vertical_gray), null, null, null);
-            signalLayout.removeView(shareButtonsLayout);
-            shareButtonsShown = false;
-        } else {
-//            shareButton.setBackground(getResources().getDrawable(R.drawable.button_secondary_blue_stroke));
-//            shareButton.setCompoundDrawables(getResources().getDrawable(R.drawable.ic_share_vertical_blue), null, null, null);
-            signalLayout.addView(shareButtonsLayout);
-            shareButtonsShown = true;
-        }
-
-    }
+//    private void toggleShareButtonsVisibility() {
+//
+//        if (shareButtonsShown) {
+////            shareButton.setBackground(getResources().getDrawable(R.drawable.button_secondary_gray_stroke));
+////            shareButton.setCompoundDrawables(getResources().getDrawable(R.drawable.ic_share_vertical_gray), null, null, null);
+//            signalLayout.removeView(shareButtonsLayout);
+//            shareButtonsShown = false;
+//        } else {
+////            shareButton.setBackground(getResources().getDrawable(R.drawable.button_secondary_blue_stroke));
+////            shareButton.setCompoundDrawables(getResources().getDrawable(R.drawable.ic_share_vertical_blue), null, null, null);
+//            signalLayout.addView(shareButtonsLayout);
+//            shareButtonsShown = true;
+//        }
+//
+//    }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -156,7 +162,7 @@ public class FragmentReceive extends Fragment {
                 observer.removeGlobalOnLayoutListener(this);
                 animateBackgroundDim();
                 animateSignalSlide();
-                signalLayout.removeView(shareButtonsLayout);
+//                signalLayout.removeView(shareButtonsLayout);
             }
         });
 

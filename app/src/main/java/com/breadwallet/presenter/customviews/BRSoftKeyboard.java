@@ -142,7 +142,11 @@ public class BRSoftKeyboard extends LinearLayout implements View.OnClickListener
         void onClick(String key);
     }
 
-    public void setBRButtonTextColor(int color){
+    public void setBRKeyboardColor(int color) {
+        setBackgroundColor(getContext().getColor(color));
+    }
+
+    public void setBRButtonTextColor(int color) {
         num0.setTextColor(getContext().getColor(color));
         num1.setTextColor(getContext().getColor(color));
         num2.setTextColor(getContext().getColor(color));
