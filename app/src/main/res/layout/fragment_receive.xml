@@ -134,7 +134,7 @@
 
 
             <Button
-                android:id="@+id/share_email"
+                android:id="@+id/scan_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
@@ -151,7 +151,7 @@
                 android:textStyle="bold"/>
 
             <Button
-                android:id="@+id/paste_button"
+                android:id="@+id/scan_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"

@@ -68,20 +68,16 @@ public class CurrencyDataSource {
     }
 
     public void putCurrencies(Collection<CurrencyEntity> currencyEntities) {
-        if(currencyEntities == null) return;
+        if (currencyEntities == null) return;
         database = dbHelper.getWritableDatabase();
         database.beginTransaction();
         try {
             for (CurrencyEntity c : currencyEntities) {
-//                Log.e(TAG,"sqlite peer saved: " + Arrays.toString(p.getPeerTimeStamp()));
                 ContentValues values = new ContentValues();
                 values.put(BRSQLiteHelper.CURRENCY_CODE, c.code);
                 values.put(BRSQLiteHelper.CURRENCY_NAME, c.name);
                 values.put(BRSQLiteHelper.CURRENCY_RATE, c.rate);
-                int id = (int) database.insertWithOnConflict(BRSQLiteHelper.CURRENCY_TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);
-                if (id == -1) {
-                    database.update(BRSQLiteHelper.CURRENCY_TABLE_NAME, values, "_id=?", new String[] {String.valueOf(c.id)});
-                }
+                database.insertWithOnConflict(BRSQLiteHelper.CURRENCY_TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
 
             }
 
@@ -151,6 +147,25 @@ public class CurrencyDataSource {
         cursor.close();
         return currencies;
     }
+    public List<String> getAllISOs() {
+        database = dbHelper.getReadableDatabase();
+        List<String> ISOs = new ArrayList<>();
+
+        Cursor cursor = database.query(BRSQLiteHelper.CURRENCY_TABLE_NAME,
+                allColumns, null, null, null, null, null);
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            CurrencyEntity curEntity = cursorToCurrency(cursor);
+            ISOs.add(curEntity.code);
+            cursor.moveToNext();
+        }
+        // make sure to close the cursor
+
+        cursor.close();
+        return ISOs;
+    }
+
     public CurrencyEntity getCurrencyByIso(String iso) {
         database = dbHelper.getReadableDatabase();
 
@@ -171,6 +186,6 @@ public class CurrencyDataSource {
     }
 
     private CurrencyEntity cursorToCurrency(Cursor cursor) {
-        return new CurrencyEntity(cursor.getInt(0),cursor.getString(1), cursor.getString(2), cursor.getFloat(3));
+        return new CurrencyEntity(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getFloat(3));
     }
 }

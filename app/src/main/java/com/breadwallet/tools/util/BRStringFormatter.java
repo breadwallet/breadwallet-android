@@ -89,7 +89,7 @@ public class BRStringFormatter {
 //        Log.e(TAG, "amount: " + amount);
         DecimalFormat currencyFormat;
 
-        BigDecimal result = getBitcoinAmount(amount);
+        BigDecimal result = amount;
         // This formats currency values as the user expects to read them (default locale).
         currencyFormat = (DecimalFormat) DecimalFormat.getCurrencyInstance(Locale.getDefault());
         // This specifies the actual currency that the value is in, and provide
@@ -100,6 +100,7 @@ public class BRStringFormatter {
         decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
 //        int decimalPoints = 0;
         if (Objects.equals(isoCurrencyCode, "BTC")) {
+            result = getBitcoinAmount(amount);
             String currencySymbolString = BRConstants.bitcoinLowercase;
             if (app != null) {
                 int unit = SharedPreferencesManager.getCurrencyUnit(app);

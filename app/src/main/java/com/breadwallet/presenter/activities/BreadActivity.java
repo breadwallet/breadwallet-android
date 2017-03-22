@@ -16,6 +16,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.presenter.fragments.FragmentReceive;
 import com.breadwallet.presenter.fragments.FragmentSend;
@@ -298,9 +299,16 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
 
     @Override
     public void onBalanceChanged(final long balance) {
-        final String bits = BRStringFormatter.getFormattedCurrencyString(this, "BTC", new BigDecimal(balance));
+        Log.e(TAG, "onBalanceChanged: " + System.getProperty("http.agent"));
         String iso = SharedPreferencesManager.getIso(this);
-        float rateForIso = CurrencyDataSource.getInstance(this).getCurrencyByIso(iso).rate;
+        CurrencyEntity ent = CurrencyDataSource.getInstance(this).getCurrencyByIso(iso);
+        if (ent == null) {
+            Log.e(TAG, "onBalanceChanged: No currency with iso: " + iso);
+            return;
+        }
+        final String bits = BRStringFormatter.getFormattedCurrencyString(this, "BTC", new BigDecimal(balance));
+
+        float rateForIso = ent.rate;
         final String amount = BRStringFormatter.getExchangeForAmount(new BigDecimal(rateForIso), iso, new BigDecimal(balance), this);
         runOnUiThread(new Runnable() {
             @Override

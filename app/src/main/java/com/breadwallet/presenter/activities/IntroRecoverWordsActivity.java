@@ -45,7 +45,7 @@ public class IntroRecoverWordsActivity extends Activity {
 
         leftButton = (Button) findViewById(R.id.left_button);
         rightButton = (Button) findViewById(R.id.right_button);
-        nextButton = (Button) findViewById(R.id.button_next);
+        nextButton = (Button) findViewById(R.id.send_button);
 
         word1 = (EditText) findViewById(R.id.word1);
         word2 = (EditText) findViewById(R.id.word2);

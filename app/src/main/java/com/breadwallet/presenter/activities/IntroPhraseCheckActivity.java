@@ -60,7 +60,7 @@ public class IntroPhraseCheckActivity extends Activity {
             }
         });
 
-        nextButton = (Button) findViewById(R.id.button_next);
+        nextButton = (Button) findViewById(R.id.send_button);
         previousButton = (Button) findViewById(R.id.button_previous);
         itemIndexText = (TextView) findViewById(R.id.item_index_text);
         buttonsLayout = (LinearLayout) findViewById(R.id.buttons_layout);

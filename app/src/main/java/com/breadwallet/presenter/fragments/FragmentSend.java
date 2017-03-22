@@ -1,32 +1,32 @@
 package com.breadwallet.presenter.fragments;
 
 import android.animation.ArgbEvaluator;
-import android.animation.LayoutTransition;
 import android.animation.ValueAnimator;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.animation.Animation;
 import android.view.animation.OvershootInterpolator;
-import android.view.animation.Transformation;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRSoftKeyboard;
-import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.tools.animation.SpringAnimator;
-import com.breadwallet.tools.manager.BRClipboardManager;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
-import com.breadwallet.wallet.BRWalletManager;
+import com.breadwallet.tools.sqlite.CurrencyDataSource;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 
 /**
@@ -56,20 +56,18 @@ import com.breadwallet.wallet.BRWalletManager;
 
 public class FragmentSend extends Fragment {
     private static final String TAG = FragmentSend.class.getName();
-//
-//    public TextView mTitle;
-//    public TextView mAddress;
-//    public ImageView mQrImage;
     public LinearLayout backgroundLayout;
     public ConstraintLayout signalLayout;
     public static final int ANIMATION_DURATION = 300;
-//    private String receiveAddress;
-//    private Button shareButton;
-//    private Button shareEmail;
-//    private Button shareTextMessage;
-//    private LinearLayout shareButtonsLayout;
-//    private boolean shareButtonsShown = false;
     private BRSoftKeyboard keyboard;
+    private EditText addressEdit;
+    private Button scan;
+    private Button paste;
+    private Button send;
+    private Spinner spinner;
+    private EditText commentEdit;
+    private BigDecimal amount;
+    private TextView isoText;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -77,79 +75,51 @@ public class FragmentSend extends Fragment {
         // properly.
 
         View rootView = inflater.inflate(R.layout.fragment_send, container, false);
-//        mTitle = (TextView) rootView.findViewById(R.id.title);
-//        mAddress = (TextView) rootView.findViewById(R.id.address_text);
-//        mQrImage = (ImageView) rootView.findViewById(R.id.qr_image);
         backgroundLayout = (LinearLayout) rootView.findViewById(R.id.background_layout);
         signalLayout = (ConstraintLayout) rootView.findViewById(R.id.signal_layout);
         keyboard = (BRSoftKeyboard) rootView.findViewById(R.id.keyboard);
         keyboard.setBRButtonBackgroundColor(R.color.white);
         keyboard.setBRKeyboardColor(R.color.white);
-
-//        shareButton = (Button) rootView.findViewById(R.id.share_button);
-//        shareEmail = (Button) rootView.findViewById(R.id.share_email);
-//        shareTextMessage = (Button) rootView.findViewById(R.id.paste_button);
-//        shareButtonsLayout = (LinearLayout) rootView.findViewById(R.id.share_buttons_layout);
-//        LayoutTransition layoutTransition = signalLayout.getLayoutTransition();
-//        layoutTransition.enableTransitionType(LayoutTransition.CHANGING);
-//        setListeners();
-//
-//        boolean success = BRWalletManager.refreshAddress(getActivity());
-//        if (!success) throw new RuntimeException("failed to retrieve address");
-//
-//        receiveAddress = SharedPreferencesManager.getReceiveAddress(getActivity());
-//        mAddress.setText(receiveAddress);
-//        boolean generated = BRWalletManager.getInstance().generateQR(getActivity(), "bitcoin:" + receiveAddress, mQrImage);
-//        if (!generated) throw new RuntimeException("failed to generate qr image for address");
+        isoText = (TextView) rootView.findViewById(R.id.iso_text);
+        addressEdit = (EditText) rootView.findViewById(R.id.address_edit);
+        scan = (Button) rootView.findViewById(R.id.scan_button);
+        paste = (Button) rootView.findViewById(R.id.paste_button);
+        send = (Button) rootView.findViewById(R.id.send_button);
+        commentEdit = (EditText) rootView.findViewById(R.id.comment_edit);
+        spinner = (Spinner) rootView.findViewById(R.id.cur_spinner);
+        setListeners();
 
         return rootView;
     }
 
-//    private void setListeners() {
-//        shareEmail.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                SpringAnimator.showAnimation(v);
-//
-//            }
-//        });
-//        shareTextMessage.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                SpringAnimator.showAnimation(v);
-//            }
-//        });
-//        shareButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                SpringAnimator.showAnimation(v);
-//                toggleShareButtonsVisibility();
-//            }
-//        });
-//        mAddress.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                BRClipboardManager.copyToClipboard(getContext(), mAddress.getText().toString());
-//                BRToast.showCustomToast(getActivity(), "Copied to Clipboard.", (int) mAddress.getY(), Toast.LENGTH_SHORT, R.drawable.toast_layout_blue);
-//            }
-//        });
-//    }
 
-//    private void toggleShareButtonsVisibility() {
-//
-//        if (shareButtonsShown) {
-////            shareButton.setBackground(getResources().getDrawable(R.drawable.button_secondary_gray_stroke));
-////            shareButton.setCompoundDrawables(getResources().getDrawable(R.drawable.ic_share_vertical_gray), null, null, null);
-//            signalLayout.removeView(shareButtonsLayout);
-//            shareButtonsShown = false;
-//        } else {
-////            shareButton.setBackground(getResources().getDrawable(R.drawable.button_secondary_blue_stroke));
-////            shareButton.setCompoundDrawables(getResources().getDrawable(R.drawable.ic_share_vertical_blue), null, null, null);
-//            signalLayout.addView(shareButtonsLayout);
-//            shareButtonsShown = true;
-//        }
-//
-//    }
+    private void setListeners(){
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String item = parent.getItemAtPosition(position).toString();
+                Log.e(TAG, "onItemSelected: " + item);
+                isoText.setText(item);
+                SpringAnimator.showAnimation(isoText);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                isoText.setText("BTC");
+                SpringAnimator.showAnimation(isoText);
+            }
+        });
+
+        keyboard.addOnInsertListener(new BRSoftKeyboard.OnInsertListener() {
+            @Override
+            public void onClick(String key) {
+                handleClick(key);
+            }
+        });
+        List<String> curList = CurrencyDataSource.getInstance(getContext()).getAllISOs();
+        spinner.setAdapter(new ArrayAdapter<>(getContext(), R.layout.bread_spinner_item, curList));
+    }
+
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -162,7 +132,6 @@ public class FragmentSend extends Fragment {
                 observer.removeGlobalOnLayoutListener(this);
                 animateBackgroundDim();
                 animateSignalSlide();
-//                signalLayout.removeView(shareButtonsLayout);
             }
         });
 
@@ -196,8 +165,6 @@ public class FragmentSend extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-//        if (backgroundLayout != null)
-//            backgroundLayout.setBackgroundColor(getActivity().getColor(android.R.color.transparent));
     }
 
     @Override
@@ -210,36 +177,32 @@ public class FragmentSend extends Fragment {
         super.onPause();
     }
 
-
-    public class ResizeAnimation extends Animation {
-        final int targetHeight;
-        View view;
-        int startHeight;
-
-        public ResizeAnimation(View view, int targetHeight, int startHeight) {
-            this.view = view;
-            this.targetHeight = targetHeight;
-            this.startHeight = startHeight;
+    private void handleClick(String key) {
+        if (key == null) {
+            Log.e(TAG, "handleClick: key is null! ");
+            return;
+        }
+        if (key.length() > 1) {
+            Log.e(TAG, "handleClick: key is longer: " + key);
+            return;
         }
 
-        @Override
-        protected void applyTransformation(float interpolatedTime, Transformation t) {
-            int newHeight = (int) (startHeight + targetHeight * interpolatedTime);
-            //to support decent animation, change new heigt as Nico S. recommended in comments
-            //int newHeight = (int) (startHeight+(targetHeight - startHeight) * interpolatedTime);
-            view.getLayoutParams().height = newHeight;
-            view.requestLayout();
+        if (key.isEmpty()) {
+            handleDeleteClick();
+        } else if (Character.isDigit(key.charAt(0))) {
+            handleDigitClick(Integer.parseInt(key));
+        } else {
+            handleSeparatorClick();
         }
+    }
 
-        @Override
-        public void initialize(int width, int height, int parentWidth, int parentHeight) {
-            super.initialize(width, height, parentWidth, parentHeight);
-        }
+    private void handleDigitClick(Integer dig) {
+    }
 
-        @Override
-        public boolean willChangeBounds() {
-            return true;
-        }
+    private void handleSeparatorClick() {
+    }
+
+    private void handleDeleteClick() {
     }
 
 }

@@ -83,7 +83,7 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/button_next"
+        android:id="@+id/send_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
@@ -108,7 +108,7 @@
         android:layout_marginTop="16dp"
         android:columnCount="1"
         android:rowCount="4"
-        app:layout_constraintBottom_toTopOf="@+id/button_next"
+        app:layout_constraintBottom_toTopOf="@+id/send_button"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

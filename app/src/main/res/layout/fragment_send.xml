@@ -59,7 +59,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/share_email"/>
+            app:layout_constraintTop_toBottomOf="@+id/scan_button"/>
 
         <View
             android:id="@+id/view3"
@@ -70,7 +70,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/spinner"
+            app:layout_constraintTop_toBottomOf="@+id/cur_spinner"
             />
 
         <View
@@ -94,7 +94,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editText2"
+            app:layout_constraintTop_toBottomOf="@+id/comment_edit"
             />
 
         <com.breadwallet.presenter.customviews.BRSoftKeyboard
@@ -116,15 +116,17 @@
             android:id="@+id/address_edit"
             android:layout_width="wrap_content"
             android:layout_height="32dp"
-            android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             android:background="@android:color/transparent"
             android:ems="10"
             android:inputType="textPersonName"
-            app:layout_constraintBottom_toBottomOf="@+id/share_email"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/share_email"
-            />
+            app:layout_constraintBottom_toBottomOf="@+id/scan_button"
+            app:layout_constraintTop_toTopOf="@+id/scan_button"
+            app:layout_constraintVertical_bias="0.625"
+            app:layout_constraintRight_toLeftOf="@+id/paste_button"
+            android:layout_marginRight="8dp"
+            android:layout_marginLeft="24dp"
+            app:layout_constraintLeft_toLeftOf="parent"/>
 
         <TextView
             android:id="@+id/textView14"
@@ -134,14 +136,16 @@
             android:textColor="@color/light_gray"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/address_edit"
+            android:layout_marginBottom="-1dp"
+            android:layout_marginLeft="0dp"
             app:layout_constraintLeft_toLeftOf="@+id/address_edit"/>
 
         <Button
-            android:id="@+id/share_email"
+            android:id="@+id/paste_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
+            android:layout_marginRight="-64dp"
             android:layout_weight="1.0"
             android:background="@drawable/button_secondary_gray_stroke"
             android:elevation="8dp"
@@ -150,16 +154,17 @@
             android:textColor="@color/light_gray"
             android:textSize="14sp"
             android:textStyle="bold"
-            app:layout_constraintRight_toLeftOf="@+id/paste_button"
-            app:layout_constraintTop_toTopOf="@+id/paste_button"/>
+            app:layout_constraintRight_toLeftOf="@+id/scan_button"
+            app:layout_constraintTop_toTopOf="@+id/scan_button"
+            android:layout_marginTop="0dp"/>
 
         <Button
-            android:id="@+id/paste_button"
+            android:id="@+id/scan_button"
             android:layout_width="64dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="24dp"
             android:layout_marginRight="24dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="34dp"
             android:layout_weight="1.0"
             android:background="@drawable/button_secondary_gray_stroke"
             android:elevation="8dp"
@@ -172,20 +177,21 @@
             app:layout_constraintTop_toBottomOf="@+id/view"/>
 
         <TextView
-            android:id="@+id/textView18"
+            android:id="@+id/iso_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="0dp"
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="0dp"
-            android:text="TextView"
-            app:layout_constraintBottom_toBottomOf="@+id/spinner"
+            android:text="BTC"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/cur_spinner"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/spinner"/>
+            app:layout_constraintTop_toTopOf="@+id/cur_spinner"/>
 
         <Spinner
-            android:id="@+id/spinner"
+            android:id="@+id/cur_spinner"
             android:layout_width="64dp"
             android:layout_height="32dp"
             android:layout_marginRight="24dp"
@@ -196,7 +202,7 @@
             app:layout_constraintTop_toBottomOf="@+id/view2"/>
 
         <EditText
-            android:id="@+id/editText2"
+            android:id="@+id/comment_edit"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
@@ -213,7 +219,7 @@
             />
 
         <Button
-            android:id="@+id/button_next"
+            android:id="@+id/send_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="25dp"
@@ -223,7 +229,7 @@
             android:background="@drawable/button_create_wallet"
             android:elevation="8dp"
             android:padding="10dp"
-            android:text="Next"
+            android:text="Send"
             android:textColor="@color/white"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"

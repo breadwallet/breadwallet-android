@@ -21,7 +21,7 @@ public class IntroRecoverActivity extends Activity {
 
         setStatusBarColor(android.R.color.transparent);
 
-        nextButton = (Button) findViewById(R.id.button_next);
+        nextButton = (Button) findViewById(R.id.send_button);
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
