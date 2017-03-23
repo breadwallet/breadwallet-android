@@ -89,21 +89,21 @@ public class BRWalletManager {
     public List<OnBalanceChanged> balanceListeners;
 
 
-    private long balance = 0;
+    public void setBalance(Context context, long balance) {
+        if (context == null) {
+            Log.e(TAG, "setBalance: FAILED TO SET THE BALANCE");
+            return;
+        }
+        SharedPreferencesManager.putBalance(context, balance);
 
-    public void setBalance(long balance) {
-        this.balance = balance;
-
-        refreshAddress(BreadActivity.app);
+        refreshAddress(context);
         for (OnBalanceChanged listener : balanceListeners) {
             if (listener != null) listener.onBalanceChanged(balance);
         }
-//        FragmentSettingsAll.refreshTransactions(ctx);
-        //todo add transactions as an observer
     }
 
-    public long getBalance() {
-        return balance;
+    public long getBalance(Context context) {
+        return SharedPreferencesManager.getBalance(context);
     }
 
     private static int messageId = 0;
@@ -327,7 +327,7 @@ public class BRWalletManager {
                     long lastMessageShow = SharedPreferencesManager.getPhraseWarningTime(ctx);
                     if (lastMessageShow == 0 || (!firstTime && lastMessageShow > (now - 36 * 60 * 60)))
                         return;//36 * 60 * 60//
-                    if (BRWalletManager.getInstance().getBalance() > SharedPreferencesManager.getLimit(ctx)) {
+                    if (BRWalletManager.getInstance().getBalance(ctx) > SharedPreferencesManager.getLimit(ctx)) {
 //                        getInstance(ctx).animateSavePhraseFlow();
                         return;
                     }
@@ -389,7 +389,7 @@ public class BRWalletManager {
 
     public static void onBalanceChanged(final long balance) {
         Log.d(TAG, "onBalanceChanged:  " + balance);
-        BRWalletManager.getInstance().setBalance(balance);
+        BRWalletManager.getInstance().setBalance(BreadActivity.app, balance);
 
     }
 

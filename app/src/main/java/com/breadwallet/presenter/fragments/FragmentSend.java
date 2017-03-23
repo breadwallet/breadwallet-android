@@ -199,7 +199,7 @@ public class FragmentSend extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String item = parent.getItemAtPosition(position).toString();
                 amountBuilder = new StringBuilder(0);
-                BigDecimal curBalanceBTC = new BigDecimal(BRWalletManager.getInstance().getBalance()).divide(new BigDecimal(100000000), BRConstants.ROUNDING_MODE);
+                BigDecimal curBalanceBTC = new BigDecimal(BRWalletManager.getInstance().getBalance(getActivity())).divide(new BigDecimal(100000000), BRConstants.ROUNDING_MODE);
                 if (item.equalsIgnoreCase("BTC")) {
                     curBalance = curBalanceBTC;
                 } else {

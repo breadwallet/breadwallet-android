@@ -129,6 +129,17 @@ public class SharedPreferencesManager {
         editor.putLong(BRConstants.FEE_KB_PREFS, fee);
         editor.apply();
     }
+    public static long getBalance(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getLong("balance", 0);
+    }
+
+    public static void putBalance(Context context, long fee) {
+        SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putLong("balance", fee);
+        editor.apply();
+    }
 
     public static long getSecureTime(Context activity) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
