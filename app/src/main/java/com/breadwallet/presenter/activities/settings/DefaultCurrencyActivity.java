@@ -15,7 +15,7 @@ import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.adapter.CurrencyListAdapter;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
-import com.breadwallet.tools.util.BRString;
+import com.breadwallet.tools.util.BRCurrency;
 
 import java.math.BigDecimal;
 
@@ -55,7 +55,7 @@ public class DefaultCurrencyActivity extends Activity {
                 SharedPreferencesManager.putIso(app, ISO);
                 SharedPreferencesManager.putCurrencyListPosition(DefaultCurrencyActivity.this, position);
 //                SharedPreferencesManager.putRate(app, rate);
-                String finalExchangeRate = BRString.getFormattedCurrencyString(DefaultCurrencyActivity.this, ISO, new BigDecimal(rate));
+                String finalExchangeRate = BRCurrency.getFormattedCurrencyString(DefaultCurrencyActivity.this, ISO, new BigDecimal(rate));
                 exchangeText.setText(finalExchangeRate + " = 1BTC");
 //                MiddleViewAdapter.resetMiddleView(app, finalExchangeRate);
                 adapter.notifyDataSetChanged();

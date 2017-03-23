@@ -413,8 +413,8 @@ public class BRWalletManager {
 //                    long absAmount = (amount > 0 ? amount : amount * -1);
 //                    String strToShow = amount > 0 ?
 //                            (String.format(ctx.getString(R.string.received_amount),
-//                                    BRString.getFormattedCurrencyString(app, "BTC", absAmount),
-//                                    BRString.getExchangeForAmount(SharedPreferencesManager.getRate(ctx),
+//                                    BRCurrency.getFormattedCurrencyString(app, "BTC", absAmount),
+//                                    BRCurrency.getExchangeForAmount(SharedPreferencesManager.getRate(ctx),
 //                                            SharedPreferencesManager.getIso(ctx), new BigDecimal(absAmount), ctx))) :
 //                            ctx.getString(R.string.sent_exclaimed);
 //
@@ -615,10 +615,10 @@ public class BRWalletManager {
 //                feeForTx += (getBalance() - request.amount) % 100;
 //            }
 //            final long total = request.amount + feeForTx;
-//            final String message = certification + allAddresses.toString() + "\n\n" + "amount: " + BRString.getFormattedCurrencyString(ctx, "BTC", request.amount)
-//                    + " (" + BRString.getExchangeForAmount(rate, iso, new BigDecimal(request.amount), ctx) + ")" + "\nnetwork fee: +" + BRString.getFormattedCurrencyString(ctx,"BTC", feeForTx)
-//                    + " (" + BRString.getExchangeForAmount(rate, iso, new BigDecimal(feeForTx), ctx) + ")" + "\ntotal: " + BRString.getFormattedCurrencyString(ctx,"BTC", total)
-//                    + " (" + BRString.getExchangeForAmount(rate, iso, new BigDecimal(total), ctx) + ")";
+//            final String message = certification + allAddresses.toString() + "\n\n" + "amount: " + BRCurrency.getFormattedCurrencyString(ctx, "BTC", request.amount)
+//                    + " (" + BRCurrency.getExchangeForAmount(rate, iso, new BigDecimal(request.amount), ctx) + ")" + "\nnetwork fee: +" + BRCurrency.getFormattedCurrencyString(ctx,"BTC", feeForTx)
+//                    + " (" + BRCurrency.getExchangeForAmount(rate, iso, new BigDecimal(feeForTx), ctx) + ")" + "\ntotal: " + BRCurrency.getFormattedCurrencyString(ctx,"BTC", total)
+//                    + " (" + BRCurrency.getExchangeForAmount(rate, iso, new BigDecimal(total), ctx) + ")";
 //
 //            double minOutput;
 //            if (request.isAmountRequested) {
@@ -744,10 +744,10 @@ public class BRWalletManager {
 //
 //            final long amountToReduce = bigDecimalAmount.longValue() - maxAmountDouble;
 //            final AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
-//            String reduceBits = BRString.getFormattedCurrencyString(ctx,"BTC", amountToReduce);
-//            String reduceFee = BRString.getExchangeForAmount(SharedPreferencesManager.getRate(ctx), SharedPreferencesManager.getIso(ctx), new BigDecimal(amountToReduce), ctx);
-//            String reduceBitsMinus = BRString.getFormattedCurrencyString(ctx,"BTC", -amountToReduce);
-//            String reduceFeeMinus = BRString.getExchangeForAmount(SharedPreferencesManager.getRate(ctx), SharedPreferencesManager.getIso(ctx), new BigDecimal(-amountToReduce), ctx);
+//            String reduceBits = BRCurrency.getFormattedCurrencyString(ctx,"BTC", amountToReduce);
+//            String reduceFee = BRCurrency.getExchangeForAmount(SharedPreferencesManager.getRate(ctx), SharedPreferencesManager.getIso(ctx), new BigDecimal(amountToReduce), ctx);
+//            String reduceBitsMinus = BRCurrency.getFormattedCurrencyString(ctx,"BTC", -amountToReduce);
+//            String reduceFeeMinus = BRCurrency.getExchangeForAmount(SharedPreferencesManager.getRate(ctx), SharedPreferencesManager.getIso(ctx), new BigDecimal(-amountToReduce), ctx);
 //
 //            builder.setmMessage(String.format(ctx.getString(R.string.reduce_payment_amount_by), reduceBits, reduceFee))
 //                    .setmTitle(R.string.insufficient_funds_for_fee)

@@ -4,7 +4,7 @@ import android.util.Log;
 
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.tools.security.RequestHandler;
-import com.breadwallet.tools.util.BRString;
+import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.BRHTTPHelper;
@@ -93,7 +93,7 @@ public class WalletPlugin implements Plugin {
             } else {
                 satAmount = Long.valueOf(amount);
             }
-            return BRHTTPHelper.handleSuccess(200, BRString.getFormattedCurrencyString(app,Locale.getDefault().getISO3Language(), new BigDecimal(satAmount)).getBytes(), baseRequest, response, null);
+            return BRHTTPHelper.handleSuccess(200, BRCurrency.getFormattedCurrencyString(app,Locale.getDefault().getISO3Language(), new BigDecimal(satAmount)).getBytes(), baseRequest, response, null);
         } else if (target.startsWith("/_wallet/sign_bitid") && request.getMethod().equalsIgnoreCase("post")) {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
             /**

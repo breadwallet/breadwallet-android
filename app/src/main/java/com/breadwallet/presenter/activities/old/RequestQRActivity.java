@@ -15,7 +15,7 @@
 //import com.breadwallet.BreadWalletApp;
 //import com.breadwallet.presenter.entities.RequestObject;
 //import com.breadwallet.tools.util.BRConstants;
-//import com.breadwallet.tools.util.BRString;
+//import com.breadwallet.tools.util.BRCurrency;
 //import com.breadwallet.tools.manager.SharedPreferencesManager;
 //import com.breadwallet.tools.animation.SpringAnimator;
 //import com.breadwallet.tools.security.RequestHandler;
@@ -80,7 +80,7 @@
 //        address = obj.address;
 //        final String iso = SharedPreferencesManager.getIso(this);
 //        final float rate = SharedPreferencesManager.getRate(this);
-//        amount = BRString.getBitsAndExchangeString(rate, iso, new BigDecimal(obj.amount), this);
+//        amount = BRCurrency.getBitsAndExchangeString(rate, iso, new BigDecimal(obj.amount), this);
 //        final Intent intent = new Intent(this, MainActivity.class);
 //        close.setOnClickListener(new View.OnClickListener() {
 //            @Override

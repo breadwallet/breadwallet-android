@@ -3,9 +3,7 @@ package com.breadwallet.tools.util;
 import android.app.Activity;
 import android.content.Context;
 
-import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
-import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.math.BigDecimal;
@@ -16,10 +14,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 import static com.breadwallet.presenter.activities.BreadActivity.app;
-import static com.breadwallet.tools.util.BRBitcoin.getBitcoinAmount;
 import static com.breadwallet.tools.util.BRConstants.CURRENT_UNIT_BITS;
-import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
-import static java.security.AccessController.getContext;
 
 /**
  * BreadWallet
@@ -46,8 +41,8 @@ import static java.security.AccessController.getContext;
  * THE SOFTWARE.
  */
 
-public class BRString {
-    public static final String TAG = BRString.class.getName();
+public class BRCurrency {
+    public static final String TAG = BRCurrency.class.getName();
 
 
 //    public static String getMiddleTextExchangeString(double rate, String iso, Activity ctx) {
@@ -140,11 +135,40 @@ public class BRString {
     }
 
 
-
     public static int getNumberOfDecimalPlaces(String amount) {
         int index = amount.indexOf(".");
         return index < 0 ? 0 : amount.length() - index - 1;
     }
 
+    public static String getSymbolByIso(String iso) {
+        String symbol;
+        if (Objects.equals(iso, "BTC")) {
+            String currencySymbolString = BRConstants.bitcoinLowercase;
+            if (app != null) {
+                int unit = SharedPreferencesManager.getCurrencyUnit(app);
+                switch (unit) {
+                    case CURRENT_UNIT_BITS:
+                        currencySymbolString = BRConstants.bitcoinLowercase;
+                        break;
+                    case BRConstants.CURRENT_UNIT_MBITS:
+                        currencySymbolString = "m" + BRConstants.bitcoinUppercase;
+                        break;
+                    case BRConstants.CURRENT_UNIT_BITCOINS:
+                        currencySymbolString = BRConstants.bitcoinUppercase;
+                        break;
+                }
+            }
+            symbol = currencySymbolString;
+        } else {
+            Currency currency;
+            try {
+                currency = Currency.getInstance(iso);
+            } catch (IllegalArgumentException e) {
+                currency = Currency.getInstance(Locale.getDefault());
+            }
+            symbol = currency.getSymbol();
+        }
+        return Utils.isNullOrEmpty(symbol) ? iso : symbol;
+    }
 
 }

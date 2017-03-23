@@ -26,7 +26,7 @@ import com.breadwallet.tools.manager.CurrencyFetchManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.RequestHandler;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
-import com.breadwallet.tools.util.BRString;
+import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
@@ -303,10 +303,10 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
             Log.e(TAG, "onBalanceChanged: No currency with iso: " + iso);
             return;
         }
-        final String bits = BRString.getFormattedCurrencyString(this, "BTC", new BigDecimal(balance));
+        final String bits = BRCurrency.getFormattedCurrencyString(this, "BTC", new BigDecimal(balance));
 
         float rateForIso = ent.rate;
-        final String amount = BRString.getExchangeForAmount(new BigDecimal(rateForIso), iso, new BigDecimal(balance), this);
+        final String amount = BRCurrency.getExchangeForAmount(new BigDecimal(rateForIso), iso, new BigDecimal(balance), this);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {

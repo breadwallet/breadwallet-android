@@ -77,11 +77,11 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
         if (importPrivKeyEntity == null) {
             return;
         }
-//        String sentBits = BRString.getFormattedCurrencyString(app,"BTC", importPrivKeyEntity.getAmount());
-//        String sentExchange = BRString.getExchangeForAmount(SharedPreferencesManager.getRate(app),
+//        String sentBits = BRCurrency.getFormattedCurrencyString(app,"BTC", importPrivKeyEntity.getAmount());
+//        String sentExchange = BRCurrency.getExchangeForAmount(SharedPreferencesManager.getRate(app),
 //                SharedPreferencesManager.getIso(app), new BigDecimal(importPrivKeyEntity.getAmount()), app);
-//        String feeBits = BRString.getFormattedCurrencyString(app,"BTC", importPrivKeyEntity.getFee());
-//        String feeExchange = BRString.getExchangeForAmount(SharedPreferencesManager.getRate(app),
+//        String feeBits = BRCurrency.getFormattedCurrencyString(app,"BTC", importPrivKeyEntity.getFee());
+//        String feeExchange = BRCurrency.getExchangeForAmount(SharedPreferencesManager.getRate(app),
 //                SharedPreferencesManager.getIso(app), new BigDecimal(importPrivKeyEntity.getFee()), app);
 //        if (app == null || importPrivKeyEntity == null) return;
 //        String message = String.format(app.getString(R.string.send_money_from_privkey_message), sentBits, sentExchange, feeBits, feeExchange);

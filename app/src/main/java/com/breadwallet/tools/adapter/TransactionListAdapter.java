@@ -13,7 +13,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
-import com.breadwallet.tools.util.BRString;
+import com.breadwallet.tools.util.BRCurrency;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -107,11 +107,11 @@ public class TransactionListAdapter extends ArrayAdapter<TransactionListItem> {
         boolean priceInBtc = SharedPreferencesManager.getPriceSetToBitcoin(mContext);
         long satoshisAmount = received ? item.getReceived() : (item.getSent() - item.getReceived()) * -1;
         if (priceInBtc) {
-            amount.setText(BRString.getFormattedCurrencyString(mContext, "BTC", new BigDecimal(satoshisAmount)));
+            amount.setText(BRCurrency.getFormattedCurrencyString(mContext, "BTC", new BigDecimal(satoshisAmount)));
         } else {
             String iso = SharedPreferencesManager.getIso(mContext);
             BigDecimal exchangeRate = new BigDecimal(CurrencyDataSource.getInstance(mContext).getCurrencyByIso(iso).rate);
-            amount.setText(BRString.getExchangeForAmount(exchangeRate, iso, new BigDecimal(satoshisAmount), mContext));
+            amount.setText(BRCurrency.getExchangeForAmount(exchangeRate, iso, new BigDecimal(satoshisAmount), mContext));
         }
         timestamp.setText(DateUtils.getRelativeTimeSpanString(item.getTimeStamp(), System.currentTimeMillis(), MINUTE_IN_MILLIS));
 

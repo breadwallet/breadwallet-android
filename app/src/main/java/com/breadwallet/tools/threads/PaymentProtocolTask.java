@@ -296,10 +296,10 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
 //        }
 //        final long total = paymentRequest.amount + paymentRequest.fee;
 //        final PaymentRequestEntity request = new PaymentRequestEntity(paymentRequest.addresses, paymentRequest.amount, certName, paymentRequest.serializedTx, false);
-//        final String message = certification + memo + allAddresses.toString() + "\n\n" + "amount: " + BRString.getFormattedCurrencyString(app, "BTC", paymentRequest.amount)
-//                + " (" + BRString.getExchangeForAmount(rate, iso, new BigDecimal(paymentRequest.amount), app) + ")" + "\nnetwork fee: +" + BRString.getFormattedCurrencyString(app, "BTC", paymentRequest.fee)
-//                + " (" + BRString.getExchangeForAmount(rate, iso, new BigDecimal(paymentRequest.fee), app) + ")" + "\ntotal: " + BRString.getFormattedCurrencyString(app, "BTC", total)
-//                + " (" + BRString.getExchangeForAmount(rate, iso, new BigDecimal(total), app) + ")";
+//        final String message = certification + memo + allAddresses.toString() + "\n\n" + "amount: " + BRCurrency.getFormattedCurrencyString(app, "BTC", paymentRequest.amount)
+//                + " (" + BRCurrency.getExchangeForAmount(rate, iso, new BigDecimal(paymentRequest.amount), app) + ")" + "\nnetwork fee: +" + BRCurrency.getFormattedCurrencyString(app, "BTC", paymentRequest.fee)
+//                + " (" + BRCurrency.getExchangeForAmount(rate, iso, new BigDecimal(paymentRequest.fee), app) + ")" + "\ntotal: " + BRCurrency.getFormattedCurrencyString(app, "BTC", total)
+//                + " (" + BRCurrency.getExchangeForAmount(rate, iso, new BigDecimal(total), app) + ")";
 
 //        app.runOnUiThread(new Runnable() {
 //            @Override

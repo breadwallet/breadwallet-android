@@ -38,8 +38,7 @@ import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
  */
 public class BRBitcoin {
 
-
-    private BigDecimal getMaxAmount(Context context, String iso) {
+    public static BigDecimal getMaxAmount(Context context, String iso) {
         final long MAX_BTC = 21000000;
         if (iso.equalsIgnoreCase("BTC"))
             return getBitcoinAmount(new BigDecimal(MAX_BTC * 100000000));

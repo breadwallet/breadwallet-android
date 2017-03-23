@@ -22,13 +22,13 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRSoftKeyboard;
-import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
-import com.breadwallet.tools.sqlite.PeerDataSource;
-import com.breadwallet.tools.util.BRString;
+import com.breadwallet.tools.util.BRBitcoin;
+import com.breadwallet.tools.util.BRCurrency;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -123,14 +123,17 @@ public class FragmentSend extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String item = parent.getItemAtPosition(position).toString();
+                amountBuilder = new StringBuilder(0);
+                updateText();
                 Log.e(TAG, "onItemSelected: " + item);
-                isoText.setText(item);
+                isoText.setText(BRCurrency.getSymbolByIso(item));
                 SpringAnimator.showAnimation(isoText);
+
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                isoText.setText("BTC");
+                isoText.setText(BRCurrency.getSymbolByIso("BTC"));
                 SpringAnimator.showAnimation(isoText);
             }
         });
@@ -141,7 +144,10 @@ public class FragmentSend extends Fragment {
                 handleClick(key);
             }
         });
-        List<String> curList = CurrencyDataSource.getInstance(getContext()).getAllISOs();
+
+        List<String> curList = new ArrayList<>();
+        curList.add("BTC");
+        curList.addAll(CurrencyDataSource.getInstance(getContext()).getAllISOs());
         spinner.setAdapter(new ArrayAdapter<>(getContext(), R.layout.bread_spinner_item, curList));
     }
 
@@ -222,8 +228,9 @@ public class FragmentSend extends Fragment {
     }
 
     private void handleDigitClick(Integer dig) {
-        String  currAmount = amountBuilder.toString();
-        if (new BigDecimal(currAmount.concat(String.valueOf(dig))).doubleValue() <= getMaxAmount(isoText.getText().toString()).doubleValue()) {
+        String currAmount = amountBuilder.toString();
+        if (new BigDecimal(currAmount.concat(String.valueOf(dig))).doubleValue()
+                <= BRBitcoin.getMaxAmount(getActivity(), (String) spinner.getSelectedItem()).doubleValue()) {
             amountBuilder.append(dig);
             updateText();
         } else {
@@ -235,20 +242,24 @@ public class FragmentSend extends Fragment {
     }
 
     private void handleSeparatorClick() {
-
+        String currAmount = amountBuilder.toString();
+        if (currAmount.contains(".")) return;
+        amountBuilder.append(".");
+        updateText();
     }
 
     private void handleDeleteClick() {
+        String currAmount = amountBuilder.toString();
+        if (currAmount.length() > 0) {
+            amountBuilder.deleteCharAt(currAmount.length() - 1);
+            updateText();
+        }
 
     }
 
     private void updateText() {
         amountEdit.setText(amountBuilder.toString());
     }
-
-
-
-
 
 
 }
