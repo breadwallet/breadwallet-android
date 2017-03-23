@@ -9,8 +9,6 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.breadwallet.presenter.entities.CurrencyEntity;
-import com.breadwallet.tools.adapter.CurrencyListAdapter;
-import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.BRWalletManager;
@@ -28,7 +26,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashSet;
@@ -63,10 +60,10 @@ import java.util.TimerTask;
  * THE SOFTWARE.
  */
 
-public class CurrencyManager {
-    private static final String TAG = CurrencyManager.class.getName();
+public class CurrencyFetchManager {
+    private static final String TAG = CurrencyFetchManager.class.getName();
 
-    private static CurrencyManager instance;
+    private static CurrencyFetchManager instance;
     private Timer timer;
 
     private TimerTask timerTask;
@@ -76,16 +73,16 @@ public class CurrencyManager {
     //    public static boolean separatorNeedsToBeShown = false;
 //    private final CurrencyListAdapter currencyListAdapter;
 
-    private CurrencyManager(Context ctx) {
+    private CurrencyFetchManager(Context ctx) {
         this.context = ctx;
 //        currencyListAdapter = new CurrencyListAdapter(ctx);
         handler = new Handler();
     }
 
-    public static CurrencyManager getInstance(Context context) {
+    public static CurrencyFetchManager getInstance(Context context) {
 
         if (instance == null) {
-            instance = new CurrencyManager(context);
+            instance = new CurrencyFetchManager(context);
         }
         return instance;
     }

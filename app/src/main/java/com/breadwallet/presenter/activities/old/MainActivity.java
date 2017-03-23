@@ -350,7 +350,7 @@
 //
 //        app = this;
 //        final BRWalletManager m = BRWalletManager.getInstance(this);
-//        CurrencyManager currencyManager = CurrencyManager.getInstance(this);
+//        CurrencyFetchManager currencyManager = CurrencyFetchManager.getInstance(this);
 //        currencyManager.startTimer();
 //        m.addObserver(this);
 //        final boolean isNetworkAvailable = ((BreadWalletApp) getApplication()).hasInternetAccess();

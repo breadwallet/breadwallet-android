@@ -22,8 +22,11 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRSoftKeyboard;
+import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
+import com.breadwallet.tools.sqlite.PeerDataSource;
+import com.breadwallet.tools.util.BRString;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -66,8 +69,9 @@ public class FragmentSend extends Fragment {
     private Button send;
     private Spinner spinner;
     private EditText commentEdit;
-    private BigDecimal amount;
+    private StringBuilder amountBuilder;
     private TextView isoText;
+    private EditText amountEdit;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -87,13 +91,34 @@ public class FragmentSend extends Fragment {
         send = (Button) rootView.findViewById(R.id.send_button);
         commentEdit = (EditText) rootView.findViewById(R.id.comment_edit);
         spinner = (Spinner) rootView.findViewById(R.id.cur_spinner);
+        amountEdit = (EditText) rootView.findViewById(R.id.amount_edit);
         setListeners();
+        amountBuilder = new StringBuilder(0);
 
         return rootView;
     }
 
 
-    private void setListeners(){
+    private void setListeners() {
+        paste.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SpringAnimator.showAnimation(v);
+            }
+        });
+
+        scan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SpringAnimator.showAnimation(v);
+            }
+        });
+        send.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SpringAnimator.showAnimation(v);
+            }
+        });
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -197,12 +222,33 @@ public class FragmentSend extends Fragment {
     }
 
     private void handleDigitClick(Integer dig) {
+        String  currAmount = amountBuilder.toString();
+        if (new BigDecimal(currAmount.concat(String.valueOf(dig))).doubleValue() <= getMaxAmount(isoText.getText().toString()).doubleValue()) {
+            amountBuilder.append(dig);
+            updateText();
+        } else {
+            SpringAnimator.failShakeAnimation(getActivity(), isoText);
+        }
+//        if ((curAmount.contains(".") && (curAmount.length() - curAmount.indexOf(".") < 8)) || curAmount.length() < ) {
+//            amountBuilder.append(dig);
+//        }
     }
 
     private void handleSeparatorClick() {
+
     }
 
     private void handleDeleteClick() {
+
     }
+
+    private void updateText() {
+        amountEdit.setText(amountBuilder.toString());
+    }
+
+
+
+
+
 
 }

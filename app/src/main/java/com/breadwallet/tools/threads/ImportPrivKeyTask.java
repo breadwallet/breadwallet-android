@@ -1,17 +1,9 @@
 package com.breadwallet.tools.threads;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.AsyncTask;
-import android.util.Log;
 
-import com.breadwallet.R;
-import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.entities.ImportPrivKeyEntity;
-import com.breadwallet.tools.animation.BreadDialog;
-import com.breadwallet.tools.util.BRStringFormatter;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.wallet.BRWalletManager;
 
 import org.json.JSONArray;
@@ -20,7 +12,6 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.math.BigDecimal;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
@@ -86,11 +77,11 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
         if (importPrivKeyEntity == null) {
             return;
         }
-//        String sentBits = BRStringFormatter.getFormattedCurrencyString(app,"BTC", importPrivKeyEntity.getAmount());
-//        String sentExchange = BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(app),
+//        String sentBits = BRString.getFormattedCurrencyString(app,"BTC", importPrivKeyEntity.getAmount());
+//        String sentExchange = BRString.getExchangeForAmount(SharedPreferencesManager.getRate(app),
 //                SharedPreferencesManager.getIso(app), new BigDecimal(importPrivKeyEntity.getAmount()), app);
-//        String feeBits = BRStringFormatter.getFormattedCurrencyString(app,"BTC", importPrivKeyEntity.getFee());
-//        String feeExchange = BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(app),
+//        String feeBits = BRString.getFormattedCurrencyString(app,"BTC", importPrivKeyEntity.getFee());
+//        String feeExchange = BRString.getExchangeForAmount(SharedPreferencesManager.getRate(app),
 //                SharedPreferencesManager.getIso(app), new BigDecimal(importPrivKeyEntity.getFee()), app);
 //        if (app == null || importPrivKeyEntity == null) return;
 //        String message = String.format(app.getString(R.string.send_money_from_privkey_message), sentBits, sentExchange, feeBits, feeExchange);

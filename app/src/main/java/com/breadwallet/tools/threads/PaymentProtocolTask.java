@@ -7,29 +7,20 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.breadwallet.R;
-import com.breadwallet.BreadWalletApp;
-import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.exceptions.CertificateChainNotFound;
-import com.breadwallet.tools.animation.BreadDialog;
-import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.tools.util.BRStringFormatter;
 import com.breadwallet.tools.util.ByteReader;
-import com.breadwallet.tools.manager.CurrencyManager;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.RequestHandler;
 import com.breadwallet.tools.security.X509CertificateValidator;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.security.cert.X509Certificate;
 import java.util.List;
-import java.util.Locale;
 
 import static com.breadwallet.presenter.activities.BreadActivity.app;
 
@@ -279,7 +270,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
 //        //DecimalFormat decimalFormat = new DecimalFormat("0.00");
 //        String iso = SharedPreferencesManager.getIso(app);
 //        float rate = SharedPreferencesManager.getRate(app);
-//        CurrencyManager cm = CurrencyManager.getInstance(app);
+//        CurrencyFetchManager cm = CurrencyFetchManager.getInstance(app);
 //
 //        double minOutput = BRWalletManager.getInstance().getMinOutputAmount();
 //        if (paymentRequest.amount < minOutput) {
@@ -305,10 +296,10 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
 //        }
 //        final long total = paymentRequest.amount + paymentRequest.fee;
 //        final PaymentRequestEntity request = new PaymentRequestEntity(paymentRequest.addresses, paymentRequest.amount, certName, paymentRequest.serializedTx, false);
-//        final String message = certification + memo + allAddresses.toString() + "\n\n" + "amount: " + BRStringFormatter.getFormattedCurrencyString(app, "BTC", paymentRequest.amount)
-//                + " (" + BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(paymentRequest.amount), app) + ")" + "\nnetwork fee: +" + BRStringFormatter.getFormattedCurrencyString(app, "BTC", paymentRequest.fee)
-//                + " (" + BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(paymentRequest.fee), app) + ")" + "\ntotal: " + BRStringFormatter.getFormattedCurrencyString(app, "BTC", total)
-//                + " (" + BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(total), app) + ")";
+//        final String message = certification + memo + allAddresses.toString() + "\n\n" + "amount: " + BRString.getFormattedCurrencyString(app, "BTC", paymentRequest.amount)
+//                + " (" + BRString.getExchangeForAmount(rate, iso, new BigDecimal(paymentRequest.amount), app) + ")" + "\nnetwork fee: +" + BRString.getFormattedCurrencyString(app, "BTC", paymentRequest.fee)
+//                + " (" + BRString.getExchangeForAmount(rate, iso, new BigDecimal(paymentRequest.fee), app) + ")" + "\ntotal: " + BRString.getFormattedCurrencyString(app, "BTC", total)
+//                + " (" + BRString.getExchangeForAmount(rate, iso, new BigDecimal(total), app) + ")";
 
 //        app.runOnUiThread(new Runnable() {
 //            @Override

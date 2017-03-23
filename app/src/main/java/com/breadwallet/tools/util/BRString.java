@@ -3,22 +3,22 @@ package com.breadwallet.tools.util;
 import android.app.Activity;
 import android.content.Context;
 
-import com.breadwallet.tools.manager.CurrencyManager;
+import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Currency;
 import java.util.Locale;
 import java.util.Objects;
 
-import static com.breadwallet.R.string.amount;
 import static com.breadwallet.presenter.activities.BreadActivity.app;
 import static com.breadwallet.tools.util.BRConstants.CURRENT_UNIT_BITS;
 import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
+import static java.security.AccessController.getContext;
 
 /**
  * BreadWallet
@@ -45,8 +45,8 @@ import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
  * THE SOFTWARE.
  */
 
-public class BRStringFormatter {
-    public static final String TAG = BRStringFormatter.class.getName();
+public class BRString {
+    public static final String TAG = BRString.class.getName();
 
 
 //    public static String getMiddleTextExchangeString(double rate, String iso, Activity ctx) {
@@ -75,7 +75,7 @@ public class BRStringFormatter {
     }
 
 //    public static String getCurrentBalanceText(Activity ctx) {
-//        CurrencyManager cm = CurrencyManager.getInstance(ctx);
+//        CurrencyFetchManager cm = CurrencyFetchManager.getInstance(ctx);
 //        String iso = SharedPreferencesManager.getIso(ctx);
 ////        double rate = SharedPreferencesManager.getRate(ctx);
 //        long exchange = BRWalletManager.getInstance().localAmount(BRWalletManager.getInstance().getBalance(),
@@ -158,6 +158,15 @@ public class BRStringFormatter {
     public static int getNumberOfDecimalPlaces(String amount) {
         int index = amount.indexOf(".");
         return index < 0 ? 0 : amount.length() - index - 1;
+    }
+
+    private BigDecimal getMaxAmount(Context context, String iso) {
+        final long MAX_BTC = 21000000;
+        if (iso.equalsIgnoreCase("BTC"))
+            return BRString.getBitcoinAmount(new BigDecimal(MAX_BTC * 100000000));
+        CurrencyEntity ent = CurrencyDataSource.getInstance(context).getCurrencyByIso(iso);
+        if (ent == null) throw new RuntimeException("no currency in DB for: " + iso);
+        return new BigDecimal(ent.rate * MAX_BTC);
     }
 
 }

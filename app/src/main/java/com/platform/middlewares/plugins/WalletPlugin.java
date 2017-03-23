@@ -1,12 +1,10 @@
 package com.platform.middlewares.plugins;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.util.Log;
 
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.tools.security.RequestHandler;
-import com.breadwallet.tools.util.BRStringFormatter;
+import com.breadwallet.tools.util.BRString;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.BRHTTPHelper;
@@ -27,9 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import static com.breadwallet.presenter.activities.BreadActivity.app;
-import static com.breadwallet.tools.util.BRStringFormatter.getFormattedCurrencyString;
-import static com.google.firebase.analytics.FirebaseAnalytics.getInstance;
-import static org.eclipse.jetty.http.HttpMethod.POST;
 
 /**
  * BreadWallet
@@ -98,7 +93,7 @@ public class WalletPlugin implements Plugin {
             } else {
                 satAmount = Long.valueOf(amount);
             }
-            return BRHTTPHelper.handleSuccess(200, BRStringFormatter.getFormattedCurrencyString(app,Locale.getDefault().getISO3Language(), new BigDecimal(satAmount)).getBytes(), baseRequest, response, null);
+            return BRHTTPHelper.handleSuccess(200, BRString.getFormattedCurrencyString(app,Locale.getDefault().getISO3Language(), new BigDecimal(satAmount)).getBytes(), baseRequest, response, null);
         } else if (target.startsWith("/_wallet/sign_bitid") && request.getMethod().equalsIgnoreCase("post")) {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
             /**

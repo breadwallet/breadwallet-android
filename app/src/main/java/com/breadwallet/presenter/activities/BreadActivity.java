@@ -22,20 +22,17 @@ import com.breadwallet.presenter.fragments.FragmentReceive;
 import com.breadwallet.presenter.fragments.FragmentSend;
 import com.breadwallet.tools.adapter.TransactionListAdapter;
 import com.breadwallet.tools.animation.SpringAnimator;
-import com.breadwallet.tools.manager.CurrencyManager;
+import com.breadwallet.tools.manager.CurrencyFetchManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.RequestHandler;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
-import com.breadwallet.tools.sqlite.TransactionDataSource;
-import com.breadwallet.tools.util.BRStringFormatter;
+import com.breadwallet.tools.util.BRString;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import static com.breadwallet.tools.animation.BRAnimator.showBreadMenu;
 import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
@@ -223,7 +220,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
             }
         }).start();
 
-        CurrencyManager currencyManager = CurrencyManager.getInstance(this);
+        CurrencyFetchManager currencyManager = CurrencyFetchManager.getInstance(this);
         currencyManager.startTimer();
     }
 
@@ -231,7 +228,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     protected void onPause() {
         super.onPause();
         appInBackground = true;
-        CurrencyManager.getInstance(this).stopTimerTask();
+        CurrencyFetchManager.getInstance(this).stopTimerTask();
     }
 
     @Override
@@ -306,10 +303,10 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
             Log.e(TAG, "onBalanceChanged: No currency with iso: " + iso);
             return;
         }
-        final String bits = BRStringFormatter.getFormattedCurrencyString(this, "BTC", new BigDecimal(balance));
+        final String bits = BRString.getFormattedCurrencyString(this, "BTC", new BigDecimal(balance));
 
         float rateForIso = ent.rate;
-        final String amount = BRStringFormatter.getExchangeForAmount(new BigDecimal(rateForIso), iso, new BigDecimal(balance), this);
+        final String amount = BRString.getExchangeForAmount(new BigDecimal(rateForIso), iso, new BigDecimal(balance), this);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {

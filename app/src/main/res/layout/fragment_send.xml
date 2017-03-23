@@ -103,6 +103,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:layout_marginRight="0dp"
+            android:paddingTop="8dp"
             android:layout_marginTop="0dp"
             android:background="@color/extra_light_gray"
             app:layout_constraintBottom_toTopOf="@+id/view5"
@@ -119,6 +120,7 @@
             android:layout_marginStart="16dp"
             android:background="@android:color/transparent"
             android:ems="10"
+            android:hint="address"
             android:inputType="textPersonName"
             app:layout_constraintBottom_toBottomOf="@+id/scan_button"
             app:layout_constraintTop_toTopOf="@+id/scan_button"
@@ -193,7 +195,7 @@
         <Spinner
             android:id="@+id/cur_spinner"
             android:layout_width="64dp"
-            android:layout_height="32dp"
+            android:layout_height="40dp"
             android:layout_marginRight="24dp"
             android:layout_marginTop="24dp"
             android:background="@drawable/button_secondary_gray_stroke"
@@ -237,6 +239,26 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/view5"
             app:layout_constraintVertical_bias="0.0"/>
+
+        <EditText
+            android:id="@+id/amount_edit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:hint="0"
+            android:textSize="18sp"
+            android:layout_marginBottom="0dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="0dp"
+            android:ems="10"
+            android:inputType="numberDecimal"
+            app:layout_constraintBottom_toBottomOf="@+id/cur_spinner"
+            app:layout_constraintLeft_toRightOf="@+id/iso_text"
+            app:layout_constraintTop_toTopOf="@+id/cur_spinner"
+            app:layout_constraintRight_toLeftOf="@+id/cur_spinner"
+            android:layout_marginRight="8dp"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintVertical_bias="0.545"/>
 
 
     </android.support.constraint.ConstraintLayout>

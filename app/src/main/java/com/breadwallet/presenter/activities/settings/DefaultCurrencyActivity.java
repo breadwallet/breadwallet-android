@@ -7,27 +7,18 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.adapter.CurrencyListAdapter;
-import com.breadwallet.tools.animation.BreadDialog;
-import com.breadwallet.tools.manager.CurrencyManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
-import com.breadwallet.tools.util.BRStringFormatter;
-
-import org.w3c.dom.Text;
+import com.breadwallet.tools.util.BRString;
 
 import java.math.BigDecimal;
 
-import static com.breadwallet.R.id.currencyRefresh;
-import static com.breadwallet.R.id.exchange_text;
 import static com.breadwallet.presenter.activities.BreadActivity.app;
 
 public class DefaultCurrencyActivity extends Activity {
@@ -64,7 +55,7 @@ public class DefaultCurrencyActivity extends Activity {
                 SharedPreferencesManager.putIso(app, ISO);
                 SharedPreferencesManager.putCurrencyListPosition(DefaultCurrencyActivity.this, position);
 //                SharedPreferencesManager.putRate(app, rate);
-                String finalExchangeRate = BRStringFormatter.getFormattedCurrencyString(DefaultCurrencyActivity.this, ISO, new BigDecimal(rate));
+                String finalExchangeRate = BRString.getFormattedCurrencyString(DefaultCurrencyActivity.this, ISO, new BigDecimal(rate));
                 exchangeText.setText(finalExchangeRate + " = 1BTC");
 //                MiddleViewAdapter.resetMiddleView(app, finalExchangeRate);
                 adapter.notifyDataSetChanged();
