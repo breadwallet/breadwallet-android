@@ -357,7 +357,7 @@ public class FragmentSend extends Fragment {
 
     private void handleSeparatorClick() {
         String currAmount = amountBuilder.toString();
-        if (currAmount.contains(".") )
+        if (currAmount.contains(".") || BRCurrency.getMaxDecimalPlaces((String) spinner.getSelectedItem()) == 0)
             return;
         amountBuilder.append(".");
         updateText();
