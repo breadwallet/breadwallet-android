@@ -171,5 +171,17 @@ public class BRCurrency {
         return Utils.isNullOrEmpty(symbol) ? iso : symbol;
     }
 
+    public static int getMaxDecimalPlaces(String iso) {
+        if (Utils.isNullOrEmpty(iso)) return 8;
+
+        if (iso.equalsIgnoreCase("BTC")) {
+            return 8;
+        } else {
+            Currency currency = Currency.getInstance(iso);
+            return currency.getDefaultFractionDigits();
+        }
+
+    }
+
 
 }

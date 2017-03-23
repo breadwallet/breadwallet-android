@@ -338,8 +338,13 @@ public class FragmentSend extends Fragment {
 
     private void handleDigitClick(Integer dig) {
         String currAmount = amountBuilder.toString();
+        String iso = (String) spinner.getSelectedItem();
         if (new BigDecimal(currAmount.concat(String.valueOf(dig))).doubleValue()
-                <= BRBitcoin.getMaxAmount(getActivity(), (String) spinner.getSelectedItem()).doubleValue()) {
+                <= BRBitcoin.getMaxAmount(getActivity(), iso).doubleValue()) {
+            //do not insert 0 if the balance is 0 now
+            if (currAmount.equalsIgnoreCase("0") && dig == 0) return;
+            if ((currAmount.contains(".") && (currAmount.length() - currAmount.indexOf(".") > BRCurrency.getMaxDecimalPlaces(iso))))
+                return;
             amountBuilder.append(dig);
             updateText();
         } else {
@@ -352,7 +357,8 @@ public class FragmentSend extends Fragment {
 
     private void handleSeparatorClick() {
         String currAmount = amountBuilder.toString();
-        if (currAmount.contains(".")) return;
+        if (currAmount.contains(".") )
+            return;
         amountBuilder.append(".");
         updateText();
     }
