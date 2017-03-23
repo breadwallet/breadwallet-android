@@ -64,6 +64,7 @@ public class IntroReEnterPinActivity extends FragmentActivity {
                 handleClick(key);
             }
         });
+        keyboard.setShowDot(false);
     }
 
     @Override

@@ -73,6 +73,7 @@ public class PinActivity extends Activity {
         });
         keyboard.setBRButtonBackgroundColor(R.color.white_trans);
         keyboard.setBRButtonTextColor(R.color.white);
+        keyboard.setShowDot(false);
 
         leftButton = (Button) findViewById(R.id.left_button);
         rightButton = (Button) findViewById(R.id.right_button);

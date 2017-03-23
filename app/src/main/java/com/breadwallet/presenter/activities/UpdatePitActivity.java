@@ -62,6 +62,7 @@ public class UpdatePitActivity extends Activity {
                 handleClick(key);
             }
         });
+        keyboard.setShowDot(false);
 
     }
 

@@ -54,6 +54,7 @@ public class BRSoftKeyboard extends LinearLayout implements View.OnClickListener
     private Button num7;
     private Button num8;
     private Button num9;
+    private Button numDot;
     private ImageButton numDelete;
     public boolean clickAvailable = true;
 
@@ -90,6 +91,7 @@ public class BRSoftKeyboard extends LinearLayout implements View.OnClickListener
         num7 = (Button) root.findViewById(R.id.num7);
         num8 = (Button) root.findViewById(R.id.num8);
         num9 = (Button) root.findViewById(R.id.num9);
+        numDot = (Button) root.findViewById(R.id.numDot);
         numDelete = (ImageButton) root.findViewById(R.id.numDelete);
 
         num0.setOnClickListener(this);
@@ -102,6 +104,7 @@ public class BRSoftKeyboard extends LinearLayout implements View.OnClickListener
         num7.setOnClickListener(this);
         num8.setOnClickListener(this);
         num9.setOnClickListener(this);
+        numDot.setOnClickListener(this);
         numDelete.setOnClickListener(this);
 
     }
@@ -157,6 +160,7 @@ public class BRSoftKeyboard extends LinearLayout implements View.OnClickListener
         num7.setTextColor(getContext().getColor(color));
         num8.setTextColor(getContext().getColor(color));
         num9.setTextColor(getContext().getColor(color));
+        numDot.setTextColor(getContext().getColor(color));
         numDelete.setColorFilter(getContext().getColor(color));
         invalidate();
     }
@@ -172,6 +176,12 @@ public class BRSoftKeyboard extends LinearLayout implements View.OnClickListener
         num7.setBackgroundColor(getContext().getColor(color));
         num8.setBackgroundColor(getContext().getColor(color));
         num9.setBackgroundColor(getContext().getColor(color));
+        numDot.setBackgroundColor(getContext().getColor(color));
+        invalidate();
+    }
+
+    public void setShowDot(boolean b) {
+        numDot.setVisibility(b ? VISIBLE : GONE);
         invalidate();
     }
 

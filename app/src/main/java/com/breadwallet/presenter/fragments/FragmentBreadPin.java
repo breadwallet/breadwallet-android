@@ -24,6 +24,7 @@ import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
 
 import static android.R.attr.dialogLayout;
+import static android.R.attr.key;
 import static android.R.attr.translationY;
 
 /**
@@ -102,6 +103,7 @@ public class FragmentBreadPin extends Fragment {
                 handleClick(key);
             }
         });
+        keyboard.setShowDot(false);
 
         return rootView;
     }

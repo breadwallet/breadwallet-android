@@ -48,6 +48,7 @@ public class IntroSetPitActivity extends Activity {
                 handleClick(key);
             }
         });
+        keyboard.setShowDot(false);
 
     }
 

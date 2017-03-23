@@ -222,7 +222,7 @@ public class FragmentSend extends Fragment {
             handleDeleteClick();
         } else if (Character.isDigit(key.charAt(0))) {
             handleDigitClick(Integer.parseInt(key));
-        } else {
+        } else if (key.charAt(0) == '.') {
             handleSeparatorClick();
         }
     }
