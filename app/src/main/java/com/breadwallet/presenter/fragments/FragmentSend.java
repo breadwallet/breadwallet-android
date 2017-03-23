@@ -21,11 +21,21 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRSoftKeyboard;
+import com.breadwallet.presenter.entities.RequestObject;
+import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.manager.BRClipboardManager;
+import com.breadwallet.tools.security.RequestHandler;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.util.BRBitcoin;
 import com.breadwallet.tools.util.BRCurrency;
+import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.BRWalletManager;
+
+import org.eclipse.jetty.util.StringUtil;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -104,6 +114,67 @@ public class FragmentSend extends Fragment {
             @Override
             public void onClick(View v) {
                 SpringAnimator.showAnimation(v);
+                if (BRAnimator.checkTheMultipressingAvailability()) {
+                    String bitcoinUrl = BRClipboardManager.getClipboard(getActivity());
+                    if (Utils.isNullOrEmpty(bitcoinUrl)) {
+                        showClipboardError();
+                        return;
+                    }
+                    String address = null;
+
+                    RequestObject obj = RequestHandler.getRequestFromString(bitcoinUrl);
+
+
+                    if (obj == null || obj.address == null) {
+                        showClipboardError();
+                        return;
+                    }
+                    address = obj.address;
+                    BRWalletManager wm = BRWalletManager.getInstance();
+
+                    if (wm.isValidBitcoinPrivateKey(address) || wm.isValidBitcoinBIP38Key(address)) {
+//                        wm.confirmSweep(getActivity(), address);
+//                        addressEdit.setText("");
+                        return;
+                    }
+
+                    if (BRWalletManager.validateAddress(address)) {
+                        if (wm.addressContainedInWallet(address)) {
+
+                            BreadDialog.showCustomDialog(getActivity(), "Address contained", getResources().getString(R.string.address_already_in_your_wallet), "close", null, new BRDialogView.BROnClickListener() {
+                                @Override
+                                public void onClick(BRDialogView brDialogView) {
+                                    brDialogView.dismiss();
+                                }
+                            }, null, null, 0);
+                            BRClipboardManager.putClipboard(getActivity(), "");
+                            addressEdit.setText("");
+                        } else if (wm.addressIsUsed(address)) {
+                            BreadDialog.showCustomDialog(getActivity(), "Address used", getResources().getString(R.string.address_already_used), "Ignore", "Cancel", new BRDialogView.BROnClickListener() {
+                                @Override
+                                public void onClick(BRDialogView brDialogView) {
+                                    brDialogView.dismiss();
+//                                    FragmentScanResult.address = finalIfAddress;
+//                                    BRAnimator.animateScanResultFragment();
+                                }
+                            }, new BRDialogView.BROnClickListener() {
+                                @Override
+                                public void onClick(BRDialogView brDialogView) {
+                                    brDialogView.dismiss();
+                                }
+                            }, null, 0);
+
+                        } else {
+//                                FragmentScanResult.address = finalAddress;
+//                                BRAnimator.animateScanResultFragment();
+                            addressEdit.setText(address);
+//                            RequestHandler.processRequest(getActivity(), bitcoinUrl);
+                        }
+                    } else {
+                        showClipboardError();
+                    }
+                }
+
             }
         });
 
@@ -149,6 +220,17 @@ public class FragmentSend extends Fragment {
         curList.add("BTC");
         curList.addAll(CurrencyDataSource.getInstance(getContext()).getAllISOs());
         spinner.setAdapter(new ArrayAdapter<>(getContext(), R.layout.bread_spinner_item, curList));
+    }
+
+    private void showClipboardError() {
+        BreadDialog.showCustomDialog(getActivity(), "Clipboard empty", getResources().getString(R.string.clipboard_invalid_data), "close", null, new BRDialogView.BROnClickListener() {
+            @Override
+            public void onClick(BRDialogView brDialogView) {
+                brDialogView.dismiss();
+            }
+        }, null, null, 0);
+        BRClipboardManager.putClipboard(getActivity(), "");
+        addressEdit.setText("");
     }
 
 

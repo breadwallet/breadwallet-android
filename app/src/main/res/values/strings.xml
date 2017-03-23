@@ -103,7 +103,7 @@
     <!-- checked -->
     <string name="cancel">cancel</string>
     <!-- checked -->
-    <string name="mainfragment_clipboard_invalid_data">"clipboard doesn't contain a valid bitcoin address"</string>
+    <string name="clipboard_invalid_data">"clipboard doesn't contain a valid bitcoin address"</string>
     <!-- checked -->
     <string name="ok">ok</string>
     <!-- checked -->

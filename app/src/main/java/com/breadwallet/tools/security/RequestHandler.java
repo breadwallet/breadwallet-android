@@ -322,16 +322,15 @@ public class RequestHandler {
         RequestObject obj = new RequestObject();
 
         String tmp = str.trim().replaceAll("\n", "").replaceAll(" ", "%20");
-        if (!URLUtil.isValidUrl(tmp)) return null;
+
+        if (!tmp.startsWith("bitcoin://")) {
+            if (!tmp.startsWith("bitcoin:"))
+                tmp = "bitcoin://".concat(tmp);
+            else
+                tmp = tmp.replace("bitcoin:", "bitcoin://");
+        }
         URI uri = URI.create(tmp);
 
-        if (uri.getScheme() == null || !uri.getScheme().equals("bitcoin")) {
-            tmp = "bitcoin://".concat(tmp);
-        } else {
-            tmp = tmp.replace("bitcoin:", "bitcoin://");
-        }
-        uri = URI.create(tmp);
-//        String[] parts = tmp.split("\\?", 2);
         String host = uri.getHost();
         if (host != null) {
             String addrs = host.trim();
@@ -415,7 +414,7 @@ public class RequestHandler {
             }
             String strAmount = String.valueOf(amount);
             if (app != null) {
-                BRWalletManager.getInstance().pay(app,addresses[0], new BigDecimal(strAmount), null, true);
+                BRWalletManager.getInstance().pay(app, addresses[0], new BigDecimal(strAmount), null, true);
             }
         } else {
             if (app != null)

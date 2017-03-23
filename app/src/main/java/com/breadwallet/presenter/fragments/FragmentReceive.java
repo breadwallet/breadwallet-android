@@ -123,7 +123,7 @@ public class FragmentReceive extends Fragment {
         mAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BRClipboardManager.copyToClipboard(getContext(), mAddress.getText().toString());
+                BRClipboardManager.putClipboard(getContext(), mAddress.getText().toString());
                 BRToast.showCustomToast(getActivity(), "Copied to Clipboard.", (int) mAddress.getY(), Toast.LENGTH_SHORT, R.drawable.toast_layout_blue);
             }
         });
