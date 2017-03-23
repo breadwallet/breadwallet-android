@@ -74,6 +74,7 @@ public class CurrencyDataSource {
         try {
             for (CurrencyEntity c : currencyEntities) {
                 ContentValues values = new ContentValues();
+                values.put(BRSQLiteHelper.CURRENCY_COLUMN_ID, c.id);
                 values.put(BRSQLiteHelper.CURRENCY_CODE, c.code);
                 values.put(BRSQLiteHelper.CURRENCY_NAME, c.name);
                 values.put(BRSQLiteHelper.CURRENCY_RATE, c.rate);
@@ -147,6 +148,7 @@ public class CurrencyDataSource {
         cursor.close();
         return currencies;
     }
+
     public List<String> getAllISOs() {
         database = dbHelper.getReadableDatabase();
         List<String> ISOs = new ArrayList<>();
