@@ -16,6 +16,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 import static com.breadwallet.presenter.activities.BreadActivity.app;
+import static com.breadwallet.tools.util.BRBitcoin.getBitcoinAmount;
 import static com.breadwallet.tools.util.BRConstants.CURRENT_UNIT_BITS;
 import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
 import static java.security.AccessController.getContext;
@@ -100,7 +101,7 @@ public class BRString {
         decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
 //        int decimalPoints = 0;
         if (Objects.equals(isoCurrencyCode, "BTC")) {
-            result = getBitcoinAmount(amount);
+            result = BRBitcoin.getBitcoinAmount(amount);
             String currencySymbolString = BRConstants.bitcoinLowercase;
             if (app != null) {
                 int unit = SharedPreferencesManager.getCurrencyUnit(app);
@@ -138,35 +139,12 @@ public class BRString {
         return currencyFormat.format(result.doubleValue());
     }
 
-    public static BigDecimal getBitcoinAmount(BigDecimal amount) {
-        BigDecimal result = new BigDecimal(0);
-        int unit = SharedPreferencesManager.getCurrencyUnit(app);
-        switch (unit) {
-            case CURRENT_UNIT_BITS:
-                result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100"), 2, ROUNDING_MODE);
-                break;
-            case BRConstants.CURRENT_UNIT_MBITS:
-                result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100000"), 5, ROUNDING_MODE);
-                break;
-            case BRConstants.CURRENT_UNIT_BITCOINS:
-                result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100000000"), 8, ROUNDING_MODE);
-                break;
-        }
-        return result;
-    }
+
 
     public static int getNumberOfDecimalPlaces(String amount) {
         int index = amount.indexOf(".");
         return index < 0 ? 0 : amount.length() - index - 1;
     }
 
-    private BigDecimal getMaxAmount(Context context, String iso) {
-        final long MAX_BTC = 21000000;
-        if (iso.equalsIgnoreCase("BTC"))
-            return BRString.getBitcoinAmount(new BigDecimal(MAX_BTC * 100000000));
-        CurrencyEntity ent = CurrencyDataSource.getInstance(context).getCurrencyByIso(iso);
-        if (ent == null) throw new RuntimeException("no currency in DB for: " + iso);
-        return new BigDecimal(ent.rate * MAX_BTC);
-    }
 
 }
