@@ -65,7 +65,7 @@
             android:id="@+id/view3"
             android:layout_width="0dp"
             android:layout_height="1dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="32dp"
             android:background="@color/extra_light_gray"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -186,10 +186,10 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="0dp"
             android:layout_marginLeft="16dp"
-            android:textSize="24sp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="0dp"
-            android:text="BTC"
+            android:text="$"
+            android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/cur_spinner"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -267,6 +267,16 @@
             android:layout_marginRight="8dp"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintVertical_bias="0.545"/>
+
+        <TextView
+            android:id="@+id/balance_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="0dp"
+            android:text="Current Balance"
+            app:layout_constraintLeft_toLeftOf="@+id/iso_text"
+            app:layout_constraintTop_toBottomOf="@+id/iso_text"/>
 
 
     </android.support.constraint.ConstraintLayout>

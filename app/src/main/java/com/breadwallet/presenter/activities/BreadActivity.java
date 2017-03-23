@@ -296,7 +296,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
 
     @Override
     public void onBalanceChanged(final long balance) {
-        Log.e(TAG, "onBalanceChanged: " + System.getProperty("http.agent"));
+        Log.e(TAG, "onBalanceChanged: " + balance);
         String iso = SharedPreferencesManager.getIso(this);
         CurrencyEntity ent = CurrencyDataSource.getInstance(this).getCurrencyByIso(iso);
         if (ent == null) {

@@ -66,7 +66,7 @@ public class BRCurrency {
     public static String getExchangeForAmount(BigDecimal rate, String iso, BigDecimal targetAmount, Context ctx) {
         if (rate.doubleValue() == 0) rate = new BigDecimal("1");
         long exchange = BRWalletManager.getInstance().localAmount(targetAmount.longValue(),
-                new BigDecimal(String.valueOf(rate)).multiply(new BigDecimal("100")).doubleValue());
+                new BigDecimal(String.valueOf(rate)).doubleValue());
         return getFormattedCurrencyString(ctx, iso, new BigDecimal(exchange));
     }
 
@@ -170,5 +170,6 @@ public class BRCurrency {
         }
         return Utils.isNullOrEmpty(symbol) ? iso : symbol;
     }
+
 
 }

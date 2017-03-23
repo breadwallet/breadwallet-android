@@ -264,7 +264,7 @@
     <ListView
         android:id="@+id/tx_listview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_above="@+id/bottom_toolbar_layout1"
         android:layout_below="@+id/loading_wallet_layout"
         android:layout_marginLeft="16dp"

@@ -31,11 +31,10 @@ import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.security.RequestHandler;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.util.BRBitcoin;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
-
-import org.eclipse.jetty.util.StringUtil;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -82,6 +81,8 @@ public class FragmentSend extends Fragment {
     private StringBuilder amountBuilder;
     private TextView isoText;
     private EditText amountEdit;
+    private TextView balanceText;
+    private BigDecimal curBalance;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -102,14 +103,17 @@ public class FragmentSend extends Fragment {
         commentEdit = (EditText) rootView.findViewById(R.id.comment_edit);
         spinner = (Spinner) rootView.findViewById(R.id.cur_spinner);
         amountEdit = (EditText) rootView.findViewById(R.id.amount_edit);
+        balanceText = (TextView) rootView.findViewById(R.id.balance_text);
         setListeners();
         amountBuilder = new StringBuilder(0);
+        curBalance = new BigDecimal(0);
 
         return rootView;
     }
 
 
     private void setListeners() {
+        long start = System.currentTimeMillis();
         paste.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -195,10 +199,17 @@ public class FragmentSend extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String item = parent.getItemAtPosition(position).toString();
                 amountBuilder = new StringBuilder(0);
-                updateText();
+                BigDecimal curBalanceBTC = new BigDecimal(BRWalletManager.getInstance().getBalance()).divide(new BigDecimal(100000000), BRConstants.ROUNDING_MODE);
+                if (item.equalsIgnoreCase("BTC")) {
+                    curBalance = curBalanceBTC;
+                } else {
+                    BigDecimal rate = new BigDecimal(CurrencyDataSource.getInstance(getContext()).getCurrencyByIso(item).rate);
+                    curBalance = rate.multiply(curBalanceBTC);
+                }
                 Log.e(TAG, "onItemSelected: " + item);
                 isoText.setText(BRCurrency.getSymbolByIso(item));
                 SpringAnimator.showAnimation(isoText);
+                updateText();
 
             }
 
@@ -216,10 +227,26 @@ public class FragmentSend extends Fragment {
             }
         });
 
-        List<String> curList = new ArrayList<>();
+
+        final List<String> curList = new ArrayList<>();
         curList.add("BTC");
-        curList.addAll(CurrencyDataSource.getInstance(getContext()).getAllISOs());
         spinner.setAdapter(new ArrayAdapter<>(getContext(), R.layout.bread_spinner_item, curList));
+        Log.e(TAG, "spinner took: " + (System.currentTimeMillis() - start));
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                curList.addAll(CurrencyDataSource.getInstance(getContext()).getAllISOs());
+                final ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.bread_spinner_item, curList);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        spinner.setAdapter(adapter);
+
+                    }
+                });
+
+            }
+        }).start();
     }
 
     private void showClipboardError() {
@@ -341,6 +368,8 @@ public class FragmentSend extends Fragment {
 
     private void updateText() {
         amountEdit.setText(amountBuilder.toString());
+        balanceText.setText(String.format("Current Balance: %s", BRCurrency.getFormattedCurrencyString(getActivity(), (String) spinner.getSelectedItem(), curBalance)));
+
     }
 
 
