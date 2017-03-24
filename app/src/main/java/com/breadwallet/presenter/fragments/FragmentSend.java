@@ -206,7 +206,7 @@ public class FragmentSend extends Fragment {
                     curBalance = curBalanceBTC;
                 } else {
                     BigDecimal rate = new BigDecimal(CurrencyDataSource.getInstance(getContext()).getCurrencyByIso(item).rate);
-                    curBalance = rate.multiply(curBalanceBTC);
+                    curBalance = rate.multiply(curBalanceBTC.divide(new BigDecimal(100000000), BRConstants.ROUNDING_MODE));
                 }
                 Log.e(TAG, "onItemSelected: " + item);
                 isoText.setText(BRCurrency.getSymbolByIso(item));
@@ -377,8 +377,22 @@ public class FragmentSend extends Fragment {
     }
 
     private void updateText() {
-        amountEdit.setText(amountBuilder.toString());
-        balanceText.setText(String.format("Current Balance: %s", BRCurrency.getFormattedCurrencyString(getActivity(), (String) spinner.getSelectedItem(), curBalance)));
+        String tmpAmount = amountBuilder.toString();
+        amountEdit.setText(tmpAmount);
+        if (new BigDecimal(tmpAmount.isEmpty() ? "0" : tmpAmount).doubleValue() > curBalance.doubleValue()) {
+            String balanceString = String.format("Insufficient funds. Try an amount below your current balance: %s",
+                    BRCurrency.getFormattedCurrencyString(getActivity(), (String) spinner.getSelectedItem(), curBalance));
+            balanceText.setTextColor(getContext().getColor(R.color.warning_color));
+            balanceText.setText(balanceString);
+            amountEdit.setTextColor(getContext().getColor(R.color.warning_color));
+            isoText.setTextColor(getContext().getColor(R.color.warning_color));
+        } else {
+            String balanceString = String.format("Current Balance: %s", BRCurrency.getFormattedCurrencyString(getActivity(), (String) spinner.getSelectedItem(), curBalance));
+            balanceText.setTextColor(getContext().getColor(R.color.light_gray));
+            balanceText.setText(balanceString);
+            amountEdit.setTextColor(getContext().getColor(R.color.almost_black));
+            isoText.setTextColor(getContext().getColor(R.color.almost_black));
+        }
 
     }
 

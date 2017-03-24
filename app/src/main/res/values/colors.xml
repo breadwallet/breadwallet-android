@@ -40,7 +40,7 @@
     <item name="button_secondary_text" type="color">#232426</item>
 
     //fingerprint
-    <color name="warning_color">#f4511e</color>
+    <color name="warning_color">#f04a5d</color>
     <color name="hint_color">#42000000</color>
     <color name="success_color">#009688</color>
 
