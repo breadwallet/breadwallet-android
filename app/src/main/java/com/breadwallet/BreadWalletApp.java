@@ -1,45 +1,21 @@
 package com.breadwallet;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.Application;
-import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.hardware.fingerprint.FingerprintManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Handler;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Display;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.breadwallet.presenter.activities.BreadActivity;
-import com.breadwallet.presenter.activities.IntroActivity;
-import com.breadwallet.presenter.entities.PaymentRequestEntity;
-import com.breadwallet.presenter.entities.PaymentRequestWrapper;
-import com.breadwallet.presenter.fragments.FingerprintDialogFragment;
-import com.breadwallet.presenter.fragments.FragmentBreadPin;
-import com.breadwallet.presenter.interfaces.BRAuthCompletion;
-import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.tools.security.KeyStoreManager;
-import com.breadwallet.wallet.BRWalletManager;
-
-import java.util.concurrent.TimeUnit;
-
-import static android.R.attr.mode;
-import static com.breadwallet.presenter.activities.BreadActivity.app;
 
 /**
  * BreadWallet
@@ -68,7 +44,6 @@ import static com.breadwallet.presenter.activities.BreadActivity.app;
 
 public class BreadWalletApp extends Application {
     private static final String TAG = BreadWalletApp.class.getName();
-    public static boolean unlocked = false;
     public boolean allowKeyStoreAccess;
     public static int DISPLAY_HEIGHT_PX;
     FingerprintManager mFingerprintManager;
@@ -88,56 +63,6 @@ public class BreadWalletApp extends Application {
 
     }
 
-
-
-//    public void setTopMiddleView(int view, String text) {
-//        if(app == null) return;
-//        switch (view) {
-//            case BRConstants.BREAD_WALLET_IMAGE:
-//                if (app.viewFlipper.getDisplayedChild() == 1) {
-//                    app.viewFlipper.showPrevious();
-//                }
-//                break;
-//            case BRConstants.BREAD_WALLET_TEXT:
-//                if (app.viewFlipper.getDisplayedChild() == 0) {
-//                    app.viewFlipper.showNext();
-//                }
-//                ((TextView) app.viewFlipper.getCurrentView()).setText(text);
-//                ((TextView) app.viewFlipper.getCurrentView()).setTextSize(20);
-//                break;
-//        }
-//    }
-
-//    public void setLockerPayButton(int view) {
-//        switch (view) {
-//            case BRConstants.LOCKER_BUTTON:
-//                if (app.lockerPayFlipper.getDisplayedChild() == 1) {
-//                    app.lockerPayFlipper.showPrevious();
-//
-//                } else if (app.lockerPayFlipper.getDisplayedChild() == 2) {
-//                    app.lockerPayFlipper.showPrevious();
-//                    app.lockerPayFlipper.showPrevious();
-//                }
-//                app.lockerButton.setVisibility(unlocked ? View.INVISIBLE : View.VISIBLE);
-//                break;
-//            case BRConstants.PAY_BUTTON:
-//                if (app.lockerPayFlipper.getDisplayedChild() == 0)
-//                    app.lockerPayFlipper.showNext();
-//                if (app.lockerPayFlipper.getDisplayedChild() == 2)
-//                    app.lockerPayFlipper.showPrevious();
-//                break;
-//            case BRConstants.REQUEST_BUTTON:
-//                if (app.lockerPayFlipper.getDisplayedChild() == 0) {
-//                    app.lockerPayFlipper.showNext();
-//                    app.lockerPayFlipper.showNext();
-//                } else if (app.lockerPayFlipper.getDisplayedChild() == 1) {
-//                    app.lockerPayFlipper.showNext();
-//                }
-//                break;
-//        }
-//
-//    }
-
     public void showDeviceNotSecuredWarning(final Activity context) {
         Log.e(TAG, "WARNING device is not secured!");
         new AlertDialog.Builder(context)
@@ -155,18 +80,6 @@ public class BreadWalletApp extends Application {
                     }
                 })
                 .show();
-    }
-
-
-
-
-    public void setUnlocked(boolean b) {
-//        unlocked = b;
-//        if (app != null) {
-//            app.lockerButton.setVisibility(b ? View.GONE : View.VISIBLE);
-//            app.lockerButton.setClickable(!b);
-//            MiddleViewAdapter.resetMiddleView(app, null);
-//        }
     }
 
     public void allowKeyStoreAccessForSeconds() {
@@ -190,10 +103,6 @@ public class BreadWalletApp extends Application {
         }
         Log.e(TAG, "hideKeyboard: FAILED");
     }
-
-//    public boolean hasInternetAccess() {
-//        return isNetworkAvailable();
-//    }
 
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager

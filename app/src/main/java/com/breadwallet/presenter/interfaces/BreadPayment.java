@@ -1,10 +1,10 @@
-package com.breadwallet.presenter.entities;
+package com.breadwallet.presenter.interfaces;
 
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail Gutan <mihail@breadwallet.com> on 11/19/15.
- * Copyright (c) 2016 breadwallet LLC
+ * Created by Mihail Gutan on <mihail@breadwallet.com> 3/24/17.
+ * Copyright (c) 2017 breadwallet LLC
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,22 +24,6 @@ package com.breadwallet.presenter.entities;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
-public class PaymentRequestEntity {
-    public static final String TAG = PaymentRequestEntity.class.getName();
-
-    public byte[] serializedTx;
-    public String []addresses;
-    public long amount;
-    public String cn;
-    public boolean isAmountRequested;
-
-    public PaymentRequestEntity(String []addresses, long theAmount, String theCn, byte[] serializedTx, boolean isAmountRequested) {
-        this.isAmountRequested = isAmountRequested;
-        this.serializedTx = serializedTx;
-        this.addresses = addresses;
-        this.amount = theAmount;
-        this.cn = theCn;
-    }
+public interface BreadPayment {
 
 }

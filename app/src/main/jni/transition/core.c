@@ -166,7 +166,7 @@ Java_com_breadwallet_tools_security_RequestHandler_parsePaymentRequest(JNIEnv *e
     jfieldID expiresField = (*env)->GetFieldID(env, clazz, "expires", "J");
     jfieldID memoField = (*env)->GetFieldID(env, clazz, "memo", "Ljava/lang/String;");
     jfieldID paymentURLField = (*env)->GetFieldID(env, clazz, "paymentURL", "Ljava/lang/String;");
-    jfieldID addresses = (*env)->GetFieldID(env, clazz, "addresses", "[Ljava/lang/String;");
+    jfieldID addresses = (*env)->GetFieldID(env, clazz, "address", "[Ljava/lang/String;");
     jfieldID amount = (*env)->GetFieldID(env, clazz, "amount", "J");
     jfieldID fee = (*env)->GetFieldID(env, clazz, "fee", "J");
 

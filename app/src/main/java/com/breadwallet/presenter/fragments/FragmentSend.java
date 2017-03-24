@@ -194,6 +194,7 @@ public class FragmentSend extends Fragment {
             @Override
             public void onClick(View v) {
                 SpringAnimator.showAnimation(v);
+//                BRWalletManager.getInstance().pay();
             }
         });
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

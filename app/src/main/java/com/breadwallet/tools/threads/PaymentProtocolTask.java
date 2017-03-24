@@ -130,7 +130,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
 //            CustomLogger.logThis("network", paymentRequest.network, "time", String.valueOf(paymentRequest.time),
 //                    "expires", String.valueOf(paymentRequest.expires), "memo", paymentRequest.memo,
 //                    "paymentURL", paymentRequest.paymentURL, "merchantDataSize",
-//                    String.valueOf(paymentRequest.merchantData.length), "addresses", allAddresses.toString(),
+//                    String.valueOf(paymentRequest.merchantData.length), "address", allAddresses.toString(),
 //                    "amount", String.valueOf(paymentRequest.amount));
             //end logging
             if (paymentRequest.expires != 0 && paymentRequest.time > paymentRequest.expires) {
@@ -260,7 +260,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
     private void continueWithThePayment(final Activity app, String certification) {
 
 //        StringBuilder allAddresses = new StringBuilder();
-//        for (String s : paymentRequest.addresses) {
+//        for (String s : paymentRequest.address) {
 //            allAddresses.append(s + ", ");
 //        }
 //        allAddresses.delete(allAddresses.length() - 2, allAddresses.length());
@@ -295,7 +295,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
 //            return;
 //        }
 //        final long total = paymentRequest.amount + paymentRequest.fee;
-//        final PaymentRequestEntity request = new PaymentRequestEntity(paymentRequest.addresses, paymentRequest.amount, certName, paymentRequest.serializedTx, false);
+//        final PaymentRequestEntity request = new PaymentRequestEntity(paymentRequest.address, paymentRequest.amount, certName, paymentRequest.serializedTx, false);
 //        final String message = certification + memo + allAddresses.toString() + "\n\n" + "amount: " + BRCurrency.getFormattedCurrencyString(app, "BTC", paymentRequest.amount)
 //                + " (" + BRCurrency.getExchangeForAmount(rate, iso, new BigDecimal(paymentRequest.amount), app) + ")" + "\nnetwork fee: +" + BRCurrency.getFormattedCurrencyString(app, "BTC", paymentRequest.fee)
 //                + " (" + BRCurrency.getExchangeForAmount(rate, iso, new BigDecimal(paymentRequest.fee), app) + ")" + "\ntotal: " + BRCurrency.getFormattedCurrencyString(app, "BTC", total)

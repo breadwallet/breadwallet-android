@@ -210,9 +210,9 @@ public class PostAuthenticationProcessor {
 //        this.phraseForKeyStore = phraseForKeyStore;
 //    }
 //
-//    public void setTmpTx(byte[] tmpTx) {
-//        this.tmpTx = tmpTx;
-//    }
+    public void setTmpTx(byte[] tmpTx) {
+        this.tmpTx = tmpTx;
+    }
 //
 //    public void setUriAndLabel(String uri, String label) {
 //        this.uri = uri;
