@@ -237,7 +237,9 @@ public class FragmentSend extends Fragment {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                curList.addAll(CurrencyDataSource.getInstance(getContext()).getAllISOs());
+                if (getActivity() == null) return;
+                curList.addAll(CurrencyDataSource.getInstance(getActivity()).getAllISOs());
+                if (getActivity() == null) return;
                 final ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.bread_spinner_item, curList);
                 getActivity().runOnUiThread(new Runnable() {
                     @Override

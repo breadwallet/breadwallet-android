@@ -98,7 +98,7 @@ public class CurrencyDataSource {
 //        database.beginTransaction();
 //        try {
 //            for (CurrencyEntity c : currencyEntities) {
-////                Log.e(TAG,"sqlite peer saved: " + Arrays.toString(p.getPeerTimeStamp()));
+//                Log.e(TAG,"sqlite peer saved: " + Arrays.toString(p.getPeerTimeStamp()));
 //                ContentValues values = new ContentValues();
 //                values.put(BRSQLiteHelper.CURRENCY_CODE, c.code);
 //                values.put(BRSQLiteHelper.CURRENCY_NAME, c.name);
