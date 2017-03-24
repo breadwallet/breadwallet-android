@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRSoftKeyboard;
+import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.RequestObject;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
@@ -156,12 +157,12 @@ public class FragmentSend extends Fragment {
                             BRClipboardManager.putClipboard(getActivity(), "");
                             addressEdit.setText("");
                         } else if (wm.addressIsUsed(address)) {
+                            final String finalAddress = address;
                             BreadDialog.showCustomDialog(getActivity(), "Address used", getResources().getString(R.string.address_already_used), "Ignore", "Cancel", new BRDialogView.BROnClickListener() {
                                 @Override
                                 public void onClick(BRDialogView brDialogView) {
                                     brDialogView.dismiss();
-//                                    FragmentScanResult.address = finalIfAddress;
-//                                    BRAnimator.animateScanResultFragment();
+                                    addressEdit.setText(finalAddress);
                                 }
                             }, new BRDialogView.BROnClickListener() {
                                 @Override
@@ -171,10 +172,7 @@ public class FragmentSend extends Fragment {
                             }, null, 0);
 
                         } else {
-//                                FragmentScanResult.address = finalAddress;
-//                                BRAnimator.animateScanResultFragment();
                             addressEdit.setText(address);
-//                            RequestHandler.processRequest(getActivity(), bitcoinUrl);
                         }
                     } else {
                         showClipboardError();
@@ -194,7 +192,31 @@ public class FragmentSend extends Fragment {
             @Override
             public void onClick(View v) {
                 SpringAnimator.showAnimation(v);
-//                BRWalletManager.getInstance().pay();
+                boolean allFilled = true;
+                String address = addressEdit.getText().toString();
+                String amountStr = amountEdit.getText().toString();
+                String iso = (String) spinner.getSelectedItem();
+
+                // Satoshis = amount * 100 000 000 / rate
+                long amount;
+                if (iso.equalsIgnoreCase("BTC")) {
+                    amount = new BigDecimal(amountStr).multiply(new BigDecimal(100)).longValue();
+                } else {
+                    amount = new BigDecimal(amountStr).multiply(new BigDecimal(100000000))
+                            .divide(new BigDecimal(CurrencyDataSource.getInstance(getContext())
+                                    .getCurrencyByIso(iso).rate), BRConstants.ROUNDING_MODE).longValue();
+                }
+
+                if (address.isEmpty()) {
+                    allFilled = false;
+                    SpringAnimator.failShakeAnimation(getActivity(), addressEdit);
+                }
+                if (amountStr.isEmpty()) {
+                    allFilled = false;
+                    SpringAnimator.failShakeAnimation(getActivity(), amountEdit);
+                }
+                if (allFilled)
+                    BRWalletManager.getInstance().handlePay(getContext(), new PaymentRequestEntity(new String[]{address}, amount, null, false));
             }
         });
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -223,7 +245,9 @@ public class FragmentSend extends Fragment {
             }
         });
 
-        keyboard.addOnInsertListener(new BRSoftKeyboard.OnInsertListener() {
+        keyboard.addOnInsertListener(new BRSoftKeyboard.OnInsertListener()
+
+        {
             @Override
             public void onClick(String key) {
                 handleClick(key);
@@ -233,9 +257,13 @@ public class FragmentSend extends Fragment {
 
         final List<String> curList = new ArrayList<>();
         curList.add("BTC");
-        spinner.setAdapter(new ArrayAdapter<>(getContext(), R.layout.bread_spinner_item, curList));
+        spinner.setAdapter(new ArrayAdapter<>(
+
+                getContext(), R.layout.bread_spinner_item, curList));
         Log.e(TAG, "spinner took: " + (System.currentTimeMillis() - start));
-        new Thread(new Runnable() {
+        new
+
+                Thread(new Runnable() {
             @Override
             public void run() {
                 if (getActivity() == null) return;
@@ -251,7 +279,10 @@ public class FragmentSend extends Fragment {
                 });
 
             }
-        }).start();
+        }).
+
+                start();
+
     }
 
     private void showClipboardError() {

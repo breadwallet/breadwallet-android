@@ -9,6 +9,7 @@ import android.webkit.URLUtil;
 import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
+import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.presenter.entities.RequestObject;
 import com.breadwallet.tools.animation.BreadDialog;
@@ -39,7 +40,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static com.breadwallet.tools.util.BRConstants.AUTH_FOR_BIT_ID;
 import static com.breadwallet.tools.util.BRConstants.REQUEST_PHRASE_BITID;
 
 /**
@@ -412,9 +412,9 @@ public class RequestHandler {
                 });
                 return false;
             }
-            String strAmount = String.valueOf(amount);
+//            String strAmount = String.valueOf(amount);
             if (app != null) {
-                BRWalletManager.getInstance().pay(app, addresses[0], new BigDecimal(strAmount), null, true);
+                BRWalletManager.getInstance().handlePay(app, new PaymentRequestEntity(addresses, amount,null, true));
             }
         } else {
             if (app != null)

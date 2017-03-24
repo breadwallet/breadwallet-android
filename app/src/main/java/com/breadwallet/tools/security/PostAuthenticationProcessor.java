@@ -1,6 +1,7 @@
 package com.breadwallet.tools.security;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.security.keystore.UserNotAuthenticatedException;
@@ -12,6 +13,7 @@ import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.IntroPhraseCheckActivity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask;
 import com.breadwallet.tools.util.BRConstants;
@@ -144,41 +146,40 @@ public class PostAuthenticationProcessor {
 //        }
 //    }
 //
-//    public void onPublishTxAuth(MainActivity app, boolean authAsked) {
-//
-//        BRWalletManager walletManager = BRWalletManager.getInstance(app);
-//        byte[] rawSeed;
-//        try {
-//            rawSeed = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAY_REQUEST_CODE);
-//        } catch (BRKeystoreErrorException e) {
-//            if (authAsked) {
-//                showBugAuthLoopErrorMessage(app);
-//                Log.e(TAG, "onPublishTxAuth,!success && authAsked");
-//            }
-//            e.printStackTrace();
-//            return;
-//        }
-//        if (rawSeed.length < 10) return;
-//        byte[] seed = TypesConverter.getNullTerminatedPhrase(rawSeed);
-//        try {
-//            if (seed.length != 0) {
-//                boolean success = false;
-//                if (tmpTx != null) {
-//                    success = walletManager.publishSerializedTransaction(tmpTx, seed);
-//                    tmpTx = null;
-//                }
-//                if (!success) {
-//                    BRWalletManager.getInstance(app).offerToChangeTheAmount(app, app.getString(R.string.insufficient_funds));
-//                    return;
-//                }
-//            } else {
-//                return;
-//            }
-//            BRAnimator.hideScanResultFragment();
-//        } finally {
-//            Arrays.fill(seed, (byte) 0);
-//        }
-//    }
+    public void onPublishTxAuth(Context app, boolean authAsked) {
+
+        BRWalletManager walletManager = BRWalletManager.getInstance();
+        byte[] rawSeed;
+        try {
+            rawSeed = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAY_REQUEST_CODE);
+        } catch (BRKeystoreErrorException e) {
+            if (authAsked) {
+//                showBugAuthLoopErrorMessage();
+                Log.e(TAG, "onPublishTxAuth,!success && authAsked");
+            }
+            e.printStackTrace();
+            return;
+        }
+        if (rawSeed.length < 10) return;
+        byte[] seed = TypesConverter.getNullTerminatedPhrase(rawSeed);
+        try {
+            if (seed.length != 0) {
+                boolean success = false;
+                if (tmpTx != null) {
+                    success = walletManager.publishSerializedTransaction(tmpTx, seed);
+                    tmpTx = null;
+                }
+                if (!success) {
+                    BRWalletManager.getInstance().offerToChangeTheAmount(app, app.getString(R.string.insufficient_funds));
+                    return;
+                }
+            } else {
+                return;
+            }
+        } finally {
+            Arrays.fill(seed, (byte) 0);
+        }
+    }
 //
 //    public void onPaymentProtocolRequest(MainActivity app, boolean authAsked) {
 //

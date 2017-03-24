@@ -28,15 +28,15 @@ package com.breadwallet.presenter.entities;
 public class PaymentRequestEntity {
     public static final String TAG = PaymentRequestEntity.class.getName();
 
-    public byte[] serializedTx;
+//    public byte[] serializedTx;
     public String []addresses;
     public long amount;
     public String cn;
     public boolean isAmountRequested;
 
-    public PaymentRequestEntity(String []addresses, long theAmount, String theCn, byte[] serializedTx, boolean isAmountRequested) {
+    public PaymentRequestEntity(String []addresses, long theAmount, String theCn,  boolean isAmountRequested) {
         this.isAmountRequested = isAmountRequested;
-        this.serializedTx = serializedTx;
+//        this.serializedTx = serializedTx;
         this.addresses = addresses;
         this.amount = theAmount;
         this.cn = theCn;
