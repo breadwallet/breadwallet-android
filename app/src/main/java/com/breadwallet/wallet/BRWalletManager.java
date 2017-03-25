@@ -30,7 +30,9 @@ import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.presenter.entities.ImportPrivKeyEntity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.TransactionListItem;
+import com.breadwallet.presenter.fragments.FragmentBreadSignal;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.manager.CurrencyFetchManager;
 import com.breadwallet.tools.qrcode.QRUtils;
@@ -382,21 +384,23 @@ public class BRWalletManager {
      */
 
     public static void publishCallback(final String message, int error) {
-        PaymentProtocolPostPaymentTask.waiting = false;
-        if (error != 0) {
-            if (!PaymentProtocolPostPaymentTask.waiting && !PaymentProtocolPostPaymentTask.sent) {
-                if (PaymentProtocolPostPaymentTask.pendingErrorMessages.get(PaymentProtocolPostPaymentTask.MESSAGE) != null) {
+        Log.e(TAG, "publishCallback: " + message + ", err:" + error);
+        BRAnimator.showBreadSignal(BreadActivity.app, "Send Confirmation", "Money Sent!", R.drawable.ic_check_mark_white);
+//        PaymentProtocolPostPaymentTask.waiting = false;
+//        if (error != 0) {
+//            if (!PaymentProtocolPostPaymentTask.waiting && !PaymentProtocolPostPaymentTask.sent) {
+//                if (PaymentProtocolPostPaymentTask.pendingErrorMessages.get(PaymentProtocolPostPaymentTask.MESSAGE) != null) {
 //                    BreadDialog.showCustomDialog(ctx, PaymentProtocolPostPaymentTask.pendingErrorMessages.get(PaymentProtocolPostPaymentTask.TITLE),
 //                            PaymentProtocolPostPaymentTask.pendingErrorMessages.get(PaymentProtocolPostPaymentTask.MESSAGE), ctx.getString(R.string.ok));
-                    PaymentProtocolPostPaymentTask.pendingErrorMessages = null;
-                } else {
-                    BRToast.showCustomToast(BreadActivity.app, message,
-                            BreadActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, R.drawable.toast_layout_black);
-                }
-            }
-        } else {
-            PaymentProtocolPostPaymentTask.sent = true;
-        }
+//                    PaymentProtocolPostPaymentTask.pendingErrorMessages = null;
+//                } else {
+//                    BRToast.showCustomToast(BreadActivity.app, message,
+//                            BreadActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, R.drawable.toast_layout_black);
+//                }
+//            }
+//        } else {
+//            PaymentProtocolPostPaymentTask.sent = true;
+//        }
     }
 
     public static void onBalanceChanged(final long balance) {

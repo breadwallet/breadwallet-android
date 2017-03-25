@@ -200,7 +200,7 @@ public class FragmentSend extends Fragment {
                 // Satoshis = amount * 100 000 000 / rate
                 long amount;
                 if (iso.equalsIgnoreCase("BTC")) {
-                    amount = new BigDecimal(amountStr).multiply(new BigDecimal(100)).longValue();
+                    amount = new BigDecimal(amountStr.isEmpty() ? "0" : amountStr).multiply(new BigDecimal(100)).longValue();
                 } else {
                     amount = new BigDecimal(amountStr).multiply(new BigDecimal(100000000))
                             .divide(new BigDecimal(CurrencyDataSource.getInstance(getContext())
@@ -215,6 +215,7 @@ public class FragmentSend extends Fragment {
                     allFilled = false;
                     SpringAnimator.failShakeAnimation(getActivity(), amountEdit);
                 }
+
                 if (allFilled)
                     BRWalletManager.getInstance().handlePay(getContext(), new PaymentRequestEntity(new String[]{address}, amount, null, false));
             }

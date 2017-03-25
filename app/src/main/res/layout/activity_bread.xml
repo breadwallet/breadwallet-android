@@ -5,6 +5,7 @@
                 android:id="@+id/main_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+
                 android:background="@color/extra_light_blue_background"
                 android:clipToPadding="false"
                 android:descendantFocusability="beforeDescendants"

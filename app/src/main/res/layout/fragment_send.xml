@@ -1,9 +1,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
-              xmlns:tools="http://schemas.android.com/tools"
               android:id="@+id/background_layout"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
+              android:isScrollContainer="false"
               android:layout_gravity="bottom"
               android:background="@color/black_trans"
               android:filterTouchesWhenObscured="true"
@@ -14,6 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
+        android:isScrollContainer="false"
         android:animateLayoutChanges="true"
         android:background="@drawable/receive_layout"
         android:clickable="true"
@@ -278,9 +279,6 @@
             app:layout_constraintLeft_toLeftOf="@+id/iso_text"
             app:layout_constraintTop_toBottomOf="@+id/iso_text"/>
 
-
     </android.support.constraint.ConstraintLayout>
-
-
 
 </LinearLayout>
