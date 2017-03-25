@@ -111,9 +111,14 @@ public class TransactionListAdapter extends ArrayAdapter<TransactionListItem> {
         } else {
             String iso = SharedPreferencesManager.getIso(mContext);
             BigDecimal exchangeRate = new BigDecimal(CurrencyDataSource.getInstance(mContext).getCurrencyByIso(iso).rate);
-            amount.setText(BRCurrency.getExchangeForAmount(exchangeRate, iso, new BigDecimal(satoshisAmount), mContext));
+            String exchangeString = BRCurrency.getExchangeForAmount(exchangeRate, iso, new BigDecimal(satoshisAmount), mContext);
+            amount.setText(exchangeString);
         }
-        timestamp.setText(DateUtils.getRelativeTimeSpanString(item.getTimeStamp(), System.currentTimeMillis(), MINUTE_IN_MILLIS));
+        //if it's 0 we use the current time.
+        long timeStamp = item.getTimeStamp() == 0 ? System.currentTimeMillis() : item.getTimeStamp() * 1000;
+        CharSequence timeSpan = DateUtils.getRelativeTimeSpanString(timeStamp, System.currentTimeMillis(), MINUTE_IN_MILLIS);
+
+        timestamp.setText(timeSpan);
 
     }
 

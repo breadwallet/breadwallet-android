@@ -385,7 +385,8 @@ public class BRWalletManager {
 
     public static void publishCallback(final String message, int error) {
         Log.e(TAG, "publishCallback: " + message + ", err:" + error);
-        BRAnimator.showBreadSignal(BreadActivity.app, "Send Confirmation", "Money Sent!", R.drawable.ic_check_mark_white);
+        BRAnimator.showBreadSignal(BreadActivity.app, error == 0 ? "Send Confirmation" : "Error", error == 0 ? "Money Sent!" : message, error == 0 ? R.drawable.ic_check_mark_white : R.drawable.ic_error_outline_black_24dp);
+
 //        PaymentProtocolPostPaymentTask.waiting = false;
 //        if (error != 0) {
 //            if (!PaymentProtocolPostPaymentTask.waiting && !PaymentProtocolPostPaymentTask.sent) {
