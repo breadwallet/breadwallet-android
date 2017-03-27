@@ -2,11 +2,12 @@ package com.breadwallet.tools.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.breadwallet.R;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static android.text.format.DateUtils.MINUTE_IN_MILLIS;
+import static android.widget.Adapter.IGNORE_ITEM_VIEW_TYPE;
 
 
 /**
@@ -48,7 +50,7 @@ import static android.text.format.DateUtils.MINUTE_IN_MILLIS;
  * THE SOFTWARE.
  */
 
-public class TransactionListAdapter extends ArrayAdapter<TransactionListItem> {
+public class TransactionListAdapter extends RecyclerView.Adapter<TransactionListAdapter.CustomViewHolder> {
     public static final String TAG = TransactionListAdapter.class.getName();
 
     private final Context mContext;
@@ -56,42 +58,25 @@ public class TransactionListAdapter extends ArrayAdapter<TransactionListItem> {
     private List<TransactionListItem> itemFeed;
 
     public TransactionListAdapter(Context mContext, List<TransactionListItem> items) {
-        super(mContext, R.layout.tx_list_item);
         itemFeed = items;
         if (itemFeed == null) itemFeed = new ArrayList<>();
         this.layoutResourceId = R.layout.tx_list_item;
         this.mContext = mContext;
+        
+    }
+
+
+    @Override
+    public CustomViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        // inflate the layout
+        LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
+        View convertView = inflater.inflate(layoutResourceId, parent, false);
+        return new CustomViewHolder(convertView);
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-
-        if (convertView == null) {
-            // inflate the layout
-            LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
-            convertView = inflater.inflate(layoutResourceId, parent, false);
-
-            if (itemFeed.size() == 1) {
-                convertView.setBackground(getContext().getDrawable(R.drawable.tx_last_item_rounded_full));
-            } else {
-                if (position == itemFeed.size() - 1) {
-                    convertView.setBackground(getContext().getDrawable(R.drawable.tx_last_item_rounded_bottom));
-                } else if(position == 0){
-                    convertView.setBackground(getContext().getDrawable(R.drawable.tx_last_item_rounded_top));
-                } else {
-                    convertView.setBackground(getContext().getDrawable(R.drawable.tx_last_item_not_rounded));
-                }
-            }
-        }
-        setTexts(convertView, position);
-
-        return convertView;
-
-    }
-
-    @Override
-    public int getCount() {
-        return itemFeed.size();
+    public void onBindViewHolder(CustomViewHolder holder, int position) {
+        setTexts(holder, position);
     }
 
     @Override
@@ -99,23 +84,22 @@ public class TransactionListAdapter extends ArrayAdapter<TransactionListItem> {
         return IGNORE_ITEM_VIEW_TYPE;
     }
 
-    private void setTexts(View convertView, int position) {
-        TextView sentReceived = (TextView) convertView.findViewById(R.id.sent_received);
-        TextView amount = (TextView) convertView.findViewById(R.id.amount);
-        TextView toFrom = (TextView) convertView.findViewById(R.id.to_from);
-//        TextView account = (TextView) convertView.findViewById(R.id.account);
-        TextView confirmation = (TextView) convertView.findViewById(R.id.confirmation);
-        TextView timestamp = (TextView) convertView.findViewById(R.id.timestamp);
-//        TextView comment = (TextView) convertView.findViewById(R.id.comment);
+    @Override
+    public int getItemCount() {
+        Log.e(TAG, "getItemCount: " + itemFeed.size());
+        return itemFeed.size();
+    }
+
+    private void setTexts(CustomViewHolder convertView, int position) {
 
         TransactionListItem item = itemFeed.get(position);
 
         boolean received = item.getSent() == 0;
-        sentReceived.setText(received ? "Received" : "Sent");
-        toFrom.setText(received ? "from" : "to");
+        convertView.sentReceived.setText(received ? "Received" : "Sent");
+        convertView.toFrom.setText(received ? "from" : "to");
         int blockHeight = item.getBlockHeight();
         int confirms = blockHeight == Integer.MAX_VALUE ? 0 : SharedPreferencesManager.getLastBlockHeight(mContext) - blockHeight + 1;
-        confirmation.setText((confirms >= 6) ? "Completed" : "Waiting to be confirmed");
+        convertView.confirmation.setText((confirms >= 6) ? "Completed" : "Waiting to be confirmed");
 
         boolean priceInBtc = SharedPreferencesManager.getPriceSetToBitcoin(mContext);
         long satoshisAmount = received ? item.getReceived() : (item.getSent() - item.getReceived()) * -1;
@@ -123,19 +107,40 @@ public class TransactionListAdapter extends ArrayAdapter<TransactionListItem> {
         CurrencyEntity ent = CurrencyDataSource.getInstance(mContext).getCurrencyByIso(iso);
 
         if (priceInBtc || ent == null) {
-            amount.setText(BRCurrency.getFormattedCurrencyString(mContext, "BTC", new BigDecimal(satoshisAmount)));
+            convertView.amount.setText(BRCurrency.getFormattedCurrencyString(mContext, "BTC", new BigDecimal(satoshisAmount)));
         } else {
 
             BigDecimal exchangeRate = new BigDecimal(ent.rate);
             String exchangeString = BRCurrency.getExchangeForAmount(exchangeRate, iso, new BigDecimal(satoshisAmount), mContext);
-            amount.setText(exchangeString);
+            convertView.amount.setText(exchangeString);
         }
         //if it's 0 we use the current time.
         long timeStamp = item.getTimeStamp() == 0 ? System.currentTimeMillis() : item.getTimeStamp() * 1000;
         CharSequence timeSpan = DateUtils.getRelativeTimeSpanString(timeStamp, System.currentTimeMillis(), MINUTE_IN_MILLIS);
 
-        timestamp.setText(timeSpan);
+        convertView.timestamp.setText(timeSpan);
 
+    }
+
+    class CustomViewHolder extends RecyclerView.ViewHolder {
+        public TextView sentReceived;
+        public TextView amount;
+        public TextView toFrom;
+        public TextView account;
+        public TextView confirmation;
+        public TextView timestamp;
+        public TextView comment;
+
+        public CustomViewHolder(View view) {
+            super(view);
+            sentReceived  = (TextView) view.findViewById(R.id.sent_received);
+            amount = (TextView) view.findViewById(R.id.amount);
+            toFrom = (TextView) view.findViewById(R.id.to_from);
+            account = (TextView) view.findViewById(R.id.account);
+            confirmation = (TextView) view.findViewById(R.id.confirmation);
+            timestamp = (TextView) view.findViewById(R.id.timestamp);
+            comment = (TextView) view.findViewById(R.id.comment);
+        }
     }
 
 }

@@ -5,6 +5,8 @@ import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -75,7 +77,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     private TextView secondaryPrice;
     private TextView emptyTip;
     private ProgressBar progressBar;
-    private ListView txList;
+    private RecyclerView txList;
     private TransactionListAdapter adapter;
 
     public static boolean appInBackground = false;
@@ -98,6 +100,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         setSupportActionBar(tb);
 
         initializeViews();
+        txList.setLayoutManager(new LinearLayoutManager(this));
         setListeners();
 
         progressBar.setProgress(80);
@@ -263,7 +266,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         secondaryPrice = (TextView) findViewById(R.id.secondary_price);
         emptyTip = (TextView) findViewById(R.id.empty_tx_tip);
         progressBar = (ProgressBar) findViewById(R.id.load_wallet_progress);
-        txList = (ListView) findViewById(R.id.tx_listview);
+        txList = (RecyclerView) findViewById(R.id.tx_list);
     }
 
     private void togglePriceTexts() {
