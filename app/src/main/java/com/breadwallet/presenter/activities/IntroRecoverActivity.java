@@ -9,6 +9,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 
 import com.breadwallet.R;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 
 public class IntroRecoverActivity extends Activity {
@@ -26,6 +27,7 @@ public class IntroRecoverActivity extends Activity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
                 Intent intent = new Intent(IntroRecoverActivity.this, IntroRecoverWordsActivity.class);
                 startActivity(intent);

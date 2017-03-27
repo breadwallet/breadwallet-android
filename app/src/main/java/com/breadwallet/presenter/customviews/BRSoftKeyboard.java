@@ -12,6 +12,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import com.breadwallet.R;
+import com.breadwallet.tools.animation.BRAnimator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +57,6 @@ public class BRSoftKeyboard extends LinearLayout implements View.OnClickListener
     private Button num9;
     private Button numDot;
     private ImageButton numDelete;
-    public boolean clickAvailable = true;
 
     public BRSoftKeyboard(Context context) {
         super(context);
@@ -128,17 +128,9 @@ public class BRSoftKeyboard extends LinearLayout implements View.OnClickListener
 
     @Override
     public void onClick(View v) {
-        if (!clickAvailable) return;
-        clickAvailable = false;
         for (OnInsertListener listener : listeners) {
             listener.onClick(v instanceof ImageButton ? "" : ((Button) v).getText().toString());
         }
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                clickAvailable = true;
-            }
-        }, 50);
     }
 
     public interface OnInsertListener {

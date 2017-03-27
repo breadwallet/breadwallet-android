@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRToast;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
@@ -103,6 +104,7 @@ public class FragmentReceive extends Fragment {
         shareEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
 
             }
@@ -110,12 +112,14 @@ public class FragmentReceive extends Fragment {
         shareTextMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
             }
         });
         shareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
                 toggleShareButtonsVisibility();
             }
@@ -123,6 +127,7 @@ public class FragmentReceive extends Fragment {
         mAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!BRAnimator.isClickAllowed()) return;
                 BRClipboardManager.putClipboard(getContext(), mAddress.getText().toString());
                 BRToast.showCustomToast(getActivity(), "Copied to Clipboard.", (int) mAddress.getY(), Toast.LENGTH_SHORT, R.drawable.toast_layout_blue);
             }

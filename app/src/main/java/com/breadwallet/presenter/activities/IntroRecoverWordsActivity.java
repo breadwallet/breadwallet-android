@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.tools.animation.BRAnimator;
 
 import static com.breadwallet.R.color.dark_blue;
 import static com.breadwallet.R.color.extra_light_gray;
@@ -74,6 +75,7 @@ public class IntroRecoverWordsActivity extends Activity {
         leftButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!BRAnimator.isClickAllowed()) return;
                 chooseWordsSize(true);
             }
         });
@@ -81,6 +83,7 @@ public class IntroRecoverWordsActivity extends Activity {
         rightButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!BRAnimator.isClickAllowed()) return;
                 chooseWordsSize(false);
             }
         });
@@ -88,6 +91,7 @@ public class IntroRecoverWordsActivity extends Activity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!BRAnimator.isClickAllowed()) return;
                 Log.e(TAG, "onClick: NEXT");
             }
         });

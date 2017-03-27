@@ -21,6 +21,7 @@ import com.breadwallet.R;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.fragments.FragmentPhraseWord;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.Utils;
@@ -68,12 +69,14 @@ public class IntroPhraseCheckActivity extends Activity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!BRAnimator.isClickAllowed()) return;
                 updateWordView(true);
             }
         });
         previousButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!BRAnimator.isClickAllowed()) return;
                 updateWordView(false);
 
             }

@@ -120,63 +120,62 @@ public class FragmentSend extends Fragment {
         paste.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
-                if (BRAnimator.checkTheMultipressingAvailability()) {
-                    String bitcoinUrl = BRClipboardManager.getClipboard(getActivity());
-                    if (Utils.isNullOrEmpty(bitcoinUrl)) {
-                        showClipboardError();
-                        return;
-                    }
-                    String address = null;
+                String bitcoinUrl = BRClipboardManager.getClipboard(getActivity());
+                if (Utils.isNullOrEmpty(bitcoinUrl)) {
+                    showClipboardError();
+                    return;
+                }
+                String address = null;
 
-                    RequestObject obj = RequestHandler.getRequestFromString(bitcoinUrl);
+                RequestObject obj = RequestHandler.getRequestFromString(bitcoinUrl);
 
 
-                    if (obj == null || obj.address == null) {
-                        showClipboardError();
-                        return;
-                    }
-                    address = obj.address;
-                    BRWalletManager wm = BRWalletManager.getInstance();
+                if (obj == null || obj.address == null) {
+                    showClipboardError();
+                    return;
+                }
+                address = obj.address;
+                BRWalletManager wm = BRWalletManager.getInstance();
 
-                    if (wm.isValidBitcoinPrivateKey(address) || wm.isValidBitcoinBIP38Key(address)) {
+                if (wm.isValidBitcoinPrivateKey(address) || wm.isValidBitcoinBIP38Key(address)) {
 //                        wm.confirmSweep(getActivity(), address);
 //                        addressEdit.setText("");
-                        return;
-                    }
+                    return;
+                }
 
-                    if (BRWalletManager.validateAddress(address)) {
-                        if (wm.addressContainedInWallet(address)) {
+                if (BRWalletManager.validateAddress(address)) {
+                    if (wm.addressContainedInWallet(address)) {
 
-                            BreadDialog.showCustomDialog(getActivity(), "Address contained", getResources().getString(R.string.address_already_in_your_wallet), "close", null, new BRDialogView.BROnClickListener() {
-                                @Override
-                                public void onClick(BRDialogView brDialogView) {
-                                    brDialogView.dismiss();
-                                }
-                            }, null, null, 0);
-                            BRClipboardManager.putClipboard(getActivity(), "");
-                            addressEdit.setText("");
-                        } else if (wm.addressIsUsed(address)) {
-                            final String finalAddress = address;
-                            BreadDialog.showCustomDialog(getActivity(), "Address used", getResources().getString(R.string.address_already_used), "Ignore", "Cancel", new BRDialogView.BROnClickListener() {
-                                @Override
-                                public void onClick(BRDialogView brDialogView) {
-                                    brDialogView.dismiss();
-                                    addressEdit.setText(finalAddress);
-                                }
-                            }, new BRDialogView.BROnClickListener() {
-                                @Override
-                                public void onClick(BRDialogView brDialogView) {
-                                    brDialogView.dismiss();
-                                }
-                            }, null, 0);
+                        BreadDialog.showCustomDialog(getActivity(), "Address contained", getResources().getString(R.string.address_already_in_your_wallet), "close", null, new BRDialogView.BROnClickListener() {
+                            @Override
+                            public void onClick(BRDialogView brDialogView) {
+                                brDialogView.dismiss();
+                            }
+                        }, null, null, 0);
+                        BRClipboardManager.putClipboard(getActivity(), "");
+                        addressEdit.setText("");
+                    } else if (wm.addressIsUsed(address)) {
+                        final String finalAddress = address;
+                        BreadDialog.showCustomDialog(getActivity(), "Address used", getResources().getString(R.string.address_already_used), "Ignore", "Cancel", new BRDialogView.BROnClickListener() {
+                            @Override
+                            public void onClick(BRDialogView brDialogView) {
+                                brDialogView.dismiss();
+                                addressEdit.setText(finalAddress);
+                            }
+                        }, new BRDialogView.BROnClickListener() {
+                            @Override
+                            public void onClick(BRDialogView brDialogView) {
+                                brDialogView.dismiss();
+                            }
+                        }, null, 0);
 
-                        } else {
-                            addressEdit.setText(address);
-                        }
                     } else {
-                        showClipboardError();
+                        addressEdit.setText(address);
                     }
+                } else {
+                    showClipboardError();
                 }
 
             }
@@ -191,6 +190,7 @@ public class FragmentSend extends Fragment {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
                 boolean allFilled = true;
                 String address = addressEdit.getText().toString();

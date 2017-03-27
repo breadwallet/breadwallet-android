@@ -31,6 +31,7 @@ public class IntroWriteDownActivity extends Activity {
         writeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!BRAnimator.isClickAllowed()) return;
                 AuthManager.getInstance().authPrompt(IntroWriteDownActivity.this, "PIN Required", "Please enter your PIN to authorize this transaction.", true, new BRAuthCompletion() {
                     @Override
                     public void onComplete() {
@@ -65,7 +66,6 @@ public class IntroWriteDownActivity extends Activity {
                     Log.e(TAG, "WARNING: resultCode != RESULT_OK");
                     BRWalletManager m = BRWalletManager.getInstance();
                     m.wipeWalletButKeystore(this);
-                    BRAnimator.resetFragmentAnimator();
                     finish();
                 }
                 break;

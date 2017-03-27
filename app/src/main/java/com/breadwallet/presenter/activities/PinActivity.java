@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRSoftKeyboard;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
 
@@ -83,6 +84,7 @@ public class PinActivity extends Activity {
         leftButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(leftButton);
                 chooseWordsSize(true);
             }
@@ -91,6 +93,7 @@ public class PinActivity extends Activity {
         rightButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(rightButton);
                 chooseWordsSize(false);
             }

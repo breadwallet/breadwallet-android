@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.tools.animation.BRAnimator;
 
 /**
  * BreadWallet
@@ -76,6 +77,7 @@ public class BRDialogView extends DialogFragment {
         positiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!BRAnimator.isClickAllowed()) return;
                 posListener.onClick(BRDialogView.this);
             }
         });
@@ -83,6 +85,7 @@ public class BRDialogView extends DialogFragment {
         negativeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!BRAnimator.isClickAllowed()) return;
                 negListener.onClick(BRDialogView.this);
             }
         });

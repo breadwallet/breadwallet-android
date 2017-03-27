@@ -92,6 +92,7 @@ public class FingerprintDialogFragment extends DialogFragment
         mCancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(!BRAnimator.isClickAllowed()) return;
                 if (!BRAnimator.scanResultFragmentOn && mode == BRConstants.AUTH_FOR_PAY && request.isAmountRequested) {
 //                    FragmentScanResult.address = request.address[0];
                     BRWalletManager.getInstance().offerToChangeTheAmount(getActivity(), "");
@@ -105,6 +106,7 @@ public class FingerprintDialogFragment extends DialogFragment
         mSecondDialogButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(!BRAnimator.isClickAllowed()) return;
                 goToBackup();
             }
         });

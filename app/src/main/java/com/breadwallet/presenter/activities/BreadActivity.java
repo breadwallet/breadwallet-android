@@ -24,6 +24,7 @@ import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.presenter.fragments.FragmentReceive;
 import com.breadwallet.presenter.fragments.FragmentSend;
 import com.breadwallet.tools.adapter.TransactionListAdapter;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
 import com.breadwallet.tools.manager.CurrencyFetchManager;
@@ -170,6 +171,8 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                if(!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
                 BreadActivity.this.getFragmentManager().beginTransaction().add(android.R.id.content, new FragmentSend(), FragmentSend.class.getName())
                         .setCustomAnimations(R.animator.to_bottom, R.animator.to_bottom, R.animator.to_bottom, R.animator.to_bottom)
@@ -180,6 +183,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         receiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
                 BreadActivity.this.getFragmentManager().beginTransaction().add(android.R.id.content, new FragmentReceive(), FragmentReceive.class.getName())
                         .setCustomAnimations(R.animator.to_bottom, R.animator.to_bottom, R.animator.to_bottom, R.animator.to_bottom)
@@ -190,6 +194,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
                 showBreadMenu(BreadActivity.this);
             }
@@ -197,12 +202,14 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         primaryPrice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!BRAnimator.isClickAllowed()) return;
                 togglePriceTexts();
             }
         });
         secondaryPrice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!BRAnimator.isClickAllowed()) return;
                 togglePriceTexts();
             }
         });

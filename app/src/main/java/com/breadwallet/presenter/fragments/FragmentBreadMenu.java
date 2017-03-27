@@ -75,6 +75,7 @@ public class FragmentBreadMenu extends Fragment {
         layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!BRAnimator.isClickAllowed()) return;
                 getActivity().onBackPressed();
             }
         });

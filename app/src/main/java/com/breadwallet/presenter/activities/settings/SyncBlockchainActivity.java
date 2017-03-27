@@ -13,6 +13,7 @@ import android.widget.ToggleButton;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRDialogView;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 
@@ -32,6 +33,7 @@ public class SyncBlockchainActivity extends Activity {
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!BRAnimator.isClickAllowed()) return;
                 BreadDialog.showCustomDialog(SyncBlockchainActivity.this, "Sync with Blockchain?",
                         "You will not be able to send money while syncing.", "Sync", "Cancel",
                         new BRDialogView.BROnClickListener() {

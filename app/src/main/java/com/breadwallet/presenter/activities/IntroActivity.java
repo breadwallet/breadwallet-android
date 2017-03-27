@@ -15,6 +15,7 @@ import android.widget.EditText;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.KeyStoreManager;
@@ -104,6 +105,7 @@ public class IntroActivity extends FragmentActivity {
         newWalletButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
                 Intent intent = new Intent(IntroActivity.this, IntroSetPitActivity.class);
                 startActivity(intent);
@@ -114,6 +116,7 @@ public class IntroActivity extends FragmentActivity {
         recoverWalletButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
                 Intent intent = new Intent(IntroActivity.this, IntroRecoverActivity.class);
                 startActivity(intent);

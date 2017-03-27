@@ -54,6 +54,7 @@ public class IntroPhraseProveActivity extends Activity {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!BRAnimator.isClickAllowed()) return;
                 String edit1 = wordEditFirst.getText().toString().replaceAll("[^a-zA-Z]", "");
                 String edit2 = wordEditSecond.getText().toString().replaceAll("[^a-zA-Z]", "");
 
