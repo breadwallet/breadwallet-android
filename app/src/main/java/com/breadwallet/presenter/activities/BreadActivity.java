@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -24,6 +25,7 @@ import com.breadwallet.presenter.fragments.FragmentReceive;
 import com.breadwallet.presenter.fragments.FragmentSend;
 import com.breadwallet.tools.adapter.TransactionListAdapter;
 import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.listeners.RecyclerItemClickListener;
 import com.breadwallet.tools.manager.CurrencyFetchManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.RequestHandler;
@@ -31,11 +33,13 @@ import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
+import com.google.firebase.crash.FirebaseCrash;
 import com.platform.APIClient;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 
+import static android.R.id.list;
 import static com.breadwallet.tools.animation.BRAnimator.showBreadMenu;
 import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
 
@@ -100,7 +104,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         setSupportActionBar(tb);
 
         initializeViews();
-        txList.setLayoutManager(new LinearLayoutManager(this));
+
         setListeners();
 
         progressBar.setProgress(80);
@@ -202,6 +206,19 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
                 togglePriceTexts();
             }
         });
+
+        txList.setLayoutManager(new LinearLayoutManager(this));
+        txList.addOnItemTouchListener(new RecyclerItemClickListener(this,
+                txList, new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position, float x, float y) {
+                Log.e(TAG, "onItemClick: " + position);
+            }
+
+            @Override
+            public void onLongItemClick(View view, int position) {
+            }
+        }));
     }
 
     @Override
