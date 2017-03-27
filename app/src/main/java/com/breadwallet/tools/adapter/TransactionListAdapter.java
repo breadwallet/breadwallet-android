@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
@@ -69,6 +70,18 @@ public class TransactionListAdapter extends ArrayAdapter<TransactionListItem> {
             // inflate the layout
             LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
             convertView = inflater.inflate(layoutResourceId, parent, false);
+
+            if (itemFeed.size() == 1) {
+                convertView.setBackground(getContext().getDrawable(R.drawable.tx_last_item_rounded_full));
+            } else {
+                if (position == itemFeed.size() - 1) {
+                    convertView.setBackground(getContext().getDrawable(R.drawable.tx_last_item_rounded_bottom));
+                } else if(position == 0){
+                    convertView.setBackground(getContext().getDrawable(R.drawable.tx_last_item_rounded_top));
+                } else {
+                    convertView.setBackground(getContext().getDrawable(R.drawable.tx_last_item_not_rounded));
+                }
+            }
         }
         setTexts(convertView, position);
 
@@ -106,11 +119,14 @@ public class TransactionListAdapter extends ArrayAdapter<TransactionListItem> {
 
         boolean priceInBtc = SharedPreferencesManager.getPriceSetToBitcoin(mContext);
         long satoshisAmount = received ? item.getReceived() : (item.getSent() - item.getReceived()) * -1;
-        if (priceInBtc) {
+        String iso = SharedPreferencesManager.getIso(mContext);
+        CurrencyEntity ent = CurrencyDataSource.getInstance(mContext).getCurrencyByIso(iso);
+
+        if (priceInBtc || ent == null) {
             amount.setText(BRCurrency.getFormattedCurrencyString(mContext, "BTC", new BigDecimal(satoshisAmount)));
         } else {
-            String iso = SharedPreferencesManager.getIso(mContext);
-            BigDecimal exchangeRate = new BigDecimal(CurrencyDataSource.getInstance(mContext).getCurrencyByIso(iso).rate);
+
+            BigDecimal exchangeRate = new BigDecimal(ent.rate);
             String exchangeString = BRCurrency.getExchangeForAmount(exchangeRate, iso, new BigDecimal(satoshisAmount), mContext);
             amount.setText(exchangeString);
         }

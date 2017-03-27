@@ -66,8 +66,7 @@ public class BRCurrency {
     public static String getExchangeForAmount(BigDecimal rate, String iso, BigDecimal targetAmount, Context ctx) {
         if (rate.doubleValue() == 0) rate = new BigDecimal("1");
 
-        long exchange = BRWalletManager.getInstance().localAmount(targetAmount.longValue(),
-                new BigDecimal(String.valueOf(rate)).doubleValue());
+        long exchange = BRWalletManager.getInstance().localAmount(targetAmount.longValue(), rate.doubleValue());
 
         return getFormattedCurrencyString(ctx, iso, new BigDecimal(exchange));
     }
@@ -75,7 +74,7 @@ public class BRCurrency {
 //    public static String getCurrentBalanceText(Activity ctx) {
 //        CurrencyFetchManager cm = CurrencyFetchManager.getInstance(ctx);
 //        String iso = SharedPreferencesManager.getIso(ctx);
-////        double rate = SharedPreferencesManager.getRate(ctx);
+//        double rate = SharedPreferencesManager.getRate(ctx);
 //        long exchange = BRWalletManager.getInstance().localAmount(BRWalletManager.getInstance().getBalance(),
 //                new BigDecimal(String.valueOf(rate)).multiply(new BigDecimal("100")).doubleValue());
 //
