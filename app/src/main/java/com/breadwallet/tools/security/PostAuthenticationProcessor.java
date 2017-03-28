@@ -12,6 +12,8 @@ import com.breadwallet.R;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.IntroPhraseCheckActivity;
+import com.breadwallet.presenter.activities.IntroReEnterPinActivity;
+import com.breadwallet.presenter.activities.IntroWriteDownActivity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
@@ -76,9 +78,10 @@ public class PostAuthenticationProcessor {
         boolean success = BRWalletManager.getInstance().generateRandomSeed(app);
         Log.e(TAG, "generateRandomSeed: took: " + (System.currentTimeMillis() - start));
         if (success) {
-            Intent intent = new Intent(app, IntroPhraseCheckActivity.class);
+            Intent intent = new Intent(app, IntroWriteDownActivity.class);
             app.startActivity(intent);
             app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+
         } else {
             if (authAsked) {
                 showBugAuthLoopErrorMessage(app);

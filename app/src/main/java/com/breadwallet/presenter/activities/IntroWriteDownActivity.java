@@ -17,6 +17,8 @@ import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.BRWalletManager;
 
+import static com.breadwallet.presenter.activities.BreadActivity.app;
+
 
 public class IntroWriteDownActivity extends Activity {
     private static final String TAG = IntroWriteDownActivity.class.getName();
@@ -32,12 +34,9 @@ public class IntroWriteDownActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if(!BRAnimator.isClickAllowed()) return;
-                AuthManager.getInstance().authPrompt(IntroWriteDownActivity.this, "PIN Required", "Please enter your PIN to authorize this transaction.", true, new BRAuthCompletion() {
-                    @Override
-                    public void onComplete() {
-                        PostAuthenticationProcessor.getInstance().onCreateWalletAuth(IntroWriteDownActivity.this, false);
-                    }
-                });
+                Intent intent = new Intent(IntroWriteDownActivity.this, IntroPhraseCheckActivity.class);
+                IntroWriteDownActivity.this.startActivity(intent);
+                IntroWriteDownActivity.this.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         });
     }

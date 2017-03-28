@@ -48,7 +48,6 @@ public class CurrencyDataSource {
     private SQLiteDatabase database;
     private final BRSQLiteHelper dbHelper;
     private final String[] allColumns = {
-            BRSQLiteHelper.CURRENCY_COLUMN_ID,
             BRSQLiteHelper.CURRENCY_CODE,
             BRSQLiteHelper.CURRENCY_NAME,
             BRSQLiteHelper.CURRENCY_RATE
@@ -74,7 +73,6 @@ public class CurrencyDataSource {
         try {
             for (CurrencyEntity c : currencyEntities) {
                 ContentValues values = new ContentValues();
-                values.put(BRSQLiteHelper.CURRENCY_COLUMN_ID, c.id);
                 values.put(BRSQLiteHelper.CURRENCY_CODE, c.code);
                 values.put(BRSQLiteHelper.CURRENCY_NAME, c.name);
                 values.put(BRSQLiteHelper.CURRENCY_RATE, c.rate);
@@ -135,7 +133,7 @@ public class CurrencyDataSource {
         List<CurrencyEntity> currencies = new ArrayList<>();
 
         Cursor cursor = database.query(BRSQLiteHelper.CURRENCY_TABLE_NAME,
-                allColumns, null, null, null, null, null);
+                allColumns, null, null, null, null, "\'" + BRSQLiteHelper.CURRENCY_CODE + "\'");
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -146,6 +144,7 @@ public class CurrencyDataSource {
         // make sure to close the cursor
 
         cursor.close();
+        Log.e(TAG, "getAllCurrencies: " + currencies.size());
         return currencies;
     }
 
@@ -188,6 +187,6 @@ public class CurrencyDataSource {
     }
 
     private CurrencyEntity cursorToCurrency(Cursor cursor) {
-        return new CurrencyEntity(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getFloat(3));
+        return new CurrencyEntity(cursor.getString(0), cursor.getString(1), cursor.getFloat(2));
     }
 }

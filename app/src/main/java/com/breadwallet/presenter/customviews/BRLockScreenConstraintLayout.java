@@ -40,7 +40,8 @@ public class BRLockScreenConstraintLayout extends ConstraintLayout {
     public static final String TAG = BRLockScreenConstraintLayout.class.getName();
     private Paint trianglesPaint;
     private Path trianglePath;
-
+    private float mXfract = 0f;
+    private float mYfract = 0f;
 
     public BRLockScreenConstraintLayout(Context context) {
         super(context);
@@ -60,7 +61,7 @@ public class BRLockScreenConstraintLayout extends ConstraintLayout {
     private void init() {
         trianglePath = new Path();
         trianglesPaint = new Paint();
-        setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        setLayerType(View.LAYER_TYPE_SOFTWARE, trianglesPaint);
         trianglesPaint.setShadowLayer(14f, 0, 0, getContext().getColor(R.color.dark_gray));
         trianglesPaint.setAntiAlias(true);
 
@@ -74,6 +75,36 @@ public class BRLockScreenConstraintLayout extends ConstraintLayout {
                 getContext().getColor(R.color.logo_gradient_end), Shader.TileMode.MIRROR));
         invalidate();
 
+    }
+
+    public void setYFraction(final float fraction) {
+        mYfract=fraction;
+        float translationY = getHeight() * fraction;
+        setTranslationY(translationY);
+    }
+
+    public float getYFraction() {
+        return mYfract;
+    }
+
+    public void setXFraction(final float fraction) {
+        mXfract=fraction;
+        float translationX = getWidth() * fraction;
+        setTranslationX(translationX);
+    }
+
+    public float getXFraction() {
+        return mXfract;
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        int width = MeasureSpec.getSize(widthMeasureSpec);
+        int height = MeasureSpec.getSize(heightMeasureSpec);
+        // Correct any translations set before the measure was set
+        setTranslationX(mXfract*width);
+        setTranslationY(mYfract*height);
     }
 
     @Override

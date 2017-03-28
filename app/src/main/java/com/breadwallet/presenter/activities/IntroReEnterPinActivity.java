@@ -13,9 +13,12 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRSoftKeyboard;
+import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.Utils;
 
 public class IntroReEnterPinActivity extends FragmentActivity {
@@ -161,12 +164,20 @@ public class IntroReEnterPinActivity extends FragmentActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent intent = new Intent(IntroReEnterPinActivity.this, IntroWriteDownActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                 pin = new StringBuilder("");
+                AuthManager.getInstance().authPrompt(IntroReEnterPinActivity.this, "PIN Required", "Please enter your PIN to authorize this transaction.", true, new BRAuthCompletion() {
+                    @Override
+                    public void onComplete() {
+                        PostAuthenticationProcessor.getInstance().onCreateWalletAuth(IntroReEnterPinActivity.this, false);
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        Log.e(TAG, "onCancel: Canceled");
+                    }
+                });
             }
-        }, 2000);
+        }, 1600);
 
     }
 

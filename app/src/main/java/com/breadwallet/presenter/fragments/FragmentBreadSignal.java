@@ -82,7 +82,7 @@ public class FragmentBreadSignal extends Fragment {
                 if (getActivity() != null)
                     getActivity().getFragmentManager().popBackStack();
             }
-        }, 2000);
+        }, 1500);
 
         return rootView;
     }

@@ -96,14 +96,12 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
      */
 
     public static final String CURRENCY_TABLE_NAME = "currencyTable";
-    public static final String CURRENCY_COLUMN_ID = "_id";
     public static final String CURRENCY_CODE = "code";
     public static final String CURRENCY_NAME = "name";
     public static final String CURRENCY_RATE = "rate";
 
     private static final String CURRENCY_DATABASE_CREATE = "create table if not exists " + CURRENCY_TABLE_NAME + "(" +
-            CURRENCY_COLUMN_ID + " integer primary key autoincrement, " +
-            CURRENCY_CODE + " text," +
+            CURRENCY_CODE + " text primary key," +
             CURRENCY_NAME + " text," +
             CURRENCY_RATE + " integer );";
 

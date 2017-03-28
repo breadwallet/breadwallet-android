@@ -660,6 +660,11 @@ public class BRWalletManager {
             public void onComplete() {
                 PostAuthenticationProcessor.getInstance().onPublishTxAuth(ctx, false);
             }
+
+            @Override
+            public void onCancel() {
+                //nothing
+            }
         });
 
 //        ((Activity) ctx).runOnUiThread(new Runnable() {

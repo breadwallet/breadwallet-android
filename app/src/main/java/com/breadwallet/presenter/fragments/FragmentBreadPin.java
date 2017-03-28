@@ -75,6 +75,7 @@ public class FragmentBreadPin extends Fragment {
     private TextView message;
     private RelativeLayout dialogLayout;
     BRLockScreenConstraintLayout mainLayout;
+    private boolean authSucceeded;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -134,6 +135,7 @@ public class FragmentBreadPin extends Fragment {
     public void onResume() {
         super.onResume();
         updateDots();
+        authSucceeded = false;
     }
 
 
@@ -198,6 +200,7 @@ public class FragmentBreadPin extends Fragment {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                authSucceeded = true;
                 getActivity().onBackPressed();
                 completion.onComplete();
             }
@@ -224,6 +227,8 @@ public class FragmentBreadPin extends Fragment {
                 .scaleY(0)
                 .scaleX(0).alpha(0);
         mainLayout.animate().alpha(0);
+        if (!authSucceeded)
+            completion.onCancel();
 
     }
 

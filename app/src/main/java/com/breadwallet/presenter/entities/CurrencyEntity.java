@@ -34,13 +34,11 @@ public class CurrencyEntity implements Serializable {
     private static final long serialVersionUID = 7526472295622776147L;
 
     public static final String TAG = CurrencyEntity.class.getName();
-    public int id;
     public String code;
     public String name;
     public float rate;
 
-    public CurrencyEntity(int id, String code, String name, float rate) {
-        this.id = id;
+    public CurrencyEntity(String code, String name, float rate) {
         this.code = code;
         this.name = name;
         this.rate = rate;
