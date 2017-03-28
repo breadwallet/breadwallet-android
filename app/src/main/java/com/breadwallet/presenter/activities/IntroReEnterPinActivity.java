@@ -164,18 +164,7 @@ public class IntroReEnterPinActivity extends FragmentActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                pin = new StringBuilder("");
-                AuthManager.getInstance().authPrompt(IntroReEnterPinActivity.this, "PIN Required", "Please enter your PIN to authorize this transaction.", true, new BRAuthCompletion() {
-                    @Override
-                    public void onComplete() {
-                        PostAuthenticationProcessor.getInstance().onCreateWalletAuth(IntroReEnterPinActivity.this, false);
-                    }
-
-                    @Override
-                    public void onCancel() {
-                        Log.e(TAG, "onCancel: Canceled");
-                    }
-                });
+                PostAuthenticationProcessor.getInstance().onCreateWalletAuth(IntroReEnterPinActivity.this, false);
             }
         }, 1600);
 
