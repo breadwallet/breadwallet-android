@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.breadwallet.R.id.menu_listview;
+import static com.breadwallet.presenter.activities.BreadActivity.app;
 import static com.breadwallet.presenter.fragments.FragmentSend.ANIMATION_DURATION;
 
 /**
@@ -93,10 +94,10 @@ public class FragmentMenu extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.e(TAG, "onClick: Security Center");
-                getActivity().onBackPressed();
-                Intent intent = new Intent(getActivity(), SecurityCenterActivity.class);
-                startActivity(intent);
-                getActivity().overridePendingTransition(R.anim.enter_from_bottom, R.anim.exit_to_bottom);
+                Activity app = getActivity();
+                Intent intent = new Intent(app, SecurityCenterActivity.class);
+                app.startActivity(intent);
+                app.overridePendingTransition(R.anim.enter_from_bottom, 0);
             }
         }));
         itemList.add(new BRMenuItem("Support", R.drawable.ic_question_mark, new View.OnClickListener() {
@@ -110,9 +111,9 @@ public class FragmentMenu extends Fragment {
             public void onClick(View v) {
                 Log.e(TAG, "onClick: Settings");
                 Intent intent = new Intent(getActivity(), SettingsActivity.class);
-                getActivity().onBackPressed();
-                startActivity(intent);
-                getActivity().overridePendingTransition(R.anim.enter_from_bottom, 0);
+                Activity app = getActivity();
+                app.startActivity(intent);
+                app.overridePendingTransition(R.anim.enter_from_bottom, 0);
             }
         }));
         itemList.add(new BRMenuItem("Lock Wallet", R.drawable.ic_lock, new View.OnClickListener() {

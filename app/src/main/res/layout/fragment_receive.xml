@@ -109,7 +109,6 @@
             android:id="@+id/view2"
             android:layout_width="0dp"
             android:layout_height="1dp"
-            android:layout_marginBottom="0dp"
             android:background="#c6c6c6"
             app:layout_constraintBottom_toTopOf="@+id/share_buttons_layout"
             app:layout_constraintHorizontal_bias="0.0"
@@ -119,11 +118,8 @@
 
         <LinearLayout
             android:id="@+id/share_buttons_layout"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="0dp"
-            android:layout_marginLeft="0dp"
-            android:layout_marginRight="0dp"
             android:background="@color/extra_light_blue_background"
             android:orientation="horizontal"
             android:weightSum="2.0"
@@ -134,7 +130,7 @@
 
 
             <Button
-                android:id="@+id/scan_button"
+                android:id="@+id/share_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
@@ -151,7 +147,7 @@
                 android:textStyle="bold"/>
 
             <Button
-                android:id="@+id/scan_button"
+                android:id="@+id/share_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"

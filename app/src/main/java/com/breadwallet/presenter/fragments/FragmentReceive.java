@@ -82,8 +82,8 @@ public class FragmentReceive extends Fragment {
         backgroundLayout = (LinearLayout) rootView.findViewById(R.id.background_layout);
         signalLayout = (ConstraintLayout) rootView.findViewById(R.id.signal_layout);
         shareButton = (Button) rootView.findViewById(R.id.share_button);
-        shareEmail = (Button) rootView.findViewById(R.id.scan_button);
-        shareTextMessage = (Button) rootView.findViewById(R.id.scan_button);
+        shareEmail = (Button) rootView.findViewById(R.id.share_email);
+        shareTextMessage = (Button) rootView.findViewById(R.id.share_text);
         shareButtonsLayout = (LinearLayout) rootView.findViewById(R.id.share_buttons_layout);
         LayoutTransition layoutTransition = signalLayout.getLayoutTransition();
         layoutTransition.enableTransitionType(LayoutTransition.CHANGING);

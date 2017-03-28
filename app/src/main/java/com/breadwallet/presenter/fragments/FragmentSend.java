@@ -41,8 +41,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
-
 
 /**
  * BreadWallet
@@ -100,7 +98,7 @@ public class FragmentSend extends Fragment {
         keyboard.setBRKeyboardColor(R.color.white);
         isoText = (TextView) rootView.findViewById(R.id.iso_text);
         addressEdit = (EditText) rootView.findViewById(R.id.address_edit);
-        scan = (Button) rootView.findViewById(R.id.scan_button);
+        scan = (Button) rootView.findViewById(R.id.share_text);
         paste = (Button) rootView.findViewById(R.id.paste_button);
         send = (Button) rootView.findViewById(R.id.send_button);
         commentEdit = (EditText) rootView.findViewById(R.id.comment_edit);
