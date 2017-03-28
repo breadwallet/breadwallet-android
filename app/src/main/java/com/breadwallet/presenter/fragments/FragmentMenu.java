@@ -15,8 +15,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.animation.OvershootInterpolator;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -30,6 +33,9 @@ import com.breadwallet.wallet.BRWalletManager;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.breadwallet.R.id.menu_listview;
+import static com.breadwallet.presenter.fragments.FragmentSend.ANIMATION_DURATION;
 
 /**
  * BreadWallet
@@ -56,13 +62,14 @@ import java.util.List;
  * THE SOFTWARE.
  */
 
-public class FragmentBreadMenu extends Fragment {
-    private static final String TAG = FragmentBreadMenu.class.getName();
+public class FragmentMenu extends Fragment {
+    private static final String TAG = FragmentMenu.class.getName();
 
     public TextView mTitle;
     public ListView mListView;
     public RelativeLayout layout;
     public List<BRMenuItem> itemList;
+    public LinearLayout signalLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -72,6 +79,7 @@ public class FragmentBreadMenu extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_menu, container, false);
         layout = (RelativeLayout) rootView.findViewById(R.id.layout);
+        signalLayout = (LinearLayout) rootView.findViewById(R.id.signal_layout);
         layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -79,7 +87,6 @@ public class FragmentBreadMenu extends Fragment {
                 getActivity().onBackPressed();
             }
         });
-        animateBackgroundDarker(false);
 
         itemList = new ArrayList<>();
         itemList.add(new BRMenuItem("Security Center", R.drawable.ic_shield, new View.OnClickListener() {
@@ -125,32 +132,50 @@ public class FragmentBreadMenu extends Fragment {
         }));
 
         mTitle = (TextView) rootView.findViewById(R.id.title);
-        mListView = (ListView) rootView.findViewById(R.id.menu_listview);
+        mListView = (ListView) rootView.findViewById(menu_listview);
         mListView.setAdapter(new MenuListAdapter(getContext(), R.layout.menu_list_item, itemList));
 
         return rootView;
     }
 
-    private void animateBackgroundDarker(boolean quick) {
-        int colorFrom = getActivity().getColor(quick ? R.color.black_trans : android.R.color.transparent);
-        int colorTo = getActivity().getColor(quick ? android.R.color.transparent : R.color.black_trans);
-        final ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-        colorAnimation.setDuration(quick ? 100 : 250); // milliseconds
-        colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
+        final ViewTreeObserver observer = mListView.getViewTreeObserver();
+        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
-            public void onAnimationUpdate(ValueAnimator animator) {
-                layout.setBackgroundColor((int) animator.getAnimatedValue());
+            public void onGlobalLayout() {
+                observer.removeGlobalOnLayoutListener(this);
+                animateBackgroundDim();
+                animateSignalSlide();
             }
-
         });
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                colorAnimation.start();
-            }
-        }, quick ? 0 : 250);
+    }
 
+    private void animateSignalSlide() {
+        float translationY = signalLayout.getTranslationY();
+        float signalHeight = signalLayout.getHeight();
+        signalLayout.setTranslationY(translationY + signalHeight);
+        signalLayout.animate().translationY(translationY).setDuration(ANIMATION_DURATION).setInterpolator(new OvershootInterpolator(0.7f));
+    }
+
+    private void animateBackgroundDim() {
+        int transColor = android.R.color.transparent;
+        int blackTransColor = R.color.black_trans;
+
+        ValueAnimator anim = new ValueAnimator();
+        anim.setIntValues(transColor, blackTransColor);
+        anim.setEvaluator(new ArgbEvaluator());
+        anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                layout.setBackgroundColor((Integer) valueAnimator.getAnimatedValue());
+            }
+        });
+
+        anim.setDuration(ANIMATION_DURATION);
+        anim.start();
     }
 
     public RelativeLayout getMainLayout() {
@@ -256,7 +281,7 @@ public class FragmentBreadMenu extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        animateBackgroundDarker(true);
+//        animateBackgroundDarker(true);
     }
 
 

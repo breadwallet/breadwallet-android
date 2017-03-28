@@ -1,17 +1,14 @@
 package com.breadwallet.tools.animation;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.fragments.FragmentBreadMenu;
+import com.breadwallet.presenter.fragments.FragmentMenu;
 import com.breadwallet.presenter.fragments.FragmentBreadSignal;
-
-import java.util.Stack;
 
 
 /**
@@ -52,7 +49,7 @@ public class BRAnimator {
     private static View copy;
 
     private static FragmentBreadSignal fragmentSignal;
-    private static FragmentBreadMenu fragmentMenu;
+    private static FragmentMenu fragmentMenu;
     private static boolean clickAllowed = true;
 
 
@@ -68,16 +65,6 @@ public class BRAnimator {
         transaction.add(android.R.id.content, fragmentSignal, fragmentSignal.getClass().getName());
         transaction.addToBackStack(null);
         transaction.commit();
-    }
-
-    public static void showBreadMenu(Activity activity) {
-        fragmentMenu = new FragmentBreadMenu();
-        FragmentTransaction transaction = activity.getFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_bottom, R.animator.from_bottom, R.animator.to_bottom);
-        transaction.add(android.R.id.content, fragmentMenu, fragmentMenu.getClass().getName());
-        transaction.addToBackStack(null);
-        transaction.commit();
-
     }
 
     public static boolean isClickAllowed() {

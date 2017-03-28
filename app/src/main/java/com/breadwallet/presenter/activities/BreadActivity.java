@@ -1,5 +1,6 @@
 package com.breadwallet.presenter.activities;
 
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Point;
 import android.net.Uri;
@@ -12,15 +13,14 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TransactionListItem;
+import com.breadwallet.presenter.fragments.FragmentMenu;
 import com.breadwallet.presenter.fragments.FragmentReceive;
 import com.breadwallet.presenter.fragments.FragmentSend;
 import com.breadwallet.tools.adapter.TransactionListAdapter;
@@ -34,14 +34,11 @@ import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
-import com.google.firebase.crash.FirebaseCrash;
 import com.platform.APIClient;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 
-import static android.R.id.list;
-import static com.breadwallet.tools.animation.BRAnimator.showBreadMenu;
 import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
 
 /**
@@ -174,8 +171,8 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
 
                 if(!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
-                BreadActivity.this.getFragmentManager().beginTransaction().add(android.R.id.content, new FragmentSend(), FragmentSend.class.getName())
-                        .setCustomAnimations(R.animator.to_bottom, R.animator.to_bottom, R.animator.to_bottom, R.animator.to_bottom)
+                getFragmentManager().beginTransaction()
+                .add(android.R.id.content, new FragmentSend(), FragmentSend.class.getName())
                         .addToBackStack(FragmentSend.class.getName()).commit();
             }
         });
@@ -185,8 +182,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
             public void onClick(View v) {
                 if(!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
-                BreadActivity.this.getFragmentManager().beginTransaction().add(android.R.id.content, new FragmentReceive(), FragmentReceive.class.getName())
-                        .setCustomAnimations(R.animator.to_bottom, R.animator.to_bottom, R.animator.to_bottom, R.animator.to_bottom)
+                getFragmentManager().beginTransaction().add(android.R.id.content, new FragmentReceive(), FragmentReceive.class.getName())
                         .addToBackStack(FragmentReceive.class.getName()).commit();
             }
         });
@@ -196,7 +192,10 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
             public void onClick(View v) {
                 if(!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
-                showBreadMenu(BreadActivity.this);
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.add(android.R.id.content, new FragmentMenu(), FragmentMenu.class.getName());
+                transaction.addToBackStack(null);
+                transaction.commit();
             }
         });
         primaryPrice.setOnClickListener(new View.OnClickListener() {
