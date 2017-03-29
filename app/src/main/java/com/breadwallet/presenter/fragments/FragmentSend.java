@@ -1,14 +1,19 @@
 package com.breadwallet.presenter.fragments;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -23,9 +28,14 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
+import com.breadwallet.presenter.activities.IntroActivity;
+import com.breadwallet.presenter.activities.IntroRecoverActivity;
+import com.breadwallet.presenter.activities.QRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRSoftKeyboard;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
@@ -187,7 +197,45 @@ public class FragmentSend extends Fragment {
         scan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
+                try {
+                    Activity app = getActivity();
+                    if (app == null) return;
+
+                    // Check if the camera permission is granted
+                    if (ContextCompat.checkSelfPermission(app,
+                            Manifest.permission.CAMERA)
+                            != PackageManager.PERMISSION_GRANTED) {
+                        // Should we show an explanation?
+                        if (ActivityCompat.shouldShowRequestPermissionRationale(app,
+                                Manifest.permission.CAMERA)) {
+                            BreadDialog.showCustomDialog(app, "Permission Required.", app.getString(R.string.allow_camera_access), "close", null, new BRDialogView.BROnClickListener() {
+                                @Override
+                                public void onClick(BRDialogView brDialogView) {
+                                    brDialogView.dismiss();
+                                }
+                            }, null, null, 0);
+                        } else {
+                            // No explanation needed, we can request the permission.
+                            ActivityCompat.requestPermissions(app,
+                                    new String[]{Manifest.permission.CAMERA},
+                                    BRConstants.CAMERA_REQUEST_ID);
+                        }
+                    } else {
+                        // Permission is granted, open camera
+                        Intent intent = new Intent(app, QRActivity.class);
+                        app.startActivityForResult(intent, 123);
+                        app.overridePendingTransition(R.anim.scale_up, 0);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
+
+
+
             }
         });
         send.setOnClickListener(new View.OnClickListener() {
@@ -318,7 +366,7 @@ public class FragmentSend extends Fragment {
     private void animateSignalSlide(final boolean reverse) {
         float translationY = signalLayout.getTranslationY();
         float signalHeight = signalLayout.getHeight();
-        signalLayout.setTranslationY(reverse? translationY : translationY + signalHeight);
+        signalLayout.setTranslationY(reverse ? translationY : translationY + signalHeight);
         signalLayout.animate().translationY(reverse ? 2000 : translationY).setDuration(ANIMATION_DURATION).setInterpolator(new OvershootInterpolator(0.7f)).setListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {

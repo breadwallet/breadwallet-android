@@ -1,5 +1,6 @@
 package com.breadwallet.presenter.activities;
 
+import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Point;
@@ -169,10 +170,10 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
             @Override
             public void onClick(View v) {
 
-                if(!BRAnimator.isClickAllowed()) return;
+                if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
                 getFragmentManager().beginTransaction()
-                .add(android.R.id.content, new FragmentSend(), FragmentSend.class.getName())
+                        .add(android.R.id.content, new FragmentSend(), FragmentSend.class.getName())
                         .addToBackStack(FragmentSend.class.getName()).commit();
             }
         });
@@ -180,7 +181,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         receiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!BRAnimator.isClickAllowed()) return;
+                if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
                 getFragmentManager().beginTransaction().add(android.R.id.content, new FragmentReceive(), FragmentReceive.class.getName())
                         .addToBackStack(FragmentReceive.class.getName()).commit();
@@ -190,7 +191,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!BRAnimator.isClickAllowed()) return;
+                if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.add(android.R.id.content, new FragmentMenu(), FragmentMenu.class.getName());
@@ -201,14 +202,14 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         primaryPrice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!BRAnimator.isClickAllowed()) return;
+                if (!BRAnimator.isClickAllowed()) return;
                 togglePriceTexts();
             }
         });
         secondaryPrice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!BRAnimator.isClickAllowed()) return;
+                if (!BRAnimator.isClickAllowed()) return;
                 togglePriceTexts();
             }
         });
@@ -344,6 +345,19 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
             }
         });
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        // 123 is the qrCode result
+        if (requestCode == 123) {
+            if (resultCode == Activity.RESULT_OK) {
+                String result = data.getStringExtra("result");
+                Log.e(TAG, "onActivityResult: result: " + result);
+            }
+
+        }
     }
 
     @Override

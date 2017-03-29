@@ -356,4 +356,8 @@
     <string name="security_description_text">Breadwallet provides security features for protecting your money. Click each feature below to learn more.</string>
     <string name="share">share</string>
 
+    <string name="intro_text">Point the camera view to a QR Code to read the information</string>
+    <string name="restart_activity">Restart Activity</string>
+    <string name="stop_start_qreader">Stop QREader</string>
+
 </resources>

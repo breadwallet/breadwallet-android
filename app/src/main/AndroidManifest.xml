@@ -149,6 +149,11 @@
             android:launchMode="singleInstance"
             android:screenOrientation="portrait">
         </activity>
+        <activity
+            android:name=".presenter.activities.QRActivity"
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait">
+        </activity>
     </application>
 
 </manifest>
