@@ -1,5 +1,7 @@
 package com.breadwallet.presenter.fragments;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
@@ -12,6 +14,7 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -148,22 +151,30 @@ public class FragmentMenu extends Fragment {
             @Override
             public void onGlobalLayout() {
                 observer.removeGlobalOnLayoutListener(this);
-                animateBackgroundDim();
-                animateSignalSlide();
+                animateBackgroundDim(false);
+                animateSignalSlide(false);
             }
         });
     }
 
-    private void animateSignalSlide() {
+    private void animateSignalSlide(final boolean reverse) {
         float translationY = signalLayout.getTranslationY();
         float signalHeight = signalLayout.getHeight();
-        signalLayout.setTranslationY(translationY + signalHeight);
-        signalLayout.animate().translationY(translationY).setDuration(ANIMATION_DURATION).setInterpolator(new OvershootInterpolator(0.7f));
+        signalLayout.setTranslationY(reverse? translationY : translationY + signalHeight);
+        signalLayout.animate().translationY(reverse ? 2000 : translationY).setDuration(ANIMATION_DURATION).setInterpolator(new OvershootInterpolator(0.7f)).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                if (reverse && getActivity() != null)
+                    getActivity().getFragmentManager().popBackStack();
+            }
+        });
+
     }
 
-    private void animateBackgroundDim() {
-        int transColor = android.R.color.transparent;
-        int blackTransColor = R.color.black_trans;
+    private void animateBackgroundDim(boolean reverse) {
+        int transColor = reverse ? R.color.black_trans : android.R.color.transparent;
+        int blackTransColor = reverse ? android.R.color.transparent : R.color.black_trans;
 
         ValueAnimator anim = new ValueAnimator();
         anim.setIntValues(transColor, blackTransColor);
@@ -223,66 +234,37 @@ public class FragmentMenu extends Fragment {
     }
 
 
-//    private void applyBlur() {
-//        layout.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-//            @Override
-//            public boolean onPreDraw() {
-//                layout.getViewTreeObserver().removeOnPreDrawListener(this);
-//                layout.buildDrawingCache();
-//
-//                Bitmap bmp = layout.getDrawingCache();
-//                blur(bmp, layout);
-//                return true;
-//            }
-//        });
-//    }
-//
-//    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-//    private void blur(Bitmap bkg, View view) {
-//        long startMs = System.currentTimeMillis();
-//
-//        float radius = 20;
-//
-//        Bitmap overlay = Bitmap.createBitmap((int) (view.getMeasuredWidth()),
-//                (int) (view.getMeasuredHeight()), Bitmap.Config.ARGB_8888);
-//
-//        Canvas canvas = new Canvas(overlay);
-//
-//        canvas.translate(-view.getLeft(), -view.getTop());
-//        canvas.drawBitmap(bkg, 0, 0, null);
-//
-//        RenderScript rs = RenderScript.create(getActivity());
-//
-//        Allocation overlayAlloc = Allocation.createFromBitmap(
-//                rs, overlay);
-//
-//        ScriptIntrinsicBlur blur = ScriptIntrinsicBlur.create(
-//                rs, overlayAlloc.getElement());
-//
-//        blur.setInput(overlayAlloc);
-//
-//        blur.setRadius(radius);
-//
-//        blur.forEach(overlayAlloc);
-//
-//        overlayAlloc.copyTo(overlay);
-//
-//        view.setBackground(new BitmapDrawable(
-//                getResources(), overlay));
-//
-//        rs.destroy();
-////        statusText.setText(System.currentTimeMillis() - startMs + "ms");
-//    }
 
     @Override
     public void onResume() {
         super.onResume();
+        if (getView() == null) {
+            Log.e(TAG, "onResume: getView is null!");
+            return;
+        }
+        getView().setFocusableInTouchMode(true);
+        getView().requestFocus();
+        //override back pressed for animation on fragment close
+        getView().setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+                switch (keyCode) {
+                    case KeyEvent.KEYCODE_BACK:
+                        Log.e(TAG, "onKey: KEYCODE_BACK");
+                        animateBackgroundDim(true);
+                        animateSignalSlide(true);
+                        getView().setOnKeyListener(null);
+                        return true;
+                }
+                return false;
+            }
+        });
     }
 
     @Override
     public void onPause() {
         super.onPause();
-//        animateBackgroundDarker(true);
     }
 
 

@@ -1,5 +1,7 @@
 package com.breadwallet.presenter.fragments;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
 import android.animation.LayoutTransition;
 import android.animation.ValueAnimator;
@@ -7,6 +9,8 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -159,24 +163,32 @@ public class FragmentReceive extends Fragment {
             @Override
             public void onGlobalLayout() {
                 observer.removeGlobalOnLayoutListener(this);
-                animateBackgroundDim();
-                animateSignalSlide();
+                animateBackgroundDim(false);
+                animateSignalSlide(false);
                 signalLayout.removeView(shareButtonsLayout);
             }
         });
 
     }
 
-    private void animateSignalSlide() {
+    private void animateSignalSlide(final boolean reverse) {
         float translationY = signalLayout.getTranslationY();
         float signalHeight = signalLayout.getHeight();
-        signalLayout.setTranslationY(translationY + signalHeight);
-        signalLayout.animate().translationY(translationY).setDuration(ANIMATION_DURATION).setInterpolator(new OvershootInterpolator(0.7f));
+        signalLayout.setTranslationY(reverse? translationY : translationY + signalHeight);
+        signalLayout.animate().translationY(reverse ? 2000 : translationY).setDuration(ANIMATION_DURATION).setInterpolator(new OvershootInterpolator(0.7f)).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                if (reverse && getActivity() != null)
+                    getActivity().getFragmentManager().popBackStack();
+            }
+        });
+
     }
 
-    private void animateBackgroundDim() {
-        int transColor = android.R.color.transparent;
-        int blackTransColor = R.color.black_trans;
+    private void animateBackgroundDim(boolean reverse) {
+        int transColor = reverse ? R.color.black_trans : android.R.color.transparent;
+        int blackTransColor = reverse ? android.R.color.transparent : R.color.black_trans;
 
         ValueAnimator anim = new ValueAnimator();
         anim.setIntValues(transColor, blackTransColor);
@@ -202,6 +214,28 @@ public class FragmentReceive extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        if (getView() == null) {
+            Log.e(TAG, "onResume: getView is null!");
+            return;
+        }
+        getView().setFocusableInTouchMode(true);
+        getView().requestFocus();
+        //override back pressed for animation on fragment close
+        getView().setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+                switch (keyCode) {
+                    case KeyEvent.KEYCODE_BACK:
+                        Log.e(TAG, "onKey: KEYCODE_BACK");
+                        animateBackgroundDim(true);
+                        animateSignalSlide(true);
+                        getView().setOnKeyListener(null);
+                        return true;
+                }
+                return false;
+            }
+        });
     }
 
     @Override

@@ -1,12 +1,16 @@
 package com.breadwallet.presenter.fragments;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +25,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRSoftKeyboard;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
@@ -118,7 +123,7 @@ public class FragmentSend extends Fragment {
         paste.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!BRAnimator.isClickAllowed()) return;
+                if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
                 String bitcoinUrl = BRClipboardManager.getClipboard(getActivity());
                 if (Utils.isNullOrEmpty(bitcoinUrl)) {
@@ -188,7 +193,7 @@ public class FragmentSend extends Fragment {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!BRAnimator.isClickAllowed()) return;
+                if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
                 boolean allFilled = true;
                 String address = addressEdit.getText().toString();
@@ -260,9 +265,7 @@ public class FragmentSend extends Fragment {
 
                 getContext(), R.layout.bread_spinner_item, curList));
         Log.e(TAG, "spinner took: " + (System.currentTimeMillis() - start));
-        new
-
-                Thread(new Runnable() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 if (getActivity() == null) return;
@@ -305,23 +308,31 @@ public class FragmentSend extends Fragment {
             @Override
             public void onGlobalLayout() {
                 observer.removeGlobalOnLayoutListener(this);
-                animateBackgroundDim();
-                animateSignalSlide();
+                animateBackgroundDim(false);
+                animateSignalSlide(false);
             }
         });
 
     }
 
-    private void animateSignalSlide() {
+    private void animateSignalSlide(final boolean reverse) {
         float translationY = signalLayout.getTranslationY();
         float signalHeight = signalLayout.getHeight();
-        signalLayout.setTranslationY(translationY + signalHeight);
-        signalLayout.animate().translationY(translationY).setDuration(ANIMATION_DURATION).setInterpolator(new OvershootInterpolator(0.7f));
+        signalLayout.setTranslationY(reverse? translationY : translationY + signalHeight);
+        signalLayout.animate().translationY(reverse ? 2000 : translationY).setDuration(ANIMATION_DURATION).setInterpolator(new OvershootInterpolator(0.7f)).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                if (reverse && getActivity() != null)
+                    getActivity().getFragmentManager().popBackStack();
+            }
+        });
+
     }
 
-    private void animateBackgroundDim() {
-        int transColor = android.R.color.transparent;
-        int blackTransColor = R.color.black_trans;
+    private void animateBackgroundDim(boolean reverse) {
+        int transColor = reverse ? R.color.black_trans : android.R.color.transparent;
+        int blackTransColor = reverse ? android.R.color.transparent : R.color.black_trans;
 
         ValueAnimator anim = new ValueAnimator();
         anim.setIntValues(transColor, blackTransColor);
@@ -345,6 +356,28 @@ public class FragmentSend extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        if (getView() == null) {
+            Log.e(TAG, "onResume: getView is null!");
+            return;
+        }
+        getView().setFocusableInTouchMode(true);
+        getView().requestFocus();
+        //override back pressed for animation on fragment close
+        getView().setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+                switch (keyCode) {
+                    case KeyEvent.KEYCODE_BACK:
+                        Log.e(TAG, "onKey: KEYCODE_BACK");
+                        animateBackgroundDim(true);
+                        animateSignalSlide(true);
+                        getView().setOnKeyListener(null);
+                        return true;
+                }
+                return false;
+            }
+        });
     }
 
     @Override
