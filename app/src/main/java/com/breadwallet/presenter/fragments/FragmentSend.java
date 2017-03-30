@@ -233,22 +233,25 @@ public class FragmentSend extends Fragment {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                //not allowed now
+                if (!BRAnimator.isClickAllowed()) {
+                    BreadDialog.showCustomDialog(getActivity(), "Not allowed", "Sending money is not allowed at the moment.", "Ok", null, new BRDialogView.BROnClickListener() {
+                        @Override
+                        public void onClick(BRDialogView brDialogView) {
+                            brDialogView.dismiss();
+                        }
+                    }, null, null, 0);
+                    return;
+                }
+
                 SpringAnimator.showAnimation(v);
                 boolean allFilled = true;
                 String address = addressEdit.getText().toString();
                 String amountStr = amountEdit.getText().toString();
                 String iso = (String) spinner.getSelectedItem();
 
-                // Satoshis = amount * 100 000 000 / rate
-                long amount;
-                if (iso.equalsIgnoreCase("BTC")) {
-                    amount = new BigDecimal(amountStr.isEmpty() ? "0" : amountStr).multiply(new BigDecimal(100)).longValue();
-                } else {
-                    amount = new BigDecimal(amountStr).multiply(new BigDecimal(100000000))
-                            .divide(new BigDecimal(CurrencyDataSource.getInstance(getContext())
-                                    .getCurrencyByIso(iso).rate), BRConstants.ROUNDING_MODE).longValue();
-                }
+
+                long amount = BRWalletManager.getInstance().getAmount(getActivity(), iso, new BigDecimal(amountStr.isEmpty() ? "0" : amountStr)).longValue();
 
                 if (address.isEmpty()) {
                     allFilled = false;
