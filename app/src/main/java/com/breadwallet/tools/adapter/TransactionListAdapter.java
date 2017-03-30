@@ -51,7 +51,7 @@ import static android.widget.Adapter.IGNORE_ITEM_VIEW_TYPE;
  * THE SOFTWARE.
  */
 
-public class TransactionListAdapter extends RecyclerView.Adapter<TransactionListAdapter.CustomViewHolder> {
+public class TransactionListAdapter extends RecyclerView.Adapter<TransactionListAdapter.CustomViewHolder>  {
     public static final String TAG = TransactionListAdapter.class.getName();
 
     private final Context mContext;
@@ -63,7 +63,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         if (itemFeed == null) itemFeed = new ArrayList<>();
         this.layoutResourceId = R.layout.tx_list_item;
         this.mContext = mContext;
-
+        SharedPreferencesManager.addIsoChangedListener(this);
     }
 
 
@@ -116,6 +116,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         convertView.timestamp.setText(timeSpan);
 
     }
+
 
     class CustomViewHolder extends RecyclerView.ViewHolder {
         public TextView sentReceived;

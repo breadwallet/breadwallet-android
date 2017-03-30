@@ -42,7 +42,7 @@
         android:layout_height="wrap_content"
         android:layout_marginRight="32dp"
         android:textColor="@color/almost_black"
-        android:text="$625.24 USD = 1 btc"
+        android:text="--- = 1 btc"
         android:textStyle="bold"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="@+id/pin_description"

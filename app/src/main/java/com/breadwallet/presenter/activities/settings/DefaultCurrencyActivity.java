@@ -42,6 +42,14 @@ public class DefaultCurrencyActivity extends Activity {
         adapter = new CurrencyListAdapter(this);
         adapter.addAll(CurrencyDataSource.getInstance(this).getAllCurrencies());
 
+        //set the rate from the last saved
+        String iso = SharedPreferencesManager.getIso(this);
+        CurrencyEntity entity = CurrencyDataSource.getInstance(this).getCurrencyByIso(iso);
+        if(entity != null) {
+            String finalExchangeRate = BRCurrency.getFormattedCurrencyString(DefaultCurrencyActivity.this, SharedPreferencesManager.getIso(this), new BigDecimal(entity.rate));
+            exchangeText.setText(finalExchangeRate + " = 1BTC");
+        }
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
