@@ -97,26 +97,8 @@ public class BRCurrency {
         decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
 //        int decimalPoints = 0;
         if (Objects.equals(isoCurrencyCode, "BTC")) {
-            result = BRBitcoin.getBitcoinAmount(amount);
-            String currencySymbolString = BRConstants.bitcoinLowercase;
-            if (app != null) {
-                int unit = SharedPreferencesManager.getCurrencyUnit(app);
-                switch (unit) {
-                    case CURRENT_UNIT_BITS:
-                        currencySymbolString = BRConstants.bitcoinLowercase;
-//                        decimalPoints = 2;
-                        if (getNumberOfDecimalPlaces(result.toPlainString()) == 1)
-                            currencyFormat.setMinimumFractionDigits(1);
-                        break;
-                    case BRConstants.CURRENT_UNIT_MBITS:
-                        currencySymbolString = "m" + BRConstants.bitcoinUppercase;
-                        break;
-                    case BRConstants.CURRENT_UNIT_BITCOINS:
-                        currencySymbolString = BRConstants.bitcoinUppercase;
-                        break;
-                }
-            }
-            symbol = currencySymbolString;
+            symbol = BRBitcoin.getBitcoinSymbol();
+
         } else {
             try {
                 currency = Currency.getInstance(isoCurrencyCode);

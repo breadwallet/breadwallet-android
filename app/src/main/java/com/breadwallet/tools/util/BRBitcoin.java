@@ -64,4 +64,43 @@ public class BRBitcoin {
         }
         return result;
     }
+
+    public static BigDecimal getSatoshisFromAmount(BigDecimal amount){
+        BigDecimal result = new BigDecimal(0);
+        int unit = SharedPreferencesManager.getCurrencyUnit(app);
+        switch (unit) {
+            case CURRENT_UNIT_BITS:
+                result = new BigDecimal(String.valueOf(amount)).multiply(new BigDecimal("100"));
+                break;
+            case BRConstants.CURRENT_UNIT_MBITS:
+                result = new BigDecimal(String.valueOf(amount)).multiply(new BigDecimal("100000"));
+                break;
+            case BRConstants.CURRENT_UNIT_BITCOINS:
+                result = new BigDecimal(String.valueOf(amount)).multiply(new BigDecimal("100000000"));
+                break;
+        }
+        return result;
+    }
+
+    public static String getBitcoinSymbol(){
+        String currencySymbolString = BRConstants.bitcoinLowercase;
+        if (app != null) {
+            int unit = SharedPreferencesManager.getCurrencyUnit(app);
+            switch (unit) {
+                case CURRENT_UNIT_BITS:
+                    currencySymbolString = BRConstants.bitcoinLowercase;
+//                        decimalPoints = 2;
+//                    if (getNumberOfDecimalPlaces(result.toPlainString()) == 1)
+//                        currencyFormat.setMinimumFractionDigits(1);
+                    break;
+                case BRConstants.CURRENT_UNIT_MBITS:
+                    currencySymbolString = "m" + BRConstants.bitcoinUppercase;
+                    break;
+                case BRConstants.CURRENT_UNIT_BITCOINS:
+                    currencySymbolString = BRConstants.bitcoinUppercase;
+                    break;
+            }
+        }
+        return currencySymbolString;
+    }
 }

@@ -510,12 +510,8 @@ public class FragmentSend extends Fragment {
         }
         if (obj.amount != null) {
             String iso = ((String) spinner.getSelectedItem());
-            if (iso.equalsIgnoreCase("BTC")) {
-                amountBuilder = new StringBuilder(BRBitcoin.getBitcoinAmount(new BigDecimal(obj.amount)).toPlainString());
-            } else {
-                BigDecimal rate = new BigDecimal(CurrencyDataSource.getInstance(getContext()).getCurrencyByIso(iso).rate);
-                amountBuilder = new StringBuilder(rate.multiply(new BigDecimal(obj.amount).divide(new BigDecimal(100000000), BRConstants.ROUNDING_MODE)).toPlainString());
-            }
+            amountBuilder = new StringBuilder(BRWalletManager.getInstance().getAmount(getActivity(),iso, new BigDecimal(obj.amount)).toPlainString());
+
             updateText();
 
         }

@@ -43,6 +43,7 @@ import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.PeerDataSource;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask;
+import com.breadwallet.tools.util.BRBitcoin;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.manager.BRNotificationManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
@@ -1020,6 +1021,29 @@ public class BRWalletManager {
 
     }
 
+    //returns BTC, mBTC or bits, depending on the user preference
+    public BigDecimal getBitcoin(double rate, long amount) {
+        return BRBitcoin.getBitcoinAmount(new BigDecimal(bitcoinAmount(amount, rate)));
+    }
+
+    //return the exchange for the specified rate
+    public BigDecimal getExchange(double rate, long amount) {
+        return new BigDecimal(localAmount(new BigDecimal(amount).longValue(), rate));
+    }
+
+    //figures out the current amount by the specified iso, amount is satoshis
+    public BigDecimal getAmount(Context app, String iso, BigDecimal amount) {
+        BigDecimal result;
+        if (iso.equalsIgnoreCase("BTC")) {
+            result = BRBitcoin.getBitcoinAmount(amount);
+        } else {
+            //multiply by 100 because core function localAmount accepts the smallest amount e.g. cents
+            BigDecimal rate = new BigDecimal(CurrencyDataSource.getInstance(app).getCurrencyByIso(iso).rate).multiply(new BigDecimal(100));
+            result = getExchange(rate.doubleValue(), amount.longValue()).divide(new BigDecimal(100), 2, BRConstants.ROUNDING_MODE);
+        }
+        return result;
+    }
+
     public void offerToChangeTheAmount(Context app, String title) {
 //
 //        new AlertDialog.Builder(app)
@@ -1147,8 +1171,12 @@ public class BRWalletManager {
 
     public native byte[] tryTransaction(String addressHolder, long amountHolder);
 
+    // returns the given amount (in satoshis) in local currency units (i.e. pennies, pence)
+    // price is local currency units per bitcoin
     public native long localAmount(long amount, double price);
 
+    // returns the given local currency amount in satoshis
+    // price is local currency units (i.e. pennies, pence) per bitcoin
     public native long bitcoinAmount(long localAmount, double price);
 
     public native void walletFreeEverything();
