@@ -82,12 +82,11 @@ public class BRCurrency {
 //                getFormattedCurrencyString(ctx, iso, new BigDecimal(exchange)) + ")";
 //    }
 
-    // amount is satoshis
+    // amount is in currency or BTC (bits, mBTC or BTC)
     public static String getFormattedCurrencyString(Context app, String isoCurrencyCode, BigDecimal amount) {
 //        Log.e(TAG, "amount: " + amount);
         DecimalFormat currencyFormat;
 
-        BigDecimal result = amount;
         // This formats currency values as the user expects to read them (default locale).
         currencyFormat = (DecimalFormat) DecimalFormat.getCurrencyInstance(Locale.getDefault());
         // This specifies the actual currency that the value is in, and provide
@@ -99,7 +98,6 @@ public class BRCurrency {
 //        int decimalPoints = 0;
         if (Objects.equals(isoCurrencyCode, "BTC")) {
             symbol = BRBitcoin.getBitcoinSymbol();
-            result = BRBitcoin.getBitcoinAmount(result);
         } else {
             try {
                 currency = Currency.getInstance(isoCurrencyCode);
@@ -115,7 +113,7 @@ public class BRCurrency {
         currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
         currencyFormat.setNegativePrefix(decimalFormatSymbols.getCurrencySymbol() + "-");
         currencyFormat.setNegativeSuffix("");
-        return currencyFormat.format(result.doubleValue());
+        return currencyFormat.format(amount.doubleValue());
     }
 
 

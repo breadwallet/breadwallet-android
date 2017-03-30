@@ -96,7 +96,7 @@ public class FragmentSend extends Fragment {
     private TextView isoText;
     private EditText amountEdit;
     private TextView balanceText;
-    private BigDecimal curBalance;
+    private long curBalance;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -118,7 +118,6 @@ public class FragmentSend extends Fragment {
         balanceText = (TextView) rootView.findViewById(R.id.balance_text);
         setListeners();
         amountBuilder = new StringBuilder(0);
-        curBalance = new BigDecimal(0);
 
         return rootView;
     }
@@ -271,7 +270,7 @@ public class FragmentSend extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String item = parent.getItemAtPosition(position).toString();
-                curBalance = BRWalletManager.getInstance().getAmount(getActivity(), item,new BigDecimal(BRWalletManager.getInstance().getBalance(getActivity())));
+                curBalance = BRWalletManager.getInstance().getBalance(getActivity());
                 Log.e(TAG, "onItemSelected: " + item);
                 isoText.setText(BRCurrency.getSymbolByIso(item));
                 SpringAnimator.showAnimation(isoText);
@@ -488,20 +487,24 @@ public class FragmentSend extends Fragment {
     private void updateText() {
         String tmpAmount = amountBuilder.toString();
         amountEdit.setText(tmpAmount);
-        if (new BigDecimal(tmpAmount.isEmpty() || tmpAmount.equalsIgnoreCase(".") ? "0" : tmpAmount).doubleValue() > curBalance.doubleValue()) {
-            String balanceString = String.format("Insufficient funds. Try an amount below your current balance: %s",
-                    BRCurrency.getFormattedCurrencyString(getActivity(), (String) spinner.getSelectedItem(), curBalance));
+        String balanceString;
+        String iso = (String) spinner.getSelectedItem();
+        //Balance depending on ISO
+        BigDecimal balanceForISO = BRWalletManager.getInstance().getAmount(getActivity(), iso, new BigDecimal(curBalance));
+        //formattedBalance
+        String formattedBalance = BRCurrency.getFormattedCurrencyString(getActivity(), iso, balanceForISO);
+        if (new BigDecimal((tmpAmount.isEmpty() || tmpAmount.equalsIgnoreCase(".")) ? "0" : tmpAmount).doubleValue() > balanceForISO.doubleValue()) {
+            balanceString = String.format("Insufficient funds. Try an amount below your current balance: %s", formattedBalance);
             balanceText.setTextColor(getContext().getColor(R.color.warning_color));
-            balanceText.setText(balanceString);
             amountEdit.setTextColor(getContext().getColor(R.color.warning_color));
             isoText.setTextColor(getContext().getColor(R.color.warning_color));
         } else {
-            String balanceString = String.format("Current Balance: %s", BRCurrency.getFormattedCurrencyString(getActivity(), (String) spinner.getSelectedItem(), curBalance));
+            balanceString = String.format("Current Balance: %s", formattedBalance);
             balanceText.setTextColor(getContext().getColor(R.color.light_gray));
-            balanceText.setText(balanceString);
             amountEdit.setTextColor(getContext().getColor(R.color.almost_black));
             isoText.setTextColor(getContext().getColor(R.color.almost_black));
         }
+        balanceText.setText(balanceString);
 
     }
 

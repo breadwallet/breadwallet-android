@@ -354,15 +354,23 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
                     e.printStackTrace();
                 }
                 String iso = SharedPreferencesManager.getIso(BreadActivity.this);
-                final String btc = BRCurrency.getFormattedCurrencyString(BreadActivity.this, "BTC", new BigDecimal(SharedPreferencesManager.getBalance(BreadActivity.this)));
 
-                BigDecimal curAmount = BRWalletManager.getInstance().getAmount(BreadActivity.this, iso, new BigDecimal(SharedPreferencesManager.getBalance(BreadActivity.this)));
-                final String amount = BRCurrency.getFormattedCurrencyString(BreadActivity.this, iso, curAmount);
+                //current amount in satoshis
+                final BigDecimal amount = new BigDecimal(SharedPreferencesManager.getBalance(BreadActivity.this));
+
+                //amount in BTC units
+                BigDecimal btcAmount = BRWalletManager.getInstance().getAmount(BreadActivity.this, "BTC", amount);
+                final String formattedBTCAmount = BRCurrency.getFormattedCurrencyString(BreadActivity.this, "BTC", btcAmount);
+
+                //amount in currency units
+                BigDecimal curAmount = BRWalletManager.getInstance().getAmount(BreadActivity.this, iso, amount);
+                final String formattedCurAmount = BRCurrency.getFormattedCurrencyString(BreadActivity.this, iso, curAmount);
+
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        primaryPrice.setText(amount);
-                        secondaryPrice.setText(btc);
+                        primaryPrice.setText(formattedCurAmount);
+                        secondaryPrice.setText(formattedBTCAmount);
                         SpringAnimator.showAnimation(primaryPrice);
                         SpringAnimator.showAnimation(secondaryPrice);
 
