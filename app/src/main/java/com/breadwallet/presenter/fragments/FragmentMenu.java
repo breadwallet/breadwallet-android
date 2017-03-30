@@ -87,7 +87,7 @@ public class FragmentMenu extends Fragment {
         layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!BRAnimator.isClickAllowed()) return;
+                if (!BRAnimator.isClickAllowed()) return;
                 getActivity().onBackPressed();
             }
         });
@@ -160,7 +160,7 @@ public class FragmentMenu extends Fragment {
     private void animateSignalSlide(final boolean reverse) {
         float translationY = signalLayout.getTranslationY();
         float signalHeight = signalLayout.getHeight();
-        signalLayout.setTranslationY(reverse? translationY : translationY + signalHeight);
+        signalLayout.setTranslationY(reverse ? translationY : translationY + signalHeight);
         signalLayout.animate().translationY(reverse ? 2000 : translationY).setDuration(ANIMATION_DURATION).setInterpolator(new OvershootInterpolator(0.7f)).setListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
@@ -234,7 +234,6 @@ public class FragmentMenu extends Fragment {
     }
 
 
-
     @Override
     public void onResume() {
         super.onResume();
@@ -265,6 +264,8 @@ public class FragmentMenu extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        if (getView() != null)
+            getView().setOnKeyListener(null);
     }
 
 

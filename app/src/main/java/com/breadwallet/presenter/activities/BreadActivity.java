@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -228,14 +229,17 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         }));
     }
 
-    public void showSendFragment(String bitcoinUrl) {
-        FragmentSend fragmentSend = new FragmentSend();
+    public void showSendFragment(final String bitcoinUrl) {
+        final FragmentSend fragmentSend = new FragmentSend();
+        if (bitcoinUrl != null && !bitcoinUrl.isEmpty()) {
+            Bundle bundle = new Bundle();
+            bundle.putString("url", bitcoinUrl);
+            fragmentSend.setArguments(bundle);
+        }
         getFragmentManager().beginTransaction()
                 .add(android.R.id.content, fragmentSend, FragmentSend.class.getName())
                 .addToBackStack(FragmentSend.class.getName()).commit();
-        if (bitcoinUrl != null && !bitcoinUrl.isEmpty()) {
-            fragmentSend.setUrl(bitcoinUrl);
-        }
+
     }
 
     @Override

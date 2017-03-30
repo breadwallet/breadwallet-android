@@ -51,6 +51,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.R.attr.dialogLayout;
 import static com.breadwallet.tools.security.BitcoinUrlHandler.getRequestFromString;
 
 
@@ -267,7 +268,6 @@ public class FragmentSend extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String item = parent.getItemAtPosition(position).toString();
-                amountBuilder = new StringBuilder(0);
                 BigDecimal curBalanceBTC = new BigDecimal(BRWalletManager.getInstance().getBalance(getActivity()));
                 if (item.equalsIgnoreCase("BTC")) {
                     curBalance = curBalanceBTC;
@@ -364,6 +364,12 @@ public class FragmentSend extends Fragment {
                 super.onAnimationEnd(animation);
                 if (reverse && getActivity() != null)
                     getActivity().getFragmentManager().popBackStack();
+
+                if (!reverse) {
+                    Bundle bundle = getArguments();
+                    if (bundle != null && bundle.getString("url") != null)
+                        setUrl(bundle.getString("url"));
+                }
             }
         });
 
@@ -390,6 +396,8 @@ public class FragmentSend extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+        animateBackgroundDim(true);
+        animateSignalSlide(true);
     }
 
     @Override
@@ -399,30 +407,31 @@ public class FragmentSend extends Fragment {
             Log.e(TAG, "onResume: getView is null!");
             return;
         }
-        getView().setFocusableInTouchMode(true);
-        getView().requestFocus();
-        //override back pressed for animation on fragment close
-        getView().setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-
-                switch (keyCode) {
-                    case KeyEvent.KEYCODE_BACK:
-                        Log.e(TAG, "onKey: KEYCODE_BACK");
-                        animateBackgroundDim(true);
-                        animateSignalSlide(true);
-                        getView().setOnKeyListener(null);
-                        return true;
-                }
-                return false;
-            }
-        });
+//        getView().setFocusableInTouchMode(true);
+//        getView().requestFocus();
+//        //override back pressed for animation on fragment close
+//        getView().setOnKeyListener(new View.OnKeyListener() {
+//            @Override
+//            public boolean onKey(View v, int keyCode, KeyEvent event) {
+//
+//                switch (keyCode) {
+//                    case KeyEvent.KEYCODE_BACK:
+//                        Log.e(TAG, "onKey: KEYCODE_BACK");
+//                        animateBackgroundDim(true);
+//                        animateSignalSlide(true);
+//                        getView().setOnKeyListener(null);
+//                        return true;
+//                }
+//                return false;
+//            }
+//        });
     }
 
     @Override
     public void onPause() {
         super.onPause();
     }
+
 
     private void handleClick(String key) {
         if (key == null) {
@@ -510,7 +519,7 @@ public class FragmentSend extends Fragment {
         }
         if (obj.amount != null) {
             String iso = ((String) spinner.getSelectedItem());
-            amountBuilder = new StringBuilder(BRWalletManager.getInstance().getAmount(getActivity(),iso, new BigDecimal(obj.amount)).toPlainString());
+            amountBuilder = new StringBuilder(BRWalletManager.getInstance().getAmount(getActivity(), iso, new BigDecimal(obj.amount)).toPlainString());
 
             updateText();
 
