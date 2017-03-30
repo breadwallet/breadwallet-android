@@ -641,6 +641,7 @@ public class BRWalletManager {
         } else {
             minOutput = BRWalletManager.getInstance().getMinOutputAmount();
         }
+        //amount can't be less than the min
         if (request.amount < minOutput) {
             final String bitcoinMinMessage = String.format(Locale.getDefault(), ctx.getString(R.string.bitcoin_payment_cant_be_less),
                     BRConstants.bitcoinLowercase + new BigDecimal(minOutput).divide(new BigDecimal("100")));
@@ -656,6 +657,7 @@ public class BRWalletManager {
             return;
         }
 
+        //successfully created the transaction, authenticate user
         AuthManager.getInstance().authPrompt(ctx, "Pin Required", message, false, new BRAuthCompletion() {
             @Override
             public void onComplete() {
@@ -668,15 +670,6 @@ public class BRWalletManager {
             }
         });
 
-//        ((Activity) ctx).runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                ((BreadWalletApp) ctx.getApplicationContext()).authPrompt(ctx,
-//                        BRConstants.AUTH_FOR_PAY, request, message, "", null, false);
-//            }
-//        });
-
-
     }
 
     public void handlePay(final Context context, final PaymentRequestEntity paymentRequest) {
@@ -684,12 +677,15 @@ public class BRWalletManager {
             Log.e(TAG, "handlePay: WRONG PARAMS");
             return;
         }
+
+        // check if spending is allowed
         if (!SharedPreferencesManager.getAllowSpend(app)) {
             Log.e(TAG, "handlePay: spend not allowed");
             showSpendNotAllowed(app);
             return;
         }
         long minAmount = getMinOutputAmountRequested();
+        //check if amount isn't smaller than the min amount
         if (paymentRequest.amount < minAmount) {
             Log.e(TAG, "pay: FAIL: bitcoin payment is less than the minimum.");
             final String bitcoinMinMessage = String.format(Locale.getDefault(), context.getString(R.string.bitcoin_payment_cant_be_less),
@@ -708,6 +704,8 @@ public class BRWalletManager {
         byte[] tmpTx = m.tryTransaction(paymentRequest.addresses[0], paymentRequest.amount);
         long feeForTx = m.feeForTransaction(paymentRequest.addresses[0], paymentRequest.amount);
 
+
+        //try transaction failed so check why
         if (tmpTx == null && paymentRequest.amount <= getBalance(context) && paymentRequest.amount > 0) {
             final long maxAmountDouble = m.getMaxOutputAmount();
             if (maxAmountDouble == -1) {
@@ -715,6 +713,7 @@ public class BRWalletManager {
                 FirebaseCrash.report(ex);
                 throw ex;
             }
+            //check if max you can send isn't smaller than the min amount
             if (maxAmountDouble < getMinOutputAmount()) {
                 Log.e(TAG, "pay: FAIL: insufficient funds for fee.");
 
@@ -728,6 +727,7 @@ public class BRWalletManager {
                 return;
             }
 
+            //offer to change amount, so it would be enough for fee
             final long amountToReduce = paymentRequest.amount - maxAmountDouble;
 //            final AlertDialog.Builder builder = new AlertDialog.Builder(context);
             String iso = SharedPreferencesManager.getIso(context);
@@ -761,12 +761,14 @@ public class BRWalletManager {
 
             return;
 
+            //Insufficient funds, show message to user
         } else if (tmpTx == null && paymentRequest.amount >= getBalance(context) && paymentRequest.amount > 0) {
             Log.e(TAG, "pay: FAIL: offer To Change The Amount.");
             BRWalletManager.getInstance().offerToChangeTheAmount(context, context.getString(R.string.insufficient_funds));
             return;
         }
 
+        // payment successful
         PostAuthenticationProcessor.getInstance().setTmpTx(tmpTx);
         Log.d(TAG, "pay: feeForTx: " + feeForTx + ", amount: " + paymentRequest.amount +
                 ", getBalance(): " + getBalance(context));

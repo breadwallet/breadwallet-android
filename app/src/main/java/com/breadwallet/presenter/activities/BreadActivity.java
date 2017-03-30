@@ -228,7 +228,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         }));
     }
 
-    private void showSendFragment(String bitcoinUrl) {
+    public void showSendFragment(String bitcoinUrl) {
         FragmentSend fragmentSend = new FragmentSend();
         getFragmentManager().beginTransaction()
                 .add(android.R.id.content, fragmentSend, FragmentSend.class.getName())

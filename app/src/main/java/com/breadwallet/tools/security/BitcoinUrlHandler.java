@@ -2,10 +2,10 @@ package com.breadwallet.tools.security;
 
 import android.app.Activity;
 import android.net.Uri;
-import android.os.Handler;
 import android.util.Log;
 
 import com.breadwallet.exceptions.BRKeystoreErrorException;
+import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.presenter.entities.RequestObject;
@@ -85,9 +85,9 @@ public class BitcoinUrlHandler {
             return false;
         }
         if (requestObject.r != null) {
-            return tryAndProcessRequestURL(requestObject);
+            return tryPaymentRequest(requestObject);
         } else if (requestObject.address != null) {
-            return tryAndProcessBitcoinURL(requestObject, app);
+            return tryBitcoinURL(url, app);
         } else {
             if (app != null) {
 //                BreadDialog.showCustomDialog(app, app.getString(R.string.warning),
@@ -371,7 +371,7 @@ public class BitcoinUrlHandler {
         return obj;
     }
 
-    private static boolean tryAndProcessRequestURL(RequestObject requestObject) {
+    private static boolean tryPaymentRequest(RequestObject requestObject) {
         String theURL = null;
         String url = requestObject.r;
         synchronized (lockObject) {
@@ -386,52 +386,31 @@ public class BitcoinUrlHandler {
         return true;
     }
 
-    private static boolean tryAndProcessBitcoinURL(RequestObject requestObject, Activity app) {
-        /** use the C implementation to check it */
-        final String str = requestObject.address;
-        if (str == null) return false;
+    private static boolean tryBitcoinURL(final String url, final Activity app) {
+        RequestObject requestObject = getRequestFromString(url);
+        if (requestObject == null || requestObject.address == null || requestObject.address.isEmpty())
+            return false;
         final String[] addresses = new String[1];
-        addresses[0] = str;
-        if (requestObject.amount != null) {
-            BigDecimal bigDecimal = new BigDecimal(requestObject.amount);
-            long amount = bigDecimal.longValue();
-            if (amount == 0 && app != null) {
-                app.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-//                        FragmentScanResult.address = str;
-                        //TODO find a better way
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-//                                BRAnimator.animateScanResultFragment();
-                            }
-                        }, 500);
+        addresses[0] = requestObject.address;
 
-                    }
-                });
-                return false;
-            }
-//            String strAmount = String.valueOf(amount);
-            if (app != null) {
-                BRWalletManager.getInstance().handlePay(app, new PaymentRequestEntity(addresses, amount, null, true));
-            }
+        String amount = requestObject.amount;
+
+        if (amount != null && amount.isEmpty() && new BigDecimal(amount).doubleValue() != 0) {
+            app.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ((BreadActivity) app).showSendFragment(url);
+
+                }
+            });
         } else {
-            if (app != null)
-                app.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-//                        FragmentScanResult.address = str;
-//                        new Handler().postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                BRAnimator.animateScanResultFragment();
-//                            }
-//                        }, 1000);
-                    }
-                });
+            if (app != null) {
+                BRWalletManager.getInstance().handlePay(app, new PaymentRequestEntity(addresses, new BigDecimal(amount).longValue(), null, true));
+            }
         }
+
         return true;
+
     }
 
     public static native PaymentRequestWrapper parsePaymentRequest(byte[] req);
