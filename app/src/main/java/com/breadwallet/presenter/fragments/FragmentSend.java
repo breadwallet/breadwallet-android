@@ -163,7 +163,6 @@ public class FragmentSend extends Fragment {
                             }
                         }, null, null, 0);
                         BRClipboardManager.putClipboard(getActivity(), "");
-                        addressEdit.setText("");
                     } else if (wm.addressIsUsed(address)) {
                         final String finalAddress = address;
                         BreadDialog.showCustomDialog(getActivity(), "Address used", getResources().getString(R.string.address_already_used), "Ignore", "Cancel", new BRDialogView.BROnClickListener() {
@@ -336,7 +335,6 @@ public class FragmentSend extends Fragment {
             }
         }, null, null, 0);
         BRClipboardManager.putClipboard(getActivity(), "");
-        addressEdit.setText("");
     }
 
 
