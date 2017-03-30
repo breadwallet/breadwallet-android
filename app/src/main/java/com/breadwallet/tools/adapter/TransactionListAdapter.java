@@ -103,11 +103,11 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         convertView.confirmation.setText((confirms >= 6) ? "Completed" : "Waiting to be confirmed");
 
         long satoshisAmount = received ? item.getReceived() : (item.getSent() - item.getReceived()) * -1;
-        String iso = SharedPreferencesManager.getIso(mContext);
 
         boolean isBTCPreferred = SharedPreferencesManager.getPreferredBTC(mContext);
+        String iso = isBTCPreferred ? "BTC" : SharedPreferencesManager.getIso(mContext);
 
-        convertView.amount.setText(BRWalletManager.getInstance().getAmount(mContext, isBTCPreferred? "BTC" : iso, new BigDecimal(satoshisAmount)).toPlainString());
+        convertView.amount.setText(BRCurrency.getFormattedCurrencyString(mContext, iso, BRWalletManager.getInstance().getAmount(mContext, iso, new BigDecimal(satoshisAmount))));
 
         //if it's 0 we use the current time.
         long timeStamp = item.getTimeStamp() == 0 ? System.currentTimeMillis() : item.getTimeStamp() * 1000;
