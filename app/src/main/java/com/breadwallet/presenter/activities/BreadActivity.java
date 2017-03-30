@@ -69,7 +69,7 @@ import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
  * THE SOFTWARE.
  */
 
-public class BreadActivity extends AppCompatActivity implements BRWalletManager.OnBalanceChanged, BRPeerManager.OnTxStatusUpdate {
+public class BreadActivity extends AppCompatActivity implements BRWalletManager.OnBalanceChanged, BRPeerManager.OnTxStatusUpdate, SharedPreferencesManager.OnIsoChangedListener {
     private static final String TAG = BreadActivity.class.getName();
 
     private LinearLayout sendButton;
@@ -98,6 +98,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         setContentView(R.layout.activity_bread);
         BRWalletManager.getInstance().addBalanceChangedListener(this);
         BRPeerManager.getInstance().addStatusUpdateListener(this);
+        SharedPreferencesManager.addIsoChangedListener(this);
         app = this;
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
         // Always cast your custom Toolbar here, and set it as the ActionBar.
@@ -338,26 +339,37 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     @Override
     public void onBalanceChanged(final long balance) {
         Log.e(TAG, "onBalanceChanged: " + balance);
-        String iso = SharedPreferencesManager.getIso(this);
-        CurrencyEntity ent = CurrencyDataSource.getInstance(this).getCurrencyByIso(iso);
-        if (ent == null) {
-            Log.e(TAG, "onBalanceChanged: No currency with iso: " + iso);
-            return;
-        }
-        final String bits = BRCurrency.getFormattedCurrencyString(this, "BTC", new BigDecimal(balance));
+        updateUI();
 
-        float rateForIso = ent.rate;
-        final String amount = BRCurrency.getExchangeForAmount(new BigDecimal(rateForIso), iso, new BigDecimal(balance), this);
-        runOnUiThread(new Runnable() {
+    }
+
+    public void updateUI(){
+        new Thread(new Runnable() {
             @Override
             public void run() {
-                primaryPrice.setText(amount);
-                secondaryPrice.setText(bits);
-                SpringAnimator.showAnimation(primaryPrice);
-                SpringAnimator.showAnimation(secondaryPrice);
+                //sleep a little in order to make sure all the commits are finished (like SharePreferences commits)
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                String iso = SharedPreferencesManager.getIso(BreadActivity.this);
+                final String btc = BRCurrency.getFormattedCurrencyString(BreadActivity.this, "BTC", new BigDecimal(SharedPreferencesManager.getBalance(BreadActivity.this)));
 
+                BigDecimal curAmount = BRWalletManager.getInstance().getAmount(BreadActivity.this, iso, new BigDecimal(SharedPreferencesManager.getBalance(BreadActivity.this)));
+                final String amount = BRCurrency.getFormattedCurrencyString(BreadActivity.this, iso, curAmount);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        primaryPrice.setText(amount);
+                        secondaryPrice.setText(btc);
+                        SpringAnimator.showAnimation(primaryPrice);
+                        SpringAnimator.showAnimation(secondaryPrice);
+
+                    }
+                });
             }
-        });
+        }).start();
 
     }
 
@@ -383,5 +395,10 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     @Override
     public void onStatusUpdate() {
         setUpTxList();
+    }
+
+    @Override
+    public void onIsoChanged(String iso) {
+        updateUI();
     }
 }

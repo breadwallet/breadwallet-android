@@ -55,21 +55,21 @@ public class BRCurrency {
 //                getFormattedCurrencyString("BTC", result);
 //    }
 
-    public static String getBitsAndExchangeString(BigDecimal rate, String iso, BigDecimal target, Activity ctx) {
-        if (rate.doubleValue() == 0) rate = new BigDecimal("1");
-        long exchange = BRWalletManager.getInstance().localAmount(target.longValue(),
-                new BigDecimal(String.valueOf(rate)).multiply(new BigDecimal("100")).doubleValue());
-        return getFormattedCurrencyString(ctx, "BTC", target) + " = " +
-                getFormattedCurrencyString(ctx, iso, new BigDecimal(exchange));
-    }
+//    public static String getBitsAndExchangeString(BigDecimal rate, String iso, BigDecimal target, Activity ctx) {
+//        if (rate.doubleValue() == 0) rate = new BigDecimal("1");
+//        long exchange = BRWalletManager.getInstance().localAmount(target.longValue(),
+//                new BigDecimal(String.valueOf(rate)).multiply(new BigDecimal("100")).doubleValue());
+//        return getFormattedCurrencyString(ctx, "BTC", target) + " = " +
+//                getFormattedCurrencyString(ctx, iso, new BigDecimal(exchange));
+//    }
 
-    public static String getExchangeForAmount(BigDecimal rate, String iso, BigDecimal targetAmount, Context ctx) {
-        if (rate.doubleValue() == 0) rate = new BigDecimal("1");
-
-        long exchange = BRWalletManager.getInstance().localAmount(targetAmount.longValue(), rate.doubleValue());
-
-        return getFormattedCurrencyString(ctx, iso, new BigDecimal(exchange));
-    }
+//    public static String getExchangeForAmount(BigDecimal rate, String iso, BigDecimal targetAmount, Context ctx) {
+//        if (rate.doubleValue() == 0) rate = new BigDecimal("1");
+//
+//        long exchange = BRWalletManager.getInstance().localAmount(targetAmount.longValue(), rate.doubleValue());
+//
+//        return getFormattedCurrencyString(ctx, iso, new BigDecimal(exchange));
+//    }
 
 //    public static String getCurrentBalanceText(Activity ctx) {
 //        CurrencyFetchManager cm = CurrencyFetchManager.getInstance(ctx);
@@ -82,6 +82,7 @@ public class BRCurrency {
 //                getFormattedCurrencyString(ctx, iso, new BigDecimal(exchange)) + ")";
 //    }
 
+    // amount is satoshis
     public static String getFormattedCurrencyString(Context app, String isoCurrencyCode, BigDecimal amount) {
 //        Log.e(TAG, "amount: " + amount);
         DecimalFormat currencyFormat;
@@ -98,7 +99,7 @@ public class BRCurrency {
 //        int decimalPoints = 0;
         if (Objects.equals(isoCurrencyCode, "BTC")) {
             symbol = BRBitcoin.getBitcoinSymbol();
-
+            result = BRBitcoin.getBitcoinAmount(result);
         } else {
             try {
                 currency = Currency.getInstance(isoCurrencyCode);

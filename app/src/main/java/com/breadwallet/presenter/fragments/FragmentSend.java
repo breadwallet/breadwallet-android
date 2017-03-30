@@ -271,13 +271,7 @@ public class FragmentSend extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String item = parent.getItemAtPosition(position).toString();
-                BigDecimal curBalanceBTC = new BigDecimal(BRWalletManager.getInstance().getBalance(getActivity()));
-                if (item.equalsIgnoreCase("BTC")) {
-                    curBalance = curBalanceBTC;
-                } else {
-                    BigDecimal rate = new BigDecimal(CurrencyDataSource.getInstance(getContext()).getCurrencyByIso(item).rate);
-                    curBalance = rate.multiply(curBalanceBTC.divide(new BigDecimal(100000000), BRConstants.ROUNDING_MODE));
-                }
+                curBalance = BRWalletManager.getInstance().getAmount(getActivity(), item,new BigDecimal(BRWalletManager.getInstance().getBalance(getActivity())));
                 Log.e(TAG, "onItemSelected: " + item);
                 isoText.setText(BRCurrency.getSymbolByIso(item));
                 SpringAnimator.showAnimation(isoText);

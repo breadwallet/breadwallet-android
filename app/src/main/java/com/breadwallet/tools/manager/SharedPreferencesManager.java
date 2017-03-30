@@ -56,6 +56,28 @@ import static com.breadwallet.tools.util.BRConstants.GEO_PERMISSIONS_REQUESTED;
 public class SharedPreferencesManager {
     public static final String TAG = SharedPreferencesManager.class.getName();
 
+    public static List<OnIsoChangedListener> isoChangedListeners = new ArrayList<>();
+
+    public interface OnIsoChangedListener {
+        void onIsoChanged(String iso);
+    }
+
+    public static void addIsoChangedListener(OnIsoChangedListener listener) {
+        if (isoChangedListeners == null) {
+            isoChangedListeners = new ArrayList<>();
+        }
+        if (!isoChangedListeners.contains(listener))
+            isoChangedListeners.add(listener);
+    }
+
+    public static void removeListener(OnIsoChangedListener listener) {
+        if (isoChangedListeners == null) {
+            isoChangedListeners = new ArrayList<>();
+        }
+        isoChangedListeners.remove(listener);
+
+    }
+
 
     public static String getIso(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
@@ -67,6 +89,10 @@ public class SharedPreferencesManager {
         SharedPreferences.Editor editor = settings.edit();
         editor.putString(BRConstants.CURRENT_CURRENCY, code.equalsIgnoreCase(Locale.getDefault().getISO3Language()) ? null : code);
         editor.apply();
+
+        for (OnIsoChangedListener listener : isoChangedListeners) {
+            if (listener != null) listener.onIsoChanged(code);
+        }
 
     }
 

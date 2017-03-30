@@ -630,10 +630,14 @@ public class BRWalletManager {
             feeForTx += (getBalance(ctx) - request.amount) % 100;
         }
         final long total = request.amount + feeForTx;
-        final String message = certification + allAddresses.toString() + "\n\n" + "amount: " + BRCurrency.getFormattedCurrencyString(ctx, "BTC", BigDecimal.valueOf(request.amount))
-                + " (" + BRCurrency.getExchangeForAmount(new BigDecimal(rate), iso, new BigDecimal(request.amount), ctx) + ")" + "\nnetwork fee: +" + BRCurrency.getFormattedCurrencyString(ctx, "BTC", BigDecimal.valueOf(feeForTx))
-                + " (" + BRCurrency.getExchangeForAmount(new BigDecimal(rate), iso, new BigDecimal(feeForTx), ctx) + ")" + "\ntotal: " + BRCurrency.getFormattedCurrencyString(ctx, "BTC", BigDecimal.valueOf(total))
-                + " (" + BRCurrency.getExchangeForAmount(new BigDecimal(rate), iso, new BigDecimal(total), ctx) + ")";
+        String formattedAmount = BRCurrency.getFormattedCurrencyString(ctx, iso, BRWalletManager.getInstance().getAmount(ctx, iso, new BigDecimal(request.amount)));
+        String formattedFee = BRCurrency.getFormattedCurrencyString(ctx, iso, BRWalletManager.getInstance().getAmount(ctx, iso, new BigDecimal(feeForTx)));
+        String formattedTotal = BRCurrency.getFormattedCurrencyString(ctx, iso, BRWalletManager.getInstance().getAmount(ctx, iso, new BigDecimal(total)));
+
+        final String message = certification + allAddresses.toString() + "\n"
+                + "amount: " + BRCurrency.getFormattedCurrencyString(ctx, "BTC", BigDecimal.valueOf(request.amount)) + " (" + formattedAmount + ")"
+                + "\nnetwork fee: +" + BRCurrency.getFormattedCurrencyString(ctx, "BTC", BigDecimal.valueOf(feeForTx)) + " (" + formattedFee + ")"
+                + "\ntotal: " + BRCurrency.getFormattedCurrencyString(ctx, "BTC", BigDecimal.valueOf(total)) + " (" + formattedTotal + ")";
 
         double minOutput;
         if (request.isAmountRequested) {
@@ -734,9 +738,9 @@ public class BRWalletManager {
             BigDecimal rate = BigDecimal.valueOf(CurrencyDataSource.getInstance(context).getCurrencyByIso(iso).rate);
 
             String reduceBits = BRCurrency.getFormattedCurrencyString(context, "BTC", BigDecimal.valueOf(amountToReduce));
-            String reduceFee = BRCurrency.getExchangeForAmount(rate, iso, new BigDecimal(amountToReduce), context);
+            String reduceFee = BRCurrency.getFormattedCurrencyString(context, iso, BRWalletManager.getInstance().getAmount(context, iso, new BigDecimal(amountToReduce)));
             String reduceBitsMinus = BRCurrency.getFormattedCurrencyString(context, "BTC", new BigDecimal(amountToReduce).negate());
-            String reduceFeeMinus = BRCurrency.getExchangeForAmount(rate, iso, new BigDecimal(amountToReduce).negate(), context);
+            String reduceFeeMinus = BRCurrency.getFormattedCurrencyString(context, iso, BRWalletManager.getInstance().getAmount(context, iso, new BigDecimal(amountToReduce).negate()));
 
             BreadDialog.showCustomDialog(context, context.getString(R.string.insufficient_funds_for_fee), String.format(context.getString(R.string.reduce_payment_amount_by),
                     reduceBits, reduceFee), String.format("%s (%s)", reduceBitsMinus, reduceFeeMinus), "Cancel", new BRDialogView.BROnClickListener() {

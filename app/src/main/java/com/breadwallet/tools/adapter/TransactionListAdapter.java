@@ -62,7 +62,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         if (itemFeed == null) itemFeed = new ArrayList<>();
         this.layoutResourceId = R.layout.tx_list_item;
         this.mContext = mContext;
-        
+
     }
 
 
@@ -109,9 +109,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         if (priceInBtc || ent == null) {
             convertView.amount.setText(BRCurrency.getFormattedCurrencyString(mContext, "BTC", new BigDecimal(satoshisAmount)));
         } else {
-
-            BigDecimal exchangeRate = new BigDecimal(ent.rate);
-            String exchangeString = BRCurrency.getExchangeForAmount(exchangeRate, iso, new BigDecimal(satoshisAmount), mContext);
+            String exchangeString = BRCurrency.getFormattedCurrencyString(mContext, iso, new BigDecimal(satoshisAmount));
             convertView.amount.setText(exchangeString);
         }
         //if it's 0 we use the current time.
@@ -133,7 +131,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
 
         public CustomViewHolder(View view) {
             super(view);
-            sentReceived  = (TextView) view.findViewById(R.id.sent_received);
+            sentReceived = (TextView) view.findViewById(R.id.sent_received);
             amount = (TextView) view.findViewById(R.id.amount);
             toFrom = (TextView) view.findViewById(R.id.to_from);
             account = (TextView) view.findViewById(R.id.account);
