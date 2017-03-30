@@ -34,6 +34,7 @@ import com.breadwallet.tools.manager.CurrencyFetchManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
+import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
@@ -69,7 +70,7 @@ import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
  * THE SOFTWARE.
  */
 
-public class BreadActivity extends AppCompatActivity implements BRWalletManager.OnBalanceChanged, BRPeerManager.OnTxStatusUpdate, SharedPreferencesManager.OnIsoChangedListener {
+public class BreadActivity extends AppCompatActivity implements BRWalletManager.OnBalanceChanged, BRPeerManager.OnTxStatusUpdate, SharedPreferencesManager.OnIsoChangedListener,  TransactionDataSource.OnTxAddedListener  {
     private static final String TAG = BreadActivity.class.getName();
 
     private LinearLayout sendButton;
@@ -408,5 +409,11 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     @Override
     public void onIsoChanged(String iso) {
         updateUI();
+        setUpTxList();
+    }
+
+    @Override
+    public void onTxAdded() {
+        setUpTxList();
     }
 }

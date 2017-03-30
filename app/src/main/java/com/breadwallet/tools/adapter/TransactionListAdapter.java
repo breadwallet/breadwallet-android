@@ -15,6 +15,7 @@ import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
+import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.wallet.BRWalletManager;
 
@@ -51,7 +52,7 @@ import static android.widget.Adapter.IGNORE_ITEM_VIEW_TYPE;
  * THE SOFTWARE.
  */
 
-public class TransactionListAdapter extends RecyclerView.Adapter<TransactionListAdapter.CustomViewHolder> implements SharedPreferencesManager.OnIsoChangedListener {
+public class TransactionListAdapter extends RecyclerView.Adapter<TransactionListAdapter.CustomViewHolder> {
     public static final String TAG = TransactionListAdapter.class.getName();
 
     private final Context mContext;
@@ -63,7 +64,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         if (itemFeed == null) itemFeed = new ArrayList<>();
         this.layoutResourceId = R.layout.tx_list_item;
         this.mContext = mContext;
-        SharedPreferencesManager.addIsoChangedListener(this);
     }
 
 
@@ -87,7 +87,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
 
     @Override
     public int getItemCount() {
-        Log.e(TAG, "getItemCount: " + itemFeed.size());
         return itemFeed.size();
     }
 
@@ -114,29 +113,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         CharSequence timeSpan = DateUtils.getRelativeTimeSpanString(timeStamp, System.currentTimeMillis(), MINUTE_IN_MILLIS);
 
         convertView.timestamp.setText(timeSpan);
-
-    }
-
-    @Override
-    public void onIsoChanged(String iso) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //sleep a little for the commits to be done for sure
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                ((Activity) mContext).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        notifyDataSetChanged();
-                    }
-                });
-            }
-        }).start();
 
     }
 

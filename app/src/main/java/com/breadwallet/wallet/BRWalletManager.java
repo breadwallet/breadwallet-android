@@ -413,53 +413,27 @@ public class BRWalletManager {
 
     public static void onTxAdded(byte[] tx, int blockHeight, long timestamp, final long amount, String hash) {
         Log.d(TAG, "onTxAdded: " + String.format("tx.length: %d, blockHeight: %d, timestamp: %d, amount: %d, hash: %s", tx.length, blockHeight, timestamp, amount, hash));
-//        final RequestQRActivity requestApp = RequestQRActivity.requestApp;
-//        if (requestApp != null && !requestApp.activityIsInBackground) {
-//            requestApp.runOnUiThread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    requestApp.close.performClick();
-//                }
-//            });
-//        }
-        final BreadActivity ctx = app;
-        if (ctx != null) {
 
+//        if (getInstance().getTxCount() <= 1) {
+//            SharedPreferencesManager.putPhraseWarningTime(ctx, System.currentTimeMillis() / 1000);
 //            ctx.runOnUiThread(new Runnable() {
 //                @Override
 //                public void run() {
-//                    long absAmount = (amount > 0 ? amount : amount * -1);
-//                    String strToShow = amount > 0 ?
-//                            (String.format(ctx.getString(R.string.received_amount),
-//                                    BRCurrency.getFormattedCurrencyString(app, "BTC", absAmount),
-//                                    BRCurrency.getExchangeForAmount(SharedPreferencesManager.getRate(ctx),
-//                                            SharedPreferencesManager.getIso(ctx), new BigDecimal(absAmount), ctx))) :
-//                            ctx.getString(R.string.sent_exclaimed);
-//
-//                    showSentReceivedToast(ctx, strToShow);
+//                    new Handler().postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            showWritePhraseDialog(ctx, true);
+//                        }
+//                    }, 2000);
 //                }
-//
 //            });
-
-        }
-
-        if (getInstance().getTxCount() <= 1) {
-            SharedPreferencesManager.putPhraseWarningTime(ctx, System.currentTimeMillis() / 1000);
-            ctx.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            showWritePhraseDialog(ctx, true);
-                        }
-                    }, 2000);
-                }
-            });
-
-        }
-
-        TransactionDataSource.getInstance(ctx).putTransaction(new BRTransactionEntity(tx, blockHeight, timestamp, hash));
+//
+//        }
+        final BreadActivity ctx = app;
+        if (ctx != null)
+            TransactionDataSource.getInstance(ctx).putTransaction(new BRTransactionEntity(tx, blockHeight, timestamp, hash));
+        else
+            Log.e(TAG, "onTxAdded: ctx is null!");
     }
 
     private static void showSentReceivedToast(final Context ctx, final String message) {
@@ -639,7 +613,7 @@ public class BRWalletManager {
         String formattedTotal = BRCurrency.getFormattedCurrencyString(ctx, iso, BRWalletManager.getInstance().getAmount(ctx, iso, new BigDecimal(total)));
 
         //formatted text
-        final String message = certification + allAddresses.toString() + "\n"
+        final String message = certification + allAddresses.toString() + "\n\n"
                 + "amount: " + formattedAmountBTC + " (" + formattedAmount + ")"
                 + "\nnetwork fee: +" + formattedFeeBTC + " (" + formattedFee + ")"
                 + "\ntotal: " + formattedTotalBTC + " (" + formattedTotal + ")";

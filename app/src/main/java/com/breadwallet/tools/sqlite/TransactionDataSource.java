@@ -51,6 +51,22 @@ public class TransactionDataSource {
             BRSQLiteHelper.TX_TIME_STAMP
     };
 
+    public interface OnTxAddedListener {
+        void onTxAdded();
+    }
+
+    List<OnTxAddedListener> listeners = new ArrayList<>();
+
+    public void addTxAddedListener(OnTxAddedListener listener) {
+        if (!listeners.contains(listener))
+            listeners.add(listener);
+    }
+
+    public void removeListener(OnTxAddedListener listener) {
+        listeners.remove(listener);
+
+    }
+
     private static TransactionDataSource instance;
 
     public static TransactionDataSource getInstance(Context context) {
@@ -82,6 +98,9 @@ public class TransactionDataSource {
             BRTransactionEntity transactionEntity1 = cursorToTransaction(cursor);
             cursor.close();
             database.setTransactionSuccessful();
+            for (OnTxAddedListener listener : listeners) {
+                if (listener != null) listener.onTxAdded();
+            }
             return transactionEntity1;
         } catch (Exception ex) {
             FirebaseCrash.report(ex);
