@@ -514,7 +514,7 @@ public class FragmentSend extends Fragment {
                 amountBuilder = new StringBuilder(BRBitcoin.getBitcoinAmount(new BigDecimal(obj.amount)).toPlainString());
             } else {
                 BigDecimal rate = new BigDecimal(CurrencyDataSource.getInstance(getContext()).getCurrencyByIso(iso).rate);
-                amountBuilder = new StringBuilder(rate.multiply(new BigDecimal(obj.amount)).toPlainString());
+                amountBuilder = new StringBuilder(rate.multiply(new BigDecimal(obj.amount).divide(new BigDecimal(100000000), BRConstants.ROUNDING_MODE)).toPlainString());
             }
             updateText();
 
