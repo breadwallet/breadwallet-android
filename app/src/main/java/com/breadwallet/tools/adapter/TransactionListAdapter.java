@@ -16,6 +16,7 @@ import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.util.BRCurrency;
+import com.breadwallet.wallet.BRWalletManager;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -101,10 +102,14 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         int confirms = blockHeight == Integer.MAX_VALUE ? 0 : SharedPreferencesManager.getLastBlockHeight(mContext) - blockHeight + 1;
         convertView.confirmation.setText((confirms >= 6) ? "Completed" : "Waiting to be confirmed");
 
-        boolean priceInBtc = SharedPreferencesManager.getPriceSetToBitcoin(mContext);
+        boolean priceInBtc = SharedPreferencesManager.getPreferredBTC(mContext);
         long satoshisAmount = received ? item.getReceived() : (item.getSent() - item.getReceived()) * -1;
         String iso = SharedPreferencesManager.getIso(mContext);
         CurrencyEntity ent = CurrencyDataSource.getInstance(mContext).getCurrencyByIso(iso);
+
+        boolean isBTCPrefered = SharedPreferencesManager.getPreferredBTC(mContext);
+
+        convertView.amount.setText(BRWalletManager.getInstance().getAmount(mContext, , ));
 
         if (priceInBtc || ent == null) {
             convertView.amount.setText(BRCurrency.getFormattedCurrencyString(mContext, "BTC", new BigDecimal(satoshisAmount)));
