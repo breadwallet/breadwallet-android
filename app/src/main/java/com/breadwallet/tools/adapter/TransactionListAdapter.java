@@ -102,21 +102,13 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         int confirms = blockHeight == Integer.MAX_VALUE ? 0 : SharedPreferencesManager.getLastBlockHeight(mContext) - blockHeight + 1;
         convertView.confirmation.setText((confirms >= 6) ? "Completed" : "Waiting to be confirmed");
 
-        boolean priceInBtc = SharedPreferencesManager.getPreferredBTC(mContext);
         long satoshisAmount = received ? item.getReceived() : (item.getSent() - item.getReceived()) * -1;
         String iso = SharedPreferencesManager.getIso(mContext);
-        CurrencyEntity ent = CurrencyDataSource.getInstance(mContext).getCurrencyByIso(iso);
 
-        boolean isBTCPrefered = SharedPreferencesManager.getPreferredBTC(mContext);
+        boolean isBTCPreferred = SharedPreferencesManager.getPreferredBTC(mContext);
 
-        convertView.amount.setText(BRWalletManager.getInstance().getAmount(mContext, , ));
+        convertView.amount.setText(BRWalletManager.getInstance().getAmount(mContext, isBTCPreferred? "BTC" : iso, new BigDecimal(satoshisAmount)).toPlainString());
 
-        if (priceInBtc || ent == null) {
-            convertView.amount.setText(BRCurrency.getFormattedCurrencyString(mContext, "BTC", new BigDecimal(satoshisAmount)));
-        } else {
-            String exchangeString = BRCurrency.getFormattedCurrencyString(mContext, iso, new BigDecimal(satoshisAmount));
-            convertView.amount.setText(exchangeString);
-        }
         //if it's 0 we use the current time.
         long timeStamp = item.getTimeStamp() == 0 ? System.currentTimeMillis() : item.getTimeStamp() * 1000;
         CharSequence timeSpan = DateUtils.getRelativeTimeSpanString(timeStamp, System.currentTimeMillis(), MINUTE_IN_MILLIS);

@@ -249,6 +249,7 @@ public class SharedPreferencesManager {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getBoolean("priceSetToBitcoin", false);
     }
+
     //if the user prefers all in bitcoin units, not other currencies
     public static void putPreferredBTC(Context activity, boolean allow) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
