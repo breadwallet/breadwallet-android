@@ -392,8 +392,6 @@ public class FragmentSend extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        animateBackgroundDim(true);
-        animateSignalSlide(true);
     }
 
     @Override
@@ -403,24 +401,24 @@ public class FragmentSend extends Fragment {
             Log.e(TAG, "onResume: getView is null!");
             return;
         }
-//        getView().setFocusableInTouchMode(true);
-//        getView().requestFocus();
-//        //override back pressed for animation on fragment close
-//        getView().setOnKeyListener(new View.OnKeyListener() {
-//            @Override
-//            public boolean onKey(View v, int keyCode, KeyEvent event) {
-//
-//                switch (keyCode) {
-//                    case KeyEvent.KEYCODE_BACK:
-//                        Log.e(TAG, "onKey: KEYCODE_BACK");
-//                        animateBackgroundDim(true);
-//                        animateSignalSlide(true);
-//                        getView().setOnKeyListener(null);
-//                        return true;
-//                }
-//                return false;
-//            }
-//        });
+        getView().setFocusableInTouchMode(true);
+        getView().requestFocus();
+        //override back pressed for animation on fragment close
+        getView().setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+                switch (keyCode) {
+                    case KeyEvent.KEYCODE_BACK:
+                        Log.e(TAG, "onKey: KEYCODE_BACK");
+                        animateBackgroundDim(true);
+                        animateSignalSlide(true);
+                        getView().setOnKeyListener(null);
+                        return true;
+                }
+                return false;
+            }
+        });
     }
 
     @Override

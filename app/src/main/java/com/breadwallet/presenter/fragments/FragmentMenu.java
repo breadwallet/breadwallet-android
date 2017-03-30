@@ -264,8 +264,6 @@ public class FragmentMenu extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        if (getView() != null)
-            getView().setOnKeyListener(null);
     }
 
 

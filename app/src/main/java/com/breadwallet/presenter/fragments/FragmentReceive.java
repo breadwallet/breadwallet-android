@@ -207,8 +207,6 @@ public class FragmentReceive extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-//        if (backgroundLayout != null)
-//            backgroundLayout.setBackgroundColor(getActivity().getColor(android.R.color.transparent));
     }
 
     @Override
