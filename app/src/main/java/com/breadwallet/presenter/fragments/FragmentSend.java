@@ -249,8 +249,11 @@ public class FragmentSend extends Fragment {
                 String amountStr = amountEdit.getText().toString();
                 String iso = (String) spinner.getSelectedItem();
 
-
-                long amount = BRWalletManager.getInstance().getAmount(getActivity(), iso, new BigDecimal(amountStr.isEmpty() ? "0" : amountStr)).longValue();
+                //get amount in satoshis from any isos
+                BigDecimal bigAmount = new BigDecimal(Utils.isNullOrEmpty(amountStr)? "0" : amountStr);
+                long amount = iso.equalsIgnoreCase("BTC")
+                        ? BRBitcoin.getSatoshisFromAmount(bigAmount).longValue()
+                        : BRWalletManager.getInstance().getAmount(getActivity(), iso, bigAmount).longValue();
 
                 if (address.isEmpty()) {
                     allFilled = false;

@@ -740,7 +740,7 @@ public class BRWalletManager {
             final long amountToReduce = paymentRequest.amount - maxOutputAmount;
 //            final AlertDialog.Builder builder = new AlertDialog.Builder(context);
             String iso = SharedPreferencesManager.getIso(context);
-            BigDecimal rate = BigDecimal.valueOf(CurrencyDataSource.getInstance(context).getCurrencyByIso(iso).rate);
+//            BigDecimal rate = BigDecimal.valueOf(CurrencyDataSource.getInstance(context).getCurrencyByIso(iso).rate);
 
             String reduceBits = BRCurrency.getFormattedCurrencyString(context, "BTC", BRWalletManager.getInstance().getAmount(context, "BTC", new BigDecimal(amountToReduce)));
             String reduceFee = BRCurrency.getFormattedCurrencyString(context, iso, BRWalletManager.getInstance().getAmount(context, iso, new BigDecimal(amountToReduce)));

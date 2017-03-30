@@ -22,6 +22,7 @@ import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.DecelerateOvershootInterpolator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.util.Utils;
 
 import static android.R.attr.dialogLayout;
 import static android.R.attr.key;
@@ -114,6 +115,12 @@ public class FragmentBreadPin extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         float keyboardTrY = keyboard.getTranslationY();
         Log.e(TAG, "onViewCreated: translationY: " + keyboardTrY);
+        if (!Utils.isNullOrEmpty(mTitle)) {
+            title.setText(mTitle);
+        }
+        if (!Utils.isNullOrEmpty(mMessage)) {
+            message.setText(mMessage);
+        }
         keyboard.setTranslationY(keyboardTrY + BreadActivity.screenParametersPoint.y / 3);
         keyboard.animate()
                 .translationY(keyboardTrY)
