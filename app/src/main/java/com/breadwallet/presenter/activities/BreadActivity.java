@@ -1,6 +1,7 @@
 package com.breadwallet.presenter.activities;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Point;
@@ -30,7 +31,7 @@ import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
 import com.breadwallet.tools.manager.CurrencyFetchManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
-import com.breadwallet.tools.security.RequestHandler;
+import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.wallet.BRPeerManager;
@@ -154,7 +155,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         String scheme = data.getScheme();
         if (scheme != null && (scheme.startsWith("bitcoin") || scheme.startsWith("bitid"))) {
             String str = intent.getDataString();
-            RequestHandler.processRequest(this, str);
+            BitcoinUrlHandler.processRequest(this, str);
         }
     }
 
@@ -172,9 +173,8 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
 
                 if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
-                getFragmentManager().beginTransaction()
-                        .add(android.R.id.content, new FragmentSend(), FragmentSend.class.getName())
-                        .addToBackStack(FragmentSend.class.getName()).commit();
+                showSendFragment(null);
+
             }
         });
 
@@ -226,6 +226,16 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
             public void onLongItemClick(View view, int position) {
             }
         }));
+    }
+
+    private void showSendFragment(String bitcoinUrl) {
+        FragmentSend fragmentSend = new FragmentSend();
+        getFragmentManager().beginTransaction()
+                .add(android.R.id.content, fragmentSend, FragmentSend.class.getName())
+                .addToBackStack(FragmentSend.class.getName()).commit();
+        if (bitcoinUrl != null && !bitcoinUrl.isEmpty()) {
+            fragmentSend.setUrl(bitcoinUrl);
+        }
     }
 
     @Override
@@ -355,6 +365,12 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
             if (resultCode == Activity.RESULT_OK) {
                 String result = data.getStringExtra("result");
                 Log.e(TAG, "onActivityResult: result: " + result);
+                FragmentSend fragmentSend = (FragmentSend) getFragmentManager().findFragmentByTag(FragmentSend.class.getName());
+                if (fragmentSend != null && fragmentSend.isVisible()) {
+                    fragmentSend.setUrl(result);
+                } else {
+                    showSendFragment(result);
+                }
             }
 
         }

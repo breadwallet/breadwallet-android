@@ -47,6 +47,7 @@ public class BRBitcoin {
         return new BigDecimal(ent.rate * MAX_BTC);
     }
 
+    // amount in satoshis
     public static BigDecimal getBitcoinAmount(BigDecimal amount) {
         BigDecimal result = new BigDecimal(0);
         int unit = SharedPreferencesManager.getCurrencyUnit(app);

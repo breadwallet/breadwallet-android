@@ -45,18 +45,13 @@ public class SpringAnimator {
         if (view != null) {
             view.setVisibility(View.GONE);
         }
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                ScaleAnimation trans = new ScaleAnimation(0.0f, 1f, 0.0f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-                trans.setDuration(800);
-                trans.setInterpolator(new DecelerateOvershootInterpolator(1.5f, 2.5f));
-                if (view != null) {
-                    view.setVisibility(View.VISIBLE);
-                    view.startAnimation(trans);
-                }
-            }
-        }, 200);
+        ScaleAnimation trans = new ScaleAnimation(0.0f, 1f, 0.0f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        trans.setDuration(800);
+        trans.setInterpolator(new DecelerateOvershootInterpolator(1.5f, 2.5f));
+        if (view != null) {
+            view.setVisibility(View.VISIBLE);
+            view.startAnimation(trans);
+        }
 
     }
 

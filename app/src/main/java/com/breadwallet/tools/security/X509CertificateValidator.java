@@ -123,7 +123,7 @@ public class X509CertificateValidator {
         try {
             CertificateFactory certFact = CertificateFactory.getInstance("X.509");
             while (true) {
-                result = RequestHandler.getCertificatesFromPaymentRequest(rawCerts, i++);
+                result = BitcoinUrlHandler.getCertificatesFromPaymentRequest(rawCerts, i++);
 //                Log.e(TAG, "The result certificate #" + i + " : " + result.length);
                 if (result.length > 0) {
                     X509Certificate certForValidation = (X509Certificate)

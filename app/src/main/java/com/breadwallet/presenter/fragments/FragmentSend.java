@@ -28,13 +28,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.breadwallet.BreadWalletApp;
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.BreadActivity;
-import com.breadwallet.presenter.activities.IntroActivity;
-import com.breadwallet.presenter.activities.IntroRecoverActivity;
 import com.breadwallet.presenter.activities.QRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRSoftKeyboard;
@@ -44,7 +39,7 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRClipboardManager;
-import com.breadwallet.tools.security.RequestHandler;
+import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.util.BRBitcoin;
 import com.breadwallet.tools.util.BRConstants;
@@ -55,6 +50,8 @@ import com.breadwallet.wallet.BRWalletManager;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.breadwallet.tools.security.BitcoinUrlHandler.getRequestFromString;
 
 
 /**
@@ -102,8 +99,6 @@ public class FragmentSend extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // The last two arguments ensure LayoutParams are inflated
-        // properly.
 
         View rootView = inflater.inflate(R.layout.fragment_send, container, false);
         backgroundLayout = (LinearLayout) rootView.findViewById(R.id.background_layout);
@@ -142,7 +137,7 @@ public class FragmentSend extends Fragment {
                 }
                 String address = null;
 
-                RequestObject obj = RequestHandler.getRequestFromString(bitcoinUrl);
+                RequestObject obj = getRequestFromString(bitcoinUrl);
 
 
                 if (obj == null || obj.address == null) {
@@ -197,7 +192,7 @@ public class FragmentSend extends Fragment {
         scan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!BRAnimator.isClickAllowed()) return;
+                if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
                 try {
                     Activity app = getActivity();
@@ -231,9 +226,6 @@ public class FragmentSend extends Fragment {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
-
-
 
 
             }
@@ -271,6 +263,7 @@ public class FragmentSend extends Fragment {
                     BRWalletManager.getInstance().handlePay(getContext(), new PaymentRequestEntity(new String[]{address}, amount, null, false));
             }
         });
+
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -491,7 +484,7 @@ public class FragmentSend extends Fragment {
     private void updateText() {
         String tmpAmount = amountBuilder.toString();
         amountEdit.setText(tmpAmount);
-        if (new BigDecimal(tmpAmount.isEmpty() ? "0" : tmpAmount).doubleValue() > curBalance.doubleValue()) {
+        if (new BigDecimal(tmpAmount.isEmpty() || tmpAmount.equalsIgnoreCase(".") ? "0" : tmpAmount).doubleValue() > curBalance.doubleValue()) {
             String balanceString = String.format("Insufficient funds. Try an amount below your current balance: %s",
                     BRCurrency.getFormattedCurrencyString(getActivity(), (String) spinner.getSelectedItem(), curBalance));
             balanceText.setTextColor(getContext().getColor(R.color.warning_color));
@@ -506,6 +499,28 @@ public class FragmentSend extends Fragment {
             isoText.setTextColor(getContext().getColor(R.color.almost_black));
         }
 
+    }
+
+    public void setUrl(String url) {
+        RequestObject obj = BitcoinUrlHandler.getRequestFromString(url);
+        if (obj == null) return;
+        if (obj.address != null && addressEdit != null) {
+            addressEdit.setText(obj.address);
+        }
+        if (obj.message != null && commentEdit != null) {
+            commentEdit.setText(obj.message);
+        }
+        if (obj.amount != null) {
+            String iso = ((String) spinner.getSelectedItem());
+            if (iso.equalsIgnoreCase("BTC")) {
+                amountBuilder = new StringBuilder(BRBitcoin.getBitcoinAmount(new BigDecimal(obj.amount)).toPlainString());
+            } else {
+                BigDecimal rate = new BigDecimal(CurrencyDataSource.getInstance(getContext()).getCurrencyByIso(iso).rate);
+                amountBuilder = new StringBuilder(rate.multiply(new BigDecimal(obj.amount)).toPlainString());
+            }
+            updateText();
+
+        }
     }
 
 

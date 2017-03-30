@@ -4,15 +4,11 @@ import android.app.Activity;
 import android.net.Uri;
 import android.os.Handler;
 import android.util.Log;
-import android.webkit.URLUtil;
 
-import com.breadwallet.R;
-import com.breadwallet.BreadWalletApp;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.presenter.entities.RequestObject;
-import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
 import com.breadwallet.tools.util.TypesConverter;
@@ -67,8 +63,8 @@ import static com.breadwallet.tools.util.BRConstants.REQUEST_PHRASE_BITID;
  * THE SOFTWARE.
  */
 
-public class RequestHandler {
-    private static final String TAG = RequestHandler.class.getName();
+public class BitcoinUrlHandler {
+    private static final String TAG = BitcoinUrlHandler.class.getName();
     private static final Object lockObject = new Object();
 
     private static String _bitUri;
@@ -77,10 +73,10 @@ public class RequestHandler {
     private static String _authString = null;
     private static int _index = 0;
 
-    public static synchronized boolean processRequest(Activity app, String uri) {
-        if (uri == null) return false;
+    public static synchronized boolean processRequest(Activity app, String url) {
+        if (url == null) return false;
 
-        RequestObject requestObject = getRequestFromString(uri);
+        RequestObject requestObject = getRequestFromString(url);
         if (requestObject == null) {
             if (app != null) {
 //                BreadDialog.showCustomDialog(app, app.getString(R.string.warning),
@@ -100,6 +96,16 @@ public class RequestHandler {
             return false;
         }
     }
+
+    public static boolean isBitcoinUrl(String url) {
+        RequestObject requestObject = getRequestFromString(url);
+        // return true if the request is valid url and has param: r or param: address
+        // return true if it is a valid bitcoinPrivKey
+        return (requestObject != null && (requestObject.r != null || requestObject.address != null)
+                || BRWalletManager.getInstance().isValidBitcoinBIP38Key(url)
+                || BRWalletManager.getInstance().isValidBitcoinPrivateKey(url));
+    }
+
 
     public static boolean tryBitIdUri(final Activity app, String uri, JSONObject jsonBody) {
         if (uri == null) return false;
@@ -352,22 +358,16 @@ public class RequestHandler {
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }
-//                Log.e(TAG, "amount: " + obj.amount);
             } else if (keyValue[0].trim().equals("label")) {
                 obj.label = keyValue[1];
-//                Log.e(TAG, "label: " + obj.label);
             } else if (keyValue[0].trim().equals("message")) {
                 obj.message = keyValue[1];
-//                Log.e(TAG, "message: " + obj.message);
             } else if (keyValue[0].trim().startsWith("req")) {
                 obj.req = keyValue[1];
-//                Log.e(TAG, "req: " + obj.req);
             } else if (keyValue[0].trim().startsWith("r")) {
                 obj.r = keyValue[1];
-//                Log.e(TAG, "r: " + obj.r);
             }
         }
-//        Log.e(TAG, "obj.address: " + obj.address);
         return obj;
     }
 
@@ -414,7 +414,7 @@ public class RequestHandler {
             }
 //            String strAmount = String.valueOf(amount);
             if (app != null) {
-                BRWalletManager.getInstance().handlePay(app, new PaymentRequestEntity(addresses, amount,null, true));
+                BRWalletManager.getInstance().handlePay(app, new PaymentRequestEntity(addresses, amount, null, true));
             }
         } else {
             if (app != null)

@@ -3,7 +3,7 @@ package com.platform.middlewares.plugins;
 import android.util.Log;
 
 import com.breadwallet.presenter.activities.BreadActivity;
-import com.breadwallet.tools.security.RequestHandler;
+import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
@@ -140,7 +140,7 @@ public class WalletPlugin implements Plugin {
                 continuation = ContinuationSupport.getContinuation(request);
                 continuation.suspend(response);
                 globalBaseRequest = baseRequest;
-                RequestHandler.tryBitIdUri(app, obj.getString("bitid_url"), obj);
+                BitcoinUrlHandler.tryBitIdUri(app, obj.getString("bitid_url"), obj);
             } catch (JSONException e) {
                 e.printStackTrace();
                 Log.e(TAG, "handle: Failed to parse Json request body: " + target + " " + baseRequest.getMethod());

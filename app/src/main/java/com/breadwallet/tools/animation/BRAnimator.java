@@ -38,18 +38,7 @@ import com.breadwallet.presenter.fragments.FragmentBreadSignal;
 
 public class BRAnimator {
     private static final String TAG = BRAnimator.class.getName();
-    public static boolean decoderFragmentOn;
-    public static boolean scanResultFragmentOn;
-    public static int level = 0;
-    public static boolean wipeWalletOpen = false;
-    //    private static Stack<Fragment> previous = new Stack<>();
-    private static boolean multiplePressingAvailable = true;
-    public static int horizontalSlideDuration = 300;
-    private static boolean horizontalSlideAvailable = true;
-    private static View copy;
-
     private static FragmentBreadSignal fragmentSignal;
-    private static FragmentMenu fragmentMenu;
     private static boolean clickAllowed = true;
 
 

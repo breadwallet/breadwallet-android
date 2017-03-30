@@ -9,8 +9,8 @@ import android.util.Log;
 import com.breadwallet.R;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.exceptions.CertificateChainNotFound;
+import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.util.ByteReader;
-import com.breadwallet.tools.security.RequestHandler;
 import com.breadwallet.tools.security.X509CertificateValidator;
 import com.breadwallet.wallet.BRWalletManager;
 
@@ -80,7 +80,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 return null;
             }
 
-            paymentRequest = RequestHandler.parsePaymentRequest(serializedBytes);
+            paymentRequest = BitcoinUrlHandler.parsePaymentRequest(serializedBytes);
 
             if (paymentRequest == null || paymentRequest.error == PaymentRequestWrapper.INVALID_REQUEST_ERROR) {
                 Log.e(TAG, "paymentRequest is null!!!");

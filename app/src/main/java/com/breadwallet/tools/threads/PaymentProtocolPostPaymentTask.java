@@ -5,14 +5,11 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.breadwallet.R;
-import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
-import com.breadwallet.tools.animation.BreadDialog;
-import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.ByteReader;
-import com.breadwallet.tools.security.RequestHandler;
+import com.breadwallet.tools.security.BitcoinUrlHandler;
 
 import java.io.DataOutputStream;
 import java.io.FileNotFoundException;
@@ -100,7 +97,7 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
                 return null;
             }
 
-            message = RequestHandler.parsePaymentACK(serializedBytes);
+            message = BitcoinUrlHandler.parsePaymentACK(serializedBytes);
 //            PostAuthenticationProcessor.getInstance().setTmpPaymentRequest(paymentRequest);
 //            PostAuthenticationProcessor.getInstance().onPaymentProtocolRequest(app,false);
         } catch (Exception e) {

@@ -37,7 +37,7 @@
 const int TEST_REQ = 0;
 
 JNIEXPORT jobject JNICALL
-Java_com_breadwallet_tools_security_RequestHandler_parsePaymentRequest(JNIEnv *env, jobject obj,
+Java_com_breadwallet_tools_security_BitcoinUrlHandler_parsePaymentRequest(JNIEnv *env, jobject obj,
                                                                        jbyteArray payment) {
     __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "parsePaymentRequest");
     if (!payment) return NULL;
@@ -206,7 +206,7 @@ Java_com_breadwallet_tools_security_RequestHandler_parsePaymentRequest(JNIEnv *e
 }
 
 JNIEXPORT jbyteArray JNICALL
-Java_com_breadwallet_tools_security_RequestHandler_getCertificatesFromPaymentRequest(JNIEnv *env,
+Java_com_breadwallet_tools_security_BitcoinUrlHandler_getCertificatesFromPaymentRequest(JNIEnv *env,
                                                                                      jobject obj,
                                                                                      jbyteArray payment,
                                                                                      jint index) {
@@ -242,7 +242,7 @@ Java_com_breadwallet_tools_security_RequestHandler_getCertificatesFromPaymentReq
 }
 
 JNIEXPORT jstring JNICALL
-Java_com_breadwallet_tools_security_RequestHandler_parsePaymentACK(JNIEnv *env, jobject obj,
+Java_com_breadwallet_tools_security_BitcoinUrlHandler_parsePaymentACK(JNIEnv *env, jobject obj,
                                                                    jbyteArray paymentACK) {
     __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "parsePaymentACK");
     if (!paymentACK) return NULL;

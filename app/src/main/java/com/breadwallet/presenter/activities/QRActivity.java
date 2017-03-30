@@ -3,16 +3,18 @@ package com.breadwallet.presenter.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.tools.qrcode.QRDataListener;
-import com.breadwallet.tools.qrcode.QREader;
+import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.qrcode.QRReader;
+import com.breadwallet.tools.security.BitcoinUrlHandler;
 
 import static com.breadwallet.presenter.activities.BreadActivity.app;
 
@@ -42,7 +44,15 @@ import static com.breadwallet.presenter.activities.BreadActivity.app;
  */
 public class QRActivity extends AppCompatActivity {
     private SurfaceView mySurfaceView;
-    private QREader qrEader;
+    private QRReader qrEader;
+    private static final String TAG = QRActivity.class.getName();
+    private boolean dataProcessing = false;
+    private ImageView cameraGuide;
+    private TextView descriptionText;
+    private long lastUpdated;
+    private UIUpdateTask task;
+    private boolean handlingCode;
+
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -51,18 +61,61 @@ public class QRActivity extends AppCompatActivity {
 
 
         mySurfaceView = (SurfaceView) findViewById(R.id.camera_view);
+        cameraGuide = (ImageView) findViewById(R.id.scan_guide);
+        descriptionText = (TextView) findViewById(R.id.description_text);
 
-        qrEader = new QREader.Builder(this, mySurfaceView, new QRDataListener() {
+        task = new UIUpdateTask();
+        task.start();
+
+        cameraGuide.setImageResource(R.drawable.cameraguide);
+        cameraGuide.setVisibility(View.GONE);
+
+        qrEader = new QRReader.Builder(this, mySurfaceView, new QRReader.OnQrFoundListener() {
             @Override
             public void onDetected(final String data) {
-                handleDetected(data);
+                if (handlingCode) return;
+                if (BitcoinUrlHandler.isBitcoinUrl(data)) {
+                    Log.e(TAG, "onDetected: YES it is bitcoin URL");
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            lastUpdated = System.currentTimeMillis();
+                            cameraGuide.setImageResource(R.drawable.cameraguide);
+                            descriptionText.setText("");
+                            handlingCode = true;
+                            handleDetected(data);
+
+                        }
+                    });
+                } else {
+                    Log.e(TAG, "onDetected: NO it is NOT bitcoin URL");
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            lastUpdated = System.currentTimeMillis();
+                            cameraGuide.setImageResource(R.drawable.cameraguide_red);
+                            descriptionText.setText("Not a valid bitcoin url");
+                        }
+                    });
+                }
+
+
             }
-        }).facing(QREader.BACK_CAM)
+        }).facing(QRReader.BACK_CAM)
                 .enableAutofocus(true)
                 .height(mySurfaceView.getHeight())
                 .width(mySurfaceView.getWidth())
                 .build();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                cameraGuide.setVisibility(View.VISIBLE);
+                SpringAnimator.showExpandCameraGuide(cameraGuide);
+            }
+        }, 400);
+
     }
+
 
     @Override
     protected void onResume() {
@@ -75,7 +128,7 @@ public class QRActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
 
-        qrEader.releaseAndCleanup();
+        qrEader.release();
     }
 
     @Override
@@ -89,5 +142,30 @@ public class QRActivity extends AppCompatActivity {
         returnIntent.putExtra("result", data);
         setResult(Activity.RESULT_OK, returnIntent);
         finish();
+    }
+
+    private class UIUpdateTask extends Thread {
+        public boolean running = true;
+
+        @Override
+        public void run() {
+            super.run();
+            while (running) {
+                if (System.currentTimeMillis() - lastUpdated > 300) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            cameraGuide.setImageResource(R.drawable.cameraguide);
+                            descriptionText.setText("");
+                        }
+                    });
+                }
+                try {
+                    Thread.sleep(300);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }
