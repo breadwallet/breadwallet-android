@@ -51,7 +51,7 @@ import static android.widget.Adapter.IGNORE_ITEM_VIEW_TYPE;
  * THE SOFTWARE.
  */
 
-public class TransactionListAdapter extends RecyclerView.Adapter<TransactionListAdapter.CustomViewHolder>  {
+public class TransactionListAdapter extends RecyclerView.Adapter<TransactionListAdapter.CustomViewHolder> implements SharedPreferencesManager.OnIsoChangedListener {
     public static final String TAG = TransactionListAdapter.class.getName();
 
     private final Context mContext;
@@ -117,6 +117,28 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
 
     }
 
+    @Override
+    public void onIsoChanged(String iso) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //sleep a little for the commits to be done for sure
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                ((Activity) mContext).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        notifyDataSetChanged();
+                    }
+                });
+            }
+        }).start();
+
+    }
 
     class CustomViewHolder extends RecyclerView.ViewHolder {
         public TextView sentReceived;
