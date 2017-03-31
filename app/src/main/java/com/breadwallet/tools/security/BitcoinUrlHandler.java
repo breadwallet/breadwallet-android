@@ -353,19 +353,19 @@ public class BitcoinUrlHandler {
                 continue;
             if (keyValue[0].trim().equals("amount")) {
                 try {
-                    BigDecimal bigDecimal = new BigDecimal(keyValue[1]);
+                    BigDecimal bigDecimal = new BigDecimal(keyValue[1].trim());
                     obj.amount = bigDecimal.multiply(new BigDecimal("100000000")).toString();
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }
             } else if (keyValue[0].trim().equals("label")) {
-                obj.label = keyValue[1];
+                obj.label = keyValue[1].trim();
             } else if (keyValue[0].trim().equals("message")) {
-                obj.message = keyValue[1];
+                obj.message = keyValue[1].trim();
             } else if (keyValue[0].trim().startsWith("req")) {
-                obj.req = keyValue[1];
+                obj.req = keyValue[1].trim();
             } else if (keyValue[0].trim().startsWith("r")) {
-                obj.r = keyValue[1];
+                obj.r = keyValue[1].trim();
             }
         }
         return obj;
