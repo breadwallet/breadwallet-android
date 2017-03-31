@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +28,7 @@ import java.util.List;
 import static com.breadwallet.R.layout.settings_list_item;
 import static com.breadwallet.R.layout.settings_list_section;
 
-public class SettingsActivity extends Activity {
+public class SettingsActivity extends AppCompatActivity {
     private static final String TAG = SettingsActivity.class.getName();
     private ListView listView;
     public List<BRSettingsItem> items;
@@ -36,7 +37,7 @@ public class SettingsActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-        setStatusBarColor(android.R.color.transparent);
+//        setStatusBarColor(android.R.color.transparent);
         listView = (ListView) findViewById(R.id.settings_list);
         items = new ArrayList<>();
 

@@ -2,6 +2,7 @@ package com.breadwallet.presenter.activities.settings;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -16,7 +17,7 @@ import com.breadwallet.tools.animation.BreadDialog;
 
 import org.w3c.dom.Text;
 
-public class AboutActivity extends Activity {
+public class AboutActivity extends AppCompatActivity {
     private static final String TAG = AboutActivity.class.getName();
     private TextView termsText;
     private TextView policyText;
@@ -30,7 +31,7 @@ public class AboutActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
-        setStatusBarColor(android.R.color.transparent);
+//        setStatusBarColor(android.R.color.transparent);
 
         infoText = (TextView) findViewById(R.id.info_text);
         termsText = (TextView) findViewById(R.id.terms_text);

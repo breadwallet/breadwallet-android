@@ -234,12 +234,6 @@ public class FragmentSend extends Fragment {
             public void onClick(View v) {
                 //not allowed now
                 if (!BRAnimator.isClickAllowed()) {
-                    BreadDialog.showCustomDialog(getActivity(), "Not allowed", "Sending money is not allowed at the moment.", "Ok", null, new BRDialogView.BROnClickListener() {
-                        @Override
-                        public void onClick(BRDialogView brDialogView) {
-                            brDialogView.dismiss();
-                        }
-                    }, null, null, 0);
                     return;
                 }
 

@@ -27,6 +27,7 @@ import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
 import com.breadwallet.presenter.entities.BRPeerEntity;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
+import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.ImportPrivKeyEntity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.TransactionListItem;
@@ -1023,7 +1024,9 @@ public class BRWalletManager {
             result = BRBitcoin.getBitcoinAmount(amount);
         } else {
             //multiply by 100 because core function localAmount accepts the smallest amount e.g. cents
-            BigDecimal rate = new BigDecimal(CurrencyDataSource.getInstance(app).getCurrencyByIso(iso).rate).multiply(new BigDecimal(100));
+            CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByIso(iso);
+            if(ent == null) return new BigDecimal(0);
+            BigDecimal rate = new BigDecimal(ent.rate).multiply(new BigDecimal(100));
             result = getExchange(rate.doubleValue(), amount.longValue()).divide(new BigDecimal(100), 2, BRConstants.ROUNDING_MODE);
         }
         return result;

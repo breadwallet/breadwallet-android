@@ -2,6 +2,7 @@ package com.breadwallet.presenter.activities.settings;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.CompoundButton;
@@ -10,7 +11,7 @@ import android.widget.ToggleButton;
 import com.breadwallet.R;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 
-public class ShareDataActivity extends Activity {
+public class ShareDataActivity extends AppCompatActivity {
     private static final String TAG = ShareDataActivity.class.getName();
     private ToggleButton toggleButton;
 
@@ -18,7 +19,7 @@ public class ShareDataActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_share_data);
-        setStatusBarColor(android.R.color.transparent);
+//        setStatusBarColor(android.R.color.transparent);
 
         toggleButton = (ToggleButton) findViewById(R.id.toggleButton);
         toggleButton.setChecked(SharedPreferencesManager.getShareData(this));

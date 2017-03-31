@@ -3,6 +3,7 @@ package com.breadwallet.presenter.activities.settings;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -19,7 +20,7 @@ import com.breadwallet.tools.manager.SharedPreferencesManager;
 
 import static com.breadwallet.R.id.toggleButton;
 
-public class SyncBlockchainActivity extends Activity {
+public class SyncBlockchainActivity extends AppCompatActivity {
     private static final String TAG = SyncBlockchainActivity.class.getName();
     private Button scanButton;
 
@@ -27,7 +28,7 @@ public class SyncBlockchainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sync_blockchain);
-        setStatusBarColor(android.R.color.transparent);
+//        setStatusBarColor(android.R.color.transparent);
 
         scanButton = (Button) findViewById(R.id.button_scan);
         scanButton.setOnClickListener(new View.OnClickListener() {

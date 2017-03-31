@@ -95,7 +95,7 @@ public class IntroActivity extends FragmentActivity {
 
             BRWalletManager.getInstance().wipeWalletButKeystore(this);
         }
-        setStatusBarColor(android.R.color.transparent);
+//        setStatusBarColor(android.R.color.transparent);
 
         PostAuthenticationProcessor.getInstance().onCanaryCheck(this, false);
 

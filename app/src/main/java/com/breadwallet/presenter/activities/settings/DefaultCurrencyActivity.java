@@ -2,6 +2,7 @@ package com.breadwallet.presenter.activities.settings;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -21,7 +22,7 @@ import java.math.BigDecimal;
 
 import static com.breadwallet.presenter.activities.BreadActivity.app;
 
-public class DefaultCurrencyActivity extends Activity {
+public class DefaultCurrencyActivity extends AppCompatActivity {
     private static final String TAG = DefaultCurrencyActivity.class.getName();
     private TextView exchangeText;
     private ListView listView;
@@ -35,7 +36,7 @@ public class DefaultCurrencyActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_default_currency);
-        setStatusBarColor(android.R.color.transparent);
+//        setStatusBarColor(android.R.color.transparent);
 
         exchangeText = (TextView) findViewById(R.id.exchange_text);
         listView = (ListView) findViewById(R.id.currency_list_view);

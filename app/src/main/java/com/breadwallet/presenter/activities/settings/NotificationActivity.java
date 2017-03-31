@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -17,7 +18,7 @@ import com.breadwallet.presenter.activities.IntroReEnterPinActivity;
 import com.breadwallet.presenter.customviews.BRSoftKeyboard;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 
-public class NotificationActivity extends Activity {
+public class NotificationActivity extends AppCompatActivity {
     private static final String TAG = NotificationActivity.class.getName();
     private ToggleButton toggleButton;
 
@@ -25,7 +26,7 @@ public class NotificationActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notification);
-        setStatusBarColor(android.R.color.transparent);
+//        setStatusBarColor(android.R.color.transparent);
 
         toggleButton = (ToggleButton) findViewById(R.id.toggleButton);
         toggleButton.setChecked(SharedPreferencesManager.getShowNotification(this));

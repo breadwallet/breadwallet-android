@@ -11,6 +11,7 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,7 +34,7 @@ import com.breadwallet.tools.security.KeyStoreManager;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SecurityCenterActivity extends Activity {
+public class SecurityCenterActivity extends AppCompatActivity {
     private static final String TAG = SecurityCenterActivity.class.getName();
 
     public ListView mListView;
@@ -44,7 +45,7 @@ public class SecurityCenterActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_security_center);
-        setStatusBarColor(android.R.color.transparent);
+//        setStatusBarColor(android.R.color.transparent);
 
         itemList = new ArrayList<>();
         mListView = (ListView) findViewById(R.id.menu_listview);
