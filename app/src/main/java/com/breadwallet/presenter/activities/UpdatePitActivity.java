@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRSoftKeyboard;
+import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
@@ -162,13 +163,12 @@ public class UpdatePitActivity extends Activity {
                 if (curNewPin.equalsIgnoreCase(pin.toString())) {
                     Log.e(TAG, "goNext: SUCCESS");
                     KeyStoreManager.putPinCode(pin.toString(), this);
-                    BRAnimator.showBreadSignal(this, "PIN Set", "Use your PIN to login and send money.", R.drawable.ic_check_mark_white);
-                    new Handler().postDelayed(new Runnable() {
+                    BRAnimator.showBreadSignal(this, "PIN Set", "Use your PIN to login and send money.", R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
                         @Override
-                        public void run() {
+                        public void onComplete() {
                             onBackPressed();
                         }
-                    }, 3000);
+                    });
                 } else {
                     SpringAnimator.failShakeAnimation(this, pinLayout);
                     setMode(ENTER_NEW_PIN);

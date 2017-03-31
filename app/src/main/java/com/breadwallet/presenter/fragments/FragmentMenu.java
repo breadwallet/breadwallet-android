@@ -31,6 +31,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.settings.SecurityCenterActivity;
 import com.breadwallet.presenter.activities.settings.SettingsActivity;
 import com.breadwallet.presenter.entities.BRMenuItem;
+import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.wallet.BRWalletManager;
 
@@ -125,13 +126,12 @@ public class FragmentMenu extends Fragment {
                 Log.e(TAG, "onClick: Lock Wallet");
                 final Activity from = getActivity();
                 from.getFragmentManager().popBackStack();
-                BRAnimator.showBreadSignal(getActivity(), "Wallet Locked", "Wallet Locked", R.drawable.ic_wallet_locked);
-                new Handler().postDelayed(new Runnable() {
+                BRAnimator.showBreadSignal(getActivity(), "Wallet Locked", "Wallet Locked", R.drawable.ic_wallet_locked, new BROnSignalCompletion() {
                     @Override
-                    public void run() {
+                    public void onComplete() {
                         BRWalletManager.getInstance().startBreadActivity(from, true);
                     }
-                }, 1000);
+                });
             }
         }));
 

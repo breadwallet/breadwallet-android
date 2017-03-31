@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.customviews.BRDialogView;
+import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
@@ -61,14 +62,13 @@ public class IntroPhraseProveActivity extends Activity {
                 if (edit1.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(0))) && edit2.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(1)))) {
                     Log.e(TAG, "onClick: Success!");
                     SharedPreferencesManager.putPhraseWroteDown(IntroPhraseProveActivity.this, true);
-                    BRAnimator.showBreadSignal(IntroPhraseProveActivity.this, "Paper Key Set", "Awesome!", R.drawable.ic_check_mark_white);
-                    new Handler().postDelayed(new Runnable() {
+                    BRAnimator.showBreadSignal(IntroPhraseProveActivity.this, "Paper Key Set", "Awesome!", R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
                         @Override
-                        public void run() {
+                        public void onComplete() {
                             BRWalletManager.getInstance().startBreadActivity(IntroPhraseProveActivity.this, false);
                             overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                         }
-                    }, 1000);
+                    });
                 } else {
                     String languageCode = getString(R.string.lang);
                     List<String> list;

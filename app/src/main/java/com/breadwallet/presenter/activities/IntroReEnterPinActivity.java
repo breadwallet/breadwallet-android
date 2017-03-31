@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRSoftKeyboard;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
+import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.AuthManager;
@@ -148,8 +149,12 @@ public class IntroReEnterPinActivity extends FragmentActivity {
             Log.e(TAG, "verifyPin: SUCCESS");
             isPressAllowed = false;
             KeyStoreManager.putPinCode(pin.toString(), this);
-            BRAnimator.showBreadSignal(this, "PIN Set", "Use your PIN to login and send money.", R.drawable.ic_check_mark_white);
-            showWriteDownPhrase();
+            BRAnimator.showBreadSignal(this, "PIN Set", "Use your PIN to login and send money.", R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
+                @Override
+                public void onComplete() {
+                    PostAuthenticationProcessor.getInstance().onCreateWalletAuth(IntroReEnterPinActivity.this, false);
+                }
+            });
         } else {
             Log.e(TAG, "verifyPin: FAIL: firs: " + firstPIN + ", reEnter: " + pin.toString());
             title.setText("Wrong PIN,\nplease try again");
@@ -160,14 +165,5 @@ public class IntroReEnterPinActivity extends FragmentActivity {
 
     }
 
-    private void showWriteDownPhrase() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                PostAuthenticationProcessor.getInstance().onCreateWalletAuth(IntroReEnterPinActivity.this, false);
-            }
-        }, 1600);
-
-    }
 
 }

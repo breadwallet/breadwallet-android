@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 
 import junit.framework.Assert;
 
@@ -49,6 +50,7 @@ public class FragmentBreadSignal extends Fragment {
     public TextView mTitle;
     public TextView mDescription;
     public ImageView mIcon;
+    BROnSignalCompletion completion;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -81,12 +83,25 @@ public class FragmentBreadSignal extends Fragment {
             public void run() {
                 if (getActivity() != null)
                     getActivity().getFragmentManager().popBackStack();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (completion != null) {
+                            completion.onComplete();
+                            completion = null;
+                        }
+                    }
+                }, 300);
+
             }
         }, 1500);
 
         return rootView;
     }
 
+    public void setCompletion(BROnSignalCompletion completion) {
+        this.completion = completion;
+    }
 
     @Override
     public void onResume() {

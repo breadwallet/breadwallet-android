@@ -9,6 +9,7 @@ import android.view.View;
 import com.breadwallet.R;
 import com.breadwallet.presenter.fragments.FragmentMenu;
 import com.breadwallet.presenter.fragments.FragmentBreadSignal;
+import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 
 
 /**
@@ -42,11 +43,12 @@ public class BRAnimator {
     private static boolean clickAllowed = true;
 
 
-    public static void showBreadSignal(Activity activity, String title, String iconDescription, int drawableId) {
+    public static void showBreadSignal(Activity activity, String title, String iconDescription, int drawableId, BROnSignalCompletion completion) {
         fragmentSignal = new FragmentBreadSignal();
         Bundle bundle = new Bundle();
         bundle.putString(FragmentBreadSignal.TITLE, title);
         bundle.putString(FragmentBreadSignal.ICON_DESCRIPTION, iconDescription);
+        fragmentSignal.setCompletion(completion);
         bundle.putInt(FragmentBreadSignal.RES_ID, drawableId);
         fragmentSignal.setArguments(bundle);
         FragmentTransaction transaction = activity.getFragmentManager().beginTransaction();

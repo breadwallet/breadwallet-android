@@ -33,6 +33,7 @@ import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.presenter.fragments.FragmentBreadSignal;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
+import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.manager.CurrencyFetchManager;
@@ -387,7 +388,15 @@ public class BRWalletManager {
 
     public static void publishCallback(final String message, int error) {
         Log.e(TAG, "publishCallback: " + message + ", err:" + error);
-        BRAnimator.showBreadSignal(BreadActivity.app, error == 0 ? "Send Confirmation" : "Error", error == 0 ? "Money Sent!" : message, error == 0 ? R.drawable.ic_check_mark_white : R.drawable.ic_error_outline_black_24dp);
+        final BreadActivity app = BreadActivity.app;
+        if (app == null) return;
+        BRAnimator.showBreadSignal(app, error == 0 ? "Send Confirmation" : "Error", error == 0 ? "Money Sent!" : message, error == 0 ? R.drawable.ic_check_mark_white : R.drawable.ic_error_outline_black_24dp, new BROnSignalCompletion() {
+            @Override
+            public void onComplete() {
+                if (app != null)
+                    app.getFragmentManager().popBackStack();
+            }
+        });
 
 //        PaymentProtocolPostPaymentTask.waiting = false;
 //        if (error != 0) {
@@ -1025,7 +1034,7 @@ public class BRWalletManager {
         } else {
             //multiply by 100 because core function localAmount accepts the smallest amount e.g. cents
             CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByIso(iso);
-            if(ent == null) return new BigDecimal(0);
+            if (ent == null) return new BigDecimal(0);
             BigDecimal rate = new BigDecimal(ent.rate).multiply(new BigDecimal(100));
             result = getExchange(rate.doubleValue(), amount.longValue()).divide(new BigDecimal(100), 2, BRConstants.ROUNDING_MODE);
         }
