@@ -42,10 +42,10 @@ import static com.breadwallet.presenter.activities.BreadActivity.app;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class QRActivity extends AppCompatActivity {
+public class ScanQRActivity extends AppCompatActivity {
     private SurfaceView mySurfaceView;
     private QRReader qrEader;
-    private static final String TAG = QRActivity.class.getName();
+    private static final String TAG = ScanQRActivity.class.getName();
     private boolean dataProcessing = false;
     private ImageView cameraGuide;
     private TextView descriptionText;

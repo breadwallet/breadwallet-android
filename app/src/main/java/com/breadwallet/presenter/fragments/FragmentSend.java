@@ -30,7 +30,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.QRActivity;
+import com.breadwallet.presenter.activities.ScanQRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRSoftKeyboard;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
@@ -51,7 +51,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.R.attr.dialogLayout;
 import static com.breadwallet.tools.security.BitcoinUrlHandler.getRequestFromString;
 
 
@@ -218,7 +217,7 @@ public class FragmentSend extends Fragment {
                         }
                     } else {
                         // Permission is granted, open camera
-                        Intent intent = new Intent(app, QRActivity.class);
+                        Intent intent = new Intent(app, ScanQRActivity.class);
                         app.startActivityForResult(intent, 123);
                         app.overridePendingTransition(R.anim.scale_up, 0);
                     }

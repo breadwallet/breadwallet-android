@@ -20,7 +20,7 @@ public class IntroRecoverActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro_recover);
 
-        setStatusBarColor(android.R.color.transparent);
+//        setStatusBarColor(android.R.color.transparent);
 
         nextButton = (Button) findViewById(R.id.send_button);
 
