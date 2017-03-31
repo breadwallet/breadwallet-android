@@ -8,6 +8,7 @@ import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +17,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -70,7 +74,7 @@ import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
  * THE SOFTWARE.
  */
 
-public class BreadActivity extends AppCompatActivity implements BRWalletManager.OnBalanceChanged, BRPeerManager.OnTxStatusUpdate, SharedPreferencesManager.OnIsoChangedListener,  TransactionDataSource.OnTxAddedListener  {
+public class BreadActivity extends AppCompatActivity implements BRWalletManager.OnBalanceChanged, BRPeerManager.OnTxStatusUpdate, SharedPreferencesManager.OnIsoChangedListener, TransactionDataSource.OnTxAddedListener {
     private static final String TAG = BreadActivity.class.getName();
 
     private LinearLayout sendButton;
@@ -83,9 +87,10 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     private TextView secondaryPrice;
     private TextView emptyTip;
     private ProgressBar progressBar;
+    private ConstraintLayout progressLayout;
     private RecyclerView txList;
     private TransactionListAdapter adapter;
-
+    private int progress = 0;
     public static boolean appInBackground = false;
 
     static {
@@ -110,7 +115,8 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
 
         setListeners();
 
-        progressBar.setProgress(80);
+        setWalletLoading();
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -306,6 +312,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         secondaryPrice = (TextView) findViewById(R.id.secondary_price);
         emptyTip = (TextView) findViewById(R.id.empty_tx_tip);
         progressBar = (ProgressBar) findViewById(R.id.load_wallet_progress);
+        progressLayout = (ConstraintLayout) findViewById(R.id.loading_wallet_layout);
         txList = (RecyclerView) findViewById(R.id.tx_list);
     }
 
@@ -344,7 +351,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
 
     }
 
-    public void updateUI(){
+    public void updateUI() {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -415,5 +422,65 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     @Override
     public void onTxAdded() {
         setUpTxList();
+    }
+
+    private void setWalletLoading(){
+        progressBar.setProgress(progress);
+
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                while (progressBar.getProgress() < 100) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    progressBar.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            progress += 5;
+                            progressBar.setProgress(progress);
+                        }
+                    });
+
+                }
+                progressLayout.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        ScaleAnimation scaleAnim = new ScaleAnimation(
+                                1f, 1f,
+                                1f, 0f,
+                                Animation.ABSOLUTE, 0,
+                                Animation.RELATIVE_TO_SELF , 0);
+                        scaleAnim.setDuration(200);
+                        scaleAnim.setRepeatCount(0);
+                        scaleAnim.setInterpolator(new AccelerateDecelerateInterpolator());
+                        scaleAnim.setFillAfter(true);
+                        scaleAnim.setFillBefore(true);
+                        scaleAnim.setFillEnabled(true);
+                        scaleAnim.setAnimationListener(new Animation.AnimationListener() {
+                            @Override
+                            public void onAnimationStart(Animation animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animation animation) {
+                                progressLayout.setVisibility(View.GONE);
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animation animation) {
+
+                            }
+                        });
+
+                        progressLayout.startAnimation(scaleAnim);
+                    }
+                });
+            }
+        }).start();
     }
 }
