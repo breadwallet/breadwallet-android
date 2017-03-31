@@ -1,7 +1,6 @@
 package com.breadwallet.presenter.activities;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Point;
@@ -25,7 +24,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.presenter.fragments.FragmentMenu;
 import com.breadwallet.presenter.fragments.FragmentReceive;
@@ -37,7 +35,6 @@ import com.breadwallet.tools.listeners.RecyclerItemClickListener;
 import com.breadwallet.tools.manager.CurrencyFetchManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
-import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.wallet.BRPeerManager;
@@ -120,7 +117,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         new Thread(new Runnable() {
             @Override
             public void run() {
-                setUpTxList();
+                updateTxList();
             }
         }).start();
 
@@ -130,9 +127,9 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     protected void onSaveInstanceState(Bundle outState) {
     }
 
-    private void setUpTxList() {
+    private void updateTxList() {
         final TransactionListItem[] arr = BRWalletManager.getInstance().getTransactions();
-        Log.e(TAG, "setUpTxList: arr.size: " + Arrays.toString(arr));
+        Log.e(TAG, "updateTxList: arr.size: " + Arrays.toString(arr));
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -317,7 +314,15 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     }
 
     private void togglePriceTexts() {
+        SharedPreferencesManager.putPreferredBTC(this, !SharedPreferencesManager.getPreferredBTC(this));
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                updateUI();
+                updateTxList();
 
+            }
+        }, 100);
     }
 
     //returns x-pos relative to root layout
@@ -348,6 +353,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     public void onBalanceChanged(final long balance) {
         Log.e(TAG, "onBalanceChanged: " + balance);
         updateUI();
+        updateTxList();
 
     }
 
@@ -377,8 +383,9 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        primaryPrice.setText(formattedCurAmount);
-                        secondaryPrice.setText(formattedBTCAmount);
+                        boolean preferredBtc = SharedPreferencesManager.getPreferredBTC(BreadActivity.this);
+                        primaryPrice.setText(preferredBtc ? formattedBTCAmount : formattedCurAmount);
+                        secondaryPrice.setText(preferredBtc ? formattedCurAmount : formattedBTCAmount);
                         SpringAnimator.showAnimation(primaryPrice);
                         SpringAnimator.showAnimation(secondaryPrice);
 
@@ -410,21 +417,21 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
 
     @Override
     public void onStatusUpdate() {
-        setUpTxList();
+        updateTxList();
     }
 
     @Override
     public void onIsoChanged(String iso) {
         updateUI();
-        setUpTxList();
+        updateTxList();
     }
 
     @Override
     public void onTxAdded() {
-        setUpTxList();
+        updateTxList();
     }
 
-    private void setWalletLoading(){
+    private void setWalletLoading() {
         progressBar.setProgress(progress);
 
         new Thread(new Runnable() {
@@ -453,7 +460,8 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
                                 1f, 1f,
                                 1f, 0f,
                                 Animation.ABSOLUTE, 0,
-                                Animation.RELATIVE_TO_SELF , 0);
+                                Animation.RELATIVE_TO_SELF, 0);
+
                         scaleAnim.setDuration(200);
                         scaleAnim.setRepeatCount(0);
                         scaleAnim.setInterpolator(new AccelerateDecelerateInterpolator());
