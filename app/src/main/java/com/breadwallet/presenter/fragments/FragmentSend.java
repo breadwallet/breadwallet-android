@@ -243,7 +243,7 @@ public class FragmentSend extends Fragment {
                 String iso = (String) spinner.getSelectedItem();
 
                 //get amount in satoshis from any isos
-                BigDecimal bigAmount = new BigDecimal(Utils.isNullOrEmpty(amountStr)? "0" : amountStr);
+                BigDecimal bigAmount = new BigDecimal(Utils.isNullOrEmpty(amountStr) ? "0" : amountStr);
                 long amount = iso.equalsIgnoreCase("BTC")
                         ? BRBitcoin.getSatoshisFromAmount(bigAmount).longValue()
                         : BRWalletManager.getInstance().getAmount(getActivity(), iso, bigAmount).longValue();
@@ -313,9 +313,7 @@ public class FragmentSend extends Fragment {
                 });
 
             }
-        }).
-
-                start();
+        }).start();
 
     }
 
@@ -453,12 +451,7 @@ public class FragmentSend extends Fragment {
                 return;
             amountBuilder.append(dig);
             updateText();
-        } else {
-            SpringAnimator.failShakeAnimation(getActivity(), isoText);
         }
-//        if ((curAmount.contains(".") && (curAmount.length() - curAmount.indexOf(".") < 8)) || curAmount.length() < ) {
-//            amountBuilder.append(dig);
-//        }
     }
 
     private void handleSeparatorClick() {
