@@ -246,4 +246,23 @@ public class PinActivity extends Activity {
         rightButton.setTextColor(activeColor);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
+
+        // 123 is the qrCode result
+        if (requestCode == 123) {
+            if (resultCode == Activity.RESULT_OK) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        String result = data.getStringExtra("result");
+                        BRAnimator.showSendFragment(PinActivity.this, result);
+                    }
+                }, 300);
+
+            }
+
+        }
+    }
+
 }
