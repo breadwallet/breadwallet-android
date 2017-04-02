@@ -41,14 +41,14 @@ public class BRBitcoin {
     public static BigDecimal getMaxAmount(Context context, String iso) {
         final long MAX_BTC = 21000000;
         if (iso.equalsIgnoreCase("BTC"))
-            return getBitcoinAmount(new BigDecimal(MAX_BTC * 100000000));
+            return getBitcoinAmount(context, new BigDecimal(MAX_BTC * 100000000));
         CurrencyEntity ent = CurrencyDataSource.getInstance(context).getCurrencyByIso(iso);
         if (ent == null) throw new RuntimeException("no currency in DB for: " + iso);
         return new BigDecimal(ent.rate * MAX_BTC);
     }
 
     // amount in satoshis
-    public static BigDecimal getBitcoinAmount(BigDecimal amount) {
+    public static BigDecimal getBitcoinAmount(Context app, BigDecimal amount) {
         BigDecimal result = new BigDecimal(0);
         int unit = SharedPreferencesManager.getCurrencyUnit(app);
         switch (unit) {

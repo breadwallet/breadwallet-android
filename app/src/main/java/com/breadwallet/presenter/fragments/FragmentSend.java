@@ -459,6 +459,7 @@ public class FragmentSend extends Fragment {
     }
 
     private void updateText() {
+        if(getActivity() == null) return;
         String tmpAmount = amountBuilder.toString();
         amountEdit.setText(tmpAmount);
         String balanceString;
