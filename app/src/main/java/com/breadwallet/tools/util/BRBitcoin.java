@@ -65,7 +65,7 @@ public class BRBitcoin {
         return result;
     }
 
-    public static BigDecimal getSatoshisFromAmount(BigDecimal amount){
+    public static BigDecimal getSatoshisFromAmount(Context app,BigDecimal amount){
         BigDecimal result = new BigDecimal(0);
         int unit = SharedPreferencesManager.getCurrencyUnit(app);
         switch (unit) {
