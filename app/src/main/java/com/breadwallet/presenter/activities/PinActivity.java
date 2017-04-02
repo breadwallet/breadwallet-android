@@ -38,6 +38,7 @@ public class PinActivity extends Activity {
     private View dot6;
     private StringBuilder pin = new StringBuilder();
     private int pinLimit = 6;
+    private static PinActivity app;
 
     private ImageView unlockedImage;
     private TextView unlockedText;
@@ -46,6 +47,10 @@ public class PinActivity extends Activity {
 
     private Button leftButton;
     private Button rightButton;
+
+    public static PinActivity getApp() {
+        return app;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
