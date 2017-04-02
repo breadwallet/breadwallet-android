@@ -1,5 +1,6 @@
 package com.breadwallet.tools.util;
 
+import android.app.Activity;
 import android.content.Context;
 
 import com.breadwallet.presenter.entities.CurrencyEntity;
@@ -8,7 +9,6 @@ import com.breadwallet.tools.sqlite.CurrencyDataSource;
 
 import java.math.BigDecimal;
 
-import static com.breadwallet.presenter.activities.BreadActivity.app;
 import static com.breadwallet.tools.util.BRConstants.CURRENT_UNIT_BITS;
 import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
 
@@ -82,7 +82,7 @@ public class BRBitcoin {
         return result;
     }
 
-    public static String getBitcoinSymbol(){
+    public static String getBitcoinSymbol(Context app){
         String currencySymbolString = BRConstants.bitcoinLowercase;
         if (app != null) {
             int unit = SharedPreferencesManager.getCurrencyUnit(app);

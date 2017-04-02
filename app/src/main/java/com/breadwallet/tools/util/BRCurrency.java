@@ -13,7 +13,6 @@ import java.util.Currency;
 import java.util.Locale;
 import java.util.Objects;
 
-import static com.breadwallet.presenter.activities.BreadActivity.app;
 import static com.breadwallet.tools.util.BRConstants.CURRENT_UNIT_BITS;
 
 /**
@@ -97,7 +96,7 @@ public class BRCurrency {
         decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
 //        int decimalPoints = 0;
         if (Objects.equals(isoCurrencyCode, "BTC")) {
-            symbol = BRBitcoin.getBitcoinSymbol();
+            symbol = BRBitcoin.getBitcoinSymbol(app);
         } else {
             try {
                 currency = Currency.getInstance(isoCurrencyCode);
@@ -122,7 +121,7 @@ public class BRCurrency {
         return index < 0 ? 0 : amount.length() - index - 1;
     }
 
-    public static String getSymbolByIso(String iso) {
+    public static String getSymbolByIso(Context app,String iso) {
         String symbol;
         if (Objects.equals(iso, "BTC")) {
             String currencySymbolString = BRConstants.bitcoinLowercase;

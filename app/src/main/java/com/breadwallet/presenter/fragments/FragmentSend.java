@@ -270,7 +270,7 @@ public class FragmentSend extends Fragment {
                 String item = parent.getItemAtPosition(position).toString();
                 curBalance = BRWalletManager.getInstance().getBalance(getActivity());
                 Log.e(TAG, "onItemSelected: " + item);
-                isoText.setText(BRCurrency.getSymbolByIso(item));
+                isoText.setText(BRCurrency.getSymbolByIso(getActivity(),item));
                 SpringAnimator.showAnimation(isoText);
                 updateText();
 
@@ -278,7 +278,7 @@ public class FragmentSend extends Fragment {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                isoText.setText(BRCurrency.getSymbolByIso("BTC"));
+                isoText.setText(BRCurrency.getSymbolByIso(getActivity(),"BTC"));
                 SpringAnimator.showAnimation(isoText);
             }
         });

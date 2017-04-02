@@ -1,6 +1,7 @@
 package com.platform;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -66,7 +67,7 @@ public class GeoLocationManager {
     public void getOneTimeGeoLocation(Continuation cont, Request req) {
         this.continuation = cont;
         this.baseRequest = req;
-        final BreadActivity app = BreadActivity.app;
+        final BreadActivity app = BreadActivity.getApp();
         if (app == null)
             return;
         locationManager = (LocationManager) app.getSystemService(Context.LOCATION_SERVICE);
@@ -94,7 +95,7 @@ public class GeoLocationManager {
     public void startGeoSocket(Session sess) {
         session = sess;
 
-        final BreadActivity app = BreadActivity.app;
+        final BreadActivity app = BreadActivity.getApp();
         if (app == null)
             return;
         final LocationManager locationManager = (LocationManager) app.getSystemService(Context.LOCATION_SERVICE);
@@ -116,7 +117,7 @@ public class GeoLocationManager {
     }
 
     public void stopGeoSocket() {
-        final BreadActivity app = BreadActivity.app;
+        final BreadActivity app = BreadActivity.getApp();
         if (app == null)
             return;
         final LocationManager locationManager = (LocationManager) app.getSystemService(Context.LOCATION_SERVICE);
@@ -214,8 +215,9 @@ public class GeoLocationManager {
                         } finally {
 
                             processing = false;
-                            if (BreadActivity.app == null || ActivityCompat.checkSelfPermission(BreadActivity.app, Manifest.permission.ACCESS_FINE_LOCATION)
-                                    != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(BreadActivity.app,
+                            Activity app = BreadActivity.getApp();
+                            if (app == null || ActivityCompat.checkSelfPermission(app, Manifest.permission.ACCESS_FINE_LOCATION)
+                                    != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(app,
                                     Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                                 Log.e(TAG, "onLocationChanged: PERMISSION DENIED for removeUpdates");
                             } else {

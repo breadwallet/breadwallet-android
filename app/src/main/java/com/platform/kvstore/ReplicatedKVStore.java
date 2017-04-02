@@ -737,7 +737,7 @@ public class ReplicatedKVStore {
      */
     public byte[] encrypt(byte[] data) {
         Context app = context;
-        if (app == null) app = BreadActivity.app;
+        if (app == null) app = BreadActivity.getApp();
         if (app == null) return null;
         BRKey key = new BRKey(KeyStoreManager.getAuthKey((Activity) app));
         byte[] nonce = getNonce();
@@ -754,7 +754,7 @@ public class ReplicatedKVStore {
      */
     public byte[] decrypt(byte[] data) {
         Context app = context;
-        if (app == null) app = BreadActivity.app;
+        if (app == null) app = BreadActivity.getApp();
         if (app == null) return null;
         BRKey key = new BRKey(KeyStoreManager.getAuthKey((Activity) app));
         //12 bytes is the nonce

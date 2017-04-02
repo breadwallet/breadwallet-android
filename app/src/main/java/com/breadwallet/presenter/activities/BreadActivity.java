@@ -77,7 +77,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     private LinearLayout sendButton;
     private LinearLayout receiveButton;
     private LinearLayout menuButton;
-    public static BreadActivity app;
+    private static BreadActivity app;
     public static final Point screenParametersPoint = new Point();
 
     private TextView primaryPrice;
@@ -89,6 +89,10 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     private TransactionListAdapter adapter;
     private int progress = 0;
     public static boolean appInBackground = false;
+
+    public static BreadActivity getApp(){
+        return app;
+    }
 
     static {
         System.loadLibrary("core");

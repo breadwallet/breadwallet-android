@@ -39,7 +39,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.breadwallet.R.id.menu_listview;
-import static com.breadwallet.presenter.activities.BreadActivity.app;
 import static com.breadwallet.presenter.fragments.FragmentSend.ANIMATION_DURATION;
 
 /**

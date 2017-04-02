@@ -54,7 +54,7 @@ public class HTTPIndexMiddleware implements Middleware {
     @Override
     public boolean handle(String target, org.eclipse.jetty.server.Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
         Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
-        String indexFile = BreadActivity.app.getFilesDir() + "/" + BUNDLES + "/" + extractedFolder + "/index.html";
+        String indexFile = BreadActivity.getApp().getFilesDir() + "/" + BUNDLES + "/" + extractedFolder + "/index.html";
 
         File temp = new File(indexFile);
         if (!temp.exists()) {

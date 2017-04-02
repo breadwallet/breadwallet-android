@@ -17,7 +17,6 @@ import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.BRWalletManager;
 
-import static com.breadwallet.presenter.activities.BreadActivity.app;
 
 
 public class IntroWriteDownActivity extends Activity {

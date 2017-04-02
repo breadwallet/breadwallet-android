@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.exceptions.CertificateChainNotFound;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
@@ -22,7 +23,6 @@ import java.net.URL;
 import java.security.cert.X509Certificate;
 import java.util.List;
 
-import static com.breadwallet.presenter.activities.BreadActivity.app;
 
 /**
  * BreadWallet
@@ -55,10 +55,12 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
     String certName = null;
     PaymentRequestWrapper paymentRequest = null;
     int certified = 0;
+    Activity app;
 
     //params[0] = uri, params[1] = label
     @Override
     protected String doInBackground(String... params) {
+        app = BreadActivity.getApp();
         InputStream in;
         try {
             Log.e(TAG, "the uri: " + params[0]);

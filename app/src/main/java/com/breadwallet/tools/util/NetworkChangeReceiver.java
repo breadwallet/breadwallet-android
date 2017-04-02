@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import com.breadwallet.wallet.BRPeerManager;
 
-import static com.breadwallet.presenter.activities.BreadActivity.app;
 
 /**
  * BreadWallet

@@ -69,7 +69,7 @@ public class APIProxy implements Middleware {
             "connection"};
 
     public APIProxy() {
-        apiInstance = APIClient.getInstance(BreadActivity.app);
+        apiInstance = APIClient.getInstance(BreadActivity.getApp());
     }
 
     @Override

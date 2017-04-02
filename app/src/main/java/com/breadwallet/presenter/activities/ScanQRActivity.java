@@ -16,7 +16,6 @@ import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.qrcode.QRReader;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 
-import static com.breadwallet.presenter.activities.BreadActivity.app;
 
 /**
  * BreadWallet
@@ -133,7 +132,7 @@ public class ScanQRActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        app.overridePendingTransition(R.anim.scale_down, 0);
+        overridePendingTransition(R.anim.scale_down, 0);
         super.onBackPressed();
     }
 

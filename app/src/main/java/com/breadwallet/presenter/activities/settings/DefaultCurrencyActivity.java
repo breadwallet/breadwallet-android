@@ -20,7 +20,6 @@ import com.breadwallet.tools.util.BRCurrency;
 
 import java.math.BigDecimal;
 
-import static com.breadwallet.presenter.activities.BreadActivity.app;
 
 public class DefaultCurrencyActivity extends AppCompatActivity {
     private static final String TAG = DefaultCurrencyActivity.class.getName();
@@ -61,7 +60,7 @@ public class DefaultCurrencyActivity extends AppCompatActivity {
 //                lastItemsPosition = position;
                 CurrencyEntity item = adapter.getItem(position);
                 rate = item == null ? 0 : item.rate;
-                SharedPreferencesManager.putIso(app, ISO);
+                SharedPreferencesManager.putIso(DefaultCurrencyActivity.this, ISO);
                 SharedPreferencesManager.putCurrencyListPosition(DefaultCurrencyActivity.this, position);
 //                SharedPreferencesManager.putRate(app, rate);
                 String finalExchangeRate = BRCurrency.getFormattedCurrencyString(DefaultCurrencyActivity.this, ISO, new BigDecimal(rate));
