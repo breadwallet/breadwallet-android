@@ -79,23 +79,23 @@ public class PinActivity extends Activity {
         leftButton = (Button) findViewById(R.id.left_button);
         rightButton = (Button) findViewById(R.id.right_button);
 
-        chooseWordsSize(true);
+        setUpOfflineButtons();
 
         leftButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!BRAnimator.isClickAllowed()) return;
-                SpringAnimator.showAnimation(leftButton);
-                chooseWordsSize(true);
+                if (!BRAnimator.isClickAllowed()) return;
+                BRAnimator.showReceiveFragment(PinActivity.this);
+//                chooseWordsSize(true);
             }
         });
 
         rightButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!BRAnimator.isClickAllowed()) return;
-                SpringAnimator.showAnimation(rightButton);
-                chooseWordsSize(false);
+                if (!BRAnimator.isClickAllowed()) return;
+                BRAnimator.showSendFragment(PinActivity.this, null);
+//                chooseWordsSize(false);
             }
         });
 
@@ -222,9 +222,8 @@ public class PinActivity extends Activity {
         }, 1000);
     }
 
-    private void chooseWordsSize(boolean isLeft) {
+    private void setUpOfflineButtons() {
         int activeColor = getColor(white);
-        int nonActiveColor = getColor(white);
         GradientDrawable leftDrawable = (GradientDrawable) leftButton.getBackground().getCurrent();
         GradientDrawable rightDrawable = (GradientDrawable) rightButton.getBackground().getCurrent();
 
@@ -234,17 +233,10 @@ public class PinActivity extends Activity {
         leftDrawable.setCornerRadii(new float[]{rad, rad, 0, 0, 0, 0, rad, rad});
         rightDrawable.setCornerRadii(new float[]{0, 0, rad, rad, rad, rad, 0, 0});
 
-        if (isLeft) {
-            leftDrawable.setStroke(stoke, activeColor, 0, 0);
-            rightDrawable.setStroke(stoke, nonActiveColor, 0, 0);
-            leftButton.setTextColor(activeColor);
-            rightButton.setTextColor(nonActiveColor);
-        } else {
-            leftDrawable.setStroke(stoke, nonActiveColor, 0, 0);
-            rightDrawable.setStroke(stoke, activeColor, 0, 0);
-            leftButton.setTextColor(nonActiveColor);
-            rightButton.setTextColor(activeColor);
-        }
-
+        leftDrawable.setStroke(stoke, activeColor, 0, 0);
+        rightDrawable.setStroke(stoke, activeColor, 0, 0);
+        leftButton.setTextColor(activeColor);
+        rightButton.setTextColor(activeColor);
     }
+
 }

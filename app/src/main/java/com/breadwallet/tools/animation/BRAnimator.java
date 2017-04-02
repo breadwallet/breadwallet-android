@@ -4,11 +4,14 @@ import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.fragments.FragmentMenu;
 import com.breadwallet.presenter.fragments.FragmentBreadSignal;
+import com.breadwallet.presenter.fragments.FragmentReceive;
+import com.breadwallet.presenter.fragments.FragmentSend;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 
 
@@ -56,6 +59,37 @@ public class BRAnimator {
         transaction.add(android.R.id.content, fragmentSignal, fragmentSignal.getClass().getName());
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+
+    public static void showSendFragment(Activity app,final String bitcoinUrl) {
+        if(app == null) {
+            Log.e(TAG, "showSendFragment: app is null");
+            return;
+        }
+        final FragmentSend fragmentSend = new FragmentSend();
+        if (bitcoinUrl != null && !bitcoinUrl.isEmpty()) {
+            Bundle bundle = new Bundle();
+            bundle.putString("url", bitcoinUrl);
+            fragmentSend.setArguments(bundle);
+        }
+        app.getFragmentManager().beginTransaction()
+                .setCustomAnimations(0, 0, 0, R.animator.plain_300)
+                .add(android.R.id.content, fragmentSend, FragmentSend.class.getName())
+                .addToBackStack(FragmentSend.class.getName()).commit();
+
+    }
+    public static void showReceiveFragment(Activity app) {
+        if(app == null) {
+            Log.e(TAG, "showReceiveFragment: app is null");
+            return;
+        }
+
+        app.getFragmentManager().beginTransaction()
+                .setCustomAnimations(0, 0, 0, R.animator.plain_300)
+                .add(android.R.id.content, new FragmentReceive(), FragmentReceive.class.getName())
+                .addToBackStack(FragmentReceive.class.getName()).commit();
+
     }
 
     public static boolean isClickAllowed() {

@@ -255,8 +255,8 @@ public class FragmentSend extends Fragment {
                     allFilled = false;
                     SpringAnimator.failShakeAnimation(getActivity(), amountEdit);
                 }
-                if(amount > BRWalletManager.getInstance().getBalance(getActivity())){
-                    SpringAnimator.failShakeAnimation(getActivity(),balanceText);
+                if (amount > BRWalletManager.getInstance().getBalance(getActivity())) {
+                    SpringAnimator.failShakeAnimation(getActivity(), balanceText);
                 }
 
                 if (allFilled)
@@ -354,8 +354,13 @@ public class FragmentSend extends Fragment {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                if (reverse && getActivity() != null)
-                    getActivity().getFragmentManager().popBackStack();
+                if (reverse && getActivity() != null) {
+                    try {
+                        getActivity().getFragmentManager().popBackStack();
+                    } catch (Exception ex) {
+
+                    }
+                }
 
                 if (!reverse) {
                     Bundle bundle = getArguments();

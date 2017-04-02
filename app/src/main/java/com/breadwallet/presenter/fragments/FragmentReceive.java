@@ -93,16 +93,9 @@ public class FragmentReceive extends Fragment {
         layoutTransition.enableTransitionType(LayoutTransition.CHANGING);
         setListeners();
 
-        boolean success = BRWalletManager.refreshAddress(getActivity());
-        if (!success) throw new RuntimeException("failed to retrieve address");
-
-        receiveAddress = SharedPreferencesManager.getReceiveAddress(getActivity());
-        mAddress.setText(receiveAddress);
-        boolean generated = BRWalletManager.getInstance().generateQR(getActivity(), "bitcoin:" + receiveAddress, mQrImage);
-        if (!generated) throw new RuntimeException("failed to generate qr image for address");
-
         return rootView;
     }
+
 
     private void setListeners() {
         shareEmail.setOnClickListener(new View.OnClickListener() {
@@ -168,6 +161,14 @@ public class FragmentReceive extends Fragment {
                 signalLayout.removeView(shareButtonsLayout);
             }
         });
+
+        boolean success = BRWalletManager.refreshAddress(getActivity());
+        if (!success) throw new RuntimeException("failed to retrieve address");
+
+        receiveAddress = SharedPreferencesManager.getReceiveAddress(getActivity());
+        mAddress.setText(receiveAddress);
+        boolean generated = BRWalletManager.getInstance().generateQR(getActivity(), "bitcoin:" + receiveAddress, mQrImage);
+        if (!generated) throw new RuntimeException("failed to generate qr image for address");
 
     }
 

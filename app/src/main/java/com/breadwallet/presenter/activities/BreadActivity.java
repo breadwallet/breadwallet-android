@@ -179,7 +179,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
 
                 if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
-                showSendFragment(null);
+                BRAnimator.showSendFragment(BreadActivity.this, null);
 
             }
         });
@@ -189,10 +189,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
-                getFragmentManager().beginTransaction()
-                        .setCustomAnimations(0, 0, 0, R.animator.plain_300)
-                        .add(android.R.id.content, new FragmentReceive(), FragmentReceive.class.getName())
-                        .addToBackStack(FragmentReceive.class.getName()).commit();
+                BRAnimator.showReceiveFragment(BreadActivity.this);
             }
         });
 
@@ -235,20 +232,6 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
             public void onLongItemClick(View view, int position) {
             }
         }));
-    }
-
-    public void showSendFragment(final String bitcoinUrl) {
-        final FragmentSend fragmentSend = new FragmentSend();
-        if (bitcoinUrl != null && !bitcoinUrl.isEmpty()) {
-            Bundle bundle = new Bundle();
-            bundle.putString("url", bitcoinUrl);
-            fragmentSend.setArguments(bundle);
-        }
-        getFragmentManager().beginTransaction()
-                .setCustomAnimations(0, 0, 0, R.animator.plain_300)
-                .add(android.R.id.content, fragmentSend, FragmentSend.class.getName())
-                .addToBackStack(FragmentSend.class.getName()).commit();
-
     }
 
     @Override
@@ -410,7 +393,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
                     @Override
                     public void run() {
                         String result = data.getStringExtra("result");
-                        showSendFragment(result);
+                        BRAnimator.showSendFragment(BreadActivity.this, result);
                     }
                 }, 300);
 

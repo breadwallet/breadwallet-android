@@ -9,6 +9,7 @@ import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.presenter.entities.RequestObject;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
 import com.breadwallet.tools.util.TypesConverter;
@@ -399,8 +400,7 @@ public class BitcoinUrlHandler {
             app.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    ((BreadActivity) app).showSendFragment(url);
-
+                    BRAnimator.showSendFragment(app, url);
                 }
             });
         } else {
