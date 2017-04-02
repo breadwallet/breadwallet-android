@@ -735,20 +735,24 @@ public class BRWalletManager {
                     reduceBits, reduceFee), String.format("%s (%s)", reduceBitsMinus, reduceFeeMinus), "Cancel", new BRDialogView.BROnClickListener() {
                 @Override
                 public void onClick(BRDialogView brDialogView) {
-                    brDialogView.dismiss();
-                }
-            }, new BRDialogView.BROnClickListener() {
-                @Override
-                public void onClick(BRDialogView brDialogView) {
-                    byte[] tmpTx2 = m.tryTransaction(paymentRequest.addresses[0], paymentRequest.amount - amountToReduce);
+
+                    long newAmount = paymentRequest.amount - amountToReduce;
+                    byte[] tmpTx2 = m.tryTransaction(paymentRequest.addresses[0], newAmount);
                     if (tmpTx2 != null) {
                         PostAuthenticationProcessor.getInstance().setTmpTx(tmpTx2);
-//                        confirmPay(ctx, new PaymentRequestEntity(new String[]{addressHolder}, bigDecimalAmount.longValue() - amountToReduce, cn, tmpTx2, isAmountRequested));
+                        paymentRequest.amount = newAmount;
+                        confirmPay(context, paymentRequest);
                     } else {
                         Log.e(TAG, "tmpTxObject2 is null!");
                         BRToast.showCustomToast(context, context.getString(R.string.insufficient_funds),
                                 BreadActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
                     }
+                    brDialogView.dismiss();
+                }
+            }, new BRDialogView.BROnClickListener() {
+                @Override
+                public void onClick(BRDialogView brDialogView) {
+                    brDialogView.dismiss();
                 }
             }, null, 0);
 
