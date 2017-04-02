@@ -243,6 +243,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         }
         getFragmentManager().beginTransaction()
                 .add(android.R.id.content, fragmentSend, FragmentSend.class.getName())
+                .setCustomAnimations(0, 0, 0, R.animator.plain_300)
                 .addToBackStack(FragmentSend.class.getName()).commit();
 
     }
