@@ -255,6 +255,9 @@ public class FragmentSend extends Fragment {
                     allFilled = false;
                     SpringAnimator.failShakeAnimation(getActivity(), amountEdit);
                 }
+                if(amount > BRWalletManager.getInstance().getBalance(getActivity())){
+                    SpringAnimator.failShakeAnimation(getActivity(),balanceText);
+                }
 
                 if (allFilled)
                     BRWalletManager.getInstance().handlePay(getContext(), new PaymentRequestEntity(new String[]{address}, amount, null, false));

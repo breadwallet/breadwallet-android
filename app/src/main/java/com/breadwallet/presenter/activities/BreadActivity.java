@@ -401,19 +401,14 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
 
         // 123 is the qrCode result
         if (requestCode == 123) {
             if (resultCode == Activity.RESULT_OK) {
                 String result = data.getStringExtra("result");
-                Log.e(TAG, "onActivityResult: result: " + result);
-                FragmentSend fragmentSend = (FragmentSend) getFragmentManager().findFragmentByTag(FragmentSend.class.getName());
-                if (fragmentSend != null && fragmentSend.isVisible()) {
-                    fragmentSend.setUrl(result);
-                } else {
-                    showSendFragment(result);
-                }
+                showSendFragment(result);
+
             }
 
         }
