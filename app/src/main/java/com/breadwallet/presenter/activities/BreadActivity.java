@@ -189,7 +189,9 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
-                getFragmentManager().beginTransaction().add(android.R.id.content, new FragmentReceive(), FragmentReceive.class.getName())
+                getFragmentManager().beginTransaction()
+                        .setCustomAnimations(0, 0, 0, R.animator.plain_300)
+                        .add(android.R.id.content, new FragmentReceive(), FragmentReceive.class.getName())
                         .addToBackStack(FragmentReceive.class.getName()).commit();
             }
         });
@@ -200,6 +202,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
                 if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.setCustomAnimations(0, 0, 0, R.animator.plain_300);
                 transaction.add(android.R.id.content, new FragmentMenu(), FragmentMenu.class.getName());
                 transaction.addToBackStack(null);
                 transaction.commit();
@@ -242,8 +245,8 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
             fragmentSend.setArguments(bundle);
         }
         getFragmentManager().beginTransaction()
-                .add(android.R.id.content, fragmentSend, FragmentSend.class.getName())
                 .setCustomAnimations(0, 0, 0, R.animator.plain_300)
+                .add(android.R.id.content, fragmentSend, FragmentSend.class.getName())
                 .addToBackStack(FragmentSend.class.getName()).commit();
 
     }

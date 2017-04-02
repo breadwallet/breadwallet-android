@@ -122,7 +122,6 @@ public class FragmentSend extends Fragment {
         return rootView;
     }
 
-
     private void setListeners() {
         long start = System.currentTimeMillis();
         paste.setOnClickListener(new View.OnClickListener() {
@@ -138,7 +137,6 @@ public class FragmentSend extends Fragment {
                 String address = null;
 
                 RequestObject obj = getRequestFromString(bitcoinUrl);
-
 
                 if (obj == null || obj.address == null) {
                     showClipboardError();
@@ -388,34 +386,12 @@ public class FragmentSend extends Fragment {
     public void onStop() {
         super.onStop();
         animateBackgroundDim(true);
-        animateSignalSlide(true); MAKE SURE THIS WORKS, NEW WAY OF CLOSING FRAGMENT WITH ANIMATION LIKE FragmentBreadPin
+        animateSignalSlide(true);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-//        if (getView() == null) {
-//            Log.e(TAG, "onResume: getView is null!");
-//            return;
-//        }
-//        getView().setFocusableInTouchMode(true);
-//        getView().requestFocus();
-//        //override back pressed for animation on fragment close
-//        getView().setOnKeyListener(new View.OnKeyListener() {
-//            @Override
-//            public boolean onKey(View v, int keyCode, KeyEvent event) {
-//
-//                switch (keyCode) {
-//                    case KeyEvent.KEYCODE_BACK:
-//                        Log.e(TAG, "onKey: KEYCODE_BACK");
-//                        animateBackgroundDim(true);
-//                        animateSignalSlide(true);
-//                        getView().setOnKeyListener(null);
-//                        return true;
-//                }
-//                return false;
-//            }
-//        });
     }
 
     @Override
