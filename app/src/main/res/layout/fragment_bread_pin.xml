@@ -11,7 +11,7 @@
 
     <RelativeLayout
         android:id="@+id/pin_dialog"
-        android:layout_width="220dp"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:background="@drawable/pin_round_corner"
         android:layout_marginBottom="64dp"
@@ -24,6 +24,7 @@
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:textStyle="bold"
+            android:textSize="22sp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="24dp"
@@ -32,6 +33,7 @@
 
         <TextView
             android:id="@+id/message"
+            android:textSize="12sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"

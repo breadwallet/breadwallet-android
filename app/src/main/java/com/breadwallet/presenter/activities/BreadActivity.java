@@ -406,8 +406,13 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         // 123 is the qrCode result
         if (requestCode == 123) {
             if (resultCode == Activity.RESULT_OK) {
-                String result = data.getStringExtra("result");
-                showSendFragment(result);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        String result = data.getStringExtra("result");
+                        showSendFragment(result);
+                    }
+                }, 300);
 
             }
 

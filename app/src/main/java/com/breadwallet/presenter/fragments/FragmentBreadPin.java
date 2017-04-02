@@ -124,7 +124,7 @@ public class FragmentBreadPin extends Fragment {
         keyboard.setTranslationY(keyboardTrY + BreadActivity.screenParametersPoint.y / 3);
         keyboard.animate()
                 .translationY(keyboardTrY)
-                .setDuration(800)
+                .setDuration(400)
                 .setInterpolator(new DecelerateOvershootInterpolator(2.0f, 1f))
                 .withLayer();
         float dialogScaleX = dialogLayout.getScaleX();
@@ -228,7 +228,7 @@ public class FragmentBreadPin extends Fragment {
     public void onStop() {
         super.onStop();
         keyboard.animate()
-                .translationY(600)
+                .translationY(1000)
                 .withLayer();
         dialogLayout.animate()
                 .scaleY(0)
