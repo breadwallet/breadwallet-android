@@ -246,13 +246,6 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         appInBackground = false;
         app = this;
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                BRWalletManager.getInstance().setUpTheWallet(BreadActivity.this);
-            }
-        }).start();
-
         CurrencyFetchManager currencyManager = CurrencyFetchManager.getInstance(this);
         currencyManager.startTimer();
     }

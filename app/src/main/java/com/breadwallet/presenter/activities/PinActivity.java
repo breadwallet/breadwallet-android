@@ -22,6 +22,7 @@ import com.breadwallet.presenter.customviews.BRSoftKeyboard;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.wallet.BRWalletManager;
 
 import static com.breadwallet.R.color.white;
 
@@ -105,6 +106,12 @@ public class PinActivity extends Activity {
     protected void onResume() {
         super.onResume();
         updateDots();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                BRWalletManager.getInstance().setUpTheWallet(PinActivity.this);
+            }
+        }).start();
     }
 
     private void handleClick(String key) {

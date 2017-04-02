@@ -1021,8 +1021,8 @@ public class BRWalletManager {
     }
 
     //returns BTC, mBTC or bits, depending on the user preference
-    public BigDecimal getBitcoin(double rate, long amount) {
-        return BRBitcoin.getBitcoinAmount(new BigDecimal(bitcoinAmount(amount, rate)));
+    public BigDecimal getBitcoin(Context context,double rate, long amount) {
+        return BRBitcoin.getBitcoinAmount(context,new BigDecimal(bitcoinAmount(amount, rate)));
     }
 
     //return the exchange for the specified rate
@@ -1034,7 +1034,7 @@ public class BRWalletManager {
     public BigDecimal getAmount(Context app, String iso, BigDecimal amount) {
         BigDecimal result;
         if (iso.equalsIgnoreCase("BTC")) {
-            result = BRBitcoin.getBitcoinAmount(amount);
+            result = BRBitcoin.getBitcoinAmount(app, amount);
         } else {
             //multiply by 100 because core function localAmount accepts the smallest amount e.g. cents
             CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByIso(iso);
