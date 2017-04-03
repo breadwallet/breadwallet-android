@@ -16,12 +16,12 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/bread_bar"
         android:layout_width="0dp"
+        android:layout_height="160dp"
+        android:background="@drawable/bread_gradient"
         android:contentInsetLeft="0dp"
         android:contentInsetStart="0dp"
         app:contentInsetLeft="0dp"
         app:contentInsetStart="0dp"
-        android:layout_height="160dp"
-        android:background="@drawable/bread_gradient"
         app:layout_collapseMode="pin"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -136,7 +136,9 @@
         tools:layout_constraintBottom_creator="1"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1"
-        tools:layout_constraintTop_creator="1"/>
+        tools:layout_constraintTop_creator="1"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintVertical_bias="0.65"/>
 
 
     <LinearLayout
@@ -251,7 +253,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/loading_wallet_layout"/>
+        app:layout_constraintTop_toBottomOf="@+id/syncing_layout"/>
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/loading_wallet_layout"
@@ -270,7 +272,7 @@
         >
 
         <TextView
-            android:id="@+id/textView19"
+            android:id="@+id/loading_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
@@ -301,7 +303,71 @@
             android:progressDrawable="@drawable/load_wallet_progress"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView19"/>
+            app:layout_constraintTop_toBottomOf="@+id/loading_label"/>
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/syncing_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/syncing_rounded"
+        android:elevation="8dp"
+        android:visibility="visible"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="@+id/bread_bar"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/loading_wallet_layout"
+        app:layout_goneMarginTop="240dp"
+        tools:layout_constraintLeft_creator="1"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintTop_creator="1">
+
+        <TextView
+            android:id="@+id/textView19"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="8dp"
+            android:text="some date"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="@+id/syncing_label"
+            app:layout_constraintTop_toBottomOf="@+id/sync_progress"/>
+
+        <TextView
+            android:id="@+id/syncing_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp"
+            android:text="Syncing with Blockchain"
+            android:textColor="@color/almost_black"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_constraintLeft_creator="1"
+            android:layout_marginLeft="16dp"/>
+
+        <ProgressBar
+            android:id="@+id/sync_progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="8dp"
+            android:layout_marginEnd="96dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginStart="96dp"
+            android:layout_marginTop="8dp"
+            android:progressDrawable="@drawable/sync_wallet_progress"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/syncing_label"
+            />
 
     </android.support.constraint.ConstraintLayout>
 
