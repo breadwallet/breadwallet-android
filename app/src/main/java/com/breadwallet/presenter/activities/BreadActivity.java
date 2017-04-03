@@ -17,9 +17,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.Animation;
-import android.view.animation.ScaleAnimation;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -27,8 +24,6 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.presenter.fragments.FragmentMenu;
-import com.breadwallet.presenter.fragments.FragmentReceive;
-import com.breadwallet.presenter.fragments.FragmentSend;
 import com.breadwallet.tools.adapter.TransactionListAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
@@ -89,11 +84,12 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     private TextView secondaryPrice;
     private TextView emptyTip;
     private ProgressBar progressBar;
-    private ConstraintLayout progressLayout;
+    private ConstraintLayout walletProgressLayout;
     private RecyclerView txList;
     private TransactionListAdapter adapter;
-    private ConstraintLayout mainLayout;
+    private LinearLayout mainLayout;
     private ConstraintLayout syncingLayout;
+    private LinearLayout recyclerLayout;
     private Toolbar toolBar;
     private int progress = 0;
     public static boolean appInBackground = false;
@@ -301,10 +297,11 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         secondaryPrice = (TextView) findViewById(R.id.secondary_price);
         emptyTip = (TextView) findViewById(R.id.empty_tx_tip);
         progressBar = (ProgressBar) findViewById(R.id.load_wallet_progress);
-        progressLayout = (ConstraintLayout) findViewById(R.id.loading_wallet_layout);
+        walletProgressLayout = (ConstraintLayout) findViewById(R.id.loading_wallet_layout);
         txList = (RecyclerView) findViewById(R.id.tx_list);
-        mainLayout = (ConstraintLayout) findViewById(R.id.main_layout);
+        mainLayout = (LinearLayout) findViewById(R.id.main_layout);
         syncingLayout = (ConstraintLayout) findViewById(R.id.syncing_layout);
+        recyclerLayout = (LinearLayout) findViewById(R.id.recycler_layout);
     }
 
     private void togglePriceTexts() {
@@ -447,45 +444,10 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
                     });
 
                 }
-                progressLayout.post(new Runnable() {
+                walletProgressLayout.post(new Runnable() {
                     @Override
                     public void run() {
-//                        ScaleAnimation scaleAnim = new ScaleAnimation(
-//                                1f, 1f,
-//                                1f, 0f,
-//                                Animation.ABSOLUTE, 0,
-//                                Animation.RELATIVE_TO_SELF, 0);
-//
-//                        scaleAnim.setDuration(200);
-//                        scaleAnim.setRepeatCount(0);
-//                        scaleAnim.setInterpolator(new AccelerateDecelerateInterpolator());
-//                        scaleAnim.setFillAfter(true);
-//                        scaleAnim.setFillBefore(true);
-//                        scaleAnim.setFillEnabled(true);
-//                        scaleAnim.setAnimationListener(new Animation.AnimationListener() {
-//                            @Override
-//                            public void onAnimationStart(Animation animation) {
-//
-//                            }
-//
-//                            @Override
-//                            public void onAnimationEnd(Animation animation) {
-//                                progressLayout.setScaleY(0);
-//                                progressLayout.requestLayout();
-//                            }
-//
-//                            @Override
-//                            public void onAnimationRepeat(Animation animation) {
-//
-//                            }
-//                        });
-//
-//                        progressLayout.startAnimation(scaleAnim);
-                        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) syncingLayout.getLayoutParams();
-                        ConstraintSet set = new ConstraintSet();
-                        set.connect(R.id.syncing_layout, TOP, R.id.bread_bar, BOTTOM, 16);
-                        set.applyTo(mainLayout);
-                        mainLayout.removeView(progressLayout);
+                        mainLayout.removeView(walletProgressLayout);
                     }
                 });
             }

@@ -160,7 +160,7 @@
             android:elevation="8dp"
             android:padding="10dp"
             android:text="Request an Amount"
-            android:textColor="@color/almost_black"
+            android:textColor="@color/light_gray"
             android:textSize="18sp"/>
 
 

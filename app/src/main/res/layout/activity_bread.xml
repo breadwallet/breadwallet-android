@@ -1,44 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                             xmlns:app="http://schemas.android.com/apk/res-auto"
-                                             xmlns:tools="http://schemas.android.com/tools"
-                                             android:id="@+id/main_layout"
-                                             android:layout_width="match_parent"
-                                             android:layout_height="match_parent"
-                                             android:animateLayoutChanges="true"
-                                             android:background="@color/extra_light_blue_background"
-                                             android:clipToPadding="false"
-                                             android:descendantFocusability="beforeDescendants"
-                                             android:filterTouchesWhenObscured="true"
-                                             android:focusableInTouchMode="true"
-                                             tools:context="com.breadwallet.presenter.activities.BreadActivity">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:id="@+id/main_layout"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:animateLayoutChanges="true"
+              android:background="@color/extra_light_blue_background"
+              android:clipToPadding="false"
+              android:descendantFocusability="beforeDescendants"
+              android:filterTouchesWhenObscured="true"
+              android:focusableInTouchMode="true"
+              android:orientation="vertical"
+              tools:context="com.breadwallet.presenter.activities.BreadActivity">
 
     <android.support.v7.widget.Toolbar
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/bread_bar"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="160dp"
         android:background="@drawable/bread_gradient"
         android:contentInsetLeft="0dp"
         android:contentInsetStart="0dp"
         app:contentInsetLeft="0dp"
         app:contentInsetStart="0dp"
-        app:layout_collapseMode="pin"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        app:layout_scrollFlags="scroll|enterAlways"
-        tools:layout_constraintLeft_creator="1"
-        tools:layout_constraintRight_creator="1"
         tools:layout_constraintTop_creator="1">
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/bread_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            >
+            android:layout_height="match_parent">
 
             <TextView
                 android:id="@+id/textView12"
@@ -59,7 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="40dp"
-                android:layout_marginLeft="0dp"
+                android:layout_marginLeft="16dp"
                 android:layout_marginStart="16dp"
                 android:text="$0"
                 android:textColor="@color/white"
@@ -123,28 +114,152 @@
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.Toolbar>
 
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/loading_wallet_layout"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="1px"
+        android:animateLayoutChanges="true"
+        android:background="@drawable/loading_wallet_layout"
+        android:visibility="visible"
+        tools:layout_constraintLeft_creator="1"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintTop_creator="1">
+
+        <TextView
+            android:id="@+id/loading_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Loading Wallet"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.501"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.35000002"
+            tools:layout_constraintLeft_creator="1"/>
+
+        <ProgressBar
+            android:id="@+id/load_wallet_progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_marginEnd="96dp"
+            android:layout_marginLeft="96dp"
+            android:layout_marginRight="96dp"
+            android:layout_marginStart="96dp"
+            android:layout_marginTop="4dp"
+            android:progressDrawable="@drawable/load_wallet_progress"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/loading_label"/>
+
+    </android.support.constraint.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/recycler_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="0dp"
+        android:orientation="vertical">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/syncing_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            android:animateLayoutChanges="true"
+            android:background="@drawable/syncing_rounded"
+            android:elevation="8dp"
+            android:visibility="visible"
+            tools:layout_constraintLeft_creator="1"
+            tools:layout_constraintRight_creator="1"
+            tools:layout_constraintTop_creator="1">
+
+            <TextView
+                android:id="@+id/textView19"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="some date"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/sync_progress"
+                android:layout_marginLeft="0dp"
+                app:layout_constraintLeft_toLeftOf="@+id/syncing_label"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginBottom="16dp"/>
+
+            <TextView
+                android:id="@+id/syncing_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Syncing with Blockchain"
+                android:textColor="@color/almost_black"
+                android:textStyle="bold"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="16dp"
+                app:layout_constraintLeft_toLeftOf="parent"/>
+
+            <ProgressBar
+                android:id="@+id/sync_progress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="8dp"
+                android:progressDrawable="@drawable/sync_wallet_progress"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/syncing_label"
+                android:layout_marginLeft="16dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_marginRight="16dp"
+                app:layout_constraintRight_toRightOf="parent"/>
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/tx_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/loading_wallet_layout"
+            android:layout_marginBottom="0dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            android:elevation="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/bottom_toolbar_layout1"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/syncing_layout"/>
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/empty_tx_tip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:text="Your transactions will appear here."
         android:textColor="@color/light_gray"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         tools:layout_constraintBottom_creator="1"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1"
-        tools:layout_constraintTop_creator="1"
-        app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintVertical_bias="0.65"/>
+        tools:layout_constraintTop_creator="1"/>
 
 
     <LinearLayout
         android:id="@+id/bottom_toolbar_layout1"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="1dp"
         android:background="@color/extra_light_blue_background"
@@ -152,9 +267,6 @@
         android:gravity="center"
         android:orientation="horizontal"
         android:weightSum="3"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
         tools:layout_conversion_absoluteHeight="0dp"
         tools:layout_conversion_absoluteWidth="411dp"
         tools:layout_conversion_absoluteX="0dp"
@@ -173,7 +285,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                app:srcCompat="@drawable/ic_send"/>
+                android:src="@drawable/ic_send"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -199,7 +311,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/ic_receive"/>
+                android:src="@drawable/ic_receive"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -225,7 +337,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/ic_menu"/>
+                android:src="@drawable/ic_menu"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -240,139 +352,4 @@
 
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/tx_list"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_below="@+id/loading_wallet_layout"
-        android:layout_marginBottom="0dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="16dp"
-        android:elevation="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/bottom_toolbar_layout1"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/syncing_layout"/>
-
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/loading_wallet_layout"
-        android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="1px"
-        android:background="@drawable/loading_wallet_layout"
-        android:visibility="visible"
-        android:animateLayoutChanges="true"
-        app:layout_constraintHorizontal_bias="0.511"
-        app:layout_constraintLeft_toLeftOf="@+id/bread_bar"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bread_bar"
-        tools:layout_constraintLeft_creator="1"
-        tools:layout_constraintRight_creator="1"
-        tools:layout_constraintTop_creator="1"
-        >
-
-        <TextView
-            android:id="@+id/loading_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="8dp"
-            android:text="Loading Wallet"
-            android:textColor="@color/white"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_bias="0.501"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.35000002"
-            tools:layout_constraintLeft_creator="1"/>
-
-        <ProgressBar
-            android:id="@+id/load_wallet_progress"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="0dp"
-            android:layout_height="4dp"
-            android:layout_marginEnd="96dp"
-            android:layout_marginLeft="96dp"
-            android:layout_marginRight="96dp"
-            android:layout_marginStart="96dp"
-            android:layout_marginTop="4dp"
-            android:progressDrawable="@drawable/load_wallet_progress"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/loading_label"/>
-
-    </android.support.constraint.ConstraintLayout>
-
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/syncing_layout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:animateLayoutChanges="true"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/syncing_rounded"
-        android:elevation="8dp"
-        android:visibility="visible"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="@+id/bread_bar"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/loading_wallet_layout"
-        app:layout_goneMarginTop="240dp"
-        tools:layout_constraintLeft_creator="1"
-        tools:layout_constraintRight_creator="1"
-        tools:layout_constraintTop_creator="1">
-
-        <TextView
-            android:id="@+id/textView19"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:layout_marginLeft="0dp"
-            android:layout_marginTop="8dp"
-            android:text="some date"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="@+id/syncing_label"
-            app:layout_constraintTop_toBottomOf="@+id/sync_progress"/>
-
-        <TextView
-            android:id="@+id/syncing_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="16dp"
-            android:text="Syncing with Blockchain"
-            android:textColor="@color/almost_black"
-            android:textStyle="bold"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:layout_constraintLeft_creator="1"
-            android:layout_marginLeft="16dp"/>
-
-        <ProgressBar
-            android:id="@+id/sync_progress"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="0dp"
-            android:layout_height="8dp"
-            android:layout_marginEnd="96dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginStart="96dp"
-            android:layout_marginTop="8dp"
-            android:progressDrawable="@drawable/sync_wallet_progress"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/syncing_label"
-            />
-
-    </android.support.constraint.ConstraintLayout>
-
-
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>
