@@ -177,6 +177,26 @@
 
         </LinearLayout>
 
+        <Button
+            android:id="@+id/request_button"
+            android:text="Request an Amount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/button_secondary_gray_stroke"
+            android:elevation="8dp"
+            android:padding="10dp"
+            android:textColor="@color/almost_black"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="8dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginRight="8dp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintHorizontal_bias="0.501"/>
 
 
     </android.support.constraint.ConstraintLayout>

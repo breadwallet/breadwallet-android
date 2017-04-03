@@ -71,6 +71,7 @@ public class FragmentReceive extends Fragment {
     private Button shareButton;
     private Button shareEmail;
     private Button shareTextMessage;
+    private Button requestButton;
     private LinearLayout shareButtonsLayout;
     private boolean shareButtonsShown = false;
 
@@ -89,6 +90,7 @@ public class FragmentReceive extends Fragment {
         shareEmail = (Button) rootView.findViewById(R.id.share_email);
         shareTextMessage = (Button) rootView.findViewById(R.id.share_text);
         shareButtonsLayout = (LinearLayout) rootView.findViewById(R.id.share_buttons_layout);
+        requestButton = (Button) rootView.findViewById(R.id.request_button);
         LayoutTransition layoutTransition = signalLayout.getLayoutTransition();
         layoutTransition.enableTransitionType(LayoutTransition.CHANGING);
         setListeners();
@@ -101,7 +103,7 @@ public class FragmentReceive extends Fragment {
         shareEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!BRAnimator.isClickAllowed()) return;
+                if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
 
             }
@@ -109,14 +111,14 @@ public class FragmentReceive extends Fragment {
         shareTextMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!BRAnimator.isClickAllowed()) return;
+                if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
             }
         });
         shareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!BRAnimator.isClickAllowed()) return;
+                if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
                 toggleShareButtonsVisibility();
             }
@@ -124,9 +126,17 @@ public class FragmentReceive extends Fragment {
         mAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!BRAnimator.isClickAllowed()) return;
+                if (!BRAnimator.isClickAllowed()) return;
                 BRClipboardManager.putClipboard(getContext(), mAddress.getText().toString());
                 BRToast.showCustomToast(getActivity(), "Copied to Clipboard.", (int) mAddress.getY(), Toast.LENGTH_SHORT, R.drawable.toast_layout_blue);
+            }
+        });
+        requestButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!BRAnimator.isClickAllowed()) return;
+                SpringAnimator.showAnimation(v);
+
             }
         });
     }
@@ -175,7 +185,7 @@ public class FragmentReceive extends Fragment {
     private void animateSignalSlide(final boolean reverse) {
         float translationY = signalLayout.getTranslationY();
         float signalHeight = signalLayout.getHeight();
-        signalLayout.setTranslationY(reverse? translationY : translationY + signalHeight);
+        signalLayout.setTranslationY(reverse ? translationY : translationY + signalHeight);
         signalLayout.animate().translationY(reverse ? 2000 : translationY).setDuration(ANIMATION_DURATION).setInterpolator(new OvershootInterpolator(0.7f)).setListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
