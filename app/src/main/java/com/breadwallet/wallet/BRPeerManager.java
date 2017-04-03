@@ -12,9 +12,12 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.PeerDataSource;
+import com.breadwallet.tools.util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.breadwallet.R.id.timestamp;
 
 
 /**
@@ -286,6 +289,8 @@ public class BRPeerManager {
                         public void run() {
                             if (tmp.syncProgressBar != null)
                                 tmp.syncProgressBar.setProgress((int) (progressStatus * 100));
+                            if (tmp.syncDate != null)
+                                tmp.syncDate.setText(Utils.getFormattedDateFromLong(BRPeerManager.getInstance().getLastBlockTimestamp()));
                         }
                     });
                     try {
@@ -407,6 +412,8 @@ public class BRPeerManager {
     public native boolean isConnected();
 
     public native void peerManagerFreeEverything();
+
+    public native long getLastBlockTimestamp();
 
     public native void rescan();
 }

@@ -81,7 +81,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     private TextView secondaryPrice;
     private TextView emptyTip;
     private TextView syncLabel;
-    private TextView syncDate;
+    public TextView syncDate;
     private ProgressBar loadProgressBar;
     public ProgressBar syncProgressBar;
     private ConstraintLayout walletProgressLayout;
