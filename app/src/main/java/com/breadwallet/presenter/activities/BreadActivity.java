@@ -127,8 +127,14 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
             @Override
             public void run() {
                 updateTxList();
-                if (BRPeerManager.getInstance().syncProgress(0) <= 0)
-                    showSyncing(false);
+                double progress = BRPeerManager.syncProgress(SharedPreferencesManager.getStartHeight(BreadActivity.this));
+                if (progress <= 0 || progress >= 1)
+                    BreadActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            showSyncing(false);
+                        }
+                    });
 
             }
         }).start();

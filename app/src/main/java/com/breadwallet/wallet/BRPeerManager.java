@@ -17,9 +17,6 @@ import com.breadwallet.tools.util.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.breadwallet.R.id.timestamp;
-
-
 /**
  * BreadWallet
  * <p/>
@@ -268,7 +265,8 @@ public class BRPeerManager {
                     public void run() {
                         if (app.syncProgressBar != null)
                             app.syncProgressBar.setProgress((int) (progressStatus * 100));
-//                        app.setProgress((int) (progressStatus * 100), String.format("%s%%", decimalFormat.format(progressStatus * 100)));
+                        if (app.syncDate != null)
+                            app.syncDate.setText(Utils.getFormattedDateFromLong(app, BRPeerManager.getInstance().getLastBlockTimestamp()));
                     }
                 });
             }
@@ -290,7 +288,7 @@ public class BRPeerManager {
                             if (tmp.syncProgressBar != null)
                                 tmp.syncProgressBar.setProgress((int) (progressStatus * 100));
                             if (tmp.syncDate != null)
-                                tmp.syncDate.setText(Utils.getFormattedDateFromLong(BRPeerManager.getInstance().getLastBlockTimestamp()));
+                                tmp.syncDate.setText(Utils.getFormattedDateFromLong(tmp, BRPeerManager.getInstance().getLastBlockTimestamp()));
                         }
                     });
                     try {
