@@ -1,7 +1,9 @@
 package com.platform.middlewares;
 
+import android.app.Activity;
 import android.util.Log;
 
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.platform.BRHTTPHelper;
 import com.platform.interfaces.Middleware;
@@ -54,7 +56,12 @@ public class HTTPIndexMiddleware implements Middleware {
     @Override
     public boolean handle(String target, org.eclipse.jetty.server.Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
         Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
-        String indexFile = BreadActivity.getApp().getFilesDir() + "/" + BUNDLES + "/" + extractedFolder + "/index.html";
+        Activity app = BreadWalletApp.getBreadContext();
+        if(app == null) {
+            Log.e(TAG, "handle: app is null!");
+            return true;
+        }
+        String indexFile = app.getFilesDir() + "/" + BUNDLES + "/" + extractedFolder + "/index.html";
 
         File temp = new File(indexFile);
         if (!temp.exists()) {

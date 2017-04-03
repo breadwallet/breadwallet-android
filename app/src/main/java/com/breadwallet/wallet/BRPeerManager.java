@@ -1,7 +1,9 @@
 package com.breadwallet.wallet;
 
+import android.app.Activity;
 import android.util.Log;
 
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.entities.BlockEntity;
 import com.breadwallet.presenter.entities.PeerEntity;
@@ -74,14 +76,14 @@ public class BRPeerManager {
 
     public static void syncSucceeded() {
         Log.d(TAG, "syncSucceeded");
-        final BreadActivity ctx = BreadActivity.getApp();
-        if (ctx == null) return;
-        SharedPreferencesManager.putAllowSpend(ctx, true);
+        final Activity app = BreadWalletApp.getBreadContext();
+        if (app == null) return;
+        SharedPreferencesManager.putAllowSpend(app, true);
         stopSyncingProgressThread();
         new Thread(new Runnable() {
             @Override
             public void run() {
-                SharedPreferencesManager.putStartHeight(ctx, getCurrentBlockHeight());
+                SharedPreferencesManager.putStartHeight(app, getCurrentBlockHeight());
             }
         }).start();
 
@@ -91,7 +93,7 @@ public class BRPeerManager {
     public static void syncFailed() {
         Log.d(TAG, "syncFailed");
         stopSyncingProgressThread();
-        BreadActivity ctx = BreadActivity.getApp();
+        Activity ctx = BreadWalletApp.getBreadContext();
         if (ctx == null) return;
         Log.e(TAG, "Network Not Available, showing not connected bar  ");
 //            ((MainActivity) ctx).hideAllBubbles();
@@ -128,7 +130,7 @@ public class BRPeerManager {
     public static void saveBlocks(final BlockEntity[] blockEntities) {
         Log.d(TAG, "saveBlocks: " + blockEntities.length);
 
-        final BreadActivity ctx = BreadActivity.getApp();
+        final Activity ctx = BreadWalletApp.getBreadContext();
         if (ctx == null) return;
         new Thread(new Runnable() {
             @Override
@@ -141,7 +143,7 @@ public class BRPeerManager {
 
     public static void savePeers(final PeerEntity[] peerEntities) {
         Log.d(TAG, "savePeers: " + peerEntities.length);
-        final BreadActivity ctx = BreadActivity.getApp();
+        final Activity ctx = BreadWalletApp.getBreadContext();
         if (ctx == null) return;
         new Thread(new Runnable() {
             @Override
@@ -161,7 +163,7 @@ public class BRPeerManager {
 
     public static void deleteBlocks() {
         Log.d(TAG, "deleteBlocks");
-        final BreadActivity ctx = BreadActivity.getApp();
+        final Activity ctx =  BreadWalletApp.getBreadContext();
         if (ctx == null) return;
         new Thread(new Runnable() {
             @Override
@@ -174,7 +176,7 @@ public class BRPeerManager {
 
     public static void deletePeers() {
         Log.d(TAG, "deletePeers");
-        final BreadActivity ctx = BreadActivity.getApp();
+        final Activity ctx =BreadWalletApp.getBreadContext();
         if (ctx == null) return;
         new Thread(new Runnable() {
             @Override
@@ -198,7 +200,7 @@ public class BRPeerManager {
         } catch (IllegalThreadStateException ex) {
             ex.printStackTrace();
         }
-        final BreadActivity ctx = BreadActivity.getApp();
+        final Activity ctx = BreadWalletApp.getBreadContext();
         if (ctx == null) return;
 //        MiddleViewAdapter.setSyncing(ctx, true);
 //        ctx.runOnUiThread(new Runnable() {
@@ -218,7 +220,7 @@ public class BRPeerManager {
 
     public static void stopSyncingProgressThread() {
         Log.d(TAG, "stopSyncingProgressThread");
-        final BreadActivity ctx = BreadActivity.getApp();
+        final Activity ctx = BreadWalletApp.getBreadContext();
         if (ctx == null) return;
 //        MiddleViewAdapter.setSyncing(ctx, false);
 //        ctx.runOnUiThread(new Runnable() {
@@ -378,7 +380,7 @@ public class BRPeerManager {
     }
 
     public static void updateLastBlockHeight(int blockHeight) {
-        final BreadActivity ctx = BreadActivity.getApp();
+        final Activity ctx =  BreadWalletApp.getBreadContext();
         if (ctx == null) return;
         SharedPreferencesManager.putLastBlockHeight(ctx, blockHeight);
     }

@@ -3,6 +3,7 @@ package com.platform.middlewares.plugins;
 import android.app.Activity;
 import android.util.Log;
 
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.util.BRCurrency;
@@ -58,7 +59,7 @@ public class WalletPlugin implements Plugin {
     @Override
     public boolean handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
         if (!target.startsWith("/_wallet")) return false;
-        Activity app = BreadActivity.getApp();
+        Activity app = BreadWalletApp.getBreadContext();
 
         if (target.startsWith("/_wallet/info") && request.getMethod().equalsIgnoreCase("get")) {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());

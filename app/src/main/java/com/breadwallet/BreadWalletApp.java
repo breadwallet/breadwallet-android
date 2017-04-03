@@ -16,6 +16,9 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
+import com.breadwallet.presenter.activities.BreadActivity;
+import com.breadwallet.presenter.activities.PinActivity;
+
 
 /**
  * BreadWallet
@@ -109,5 +112,9 @@ public class BreadWalletApp extends Application {
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    public static Activity getBreadContext(){
+        return BreadActivity.getApp() == null? PinActivity.getApp() : BreadActivity.getApp();
     }
 }

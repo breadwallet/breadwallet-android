@@ -1,7 +1,9 @@
 package com.platform.middlewares;
 
+import android.app.Activity;
 import android.util.Log;
 
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.util.TypesConverter;
@@ -59,8 +61,13 @@ public class HTTPFileMiddleware implements Middleware {
         if (target.equals("/favicon.ico")) {
             return BRHTTPHelper.handleSuccess(200, null, baseRequest, response, null);
         }
+        Activity app =  BreadWalletApp.getBreadContext();
+        if(app == null) {
+            Log.e(TAG, "handle: app is null!");
+            return true;
+        }
 
-        String requestedFile = BreadActivity.getApp().getFilesDir() + "/" + BUNDLES + "/" + extractedFolder + target;
+        String requestedFile = app.getFilesDir() + "/" + BUNDLES + "/" + extractedFolder + target;
         File temp = new File(requestedFile);
         if (!temp.exists()) {
             return false;

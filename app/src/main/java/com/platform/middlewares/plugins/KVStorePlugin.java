@@ -1,7 +1,9 @@
 package com.platform.middlewares.plugins;
 
+import android.app.Activity;
 import android.util.Log;
 
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.tools.util.BRCompressor;
 import com.platform.APIClient;
@@ -59,7 +61,7 @@ public class KVStorePlugin implements Plugin {
         if (target.startsWith("/_kv/")) {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
             String key = target.replace("/_kv/", "");
-            BreadActivity app = BreadActivity.getApp();
+            Activity app = BreadWalletApp.getBreadContext();
             if (app == null) {
                 Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);

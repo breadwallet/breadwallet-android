@@ -71,7 +71,8 @@ import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
  * THE SOFTWARE.
  */
 
-public class BreadActivity extends AppCompatActivity implements BRWalletManager.OnBalanceChanged, BRPeerManager.OnTxStatusUpdate, SharedPreferencesManager.OnIsoChangedListener, TransactionDataSource.OnTxAddedListener {
+public class BreadActivity extends AppCompatActivity implements BRWalletManager.OnBalanceChanged,
+        BRPeerManager.OnTxStatusUpdate, SharedPreferencesManager.OnIsoChangedListener, TransactionDataSource.OnTxAddedListener {
     private static final String TAG = BreadActivity.class.getName();
 
     private LinearLayout sendButton;

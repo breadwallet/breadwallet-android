@@ -7,6 +7,7 @@ import android.content.pm.ApplicationInfo;
 import android.net.Uri;
 import android.util.Log;
 
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
@@ -182,7 +183,7 @@ public class APIClient {
     }
 
     public Response buyBitcoinMe() {
-        if (ctx == null) ctx = BreadActivity.getApp();
+        if (ctx == null) ctx =  BreadWalletApp.getBreadContext();
         if (ctx == null) return null;
         String strUtl = BASE_URL + ME;
         Request request = new Request.Builder()
@@ -208,7 +209,7 @@ public class APIClient {
     }
 
     public String getToken() {
-        if (ctx == null) ctx = BreadActivity.getApp();
+        if (ctx == null) ctx = BreadWalletApp.getBreadContext();
         if (ctx == null) return null;
         try {
             String strUtl = BASE_URL + TOKEN;
@@ -502,7 +503,12 @@ public class APIClient {
     }
 
     public boolean tryExtractTar(File inputFile) {
-        String extractFolderName = BreadActivity.getApp().getFilesDir().getAbsolutePath() + bundlesFileName + "/" + extractedFolder;
+        Activity app = BreadWalletApp.getBreadContext();
+        if(app == null) {
+            Log.e(TAG, "tryExtractTar: failed to extract, app is null");
+            return false;
+        }
+        String extractFolderName = app.getFilesDir().getAbsolutePath() + bundlesFileName + "/" + extractedFolder;
         boolean result = false;
         TarArchiveInputStream debInputStream = null;
         try {

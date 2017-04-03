@@ -381,16 +381,12 @@ public class BRWalletManager {
      */
     public static void publishCallback(final String message, int error) {
         Log.e(TAG, "publishCallback: " + message + ", err:" + error);
-        Activity app = BreadActivity.getApp();
-        if (app == null) {
-            app = PinActivity.getApp();
-        }
-        final Activity finalApp = app;
-        BRAnimator.showBreadSignal(finalApp, error == 0 ? "Send Confirmation" : "Error", error == 0 ? "Money Sent!" : message, error == 0 ? R.drawable.ic_check_mark_white : R.drawable.ic_error_outline_black_24dp, new BROnSignalCompletion() {
+        final Activity app = BreadWalletApp.getBreadContext();
+        BRAnimator.showBreadSignal(app, error == 0 ? "Send Confirmation" : "Error", error == 0 ? "Money Sent!" : message, error == 0 ? R.drawable.ic_check_mark_white : R.drawable.ic_error_outline_black_24dp, new BROnSignalCompletion() {
             @Override
             public void onComplete() {
-                if (finalApp != null)
-                    finalApp.getFragmentManager().popBackStack();
+                if (app != null)
+                    app.getFragmentManager().popBackStack();
             }
         });
 
@@ -413,9 +409,8 @@ public class BRWalletManager {
 
     public static void onBalanceChanged(final long balance) {
         Log.d(TAG, "onBalanceChanged:  " + balance);
-        Activity app = BreadActivity.getApp();
-        if(app == null) app = PinActivity.getApp();
-        BRWalletManager.getInstance().setBalance(BreadActivity.getApp(), balance);
+        Activity app = BreadWalletApp.getBreadContext();
+        BRWalletManager.getInstance().setBalance(app, balance);
 
     }
 
@@ -437,7 +432,7 @@ public class BRWalletManager {
 //            });
 //
 //        }
-        final BreadActivity ctx = BreadActivity.getApp();
+        Activity ctx = BreadWalletApp.getBreadContext();
         if (ctx != null)
             TransactionDataSource.getInstance(ctx).putTransaction(new BRTransactionEntity(tx, blockHeight, timestamp, hash));
         else
@@ -480,7 +475,7 @@ public class BRWalletManager {
 
     public static void onTxUpdated(String hash, int blockHeight, int timeStamp) {
         Log.d(TAG, "onTxUpdated: " + String.format("hash: %s, blockHeight: %d, timestamp: %d", hash, blockHeight, timeStamp));
-        BreadActivity ctx = BreadActivity.getApp();
+        Activity ctx = BreadWalletApp.getBreadContext();
         if (ctx != null) {
             TransactionDataSource.getInstance(ctx).updateTxBlockHeight(hash, blockHeight, timeStamp);
         }
@@ -488,7 +483,7 @@ public class BRWalletManager {
 
     public static void onTxDeleted(String hash, int notifyUser, final int recommendRescan) {
         Log.e(TAG, "onTxDeleted: " + String.format("hash: %s, notifyUser: %d, recommendRescan: %d", hash, notifyUser, recommendRescan));
-        final BreadActivity ctx = BreadActivity.getApp();
+        final Activity ctx = BreadWalletApp.getBreadContext();
         if (ctx != null) {
             TransactionDataSource.getInstance(ctx).deleteTxByHash(hash);
             if (notifyUser == 1) {

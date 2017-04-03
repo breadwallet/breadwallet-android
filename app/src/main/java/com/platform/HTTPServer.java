@@ -3,6 +3,7 @@ package com.platform;
 import android.app.Activity;
 import android.util.Log;
 
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.platform.interfaces.Middleware;
 import com.platform.interfaces.Plugin;
@@ -156,7 +157,7 @@ public class HTTPServer {
 
     private static boolean dispatch(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
         Log.d(TAG, "TRYING TO HANDLE: " + target + " (" + request.getMethod() + ")");
-        final Activity app = BreadActivity.getApp();
+        final Activity app = BreadWalletApp.getBreadContext();
         boolean result = false;
         if (target.equalsIgnoreCase("/_close")) {
             if (app != null) {

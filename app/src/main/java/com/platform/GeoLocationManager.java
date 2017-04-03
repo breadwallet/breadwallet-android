@@ -12,6 +12,7 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
 
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.tools.util.Utils;
 import com.google.firebase.crash.FirebaseCrash;
@@ -67,7 +68,7 @@ public class GeoLocationManager {
     public void getOneTimeGeoLocation(Continuation cont, Request req) {
         this.continuation = cont;
         this.baseRequest = req;
-        final BreadActivity app = BreadActivity.getApp();
+        final Activity app = BreadWalletApp.getBreadContext();
         if (app == null)
             return;
         locationManager = (LocationManager) app.getSystemService(Context.LOCATION_SERVICE);
@@ -95,7 +96,7 @@ public class GeoLocationManager {
     public void startGeoSocket(Session sess) {
         session = sess;
 
-        final BreadActivity app = BreadActivity.getApp();
+        final Activity app = BreadWalletApp.getBreadContext();
         if (app == null)
             return;
         final LocationManager locationManager = (LocationManager) app.getSystemService(Context.LOCATION_SERVICE);
@@ -117,7 +118,7 @@ public class GeoLocationManager {
     }
 
     public void stopGeoSocket() {
-        final BreadActivity app = BreadActivity.getApp();
+        final Activity app = BreadWalletApp.getBreadContext();
         if (app == null)
             return;
         final LocationManager locationManager = (LocationManager) app.getSystemService(Context.LOCATION_SERVICE);
@@ -215,7 +216,7 @@ public class GeoLocationManager {
                         } finally {
 
                             processing = false;
-                            Activity app = BreadActivity.getApp();
+                            Activity app = BreadWalletApp.getBreadContext();
                             if (app == null || ActivityCompat.checkSelfPermission(app, Manifest.permission.ACCESS_FINE_LOCATION)
                                     != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(app,
                                     Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {

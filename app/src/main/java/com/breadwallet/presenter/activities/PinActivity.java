@@ -48,6 +48,10 @@ public class PinActivity extends Activity {
     private Button leftButton;
     private Button rightButton;
 
+    static {
+        System.loadLibrary("core");
+    }
+
     public static PinActivity getApp() {
         return app;
     }

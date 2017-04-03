@@ -110,6 +110,17 @@
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:background="#c6c6c6"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginTop="0dp"
+            app:layout_constraintTop_toBottomOf="@+id/share_buttons_layout"/>
+
+        <View
+            android:id="@+id/view6"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="#c6c6c6"
             app:layout_constraintBottom_toTopOf="@+id/share_buttons_layout"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -123,10 +134,11 @@
             android:background="@color/extra_light_blue_background"
             android:orientation="horizontal"
             android:weightSum="2.0"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_bias="0.526"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent">
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toTopOf="@+id/request_button">
 
 
             <Button
@@ -164,6 +176,7 @@
                 android:textStyle="bold"/>
 
         </LinearLayout>
+
 
 
     </android.support.constraint.ConstraintLayout>
