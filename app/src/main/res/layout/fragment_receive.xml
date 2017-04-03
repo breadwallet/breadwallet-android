@@ -29,7 +29,7 @@
             android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
-            android:text="My Address"
+            android:text="Receive"
             android:textColor="@color/almost_black"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -90,7 +90,7 @@
             />
 
         <View
-            android:id="@+id/view2"
+            android:id="@+id/separator"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="#c6c6c6"/>

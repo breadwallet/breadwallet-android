@@ -79,15 +79,21 @@ public class BRAnimator {
                 .addToBackStack(FragmentSend.class.getName()).commit();
 
     }
-    public static void showReceiveFragment(Activity app) {
+
+    //isReceive tells the Animator that the Receive fragment is requested, not My Address
+    public static void showReceiveFragment(Activity app, boolean isReceive) {
         if(app == null) {
             Log.e(TAG, "showReceiveFragment: app is null");
             return;
         }
+        FragmentReceive fragmentReceive = new FragmentReceive();
+        Bundle args = new Bundle();
+        args.putBoolean("receive", isReceive);
+        fragmentReceive.setArguments(args);
 
         app.getFragmentManager().beginTransaction()
                 .setCustomAnimations(0, 0, 0, R.animator.plain_300)
-                .add(android.R.id.content, new FragmentReceive(), FragmentReceive.class.getName())
+                .add(android.R.id.content, fragmentReceive, FragmentReceive.class.getName())
                 .addToBackStack(FragmentReceive.class.getName()).commit();
 
     }

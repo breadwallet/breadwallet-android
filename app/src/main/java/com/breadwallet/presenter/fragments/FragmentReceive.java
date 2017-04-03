@@ -69,12 +69,14 @@ public class FragmentReceive extends Fragment {
     public static final int ANIMATION_DURATION = 300;
     private String receiveAddress;
     private View shareSeparator;
+    private View separator;
     private Button shareButton;
     private Button shareEmail;
     private Button shareTextMessage;
     private Button requestButton;
     private LinearLayout shareButtonsLayout;
     private boolean shareButtonsShown = true;
+    private boolean isReceive;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -93,6 +95,7 @@ public class FragmentReceive extends Fragment {
         shareButtonsLayout = (LinearLayout) rootView.findViewById(R.id.share_buttons_layout);
         requestButton = (Button) rootView.findViewById(R.id.request_button);
         shareSeparator = rootView.findViewById(R.id.share_separator);
+        separator = rootView.findViewById(R.id.separator);
         LayoutTransition layoutTransition = signalLayout.getLayoutTransition();
         layoutTransition.enableTransitionType(LayoutTransition.CHANGING);
         setListeners();
@@ -154,8 +157,8 @@ public class FragmentReceive extends Fragment {
         } else {
 //            shareButton.setBackground(getResources().getDrawable(R.drawable.button_secondary_blue_stroke));
 //            shareButton.setCompoundDrawables(getResources().getDrawable(R.drawable.ic_share_vertical_blue), null, null, null);
-            signalLayout.addView(shareSeparator, signalLayout.getChildCount() - 2);
-            signalLayout.addView(shareButtonsLayout, signalLayout.getChildCount() - 2);
+            signalLayout.addView(shareSeparator, isReceive ? signalLayout.getChildCount() - 2 : signalLayout.getChildCount());
+            signalLayout.addView(shareButtonsLayout, isReceive ? signalLayout.getChildCount() - 2 : signalLayout.getChildCount());
 
             shareButtonsShown = true;
         }
@@ -176,6 +179,14 @@ public class FragmentReceive extends Fragment {
                 toggleShareButtonsVisibility();
             }
         });
+
+        Bundle extras = getArguments();
+        isReceive = extras.getBoolean("receive");
+        if (!isReceive) {
+            signalLayout.removeView(separator);
+            signalLayout.removeView(requestButton);
+            mTitle.setText("My Address");
+        }
 
         boolean success = BRWalletManager.refreshAddress(getActivity());
         if (!success) throw new RuntimeException("failed to retrieve address");

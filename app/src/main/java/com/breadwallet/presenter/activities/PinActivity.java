@@ -95,7 +95,7 @@ public class PinActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                BRAnimator.showReceiveFragment(PinActivity.this);
+                BRAnimator.showReceiveFragment(PinActivity.this, false);
 //                chooseWordsSize(true);
             }
         });

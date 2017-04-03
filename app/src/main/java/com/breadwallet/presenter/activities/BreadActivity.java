@@ -201,7 +201,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
-                BRAnimator.showReceiveFragment(BreadActivity.this);
+                BRAnimator.showReceiveFragment(BreadActivity.this, true);
             }
         });
 
