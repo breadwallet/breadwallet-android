@@ -1,12 +1,14 @@
 package com.breadwallet.wallet;
 
 import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.entities.BlockEntity;
 import com.breadwallet.presenter.entities.PeerEntity;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.PeerDataSource;
@@ -71,7 +73,8 @@ public class BRPeerManager {
 
     public static void syncStarted() {
         Log.d(TAG, "syncStarted");
-        BRPeerManager.getInstance().refreshConnection();
+//        BRPeerManager.getInstance().refreshConnection();
+        startSyncingProgressThread();
     }
 
     public static void syncSucceeded() {
@@ -163,7 +166,7 @@ public class BRPeerManager {
 
     public static void deleteBlocks() {
         Log.d(TAG, "deleteBlocks");
-        final Activity ctx =  BreadWalletApp.getBreadContext();
+        final Activity ctx = BreadWalletApp.getBreadContext();
         if (ctx == null) return;
         new Thread(new Runnable() {
             @Override
@@ -176,7 +179,7 @@ public class BRPeerManager {
 
     public static void deletePeers() {
         Log.d(TAG, "deletePeers");
-        final Activity ctx =BreadWalletApp.getBreadContext();
+        final Activity ctx = BreadWalletApp.getBreadContext();
         if (ctx == null) return;
         new Thread(new Runnable() {
             @Override
@@ -189,6 +192,7 @@ public class BRPeerManager {
 
     public static void startSyncingProgressThread() {
         Log.d(TAG, "startSyncingProgressThread");
+
         try {
             if (syncTask != null) {
                 syncTask.interrupt();
@@ -200,39 +204,36 @@ public class BRPeerManager {
         } catch (IllegalThreadStateException ex) {
             ex.printStackTrace();
         }
-        final Activity ctx = BreadWalletApp.getBreadContext();
+
+        final BreadActivity ctx = BreadActivity.getApp();
         if (ctx == null) return;
-//        MiddleViewAdapter.setSyncing(ctx, true);
-//        ctx.runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    if (BRAnimator.level == 0)
-//                        ((MainActivity) ctx).showHideSyncProgressViews(true);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
-
-
+        ctx.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    ctx.showSyncing(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     public static void stopSyncingProgressThread() {
         Log.d(TAG, "stopSyncingProgressThread");
-        final Activity ctx = BreadWalletApp.getBreadContext();
+        final BreadActivity ctx = BreadActivity.getApp();
         if (ctx == null) return;
 //        MiddleViewAdapter.setSyncing(ctx, false);
-//        ctx.runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    ((MainActivity) ctx).showHideSyncProgressViews(false);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
+        ctx.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    ctx.showSyncing(false);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         try {
             if (syncTask != null) {
@@ -255,56 +256,54 @@ public class BRPeerManager {
 
         @Override
         public void run() {
-//            final MainActivity app = MainActivity.app;
-//            progressStatus = 0;
-//            final DecimalFormat decimalFormat = new DecimalFormat("#.#");
-//            if (app != null) {
-//                app.runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
+            final BreadActivity app = BreadActivity.getApp();
+            progressStatus = 0;
+            Log.e(TAG, "run: starting: " + progressStatus);
+            if (app != null) {
+                app.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (app.syncProgressBar != null)
+                            app.syncProgressBar.setProgress((int) (progressStatus * 100));
 //                        app.setProgress((int) (progressStatus * 100), String.format("%s%%", decimalFormat.format(progressStatus * 100)));
-//                    }
-//                });
-//                progressStatus = syncProgress(SharedPreferencesManager.getStartHeight(app));
-//                app.runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        if (BRAnimator.level == 0)
-//                            app.showHideSyncProgressViews(true);
-//
-//                        app.setProgress((int) (progressStatus * 100), String.format("%s%%", decimalFormat.format(progressStatus * 100)));
-//                    }
-//                });
-//                int startHeight = SharedPreferencesManager.getStartHeight(app);
-//                while (running) {
-//                    progressStatus = syncProgress(startHeight);
-////                    Log.e(TAG, "run: progressStatus: " + progressStatus);
-//                    if (progressStatus == 1) {
-//                        running = false;
-//                        continue;
-//                    }
-//                    app.runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            app.setProgress((int) (progressStatus * 100), String.format("%s%%", decimalFormat.format(progressStatus * 100)));
-//                        }
-//                    });
-//                    try {
-//                        Thread.sleep(300);
-//                    } catch (InterruptedException e) {
-//                        Log.e(TAG, "run: Thread.sleep was Interrupted");
-//                        running = false;
-//                        app.runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                progressStatus = 0;
-//                                app.showHideSyncProgressViews(false);
-//                            }
-//                        });
-//                    }
-//                }
-//
-//            }
+                    }
+                });
+            }
+
+            while (running) {
+                final BreadActivity tmp = BreadActivity.getApp();
+                if (tmp != null) {
+                    Context context = BreadWalletApp.getBreadContext();
+                    int startHeight = context == null ? 0 : SharedPreferencesManager.getStartHeight(context);
+                    progressStatus = syncProgress(startHeight);
+//                    Log.e(TAG, "run: progressStatus: " + progressStatus);
+                    if (progressStatus == 1) {
+                        running = false;
+                        continue;
+                    }
+                    tmp.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (tmp.syncProgressBar != null)
+                                tmp.syncProgressBar.setProgress((int) (progressStatus * 100));
+                        }
+                    });
+                    try {
+                        Thread.sleep(300);
+                    } catch (InterruptedException e) {
+                        Log.e(TAG, "run: Thread.sleep was Interrupted");
+                        running = false;
+                        tmp.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressStatus = 0;
+                                tmp.showSyncing(false);
+                            }
+                        });
+                    }
+                }
+
+            }
 
         }
     }
@@ -380,7 +379,7 @@ public class BRPeerManager {
     }
 
     public static void updateLastBlockHeight(int blockHeight) {
-        final Activity ctx =  BreadWalletApp.getBreadContext();
+        final Activity ctx = BreadWalletApp.getBreadContext();
         if (ctx == null) return;
         SharedPreferencesManager.putLastBlockHeight(ctx, blockHeight);
     }

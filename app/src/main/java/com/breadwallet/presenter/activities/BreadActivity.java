@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
-import android.support.constraint.ConstraintSet;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -40,8 +39,6 @@ import com.platform.APIClient;
 import java.math.BigDecimal;
 import java.util.Arrays;
 
-import static android.support.constraint.ConstraintSet.BOTTOM;
-import static android.support.constraint.ConstraintSet.TOP;
 import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
 
 /**
@@ -83,7 +80,10 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     private TextView primaryPrice;
     private TextView secondaryPrice;
     private TextView emptyTip;
-    private ProgressBar progressBar;
+    private TextView syncLabel;
+    private TextView syncDate;
+    private ProgressBar loadProgressBar;
+    public ProgressBar syncProgressBar;
     private ConstraintLayout walletProgressLayout;
     private RecyclerView txList;
     private TransactionListAdapter adapter;
@@ -94,7 +94,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     private int progress = 0;
     public static boolean appInBackground = false;
 
-    public static BreadActivity getApp(){
+    public static BreadActivity getApp() {
         return app;
     }
 
@@ -110,6 +110,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         BRWalletManager.getInstance().addBalanceChangedListener(this);
         BRPeerManager.getInstance().addStatusUpdateListener(this);
         SharedPreferencesManager.addIsoChangedListener(this);
+
         app = this;
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
         // Always cast your custom Toolbar here, and set it as the ActionBar.
@@ -126,6 +127,9 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
             @Override
             public void run() {
                 updateTxList();
+                if (BRPeerManager.getInstance().syncProgress(0) <= 0)
+                    showSyncing(false);
+
             }
         }).start();
 
@@ -256,6 +260,16 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
 
         CurrencyFetchManager currencyManager = CurrencyFetchManager.getInstance(this);
         currencyManager.startTimer();
+
+        if (!BRWalletManager.getInstance().isCreated()) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    BRWalletManager.getInstance().setUpTheWallet(BreadActivity.this);
+                }
+            }).start();
+
+        }
     }
 
     @Override
@@ -296,7 +310,10 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         primaryPrice = (TextView) findViewById(R.id.primary_price);
         secondaryPrice = (TextView) findViewById(R.id.secondary_price);
         emptyTip = (TextView) findViewById(R.id.empty_tx_tip);
-        progressBar = (ProgressBar) findViewById(R.id.load_wallet_progress);
+        syncLabel = (TextView) findViewById(R.id.syncing_label);
+        syncDate = (TextView) findViewById(R.id.sync_date);
+        loadProgressBar = (ProgressBar) findViewById(R.id.load_wallet_progress);
+        syncProgressBar = (ProgressBar) findViewById(R.id.sync_progress);
         walletProgressLayout = (ConstraintLayout) findViewById(R.id.loading_wallet_layout);
         txList = (RecyclerView) findViewById(R.id.tx_list);
         mainLayout = (LinearLayout) findViewById(R.id.main_layout);
@@ -423,23 +440,23 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     }
 
     private void setWalletLoading() {
-        progressBar.setProgress(progress);
+        loadProgressBar.setProgress(progress);
 
         new Thread(new Runnable() {
 
             @Override
             public void run() {
-                while (progressBar.getProgress() < 100) {
+                while (loadProgressBar.getProgress() < 100) {
                     try {
                         Thread.sleep(100);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    progressBar.post(new Runnable() {
+                    loadProgressBar.post(new Runnable() {
                         @Override
                         public void run() {
                             progress += 5;
-                            progressBar.setProgress(progress);
+                            loadProgressBar.setProgress(progress);
                         }
                     });
 
@@ -452,5 +469,17 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
                 });
             }
         }).start();
+    }
+
+    public void showSyncing(boolean show) {
+        try {
+            if (show) {
+                recyclerLayout.addView(syncingLayout, 0);
+            } else {
+                recyclerLayout.removeView(syncingLayout);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
