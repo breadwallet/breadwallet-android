@@ -402,7 +402,12 @@ JNIEXPORT jint JNICALL Java_com_breadwallet_wallet_BRPeerManager_getEstimatedBlo
     if (!_peerManager || !_wallet) return 0;
     return (jint) BRPeerManagerEstimatedBlockHeight(_peerManager);
 }
-
+JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRPeerManager_getLastBlockTimestamp(
+        JNIEnv *env, jobject thiz) {
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "getLastBlockTimestamp");
+    if (!_peerManager || !_wallet) return 0;
+    return (jint) BRPeerManagerLastBlockTimestamp(_peerManager);
+}
 
 JNIEXPORT void JNICALL Java_com_breadwallet_wallet_BRPeerManager_peerManagerFreeEverything(
         JNIEnv *env, jobject thiz) {
