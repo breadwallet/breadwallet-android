@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -44,6 +45,8 @@ import com.platform.APIClient;
 import java.math.BigDecimal;
 import java.util.Arrays;
 
+import static android.support.constraint.ConstraintSet.BOTTOM;
+import static android.support.constraint.ConstraintSet.TOP;
 import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
 
 /**
@@ -73,6 +76,7 @@ import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
 
 public class BreadActivity extends AppCompatActivity implements BRWalletManager.OnBalanceChanged,
         BRPeerManager.OnTxStatusUpdate, SharedPreferencesManager.OnIsoChangedListener, TransactionDataSource.OnTxAddedListener {
+
     private static final String TAG = BreadActivity.class.getName();
 
     private LinearLayout sendButton;
@@ -88,6 +92,9 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     private ConstraintLayout progressLayout;
     private RecyclerView txList;
     private TransactionListAdapter adapter;
+    private ConstraintLayout mainLayout;
+    private ConstraintLayout syncingLayout;
+    private Toolbar toolBar;
     private int progress = 0;
     public static boolean appInBackground = false;
 
@@ -110,8 +117,8 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         app = this;
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
         // Always cast your custom Toolbar here, and set it as the ActionBar.
-        Toolbar tb = (Toolbar) findViewById(R.id.bread_bar);
-        setSupportActionBar(tb);
+        toolBar = (Toolbar) findViewById(R.id.bread_bar);
+        setSupportActionBar(toolBar);
 
         initializeViews();
 
@@ -296,6 +303,8 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         progressBar = (ProgressBar) findViewById(R.id.load_wallet_progress);
         progressLayout = (ConstraintLayout) findViewById(R.id.loading_wallet_layout);
         txList = (RecyclerView) findViewById(R.id.tx_list);
+        mainLayout = (ConstraintLayout) findViewById(R.id.main_layout);
+        syncingLayout = (ConstraintLayout) findViewById(R.id.syncing_layout);
     }
 
     private void togglePriceTexts() {
@@ -441,36 +450,42 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
                 progressLayout.post(new Runnable() {
                     @Override
                     public void run() {
-                        ScaleAnimation scaleAnim = new ScaleAnimation(
-                                1f, 1f,
-                                1f, 0f,
-                                Animation.ABSOLUTE, 0,
-                                Animation.RELATIVE_TO_SELF, 0);
-
-                        scaleAnim.setDuration(200);
-                        scaleAnim.setRepeatCount(0);
-                        scaleAnim.setInterpolator(new AccelerateDecelerateInterpolator());
-                        scaleAnim.setFillAfter(true);
-                        scaleAnim.setFillBefore(true);
-                        scaleAnim.setFillEnabled(true);
-                        scaleAnim.setAnimationListener(new Animation.AnimationListener() {
-                            @Override
-                            public void onAnimationStart(Animation animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animation animation) {
-                                progressLayout.setVisibility(View.GONE);
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animation animation) {
-
-                            }
-                        });
-
-                        progressLayout.startAnimation(scaleAnim);
+//                        ScaleAnimation scaleAnim = new ScaleAnimation(
+//                                1f, 1f,
+//                                1f, 0f,
+//                                Animation.ABSOLUTE, 0,
+//                                Animation.RELATIVE_TO_SELF, 0);
+//
+//                        scaleAnim.setDuration(200);
+//                        scaleAnim.setRepeatCount(0);
+//                        scaleAnim.setInterpolator(new AccelerateDecelerateInterpolator());
+//                        scaleAnim.setFillAfter(true);
+//                        scaleAnim.setFillBefore(true);
+//                        scaleAnim.setFillEnabled(true);
+//                        scaleAnim.setAnimationListener(new Animation.AnimationListener() {
+//                            @Override
+//                            public void onAnimationStart(Animation animation) {
+//
+//                            }
+//
+//                            @Override
+//                            public void onAnimationEnd(Animation animation) {
+//                                progressLayout.setScaleY(0);
+//                                progressLayout.requestLayout();
+//                            }
+//
+//                            @Override
+//                            public void onAnimationRepeat(Animation animation) {
+//
+//                            }
+//                        });
+//
+//                        progressLayout.startAnimation(scaleAnim);
+                        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) syncingLayout.getLayoutParams();
+                        ConstraintSet set = new ConstraintSet();
+                        set.connect(R.id.syncing_layout, TOP, R.id.bread_bar, BOTTOM, 16);
+                        set.applyTo(mainLayout);
+                        mainLayout.removeView(progressLayout);
                     }
                 });
             }

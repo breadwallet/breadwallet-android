@@ -65,15 +65,16 @@ public class FragmentReceive extends Fragment {
     public TextView mAddress;
     public ImageView mQrImage;
     public LinearLayout backgroundLayout;
-    public ConstraintLayout signalLayout;
+    public LinearLayout signalLayout;
     public static final int ANIMATION_DURATION = 300;
     private String receiveAddress;
+    private View shareSeparator;
     private Button shareButton;
     private Button shareEmail;
     private Button shareTextMessage;
     private Button requestButton;
     private LinearLayout shareButtonsLayout;
-    private boolean shareButtonsShown = false;
+    private boolean shareButtonsShown = true;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -85,12 +86,13 @@ public class FragmentReceive extends Fragment {
         mAddress = (TextView) rootView.findViewById(R.id.address_text);
         mQrImage = (ImageView) rootView.findViewById(R.id.qr_image);
         backgroundLayout = (LinearLayout) rootView.findViewById(R.id.background_layout);
-        signalLayout = (ConstraintLayout) rootView.findViewById(R.id.signal_layout);
+        signalLayout = (LinearLayout) rootView.findViewById(R.id.signal_layout);
         shareButton = (Button) rootView.findViewById(R.id.share_button);
         shareEmail = (Button) rootView.findViewById(R.id.share_email);
         shareTextMessage = (Button) rootView.findViewById(R.id.share_text);
         shareButtonsLayout = (LinearLayout) rootView.findViewById(R.id.share_buttons_layout);
         requestButton = (Button) rootView.findViewById(R.id.request_button);
+        shareSeparator = rootView.findViewById(R.id.share_separator);
         LayoutTransition layoutTransition = signalLayout.getLayoutTransition();
         layoutTransition.enableTransitionType(LayoutTransition.CHANGING);
         setListeners();
@@ -147,11 +149,14 @@ public class FragmentReceive extends Fragment {
 //            shareButton.setBackground(getResources().getDrawable(R.drawable.button_secondary_gray_stroke));
 //            shareButton.setCompoundDrawables(getResources().getDrawable(R.drawable.ic_share_vertical_gray), null, null, null);
             signalLayout.removeView(shareButtonsLayout);
+            signalLayout.removeView(shareSeparator);
             shareButtonsShown = false;
         } else {
 //            shareButton.setBackground(getResources().getDrawable(R.drawable.button_secondary_blue_stroke));
 //            shareButton.setCompoundDrawables(getResources().getDrawable(R.drawable.ic_share_vertical_blue), null, null, null);
-            signalLayout.addView(shareButtonsLayout);
+            signalLayout.addView(shareSeparator, signalLayout.getChildCount() - 2);
+            signalLayout.addView(shareButtonsLayout, signalLayout.getChildCount() - 2);
+
             shareButtonsShown = true;
         }
 
@@ -168,7 +173,7 @@ public class FragmentReceive extends Fragment {
                 observer.removeGlobalOnLayoutListener(this);
                 animateBackgroundDim(false);
                 animateSignalSlide(false);
-                signalLayout.removeView(shareButtonsLayout);
+                toggleShareButtonsVisibility();
             }
         });
 
@@ -233,35 +238,35 @@ public class FragmentReceive extends Fragment {
     }
 
 
-    public class ResizeAnimation extends Animation {
-        final int targetHeight;
-        View view;
-        int startHeight;
-
-        public ResizeAnimation(View view, int targetHeight, int startHeight) {
-            this.view = view;
-            this.targetHeight = targetHeight;
-            this.startHeight = startHeight;
-        }
-
-        @Override
-        protected void applyTransformation(float interpolatedTime, Transformation t) {
-            int newHeight = (int) (startHeight + targetHeight * interpolatedTime);
-            //to support decent animation, change new heigt as Nico S. recommended in comments
-            //int newHeight = (int) (startHeight+(targetHeight - startHeight) * interpolatedTime);
-            view.getLayoutParams().height = newHeight;
-            view.requestLayout();
-        }
-
-        @Override
-        public void initialize(int width, int height, int parentWidth, int parentHeight) {
-            super.initialize(width, height, parentWidth, parentHeight);
-        }
-
-        @Override
-        public boolean willChangeBounds() {
-            return true;
-        }
-    }
+//    public class ResizeAnimation extends Animation {
+//        final int targetHeight;
+//        View view;
+//        int startHeight;
+//
+//        public ResizeAnimation(View view, int targetHeight, int startHeight) {
+//            this.view = view;
+//            this.targetHeight = targetHeight;
+//            this.startHeight = startHeight;
+//        }
+//
+//        @Override
+//        protected void applyTransformation(float interpolatedTime, Transformation t) {
+//            int newHeight = (int) (startHeight + targetHeight * interpolatedTime);
+//            //to support decent animation, change new heigt as Nico S. recommended in comments
+//            //int newHeight = (int) (startHeight+(targetHeight - startHeight) * interpolatedTime);
+//            view.getLayoutParams().height = newHeight;
+//            view.requestLayout();
+//        }
+//
+//        @Override
+//        public void initialize(int width, int height, int parentWidth, int parentHeight) {
+//            super.initialize(width, height, parentWidth, parentHeight);
+//        }
+//
+//        @Override
+//        public boolean willChangeBounds() {
+//            return true;
+//        }
+//    }
 
 }
