@@ -16,8 +16,10 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
+import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.wallet.BRPeerManager;
+import com.breadwallet.wallet.BRWalletManager;
 
 import static com.breadwallet.R.id.toggleButton;
 
@@ -42,12 +44,14 @@ public class SyncBlockchainActivity extends AppCompatActivity {
                             @Override
                             public void onClick(BRDialogView brDialogView) {
                                 Log.e(TAG, "onClick: Starting syncing...");
+                                brDialogView.dismissWithAnimation();
                                 new Thread(new Runnable() {
                                     @Override
                                     public void run() {
                                         BRPeerManager.getInstance().rescan();
                                         SharedPreferencesManager.putStartHeight(SyncBlockchainActivity.this, BRPeerManager.getCurrentBlockHeight());
-                                        onBackPressed();
+                                        BRWalletManager.getInstance().startBreadActivity(SyncBlockchainActivity.this, false);
+
                                     }
                                 }).start();
                             }
