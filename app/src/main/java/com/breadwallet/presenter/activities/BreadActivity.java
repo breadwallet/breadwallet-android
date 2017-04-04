@@ -18,6 +18,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
@@ -87,7 +88,8 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     private ConstraintLayout walletProgressLayout;
     private RecyclerView txList;
     private TransactionListAdapter adapter;
-    private LinearLayout mainLayout;
+    private RelativeLayout mainLayout;
+    private LinearLayout toolbarLayout;
     private ConstraintLayout syncingLayout;
     private LinearLayout recyclerLayout;
     private Toolbar toolBar;
@@ -321,7 +323,8 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         syncProgressBar = (ProgressBar) findViewById(R.id.sync_progress);
         walletProgressLayout = (ConstraintLayout) findViewById(R.id.loading_wallet_layout);
         txList = (RecyclerView) findViewById(R.id.tx_list);
-        mainLayout = (LinearLayout) findViewById(R.id.main_layout);
+        mainLayout = (RelativeLayout) findViewById(R.id.main_layout);
+        toolbarLayout = (LinearLayout) findViewById(R.id.toolbar_layout);
         syncingLayout = (ConstraintLayout) findViewById(R.id.syncing_layout);
         recyclerLayout = (LinearLayout) findViewById(R.id.recycler_layout);
     }
@@ -469,7 +472,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
                 walletProgressLayout.post(new Runnable() {
                     @Override
                     public void run() {
-                        mainLayout.removeView(walletProgressLayout);
+                        toolbarLayout.removeView(walletProgressLayout);
                     }
                 });
             }
