@@ -84,36 +84,24 @@ public class FragmentRequestAmount extends Fragment {
     public ConstraintLayout signalLayout;
     public static final int ANIMATION_DURATION = 300;
     private BRSoftKeyboard keyboard;
-    private EditText addressEdit;
-    private Button scan;
-    private Button paste;
-    private Button send;
     private Spinner spinner;
-    private EditText commentEdit;
     private StringBuilder amountBuilder;
     private TextView isoText;
     private EditText amountEdit;
-    private TextView balanceText;
     private long curBalance;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_send, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_request, container, false);
         backgroundLayout = (LinearLayout) rootView.findViewById(R.id.background_layout);
         signalLayout = (ConstraintLayout) rootView.findViewById(R.id.signal_layout);
         keyboard = (BRSoftKeyboard) rootView.findViewById(R.id.keyboard);
         keyboard.setBRButtonBackgroundColor(R.color.white);
         keyboard.setBRKeyboardColor(R.color.white);
         isoText = (TextView) rootView.findViewById(R.id.iso_text);
-        addressEdit = (EditText) rootView.findViewById(R.id.address_edit);
-        scan = (Button) rootView.findViewById(R.id.share_text);
-        paste = (Button) rootView.findViewById(R.id.paste_button);
-        send = (Button) rootView.findViewById(R.id.send_button);
-        commentEdit = (EditText) rootView.findViewById(R.id.comment_edit);
         spinner = (Spinner) rootView.findViewById(R.id.cur_spinner);
         amountEdit = (EditText) rootView.findViewById(R.id.amount_edit);
-        balanceText = (TextView) rootView.findViewById(R.id.balance_text);
         setListeners();
         amountBuilder = new StringBuilder(0);
 
@@ -122,145 +110,6 @@ public class FragmentRequestAmount extends Fragment {
 
     private void setListeners() {
         long start = System.currentTimeMillis();
-        paste.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
-                SpringAnimator.showAnimation(v);
-                String bitcoinUrl = BRClipboardManager.getClipboard(getActivity());
-                if (Utils.isNullOrEmpty(bitcoinUrl)) {
-                    showClipboardError();
-                    return;
-                }
-                String address = null;
-
-                RequestObject obj = getRequestFromString(bitcoinUrl);
-
-                if (obj == null || obj.address == null) {
-                    showClipboardError();
-                    return;
-                }
-                address = obj.address;
-                BRWalletManager wm = BRWalletManager.getInstance();
-
-                if (wm.isValidBitcoinPrivateKey(address) || wm.isValidBitcoinBIP38Key(address)) {
-//                        wm.confirmSweep(getActivity(), address);
-//                        addressEdit.setText("");
-                    return;
-                }
-
-                if (BRWalletManager.validateAddress(address)) {
-                    if (wm.addressContainedInWallet(address)) {
-
-                        BreadDialog.showCustomDialog(getActivity(), "Address contained", getResources().getString(R.string.address_already_in_your_wallet), "close", null, new BRDialogView.BROnClickListener() {
-                            @Override
-                            public void onClick(BRDialogView brDialogView) {
-                                brDialogView.dismiss();
-                            }
-                        }, null, null, 0);
-                        BRClipboardManager.putClipboard(getActivity(), "");
-                    } else if (wm.addressIsUsed(address)) {
-                        final String finalAddress = address;
-                        BreadDialog.showCustomDialog(getActivity(), "Address used", getResources().getString(R.string.address_already_used), "Ignore", "Cancel", new BRDialogView.BROnClickListener() {
-                            @Override
-                            public void onClick(BRDialogView brDialogView) {
-                                brDialogView.dismiss();
-                                addressEdit.setText(finalAddress);
-                            }
-                        }, new BRDialogView.BROnClickListener() {
-                            @Override
-                            public void onClick(BRDialogView brDialogView) {
-                                brDialogView.dismiss();
-                            }
-                        }, null, 0);
-
-                    } else {
-                        addressEdit.setText(address);
-                    }
-                } else {
-                    showClipboardError();
-                }
-
-            }
-        });
-
-        scan.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
-                SpringAnimator.showAnimation(v);
-                try {
-                    Activity app = getActivity();
-                    if (app == null) return;
-
-                    // Check if the camera permission is granted
-                    if (ContextCompat.checkSelfPermission(app,
-                            Manifest.permission.CAMERA)
-                            != PackageManager.PERMISSION_GRANTED) {
-                        // Should we show an explanation?
-                        if (ActivityCompat.shouldShowRequestPermissionRationale(app,
-                                Manifest.permission.CAMERA)) {
-                            BreadDialog.showCustomDialog(app, "Permission Required.", app.getString(R.string.allow_camera_access), "close", null, new BRDialogView.BROnClickListener() {
-                                @Override
-                                public void onClick(BRDialogView brDialogView) {
-                                    brDialogView.dismiss();
-                                }
-                            }, null, null, 0);
-                        } else {
-                            // No explanation needed, we can request the permission.
-                            ActivityCompat.requestPermissions(app,
-                                    new String[]{Manifest.permission.CAMERA},
-                                    BRConstants.CAMERA_REQUEST_ID);
-                        }
-                    } else {
-                        // Permission is granted, open camera
-                        Intent intent = new Intent(app, ScanQRActivity.class);
-                        app.startActivityForResult(intent, 123);
-                        app.overridePendingTransition(R.anim.scale_up, 0);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-
-            }
-        });
-        send.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //not allowed now
-                if (!BRAnimator.isClickAllowed()) {
-                    return;
-                }
-
-                SpringAnimator.showAnimation(v);
-                boolean allFilled = true;
-                String address = addressEdit.getText().toString();
-                String amountStr = amountEdit.getText().toString();
-                String iso = (String) spinner.getSelectedItem();
-
-                //get amount in satoshis from any isos
-                BigDecimal bigAmount = new BigDecimal(Utils.isNullOrEmpty(amountStr) ? "0" : amountStr);
-                long amount = iso.equalsIgnoreCase("BTC")
-                        ? BRBitcoin.getSatoshisFromAmount(getActivity(),bigAmount).longValue()
-                        : BRWalletManager.getInstance().getAmount(getActivity(), iso, bigAmount).longValue();
-
-                if (address.isEmpty()) {
-                    allFilled = false;
-                    SpringAnimator.failShakeAnimation(getActivity(), addressEdit);
-                }
-                if (amountStr.isEmpty()) {
-                    allFilled = false;
-                    SpringAnimator.failShakeAnimation(getActivity(), amountEdit);
-                }
-                if (amount > BRWalletManager.getInstance().getBalance(getActivity())) {
-                    SpringAnimator.failShakeAnimation(getActivity(), balanceText);
-                }
-
-                if (allFilled)
-                    BRWalletManager.getInstance().handlePay(getContext(), new PaymentRequestEntity(new String[]{address}, amount, null, false));
-            }
-        });
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -360,11 +209,6 @@ public class FragmentRequestAmount extends Fragment {
                     }
                 }
 
-                if (!reverse) {
-                    Bundle bundle = getArguments();
-                    if (bundle != null && bundle.getString("url") != null)
-                        setUrl(bundle.getString("url"));
-                }
             }
         });
 
@@ -460,44 +304,7 @@ public class FragmentRequestAmount extends Fragment {
         if(getActivity() == null) return;
         String tmpAmount = amountBuilder.toString();
         amountEdit.setText(tmpAmount);
-        String balanceString;
-        String iso = (String) spinner.getSelectedItem();
-        //Balance depending on ISO
-        BigDecimal balanceForISO = BRWalletManager.getInstance().getAmount(getActivity(), iso, new BigDecimal(curBalance));
-        //formattedBalance
-        String formattedBalance = BRCurrency.getFormattedCurrencyString(getActivity(), iso, balanceForISO);
-        if (new BigDecimal((tmpAmount.isEmpty() || tmpAmount.equalsIgnoreCase(".")) ? "0" : tmpAmount).doubleValue() > balanceForISO.doubleValue()) {
-            balanceString = String.format("Insufficient funds. Try an amount below your current balance: %s", formattedBalance);
-            balanceText.setTextColor(getContext().getColor(R.color.warning_color));
-            amountEdit.setTextColor(getContext().getColor(R.color.warning_color));
-            isoText.setTextColor(getContext().getColor(R.color.warning_color));
-        } else {
-            balanceString = String.format("Current Balance: %s", formattedBalance);
-            balanceText.setTextColor(getContext().getColor(R.color.light_gray));
-            amountEdit.setTextColor(getContext().getColor(R.color.almost_black));
-            isoText.setTextColor(getContext().getColor(R.color.almost_black));
-        }
-        balanceText.setText(balanceString);
 
     }
-
-    public void setUrl(String url) {
-        RequestObject obj = BitcoinUrlHandler.getRequestFromString(url);
-        if (obj == null) return;
-        if (obj.address != null && addressEdit != null) {
-            addressEdit.setText(obj.address);
-        }
-        if (obj.message != null && commentEdit != null) {
-            commentEdit.setText(obj.message);
-        }
-        if (obj.amount != null) {
-            String iso = ((String) spinner.getSelectedItem());
-            amountBuilder = new StringBuilder(BRWalletManager.getInstance().getAmount(getActivity(), iso, new BigDecimal(obj.amount)).toPlainString());
-
-            updateText();
-
-        }
-    }
-
 
 }

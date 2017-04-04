@@ -11,8 +11,10 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.fragments.FragmentMenu;
 import com.breadwallet.presenter.fragments.FragmentBreadSignal;
 import com.breadwallet.presenter.fragments.FragmentReceive;
+import com.breadwallet.presenter.fragments.FragmentRequestAmount;
 import com.breadwallet.presenter.fragments.FragmentSend;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
+import com.breadwallet.tools.util.Utils;
 
 
 /**
@@ -62,8 +64,8 @@ public class BRAnimator {
     }
 
 
-    public static void showSendFragment(Activity app,final String bitcoinUrl) {
-        if(app == null) {
+    public static void showSendFragment(Activity app, final String bitcoinUrl) {
+        if (app == null) {
             Log.e(TAG, "showSendFragment: app is null");
             return;
         }
@@ -80,9 +82,29 @@ public class BRAnimator {
 
     }
 
+    public static void showRequestFragment(Activity app, String address) {
+        if (app == null) {
+            Log.e(TAG, "showRequestFragment: app is null");
+            return;
+        }
+        if(Utils.isNullOrEmpty(address)) {
+            Log.e(TAG, "showRequestFragment: address is empty: " + address);
+            return;
+        }
+        final FragmentRequestAmount fragmentRequestAmount = new FragmentRequestAmount();
+        Bundle bundle = new Bundle();
+        bundle.putString("address", address);
+        fragmentRequestAmount.setArguments(bundle);
+        app.getFragmentManager().beginTransaction()
+                .setCustomAnimations(0, 0, 0, R.animator.plain_300)
+                .add(android.R.id.content, fragmentRequestAmount, FragmentRequestAmount.class.getName())
+                .addToBackStack(FragmentRequestAmount.class.getName()).commit();
+
+    }
+
     //isReceive tells the Animator that the Receive fragment is requested, not My Address
     public static void showReceiveFragment(Activity app, boolean isReceive) {
-        if(app == null) {
+        if (app == null) {
             Log.e(TAG, "showReceiveFragment: app is null");
             return;
         }
