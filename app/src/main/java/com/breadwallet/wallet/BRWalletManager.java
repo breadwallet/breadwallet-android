@@ -66,6 +66,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static com.breadwallet.R.string.from;
+
 /**
  * BreadWallet
  * <p/>
@@ -949,19 +951,10 @@ public class BRWalletManager {
 
     public void startBreadActivity(Activity from, boolean auth) {
         Log.e(TAG, "startBreadActivity: from: " + from);
-        Intent intent;
-        if (auth) {
-            intent = new Intent(from, PinActivity.class);
-            from.startActivity(intent);
-            if (!from.isDestroyed()) {
-                from.finish();
-            }
-        } else {
-            intent = new Intent(from, BreadActivity.class);
-            from.startActivity(intent);
-            if (!from.isDestroyed()) {
-                from.finish();
-            }
+        Class toStart = auth ? PinActivity.class : BreadActivity.class;
+        from.startActivity(new Intent(from, toStart));
+        if (!from.isDestroyed()) {
+            from.finish();
         }
     }
 
@@ -985,6 +978,7 @@ public class BRWalletManager {
 
     public interface OnBalanceChanged {
         void onBalanceChanged(long balance);
+
     }
 
     private native byte[] encodeSeed(byte[] seed, String[] wordList);
