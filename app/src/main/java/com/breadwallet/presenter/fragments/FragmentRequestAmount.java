@@ -4,6 +4,7 @@ import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
+import android.animation.LayoutTransition;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.Fragment;
@@ -24,20 +25,24 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.ScanQRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRSoftKeyboard;
+import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.RequestObject;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRClipboardManager;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.util.BRBitcoin;
@@ -80,30 +85,54 @@ import static com.breadwallet.tools.security.BitcoinUrlHandler.getRequestFromStr
 
 public class FragmentRequestAmount extends Fragment {
     private static final String TAG = FragmentRequestAmount.class.getName();
-    public LinearLayout backgroundLayout;
-    public ConstraintLayout signalLayout;
-    public static final int ANIMATION_DURATION = 300;
     private BRSoftKeyboard keyboard;
     private Spinner spinner;
     private StringBuilder amountBuilder;
     private TextView isoText;
     private EditText amountEdit;
-    private long curBalance;
+    public TextView mTitle;
+    public TextView mAddress;
+    public ImageView mQrImage;
+    public LinearLayout backgroundLayout;
+    public LinearLayout signalLayout;
+    public static final int ANIMATION_DURATION = 300;
+    private String receiveAddress;
+    private View shareSeparator;
+    private View separator;
+    private Button shareButton;
+    private Button shareEmail;
+    private Button shareTextMessage;
+    private LinearLayout shareButtonsLayout;
+    private boolean shareButtonsShown = true;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_request, container, false);
         backgroundLayout = (LinearLayout) rootView.findViewById(R.id.background_layout);
-        signalLayout = (ConstraintLayout) rootView.findViewById(R.id.signal_layout);
+        signalLayout = (LinearLayout) rootView.findViewById(R.id.signal_layout);
         keyboard = (BRSoftKeyboard) rootView.findViewById(R.id.keyboard);
         keyboard.setBRButtonBackgroundColor(R.color.white);
         keyboard.setBRKeyboardColor(R.color.white);
         isoText = (TextView) rootView.findViewById(R.id.iso_text);
         spinner = (Spinner) rootView.findViewById(R.id.cur_spinner);
         amountEdit = (EditText) rootView.findViewById(R.id.amount_edit);
-        setListeners();
         amountBuilder = new StringBuilder(0);
+
+        mTitle = (TextView) rootView.findViewById(R.id.title);
+        mAddress = (TextView) rootView.findViewById(R.id.address_text);
+        mQrImage = (ImageView) rootView.findViewById(R.id.qr_image);
+        backgroundLayout = (LinearLayout) rootView.findViewById(R.id.background_layout);
+        signalLayout = (LinearLayout) rootView.findViewById(R.id.signal_layout);
+        shareButton = (Button) rootView.findViewById(R.id.share_button);
+        shareEmail = (Button) rootView.findViewById(R.id.share_email);
+        shareTextMessage = (Button) rootView.findViewById(R.id.share_text);
+        shareButtonsLayout = (LinearLayout) rootView.findViewById(R.id.share_buttons_layout);
+        shareSeparator = rootView.findViewById(R.id.share_separator);
+        separator = rootView.findViewById(R.id.separator);
+        LayoutTransition layoutTransition = signalLayout.getLayoutTransition();
+        layoutTransition.enableTransitionType(LayoutTransition.CHANGING);
+        setListeners();
 
         return rootView;
     }
@@ -115,9 +144,8 @@ public class FragmentRequestAmount extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String item = parent.getItemAtPosition(position).toString();
-                curBalance = BRWalletManager.getInstance().getBalance(getActivity());
                 Log.e(TAG, "onItemSelected: " + item);
-                isoText.setText(BRCurrency.getSymbolByIso(getActivity(),item));
+                isoText.setText(BRCurrency.getSymbolByIso(getActivity(), item));
                 SpringAnimator.showAnimation(isoText);
                 updateText();
 
@@ -125,7 +153,7 @@ public class FragmentRequestAmount extends Fragment {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                isoText.setText(BRCurrency.getSymbolByIso(getActivity(),"BTC"));
+                isoText.setText(BRCurrency.getSymbolByIso(getActivity(), "BTC"));
                 SpringAnimator.showAnimation(isoText);
             }
         });
@@ -164,18 +192,53 @@ public class FragmentRequestAmount extends Fragment {
             }
         }).start();
 
-    }
-
-    private void showClipboardError() {
-        BreadDialog.showCustomDialog(getActivity(), "Clipboard empty", getResources().getString(R.string.clipboard_invalid_data), "close", null, new BRDialogView.BROnClickListener() {
+        shareEmail.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(BRDialogView brDialogView) {
-                brDialogView.dismiss();
+            public void onClick(View v) {
+                if (!BRAnimator.isClickAllowed()) return;
+                SpringAnimator.showAnimation(v);
+
             }
-        }, null, null, 0);
-        BRClipboardManager.putClipboard(getActivity(), "");
+        });
+        shareTextMessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!BRAnimator.isClickAllowed()) return;
+                SpringAnimator.showAnimation(v);
+            }
+        });
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!BRAnimator.isClickAllowed()) return;
+                SpringAnimator.showAnimation(v);
+                toggleShareButtonsVisibility();
+            }
+        });
+        mAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!BRAnimator.isClickAllowed()) return;
+                BRClipboardManager.putClipboard(getContext(), mAddress.getText().toString());
+                BRToast.showCustomToast(getActivity(), "Copied to Clipboard.", (int) mAddress.getY(), Toast.LENGTH_SHORT, R.drawable.toast_layout_blue);
+            }
+        });
+
     }
 
+    private void toggleShareButtonsVisibility() {
+
+        if (shareButtonsShown) {
+            signalLayout.removeView(shareButtonsLayout);
+            signalLayout.removeView(shareSeparator);
+            shareButtonsShown = false;
+        } else {
+            signalLayout.addView(shareSeparator, signalLayout.getChildCount());
+            signalLayout.addView(shareButtonsLayout, signalLayout.getChildCount());
+            shareButtonsShown = true;
+        }
+
+    }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -188,8 +251,17 @@ public class FragmentRequestAmount extends Fragment {
                 observer.removeGlobalOnLayoutListener(this);
                 animateBackgroundDim(false);
                 animateSignalSlide(false);
+                toggleShareButtonsVisibility();
             }
         });
+
+        boolean success = BRWalletManager.refreshAddress(getActivity());
+        if (!success) throw new RuntimeException("failed to retrieve address");
+
+        receiveAddress = SharedPreferencesManager.getReceiveAddress(getActivity());
+        mAddress.setText(receiveAddress);
+        boolean generated = BRWalletManager.getInstance().generateQR(getActivity(), "bitcoin:" + receiveAddress, mQrImage);
+        if (!generated) throw new RuntimeException("failed to generate qr image for address");
 
     }
 
@@ -204,7 +276,7 @@ public class FragmentRequestAmount extends Fragment {
                 if (reverse && getActivity() != null) {
                     try {
                         getActivity().getFragmentManager().popBackStack();
-                    } catch (Exception ex) {
+                    } catch (Exception ignored) {
 
                     }
                 }
@@ -301,7 +373,7 @@ public class FragmentRequestAmount extends Fragment {
     }
 
     private void updateText() {
-        if(getActivity() == null) return;
+        if (getActivity() == null) return;
         String tmpAmount = amountBuilder.toString();
         amountEdit.setText(tmpAmount);
 
