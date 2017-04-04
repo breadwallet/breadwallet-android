@@ -123,22 +123,6 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
 
         setWalletLoading();
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                updateTxList();
-                double progress = BRPeerManager.syncProgress(SharedPreferencesManager.getStartHeight(BreadActivity.this));
-                if (progress <= 0 || progress >= 1)
-                    BreadActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            showSyncing(false);
-                        }
-                    });
-
-            }
-        }).start();
-
     }
 
     @Override
@@ -276,6 +260,21 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
             }).start();
 
         }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                updateTxList();
+                double progress = BRPeerManager.syncProgress(SharedPreferencesManager.getStartHeight(BreadActivity.this));
+                if (progress <= 0 || progress >= 1)
+                    BreadActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            showSyncing(false);
+                        }
+                    });
+
+            }
+        }).start();
     }
 
     @Override

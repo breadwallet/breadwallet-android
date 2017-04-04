@@ -17,6 +17,7 @@ import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.wallet.BRPeerManager;
 
 import static com.breadwallet.R.id.toggleButton;
 
@@ -41,6 +42,14 @@ public class SyncBlockchainActivity extends AppCompatActivity {
                             @Override
                             public void onClick(BRDialogView brDialogView) {
                                 Log.e(TAG, "onClick: Starting syncing...");
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        BRPeerManager.getInstance().rescan();
+                                        SharedPreferencesManager.putStartHeight(SyncBlockchainActivity.this, BRPeerManager.getCurrentBlockHeight());
+                                        onBackPressed();
+                                    }
+                                }).start();
                             }
                         }, new BRDialogView.BROnClickListener() {
                             @Override
