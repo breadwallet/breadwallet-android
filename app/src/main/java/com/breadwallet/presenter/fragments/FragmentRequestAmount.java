@@ -280,7 +280,7 @@ public class FragmentRequestAmount extends Fragment {
 
         receiveAddress = SharedPreferencesManager.getReceiveAddress(getActivity());
         mAddress.setText(receiveAddress);
-        boolean generated = BRWalletManager.getInstance().generateQR(getActivity(), "bitcoin:" + receiveAddress, mQrImage);
+        boolean generated = generateQrImage(receiveAddress, "0", "BTC");
         if (!generated) throw new RuntimeException("failed to generate qr image for address");
 
     }
@@ -359,6 +359,8 @@ public class FragmentRequestAmount extends Fragment {
         } else if (key.charAt(0) == '.') {
             handleSeparatorClick();
         }
+        boolean generated = generateQrImage(receiveAddress, amountEdit.getText().toString(), (String) spinner.getSelectedItem());
+        if (!generated) throw new RuntimeException("failed to generate qr image for address");
     }
 
     private void handleDigitClick(Integer dig) {
@@ -411,6 +413,19 @@ public class FragmentRequestAmount extends Fragment {
         } catch (Exception ignored) {
 
         }
+    }
+
+    private boolean generateQrImage(String address, String strAmount, String iso){
+        String amountArg = "";
+        if(!Utils.isNullOrEmpty(strAmount)){
+            BigDecimal bigAmount = new BigDecimal(Utils.isNullOrEmpty(strAmount) ? "0" : strAmount);
+            long amount = iso.equalsIgnoreCase("BTC")
+                    ? BRBitcoin.getSatoshisFromAmount(getActivity(),bigAmount).longValue()
+                    : BRWalletManager.getInstance().getAmount(getActivity(), iso, bigAmount).longValue();
+            String am = new BigDecimal(amount).divide(new BigDecimal(100000000), 8, BRConstants.ROUNDING_MODE).toPlainString();
+            amountArg = "?amount=" + am;
+        }
+        return BRWalletManager.getInstance().generateQR(getActivity(), "bitcoin:" + address + amountArg, mQrImage);
     }
 
 }

@@ -295,9 +295,7 @@ public class FragmentSend extends Fragment {
 
         final List<String> curList = new ArrayList<>();
         curList.add("BTC");
-        spinner.setAdapter(new ArrayAdapter<>(
-
-                getContext(), R.layout.bread_spinner_item, curList));
+        spinner.setAdapter(new ArrayAdapter<>(getContext(), R.layout.bread_spinner_item, curList));
         Log.e(TAG, "spinner took: " + (System.currentTimeMillis() - start));
         new Thread(new Runnable() {
             @Override
