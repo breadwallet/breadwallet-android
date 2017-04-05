@@ -253,8 +253,8 @@ public class FragmentRequestAmount extends Fragment {
             signalLayout.removeView(shareSeparator);
             shareButtonsShown = false;
         } else {
-            signalLayout.addView(shareSeparator, signalLayout.getChildCount());
             signalLayout.addView(shareButtonsLayout, signalLayout.getChildCount());
+            signalLayout.addView(shareSeparator, signalLayout.getChildCount());
             shareButtonsShown = true;
         }
 
