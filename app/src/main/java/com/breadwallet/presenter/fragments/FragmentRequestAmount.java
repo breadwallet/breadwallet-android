@@ -367,7 +367,7 @@ public class FragmentRequestAmount extends Fragment {
         if (new BigDecimal(currAmount.concat(String.valueOf(dig))).doubleValue()
                 <= BRBitcoin.getMaxAmount(getActivity(), iso).doubleValue()) {
             //do not insert 0 if the balance is 0 now
-            if (currAmount.equalsIgnoreCase("0") && dig == 0) return;
+            if (currAmount.equalsIgnoreCase("0")) amountBuilder = new StringBuilder("");
             if ((currAmount.contains(".") && (currAmount.length() - currAmount.indexOf(".") > BRCurrency.getMaxDecimalPlaces(iso))))
                 return;
             amountBuilder.append(dig);
