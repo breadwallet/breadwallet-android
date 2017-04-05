@@ -45,7 +45,7 @@
             android:background="#c6c6c6"
             />
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -54,6 +54,7 @@
                 android:id="@+id/iso_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="0dp"
@@ -64,8 +65,13 @@
 
             <EditText
                 android:id="@+id/amount_edit"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_toLeftOf="@+id/cur_spinner"
+                android:layout_marginStart="8dp"
+                android:layout_toEndOf="@+id/iso_text"
+                android:layout_centerVertical="true"
                 android:layout_gravity="center_vertical"
                 android:layout_marginBottom="0dp"
                 android:layout_marginLeft="8dp"
@@ -85,6 +91,8 @@
 
             <Spinner
                 android:id="@+id/cur_spinner"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
                 android:layout_width="64dp"
                 android:layout_height="40dp"
                 android:layout_gravity="center_vertical"
@@ -94,7 +102,7 @@
                 android:background="@drawable/button_secondary_gray_stroke"
                 android:elevation="8dp"
                 />
-        </LinearLayout>
+        </RelativeLayout>
 
         <View
             android:id="@+id/view2"

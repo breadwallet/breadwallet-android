@@ -485,7 +485,7 @@ public class FragmentSend extends Fragment {
         RequestObject obj = BitcoinUrlHandler.getRequestFromString(url);
         if (obj == null) return;
         if (obj.address != null && addressEdit != null) {
-            addressEdit.setText(obj.address);
+            addressEdit.setText(obj.address.trim());
         }
         if (obj.message != null && commentEdit != null) {
             commentEdit.setText(obj.message);

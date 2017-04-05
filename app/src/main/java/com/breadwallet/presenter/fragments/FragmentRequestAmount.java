@@ -359,6 +359,7 @@ public class FragmentRequestAmount extends Fragment {
         } else if (key.charAt(0) == '.') {
             handleSeparatorClick();
         }
+
         boolean generated = generateQrImage(receiveAddress, amountEdit.getText().toString(), (String) spinner.getSelectedItem());
         if (!generated) throw new RuntimeException("failed to generate qr image for address");
     }
@@ -417,7 +418,7 @@ public class FragmentRequestAmount extends Fragment {
 
     private boolean generateQrImage(String address, String strAmount, String iso){
         String amountArg = "";
-        if(!Utils.isNullOrEmpty(strAmount)){
+        if(strAmount != null && !strAmount.isEmpty()){
             BigDecimal bigAmount = new BigDecimal(Utils.isNullOrEmpty(strAmount) ? "0" : strAmount);
             long amount = iso.equalsIgnoreCase("BTC")
                     ? BRBitcoin.getSatoshisFromAmount(getActivity(),bigAmount).longValue()
