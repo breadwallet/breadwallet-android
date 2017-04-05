@@ -99,11 +99,13 @@ public class FragmentRequestAmount extends Fragment {
     private String receiveAddress;
     private View shareSeparator;
     private View separator;
+    private View keyboardSeparator;
     private Button shareButton;
     private Button shareEmail;
     private Button shareTextMessage;
     private LinearLayout shareButtonsLayout;
     private boolean shareButtonsShown = true;
+    private int keyboardPosition = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -130,15 +132,24 @@ public class FragmentRequestAmount extends Fragment {
         shareButtonsLayout = (LinearLayout) rootView.findViewById(R.id.share_buttons_layout);
         shareSeparator = rootView.findViewById(R.id.share_separator);
         separator = rootView.findViewById(R.id.separator);
+        keyboardSeparator = rootView.findViewById(R.id.view2);
         LayoutTransition layoutTransition = signalLayout.getLayoutTransition();
         layoutTransition.enableTransitionType(LayoutTransition.CHANGING);
         setListeners();
+        keyboardPosition = signalLayout.indexOfChild(keyboard);
 
         return rootView;
     }
 
     private void setListeners() {
         long start = System.currentTimeMillis();
+
+        amountEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showKeyboard(true);
+            }
+        });
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -158,6 +169,13 @@ public class FragmentRequestAmount extends Fragment {
             }
         });
 
+        mQrImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showKeyboard(false);
+            }
+        });
+
         keyboard.addOnInsertListener(new BRSoftKeyboard.OnInsertListener()
 
         {
@@ -170,9 +188,7 @@ public class FragmentRequestAmount extends Fragment {
 
         final List<String> curList = new ArrayList<>();
         curList.add("BTC");
-        spinner.setAdapter(new ArrayAdapter<>(
-
-                getContext(), R.layout.bread_spinner_item, curList));
+        spinner.setAdapter(new ArrayAdapter<>(getContext(), R.layout.bread_spinner_item, curList));
         Log.e(TAG, "spinner took: " + (System.currentTimeMillis() - start));
         new Thread(new Runnable() {
             @Override
@@ -197,6 +213,7 @@ public class FragmentRequestAmount extends Fragment {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
+                showKeyboard(false);
 
             }
         });
@@ -205,6 +222,7 @@ public class FragmentRequestAmount extends Fragment {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
+                showKeyboard(false);
             }
         });
         shareButton.setOnClickListener(new View.OnClickListener() {
@@ -213,6 +231,7 @@ public class FragmentRequestAmount extends Fragment {
                 if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
                 toggleShareButtonsVisibility();
+                showKeyboard(false);
             }
         });
         mAddress.setOnClickListener(new View.OnClickListener() {
@@ -221,6 +240,7 @@ public class FragmentRequestAmount extends Fragment {
                 if (!BRAnimator.isClickAllowed()) return;
                 BRClipboardManager.putClipboard(getContext(), mAddress.getText().toString());
                 BRToast.showCustomToast(getActivity(), "Copied to Clipboard.", (int) mAddress.getY(), Toast.LENGTH_SHORT, R.drawable.toast_layout_blue);
+                showKeyboard(false);
             }
         });
 
@@ -377,6 +397,20 @@ public class FragmentRequestAmount extends Fragment {
         String tmpAmount = amountBuilder.toString();
         amountEdit.setText(tmpAmount);
 
+    }
+
+    private void showKeyboard(boolean b) {
+        try {
+            if (b) {
+                signalLayout.addView(keyboard, keyboardPosition);
+                signalLayout.addView(keyboardSeparator, keyboardPosition + 1);
+            } else {
+                signalLayout.removeView(keyboard);
+                signalLayout.removeView(keyboardSeparator);
+            }
+        } catch (Exception ignored) {
+
+        }
     }
 
 }

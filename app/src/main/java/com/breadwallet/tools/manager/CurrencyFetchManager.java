@@ -196,8 +196,7 @@ public class CurrencyFetchManager {
             JSONObject obj = new JSONObject(jsonString);
             jsonArray = obj.getJSONArray("body");
 
-        } catch (JSONException e) {
-            e.printStackTrace();
+        } catch (JSONException ignored) {
         }
         return jsonArray == null ? getBackUpJSonArray(activity) : jsonArray;
     }
