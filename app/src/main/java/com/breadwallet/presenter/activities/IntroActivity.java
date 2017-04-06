@@ -113,6 +113,7 @@ public class IntroActivity extends FragmentActivity implements Serializable{
                 Intent intent = new Intent(IntroActivity.this, IntroSetPitActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+
             }
         });
 
@@ -124,6 +125,7 @@ public class IntroActivity extends FragmentActivity implements Serializable{
                 Intent intent = new Intent(IntroActivity.this, IntroRecoverActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+
             }
         });
     }

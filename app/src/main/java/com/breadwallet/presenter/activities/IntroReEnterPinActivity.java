@@ -159,6 +159,7 @@ public class IntroReEnterPinActivity extends FragmentActivity {
                     }
                 });
             }
+            if (!isDestroyed()) finish();
         } else {
             Log.e(TAG, "verifyPin: FAIL: firs: " + firstPIN + ", reEnter: " + pin.toString());
             title.setText("Wrong PIN,\nplease try again");
