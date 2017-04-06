@@ -2,6 +2,7 @@ package com.breadwallet.tools.util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
@@ -38,6 +39,8 @@ import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
  * THE SOFTWARE.
  */
 public class BRExchange {
+
+    private static final String TAG = BRExchange.class.getName();
 
     public static BigDecimal getMaxAmount(Context context, String iso) {
         final long MAX_BTC = 21000000;
@@ -107,6 +110,7 @@ public class BRExchange {
 
     //get an iso amount from  satoshis
     public static BigDecimal getAmountFromSatoshis(Context app, String iso, BigDecimal amount) {
+        Log.e(TAG, "getAmountFromSatoshis: " + iso + ":" + amount);
         BigDecimal result;
         if (iso.equalsIgnoreCase("BTC")) {
             result = getBitcoinForSatoshis(app, amount);
@@ -115,8 +119,10 @@ public class BRExchange {
             CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByIso(iso);
             if (ent == null) return new BigDecimal(0);
             BigDecimal rate = new BigDecimal(ent.rate).multiply(new BigDecimal(100));
-            result = new BigDecimal(BRWalletManager.getInstance().localAmount(amount.multiply(new BigDecimal(100)).longValue(),rate.doubleValue()));
+            result = new BigDecimal(BRWalletManager.getInstance().localAmount(amount.longValue(),rate.doubleValue()))
+                    .divide(new BigDecimal(100), 2, BRConstants.ROUNDING_MODE);
         }
+        Log.e(TAG, "getAmountFromSatoshis: " + iso + ":RESULT:" + result);
         return result;
     }
 
@@ -124,6 +130,7 @@ public class BRExchange {
 
     //get satoshis from an iso amount
     public static BigDecimal getSatoshisFromAmount(Context app, String iso, BigDecimal amount) {
+        Log.e(TAG, "getSatoshisFromAmount: " + iso + ":" + amount);
         BigDecimal result;
         if (iso.equalsIgnoreCase("BTC")) {
             result = BRExchange.getSatoshisForBitcoin(app, amount);
@@ -134,6 +141,7 @@ public class BRExchange {
             BigDecimal rate = new BigDecimal(ent.rate).multiply(new BigDecimal(100));
             result = new BigDecimal(BRWalletManager.getInstance().bitcoinAmount(amount.multiply(new BigDecimal(100)).longValue(),rate.doubleValue()));
         }
+        Log.e(TAG, "getSatoshisFromAmount: " + iso + ":RESULT:" + result);
         return result;
     }
 }
