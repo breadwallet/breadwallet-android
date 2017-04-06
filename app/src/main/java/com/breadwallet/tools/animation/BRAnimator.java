@@ -69,7 +69,11 @@ public class BRAnimator {
             Log.e(TAG, "showSendFragment: app is null");
             return;
         }
-        final FragmentSend fragmentSend = new FragmentSend();
+        FragmentSend fragmentSend = (FragmentSend) app.getFragmentManager().findFragmentByTag(FragmentSend.class.getName());
+        if (fragmentSend != null && fragmentSend.isAdded())
+            return;
+
+        fragmentSend = new FragmentSend();
         if (bitcoinUrl != null && !bitcoinUrl.isEmpty()) {
             Bundle bundle = new Bundle();
             bundle.putString("url", bitcoinUrl);
@@ -87,11 +91,16 @@ public class BRAnimator {
             Log.e(TAG, "showRequestFragment: app is null");
             return;
         }
-        if(Utils.isNullOrEmpty(address)) {
+        if (Utils.isNullOrEmpty(address)) {
             Log.e(TAG, "showRequestFragment: address is empty: " + address);
             return;
         }
-        final FragmentRequestAmount fragmentRequestAmount = new FragmentRequestAmount();
+
+        FragmentRequestAmount fragmentRequestAmount = (FragmentRequestAmount) app.getFragmentManager().findFragmentByTag(FragmentRequestAmount.class.getName());
+        if (fragmentRequestAmount != null && fragmentRequestAmount.isAdded())
+            return;
+
+       fragmentRequestAmount = new FragmentRequestAmount();
         Bundle bundle = new Bundle();
         bundle.putString("address", address);
         fragmentRequestAmount.setArguments(bundle);
@@ -108,7 +117,10 @@ public class BRAnimator {
             Log.e(TAG, "showReceiveFragment: app is null");
             return;
         }
-        FragmentReceive fragmentReceive = new FragmentReceive();
+        FragmentReceive fragmentReceive = (FragmentReceive) app.getFragmentManager().findFragmentByTag(FragmentReceive.class.getName());
+        if (fragmentReceive != null && fragmentReceive.isAdded())
+            return;
+        fragmentReceive = new FragmentReceive();
         Bundle args = new Bundle();
         args.putBoolean("receive", isReceive);
         fragmentReceive.setArguments(args);
