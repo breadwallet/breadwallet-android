@@ -100,7 +100,7 @@ public class FragmentMenu extends Fragment {
                 Activity app = getActivity();
                 Intent intent = new Intent(app, SecurityCenterActivity.class);
                 app.startActivity(intent);
-                app.overridePendingTransition(R.anim.enter_from_bottom, 0);
+                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
             }
         }));
         itemList.add(new BRMenuItem("Support", R.drawable.ic_question_mark, new View.OnClickListener() {
@@ -116,7 +116,7 @@ public class FragmentMenu extends Fragment {
                 Intent intent = new Intent(getActivity(), SettingsActivity.class);
                 Activity app = getActivity();
                 app.startActivity(intent);
-                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.exit_to_bottom);
+                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
             }
         }));
         itemList.add(new BRMenuItem("Lock Wallet", R.drawable.ic_lock, new View.OnClickListener() {

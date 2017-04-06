@@ -216,7 +216,7 @@ public class FragmentSend extends Fragment {
                         // Permission is granted, open camera
                         Intent intent = new Intent(app, ScanQRActivity.class);
                         app.startActivityForResult(intent, 123);
-                        app.overridePendingTransition(R.anim.scale_up, 0);
+                        app.overridePendingTransition(R.anim.fade_up, 0);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

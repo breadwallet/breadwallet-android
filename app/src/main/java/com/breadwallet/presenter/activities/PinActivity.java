@@ -143,7 +143,7 @@ public class PinActivity extends Activity {
                         // Permission is granted, open camera
                         Intent intent = new Intent(app, ScanQRActivity.class);
                         app.startActivityForResult(intent, 123);
-                        app.overridePendingTransition(R.anim.scale_up, 0);
+                        app.overridePendingTransition(R.anim.fade_up, 0);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -259,7 +259,7 @@ public class PinActivity extends Activity {
                     public void run() {
                         Intent intent = new Intent(PinActivity.this, BreadActivity.class);
                         startActivity(intent);
-                        overridePendingTransition(R.anim.scale_up, R.anim.scale_down);
+                        overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
                         if (!PinActivity.this.isDestroyed()) {
                             PinActivity.this.finish();
                         }

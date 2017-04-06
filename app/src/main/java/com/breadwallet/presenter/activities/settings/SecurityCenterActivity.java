@@ -62,7 +62,7 @@ public class SecurityCenterActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_bottom);
+        overridePendingTransition(R.anim.fade_up, R.anim.exit_to_bottom);
     }
 
     private void setStatusBarColor(int color) {

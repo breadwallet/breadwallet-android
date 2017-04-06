@@ -27,7 +27,6 @@ import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
 import com.breadwallet.presenter.entities.BRPeerEntity;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
-import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.ImportPrivKeyEntity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.TransactionListItem;
@@ -62,8 +61,6 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import static com.breadwallet.tools.util.BRExchange.getBitcoinForSatoshis;
 
 /**
  * BreadWallet
@@ -924,7 +921,7 @@ public class BRWalletManager {
         Log.e(TAG, "startBreadActivity: from: " + from);
         Class toStart = auth ? PinActivity.class : BreadActivity.class;
         from.startActivity(new Intent(from, toStart));
-        from.overridePendingTransition(R.anim.scale_up, R.anim.scale_down);
+        from.overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
         if (!from.isDestroyed()) {
             from.finish();
         }

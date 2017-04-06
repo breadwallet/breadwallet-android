@@ -132,7 +132,7 @@ public class ScanQRActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        overridePendingTransition(R.anim.scale_down, 0);
+        overridePendingTransition(R.anim.fade_down, 0);
         super.onBackPressed();
     }
 

@@ -100,6 +100,7 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        overridePendingTransition(R.anim.fade_up, R.anim.exit_to_bottom);
 //        overridePendingTransition(R.anim.exit_to_bottom, 0);
     }
 
