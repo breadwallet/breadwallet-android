@@ -31,7 +31,9 @@ import com.breadwallet.tools.listeners.RecyclerItemClickListener;
 import com.breadwallet.tools.manager.CurrencyFetchManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
+import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.wallet.BRPeerManager;
@@ -417,18 +419,24 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
 
         // 123 is the qrCode result
-        if (requestCode == 123) {
-            if (resultCode == Activity.RESULT_OK) {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        String result = data.getStringExtra("result");
-                        BRAnimator.showSendFragment(BreadActivity.this, result);
-                    }
-                }, 300);
+        switch (requestCode) {
+            case 123:
+                if (resultCode == Activity.RESULT_OK) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            String result = data.getStringExtra("result");
+                            BRAnimator.showSendFragment(BreadActivity.this, result);
+                        }
+                    }, 300);
 
-            }
+                }
 
+            case BRConstants.PAY_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    PostAuthenticationProcessor.getInstance().onPublishTxAuth(this, true);
+                }
+                break;
         }
     }
 

@@ -16,6 +16,7 @@ import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.wallet.BRWalletManager;
 
 public class UpdatePitActivity extends Activity {
     private static final String TAG = UpdatePitActivity.class.getName();
@@ -166,7 +167,7 @@ public class UpdatePitActivity extends Activity {
                     BRAnimator.showBreadSignal(this, "PIN Set", "Use your PIN to login and send money.", R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
                         @Override
                         public void onComplete() {
-                            onBackPressed();
+                            BRWalletManager.getInstance().startBreadActivity(UpdatePitActivity.this, false);
                         }
                     });
                 } else {

@@ -1,6 +1,7 @@
 
 package com.breadwallet.presenter.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -23,6 +24,8 @@ import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.BRWalletManager;
 import com.google.firebase.crash.FirebaseCrash;
+
+import java.io.Serializable;
 
 
 /**
@@ -50,7 +53,7 @@ import com.google.firebase.crash.FirebaseCrash;
  * THE SOFTWARE.
  */
 
-public class IntroActivity extends FragmentActivity {
+public class IntroActivity extends FragmentActivity implements Serializable{
     private static final String TAG = IntroActivity.class.getName();
     public Button newWalletButton;
     public Button recoverWalletButton;

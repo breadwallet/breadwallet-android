@@ -13,14 +13,13 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRSoftKeyboard;
-import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
-import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.BRWalletManager;
 
 public class IntroReEnterPinActivity extends FragmentActivity {
     private static final String TAG = IntroReEnterPinActivity.class.getName();
@@ -149,12 +148,16 @@ public class IntroReEnterPinActivity extends FragmentActivity {
             Log.e(TAG, "verifyPin: SUCCESS");
             isPressAllowed = false;
             KeyStoreManager.putPinCode(pin.toString(), this);
-            BRAnimator.showBreadSignal(this, "PIN Set", "Use your PIN to login and send money.", R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
-                @Override
-                public void onComplete() {
-                    PostAuthenticationProcessor.getInstance().onCreateWalletAuth(IntroReEnterPinActivity.this, false);
-                }
-            });
+            if (getIntent().getBooleanExtra("recovery", false)) {
+                BRWalletManager.getInstance().startBreadActivity(this, false);
+            } else {
+                BRAnimator.showBreadSignal(this, "PIN Set", "Use your PIN to login and send money.", R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
+                    @Override
+                    public void onComplete() {
+                        PostAuthenticationProcessor.getInstance().onCreateWalletAuth(IntroReEnterPinActivity.this, false);
+                    }
+                });
+            }
         } else {
             Log.e(TAG, "verifyPin: FAIL: firs: " + firstPIN + ", reEnter: " + pin.toString());
             title.setText("Wrong PIN,\nplease try again");

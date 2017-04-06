@@ -28,6 +28,7 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.BRWalletManager;
 
@@ -67,6 +68,13 @@ public class PinActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pin);
+        String pin = KeyStoreManager.getPinCode(this);
+        if(pin.isEmpty() || pin.length()!=6) {
+            Intent intent = new Intent(this, IntroSetPitActivity.class);
+            intent.putExtra("recovery", true);
+            startActivity(intent);
+            return;
+        }
 //        setStatusBarColor(android.R.color.transparent);
         keyboard = (BRSoftKeyboard) findViewById(R.id.brkeyboard);
         pinLayout = (LinearLayout) findViewById(R.id.pinLayout);
@@ -296,18 +304,24 @@ public class PinActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
 
         // 123 is the qrCode result
-        if (requestCode == 123) {
-            if (resultCode == Activity.RESULT_OK) {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        String result = data.getStringExtra("result");
-                        BRAnimator.showSendFragment(PinActivity.this, result);
-                    }
-                }, 300);
+        switch (requestCode) {
+            case 123:
+                if (resultCode == Activity.RESULT_OK) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            String result = data.getStringExtra("result");
+                            BRAnimator.showSendFragment(PinActivity.this, result);
+                        }
+                    }, 300);
 
-            }
+                }
 
+            case BRConstants.PAY_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    PostAuthenticationProcessor.getInstance().onPublishTxAuth(this, true);
+                }
+                break;
         }
     }
 

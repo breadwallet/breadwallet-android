@@ -3,6 +3,7 @@ package com.breadwallet.presenter.activities;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -25,6 +26,7 @@ import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.tools.util.WordsReader;
 import com.breadwallet.wallet.BRWalletManager;
@@ -127,7 +129,6 @@ public class IntroRecoverWordsActivity extends Activity {
                     PostAuthenticationProcessor.getInstance().setPhraseForKeyStore(cleanPhrase);
                     PostAuthenticationProcessor.getInstance().onRecoverWalletAuth(app, false);
                     SharedPreferencesManager.putAllowSpend(app, false);
-
                 } else {
                     String message = getResources().getString(R.string.bad_recovery_phrase);
                     String[] words = cleanPhrase.split(" ");
@@ -269,6 +270,22 @@ public class IntroRecoverWordsActivity extends Activity {
         if (!success) return null;
 
         return w1 + " " + w2 + " " + w3 + " " + w4 + " " + w5 + " " + w6 + " " + w7 + " " + w8 + " " + w9 + " " + w10 + " " + w11 + " " + w12;
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    PostAuthenticationProcessor.getInstance().onRecoverWalletAuth(this, true);
+                } else {
+                    finish();
+                }
+                break;
+
+        }
+
     }
 
 }
