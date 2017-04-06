@@ -89,7 +89,6 @@ public class IntroPhraseCheckActivity extends Activity {
 
         try {
             cleanPhrase = new String(KeyStoreManager.getKeyStorePhrase(this, 0));
-            //todo DELETE THIS LOG
         } catch (BRKeystoreErrorException e) {
             e.printStackTrace();
         }

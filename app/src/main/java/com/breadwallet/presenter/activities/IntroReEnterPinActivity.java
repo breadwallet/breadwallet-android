@@ -18,6 +18,7 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 
@@ -168,5 +169,22 @@ public class IntroReEnterPinActivity extends FragmentActivity {
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
+        switch (requestCode) {
+            case BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    PostAuthenticationProcessor.getInstance().onCreateWalletAuth(this, true);
+                } else {
+                    Log.e(TAG, "WARNING: resultCode != RESULT_OK");
+                    BRWalletManager m = BRWalletManager.getInstance();
+                    m.wipeWalletButKeystore(this);
+                    finish();
+                }
+                break;
+        }
+
+    }
 }

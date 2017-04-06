@@ -53,7 +53,7 @@ public class FragmentBreadSignal extends Fragment {
     BROnSignalCompletion completion;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
         // The last two arguments ensure LayoutParams are inflated
         // properly.
 
@@ -81,8 +81,6 @@ public class FragmentBreadSignal extends Fragment {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (getActivity() != null)
-                    getActivity().getFragmentManager().popBackStack();
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -92,6 +90,12 @@ public class FragmentBreadSignal extends Fragment {
                         }
                     }
                 }, 300);
+                try {
+                    if (getActivity() != null)
+                        getActivity().getFragmentManager().popBackStack();
+                } catch (Exception ignored){
+
+                }
 
             }
         }, 1500);
