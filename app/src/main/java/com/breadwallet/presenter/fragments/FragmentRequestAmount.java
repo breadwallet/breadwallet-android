@@ -144,7 +144,8 @@ public class FragmentRequestAmount extends Fragment {
                 isoText.setText(BRCurrency.getSymbolByIso(getActivity(), item));
                 SpringAnimator.showAnimation(isoText);
                 updateText();
-
+                boolean generated = generateQrImage(receiveAddress, amountEdit.getText().toString(), (String) spinner.getSelectedItem());
+                if (!generated) throw new RuntimeException("failed to generate qr image for address");
             }
 
             @Override
@@ -180,7 +181,6 @@ public class FragmentRequestAmount extends Fragment {
             public void run() {
                 if (getActivity() == null) return;
                 curList.addAll(CurrencyDataSource.getInstance(getActivity()).getAllISOs());
-                if (getActivity() == null) return;
                 final ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.bread_spinner_item, curList);
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
