@@ -242,7 +242,7 @@ public class FragmentSend extends Fragment {
                 //get amount in satoshis from any isos
                 BigDecimal bigAmount = new BigDecimal(Utils.isNullOrEmpty(amountStr) ? "0" : amountStr);
                 BigDecimal satoshiAmount = BRExchange.getSatoshisFromAmount(getActivity(), iso, bigAmount);
-                long amount = BRExchange.getAmountFromSatoshis(getActivity(), iso, satoshiAmount).longValue();
+//                long amount = BRExchange.getAmountFromSatoshis(getActivity(), iso, satoshiAmount).longValue();
 
                 if (address.isEmpty()) {
                     allFilled = false;
@@ -252,12 +252,12 @@ public class FragmentSend extends Fragment {
                     allFilled = false;
                     SpringAnimator.failShakeAnimation(getActivity(), amountEdit);
                 }
-                if (amount > BRWalletManager.getInstance().getBalance(getActivity())) {
+                if (satoshiAmount.longValue() > BRWalletManager.getInstance().getBalance(getActivity())) {
                     SpringAnimator.failShakeAnimation(getActivity(), balanceText);
                 }
 
                 if (allFilled)
-                    BRWalletManager.getInstance().handlePay(getContext(), new PaymentRequestEntity(new String[]{address}, amount, null, false));
+                    BRWalletManager.getInstance().handlePay(getContext(), new PaymentRequestEntity(new String[]{address}, satoshiAmount.longValue(), null, false));
             }
         });
 

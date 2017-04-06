@@ -401,14 +401,14 @@ public class FragmentRequestAmount extends Fragment {
         }
     }
 
-    private boolean generateQrImage(String address, String strAmount, String iso){
+    private boolean generateQrImage(String address, String strAmount, String iso) {
         String amountArg = "";
-        if(strAmount != null && !strAmount.isEmpty()){
+        if (strAmount != null && !strAmount.isEmpty()) {
             BigDecimal bigAmount = new BigDecimal((Utils.isNullOrEmpty(strAmount) || strAmount.equalsIgnoreCase(".")) ? "0" : strAmount);
             long amount = BRExchange.getSatoshisFromAmount(getActivity(), iso, bigAmount).longValue();
             String am = new BigDecimal(amount).divide(new BigDecimal(100000000), 8, BRConstants.ROUNDING_MODE).toPlainString();
             amountArg = "?amount=" + am;
-        },
+        }
         return BRWalletManager.getInstance().generateQR(getActivity(), "bitcoin:" + address + amountArg, mQrImage);
     }
 
