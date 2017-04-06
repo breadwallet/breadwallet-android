@@ -1,10 +1,14 @@
 package com.breadwallet.presenter.activities;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -13,11 +17,24 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.R;
+import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.BreadDialog;
+import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.security.PostAuthenticationProcessor;
+import com.breadwallet.tools.util.Utils;
+import com.breadwallet.tools.util.WordsReader;
+import com.breadwallet.wallet.BRWalletManager;
+
+import java.util.List;
 
 import static com.breadwallet.R.color.dark_blue;
 import static com.breadwallet.R.color.extra_light_gray;
+import static com.breadwallet.tools.util.WordsReader.getAllWordLists;
+import okhttp3.internal.Util;
 
 public class IntroRecoverWordsActivity extends Activity {
     private static final String TAG = IntroRecoverWordsActivity.class.getName();
@@ -75,7 +92,7 @@ public class IntroRecoverWordsActivity extends Activity {
         leftButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!BRAnimator.isClickAllowed()) return;
+                if (!BRAnimator.isClickAllowed()) return;
                 chooseWordsSize(true);
             }
         });
@@ -83,7 +100,7 @@ public class IntroRecoverWordsActivity extends Activity {
         rightButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!BRAnimator.isClickAllowed()) return;
+                if (!BRAnimator.isClickAllowed()) return;
                 chooseWordsSize(false);
             }
         });
@@ -91,8 +108,49 @@ public class IntroRecoverWordsActivity extends Activity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!BRAnimator.isClickAllowed()) return;
-                Log.e(TAG, "onClick: NEXT");
+                if (!BRAnimator.isClickAllowed()) return;
+                SpringAnimator.showAnimation(v);
+//                if (alertDialog.isShowing()) {
+//                    alertDialog.dismiss();
+//                }
+                Activity app = IntroRecoverWordsActivity.this;
+
+                String phraseToCheck = getPhrase();
+                if (phraseToCheck == null) return;
+                String cleanPhrase = WordsReader.cleanPhrase(app, phraseToCheck);
+
+                if (BRWalletManager.getInstance().validatePhrase(app, cleanPhrase)) {
+                    ((BreadWalletApp) app.getApplication()).hideKeyboard(app);
+                    BRWalletManager m = BRWalletManager.getInstance();
+                    m.wipeWalletButKeystore(app);
+                    m.wipeKeyStore(app);
+                    PostAuthenticationProcessor.getInstance().setPhraseForKeyStore(cleanPhrase);
+                    PostAuthenticationProcessor.getInstance().onRecoverWalletAuth(app, false);
+                    SharedPreferencesManager.putAllowSpend(app, false);
+
+                } else {
+                    String message = getResources().getString(R.string.bad_recovery_phrase);
+                    String[] words = cleanPhrase.split(" ");
+                    if (words.length != 12) {
+                        message = String.format(app.getString(R.string.recovery_phrase_must_have_12_words), 12);
+                    } else {
+                        List<String> allWords = getAllWordLists(app);
+
+                        for (String word : words) {
+                            if (!allWords.contains(word)) {
+                                message = String.format(app.getString(R.string.not_a_recovery_phrase_word), word);
+                            }
+                        }
+                    }
+
+                    BreadDialog.showCustomDialog(app, "", message, "Close", null, new BRDialogView.BROnClickListener() {
+                        @Override
+                        public void onClick(BRDialogView brDialogView) {
+                            brDialogView.dismissWithAnimation();
+                        }
+                    }, null, null, 0);
+
+                }
             }
         });
 
@@ -141,6 +199,76 @@ public class IntroRecoverWordsActivity extends Activity {
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(getColor(color));
+    }
+
+    private String getPhrase() {
+        boolean success = true;
+
+        String w1 = word1.getText().toString().toLowerCase();
+        String w2 = word2.getText().toString().toLowerCase();
+        String w3 = word3.getText().toString().toLowerCase();
+        String w4 = word4.getText().toString().toLowerCase();
+        String w5 = word5.getText().toString().toLowerCase();
+        String w6 = word6.getText().toString().toLowerCase();
+        String w7 = word7.getText().toString().toLowerCase();
+        String w8 = word8.getText().toString().toLowerCase();
+        String w9 = word9.getText().toString().toLowerCase();
+        String w10 = word10.getText().toString().toLowerCase();
+        String w11 = word11.getText().toString().toLowerCase();
+        String w12 = word12.getText().toString().toLowerCase();
+
+        if (Utils.isNullOrEmpty(w1)) {
+            SpringAnimator.failShakeAnimation(this, word1);
+            success = false;
+        }
+        if (Utils.isNullOrEmpty(w2)) {
+            SpringAnimator.failShakeAnimation(this, word2);
+            success = false;
+        }
+        if (Utils.isNullOrEmpty(w3)) {
+            SpringAnimator.failShakeAnimation(this, word3);
+            success = false;
+        }
+        if (Utils.isNullOrEmpty(w4)) {
+            SpringAnimator.failShakeAnimation(this, word4);
+            success = false;
+        }
+        if (Utils.isNullOrEmpty(w5)) {
+            SpringAnimator.failShakeAnimation(this, word5);
+            success = false;
+        }
+        if (Utils.isNullOrEmpty(w6)) {
+            SpringAnimator.failShakeAnimation(this, word6);
+            success = false;
+        }
+        if (Utils.isNullOrEmpty(w7)) {
+            SpringAnimator.failShakeAnimation(this, word7);
+            success = false;
+        }
+        if (Utils.isNullOrEmpty(w8)) {
+            SpringAnimator.failShakeAnimation(this, word8);
+            success = false;
+        }
+        if (Utils.isNullOrEmpty(w9)) {
+            SpringAnimator.failShakeAnimation(this, word9);
+            success = false;
+        }
+        if (Utils.isNullOrEmpty(w10)) {
+            SpringAnimator.failShakeAnimation(this, word10);
+            success = false;
+        }
+        if (Utils.isNullOrEmpty(w11)) {
+            SpringAnimator.failShakeAnimation(this, word11);
+            success = false;
+        }
+        if (Utils.isNullOrEmpty(w12)) {
+            SpringAnimator.failShakeAnimation(this, word12);
+            success = false;
+        }
+
+        if (!success) return null;
+
+        return w1 + " " + w2 + " " + w3 + " " + w4 + " " + w5 + " " + w6 + " " + w7 + " " + w8 + " " + w9 + " " + w10 + " " + w11 + " " + w12;
     }
 
 }

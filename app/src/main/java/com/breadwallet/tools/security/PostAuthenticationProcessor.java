@@ -92,7 +92,7 @@ public class PostAuthenticationProcessor {
         }
     }
 
-    public void onRecoverWalletAuth(IntroActivity app, boolean authAsked) {
+    public void onRecoverWalletAuth(Activity app, boolean authAsked) {
         if (phraseForKeyStore == null) return;
         byte[] bytePhrase = new byte[0];
 
@@ -119,7 +119,7 @@ public class PostAuthenticationProcessor {
                     KeyStoreManager.putAuthKey(authKey, app);
                     byte[] pubKey = BRWalletManager.getInstance().getMasterPubKey(bytePhrase);
                     KeyStoreManager.putMasterPublicKey(pubKey, app);
-                    app.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+//                    app.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                     BRWalletManager.getInstance().startBreadActivity(app, false);
                     if (!app.isDestroyed()) app.finish();
                     phraseForKeyStore = null;
@@ -210,9 +210,9 @@ public class PostAuthenticationProcessor {
 //
 //    }
 //
-//    public void setPhraseForKeyStore(String phraseForKeyStore) {
-//        this.phraseForKeyStore = phraseForKeyStore;
-//    }
+    public void setPhraseForKeyStore(String phraseForKeyStore) {
+        this.phraseForKeyStore = phraseForKeyStore;
+    }
 //
     public void setTmpTx(byte[] tmpTx) {
         this.tmpTx = tmpTx;

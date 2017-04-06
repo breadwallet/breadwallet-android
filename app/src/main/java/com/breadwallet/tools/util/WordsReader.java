@@ -126,7 +126,7 @@ public class WordsReader {
         return result;
     }
 
-    public static String cleanPhrase(Activity activity, String phraseToCheck) {
+    public static String cleanPhrase(Context activity, String phraseToCheck) {
         String phrase = Normalizer.normalize(phraseToCheck, Normalizer.Form.NFKD).replace("　", " ").replace("\n", " ").trim().replaceAll(" +", " ");
 
         String[] phraseWords = phrase.split(" ");
@@ -164,7 +164,7 @@ public class WordsReader {
         return phrase;
     }
 
-    public static List<String> getAllWordLists(Activity context) {
+    public static List<String> getAllWordLists(Context context) {
         String[] langs = {"en", "es", "fr", "ja", "zh"};
         List<String> result = new ArrayList<>();
 

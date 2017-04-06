@@ -110,7 +110,7 @@ public class BRExchange {
 
     //get an iso amount from  satoshis
     public static BigDecimal getAmountFromSatoshis(Context app, String iso, BigDecimal amount) {
-        Log.e(TAG, "getAmountFromSatoshis: " + iso + ":" + amount);
+//        Log.e(TAG, "getAmountFromSatoshis: " + iso + ":" + amount);
         BigDecimal result;
         if (iso.equalsIgnoreCase("BTC")) {
             result = getBitcoinForSatoshis(app, amount);
@@ -122,7 +122,7 @@ public class BRExchange {
             result = new BigDecimal(BRWalletManager.getInstance().localAmount(amount.longValue(),rate.doubleValue()))
                     .divide(new BigDecimal(100), 2, BRConstants.ROUNDING_MODE);
         }
-        Log.e(TAG, "getAmountFromSatoshis: " + iso + ":RESULT:" + result);
+//        Log.e(TAG, "getAmountFromSatoshis: " + iso + ":RESULT:" + result);
         return result;
     }
 
@@ -130,7 +130,7 @@ public class BRExchange {
 
     //get satoshis from an iso amount
     public static BigDecimal getSatoshisFromAmount(Context app, String iso, BigDecimal amount) {
-        Log.e(TAG, "getSatoshisFromAmount: " + iso + ":" + amount);
+//        Log.e(TAG, "getSatoshisFromAmount: " + iso + ":" + amount);
         BigDecimal result;
         if (iso.equalsIgnoreCase("BTC")) {
             result = BRExchange.getSatoshisForBitcoin(app, amount);
@@ -141,7 +141,7 @@ public class BRExchange {
             BigDecimal rate = new BigDecimal(ent.rate).multiply(new BigDecimal(100));
             result = new BigDecimal(BRWalletManager.getInstance().bitcoinAmount(amount.multiply(new BigDecimal(100)).longValue(),rate.doubleValue()));
         }
-        Log.e(TAG, "getSatoshisFromAmount: " + iso + ":RESULT:" + result);
+//        Log.e(TAG, "getSatoshisFromAmount: " + iso + ":RESULT:" + result);
         return result;
     }
 }
