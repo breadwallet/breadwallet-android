@@ -6,6 +6,7 @@ import android.content.Context;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
+import com.breadwallet.wallet.BRWalletManager;
 
 import java.math.BigDecimal;
 
@@ -36,19 +37,19 @@ import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class BRBitcoin {
+public class BRExchange {
 
     public static BigDecimal getMaxAmount(Context context, String iso) {
         final long MAX_BTC = 21000000;
         if (iso.equalsIgnoreCase("BTC"))
-            return getBitcoinAmount(context, new BigDecimal(MAX_BTC * 100000000));
+            return getBitcoinForSatoshis(context, new BigDecimal(MAX_BTC * 100000000));
         CurrencyEntity ent = CurrencyDataSource.getInstance(context).getCurrencyByIso(iso);
         if (ent == null) throw new RuntimeException("no currency in DB for: " + iso);
         return new BigDecimal(ent.rate * MAX_BTC);
     }
 
     // amount in satoshis
-    public static BigDecimal getBitcoinAmount(Context app, BigDecimal amount) {
+    public static BigDecimal getBitcoinForSatoshis(Context app, BigDecimal amount) {
         BigDecimal result = new BigDecimal(0);
         int unit = SharedPreferencesManager.getCurrencyUnit(app);
         switch (unit) {
@@ -65,7 +66,7 @@ public class BRBitcoin {
         return result;
     }
 
-    public static BigDecimal getSatoshisFromAmount(Context app,BigDecimal amount){
+    public static BigDecimal getSatoshisForBitcoin(Context app, BigDecimal amount) {
         BigDecimal result = new BigDecimal(0);
         int unit = SharedPreferencesManager.getCurrencyUnit(app);
         switch (unit) {
@@ -82,7 +83,7 @@ public class BRBitcoin {
         return result;
     }
 
-    public static String getBitcoinSymbol(Context app){
+    public static String getBitcoinSymbol(Context app) {
         String currencySymbolString = BRConstants.bitcoinLowercase;
         if (app != null) {
             int unit = SharedPreferencesManager.getCurrencyUnit(app);
@@ -102,5 +103,35 @@ public class BRBitcoin {
             }
         }
         return currencySymbolString;
+    }
+
+    //get an iso amount from  satoshis
+    public static BigDecimal getAmountFromSatoshis(Context app, String iso, BigDecimal amount) {
+        BigDecimal result;
+        if (iso.equalsIgnoreCase("BTC")) {
+            result = getBitcoinForSatoshis(app, amount);
+        } else {
+            //multiply by 100 because core function localAmount accepts the smallest amount e.g. cents
+            CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByIso(iso);
+            if (ent == null) return new BigDecimal(0);
+            BigDecimal rate = new BigDecimal(ent.rate).multiply(new BigDecimal(100));
+            result = new BigDecimal(BRWalletManager.getInstance().localAmount(amount.multiply(new BigDecimal(100)).longValue(),rate.doubleValue()));
+        }
+        return result;
+    }
+
+    //get satoshis from an iso amount
+    public static BigDecimal getSatoshisFromAmount(Context app, String iso, BigDecimal amount) {
+        BigDecimal result;
+        if (iso.equalsIgnoreCase("BTC")) {
+            result = BRExchange.getSatoshisForBitcoin(app, amount);
+        } else {
+            //multiply by 100 because core function localAmount accepts the smallest amount e.g. cents
+            CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByIso(iso);
+            if (ent == null) return new BigDecimal(0);
+            BigDecimal rate = new BigDecimal(ent.rate).multiply(new BigDecimal(100));
+            result = new BigDecimal(BRWalletManager.getInstance().bitcoinAmount(amount.multiply(new BigDecimal(100)).longValue(),rate.doubleValue()));
+        }
+        return result;
     }
 }

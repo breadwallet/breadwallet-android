@@ -31,12 +31,10 @@ import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.ImportPrivKeyEntity;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.TransactionListItem;
-import com.breadwallet.presenter.fragments.FragmentBreadSignal;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
-import com.breadwallet.tools.manager.CurrencyFetchManager;
 import com.breadwallet.tools.qrcode.QRUtils;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
@@ -44,8 +42,7 @@ import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.PeerDataSource;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
-import com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask;
-import com.breadwallet.tools.util.BRBitcoin;
+import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.manager.BRNotificationManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
@@ -66,7 +63,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import static com.breadwallet.R.string.from;
+import static com.breadwallet.tools.util.BRExchange.getBitcoinForSatoshis;
 
 /**
  * BreadWallet
@@ -869,31 +866,6 @@ public class BRWalletManager {
 
     }
 
-    //returns BTC, mBTC or bits, depending on the user preference
-    public BigDecimal getBitcoin(Context context, double rate, long amount) {
-        return BRBitcoin.getBitcoinAmount(context, new BigDecimal(bitcoinAmount(amount, rate)));
-    }
-
-    //return the exchange for the specified rate
-    public BigDecimal getExchange(double rate, long amount) {
-        return new BigDecimal(localAmount(new BigDecimal(amount).longValue(), rate));
-    }
-
-    //figures out the current amount by the specified iso, amount is satoshis
-    public BigDecimal getAmount(Context app, String iso, BigDecimal amount) {
-        BigDecimal result;
-        if (iso.equalsIgnoreCase("BTC")) {
-            result = BRBitcoin.getBitcoinAmount(app, amount);
-        } else {
-            //multiply by 100 because core function localAmount accepts the smallest amount e.g. cents
-            CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByIso(iso);
-            if (ent == null) return new BigDecimal(0);
-            BigDecimal rate = new BigDecimal(ent.rate).multiply(new BigDecimal(100));
-            result = getExchange(rate.doubleValue(), amount.longValue()).divide(new BigDecimal(100), 2, BRConstants.ROUNDING_MODE);
-        }
-        return result;
-    }
-
     public void offerToChangeTheAmount(Context app, String title) {
 //
 //        new AlertDialog.Builder(app)
@@ -1013,7 +985,7 @@ public class BRWalletManager {
 
     public native byte[] tryTransaction(String addressHolder, long amountHolder);
 
-    // returns the given amount (in satoshis) in local currency units (i.e. pennies, pence)
+    // returns the given amount (amount is in satoshis) in local currency units (i.e. pennies, pence)
     // price is local currency units per bitcoin
     public native long localAmount(long amount, double price);
 

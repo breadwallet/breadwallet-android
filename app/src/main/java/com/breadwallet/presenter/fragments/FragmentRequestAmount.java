@@ -1,20 +1,13 @@
 package com.breadwallet.presenter.fragments;
 
-import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
 import android.animation.LayoutTransition;
 import android.animation.ValueAnimator;
-import android.app.Activity;
 import android.app.Fragment;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,20 +25,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.ScanQRActivity;
-import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRSoftKeyboard;
 import com.breadwallet.presenter.customviews.BRToast;
-import com.breadwallet.presenter.entities.PaymentRequestEntity;
-import com.breadwallet.presenter.entities.RequestObject;
 import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
-import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
-import com.breadwallet.tools.util.BRBitcoin;
+import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.Utils;
@@ -54,8 +41,6 @@ import com.breadwallet.wallet.BRWalletManager;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.breadwallet.tools.security.BitcoinUrlHandler.getRequestFromString;
 
 
 /**
@@ -368,7 +353,7 @@ public class FragmentRequestAmount extends Fragment {
         String currAmount = amountBuilder.toString();
         String iso = (String) spinner.getSelectedItem();
         if (new BigDecimal(currAmount.concat(String.valueOf(dig))).doubleValue()
-                <= BRBitcoin.getMaxAmount(getActivity(), iso).doubleValue()) {
+                <= BRExchange.getMaxAmount(getActivity(), iso).doubleValue()) {
             //do not insert 0 if the balance is 0 now
             if (currAmount.equalsIgnoreCase("0")) amountBuilder = new StringBuilder("");
             if ((currAmount.contains(".") && (currAmount.length() - currAmount.indexOf(".") > BRCurrency.getMaxDecimalPlaces(iso))))
@@ -419,9 +404,9 @@ public class FragmentRequestAmount extends Fragment {
     private boolean generateQrImage(String address, String strAmount, String iso){
         String amountArg = "";
         if(strAmount != null && !strAmount.isEmpty()){
-            BigDecimal bigAmount = new BigDecimal(Utils.isNullOrEmpty(strAmount) ? "0" : strAmount);
+            BigDecimal bigAmount = new BigDecimal((Utils.isNullOrEmpty(strAmount) || strAmount.equalsIgnoreCase(".")) ? "0" : strAmount);
             long amount = iso.equalsIgnoreCase("BTC")
-                    ? BRBitcoin.getSatoshisFromAmount(getActivity(),bigAmount).longValue()
+                    ? BRExchange.getSatoshisForBitcoin(getActivity(),bigAmount).longValue()
                     : BRWalletManager.getInstance().getAmount(getActivity(), iso, bigAmount).longValue();
             String am = new BigDecimal(amount).divide(new BigDecimal(100000000), 8, BRConstants.ROUNDING_MODE).toPlainString();
             amountArg = "?amount=" + am;

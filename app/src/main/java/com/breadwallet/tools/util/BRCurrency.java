@@ -1,10 +1,8 @@
 package com.breadwallet.tools.util;
 
-import android.app.Activity;
 import android.content.Context;
 
 import com.breadwallet.tools.manager.SharedPreferencesManager;
-import com.breadwallet.wallet.BRWalletManager;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -96,7 +94,7 @@ public class BRCurrency {
         decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
 //        int decimalPoints = 0;
         if (Objects.equals(isoCurrencyCode, "BTC")) {
-            symbol = BRBitcoin.getBitcoinSymbol(app);
+            symbol = BRExchange.getBitcoinSymbol(app);
         } else {
             try {
                 currency = Currency.getInstance(isoCurrencyCode);

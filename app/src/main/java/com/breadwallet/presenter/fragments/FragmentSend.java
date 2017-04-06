@@ -15,7 +15,6 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +40,7 @@ import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
-import com.breadwallet.tools.util.BRBitcoin;
+import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.Utils;
@@ -52,7 +51,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.breadwallet.tools.security.BitcoinUrlHandler.getRequestFromString;
-import static org.eclipse.jetty.websocket.common.ConnectionState.CLOSING;
 
 
 /**
@@ -243,9 +241,7 @@ public class FragmentSend extends Fragment {
 
                 //get amount in satoshis from any isos
                 BigDecimal bigAmount = new BigDecimal(Utils.isNullOrEmpty(amountStr) ? "0" : amountStr);
-                long amount = iso.equalsIgnoreCase("BTC")
-                        ? BRBitcoin.getSatoshisFromAmount(getActivity(),bigAmount).longValue()
-                        : BRWalletManager.getInstance().getAmount(getActivity(), iso, bigAmount).longValue();
+                long amount = BRWalletManager.getInstance().getAmount(getActivity(), iso, bigAmount).longValue();
 
                 if (address.isEmpty()) {
                     allFilled = false;
@@ -429,7 +425,7 @@ public class FragmentSend extends Fragment {
         String currAmount = amountBuilder.toString();
         String iso = (String) spinner.getSelectedItem();
         if (new BigDecimal(currAmount.concat(String.valueOf(dig))).doubleValue()
-                <= BRBitcoin.getMaxAmount(getActivity(), iso).doubleValue()) {
+                <= BRExchange.getMaxAmount(getActivity(), iso).doubleValue()) {
             //do not insert 0 if the balance is 0 now
             if (currAmount.equalsIgnoreCase("0")) amountBuilder = new StringBuilder("");
             if ((currAmount.contains(".") && (currAmount.length() - currAmount.indexOf(".") > BRCurrency.getMaxDecimalPlaces(iso))))
