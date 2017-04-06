@@ -241,7 +241,8 @@ public class FragmentSend extends Fragment {
 
                 //get amount in satoshis from any isos
                 BigDecimal bigAmount = new BigDecimal(Utils.isNullOrEmpty(amountStr) ? "0" : amountStr);
-                long amount = BRWalletManager.getInstance().getAmount(getActivity(), iso, bigAmount).longValue();
+                BigDecimal satoshiAmount = BRExchange.getSatoshisFromAmount(getActivity(), iso, bigAmount);
+                long amount = BRExchange.getAmountFromSatoshis(getActivity(), iso, satoshiAmount).longValue();
 
                 if (address.isEmpty()) {
                     allFilled = false;
@@ -459,7 +460,7 @@ public class FragmentSend extends Fragment {
         String balanceString;
         String iso = (String) spinner.getSelectedItem();
         //Balance depending on ISO
-        BigDecimal balanceForISO = BRWalletManager.getInstance().getAmount(getActivity(), iso, new BigDecimal(curBalance));
+        BigDecimal balanceForISO = BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(curBalance));
         //formattedBalance
         String formattedBalance = BRCurrency.getFormattedCurrencyString(getActivity(), iso, balanceForISO);
         if (new BigDecimal((tmpAmount.isEmpty() || tmpAmount.equalsIgnoreCase(".")) ? "0" : tmpAmount).doubleValue() > balanceForISO.doubleValue()) {
@@ -488,7 +489,8 @@ public class FragmentSend extends Fragment {
         }
         if (obj.amount != null) {
             String iso = ((String) spinner.getSelectedItem());
-            amountBuilder = new StringBuilder(BRWalletManager.getInstance().getAmount(getActivity(), iso, new BigDecimal(obj.amount)).toPlainString());
+            BigDecimal satoshiAmount = new BigDecimal(obj.amount).multiply(new BigDecimal(100000000));
+            amountBuilder = new StringBuilder(BRExchange.getAmountFromSatoshis(getActivity(), iso, satoshiAmount).toPlainString());
 
             updateText();
 

@@ -120,6 +120,8 @@ public class BRExchange {
         return result;
     }
 
+
+
     //get satoshis from an iso amount
     public static BigDecimal getSatoshisFromAmount(Context app, String iso, BigDecimal amount) {
         BigDecimal result;

@@ -17,6 +17,7 @@ import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.tools.util.BRCurrency;
+import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.math.BigDecimal;
@@ -106,7 +107,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         boolean isBTCPreferred = SharedPreferencesManager.getPreferredBTC(mContext);
         String iso = isBTCPreferred ? "BTC" : SharedPreferencesManager.getIso(mContext);
 
-        convertView.amount.setText(BRCurrency.getFormattedCurrencyString(mContext, iso, BRWalletManager.getInstance().getAmount(mContext, iso, new BigDecimal(satoshisAmount))));
+        convertView.amount.setText(BRCurrency.getFormattedCurrencyString(mContext, iso, BRExchange.getAmountFromSatoshis(mContext, iso, new BigDecimal(satoshisAmount))));
 
         //if it's 0 we use the current time.
         long timeStamp = item.getTimeStamp() == 0 ? System.currentTimeMillis() : item.getTimeStamp() * 1000;

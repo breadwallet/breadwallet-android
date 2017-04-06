@@ -33,6 +33,7 @@ import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.tools.util.BRCurrency;
+import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
@@ -389,11 +390,11 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
                 final BigDecimal amount = new BigDecimal(SharedPreferencesManager.getBalance(BreadActivity.this));
 
                 //amount in BTC units
-                BigDecimal btcAmount = BRWalletManager.getInstance().getAmount(BreadActivity.this, "BTC", amount);
+                BigDecimal btcAmount = BRExchange.getBitcoinForSatoshis(BreadActivity.this, amount);
                 final String formattedBTCAmount = BRCurrency.getFormattedCurrencyString(BreadActivity.this, "BTC", btcAmount);
 
                 //amount in currency units
-                BigDecimal curAmount = BRWalletManager.getInstance().getAmount(BreadActivity.this, iso, amount);
+                BigDecimal curAmount = BRExchange.getAmountFromSatoshis(BreadActivity.this, iso, amount);
                 final String formattedCurAmount = BRCurrency.getFormattedCurrencyString(BreadActivity.this, iso, curAmount);
 
                 runOnUiThread(new Runnable() {
