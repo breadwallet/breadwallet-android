@@ -122,6 +122,13 @@ public class Utils {
         if (is24HoursFormat) result += "h";
         return result;
     }
+    public static String formatTimeStamp(Context app, long time) {
+
+        SimpleDateFormat formatter = new SimpleDateFormat("MMM. dd, yyyy", Locale.getDefault());
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(time);
+        return formatter.format(calendar.getTime());
+    }
 
     public static boolean isNullOrEmpty(String str) {
         return str == null || str.isEmpty();
