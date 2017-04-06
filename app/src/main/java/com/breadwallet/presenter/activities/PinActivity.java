@@ -150,6 +150,7 @@ public class PinActivity extends Activity {
     protected void onResume() {
         super.onResume();
         updateDots();
+        app = this;
         new Thread(new Runnable() {
             @Override
             public void run() {
