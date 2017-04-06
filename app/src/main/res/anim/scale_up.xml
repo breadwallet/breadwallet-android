@@ -2,17 +2,17 @@
 
 <set xmlns:android="http://schemas.android.com/apk/res/android"
      android:shareInterpolator="false"
-     android:zAdjustment="top">
+     >
     <scale
-        android:duration="@android:integer/config_shortAnimTime"
+        android:duration="300"
         android:fillAfter="false"
         android:fillBefore="false"
         android:fillEnabled="true"
-        android:fromXScale="1.1"
-        android:fromYScale="1.1"
+        android:fromXScale="0.0"
+        android:fromYScale="0.0"
         android:interpolator="@anim/overshoot_interpolator"
-        android:pivotX="50%p"
-        android:pivotY="50%p"
+        android:pivotX="50%"
+        android:pivotY="50%"
         android:toXScale="1.0"
         android:toYScale="1.0"/>
 </set>

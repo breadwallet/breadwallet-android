@@ -131,6 +131,7 @@ public class SecurityCenterActivity extends AppCompatActivity {
                 Log.e(TAG, "onClick: 6-Digit PIN");
                 Intent intent = new Intent(SecurityCenterActivity.this, UpdatePitActivity.class);
                 startActivity(intent);
+                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         }));
 
@@ -172,7 +173,7 @@ public class SecurityCenterActivity extends AppCompatActivity {
                 Log.e(TAG, "onClick: Paper Key");
                 Intent intent = new Intent(SecurityCenterActivity.this, IntroWriteDownActivity.class);
                 startActivity(intent);
-               overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_right);
+                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         }));
 

@@ -119,7 +119,6 @@ public class PinActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                SpringAnimator.showAnimation(v);
                 try {
                     // Check if the camera permission is granted
                     if (ContextCompat.checkSelfPermission(app,
