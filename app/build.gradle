@@ -27,7 +27,7 @@ model {
                 }
             }
             create("demo") {
-                applicationId "com.bread"
+                applicationId "com.demo"
                 resValues.with {
                     create() {
                         type = "string"
