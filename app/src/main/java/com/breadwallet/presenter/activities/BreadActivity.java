@@ -128,6 +128,8 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
 
         setWalletLoading();
 
+        updateUI();
+
     }
 
     @Override

@@ -603,9 +603,9 @@ public class BRWalletManager {
             feeForTx += (getBalance(ctx) - request.amount) % 100;
         }
         final long total = request.amount + feeForTx;
-        String formattedAmountBTC = BRCurrency.getFormattedCurrencyString(ctx, "BTC", BRExchange.getBitcoinForSatoshis(ctx,  new BigDecimal(request.amount)));
-        String formattedFeeBTC = BRCurrency.getFormattedCurrencyString(ctx, "BTC", BRExchange.getBitcoinForSatoshis(ctx,  new BigDecimal(feeForTx)));
-        String formattedTotalBTC = BRCurrency.getFormattedCurrencyString(ctx, "BTC", BRExchange.getBitcoinForSatoshis(ctx,  new BigDecimal(total)));
+        String formattedAmountBTC = BRCurrency.getFormattedCurrencyString(ctx, "BTC", BRExchange.getBitcoinForSatoshis(ctx, new BigDecimal(request.amount)));
+        String formattedFeeBTC = BRCurrency.getFormattedCurrencyString(ctx, "BTC", BRExchange.getBitcoinForSatoshis(ctx, new BigDecimal(feeForTx)));
+        String formattedTotalBTC = BRCurrency.getFormattedCurrencyString(ctx, "BTC", BRExchange.getBitcoinForSatoshis(ctx, new BigDecimal(total)));
 
         String formattedAmount = BRCurrency.getFormattedCurrencyString(ctx, iso, BRExchange.getAmountFromSatoshis(ctx, iso, new BigDecimal(request.amount)));
         String formattedFee = BRCurrency.getFormattedCurrencyString(ctx, iso, BRExchange.getAmountFromSatoshis(ctx, iso, new BigDecimal(feeForTx)));
