@@ -173,10 +173,12 @@ public class PostAuthenticationProcessor {
                     tmpTx = null;
                 }
                 if (!success) {
+                    Log.e(TAG, "onPublishTxAuth: publishSerializedTransaction returned FALSE");
                     BRWalletManager.getInstance().offerToChangeTheAmount(app, app.getString(R.string.insufficient_funds));
                     return;
                 }
             } else {
+                Log.e(TAG, "onPublishTxAuth: seed length is 0!");
                 return;
             }
         } finally {

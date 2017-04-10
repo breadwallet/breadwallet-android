@@ -654,7 +654,7 @@ Java_com_breadwallet_wallet_BRWalletManager_publishSerializedTransaction(JNIEnv 
     if (!tmpTx) return JNI_FALSE;
     BRPeerManagerPublishTx(_peerManager, tmpTx, NULL, callback);
     (*env)->ReleaseByteArrayElements(env, phrase, bytePhrase, JNI_ABORT);
-
+    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "returning true");
     return JNI_TRUE;
 }
 
