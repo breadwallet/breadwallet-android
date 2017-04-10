@@ -70,12 +70,9 @@ public class CurrencyFetchManager {
     private Context context;
 
     private Handler handler;
-    //    public static boolean separatorNeedsToBeShown = false;
-//    private final CurrencyListAdapter currencyListAdapter;
 
     private CurrencyFetchManager(Context ctx) {
         this.context = ctx;
-//        currencyListAdapter = new CurrencyListAdapter(ctx);
         handler = new Handler();
     }
 
@@ -89,11 +86,9 @@ public class CurrencyFetchManager {
 
     private Set<CurrencyEntity> getCurrencies(Activity context) {
         Set<CurrencyEntity> set = new LinkedHashSet<>();
-//        if (((BreadWalletApp) context.getApplication()).hasInternetAccess()) {
         try {
             JSONArray arr = getJSonArray(context);
             updateFeePerKb(context);
-//                Log.e(TAG, "JSONArray arr.length(): " + arr.length());
             if (arr != null) {
                 int length = arr.length();
                 for (int i = 1; i < length; i++) {
@@ -150,11 +145,6 @@ public class CurrencyFetchManager {
         }
     }
 
-//    public CurrencyListAdapter getCurrencyAdapterIfReady() {
-////        new GetCurrenciesTask().execute();
-//        return currencyListAdapter;
-//    }
-
     private void initializeTimerTask() {
 
         timerTask = new TimerTask() {
@@ -192,6 +182,7 @@ public class CurrencyFetchManager {
     public static JSONArray getJSonArray(Activity activity) {
         String jsonString = callURL(activity, "https://api.breadwallet.com/rates");
         JSONArray jsonArray = null;
+        if (jsonString == null) return null;
         try {
             JSONObject obj = new JSONObject(jsonString);
             jsonArray = obj.getJSONArray("body");
