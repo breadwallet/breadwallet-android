@@ -156,10 +156,11 @@ public class IntroReEnterPinActivity extends FragmentActivity {
                     @Override
                     public void onComplete() {
                         PostAuthenticationProcessor.getInstance().onCreateWalletAuth(IntroReEnterPinActivity.this, false);
+                        if (!isDestroyed()) finish();
                     }
                 });
             }
-            if (!isDestroyed()) finish();
+
         } else {
             Log.e(TAG, "verifyPin: FAIL: firs: " + firstPIN + ", reEnter: " + pin.toString());
             title.setText("Wrong PIN,\nplease try again");

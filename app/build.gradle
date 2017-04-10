@@ -14,6 +14,31 @@ model {
             versionName = "36"
         }
 
+        productFlavors.with {
+
+            create("bread") {
+                applicationId "com.bread"
+                resValues.with {
+                    create() {
+                        type = "string"
+                        name = "app_name"
+                        value = "ƀreadwallet"
+                    }
+                }
+            }
+            create("demo") {
+                applicationId "com.bread"
+                resValues.with {
+                    create() {
+                        type = "string"
+                        name = "app_name"
+                        value = "bread-demo"
+                    }
+                }
+            }
+
+        }
+
         ndk {
             platformVersion = "23"
             moduleName = "core"
@@ -44,6 +69,7 @@ model {
 
         buildTypes {
             gitUpdateModules()
+
             release {
                 proguardFiles.add(file('proguard-rules.pro'))
                 minifyEnabled = false

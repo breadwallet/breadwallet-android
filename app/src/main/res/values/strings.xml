@@ -1,6 +1,6 @@
 <resources>
     <!-- no need -->
-    <string name="app_name">&#384;readwallet</string>
+    <!--<string name="app_name">&#384;readwallet</string>-->
     <!-- no need -->
     <string name="lang">en</string>
     <!-- android -->
