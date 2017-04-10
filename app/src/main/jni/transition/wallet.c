@@ -55,6 +55,8 @@ static JNIEnv *getEnv() {
 
 //callback for tx publishing
 void callback(void *info, int error) {
+    __android_log_print(ANDROID_LOG_ERROR, "Message from callback: ", "err: %s",
+                        strerror(error));
     JNIEnv *env = getEnv();
 
     if (!env || _walletManagerClass == NULL) return;

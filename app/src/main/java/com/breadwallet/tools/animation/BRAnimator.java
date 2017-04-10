@@ -70,8 +70,11 @@ public class BRAnimator {
             return;
         }
         FragmentSend fragmentSend = (FragmentSend) app.getFragmentManager().findFragmentByTag(FragmentSend.class.getName());
-        if (fragmentSend != null && fragmentSend.isAdded())
+        if (fragmentSend != null && fragmentSend.isAdded()){
+            fragmentSend.setUrl(bitcoinUrl);
             return;
+        }
+
 
         fragmentSend = new FragmentSend();
         if (bitcoinUrl != null && !bitcoinUrl.isEmpty()) {

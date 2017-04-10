@@ -430,7 +430,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
                             String result = data.getStringExtra("result");
                             BRAnimator.showSendFragment(BreadActivity.this, result);
                         }
-                    }, 300);
+                    }, 500);
 
                 }
 
