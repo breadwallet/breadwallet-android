@@ -17,7 +17,7 @@ model {
         productFlavors.with {
 
             create("bread") {
-                applicationId "com.bread"
+                applicationId "com.breadwallet"
                 resValues.with {
                     create() {
                         type = "string"
@@ -27,7 +27,7 @@ model {
                 }
             }
             create("demo") {
-                applicationId "com.demo"
+                applicationId "com.breaddemo"
                 resValues.with {
                     create() {
                         type = "string"

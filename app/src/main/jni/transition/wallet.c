@@ -68,8 +68,7 @@ void callback(void *info, int error) {
     if (error) {
         __android_log_print(ANDROID_LOG_ERROR, "Message from callback: ", "publishing Failed: %s",
                             strerror(error));
-    }
-    else {
+    } else {
         __android_log_print(ANDROID_LOG_DEBUG, "Message from callback: ", "publishing Succeeded!");
     }
 
@@ -114,8 +113,7 @@ static void txAdded(void *info, BRTransaction *tx) {
 //    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "fee: %d", (int)fee);
     if (BRWalletAmountSentByTx(_wallet, tx) == 0) {
         amount = (jlong) BRWalletAmountReceivedFromTx(_wallet, tx);
-    }
-    else {
+    } else {
         amount = (jlong) (
                 (BRWalletAmountSentByTx(_wallet, tx) - BRWalletAmountReceivedFromTx(_wallet, tx) -
                  fee) * -1);
@@ -234,6 +232,8 @@ Java_com_breadwallet_wallet_BRWalletManager_createWallet(JNIEnv *env, jobject th
     BRWallet *w;
 
     if (txCount > 0) {
+        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ",
+                            "BRWalletNew with tx nr: %zu", sizeof(_transactions));
         w = BRWalletNew(_transactions, txCount, pubKey);
         _transactionsCounter = 0;
 
@@ -241,8 +241,7 @@ Java_com_breadwallet_wallet_BRWalletManager_createWallet(JNIEnv *env, jobject th
             free(_transactions);
             _transactions = NULL;
         }
-    }
-    else {
+    } else {
         w = BRWalletNew(NULL, 0, pubKey);
     }
 
@@ -304,6 +303,7 @@ Java_com_breadwallet_wallet_BRWalletManager_putTransaction(JNIEnv *env, jobject 
 //                        tmpTx->timestamp);
 //    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "tmpTx: %s", u256_hex_encode(tmpTx->txHash));
     _transactions[_transactionsCounter++] = tmpTx;
+
 }
 
 JNIEXPORT void JNICALL
@@ -313,7 +313,6 @@ Java_com_breadwallet_wallet_BRWalletManager_createTxArrayWithCount(JNIEnv *env, 
                         txCount);
     _transactions = calloc((size_t) txCount, sizeof(*_transactions));
     _transactionsCounter = 0;
-
     // need to call free(transactions);
 }
 
@@ -351,15 +350,16 @@ JNIEXPORT jobjectArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTr
 
     for (int i = 0; i < txCount; i++) {
         if (!_wallet) return NULL;
+        BRTransaction *tempTx = transactions_sqlite[i];
 
-        jlong JtimeStamp = transactions_sqlite[i]->timestamp;
-        jint JblockHeight = transactions_sqlite[i]->blockHeight;
-        UInt256 txid = transactions_sqlite[i]->txHash;
+        jlong JtimeStamp = tempTx->timestamp;
+        jint JblockHeight = tempTx->blockHeight;
+        UInt256 txid = tempTx->txHash;
         jstring JtxHash = (*env)->NewStringUTF(env, u256_hex_encode(txid));
-        jlong Jsent = (jlong) BRWalletAmountSentByTx(_wallet, transactions_sqlite[i]);
-        jlong Jreceived = (jlong) BRWalletAmountReceivedFromTx(_wallet, transactions_sqlite[i]);
-        jlong Jfee = (jlong) BRWalletFeeForTx(_wallet, transactions_sqlite[i]);
-        int outCountTemp = (int) transactions_sqlite[i]->outCount;
+        jlong Jsent = (jlong) BRWalletAmountSentByTx(_wallet, tempTx);
+        jlong Jreceived = (jlong) BRWalletAmountReceivedFromTx(_wallet, tempTx);
+        jlong Jfee = (jlong) BRWalletFeeForTx(_wallet, tempTx);
+        int outCountTemp = (int) tempTx->outCount;
         jlongArray JoutAmounts = (*env)->NewLongArray(env, outCountTemp);
         jobjectArray JtoAddresses = (*env)->NewObjectArray(env, outCountTemp, stringClass, 0);
 
@@ -370,21 +370,20 @@ JNIEXPORT jobjectArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTr
 
         for (int j = 0; j < outCountTemp; j++) {
             if (Jsent > 0) {
-                if (!BRWalletContainsAddress(_wallet, transactions_sqlite[i]->outputs[j].address)) {
+                if (!BRWalletContainsAddress(_wallet, tempTx->outputs[j].address)) {
                     jstring str = (*env)->NewStringUTF(env,
-                                                       transactions_sqlite[i]->outputs[j].address);
+                                                       tempTx->outputs[j].address);
                     (*env)->SetObjectArrayElement(env, JtoAddresses, outCountAfterFilter, str);
                     (*env)->SetLongArrayRegion(env, JoutAmounts, outCountAfterFilter++, 1,
-                                               (const jlong *) &transactions_sqlite[i]->outputs[j].amount);
+                                               (const jlong *) &tempTx->outputs[j].amount);
                     (*env)->DeleteLocalRef(env, str);
                 }
 
-            }
-            else if (BRWalletContainsAddress(_wallet, transactions_sqlite[i]->outputs[j].address)) {
-                jstring str = (*env)->NewStringUTF(env, transactions_sqlite[i]->outputs[j].address);
+            } else if (BRWalletContainsAddress(_wallet, tempTx->outputs[j].address)) {
+                jstring str = (*env)->NewStringUTF(env, tempTx->outputs[j].address);
                 (*env)->SetObjectArrayElement(env, JtoAddresses, outCountAfterFilter, str);
                 (*env)->SetLongArrayRegion(env, JoutAmounts, outCountAfterFilter++, 1,
-                                           (const jlong *) &transactions_sqlite[i]->outputs[j].amount);
+                                           (const jlong *) &tempTx->outputs[j].amount);
                 (*env)->DeleteLocalRef(env, str);
             }
         }
@@ -396,20 +395,19 @@ JNIEXPORT jobjectArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTr
 
         for (int j = 0; j < inCountTemp; j++) {
             if (Jsent > 0) {
-                jstring str = (*env)->NewStringUTF(env, transactions_sqlite[i]->inputs[j].address);
+                jstring str = (*env)->NewStringUTF(env, tempTx->inputs[j].address);
 
                 (*env)->SetObjectArrayElement(env, JfromAddresses, inCountAfterFilter++, str);
                 (*env)->DeleteLocalRef(env, str);
-            }
-            else {
-                jstring str = (*env)->NewStringUTF(env, transactions_sqlite[i]->inputs[j].address);
+            } else {
+                jstring str = (*env)->NewStringUTF(env, tempTx->inputs[j].address);
 
                 (*env)->SetObjectArrayElement(env, JfromAddresses, inCountAfterFilter++, str);
                 (*env)->DeleteLocalRef(env, str);
             }
         }
 
-        jlong JbalanceAfterTx = (jlong) BRWalletBalanceAfterTx(_wallet, transactions_sqlite[i]);
+        jlong JbalanceAfterTx = (jlong) BRWalletBalanceAfterTx(_wallet, tempTx);
 
         jobject txObject = (*env)->NewObject(env, txClass, txObjMid, JtimeStamp, JblockHeight,
                                              JtxHash, Jsent,
@@ -729,8 +727,7 @@ Java_com_breadwallet_wallet_BRWalletManager_decryptBip38Key(JNIEnv *env, jobject
 
         BRKeyPrivKey(&key, pk, sizeof(pk));
         return (*env)->NewStringUTF(env, pk);
-    }
-    else return (*env)->NewStringUTF(env, "");
+    } else return (*env)->NewStringUTF(env, "");
 }
 
 JNIEXPORT void JNICALL Java_com_breadwallet_wallet_BRWalletManager_createInputArray(JNIEnv *env,
