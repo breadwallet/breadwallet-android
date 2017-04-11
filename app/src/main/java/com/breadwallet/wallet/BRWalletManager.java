@@ -375,14 +375,26 @@ public class BRWalletManager {
     /**
      * Wallet callbacks
      */
-    public static void publishCallback(final String message, int error) {
+    public static void publishCallback(final String message, final int error) {
         Log.e(TAG, "publishCallback: " + message + ", err:" + error);
         final Activity app = BreadWalletApp.getBreadContext();
-        BRAnimator.showBreadSignal(app, error == 0 ? "Send Confirmation" : "Error", error == 0 ? "Money Sent!" : message, error == 0 ? R.drawable.ic_check_mark_white : R.drawable.ic_error_outline_black_24dp, new BROnSignalCompletion() {
+        app.runOnUiThread(new Runnable() {
             @Override
-            public void onComplete() {
-                if (app != null)
-                    app.getFragmentManager().popBackStack();
+            public void run() {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        BRAnimator.showBreadSignal(app, error == 0 ? "Send Confirmation" : "Error",
+                                error == 0 ? "Money Sent!" : message, error == 0 ? R.drawable.ic_check_mark_white : R.drawable.ic_error_outline_black_24dp, new BROnSignalCompletion() {
+                                    @Override
+                                    public void onComplete() {
+                                        if (app != null)
+                                            app.getFragmentManager().popBackStack();
+                                    }
+                                });
+                    }
+                },500);
+
             }
         });
 
@@ -401,6 +413,7 @@ public class BRWalletManager {
 //        } else {
 //            PaymentProtocolPostPaymentTask.sent = true;
 //        }
+
     }
 
     public static void onBalanceChanged(final long balance) {
