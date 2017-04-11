@@ -16,6 +16,7 @@ import com.breadwallet.presenter.customviews.BRSoftKeyboard;
 public class IntroSetPitActivity extends Activity {
     private static final String TAG = IntroSetPitActivity.class.getName();
     private BRSoftKeyboard keyboard;
+    public static IntroSetPitActivity introSetPitActivity;
     private View dot1;
     private View dot2;
     private View dot3;
@@ -56,6 +57,7 @@ public class IntroSetPitActivity extends Activity {
     protected void onResume() {
         super.onResume();
         updateDots();
+        introSetPitActivity = this;
     }
 
     private void handleClick(String key) {

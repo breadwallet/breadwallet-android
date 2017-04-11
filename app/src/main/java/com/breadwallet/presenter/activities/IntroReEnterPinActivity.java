@@ -25,6 +25,7 @@ import com.breadwallet.wallet.BRWalletManager;
 public class IntroReEnterPinActivity extends FragmentActivity {
     private static final String TAG = IntroReEnterPinActivity.class.getName();
     private BRSoftKeyboard keyboard;
+    public static IntroReEnterPinActivity introReEnterPinActivity;
     private View dot1;
     private View dot2;
     private View dot3;
@@ -54,6 +55,7 @@ public class IntroReEnterPinActivity extends FragmentActivity {
             Log.e(TAG, "onCreate: " + firstPIN);
             throw new RuntimeException("first PIN is required");
         }
+        introReEnterPinActivity = this;
 
         dot1 = findViewById(R.id.dot1);
         dot2 = findViewById(R.id.dot2);

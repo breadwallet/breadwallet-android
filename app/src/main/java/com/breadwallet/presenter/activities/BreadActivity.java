@@ -43,6 +43,9 @@ import com.platform.APIClient;
 import java.math.BigDecimal;
 import java.util.Arrays;
 
+import static com.breadwallet.presenter.activities.IntroActivity.introActivity;
+import static com.breadwallet.presenter.activities.IntroReEnterPinActivity.introReEnterPinActivity;
+import static com.breadwallet.presenter.activities.IntroSetPitActivity.introSetPitActivity;
 import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
 
 /**
@@ -129,6 +132,10 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         setWalletLoading();
 
         updateUI();
+
+        if(introSetPitActivity != null) introSetPitActivity.finish();
+        if(introActivity != null) introActivity.finish();
+        if(introReEnterPinActivity != null) introReEnterPinActivity.finish();
 
     }
 
@@ -501,5 +508,11 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+        overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
     }
 }

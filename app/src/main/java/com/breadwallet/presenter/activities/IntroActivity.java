@@ -57,6 +57,7 @@ public class IntroActivity extends FragmentActivity implements Serializable{
     private static final String TAG = IntroActivity.class.getName();
     public Button newWalletButton;
     public Button recoverWalletButton;
+    public static IntroActivity introActivity;
 
     //loading the native library
     static {
@@ -84,6 +85,7 @@ public class IntroActivity extends FragmentActivity implements Serializable{
             FirebaseCrash.report(ex);
             throw ex;
         }
+        introActivity = this;
 
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
 

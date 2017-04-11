@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.security.keystore.UserNotAuthenticatedException;
+import android.support.v4.content.IntentCompat;
 import android.util.Log;
 
 import com.breadwallet.BreadWalletApp;
@@ -13,6 +14,7 @@ import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.IntroPhraseCheckActivity;
 import com.breadwallet.presenter.activities.IntroReEnterPinActivity;
+import com.breadwallet.presenter.activities.IntroSetPitActivity;
 import com.breadwallet.presenter.activities.IntroWriteDownActivity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -25,6 +27,7 @@ import com.breadwallet.wallet.BRWalletManager;
 import java.security.Key;
 import java.util.Arrays;
 
+import static com.breadwallet.presenter.activities.IntroSetPitActivity.introSetPitActivity;
 import static com.breadwallet.wallet.BRWalletManager.getSeedFromPhrase;
 
 /**
@@ -81,7 +84,7 @@ public class PostAuthenticationProcessor {
             Intent intent = new Intent(app, IntroWriteDownActivity.class);
             app.startActivity(intent);
             app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-            if (!app.isDestroyed()) app.finish();
+
         } else {
             if (authAsked) {
                 showBugAuthLoopErrorMessage(app);
@@ -134,7 +137,7 @@ public class PostAuthenticationProcessor {
 
     }
 
-//    public void onShowPhraseFlowAuth(PhraseFlowActivity app, boolean authAsked) {
+    //    public void onShowPhraseFlowAuth(PhraseFlowActivity app, boolean authAsked) {
 //        byte[] phrase;
 //        try {
 //            phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.SHOW_PHRASE_REQUEST_CODE);
@@ -185,7 +188,8 @@ public class PostAuthenticationProcessor {
             Arrays.fill(seed, (byte) 0);
         }
     }
-//
+
+    //
 //    public void onPaymentProtocolRequest(MainActivity app, boolean authAsked) {
 //
 //        byte[] rawSeed;
@@ -215,11 +219,13 @@ public class PostAuthenticationProcessor {
     public void setPhraseForKeyStore(String phraseForKeyStore) {
         this.phraseForKeyStore = phraseForKeyStore;
     }
-//
+
+    //
     public void setTmpTx(byte[] tmpTx) {
         this.tmpTx = tmpTx;
     }
-//
+
+    //
 //    public void setUriAndLabel(String uri, String label) {
 //        this.uri = uri;
 //        this.label = label;

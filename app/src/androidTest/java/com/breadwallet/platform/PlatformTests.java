@@ -113,7 +113,7 @@ public class PlatformTests {
         response = apiClient.sendRequest(request, false, 0);
         apiClient.writeBundleToFile(response, bundleFile);
         apiClient.tryExtractTar(bundleFile);
-        String extractFolderName = BreadActivity.app.getFilesDir() + "/" + BUNDLES + "/" + extractedFolder;
+        String extractFolderName = BreadActivity.getApp().getFilesDir() + "/" + BUNDLES + "/" + extractedFolder;
         File temp = new File(extractFolderName);
         int filesExtracted = temp.listFiles().length;
         Log.e(TAG, "bundleExtractTest: filesExtracted: " + filesExtracted);
