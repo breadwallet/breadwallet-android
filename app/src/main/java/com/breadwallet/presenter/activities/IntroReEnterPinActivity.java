@@ -156,7 +156,7 @@ public class IntroReEnterPinActivity extends FragmentActivity {
                     @Override
                     public void onComplete() {
                         PostAuthenticationProcessor.getInstance().onCreateWalletAuth(IntroReEnterPinActivity.this, false);
-                        if (!isDestroyed()) finish();
+
                     }
                 });
             }

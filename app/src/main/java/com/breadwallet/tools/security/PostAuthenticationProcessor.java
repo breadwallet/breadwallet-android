@@ -81,7 +81,7 @@ public class PostAuthenticationProcessor {
             Intent intent = new Intent(app, IntroWriteDownActivity.class);
             app.startActivity(intent);
             app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-
+            if (!app.isDestroyed()) app.finish();
         } else {
             if (authAsked) {
                 showBugAuthLoopErrorMessage(app);
