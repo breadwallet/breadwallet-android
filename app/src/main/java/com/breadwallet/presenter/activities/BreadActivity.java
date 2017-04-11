@@ -433,6 +433,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
                     }, 500);
 
                 }
+                break;
 
             case BRConstants.PAY_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {

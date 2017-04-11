@@ -74,7 +74,7 @@ public class SyncBlockchainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
+        overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
     }
 
     private void setStatusBarColor(int color) {

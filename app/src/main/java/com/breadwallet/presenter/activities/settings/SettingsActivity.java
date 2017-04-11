@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.entities.BRSettingsItem;
+import com.breadwallet.wallet.BRWalletManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,8 +101,7 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.fade_up, R.anim.exit_to_bottom);
-//        overridePendingTransition(R.anim.exit_to_bottom, 0);
+        BRWalletManager.getInstance().startBreadActivity(this, false);
     }
 
     private void setStatusBarColor(int color) {
