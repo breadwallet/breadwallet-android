@@ -52,10 +52,10 @@ public class FragmentTransactionDetails extends Fragment {
     private static final String TAG = FragmentTransactionDetails.class.getName();
 
     public TextView mTitle;
-//    public TextView mAddress;
+    //    public TextView mAddress;
 //    public ImageView mQrImage;
     public LinearLayout backgroundLayout;
-//    public LinearLayout signalLayout;
+    //    public LinearLayout signalLayout;
     public static final int ANIMATION_DURATION = 300;
     private ViewPager txViewPager;
     private TransactionPagerAdapter txPagerAdapter;
@@ -96,6 +96,8 @@ public class FragmentTransactionDetails extends Fragment {
         });
         txPagerAdapter = new TransactionPagerAdapter(getChildFragmentManager(), items);
         txViewPager.setAdapter(txPagerAdapter);
+        int pos = getArguments().getInt("pos");
+        txViewPager.setCurrentItem(pos, false);
 //        shareButton = (Button) rootView.findViewById(R.id.share_button);
 //        shareEmail = (Button) rootView.findViewById(R.id.share_email);
 //        shareTextMessage = (Button) rootView.findViewById(R.id.share_text);

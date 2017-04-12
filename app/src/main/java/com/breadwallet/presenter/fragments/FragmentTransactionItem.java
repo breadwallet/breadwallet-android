@@ -93,6 +93,8 @@ public class FragmentTransactionItem extends Fragment {
     }
 
     private void fillTexts() {
+        Log.e(TAG, "fillTexts fee: " + item.getFee());
+        Log.e(TAG, "fillTexts hash: " + item.getHexId());
         //get the current iso
         String iso = SharedPreferencesManager.getPreferredBTC(getActivity()) ? "BTC" : SharedPreferencesManager.getIso(getContext());
         //get the tx amount
@@ -101,16 +103,17 @@ public class FragmentTransactionItem extends Fragment {
         boolean sent = txAmount.longValue() < 0;
 
         //calculated and formatted amount for iso
-        String amount = BRCurrency.getFormattedCurrencyString(getActivity(), iso, BRExchange.getAmountFromSatoshis(getActivity(), iso, txAmount));
+        String amountWithFee = BRCurrency.getFormattedCurrencyString(getActivity(), iso, BRExchange.getAmountFromSatoshis(getActivity(), iso, txAmount));
+        String amount = BRCurrency.getFormattedCurrencyString(getActivity(), iso, BRExchange.getAmountFromSatoshis(getActivity(), iso, item.getFee() == -1 ? txAmount : txAmount.add(new BigDecimal(item.getFee()))));
         //calculated and formatted fee for iso
         String fee = BRCurrency.getFormattedCurrencyString(getActivity(), iso, BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(item.getFee())));
         //description (Sent $24.32 ....)
-        Spannable descriptionString = sent ? new SpannableString("Sent " + amount) : new SpannableString("Received " + amount);
+        Spannable descriptionString = sent ? new SpannableString("Sent " + amountWithFee) : new SpannableString("Received " + amountWithFee);
 
         String startingBalance = BRCurrency.getFormattedCurrencyString(getActivity(), iso, BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(item.getBalanceAfterTx() - txAmount.longValue())));
         String endingBalance = BRCurrency.getFormattedCurrencyString(getActivity(), iso, BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(item.getBalanceAfterTx())));
         String commentString = "For Love";
-        String amountString = String.format("%s (%s fee)\n\nStarting Balance: %s\nEnding Balance:  %s\n\nExchange Rate on Day-Of-Transaction\n%s", amount, fee, startingBalance, endingBalance, "none for now");
+        String amountString = String.format("%s %s\n\nStarting Balance: %s\nEnding Balance:  %s\n\nExchange Rate on Day-Of-Transaction\n%s", amount, item.getFee() == -1 ? "" : String.format("(%s)", fee), startingBalance, endingBalance, "none for now");
 
 
         SpannableString addr = sent ? new SpannableString(item.getTo()[0]) : new SpannableString(item.getFrom()[0]);

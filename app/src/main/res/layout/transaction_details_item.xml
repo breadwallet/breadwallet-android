@@ -49,6 +49,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:textSize="18sp"
+            android:textIsSelectable="true"
             android:layout_marginTop="16dp"
             android:text="some date"
             android:textColor="@color/light_gray"
@@ -60,6 +61,7 @@
             android:layout_height="wrap_content"
             android:textStyle="bold"
             android:textSize="24sp"
+            android:textIsSelectable="true"
             android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
@@ -82,6 +84,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:textIsSelectable="true"
             android:text="Waiting to be confirmed..."
             android:textColor="@color/almost_black"/>
 
@@ -106,6 +109,7 @@
             android:id="@+id/comment_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textIsSelectable="true"
             android:layout_marginStart="16dp"
             android:text="For love"
             android:textColor="@color/almost_black"/>
@@ -130,6 +134,7 @@
         <TextView
             android:id="@+id/amount_text"
             android:layout_width="wrap_content"
+            android:textIsSelectable="true"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:text="----\n\nStarting Balance: ---- \nEnding Balance: ----"
@@ -157,6 +162,7 @@
             android:id="@+id/address_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textIsSelectable="true"
             android:layout_marginStart="16dp"
             android:text="some address"
             android:textColor="@color/almost_black"/>

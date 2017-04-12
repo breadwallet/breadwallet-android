@@ -479,6 +479,8 @@ public class BRWalletManager {
                 }
             });
 
+        } else {
+            Log.e(TAG, "showSentReceivedToast: failed, ctx is null");
         }
     }
 
@@ -487,6 +489,8 @@ public class BRWalletManager {
         Activity ctx = BreadWalletApp.getBreadContext();
         if (ctx != null) {
             TransactionDataSource.getInstance(ctx).updateTxBlockHeight(hash, blockHeight, timeStamp);
+        } else {
+            Log.e(TAG, "onTxUpdated: Failed, ctx is null");
         }
     }
 
@@ -530,6 +534,8 @@ public class BRWalletManager {
                 });
 
             }
+        } else {
+            Log.e(TAG, "onTxDeleted: Failed! ctx is null");
         }
     }
 
