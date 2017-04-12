@@ -61,6 +61,7 @@ public class FragmentTransactionItem extends Fragment {
 
     public TextView mTitle;
     private TextView mDescriptionText;
+    private TextView mConfirmationText;
     private TextView mCommentText;
     private TextView mAmountText;
     private TextView mAddressText;
@@ -81,6 +82,7 @@ public class FragmentTransactionItem extends Fragment {
         mAddressText = (TextView) rootView.findViewById(R.id.address_text);
         mDateText = (TextView) rootView.findViewById(R.id.date_text);
         mToFromBottom = (TextView) rootView.findViewById(R.id.to_from);
+        mConfirmationText = (TextView) rootView.findViewById(R.id.confirmation_text);
 
         return rootView;
     }
@@ -93,18 +95,21 @@ public class FragmentTransactionItem extends Fragment {
     }
 
     private void fillTexts() {
-        Log.e(TAG, "fillTexts fee: " + item.getFee());
-        Log.e(TAG, "fillTexts hash: " + item.getHexId());
+//        Log.e(TAG, "fillTexts fee: " + item.getFee());
+//        Log.e(TAG, "fillTexts hash: " + item.getHexId());
         //get the current iso
         String iso = SharedPreferencesManager.getPreferredBTC(getActivity()) ? "BTC" : SharedPreferencesManager.getIso(getContext());
         //get the tx amount
-        BigDecimal txAmount = new BigDecimal(item.getReceived() - item.getSent());
+        BigDecimal txAmount = new BigDecimal(item.getReceived() - item.getSent()).abs();
         //see if it was sent
-        boolean sent = txAmount.longValue() < 0;
+        boolean sent = item.getReceived() - item.getSent() < 0;
+
+        int blockHeight = item.getBlockHeight();
+        int confirms = blockHeight == Integer.MAX_VALUE ? 0 : SharedPreferencesManager.getLastBlockHeight(getContext()) - blockHeight + 1;
 
         //calculated and formatted amount for iso
         String amountWithFee = BRCurrency.getFormattedCurrencyString(getActivity(), iso, BRExchange.getAmountFromSatoshis(getActivity(), iso, txAmount));
-        String amount = BRCurrency.getFormattedCurrencyString(getActivity(), iso, BRExchange.getAmountFromSatoshis(getActivity(), iso, item.getFee() == -1 ? txAmount : txAmount.add(new BigDecimal(item.getFee()))));
+        String amount = BRCurrency.getFormattedCurrencyString(getActivity(), iso, BRExchange.getAmountFromSatoshis(getActivity(), iso, item.getFee() == -1 ? txAmount : txAmount.subtract(new BigDecimal(item.getFee()))));
         //calculated and formatted fee for iso
         String fee = BRCurrency.getFormattedCurrencyString(getActivity(), iso, BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(item.getFee())));
         //description (Sent $24.32 ....)
@@ -124,6 +129,7 @@ public class FragmentTransactionItem extends Fragment {
         addr.setSpan(norm, 0, addr.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
         addr.setSpan(new RelativeSizeSpan(0.65f), 0, addr.length(), 0);
 
+        mConfirmationText.setText((confirms >= 6) ? "Completed" : "Waiting to be confirmed. Some merchants require confirmation to complete a transaction.  Estimated time: 1-2 hours.");
         mToFromBottom.setText(sent ? "from" : "to");
         mDateText.setText(getFormattedDate(item.getTimeStamp()));
         mDescriptionText.setText(TextUtils.concat(descriptionString, "\n", toFrom, ": ", addr));

@@ -1,14 +1,21 @@
 package com.breadwallet.tools.animation;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.ScanQRActivity;
+import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.presenter.fragments.FragmentMenu;
 import com.breadwallet.presenter.fragments.FragmentBreadSignal;
@@ -17,6 +24,7 @@ import com.breadwallet.presenter.fragments.FragmentRequestAmount;
 import com.breadwallet.presenter.fragments.FragmentSend;
 import com.breadwallet.presenter.fragments.FragmentTransactionDetails;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 
 import java.util.List;
@@ -114,6 +122,41 @@ public class BRAnimator {
                 .setCustomAnimations(0, 0, 0, R.animator.plain_300)
                 .add(android.R.id.content, fragmentTransactionDetails, FragmentSend.class.getName())
                 .addToBackStack(FragmentSend.class.getName()).commit();
+
+    }
+
+    public static void openCamera(Activity app){
+        try {
+            if (app == null) return;
+
+            // Check if the camera permission is granted
+            if (ContextCompat.checkSelfPermission(app,
+                    Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED) {
+                // Should we show an explanation?
+                if (ActivityCompat.shouldShowRequestPermissionRationale(app,
+                        Manifest.permission.CAMERA)) {
+                    BreadDialog.showCustomDialog(app, "Permission Required.", app.getString(R.string.allow_camera_access), "close", null, new BRDialogView.BROnClickListener() {
+                        @Override
+                        public void onClick(BRDialogView brDialogView) {
+                            brDialogView.dismiss();
+                        }
+                    }, null, null, 0);
+                } else {
+                    // No explanation needed, we can request the permission.
+                    ActivityCompat.requestPermissions(app,
+                            new String[]{Manifest.permission.CAMERA},
+                            BRConstants.CAMERA_REQUEST_ID);
+                }
+            } else {
+                // Permission is granted, open camera
+                Intent intent = new Intent(app, ScanQRActivity.class);
+                app.startActivityForResult(intent, 123);
+                app.overridePendingTransition(R.anim.fade_up, 0);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 

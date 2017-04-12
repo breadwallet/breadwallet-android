@@ -108,7 +108,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         int confirms = blockHeight == Integer.MAX_VALUE ? 0 : SharedPreferencesManager.getLastBlockHeight(mContext) - blockHeight + 1;
         convertView.confirmation.setText((confirms >= 6) ? "Completed" : "Waiting to be confirmed");
 
-        long satoshisAmount = received ? item.getReceived() : (item.getSent() - item.getReceived()) * -1;
+        long satoshisAmount = received ? item.getReceived() : (item.getSent() - item.getReceived()) ;
 
         boolean isBTCPreferred = SharedPreferencesManager.getPreferredBTC(mContext);
         String iso = isBTCPreferred ? "BTC" : SharedPreferencesManager.getIso(mContext);

@@ -189,39 +189,7 @@ public class FragmentSend extends Fragment {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
-                try {
-                    Activity app = getActivity();
-                    if (app == null) return;
-
-                    // Check if the camera permission is granted
-                    if (ContextCompat.checkSelfPermission(app,
-                            Manifest.permission.CAMERA)
-                            != PackageManager.PERMISSION_GRANTED) {
-                        // Should we show an explanation?
-                        if (ActivityCompat.shouldShowRequestPermissionRationale(app,
-                                Manifest.permission.CAMERA)) {
-                            BreadDialog.showCustomDialog(app, "Permission Required.", app.getString(R.string.allow_camera_access), "close", null, new BRDialogView.BROnClickListener() {
-                                @Override
-                                public void onClick(BRDialogView brDialogView) {
-                                    brDialogView.dismiss();
-                                }
-                            }, null, null, 0);
-                        } else {
-                            // No explanation needed, we can request the permission.
-                            ActivityCompat.requestPermissions(app,
-                                    new String[]{Manifest.permission.CAMERA},
-                                    BRConstants.CAMERA_REQUEST_ID);
-                        }
-                    } else {
-                        // Permission is granted, open camera
-                        Intent intent = new Intent(app, ScanQRActivity.class);
-                        app.startActivityForResult(intent, 123);
-                        app.overridePendingTransition(R.anim.fade_up, 0);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
+                BRAnimator.openCamera(getActivity());
 
             }
         });
