@@ -1,11 +1,16 @@
 package com.breadwallet.presenter.fragments;
 
 import android.app.Fragment;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.TextUtils;
 import android.text.format.DateFormat;
+import android.text.style.RelativeSizeSpan;
+import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +27,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+
+import static com.breadwallet.R.string.to;
 
 
 /**
@@ -58,6 +65,7 @@ public class FragmentTransactionItem extends Fragment {
     private TextView mAmountText;
     private TextView mAddressText;
     private TextView mDateText;
+    private TextView mToFromBottom;
     private TransactionListItem item;
 
     @Override
@@ -72,6 +80,8 @@ public class FragmentTransactionItem extends Fragment {
         mAmountText = (TextView) rootView.findViewById(R.id.amount_text);
         mAddressText = (TextView) rootView.findViewById(R.id.address_text);
         mDateText = (TextView) rootView.findViewById(R.id.date_text);
+        mToFromBottom = (TextView) rootView.findViewById(R.id.to_from);
+
         return rootView;
     }
 
@@ -83,31 +93,40 @@ public class FragmentTransactionItem extends Fragment {
     }
 
     private void fillTexts() {
+        //get the current iso
         String iso = SharedPreferencesManager.getPreferredBTC(getActivity()) ? "BTC" : SharedPreferencesManager.getIso(getContext());
+        //get the tx amount
         BigDecimal txAmount = new BigDecimal(item.getReceived() - item.getSent());
+        //see if it was sent
+        boolean sent = txAmount.longValue() < 0;
 
+        //calculated and formatted amount for iso
         String amount = BRCurrency.getFormattedCurrencyString(getActivity(), iso, BRExchange.getAmountFromSatoshis(getActivity(), iso, txAmount));
+        //calculated and formatted fee for iso
         String fee = BRCurrency.getFormattedCurrencyString(getActivity(), iso, BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(item.getFee())));
-        Spannable descriptionString = item.getSent() - item.getReceived() < 0 ? new SpannableString("Sent") : new SpannableString("Received");
+        //description (Sent $24.32 ....)
+        Spannable descriptionString = sent ? new SpannableString("Sent " + amount) : new SpannableString("Received " + amount);
+
         String startingBalance = BRCurrency.getFormattedCurrencyString(getActivity(), iso, BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(item.getBalanceAfterTx() - txAmount.longValue())));
         String endingBalance = BRCurrency.getFormattedCurrencyString(getActivity(), iso, BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(item.getBalanceAfterTx())));
-//        if(mBodyText.getSelectionEnd() > mBodyText.getSelectionStart())
-//            str.setSpan(new StyleSpan(android.graphics.Typeface.ITALIC),
-//                    mBodyText.getSelectionStart(), mBodyText.getSelectionEnd(),
-//                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//        else
-//            str.setSpan(new StyleSpan(android.graphics.Typeface.ITALIC),
-//                    mBodyText.getSelectionEnd(),
-//                    mBodyText.getSelectionStart(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         String commentString = "For Love";
-//        BigDecimal
-        String amountString = String.format("%s (%s fee)\n\nStarting Balance: %s\nEnding Balance: %s\n\nExchange Rate on Day-Of-Transaction\n%s", amount, fee, startingBalance, endingBalance, "none for now");
+        String amountString = String.format("%s (%s fee)\n\nStarting Balance: %s\nEnding Balance:  %s\n\nExchange Rate on Day-Of-Transaction\n%s", amount, fee, startingBalance, endingBalance, "none for now");
 
+
+        SpannableString addr = sent ? new SpannableString(item.getTo()[0]) : new SpannableString(item.getFrom()[0]);
+        SpannableString toFrom = sent ? new SpannableString("to") : new SpannableString("from");
+        toFrom.setSpan(new RelativeSizeSpan(0.80f), 0, toFrom.length(), 0);
+        //span a piece of text to be smaller size (the address)
+        final StyleSpan norm = new StyleSpan(Typeface.NORMAL);
+        addr.setSpan(norm, 0, addr.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+        addr.setSpan(new RelativeSizeSpan(0.65f), 0, addr.length(), 0);
+
+        mToFromBottom.setText(sent ? "from" : "to");
         mDateText.setText(getFormattedDate(item.getTimeStamp()));
-        mDescriptionText.setText(descriptionString);
+        mDescriptionText.setText(TextUtils.concat(descriptionString, "\n", toFrom, ": ", addr));
         mCommentText.setText(commentString);
         mAmountText.setText(amountString);
-        mAddressText.setText(item.getTo()[0]);
+        mAddressText.setText(sent ? item.getFrom()[0] : item.getTo()[0]);
     }
 
     @Override
@@ -139,12 +158,17 @@ public class FragmentTransactionItem extends Fragment {
     }
 
     private String getFormattedDate(long timeStamp) {
-        Calendar cal = Calendar.getInstance();
-        Date currentLocalTime = cal.getTime();
+        Log.e(TAG, "getFormattedDate: " + timeStamp);
 
-        SimpleDateFormat date = new SimpleDateFormat("dd-MM-yyy HH:mm:ss z", Locale.getDefault());
+        Date currentLocalTime = new Date(timeStamp == 0 ? System.currentTimeMillis() : timeStamp * 1000);
 
-        return date.format(currentLocalTime);
+        SimpleDateFormat date1 = new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault());
+        SimpleDateFormat date2 = new SimpleDateFormat("HH:mm a", Locale.getDefault());
+
+        String str1 = date1.format(currentLocalTime);
+        String str2 = date2.format(currentLocalTime);
+
+        return str1 + " at " + str2;
     }
 
 

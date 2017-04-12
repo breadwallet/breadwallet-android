@@ -48,6 +48,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:textSize="18sp"
             android:layout_marginTop="16dp"
             android:text="some date"
             android:textColor="@color/light_gray"
@@ -57,6 +58,8 @@
             android:id="@+id/description_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="24sp"
             android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
@@ -142,6 +145,7 @@
 
         <TextView
             android:layout_width="wrap_content"
+            android:id="@+id/to_from"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
