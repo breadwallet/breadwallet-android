@@ -2,19 +2,24 @@ package com.breadwallet.tools.animation;
 
 import android.app.Activity;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.presenter.fragments.FragmentMenu;
 import com.breadwallet.presenter.fragments.FragmentBreadSignal;
 import com.breadwallet.presenter.fragments.FragmentReceive;
 import com.breadwallet.presenter.fragments.FragmentRequestAmount;
 import com.breadwallet.presenter.fragments.FragmentSend;
+import com.breadwallet.presenter.fragments.FragmentTransactionDetails;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.util.Utils;
+
+import java.util.List;
 
 
 /**
@@ -85,6 +90,29 @@ public class BRAnimator {
         app.getFragmentManager().beginTransaction()
                 .setCustomAnimations(0, 0, 0, R.animator.plain_300)
                 .add(android.R.id.content, fragmentSend, FragmentSend.class.getName())
+                .addToBackStack(FragmentSend.class.getName()).commit();
+
+    }
+    public static void showTransactionPager(Activity app, List<TransactionListItem> items, int position) {
+        if (app == null) {
+            Log.e(TAG, "showSendFragment: app is null");
+            return;
+        }
+        FragmentTransactionDetails fragmentTransactionDetails = (FragmentTransactionDetails) app.getFragmentManager().findFragmentByTag(FragmentTransactionDetails.class.getName());
+        if (fragmentTransactionDetails != null && fragmentTransactionDetails.isAdded()){
+            Log.e(TAG, "showTransactionPager: Already showing");
+            return;
+        }
+
+        fragmentTransactionDetails = new FragmentTransactionDetails();
+        fragmentTransactionDetails.setItems(items);
+        Bundle bundle = new Bundle();
+        bundle.putInt("pos", position);
+        fragmentTransactionDetails.setArguments(bundle);
+
+        app.getFragmentManager().beginTransaction()
+                .setCustomAnimations(0, 0, 0, R.animator.plain_300)
+                .add(android.R.id.content, fragmentTransactionDetails, FragmentSend.class.getName())
                 .addToBackStack(FragmentSend.class.getName()).commit();
 
     }

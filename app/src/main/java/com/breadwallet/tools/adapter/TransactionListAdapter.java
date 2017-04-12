@@ -67,6 +67,12 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         this.mContext = mContext;
     }
 
+    public TransactionListItem getItemAtPos(int pos){
+        return itemFeed.get(pos);
+    }
+    public List<TransactionListItem> getItems(){
+        return itemFeed;
+    }
 
     @Override
     public CustomViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

@@ -96,7 +96,7 @@ public class IntroPhraseProveActivity extends Activity {
         try {
             cleanPhrase = new String(KeyStoreManager.getKeyStorePhrase(this, 0));
             //todo DELETE THIS LOG
-            Log.e(TAG, "onCreate: success: " + cleanPhrase);
+//            Log.e(TAG, "onCreate: success: " + cleanPhrase);
         } catch (BRKeystoreErrorException e) {
             e.printStackTrace();
         }
