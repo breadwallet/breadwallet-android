@@ -324,6 +324,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
             allAddresses.append(s + ", ");
         }
         allAddresses.delete(allAddresses.length() - 2, allAddresses.length());
+        if(paymentRequest.memo == null) paymentRequest.memo = "";
         String memo = (!paymentRequest.memo.isEmpty() ? "\n" : "") + paymentRequest.memo;
         allAddresses = new StringBuilder();
 
