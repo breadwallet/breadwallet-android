@@ -28,6 +28,7 @@ import com.breadwallet.presenter.customviews.BRSoftKeyboard;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
@@ -311,9 +312,9 @@ public class PinActivity extends Activity {
                         @Override
                         public void run() {
                             String result = data.getStringExtra("result");
-                            BRAnimator.showSendFragment(PinActivity.this, result);
+                            BitcoinUrlHandler.processRequest(PinActivity.this, result);
                         }
-                    }, 300);
+                    }, 500);
 
                 }
 

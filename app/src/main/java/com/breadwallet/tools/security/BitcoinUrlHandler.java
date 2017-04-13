@@ -4,12 +4,15 @@ import android.app.Activity;
 import android.net.Uri;
 import android.util.Log;
 
+import com.breadwallet.R;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.activities.BreadActivity;
+import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.presenter.entities.RequestObject;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
 import com.breadwallet.tools.util.TypesConverter;
@@ -75,13 +78,20 @@ public class BitcoinUrlHandler {
     private static int _index = 0;
 
     public static synchronized boolean processRequest(Activity app, String url) {
-        if (url == null) return false;
+        if (url == null) {
+            Log.e(TAG, "processRequest: url is null");
+            return false;
+        }
 
         RequestObject requestObject = getRequestFromString(url);
         if (requestObject == null) {
             if (app != null) {
-//                BreadDialog.showCustomDialog(app, app.getString(R.string.warning),
-//                        app.getString(R.string.invalid_address), app.getString(R.string.ok));
+                BreadDialog.showCustomDialog(app, app.getString(R.string.warning), app.getString(R.string.invalid_address), app.getString(R.string.ok), null, new BRDialogView.BROnClickListener() {
+                    @Override
+                    public void onClick(BRDialogView brDialogView) {
+                        brDialogView.dismissWithAnimation();
+                    }
+                }, null, null, 0);
             }
             return false;
         }
@@ -91,8 +101,12 @@ public class BitcoinUrlHandler {
             return tryBitcoinURL(url, app);
         } else {
             if (app != null) {
-//                BreadDialog.showCustomDialog(app, app.getString(R.string.warning),
-//                        app.getString(R.string.bad_payment_request), app.getString(R.string.ok));
+                BreadDialog.showCustomDialog(app, app.getString(R.string.warning), app.getString(R.string.bad_payment_request), app.getString(R.string.ok), null, new BRDialogView.BROnClickListener() {
+                    @Override
+                    public void onClick(BRDialogView brDialogView) {
+                        brDialogView.dismissWithAnimation();
+                    }
+                }, null, null, 0);
             }
             return false;
         }

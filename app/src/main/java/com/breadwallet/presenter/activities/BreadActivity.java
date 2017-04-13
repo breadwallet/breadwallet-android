@@ -439,7 +439,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
                         @Override
                         public void run() {
                             String result = data.getStringExtra("result");
-                            BRAnimator.showSendFragment(BreadActivity.this, result);
+                            BitcoinUrlHandler.processRequest(BreadActivity.this, result);
                         }
                     }, 500);
 
