@@ -410,7 +410,7 @@ public class BitcoinUrlHandler {
 
         String amount = requestObject.amount;
 
-        if (amount != null && amount.isEmpty() && new BigDecimal(amount).doubleValue() != 0) {
+        if (amount == null || amount.isEmpty() || new BigDecimal(amount).doubleValue() == 0) {
             app.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
