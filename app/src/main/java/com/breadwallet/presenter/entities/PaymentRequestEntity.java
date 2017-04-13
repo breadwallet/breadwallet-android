@@ -34,7 +34,7 @@ public class PaymentRequestEntity {
     public String cn;
     public boolean isAmountRequested;
 
-    public PaymentRequestEntity(String []addresses, long theAmount, String theCn,  boolean isAmountRequested) {
+    public PaymentRequestEntity(String []addresses, long theAmount, String theCn,   boolean isAmountRequested) {
         this.isAmountRequested = isAmountRequested;
 //        this.serializedTx = serializedTx;
         this.addresses = addresses;

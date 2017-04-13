@@ -190,32 +190,32 @@ public class PostAuthenticationProcessor {
     }
 
     //
-//    public void onPaymentProtocolRequest(MainActivity app, boolean authAsked) {
-//
-//        byte[] rawSeed;
-//        try {
-//            rawSeed = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE);
-//        } catch (BRKeystoreErrorException e) {
-//            if (authAsked) {
-//                showBugAuthLoopErrorMessage(app);
-//                Log.e(TAG, "onPublishTxAuth,!success && authAsked");
-//            }
-//            e.printStackTrace();
-//            return;
-//        }
-//        if (rawSeed == null || rawSeed.length < 10 || paymentRequest.serializedTx == null)
-//            return;
-//        if (rawSeed.length < 10) return;
-//
-//        byte[] seed = TypesConverter.getNullTerminatedPhrase(rawSeed);
-//
-//        BRWalletManager.getInstance(app).publishSerializedTransaction(paymentRequest.serializedTx, seed);
-//        PaymentProtocolPostPaymentTask.sent = true;
-//        Arrays.fill(seed, (byte) 0);
-//        paymentRequest = null;
-//
-//    }
-//
+    public void onPaymentProtocolRequest(Activity app, boolean authAsked) {
+
+        byte[] rawSeed;
+        try {
+            rawSeed = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE);
+        } catch (BRKeystoreErrorException e) {
+            if (authAsked) {
+                showBugAuthLoopErrorMessage(app);
+                Log.e(TAG, "onPublishTxAuth,!success && authAsked");
+            }
+            e.printStackTrace();
+            return;
+        }
+        if (rawSeed == null || rawSeed.length < 10 || paymentRequest.serializedTx == null)
+            return;
+        if (rawSeed.length < 10) return;
+
+        byte[] seed = TypesConverter.getNullTerminatedPhrase(rawSeed);
+
+        BRWalletManager.getInstance().publishSerializedTransaction(paymentRequest.serializedTx, seed);
+        PaymentProtocolPostPaymentTask.sent = true;
+        Arrays.fill(seed, (byte) 0);
+        paymentRequest = null;
+
+    }
+
     public void setPhraseForKeyStore(String phraseForKeyStore) {
         this.phraseForKeyStore = phraseForKeyStore;
     }
@@ -231,10 +231,10 @@ public class PostAuthenticationProcessor {
 //        this.label = label;
 //    }
 //
-//    public void setTmpPaymentRequest(PaymentRequestWrapper paymentRequest) {
-//        this.paymentRequest = paymentRequest;
-//    }
-//
+    public void setTmpPaymentRequest(PaymentRequestWrapper paymentRequest) {
+        this.paymentRequest = paymentRequest;
+    }
+
     public void onCanaryCheck(final IntroActivity introActivity, boolean authAsked) {
         String canary;
         try {
