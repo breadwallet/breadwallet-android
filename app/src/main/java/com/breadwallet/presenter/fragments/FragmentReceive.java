@@ -7,6 +7,8 @@ import android.animation.LayoutTransition;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -31,7 +33,12 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.qrcode.QRReader;
+import com.breadwallet.tools.qrcode.QRUtils;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
+
+import java.io.File;
 
 
 /**
@@ -111,6 +118,17 @@ public class FragmentReceive extends Fragment {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
+                Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                        "mailto", "", null));
+                String bitcoinUri = Utils.createBitcoinUrl(receiveAddress, 0, null, null, null);
+                emailIntent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.bitcoin_address));
+                emailIntent.putExtra(Intent.EXTRA_TEXT, bitcoinUri);
+                File qrFile = QRUtils.encodeAsBitmap(bitcoinUri, 500);
+                Uri uri = qrFile == null ? null : Uri.fromFile(qrFile);
+                if (uri != null)
+                    emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                startActivity(Intent.createChooser(emailIntent, getResources().getString(R.string.bitcoin_address)));
+                getDialog().cancel();
 
             }
         });

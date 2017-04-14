@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.util.Log;
@@ -163,6 +164,21 @@ public class Utils {
                     + Character.digit(s.charAt(i + 1), 16));
         }
         return data;
+    }
+
+    public static String createBitcoinUrl(String address, long satoshiAmount, String label, String message, String rURL){
+
+
+        Uri.Builder builder = new Uri.Builder();
+        builder.scheme("bitcoin")
+                .authority("www.myawesomesite.com")
+                .appendPath("turtles")
+                .appendPath("types")
+                .appendQueryParameter("type", "1")
+                .appendQueryParameter("sort", "relevance")
+                .fragment("section-name");
+        return builder.build().toString();
+
     }
 
 

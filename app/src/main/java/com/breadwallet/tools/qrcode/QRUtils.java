@@ -11,6 +11,7 @@ import com.google.zxing.common.BitMatrix;
 import java.util.EnumMap;
 import java.util.Map;
 
+import static android.R.attr.width;
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
 
@@ -41,7 +42,7 @@ import static android.graphics.Color.WHITE;
 public class QRUtils {
 
 
-    public static Bitmap encodeAsBitmap(String content, int dimension) throws WriterException {
+    public static Bitmap encodeAsBitmap(String content, int dimension) {
 
         if (content == null) {
             return null;
@@ -53,13 +54,16 @@ public class QRUtils {
             hints.put(EncodeHintType.CHARACTER_SET, encoding);
         }
         hints.put(EncodeHintType.MARGIN, 1);
-        BitMatrix result;
+        BitMatrix result = null;
         try {
             result = new MultiFormatWriter().encode(content, BarcodeFormat.QR_CODE, dimension, dimension, hints);
         } catch (IllegalArgumentException iae) {
             // Unsupported format
             return null;
+        } catch (WriterException e) {
+            e.printStackTrace();
         }
+        if(result == null) return null;
         int width = result.getWidth();
         int height = result.getHeight();
         int[] pixels = new int[width * height];
