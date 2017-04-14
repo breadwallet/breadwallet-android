@@ -7,20 +7,19 @@ import android.animation.LayoutTransition;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.animation.Animation;
 import android.view.animation.OvershootInterpolator;
-import android.view.animation.Transformation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -33,12 +32,13 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
-import com.breadwallet.tools.qrcode.QRReader;
 import com.breadwallet.tools.qrcode.QRUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 
 /**
@@ -123,12 +123,18 @@ public class FragmentReceive extends Fragment {
                 String bitcoinUri = Utils.createBitcoinUrl(receiveAddress, 0, null, null, null);
                 emailIntent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.bitcoin_address));
                 emailIntent.putExtra(Intent.EXTRA_TEXT, bitcoinUri);
-                File qrFile = QRUtils.encodeAsBitmap(bitcoinUri, 500);
-                Uri uri = qrFile == null ? null : Uri.fromFile(qrFile);
+                String path = saveToExternalStorage(QRUtils.encodeAsBitmap(bitcoinUri, 500), getActivity());
+                Uri uri;
+                if (path == null) {
+                    uri = null;
+                } else {
+                    File qrFile = new File(path);
+                    uri = Uri.fromFile(qrFile);
+                }
+
                 if (uri != null)
                     emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
                 startActivity(Intent.createChooser(emailIntent, getResources().getString(R.string.bitcoin_address)));
-                getDialog().cancel();
 
             }
         });
@@ -270,6 +276,31 @@ public class FragmentReceive extends Fragment {
         super.onPause();
     }
 
+    private static String saveToExternalStorage(Bitmap bitmapImage, Activity app) {
+        File directory = app.getExternalCacheDir();
+        if (directory == null) {
+            Log.e(TAG, "saveToExternalStorage: app.getExternalCacheDir() is null");
+            return null;
+        }
+        // Create imageDir
+        File mypath = new File(directory, "qrcode.jpg");
 
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(mypath);
+            // Use the compress method on the BitMap object to write image to the OutputStream
+            bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (fos != null)
+                    fos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return directory.getAbsolutePath();
+    }
 
 }

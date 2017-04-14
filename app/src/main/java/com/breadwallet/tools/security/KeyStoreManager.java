@@ -13,8 +13,8 @@ import android.util.Log;
 
 import com.breadwallet.R;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
-import com.breadwallet.tools.util.ByteReader;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.util.BytesUtil;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.wallet.BRWalletManager;
 import com.google.firebase.crash.FirebaseCrash;
@@ -250,7 +250,7 @@ public class KeyStoreManager {
 
             CipherInputStream cipherInputStream = new CipherInputStream(
                     new FileInputStream(encryptedDataFilePath), outCipher);
-            return ByteReader.readBytesFromStream(cipherInputStream);
+            return BytesUtil.readBytesFromStream(cipherInputStream);
         } catch (InvalidKeyException e) {
             Log.e(TAG, "_getData: InvalidKeyException");
             if (e instanceof UserNotAuthenticatedException) {
@@ -657,7 +657,7 @@ public class KeyStoreManager {
         try {
             File file = new File(path);
             FileInputStream fin = new FileInputStream(file);
-            bytes = ByteReader.readBytesFromStream(fin);
+            bytes = BytesUtil.readBytesFromStream(fin);
         } catch (IOException e) {
             e.printStackTrace();
         }

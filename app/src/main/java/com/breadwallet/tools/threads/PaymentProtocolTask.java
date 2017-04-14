@@ -25,8 +25,8 @@ import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRExchange;
-import com.breadwallet.tools.util.ByteReader;
 import com.breadwallet.tools.security.X509CertificateValidator;
+import com.breadwallet.tools.util.BytesUtil;
 import com.breadwallet.tools.util.CustomLogger;
 import com.breadwallet.wallet.BRWalletManager;
 
@@ -93,7 +93,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 Log.e(TAG, "The inputStream is null!");
                 return null;
             }
-            byte[] serializedBytes = ByteReader.readBytesFromStream(in);
+            byte[] serializedBytes = BytesUtil.readBytesFromStream(in);
             if (serializedBytes == null || serializedBytes.length == 0) {
                 Log.e(TAG, "serializedBytes are null!!!");
                 return null;

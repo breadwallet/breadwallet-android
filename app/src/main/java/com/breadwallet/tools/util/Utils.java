@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.breadwallet.presenter.activities.BreadActivity;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
@@ -123,6 +124,7 @@ public class Utils {
         if (is24HoursFormat) result += "h";
         return result;
     }
+
     public static String formatTimeStamp(Context app, long time) {
 
         SimpleDateFormat formatter = new SimpleDateFormat("MMM. dd, yyyy  ha", Locale.getDefault());
@@ -166,17 +168,21 @@ public class Utils {
         return data;
     }
 
-    public static String createBitcoinUrl(String address, long satoshiAmount, String label, String message, String rURL){
-
+    public static String createBitcoinUrl(String address, long satoshiAmount, String label, String message, String rURL) {
 
         Uri.Builder builder = new Uri.Builder();
-        builder.scheme("bitcoin")
-                .authority("www.myawesomesite.com")
-                .appendPath("turtles")
-                .appendPath("types")
-                .appendQueryParameter("type", "1")
-                .appendQueryParameter("sort", "relevance")
-                .fragment("section-name");
+        builder = builder.scheme("bitcoin");
+        if (address != null && !address.isEmpty())
+            builder = builder.opaquePart(address);
+        if (satoshiAmount != 0)
+            builder = builder.appendQueryParameter("amount", new BigDecimal(satoshiAmount).divide(new BigDecimal(100000000), 8, BRConstants.ROUNDING_MODE).toPlainString());
+        if (label != null && !label.isEmpty())
+            builder = builder.appendQueryParameter("label", label);
+        if (message != null && !message.isEmpty())
+            builder = builder.appendQueryParameter("message", message);
+        if (rURL != null && !rURL.isEmpty())
+            builder = builder.appendQueryParameter("r", rURL);
+
         return builder.build().toString();
 
     }

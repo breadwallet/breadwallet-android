@@ -10,8 +10,8 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
-import com.breadwallet.tools.util.ByteReader;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
+import com.breadwallet.tools.util.BytesUtil;
 
 import java.io.DataOutputStream;
 import java.io.FileNotFoundException;
@@ -92,7 +92,7 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
                 Log.e(TAG, "The inputStream is null!");
                 return null;
             }
-            byte[] serializedBytes = ByteReader.readBytesFromStream(in);
+            byte[] serializedBytes = BytesUtil.readBytesFromStream(in);
             if (serializedBytes == null || serializedBytes.length == 0) {
                 Log.e(TAG, "serializedBytes are null!!!");
                 return null;
