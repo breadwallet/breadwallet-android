@@ -97,7 +97,8 @@ public class AuthManager {
         transaction.setCustomAnimations(0, 0, 0, R.animator.plain_300);
         transaction.add(android.R.id.content, breadPin, breadPin.getClass().getName());
         transaction.addToBackStack(null);
-        transaction.commit();
+        if (!app.isDestroyed())
+            transaction.commit();
 
 //        KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Activity.KEYGUARD_SERVICE);
 //

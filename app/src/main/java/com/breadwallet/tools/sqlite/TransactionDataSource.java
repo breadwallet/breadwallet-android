@@ -135,6 +135,9 @@ public class TransactionDataSource {
         // make sure to close the cursor
 
         Log.e(TAG, "transactions: " + transactions.size());
+//        for (BRTransactionEntity ent : transactions) {
+//            Log.e(TAG, "getAllTransactions: hash: " + ent.getTxHash());
+//        }
         cursor.close();
         return transactions;
     }
@@ -152,7 +155,6 @@ public class TransactionDataSource {
         args.put(BRSQLiteHelper.TX_TIME_STAMP, timeStamp);
 
         Log.e(TAG, "updateTxBlockHeight: size before updating: " + getAllTransactions().size());
-
         database.update(BRSQLiteHelper.TX_TABLE_NAME, args, strFilter, null);
         Log.e(TAG, "updateTxBlockHeight: size after updating: " + getAllTransactions().size());
 

@@ -435,13 +435,13 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         switch (requestCode) {
             case 123:
                 if (resultCode == Activity.RESULT_OK) {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            String result = data.getStringExtra("result");
-                            BitcoinUrlHandler.processRequest(BreadActivity.this, result);
-                        }
-                    }, 500);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                String result = data.getStringExtra("result");
+                                BitcoinUrlHandler.processRequest(BreadActivity.this, result);
+                            }
+                        }, 500);
 
                 }
                 break;

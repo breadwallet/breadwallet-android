@@ -328,10 +328,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
         String memo = (!paymentRequest.memo.isEmpty() ? "\n" : "") + paymentRequest.memo;
         allAddresses = new StringBuilder();
 
-        //DecimalFormat decimalFormat = new DecimalFormat("0.00");
         String iso = SharedPreferencesManager.getIso(app);
-        float rate = CurrencyDataSource.getInstance(app).getCurrencyByIso(iso).rate;
-        CurrencyFetchManager cm = CurrencyFetchManager.getInstance(app);
 
         double minOutput = BRWalletManager.getInstance().getMinOutputAmount();
         if (paymentRequest.amount < minOutput) {
@@ -357,7 +354,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
         }
         final long total = paymentRequest.amount + paymentRequest.fee;
 
-        final PaymentRequestEntity request = new PaymentRequestEntity(paymentRequest.addresses, paymentRequest.amount, certName, false);
+//        final PaymentRequestEntity request = new PaymentRequestEntity(paymentRequest.addresses, paymentRequest.amount, certName, false);
 
         BigDecimal bigAm = BRExchange.getAmountFromSatoshis(app, iso, new BigDecimal(paymentRequest.amount));
         BigDecimal bigFee = BRExchange.getAmountFromSatoshis(app, iso, new BigDecimal(paymentRequest.fee));
