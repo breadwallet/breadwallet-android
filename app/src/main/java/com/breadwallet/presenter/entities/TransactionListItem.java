@@ -103,4 +103,7 @@ public class TransactionListItem {
         return outAmounts;
     }
 
+    public boolean isValid() {
+        return isValid;
+    }
 }

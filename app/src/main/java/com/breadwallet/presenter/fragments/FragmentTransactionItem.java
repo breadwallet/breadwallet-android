@@ -129,7 +129,23 @@ public class FragmentTransactionItem extends Fragment {
         addr.setSpan(norm, 0, addr.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
         addr.setSpan(new RelativeSizeSpan(0.65f), 0, addr.length(), 0);
 
-        mConfirmationText.setText((confirms >= 6) ? "Completed" : "Waiting to be confirmed. Some merchants require confirmation to complete a transaction.  Estimated time: 1-2 hours.");
+
+        if (!item.isValid())
+            mConfirmationText.setText("INVALID");
+        else if (confirms < 6) {
+            if (blockHeight == Integer.MAX_VALUE)
+                mConfirmationText.setText("Waiting to be confirmed. Some merchants require confirmation to complete a transaction.  Estimated time: 1-2 hours.");
+            else if (confirms == 0)
+                mConfirmationText.setText(getActivity().getString(R.string.nr_confirmations0));
+            else if (confirms == 1)
+                mConfirmationText.setText(getActivity().getString(R.string.nr_confirmations1));
+            else
+                mConfirmationText.setText(String.format(getActivity().getString(R.string.nr_confirmations), confirms));
+        } else {
+            mConfirmationText.setText("Completed");
+        }
+
+
         mToFromBottom.setText(sent ? "from" : "to");
         mDateText.setText(getFormattedDate(item.getTimeStamp()));
         mDescriptionText.setText(TextUtils.concat(descriptionString, "\n", toFrom, ": ", addr));

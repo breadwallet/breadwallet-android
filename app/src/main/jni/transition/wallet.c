@@ -345,7 +345,7 @@ JNIEXPORT jobjectArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTr
     jobjectArray txObjects = (*env)->NewObjectArray(env, (jsize) txCount, txClass, 0);
     jobjectArray globalTxs = (*env)->NewGlobalRef(env, txObjects);
     jmethodID txObjMid = (*env)->GetMethodID(env, txClass, "<init>",
-                                             "(JILjava/lang/String;JJJ[Ljava/lang/String;[Ljava/lang/String;J[J)V");
+                                             "(JILjava/lang/String;JJJ[Ljava/lang/String;[Ljava/lang/String;J[JZ)V");
     jclass stringClass = (*env)->FindClass(env, "java/lang/String");
 
     for (int i = 0; i < txCount; i++) {
