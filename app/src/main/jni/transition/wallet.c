@@ -351,7 +351,7 @@ JNIEXPORT jobjectArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTr
     for (int i = 0; i < txCount; i++) {
         if (!_wallet) return NULL;
         BRTransaction *tempTx = transactions_sqlite[i];
-
+        jboolean isValid = (jboolean) ((BRWalletTransactionIsValid(_wallet, tempTx) == 1) ? JNI_TRUE : JNI_FALSE);
 
         jlong JtimeStamp = tempTx->timestamp;
         jint JblockHeight = tempTx->blockHeight;
@@ -415,7 +415,7 @@ JNIEXPORT jobjectArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTr
                                              JtxHash, Jsent,
                                              Jreceived, Jfee, JtoAddresses, JfromAddresses,
                                              JbalanceAfterTx,
-                                             JoutAmounts);
+                                             JoutAmounts, isValid);
 
         (*env)->SetObjectArrayElement(env, globalTxs, (jsize) (txCount - 1 - i), txObject);
         (*env)->DeleteLocalRef(env, txObject);

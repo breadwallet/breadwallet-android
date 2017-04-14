@@ -38,13 +38,14 @@ public class TransactionListItem {
     private String from[];
     private long balanceAfterTx;
     private long outAmounts[];
+    private boolean isValid;
 
     private TransactionListItem() {
     }
 
     public TransactionListItem(long timeStamp, int blockHeight, String hash, long sent,
                                long received, long fee, String to[], String from[],
-                               long balanceAfterTx, long[] outAmounts) {
+                               long balanceAfterTx, long[] outAmounts, boolean isValid) {
         this.timeStamp = timeStamp;
         this.blockHeight = blockHeight;
         this.hash = hash;
@@ -55,6 +56,7 @@ public class TransactionListItem {
         this.from = from;
         this.balanceAfterTx = balanceAfterTx;
         this.outAmounts = outAmounts;
+        this.isValid = isValid;
     }
 
     public int getBlockHeight() {

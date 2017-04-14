@@ -67,10 +67,11 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         this.mContext = mContext;
     }
 
-    public TransactionListItem getItemAtPos(int pos){
+    public TransactionListItem getItemAtPos(int pos) {
         return itemFeed.get(pos);
     }
-    public List<TransactionListItem> getItems(){
+
+    public List<TransactionListItem> getItems() {
         return itemFeed;
     }
 
@@ -106,9 +107,22 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         convertView.toFrom.setText(received ? "from" : "to");
         int blockHeight = item.getBlockHeight();
         int confirms = blockHeight == Integer.MAX_VALUE ? 0 : SharedPreferencesManager.getLastBlockHeight(mContext) - blockHeight + 1;
-        convertView.confirmation.setText((confirms >= 6) ? "Completed" : "Waiting to be confirmed");
 
-        long satoshisAmount = received ? item.getReceived() : (item.getSent() - item.getReceived()) ;
+        if (confirms < 6) {
+            if (blockHeight == Integer.MAX_VALUE)
+                convertView.confirmation.setText("Waiting to be confirmed");
+            else if (confirms == 0)
+                convertView.confirmation.setText(mContext.getString(R.string.nr_confirmations0));
+            else if (confirms == 1)
+                convertView.confirmation.setText(mContext.getString(R.string.nr_confirmations1));
+            else
+                convertView.confirmation.setText(String.format(mContext.getString(R.string.nr_confirmations), confirms));
+        } else {
+            convertView.confirmation.setText("Completed");
+        }
+//        convertView.confirmation.setText((confirms >= 6) ? "Completed" : "Waiting to be confirmed");
+
+        long satoshisAmount = received ? item.getReceived() : (item.getSent() - item.getReceived());
 
         boolean isBTCPreferred = SharedPreferencesManager.getPreferredBTC(mContext);
         String iso = isBTCPreferred ? "BTC" : SharedPreferencesManager.getIso(mContext);
