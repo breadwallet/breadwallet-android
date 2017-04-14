@@ -135,9 +135,9 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
 
         updateUI();
 
-        if(introSetPitActivity != null) introSetPitActivity.finish();
-        if(introActivity != null) introActivity.finish();
-        if(introReEnterPinActivity != null) introReEnterPinActivity.finish();
+        if (introSetPitActivity != null) introSetPitActivity.finish();
+        if (introActivity != null) introActivity.finish();
+        if (introReEnterPinActivity != null) introReEnterPinActivity.finish();
 
     }
 
@@ -147,7 +147,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
 
     private void updateTxList() {
         final TransactionListItem[] arr = BRWalletManager.getInstance().getTransactions();
-        Log.e(TAG, "updateTxList: arr.size: " + Arrays.toString(arr));
+        Log.e(TAG, "updateTxList: getTransactions().length: " + (arr == null ? 0 : arr.length));
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -245,7 +245,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
             public void onItemClick(View view, int position, float x, float y) {
                 Log.e(TAG, "onItemClick: " + position);
 
-                BRAnimator.showTransactionPager(BreadActivity.this, adapter.getItems(),position);
+                BRAnimator.showTransactionPager(BreadActivity.this, adapter.getItems(), position);
             }
 
             @Override
@@ -435,13 +435,13 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         switch (requestCode) {
             case 123:
                 if (resultCode == Activity.RESULT_OK) {
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                String result = data.getStringExtra("result");
-                                BitcoinUrlHandler.processRequest(BreadActivity.this, result);
-                            }
-                        }, 500);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            String result = data.getStringExtra("result");
+                            BitcoinUrlHandler.processRequest(BreadActivity.this, result);
+                        }
+                    }, 500);
 
                 }
                 break;
@@ -479,7 +479,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
             public void run() {
                 while (loadProgressBar.getProgress() < 100) {
                     try {
-                        Thread.sleep(100);
+                        Thread.sleep(60);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

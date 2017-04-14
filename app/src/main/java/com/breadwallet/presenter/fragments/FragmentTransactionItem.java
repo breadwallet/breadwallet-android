@@ -183,7 +183,6 @@ public class FragmentTransactionItem extends Fragment {
     }
 
     private String getFormattedDate(long timeStamp) {
-        Log.e(TAG, "getFormattedDate: " + timeStamp);
 
         Date currentLocalTime = new Date(timeStamp == 0 ? System.currentTimeMillis() : timeStamp * 1000);
 
