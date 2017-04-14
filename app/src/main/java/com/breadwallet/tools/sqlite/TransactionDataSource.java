@@ -158,6 +158,7 @@ public class TransactionDataSource {
         database.update(BRSQLiteHelper.TX_TABLE_NAME, args, strFilter, null);
         Log.e(TAG, "updateTxBlockHeight: size after updating: " + getAllTransactions().size());
 
+
     }
 
     public void deleteTxByHash(String hash) {

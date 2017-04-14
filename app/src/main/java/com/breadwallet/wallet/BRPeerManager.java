@@ -120,13 +120,12 @@ public class BRPeerManager {
         for (OnTxStatusUpdate listener : statusUpdateListeners) {
             if (listener != null) listener.onStatusUpdate();
         }
-//        FragmentSettingsAll.refreshTransactions(ctx);
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                updateLastBlockHeight(getCurrentBlockHeight());
-//            }
-//        }).start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                updateLastBlockHeight(getCurrentBlockHeight());
+            }
+        }).start();
 
     }
 

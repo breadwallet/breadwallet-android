@@ -107,7 +107,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         convertView.toFrom.setText(received ? "from" : "to");
         int blockHeight = item.getBlockHeight();
         int confirms = blockHeight == Integer.MAX_VALUE ? 0 : SharedPreferencesManager.getLastBlockHeight(mContext) - blockHeight + 1;
-
         if (!item.isValid())
             convertView.confirmation.setText("INVALID");
         else if (confirms < 6) {

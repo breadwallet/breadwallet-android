@@ -489,6 +489,7 @@ public class BRWalletManager {
         Activity ctx = BreadWalletApp.getBreadContext();
         if (ctx != null) {
             TransactionDataSource.getInstance(ctx).updateTxBlockHeight(hash, blockHeight, timeStamp);
+
         } else {
             Log.e(TAG, "onTxUpdated: Failed, ctx is null");
         }
