@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -123,7 +124,7 @@ public class FragmentReceive extends Fragment {
                 String bitcoinUri = Utils.createBitcoinUrl(receiveAddress, 0, null, null, null);
                 emailIntent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.bitcoin_address));
                 emailIntent.putExtra(Intent.EXTRA_TEXT, bitcoinUri);
-                String path = saveToExternalStorage(QRUtils.encodeAsBitmap(bitcoinUri, 500), getActivity());
+                String path = saveToExternalStorage(QRUtils.encodeAsBitmap(bitcoinUri, 500));
                 Uri uri;
                 if (path == null) {
                     uri = null;
@@ -276,8 +277,8 @@ public class FragmentReceive extends Fragment {
         super.onPause();
     }
 
-    private static String saveToExternalStorage(Bitmap bitmapImage, Activity app) {
-        File directory = app.getExternalCacheDir();
+    private static String saveToExternalStorage(Bitmap bitmapImage) {
+        File directory = Environment.getExternalStorageDirectory();
         if (directory == null) {
             Log.e(TAG, "saveToExternalStorage: app.getExternalCacheDir() is null");
             return null;
@@ -300,7 +301,7 @@ public class FragmentReceive extends Fragment {
                 e.printStackTrace();
             }
         }
-        return directory.getAbsolutePath();
+        return mypath.getAbsolutePath();
     }
 
 }

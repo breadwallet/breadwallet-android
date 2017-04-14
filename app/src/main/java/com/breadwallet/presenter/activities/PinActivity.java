@@ -160,12 +160,14 @@ public class PinActivity extends Activity {
         super.onResume();
         updateDots();
         app = this;
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                BRWalletManager.getInstance().setUpTheWallet(PinActivity.this);
-            }
-        }).start();
+        if (!BRWalletManager.getInstance().isCreated()) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    BRWalletManager.getInstance().setUpTheWallet(PinActivity.this);
+                }
+            }).start();
+        }
     }
 
     private void handleClick(String key) {

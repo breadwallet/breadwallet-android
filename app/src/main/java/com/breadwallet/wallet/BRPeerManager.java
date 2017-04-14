@@ -259,13 +259,14 @@ public class BRPeerManager {
             progressStatus = 0;
             Log.e(TAG, "run: starting: " + progressStatus);
             if (app != null) {
+                final long lastBlockTimeStamp = BRPeerManager.getInstance().getLastBlockTimestamp() * 1000;
                 app.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         if (app.syncProgressBar != null)
                             app.syncProgressBar.setProgress((int) (progressStatus * 100));
                         if (app.syncDate != null)
-                            app.syncDate.setText(Utils.formatTimeStamp(app, BRPeerManager.getInstance().getLastBlockTimestamp() * 1000));
+                            app.syncDate.setText(Utils.formatTimeStamp(app, lastBlockTimeStamp));
                     }
                 });
             }
@@ -281,13 +282,15 @@ public class BRPeerManager {
                         running = false;
                         continue;
                     }
+                    final long lastBlockTimeStamp = BRPeerManager.getInstance().getLastBlockTimestamp() * 1000;
+
                     tmp.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             if (tmp.syncProgressBar != null)
                                 tmp.syncProgressBar.setProgress((int) (progressStatus * 100));
                             if (tmp.syncDate != null)
-                                tmp.syncDate.setText(Utils.formatTimeStamp(tmp, BRPeerManager.getInstance().getLastBlockTimestamp()* 1000));
+                                tmp.syncDate.setText(Utils.formatTimeStamp(tmp, lastBlockTimeStamp));
                         }
                     });
                     try {
