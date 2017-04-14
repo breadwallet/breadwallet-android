@@ -115,7 +115,7 @@ public class FragmentTransactionItem extends Fragment {
         //description (Sent $24.32 ....)
         Spannable descriptionString = sent ? new SpannableString("Sent " + amountWithFee) : new SpannableString("Received " + amountWithFee);
 
-        String startingBalance = BRCurrency.getFormattedCurrencyString(getActivity(), iso, BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(item.getBalanceAfterTx() - txAmount.longValue())));
+        String startingBalance = BRCurrency.getFormattedCurrencyString(getActivity(), iso, BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(sent? item.getBalanceAfterTx() +  txAmount.longValue() : item.getBalanceAfterTx() - txAmount.longValue())));
         String endingBalance = BRCurrency.getFormattedCurrencyString(getActivity(), iso, BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(item.getBalanceAfterTx())));
         String commentString = "For Love";
         String amountString = String.format("%s %s\n\nStarting Balance: %s\nEnding Balance:  %s\n\nExchange Rate on Day-Of-Transaction\n%s", amount, item.getFee() == -1 ? "" : String.format("(%s)", fee), startingBalance, endingBalance, "none for now");
