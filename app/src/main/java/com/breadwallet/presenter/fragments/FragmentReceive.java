@@ -144,6 +144,12 @@ public class FragmentReceive extends Fragment {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
+                Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+                sendIntent.setData(Uri.parse("sms:"));
+                String bitcoinUri = Utils.createBitcoinUrl(receiveAddress, 0, null, null, null);
+                sendIntent.putExtra("sms_body", bitcoinUri);
+                sendIntent.putExtra("exit_on_sent", true);
+                startActivity(sendIntent);
             }
         });
         shareButton.setOnClickListener(new View.OnClickListener() {
