@@ -173,7 +173,7 @@ public class Utils {
         Uri.Builder builder = new Uri.Builder();
         builder = builder.scheme("bitcoin");
         if (address != null && !address.isEmpty())
-            builder = builder.opaquePart(address);
+            builder = builder.appendPath(address);
         if (satoshiAmount != 0)
             builder = builder.appendQueryParameter("amount", new BigDecimal(satoshiAmount).divide(new BigDecimal(100000000), 8, BRConstants.ROUNDING_MODE).toPlainString());
         if (label != null && !label.isEmpty())
@@ -183,7 +183,7 @@ public class Utils {
         if (rURL != null && !rURL.isEmpty())
             builder = builder.appendQueryParameter("r", rURL);
 
-        return builder.build().toString();
+        return builder.build().toString().replaceFirst("/", "");
 
     }
 

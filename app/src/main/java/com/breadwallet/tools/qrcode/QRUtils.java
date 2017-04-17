@@ -1,16 +1,28 @@
 package com.breadwallet.tools.qrcode;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Environment;
+import android.util.Log;
 
+import com.breadwallet.R;
+import com.breadwallet.tools.util.Utils;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.EnumMap;
 import java.util.Map;
 
+import static android.R.attr.path;
 import static android.R.attr.width;
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
@@ -40,7 +52,7 @@ import static android.graphics.Color.WHITE;
  * THE SOFTWARE.
  */
 public class QRUtils {
-
+    private static final String TAG = QRUtils.class.getName();
 
     public static Bitmap encodeAsBitmap(String content, int dimension) {
 
@@ -63,7 +75,7 @@ public class QRUtils {
         } catch (WriterException e) {
             e.printStackTrace();
         }
-        if(result == null) return null;
+        if (result == null) return null;
         int width = result.getWidth();
         int height = result.getHeight();
         int[] pixels = new int[width * height];
@@ -87,5 +99,62 @@ public class QRUtils {
             }
         }
         return null;
+    }
+
+    public static void share(String via, Activity app, String bitcoinUri) {
+        if (app == null) {
+            Log.e(TAG, "share: app is null");
+            return;
+        }
+
+        String path = saveToExternalStorage(QRUtils.encodeAsBitmap(bitcoinUri, 500), app);
+        Uri uri;
+        if (path == null) {
+            uri = null;
+        } else {
+            File qrFile = new File(path);
+            uri = Uri.fromFile(qrFile);
+        }
+
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse(via));
+
+        if (via.equalsIgnoreCase("sms:")) {
+            intent.putExtra("sms_body", bitcoinUri);
+            intent.putExtra("exit_on_sent", true);
+        } else {
+            intent.putExtra(Intent.EXTRA_SUBJECT, app.getResources().getString(R.string.bitcoin_address));
+            intent.putExtra(Intent.EXTRA_TEXT, bitcoinUri);
+        }
+        if (uri != null)
+            intent.putExtra(Intent.EXTRA_STREAM, uri);
+        app.startActivity(Intent.createChooser(intent, app.getResources().getString(R.string.bitcoin_address)));
+    }
+
+    private static String saveToExternalStorage(Bitmap bitmapImage, Activity app) {
+        if (app == null) {
+            Log.e(TAG, "saveToExternalStorage: app is null");
+            return null;
+        }
+
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        String fileName = "qrcode.jpg";
+
+        bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, bytes);
+        File f = new File(Environment.getExternalStorageDirectory() + File.separator + fileName);
+        try {
+            boolean result = f.createNewFile();
+            FileOutputStream fo = new FileOutputStream(f);
+            fo.write(bytes.toByteArray());
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                bytes.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return f.getAbsolutePath();
     }
 }

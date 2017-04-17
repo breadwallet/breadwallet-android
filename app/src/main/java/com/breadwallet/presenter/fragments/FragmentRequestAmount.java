@@ -31,6 +31,7 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.qrcode.QRUtils;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.tools.util.BRConstants;
@@ -140,7 +141,6 @@ public class FragmentRequestAmount extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String item = parent.getItemAtPosition(position).toString();
-                Log.e(TAG, "onItemSelected: " + item);
                 isoText.setText(BRCurrency.getSymbolByIso(getActivity(), item));
                 SpringAnimator.showAnimation(isoText);
                 updateText();
@@ -199,6 +199,12 @@ public class FragmentRequestAmount extends Fragment {
                 if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
                 showKeyboard(false);
+                String iso = (String) spinner.getSelectedItem();
+                String strAmount = amountEdit.getText().toString();
+                BigDecimal bigAmount = new BigDecimal((Utils.isNullOrEmpty(strAmount) || strAmount.equalsIgnoreCase(".")) ? "0" : strAmount);
+                long amount = BRExchange.getSatoshisFromAmount(getActivity(), iso, bigAmount).longValue();
+                String bitcoinUri = Utils.createBitcoinUrl(receiveAddress, amount, null, null, null);
+                QRUtils.share("mailto:", getActivity(), bitcoinUri);
 
             }
         });
@@ -208,6 +214,12 @@ public class FragmentRequestAmount extends Fragment {
                 if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
                 showKeyboard(false);
+                String iso = (String) spinner.getSelectedItem();
+                String strAmount = amountEdit.getText().toString();
+                BigDecimal bigAmount = new BigDecimal((Utils.isNullOrEmpty(strAmount) || strAmount.equalsIgnoreCase(".")) ? "0" : strAmount);
+                long amount = BRExchange.getSatoshisFromAmount(getActivity(), iso, bigAmount).longValue();
+                String bitcoinUri = Utils.createBitcoinUrl(receiveAddress, amount, null, null, null);
+                QRUtils.share("sms:", getActivity(), bitcoinUri);
             }
         });
         shareButton.setOnClickListener(new View.OnClickListener() {

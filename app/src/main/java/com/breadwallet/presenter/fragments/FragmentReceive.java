@@ -120,8 +120,8 @@ public class FragmentReceive extends Fragment {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
-
-                share("mailto:");
+                String bitcoinUri = Utils.createBitcoinUrl(receiveAddress, 0, null, null, null);
+                QRUtils.share("mailto:", getActivity(), bitcoinUri);
 
             }
         });
@@ -130,8 +130,8 @@ public class FragmentReceive extends Fragment {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
-
-                share("sms:");
+                String bitcoinUri = Utils.createBitcoinUrl(receiveAddress, 0, null, null, null);
+                QRUtils.share("sms:", getActivity(), bitcoinUri);
             }
         });
         shareButton.setOnClickListener(new View.OnClickListener() {
@@ -265,64 +265,5 @@ public class FragmentReceive extends Fragment {
         super.onPause();
     }
 
-
-    private static String saveToExternalStorage(Bitmap bitmapImage, Activity app) {
-        if (app == null) {
-            Log.e(TAG, "saveToExternalStorage: app is null");
-            return null;
-        }
-
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        String fileName = "qrcode.jpg";
-
-        bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, bytes);
-        File f = new File(Environment.getExternalStorageDirectory() + File.separator + fileName);
-        try {
-            boolean result = f.createNewFile();
-            Log.e(TAG, "saveToExternalStorage: created? : " + result);
-            FileOutputStream fo = new FileOutputStream(f);
-            fo.write(bytes.toByteArray());
-            Log.e(TAG, "saveToExternalStorage: f.getTotalSpace(): " + f.getTotalSpace());
-            Log.e(TAG, "saveToExternalStorage: f.getFreeSpace(): " + f.getFreeSpace());
-            Log.e(TAG, "saveToExternalStorage: f.getUsableSpace(): " + f.getUsableSpace());
-            Log.e(TAG, "saveToExternalStorage: f.length(): " + f.length());
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                bytes.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return f.getAbsolutePath();
-    }
-
-    private void share(String via) {
-        String bitcoinUri = Utils.createBitcoinUrl(receiveAddress, 0, null, null, null);
-
-        String path = saveToExternalStorage(QRUtils.encodeAsBitmap(bitcoinUri, 500), getActivity());
-        Uri uri;
-        if (path == null) {
-            uri = null;
-        } else {
-            File qrFile = new File(path);
-            uri = Uri.fromFile(qrFile);
-        }
-
-        Intent intent = new Intent(Intent.ACTION_SENDTO);
-        intent.setData(Uri.parse(via));
-
-        if (via.equalsIgnoreCase("sms:")) {
-            intent.putExtra("sms_body", bitcoinUri);
-            intent.putExtra("exit_on_sent", true);
-        } else {
-            intent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.bitcoin_address));
-            intent.putExtra(Intent.EXTRA_TEXT, bitcoinUri);
-        }
-        if (uri != null)
-            intent.putExtra(Intent.EXTRA_STREAM, uri);
-        startActivity(Intent.createChooser(intent, getResources().getString(R.string.bitcoin_address)));
-    }
 
 }
