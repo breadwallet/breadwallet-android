@@ -37,6 +37,7 @@ import com.breadwallet.tools.qrcode.QRUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -119,12 +120,11 @@ public class FragmentReceive extends Fragment {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
-                Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-                        "mailto", "", null));
+
                 String bitcoinUri = Utils.createBitcoinUrl(receiveAddress, 0, null, null, null);
-                emailIntent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.bitcoin_address));
-                emailIntent.putExtra(Intent.EXTRA_TEXT, bitcoinUri);
-                String path = saveToExternalStorage(QRUtils.encodeAsBitmap(bitcoinUri, 500));
+
+                String path = saveToExternalStorage(QRUtils.encodeAsBitmap(bitcoinUri, 500), getActivity());
+                Log.e(TAG, "onClick: path: " + path);
                 Uri uri;
                 if (path == null) {
                     uri = null;
@@ -132,7 +132,12 @@ public class FragmentReceive extends Fragment {
                     File qrFile = new File(path);
                     uri = Uri.fromFile(qrFile);
                 }
+                Log.e(TAG, "onClick: uri: " + uri);
 
+                Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
+                emailIntent.setType("application/image");
+                emailIntent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.bitcoin_address));
+                emailIntent.putExtra(Intent.EXTRA_TEXT, bitcoinUri);
                 if (uri != null)
                     emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
                 startActivity(Intent.createChooser(emailIntent, getResources().getString(R.string.bitcoin_address)));
@@ -283,31 +288,37 @@ public class FragmentReceive extends Fragment {
         super.onPause();
     }
 
-    private static String saveToExternalStorage(Bitmap bitmapImage) {
-        File directory = Environment.getExternalStorageDirectory();
-        if (directory == null) {
-            Log.e(TAG, "saveToExternalStorage: app.getExternalCacheDir() is null");
+
+    private static String saveToExternalStorage(Bitmap bitmapImage, Activity app) {
+        if (app == null) {
+            Log.e(TAG, "saveToExternalStorage: app is null");
             return null;
         }
-        // Create imageDir
-        File mypath = new File(directory, "qrcode.jpg");
 
-        FileOutputStream fos = null;
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        String fileName = "qrcode.jpg";
+
+        bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, bytes);
+        File f = new File(Environment.getExternalStorageDirectory() + File.separator + fileName);
         try {
-            fos = new FileOutputStream(mypath);
-            // Use the compress method on the BitMap object to write image to the OutputStream
-            bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            boolean result = f.createNewFile();
+            Log.e(TAG, "saveToExternalStorage: created? : " + result);
+            FileOutputStream fo = new FileOutputStream(f);
+            fo.write(bytes.toByteArray());
+            Log.e(TAG, "saveToExternalStorage: f.getTotalSpace(): " + f.getTotalSpace());
+            Log.e(TAG, "saveToExternalStorage: f.getFreeSpace(): " + f.getFreeSpace());
+            Log.e(TAG, "saveToExternalStorage: f.getUsableSpace(): " + f.getUsableSpace());
+            Log.e(TAG, "saveToExternalStorage: f.length(): " + f.length());
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             try {
-                if (fos != null)
-                    fos.close();
+                bytes.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        return mypath.getAbsolutePath();
+        return f.getAbsolutePath();
     }
 
 }

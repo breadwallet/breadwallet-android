@@ -149,6 +149,7 @@
             android:launchMode="singleInstance"
             android:screenOrientation="portrait">
         </activity>
+
     </application>
 
 </manifest>
