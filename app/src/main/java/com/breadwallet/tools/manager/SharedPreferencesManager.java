@@ -131,6 +131,16 @@ public class SharedPreferencesManager {
         editor.putString(BRConstants.RECEIVE_ADDRESS, tmpAddr);
         editor.apply();
     }
+    public static String getWalletName(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString(BRConstants.WALLET_NAME, "My Bread");
+    }
+
+    public static void putWalletName(Context ctx, String name) {
+        SharedPreferences.Editor editor = ctx.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE).edit();
+        editor.putString(BRConstants.WALLET_NAME, name);
+        editor.apply();
+    }
 
     public static String getFirstAddress(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);

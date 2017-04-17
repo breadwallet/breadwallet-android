@@ -36,6 +36,7 @@ import com.breadwallet.presenter.activities.settings.SettingsActivity;
 import com.breadwallet.presenter.entities.BRMenuItem;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
@@ -79,6 +80,7 @@ public class FragmentManage extends Fragment {
     public LinearLayout signalLayout;
     public EditText walletNameText;
     public TextView creationTimeText;
+    private OnNameChanged onNameChanged;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -92,20 +94,7 @@ public class FragmentManage extends Fragment {
         walletNameText = (EditText) rootView.findViewById(R.id.wallet_name_label);
         creationTimeText = (TextView) rootView.findViewById(R.id.wallet_creation_label);
 
-        walletNameText.addTextChangedListener(new TextWatcher() {
-
-            public void afterTextChanged(Editable s) {}
-
-            public void beforeTextChanged(CharSequence s, int start,
-                                          int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start,
-                                      int before, int count) {
-
-                walletNameText.setText(s);
-            }
-        });
+        walletNameText.setText(SharedPreferencesManager.getWalletName(getContext()));
 
         long time = (long) KeyStoreManager.getWalletCreationTime(getContext()) * 1000;
         Log.e(TAG, "onCreateView: time:" + time);
@@ -191,7 +180,16 @@ public class FragmentManage extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        SharedPreferencesManager.putWalletName(getActivity(), walletNameText.getText().toString());
+
     }
 
+    public interface OnNameChanged {
 
+        void onNameChanged(String name);
+    }
+
+    public void setOnNameChanged(OnNameChanged onNameChanged) {
+        this.onNameChanged = onNameChanged;
+    }
 }

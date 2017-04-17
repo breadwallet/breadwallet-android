@@ -77,7 +77,7 @@ import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
  */
 
 public class BreadActivity extends AppCompatActivity implements BRWalletManager.OnBalanceChanged,
-        BRPeerManager.OnTxStatusUpdate, SharedPreferencesManager.OnIsoChangedListener, TransactionDataSource.OnTxAddedListener {
+        BRPeerManager.OnTxStatusUpdate, SharedPreferencesManager.OnIsoChangedListener, TransactionDataSource.OnTxAddedListener, FragmentManage.OnNameChanged {
 
     private static final String TAG = BreadActivity.class.getName();
 
@@ -232,7 +232,9 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
                 SpringAnimator.showAnimation(v);
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(0, 0, 0, R.animator.plain_300);
-                transaction.add(android.R.id.content, new FragmentManage(), FragmentManage.class.getName());
+                FragmentManage fragmentManage = new FragmentManage();
+                fragmentManage.setOnNameChanged(BreadActivity.this);
+                transaction.add(android.R.id.content, fragmentManage, FragmentManage.class.getName());
                 transaction.addToBackStack(null);
                 transaction.commit();
             }
@@ -554,5 +556,10 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
             // other 'case' lines to check for other
             // permissions this app might request
         }
+    }
+
+    @Override
+    public void onNameChanged(String name) {
+
     }
 }
