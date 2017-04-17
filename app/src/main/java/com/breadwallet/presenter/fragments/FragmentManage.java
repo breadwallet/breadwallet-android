@@ -12,14 +12,18 @@ import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.format.DateUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.OvershootInterpolator;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -73,7 +77,7 @@ public class FragmentManage extends Fragment {
     public TextView mTitle;
     public RelativeLayout layout;
     public LinearLayout signalLayout;
-    public TextView walletNameText;
+    public EditText walletNameText;
     public TextView creationTimeText;
 
     @Override
@@ -85,13 +89,21 @@ public class FragmentManage extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_manage, container, false);
         layout = (RelativeLayout) rootView.findViewById(R.id.layout);
         signalLayout = (LinearLayout) rootView.findViewById(R.id.signal_layout);
-        walletNameText = (TextView) rootView.findViewById(R.id.wallet_name_label);
+        walletNameText = (EditText) rootView.findViewById(R.id.wallet_name_label);
         creationTimeText = (TextView) rootView.findViewById(R.id.wallet_creation_label);
 
-        walletNameText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        walletNameText.addTextChangedListener(new TextWatcher() {
 
+            public void afterTextChanged(Editable s) {}
+
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+
+                walletNameText.setText(s);
             }
         });
 
