@@ -75,6 +75,11 @@
             android:screenOrientation="portrait">
         </activity>
         <activity
+            android:name=".presenter.activities.IntroRestoreActivity"
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
             android:name=".presenter.activities.IntroReEnterPinActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait">
