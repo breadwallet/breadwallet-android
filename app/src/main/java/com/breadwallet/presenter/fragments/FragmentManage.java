@@ -202,7 +202,7 @@ public class FragmentManage extends Fragment {
     public void onPause() {
         super.onPause();
         SharedPreferencesManager.putWalletName(getActivity(), walletNameText.getText().toString());
-        ((BreadWalletApp)getActivity().getApplicationContext()).hideKeyboard();
+        Utils.hideKeyboard(getActivity());
 
     }
 

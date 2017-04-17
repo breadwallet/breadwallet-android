@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.View;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
@@ -183,6 +184,17 @@ public class Utils {
             builder = builder.appendQueryParameter("r", rURL);
 
         return builder.build().toString().replaceFirst("/", "");
+
+    }
+
+    public static void hideKeyboard(Context app) {
+        if (app != null) {
+            View view = ((Activity) app).getCurrentFocus();
+            if (view != null) {
+                InputMethodManager imm = (InputMethodManager) app.getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+        }
 
     }
 

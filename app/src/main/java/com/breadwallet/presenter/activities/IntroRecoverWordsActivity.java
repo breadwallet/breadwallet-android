@@ -122,7 +122,7 @@ public class IntroRecoverWordsActivity extends Activity {
                 String cleanPhrase = WordsReader.cleanPhrase(app, phraseToCheck);
 
                 if (BRWalletManager.getInstance().validatePhrase(app, cleanPhrase)) {
-                    ((BreadWalletApp) app.getApplication()).hideKeyboard(app);
+                   Utils.hideKeyboard(app);
                     BRWalletManager m = BRWalletManager.getInstance();
                     m.wipeWalletButKeystore(app);
                     m.wipeKeyStore(app);
