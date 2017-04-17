@@ -121,24 +121,7 @@ public class FragmentReceive extends Fragment {
                 if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
 
-                String bitcoinUri = Utils.createBitcoinUrl(receiveAddress, 0, null, null, null);
-
-                String path = saveToExternalStorage(QRUtils.encodeAsBitmap(bitcoinUri, 500), getActivity());
-                Uri uri;
-                if (path == null) {
-                    uri = null;
-                } else {
-                    File qrFile = new File(path);
-                    uri = Uri.fromFile(qrFile);
-                }
-
-                Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
-                emailIntent.setData(Uri.parse("mailto:"));
-                emailIntent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.bitcoin_address));
-                emailIntent.putExtra(Intent.EXTRA_TEXT, bitcoinUri);
-                if (uri != null)
-                    emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
-                startActivity(Intent.createChooser(emailIntent, getResources().getString(R.string.bitcoin_address)));
+                share("mailto:");
 
             }
         });
@@ -147,21 +130,8 @@ public class FragmentReceive extends Fragment {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
-                Intent sendIntent = new Intent(Intent.ACTION_VIEW);
-                sendIntent.setData(Uri.parse("sms:"));
-                String bitcoinUri = Utils.createBitcoinUrl(receiveAddress, 0, null, null, null);
-                String path = saveToExternalStorage(QRUtils.encodeAsBitmap(bitcoinUri, 500), getActivity());
-                Uri uri;
-                if (path == null) {
-                    uri = null;
-                } else {
-                    File qrFile = new File(path);
-                    uri = Uri.fromFile(qrFile);
-                }
-                sendIntent.putExtra("sms_body", bitcoinUri);
-                sendIntent.putExtra("exit_on_sent", true);
-                sendIntent.setType("image/*");
-                startActivity(sendIntent);
+
+                share("sms:");
             }
         });
         shareButton.setOnClickListener(new View.OnClickListener() {
@@ -326,6 +296,33 @@ public class FragmentReceive extends Fragment {
             }
         }
         return f.getAbsolutePath();
+    }
+
+    private void share(String via) {
+        String bitcoinUri = Utils.createBitcoinUrl(receiveAddress, 0, null, null, null);
+
+        String path = saveToExternalStorage(QRUtils.encodeAsBitmap(bitcoinUri, 500), getActivity());
+        Uri uri;
+        if (path == null) {
+            uri = null;
+        } else {
+            File qrFile = new File(path);
+            uri = Uri.fromFile(qrFile);
+        }
+
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse(via));
+
+        if (via.equalsIgnoreCase("sms:")) {
+            intent.putExtra("sms_body", bitcoinUri);
+            intent.putExtra("exit_on_sent", true);
+        } else {
+            intent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.bitcoin_address));
+            intent.putExtra(Intent.EXTRA_TEXT, bitcoinUri);
+        }
+        if (uri != null)
+            intent.putExtra(Intent.EXTRA_STREAM, uri);
+        startActivity(Intent.createChooser(intent, getResources().getString(R.string.bitcoin_address)));
     }
 
 }
