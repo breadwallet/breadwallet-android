@@ -124,7 +124,6 @@ public class FragmentReceive extends Fragment {
                 String bitcoinUri = Utils.createBitcoinUrl(receiveAddress, 0, null, null, null);
 
                 String path = saveToExternalStorage(QRUtils.encodeAsBitmap(bitcoinUri, 500), getActivity());
-                Log.e(TAG, "onClick: path: " + path);
                 Uri uri;
                 if (path == null) {
                     uri = null;
@@ -132,10 +131,9 @@ public class FragmentReceive extends Fragment {
                     File qrFile = new File(path);
                     uri = Uri.fromFile(qrFile);
                 }
-                Log.e(TAG, "onClick: uri: " + uri);
 
-                Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
-                emailIntent.setType("application/image");
+                Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+                emailIntent.setData(Uri.parse("mailto:"));
                 emailIntent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.bitcoin_address));
                 emailIntent.putExtra(Intent.EXTRA_TEXT, bitcoinUri);
                 if (uri != null)
@@ -152,8 +150,17 @@ public class FragmentReceive extends Fragment {
                 Intent sendIntent = new Intent(Intent.ACTION_VIEW);
                 sendIntent.setData(Uri.parse("sms:"));
                 String bitcoinUri = Utils.createBitcoinUrl(receiveAddress, 0, null, null, null);
+                String path = saveToExternalStorage(QRUtils.encodeAsBitmap(bitcoinUri, 500), getActivity());
+                Uri uri;
+                if (path == null) {
+                    uri = null;
+                } else {
+                    File qrFile = new File(path);
+                    uri = Uri.fromFile(qrFile);
+                }
                 sendIntent.putExtra("sms_body", bitcoinUri);
                 sendIntent.putExtra("exit_on_sent", true);
+                sendIntent.setType("image/*");
                 startActivity(sendIntent);
             }
         });
