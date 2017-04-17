@@ -20,6 +20,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.IntroRestoreActivity;
 import com.breadwallet.presenter.entities.BRSettingsItem;
 import com.breadwallet.wallet.BRWalletManager;
 
@@ -127,6 +128,9 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.e(TAG, "onClick: Restore Breadwallet");
+                Intent intent = new Intent(SettingsActivity.this, IntroRestoreActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         }, false));
 
