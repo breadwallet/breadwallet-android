@@ -67,6 +67,7 @@
     <string name="refresh">refresh</string>
     <!-- android -->
     <string name="breadwallet_v">breadwallet %1$d</string>
+    <string name="wallet_created_on">You created your wallet on %1$s</string>
     <!-- android -->
     <string name="copyright_u00a9_2016_breadwallet_llc">copyright © 2016 breadwallet llc</string>
     <!-- android -->

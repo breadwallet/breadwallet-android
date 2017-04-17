@@ -266,7 +266,7 @@ public class BRPeerManager {
                         if (app.syncProgressBar != null)
                             app.syncProgressBar.setProgress((int) (progressStatus * 100));
                         if (app.syncDate != null)
-                            app.syncDate.setText(Utils.formatTimeStamp(app, lastBlockTimeStamp));
+                            app.syncDate.setText(Utils.formatTimeStamp( lastBlockTimeStamp));
                     }
                 });
             }
@@ -290,7 +290,7 @@ public class BRPeerManager {
                             if (tmp.syncProgressBar != null)
                                 tmp.syncProgressBar.setProgress((int) (progressStatus * 100));
                             if (tmp.syncDate != null)
-                                tmp.syncDate.setText(Utils.formatTimeStamp(tmp, lastBlockTimeStamp));
+                                tmp.syncDate.setText(Utils.formatTimeStamp(lastBlockTimeStamp));
                         }
                     });
                     try {

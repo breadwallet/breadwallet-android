@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.entities.TransactionListItem;
+import com.breadwallet.presenter.fragments.FragmentManage;
 import com.breadwallet.presenter.fragments.FragmentMenu;
 import com.breadwallet.tools.adapter.TransactionListAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -88,6 +89,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
 
     private TextView primaryPrice;
     private TextView secondaryPrice;
+    private TextView manageText;
     private TextView emptyTip;
     private TextView syncLabel;
     public TextView syncDate;
@@ -223,6 +225,18 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
                 transaction.commit();
             }
         });
+        manageText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!BRAnimator.isClickAllowed()) return;
+                SpringAnimator.showAnimation(v);
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.setCustomAnimations(0, 0, 0, R.animator.plain_300);
+                transaction.add(android.R.id.content, new FragmentManage(), FragmentManage.class.getName());
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
+        });
         primaryPrice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -329,6 +343,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     private void initializeViews() {
         sendButton = (LinearLayout) findViewById(R.id.send_layout);
         receiveButton = (LinearLayout) findViewById(R.id.receive_layout);
+        manageText = (TextView) findViewById(R.id.manage_text);
         menuButton = (LinearLayout) findViewById(R.id.menu_layout);
         primaryPrice = (TextView) findViewById(R.id.primary_price);
         secondaryPrice = (TextView) findViewById(R.id.secondary_price);
@@ -343,6 +358,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         toolbarLayout = (LinearLayout) findViewById(R.id.toolbar_layout);
         syncingLayout = (ConstraintLayout) findViewById(R.id.syncing_layout);
         recyclerLayout = (LinearLayout) findViewById(R.id.recycler_layout);
+
     }
 
     private void togglePriceTexts() {
