@@ -357,7 +357,7 @@ JNIEXPORT jobjectArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTr
         jint JblockHeight = tempTx->blockHeight;
         UInt256 txid = tempTx->txHash;
         jstring JtxHash = (*env)->NewStringUTF(env, u256_hex_encode(txid));
-        __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "tx: %s is valid: %d", u256_hex_encode(txid), BRWalletTransactionIsValid(_wallet, tempTx));
+//        __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "tx: %s is valid: %d", u256_hex_encode(txid), BRWalletTransactionIsValid(_wallet, tempTx));
         jlong Jsent = (jlong) BRWalletAmountSentByTx(_wallet, tempTx);
         jlong Jreceived = (jlong) BRWalletAmountReceivedFromTx(_wallet, tempTx);
         jlong Jfee = (jlong) BRWalletFeeForTx(_wallet, tempTx);

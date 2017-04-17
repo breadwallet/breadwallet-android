@@ -90,6 +90,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     private TextView primaryPrice;
     private TextView secondaryPrice;
     private TextView manageText;
+    private TextView walletName;
     private TextView emptyTip;
     private TextView syncLabel;
     public TextView syncDate;
@@ -282,6 +283,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         appInBackground = false;
         app = this;
 
+        walletName.setText(SharedPreferencesManager.getWalletName(this));
         CurrencyFetchManager currencyManager = CurrencyFetchManager.getInstance(this);
         currencyManager.startTimer();
 
@@ -346,6 +348,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         sendButton = (LinearLayout) findViewById(R.id.send_layout);
         receiveButton = (LinearLayout) findViewById(R.id.receive_layout);
         manageText = (TextView) findViewById(R.id.manage_text);
+        walletName = (TextView) findViewById(R.id.wallet_name_text);
         menuButton = (LinearLayout) findViewById(R.id.menu_layout);
         primaryPrice = (TextView) findViewById(R.id.primary_price);
         secondaryPrice = (TextView) findViewById(R.id.secondary_price);
@@ -560,6 +563,6 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
 
     @Override
     public void onNameChanged(String name) {
-
+        walletName.setText(name);
     }
 }

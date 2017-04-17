@@ -30,7 +30,9 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.activities.settings.SecurityCenterActivity;
 import com.breadwallet.presenter.activities.settings.SettingsActivity;
 import com.breadwallet.presenter.entities.BRMenuItem;
@@ -94,10 +96,29 @@ public class FragmentManage extends Fragment {
         walletNameText = (EditText) rootView.findViewById(R.id.wallet_name_label);
         creationTimeText = (TextView) rootView.findViewById(R.id.wallet_creation_label);
 
+        layout.clearFocus();
+
         walletNameText.setText(SharedPreferencesManager.getWalletName(getContext()));
 
+        walletNameText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (onNameChanged != null) onNameChanged.onNameChanged(s.toString());
+                SharedPreferencesManager.putWalletName(getActivity(), s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
         long time = (long) KeyStoreManager.getWalletCreationTime(getContext()) * 1000;
-        Log.e(TAG, "onCreateView: time:" + time);
         // multiply by 1000, make it millis, since the Wallet creation time is seconds.
         String creationDate = Utils.formatTimeStamp(time);
 
@@ -181,6 +202,7 @@ public class FragmentManage extends Fragment {
     public void onPause() {
         super.onPause();
         SharedPreferencesManager.putWalletName(getActivity(), walletNameText.getText().toString());
+        ((BreadWalletApp)getActivity().getApplicationContext()).hideKeyboard();
 
     }
 

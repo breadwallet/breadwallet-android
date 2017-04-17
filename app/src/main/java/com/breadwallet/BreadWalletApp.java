@@ -95,18 +95,6 @@ public class BreadWalletApp extends Application {
         }, 2 * 1000);
     }
 
-    public void hideKeyboard(Context app) {
-        if (app != null) {
-            View view = ((Activity) app).getCurrentFocus();
-            if (view != null) {
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                return;
-            }
-        }
-        Log.e(TAG, "hideKeyboard: FAILED");
-    }
-
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);

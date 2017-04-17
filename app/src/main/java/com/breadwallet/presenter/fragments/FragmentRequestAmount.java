@@ -241,6 +241,14 @@ public class FragmentRequestAmount extends Fragment {
             }
         });
 
+        backgroundLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!BRAnimator.isClickAllowed()) return;
+                getActivity().onBackPressed();
+            }
+        });
+
     }
 
     private void toggleShareButtonsVisibility() {

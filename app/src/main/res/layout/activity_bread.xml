@@ -38,7 +38,7 @@
                 android:layout_height="match_parent">
 
                 <TextView
-                    android:id="@+id/textView12"
+                    android:id="@+id/wallet_name_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
@@ -99,9 +99,9 @@
                     android:textColor="@color/white"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="@+id/textView12"
+                    app:layout_constraintBottom_toBottomOf="@+id/wallet_name_text"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/textView12"/>
+                    app:layout_constraintTop_toTopOf="@+id/wallet_name_text"/>
 
                 <ImageButton
                     android:id="@+id/search_icon"

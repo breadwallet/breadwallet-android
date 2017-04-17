@@ -13,7 +13,6 @@
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
         android:background="@drawable/menu_layout"
-        android:clickable="true"
         android:orientation="vertical">
 
         <TextView
@@ -53,7 +52,6 @@
             android:layout_marginStart="16dp"
             android:text="My Bread"
             android:textColor="@color/almost_black"
-            android:textIsSelectable="true"
             android:textSize="18sp"/>
 
         <View
@@ -69,7 +67,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:text="Your wallet name only appears in your account transaction history and cannot be seen by anyone you pay or receive money from."
-            android:textColor="@color/light_gray"
+            android:textColor="@color/gray"
             android:textSize="16sp"
             />
 
@@ -81,7 +79,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:text="You created your wallet on ..."
-            android:textColor="@color/light_gray"
+            android:textColor="@color/gray"
             android:textSize="16sp"
             />
 
