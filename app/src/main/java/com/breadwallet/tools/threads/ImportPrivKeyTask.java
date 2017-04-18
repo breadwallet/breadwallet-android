@@ -116,6 +116,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
                                 }
                             }, null, null, 0);
                 }
+                brDialogView.dismissWithAnimation();
 
             }
         }, new BRDialogView.BROnClickListener() {
