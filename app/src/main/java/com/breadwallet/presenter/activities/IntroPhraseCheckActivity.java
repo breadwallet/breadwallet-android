@@ -8,6 +8,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.util.SparseArray;
 import android.util.TypedValue;
 import android.view.View;
@@ -57,10 +58,11 @@ public class IntroPhraseCheckActivity extends Activity {
             }
 
             public void onPageSelected(int position) {
-                if(position == 0)
-                    previousButton.setEnabled(false);
+                Log.e(TAG, "onPageSelected: " + position);
+                if (position == 0)
+                    setButtonEnabled(false);
                 else
-                    previousButton.setEnabled(true);
+                    setButtonEnabled(false);
                 updateItemIndexText();
                 // Check if this is the page you want.
             }
