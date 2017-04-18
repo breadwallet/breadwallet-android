@@ -99,7 +99,7 @@
             android:layout_below="@+id/textView2"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="32dp"
-            app:srcCompat="@drawable/import_symbol"/>
+            android:src="@drawable/import_symbol"/>
 
     </RelativeLayout>
 
