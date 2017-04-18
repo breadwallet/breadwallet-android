@@ -137,32 +137,23 @@ public class IntroRecoverWordsActivity extends Activity {
 //                if (alertDialog.isShowing()) {
 //                    alertDialog.dismiss();
 //                }
-                Activity app = IntroRecoverWordsActivity.this;
+                final Activity app = IntroRecoverWordsActivity.this;
 
                 String phraseToCheck = getPhrase();
                 if (phraseToCheck == null) return;
                 String cleanPhrase = WordsReader.cleanPhrase(app, phraseToCheck);
 
                 if (BRWalletManager.getInstance().validatePhrase(app, cleanPhrase)) {
-                    Utils.hideKeyboard(app);
-                    BRWalletManager m = BRWalletManager.getInstance();
-                    m.wipeWalletButKeystore(app);
-                    m.wipeKeyStore(app);
+
                     if (restore) {
-                        if (KeyStoreManager.phraseIsValid(cleanPhrase, IntroRecoverWordsActivity.this)) {
-                            AuthManager.getInstance().authPrompt(IntroRecoverWordsActivity.this, "Auth needed", "Please authenticate before wiping the wallet", true, new BRAuthCompletion() {
-                                @Override
-                                public void onComplete() {
-                                    Intent intent = new Intent(IntroRecoverWordsActivity.this, IntroActivity.class);
-                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                    startActivity(intent);
-                                }
-
-                                @Override
-                                public void onCancel() {
-
-                                }
-                            });
+                        if (KeyStoreManager.phraseIsValid(cleanPhrase, app)) {
+                            Utils.hideKeyboard(app);
+                            BRWalletManager m = BRWalletManager.getInstance();
+                            m.wipeWalletButKeystore(app);
+                            m.wipeKeyStore(app);
+                            Intent intent = new Intent(app, IntroActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
                         } else {
                             BreadDialog.showCustomDialog(app, "", "The entered phrase does not match your wallet's phrase", "Close", null, new BRDialogView.BROnClickListener() {
                                 @Override
@@ -173,6 +164,10 @@ public class IntroRecoverWordsActivity extends Activity {
                         }
 
                     } else {
+                        Utils.hideKeyboard(app);
+                        BRWalletManager m = BRWalletManager.getInstance();
+                        m.wipeWalletButKeystore(app);
+                        m.wipeKeyStore(app);
                         PostAuthenticationProcessor.getInstance().setPhraseForKeyStore(cleanPhrase);
                         PostAuthenticationProcessor.getInstance().onRecoverWalletAuth(app, false);
                         SharedPreferencesManager.putAllowSpend(app, false);
