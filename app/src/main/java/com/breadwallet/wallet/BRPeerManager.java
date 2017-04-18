@@ -266,7 +266,7 @@ public class BRPeerManager {
                         if (app.syncProgressBar != null)
                             app.syncProgressBar.setProgress((int) (progressStatus * 100));
                         if (app.syncDate != null)
-                            app.syncDate.setText(Utils.formatTimeStamp( lastBlockTimeStamp));
+                            app.syncDate.setText(Utils.formatTimeStamp(lastBlockTimeStamp));
                     }
                 });
             }
@@ -313,18 +313,19 @@ public class BRPeerManager {
         }
     }
 
-    public void refreshConnection() {
+    public void networkChanged(boolean isOnline) {
 
 //        final RelativeLayout networkErrorBar = (RelativeLayout) ctx.findViewById(R.id.main_internet_status_bar);
 //        if (networkErrorBar == null) return;
 //
 //        final boolean isConnected = ((BreadWalletApp) ctx.getApplication()).hasInternetAccess();
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                BRPeerManager.getInstance(ctx).connect();
-//            }
-//        }).start();
+        if (isOnline)
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    BRPeerManager.getInstance().connect();
+                }
+            }).start();
 //
 //        if (!isConnected) {
 //            ctx.runOnUiThread(new Runnable() {

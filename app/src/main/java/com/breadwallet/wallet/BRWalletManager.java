@@ -262,7 +262,7 @@ public class BRWalletManager {
                 public void run() {
 
                     final AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
-                    builder.setTitle("password protected key");
+//                    builder.setTitle("password protected key");
 
                     final View input = ((Activity) ctx).getLayoutInflater().inflate(R.layout.view_bip38password_dialog, null);
                     // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
@@ -297,7 +297,7 @@ public class BRWalletManager {
                                 ((Activity) ctx).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        BRToast.showCustomToast(ctx, ctx.getString(R.string.checking_privkey_balance), BreadActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, R.drawable.toast_layout_blue);
+                                        BRToast.showCustomToast(ctx, ctx.getString(R.string.checking_privkey_balance), 500, Toast.LENGTH_LONG, R.drawable.toast_layout_blue);
                                     }
                                 });
                             if (editText == null) {
@@ -305,15 +305,23 @@ public class BRWalletManager {
                                 return;
                             }
 
-                            String pass = editText.getText().toString();
-                            String decryptedKey = decryptBip38Key(privKey, pass);
+                            final String pass = editText.getText().toString();
+                            Log.e(TAG, "onClick: before");
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    String decryptedKey = decryptBip38Key(privKey, pass);
+                                    Log.e(TAG, "onClick: after");
 
-                            if (decryptedKey.equals("")) {
-                                SpringAnimator.showAnimation(input);
-                                confirmSweep(ctx, privKey);
-                            } else {
-                                confirmSweep(ctx, decryptedKey);
-                            }
+                                    if (decryptedKey.equals("")) {
+                                        SpringAnimator.showAnimation(input);
+                                        confirmSweep(ctx, privKey);
+                                    } else {
+                                        confirmSweep(ctx, decryptedKey);
+                                    }
+                                }
+                            }).start();
+
 
                         }
                     });
@@ -895,19 +903,19 @@ public class BRWalletManager {
     }
 
     public void offerToChangeTheAmount(Context app, String title) {
-        BreadDialog.showCustomDialog(app, title, app.getString(R.string.change_payment_amount),
-                app.getString(R.string.change), app.getString(R.string.cancel), new BRDialogView.BROnClickListener() {
-                    @Override
-                    public void onClick(BRDialogView brDialogView) {
-//                BRAnimator.animateScanResultFragment();
-                        brDialogView.dismissWithAnimation();
-                    }
-                }, new BRDialogView.BROnClickListener() {
-                    @Override
-                    public void onClick(BRDialogView brDialogView) {
-                        brDialogView.dismissWithAnimation();
-                    }
-                }, null, 0);
+//        BreadDialog.showCustomDialog(app, title, app.getString(R.string.change_payment_amount),
+//                app.getString(R.string.change), app.getString(R.string.cancel), new BRDialogView.BROnClickListener() {
+//                    @Override
+//                    public void onClick(BRDialogView brDialogView) {
+////                BRAnimator.animateScanResultFragment();
+//                        brDialogView.dismissWithAnimation();
+//                    }
+//                }, new BRDialogView.BROnClickListener() {
+//                    @Override
+//                    public void onClick(BRDialogView brDialogView) {
+//                        brDialogView.dismissWithAnimation();
+//                    }
+//                }, null, 0);
     }
 
 //    public void animateSavePhraseFlow() {

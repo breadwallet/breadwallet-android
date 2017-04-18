@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -41,6 +43,7 @@ import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRExchange;
+import com.breadwallet.tools.util.NetworkChangeReceiver;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
@@ -88,6 +91,8 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     private LinearLayout menuButton;
     private static BreadActivity app;
     public static final Point screenParametersPoint = new Point();
+
+    NetworkChangeReceiver mNetworkStateReceiver;
 
     private TextView primaryPrice;
     private TextView secondaryPrice;
@@ -288,6 +293,9 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         walletName.setText(SharedPreferencesManager.getWalletName(this));
         CurrencyFetchManager currencyManager = CurrencyFetchManager.getInstance(this);
         currencyManager.startTimer();
+        if(mNetworkStateReceiver == null) mNetworkStateReceiver = new NetworkChangeReceiver();
+        IntentFilter mNetworkStateFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(mNetworkStateReceiver , mNetworkStateFilter);
 
         if (!BRWalletManager.getInstance().isCreated()) {
             new Thread(new Runnable() {
@@ -320,6 +328,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         super.onPause();
         appInBackground = true;
         CurrencyFetchManager.getInstance(this).stopTimerTask();
+
     }
 
     @Override
@@ -333,6 +342,8 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         super.onDestroy();
 
         //sync the kv stores
+
+        unregisterReceiver(mNetworkStateReceiver);
 
         if (PLATFORM_ON) {
             new Thread(new Runnable() {
