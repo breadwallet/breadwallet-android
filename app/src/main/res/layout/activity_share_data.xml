@@ -22,7 +22,7 @@
         app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
-        android:id="@+id/pin_description"
+        android:id="@+id/description"
         android:layout_width="296dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
@@ -57,8 +57,8 @@
         android:text="Share Anonymous Data"
         android:textColor="@color/almost_black"
         android:textStyle="bold"
-        app:layout_constraintLeft_toLeftOf="@+id/pin_description"
-        app:layout_constraintTop_toBottomOf="@+id/pin_description"/>
+        app:layout_constraintLeft_toLeftOf="@+id/description"
+        app:layout_constraintTop_toBottomOf="@+id/description"/>
 
     <ToggleButton
         android:id="@+id/toggleButton"

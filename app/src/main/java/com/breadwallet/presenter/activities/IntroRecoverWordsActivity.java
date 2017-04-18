@@ -21,10 +21,12 @@ import android.widget.TextView;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRDialogView;
+import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
@@ -36,6 +38,7 @@ import java.util.List;
 import static com.breadwallet.R.color.dark_blue;
 import static com.breadwallet.R.color.extra_light_gray;
 import static com.breadwallet.tools.util.WordsReader.getAllWordLists;
+import static java.lang.Boolean.getBoolean;
 import okhttp3.internal.Util;
 
 public class IntroRecoverWordsActivity extends Activity {
@@ -57,6 +60,12 @@ public class IntroRecoverWordsActivity extends Activity {
     private EditText word11;
     private EditText word12;
 
+    private TextView title;
+    private TextView description;
+
+    //will be true if this screen was called from the restore screen
+    private boolean restore = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +75,9 @@ public class IntroRecoverWordsActivity extends Activity {
         leftButton = (Button) findViewById(R.id.left_button);
         rightButton = (Button) findViewById(R.id.right_button);
         nextButton = (Button) findViewById(R.id.send_button);
+
+        title = (TextView) findViewById(R.id.title);
+        description = (TextView) findViewById(R.id.description);
 
         word1 = (EditText) findViewById(R.id.word1);
         word2 = (EditText) findViewById(R.id.word2);
@@ -79,6 +91,14 @@ public class IntroRecoverWordsActivity extends Activity {
         word10 = (EditText) findViewById(R.id.word10);
         word11 = (EditText) findViewById(R.id.word11);
         word12 = (EditText) findViewById(R.id.word12);
+
+        restore = getIntent().getExtras() != null && getIntent().getExtras().getBoolean("restore");
+
+        if(restore){
+            //change the labels
+            title.setText("Restore Wallet");
+            description.setText("Enter the paper key for your current Bread wallet.");
+        }
 
         word12.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -122,13 +142,32 @@ public class IntroRecoverWordsActivity extends Activity {
                 String cleanPhrase = WordsReader.cleanPhrase(app, phraseToCheck);
 
                 if (BRWalletManager.getInstance().validatePhrase(app, cleanPhrase)) {
-                   Utils.hideKeyboard(app);
+                    Utils.hideKeyboard(app);
                     BRWalletManager m = BRWalletManager.getInstance();
                     m.wipeWalletButKeystore(app);
                     m.wipeKeyStore(app);
-                    PostAuthenticationProcessor.getInstance().setPhraseForKeyStore(cleanPhrase);
-                    PostAuthenticationProcessor.getInstance().onRecoverWalletAuth(app, false);
-                    SharedPreferencesManager.putAllowSpend(app, false);
+                    if (restore) {
+                        AuthManager.getInstance().authPrompt(IntroRecoverWordsActivity.this, "Auth needed", "Please authenticate before wiping the wallet", true, new BRAuthCompletion() {
+                            @Override
+                            public void onComplete() {
+                                Intent intent = new Intent(IntroRecoverWordsActivity.this, IntroActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(intent);
+                            }
+
+                            @Override
+                            public void onCancel() {
+
+                            }
+                        });
+
+
+                    } else {
+                        PostAuthenticationProcessor.getInstance().setPhraseForKeyStore(cleanPhrase);
+                        PostAuthenticationProcessor.getInstance().onRecoverWalletAuth(app, false);
+                        SharedPreferencesManager.putAllowSpend(app, false);
+                    }
+
                 } else {
                     String message = getResources().getString(R.string.bad_recovery_phrase);
                     String[] words = cleanPhrase.split(" ");

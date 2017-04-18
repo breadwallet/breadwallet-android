@@ -2,7 +2,6 @@ package com.breadwallet.presenter.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -47,7 +46,7 @@ public class UpdatePitActivity extends Activity {
 //        setStatusBarColor(android.R.color.transparent);
         keyboard = (BRSoftKeyboard) findViewById(R.id.brkeyboard);
         title = (TextView) findViewById(R.id.title);
-        description = (TextView) findViewById(R.id.pin_description);
+        description = (TextView) findViewById(R.id.description);
         pinLayout = (LinearLayout) findViewById(R.id.pinLayout);
         setMode(ENTER_PIN);
         title.setText("Update PIN");
