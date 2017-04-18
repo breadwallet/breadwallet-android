@@ -565,6 +565,8 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         }
     }
 
+
+
     @Override
     public void onNameChanged(String name) {
         walletName.setText(name);

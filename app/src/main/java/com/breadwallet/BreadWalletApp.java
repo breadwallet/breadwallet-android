@@ -47,7 +47,6 @@ import com.breadwallet.presenter.activities.PinActivity;
 
 public class BreadWalletApp extends Application {
     private static final String TAG = BreadWalletApp.class.getName();
-    public boolean allowKeyStoreAccess;
     public static int DISPLAY_HEIGHT_PX;
     FingerprintManager mFingerprintManager;
 
@@ -64,42 +63,6 @@ public class BreadWalletApp extends Application {
         DISPLAY_HEIGHT_PX = size.y;
         mFingerprintManager = (FingerprintManager) getSystemService(Context.FINGERPRINT_SERVICE);
 
-    }
-
-    public void showDeviceNotSecuredWarning(final Activity context) {
-        Log.e(TAG, "WARNING device is not secured!");
-        new AlertDialog.Builder(context)
-                .setMessage(R.string.encryption_needed_for_wallet)
-                .setNegativeButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        context.finish();
-                    }
-                })
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        context.finish();
-                    }
-                })
-                .show();
-    }
-
-    public void allowKeyStoreAccessForSeconds() {
-        allowKeyStoreAccess = true;
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                allowKeyStoreAccess = false;
-            }
-        }, 2 * 1000);
-    }
-
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     public static Activity getBreadContext(){

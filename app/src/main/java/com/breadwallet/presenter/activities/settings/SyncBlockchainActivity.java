@@ -43,7 +43,6 @@ public class SyncBlockchainActivity extends AppCompatActivity {
                         new BRDialogView.BROnClickListener() {
                             @Override
                             public void onClick(BRDialogView brDialogView) {
-                                Log.e(TAG, "onClick: Starting syncing...");
                                 brDialogView.dismissWithAnimation();
                                 new Thread(new Runnable() {
                                     @Override

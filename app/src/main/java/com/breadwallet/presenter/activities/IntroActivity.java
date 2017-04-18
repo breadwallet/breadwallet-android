@@ -2,6 +2,7 @@
 package com.breadwallet.presenter.activities;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -16,7 +17,9 @@ import android.widget.EditText;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
+import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.KeyStoreManager;
@@ -53,7 +56,7 @@ import java.io.Serializable;
  * THE SOFTWARE.
  */
 
-public class IntroActivity extends FragmentActivity implements Serializable{
+public class IntroActivity extends FragmentActivity implements Serializable {
     private static final String TAG = IntroActivity.class.getName();
     public Button newWalletButton;
     public Button recoverWalletButton;
@@ -110,7 +113,7 @@ public class IntroActivity extends FragmentActivity implements Serializable{
         newWalletButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!BRAnimator.isClickAllowed()) return;
+                if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
                 Intent intent = new Intent(IntroActivity.this, IntroSetPitActivity.class);
                 startActivity(intent);
@@ -122,7 +125,7 @@ public class IntroActivity extends FragmentActivity implements Serializable{
         recoverWalletButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!BRAnimator.isClickAllowed()) return;
+                if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
                 Intent intent = new Intent(IntroActivity.this, IntroRecoverActivity.class);
                 startActivity(intent);
@@ -229,6 +232,17 @@ public class IntroActivity extends FragmentActivity implements Serializable{
         if (!m.isPasscodeEnabled(this)) {
             //Device passcode/password should be enabled for the app to work
             ((BreadWalletApp) getApplication()).showDeviceNotSecuredWarning(this);
+            BreadDialog.showCustomDialog(this, "Warning", getString(R.string.encryption_needed_for_wallet), "close", null, new BRDialogView.BROnClickListener() {
+                @Override
+                public void onClick(BRDialogView brDialogView) {
+                    finish();
+                }
+            }, null, new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    finish();
+                }
+            }, 0);
         } else {
             if (!m.noWallet(this)) {
                 BRWalletManager.getInstance().startBreadActivity(this, true);

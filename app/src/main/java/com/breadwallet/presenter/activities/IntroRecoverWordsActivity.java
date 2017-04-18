@@ -1,15 +1,10 @@
 package com.breadwallet.presenter.activities;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-import android.os.SystemClock;
-import android.util.Log;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -18,15 +13,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.breadwallet.BreadWalletApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
-import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
@@ -38,10 +30,7 @@ import java.util.List;
 
 import static com.breadwallet.R.color.dark_blue;
 import static com.breadwallet.R.color.extra_light_gray;
-import static com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask.message;
 import static com.breadwallet.tools.util.WordsReader.getAllWordLists;
-import static java.lang.Boolean.getBoolean;
-import okhttp3.internal.Util;
 
 public class IntroRecoverWordsActivity extends Activity {
     private static final String TAG = IntroRecoverWordsActivity.class.getName();
@@ -148,12 +137,14 @@ public class IntroRecoverWordsActivity extends Activity {
                     if (restore) {
                         if (KeyStoreManager.phraseIsValid(cleanPhrase, app)) {
                             Utils.hideKeyboard(app);
+                            clearWords();
                             BRWalletManager m = BRWalletManager.getInstance();
                             m.wipeWalletButKeystore(app);
                             m.wipeKeyStore(app);
                             Intent intent = new Intent(app, IntroActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
+
                         } else {
                             BreadDialog.showCustomDialog(app, "", "The entered phrase does not match your wallet's phrase", "Close", null, new BRDialogView.BROnClickListener() {
                                 @Override
@@ -330,6 +321,21 @@ public class IntroRecoverWordsActivity extends Activity {
 
         }
 
+    }
+
+    private void clearWords(){
+        word1.setText("");
+        word2.setText("");
+        word3.setText("");
+        word4.setText("");
+        word5.setText("");
+        word6.setText("");
+        word7.setText("");
+        word8.setText("");
+        word9.setText("");
+        word10.setText("");
+        word11.setText("");
+        word12.setText("");
     }
 
 }
