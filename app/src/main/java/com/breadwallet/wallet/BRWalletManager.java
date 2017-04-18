@@ -10,6 +10,8 @@ import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Handler;
 import android.util.Log;
 import android.view.Display;
@@ -213,6 +215,13 @@ public class BRWalletManager {
         return keyguardManager.isKeyguardSecure();
     }
 
+    public boolean isNetworkAvailable(Context ctx) {
+        ConnectivityManager cm = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+
+    }
+
     public static boolean refreshAddress(Context ctx) {
         if (ctx == null) return false;
         String address = getReceiveAddress();
@@ -393,7 +402,7 @@ public class BRWalletManager {
                                     }
                                 });
                     }
-                },500);
+                }, 500);
 
             }
         });
@@ -872,7 +881,7 @@ public class BRWalletManager {
         bitmap = QRUtils.encodeAsBitmap(bitcoinURL, smallerDimension);
         //        qrcode.setPadding(1, 1, 1, 1);
 //        qrcode.setBackgroundResource(R.color.gray);
-        if(bitmap == null) return false;
+        if (bitmap == null) return false;
         qrcode.setImageBitmap(bitmap);
         return true;
 
