@@ -9,7 +9,7 @@
     tools:context="com.breadwallet.presenter.activities.IntroRecoverActivity">
 
     <Button
-        android:id="@+id/send_button"
+        android:id="@+id/scan_button"
         android:layout_width="0dp"
         android:layout_height="60dp"
         android:layout_marginBottom="64dp"

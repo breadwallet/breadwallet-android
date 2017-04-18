@@ -12,27 +12,26 @@ import com.breadwallet.R;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 
-public class IntroRestoreActivity extends Activity {
-    private Button nextButton;
+public class ImportActivity extends Activity {
+    private Button scan;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_restore);
+        setContentView(R.layout.activity_import);
 
 //        setStatusBarColor(android.R.color.transparent);
 
-        nextButton = (Button) findViewById(R.id.send_button);
+        scan = (Button) findViewById(R.id.scan_button);
 
-        nextButton.setOnClickListener(new View.OnClickListener() {
+        scan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.showAnimation(v);
-                Intent intent = new Intent(IntroRestoreActivity.this, IntroRecoverWordsActivity.class);
-                intent.putExtra("restore", true);
+                Intent intent = new Intent(ImportActivity.this, ScanQRActivity.class);
                 startActivity(intent);
-                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
             }
         });
     }

@@ -14,13 +14,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.IntroRestoreActivity;
+import com.breadwallet.presenter.activities.ImportActivity;
+import com.breadwallet.presenter.activities.RestoreActivity;
 import com.breadwallet.presenter.entities.BRSettingsItem;
 import com.breadwallet.wallet.BRWalletManager;
 
@@ -120,6 +120,9 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.e(TAG, "onClick: Import Wallet");
+                Intent intent = new Intent(SettingsActivity.this, ImportActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
 
             }
         }, false));
@@ -128,7 +131,7 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.e(TAG, "onClick: Restore Breadwallet");
-                Intent intent = new Intent(SettingsActivity.this, IntroRestoreActivity.class);
+                Intent intent = new Intent(SettingsActivity.this, RestoreActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }

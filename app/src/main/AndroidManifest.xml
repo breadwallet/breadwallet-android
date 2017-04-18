@@ -55,12 +55,14 @@
             android:label="@string/app_name"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
+
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
+
                 <data android:scheme="bitcoin"/>
             </intent-filter>
         </activity>
@@ -75,7 +77,12 @@
             android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name=".presenter.activities.IntroRestoreActivity"
+            android:name=".presenter.activities.RestoreActivity"
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name=".presenter.activities.ImportActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait">
         </activity>
