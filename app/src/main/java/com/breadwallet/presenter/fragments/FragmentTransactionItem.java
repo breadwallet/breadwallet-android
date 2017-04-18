@@ -132,8 +132,8 @@ public class FragmentTransactionItem extends Fragment {
 
         if (!item.isValid())
             mConfirmationText.setText("INVALID");
-        else if (confirms < 6) {
-            if (blockHeight == Integer.MAX_VALUE)
+        else if (confirms < 6 ) {
+            if (blockHeight == Integer.MAX_VALUE || confirms < 0)
                 mConfirmationText.setText("Waiting to be confirmed. Some merchants require confirmation to complete a transaction.  Estimated time: 1-2 hours.");
             else if (confirms == 0)
                 mConfirmationText.setText(getActivity().getString(R.string.nr_confirmations0));

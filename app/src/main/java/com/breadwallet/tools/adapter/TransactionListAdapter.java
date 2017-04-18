@@ -110,7 +110,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         if (!item.isValid())
             convertView.confirmation.setText("INVALID");
         else if (confirms < 6) {
-            if (blockHeight == Integer.MAX_VALUE)
+            if (blockHeight == Integer.MAX_VALUE || confirms < 0)
                 convertView.confirmation.setText("Waiting to be confirmed");
             else if (confirms == 0)
                 convertView.confirmation.setText(mContext.getString(R.string.nr_confirmations0));
