@@ -84,6 +84,9 @@ public class BitcoinUrlHandler {
         }
 
         RequestObject requestObject = getRequestFromString(url);
+        if (BRWalletManager.getInstance().confirmSweep(app, url)) {
+            return true;
+        }
         if (requestObject == null) {
             if (app != null) {
                 BreadDialog.showCustomDialog(app, app.getString(R.string.warning), app.getString(R.string.invalid_address), app.getString(R.string.ok), null, new BRDialogView.BROnClickListener() {
