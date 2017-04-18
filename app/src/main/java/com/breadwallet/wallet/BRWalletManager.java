@@ -297,7 +297,7 @@ public class BRWalletManager {
                                 ((Activity) ctx).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        BRToast.showCustomToast(ctx, ctx.getString(R.string.checking_privkey_balance), BreadActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 1);
+                                        BRToast.showCustomToast(ctx, ctx.getString(R.string.checking_privkey_balance), BreadActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, R.drawable.toast_layout_blue);
                                     }
                                 });
                             if (editText == null) {
