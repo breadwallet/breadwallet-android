@@ -3,6 +3,7 @@ package com.breadwallet.tools.threads;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
@@ -52,7 +53,7 @@ import java.nio.charset.Charset;
 
 public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
     public static final String TAG = ImportPrivKeyTask.class.getName();
-    public static final String UNSPENT_URL = BuildConfig.BITCOIN_TESTNET ? "https://test-insight.bitpay.com/api/addrs/utxo": "https://api.breadwallet.com/q/addr/";
+    public static final String UNSPENT_URL = BuildConfig.BITCOIN_TESTNET ? "https://test-insight.bitpay.com/api/addrs/" : "https://api.breadwallet.com/q/addr/";
     private Activity app;
     private String key;
     private ImportPrivKeyEntity importPrivKeyEntity;
@@ -91,6 +92,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
         if (importPrivKeyEntity == null) {
             return;
         }
+
         String iso = SharedPreferencesManager.getIso(app);
         String sentBits = BRCurrency.getFormattedCurrencyString(app, "BTC", BRExchange.getAmountFromSatoshis(app, "BTC", new BigDecimal(importPrivKeyEntity.getAmount())));
 
@@ -113,9 +115,6 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
                                     brDialogView.dismissWithAnimation();
                                 }
                             }, null, null, 0);
-                } else {
-                    BRWalletManager.getInstance().startBreadActivity(app, false);
-                    if (app != null && !app.isDestroyed()) app.finish();
                 }
 
             }
@@ -145,7 +144,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
                 String txid = obj.getString("txid");
                 int vout = obj.getInt("vout");
                 String scriptPubKey = obj.getString("scriptPubKey");
-                long amount = obj.getLong("amount");
+                long amount = obj.getLong("satoshis");
                 byte[] txidBytes = hexStringToByteArray(txid);
                 byte[] scriptPubKeyBytes = hexStringToByteArray(scriptPubKey);
                 BRWalletManager.getInstance().addInputToPrivKeyTx(txidBytes, vout, scriptPubKeyBytes, amount);
