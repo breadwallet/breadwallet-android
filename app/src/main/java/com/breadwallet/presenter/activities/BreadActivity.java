@@ -2,12 +2,14 @@ package com.breadwallet.presenter.activities;
 
 import android.app.Activity;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.PowerManager;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -527,8 +529,10 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         try {
             if (show) {
                 recyclerLayout.addView(syncingLayout, 0);
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             } else {
                 recyclerLayout.removeView(syncingLayout);
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             }
         } catch (Exception e) {
             e.printStackTrace();
