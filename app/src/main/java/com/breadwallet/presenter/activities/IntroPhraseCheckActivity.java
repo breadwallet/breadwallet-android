@@ -57,6 +57,10 @@ public class IntroPhraseCheckActivity extends Activity {
             }
 
             public void onPageSelected(int position) {
+                if(position == 0)
+                    previousButton.setEnabled(false);
+                else
+                    previousButton.setEnabled(true);
                 updateItemIndexText();
                 // Check if this is the page you want.
             }
