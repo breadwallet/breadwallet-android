@@ -27,6 +27,7 @@ import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.AuthManager;
+import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
@@ -37,6 +38,7 @@ import java.util.List;
 
 import static com.breadwallet.R.color.dark_blue;
 import static com.breadwallet.R.color.extra_light_gray;
+import static com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask.message;
 import static com.breadwallet.tools.util.WordsReader.getAllWordLists;
 import static java.lang.Boolean.getBoolean;
 import okhttp3.internal.Util;
@@ -94,7 +96,7 @@ public class IntroRecoverWordsActivity extends Activity {
 
         restore = getIntent().getExtras() != null && getIntent().getExtras().getBoolean("restore");
 
-        if(restore){
+        if (restore) {
             //change the labels
             title.setText("Restore Wallet");
             description.setText("Enter the paper key for your current Bread wallet.");
@@ -147,20 +149,28 @@ public class IntroRecoverWordsActivity extends Activity {
                     m.wipeWalletButKeystore(app);
                     m.wipeKeyStore(app);
                     if (restore) {
-                        AuthManager.getInstance().authPrompt(IntroRecoverWordsActivity.this, "Auth needed", "Please authenticate before wiping the wallet", true, new BRAuthCompletion() {
-                            @Override
-                            public void onComplete() {
-                                Intent intent = new Intent(IntroRecoverWordsActivity.this, IntroActivity.class);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                startActivity(intent);
-                            }
+                        if (KeyStoreManager.phraseIsValid(cleanPhrase, IntroRecoverWordsActivity.this)) {
+                            AuthManager.getInstance().authPrompt(IntroRecoverWordsActivity.this, "Auth needed", "Please authenticate before wiping the wallet", true, new BRAuthCompletion() {
+                                @Override
+                                public void onComplete() {
+                                    Intent intent = new Intent(IntroRecoverWordsActivity.this, IntroActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    startActivity(intent);
+                                }
 
-                            @Override
-                            public void onCancel() {
+                                @Override
+                                public void onCancel() {
 
-                            }
-                        });
-
+                                }
+                            });
+                        } else {
+                            BreadDialog.showCustomDialog(app, "", "The entered phrase does not match your wallet's phrase", "Close", null, new BRDialogView.BROnClickListener() {
+                                @Override
+                                public void onClick(BRDialogView brDialogView) {
+                                    brDialogView.dismissWithAnimation();
+                                }
+                            }, null, null, 0);
+                        }
 
                     } else {
                         PostAuthenticationProcessor.getInstance().setPhraseForKeyStore(cleanPhrase);
