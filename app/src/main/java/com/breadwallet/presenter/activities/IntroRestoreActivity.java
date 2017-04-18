@@ -18,7 +18,7 @@ public class IntroRestoreActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_intro_restore);
+        setContentView(R.layout.activity_restore);
 
 //        setStatusBarColor(android.R.color.transparent);
 

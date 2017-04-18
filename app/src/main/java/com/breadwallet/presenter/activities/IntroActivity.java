@@ -208,30 +208,12 @@ public class IntroActivity extends FragmentActivity implements Serializable {
     public void onBackPressed() {
         super.onBackPressed();
 
-//        if (backNotAllowed) return;
-//        if (newRecoverNoneFlag == 1) {
-//            leftButton.setVisibility(View.GONE);
-//            leftButton.setClickable(false);
-//            animateSlide(introNewWalletFragment, introNewRecoverFragment, LEFT);
-//            newRecoverNoneFlag = 0;
-//        } else if (newRecoverNoneFlag == 2) {
-//            showHideFragments(introRecoverWalletFragment, introNewRecoverFragment);
-//            leftButton.setVisibility(View.GONE);
-//            leftButton.setClickable(false);
-//            animateSlide(introRecoverWalletFragment, introNewRecoverFragment, LEFT);
-//            newRecoverNoneFlag = 0;
-//            introRecoverWalletFragment.showKeyBoard(false);
-//        } else {
-//            super.onBackPressed();
-//        }
-
     }
 
     public void startTheWalletIfExists() {
         final BRWalletManager m = BRWalletManager.getInstance();
         if (!m.isPasscodeEnabled(this)) {
             //Device passcode/password should be enabled for the app to work
-            ((BreadWalletApp) getApplication()).showDeviceNotSecuredWarning(this);
             BreadDialog.showCustomDialog(this, "Warning", getString(R.string.encryption_needed_for_wallet), "close", null, new BRDialogView.BROnClickListener() {
                 @Override
                 public void onClick(BRDialogView brDialogView) {
