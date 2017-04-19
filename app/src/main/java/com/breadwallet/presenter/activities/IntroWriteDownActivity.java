@@ -10,9 +10,11 @@ import android.view.WindowManager;
 import android.widget.Button;
 
 import com.breadwallet.R;
+import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.security.AuthManager;
+import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.BRWalletManager;
@@ -33,9 +35,8 @@ public class IntroWriteDownActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if(!BRAnimator.isClickAllowed()) return;
-                Intent intent = new Intent(IntroWriteDownActivity.this, IntroPhraseCheckActivity.class);
-                IntroWriteDownActivity.this.startActivity(intent);
-                IntroWriteDownActivity.this.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+
+                PostAuthenticationProcessor.getInstance().onPhraseCheckAuth(IntroWriteDownActivity.this, false);
             }
         });
     }
@@ -58,14 +59,9 @@ public class IntroWriteDownActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
 
         switch (requestCode) {
-            case BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE:
+            case BRConstants.SHOW_PHRASE_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
-                    PostAuthenticationProcessor.getInstance().onCreateWalletAuth(this, true);
-                } else {
-                    Log.e(TAG, "WARNING: resultCode != RESULT_OK");
-                    BRWalletManager m = BRWalletManager.getInstance();
-                    m.wipeWalletButKeystore(this);
-                    finish();
+                    PostAuthenticationProcessor.getInstance().onPhraseCheckAuth(this, true);
                 }
                 break;
 //            case BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE:

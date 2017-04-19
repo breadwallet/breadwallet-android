@@ -90,15 +90,9 @@ public class IntroPhraseCheckActivity extends Activity {
 
             }
         });
-        String cleanPhrase = null;
+        String cleanPhrase = getIntent().getExtras() == null? null : getIntent().getStringExtra("phrase");
         wordMap = new SparseArray<>();
 
-        try {
-            cleanPhrase = new String(KeyStoreManager.getKeyStorePhrase(this, 0));
-        } catch (BRKeystoreErrorException e) {
-            e.printStackTrace();
-            return;
-        }
         if (Utils.isNullOrEmpty(cleanPhrase)) {
             throw new RuntimeException(TAG + ": cleanPhrase is null");
         }

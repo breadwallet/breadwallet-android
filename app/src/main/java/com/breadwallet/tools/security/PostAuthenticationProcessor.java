@@ -95,6 +95,21 @@ public class PostAuthenticationProcessor {
         }
     }
 
+    public void onPhraseCheckAuth(Activity app, boolean authAsked) {
+        String cleanPhrase;
+        try {
+            cleanPhrase = new String(KeyStoreManager.getKeyStorePhrase(app, BRConstants.SHOW_PHRASE_REQUEST_CODE));
+        } catch (BRKeystoreErrorException e) {
+            e.printStackTrace();
+            return;
+        }
+        Intent intent = new Intent(app, IntroPhraseCheckActivity.class);
+        intent.putExtra("phrase", cleanPhrase);
+        app.startActivity(intent);
+        app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+    }
+
+
     public void onRecoverWalletAuth(Activity app, boolean authAsked) {
         if (phraseForKeyStore == null) return;
         byte[] bytePhrase = new byte[0];
@@ -137,21 +152,6 @@ public class PostAuthenticationProcessor {
 
     }
 
-    //    public void onShowPhraseFlowAuth(PhraseFlowActivity app, boolean authAsked) {
-//        byte[] phrase;
-//        try {
-//            phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.SHOW_PHRASE_REQUEST_CODE);
-////            app.showHideFragments(app.fragmentPhraseFlow1);
-//            app.fragmentPhraseFlow1.setPhrase(phrase);
-//        } catch (BRKeystoreErrorException e) {
-//            e.printStackTrace();
-//            if (authAsked) {
-//                showBugAuthLoopErrorMessage(app);
-//                Log.e(TAG, "onShowPhraseFlowAuth,!success && authAsked");
-//            }
-//        }
-//    }
-//
     public void onPublishTxAuth(Context app, boolean authAsked) {
 
         BRWalletManager walletManager = BRWalletManager.getInstance();
@@ -160,7 +160,7 @@ public class PostAuthenticationProcessor {
             rawSeed = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAY_REQUEST_CODE);
         } catch (BRKeystoreErrorException e) {
             if (authAsked) {
-//                showBugAuthLoopErrorMessage();
+                showBugAuthLoopErrorMessage((Activity) app);
                 Log.e(TAG, "onPublishTxAuth,!success && authAsked");
             }
             e.printStackTrace();
@@ -261,7 +261,6 @@ public class PostAuthenticationProcessor {
                 BRWalletManager m = BRWalletManager.getInstance();
                 m.wipeKeyStore(introActivity);
                 m.wipeWalletButKeystore(introActivity);
-//                BRAnimator.resetFragmentAnimator();
             } else {
                 try {
                     KeyStoreManager.putKeyStoreCanary(BRConstants.CANARY_STRING, introActivity, 0);
@@ -278,7 +277,6 @@ public class PostAuthenticationProcessor {
             BRWalletManager m = BRWalletManager.getInstance();
             m.wipeKeyStore(app);
             m.wipeWalletButKeystore(app);
-//            BRAnimator.resetFragmentAnimator();
             KeyStoreManager.showKeyStoreDialog(app, "Keystore invalidated", "Disable lock screen and all fingerprints, and re-enable to continue.", app.getString(R.string.ok), null,
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
