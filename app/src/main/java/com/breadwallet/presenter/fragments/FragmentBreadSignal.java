@@ -81,6 +81,13 @@ public class FragmentBreadSignal extends Fragment {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+
+                try {
+                    if (getActivity() != null)
+                        getActivity().getFragmentManager().popBackStack();
+                } catch (Exception ignored){
+
+                }
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -90,12 +97,6 @@ public class FragmentBreadSignal extends Fragment {
                         }
                     }
                 }, 300);
-                try {
-                    if (getActivity() != null)
-                        getActivity().getFragmentManager().popBackStack();
-                } catch (Exception ignored){
-
-                }
 
             }
         }, 1500);

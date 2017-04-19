@@ -150,6 +150,13 @@ public class IntroReEnterPinActivity extends FragmentActivity {
         if (firstPIN.equalsIgnoreCase(pin.toString())) {
             Log.e(TAG, "verifyPin: SUCCESS");
             isPressAllowed = false;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    pin = new StringBuilder("");
+                    updateDots();
+                }
+            },200);
             KeyStoreManager.putPinCode(pin.toString(), this);
             if (getIntent().getBooleanExtra("recovery", false)) {
                 BRWalletManager.getInstance().startBreadActivity(this, false);
@@ -168,7 +175,6 @@ public class IntroReEnterPinActivity extends FragmentActivity {
             title.setText("Wrong PIN,\nplease try again");
             SpringAnimator.failShakeAnimation(this, pinLayout);
             pin = new StringBuilder();
-            updateDots();
         }
 
     }

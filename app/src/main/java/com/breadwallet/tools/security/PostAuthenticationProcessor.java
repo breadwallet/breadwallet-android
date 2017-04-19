@@ -77,6 +77,7 @@ public class PostAuthenticationProcessor {
     }
 
     public void onCreateWalletAuth(Activity app, boolean authAsked) {
+        Log.e(TAG, "onCreateWalletAuth: " + authAsked + ", " + app.getClass().getName());
         long start = System.currentTimeMillis();
         boolean success = BRWalletManager.getInstance().generateRandomSeed(app);
         Log.e(TAG, "generateRandomSeed: took: " + (System.currentTimeMillis() - start));

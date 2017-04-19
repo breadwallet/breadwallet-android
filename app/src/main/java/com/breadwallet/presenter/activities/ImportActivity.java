@@ -100,6 +100,12 @@ public class ImportActivity extends Activity {
 
                 }
 
+            case BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    PostAuthenticationProcessor.getInstance().onPaymentProtocolRequest(this, true);
+                }
+                break;
+
         }
     }
 }

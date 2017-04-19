@@ -41,7 +41,6 @@ public class IntroPhraseCheckActivity extends Activity {
     private LinearLayout buttonsLayout;
     private TextView itemIndexText;
     private SparseArray<String> wordMap;
-//    private int currentIndex = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,19 +51,20 @@ public class IntroPhraseCheckActivity extends Activity {
         wordViewPager = (ViewPager) findViewById(R.id.phrase_words_pager);
         wordViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             public void onPageScrollStateChanged(int state) {
+
             }
 
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
             }
 
             public void onPageSelected(int position) {
-                Log.e(TAG, "onPageSelected: " + position);
                 if (position == 0)
                     setButtonEnabled(false);
                 else
-                    setButtonEnabled(false);
+                    setButtonEnabled(true);
+
                 updateItemIndexText();
-                // Check if this is the page you want.
             }
         });
 

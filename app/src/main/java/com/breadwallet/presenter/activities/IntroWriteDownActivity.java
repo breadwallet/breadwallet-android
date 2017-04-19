@@ -3,23 +3,16 @@ package com.breadwallet.presenter.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 
 import com.breadwallet.R;
-import com.breadwallet.exceptions.BRKeystoreErrorException;
-import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.security.AuthManager;
-import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.BRWalletManager;
-
-
 
 public class IntroWriteDownActivity extends Activity {
     private static final String TAG = IntroWriteDownActivity.class.getName();
@@ -64,20 +57,6 @@ public class IntroWriteDownActivity extends Activity {
                     PostAuthenticationProcessor.getInstance().onPhraseCheckAuth(this, true);
                 }
                 break;
-//            case BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE:
-//                if (resultCode == RESULT_OK) {
-//                    PostAuthenticationProcessor.getInstance().onRecoverWalletAuth(this, true);
-//                } else {
-//                    finish();
-//                }
-//                break;
-//            case BRConstants.CANARY_REQUEST_CODE:
-//                if (resultCode == RESULT_OK) {
-//                    PostAuthenticationProcessor.getInstance().onCanaryCheck(this, true);
-//                } else {
-//                    finish();
-//                }
-//                break;
         }
     }
 
