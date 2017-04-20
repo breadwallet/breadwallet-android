@@ -3,6 +3,7 @@
     <!--<string name="app_name">&#384;readwallet</string>-->
     <!-- no need -->
     <string name="lang">en</string>
+    <string name="search_hint">Search Transactions</string>
     <!-- android -->
     <string name="bitcoin_address">Bitcoin Address</string>
     <!-- android -->
