@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -25,6 +26,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.OvershootInterpolator;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -49,6 +51,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.tools.util.NetworkChangeReceiver;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
@@ -316,8 +319,13 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         searchEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus)
+                if (!hasFocus) {
                     searchManager.animateSearchVisibility(false);
+                    Utils.hideKeyboard(app);
+                } else {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                }
             }
         });
 
@@ -669,6 +677,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
             if (b) {
                 searchIcon.setBackgroundResource(R.drawable.ic_close_black_24dp);
                 searchEdit.setVisibility(View.VISIBLE);
+                searchEdit.setText("");
                 searchEdit.setScaleX(0);
                 searchEdit.setPivotX(searchEditPivotX);
                 searchEdit.animate().scaleX(searchEditXScale).setDuration(duration).setInterpolator(new OvershootInterpolator(0.7f)).setListener(new AnimatorListenerAdapter() {
@@ -734,6 +743,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
                         searchEdit.setVisibility(View.GONE);
                     }
                 });
+                Utils.hideKeyboard(app);
             }
         }
     }
