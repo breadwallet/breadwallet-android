@@ -1,8 +1,10 @@
 package com.breadwallet.presenter.activities;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.FragmentTransaction;
-import android.content.Context;
+import android.app.SearchManager;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -11,17 +13,20 @@ import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.PowerManager;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.OvershootInterpolator;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -83,7 +88,7 @@ import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
 
 public class BreadActivity extends AppCompatActivity implements BRWalletManager.OnBalanceChanged,
         BRPeerManager.OnTxStatusUpdate, SharedPreferencesManager.OnIsoChangedListener,
-        TransactionDataSource.OnTxAddedListener, FragmentManage.OnNameChanged {
+        TransactionDataSource.OnTxAddedListener, FragmentManage.OnNameChanged, SearchView.OnQueryTextListener {
 
     private static final String TAG = BreadActivity.class.getName();
 
@@ -97,6 +102,8 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
 
     private TextView primaryPrice;
     private TextView secondaryPrice;
+    private TextView priceChange;
+
     private TextView manageText;
     private TextView walletName;
     private TextView emptyTip;
@@ -114,6 +121,9 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     private Toolbar toolBar;
     private int progress = 0;
     public static boolean appInBackground = false;
+    private ImageButton searchIcon;
+    private EditText searchEdit;
+    private BRSearchManager searchManager;
 
     public static BreadActivity getApp() {
         return app;
@@ -145,11 +155,27 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         setWalletLoading();
 
         updateUI();
+        handleIntent(getIntent());
 
         if (introSetPitActivity != null) introSetPitActivity.finish();
         if (introActivity != null) introActivity.finish();
         if (introReEnterPinActivity != null) introReEnterPinActivity.finish();
 
+        searchManager = new BRSearchManager();
+        searchManager.init();
+
+    }
+
+
+    private void handleIntent(Intent intent) {
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            filterListBy(query);
+        }
+    }
+
+    private void filterListBy(String query) {
+        Log.e(TAG, "filterListBy: query:" + query);
     }
 
     @Override
@@ -198,7 +224,8 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setUrlHandler(intent);
-
+        setIntent(intent);
+        handleIntent(intent);
     }
 
     private void setListeners() {
@@ -275,8 +302,25 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
 
             @Override
             public void onLongItemClick(View view, int position) {
+
             }
         }));
+
+        searchIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SpringAnimator.showAnimation(v);
+                searchManager.animateSearchVisibility(searchEdit.getVisibility() != View.VISIBLE);
+            }
+        });
+        searchEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus)
+                    searchManager.animateSearchVisibility(false);
+            }
+        });
+
     }
 
     @Override
@@ -294,9 +338,9 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         walletName.setText(SharedPreferencesManager.getWalletName(this));
         CurrencyFetchManager currencyManager = CurrencyFetchManager.getInstance(this);
         currencyManager.startTimer();
-        if(mNetworkStateReceiver == null) mNetworkStateReceiver = new NetworkChangeReceiver();
+        if (mNetworkStateReceiver == null) mNetworkStateReceiver = new NetworkChangeReceiver();
         IntentFilter mNetworkStateFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(mNetworkStateReceiver , mNetworkStateFilter);
+        registerReceiver(mNetworkStateReceiver, mNetworkStateFilter);
 
         if (!BRWalletManager.getInstance().isCreated()) {
             new Thread(new Runnable() {
@@ -366,6 +410,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         menuButton = (LinearLayout) findViewById(R.id.menu_layout);
         primaryPrice = (TextView) findViewById(R.id.primary_price);
         secondaryPrice = (TextView) findViewById(R.id.secondary_price);
+        priceChange = (TextView) findViewById(R.id.price_change_text);
         emptyTip = (TextView) findViewById(R.id.empty_tx_tip);
         syncLabel = (TextView) findViewById(R.id.syncing_label);
         syncDate = (TextView) findViewById(R.id.sync_date);
@@ -377,6 +422,8 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         toolbarLayout = (LinearLayout) findViewById(R.id.toolbar_layout);
         syncingLayout = (ConstraintLayout) findViewById(R.id.syncing_layout);
         recyclerLayout = (LinearLayout) findViewById(R.id.recycler_layout);
+        searchIcon = (ImageButton) findViewById(R.id.search_icon);
+        searchEdit = (EditText) findViewById(R.id.search_edit);
 
     }
 
@@ -583,9 +630,111 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     }
 
 
-
     @Override
     public void onNameChanged(String name) {
         walletName.setText(name);
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        Log.e(TAG, "onQueryTextSubmit: " + query);
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        Log.e(TAG, "onQueryTextChange: " + newText);
+        return true;
+    }
+
+    private class BRSearchManager {
+
+        private float searchEditXScale;
+        private float searchEditPivotX;
+        private float primaryYScale;
+        private float secondaryYScale;
+        private float priceChangeYScale;
+
+        public void init() {
+            searchEditXScale = searchEdit.getScaleX();
+            primaryYScale = primaryPrice.getScaleY();
+            secondaryYScale = secondaryPrice.getScaleY();
+            priceChangeYScale = priceChange.getScaleY();
+            searchEditPivotX = searchEdit.getX() + searchEdit.getWidth();
+        }
+
+        public void animateSearchVisibility(boolean b) {
+            int duration = 300;
+            int durationShort = 200;
+            if (b) {
+                searchIcon.setBackgroundResource(R.drawable.ic_close_black_24dp);
+                searchEdit.setVisibility(View.VISIBLE);
+                searchEdit.setScaleX(0);
+                searchEdit.setPivotX(searchEditPivotX);
+                searchEdit.animate().scaleX(searchEditXScale).setDuration(duration).setInterpolator(new OvershootInterpolator(0.7f)).setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        searchEdit.setScaleX(searchEditXScale);
+                        searchEdit.requestFocus();
+                    }
+                });
+                primaryPrice.animate().scaleY(0).setDuration(durationShort).setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        primaryPrice.setScaleY(0);
+                    }
+                });
+                secondaryPrice.animate().scaleY(0).setDuration(durationShort).setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        secondaryPrice.setScaleY(0);
+                    }
+                });
+                priceChange.animate().scaleY(0).setDuration(durationShort).setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        priceChange.setScaleY(0);
+                    }
+                });
+            } else {
+                searchIcon.setBackgroundResource(R.drawable.ic_search_black_24dp);
+                primaryPrice.setVisibility(View.VISIBLE);
+                secondaryPrice.setVisibility(View.VISIBLE);
+                priceChange.setVisibility(View.VISIBLE);
+                primaryPrice.animate().scaleY(primaryYScale).setDuration(duration).setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        primaryPrice.setScaleY(primaryYScale);
+                    }
+                });
+                secondaryPrice.animate().scaleY(secondaryYScale).setDuration(duration).setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        secondaryPrice.setScaleY(secondaryYScale);
+                    }
+                });
+                priceChange.animate().scaleY(priceChangeYScale).setDuration(duration).setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        priceChange.setScaleY(priceChangeYScale);
+                    }
+                });
+
+                searchEdit.animate().scaleX(0).setDuration(durationShort).setInterpolator(null).setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        searchEdit.setVisibility(View.GONE);
+                    }
+                });
+            }
+        }
     }
 }

@@ -94,7 +94,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
                     android:layout_marginEnd="16dp"
-                    android:layout_marginRight="16dp"
                     android:text="MANAGE"
                     android:textColor="@color/white"
                     android:textSize="18sp"
@@ -105,16 +104,37 @@
 
                 <ImageButton
                     android:id="@+id/search_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
                     android:layout_marginEnd="16dp"
-                    android:layout_marginRight="16dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@android:color/transparent"
-                    android:src="@drawable/ic_search_black_24dp"
+                    android:layout_marginTop="0dp"
+                    android:background="@drawable/ic_search_black_24dp"
                     app:layout_constraintBottom_toBottomOf="@+id/primary_price"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/primary_price"/>
+
+                <EditText
+                    android:id="@+id/search_edit"
+                    android:layout_width="0dp"
+                    android:padding="4dp"
+                    android:background="@drawable/search_background"
+                    android:textColorHint="@color/light_gray"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="0dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:textColor="@color/dark_gray"
+                    android:layout_marginTop="0dp"
+                    android:ems="10"
+                    android:hint="@string/search_hint"
+                    android:inputType="textPersonName"
+                    android:maxLines="1"
+                    android:selectAllOnFocus="true"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@+id/search_icon"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toLeftOf="@+id/search_icon"
+                    app:layout_constraintTop_toTopOf="@+id/search_icon"/>
 
 
             </android.support.constraint.ConstraintLayout>
@@ -174,9 +194,9 @@
     <LinearLayout
         android:id="@+id/recycler_layout"
         android:layout_width="match_parent"
-        android:layout_below="@+id/toolbar_layout"
-        android:layout_above="@+id/bottom_toolbar_layout1"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/bottom_toolbar_layout1"
+        android:layout_below="@+id/toolbar_layout"
         android:animateLayoutChanges="true"
         android:orientation="vertical">
 
@@ -238,12 +258,12 @@
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/tx_list"
-            android:layout_marginTop="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="0dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:elevation="8dp"
             app:layout_constraintBottom_toTopOf="@+id/bottom_toolbar_layout1"
             app:layout_constraintHorizontal_bias="0.0"
@@ -257,8 +277,8 @@
         android:id="@+id/empty_tx_tip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
         android:layout_marginBottom="160dp"
         android:text="Your transactions will appear here."
         android:textColor="@color/light_gray"
