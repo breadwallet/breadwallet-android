@@ -18,6 +18,7 @@ import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRExchange;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.math.BigDecimal;
@@ -58,10 +59,12 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
 
     private final Context mContext;
     private final int layoutResourceId;
+    private List<TransactionListItem> backUpFeed;
     private List<TransactionListItem> itemFeed;
 
     public TransactionListAdapter(Context mContext, List<TransactionListItem> items) {
         itemFeed = items;
+        backUpFeed = items;
         if (itemFeed == null) itemFeed = new ArrayList<>();
         this.layoutResourceId = R.layout.tx_list_item;
         this.mContext = mContext;
@@ -135,6 +138,30 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
 
         convertView.timestamp.setText(timeSpan);
 
+    }
+
+    public void filterBy(String query) {
+        filter(query);
+    }
+
+    private void filter(String query) {
+
+        if (Utils.isNullOrEmpty(query)) {
+            itemFeed = backUpFeed;
+            notifyDataSetChanged();
+            return;
+        }
+        String lowerQuery = query.toLowerCase().trim();
+
+        List<TransactionListItem> filteredList = new ArrayList<>();
+        for (TransactionListItem item : backUpFeed) {
+            if (item.getHexId().toLowerCase().contains(lowerQuery) || item.getFrom()[0].toLowerCase().contains(lowerQuery)
+                    || item.getTo()[0].toLowerCase().contains(lowerQuery)) {
+                filteredList.add(item);
+            }
+        }
+        itemFeed = filteredList;
+        notifyDataSetChanged();
     }
 
     class CustomViewHolder extends RecyclerView.ViewHolder {

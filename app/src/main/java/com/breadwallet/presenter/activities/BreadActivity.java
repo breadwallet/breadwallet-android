@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.FragmentTransaction;
-import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -19,8 +18,9 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -91,7 +91,7 @@ import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
 
 public class BreadActivity extends AppCompatActivity implements BRWalletManager.OnBalanceChanged,
         BRPeerManager.OnTxStatusUpdate, SharedPreferencesManager.OnIsoChangedListener,
-        TransactionDataSource.OnTxAddedListener, FragmentManage.OnNameChanged, SearchView.OnQueryTextListener {
+        TransactionDataSource.OnTxAddedListener, FragmentManage.OnNameChanged {
 
     private static final String TAG = BreadActivity.class.getName();
 
@@ -158,7 +158,6 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         setWalletLoading();
 
         updateUI();
-        handleIntent(getIntent());
 
         if (introSetPitActivity != null) introSetPitActivity.finish();
         if (introActivity != null) introActivity.finish();
@@ -167,18 +166,6 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         searchManager = new BRSearchManager();
         searchManager.init();
 
-    }
-
-
-    private void handleIntent(Intent intent) {
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            filterListBy(query);
-        }
-    }
-
-    private void filterListBy(String query) {
-        Log.e(TAG, "filterListBy: query:" + query);
     }
 
     @Override
@@ -227,8 +214,6 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setUrlHandler(intent);
-        setIntent(intent);
-        handleIntent(intent);
     }
 
     private void setListeners() {
@@ -321,11 +306,29 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     searchManager.animateSearchVisibility(false);
-                    Utils.hideKeyboard(app);
                 } else {
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
                 }
+            }
+        });
+
+        searchEdit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (adapter != null)
+                    adapter.filterBy(s.toString());
+                Log.e(TAG, "onTextChanged: " + s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
 
@@ -643,17 +646,6 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         walletName.setText(name);
     }
 
-    @Override
-    public boolean onQueryTextSubmit(String query) {
-        Log.e(TAG, "onQueryTextSubmit: " + query);
-        return true;
-    }
-
-    @Override
-    public boolean onQueryTextChange(String newText) {
-        Log.e(TAG, "onQueryTextChange: " + newText);
-        return true;
-    }
 
     private class BRSearchManager {
 
@@ -744,6 +736,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
                     }
                 });
                 Utils.hideKeyboard(app);
+                updateTxList();
             }
         }
     }
