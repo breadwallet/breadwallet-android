@@ -319,7 +319,7 @@ public class PinActivity extends Activity {
                     }, 500);
 
                 }
-
+                break;
             case BRConstants.PAY_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
                     PostAuthenticationProcessor.getInstance().onPublishTxAuth(this, true);

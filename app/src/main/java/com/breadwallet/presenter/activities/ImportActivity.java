@@ -23,6 +23,10 @@ public class ImportActivity extends Activity {
     private Button scan;
     private static final String TAG = ImportActivity.class.getName();
 
+    static {
+        System.loadLibrary("core");
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

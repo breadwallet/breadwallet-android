@@ -90,7 +90,6 @@ public class BRPeerManager {
             }
         }).start();
 
-//        ((MainActivity) ctx).hideAllBubbles();
     }
 
     public static void syncFailed() {
@@ -158,9 +157,7 @@ public class BRPeerManager {
 
     public static boolean networkIsReachable() {
         Log.d(TAG, "networkIsReachable");
-//        final BreadActivity ctx = BreadActivity.app;
-//        return ctx != null && ((BreadWalletApp) ctx.getApplication()).hasInternetAccess();
-        return true;
+        return BRWalletManager.getInstance().isNetworkAvailable(BreadWalletApp.getBreadContext());
     }
 
     public static void deleteBlocks() {
@@ -222,7 +219,6 @@ public class BRPeerManager {
         Log.d(TAG, "stopSyncingProgressThread");
         final BreadActivity ctx = BreadActivity.getApp();
         if (ctx == null) return;
-//        MiddleViewAdapter.setSyncing(ctx, false);
         ctx.runOnUiThread(new Runnable() {
             @Override
             public void run() {

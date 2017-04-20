@@ -222,6 +222,7 @@ public class BRWalletManager {
     }
 
     public boolean isNetworkAvailable(Context ctx) {
+        if(ctx == null) return false;
         ConnectivityManager cm = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();

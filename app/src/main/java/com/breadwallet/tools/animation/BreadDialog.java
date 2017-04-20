@@ -43,8 +43,8 @@ public class BreadDialog {
     public static void showCustomDialog(@NonNull final Context app, @NonNull final String title, @NonNull final String message,
                                         @NonNull final String posButton, final String negButton, final BRDialogView.BROnClickListener posListener,
                                         final BRDialogView.BROnClickListener negListener, final DialogInterface.OnDismissListener dismissListener, final int iconRes) {
-        if (app == null) {
-            Log.e(TAG, "showCustomDialog: FAILED, context is null");
+        if (((Activity) app).isDestroyed()) {
+            Log.e(TAG, "showCustomDialog: FAILED, context is destroyed");
             return;
         }
 

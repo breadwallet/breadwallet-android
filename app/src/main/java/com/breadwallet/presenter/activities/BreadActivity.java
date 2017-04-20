@@ -82,7 +82,8 @@ import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
  */
 
 public class BreadActivity extends AppCompatActivity implements BRWalletManager.OnBalanceChanged,
-        BRPeerManager.OnTxStatusUpdate, SharedPreferencesManager.OnIsoChangedListener, TransactionDataSource.OnTxAddedListener, FragmentManage.OnNameChanged {
+        BRPeerManager.OnTxStatusUpdate, SharedPreferencesManager.OnIsoChangedListener,
+        TransactionDataSource.OnTxAddedListener, FragmentManage.OnNameChanged {
 
     private static final String TAG = BreadActivity.class.getName();
 
@@ -485,6 +486,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
                     PostAuthenticationProcessor.getInstance().onPublishTxAuth(this, true);
                 }
                 break;
+
             case BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
                     PostAuthenticationProcessor.getInstance().onPaymentProtocolRequest(this, true);
@@ -550,8 +552,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
                 recyclerLayout.removeView(syncingLayout);
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignored) {
         }
     }
 

@@ -150,7 +150,6 @@ public class PostAuthenticationProcessor {
             Arrays.fill(bytePhrase, (byte) 0);
         }
 
-
     }
 
     public void onPublishTxAuth(Context app, boolean authAsked) {
@@ -162,7 +161,7 @@ public class PostAuthenticationProcessor {
         } catch (BRKeystoreErrorException e) {
             if (authAsked) {
                 showBugAuthLoopErrorMessage((Activity) app);
-                Log.e(TAG, "onPublishTxAuth,!success && authAsked");
+                Log.e(TAG, "onPublishTxAuth,!success && authAsked: " + e.getMessage());
             }
             e.printStackTrace();
             return;
@@ -190,7 +189,6 @@ public class PostAuthenticationProcessor {
         }
     }
 
-    //
     public void onPaymentProtocolRequest(Activity app, boolean authAsked) {
 
         byte[] rawSeed;
@@ -199,13 +197,14 @@ public class PostAuthenticationProcessor {
         } catch (BRKeystoreErrorException e) {
             if (authAsked) {
                 showBugAuthLoopErrorMessage(app);
-                Log.e(TAG, "onPublishTxAuth,!success && authAsked");
+                Log.e(TAG, "onPublishTxAuth,!success && authAsked: " + e.getMessage());
             }
-            e.printStackTrace();
             return;
         }
-        if (rawSeed == null || rawSeed.length < 10 || paymentRequest.serializedTx == null)
+        if (rawSeed == null || rawSeed.length < 10 || paymentRequest.serializedTx == null) {
+            Log.d(TAG, "onPaymentProtocolRequest() returned: rawSeed is malformed: " + Arrays.toString(rawSeed));
             return;
+        }
         if (rawSeed.length < 10) return;
 
         byte[] seed = TypesConverter.getNullTerminatedPhrase(rawSeed);
@@ -276,8 +275,8 @@ public class PostAuthenticationProcessor {
     private void showBugAuthLoopErrorMessage(final Activity app) {
         if (app != null) {
             BRWalletManager m = BRWalletManager.getInstance();
-            m.wipeKeyStore(app);
-            m.wipeWalletButKeystore(app);
+//            m.wipeKeyStore(app);
+//            m.wipeWalletButKeystore(app);
             KeyStoreManager.showKeyStoreDialog(app, "Keystore invalidated", "Disable lock screen and all fingerprints, and re-enable to continue.", app.getString(R.string.ok), null,
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
