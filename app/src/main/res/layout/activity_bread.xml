@@ -104,7 +104,6 @@
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_marginEnd="16dp"
-                    android:layout_marginTop="0dp"
                     android:background="@drawable/ic_search_black_24dp"
                     app:layout_constraintBottom_toBottomOf="@+id/primary_price"
                     app:layout_constraintRight_toRightOf="parent"
@@ -113,25 +112,98 @@
                 <EditText
                     android:id="@+id/search_edit"
                     android:layout_width="0dp"
-                    android:padding="4dp"
-                    android:background="@drawable/search_background"
-                    android:textColorHint="@color/light_gray"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="0dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-                    android:textColor="@color/dark_gray"
-                    android:layout_marginTop="0dp"
+                    android:background="@drawable/search_background"
                     android:ems="10"
                     android:hint="@string/search_hint"
                     android:inputType="textPersonName"
                     android:maxLines="1"
+                    android:padding="4dp"
+
                     android:selectAllOnFocus="true"
+                    android:textColor="@color/dark_gray"
+                    android:textColorHint="@color/light_gray"
                     android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="@+id/search_icon"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toLeftOf="@+id/search_icon"
-                    app:layout_constraintTop_toTopOf="@+id/search_icon"/>
+                    app:layout_constraintTop_toTopOf="@+id/search_icon"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginLeft="16dp"/>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="0dp"
+                    android:id="@+id/filter_buttons_layout"
+                    android:layout_marginLeft="32dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="0dp"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/search_icon"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintVertical_bias="0.0">
+
+                    <Button
+                        android:id="@+id/sent_filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="4dp"
+                        android:background="@drawable/button_secondary_gray_stroke"
+                        android:elevation="8dp"
+                        android:paddingEnd="4dp"
+                        android:paddingStart="4dp"
+                        android:text="sent"
+                        android:textColor="@color/light_gray"/>
+
+                    <Button
+                        android:id="@+id/received_filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="4dp"
+                        android:background="@drawable/button_secondary_gray_stroke"
+                        android:elevation="8dp"
+                        android:paddingEnd="4dp"
+                        android:paddingStart="4dp"
+                        android:text="received"
+                        android:textColor="@color/light_gray"/>
+
+                    <Button
+                        android:id="@+id/pending_filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="4dp"
+                        android:background="@drawable/button_secondary_gray_stroke"
+                        android:elevation="8dp"
+                        android:paddingEnd="4dp"
+                        android:paddingStart="4dp"
+                        android:text="pending"
+                        android:textColor="@color/light_gray"/>
+
+                    <Button
+                        android:id="@+id/complete_filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="4dp"
+                        android:background="@drawable/button_secondary_gray_stroke"
+                        android:elevation="8dp"
+                        android:paddingEnd="4dp"
+                        android:paddingStart="4dp"
+                        android:text="complete"
+                        android:textColor="@color/light_gray"/>
+
+                </LinearLayout>
 
 
             </android.support.constraint.ConstraintLayout>

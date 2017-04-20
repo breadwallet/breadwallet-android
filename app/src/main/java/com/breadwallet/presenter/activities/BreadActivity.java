@@ -127,6 +127,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     private ImageButton searchIcon;
     private EditText searchEdit;
     private BRSearchManager searchManager;
+    private LinearLayout filterButtonsLayout;
 
     public static BreadActivity getApp() {
         return app;
@@ -435,6 +436,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         recyclerLayout = (LinearLayout) findViewById(R.id.recycler_layout);
         searchIcon = (ImageButton) findViewById(R.id.search_icon);
         searchEdit = (EditText) findViewById(R.id.search_edit);
+        filterButtonsLayout = (LinearLayout) findViewById(R.id.filter_buttons_layout);
 
     }
 
@@ -654,13 +656,16 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         private float primaryYScale;
         private float secondaryYScale;
         private float priceChangeYScale;
+        private float filterButtonsLayoutYScale;
 
         public void init() {
             searchEditXScale = searchEdit.getScaleX();
             primaryYScale = primaryPrice.getScaleY();
             secondaryYScale = secondaryPrice.getScaleY();
             priceChangeYScale = priceChange.getScaleY();
+            filterButtonsLayoutYScale = filterButtonsLayout.getScaleY();
             searchEditPivotX = searchEdit.getX() + searchEdit.getWidth();
+            filterButtonsLayout.setScaleY(0);
         }
 
         public void animateSearchVisibility(boolean b) {
@@ -701,6 +706,14 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
                         priceChange.setScaleY(0);
                     }
                 });
+
+                filterButtonsLayout.animate().scaleY(filterButtonsLayoutYScale).setDuration(durationShort).setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        filterButtonsLayout.setScaleY(filterButtonsLayoutYScale);
+                    }
+                });
             } else {
                 searchIcon.setBackgroundResource(R.drawable.ic_search_black_24dp);
                 primaryPrice.setVisibility(View.VISIBLE);
@@ -733,6 +746,14 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
                     public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
                         searchEdit.setVisibility(View.GONE);
+                    }
+                });
+
+                filterButtonsLayout.animate().scaleY(0).setDuration(durationShort).setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        filterButtonsLayout.setScaleY(0);
                     }
                 });
                 Utils.hideKeyboard(app);
