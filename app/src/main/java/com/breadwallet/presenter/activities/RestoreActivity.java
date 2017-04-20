@@ -33,6 +33,7 @@ public class RestoreActivity extends Activity {
                 intent.putExtra("restore", true);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                if (!RestoreActivity.this.isDestroyed()) finish();
             }
         });
     }

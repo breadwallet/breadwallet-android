@@ -144,6 +144,7 @@ public class IntroRecoverWordsActivity extends Activity {
                             Intent intent = new Intent(app, IntroActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
+                            if (!IntroRecoverWordsActivity.this.isDestroyed()) finish();
 
                         } else {
                             BreadDialog.showCustomDialog(app, "", "The entered phrase does not match your wallet's phrase", "Close", null, new BRDialogView.BROnClickListener() {
@@ -323,7 +324,7 @@ public class IntroRecoverWordsActivity extends Activity {
 
     }
 
-    private void clearWords(){
+    private void clearWords() {
         word1.setText("");
         word2.setText("");
         word3.setText("");
