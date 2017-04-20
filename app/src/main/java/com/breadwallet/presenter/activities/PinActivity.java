@@ -217,6 +217,7 @@ public class PinActivity extends Activity {
     }
 
     private void updateDots() {
+        if (dot1 == null) return;
         int selectedDots = pin.length();
         dot1.setBackground(getDrawable(selectedDots <= 0 ? R.drawable.ic_pin_dot_white : R.drawable.ic_pin_dot_black));
         selectedDots--;
