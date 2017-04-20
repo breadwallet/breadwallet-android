@@ -65,6 +65,8 @@
 
                 <data android:scheme="bitcoin"/>
             </intent-filter>
+            <meta-data android:name="android.app.searchable"
+                       android:resource="@xml/searchable"/>
         </activity>
         <activity
             android:name=".presenter.activities.IntroSetPitActivity"
