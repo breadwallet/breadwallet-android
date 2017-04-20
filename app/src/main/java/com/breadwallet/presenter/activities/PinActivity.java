@@ -75,6 +75,7 @@ public class PinActivity extends Activity {
             Intent intent = new Intent(this, IntroSetPitActivity.class);
             intent.putExtra("recovery", true);
             startActivity(intent);
+            if(!PinActivity.this.isDestroyed()) finish();
             return;
         }
 //        setStatusBarColor(android.R.color.transparent);
