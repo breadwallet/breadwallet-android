@@ -114,12 +114,11 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:background="@drawable/search_background"
-                    android:ems="10"
                     android:hint="@string/search_hint"
+                    android:maxEms="20"
                     android:inputType="textPersonName"
                     android:maxLines="1"
-                    android:padding="4dp"
-
+                    android:padding="8dp"
                     android:selectAllOnFocus="true"
                     android:textColor="@color/dark_gray"
                     android:textColorHint="@color/light_gray"
@@ -143,7 +142,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/search_icon"
+                    app:layout_constraintTop_toBottomOf="@+id/search_edit"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintVertical_bias="0.0">
 
