@@ -387,7 +387,8 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         pendingFilter.setTextColor(switches[2] ? getColor(R.color.dark_blue) : getColor(R.color.light_gray));
         completeFilter.setBackgroundResource(switches[3] ? R.drawable.button_secondary_blue_stroke : R.drawable.button_secondary_gray_stroke);
         completeFilter.setTextColor(switches[3] ? getColor(R.color.dark_blue) : getColor(R.color.light_gray));
-        adapter.filterBy(searchEdit.getText().toString(), searchManager.filterSwitches);
+        if (adapter != null)
+            adapter.filterBy(searchEdit.getText().toString(), searchManager.filterSwitches);
     }
 
     @Override
@@ -725,7 +726,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
 
         }
 
-        public void clearSwitches(){
+        public void clearSwitches() {
             filterSwitches[0] = false;
             filterSwitches[1] = false;
             filterSwitches[2] = false;
