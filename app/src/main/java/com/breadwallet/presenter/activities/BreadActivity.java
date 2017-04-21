@@ -750,6 +750,15 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
                         super.onAnimationEnd(animation);
                         searchEdit.setScaleX(searchEditXScale);
                         searchEdit.requestFocus();
+                        filterButtonsLayout.animate().scaleX(filterButtonsLayoutXScale).setDuration(durationShort * 2).setListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                super.onAnimationEnd(animation);
+                                filterButtonsLayout.setScaleX(filterButtonsLayoutXScale);
+                            }
+                        });
+                        searchManager.clearSwitches();
+                        updateFilterButtonsUI(searchManager.filterSwitches);
                     }
                 });
                 primaryPrice.animate().scaleY(0).setDuration(durationShort).setListener(new AnimatorListenerAdapter() {
@@ -774,20 +783,6 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
                     }
                 });
 
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        filterButtonsLayout.animate().scaleX(filterButtonsLayoutXScale).setDuration(durationShort * 2).setListener(new AnimatorListenerAdapter() {
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-                                super.onAnimationEnd(animation);
-                                filterButtonsLayout.setScaleX(filterButtonsLayoutXScale);
-                            }
-                        });
-                        searchManager.clearSwitches();
-                        updateFilterButtonsUI(searchManager.filterSwitches);
-                    }
-                }, 100);
 
             } else {
                 searchIcon.setBackgroundResource(R.drawable.ic_search_black_24dp);
