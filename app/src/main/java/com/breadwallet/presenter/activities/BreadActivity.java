@@ -329,7 +329,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (adapter != null)
-                    adapter.filterBy(s.toString());
+                    adapter.filterBy(s.toString(), searchManager.filterSwitches);
                 Log.e(TAG, "onTextChanged: " + s.toString());
             }
 
@@ -380,14 +380,14 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
 
     private void updateFilterButtonsUI(boolean[] switches) {
         sentFilter.setBackgroundResource(switches[0] ? R.drawable.button_secondary_blue_stroke : R.drawable.button_secondary_gray_stroke);
-        sentFilter.setTextColor(switches[0] ? getColor(R.color.dark_blue) : getColor(R.color.extra_light_gray));
+        sentFilter.setTextColor(switches[0] ? getColor(R.color.dark_blue) : getColor(R.color.light_gray));
         receivedFilter.setBackgroundResource(switches[1] ? R.drawable.button_secondary_blue_stroke : R.drawable.button_secondary_gray_stroke);
-        receivedFilter.setTextColor(switches[1] ? getColor(R.color.dark_blue) : getColor(R.color.extra_light_gray));
+        receivedFilter.setTextColor(switches[1] ? getColor(R.color.dark_blue) : getColor(R.color.light_gray));
         pendingFilter.setBackgroundResource(switches[2] ? R.drawable.button_secondary_blue_stroke : R.drawable.button_secondary_gray_stroke);
-        pendingFilter.setTextColor(switches[2] ? getColor(R.color.dark_blue) : getColor(R.color.extra_light_gray));
+        pendingFilter.setTextColor(switches[2] ? getColor(R.color.dark_blue) : getColor(R.color.light_gray));
         completeFilter.setBackgroundResource(switches[3] ? R.drawable.button_secondary_blue_stroke : R.drawable.button_secondary_gray_stroke);
-        completeFilter.setTextColor(switches[3] ? getColor(R.color.dark_blue) : getColor(R.color.extra_light_gray));
-
+        completeFilter.setTextColor(switches[3] ? getColor(R.color.dark_blue) : getColor(R.color.light_gray));
+        adapter.filterBy(searchEdit.getText().toString(), searchManager.filterSwitches);
     }
 
     @Override
@@ -725,9 +725,16 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
 
         }
 
+        public void clearSwitches(){
+            filterSwitches[0] = false;
+            filterSwitches[1] = false;
+            filterSwitches[2] = false;
+            filterSwitches[3] = false;
+        }
+
         void animateSearchVisibility(boolean b) {
             int duration = 300;
-            int durationShort = 200;
+            final int durationShort = 200;
             if (b) {
                 searchIcon.setBackgroundResource(R.drawable.ic_close_black_24dp);
                 searchEdit.setVisibility(View.VISIBLE);
@@ -735,6 +742,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
                 searchEdit.setScaleX(0);
                 searchEdit.setPivotX(searchEdit.getX());
                 filterButtonsLayout.setPivotX(filterButtonsLayout.getX());
+
                 searchEdit.animate().scaleX(searchEditXScale).setDuration(duration).setInterpolator(new OvershootInterpolator(0.7f)).setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
@@ -765,13 +773,21 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
                     }
                 });
 
-                filterButtonsLayout.animate().scaleX(filterButtonsLayoutXScale).setDuration(durationShort * 2).setListener(new AnimatorListenerAdapter() {
+                new Handler().postDelayed(new Runnable() {
                     @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        filterButtonsLayout.setScaleX(filterButtonsLayoutXScale);
+                    public void run() {
+                        filterButtonsLayout.animate().scaleX(filterButtonsLayoutXScale).setDuration(durationShort * 2).setListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                super.onAnimationEnd(animation);
+                                filterButtonsLayout.setScaleX(filterButtonsLayoutXScale);
+                            }
+                        });
+                        searchManager.clearSwitches();
+                        updateFilterButtonsUI(searchManager.filterSwitches);
                     }
-                });
+                }, 100);
+
             } else {
                 searchIcon.setBackgroundResource(R.drawable.ic_search_black_24dp);
                 primaryPrice.setVisibility(View.VISIBLE);

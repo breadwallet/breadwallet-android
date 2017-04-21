@@ -23,6 +23,7 @@ import com.breadwallet.wallet.BRWalletManager;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static android.text.format.DateUtils.MINUTE_IN_MILLIS;
@@ -140,25 +141,52 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
 
     }
 
-    public void filterBy(String query) {
-        filter(query);
+    public void filterBy(String query, boolean[] switches) {
+        filter(query, switches);
     }
 
-    private void filter(String query) {
-
-        if (Utils.isNullOrEmpty(query)) {
-            itemFeed = backUpFeed;
-            notifyDataSetChanged();
-            return;
-        }
+    private void filter(String query, boolean[] switches) {
+        Log.e(TAG, "filter: " + Arrays.toString(switches) + ", " + query);
         String lowerQuery = query.toLowerCase().trim();
+
+        int switchesON = 0;
+        for (boolean i : switches) if (i) switchesON++;
 
         List<TransactionListItem> filteredList = new ArrayList<>();
         for (TransactionListItem item : backUpFeed) {
-            if (item.getHexId().toLowerCase().contains(lowerQuery) || item.getFrom()[0].toLowerCase().contains(lowerQuery)
+
+            if (item.getHexId().toLowerCase().contains(lowerQuery)
+                    || item.getFrom()[0].toLowerCase().contains(lowerQuery)
                     || item.getTo()[0].toLowerCase().contains(lowerQuery)) {
-                filteredList.add(item);
+                if (switchesON == 0) {
+                    filteredList.add(item);
+                } else {
+                    boolean willAdd = true;
+                    //filter by sent and this is received
+                    if (switches[0] && (item.getSent() - item.getReceived() <= 0)) {
+                        willAdd = false;
+                    }
+                    //filter by received and this is sent
+                    if (switches[1] && (item.getSent() - item.getReceived() > 0)) {
+                        willAdd = false;
+                    }
+
+                    int confirms = item.getBlockHeight() == Integer.MAX_VALUE ? 0 : SharedPreferencesManager.getLastBlockHeight(mContext) - item.getBlockHeight() + 1;
+                    //filter by pending and this is complete
+                    if (switches[2] && confirms >= 6) {
+                        willAdd = false;
+                    }
+
+                    //filter by completed and this is pending
+                    if (switches[3] && confirms < 6) {
+                        willAdd = false;
+                    }
+
+                    if (willAdd) filteredList.add(item);
+                }
+
             }
+
         }
         itemFeed = filteredList;
         notifyDataSetChanged();
