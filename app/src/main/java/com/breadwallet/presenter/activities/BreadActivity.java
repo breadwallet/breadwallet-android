@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.net.Uri;
@@ -27,6 +28,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.OvershootInterpolator;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -128,6 +130,10 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     private EditText searchEdit;
     private BRSearchManager searchManager;
     private LinearLayout filterButtonsLayout;
+    private Button sentFilter;
+    private Button receivedFilter;
+    private Button pendingFilter;
+    private Button completeFilter;
 
     public static BreadActivity getApp() {
         return app;
@@ -333,6 +339,55 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
             }
         });
 
+        sentFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SpringAnimator.showAnimation(v);
+                searchManager.filterSwitches[0] = !searchManager.filterSwitches[0];
+                updateFilterButtonsUI(searchManager.filterSwitches);
+
+            }
+        });
+
+        receivedFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SpringAnimator.showAnimation(v);
+                searchManager.filterSwitches[1] = !searchManager.filterSwitches[1];
+                updateFilterButtonsUI(searchManager.filterSwitches);
+            }
+        });
+
+        pendingFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SpringAnimator.showAnimation(v);
+                searchManager.filterSwitches[2] = !searchManager.filterSwitches[2];
+                updateFilterButtonsUI(searchManager.filterSwitches);
+            }
+        });
+
+        completeFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SpringAnimator.showAnimation(v);
+                searchManager.filterSwitches[3] = !searchManager.filterSwitches[3];
+                updateFilterButtonsUI(searchManager.filterSwitches);
+            }
+        });
+
+    }
+
+    private void updateFilterButtonsUI(boolean[] switches) {
+        sentFilter.setBackgroundResource(switches[0] ? R.drawable.button_secondary_blue_stroke : R.drawable.button_secondary_gray_stroke);
+        sentFilter.setTextColor(switches[0] ? getColor(R.color.dark_blue) : getColor(R.color.extra_light_gray));
+        receivedFilter.setBackgroundResource(switches[1] ? R.drawable.button_secondary_blue_stroke : R.drawable.button_secondary_gray_stroke);
+        receivedFilter.setTextColor(switches[1] ? getColor(R.color.dark_blue) : getColor(R.color.extra_light_gray));
+        pendingFilter.setBackgroundResource(switches[2] ? R.drawable.button_secondary_blue_stroke : R.drawable.button_secondary_gray_stroke);
+        pendingFilter.setTextColor(switches[2] ? getColor(R.color.dark_blue) : getColor(R.color.extra_light_gray));
+        completeFilter.setBackgroundResource(switches[3] ? R.drawable.button_secondary_blue_stroke : R.drawable.button_secondary_gray_stroke);
+        completeFilter.setTextColor(switches[3] ? getColor(R.color.dark_blue) : getColor(R.color.extra_light_gray));
+
     }
 
     @Override
@@ -438,6 +493,11 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         searchEdit = (EditText) findViewById(R.id.search_edit);
         filterButtonsLayout = (LinearLayout) findViewById(R.id.filter_buttons_layout);
 
+        sentFilter = (Button) findViewById(R.id.sent_filter);
+        receivedFilter = (Button) findViewById(R.id.received_filter);
+        pendingFilter = (Button) findViewById(R.id.pending_filter);
+        completeFilter = (Button) findViewById(R.id.complete_filter);
+
     }
 
     private void togglePriceTexts() {
@@ -447,7 +507,6 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
             public void run() {
                 updateUI();
                 updateTxList();
-
             }
         }, 100);
     }
@@ -478,7 +537,6 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
 
     @Override
     public void onBalanceChanged(final long balance) {
-        Log.e(TAG, "onBalanceChanged: " + balance);
         updateUI();
         updateTxList();
 
@@ -648,15 +706,14 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         walletName.setText(name);
     }
 
-
     private class BRSearchManager {
 
         private float searchEditXScale;
-//        private float searchEditPivotX;
         private float primaryYScale;
         private float secondaryYScale;
         private float priceChangeYScale;
         private float filterButtonsLayoutXScale;
+        public boolean[] filterSwitches = new boolean[4];
 
         public void init() {
             searchEditXScale = searchEdit.getScaleX();
@@ -664,11 +721,11 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
             secondaryYScale = secondaryPrice.getScaleY();
             priceChangeYScale = priceChange.getScaleY();
             filterButtonsLayoutXScale = filterButtonsLayout.getScaleX();
-//            searchEditPivotX = searchEdit.getX() + searchEdit.getWidth();
             filterButtonsLayout.setScaleX(0);
+
         }
 
-        public void animateSearchVisibility(boolean b) {
+        void animateSearchVisibility(boolean b) {
             int duration = 300;
             int durationShort = 200;
             if (b) {
@@ -750,7 +807,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
                     }
                 });
 
-                filterButtonsLayout.animate().scaleX(0).setDuration(durationShort/2).setListener(new AnimatorListenerAdapter() {
+                filterButtonsLayout.animate().scaleX(0).setDuration(durationShort / 2).setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
