@@ -55,7 +55,7 @@ public class IntroPhraseProveActivity extends Activity {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!BRAnimator.isClickAllowed()) return;
+                if (!BRAnimator.isClickAllowed()) return;
                 String edit1 = wordEditFirst.getText().toString().replaceAll("[^a-zA-Z]", "");
                 String edit2 = wordEditSecond.getText().toString().replaceAll("[^a-zA-Z]", "");
 
@@ -93,13 +93,8 @@ public class IntroPhraseProveActivity extends Activity {
         });
         String cleanPhrase = null;
 
-        try {
-            cleanPhrase = new String(KeyStoreManager.getKeyStorePhrase(this, 0));
-            //todo DELETE THIS LOG
-//            Log.e(TAG, "onCreate: success: " + cleanPhrase);
-        } catch (BRKeystoreErrorException e) {
-            e.printStackTrace();
-        }
+        cleanPhrase = getIntent().getExtras() == null ? null : getIntent().getStringExtra("phrase");
+
         if (Utils.isNullOrEmpty(cleanPhrase)) {
             throw new RuntimeException(TAG + ": cleanPhrase is null");
         }

@@ -13,6 +13,7 @@ import com.breadwallet.R;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.IntroPhraseCheckActivity;
+import com.breadwallet.presenter.activities.IntroPhraseProveActivity;
 import com.breadwallet.presenter.activities.IntroReEnterPinActivity;
 import com.breadwallet.presenter.activities.IntroSetPitActivity;
 import com.breadwallet.presenter.activities.IntroWriteDownActivity;
@@ -105,6 +106,20 @@ public class PostAuthenticationProcessor {
             return;
         }
         Intent intent = new Intent(app, IntroPhraseCheckActivity.class);
+        intent.putExtra("phrase", cleanPhrase);
+        app.startActivity(intent);
+        app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+    }
+
+    public void onPhraseProveAuth(Activity app, boolean authAsked) {
+        String cleanPhrase;
+        try {
+            cleanPhrase = new String(KeyStoreManager.getKeyStorePhrase(app, BRConstants.PROVE_PHRASE_REQUEST));
+        } catch (BRKeystoreErrorException e) {
+            e.printStackTrace();
+            return;
+        }
+        Intent intent = new Intent(app, IntroPhraseProveActivity.class);
         intent.putExtra("phrase", cleanPhrase);
         app.startActivity(intent);
         app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);

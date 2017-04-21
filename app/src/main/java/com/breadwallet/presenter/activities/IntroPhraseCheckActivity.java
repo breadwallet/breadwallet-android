@@ -26,6 +26,8 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.security.PostAuthenticationProcessor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 import com.google.firebase.crash.FirebaseCrash;
@@ -90,7 +92,7 @@ public class IntroPhraseCheckActivity extends Activity {
 
             }
         });
-        String cleanPhrase = getIntent().getExtras() == null? null : getIntent().getStringExtra("phrase");
+        String cleanPhrase = getIntent().getExtras() == null ? null : getIntent().getStringExtra("phrase");
         wordMap = new SparseArray<>();
 
         if (Utils.isNullOrEmpty(cleanPhrase)) {
@@ -126,9 +128,7 @@ public class IntroPhraseCheckActivity extends Activity {
         if (isNext) {
             setButtonEnabled(true);
             if (currentIndex >= 11) {
-                Intent intent = new Intent(IntroPhraseCheckActivity.this, IntroPhraseProveActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                PostAuthenticationProcessor.getInstance().onPhraseProveAuth(this, false);
             } else {
                 wordViewPager.setCurrentItem(currentIndex + 1);
             }
@@ -190,5 +190,18 @@ public class IntroPhraseCheckActivity extends Activity {
             return words == null ? 0 : words.length;
         }
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case BRConstants.PROVE_PHRASE_REQUEST:
+                if (resultCode == RESULT_OK) {
+                    PostAuthenticationProcessor.getInstance().onPhraseProveAuth(this, true);
+                }
+                break;
+        }
     }
 }
