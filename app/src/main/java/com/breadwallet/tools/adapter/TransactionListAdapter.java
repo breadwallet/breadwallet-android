@@ -146,7 +146,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
     }
 
     private void filter(String query, boolean[] switches) {
-        Log.e(TAG, "filter: " + Arrays.toString(switches) + ", " + query);
         String lowerQuery = query.toLowerCase().trim();
 
         int switchesON = 0;
