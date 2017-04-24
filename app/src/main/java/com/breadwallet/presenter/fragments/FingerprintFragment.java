@@ -199,6 +199,7 @@ public class FingerprintFragment extends Fragment
     public void onAuthenticated() {
         authSucceeded = true;
         if (completion != null) completion.onComplete();
+        closeMe();
 //
 //        ((BreadWalletApp) getActivity().getApplicationContext()).setUnlocked(true);
 //        FragmentSettingsAll.refreshUI();
@@ -254,12 +255,11 @@ public class FingerprintFragment extends Fragment
 
     private void animateSignalSlide(final boolean reverse) {
         float layoutTY = fingerPrintLayout.getTranslationY();
-        Log.e(TAG, "animateSignalSlide: " + layoutTY);
         if (!reverse) {
             fingerPrintLayout.setTranslationY(layoutTY + BreadActivity.screenParametersPoint.y);
             fingerPrintLayout.animate()
                     .translationY(layoutTY)
-                    .setDuration(ANIMATION_DURATION)
+                    .setDuration(ANIMATION_DURATION + 200)
                     .setInterpolator(new DecelerateOvershootInterpolator(2.0f, 1f))
                     .withLayer();
         } else {

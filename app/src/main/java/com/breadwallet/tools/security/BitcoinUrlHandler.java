@@ -1,6 +1,7 @@
 package com.breadwallet.tools.security;
 
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.net.Uri;
 import android.util.Log;
 
@@ -422,6 +423,7 @@ public class BitcoinUrlHandler {
             });
         } else {
             if (app != null) {
+                app.getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 BRWalletManager.getInstance().handlePay(app, new PaymentRequestEntity(addresses, new BigDecimal(amount).longValue(), null, true));
             }
         }

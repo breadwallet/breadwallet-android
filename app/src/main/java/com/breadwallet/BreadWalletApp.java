@@ -65,7 +65,7 @@ public class BreadWalletApp extends Application {
 
     }
 
-    public static Activity getBreadContext(){
-        return BreadActivity.getApp() == null? PinActivity.getApp() : BreadActivity.getApp();
+    public static Activity getBreadContext() {
+        return BreadActivity.getApp() != null && !BreadActivity.getApp().isDestroyed() ? BreadActivity.getApp() : PinActivity.getApp();
     }
 }
