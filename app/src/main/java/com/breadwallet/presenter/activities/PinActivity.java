@@ -18,6 +18,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -25,9 +26,11 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRSoftKeyboard;
+import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
@@ -55,6 +58,8 @@ public class PinActivity extends Activity {
     private TextView enterPinLabel;
     private LinearLayout offlineButtonsLayout;
 
+    private ImageButton fingerPrint;
+
     private Button leftButton;
     private Button rightButton;
 
@@ -75,12 +80,13 @@ public class PinActivity extends Activity {
             Intent intent = new Intent(this, IntroSetPitActivity.class);
             intent.putExtra("recovery", true);
             startActivity(intent);
-            if(!PinActivity.this.isDestroyed()) finish();
+            if (!PinActivity.this.isDestroyed()) finish();
             return;
         }
 //        setStatusBarColor(android.R.color.transparent);
         keyboard = (BRSoftKeyboard) findViewById(R.id.brkeyboard);
         pinLayout = (LinearLayout) findViewById(R.id.pinLayout);
+        fingerPrint = (ImageButton) findViewById(R.id.fingerprint_icon);
 
         unlockedImage = (ImageView) findViewById(R.id.unlocked_image);
         unlockedText = (TextView) findViewById(R.id.unlocked_text);
@@ -153,6 +159,28 @@ public class PinActivity extends Activity {
                 }
             }
         });
+
+        boolean isFingerPrintAvailable = AuthManager.isFingerPrintAvailable(this);
+        Log.e(TAG, "onCreate: isFingerPrintAvailable: " + isFingerPrintAvailable);
+        fingerPrint.setVisibility(isFingerPrintAvailable ? View.VISIBLE : View.GONE);
+
+        if (isFingerPrintAvailable)
+            fingerPrint.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AuthManager.getInstance().authPrompt(PinActivity.this, "", "FingerPrint authentication", false, new BRAuthCompletion() {
+                        @Override
+                        public void onComplete() {
+                            BRWalletManager.getInstance().startBreadActivity(PinActivity.this, false);
+                        }
+
+                        @Override
+                        public void onCancel() {
+
+                        }
+                    });
+                }
+            });
 
     }
 

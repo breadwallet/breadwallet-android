@@ -16,6 +16,7 @@ import com.breadwallet.presenter.customviews.BRSoftKeyboard;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
@@ -157,7 +158,7 @@ public class IntroReEnterPinActivity extends FragmentActivity {
                     updateDots();
                 }
             },200);
-            KeyStoreManager.putPinCode(pin.toString(), this);
+            AuthManager.getInstance().setPinCode(pin.toString(), this);
             if (getIntent().getBooleanExtra("recovery", false)) {
                 BRWalletManager.getInstance().startBreadActivity(this, false);
             } else {

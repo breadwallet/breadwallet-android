@@ -57,8 +57,6 @@ public class FragmentBreadPin extends Fragment {
     private static final String TAG = FragmentBreadPin.class.getName();
 
     private BRAuthCompletion completion;
-    private String mTitle;
-    private String mMessage;
 
     private BRSoftKeyboard keyboard;
     private LinearLayout pinLayout;
@@ -115,11 +113,14 @@ public class FragmentBreadPin extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         float keyboardTrY = keyboard.getTranslationY();
         Log.e(TAG, "onViewCreated: translationY: " + keyboardTrY);
-        if (!Utils.isNullOrEmpty(mTitle)) {
-            title.setText(mTitle);
+        Bundle bundle = getArguments();
+        String titleString = bundle.getString("title");
+        String messageString = bundle.getString("message");
+        if (!Utils.isNullOrEmpty(titleString)) {
+            title.setText(titleString);
         }
-        if (!Utils.isNullOrEmpty(mMessage)) {
-            message.setText(mMessage);
+        if (!Utils.isNullOrEmpty(messageString)) {
+            message.setText(messageString);
         }
         keyboard.setTranslationY(keyboardTrY + BreadActivity.screenParametersPoint.y / 3);
         keyboard.animate()
@@ -248,11 +249,4 @@ public class FragmentBreadPin extends Fragment {
         this.completion = completion;
     }
 
-    public void setmTitle(String mTitle) {
-        this.mTitle = mTitle;
-    }
-
-    public void setmMessage(String mMessage) {
-        this.mMessage = mMessage;
-    }
 }

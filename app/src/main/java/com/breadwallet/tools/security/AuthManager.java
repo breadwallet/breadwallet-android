@@ -1,15 +1,31 @@
 package com.breadwallet.tools.security;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.FragmentTransaction;
+import android.app.KeyguardManager;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
+import android.hardware.fingerprint.FingerprintManager;
+import android.os.Bundle;
+import android.support.v13.app.ActivityCompat;
 import android.util.Log;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.customviews.BRDialogView;
+import com.breadwallet.presenter.fragments.FingerprintDialogFragment;
 import com.breadwallet.presenter.fragments.FragmentBreadPin;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
+import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.BRWalletManager;
+
+import java.util.concurrent.TimeUnit;
+
+import static android.R.attr.mode;
 
 /**
  * BreadWallet
@@ -80,30 +96,15 @@ public class AuthManager {
         }
     }
 
-    public void authPrompt(Context context, String title, String message, boolean forcePin, BRAuthCompletion completion) {
+
+    public void authPrompt(final Context context, String title, String message, boolean forcePin, BRAuthCompletion completion) {
         if (context == null || !(context instanceof Activity)) {
             Log.e(TAG, "authPrompt: context is null or not Activity: " + context);
             return;
         }
+        KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Activity.KEYGUARD_SERVICE);
 
-        Activity app = (Activity) context;
-
-        FragmentBreadPin breadPin = new FragmentBreadPin();
-        breadPin.setmTitle(title);
-        breadPin.setmMessage(message);
-        breadPin.setCompletion(completion);
-
-        FragmentTransaction transaction = app.getFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(0, 0, 0, R.animator.plain_300);
-        transaction.add(android.R.id.content, breadPin, breadPin.getClass().getName());
-        transaction.addToBackStack(null);
-        if (!app.isDestroyed())
-            transaction.commit();
-
-//        KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Activity.KEYGUARD_SERVICE);
-//
-//        boolean useFingerPrint = ActivityCompat.checkSelfPermission(this, Manifest.permission.USE_FINGERPRINT) ==
-//                PackageManager.PERMISSION_GRANTED && mFingerprintManager.isHardwareDetected() && mFingerprintManager.hasEnrolledFingerprints();
+        boolean useFingerPrint = isFingerPrintAvailable(context);
 //        if (mode == BRConstants.AUTH_FOR_PAY) {
 //            long limit = KeyStoreManager.getSpendLimit(context);
 //            long totalSent = BRWalletManager.getInstance().getTotalSent();
@@ -117,38 +118,72 @@ public class AuthManager {
 //        if (mode == BRConstants.AUTH_FOR_LIMIT || mode == BRConstants.AUTH_FOR_PHRASE) {
 //            useFingerPrint = false;
 //        }
-//
-//        if (KeyStoreManager.getFailCount(context) != 0) {
-//            useFingerPrint = false;
-//        }
-//        long passTime = KeyStoreManager.getLastPasscodeUsedTime(context);
-//        if (passTime + TimeUnit.MILLISECONDS.convert(2, TimeUnit.DAYS) <= System.currentTimeMillis()) {
-//            useFingerPrint = false;
-//        }
-//        if (forcePasscode) useFingerPrint = false;
-//
-//        if (keyguardManager.isKeyguardSecure()) {
-//            if (useFingerPrint) {
-//                // This happens when no fingerprints are registered.
-//                FingerprintDialogFragment fingerprintDialogFragment = new FingerprintDialogFragment();
+
+        if (KeyStoreManager.getFailCount(context) != 0) {
+            useFingerPrint = false;
+        }
+        long passTime = KeyStoreManager.getLastPasscodeUsedTime(context);
+        if (passTime + TimeUnit.MILLISECONDS.convert(2, TimeUnit.DAYS) <= System.currentTimeMillis()) {
+            useFingerPrint = false;
+        }
+        if (forcePin)
+            useFingerPrint = false;
+
+        final Activity app = (Activity) context;
+
+        if (keyguardManager.isKeyguardSecure()) {
+            if (useFingerPrint) {
+                FingerprintDialogFragment fingerprintDialogFragment = new FingerprintDialogFragment();
+                Bundle args = new Bundle();
+                args.putString("title", title);
+                args.putString("message", message);
+                fingerprintDialogFragment.setArguments(args);
+                fingerprintDialogFragment.setCompletion(completion);
 //                fingerprintDialogFragment.setMode(mode);
 //                fingerprintDialogFragment.setPaymentRequestEntity(requestEntity, paymentRequest);
 //                fingerprintDialogFragment.setmMessage(message);
 //                fingerprintDialogFragment.setmTitle(message != null ? "" : title);
-//                if (!context.isDestroyed())
-//                    fingerprintDialogFragment.show(context.getFragmentManager(), FingerprintDialogFragment.class.getName());
-//            } else {
-//                PasswordDialogFragment passwordDialogFragment = new PasswordDialogFragment();
-//                passwordDialogFragment.setMode(mode);
-//                passwordDialogFragment.setPaymentRequestEntity(requestEntity, paymentRequest);
-//                passwordDialogFragment.setVerifyOnlyTrue();
-//                passwordDialogFragment.setmMessage(message);
-//                if (!context.isDestroyed())
-//                    passwordDialogFragment.show(context.getFragmentManager(), PasswordDialogFragment.class.getName());
-//            }
-//        } else {
-//            showDeviceNotSecuredWarning(context);
-//        }
+                FragmentTransaction transaction = app.getFragmentManager().beginTransaction();
+                transaction.setCustomAnimations(0, 0, 0, R.animator.plain_300);
+                transaction.add(android.R.id.content, fingerprintDialogFragment, fingerprintDialogFragment.getClass().getName());
+                transaction.addToBackStack(null);
+                if (!app.isDestroyed())
+                    transaction.commit();
+            } else {
+
+                FragmentBreadPin breadPin = new FragmentBreadPin();
+                Bundle args = new Bundle();
+                args.putString("title", title);
+                args.putString("message", message);
+                breadPin.setArguments(args);
+                breadPin.setCompletion(completion);
+                FragmentTransaction transaction = app.getFragmentManager().beginTransaction();
+                transaction.setCustomAnimations(0, 0, 0, R.animator.plain_300);
+                transaction.add(android.R.id.content, breadPin, breadPin.getClass().getName());
+                transaction.addToBackStack(null);
+                if (!app.isDestroyed())
+                    transaction.commit();
+            }
+        } else {
+            BreadDialog.showCustomDialog(app, "", context.getString(R.string.encryption_needed_for_wallet), "close", null, new BRDialogView.BROnClickListener() {
+                @Override
+                public void onClick(BRDialogView brDialogView) {
+                    app.finish();
+                }
+            }, null, new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    app.finish();
+                }
+            }, 0);
+        }
 
     }
+
+    public static boolean isFingerPrintAvailable(Context context) {
+        FingerprintManager mFingerprintManager = (FingerprintManager) context.getSystemService(Context.FINGERPRINT_SERVICE);
+        return ActivityCompat.checkSelfPermission(context, Manifest.permission.USE_FINGERPRINT) ==
+                PackageManager.PERMISSION_GRANTED && mFingerprintManager.isHardwareDetected() && mFingerprintManager.hasEnrolledFingerprints();
+    }
+
 }

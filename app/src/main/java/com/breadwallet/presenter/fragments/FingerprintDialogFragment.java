@@ -17,43 +17,50 @@ package com.breadwallet.presenter.fragments;/*
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
+import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.security.FingerprintUiHelper;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
+
+import static android.R.attr.dialogLayout;
+import static com.breadwallet.R.id.keyboard;
 
 
 /**
  * A dialog which uses fingerprint APIs to authenticate the user, and falls back to password
  * authentication if fingerprint is not available.
  */
-public class FingerprintDialogFragment extends DialogFragment
+public class FingerprintDialogFragment extends Fragment
         implements FingerprintUiHelper.Callback {
     public static final String TAG = FingerprintDialogFragment.class.getName();
 
     private FingerprintManager.CryptoObject mCryptoObject;
     private FingerprintUiHelper mFingerprintUiHelper;
-    private String message;
-    private String title;
-
-    private PaymentRequestEntity request;
-    private PaymentRequestWrapper paymentRequest;
-
-    private int mode = -1;
+    private BRAuthCompletion completion;
+    private TextView title;
+    private TextView message;
+    private LinearLayout fingerPrintLayout;
+    private boolean authSucceeded;
 
     FingerprintUiHelper.FingerprintUiHelperBuilder mFingerprintUiHelperBuilder;
 
@@ -66,7 +73,7 @@ public class FingerprintDialogFragment extends DialogFragment
 
         // Do not create a new Fragment when the Activity is re-created such as orientation changes. 
         setRetainInstance(true);
-        setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_Material_Light_Dialog);
+//        setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_Material_Light_Dialog);
     }
 
     @Override
@@ -74,30 +81,37 @@ public class FingerprintDialogFragment extends DialogFragment
                              Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.fingerprint_dialog_container, container, false);
-        getDialog().setTitle(R.string.fingerprint_auth);
-        if (title != null) getDialog().setTitle(title);
+//        getDialog().setTitle(R.string.fingerprint_auth);
+        message = (TextView) v.findViewById(R.id.fingerprint_description);
+        fingerPrintLayout = (LinearLayout) v.findViewById(R.id.fingerprint_layout);
+//        title = (TextView) v....
+        Bundle bundle = getArguments();
+        String titleString = bundle.getString("title");
+        String messageString = bundle.getString("message");
+        if (!Utils.isNullOrEmpty(titleString)) {
+            title.setText(titleString);
+        }
+        if (!Utils.isNullOrEmpty(messageString)) {
+            message.setText(messageString);
+        }
         FingerprintManager mFingerprintManager = (FingerprintManager) getActivity().getSystemService(Activity.FINGERPRINT_SERVICE);
         mFingerprintUiHelperBuilder = new FingerprintUiHelper.FingerprintUiHelperBuilder(mFingerprintManager);
         mFingerprintUiHelper = mFingerprintUiHelperBuilder.build(
                 (ImageView) v.findViewById(R.id.fingerprint_icon),
                 (TextView) v.findViewById(R.id.fingerprint_status), this);
         View mFingerprintContent = v.findViewById(R.id.fingerprint_container);
-        TextView description = (TextView) v.findViewById(R.id.fingerprint_description);
-        if (message != null) {
-            description.setText(message);
-        }
 
         Button mCancelButton = (Button) v.findViewById(R.id.cancel_button);
         Button mSecondDialogButton = (Button) v.findViewById(R.id.second_dialog_button);
         mCancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!BRAnimator.isClickAllowed()) return;
+                if (!BRAnimator.isClickAllowed()) return;
 //                if (!BRAnimator.scanResultFragmentOn && mode == BRConstants.AUTH_FOR_PAY && request.isAmountRequested) {
 ////                    FragmentScanResult.address = request.address[0];
 //                    BRWalletManager.getInstance().offerToChangeTheAmount(getActivity(), "");
 //                }
-                dismiss();
+//                dismiss();
             }
         });
         mCancelButton.setText(R.string.cancel);
@@ -106,7 +120,7 @@ public class FingerprintDialogFragment extends DialogFragment
         mSecondDialogButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!BRAnimator.isClickAllowed()) return;
+                if (!BRAnimator.isClickAllowed()) return;
                 goToBackup();
             }
         });
@@ -115,9 +129,24 @@ public class FingerprintDialogFragment extends DialogFragment
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        fingerPrintLayout.animate()
+                .translationY(1000)
+                .withLayer();
+//        dialogLayout.animate()
+//                .scaleY(0)
+//                .scaleX(0).alpha(0);
+//        mainLayout.animate().alpha(0);
+        if (!authSucceeded)
+            completion.onCancel();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         mFingerprintUiHelper.startListening(mCryptoObject);
+        authSucceeded = false;
     }
 
     @Override
@@ -132,7 +161,7 @@ public class FingerprintDialogFragment extends DialogFragment
      * button. This can also happen when the user had too many fingerprint attempts.
      */
     private void goToBackup() {
-
+        Log.e(TAG, "goToBackup: ");
 //        // Fingerprint is not used anymore. Stop listening for it.
 //        if (getDialog() != null)
 //            getDialog().cancel();
@@ -143,15 +172,18 @@ public class FingerprintDialogFragment extends DialogFragment
 //        passwordDialogFragment.setmMessage(message);
 //        FragmentManager fm = getActivity().getFragmentManager();
 //        passwordDialogFragment.show(fm, PasswordDialogFragment.class.getName());
+        AuthManager.getInstance().authPrompt(getContext(), title.getText().toString(), message.getText().toString(), true, completion);
         if (mFingerprintUiHelper != null)
             mFingerprintUiHelper.stopListening();
     }
 
     @Override
     public void onAuthenticated() {
-        Dialog d = getDialog();
-        if (d == null) return;
-        d.cancel();
+//        Dialog d = getDialog();
+//        if (d == null) return;
+//        d.cancel();
+        authSucceeded = true;
+        Log.e(TAG, "onAuthenticated: ");
 //
 //        ((BreadWalletApp) getActivity().getApplicationContext()).setUnlocked(true);
 //        FragmentSettingsAll.refreshUI();
@@ -175,28 +207,17 @@ public class FingerprintDialogFragment extends DialogFragment
 //        } else if (mode == AUTH_FOR_BIT_ID){
 //            RequestHandler.processBitIdResponse(getActivity());
 //        }
-        dismiss();
+//        dismiss();
+    }
+
+    public void setCompletion(BRAuthCompletion completion) {
+        this.completion = completion;
     }
 
     @Override
     public void onError() {
+        Log.e(TAG, "onError: going to backup");
         goToBackup();
     }
 
-    public void setPaymentRequestEntity(PaymentRequestEntity requestEntity, PaymentRequestWrapper paymentRequest) {
-        this.paymentRequest = paymentRequest;
-        request = requestEntity;
-    }
-
-    public void setMode(int mode) {
-        this.mode = mode;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
 }
