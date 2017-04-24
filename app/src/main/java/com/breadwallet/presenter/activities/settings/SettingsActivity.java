@@ -22,6 +22,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.ImportActivity;
 import com.breadwallet.presenter.activities.RestoreActivity;
 import com.breadwallet.presenter.entities.BRSettingsItem;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.util.ArrayList;
@@ -102,7 +103,7 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        BRWalletManager.getInstance().startBreadActivity(this, false);
+        BRAnimator.startBreadActivity(this, false);
     }
 
     private void setStatusBarColor(int color) {

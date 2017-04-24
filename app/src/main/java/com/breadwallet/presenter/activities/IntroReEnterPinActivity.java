@@ -160,7 +160,7 @@ public class IntroReEnterPinActivity extends FragmentActivity {
             },200);
             AuthManager.getInstance().setPinCode(pin.toString(), this);
             if (getIntent().getBooleanExtra("recovery", false)) {
-                BRWalletManager.getInstance().startBreadActivity(this, false);
+                BRAnimator.startBreadActivity(this, false);
             } else {
                 BRAnimator.showBreadSignal(this, "PIN Set", "Use your PIN to login and send money.", R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
                     @Override

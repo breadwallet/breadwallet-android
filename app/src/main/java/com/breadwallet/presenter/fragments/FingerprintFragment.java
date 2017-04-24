@@ -197,9 +197,14 @@ public class FingerprintFragment extends Fragment
 
     @Override
     public void onAuthenticated() {
+        Activity app = getActivity();
         authSucceeded = true;
+        BRAnimator.killAllFragments(app);
+        BRAnimator.startBreadIfNotStarted(app);
         if (completion != null) completion.onComplete();
+
         closeMe();
+
 //
 //        ((BreadWalletApp) getActivity().getApplicationContext()).setUnlocked(true);
 //        FragmentSettingsAll.refreshUI();

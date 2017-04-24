@@ -227,7 +227,7 @@ public class IntroActivity extends FragmentActivity implements Serializable {
             }, 0);
         } else {
             if (!m.noWallet(this)) {
-                BRWalletManager.getInstance().startBreadActivity(this, true);
+                BRAnimator.startBreadActivity(this, true);
             }
 
         }

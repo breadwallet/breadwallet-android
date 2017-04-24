@@ -128,7 +128,7 @@ public class FragmentMenu extends Fragment {
                 BRAnimator.showBreadSignal(getActivity(), "Wallet Locked", "Wallet Locked", R.drawable.ic_wallet_locked, new BROnSignalCompletion() {
                     @Override
                     public void onComplete() {
-                        BRWalletManager.getInstance().startBreadActivity(from, true);
+                        BRAnimator.startBreadActivity(from, true);
                     }
                 });
             }

@@ -65,7 +65,7 @@ public class IntroPhraseProveActivity extends Activity {
                     BRAnimator.showBreadSignal(IntroPhraseProveActivity.this, "Paper Key Set", "Awesome!", R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
                         @Override
                         public void onComplete() {
-                            BRWalletManager.getInstance().startBreadActivity(IntroPhraseProveActivity.this, false);
+                            BRAnimator.startBreadActivity(IntroPhraseProveActivity.this, false);
                             overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                         }
                     });

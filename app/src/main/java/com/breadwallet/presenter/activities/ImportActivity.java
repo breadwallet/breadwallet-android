@@ -47,6 +47,10 @@ public class ImportActivity extends Activity {
         });
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+    }
+
     private void setStatusBarColor(int color) {
         Window window = getWindow();
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -103,6 +107,7 @@ public class ImportActivity extends Activity {
                     }, 500);
 
                 }
+                break;
 
             case BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {

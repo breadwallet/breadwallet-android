@@ -41,7 +41,7 @@ public class SyncBlockchainActivity extends AppCompatActivity {
                                     public void run() {
                                         BRPeerManager.getInstance().rescan();
                                         SharedPreferencesManager.putStartHeight(SyncBlockchainActivity.this, BRPeerManager.getCurrentBlockHeight());
-                                        BRWalletManager.getInstance().startBreadActivity(SyncBlockchainActivity.this, false);
+                                        BRAnimator.startBreadActivity(SyncBlockchainActivity.this, false);
 
                                     }
                                 }).start();

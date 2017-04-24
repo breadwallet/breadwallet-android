@@ -28,6 +28,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.IntroWriteDownActivity;
 import com.breadwallet.presenter.activities.UpdatePitActivity;
 import com.breadwallet.presenter.entities.BRSecurityCenterItem;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.wallet.BRWalletManager;
@@ -63,7 +64,7 @@ public class SecurityCenterActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        BRWalletManager.getInstance().startBreadActivity(this, false);
+        BRAnimator.startBreadActivity(this, false);
     }
 
     private void setStatusBarColor(int color) {

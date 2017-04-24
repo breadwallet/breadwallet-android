@@ -166,7 +166,7 @@ public class UpdatePitActivity extends Activity {
                     BRAnimator.showBreadSignal(this, "PIN Set", "Use your PIN to login and send money.", R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
                         @Override
                         public void onComplete() {
-                            BRWalletManager.getInstance().startBreadActivity(UpdatePitActivity.this, false);
+                            BRAnimator.startBreadActivity(UpdatePitActivity.this, false);
                         }
                     });
                 } else {

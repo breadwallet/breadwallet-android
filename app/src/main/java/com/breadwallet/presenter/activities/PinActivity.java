@@ -171,7 +171,7 @@ public class PinActivity extends Activity {
                     AuthManager.getInstance().authPrompt(PinActivity.this, "", "", false, new BRAuthCompletion() {
                         @Override
                         public void onComplete() {
-                            BRWalletManager.getInstance().startBreadActivity(PinActivity.this, false);
+                            BRAnimator.startBreadActivity(PinActivity.this, false);
                         }
 
                         @Override
