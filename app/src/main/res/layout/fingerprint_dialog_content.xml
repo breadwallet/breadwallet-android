@@ -14,25 +14,41 @@
   ~ limitations under the License
   -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/fingerprint_container"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:filterTouchesWhenObscured="true"
-    android:paddingBottom="8dp"
-    android:paddingEnd="24dp"
-    android:paddingStart="24dp">
+                android:id="@+id/fingerprint_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
 
+                android:filterTouchesWhenObscured="true"
+                android:paddingBottom="8dp"
+                android:paddingEnd="24dp"
+                android:paddingStart="24dp">
+
+
+    <TextView
+        android:id="@+id/fingerprint_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="16dp"
+        android:layout_centerHorizontal="true"
+        android:filterTouchesWhenObscured="true"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:textAppearance="@android:style/TextAppearance.Material.Subhead"
+        android:textColor="?android:attr/textColorSecondary"/>
     <TextView
         android:id="@+id/fingerprint_description"
         android:layout_width="wrap_content"
+        android:layout_below="@+id/fingerprint_title"
         android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:filterTouchesWhenObscured="true"
         android:gravity="center"
         android:textAlignment="center"
         android:textAppearance="@android:style/TextAppearance.Material.Subhead"
-        android:textColor="?android:attr/textColorSecondary" />
+        android:textColor="?android:attr/textColorSecondary"/>
 
 
     <ImageView
@@ -43,7 +59,7 @@
         android:layout_below="@+id/fingerprint_description"
         android:layout_marginTop="20dp"
         android:filterTouchesWhenObscured="true"
-        android:src="@drawable/ic_fp_40px" />
+        android:src="@drawable/ic_fp_40px"/>
 
     <TextView
         android:id="@+id/fingerprint_status"
@@ -57,5 +73,5 @@
         android:filterTouchesWhenObscured="true"
         android:gravity="center_vertical"
         android:text="@string/fingerprint_hint"
-        android:textColor="@color/hint_color" />
+        android:textColor="@color/hint_color"/>
 </RelativeLayout>

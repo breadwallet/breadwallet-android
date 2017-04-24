@@ -14,45 +14,46 @@ package com.breadwallet.presenter.fragments;/*
  * limitations under the License 
  */
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.app.Activity;
-import android.app.Dialog;
-import android.app.DialogFragment;
 import android.app.Fragment;
-import android.app.FragmentManager;
+import android.content.Context;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.animation.AnticipateInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.BreadWalletApp;
-import com.breadwallet.presenter.entities.PaymentRequestEntity;
-import com.breadwallet.presenter.entities.PaymentRequestWrapper;
+import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.DecelerateOvershootInterpolator;
 import com.breadwallet.tools.security.AuthManager;
-import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.security.FingerprintUiHelper;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.BRWalletManager;
-
-import static android.R.attr.dialogLayout;
-import static com.breadwallet.R.id.keyboard;
 
 
 /**
  * A dialog which uses fingerprint APIs to authenticate the user, and falls back to password
  * authentication if fingerprint is not available.
  */
-public class FingerprintDialogFragment extends Fragment
+public class FingerprintFragment extends Fragment
         implements FingerprintUiHelper.Callback {
-    public static final String TAG = FingerprintDialogFragment.class.getName();
+    public static final String TAG = FingerprintFragment.class.getName();
 
     private FingerprintManager.CryptoObject mCryptoObject;
     private FingerprintUiHelper mFingerprintUiHelper;
@@ -60,11 +61,13 @@ public class FingerprintDialogFragment extends Fragment
     private TextView title;
     private TextView message;
     private LinearLayout fingerPrintLayout;
+    private RelativeLayout fingerprintBackground;
     private boolean authSucceeded;
+    public static final int ANIMATION_DURATION = 300;
 
     FingerprintUiHelper.FingerprintUiHelperBuilder mFingerprintUiHelperBuilder;
 
-    public FingerprintDialogFragment() {
+    public FingerprintFragment() {
     }
 
     @Override
@@ -83,8 +86,9 @@ public class FingerprintDialogFragment extends Fragment
         View v = inflater.inflate(R.layout.fingerprint_dialog_container, container, false);
 //        getDialog().setTitle(R.string.fingerprint_auth);
         message = (TextView) v.findViewById(R.id.fingerprint_description);
+        title = (TextView) v.findViewById(R.id.fingerprint_title);
         fingerPrintLayout = (LinearLayout) v.findViewById(R.id.fingerprint_layout);
-//        title = (TextView) v....
+        fingerprintBackground = (RelativeLayout) v.findViewById(R.id.fingerprint_background);
         Bundle bundle = getArguments();
         String titleString = bundle.getString("title");
         String messageString = bundle.getString("message");
@@ -112,6 +116,7 @@ public class FingerprintDialogFragment extends Fragment
 //                    BRWalletManager.getInstance().offerToChangeTheAmount(getActivity(), "");
 //                }
 //                dismiss();
+                closeMe();
             }
         });
         mCancelButton.setText(R.string.cancel);
@@ -121,6 +126,7 @@ public class FingerprintDialogFragment extends Fragment
             @Override
             public void onClick(View view) {
                 if (!BRAnimator.isClickAllowed()) return;
+                closeMe();
                 goToBackup();
             }
         });
@@ -129,15 +135,26 @@ public class FingerprintDialogFragment extends Fragment
     }
 
     @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        final ViewTreeObserver observer = fingerPrintLayout.getViewTreeObserver();
+        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                observer.removeGlobalOnLayoutListener(this);
+                animateBackgroundDim(false);
+                animateSignalSlide(false);
+            }
+        });
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
-        fingerPrintLayout.animate()
-                .translationY(1000)
-                .withLayer();
-//        dialogLayout.animate()
-//                .scaleY(0)
-//                .scaleX(0).alpha(0);
-//        mainLayout.animate().alpha(0);
+
+        animateBackgroundDim(true);
+        animateSignalSlide(true);
         if (!authSucceeded)
             completion.onCancel();
     }
@@ -161,29 +178,23 @@ public class FingerprintDialogFragment extends Fragment
      * button. This can also happen when the user had too many fingerprint attempts.
      */
     private void goToBackup() {
-        Log.e(TAG, "goToBackup: ");
-//        // Fingerprint is not used anymore. Stop listening for it.
-//        if (getDialog() != null)
-//            getDialog().cancel();
-//        PasswordDialogFragment passwordDialogFragment = new PasswordDialogFragment();
-//        passwordDialogFragment.setMode(mode);
-//        passwordDialogFragment.setPaymentRequestEntity(request, paymentRequest);
-//        passwordDialogFragment.setVerifyOnlyTrue();
-//        passwordDialogFragment.setmMessage(message);
-//        FragmentManager fm = getActivity().getFragmentManager();
-//        passwordDialogFragment.show(fm, PasswordDialogFragment.class.getName());
-        AuthManager.getInstance().authPrompt(getContext(), title.getText().toString(), message.getText().toString(), true, completion);
+        final Context app = getContext();
+        closeMe();
+
         if (mFingerprintUiHelper != null)
             mFingerprintUiHelper.stopListening();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                AuthManager.getInstance().authPrompt(app, title.getText().toString(), message.getText().toString(), true, completion);
+            }
+        }, ANIMATION_DURATION + 100);
     }
 
     @Override
     public void onAuthenticated() {
-//        Dialog d = getDialog();
-//        if (d == null) return;
-//        d.cancel();
         authSucceeded = true;
-        Log.e(TAG, "onAuthenticated: ");
+        if (completion != null) completion.onComplete();
 //
 //        ((BreadWalletApp) getActivity().getApplicationContext()).setUnlocked(true);
 //        FragmentSettingsAll.refreshUI();
@@ -218,6 +229,56 @@ public class FingerprintDialogFragment extends Fragment
     public void onError() {
         Log.e(TAG, "onError: going to backup");
         goToBackup();
+    }
+
+    private void animateBackgroundDim(boolean reverse) {
+        int transColor = reverse ? R.color.black_trans : android.R.color.transparent;
+        int blackTransColor = reverse ? android.R.color.transparent : R.color.black_trans;
+
+        ValueAnimator anim = new ValueAnimator();
+        anim.setIntValues(transColor, blackTransColor);
+        anim.setEvaluator(new ArgbEvaluator());
+        anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                fingerprintBackground.setBackgroundColor((Integer) valueAnimator.getAnimatedValue());
+            }
+        });
+
+        anim.setDuration(ANIMATION_DURATION);
+        anim.start();
+    }
+
+    private void animateSignalSlide(final boolean reverse) {
+        float layoutTY = fingerPrintLayout.getTranslationY();
+        Log.e(TAG, "animateSignalSlide: " + layoutTY);
+        if (!reverse) {
+            fingerPrintLayout.setTranslationY(layoutTY + BreadActivity.screenParametersPoint.y);
+            fingerPrintLayout.animate()
+                    .translationY(layoutTY)
+                    .setDuration(ANIMATION_DURATION)
+                    .setInterpolator(new DecelerateOvershootInterpolator(2.0f, 1f))
+                    .withLayer();
+        } else {
+            fingerPrintLayout.animate()
+                    .translationY(1500)
+                    .setDuration(ANIMATION_DURATION)
+                    .withLayer().setInterpolator(new AnticipateInterpolator(2f)).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    if (getActivity() != null)
+                        getActivity().getFragmentManager().beginTransaction().remove(FingerprintFragment.this).commit();
+                }
+            });
+
+        }
+
+    }
+
+    private void closeMe() {
+        animateBackgroundDim(true);
+        animateSignalSlide(true);
     }
 
 }

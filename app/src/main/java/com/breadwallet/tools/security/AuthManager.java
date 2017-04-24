@@ -2,7 +2,6 @@ package com.breadwallet.tools.security;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.FragmentTransaction;
 import android.app.KeyguardManager;
 import android.content.Context;
@@ -15,17 +14,14 @@ import android.util.Log;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.presenter.fragments.FingerprintDialogFragment;
+import com.breadwallet.presenter.fragments.FingerprintFragment;
 import com.breadwallet.presenter.fragments.FragmentBreadPin;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
-import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.util.concurrent.TimeUnit;
-
-import static android.R.attr.mode;
 
 /**
  * BreadWallet
@@ -131,27 +127,31 @@ public class AuthManager {
 
         final Activity app = (Activity) context;
 
+        FingerprintFragment fingerprintFragment = (FingerprintFragment) app.getFragmentManager().findFragmentByTag(FingerprintFragment.class.getName());
+        FragmentBreadPin breadPin = (FragmentBreadPin) app.getFragmentManager().findFragmentByTag(FragmentBreadPin.class.getName());
+        if (fingerprintFragment != null && fingerprintFragment.isAdded() || breadPin != null && breadPin.isAdded()) {
+            Log.e(TAG, "authPrompt: auth fragment already added: F:" + fingerprintFragment + ", P:" + breadPin);
+            return;
+        }
+
         if (keyguardManager.isKeyguardSecure()) {
             if (useFingerPrint) {
-                FingerprintDialogFragment fingerprintDialogFragment = new FingerprintDialogFragment();
+
+                fingerprintFragment = new FingerprintFragment();
                 Bundle args = new Bundle();
                 args.putString("title", title);
                 args.putString("message", message);
-                fingerprintDialogFragment.setArguments(args);
-                fingerprintDialogFragment.setCompletion(completion);
-//                fingerprintDialogFragment.setMode(mode);
-//                fingerprintDialogFragment.setPaymentRequestEntity(requestEntity, paymentRequest);
-//                fingerprintDialogFragment.setmMessage(message);
-//                fingerprintDialogFragment.setmTitle(message != null ? "" : title);
+                fingerprintFragment.setArguments(args);
+                fingerprintFragment.setCompletion(completion);
                 FragmentTransaction transaction = app.getFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(0, 0, 0, R.animator.plain_300);
-                transaction.add(android.R.id.content, fingerprintDialogFragment, fingerprintDialogFragment.getClass().getName());
+                transaction.add(android.R.id.content, fingerprintFragment, FingerprintFragment.class.getName());
                 transaction.addToBackStack(null);
                 if (!app.isDestroyed())
                     transaction.commit();
             } else {
 
-                FragmentBreadPin breadPin = new FragmentBreadPin();
+                breadPin = new FragmentBreadPin();
                 Bundle args = new Bundle();
                 args.putString("title", title);
                 args.putString("message", message);

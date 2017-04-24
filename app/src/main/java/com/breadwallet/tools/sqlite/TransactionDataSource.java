@@ -134,7 +134,7 @@ public class TransactionDataSource {
         }
         // make sure to close the cursor
 
-        Log.e(TAG, "transactions: " + transactions.size());
+//        Log.e(TAG, "transactions: " + transactions.size());
 //        for (BRTransactionEntity ent : transactions) {
 //            Log.e(TAG, "getAllTransactions: hash: " + ent.getTxHash());
 //        }

@@ -112,7 +112,6 @@ public class FragmentBreadPin extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         float keyboardTrY = keyboard.getTranslationY();
-        Log.e(TAG, "onViewCreated: translationY: " + keyboardTrY);
         Bundle bundle = getArguments();
         String titleString = bundle.getString("title");
         String messageString = bundle.getString("message");

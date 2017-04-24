@@ -955,7 +955,6 @@ public class BRWalletManager {
 
 
     public void startBreadActivity(Activity from, boolean auth) {
-        Log.e(TAG, "startBreadActivity: from: " + from);
         Class toStart = auth ? PinActivity.class : BreadActivity.class;
         from.startActivity(new Intent(from, toStart));
         from.overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
