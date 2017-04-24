@@ -666,10 +666,10 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         try {
             if (show) {
                 recyclerLayout.addView(syncingLayout, 0);
-                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+//                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             } else {
                 recyclerLayout.removeView(syncingLayout);
-                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+//                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             }
         } catch (Exception ignored) {
         }
