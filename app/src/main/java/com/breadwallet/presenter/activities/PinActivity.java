@@ -168,7 +168,7 @@ public class PinActivity extends Activity {
             fingerPrint.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    AuthManager.getInstance().authPrompt(PinActivity.this, "", "FingerPrint authentication", false, new BRAuthCompletion() {
+                    AuthManager.getInstance().authPrompt(PinActivity.this, "", "", false, new BRAuthCompletion() {
                         @Override
                         public void onComplete() {
                             BRWalletManager.getInstance().startBreadActivity(PinActivity.this, false);

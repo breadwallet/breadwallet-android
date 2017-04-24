@@ -87,6 +87,7 @@ public class FingerprintFragment extends Fragment
 //        getDialog().setTitle(R.string.fingerprint_auth);
         message = (TextView) v.findViewById(R.id.fingerprint_description);
         title = (TextView) v.findViewById(R.id.fingerprint_title);
+        title.setText("FingerPrint authentication\nFingerPrint authentication\nFingerPrint authentication\n");
         fingerPrintLayout = (LinearLayout) v.findViewById(R.id.fingerprint_layout);
         fingerprintBackground = (RelativeLayout) v.findViewById(R.id.fingerprint_background);
         Bundle bundle = getArguments();
