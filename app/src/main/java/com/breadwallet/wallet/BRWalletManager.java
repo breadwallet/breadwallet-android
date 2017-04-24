@@ -953,16 +953,6 @@ public class BRWalletManager {
 //        });
     }
 
-
-    public void startBreadActivity(Activity from, boolean auth) {
-        Class toStart = auth ? PinActivity.class : BreadActivity.class;
-        from.startActivity(new Intent(from, toStart));
-        from.overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
-        if (!from.isDestroyed()) {
-            from.finish();
-        }
-    }
-
     public void addBalanceChangedListener(OnBalanceChanged listener) {
         if (balanceListeners == null) {
             Log.e(TAG, "addBalanceChangedListener: statusUpdateListeners is null");

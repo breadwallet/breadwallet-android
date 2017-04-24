@@ -2,6 +2,7 @@ package com.breadwallet.tools.animation;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +15,8 @@ import android.util.Log;
 import android.view.View;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.BreadActivity;
+import com.breadwallet.presenter.activities.PinActivity;
 import com.breadwallet.presenter.activities.ScanQRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.TransactionListItem;
@@ -26,6 +29,7 @@ import com.breadwallet.presenter.fragments.FragmentTransactionDetails;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.BRWalletManager;
 
 import java.util.List;
 
@@ -83,7 +87,7 @@ public class BRAnimator {
             return;
         }
         FragmentSend fragmentSend = (FragmentSend) app.getFragmentManager().findFragmentByTag(FragmentSend.class.getName());
-        if (fragmentSend != null && fragmentSend.isAdded()){
+        if (fragmentSend != null && fragmentSend.isAdded()) {
             fragmentSend.setUrl(bitcoinUrl);
             return;
         }
@@ -101,13 +105,14 @@ public class BRAnimator {
                 .addToBackStack(FragmentSend.class.getName()).commit();
 
     }
+
     public static void showTransactionPager(Activity app, List<TransactionListItem> items, int position) {
         if (app == null) {
             Log.e(TAG, "showSendFragment: app is null");
             return;
         }
         FragmentTransactionDetails fragmentTransactionDetails = (FragmentTransactionDetails) app.getFragmentManager().findFragmentByTag(FragmentTransactionDetails.class.getName());
-        if (fragmentTransactionDetails != null && fragmentTransactionDetails.isAdded()){
+        if (fragmentTransactionDetails != null && fragmentTransactionDetails.isAdded()) {
             Log.e(TAG, "showTransactionPager: Already showing");
             return;
         }
@@ -125,7 +130,7 @@ public class BRAnimator {
 
     }
 
-    public static void openCamera(Activity app){
+    public static void openCamera(Activity app) {
         try {
             if (app == null) return;
 
@@ -174,7 +179,7 @@ public class BRAnimator {
         if (fragmentRequestAmount != null && fragmentRequestAmount.isAdded())
             return;
 
-       fragmentRequestAmount = new FragmentRequestAmount();
+        fragmentRequestAmount = new FragmentRequestAmount();
         Bundle bundle = new Bundle();
         bundle.putString("address", address);
         fragmentRequestAmount.setArguments(bundle);
@@ -217,6 +222,25 @@ public class BRAnimator {
             }, 300);
             return true;
         } else return false;
+    }
+
+    public static void killAllFragments(Activity app) {
+        if (app != null)
+            app.getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+    }
+
+    public static void startBreadIfNotStarted(Activity app) {
+        if (!(app instanceof BreadActivity))
+            startBreadActivity(app, false);
+    }
+
+    public static void startBreadActivity(Activity from, boolean auth) {
+        Class toStart = auth ? PinActivity.class : BreadActivity.class;
+        from.startActivity(new Intent(from, toStart));
+        from.overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
+        if (!from.isDestroyed()) {
+            from.finish();
+        }
     }
 
 }

@@ -19,6 +19,7 @@ import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.customviews.BRLockScreenConstraintLayout;
 import com.breadwallet.presenter.customviews.BRSoftKeyboard;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.DecelerateOvershootInterpolator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
@@ -169,7 +170,6 @@ public class FragmentBreadPin extends Fragment {
         }
     }
 
-
     private void handleDigitClick(Integer dig) {
         if (pin.length() < pinLimit)
             pin.append(dig);
@@ -212,8 +212,10 @@ public class FragmentBreadPin extends Fragment {
             @Override
             public void run() {
                 authSucceeded = true;
-                getActivity().onBackPressed();
+                BRAnimator.killAllFragments(getActivity());
+                BRAnimator.startBreadIfNotStarted(getActivity());
                 completion.onComplete();
+
             }
         }, 100);
     }

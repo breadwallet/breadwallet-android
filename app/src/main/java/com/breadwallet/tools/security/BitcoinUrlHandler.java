@@ -5,6 +5,7 @@ import android.app.FragmentManager;
 import android.net.Uri;
 import android.util.Log;
 
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.R;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.activities.BreadActivity;
@@ -423,7 +424,7 @@ public class BitcoinUrlHandler {
             });
         } else {
             if (app != null) {
-                app.getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                BRAnimator.killAllFragments(app);
                 BRWalletManager.getInstance().handlePay(app, new PaymentRequestEntity(addresses, new BigDecimal(amount).longValue(), null, true));
             }
         }
