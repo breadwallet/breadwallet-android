@@ -64,6 +64,8 @@ public class FingerprintFragment extends Fragment
     private RelativeLayout fingerprintBackground;
     private boolean authSucceeded;
     public static final int ANIMATION_DURATION = 300;
+    private String customTitle;
+    private String customMessage;
 
     FingerprintUiHelper.FingerprintUiHelperBuilder mFingerprintUiHelperBuilder;
 
@@ -87,17 +89,18 @@ public class FingerprintFragment extends Fragment
 //        getDialog().setTitle(R.string.fingerprint_auth);
         message = (TextView) v.findViewById(R.id.fingerprint_description);
         title = (TextView) v.findViewById(R.id.fingerprint_title);
-        title.setText("FingerPrint authentication\nFingerPrint authentication\nFingerPrint authentication\n");
         fingerPrintLayout = (LinearLayout) v.findViewById(R.id.fingerprint_layout);
         fingerprintBackground = (RelativeLayout) v.findViewById(R.id.fingerprint_background);
         Bundle bundle = getArguments();
         String titleString = bundle.getString("title");
         String messageString = bundle.getString("message");
         if (!Utils.isNullOrEmpty(titleString)) {
-            title.setText(titleString);
+            customTitle = titleString;
+            title.setText(customTitle);
         }
         if (!Utils.isNullOrEmpty(messageString)) {
-            message.setText(messageString);
+            customMessage = messageString;
+            message.setText(customMessage);
         }
         FingerprintManager mFingerprintManager = (FingerprintManager) getActivity().getSystemService(Activity.FINGERPRINT_SERVICE);
         mFingerprintUiHelperBuilder = new FingerprintUiHelper.FingerprintUiHelperBuilder(mFingerprintManager);
@@ -187,7 +190,7 @@ public class FingerprintFragment extends Fragment
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                AuthManager.getInstance().authPrompt(app, title.getText().toString(), message.getText().toString(), true, completion);
+                AuthManager.getInstance().authPrompt(app, customTitle, customMessage, true, completion);
             }
         }, ANIMATION_DURATION + 100);
     }
@@ -228,7 +231,6 @@ public class FingerprintFragment extends Fragment
 
     @Override
     public void onError() {
-        Log.e(TAG, "onError: going to backup");
         goToBackup();
     }
 

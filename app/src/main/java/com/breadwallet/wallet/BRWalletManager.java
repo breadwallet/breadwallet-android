@@ -685,7 +685,7 @@ public class BRWalletManager {
         }
 
         //successfully created the transaction, authenticate user
-        AuthManager.getInstance().authPrompt(ctx, "Pin Required", message, false, new BRAuthCompletion() {
+        AuthManager.getInstance().authPrompt(ctx, "", message, false, new BRAuthCompletion() {
             @Override
             public void onComplete() {
                 PostAuthenticationProcessor.getInstance().onPublishTxAuth(ctx, false);

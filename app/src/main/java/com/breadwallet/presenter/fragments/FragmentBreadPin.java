@@ -75,6 +75,8 @@ public class FragmentBreadPin extends Fragment {
     private RelativeLayout dialogLayout;
     BRLockScreenConstraintLayout mainLayout;
     private boolean authSucceeded;
+    private String customTitle;
+    private String customMessage;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -116,10 +118,12 @@ public class FragmentBreadPin extends Fragment {
         String titleString = bundle.getString("title");
         String messageString = bundle.getString("message");
         if (!Utils.isNullOrEmpty(titleString)) {
-            title.setText(titleString);
+            customTitle = titleString;
+            title.setText(customTitle);
         }
         if (!Utils.isNullOrEmpty(messageString)) {
-            message.setText(messageString);
+            customMessage = messageString;
+            message.setText(customMessage);
         }
         keyboard.setTranslationY(keyboardTrY + BreadActivity.screenParametersPoint.y / 3);
         keyboard.animate()
