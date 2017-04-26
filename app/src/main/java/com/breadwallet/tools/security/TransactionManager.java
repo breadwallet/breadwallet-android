@@ -67,42 +67,55 @@ public class TransactionManager {
      * Create tx from the PaymentItem object and try to send it
      */
     public void sendTransaction(final Context app, final PaymentItem request) {
-        String errTitle = null;
-        String errMessage = null;
-        try {
-            tryPay(app, request);
-            return; //return so no error is shown
-        } catch (InsufficientFundsException ignored) {
-            errTitle = app.getString(R.string.could_not_make_payment);
-            errMessage = app.getString(R.string.insufficient_funds);
-        } catch (AmountSmallerThanMinException e) {
-            long minAmount = BRWalletManager.getInstance().getMinOutputAmountRequested();
-            errTitle = app.getString(R.string.could_not_make_payment);
-            errMessage = String.format(Locale.getDefault(), app.getString(R.string.bitcoin_payment_cant_be_less),
-                    BRConstants.bitcoinLowercase + new BigDecimal(minAmount).divide(new BigDecimal(100), BRConstants.ROUNDING_MODE));
-        } catch (SpendingNotAllowed spendingNotAllowed) {
-            showSpendNotAllowed(app);
-            return;
-        } catch (FeeNeedsAdjust feeNeedsAdjust) {
-            //offer to change amount, so it would be enough for fee
-            tryAdjustFee(app, request);
+        //array in order to be able to modify the first element from an inner block (can't be final)
+        final String[] errTitle = {null};
+        final String[] errMessage = {null};
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    tryPay(app, request);
+                    return; //return so no error is shown
+                } catch (InsufficientFundsException ignored) {
+                    errTitle[0] = app.getString(R.string.could_not_make_payment);
+                    errMessage[0] = app.getString(R.string.insufficient_funds);
+                } catch (AmountSmallerThanMinException e) {
+                    long minAmount = BRWalletManager.getInstance().getMinOutputAmountRequested();
+                    errTitle[0] = app.getString(R.string.could_not_make_payment);
+                    errMessage[0] = String.format(Locale.getDefault(), app.getString(R.string.bitcoin_payment_cant_be_less),
+                            BRConstants.bitcoinLowercase + new BigDecimal(minAmount).divide(new BigDecimal(100), BRConstants.ROUNDING_MODE));
+                } catch (SpendingNotAllowed spendingNotAllowed) {
+                    showSpendNotAllowed(app);
+                    return;
+                } catch (FeeNeedsAdjust feeNeedsAdjust) {
+                    //offer to change amount, so it would be enough for fee
+                    tryAdjustFee(app, request);
 
-            return;
-        }
-        //show the message if we have one to show
-        if (errTitle != null && errMessage != null) {
-            BreadDialog.showCustomDialog(app, errTitle, errMessage, "Ok", null, new BRDialogView.BROnClickListener() {
-                @Override
-                public void onClick(BRDialogView brDialogView) {
-                    brDialogView.dismiss();
+                    return;
                 }
-            }, null, null, 0);
-        }
+
+                //show the message if we have one to show
+                if (errTitle[0] != null && errMessage[0] != null)
+                    ((Activity) app).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            BreadDialog.showCustomDialog(app, errTitle[0], errMessage[0], "Ok", null, new BRDialogView.BROnClickListener() {
+                                @Override
+                                public void onClick(BRDialogView brDialogView) {
+                                    brDialogView.dismiss();
+                                }
+                            }, null, null, 0);
+                        }
+                    });
+
+            }
+        }).start();
 
     }
 
     /**
      * Try transaction and throw appropriate exceptions if something was wrong
+     * BLOCKS
      */
     public void tryPay(final Context app, final PaymentItem paymentRequest) throws InsufficientFundsException,
             AmountSmallerThanMinException, SpendingNotAllowed, FeeNeedsAdjust {
@@ -115,7 +128,7 @@ public class TransactionManager {
         }
         long amount = paymentRequest.amount;
         long balance = BRWalletManager.getInstance().getBalance(app);
-        BRWalletManager m = BRWalletManager.getInstance();
+        final BRWalletManager m = BRWalletManager.getInstance();
         long minOutputAmount = BRWalletManager.getInstance().getMinOutputAmount();
         final long maxOutputAmount = BRWalletManager.getInstance().getMaxOutputAmount();
 
@@ -151,19 +164,31 @@ public class TransactionManager {
             throw new FeeNeedsAdjust(amount, balance, feeForTx);
         }
         // payment successful
-        byte[] tmpTx = m.tryTransaction(paymentRequest.addresses[0], paymentRequest.amount);
-        if (tmpTx == null) {
-            //something went wrong, failed to create tx
-            BreadDialog.showCustomDialog(app, "", app.getString(R.string.insufficient_funds), "Close", null, new BRDialogView.BROnClickListener() {
-                @Override
-                public void onClick(BRDialogView brDialogView) {
-                    brDialogView.dismiss();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                byte[] tmpTx = m.tryTransaction(paymentRequest.addresses[0], paymentRequest.amount);
+                if (tmpTx == null) {
+                    //something went wrong, failed to create tx
+                    ((Activity) app).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            BreadDialog.showCustomDialog(app, "", app.getString(R.string.insufficient_funds), "Close", null, new BRDialogView.BROnClickListener() {
+                                @Override
+                                public void onClick(BRDialogView brDialogView) {
+                                    brDialogView.dismiss();
+                                }
+                            }, null, null, 0);
+
+                        }
+                    });
+                    return;
                 }
-            }, null, null, 0);
-            return;
-        }
-        PostAuthenticationProcessor.getInstance().setTmpTx(tmpTx);
-        confirmPay(app, paymentRequest);
+                PostAuthenticationProcessor.getInstance().setTmpTx(tmpTx);
+                confirmPay(app, paymentRequest);
+            }
+        }).start();
+
 
     }
 
@@ -172,40 +197,56 @@ public class TransactionManager {
         final BRWalletManager m = BRWalletManager.getInstance();
         final long amountToReduce = request.amount - maxOutputAmount;
         String iso = SharedPreferencesManager.getIso(app);
-        //BigDecimal rate = BigDecimal.valueOf(CurrencyDataSource.getInstance(app).getCurrencyByIso(iso).rate);
-        String reduceBits = BRCurrency.getFormattedCurrencyString(app, "BTC", BRExchange.getAmountFromSatoshis(app, "BTC", new BigDecimal(amountToReduce)));
-        String reduceCurrency = BRCurrency.getFormattedCurrencyString(app, iso, BRExchange.getAmountFromSatoshis(app, iso, new BigDecimal(amountToReduce)));
-        String reduceBitsMinus = BRCurrency.getFormattedCurrencyString(app, "BTC", BRExchange.getAmountFromSatoshis(app, "BTC", new BigDecimal(amountToReduce).negate()));
-        String reduceCurrencyMinus = BRCurrency.getFormattedCurrencyString(app, iso, BRExchange.getAmountFromSatoshis(app, iso, new BigDecimal(amountToReduce).negate()));
+        final String reduceBits = BRCurrency.getFormattedCurrencyString(app, "BTC", BRExchange.getAmountFromSatoshis(app, "BTC", new BigDecimal(amountToReduce)));
+        final String reduceCurrency = BRCurrency.getFormattedCurrencyString(app, iso, BRExchange.getAmountFromSatoshis(app, iso, new BigDecimal(amountToReduce)));
+        final String reduceBitsMinus = BRCurrency.getFormattedCurrencyString(app, "BTC", BRExchange.getAmountFromSatoshis(app, "BTC", new BigDecimal(amountToReduce).negate()));
+        final String reduceCurrencyMinus = BRCurrency.getFormattedCurrencyString(app, iso, BRExchange.getAmountFromSatoshis(app, iso, new BigDecimal(amountToReduce).negate()));
 
-        BreadDialog.showCustomDialog(app, app.getString(R.string.insufficient_funds_for_fee), String.format(app.getString(R.string.reduce_payment_amount_by),
-                reduceBits, reduceCurrency), String.format("%s (%s)", reduceBitsMinus, reduceCurrencyMinus), "Cancel", new BRDialogView.BROnClickListener() {
+        ((Activity)app).runOnUiThread(new Runnable() {
             @Override
-            public void onClick(BRDialogView brDialogView) {
+            public void run() {
+                BreadDialog.showCustomDialog(app, app.getString(R.string.insufficient_funds_for_fee), String.format(app.getString(R.string.reduce_payment_amount_by),
+                        reduceBits, reduceCurrency), String.format("%s (%s)", reduceBitsMinus, reduceCurrencyMinus), "Cancel", new BRDialogView.BROnClickListener() {
+                    @Override
+                    public void onClick(BRDialogView brDialogView) {
 
-                long newAmount = request.amount - amountToReduce;
-                byte[] tmpTx2 = m.tryTransaction(request.addresses[0], newAmount);
-                if (tmpTx2 != null) {
-                    PostAuthenticationProcessor.getInstance().setTmpTx(tmpTx2);
-                    request.amount = newAmount;
-                    confirmPay(app, request);
-                } else {
-                    Log.e(TAG, "tmpTxObject2 is null!");
-                    BRToast.showCustomToast(app, app.getString(R.string.insufficient_funds),
-                            BreadActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
-                }
-                brDialogView.dismiss();
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                final long newAmount = request.amount - amountToReduce;
+                                final byte[] tmpTx2 = m.tryTransaction(request.addresses[0], newAmount);
+
+                                if (tmpTx2 != null) {
+                                    PostAuthenticationProcessor.getInstance().setTmpTx(tmpTx2);
+                                    request.amount = newAmount;
+                                    confirmPay(app, request);
+                                } else {
+                                    ((Activity) app).runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Log.e(TAG, "tmpTxObject2 is null!");
+                                            BRToast.showCustomToast(app, app.getString(R.string.insufficient_funds),
+                                                    BreadActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
+                                        }
+                                    });
+                                }
+                            }
+                        }).start();
+                        brDialogView.dismiss();
+                    }
+                }, new BRDialogView.BROnClickListener() {
+                    @Override
+                    public void onClick(BRDialogView brDialogView) {
+                        brDialogView.dismiss();
+                    }
+                }, null, 0);
             }
-        }, new BRDialogView.BROnClickListener() {
-            @Override
-            public void onClick(BRDialogView brDialogView) {
-                brDialogView.dismiss();
-            }
-        }, null, 0);
+        });
+
     }
 
+    //BLOCKS
     public void confirmPay(final Context ctx, final PaymentItem request) {
-
         if (ctx == null) {
             Log.e(TAG, "confirmPay: context is null");
             return;
@@ -224,14 +265,17 @@ public class TransactionManager {
             final String bitcoinMinMessage = String.format(Locale.getDefault(), ctx.getString(R.string.bitcoin_payment_cant_be_less),
                     BRConstants.bitcoinLowercase + new BigDecimal(minOutput).divide(new BigDecimal("100")));
 
-
-            BreadDialog.showCustomDialog(ctx, ctx.getString(R.string.payment_failed), bitcoinMinMessage, "Close", null, new BRDialogView.BROnClickListener() {
+            ((Activity) ctx).runOnUiThread(new Runnable() {
                 @Override
-                public void onClick(BRDialogView brDialogView) {
-                    brDialogView.dismiss();
+                public void run() {
+                    BreadDialog.showCustomDialog(ctx, ctx.getString(R.string.payment_failed), bitcoinMinMessage, "Close", null, new BRDialogView.BROnClickListener() {
+                        @Override
+                        public void onClick(BRDialogView brDialogView) {
+                            brDialogView.dismiss();
+                        }
+                    }, null, null, 0);
                 }
-            }, null, null, 0);
-
+            });
             return;
         }
 

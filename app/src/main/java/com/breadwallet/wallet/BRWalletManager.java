@@ -219,6 +219,7 @@ public class BRWalletManager {
 
     }
 
+    //BLOCKS
     public static boolean refreshAddress(Context ctx) {
         if (ctx == null) return false;
         String address = getReceiveAddress();
@@ -590,6 +591,7 @@ public class BRWalletManager {
         return validateRecoveryPhrase(cleanWordList, phrase);
     }
 
+    //BLOCKS
     public void setUpTheWallet(final Context ctx) {
         Log.d(TAG, "setUpTheWallet...");
         Assert.assertNotNull(ctx);
@@ -742,7 +744,6 @@ public class BRWalletManager {
 
 //    public native boolean transactionIsVerified(String txHash);
 
-    //todo make sure tryTransaction get called in separate threads but fix paying architecture first
     public native byte[] tryTransaction(String addressHolder, long amountHolder);
 
     // returns the given amount (amount is in satoshis) in local currency units (i.e. pennies, pence)

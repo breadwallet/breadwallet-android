@@ -213,13 +213,22 @@ public class FragmentReceive extends Fragment {
             mTitle.setText("My Address");
         }
 
-        boolean success = BRWalletManager.refreshAddress(getActivity());
-        if (!success) throw new RuntimeException("failed to retrieve address");
-
-        receiveAddress = SharedPreferencesManager.getReceiveAddress(getActivity());
-        mAddress.setText(receiveAddress);
-        boolean generated = BRWalletManager.getInstance().generateQR(getActivity(), "bitcoin:" + receiveAddress, mQrImage);
-        if (!generated) throw new RuntimeException("failed to generate qr image for address");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                boolean success = BRWalletManager.refreshAddress(getActivity());
+                if (!success) throw new RuntimeException("failed to retrieve address");
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        receiveAddress = SharedPreferencesManager.getReceiveAddress(getActivity());
+                        mAddress.setText(receiveAddress);
+                        boolean generated = BRWalletManager.getInstance().generateQR(getActivity(), "bitcoin:" + receiveAddress, mQrImage);
+                        if (!generated) throw new RuntimeException("failed to generate qr image for address");
+                    }
+                });
+            }
+        }).start();
 
     }
 

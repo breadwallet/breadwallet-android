@@ -178,6 +178,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     protected void onSaveInstanceState(Bundle outState) {
     }
 
+    //BLOCKS
     private void updateTxList() {
         final TransactionListItem[] arr = BRWalletManager.getInstance().getTransactions();
         Log.e(TAG, "updateTxList: getTransactions().length: " + (arr == null ? 0 : arr.length));
@@ -506,7 +507,13 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
             @Override
             public void run() {
                 updateUI();
-                updateTxList();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateTxList();
+                    }
+                }).start();
+
             }
         }, 100);
     }
@@ -538,7 +545,13 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     @Override
     public void onBalanceChanged(final long balance) {
         updateUI();
-        updateTxList();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                updateTxList();
+            }
+        }).start();
+
 
     }
 
@@ -615,18 +628,34 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
 
     @Override
     public void onStatusUpdate() {
-        updateTxList();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                updateTxList();
+            }
+        }).start();
+
     }
 
     @Override
     public void onIsoChanged(String iso) {
         updateUI();
-        updateTxList();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                updateTxList();
+            }
+        }).start();
     }
 
     @Override
     public void onTxAdded() {
-        updateTxList();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                updateTxList();
+            }
+        }).start();
     }
 
     private void setWalletLoading() {
@@ -829,7 +858,12 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
                     }
                 });
                 Utils.hideKeyboard(app);
-                updateTxList();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateTxList();
+                    }
+                }).start();
             }
         }
     }

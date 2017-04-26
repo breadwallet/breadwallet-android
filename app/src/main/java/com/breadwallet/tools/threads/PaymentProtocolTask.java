@@ -308,73 +308,78 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
             }
         }
         String cleanCN = str.substring(index, endIndex);
-//            Log.e(TAG, "cleanCN: " + cleanCN);
         return (index != -1 && endIndex != -1) ? cleanCN : null;
     }
 
-    private void continueWithThePayment(final Activity app, String certification) {
+    private void continueWithThePayment(final Activity app, final String certification) {
 
         StringBuilder allAddresses = new StringBuilder();
         for (String s : paymentRequest.addresses) {
             allAddresses.append(s + ", ");
         }
         allAddresses.delete(allAddresses.length() - 2, allAddresses.length());
-        if(paymentRequest.memo == null) paymentRequest.memo = "";
-        String memo = (!paymentRequest.memo.isEmpty() ? "\n" : "") + paymentRequest.memo;
+        if (paymentRequest.memo == null) paymentRequest.memo = "";
+        final String memo = (!paymentRequest.memo.isEmpty() ? "\n" : "") + paymentRequest.memo;
         allAddresses = new StringBuilder();
 
-        String iso = SharedPreferencesManager.getIso(app);
+        final String iso = SharedPreferencesManager.getIso(app);
+        final StringBuilder finalAllAddresses = allAddresses;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                double minOutput = BRWalletManager.getInstance().getMinOutputAmount();
+                if (paymentRequest.amount < minOutput) {
+                    final String bitcoinMinMessage = String.format(Locale.getDefault(), app.getString(R.string.bitcoin_payment_cant_be_less),
+                            BRConstants.bitcoinLowercase + new BigDecimal(minOutput).divide(new BigDecimal("100")));
+                    app.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            new android.app.AlertDialog.Builder(app)
+                                    .setTitle(app.getString(R.string.payment_failed))
+                                    .setMessage(bitcoinMinMessage)
+                                    .setPositiveButton(app.getString(R.string.ok), new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    })
+                                    .setIcon(android.R.drawable.ic_dialog_alert)
+                                    .show();
+                        }
+                    });
 
-        double minOutput = BRWalletManager.getInstance().getMinOutputAmount();
-        if (paymentRequest.amount < minOutput) {
-            final String bitcoinMinMessage = String.format(Locale.getDefault(), app.getString(R.string.bitcoin_payment_cant_be_less),
-                    BRConstants.bitcoinLowercase + new BigDecimal(minOutput).divide(new BigDecimal("100")));
-            app.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    new android.app.AlertDialog.Builder(app)
-                            .setTitle(app.getString(R.string.payment_failed))
-                            .setMessage(bitcoinMinMessage)
-                            .setPositiveButton(app.getString(R.string.ok), new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            })
-                            .setIcon(android.R.drawable.ic_dialog_alert)
-                            .show();
+                    return;
                 }
-            });
-
-            return;
-        }
-        final long total = paymentRequest.amount + paymentRequest.fee;
+                final long total = paymentRequest.amount + paymentRequest.fee;
 
 //        final PaymentItem request = new PaymentItem(paymentRequest.addresses, paymentRequest.amount, certName, false);
 
-        BigDecimal bigAm = BRExchange.getAmountFromSatoshis(app, iso, new BigDecimal(paymentRequest.amount));
-        BigDecimal bigFee = BRExchange.getAmountFromSatoshis(app, iso, new BigDecimal(paymentRequest.fee));
-        BigDecimal bigTotal = BRExchange.getAmountFromSatoshis(app, iso, new BigDecimal(total));
-        final String message = certification + memo + allAddresses.toString() + "\n\n" + "amount: " + BRCurrency.getFormattedCurrencyString(app, iso, bigAm)
-                + "\nnetwork fee: +" + BRCurrency.getFormattedCurrencyString(app, iso, bigFee)
-                + "\ntotal: " + BRCurrency.getFormattedCurrencyString(app, iso, bigTotal);
+                BigDecimal bigAm = BRExchange.getAmountFromSatoshis(app, iso, new BigDecimal(paymentRequest.amount));
+                BigDecimal bigFee = BRExchange.getAmountFromSatoshis(app, iso, new BigDecimal(paymentRequest.fee));
+                BigDecimal bigTotal = BRExchange.getAmountFromSatoshis(app, iso, new BigDecimal(total));
+                final String message = certification + memo + finalAllAddresses.toString() + "\n\n" + "amount: " + BRCurrency.getFormattedCurrencyString(app, iso, bigAm)
+                        + "\nnetwork fee: +" + BRCurrency.getFormattedCurrencyString(app, iso, bigFee)
+                        + "\ntotal: " + BRCurrency.getFormattedCurrencyString(app, iso, bigTotal);
 
-        app.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                AuthManager.getInstance().authPrompt(app, "Confirmation", message, false, new BRAuthCompletion() {
+                app.runOnUiThread(new Runnable() {
                     @Override
-                    public void onComplete() {
-                        PostAuthenticationProcessor.getInstance().setTmpPaymentRequest(paymentRequest);
-                        PostAuthenticationProcessor.getInstance().onPaymentProtocolRequest(app, false);
-                    }
+                    public void run() {
+                        AuthManager.getInstance().authPrompt(app, "Confirmation", message, false, new BRAuthCompletion() {
+                            @Override
+                            public void onComplete() {
+                                PostAuthenticationProcessor.getInstance().setTmpPaymentRequest(paymentRequest);
+                                PostAuthenticationProcessor.getInstance().onPaymentProtocolRequest(app, false);
+                            }
 
-                    @Override
-                    public void onCancel() {
-                        Log.e(TAG, "onCancel: ");
+                            @Override
+                            public void onCancel() {
+                                Log.e(TAG, "onCancel: ");
+                            }
+                        });
                     }
                 });
             }
-        });
+        }).start();
+
     }
 
 }

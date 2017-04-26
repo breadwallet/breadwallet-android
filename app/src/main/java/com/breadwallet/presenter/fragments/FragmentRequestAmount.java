@@ -280,13 +280,24 @@ public class FragmentRequestAmount extends Fragment {
             }
         });
 
-        boolean success = BRWalletManager.refreshAddress(getActivity());
-        if (!success) throw new RuntimeException("failed to retrieve address");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                boolean success = BRWalletManager.refreshAddress(getActivity());
+                if (!success) throw new RuntimeException("failed to retrieve address");
 
-        receiveAddress = SharedPreferencesManager.getReceiveAddress(getActivity());
-        mAddress.setText(receiveAddress);
-        boolean generated = generateQrImage(receiveAddress, "0", "BTC");
-        if (!generated) throw new RuntimeException("failed to generate qr image for address");
+                receiveAddress = SharedPreferencesManager.getReceiveAddress(getActivity());
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mAddress.setText(receiveAddress);
+                        boolean generated = generateQrImage(receiveAddress, "0", "BTC");
+                        if (!generated) throw new RuntimeException("failed to generate qr image for address");
+                    }
+                });
+            }
+        }).start();
 
     }
 

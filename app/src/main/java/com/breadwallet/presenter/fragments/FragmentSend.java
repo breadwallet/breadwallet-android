@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -134,7 +135,7 @@ public class FragmentSend extends Fragment {
                     return;
                 }
                 address = obj.address;
-                BRWalletManager wm = BRWalletManager.getInstance();
+                final BRWalletManager wm = BRWalletManager.getInstance();
 
                 if (wm.isValidBitcoinPrivateKey(address) || wm.isValidBitcoinBIP38Key(address)) {
 //                        wm.confirmSweep(getActivity(), address);
@@ -143,33 +144,54 @@ public class FragmentSend extends Fragment {
                 }
 
                 if (BRWalletManager.validateAddress(address)) {
-                    if (wm.addressContainedInWallet(address)) {
+                    final String finalAddress = address;
+                    final Activity app = getActivity();
+                    if (app == null) {
+                        Log.e(TAG, "paste onClick: app is null");
+                        return;
+                    }
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (wm.addressContainedInWallet(finalAddress)) {
+                                app.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        BreadDialog.showCustomDialog(getActivity(), "Address contained", getResources().getString(R.string.address_already_in_your_wallet), "close", null, new BRDialogView.BROnClickListener() {
+                                            @Override
+                                            public void onClick(BRDialogView brDialogView) {
+                                                brDialogView.dismiss();
+                                            }
+                                        }, null, null, 0);
+                                        BRClipboardManager.putClipboard(getActivity(), "");
+                                    }
+                                });
 
-                        BreadDialog.showCustomDialog(getActivity(), "Address contained", getResources().getString(R.string.address_already_in_your_wallet), "close", null, new BRDialogView.BROnClickListener() {
-                            @Override
-                            public void onClick(BRDialogView brDialogView) {
-                                brDialogView.dismiss();
-                            }
-                        }, null, null, 0);
-                        BRClipboardManager.putClipboard(getActivity(), "");
-                    } else if (wm.addressIsUsed(address)) {
-                        final String finalAddress = address;
-                        BreadDialog.showCustomDialog(getActivity(), "Address used", getResources().getString(R.string.address_already_used), "Ignore", "Cancel", new BRDialogView.BROnClickListener() {
-                            @Override
-                            public void onClick(BRDialogView brDialogView) {
-                                brDialogView.dismiss();
+                            } else if (wm.addressIsUsed(finalAddress)) {
+                                app.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        BreadDialog.showCustomDialog(getActivity(), "Address used", getResources().getString(R.string.address_already_used), "Ignore", "Cancel", new BRDialogView.BROnClickListener() {
+                                            @Override
+                                            public void onClick(BRDialogView brDialogView) {
+                                                brDialogView.dismiss();
+                                                addressEdit.setText(finalAddress);
+                                            }
+                                        }, new BRDialogView.BROnClickListener() {
+                                            @Override
+                                            public void onClick(BRDialogView brDialogView) {
+                                                brDialogView.dismiss();
+                                            }
+                                        }, null, 0);
+                                    }
+                                });
+
+                            } else {
                                 addressEdit.setText(finalAddress);
                             }
-                        }, new BRDialogView.BROnClickListener() {
-                            @Override
-                            public void onClick(BRDialogView brDialogView) {
-                                brDialogView.dismiss();
-                            }
-                        }, null, 0);
+                        }
+                    }).start();
 
-                    } else {
-                        addressEdit.setText(address);
-                    }
                 } else {
                     showClipboardError();
                 }
@@ -236,7 +258,7 @@ public class FragmentSend extends Fragment {
                 String item = parent.getItemAtPosition(position).toString();
                 curBalance = BRWalletManager.getInstance().getBalance(getActivity());
                 Log.e(TAG, "onItemSelected: " + item);
-                isoText.setText(BRCurrency.getSymbolByIso(getActivity(),item));
+                isoText.setText(BRCurrency.getSymbolByIso(getActivity(), item));
                 SpringAnimator.showAnimation(isoText);
                 updateText();
 
@@ -244,7 +266,7 @@ public class FragmentSend extends Fragment {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                isoText.setText(BRCurrency.getSymbolByIso(getActivity(),"BTC"));
+                isoText.setText(BRCurrency.getSymbolByIso(getActivity(), "BTC"));
                 SpringAnimator.showAnimation(isoText);
             }
         });
@@ -423,7 +445,7 @@ public class FragmentSend extends Fragment {
     }
 
     private void updateText() {
-        if(getActivity() == null) return;
+        if (getActivity() == null) return;
         String tmpAmount = amountBuilder.toString();
         amountEdit.setText(tmpAmount);
         String balanceString;
