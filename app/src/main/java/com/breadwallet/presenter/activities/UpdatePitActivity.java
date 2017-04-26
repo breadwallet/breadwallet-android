@@ -14,6 +14,7 @@ import com.breadwallet.presenter.customviews.BRSoftKeyboard;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.wallet.BRWalletManager;
 
@@ -142,8 +143,7 @@ public class UpdatePitActivity extends Activity {
         Log.e(TAG, "goNext: mode: " + mode);
         switch (mode) {
             case ENTER_PIN:
-                String curPin = KeyStoreManager.getPinCode(this);
-                if (curPin.equalsIgnoreCase(pin.toString())) {
+                if (AuthManager.getInstance().checkAuth(pin.toString(), this)) {
                     setMode(ENTER_NEW_PIN);
                 } else {
                     SpringAnimator.failShakeAnimation(this, pinLayout);

@@ -22,6 +22,7 @@ import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.DecelerateOvershootInterpolator;
 import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.Utils;
 
@@ -197,7 +198,7 @@ public class FragmentBreadPin extends Fragment {
         dot6.setBackground(getActivity().getDrawable(selectedDots <= 0 ? R.drawable.ic_pin_dot_gray : R.drawable.ic_pin_dot_black));
 
         if (pin.length() == 6) {
-            if (pin.toString().equalsIgnoreCase(KeyStoreManager.getPinCode(getContext()))) {
+            if (AuthManager.getInstance().checkAuth(pin.toString(), getContext())) {
                 handleSuccess();
             } else {
                 handleFail();

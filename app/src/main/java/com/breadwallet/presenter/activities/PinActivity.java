@@ -263,8 +263,7 @@ public class PinActivity extends Activity {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    String actualPin = KeyStoreManager.getPinCode(PinActivity.this);
-                    if (actualPin.equalsIgnoreCase(pin.toString())) {
+                    if (AuthManager.getInstance().checkAuth(pin.toString(), PinActivity.this)) {
                         unlockWallet();
                     } else {
                         showFailedToUnlock();

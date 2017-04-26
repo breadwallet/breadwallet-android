@@ -62,7 +62,7 @@ public class AuthManager {
         return instance;
     }
 
-    public boolean checkAuth(CharSequence passcode, Activity context) {
+    public boolean checkAuth(CharSequence passcode, Context context) {
         String pass = KeyStoreManager.getPinCode(context);
         return pass != null && passcode.equals(pass);
     }
