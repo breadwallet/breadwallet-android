@@ -722,6 +722,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
             priceChangeYScale = priceChange.getScaleY();
             filterButtonsLayoutXScale = filterButtonsLayout.getScaleX();
             filterButtonsLayout.setScaleX(0);
+            filterButtonsLayout.setVisibility(View.GONE);
 
         }
 
@@ -741,6 +742,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
                 searchEdit.setText("");
                 searchEdit.setScaleX(0);
                 searchEdit.setPivotX(searchEdit.getX());
+                filterButtonsLayout.setVisibility(View.VISIBLE);
                 filterButtonsLayout.setPivotX(filterButtonsLayout.getX());
 
                 searchEdit.animate().scaleX(searchEditXScale).setDuration(duration).setInterpolator(new OvershootInterpolator(0.7f)).setListener(new AnimatorListenerAdapter() {
@@ -823,6 +825,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
                     public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
                         filterButtonsLayout.setScaleX(0);
+                        filterButtonsLayout.setVisibility(View.GONE);
                     }
                 });
                 Utils.hideKeyboard(app);
