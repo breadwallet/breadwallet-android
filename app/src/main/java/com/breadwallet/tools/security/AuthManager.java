@@ -82,13 +82,19 @@ public class AuthManager {
     }
 
 
-    private void setSpendingLimitIfNotSet(Activity activity) {
+    private void setSpendingLimitIfNotSet(final Activity activity) {
         if (activity == null) return;
         long limit = KeyStoreManager.getSpendLimit(activity);
         if (limit == 0) {
-            long totalSpent = BRWalletManager.getInstance().getTotalSent();
-            long spendLimit = totalSpent + AuthManager.getInstance().getLimit(activity);
-            KeyStoreManager.putSpendLimit(spendLimit, activity);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    long totalSpent = BRWalletManager.getInstance().getTotalSent();
+                    long spendLimit = totalSpent + AuthManager.getInstance().getLimit(activity);
+                    KeyStoreManager.putSpendLimit(spendLimit, activity);
+                }
+            }).start();
+
         }
     }
 

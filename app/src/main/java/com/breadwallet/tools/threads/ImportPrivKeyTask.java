@@ -106,16 +106,28 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
         BreadDialog.showCustomDialog(app, "", message, posButton, "Cancel", new BRDialogView.BROnClickListener() {
             @Override
             public void onClick(BRDialogView brDialogView) {
-                boolean result = BRWalletManager.getInstance().confirmKeySweep(importPrivKeyEntity.getTx(), key);
-                if (!result) {
-                    BreadDialog.showCustomDialog(app, app.getString(R.string.warning),
-                            app.getString(R.string.could_not_sweep_the_balance), app.getString(R.string.ok), null, new BRDialogView.BROnClickListener() {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        boolean result = BRWalletManager.getInstance().confirmKeySweep(importPrivKeyEntity.getTx(), key);
+                        if (!result) {
+                            app.runOnUiThread(new Runnable() {
                                 @Override
-                                public void onClick(BRDialogView brDialogView) {
-                                    brDialogView.dismissWithAnimation();
+                                public void run() {
+                                    BreadDialog.showCustomDialog(app, app.getString(R.string.warning),
+                                            app.getString(R.string.could_not_sweep_the_balance), app.getString(R.string.ok), null, new BRDialogView.BROnClickListener() {
+                                                @Override
+                                                public void onClick(BRDialogView brDialogView) {
+                                                    brDialogView.dismissWithAnimation();
+                                                }
+                                            }, null, null, 0);
                                 }
-                            }, null, null, 0);
-                }
+                            });
+
+                        }
+                    }
+                }).start();
+
                 brDialogView.dismissWithAnimation();
 
             }

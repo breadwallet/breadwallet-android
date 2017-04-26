@@ -167,9 +167,9 @@ public class PostAuthenticationProcessor {
 
     }
 
-    public void onPublishTxAuth(Context app, boolean authAsked) {
+    public void onPublishTxAuth(final Context app, boolean authAsked) {
 
-        BRWalletManager walletManager = BRWalletManager.getInstance();
+        final BRWalletManager walletManager = BRWalletManager.getInstance();
         byte[] rawSeed;
         try {
             rawSeed = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAY_REQUEST_CODE);
@@ -182,26 +182,32 @@ public class PostAuthenticationProcessor {
             return;
         }
         if (rawSeed.length < 10) return;
-        byte[] seed = TypesConverter.getNullTerminatedPhrase(rawSeed);
-        try {
-            if (seed.length != 0) {
-                boolean success = false;
-                if (tmpTx != null) {
-                    success = walletManager.publishSerializedTransaction(tmpTx, seed);
-                    tmpTx = null;
+        final byte[] seed = TypesConverter.getNullTerminatedPhrase(rawSeed);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (seed.length != 0) {
+                        boolean success = false;
+                        if (tmpTx != null) {
+                            success = walletManager.publishSerializedTransaction(tmpTx, seed);
+                            tmpTx = null;
+                        }
+                        if (!success) {
+                            Log.e(TAG, "onPublishTxAuth: publishSerializedTransaction returned FALSE");
+                            BRWalletManager.getInstance().offerToChangeTheAmount(app, app.getString(R.string.insufficient_funds));
+                            return;
+                        }
+                    } else {
+                        Log.e(TAG, "onPublishTxAuth: seed length is 0!");
+                        return;
+                    }
+                } finally {
+                    Arrays.fill(seed, (byte) 0);
                 }
-                if (!success) {
-                    Log.e(TAG, "onPublishTxAuth: publishSerializedTransaction returned FALSE");
-                    BRWalletManager.getInstance().offerToChangeTheAmount(app, app.getString(R.string.insufficient_funds));
-                    return;
-                }
-            } else {
-                Log.e(TAG, "onPublishTxAuth: seed length is 0!");
-                return;
             }
-        } finally {
-            Arrays.fill(seed, (byte) 0);
-        }
+        }).start();
+
     }
 
     public void onPaymentProtocolRequest(Activity app, boolean authAsked) {
@@ -222,12 +228,18 @@ public class PostAuthenticationProcessor {
         }
         if (rawSeed.length < 10) return;
 
-        byte[] seed = TypesConverter.getNullTerminatedPhrase(rawSeed);
+        final byte[] seed = TypesConverter.getNullTerminatedPhrase(rawSeed);
 
-        BRWalletManager.getInstance().publishSerializedTransaction(paymentRequest.serializedTx, seed);
-        PaymentProtocolPostPaymentTask.sent = true;
-        Arrays.fill(seed, (byte) 0);
-        paymentRequest = null;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                BRWalletManager.getInstance().publishSerializedTransaction(paymentRequest.serializedTx, seed);
+                PaymentProtocolPostPaymentTask.sent = true;
+                Arrays.fill(seed, (byte) 0);
+                paymentRequest = null;
+            }
+        }).start();
+
 
     }
 

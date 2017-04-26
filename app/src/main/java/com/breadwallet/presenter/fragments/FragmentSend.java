@@ -1,19 +1,13 @@
 package com.breadwallet.presenter.fragments;
 
-import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
-import android.app.Activity;
 import android.app.Fragment;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,10 +23,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.ScanQRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRSoftKeyboard;
-import com.breadwallet.presenter.entities.PaymentRequestEntity;
+import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.presenter.entities.RequestObject;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
@@ -41,7 +34,6 @@ import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.util.BRExchange;
-import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
@@ -225,7 +217,7 @@ public class FragmentSend extends Fragment {
                 }
 
                 if (allFilled)
-                    BRWalletManager.getInstance().handlePay(getContext(), new PaymentRequestEntity(new String[]{address}, satoshiAmount.longValue(), null, false));
+                    BRWalletManager.getInstance().handlePay(getContext(), new PaymentItem(new String[]{address}, satoshiAmount.longValue(), null, false));
             }
         });
 

@@ -8,20 +8,15 @@ import android.util.Log;
 
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.BreadActivity;
-import com.breadwallet.presenter.activities.PinActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.presenter.entities.PaymentRequestEntity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.exceptions.CertificateChainNotFound;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BreadDialog;
-import com.breadwallet.tools.manager.CurrencyFetchManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
-import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRExchange;
@@ -354,7 +349,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
         }
         final long total = paymentRequest.amount + paymentRequest.fee;
 
-//        final PaymentRequestEntity request = new PaymentRequestEntity(paymentRequest.addresses, paymentRequest.amount, certName, false);
+//        final PaymentItem request = new PaymentItem(paymentRequest.addresses, paymentRequest.amount, certName, false);
 
         BigDecimal bigAm = BRExchange.getAmountFromSatoshis(app, iso, new BigDecimal(paymentRequest.amount));
         BigDecimal bigFee = BRExchange.getAmountFromSatoshis(app, iso, new BigDecimal(paymentRequest.fee));

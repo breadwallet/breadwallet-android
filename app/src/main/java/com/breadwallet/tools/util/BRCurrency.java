@@ -72,10 +72,10 @@ public class BRCurrency {
 //        CurrencyFetchManager cm = CurrencyFetchManager.getInstance(ctx);
 //        String iso = SharedPreferencesManager.getIso(ctx);
 //        double rate = SharedPreferencesManager.getRate(ctx);
-//        long exchange = BRWalletManager.getInstance().localAmount(BRWalletManager.getInstance().getBalance(),
+//        long exchange = BRWalletManager.getInstance().localAmount(BRWalletManager.getInstance().getCatchedBalance(),
 //                new BigDecimal(String.valueOf(rate)).multiply(new BigDecimal("100")).doubleValue());
 //
-//        return getFormattedCurrencyString(ctx, "BTC", new BigDecimal(BRWalletManager.getInstance().getBalance())) + " (" +
+//        return getFormattedCurrencyString(ctx, "BTC", new BigDecimal(BRWalletManager.getInstance().getCatchedBalance())) + " (" +
 //                getFormattedCurrencyString(ctx, iso, new BigDecimal(exchange)) + ")";
 //    }
 

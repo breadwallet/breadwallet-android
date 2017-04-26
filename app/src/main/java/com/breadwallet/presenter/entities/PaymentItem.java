@@ -25,8 +25,8 @@ package com.breadwallet.presenter.entities;
  * THE SOFTWARE.
  */
 
-public class PaymentRequestEntity {
-    public static final String TAG = PaymentRequestEntity.class.getName();
+public class PaymentItem {
+    public static final String TAG = PaymentItem.class.getName();
 
 //    public byte[] serializedTx;
     public String []addresses;
@@ -34,7 +34,7 @@ public class PaymentRequestEntity {
     public String cn;
     public boolean isAmountRequested;
 
-    public PaymentRequestEntity(String []addresses, long theAmount, String theCn,   boolean isAmountRequested) {
+    public PaymentItem(String []addresses, long theAmount, String theCn, boolean isAmountRequested) {
         this.isAmountRequested = isAmountRequested;
 //        this.serializedTx = serializedTx;
         this.addresses = addresses;

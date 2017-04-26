@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
 import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.net.Uri;
@@ -556,7 +555,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
                 String iso = SharedPreferencesManager.getIso(BreadActivity.this);
 
                 //current amount in satoshis
-                final BigDecimal amount = new BigDecimal(SharedPreferencesManager.getBalance(BreadActivity.this));
+                final BigDecimal amount = new BigDecimal(SharedPreferencesManager.getCatchedBalance(BreadActivity.this));
 
                 //amount in BTC units
                 BigDecimal btcAmount = BRExchange.getBitcoinForSatoshis(BreadActivity.this, amount);

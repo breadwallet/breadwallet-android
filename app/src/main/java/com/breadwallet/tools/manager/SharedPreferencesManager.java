@@ -165,12 +165,12 @@ public class SharedPreferencesManager {
         editor.putLong(BRConstants.FEE_KB_PREFS, fee);
         editor.apply();
     }
-    public static long getBalance(Context context) {
+    public static long getCatchedBalance(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getLong("balance", 0);
     }
 
-    public static void putBalance(Context context, long fee) {
+    public static void putCatchedBalance(Context context, long fee) {
         SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putLong("balance", fee);

@@ -1,16 +1,13 @@
 package com.breadwallet.tools.security;
 
 import android.app.Activity;
-import android.app.FragmentManager;
 import android.net.Uri;
 import android.util.Log;
 
-import com.breadwallet.BreadWalletApp;
 import com.breadwallet.R;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
-import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.presenter.entities.PaymentRequestEntity;
+import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.presenter.entities.RequestObject;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -425,7 +422,7 @@ public class BitcoinUrlHandler {
         } else {
             if (app != null) {
                 BRAnimator.killAllFragments(app);
-                BRWalletManager.getInstance().handlePay(app, new PaymentRequestEntity(addresses, new BigDecimal(amount).longValue(), null, true));
+                BRWalletManager.getInstance().handlePay(app, new PaymentItem(addresses, new BigDecimal(amount).longValue(), null, true));
             }
         }
 
