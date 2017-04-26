@@ -17,6 +17,7 @@ import com.breadwallet.presenter.activities.IntroPhraseProveActivity;
 import com.breadwallet.presenter.activities.IntroReEnterPinActivity;
 import com.breadwallet.presenter.activities.IntroSetPitActivity;
 import com.breadwallet.presenter.activities.IntroWriteDownActivity;
+import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
@@ -195,7 +196,8 @@ public class PostAuthenticationProcessor {
                         }
                         if (!success) {
                             Log.e(TAG, "onPublishTxAuth: publishSerializedTransaction returned FALSE");
-                            BRWalletManager.getInstance().offerToChangeTheAmount(app, app.getString(R.string.insufficient_funds));
+                            BRWalletManager.getInstance().offerToChangeTheAmount(app,
+                                    new PaymentItem(paymentRequest.addresses, paymentRequest.amount, null, paymentRequest.isPaymentRequest));
                             return;
                         }
                     } else {

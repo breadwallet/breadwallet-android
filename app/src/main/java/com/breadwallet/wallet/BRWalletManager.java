@@ -26,16 +26,20 @@ import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.activities.BreadActivity;
+import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
 import com.breadwallet.presenter.entities.BRPeerEntity;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.presenter.entities.ImportPrivKeyEntity;
+import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.qrcode.QRUtils;
+import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.PeerDataSource;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
@@ -208,7 +212,7 @@ public class BRWalletManager {
     }
 
     public boolean isNetworkAvailable(Context ctx) {
-        if(ctx == null) return false;
+        if (ctx == null) return false;
         ConnectivityManager cm = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
@@ -661,43 +665,29 @@ public class BRWalletManager {
         smallerDimension = (int) (smallerDimension * 0.5f);
         Bitmap bitmap = null;
         bitmap = QRUtils.encodeAsBitmap(bitcoinURL, smallerDimension);
-        //        qrcode.setPadding(1, 1, 1, 1);
-//        qrcode.setBackgroundResource(R.color.gray);
+        //qrcode.setPadding(1, 1, 1, 1);
+        //qrcode.setBackgroundResource(R.color.gray);
         if (bitmap == null) return false;
         qrcode.setImageBitmap(bitmap);
         return true;
 
     }
 
-    public void offerToChangeTheAmount(Context app, String title) {
-//        BreadDialog.showCustomDialog(app, title, app.getString(R.string.change_payment_amount),
-//                app.getString(R.string.change), app.getString(R.string.cancel), new BRDialogView.BROnClickListener() {
-//                    @Override
-//                    public void onClick(BRDialogView brDialogView) {
-////                BRAnimator.animateScanResultFragment();
-//                        brDialogView.dismissWithAnimation();
-//                    }
-//                }, new BRDialogView.BROnClickListener() {
-//                    @Override
-//                    public void onClick(BRDialogView brDialogView) {
-//                        brDialogView.dismissWithAnimation();
-//                    }
-//                }, null, 0);
+    public void offerToChangeTheAmount(final Context app, final PaymentItem item) {
+        BreadDialog.showCustomDialog(app, app.getString(R.string.insufficient_funds), app.getString(R.string.change_payment_amount),
+                app.getString(R.string.change), app.getString(R.string.cancel), new BRDialogView.BROnClickListener() {
+                    @Override
+                    public void onClick(BRDialogView brDialogView) {
+                        BRAnimator.showSendFragment((Activity) app, Utils.createBitcoinUrl(item.addresses[0], 0, null, null, null));
+                        brDialogView.dismissWithAnimation();
+                    }
+                }, new BRDialogView.BROnClickListener() {
+                    @Override
+                    public void onClick(BRDialogView brDialogView) {
+                        brDialogView.dismissWithAnimation();
+                    }
+                }, null, 0);
     }
-
-//    public void animateSavePhraseFlow() {
-//        PhraseFlowActivity.screenParametersPoint = IntroActivity.screenParametersPoint;
-//        if (PhraseFlowActivity.screenParametersPoint == null ||
-//                PhraseFlowActivity.screenParametersPoint.y == 0 ||
-//                PhraseFlowActivity.screenParametersPoint.x == 0)
-//            PhraseFlowActivity.screenParametersPoint = MainActivity.screenParametersPoint;
-//        Intent intent;
-//        intent = new Intent(ctx, PhraseFlowActivity.class);
-//        ctx.startActivity(intent);
-//        if (!ctx.isDestroyed()) {
-//            ctx.finish();
-//        }
-//    }
 
     public void addBalanceChangedListener(OnBalanceChanged listener) {
         if (balanceListeners == null) {
