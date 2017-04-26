@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
@@ -50,7 +51,8 @@ public class FragmentBreadSignal extends Fragment {
     public TextView mTitle;
     public TextView mDescription;
     public ImageView mIcon;
-    BROnSignalCompletion completion;
+    private BROnSignalCompletion completion;
+    private LinearLayout signalLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
@@ -61,6 +63,13 @@ public class FragmentBreadSignal extends Fragment {
         mTitle = (TextView) rootView.findViewById(R.id.title);
         mDescription = (TextView) rootView.findViewById(R.id.description);
         mIcon = (ImageView) rootView.findViewById(R.id.qr_image);
+        signalLayout = (LinearLayout) rootView.findViewById(R.id.signal_layout);
+        signalLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //do nothing, in order to prevent click through
+            }
+        });
 
         Bundle bundle = this.getArguments();
 
@@ -78,10 +87,10 @@ public class FragmentBreadSignal extends Fragment {
         } else {
             Log.e(TAG, "onCreateView: bundle is null!");
         }
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-
                 try {
                     if (getActivity() != null)
                         getActivity().getFragmentManager().popBackStack();

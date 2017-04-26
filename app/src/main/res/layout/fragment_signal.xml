@@ -10,6 +10,7 @@
         android:layout_height="300dp"
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
+        android:id="@+id/signal_layout"
         android:background="@drawable/signal_layout"
         android:orientation="vertical">
 
