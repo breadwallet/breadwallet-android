@@ -344,5 +344,35 @@ public class TransactionManager {
         });
     }
 
+    class InsufficientFundsException extends Exception {
 
+        public InsufficientFundsException(long amount, long balance) {
+            super("Balance: " + balance + " satoshis, amount: " + amount + " satoshis.");
+        }
+
+    }
+
+    class AmountSmallerThanMinException extends Exception {
+
+        public AmountSmallerThanMinException(long amount, long balance) {
+            super("Balance: " + balance + " satoshis, amount: " + amount + " satoshis.");
+        }
+
+    }
+
+    class InvalidPaymentItem extends Exception {
+
+        public InvalidPaymentItem(PaymentItem item) {
+            super("item is null");
+        }
+
+    }
+
+    class NotEnoughForFee extends Exception {
+
+        public NotEnoughForFee(long amount, long balance, long fee) {
+            super("Balance: " + balance + " satoshis, amount: " + amount + " satoshis, fee: " + fee + " satoshis.");
+        }
+
+    }
 }
