@@ -152,6 +152,11 @@
             android:screenOrientation="portrait">
         </activity>
         <activity
+            android:name=".presenter.activities.settings.SpendLimitActivity"
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
             android:name=".presenter.activities.IntroPhraseProveActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait">
