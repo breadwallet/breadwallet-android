@@ -338,55 +338,55 @@ public class BRWalletManager {
         }
     }
 
-    public static void showWritePhraseDialog(final Context ctx, final boolean firstTime) {
-
-        if (ctx != null) {
-            ((Activity) ctx).runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    boolean phraseWroteDown = SharedPreferencesManager.getPhraseWroteDown(ctx);
-                    if (phraseWroteDown) return;
-                    long now = System.currentTimeMillis() / 1000;
-                    long lastMessageShow = SharedPreferencesManager.getPhraseWarningTime(ctx);
-                    if (lastMessageShow == 0 || (!firstTime && lastMessageShow > (now - 36 * 60 * 60)))
-                        return;//36 * 60 * 60//
-                    if (BRWalletManager.getInstance().getBalance(ctx) > SharedPreferencesManager.getLimit(ctx)) {
-//                        getInstance(ctx).animateSavePhraseFlow();
-                        return;
-                    }
-                    SharedPreferencesManager.putPhraseWarningTime(ctx, System.currentTimeMillis() / 1000);
-                    AlertDialog alert;
-                    AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
-                    builder.setTitle(ctx.getString(R.string.you_received_bitcoin));
-                    builder.setMessage(String.format(ctx.getString(R.string.write_down_phrase),
-                            ctx.getString(R.string.write_down_phrase_holder1)));
-                    builder.setPositiveButton(ctx.getString(R.string.show_phrase),
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(final DialogInterface dialog, int which) {
-                                    new Thread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            dialog.dismiss();
-//                                            BRWalletManager.getInstance().animateSavePhraseFlow();
-                                        }
-                                    }).start();
-                                }
-                            });
-                    builder.setNegativeButton(ctx.getString(R.string.ok),
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            });
-                    builder.setCancelable(false);
-                    alert = builder.create();
-                    alert.show();
-                }
-            });
-
-        }
-
-    }
+//    public static void showWritePhraseDialog(final Context ctx, final boolean firstTime) {
+//
+//        if (ctx != null) {
+//            ((Activity) ctx).runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    boolean phraseWroteDown = SharedPreferencesManager.getPhraseWroteDown(ctx);
+//                    if (phraseWroteDown) return;
+//                    long now = System.currentTimeMillis() / 1000;
+//                    long lastMessageShow = SharedPreferencesManager.getPhraseWarningTime(ctx);
+//                    if (lastMessageShow == 0 || (!firstTime && lastMessageShow > (now - 36 * 60 * 60)))
+//                        return;//36 * 60 * 60//
+//                    if (BRWalletManager.getInstance().getBalance(ctx) > SharedPreferencesManager.getLimit(ctx)) {
+////                        getInstance(ctx).animateSavePhraseFlow();
+//                        return;
+//                    }
+//                    SharedPreferencesManager.putPhraseWarningTime(ctx, System.currentTimeMillis() / 1000);
+//                    AlertDialog alert;
+//                    AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+//                    builder.setTitle(ctx.getString(R.string.you_received_bitcoin));
+//                    builder.setMessage(String.format(ctx.getString(R.string.write_down_phrase),
+//                            ctx.getString(R.string.write_down_phrase_holder1)));
+//                    builder.setPositiveButton(ctx.getString(R.string.show_phrase),
+//                            new DialogInterface.OnClickListener() {
+//                                public void onClick(final DialogInterface dialog, int which) {
+//                                    new Thread(new Runnable() {
+//                                        @Override
+//                                        public void run() {
+//                                            dialog.dismiss();
+////                                            BRWalletManager.getInstance().animateSavePhraseFlow();
+//                                        }
+//                                    }).start();
+//                                }
+//                            });
+//                    builder.setNegativeButton(ctx.getString(R.string.ok),
+//                            new DialogInterface.OnClickListener() {
+//                                public void onClick(DialogInterface dialog, int which) {
+//                                    dialog.dismiss();
+//                                }
+//                            });
+//                    builder.setCancelable(false);
+//                    alert = builder.create();
+//                    alert.show();
+//                }
+//            });
+//
+//        }
+//
+//    }
 
     /**
      * Wallet callbacks

@@ -151,11 +151,14 @@ public class SettingsActivity extends AppCompatActivity {
 
             }
         }, false));
-        if (AuthManager.isFingerPrintAvailable(this) {
+        if (AuthManager.isFingerPrintAvailable(this)) {
             items.add(new BRSettingsItem("FingerPrint Spending Limit", "", new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Log.e(TAG, "onClick: FingerPrint Spending Limit");
+                    Intent intent = new Intent(SettingsActivity.this, SpendLimitActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                 }
             }, false));
         }
