@@ -203,17 +203,17 @@ public class SharedPreferencesManager {
         editor.apply();
     }
 
-    public static int getLimit(Context activity) {
-        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
-        return prefs.getInt(BRConstants.LIMIT_PREFS, BRConstants.HUNDRED_BITS);
-    }
-
-    public static void putLimit(Context activity, int limit) {
-        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt(BRConstants.LIMIT_PREFS, limit);
-        editor.apply();
-    }
+//    public static int getLimit(Context activity) {
+//        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+//        return prefs.getInt(BRConstants.LIMIT_PREFS, BRConstants.HUNDRED_BITS);
+//    }
+//
+//    public static void putLimit(Context activity, int limit) {
+//        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+//        SharedPreferences.Editor editor = prefs.edit();
+//        editor.putInt(BRConstants.LIMIT_PREFS, limit);
+//        editor.apply();
+//    }
 
     public static List<Integer> getBitIdNonces(Context activity, String key) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);

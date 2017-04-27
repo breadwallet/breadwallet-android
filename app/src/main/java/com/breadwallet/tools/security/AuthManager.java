@@ -73,14 +73,19 @@ public class AuthManager {
         setSpendingLimitIfNotSet(context);
     }
 
-    public int getLimit(Activity activity) {
-        return SharedPreferencesManager.getLimit(activity);
+    /**
+     * Returns the total current limit that cannot be surpass without a pin
+     */
+    public long getLimit(Activity activity) {
+        return KeyStoreManager.getTotalLimit(activity);
     }
 
+    /**
+     * Sets the total current limit that cannot be surpass without a pin
+     */
     public void setLimit(Activity activity, int limit) {
-        SharedPreferencesManager.putLimit(activity, limit);
+        KeyStoreManager.putTotalLimit(limit, activity);
     }
-
 
     private void setSpendingLimitIfNotSet(final Activity activity) {
         if (activity == null) return;
@@ -97,7 +102,6 @@ public class AuthManager {
 
         }
     }
-
 
     public void authPrompt(final Context context, String title, String message, boolean forcePin, BRAuthCompletion completion) {
         if (context == null || !(context instanceof Activity)) {

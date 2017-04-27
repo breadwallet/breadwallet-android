@@ -90,6 +90,7 @@ public class KeyStoreManager {
     private static final String PASS_CODE_IV = "ivpasscode";
     private static final String FAIL_COUNT_IV = "ivfailcount";
     private static final String SPENT_LIMIT_IV = "ivspendlimit";
+    private static final String TOTAL_LIMIT_IV = "ivtotallimit";
     private static final String FAIL_TIMESTAMP_IV = "ivfailtimestamp";
     private static final String AUTH_KEY_IV = "ivauthkey";
     private static final String TOKEN_IV = "ivtoken";
@@ -102,6 +103,7 @@ public class KeyStoreManager {
     public static final String PASS_CODE_ALIAS = "passCode";
     public static final String FAIL_COUNT_ALIAS = "failCount";
     public static final String SPEND_LIMIT_ALIAS = "spendlimit";
+    public static final String TOTAL_LIMIT_ALIAS = "totallimit";
     public static final String FAIL_TIMESTAMP_ALIAS = "failTimeStamp";
     public static final String AUTH_KEY_ALIAS = "authKey";
     public static final String TOKEN_ALIAS = "token";
@@ -114,6 +116,7 @@ public class KeyStoreManager {
     private static final String PASS_CODE_FILENAME = "my_pass_code";
     private static final String FAIL_COUNT_FILENAME = "my_fail_count";
     private static final String SPEND_LIMIT_FILENAME = "my_spend_limit";
+    private static final String TOTAL_LIMIT_FILENAME = "my_total_limit";
     private static final String FAIL_TIMESTAMP_FILENAME = "my_fail_timestamp";
     private static final String AUTH_KEY_FILENAME = "my_auth_key";
     private static final String TOKEN_FILENAME = "my_token";
@@ -135,8 +138,9 @@ public class KeyStoreManager {
         aliasObjectMap.put(AUTH_KEY_ALIAS, new AliasObject(AUTH_KEY_ALIAS, AUTH_KEY_FILENAME, AUTH_KEY_IV));
         aliasObjectMap.put(TOKEN_ALIAS, new AliasObject(TOKEN_ALIAS, TOKEN_FILENAME, TOKEN_IV));
         aliasObjectMap.put(PASS_TIME_ALIAS, new AliasObject(PASS_TIME_ALIAS, PASS_TIME_FILENAME, PASS_TIME_IV));
+        aliasObjectMap.put(PASS_TIME_ALIAS, new AliasObject(TOTAL_LIMIT_ALIAS, TOTAL_LIMIT_FILENAME, TOTAL_LIMIT_IV));
 
-        Assert.assertEquals(aliasObjectMap.size(), 11);
+        Assert.assertEquals(aliasObjectMap.size(), 12);
 //        Assert.assertEquals(AUTH_DURATION_SEC, 300);
     }
 
@@ -528,6 +532,28 @@ public class KeyStoreManager {
 
     public static long getSpendLimit(final Context context) {
         AliasObject obj = aliasObjectMap.get(SPEND_LIMIT_ALIAS);
+        byte[] result = new byte[0];
+        try {
+            result = _getData(context, obj.alias, obj.datafileName, obj.ivFileName, 0);
+        } catch (BRKeystoreErrorException e) {
+            e.printStackTrace();
+        }
+
+        return result.length > 0 ? TypesConverter.byteArray2long(result) : 0;
+    }
+    public static boolean putTotalLimit(long totalLimit, Context context) {
+        AliasObject obj = aliasObjectMap.get(TOTAL_LIMIT_ALIAS);
+        byte[] bytesToStore = TypesConverter.long2byteArray(totalLimit);
+        try {
+            return bytesToStore.length != 0 && _setData(context, bytesToStore, obj.alias, obj.datafileName, obj.ivFileName, 0, false);
+        } catch (BRKeystoreErrorException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static long getTotalLimit(final Context context) {
+        AliasObject obj = aliasObjectMap.get(TOTAL_LIMIT_ALIAS);
         byte[] result = new byte[0];
         try {
             result = _getData(context, obj.alias, obj.datafileName, obj.ivFileName, 0);

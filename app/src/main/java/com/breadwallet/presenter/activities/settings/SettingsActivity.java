@@ -22,7 +22,9 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.ImportActivity;
 import com.breadwallet.presenter.activities.RestoreActivity;
 import com.breadwallet.presenter.entities.BRSettingsItem;
+import com.breadwallet.presenter.fragments.FingerprintFragment;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.util.ArrayList;
@@ -149,12 +151,15 @@ public class SettingsActivity extends AppCompatActivity {
 
             }
         }, false));
-        items.add(new BRSettingsItem("FingerPrint Spending Limit", "", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.e(TAG, "onClick: FingerPrint Spending Limit");
-            }
-        }, false));
+        if (AuthManager.isFingerPrintAvailable(this) {
+            items.add(new BRSettingsItem("FingerPrint Spending Limit", "", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.e(TAG, "onClick: FingerPrint Spending Limit");
+                }
+            }, false));
+        }
+
         items.add(new BRSettingsItem("Default Currency", "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
