@@ -220,11 +220,16 @@ public class FragmentBreadPin extends Fragment {
                     e.printStackTrace();
                 }
                 authSucceeded = true;
-                BRAnimator.killAllFragments(getActivity());
-                BRAnimator.startBreadIfNotStarted(getActivity());
                 completion.onComplete();
                 AuthManager.getInstance().setTotalLimit(getContext(), BRWalletManager.getInstance().getTotalSent()
                         + KeyStoreManager.getSpendLimit(getContext()));
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        BRAnimator.killAllFragments(getActivity());
+                        BRAnimator.startBreadIfNotStarted(getActivity());
+                    }
+                });
             }
         }).start();
 

@@ -26,6 +26,7 @@ import com.breadwallet.presenter.fragments.FingerprintFragment;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.wallet.BRWalletManager;
+import com.platform.HTTPServer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -196,6 +197,7 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.e(TAG, "onClick: Join Early Access Program");
+                BRAnimator.showWebView(SettingsActivity.this, HTTPServer.URL_EA);
             }
         }, false));
         items.add(new BRSettingsItem("About", "", new View.OnClickListener() {

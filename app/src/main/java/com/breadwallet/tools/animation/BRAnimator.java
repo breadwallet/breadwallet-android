@@ -26,6 +26,7 @@ import com.breadwallet.presenter.fragments.FragmentReceive;
 import com.breadwallet.presenter.fragments.FragmentRequestAmount;
 import com.breadwallet.presenter.fragments.FragmentSend;
 import com.breadwallet.presenter.fragments.FragmentTransactionDetails;
+import com.breadwallet.presenter.fragments.FragmentWebView;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
@@ -102,6 +103,34 @@ public class BRAnimator {
         app.getFragmentManager().beginTransaction()
                 .setCustomAnimations(0, 0, 0, R.animator.plain_300)
                 .add(android.R.id.content, fragmentSend, FragmentSend.class.getName())
+                .addToBackStack(FragmentSend.class.getName()).commit();
+
+    }
+
+    public static void showWebView(Activity app, final String url) {
+        if (app == null) {
+            Log.e(TAG, "showSendFragment: app is null");
+            return;
+        }
+        if (Utils.isNullOrEmpty(url)) {
+            Log.e(TAG, "showWebView: url is null or empty");
+            return;
+        }
+        FragmentWebView fragmentWebView = (FragmentWebView) app.getFragmentManager().findFragmentByTag(FragmentWebView.class.getName());
+        if (fragmentWebView != null && fragmentWebView.isAdded()) {
+            app.getFragmentManager().beginTransaction().remove(fragmentWebView).commit();
+            return;
+        }
+
+        fragmentWebView = new FragmentWebView();
+
+        Bundle bundle = new Bundle();
+        bundle.putString("url", url);
+        fragmentWebView.setArguments(bundle);
+
+        app.getFragmentManager().beginTransaction()
+                .setCustomAnimations(R.animator.from_bottom, R.animator.to_bottom,R.animator.from_bottom, R.animator.to_bottom)
+                .add(android.R.id.content, fragmentWebView, FragmentWebView.class.getName())
                 .addToBackStack(FragmentSend.class.getName()).commit();
 
     }

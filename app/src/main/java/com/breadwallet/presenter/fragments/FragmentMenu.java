@@ -34,6 +34,8 @@ import com.breadwallet.presenter.entities.BRMenuItem;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.wallet.BRWalletManager;
+import com.platform.APIClient;
+import com.platform.HTTPServer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -133,7 +135,15 @@ public class FragmentMenu extends Fragment {
                 });
             }
         }));
-
+        boolean buyBitcoinEnabled = APIClient.getInstance(getActivity()).isFeatureEnabled(APIClient.FeatureFlags.BUY_BITCOIN.toString());
+        if (buyBitcoinEnabled)
+            itemList.add(new BRMenuItem("Buy Bitcoin", R.drawable.ic_lock, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.e(TAG, "onClick: Lock Wallet");
+                    BRAnimator.showWebView(getActivity(), HTTPServer.URL_BUY_BITCOIN);
+                }
+            }));
         mTitle = (TextView) rootView.findViewById(R.id.title);
         mListView = (ListView) rootView.findViewById(menu_listview);
         mListView.setAdapter(new MenuListAdapter(getContext(), R.layout.menu_list_item, itemList));

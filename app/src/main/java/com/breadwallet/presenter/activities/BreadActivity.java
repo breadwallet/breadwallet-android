@@ -56,6 +56,7 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
+import com.platform.HTTPServer;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
