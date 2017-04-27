@@ -20,7 +20,6 @@ import com.breadwallet.wallet.BRWalletManager;
 import com.google.firebase.crash.FirebaseCrash;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Locale;
 
 import static com.breadwallet.R.string.syncing_in_progress;
@@ -202,7 +201,7 @@ public class TransactionManager {
         final String reduceBitsMinus = BRCurrency.getFormattedCurrencyString(app, "BTC", BRExchange.getAmountFromSatoshis(app, "BTC", new BigDecimal(amountToReduce).negate()));
         final String reduceCurrencyMinus = BRCurrency.getFormattedCurrencyString(app, iso, BRExchange.getAmountFromSatoshis(app, iso, new BigDecimal(amountToReduce).negate()));
 
-        ((Activity)app).runOnUiThread(new Runnable() {
+        ((Activity) app).runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 BreadDialog.showCustomDialog(app, app.getString(R.string.insufficient_funds_for_fee), String.format(app.getString(R.string.reduce_payment_amount_by),
@@ -278,12 +277,16 @@ public class TransactionManager {
             });
             return;
         }
+        boolean forcePin = false;
+        if(BRWalletManager.getInstance().getTotalSent() + request.amount > AuthManager.getInstance().getTotalLimit(ctx)){
+            forcePin = true;
+        }
 
         //successfully created the transaction, authenticate user
-        AuthManager.getInstance().authPrompt(ctx, "", message, false, new BRAuthCompletion() {
+        AuthManager.getInstance().authPrompt(ctx, "", message, forcePin, new BRAuthCompletion() {
             @Override
             public void onComplete() {
-                PostAuthenticationProcessor.getInstance().onPublishTxAuth(ctx, false);
+                PostAuthenticationProcessor.getInstance().onPublishTxAuth(ctx, true);
             }
 
             @Override

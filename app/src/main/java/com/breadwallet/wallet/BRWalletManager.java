@@ -350,7 +350,7 @@ public class BRWalletManager {
 //                    long lastMessageShow = SharedPreferencesManager.getPhraseWarningTime(ctx);
 //                    if (lastMessageShow == 0 || (!firstTime && lastMessageShow > (now - 36 * 60 * 60)))
 //                        return;//36 * 60 * 60//
-//                    if (BRWalletManager.getInstance().getBalance(ctx) > SharedPreferencesManager.getLimit(ctx)) {
+//                    if (BRWalletManager.getInstance().getBalance(ctx) > SharedPreferencesManager.getTotalLimit(ctx)) {
 ////                        getInstance(ctx).animateSavePhraseFlow();
 //                        return;
 //                    }

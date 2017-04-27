@@ -264,6 +264,8 @@ public class PinActivity extends Activity {
                 @Override
                 public void run() {
                     if (AuthManager.getInstance().checkAuth(pin.toString(), PinActivity.this)) {
+                        AuthManager.getInstance().setTotalLimit(PinActivity.this, BRWalletManager.getInstance().getTotalSent()
+                                + KeyStoreManager.getSpendLimit(PinActivity.this));
                         unlockWallet();
                     } else {
                         showFailedToUnlock();
@@ -278,7 +280,6 @@ public class PinActivity extends Activity {
 
     private void unlockWallet() {
         pin = new StringBuilder("");
-        int duration = 2000;
         offlineButtonsLayout.animate().translationY(-600).setInterpolator(new AccelerateInterpolator());
         pinLayout.animate().translationY(-2000).setInterpolator(new AccelerateInterpolator());
         enterPinLabel.animate().translationY(-1800).setInterpolator(new AccelerateInterpolator());
@@ -351,7 +352,12 @@ public class PinActivity extends Activity {
                 break;
             case BRConstants.PAY_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
-                    PostAuthenticationProcessor.getInstance().onPublishTxAuth(this, true);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            PostAuthenticationProcessor.getInstance().onPublishTxAuth(PinActivity.this, true);
+                        }
+                    }).start();
                 }
                 break;
 

@@ -168,6 +168,8 @@ public class PostAuthenticationProcessor {
 
     }
 
+
+    //BLOCKS
     public void onPublishTxAuth(final Context app, boolean authAsked) {
 
         final BRWalletManager walletManager = BRWalletManager.getInstance();
@@ -184,31 +186,26 @@ public class PostAuthenticationProcessor {
         }
         if (rawSeed.length < 10) return;
         final byte[] seed = TypesConverter.getNullTerminatedPhrase(rawSeed);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    if (seed.length != 0) {
-                        boolean success = false;
-                        if (tmpTx != null) {
-                            success = walletManager.publishSerializedTransaction(tmpTx, seed);
-                            tmpTx = null;
-                        }
-                        if (!success) {
-                            Log.e(TAG, "onPublishTxAuth: publishSerializedTransaction returned FALSE");
-                            BRWalletManager.getInstance().offerToChangeTheAmount(app,
-                                    new PaymentItem(paymentRequest.addresses, paymentRequest.amount, null, paymentRequest.isPaymentRequest));
-                            return;
-                        }
-                    } else {
-                        Log.e(TAG, "onPublishTxAuth: seed length is 0!");
-                        return;
-                    }
-                } finally {
-                    Arrays.fill(seed, (byte) 0);
+        try {
+            if (seed.length != 0) {
+                boolean success = false;
+                if (tmpTx != null) {
+                    success = walletManager.publishSerializedTransaction(tmpTx, seed);
+                    tmpTx = null;
                 }
+                if (!success) {
+                    Log.e(TAG, "onPublishTxAuth: publishSerializedTransaction returned FALSE");
+                    BRWalletManager.getInstance().offerToChangeTheAmount(app,
+                            new PaymentItem(paymentRequest.addresses, paymentRequest.amount, null, paymentRequest.isPaymentRequest));
+                    return;
+                }
+            } else {
+                Log.e(TAG, "onPublishTxAuth: seed length is 0!");
+                return;
             }
-        }).start();
+        } finally {
+            Arrays.fill(seed, (byte) 0);
+        }
 
     }
 

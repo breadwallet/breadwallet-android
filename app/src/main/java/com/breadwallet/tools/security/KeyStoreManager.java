@@ -541,6 +541,8 @@ public class KeyStoreManager {
 
         return result.length > 0 ? TypesConverter.byteArray2long(result) : 0;
     }
+
+    // WARNING use AuthManager to get the limit
     public static boolean putTotalLimit(long totalLimit, Context context) {
         AliasObject obj = aliasObjectMap.get(TOTAL_LIMIT_ALIAS);
         byte[] bytesToStore = TypesConverter.long2byteArray(totalLimit);
@@ -552,6 +554,8 @@ public class KeyStoreManager {
         return false;
     }
 
+
+    // WARNING use AuthManager to set the limit
     public static long getTotalLimit(final Context context) {
         AliasObject obj = aliasObjectMap.get(TOTAL_LIMIT_ALIAS);
         byte[] result = new byte[0];

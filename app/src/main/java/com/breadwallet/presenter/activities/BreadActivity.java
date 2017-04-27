@@ -614,7 +614,13 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
 
             case BRConstants.PAY_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
-                    PostAuthenticationProcessor.getInstance().onPublishTxAuth(this, true);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            PostAuthenticationProcessor.getInstance().onPublishTxAuth(BreadActivity.this, true);
+                        }
+                    }).start();
+
                 }
                 break;
 

@@ -18,7 +18,6 @@ import com.breadwallet.presenter.fragments.FingerprintFragment;
 import com.breadwallet.presenter.fragments.FragmentBreadPin;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BreadDialog;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.util.concurrent.TimeUnit;
@@ -76,14 +75,14 @@ public class AuthManager {
     /**
      * Returns the total current limit that cannot be surpass without a pin
      */
-    public long getLimit(Activity activity) {
+    public long getTotalLimit(Context activity) {
         return KeyStoreManager.getTotalLimit(activity);
     }
 
     /**
      * Sets the total current limit that cannot be surpass without a pin
      */
-    public void setLimit(Activity activity, int limit) {
+    public void setTotalLimit(Context activity, long limit) {
         KeyStoreManager.putTotalLimit(limit, activity);
     }
 
@@ -95,7 +94,7 @@ public class AuthManager {
                 @Override
                 public void run() {
                     long totalSpent = BRWalletManager.getInstance().getTotalSent();
-                    long spendLimit = totalSpent + AuthManager.getInstance().getLimit(activity);
+                    long spendLimit = totalSpent + AuthManager.getInstance().getTotalLimit(activity);
                     KeyStoreManager.putSpendLimit(spendLimit, activity);
                 }
             }).start();

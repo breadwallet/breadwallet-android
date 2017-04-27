@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
+import com.breadwallet.presenter.activities.PinActivity;
 import com.breadwallet.presenter.customviews.BRLockScreenConstraintLayout;
 import com.breadwallet.presenter.customviews.BRSoftKeyboard;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
@@ -25,6 +26,7 @@ import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.BRWalletManager;
 
 import static android.R.attr.dialogLayout;
 import static android.R.attr.key;
@@ -209,16 +211,23 @@ public class FragmentBreadPin extends Fragment {
     }
 
     private void handleSuccess() {
-        new Handler().postDelayed(new Runnable() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 authSucceeded = true;
                 BRAnimator.killAllFragments(getActivity());
                 BRAnimator.startBreadIfNotStarted(getActivity());
                 completion.onComplete();
-
+                AuthManager.getInstance().setTotalLimit(getContext(), BRWalletManager.getInstance().getTotalSent()
+                        + KeyStoreManager.getSpendLimit(getContext()));
             }
-        }, 100);
+        }).start();
+
     }
 
     private void handleFail() {

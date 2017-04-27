@@ -203,7 +203,7 @@ public class SharedPreferencesManager {
         editor.apply();
     }
 
-//    public static int getLimit(Context activity) {
+//    public static int getTotalLimit(Context activity) {
 //        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
 //        return prefs.getInt(BRConstants.LIMIT_PREFS, BRConstants.HUNDRED_BITS);
 //    }
