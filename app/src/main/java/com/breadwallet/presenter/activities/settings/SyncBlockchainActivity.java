@@ -15,9 +15,17 @@ import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 
+import org.eclipse.jetty.util.SocketAddressResolver;
+
 public class SyncBlockchainActivity extends AppCompatActivity {
     private static final String TAG = SyncBlockchainActivity.class.getName();
     private Button scanButton;
+    public static boolean appVisible = false;
+    private static SyncBlockchainActivity app;
+
+    public static SyncBlockchainActivity getApp() {
+        return app;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +68,14 @@ public class SyncBlockchainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        appVisible = true;
+        app = this;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        appVisible = false;
     }
 
     @Override

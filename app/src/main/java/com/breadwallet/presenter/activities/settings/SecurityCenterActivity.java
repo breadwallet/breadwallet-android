@@ -42,6 +42,12 @@ public class SecurityCenterActivity extends AppCompatActivity {
     public ListView mListView;
     public RelativeLayout layout;
     public List<BRSecurityCenterItem> itemList;
+    public static boolean appVisible = false;
+    private static SecurityCenterActivity app;
+
+    public static SecurityCenterActivity getApp() {
+        return app;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +65,10 @@ public class SecurityCenterActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         updateList();
+        appVisible = true;
+        app = this;
     }
+
 
     @Override
     public void onBackPressed() {
@@ -121,6 +130,7 @@ public class SecurityCenterActivity extends AppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
+        appVisible = false;
     }
 
     private void updateList() {

@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.settings.DefaultCurrencyActivity;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.qrcode.QRReader;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
@@ -51,7 +52,12 @@ public class ScanQRActivity extends AppCompatActivity {
     private long lastUpdated;
     private UIUpdateTask task;
     private boolean handlingCode;
+    public static boolean appVisible = false;
+    private static ScanQRActivity app;
 
+    public static ScanQRActivity getApp() {
+        return app;
+    }
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -119,14 +125,15 @@ public class ScanQRActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
+        appVisible = true;
         qrEader.initAndStart(mySurfaceView);
+        app = this;
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-
+        appVisible = false;
         qrEader.release();
     }
 

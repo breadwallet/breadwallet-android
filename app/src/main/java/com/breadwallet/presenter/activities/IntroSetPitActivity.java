@@ -11,6 +11,7 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.settings.DefaultCurrencyActivity;
 import com.breadwallet.presenter.customviews.BRSoftKeyboard;
 
 public class IntroSetPitActivity extends Activity {
@@ -27,6 +28,12 @@ public class IntroSetPitActivity extends Activity {
     private int pinLimit = 6;
     private boolean startingNextActivity;
     private TextView title;
+    public static boolean appVisible = false;
+    private static IntroSetPitActivity app;
+
+    public static IntroSetPitActivity getApp() {
+        return app;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +65,14 @@ public class IntroSetPitActivity extends Activity {
         super.onResume();
         updateDots();
         introSetPitActivity = this;
+        appVisible = true;
+        app = this;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        appVisible = false;
     }
 
     private void handleClick(String key) {

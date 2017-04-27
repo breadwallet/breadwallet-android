@@ -9,6 +9,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.settings.DefaultCurrencyActivity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
@@ -17,6 +18,12 @@ import com.breadwallet.wallet.BRWalletManager;
 public class IntroWriteDownActivity extends Activity {
     private static final String TAG = IntroWriteDownActivity.class.getName();
     private Button writeButton;
+    public static boolean appVisible = false;
+    private static IntroWriteDownActivity app;
+
+    public static IntroWriteDownActivity getApp() {
+        return app;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,11 +34,24 @@ public class IntroWriteDownActivity extends Activity {
         writeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!BRAnimator.isClickAllowed()) return;
+                if (!BRAnimator.isClickAllowed()) return;
 
                 PostAuthenticationProcessor.getInstance().onPhraseCheckAuth(IntroWriteDownActivity.this, false);
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        appVisible = true;
+        app = this;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        appVisible = false;
     }
 
     @Override

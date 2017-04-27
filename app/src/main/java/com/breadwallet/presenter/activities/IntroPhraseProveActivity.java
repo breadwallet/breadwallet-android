@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
+import com.breadwallet.presenter.activities.settings.DefaultCurrencyActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -39,6 +40,12 @@ public class IntroPhraseProveActivity extends Activity {
     private TextView wordTextFirst;
     private TextView wordTextSecond;
     private SparseArray<String> sparseArrayWords = new SparseArray<>();
+    public static boolean appVisible = false;
+    private static IntroPhraseProveActivity app;
+
+    public static IntroPhraseProveActivity getApp() {
+        return app;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,6 +124,19 @@ public class IntroPhraseProveActivity extends Activity {
 
         }
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        appVisible = true;
+        app = this;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        appVisible = false;
     }
 
     @Override

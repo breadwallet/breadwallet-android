@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.settings.DefaultCurrencyActivity;
 import com.breadwallet.presenter.customviews.BRSoftKeyboard;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -39,6 +40,12 @@ public class UpdatePitActivity extends Activity {
 
     private LinearLayout pinLayout;
     private String curNewPin = "";
+    public static boolean appVisible = false;
+    private static UpdatePitActivity app;
+
+    public static UpdatePitActivity getApp() {
+        return app;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +79,14 @@ public class UpdatePitActivity extends Activity {
     protected void onResume() {
         super.onResume();
         updateDots();
+        appVisible = true;
+        app = this;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        appVisible = false;
     }
 
     private void handleClick(String key) {

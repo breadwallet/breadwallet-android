@@ -17,6 +17,7 @@ import android.widget.EditText;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.settings.DefaultCurrencyActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
@@ -61,6 +62,12 @@ public class IntroActivity extends FragmentActivity implements Serializable {
     public Button newWalletButton;
     public Button recoverWalletButton;
     public static IntroActivity introActivity;
+    public static boolean appVisible = false;
+    private static IntroActivity app;
+
+    public static IntroActivity getApp() {
+        return app;
+    }
 
     //loading the native library
     static {
@@ -109,6 +116,7 @@ public class IntroActivity extends FragmentActivity implements Serializable {
 
     }
 
+
     private void setListeners() {
         newWalletButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,12 +160,15 @@ public class IntroActivity extends FragmentActivity implements Serializable {
     @Override
     protected void onResume() {
         super.onResume();
+        appVisible = true;
+        app = this;
 
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        appVisible = false;
     }
 
     @Override

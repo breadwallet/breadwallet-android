@@ -15,12 +15,19 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.breadwallet.R;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.util.Utils;
 
 public class WebViewActivity extends Activity {
     private static final String TAG = WebViewActivity.class.getName();
     WebView webView;
     String theUrl;
+    public static boolean appVisible = false;
+    private static WebViewActivity app;
+
+    public static WebViewActivity getApp() {
+        return app;
+    }
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -60,6 +67,10 @@ public class WebViewActivity extends Activity {
         webView.loadUrl(theUrl);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+    }
+
     private class BRWebChromeClient extends WebChromeClient {
         @Override
         public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
@@ -74,6 +85,23 @@ public class WebViewActivity extends Activity {
 
         }
 
+    }
 
+    @Override
+    public void onBackPressed() {
+        BRAnimator.startBreadActivity(this, false);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        appVisible = true;
+        app = this;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        appVisible = false;
     }
 }

@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.settings.DefaultCurrencyActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
@@ -53,6 +54,12 @@ public class IntroRecoverWordsActivity extends Activity {
 
     private TextView title;
     private TextView description;
+    public static boolean appVisible = false;
+    private static IntroRecoverWordsActivity app;
+
+    public static IntroRecoverWordsActivity getApp() {
+        return app;
+    }
 
     //will be true if this screen was called from the restore screen
     private boolean restore = false;
@@ -193,6 +200,7 @@ public class IntroRecoverWordsActivity extends Activity {
 
     }
 
+
     private void chooseWordsSize(boolean isLeft) {
         int activeColor = getColor(dark_blue);
         int nonActiveColor = getColor(extra_light_gray);
@@ -222,8 +230,15 @@ public class IntroRecoverWordsActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        appVisible = true;
+        app = this;
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        appVisible = false;
+    }
 
     @Override
     public void onBackPressed() {

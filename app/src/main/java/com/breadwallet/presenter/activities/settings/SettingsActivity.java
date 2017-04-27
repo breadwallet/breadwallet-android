@@ -38,6 +38,12 @@ public class SettingsActivity extends AppCompatActivity {
     private static final String TAG = SettingsActivity.class.getName();
     private ListView listView;
     public List<BRSettingsItem> items;
+    public static boolean appVisible = false;
+    private static SettingsActivity app;
+
+    public static SettingsActivity getApp() {
+        return app;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,12 +106,13 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        appVisible = true;
+        app = this;
     }
 
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         BRAnimator.startBreadActivity(this, false);
     }
 
@@ -216,4 +223,9 @@ public class SettingsActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        appVisible = false;
+    }
 }

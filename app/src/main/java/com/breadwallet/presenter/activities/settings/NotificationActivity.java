@@ -21,6 +21,12 @@ import com.breadwallet.tools.manager.SharedPreferencesManager;
 public class NotificationActivity extends AppCompatActivity {
     private static final String TAG = NotificationActivity.class.getName();
     private ToggleButton toggleButton;
+    public static boolean appVisible = false;
+    private static NotificationActivity app;
+
+    public static NotificationActivity getApp() {
+        return app;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +48,14 @@ public class NotificationActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        appVisible = true;
+        app = this;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        appVisible = false;
     }
 
     @Override

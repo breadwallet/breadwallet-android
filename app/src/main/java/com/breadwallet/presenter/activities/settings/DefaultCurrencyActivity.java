@@ -29,7 +29,12 @@ public class DefaultCurrencyActivity extends AppCompatActivity {
     private CurrencyListAdapter adapter;
     private String ISO;
     private float rate;
+    public static boolean appVisible = false;
+    private static DefaultCurrencyActivity app;
 
+    public static DefaultCurrencyActivity getApp() {
+        return app;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +85,14 @@ public class DefaultCurrencyActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        appVisible = true;
+        app = this;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        appVisible = false;
     }
 
     @Override

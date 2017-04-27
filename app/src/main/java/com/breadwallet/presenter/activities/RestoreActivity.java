@@ -9,11 +9,18 @@ import android.view.WindowManager;
 import android.widget.Button;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.settings.DefaultCurrencyActivity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 
 public class RestoreActivity extends Activity {
     private Button nextButton;
+    public static boolean appVisible = false;
+    private static RestoreActivity app;
+
+    public static RestoreActivity getApp() {
+        return app;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +43,19 @@ public class RestoreActivity extends Activity {
                 if (!RestoreActivity.this.isDestroyed()) finish();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        appVisible = true;
+        app = this;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        appVisible = false;
     }
 
     private void setStatusBarColor(int color) {

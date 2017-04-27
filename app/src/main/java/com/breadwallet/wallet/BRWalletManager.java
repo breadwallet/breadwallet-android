@@ -485,7 +485,7 @@ public class BRWalletManager {
 
                                     }
                                     messageId = 0;
-                                    if (BreadActivity.appInBackground)
+                                    if (!BreadActivity.appVisible)
                                         BRNotificationManager.sendNotification(ctx, R.drawable.notification_icon, ctx.getString(R.string.app_name), message, 1);
                                 }
                             }

@@ -100,7 +100,6 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     private LinearLayout sendButton;
     private LinearLayout receiveButton;
     private LinearLayout menuButton;
-    private static BreadActivity app;
     public static final Point screenParametersPoint = new Point();
 
     NetworkChangeReceiver mNetworkStateReceiver;
@@ -125,7 +124,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     private LinearLayout recyclerLayout;
     private Toolbar toolBar;
     private int progress = 0;
-    public static boolean appInBackground = false;
+    public static boolean appVisible = false;
     private ImageButton searchIcon;
     private EditText searchEdit;
     private BRSearchManager searchManager;
@@ -135,6 +134,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     private Button pendingFilter;
     private Button completeFilter;
 
+    private static BreadActivity app;
     public static BreadActivity getApp() {
         return app;
     }
@@ -403,7 +403,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     @Override
     protected void onResume() {
         super.onResume();
-        appInBackground = false;
+        appVisible = true;
         app = this;
         new Thread(new Runnable() {
             @Override
@@ -411,6 +411,8 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
                 HTTPServer.stopServer();
             }
         }).start();
+        if (PLATFORM_ON)
+            APIClient.getInstance(this).updatePlatform();
 
         walletName.setText(SharedPreferencesManager.getWalletName(this));
         CurrencyFetchManager currencyManager = CurrencyFetchManager.getInstance(this);
@@ -448,7 +450,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     @Override
     protected void onPause() {
         super.onPause();
-        appInBackground = true;
+        appVisible = false;
         CurrencyFetchManager.getInstance(this).stopTimerTask();
 
     }

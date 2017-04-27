@@ -13,6 +13,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.settings.DefaultCurrencyActivity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
@@ -22,6 +23,12 @@ import com.breadwallet.tools.util.BRConstants;
 public class ImportActivity extends Activity {
     private Button scan;
     private static final String TAG = ImportActivity.class.getName();
+    public static boolean appVisible = false;
+    private static ImportActivity app;
+
+    public static ImportActivity getApp() {
+        return app;
+    }
 
     static {
         System.loadLibrary("core");
@@ -45,6 +52,19 @@ public class ImportActivity extends Activity {
                 BRAnimator.openCamera(ImportActivity.this);
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        appVisible = true;
+        app = this;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        appVisible = false;
     }
 
     @Override

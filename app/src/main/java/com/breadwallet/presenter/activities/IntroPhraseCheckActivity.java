@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
+import com.breadwallet.presenter.activities.settings.DefaultCurrencyActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.fragments.FragmentPhraseWord;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -43,6 +44,12 @@ public class IntroPhraseCheckActivity extends Activity {
     private LinearLayout buttonsLayout;
     private TextView itemIndexText;
     private SparseArray<String> wordMap;
+    public static boolean appVisible = false;
+    private static IntroPhraseCheckActivity app;
+
+    public static IntroPhraseCheckActivity getApp() {
+        return app;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,6 +155,19 @@ public class IntroPhraseCheckActivity extends Activity {
         float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, b ? 8 : 0, r.getDisplayMetrics());
         previousButton.setElevation(px);
         previousButton.setEnabled(b);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        appVisible = true;
+        app = this;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        appVisible = false;
     }
 
     private void updateItemIndexText() {

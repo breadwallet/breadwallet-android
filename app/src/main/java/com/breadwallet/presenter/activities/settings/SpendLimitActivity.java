@@ -17,6 +17,12 @@ import com.breadwallet.wallet.BRPeerManager;
 public class SpendLimitActivity extends AppCompatActivity {
     private static final String TAG = SpendLimitActivity.class.getName();
     private Button scanButton;
+    public static boolean appVisible = false;
+    private static SpendLimitActivity app;
+
+    public static SpendLimitActivity getApp() {
+        return app;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +65,15 @@ public class SpendLimitActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        appVisible = true;
+        app = this;
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        appVisible = false;
     }
 
     @Override

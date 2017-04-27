@@ -61,6 +61,7 @@ public class PinActivity extends Activity {
     private LinearLayout offlineButtonsLayout;
 
     private ImageButton fingerPrint;
+    public static boolean appVisible = false;
 
     private Button leftButton;
     private Button rightButton;
@@ -190,6 +191,7 @@ public class PinActivity extends Activity {
     protected void onResume() {
         super.onResume();
         updateDots();
+        appVisible = true;
         app = this;
         if (!BRWalletManager.getInstance().isCreated()) {
             new Thread(new Runnable() {
@@ -201,6 +203,12 @@ public class PinActivity extends Activity {
         }
         if (PLATFORM_ON)
             APIClient.getInstance(this).updatePlatform();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        appVisible = false;
     }
 
     private void handleClick(String key) {

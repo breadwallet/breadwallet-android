@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.settings.DefaultCurrencyActivity;
 import com.breadwallet.presenter.customviews.BRSoftKeyboard;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -39,7 +40,12 @@ public class IntroReEnterPinActivity extends FragmentActivity {
     private String firstPIN;
     private boolean isPressAllowed = true;
     private LinearLayout pinLayout;
+    public static boolean appVisible = false;
+    private static IntroReEnterPinActivity app;
 
+    public static IntroReEnterPinActivity getApp() {
+        return app;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +84,14 @@ public class IntroReEnterPinActivity extends FragmentActivity {
     protected void onResume() {
         super.onResume();
         updateDots();
+        appVisible = true;
+        app = this;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        appVisible = false;
     }
 
     private void handleClick(String key) {
@@ -157,7 +171,7 @@ public class IntroReEnterPinActivity extends FragmentActivity {
                     pin = new StringBuilder("");
                     updateDots();
                 }
-            },200);
+            }, 200);
             AuthManager.getInstance().setPinCode(pin.toString(), this);
             if (getIntent().getBooleanExtra("recovery", false)) {
                 BRAnimator.startBreadActivity(this, false);

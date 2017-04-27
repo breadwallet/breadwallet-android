@@ -17,7 +17,33 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
 import com.breadwallet.presenter.activities.BreadActivity;
+import com.breadwallet.presenter.activities.ImportActivity;
+import com.breadwallet.presenter.activities.IntroActivity;
+import com.breadwallet.presenter.activities.IntroPhraseCheckActivity;
+import com.breadwallet.presenter.activities.IntroPhraseProveActivity;
+import com.breadwallet.presenter.activities.IntroReEnterPinActivity;
+import com.breadwallet.presenter.activities.IntroRecoverActivity;
+import com.breadwallet.presenter.activities.IntroRecoverWordsActivity;
+import com.breadwallet.presenter.activities.IntroSetPitActivity;
+import com.breadwallet.presenter.activities.IntroWriteDownActivity;
 import com.breadwallet.presenter.activities.PinActivity;
+import com.breadwallet.presenter.activities.RestoreActivity;
+import com.breadwallet.presenter.activities.ScanQRActivity;
+import com.breadwallet.presenter.activities.UpdatePitActivity;
+import com.breadwallet.presenter.activities.settings.AboutActivity;
+import com.breadwallet.presenter.activities.settings.DefaultCurrencyActivity;
+import com.breadwallet.presenter.activities.settings.NotificationActivity;
+import com.breadwallet.presenter.activities.settings.SecurityCenterActivity;
+import com.breadwallet.presenter.activities.settings.SettingsActivity;
+import com.breadwallet.presenter.activities.settings.ShareDataActivity;
+import com.breadwallet.presenter.activities.settings.SpendLimitActivity;
+import com.breadwallet.presenter.activities.settings.SyncBlockchainActivity;
+import com.breadwallet.presenter.activities.settings.WebViewActivity;
+
+import junit.framework.Assert;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -66,6 +92,36 @@ public class BreadWalletApp extends Application {
     }
 
     public static Activity getBreadContext() {
-        return BreadActivity.getApp() != null && !BreadActivity.getApp().isDestroyed() ? BreadActivity.getApp() : PinActivity.getApp();
+        List<Activity> list = new ArrayList<>();
+        if (AboutActivity.appVisible) list.add(AboutActivity.getApp());
+        if (DefaultCurrencyActivity.appVisible) list.add(DefaultCurrencyActivity.getApp());
+        if (NotificationActivity.appVisible) list.add(NotificationActivity.getApp());
+        if (SecurityCenterActivity.appVisible) list.add(SecurityCenterActivity.getApp());
+        if (SettingsActivity.appVisible) list.add(SettingsActivity.getApp());
+        if (ShareDataActivity.appVisible) list.add(ShareDataActivity.getApp());
+        if (SpendLimitActivity.appVisible) list.add(SpendLimitActivity.getApp());
+        if (SyncBlockchainActivity.appVisible) list.add(SyncBlockchainActivity.getApp());
+        if (WebViewActivity.appVisible) list.add(WebViewActivity.getApp());
+        if (BreadActivity.appVisible) list.add(BreadActivity.getApp());
+        if (ImportActivity.appVisible) list.add(ImportActivity.getApp());
+        if (IntroActivity.appVisible) list.add(IntroActivity.getApp());
+        if (IntroPhraseCheckActivity.appVisible) list.add(IntroPhraseCheckActivity.getApp());
+        if (IntroPhraseProveActivity.appVisible) list.add(IntroPhraseProveActivity.getApp());
+        if (IntroRecoverActivity.appVisible) list.add(IntroRecoverActivity.getApp());
+        if (IntroRecoverWordsActivity.appVisible) list.add(IntroRecoverWordsActivity.getApp());
+        if (IntroReEnterPinActivity.appVisible) list.add(IntroReEnterPinActivity.getApp());
+        if (IntroSetPitActivity.appVisible) list.add(IntroSetPitActivity.getApp());
+        if (IntroWriteDownActivity.appVisible) list.add(IntroWriteDownActivity.getApp());
+        if (PinActivity.appVisible) list.add(PinActivity.getApp());
+        if (RestoreActivity.appVisible) list.add(RestoreActivity.getApp());
+        if (ScanQRActivity.appVisible) list.add(ScanQRActivity.getApp());
+        if (UpdatePitActivity.appVisible) list.add(UpdatePitActivity.getApp());
+        Assert.assertTrue(list.size() <= 1);
+
+        return list.size() == 0 ? null : list.get(0);
+    }
+
+    public static boolean isAnyActivityOn() {
+        return getBreadContext() != null;
     }
 }

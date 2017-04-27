@@ -14,6 +14,12 @@ import com.breadwallet.tools.manager.SharedPreferencesManager;
 public class ShareDataActivity extends AppCompatActivity {
     private static final String TAG = ShareDataActivity.class.getName();
     private ToggleButton toggleButton;
+    public static boolean appVisible = false;
+    private static ShareDataActivity app;
+
+    public static ShareDataActivity getApp() {
+        return app;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +41,14 @@ public class ShareDataActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        appVisible = true;
+        app = this;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+         appVisible = false;
     }
 
     @Override

@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.animation.BreadDialog;
 
@@ -26,6 +27,13 @@ public class AboutActivity extends AppCompatActivity {
     private ImageView redditShare;
     private ImageView twitterShare;
     private ImageView blogShare;
+    private static AboutActivity app;
+
+    public static AboutActivity getApp() {
+        return app;
+    }
+
+    public static boolean appVisible = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +54,14 @@ public class AboutActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        appVisible = true;
+        app = this;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        appVisible = false;
     }
 
     @Override
