@@ -56,7 +56,7 @@ public class IntroPhraseCheckActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_phrase_check);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
-//        setStatusBarColor(android.R.color.transparent);
+        ActivityUTILS.setStatusBarColor(this, R.color.status_bar);
         wordViewPager = (ViewPager) findViewById(R.id.phrase_words_pager);
         wordViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             public void onPageScrollStateChanged(int state) {
@@ -175,12 +175,6 @@ public class IntroPhraseCheckActivity extends Activity {
         itemIndexText.setText(text);
     }
 
-    private void setStatusBarColor(int color) {
-        Window window = getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(getColor(color));
-    }
 
     @Override
     public void onBackPressed() {

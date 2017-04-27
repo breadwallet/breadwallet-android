@@ -27,8 +27,7 @@ public class RestoreActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restore);
 
-//        setStatusBarColor(android.R.color.transparent);
-
+        ActivityUTILS.setStatusBarColor(this, R.color.status_bar);
         nextButton = (Button) findViewById(R.id.send_button);
 
         nextButton.setOnClickListener(new View.OnClickListener() {
@@ -56,13 +55,6 @@ public class RestoreActivity extends Activity {
     protected void onPause() {
         super.onPause();
         appVisible = false;
-    }
-
-    private void setStatusBarColor(int color) {
-        Window window = getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(getColor(color));
     }
 
     @Override

@@ -157,6 +157,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         // Always cast your custom Toolbar here, and set it as the ActionBar.
         toolBar = (Toolbar) findViewById(R.id.bread_bar);
         setSupportActionBar(toolBar);
+        ActivityUTILS.setStatusBarColor(this, R.color.status_bar);
 
         initializeViews();
 
@@ -201,12 +202,6 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
 
     }
 
-    private void setStatusBarColor() {
-        Window window = getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(getColor(R.color.status_bar));
-    }
 
     private void setUrlHandler(Intent intent) {
         Uri data = intent.getData();

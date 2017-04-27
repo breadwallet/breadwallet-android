@@ -51,7 +51,7 @@ public class IntroReEnterPinActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pin_template);
-//        setStatusBarColor(android.R.color.transparent);
+        ActivityUTILS.setStatusBarColor(this, R.color.status_bar);
         keyboard = (BRSoftKeyboard) findViewById(R.id.brkeyboard);
         pinLayout = (LinearLayout) findViewById(R.id.pinLayout);
 
@@ -131,13 +131,6 @@ public class IntroReEnterPinActivity extends FragmentActivity {
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
-    }
-
-    private void setStatusBarColor(int color) {
-        Window window = getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(getColor(color));
     }
 
     private void updateDots() {

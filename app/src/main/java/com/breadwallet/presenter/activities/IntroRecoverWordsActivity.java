@@ -68,8 +68,7 @@ public class IntroRecoverWordsActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro_recover_words);
-//        setStatusBarColor(android.R.color.transparent);
-
+        ActivityUTILS.setStatusBarColor(this, R.color.status_bar);
         leftButton = (Button) findViewById(R.id.left_button);
         rightButton = (Button) findViewById(R.id.right_button);
         nextButton = (Button) findViewById(R.id.send_button);
@@ -244,13 +243,6 @@ public class IntroRecoverWordsActivity extends Activity {
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
-    }
-
-    private void setStatusBarColor(int color) {
-        Window window = getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(getColor(color));
     }
 
     private String getPhrase() {

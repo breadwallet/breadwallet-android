@@ -1,22 +1,12 @@
 package com.breadwallet.presenter.activities.settings;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.BreadActivity;
-import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.tools.animation.BreadDialog;
-
-import org.w3c.dom.Text;
+import com.breadwallet.presenter.activities.ActivityUTILS;
 
 public class AboutActivity extends AppCompatActivity {
     private static final String TAG = AboutActivity.class.getName();
@@ -48,7 +38,7 @@ public class AboutActivity extends AppCompatActivity {
         redditShare = (ImageView) findViewById(R.id.reddit_share_button);
         twitterShare = (ImageView) findViewById(R.id.twitter_share_button);
         blogShare = (ImageView) findViewById(R.id.blog_share_button);
-
+        ActivityUTILS.setStatusBarColor(this, R.color.status_bar);
     }
 
     @Override
@@ -70,10 +60,4 @@ public class AboutActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
     }
 
-    private void setStatusBarColor(int color) {
-        Window window = getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(getColor(color));
-    }
 }

@@ -110,8 +110,7 @@ public class IntroActivity extends FragmentActivity implements Serializable {
 
             BRWalletManager.getInstance().wipeWalletButKeystore(this);
         }
-//        setStatusBarColor(android.R.color.transparent);
-
+        ActivityUTILS.setStatusBarColor(this, R.color.status_bar);
         PostAuthenticationProcessor.getInstance().onCanaryCheck(this, false);
 
     }
@@ -141,14 +140,6 @@ public class IntroActivity extends FragmentActivity implements Serializable {
 
             }
         });
-    }
-
-
-    private void setStatusBarColor(int color) {
-        Window window = getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(getColor(color));
     }
 
     public boolean checkFirstAddress(byte[] mpk) {

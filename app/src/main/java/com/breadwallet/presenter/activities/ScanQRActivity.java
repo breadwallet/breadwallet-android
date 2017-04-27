@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -64,6 +66,7 @@ public class ScanQRActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qr);
 
+        ActivityUTILS.setStatusBarColor(this, R.color.status_bar);
 
         mySurfaceView = (SurfaceView) findViewById(R.id.camera_view);
         cameraGuide = (ImageView) findViewById(R.id.scan_guide);
@@ -149,6 +152,7 @@ public class ScanQRActivity extends AppCompatActivity {
         setResult(Activity.RESULT_OK, returnIntent);
         finish();
     }
+
 
     private class UIUpdateTask extends Thread {
         public boolean running = true;

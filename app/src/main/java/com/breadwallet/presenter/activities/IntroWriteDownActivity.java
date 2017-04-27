@@ -29,7 +29,7 @@ public class IntroWriteDownActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_write_down);
-//        setStatusBarColor(android.R.color.transparent);
+        ActivityUTILS.setStatusBarColor(this, R.color.status_bar);
         writeButton = (Button) findViewById(R.id.button_write_down);
         writeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,13 +78,6 @@ public class IntroWriteDownActivity extends Activity {
                 }
                 break;
         }
-    }
-
-    private void setStatusBarColor(int color) {
-        Window window = getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(getColor(color));
     }
 
 }

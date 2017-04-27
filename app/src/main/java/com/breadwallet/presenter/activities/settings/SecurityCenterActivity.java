@@ -16,8 +16,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -25,13 +23,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.ActivityUTILS;
 import com.breadwallet.presenter.activities.IntroWriteDownActivity;
 import com.breadwallet.presenter.activities.UpdatePitActivity;
 import com.breadwallet.presenter.entities.BRSecurityCenterItem;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.KeyStoreManager;
-import com.breadwallet.wallet.BRWalletManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,8 +51,7 @@ public class SecurityCenterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_security_center);
-//        setStatusBarColor(android.R.color.transparent);
-
+        ActivityUTILS.setStatusBarColor(this, R.color.status_bar);
         itemList = new ArrayList<>();
         mListView = (ListView) findViewById(R.id.menu_listview);
         updateList();
@@ -74,13 +71,6 @@ public class SecurityCenterActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         BRAnimator.startBreadActivity(this, false);
-    }
-
-    private void setStatusBarColor(int color) {
-        Window window = getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(getColor(color));
     }
 
     public RelativeLayout getMainLayout() {

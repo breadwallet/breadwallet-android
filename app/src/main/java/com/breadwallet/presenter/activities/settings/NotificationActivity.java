@@ -1,21 +1,12 @@
 package com.breadwallet.presenter.activities.settings;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.CompoundButton;
-import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.IntroReEnterPinActivity;
-import com.breadwallet.presenter.customviews.BRSoftKeyboard;
+import com.breadwallet.presenter.activities.ActivityUTILS;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 
 public class NotificationActivity extends AppCompatActivity {
@@ -32,7 +23,7 @@ public class NotificationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notification);
-//        setStatusBarColor(android.R.color.transparent);
+        ActivityUTILS.setStatusBarColor(this, R.color.status_bar);
 
         toggleButton = (ToggleButton) findViewById(R.id.toggleButton);
         toggleButton.setChecked(SharedPreferencesManager.getShowNotification(this));
@@ -64,10 +55,4 @@ public class NotificationActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
     }
 
-    private void setStatusBarColor(int color) {
-        Window window = getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(getColor(color));
-    }
 }

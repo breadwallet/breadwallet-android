@@ -39,8 +39,7 @@ public class ImportActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_import);
 
-//        setStatusBarColor(android.R.color.transparent);
-
+        ActivityUTILS.setStatusBarColor(this, R.color.status_bar);
         scan = (Button) findViewById(R.id.scan_button);
 
         scan.setOnClickListener(new View.OnClickListener() {
@@ -69,13 +68,6 @@ public class ImportActivity extends Activity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-    }
-
-    private void setStatusBarColor(int color) {
-        Window window = getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(getColor(color));
     }
 
     @Override

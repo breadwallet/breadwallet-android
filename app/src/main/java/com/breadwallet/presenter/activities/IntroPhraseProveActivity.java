@@ -52,7 +52,7 @@ public class IntroPhraseProveActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_phrase_prove);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
-//        setStatusBarColor(android.R.color.transparent);
+        ActivityUTILS.setStatusBarColor(this, R.color.status_bar);
         submit = (Button) findViewById(R.id.button_submit);
         wordEditFirst = (EditText) findViewById(R.id.word_edittext_first);
         wordEditSecond = (EditText) findViewById(R.id.word_edittext_second);
@@ -161,11 +161,5 @@ public class IntroPhraseProveActivity extends Activity {
         wordTextSecond.setText("Word " + (sparseArrayWords.keyAt(1) + 1));
     }
 
-    private void setStatusBarColor(int color) {
-        Window window = getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(getColor(color));
-    }
 
 }

@@ -1,17 +1,15 @@
 package com.breadwallet.presenter.activities.settings;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.ActivityUTILS;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.adapter.CurrencyListAdapter;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
@@ -46,11 +44,11 @@ public class DefaultCurrencyActivity extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.currency_list_view);
         adapter = new CurrencyListAdapter(this);
         adapter.addAll(CurrencyDataSource.getInstance(this).getAllCurrencies());
-
+        ActivityUTILS.setStatusBarColor(this, R.color.status_bar);
         //set the rate from the last saved
         String iso = SharedPreferencesManager.getIso(this);
         CurrencyEntity entity = CurrencyDataSource.getInstance(this).getCurrencyByIso(iso);
-        if(entity != null) {
+        if (entity != null) {
             String finalExchangeRate = BRCurrency.getFormattedCurrencyString(DefaultCurrencyActivity.this, SharedPreferencesManager.getIso(this), new BigDecimal(entity.rate));
             exchangeText.setText(finalExchangeRate + " = 1BTC");
         }
@@ -101,11 +99,5 @@ public class DefaultCurrencyActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
     }
 
-    private void setStatusBarColor(int color) {
-        Window window = getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(getColor(color));
-    }
 
 }

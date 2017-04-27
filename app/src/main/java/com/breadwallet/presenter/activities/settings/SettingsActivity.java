@@ -12,20 +12,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.ActivityUTILS;
 import com.breadwallet.presenter.activities.ImportActivity;
 import com.breadwallet.presenter.activities.RestoreActivity;
 import com.breadwallet.presenter.entities.BRSettingsItem;
-import com.breadwallet.presenter.fragments.FingerprintFragment;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.security.AuthManager;
-import com.breadwallet.wallet.BRWalletManager;
 import com.platform.HTTPServer;
 
 import java.util.ArrayList;
@@ -49,7 +46,7 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-//        setStatusBarColor(android.R.color.transparent);
+        ActivityUTILS.setStatusBarColor(this, R.color.status_bar);
         listView = (ListView) findViewById(R.id.settings_list);
         items = new ArrayList<>();
 
@@ -114,13 +111,6 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         BRAnimator.startBreadActivity(this, false);
-    }
-
-    private void setStatusBarColor(int color) {
-        Window window = getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(getColor(color));
     }
 
     private void populateItems() {
