@@ -47,6 +47,7 @@
             android:screenOrientation="portrait">
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.MAIN"/>
+
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
@@ -66,10 +67,12 @@
                 <data android:scheme="bitcoin"/>
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
+                <action android:name="android.intent.action.SEARCH"/>
             </intent-filter>
-            <meta-data android:name="android.app.searchable"
-                       android:resource="@xml/searchable"/>
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable"/>
         </activity>
         <activity
             android:name=".presenter.activities.IntroSetPitActivity"
@@ -171,7 +174,8 @@
             android:launchMode="singleInstance"
             android:screenOrientation="portrait">
         </activity>
-
+        <activity android:name=".presenter.activities.settings.WebViewActivity">
+        </activity>
     </application>
 
 </manifest>

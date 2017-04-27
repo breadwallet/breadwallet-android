@@ -197,7 +197,11 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.e(TAG, "onClick: Join Early Access Program");
-                BRAnimator.showWebView(SettingsActivity.this, HTTPServer.URL_EA);
+                Intent intent = new Intent(SettingsActivity.this, WebViewActivity.class);
+                intent.putExtra("url", HTTPServer.URL_EA);
+                Activity app = SettingsActivity.this;
+                app.startActivity(intent);
+                app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         }, false));
         items.add(new BRSettingsItem("About", "", new View.OnClickListener() {

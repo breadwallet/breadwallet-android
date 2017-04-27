@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -12,25 +11,20 @@ import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.View;
-
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.activities.PinActivity;
 import com.breadwallet.presenter.activities.ScanQRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.TransactionListItem;
-import com.breadwallet.presenter.fragments.FragmentMenu;
 import com.breadwallet.presenter.fragments.FragmentBreadSignal;
 import com.breadwallet.presenter.fragments.FragmentReceive;
 import com.breadwallet.presenter.fragments.FragmentRequestAmount;
 import com.breadwallet.presenter.fragments.FragmentSend;
 import com.breadwallet.presenter.fragments.FragmentTransactionDetails;
-import com.breadwallet.presenter.fragments.FragmentWebView;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.BRWalletManager;
 
 import java.util.List;
 
@@ -103,34 +97,6 @@ public class BRAnimator {
         app.getFragmentManager().beginTransaction()
                 .setCustomAnimations(0, 0, 0, R.animator.plain_300)
                 .add(android.R.id.content, fragmentSend, FragmentSend.class.getName())
-                .addToBackStack(FragmentSend.class.getName()).commit();
-
-    }
-
-    public static void showWebView(Activity app, final String url) {
-        if (app == null) {
-            Log.e(TAG, "showSendFragment: app is null");
-            return;
-        }
-        if (Utils.isNullOrEmpty(url)) {
-            Log.e(TAG, "showWebView: url is null or empty");
-            return;
-        }
-        FragmentWebView fragmentWebView = (FragmentWebView) app.getFragmentManager().findFragmentByTag(FragmentWebView.class.getName());
-        if (fragmentWebView != null && fragmentWebView.isAdded()) {
-            app.getFragmentManager().beginTransaction().remove(fragmentWebView).commit();
-            return;
-        }
-
-        fragmentWebView = new FragmentWebView();
-
-        Bundle bundle = new Bundle();
-        bundle.putString("url", url);
-        fragmentWebView.setArguments(bundle);
-
-        app.getFragmentManager().beginTransaction()
-                .setCustomAnimations(R.animator.from_bottom, R.animator.to_bottom,R.animator.from_bottom, R.animator.to_bottom)
-                .add(android.R.id.content, fragmentWebView, FragmentWebView.class.getName())
                 .addToBackStack(FragmentSend.class.getName()).commit();
 
     }

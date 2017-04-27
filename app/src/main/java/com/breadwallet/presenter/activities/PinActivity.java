@@ -36,8 +36,10 @@ import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.BRWalletManager;
+import com.platform.APIClient;
 
 import static com.breadwallet.R.color.white;
+import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
 
 public class PinActivity extends Activity {
     private static final String TAG = PinActivity.class.getName();
@@ -197,6 +199,8 @@ public class PinActivity extends Activity {
                 }
             }).start();
         }
+        if (PLATFORM_ON)
+            APIClient.getInstance(this).updatePlatform();
     }
 
     private void handleClick(String key) {

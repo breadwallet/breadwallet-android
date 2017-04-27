@@ -30,6 +30,7 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.settings.SecurityCenterActivity;
 import com.breadwallet.presenter.activities.settings.SettingsActivity;
+import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.entities.BRMenuItem;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -141,7 +142,12 @@ public class FragmentMenu extends Fragment {
                 @Override
                 public void onClick(View v) {
                     Log.e(TAG, "onClick: Lock Wallet");
-                    BRAnimator.showWebView(getActivity(), HTTPServer.URL_BUY_BITCOIN);
+                    Intent intent = new Intent(getActivity(), WebViewActivity.class);
+                    intent.putExtra("url", HTTPServer.URL_BUY_BITCOIN);
+                    Activity app = getActivity();
+                    app.startActivity(intent);
+                    app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
+
                 }
             }));
         mTitle = (TextView) rootView.findViewById(R.id.title);
@@ -247,11 +253,18 @@ public class FragmentMenu extends Fragment {
         super.onStop();
         animateBackgroundDim(true);
         animateSignalSlide(true);
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HTTPServer.startServer();
+            }
+        }).start();
     }
 
     @Override

@@ -249,6 +249,8 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
+                //start the server for Buy Bitcoin
+
                 SpringAnimator.showAnimation(v);
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(0, 0, 0, R.animator.plain_300);
@@ -403,6 +405,12 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         super.onResume();
         appInBackground = false;
         app = this;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HTTPServer.stopServer();
+            }
+        }).start();
 
         walletName.setText(SharedPreferencesManager.getWalletName(this));
         CurrencyFetchManager currencyManager = CurrencyFetchManager.getInstance(this);
