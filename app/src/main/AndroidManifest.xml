@@ -176,6 +176,8 @@
         </activity>
         <activity android:name=".presenter.activities.settings.WebViewActivity">
         </activity>
+        <activity android:name=".presenter.activities.DisabledActivity">
+        </activity>
     </application>
 
 </manifest>

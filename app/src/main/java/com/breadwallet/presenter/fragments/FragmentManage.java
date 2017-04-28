@@ -120,7 +120,7 @@ public class FragmentManage extends Fragment {
 
         long time = (long) KeyStoreManager.getWalletCreationTime(getContext()) * 1000;
         // multiply by 1000, make it millis, since the Wallet creation time is seconds.
-        String creationDate = Utils.formatTimeStamp(time);
+        String creationDate = Utils.formatTimeStamp(time, "MMM. dd, yyyy  ha");
 
         creationTimeText.setText(String.format(getString(R.string.wallet_created_on), creationDate));
 

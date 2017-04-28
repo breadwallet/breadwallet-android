@@ -126,8 +126,8 @@ public class Utils {
         return result;
     }
 
-    public static String formatTimeStamp(long time) {
-        SimpleDateFormat formatter = new SimpleDateFormat("MMM. dd, yyyy  ha", Locale.getDefault());
+    public static String formatTimeStamp(long time, String pattern) {
+        SimpleDateFormat formatter = new SimpleDateFormat(pattern, Locale.getDefault());
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(time);
         return formatter.format(calendar.getTime());

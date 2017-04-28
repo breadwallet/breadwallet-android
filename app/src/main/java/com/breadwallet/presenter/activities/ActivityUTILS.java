@@ -1,6 +1,7 @@
 package com.breadwallet.presenter.activities;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -37,4 +38,5 @@ public class ActivityUTILS {
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(app.getColor(color));
     }
+
 }

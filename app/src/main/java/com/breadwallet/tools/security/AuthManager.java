@@ -13,6 +13,7 @@ import android.support.v13.app.ActivityCompat;
 import android.util.Log;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.ActivityUTILS;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.fragments.FingerprintFragment;
 import com.breadwallet.presenter.fragments.FragmentBreadPin;
@@ -50,9 +51,10 @@ import java.util.concurrent.TimeUnit;
 public class AuthManager {
     public static final String TAG = AuthManager.class.getName();
     private static AuthManager instance;
+    private String previousTry;
 
     private AuthManager() {
-
+        previousTry = "";
     }
 
     public static AuthManager getInstance() {
@@ -61,9 +63,22 @@ public class AuthManager {
         return instance;
     }
 
-    public boolean checkAuth(CharSequence passcode, Context context) {
+    public boolean checkAuth(CharSequence passSequence, Context context) {
+        String tempPass = passSequence.toString();
+        if (!previousTry.equals(tempPass)) {
+            KeyStoreManager.putFailCount(KeyStoreManager.getFailCount(context) + 1, context);
+        }
+        previousTry = tempPass;
+        if (KeyStoreManager.getFailCount(context) >= 3) {
+            setWalletDisabled((Activity) context);
+        }
         String pass = KeyStoreManager.getPinCode(context);
-        return pass != null && passcode.equals(pass);
+
+        return pass != null && tempPass.equals(pass);
+    }
+
+    private void setWalletDisabled(Activity app){
+        ActivityUTILS.showWalletDisabled(app);
     }
 
     public void setPinCode(String pass, Activity context) {
