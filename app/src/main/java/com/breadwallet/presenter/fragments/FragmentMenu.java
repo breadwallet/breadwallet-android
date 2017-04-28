@@ -138,7 +138,7 @@ public class FragmentMenu extends Fragment {
         }));
         boolean buyBitcoinEnabled = APIClient.getInstance(getActivity()).isFeatureEnabled(APIClient.FeatureFlags.BUY_BITCOIN.toString());
 //        if (buyBitcoinEnabled) //todo comment that for now
-            itemList.add(new BRMenuItem("Buy Bitcoin", R.drawable.ic_lock, new View.OnClickListener() {
+            itemList.add(new BRMenuItem("Buy Bitcoin", 0, new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Log.e(TAG, "onClick: Lock Wallet");
