@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
 
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.util.BRConstants;
@@ -67,19 +68,17 @@ public class CurrencyFetchManager {
     private Timer timer;
 
     private TimerTask timerTask;
-    private Context context;
 
     private Handler handler;
 
-    private CurrencyFetchManager(Context ctx) {
-        this.context = ctx;
+    private CurrencyFetchManager() {
         handler = new Handler();
     }
 
-    public static CurrencyFetchManager getInstance(Context context) {
+    public static CurrencyFetchManager getInstance() {
 
         if (instance == null) {
-            instance = new CurrencyFetchManager(context);
+            instance = new CurrencyFetchManager();
         }
         return instance;
     }
@@ -117,7 +116,6 @@ public class CurrencyFetchManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
-//        }
         List tempList = new ArrayList<>(set);
         Collections.reverse(tempList);
         return new LinkedHashSet<>(set);
@@ -133,6 +131,10 @@ public class CurrencyFetchManager {
 
         @Override
         protected Object doInBackground(Object[] params) {
+            if (!BreadWalletApp.isAnyActivityOn()) {
+                Log.e(TAG, "doInBackground: Stopping timer, no activity on.");
+                CurrencyFetchManager.getInstance().stopTimerTask();
+            }
             tmp = getCurrencies((Activity) context);
             return null;
         }
@@ -145,7 +147,7 @@ public class CurrencyFetchManager {
         }
     }
 
-    private void initializeTimerTask() {
+    private void initializeTimerTask(final Context context) {
 
         timerTask = new TimerTask() {
             public void run() {
@@ -159,12 +161,13 @@ public class CurrencyFetchManager {
         };
     }
 
-    public void startTimer() {
+    public void startTimer(Context context) {
         //set a new Timer
+        if (timer != null) return;
         timer = new Timer();
 
         //initialize the TimerTask's job
-        initializeTimerTask();
+        initializeTimerTask(context);
 
         //schedule the timer, after the first 5000ms the TimerTask will run every 10000ms
         timer.schedule(timerTask, 0, 60000); //
@@ -201,11 +204,11 @@ public class CurrencyFetchManager {
             JSONObject obj = new JSONObject(jsonString);
 
             jsonArray = obj.getJSONArray("data");
-            JSONObject headers = obj.getJSONObject("headers");
-            String secureDate = headers.getString("Date");
-            @SuppressWarnings("deprecation") long date = Date.parse(secureDate) / 1000;
+//            JSONObject headers = obj.getJSONObject("headers");
+//            String secureDate = headers.getString("Date");
+//            @SuppressWarnings("deprecation") long date = Date.parse(secureDate) / 1000;
 
-            SharedPreferencesManager.putSecureTime(activity, date);
+//            SharedPreferencesManager.putSecureTime(activity, date);
         } catch (JSONException e) {
             e.printStackTrace();
         }

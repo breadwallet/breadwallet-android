@@ -51,7 +51,7 @@ public class SecurityCenterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_security_center);
-        ActivityUTILS.setStatusBarColor(this, R.color.status_bar);
+
         itemList = new ArrayList<>();
         mListView = (ListView) findViewById(R.id.menu_listview);
         updateList();
@@ -64,6 +64,7 @@ public class SecurityCenterActivity extends AppCompatActivity {
         updateList();
         appVisible = true;
         app = this;
+        ActivityUTILS.init(this);
     }
 
 

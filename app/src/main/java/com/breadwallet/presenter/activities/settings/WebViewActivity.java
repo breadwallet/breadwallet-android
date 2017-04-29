@@ -35,7 +35,7 @@ public class WebViewActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_view);
-        ActivityUTILS.setStatusBarColor(this, R.color.status_bar);
+
         if (webView != null) webView.destroy();
         webView = (WebView) findViewById(R.id.web_view);
         webView.setWebChromeClient(new BRWebChromeClient());
@@ -98,6 +98,7 @@ public class WebViewActivity extends Activity {
         super.onResume();
         appVisible = true;
         app = this;
+        ActivityUTILS.init(this);
     }
 
     @Override

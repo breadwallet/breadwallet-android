@@ -157,7 +157,6 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         // Always cast your custom Toolbar here, and set it as the ActionBar.
         toolBar = (Toolbar) findViewById(R.id.bread_bar);
         setSupportActionBar(toolBar);
-        ActivityUTILS.setStatusBarColor(this, R.color.status_bar);
 
         initializeViews();
 
@@ -400,6 +399,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         super.onResume();
         appVisible = true;
         app = this;
+        ActivityUTILS.init(this);
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -410,8 +410,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
             APIClient.getInstance(this).updatePlatform();
 
         walletName.setText(SharedPreferencesManager.getWalletName(this));
-        CurrencyFetchManager currencyManager = CurrencyFetchManager.getInstance(this);
-        currencyManager.startTimer();
+
         if (mNetworkStateReceiver == null) mNetworkStateReceiver = new NetworkChangeReceiver();
         IntentFilter mNetworkStateFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(mNetworkStateReceiver, mNetworkStateFilter);
@@ -446,7 +445,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     protected void onPause() {
         super.onPause();
         appVisible = false;
-        CurrencyFetchManager.getInstance(this).stopTimerTask();
+
 
     }
 

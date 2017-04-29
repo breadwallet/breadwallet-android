@@ -174,9 +174,15 @@
             android:launchMode="singleInstance"
             android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".presenter.activities.settings.WebViewActivity">
+        <activity
+            android:name=".presenter.activities.settings.WebViewActivity"
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".presenter.activities.DisabledActivity">
+        <activity
+            android:name=".presenter.activities.DisabledActivity"
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 

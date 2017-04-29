@@ -46,7 +46,7 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-        ActivityUTILS.setStatusBarColor(this, R.color.status_bar);
+
         listView = (ListView) findViewById(R.id.settings_list);
         items = new ArrayList<>();
 
@@ -105,6 +105,7 @@ public class SettingsActivity extends AppCompatActivity {
         super.onResume();
         appVisible = true;
         app = this;
+        ActivityUTILS.init(this);
     }
 
 

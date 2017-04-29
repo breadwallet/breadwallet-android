@@ -84,7 +84,7 @@ public class PinActivity extends Activity {
             if (!PinActivity.this.isDestroyed()) finish();
             return;
         }
-        ActivityUTILS.setStatusBarColor(this, R.color.status_bar);
+
         keyboard = (BRSoftKeyboard) findViewById(R.id.brkeyboard);
         pinLayout = (LinearLayout) findViewById(R.id.pinLayout);
         fingerPrint = (ImageButton) findViewById(R.id.fingerprint_icon);
@@ -137,7 +137,8 @@ public class PinActivity extends Activity {
                         // Should we show an explanation?
                         if (ActivityCompat.shouldShowRequestPermissionRationale(app,
                                 Manifest.permission.CAMERA)) {
-                            BreadDialog.showCustomDialog(app, "Permission Required.", app.getString(R.string.allow_camera_access), "close", null, new BRDialogView.BROnClickListener() {
+                            BreadDialog.showCustomDialog(app, "Permission Required.",
+                                    app.getString(R.string.allow_camera_access), "close", null, new BRDialogView.BROnClickListener() {
                                 @Override
                                 public void onClick(BRDialogView brDialogView) {
                                     brDialogView.dismiss();
@@ -191,6 +192,7 @@ public class PinActivity extends Activity {
         updateDots();
         appVisible = true;
         app = this;
+        ActivityUTILS.init(this);
         if (!BRWalletManager.getInstance().isCreated()) {
             new Thread(new Runnable() {
                 @Override

@@ -5,6 +5,11 @@ import android.content.Intent;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.breadwallet.BreadWalletApp;
+import com.breadwallet.R;
+import com.breadwallet.tools.manager.CurrencyFetchManager;
+import com.breadwallet.tools.security.AuthManager;
+
 /**
  * BreadWallet
  * <p/>
@@ -31,7 +36,7 @@ import android.view.WindowManager;
  */
 public class ActivityUTILS {
 
-    public static void setStatusBarColor(Activity app, int color) {
+    private static void setStatusBarColor(Activity app, int color) {
         if (app == null) return;
         Window window = app.getWindow();
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -39,4 +44,20 @@ public class ActivityUTILS {
         window.setStatusBarColor(app.getColor(color));
     }
 
+    public static void init(Activity app) {
+        //set status bar color
+        ActivityUTILS.setStatusBarColor(app, R.color.status_bar);
+        //show wallet locked if it is
+        if (AuthManager.getInstance().isWalletDisabled(app))
+            AuthManager.getInstance().setWalletDisabled(app);
+        CurrencyFetchManager.getInstance().startTimer(app);
+    }
+
+    public static void showWalletDisabled(Activity app, double waitTimeMinutes) {
+        Intent intent = new Intent(app, DisabledActivity.class);
+        intent.putExtra("waitTimeMinutes", waitTimeMinutes);
+        app.startActivity(intent);
+        app.overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
+
+    }
 }

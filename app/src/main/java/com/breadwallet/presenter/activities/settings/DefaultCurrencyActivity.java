@@ -44,7 +44,7 @@ public class DefaultCurrencyActivity extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.currency_list_view);
         adapter = new CurrencyListAdapter(this);
         adapter.addAll(CurrencyDataSource.getInstance(this).getAllCurrencies());
-        ActivityUTILS.setStatusBarColor(this, R.color.status_bar);
+
         //set the rate from the last saved
         String iso = SharedPreferencesManager.getIso(this);
         CurrencyEntity entity = CurrencyDataSource.getInstance(this).getCurrencyByIso(iso);
@@ -85,6 +85,7 @@ public class DefaultCurrencyActivity extends AppCompatActivity {
         super.onResume();
         appVisible = true;
         app = this;
+        ActivityUTILS.init(this);
     }
 
     @Override

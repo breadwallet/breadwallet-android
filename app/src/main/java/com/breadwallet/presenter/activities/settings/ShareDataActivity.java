@@ -23,7 +23,7 @@ public class ShareDataActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_share_data);
-        ActivityUTILS.setStatusBarColor(this, R.color.status_bar);
+
         toggleButton = (ToggleButton) findViewById(R.id.toggleButton);
         toggleButton.setChecked(SharedPreferencesManager.getShareData(this));
         toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -40,6 +40,7 @@ public class ShareDataActivity extends AppCompatActivity {
         super.onResume();
         appVisible = true;
         app = this;
+        ActivityUTILS.init(this);
     }
 
     @Override

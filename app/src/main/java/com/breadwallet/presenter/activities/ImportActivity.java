@@ -39,7 +39,7 @@ public class ImportActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_import);
 
-        ActivityUTILS.setStatusBarColor(this, R.color.status_bar);
+
         scan = (Button) findViewById(R.id.scan_button);
 
         scan.setOnClickListener(new View.OnClickListener() {
@@ -58,6 +58,7 @@ public class ImportActivity extends Activity {
         super.onResume();
         appVisible = true;
         app = this;
+        ActivityUTILS.init(this);
     }
 
     @Override

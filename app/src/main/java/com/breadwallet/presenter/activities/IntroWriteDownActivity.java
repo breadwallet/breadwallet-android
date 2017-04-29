@@ -29,7 +29,7 @@ public class IntroWriteDownActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_write_down);
-        ActivityUTILS.setStatusBarColor(this, R.color.status_bar);
+
         writeButton = (Button) findViewById(R.id.button_write_down);
         writeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,6 +46,7 @@ public class IntroWriteDownActivity extends Activity {
         super.onResume();
         appVisible = true;
         app = this;
+        ActivityUTILS.init(this);
     }
 
     @Override

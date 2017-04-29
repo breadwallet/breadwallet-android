@@ -27,7 +27,7 @@ public class SyncBlockchainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sync_blockchain);
-        ActivityUTILS.setStatusBarColor(this, R.color.status_bar);
+
         scanButton = (Button) findViewById(R.id.button_scan);
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,6 +65,7 @@ public class SyncBlockchainActivity extends AppCompatActivity {
         super.onResume();
         appVisible = true;
         app = this;
+        ActivityUTILS.init(this);
     }
 
     @Override

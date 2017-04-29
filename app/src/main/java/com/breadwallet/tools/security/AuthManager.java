@@ -19,6 +19,7 @@ import com.breadwallet.presenter.fragments.FingerprintFragment;
 import com.breadwallet.presenter.fragments.FragmentBreadPin;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BreadDialog;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.util.concurrent.TimeUnit;
@@ -64,9 +65,12 @@ public class AuthManager {
     }
 
     public boolean checkAuth(CharSequence passSequence, Context context) {
+        Log.e(TAG, "checkAuth: ");
         String tempPass = passSequence.toString();
         if (!previousTry.equals(tempPass)) {
-            KeyStoreManager.putFailCount(KeyStoreManager.getFailCount(context) + 1, context);
+            int failCount = KeyStoreManager.getFailCount(context);
+            Log.e(TAG, "checkAuth: failCount: " + failCount);
+            KeyStoreManager.putFailCount(failCount + 1, context);
         }
         previousTry = tempPass;
         if (KeyStoreManager.getFailCount(context) >= 3) {
@@ -77,8 +81,25 @@ public class AuthManager {
         return pass != null && tempPass.equals(pass);
     }
 
-    private void setWalletDisabled(Activity app){
-        ActivityUTILS.showWalletDisabled(app);
+    //if 0 then wallet is ok, more means locked for milliseconds
+    public boolean isWalletDisabled(Activity app) {
+        int failCount = KeyStoreManager.getFailCount(app);
+        long secureTime = SharedPreferencesManager.getSecureTime(app);
+        long failTimestamp = KeyStoreManager.getFailTimeStamp(app);
+        return secureTime < failTimestamp + Math.pow(6, failCount - 3) * 60.0;
+
+    }
+
+    public void setWalletDisabled(Activity app) {
+        int failCount = KeyStoreManager.getFailCount(app);
+        long now = System.currentTimeMillis() / 1000;
+        Log.e(TAG, "setWalletDisabled: " + now);
+        long secureTime = SharedPreferencesManager.getSecureTime(app);
+        long failTimestamp = KeyStoreManager.getFailTimeStamp(app);
+        double waitTimeMinutes = (failTimestamp + Math.pow(6, failCount - 3) * 60.0 - secureTime) / 60.0;
+
+        Log.e(TAG, "setWalletDisabled: " + waitTimeMinutes);
+        ActivityUTILS.showWalletDisabled(app,  waitTimeMinutes);
     }
 
     public void setPinCode(String pass, Activity context) {

@@ -56,7 +56,7 @@ public class IntroPhraseCheckActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_phrase_check);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
-        ActivityUTILS.setStatusBarColor(this, R.color.status_bar);
+
         wordViewPager = (ViewPager) findViewById(R.id.phrase_words_pager);
         wordViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             public void onPageScrollStateChanged(int state) {
@@ -162,6 +162,7 @@ public class IntroPhraseCheckActivity extends Activity {
         super.onResume();
         appVisible = true;
         app = this;
+        ActivityUTILS.init(this);
     }
 
     @Override

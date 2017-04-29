@@ -23,7 +23,7 @@ public class NotificationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notification);
-        ActivityUTILS.setStatusBarColor(this, R.color.status_bar);
+
 
         toggleButton = (ToggleButton) findViewById(R.id.toggleButton);
         toggleButton.setChecked(SharedPreferencesManager.getShowNotification(this));
@@ -41,6 +41,7 @@ public class NotificationActivity extends AppCompatActivity {
         super.onResume();
         appVisible = true;
         app = this;
+        ActivityUTILS.init(this);
     }
 
     @Override

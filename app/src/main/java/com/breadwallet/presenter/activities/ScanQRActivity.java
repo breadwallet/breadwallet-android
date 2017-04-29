@@ -66,7 +66,6 @@ public class ScanQRActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qr);
 
-        ActivityUTILS.setStatusBarColor(this, R.color.status_bar);
 
         mySurfaceView = (SurfaceView) findViewById(R.id.camera_view);
         cameraGuide = (ImageView) findViewById(R.id.scan_guide);
@@ -131,6 +130,7 @@ public class ScanQRActivity extends AppCompatActivity {
         appVisible = true;
         qrEader.initAndStart(mySurfaceView);
         app = this;
+        ActivityUTILS.init(this);
     }
 
     @Override

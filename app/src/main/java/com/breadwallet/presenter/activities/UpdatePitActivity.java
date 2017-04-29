@@ -51,7 +51,7 @@ public class UpdatePitActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pin_template);
-        ActivityUTILS.setStatusBarColor(this, R.color.status_bar);
+
         keyboard = (BRSoftKeyboard) findViewById(R.id.brkeyboard);
         title = (TextView) findViewById(R.id.title);
         description = (TextView) findViewById(R.id.description);
@@ -81,6 +81,7 @@ public class UpdatePitActivity extends Activity {
         updateDots();
         appVisible = true;
         app = this;
+        ActivityUTILS.init(this);
     }
 
     @Override

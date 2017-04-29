@@ -51,7 +51,7 @@ public class IntroReEnterPinActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pin_template);
-        ActivityUTILS.setStatusBarColor(this, R.color.status_bar);
+
         keyboard = (BRSoftKeyboard) findViewById(R.id.brkeyboard);
         pinLayout = (LinearLayout) findViewById(R.id.pinLayout);
 
@@ -86,6 +86,7 @@ public class IntroReEnterPinActivity extends FragmentActivity {
         updateDots();
         appVisible = true;
         app = this;
+        ActivityUTILS.init(this);
     }
 
     @Override

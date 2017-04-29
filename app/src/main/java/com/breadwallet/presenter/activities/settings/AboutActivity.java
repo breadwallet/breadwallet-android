@@ -38,7 +38,8 @@ public class AboutActivity extends AppCompatActivity {
         redditShare = (ImageView) findViewById(R.id.reddit_share_button);
         twitterShare = (ImageView) findViewById(R.id.twitter_share_button);
         blogShare = (ImageView) findViewById(R.id.blog_share_button);
-        ActivityUTILS.setStatusBarColor(this, R.color.status_bar);
+
+
     }
 
     @Override
@@ -46,6 +47,7 @@ public class AboutActivity extends AppCompatActivity {
         super.onResume();
         appVisible = true;
         app = this;
+        ActivityUTILS.init(this);
     }
 
     @Override

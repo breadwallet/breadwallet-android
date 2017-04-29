@@ -32,7 +32,7 @@ public class SpendLimitActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_spend_limit);
-        ActivityUTILS.setStatusBarColor(this, R.color.status_bar);
+
         seekBar = (SeekBar) findViewById(R.id.seekBar);
         seekBar.setMax(200);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -63,6 +63,7 @@ public class SpendLimitActivity extends AppCompatActivity {
         super.onResume();
         appVisible = true;
         app = this;
+        ActivityUTILS.init(this);
 
     }
 

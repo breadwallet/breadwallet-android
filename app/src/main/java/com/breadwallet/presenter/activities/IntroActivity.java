@@ -110,7 +110,7 @@ public class IntroActivity extends FragmentActivity implements Serializable {
 
             BRWalletManager.getInstance().wipeWalletButKeystore(this);
         }
-        ActivityUTILS.setStatusBarColor(this, R.color.status_bar);
+
         PostAuthenticationProcessor.getInstance().onCanaryCheck(this, false);
 
     }
@@ -153,6 +153,7 @@ public class IntroActivity extends FragmentActivity implements Serializable {
         super.onResume();
         appVisible = true;
         app = this;
+        ActivityUTILS.init(this);
 
     }
 

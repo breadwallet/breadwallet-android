@@ -27,7 +27,7 @@ public class IntroRecoverActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro_recover);
 
-        ActivityUTILS.setStatusBarColor(this, R.color.status_bar);
+
         nextButton = (Button) findViewById(R.id.send_button);
 
         nextButton.setOnClickListener(new View.OnClickListener() {
@@ -47,6 +47,7 @@ public class IntroRecoverActivity extends Activity {
         super.onResume();
         appVisible = true;
         app = this;
+        ActivityUTILS.init(this);
     }
 
     @Override

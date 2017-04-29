@@ -184,24 +184,25 @@ public class SharedPreferencesManager {
 
     //secure time from the server
     public static void putSecureTime(Context activity, long date) {
+        Log.e(TAG, "putSecureTime: " + date);
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putLong(BRConstants.SECURE_TIME_PREFS, date);
         editor.apply();
     }
 
-    public static long getPhraseWarningTime(Context activity) {
-        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
-        return prefs.getLong(BRConstants.PHRASE_WARNING_TIME, 0);
-    }
-
-
-    public static void putPhraseWarningTime(Context activity, long phraseWarningTime) {
-        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putLong(BRConstants.PHRASE_WARNING_TIME, phraseWarningTime);
-        editor.apply();
-    }
+//    public static long getPhraseWarningTime(Context activity) {
+//        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+//        return prefs.getLong(BRConstants.PHRASE_WARNING_TIME, 0);
+//    }
+//
+//
+//    public static void putPhraseWarningTime(Context activity, long phraseWarningTime) {
+//        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+//        SharedPreferences.Editor editor = prefs.edit();
+//        editor.putLong(BRConstants.PHRASE_WARNING_TIME, phraseWarningTime);
+//        editor.apply();
+//    }
 
 //    public static int getTotalLimit(Context activity) {
 //        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
