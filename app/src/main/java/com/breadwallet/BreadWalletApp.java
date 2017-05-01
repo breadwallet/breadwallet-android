@@ -1,7 +1,9 @@
 package com.breadwallet;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Application;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Point;
@@ -76,6 +78,8 @@ public class BreadWalletApp extends Application {
     public static int DISPLAY_HEIGHT_PX;
     FingerprintManager mFingerprintManager;
 
+    private static Activity currentActivity;
+
 
     @Override
     public void onCreate() {
@@ -92,36 +96,18 @@ public class BreadWalletApp extends Application {
     }
 
     public static Activity getBreadContext() {
-        List<Activity> list = new ArrayList<>();
-        if (AboutActivity.appVisible) list.add(AboutActivity.getApp());
-        if (DefaultCurrencyActivity.appVisible) list.add(DefaultCurrencyActivity.getApp());
-        if (NotificationActivity.appVisible) list.add(NotificationActivity.getApp());
-        if (SecurityCenterActivity.appVisible) list.add(SecurityCenterActivity.getApp());
-        if (SettingsActivity.appVisible) list.add(SettingsActivity.getApp());
-        if (ShareDataActivity.appVisible) list.add(ShareDataActivity.getApp());
-        if (SpendLimitActivity.appVisible) list.add(SpendLimitActivity.getApp());
-        if (SyncBlockchainActivity.appVisible) list.add(SyncBlockchainActivity.getApp());
-        if (WebViewActivity.appVisible) list.add(WebViewActivity.getApp());
-        if (BreadActivity.appVisible) list.add(BreadActivity.getApp());
-        if (ImportActivity.appVisible) list.add(ImportActivity.getApp());
-        if (IntroActivity.appVisible) list.add(IntroActivity.getApp());
-        if (IntroPhraseCheckActivity.appVisible) list.add(IntroPhraseCheckActivity.getApp());
-        if (IntroPhraseProveActivity.appVisible) list.add(IntroPhraseProveActivity.getApp());
-        if (IntroRecoverActivity.appVisible) list.add(IntroRecoverActivity.getApp());
-        if (IntroRecoverWordsActivity.appVisible) list.add(IntroRecoverWordsActivity.getApp());
-        if (IntroReEnterPinActivity.appVisible) list.add(IntroReEnterPinActivity.getApp());
-        if (IntroSetPitActivity.appVisible) list.add(IntroSetPitActivity.getApp());
-        if (IntroWriteDownActivity.appVisible) list.add(IntroWriteDownActivity.getApp());
-        if (PinActivity.appVisible) list.add(PinActivity.getApp());
-        if (RestoreActivity.appVisible) list.add(RestoreActivity.getApp());
-        if (ScanQRActivity.appVisible) list.add(ScanQRActivity.getApp());
-        if (UpdatePitActivity.appVisible) list.add(UpdatePitActivity.getApp());
-        Assert.assertTrue(list.size() <= 1);
+        Log.e(TAG, "getBreadContext: " + currentActivity.getClass().getName());
+        return currentActivity;
+    }
 
-        return list.size() == 0 ? null : list.get(0);
+    public static void setBreadContext(Activity app) {
+        Log.e(TAG, "setBreadContext: " + app.getClass().getName());
+        currentActivity = app;
     }
 
     public static boolean isAnyActivityOn() {
-        return getBreadContext() != null;
+        boolean on = getBreadContext() != null;
+        if(!on) Log.e(TAG, "isAnyActivityOn: NO ACTIVITY ON");
+        return on;
     }
 }

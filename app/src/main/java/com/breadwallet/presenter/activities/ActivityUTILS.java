@@ -10,6 +10,8 @@ import com.breadwallet.R;
 import com.breadwallet.tools.manager.CurrencyFetchManager;
 import com.breadwallet.tools.security.AuthManager;
 
+
+
 /**
  * BreadWallet
  * <p/>
@@ -47,10 +49,12 @@ public class ActivityUTILS {
     public static void init(Activity app) {
         //set status bar color
         ActivityUTILS.setStatusBarColor(app, R.color.status_bar);
+        CurrencyFetchManager.getInstance().startTimer(app);
+        BreadWalletApp.setBreadContext(app);
         //show wallet locked if it is
         if (AuthManager.getInstance().isWalletDisabled(app))
             AuthManager.getInstance().setWalletDisabled(app);
-        CurrencyFetchManager.getInstance().startTimer(app);
+
     }
 
     public static void showWalletDisabled(Activity app, double waitTimeMinutes) {

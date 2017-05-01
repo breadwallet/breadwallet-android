@@ -81,7 +81,6 @@ public class AuthManager {
         return pass != null && tempPass.equals(pass);
     }
 
-    //if 0 then wallet is ok, more means locked for milliseconds
     public boolean isWalletDisabled(Activity app) {
         int failCount = KeyStoreManager.getFailCount(app);
         long secureTime = SharedPreferencesManager.getSecureTime(app);

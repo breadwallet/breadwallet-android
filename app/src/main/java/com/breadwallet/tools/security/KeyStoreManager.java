@@ -122,7 +122,7 @@ public class KeyStoreManager {
     private static final String TOKEN_FILENAME = "my_token";
     private static final String PASS_TIME_FILENAME = "my_pass_time";
 
-    public static final int AUTH_DURATION_SEC = 10; //todo put this back to 300
+    public static final int AUTH_DURATION_SEC = 300; //todo put this back to 300
 
     static {
         aliasObjectMap = new HashMap<>();

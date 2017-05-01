@@ -7,9 +7,12 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.BRWalletManager;
 
 import java.util.Locale;
 
@@ -34,7 +37,12 @@ public class DisabledActivity extends Activity {
         layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SpringAnimator.failShakeAnimation(DisabledActivity.this, disabled);
+                if (AuthManager.getInstance().isWalletDisabled(DisabledActivity.this)) {
+                    SpringAnimator.failShakeAnimation(DisabledActivity.this, disabled);
+                    KeyStoreManager.putFailCount(0, DisabledActivity.this); //todo DELETE
+                } else {
+                    BRAnimator.startBreadActivity(DisabledActivity.this, true);
+                }
             }
         });
 
