@@ -139,11 +139,11 @@ public class PinActivity extends Activity {
                                 Manifest.permission.CAMERA)) {
                             BreadDialog.showCustomDialog(app, "Permission Required.",
                                     app.getString(R.string.allow_camera_access), "close", null, new BRDialogView.BROnClickListener() {
-                                @Override
-                                public void onClick(BRDialogView brDialogView) {
-                                    brDialogView.dismiss();
-                                }
-                            }, null, null, 0);
+                                        @Override
+                                        public void onClick(BRDialogView brDialogView) {
+                                            brDialogView.dismiss();
+                                        }
+                                    }, null, null, 0);
                         } else {
                             // No explanation needed, we can request the permission.
                             ActivityCompat.requestPermissions(app,
@@ -245,7 +245,9 @@ public class PinActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
+            super.onBackPressed();
+        }
     }
 
 
