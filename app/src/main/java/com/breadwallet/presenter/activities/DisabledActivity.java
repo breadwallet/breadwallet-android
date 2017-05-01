@@ -1,6 +1,7 @@
 package com.breadwallet.presenter.activities;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.view.View;
@@ -41,6 +42,10 @@ public class DisabledActivity extends Activity {
             @Override
             public void onClick(View v) {
             SpringAnimator.springView(v);
+                Intent intent = new Intent(DisabledActivity.this, InputWordsActivity.class);
+                intent.putExtra("resetPin", true);
+                startActivity(intent);
+                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         });
 

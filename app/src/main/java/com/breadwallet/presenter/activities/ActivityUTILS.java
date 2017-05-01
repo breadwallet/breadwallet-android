@@ -11,7 +11,6 @@ import com.breadwallet.tools.manager.CurrencyFetchManager;
 import com.breadwallet.tools.security.AuthManager;
 
 
-
 /**
  * BreadWallet
  * <p/>
@@ -52,9 +51,15 @@ public class ActivityUTILS {
         CurrencyFetchManager.getInstance().startTimer(app);
         BreadWalletApp.setBreadContext(app);
         //show wallet locked if it is
-        if (AuthManager.getInstance().isWalletDisabled(app))
-            AuthManager.getInstance().setWalletDisabled(app);
+        if (!isAppSafe(app))
+            if (AuthManager.getInstance().isWalletDisabled(app))
+                AuthManager.getInstance().setWalletDisabled(app);
 
+    }
+
+    //return true if the app does need to show the disabled wallet screen
+    private static boolean isAppSafe(Activity app) {
+        return app instanceof IntroSetPitActivity || app instanceof InputWordsActivity;
     }
 
     public static void showWalletDisabled(Activity app, double waitTimeMinutes) {

@@ -1,51 +1,12 @@
 package com.breadwallet;
 
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.Application;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Point;
 import android.hardware.fingerprint.FingerprintManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.Handler;
-import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.Display;
-import android.view.View;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
-
-import com.breadwallet.presenter.activities.BreadActivity;
-import com.breadwallet.presenter.activities.ImportActivity;
-import com.breadwallet.presenter.activities.IntroActivity;
-import com.breadwallet.presenter.activities.IntroPhraseCheckActivity;
-import com.breadwallet.presenter.activities.IntroPhraseProveActivity;
-import com.breadwallet.presenter.activities.IntroReEnterPinActivity;
-import com.breadwallet.presenter.activities.IntroRecoverActivity;
-import com.breadwallet.presenter.activities.IntroRecoverWordsActivity;
-import com.breadwallet.presenter.activities.IntroSetPitActivity;
-import com.breadwallet.presenter.activities.IntroWriteDownActivity;
-import com.breadwallet.presenter.activities.PinActivity;
-import com.breadwallet.presenter.activities.RestoreActivity;
-import com.breadwallet.presenter.activities.ScanQRActivity;
-import com.breadwallet.presenter.activities.UpdatePitActivity;
-import com.breadwallet.presenter.activities.settings.AboutActivity;
-import com.breadwallet.presenter.activities.settings.DefaultCurrencyActivity;
-import com.breadwallet.presenter.activities.settings.NotificationActivity;
-import com.breadwallet.presenter.activities.settings.SecurityCenterActivity;
-import com.breadwallet.presenter.activities.settings.SettingsActivity;
-import com.breadwallet.presenter.activities.settings.ShareDataActivity;
-import com.breadwallet.presenter.activities.settings.SpendLimitActivity;
-import com.breadwallet.presenter.activities.settings.SyncBlockchainActivity;
-import com.breadwallet.presenter.activities.settings.WebViewActivity;
-
-import junit.framework.Assert;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**

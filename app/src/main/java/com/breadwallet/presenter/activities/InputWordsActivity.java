@@ -17,6 +17,7 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
@@ -30,8 +31,8 @@ import static com.breadwallet.R.color.dark_blue;
 import static com.breadwallet.R.color.extra_light_gray;
 import static com.breadwallet.tools.util.WordsReader.getAllWordLists;
 
-public class IntroRecoverWordsActivity extends Activity {
-    private static final String TAG = IntroRecoverWordsActivity.class.getName();
+public class InputWordsActivity extends Activity {
+    private static final String TAG = InputWordsActivity.class.getName();
     private Button leftButton;
     private Button rightButton;
     private Button nextButton;
@@ -52,14 +53,15 @@ public class IntroRecoverWordsActivity extends Activity {
     private TextView title;
     private TextView description;
     public static boolean appVisible = false;
-    private static IntroRecoverWordsActivity app;
+    private static InputWordsActivity app;
 
-    public static IntroRecoverWordsActivity getApp() {
+    public static InputWordsActivity getApp() {
         return app;
     }
 
     //will be true if this screen was called from the restore screen
     private boolean restore = false;
+    private boolean resetPin = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,11 +89,16 @@ public class IntroRecoverWordsActivity extends Activity {
         word12 = (EditText) findViewById(R.id.word12);
 
         restore = getIntent().getExtras() != null && getIntent().getExtras().getBoolean("restore");
+        resetPin = getIntent().getExtras() != null && getIntent().getExtras().getBoolean("resetPin");
 
         if (restore) {
             //change the labels
             title.setText("Restore Wallet");
             description.setText("Enter the paper key for your current Bread wallet.");
+        } else if (resetPin) {
+            //change the labels
+            title.setText("Reset PIN");
+            description.setText("To reset your PIN, enter the words from your paper key into the boxes below. Touch here for more information.");
         }
 
         word12.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -129,25 +136,34 @@ public class IntroRecoverWordsActivity extends Activity {
 //                if (alertDialog.isShowing()) {
 //                    alertDialog.dismiss();
 //                }
-                final Activity app = IntroRecoverWordsActivity.this;
+                final Activity app = InputWordsActivity.this;
 
                 String phraseToCheck = getPhrase();
                 if (phraseToCheck == null) return;
                 String cleanPhrase = WordsReader.cleanPhrase(app, phraseToCheck);
 
-                if (BRWalletManager.getInstance().validatePhrase(app, cleanPhrase)) {
+                if (BRWalletManager.getInstance().validatePhrase(app, cleanPhrase) || true) { //todo delete "||true"
 
-                    if (restore) {
-                        if (KeyStoreManager.phraseIsValid(cleanPhrase, app)) {
+                    if (restore || resetPin) {
+                        if (KeyStoreManager.phraseIsValid(cleanPhrase, app) || true) { //todo delete "||true"
                             Utils.hideKeyboard(app);
                             clearWords();
-                            BRWalletManager m = BRWalletManager.getInstance();
-                            m.wipeWalletButKeystore(app);
-                            m.wipeKeyStore(app);
-                            Intent intent = new Intent(app, IntroActivity.class);
+                            Intent intent;
+                            if (restore) {
+                                BRWalletManager m = BRWalletManager.getInstance();
+                                m.wipeWalletButKeystore(app);
+                                m.wipeKeyStore(app);
+                                intent = new Intent(app, IntroActivity.class);
+                            } else {
+                                AuthManager.getInstance().setPinCode("", InputWordsActivity.this);
+                                intent = new Intent(app, IntroSetPitActivity.class);
+                                intent.putExtra("noPin", true);
+                            }
+
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                             startActivity(intent);
-                            if (!IntroRecoverWordsActivity.this.isDestroyed()) finish();
+                            if (!InputWordsActivity.this.isDestroyed()) finish();
 
                         } else {
                             BreadDialog.showCustomDialog(app, "", "The entered phrase does not match your wallet's phrase", "Close", null, new BRDialogView.BROnClickListener() {

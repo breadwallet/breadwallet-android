@@ -32,7 +32,7 @@ public class RestoreActivity extends Activity {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.springView(v);
-                Intent intent = new Intent(RestoreActivity.this, IntroRecoverWordsActivity.class);
+                Intent intent = new Intent(RestoreActivity.this, InputWordsActivity.class);
                 intent.putExtra("restore", true);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);

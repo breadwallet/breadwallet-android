@@ -79,7 +79,7 @@ public class PinActivity extends Activity {
         String pin = KeyStoreManager.getPinCode(this);
         if (pin.isEmpty() || pin.length() != 6) {
             Intent intent = new Intent(this, IntroSetPitActivity.class);
-            intent.putExtra("recovery", true);
+            intent.putExtra("noPin", true);
             startActivity(intent);
             if (!PinActivity.this.isDestroyed()) finish();
             return;

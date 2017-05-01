@@ -137,7 +137,7 @@ public class IntroSetPitActivity extends Activity {
                     Log.e(TAG, "updateDots: starting new activity: " + pin.toString());
                     Intent intent = new Intent(IntroSetPitActivity.this, IntroReEnterPinActivity.class);
                     intent.putExtra("pin", pin.toString());
-                    intent.putExtra("recovery", getIntent().getBooleanExtra("recovery", false));
+                    intent.putExtra("noPin", getIntent().getBooleanExtra("noPin", false));
                     startActivity(intent);
                     overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                     pin = new StringBuilder("");

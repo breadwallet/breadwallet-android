@@ -165,7 +165,7 @@
             android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name=".presenter.activities.IntroRecoverWordsActivity"
+            android:name=".presenter.activities.InputWordsActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait">
         </activity>
