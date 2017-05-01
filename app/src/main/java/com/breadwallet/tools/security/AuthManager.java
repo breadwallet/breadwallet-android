@@ -84,7 +84,10 @@ public class AuthManager {
     public void authSuccess(Context app){
         AuthManager.getInstance().setTotalLimit(app, BRWalletManager.getInstance().getTotalSent()
                 + KeyStoreManager.getSpendLimit(app));
+        KeyStoreManager.putFailCount(0, app);
+        KeyStoreManager.putLastPinUsedTime(System.currentTimeMillis(), app);
     }
+
     public void authFail(Context app){
 
     }

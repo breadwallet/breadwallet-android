@@ -281,7 +281,6 @@ public class PinActivity extends Activity {
             }, 100);
 
         }
-
     }
 
     private void unlockWallet() {
