@@ -157,6 +157,7 @@ public class IntroReEnterPinActivity extends FragmentActivity {
 
     private void verifyPin() {
         if (firstPIN.equalsIgnoreCase(pin.toString())) {
+            AuthManager.getInstance().authSuccess(this);
             Log.e(TAG, "verifyPin: SUCCESS");
             isPressAllowed = false;
             new Handler().postDelayed(new Runnable() {
@@ -180,6 +181,7 @@ public class IntroReEnterPinActivity extends FragmentActivity {
             }
 
         } else {
+            AuthManager.getInstance().authFail(this);
             Log.e(TAG, "verifyPin: FAIL: firs: " + firstPIN + ", reEnter: " + pin.toString());
             title.setText("Wrong PIN,\nplease try again");
             SpringAnimator.failShakeAnimation(this, pinLayout);

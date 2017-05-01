@@ -221,8 +221,8 @@ public class FragmentBreadPin extends Fragment {
                 }
                 authSucceeded = true;
                 completion.onComplete();
-                AuthManager.getInstance().setTotalLimit(getContext(), BRWalletManager.getInstance().getTotalSent()
-                        + KeyStoreManager.getSpendLimit(getContext()));
+                AuthManager.getInstance().authSuccess(getActivity());
+
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -243,6 +243,7 @@ public class FragmentBreadPin extends Fragment {
                 updateDots();
             }
         }, 500);
+        AuthManager.getInstance().authFail(getActivity());
     }
 
     @Override

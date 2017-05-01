@@ -270,10 +270,10 @@ public class PinActivity extends Activity {
                 @Override
                 public void run() {
                     if (AuthManager.getInstance().checkAuth(pin.toString(), PinActivity.this)) {
-                        AuthManager.getInstance().setTotalLimit(PinActivity.this, BRWalletManager.getInstance().getTotalSent()
-                                + KeyStoreManager.getSpendLimit(PinActivity.this));
+                        AuthManager.getInstance().authSuccess(PinActivity.this);
                         unlockWallet();
                     } else {
+                        AuthManager.getInstance().authFail(PinActivity.this);
                         showFailedToUnlock();
                     }
 

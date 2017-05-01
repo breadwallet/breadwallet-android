@@ -81,11 +81,19 @@ public class AuthManager {
         return pass != null && tempPass.equals(pass);
     }
 
+    public void authSuccess(Context app){
+        AuthManager.getInstance().setTotalLimit(app, BRWalletManager.getInstance().getTotalSent()
+                + KeyStoreManager.getSpendLimit(app));
+    }
+    public void authFail(Context app){
+
+    }
+
     public boolean isWalletDisabled(Activity app) {
         int failCount = KeyStoreManager.getFailCount(app);
         long secureTime = SharedPreferencesManager.getSecureTime(app);
         long failTimestamp = KeyStoreManager.getFailTimeStamp(app);
-        return secureTime < failTimestamp + Math.pow(6, failCount - 3) * 60.0;
+        return failCount >= 3 && secureTime < failTimestamp + Math.pow(6, failCount - 3) * 60.0;
 
     }
 
@@ -98,7 +106,7 @@ public class AuthManager {
         double waitTimeMinutes = (failTimestamp + Math.pow(6, failCount - 3) * 60.0 - secureTime) / 60.0;
 
         Log.e(TAG, "setWalletDisabled: " + waitTimeMinutes);
-        ActivityUTILS.showWalletDisabled(app,  waitTimeMinutes);
+        ActivityUTILS.showWalletDisabled(app, waitTimeMinutes);
     }
 
     public void setPinCode(String pass, Activity context) {
