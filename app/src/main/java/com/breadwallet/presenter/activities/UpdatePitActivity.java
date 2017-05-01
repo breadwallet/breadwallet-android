@@ -4,20 +4,15 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.settings.DefaultCurrencyActivity;
 import com.breadwallet.presenter.customviews.BRSoftKeyboard;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.AuthManager;
-import com.breadwallet.tools.security.KeyStoreManager;
-import com.breadwallet.wallet.BRWalletManager;
 
 public class UpdatePitActivity extends Activity {
     private static final String TAG = UpdatePitActivity.class.getName();
@@ -203,6 +198,6 @@ public class UpdatePitActivity extends Activity {
                 break;
         }
         description.setText(text);
-        SpringAnimator.showAnimation(description);
+        SpringAnimator.springView(description);
     }
 }

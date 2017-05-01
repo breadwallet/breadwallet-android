@@ -4,12 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.settings.DefaultCurrencyActivity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 
@@ -34,7 +31,7 @@ public class IntroRecoverActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                SpringAnimator.showAnimation(v);
+                SpringAnimator.springView(v);
                 Intent intent = new Intent(IntroRecoverActivity.this, IntroRecoverWordsActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);

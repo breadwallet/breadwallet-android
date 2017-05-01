@@ -96,18 +96,18 @@ public class BreadWalletApp extends Application {
     }
 
     public static Activity getBreadContext() {
-        Log.e(TAG, "getBreadContext: " + currentActivity.getClass().getName());
+//        Log.e(TAG, "getBreadContext: " + currentActivity.getClass().getName());
         return currentActivity;
     }
 
     public static void setBreadContext(Activity app) {
-        Log.e(TAG, "setBreadContext: " + app.getClass().getName());
+//        Log.e(TAG, "setBreadContext: " + app.getClass().getName());
         currentActivity = app;
     }
 
     public static boolean isAnyActivityOn() {
         boolean on = getBreadContext() != null;
-        if(!on) Log.e(TAG, "isAnyActivityOn: NO ACTIVITY ON");
+//        if(!on) Log.e(TAG, "isAnyActivityOn: NO ACTIVITY ON");
         return on;
     }
 }

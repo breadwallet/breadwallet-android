@@ -120,7 +120,7 @@ public class FragmentSend extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                SpringAnimator.showAnimation(v);
+                SpringAnimator.springView(v);
                 String bitcoinUrl = BRClipboardManager.getClipboard(getActivity());
                 if (Utils.isNullOrEmpty(bitcoinUrl)) {
                     showClipboardError();
@@ -203,7 +203,7 @@ public class FragmentSend extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                SpringAnimator.showAnimation(v);
+                SpringAnimator.springView(v);
                 BRAnimator.openCamera(getActivity());
 
             }
@@ -216,7 +216,7 @@ public class FragmentSend extends Fragment {
                     return;
                 }
 
-                SpringAnimator.showAnimation(v);
+                SpringAnimator.springView(v);
                 boolean allFilled = true;
                 String address = addressEdit.getText().toString();
                 String amountStr = amountEdit.getText().toString();
@@ -259,7 +259,7 @@ public class FragmentSend extends Fragment {
                 curBalance = BRWalletManager.getInstance().getBalance(getActivity());
                 Log.e(TAG, "onItemSelected: " + item);
                 isoText.setText(BRCurrency.getSymbolByIso(getActivity(), item));
-                SpringAnimator.showAnimation(isoText);
+                SpringAnimator.springView(isoText);
                 updateText();
 
             }
@@ -267,7 +267,7 @@ public class FragmentSend extends Fragment {
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
                 isoText.setText(BRCurrency.getSymbolByIso(getActivity(), "BTC"));
-                SpringAnimator.showAnimation(isoText);
+                SpringAnimator.springView(isoText);
             }
         });
 

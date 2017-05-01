@@ -39,7 +39,6 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.qrcode.QRUtils;
-import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.PeerDataSource;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
@@ -306,7 +305,7 @@ public class BRWalletManager {
                                     Log.e(TAG, "onClick: after");
 
                                     if (decryptedKey.equals("")) {
-                                        SpringAnimator.showAnimation(input);
+                                        SpringAnimator.springView(input);
                                         confirmSweep(ctx, privKey);
                                     } else {
                                         confirmSweep(ctx, decryptedKey);

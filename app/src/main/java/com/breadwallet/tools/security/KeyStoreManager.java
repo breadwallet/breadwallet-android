@@ -493,6 +493,7 @@ public class KeyStoreManager {
     }
 
     public static boolean putFailCount(int failCount, Context context) {
+        Log.e(TAG, "putFailCount: " + failCount);
         AliasObject obj = aliasObjectMap.get(FAIL_COUNT_ALIAS);
         if (failCount >= 3) {
             long time = SharedPreferencesManager.getSecureTime(context);

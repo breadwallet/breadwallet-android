@@ -58,7 +58,7 @@ public class SpringAnimator {
     /**
      * Shows the springy animation on views
      */
-    public static void showAnimation(final View view) {
+    public static void springView(final View view) {
         if (view == null) return;
         ScaleAnimation trans = new ScaleAnimation(0.8f, 1f, 0.8f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         trans.setDuration(1000);

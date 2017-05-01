@@ -65,7 +65,6 @@ public class AuthManager {
     }
 
     public boolean checkAuth(CharSequence passSequence, Context context) {
-        Log.e(TAG, "checkAuth: ");
         String tempPass = passSequence.toString();
         if (!previousTry.equals(tempPass)) {
             int failCount = KeyStoreManager.getFailCount(context);

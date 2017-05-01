@@ -7,15 +7,8 @@ import android.animation.LayoutTransition;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
-import android.content.ContextWrapper;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,11 +29,6 @@ import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.qrcode.QRUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 
 /**
@@ -119,7 +107,7 @@ public class FragmentReceive extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                SpringAnimator.showAnimation(v);
+                SpringAnimator.springView(v);
                 String bitcoinUri = Utils.createBitcoinUrl(receiveAddress, 0, null, null, null);
                 QRUtils.share("mailto:", getActivity(), bitcoinUri);
 
@@ -129,7 +117,7 @@ public class FragmentReceive extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                SpringAnimator.showAnimation(v);
+                SpringAnimator.springView(v);
                 String bitcoinUri = Utils.createBitcoinUrl(receiveAddress, 0, null, null, null);
                 QRUtils.share("sms:", getActivity(), bitcoinUri);
             }
@@ -138,7 +126,7 @@ public class FragmentReceive extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                SpringAnimator.showAnimation(v);
+                SpringAnimator.springView(v);
                 toggleShareButtonsVisibility();
             }
         });
@@ -154,7 +142,7 @@ public class FragmentReceive extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                SpringAnimator.showAnimation(v);
+                SpringAnimator.springView(v);
                 Activity app = getActivity();
                 app.onBackPressed();
                 BRAnimator.showRequestFragment(app, receiveAddress);

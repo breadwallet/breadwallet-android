@@ -184,7 +184,6 @@ public class SharedPreferencesManager {
 
     //secure time from the server
     public static void putSecureTime(Context activity, long date) {
-        Log.e(TAG, "putSecureTime: " + date);
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putLong(BRConstants.SECURE_TIME_PREFS, date);

@@ -142,7 +142,7 @@ public class FragmentRequestAmount extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String item = parent.getItemAtPosition(position).toString();
                 isoText.setText(BRCurrency.getSymbolByIso(getActivity(), item));
-                SpringAnimator.showAnimation(isoText);
+                SpringAnimator.springView(isoText);
                 updateText();
                 boolean generated = generateQrImage(receiveAddress, amountEdit.getText().toString(), (String) spinner.getSelectedItem());
                 if (!generated) throw new RuntimeException("failed to generate qr image for address");
@@ -151,7 +151,7 @@ public class FragmentRequestAmount extends Fragment {
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
                 isoText.setText(BRCurrency.getSymbolByIso(getActivity(), "BTC"));
-                SpringAnimator.showAnimation(isoText);
+                SpringAnimator.springView(isoText);
             }
         });
 
@@ -197,7 +197,7 @@ public class FragmentRequestAmount extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                SpringAnimator.showAnimation(v);
+                SpringAnimator.springView(v);
                 showKeyboard(false);
                 String iso = (String) spinner.getSelectedItem();
                 String strAmount = amountEdit.getText().toString();
@@ -212,7 +212,7 @@ public class FragmentRequestAmount extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                SpringAnimator.showAnimation(v);
+                SpringAnimator.springView(v);
                 showKeyboard(false);
                 String iso = (String) spinner.getSelectedItem();
                 String strAmount = amountEdit.getText().toString();
@@ -226,7 +226,7 @@ public class FragmentRequestAmount extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                SpringAnimator.showAnimation(v);
+                SpringAnimator.springView(v);
                 toggleShareButtonsVisibility();
                 showKeyboard(false);
             }

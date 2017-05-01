@@ -23,8 +23,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.animation.OvershootInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -43,7 +41,6 @@ import com.breadwallet.tools.adapter.TransactionListAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
-import com.breadwallet.tools.manager.CurrencyFetchManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
@@ -135,6 +132,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     private Button completeFilter;
 
     private static BreadActivity app;
+
     public static BreadActivity getApp() {
         return app;
     }
@@ -224,7 +222,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
             public void onClick(View v) {
 
                 if (!BRAnimator.isClickAllowed()) return;
-                SpringAnimator.showAnimation(v);
+                SpringAnimator.springView(v);
                 BRAnimator.showSendFragment(BreadActivity.this, null);
 
             }
@@ -234,7 +232,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                SpringAnimator.showAnimation(v);
+                SpringAnimator.springView(v);
                 BRAnimator.showReceiveFragment(BreadActivity.this, true);
             }
         });
@@ -245,7 +243,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
                 if (!BRAnimator.isClickAllowed()) return;
                 //start the server for Buy Bitcoin
 
-                SpringAnimator.showAnimation(v);
+                SpringAnimator.springView(v);
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(0, 0, 0, R.animator.plain_300);
                 transaction.add(android.R.id.content, new FragmentMenu(), FragmentMenu.class.getName());
@@ -257,7 +255,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                SpringAnimator.showAnimation(v);
+                SpringAnimator.springView(v);
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(0, 0, 0, R.animator.plain_300);
                 FragmentManage fragmentManage = new FragmentManage();
@@ -301,7 +299,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         searchIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SpringAnimator.showAnimation(v);
+                SpringAnimator.springView(v);
                 searchManager.animateSearchVisibility(searchEdit.getVisibility() != View.VISIBLE);
             }
         });
@@ -339,7 +337,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         sentFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SpringAnimator.showAnimation(v);
+                SpringAnimator.springView(v);
                 searchManager.filterSwitches[0] = !searchManager.filterSwitches[0];
                 updateFilterButtonsUI(searchManager.filterSwitches);
 
@@ -349,7 +347,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         receivedFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SpringAnimator.showAnimation(v);
+                SpringAnimator.springView(v);
                 searchManager.filterSwitches[1] = !searchManager.filterSwitches[1];
                 updateFilterButtonsUI(searchManager.filterSwitches);
             }
@@ -358,7 +356,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         pendingFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SpringAnimator.showAnimation(v);
+                SpringAnimator.springView(v);
                 searchManager.filterSwitches[2] = !searchManager.filterSwitches[2];
                 updateFilterButtonsUI(searchManager.filterSwitches);
             }
@@ -367,7 +365,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         completeFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SpringAnimator.showAnimation(v);
+                SpringAnimator.springView(v);
                 searchManager.filterSwitches[3] = !searchManager.filterSwitches[3];
                 updateFilterButtonsUI(searchManager.filterSwitches);
             }
@@ -560,6 +558,16 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
 
     }
 
+    @Override
+    public void onBackPressed() {
+        if (getFragmentManager().getBackStackEntryCount() == 0) {
+            overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
+            this.finishAndRemoveTask();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
     public void updateUI() {
         new Thread(new Runnable() {
             @Override
@@ -589,8 +597,8 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
                         boolean preferredBtc = SharedPreferencesManager.getPreferredBTC(BreadActivity.this);
                         primaryPrice.setText(preferredBtc ? formattedBTCAmount : formattedCurAmount);
                         secondaryPrice.setText(preferredBtc ? formattedCurAmount : formattedBTCAmount);
-                        SpringAnimator.showAnimation(primaryPrice);
-                        SpringAnimator.showAnimation(secondaryPrice);
+                        SpringAnimator.springView(primaryPrice);
+                        SpringAnimator.springView(secondaryPrice);
 
                     }
                 });
