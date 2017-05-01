@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.activities.PinActivity;
@@ -231,7 +232,10 @@ public class BRAnimator {
 
     public static void startBreadActivity(Activity from, boolean auth) {
         Class toStart = auth ? PinActivity.class : BreadActivity.class;
-        from.startActivity(new Intent(from, toStart));
+        Intent intent = new Intent(from, toStart);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        from.startActivity(intent);
         from.overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
         if (!from.isDestroyed()) {
             from.finish();

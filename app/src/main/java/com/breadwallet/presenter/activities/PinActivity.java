@@ -245,8 +245,7 @@ public class PinActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
+
     }
 
 
