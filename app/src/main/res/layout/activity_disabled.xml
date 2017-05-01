@@ -10,6 +10,22 @@
     tools:context="com.breadwallet.presenter.activities.DisabledActivity">
 
 
+    <Button
+        android:id="@+id/reset_button"
+        android:layout_width="200dp"
+        android:layout_height="60dp"
+        android:layout_marginBottom="32dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="32dp"
+        android:background="@drawable/button_reset_pin"
+        android:elevation="8dp"
+        android:padding="8dp"
+        android:text="Reset PIN"
+        android:textColor="@color/button_secondary_text"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
     <TextView
         android:id="@+id/disabled"
         android:layout_width="wrap_content"
