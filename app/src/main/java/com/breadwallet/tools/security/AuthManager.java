@@ -112,6 +112,7 @@ public class AuthManager {
     }
 
     public void setPinCode(String pass, Activity context) {
+        KeyStoreManager.putFailCount(0, context);
         KeyStoreManager.putPinCode(pass, context);
         KeyStoreManager.putLastPinUsedTime(System.currentTimeMillis(), context);
         setSpendingLimitIfNotSet(context);

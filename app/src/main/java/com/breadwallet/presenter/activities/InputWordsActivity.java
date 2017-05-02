@@ -142,10 +142,10 @@ public class InputWordsActivity extends Activity {
                 if (phraseToCheck == null) return;
                 String cleanPhrase = WordsReader.cleanPhrase(app, phraseToCheck);
 
-                if (BRWalletManager.getInstance().validatePhrase(app, cleanPhrase) || true) { //todo delete "||true"
+                if (BRWalletManager.getInstance().validatePhrase(app, cleanPhrase) ) {
 
                     if (restore || resetPin) {
-                        if (KeyStoreManager.phraseIsValid(cleanPhrase, app) || true) { //todo delete "||true"
+                        if (KeyStoreManager.phraseIsValid(cleanPhrase, app) ) {
                             Utils.hideKeyboard(app);
                             clearWords();
                             Intent intent;
