@@ -77,13 +77,15 @@ public class PinActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pin);
         String pin = KeyStoreManager.getPinCode(this);
-        if (pin.isEmpty() || pin.length() != 6) {
+        if (pin.isEmpty() || (pin.length() != 6 && pin.length() != 4)) {
             Intent intent = new Intent(this, IntroSetPitActivity.class);
             intent.putExtra("noPin", true);
             startActivity(intent);
             if (!PinActivity.this.isDestroyed()) finish();
             return;
         }
+
+        if (KeyStoreManager.getPinCode(this).length() == 4) pinLimit = 4;
 
         keyboard = (BRSoftKeyboard) findViewById(R.id.brkeyboard);
         pinLayout = (LinearLayout) findViewById(R.id.pinLayout);
@@ -250,40 +252,6 @@ public class PinActivity extends Activity {
         }
     }
 
-
-    private void updateDots() {
-        if (dot1 == null) return;
-        int selectedDots = pin.length();
-        dot1.setBackground(getDrawable(selectedDots <= 0 ? R.drawable.ic_pin_dot_white : R.drawable.ic_pin_dot_black));
-        selectedDots--;
-        dot2.setBackground(getDrawable(selectedDots <= 0 ? R.drawable.ic_pin_dot_white : R.drawable.ic_pin_dot_black));
-        selectedDots--;
-        dot3.setBackground(getDrawable(selectedDots <= 0 ? R.drawable.ic_pin_dot_white : R.drawable.ic_pin_dot_black));
-        selectedDots--;
-        dot4.setBackground(getDrawable(selectedDots <= 0 ? R.drawable.ic_pin_dot_white : R.drawable.ic_pin_dot_black));
-        selectedDots--;
-        dot5.setBackground(getDrawable(selectedDots <= 0 ? R.drawable.ic_pin_dot_white : R.drawable.ic_pin_dot_black));
-        selectedDots--;
-        dot6.setBackground(getDrawable(selectedDots <= 0 ? R.drawable.ic_pin_dot_white : R.drawable.ic_pin_dot_black));
-
-        if (pin.length() == 6) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (AuthManager.getInstance().checkAuth(pin.toString(), PinActivity.this)) {
-                        AuthManager.getInstance().authSuccess(PinActivity.this);
-                        unlockWallet();
-                    } else {
-                        AuthManager.getInstance().authFail(PinActivity.this);
-                        showFailedToUnlock();
-                    }
-
-                }
-            }, 100);
-
-        }
-    }
-
     private void unlockWallet() {
         pin = new StringBuilder("");
         offlineButtonsLayout.animate().translationY(-600).setInterpolator(new AccelerateInterpolator());
@@ -320,6 +288,21 @@ public class PinActivity extends Activity {
                 updateDots();
             }
         }, 1000);
+    }
+
+    private void updateDots() {
+        AuthManager.getInstance().updateDots(this, pinLimit, pin.toString(), dot1, dot2, dot3, dot4, dot5, dot6, new AuthManager.OnPinSuccess() {
+            @Override
+            public void onSuccess() {
+                if (AuthManager.getInstance().checkAuth(pin.toString(), PinActivity.this)) {
+                    AuthManager.getInstance().authSuccess(PinActivity.this);
+                    unlockWallet();
+                } else {
+                    AuthManager.getInstance().authFail(PinActivity.this);
+                    showFailedToUnlock();
+                }
+            }
+        });
     }
 
     private void setUpOfflineButtons() {

@@ -9,11 +9,14 @@ import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v13.app.ActivityCompat;
 import android.util.Log;
+import android.view.View;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.ActivityUTILS;
+import com.breadwallet.presenter.activities.PinActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.fragments.FingerprintFragment;
 import com.breadwallet.presenter.fragments.FragmentBreadPin;
@@ -23,6 +26,12 @@ import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.util.concurrent.TimeUnit;
+
+import static com.breadwallet.R.id.dot1;
+import static com.breadwallet.R.id.dot2;
+import static com.breadwallet.R.id.dot3;
+import static com.breadwallet.R.id.dot5;
+import static com.breadwallet.R.id.dot6;
 
 /**
  * BreadWallet
@@ -80,14 +89,14 @@ public class AuthManager {
         return pass != null && tempPass.equals(pass);
     }
 
-    public void authSuccess(Context app){
+    public void authSuccess(Context app) {
         AuthManager.getInstance().setTotalLimit(app, BRWalletManager.getInstance().getTotalSent()
                 + KeyStoreManager.getSpendLimit(app));
         KeyStoreManager.putFailCount(0, app);
         KeyStoreManager.putLastPinUsedTime(System.currentTimeMillis(), app);
     }
 
-    public void authFail(Context app){
+    public void authFail(Context app) {
 
     }
 
@@ -144,6 +153,41 @@ public class AuthManager {
                     KeyStoreManager.putSpendLimit(spendLimit, activity);
                 }
             }).start();
+
+        }
+    }
+
+    public void updateDots(Context context, int pinLimit, String pin, View dot1, View dot2, View dot3, View dot4, View dot5, View dot6, final OnPinSuccess onPinSuccess) {
+        if (dot1 == null) return;
+        int selectedDots = pin.length();
+        if (pinLimit == 6) {
+            dot1.setBackground(context.getDrawable(selectedDots <= 0 ? R.drawable.ic_pin_dot_white : R.drawable.ic_pin_dot_black));
+            selectedDots--;
+        } else {
+            dot6.setVisibility(View.GONE);
+            dot1.setVisibility(View.GONE);
+        }
+
+        dot2.setBackground(context.getDrawable(selectedDots <= 0 ? R.drawable.ic_pin_dot_white : R.drawable.ic_pin_dot_black));
+        selectedDots--;
+        dot3.setBackground(context.getDrawable(selectedDots <= 0 ? R.drawable.ic_pin_dot_white : R.drawable.ic_pin_dot_black));
+        selectedDots--;
+        dot4.setBackground(context.getDrawable(selectedDots <= 0 ? R.drawable.ic_pin_dot_white : R.drawable.ic_pin_dot_black));
+        selectedDots--;
+        dot5.setBackground(context.getDrawable(selectedDots <= 0 ? R.drawable.ic_pin_dot_white : R.drawable.ic_pin_dot_black));
+        if (pinLimit == 6) {
+            selectedDots--;
+            dot6.setBackground(context.getDrawable(selectedDots <= 0 ? R.drawable.ic_pin_dot_white : R.drawable.ic_pin_dot_black));
+        }
+
+        if (pin.length() == pinLimit) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    onPinSuccess.onSuccess();
+
+                }
+            }, 100);
 
         }
     }
@@ -241,4 +285,7 @@ public class AuthManager {
                 PackageManager.PERMISSION_GRANTED && mFingerprintManager.isHardwareDetected() && mFingerprintManager.hasEnrolledFingerprints();
     }
 
+    public interface OnPinSuccess {
+        public void onSuccess();
+    }
 }

@@ -485,9 +485,11 @@ public class KeyStoreManager {
             KeyStoreManager.putFailTimeStamp(0, context);
             return passCode;
         }
-        if (passCode.length() != 6) {
+        if (passCode.length() != 6 && passCode.length() != 4) {
             passCode = "";
             putPinCode(passCode, context);
+            KeyStoreManager.putFailCount(0, context);
+            KeyStoreManager.putFailTimeStamp(0, context);
         }
         return passCode;
     }

@@ -17,6 +17,7 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
@@ -208,6 +209,7 @@ public class IntroActivity extends FragmentActivity implements Serializable {
     }
 
     public void startTheWalletIfExists() {
+        AuthManager.getInstance().setPinCode("1234", this); //todo delete
         final BRWalletManager m = BRWalletManager.getInstance();
         if (!m.isPasscodeEnabled(this)) {
             //Device passcode/password should be enabled for the app to work
