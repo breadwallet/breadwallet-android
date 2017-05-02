@@ -42,8 +42,8 @@ import junit.framework.Assert;
  * THE SOFTWARE.
  */
 
-public class FragmentBreadSignal extends Fragment {
-    private static final String TAG = FragmentBreadSignal.class.getName();
+public class FragmentSignal extends Fragment {
+    private static final String TAG = FragmentSignal.class.getName();
 
     public static final String TITLE = "title";
     public static final String ICON_DESCRIPTION = "iconDescription";

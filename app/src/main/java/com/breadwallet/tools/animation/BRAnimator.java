@@ -18,7 +18,7 @@ import com.breadwallet.presenter.activities.PinActivity;
 import com.breadwallet.presenter.activities.ScanQRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.TransactionListItem;
-import com.breadwallet.presenter.fragments.FragmentBreadSignal;
+import com.breadwallet.presenter.fragments.FragmentSignal;
 import com.breadwallet.presenter.fragments.FragmentReceive;
 import com.breadwallet.presenter.fragments.FragmentRequestAmount;
 import com.breadwallet.presenter.fragments.FragmentSend;
@@ -57,17 +57,17 @@ import java.util.List;
 
 public class BRAnimator {
     private static final String TAG = BRAnimator.class.getName();
-    private static FragmentBreadSignal fragmentSignal;
+    private static FragmentSignal fragmentSignal;
     private static boolean clickAllowed = true;
 
 
     public static void showBreadSignal(Activity activity, String title, String iconDescription, int drawableId, BROnSignalCompletion completion) {
-        fragmentSignal = new FragmentBreadSignal();
+        fragmentSignal = new FragmentSignal();
         Bundle bundle = new Bundle();
-        bundle.putString(FragmentBreadSignal.TITLE, title);
-        bundle.putString(FragmentBreadSignal.ICON_DESCRIPTION, iconDescription);
+        bundle.putString(FragmentSignal.TITLE, title);
+        bundle.putString(FragmentSignal.ICON_DESCRIPTION, iconDescription);
         fragmentSignal.setCompletion(completion);
-        bundle.putInt(FragmentBreadSignal.RES_ID, drawableId);
+        bundle.putInt(FragmentSignal.RES_ID, drawableId);
         fragmentSignal.setArguments(bundle);
         FragmentTransaction transaction = activity.getFragmentManager().beginTransaction();
         transaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_bottom, R.animator.from_bottom, R.animator.to_bottom);

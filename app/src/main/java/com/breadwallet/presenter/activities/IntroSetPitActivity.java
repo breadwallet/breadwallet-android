@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.settings.DefaultCurrencyActivity;
 import com.breadwallet.presenter.customviews.BRSoftKeyboard;
+import com.breadwallet.tools.security.AuthManager;
 
 public class IntroSetPitActivity extends Activity {
     private static final String TAG = IntroSetPitActivity.class.getName();

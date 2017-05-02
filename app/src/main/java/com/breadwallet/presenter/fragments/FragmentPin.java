@@ -9,14 +9,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.OvershootInterpolator;
-import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
-import com.breadwallet.presenter.activities.PinActivity;
 import com.breadwallet.presenter.customviews.BRLockScreenConstraintLayout;
 import com.breadwallet.presenter.customviews.BRSoftKeyboard;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
@@ -26,11 +24,6 @@ import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.BRWalletManager;
-
-import static android.R.attr.dialogLayout;
-import static android.R.attr.key;
-import static android.R.attr.translationY;
 
 /**
  * BreadWallet
@@ -57,8 +50,8 @@ import static android.R.attr.translationY;
  * THE SOFTWARE.
  */
 
-public class FragmentBreadPin extends Fragment {
-    private static final String TAG = FragmentBreadPin.class.getName();
+public class FragmentPin extends Fragment {
+    private static final String TAG = FragmentPin.class.getName();
 
     private BRAuthCompletion completion;
 
@@ -90,6 +83,8 @@ public class FragmentBreadPin extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_bread_pin, container, false);
         keyboard = (BRSoftKeyboard) rootView.findViewById(R.id.brkeyboard);
         pinLayout = (LinearLayout) rootView.findViewById(R.id.pinLayout);
+
+        if (KeyStoreManager.getPinCode(getContext()).length() == 4) pinLimit = 4;
 
         title = (TextView) rootView.findViewById(R.id.title);
         message = (TextView) rootView.findViewById(R.id.message);
@@ -186,27 +181,17 @@ public class FragmentBreadPin extends Fragment {
     }
 
     private void updateDots() {
-        int selectedDots = pin.length();
-        dot1.setBackground(getActivity().getDrawable(selectedDots <= 0 ? R.drawable.ic_pin_dot_gray : R.drawable.ic_pin_dot_black));
-        selectedDots--;
-        dot2.setBackground(getActivity().getDrawable(selectedDots <= 0 ? R.drawable.ic_pin_dot_gray : R.drawable.ic_pin_dot_black));
-        selectedDots--;
-        dot3.setBackground(getActivity().getDrawable(selectedDots <= 0 ? R.drawable.ic_pin_dot_gray : R.drawable.ic_pin_dot_black));
-        selectedDots--;
-        dot4.setBackground(getActivity().getDrawable(selectedDots <= 0 ? R.drawable.ic_pin_dot_gray : R.drawable.ic_pin_dot_black));
-        selectedDots--;
-        dot5.setBackground(getActivity().getDrawable(selectedDots <= 0 ? R.drawable.ic_pin_dot_gray : R.drawable.ic_pin_dot_black));
-        selectedDots--;
-        dot6.setBackground(getActivity().getDrawable(selectedDots <= 0 ? R.drawable.ic_pin_dot_gray : R.drawable.ic_pin_dot_black));
-
-        if (pin.length() == 6) {
-            if (AuthManager.getInstance().checkAuth(pin.toString(), getContext())) {
-                handleSuccess();
-            } else {
-                handleFail();
+        AuthManager.getInstance().updateDots(getActivity(), pinLimit, pin.toString(), dot1, dot2, dot3, dot4, dot5, dot6, R.drawable.ic_pin_dot_gray, new AuthManager.OnPinSuccess() {
+            @Override
+            public void onSuccess() {
+                if (AuthManager.getInstance().checkAuth(pin.toString(), getContext())) {
+                    handleSuccess();
+                } else {
+                    handleFail();
+                }
+                pin = new StringBuilder("");
             }
-            pin = new StringBuilder("");
-        }
+        });
 
     }
 

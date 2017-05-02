@@ -291,18 +291,19 @@ public class PinActivity extends Activity {
     }
 
     private void updateDots() {
-        AuthManager.getInstance().updateDots(this, pinLimit, pin.toString(), dot1, dot2, dot3, dot4, dot5, dot6, new AuthManager.OnPinSuccess() {
-            @Override
-            public void onSuccess() {
-                if (AuthManager.getInstance().checkAuth(pin.toString(), PinActivity.this)) {
-                    AuthManager.getInstance().authSuccess(PinActivity.this);
-                    unlockWallet();
-                } else {
-                    AuthManager.getInstance().authFail(PinActivity.this);
-                    showFailedToUnlock();
-                }
-            }
-        });
+        AuthManager.getInstance().updateDots(this, pinLimit, pin.toString(), dot1, dot2, dot3, dot4, dot5, dot6, R.drawable.ic_pin_dot_white,
+                new AuthManager.OnPinSuccess() {
+                    @Override
+                    public void onSuccess() {
+                        if (AuthManager.getInstance().checkAuth(pin.toString(), PinActivity.this)) {
+                            AuthManager.getInstance().authSuccess(PinActivity.this);
+                            unlockWallet();
+                        } else {
+                            AuthManager.getInstance().authFail(PinActivity.this);
+                            showFailedToUnlock();
+                        }
+                    }
+                });
     }
 
     private void setUpOfflineButtons() {

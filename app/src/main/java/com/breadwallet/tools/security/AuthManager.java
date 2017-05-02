@@ -16,22 +16,15 @@ import android.view.View;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.ActivityUTILS;
-import com.breadwallet.presenter.activities.PinActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.fragments.FingerprintFragment;
-import com.breadwallet.presenter.fragments.FragmentBreadPin;
+import com.breadwallet.presenter.fragments.FragmentPin;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.util.concurrent.TimeUnit;
-
-import static com.breadwallet.R.id.dot1;
-import static com.breadwallet.R.id.dot2;
-import static com.breadwallet.R.id.dot3;
-import static com.breadwallet.R.id.dot5;
-import static com.breadwallet.R.id.dot6;
 
 /**
  * BreadWallet
@@ -157,27 +150,30 @@ public class AuthManager {
         }
     }
 
-    public void updateDots(Context context, int pinLimit, String pin, View dot1, View dot2, View dot3, View dot4, View dot5, View dot6, final OnPinSuccess onPinSuccess) {
+    public void updateDots(Context context, int pinLimit, String pin, View dot1, View dot2, View dot3, View dot4, View dot5, View dot6, int emptyPinRes,final OnPinSuccess onPinSuccess) {
         if (dot1 == null) return;
         int selectedDots = pin.length();
+
         if (pinLimit == 6) {
-            dot1.setBackground(context.getDrawable(selectedDots <= 0 ? R.drawable.ic_pin_dot_white : R.drawable.ic_pin_dot_black));
+            dot6.setVisibility(View.VISIBLE);
+            dot1.setVisibility(View.VISIBLE);
+            dot1.setBackground(context.getDrawable(selectedDots <= 0 ? emptyPinRes : R.drawable.ic_pin_dot_black));
             selectedDots--;
         } else {
             dot6.setVisibility(View.GONE);
             dot1.setVisibility(View.GONE);
         }
 
-        dot2.setBackground(context.getDrawable(selectedDots <= 0 ? R.drawable.ic_pin_dot_white : R.drawable.ic_pin_dot_black));
+        dot2.setBackground(context.getDrawable(selectedDots <= 0 ? emptyPinRes : R.drawable.ic_pin_dot_black));
         selectedDots--;
-        dot3.setBackground(context.getDrawable(selectedDots <= 0 ? R.drawable.ic_pin_dot_white : R.drawable.ic_pin_dot_black));
+        dot3.setBackground(context.getDrawable(selectedDots <= 0 ? emptyPinRes : R.drawable.ic_pin_dot_black));
         selectedDots--;
-        dot4.setBackground(context.getDrawable(selectedDots <= 0 ? R.drawable.ic_pin_dot_white : R.drawable.ic_pin_dot_black));
+        dot4.setBackground(context.getDrawable(selectedDots <= 0 ? emptyPinRes : R.drawable.ic_pin_dot_black));
         selectedDots--;
-        dot5.setBackground(context.getDrawable(selectedDots <= 0 ? R.drawable.ic_pin_dot_white : R.drawable.ic_pin_dot_black));
+        dot5.setBackground(context.getDrawable(selectedDots <= 0 ? emptyPinRes : R.drawable.ic_pin_dot_black));
         if (pinLimit == 6) {
             selectedDots--;
-            dot6.setBackground(context.getDrawable(selectedDots <= 0 ? R.drawable.ic_pin_dot_white : R.drawable.ic_pin_dot_black));
+            dot6.setBackground(context.getDrawable(selectedDots <= 0 ? emptyPinRes : R.drawable.ic_pin_dot_black));
         }
 
         if (pin.length() == pinLimit) {
@@ -227,7 +223,7 @@ public class AuthManager {
         final Activity app = (Activity) context;
 
         FingerprintFragment fingerprintFragment = (FingerprintFragment) app.getFragmentManager().findFragmentByTag(FingerprintFragment.class.getName());
-        FragmentBreadPin breadPin = (FragmentBreadPin) app.getFragmentManager().findFragmentByTag(FragmentBreadPin.class.getName());
+        FragmentPin breadPin = (FragmentPin) app.getFragmentManager().findFragmentByTag(FragmentPin.class.getName());
         if (fingerprintFragment != null && fingerprintFragment.isAdded() || breadPin != null && breadPin.isAdded()) {
             Log.e(TAG, "authPrompt: auth fragment already added: F:" + fingerprintFragment + ", P:" + breadPin);
             return;
@@ -250,7 +246,7 @@ public class AuthManager {
                     transaction.commit();
             } else {
 
-                breadPin = new FragmentBreadPin();
+                breadPin = new FragmentPin();
                 Bundle args = new Bundle();
                 args.putString("title", title);
                 args.putString("message", message);

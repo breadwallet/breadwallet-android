@@ -1,7 +1,9 @@
 package com.breadwallet.presenter.activities;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -13,6 +15,7 @@ import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.AuthManager;
+import com.breadwallet.tools.security.KeyStoreManager;
 
 public class UpdatePitActivity extends Activity {
     private static final String TAG = UpdatePitActivity.class.getName();
@@ -51,6 +54,7 @@ public class UpdatePitActivity extends Activity {
         title = (TextView) findViewById(R.id.title);
         description = (TextView) findViewById(R.id.description);
         pinLayout = (LinearLayout) findViewById(R.id.pinLayout);
+        if (KeyStoreManager.getPinCode(this).length() == 4) pinLimit = 4;
         setMode(ENTER_PIN);
         title.setText("Update PIN");
         dot1 = findViewById(R.id.dot1);
@@ -59,6 +63,7 @@ public class UpdatePitActivity extends Activity {
         dot4 = findViewById(R.id.dot4);
         dot5 = findViewById(R.id.dot5);
         dot6 = findViewById(R.id.dot6);
+
 
         keyboard.addOnInsertListener(new BRSoftKeyboard.OnInsertListener() {
             @Override
@@ -124,22 +129,18 @@ public class UpdatePitActivity extends Activity {
     }
 
     private void updateDots() {
-        int selectedDots = pin.length();
-        dot1.setBackground(getDrawable(selectedDots <= 0 ? R.drawable.ic_pin_dot_gray : R.drawable.ic_pin_dot_black));
-        selectedDots--;
-        dot2.setBackground(getDrawable(selectedDots <= 0 ? R.drawable.ic_pin_dot_gray : R.drawable.ic_pin_dot_black));
-        selectedDots--;
-        dot3.setBackground(getDrawable(selectedDots <= 0 ? R.drawable.ic_pin_dot_gray : R.drawable.ic_pin_dot_black));
-        selectedDots--;
-        dot4.setBackground(getDrawable(selectedDots <= 0 ? R.drawable.ic_pin_dot_gray : R.drawable.ic_pin_dot_black));
-        selectedDots--;
-        dot5.setBackground(getDrawable(selectedDots <= 0 ? R.drawable.ic_pin_dot_gray : R.drawable.ic_pin_dot_black));
-        selectedDots--;
-        dot6.setBackground(getDrawable(selectedDots <= 0 ? R.drawable.ic_pin_dot_gray : R.drawable.ic_pin_dot_black));
 
-        if (pin.length() == 6) {
-            goNext();
-        }
+        AuthManager.getInstance().updateDots(this, pinLimit, pin.toString(), dot1, dot2, dot3, dot4, dot5, dot6, R.drawable.ic_pin_dot_gray, new AuthManager.OnPinSuccess() {
+            @Override
+            public void onSuccess() {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        goNext();
+                    }
+                }, 100);
+            }
+        });
 
     }
 
@@ -149,6 +150,7 @@ public class UpdatePitActivity extends Activity {
             case ENTER_PIN:
                 if (AuthManager.getInstance().checkAuth(pin.toString(), this)) {
                     setMode(ENTER_NEW_PIN);
+                    pinLimit = 6;
                 } else {
                     SpringAnimator.failShakeAnimation(this, pinLayout);
                 }
@@ -158,7 +160,6 @@ public class UpdatePitActivity extends Activity {
             case ENTER_NEW_PIN:
                 setMode(RE_ENTER_NEW_PIN);
                 curNewPin = pin.toString();
-
                 pin = new StringBuilder("");
                 updateDots();
                 break;
@@ -176,6 +177,7 @@ public class UpdatePitActivity extends Activity {
                 } else {
                     SpringAnimator.failShakeAnimation(this, pinLayout);
                     setMode(ENTER_NEW_PIN);
+                    pinLimit = KeyStoreManager.getPinCode(this).length();
                 }
                 pin = new StringBuilder("");
                 updateDots();
