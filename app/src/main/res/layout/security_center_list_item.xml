@@ -18,7 +18,7 @@
         android:layout_toRightOf="@+id/check_mark"
         android:text="Test"
         android:textColor="@color/almost_black"
-        android:textStyle="bold"/>
+       />
 
     <com.breadwallet.presenter.customviews.BreadText
         android:id="@+id/item_text"

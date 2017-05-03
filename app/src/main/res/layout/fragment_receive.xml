@@ -34,7 +34,6 @@
             android:text="Receive"
             android:textColor="@color/almost_black"
             android:textSize="18sp"
-            android:textStyle="bold"
             />
 
         <View
@@ -88,7 +87,6 @@
             android:text="@string/share"
             android:textColor="@color/light_gray"
             android:textSize="18sp"
-            android:textStyle="bold"
             />
 
         <View
@@ -127,7 +125,7 @@
                 android:text="Email"
                 android:textColor="@color/light_gray"
                 android:textSize="14sp"
-                android:textStyle="bold"/>
+                />
 
             <com.breadwallet.presenter.customviews.BreadButton
                 android:id="@+id/share_text"
@@ -144,7 +142,7 @@
                 android:text="Text Message"
                 android:textColor="@color/light_gray"
                 android:textSize="14sp"
-                android:textStyle="bold"/>
+                />
 
         </LinearLayout>
 

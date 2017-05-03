@@ -18,7 +18,6 @@
         android:text="bread"
         android:textColor="@color/white"
         android:textSize="34sp"
-        android:textStyle="normal|bold"
         app:customFont="Celevenia.otf"
         app:layout_constraintBottom_toTopOf="@+id/unlocked_text"
         app:layout_constraintLeft_toLeftOf="parent"

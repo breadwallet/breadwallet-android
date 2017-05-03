@@ -18,7 +18,7 @@
         android:layout_marginTop="64dp"
         android:text="Sync Blockchain"
         android:textSize="30sp"
-        android:textStyle="normal|bold"
+
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
@@ -31,7 +31,6 @@
         android:layout_marginTop="32dp"
         android:text="Estimated time"
         android:textSize="16sp"
-        android:textStyle="bold"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="@+id/title"
         app:layout_constraintRight_toRightOf="parent"
@@ -60,7 +59,6 @@
         android:layout_marginTop="31dp"
         android:text="When to Sync?"
         android:textSize="16sp"
-        android:textStyle="bold"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="@+id/exchange_text"
         app:layout_constraintRight_toRightOf="parent"

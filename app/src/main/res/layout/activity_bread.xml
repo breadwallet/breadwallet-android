@@ -46,7 +46,6 @@
                     android:text="My Bread"
                     android:textColor="@color/white"
                     android:textSize="22sp"
-                    android:textStyle="bold"
                     app:customFont="CircularPro-Bold.otf"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent"/>
@@ -60,7 +59,6 @@
                     android:text="$0"
                     android:textColor="@color/white"
                     android:textSize="26sp"
-                    android:textStyle="bold"
                     app:customFont="CircularPro-Book.otf"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"/>
@@ -98,7 +96,6 @@
                     android:text="MANAGE"
                     android:textColor="@color/white"
                     android:textSize="18sp"
-                    android:textStyle="bold"
                     app:customFont="CircularPro-Bold.otf"
                     app:layout_constraintBottom_toBottomOf="@+id/wallet_name_text"
                     app:layout_constraintRight_toRightOf="parent"
@@ -238,7 +235,6 @@
                 android:layout_marginTop="8dp"
                 android:text="Loading Wallet"
                 android:textColor="@color/white"
-                android:textStyle="bold"
                 app:customFont="CircularPro-Bold.otf"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHorizontal_bias="0.501"
@@ -314,7 +310,6 @@
                 android:layout_marginTop="16dp"
                 android:text="Syncing with Blockchain"
                 android:textColor="@color/almost_black"
-                android:textStyle="bold"
                 app:customFont="CircularPro-Bold.otf"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>
@@ -406,7 +401,6 @@
                 android:layout_weight="1"
                 android:text="SEND"
                 android:textColor="@color/pin_pad_text"
-                android:textStyle="bold"
                 app:customFont="CircularPro-Medium.otf"/>
         </LinearLayout>
 
@@ -433,7 +427,6 @@
                 android:layout_weight="1"
                 android:text="RECEIVE"
                 android:textColor="@color/pin_pad_text"
-                android:textStyle="bold"
                 app:customFont="CircularPro-Medium.otf"/>
         </LinearLayout>
 
@@ -460,7 +453,6 @@
                 android:layout_weight="1"
                 android:text="MENU"
                 android:textColor="@color/pin_pad_text"
-                android:textStyle="bold"
                 app:customFont="CircularPro-Medium.otf"/>
         </LinearLayout>
 

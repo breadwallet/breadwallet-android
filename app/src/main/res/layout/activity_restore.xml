@@ -51,7 +51,6 @@
             android:text="Restore Bread Wallet"
             android:textColor="@color/white"
             android:textSize="18sp"
-            android:textStyle="bold"
             tools:layout_constraintTop_creator="1"/>
 
         <ImageView
@@ -94,7 +93,7 @@
             android:text="Your Bread on this Device "
             android:textColor="@color/black"
             android:textSize="16sp"
-            android:textStyle="bold"/>
+            />
 
         <ImageView
             android:id="@+id/imageView7"

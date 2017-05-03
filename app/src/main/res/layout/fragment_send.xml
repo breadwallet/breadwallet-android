@@ -34,7 +34,6 @@
             android:text="Send Money"
             android:textColor="@color/almost_black"
             android:textSize="18sp"
-            android:textStyle="bold"
             app:layout_constraintHorizontal_bias="0.501"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -139,7 +138,6 @@
             android:layout_height="wrap_content"
             android:text="To"
             android:textColor="@color/gray"
-            android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/address_edit"
             android:layout_marginBottom="-1dp"
             android:layout_marginLeft="0dp"
@@ -158,7 +156,6 @@
             android:text="Paste"
             android:textColor="@color/light_gray"
             android:textSize="14sp"
-            android:textStyle="bold"
             app:layout_constraintRight_toLeftOf="@+id/share_text"
             app:layout_constraintTop_toTopOf="@+id/share_text"
             android:layout_marginTop="0dp"/>
@@ -177,7 +174,6 @@
             android:text="Scan"
             android:textColor="@color/light_gray"
             android:textSize="14sp"
-            android:textStyle="bold"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/view"/>
 
@@ -191,7 +187,6 @@
             android:layout_marginTop="0dp"
             android:text="$"
             android:textSize="28sp"
-            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/cur_spinner"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="@+id/cur_spinner"/>
