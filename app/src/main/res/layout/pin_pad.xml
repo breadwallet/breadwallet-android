@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:columnCount="3"
             android:rowCount="4">
 
-    <Button
+    <com.breadwallet.presenter.customviews.BreadButton
         android:id="@+id/num1"
         android:layout_column="0"
         android:layout_columnWeight="1"
@@ -18,9 +19,10 @@
         android:text="1"
         android:textColor="@color/pin_pad_text"
         android:textSize="@dimen/pin_par_text_size"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        app:customFont="CircularPro-Book.otf"/>
 
-    <Button
+    <com.breadwallet.presenter.customviews.BreadButton
         android:id="@+id/num2"
         android:layout_column="1"
         android:layout_columnWeight="1"
@@ -33,9 +35,10 @@
         android:text="2"
         android:textColor="@color/pin_pad_text"
         android:textSize="@dimen/pin_par_text_size"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        app:customFont="CircularPro-Book.otf"/>
 
-    <Button
+    <com.breadwallet.presenter.customviews.BreadButton
         android:id="@+id/num3"
         android:layout_column="2"
         android:layout_columnWeight="1"
@@ -48,9 +51,10 @@
         android:text="3"
         android:textColor="@color/pin_pad_text"
         android:textSize="@dimen/pin_par_text_size"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        app:customFont="CircularPro-Book.otf"/>
 
-    <Button
+    <com.breadwallet.presenter.customviews.BreadButton
         android:id="@+id/num4"
         android:layout_column="0"
         android:layout_gravity="fill_horizontal"
@@ -62,9 +66,10 @@
         android:text="4"
         android:textColor="@color/pin_pad_text"
         android:textSize="@dimen/pin_par_text_size"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        app:customFont="CircularPro-Book.otf"/>
 
-    <Button
+    <com.breadwallet.presenter.customviews.BreadButton
         android:id="@+id/num5"
         android:layout_column="1"
         android:layout_gravity="fill_horizontal"
@@ -76,9 +81,10 @@
         android:text="5"
         android:textColor="@color/pin_pad_text"
         android:textSize="@dimen/pin_par_text_size"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        app:customFont="CircularPro-Book.otf"/>
 
-    <Button
+    <com.breadwallet.presenter.customviews.BreadButton
         android:id="@+id/num6"
         android:layout_column="2"
         android:layout_gravity="fill_horizontal"
@@ -87,13 +93,14 @@
         android:layout_rowWeight="1"
         android:background="@android:color/transparent"
         android:gravity="center"
-
         android:text="6"
+
         android:textColor="@color/pin_pad_text"
         android:textSize="@dimen/pin_par_text_size"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        app:customFont="CircularPro-Book.otf"/>
 
-    <Button
+    <com.breadwallet.presenter.customviews.BreadButton
         android:id="@+id/num7"
         android:layout_column="0"
         android:layout_gravity="fill_horizontal"
@@ -105,9 +112,10 @@
         android:text="7"
         android:textColor="@color/pin_pad_text"
         android:textSize="@dimen/pin_par_text_size"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        app:customFont="CircularPro-Book.otf"/>
 
-    <Button
+    <com.breadwallet.presenter.customviews.BreadButton
         android:id="@+id/num8"
         android:layout_column="1"
         android:layout_gravity="fill_horizontal"
@@ -119,9 +127,10 @@
         android:text="8"
         android:textColor="@color/pin_pad_text"
         android:textSize="@dimen/pin_par_text_size"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        app:customFont="CircularPro-Book.otf"/>
 
-    <Button
+    <com.breadwallet.presenter.customviews.BreadButton
         android:id="@+id/num9"
         android:layout_column="2"
         android:layout_gravity="fill_horizontal"
@@ -133,9 +142,10 @@
         android:text="9"
         android:textColor="@color/pin_pad_text"
         android:textSize="@dimen/pin_par_text_size"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        app:customFont="CircularPro-Book.otf"/>
 
-    <Button
+    <com.breadwallet.presenter.customviews.BreadButton
         android:id="@+id/numDot"
         android:layout_column="0"
         android:layout_gravity="fill_horizontal"
@@ -147,9 +157,10 @@
         android:text="."
         android:textColor="@color/pin_pad_text"
         android:textSize="@dimen/pin_par_text_size"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        app:customFont="CircularPro-Book.otf"/>
 
-    <Button
+    <com.breadwallet.presenter.customviews.BreadButton
         android:id="@+id/num0"
         android:layout_column="1"
         android:layout_gravity="fill_horizontal|fill_vertical"
@@ -161,7 +172,8 @@
         android:text="0"
         android:textColor="@color/pin_pad_text"
         android:textSize="@dimen/pin_par_text_size"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        app:customFont="CircularPro-Book.otf"/>
 
     <ImageButton
         android:id="@+id/numDelete"
