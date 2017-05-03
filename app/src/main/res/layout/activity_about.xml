@@ -22,19 +22,21 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title"/>
 
-    <TextView
+    <com.breadwallet.presenter.customviews.BreadText
+        app:customFont="Celevenia.otf"
         android:id="@+id/textView11"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Bread"
         android:textColor="@color/black"
-        android:textSize="22sp"
+        android:textSize="26sp"
         app:layout_constraintLeft_toLeftOf="@+id/view3"
         app:layout_constraintRight_toRightOf="@+id/view3"
         app:layout_constraintTop_toBottomOf="@+id/view3"/>
 
-    <TextView
+    <com.breadwallet.presenter.customviews.BreadText
+        app:customFont="CircularPro-Bold.otf"
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -42,7 +44,6 @@
         android:layout_marginTop="64dp"
         android:text="About"
         android:textSize="30sp"
-        android:textStyle="normal|bold"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
@@ -105,18 +106,19 @@
         android:layout_marginLeft="16dp"
         app:layout_constraintLeft_toLeftOf="parent"/>
 
-    <TextView
+    <com.breadwallet.presenter.customviews.BreadText
+        app:customFont="CircularPro-Book.otf"
         android:id="@+id/textView22"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
         android:text="Twitter"
         android:textSize="18sp"
-        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/view4"
         app:layout_constraintLeft_toLeftOf="@+id/divider1"/>
 
-    <TextView
+    <com.breadwallet.presenter.customviews.BreadText
+        app:customFont="CircularPro-Book.otf"
         android:id="@+id/textView24"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -124,7 +126,6 @@
         android:layout_marginLeft="0dp"
         android:text="Blog"
         android:textSize="18sp"
-        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/view5"
         app:layout_constraintLeft_toLeftOf="@+id/divider1"/>
 
@@ -149,7 +150,8 @@
         app:layout_constraintTop_toTopOf="@+id/textView24"
         android:src="@drawable/ic_share"/>
 
-    <TextView
+    <com.breadwallet.presenter.customviews.BreadText
+        app:customFont="CircularPro-Book.otf"
         android:id="@+id/policy_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -158,13 +160,13 @@
         android:text="Privacy Policy"
         android:textColor="@color/dark_blue"
         android:textSize="16sp"
-        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/divider"
         app:layout_constraintLeft_toRightOf="@+id/divider"
         app:layout_constraintTop_toTopOf="@+id/divider"
         android:layout_marginStart="8dp"/>
 
-    <TextView
+    <com.breadwallet.presenter.customviews.BreadText
+        app:customFont="CircularPro-Book.otf"
         android:id="@+id/terms_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -173,13 +175,13 @@
         android:text="Terms of Use"
         android:textColor="@color/dark_blue"
         android:textSize="16sp"
-        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/divider"
         app:layout_constraintRight_toLeftOf="@+id/divider"
         app:layout_constraintTop_toTopOf="@+id/divider"
         android:layout_marginEnd="8dp"/>
 
-    <TextView
+    <com.breadwallet.presenter.customviews.BreadText
+        app:customFont="CircularPro-Book.otf"
         android:id="@+id/info_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -187,7 +189,6 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:text="Made in North America. Version 1.2.33"
-        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -195,14 +196,14 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"/>
 
-    <TextView
+    <com.breadwallet.presenter.customviews.BreadText
+        app:customFont="CircularPro-Book.otf"
         android:id="@+id/textView21"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
         android:text="Reddit"
         android:textSize="18sp"
-        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/divider1"
         app:layout_constraintLeft_toLeftOf="@+id/divider1"/>
 
