@@ -152,7 +152,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/search_edit"
                     app:layout_constraintVertical_bias="0.0">
 
-                    <Button
+                    <com.breadwallet.presenter.customviews.BreadButton
                         android:id="@+id/sent_filter"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -164,9 +164,10 @@
                         android:paddingEnd="4dp"
                         android:paddingStart="4dp"
                         android:text="sent"
-                        android:textColor="@color/light_gray"/>
+                        android:textColor="@color/light_gray"
+                        app:customFont="CircularPro-Book.otf"/>
 
-                    <Button
+                    <com.breadwallet.presenter.customviews.BreadButton
                         android:id="@+id/received_filter"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -178,9 +179,10 @@
                         android:paddingEnd="4dp"
                         android:paddingStart="4dp"
                         android:text="received"
-                        android:textColor="@color/light_gray"/>
+                        android:textColor="@color/light_gray"
+                        app:customFont="CircularPro-Book.otf"/>
 
-                    <Button
+                    <com.breadwallet.presenter.customviews.BreadButton
                         android:id="@+id/pending_filter"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -192,9 +194,10 @@
                         android:paddingEnd="4dp"
                         android:paddingStart="4dp"
                         android:text="pending"
-                        android:textColor="@color/light_gray"/>
+                        android:textColor="@color/light_gray"
+                        app:customFont="CircularPro-Book.otf"/>
 
-                    <Button
+                    <com.breadwallet.presenter.customviews.BreadButton
                         android:id="@+id/complete_filter"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -206,7 +209,8 @@
                         android:paddingEnd="4dp"
                         android:paddingStart="4dp"
                         android:text="complete"
-                        android:textColor="@color/light_gray"/>
+                        android:textColor="@color/light_gray"
+                        app:customFont="CircularPro-Book.otf"/>
 
                 </LinearLayout>
 
@@ -226,7 +230,6 @@
             tools:layout_constraintTop_creator="1">
 
             <com.breadwallet.presenter.customviews.BreadText
-                app:customFont="CircularPro-Bold.otf"
                 android:id="@+id/loading_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -236,6 +239,7 @@
                 android:text="Loading Wallet"
                 android:textColor="@color/white"
                 android:textStyle="bold"
+                app:customFont="CircularPro-Bold.otf"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHorizontal_bias="0.501"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -290,19 +294,18 @@
             tools:layout_constraintTop_creator="1">
 
             <com.breadwallet.presenter.customviews.BreadText
-                app:customFont="CircularPro-Book.otf"
                 android:id="@+id/sync_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:layout_marginTop="8dp"
                 android:text="some date"
+                app:customFont="CircularPro-Book.otf"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="@+id/syncing_label"
                 app:layout_constraintTop_toBottomOf="@+id/sync_progress"/>
 
             <com.breadwallet.presenter.customviews.BreadText
-                app:customFont="CircularPro-Bold.otf"
                 android:id="@+id/syncing_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -312,6 +315,7 @@
                 android:text="Syncing with Blockchain"
                 android:textColor="@color/almost_black"
                 android:textStyle="bold"
+                app:customFont="CircularPro-Bold.otf"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>
 
@@ -350,7 +354,6 @@
     </LinearLayout>
 
     <com.breadwallet.presenter.customviews.BreadText
-        app:customFont="CircularPro-Book.otf"
         android:id="@+id/empty_tx_tip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -359,6 +362,7 @@
         android:layout_marginBottom="160dp"
         android:text="Your transactions will appear here."
         android:textColor="@color/light_gray"
+        app:customFont="CircularPro-Book.otf"
         tools:layout_constraintBottom_creator="1"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1"
