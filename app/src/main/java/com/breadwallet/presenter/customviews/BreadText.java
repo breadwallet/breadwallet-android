@@ -62,7 +62,7 @@ public class BreadText extends TextView {
     private void init(Context ctx, AttributeSet attrs) {
         TypedArray a = ctx.obtainStyledAttributes(attrs, R.styleable.BreadText);
         String customFont = a.getString(R.styleable.BreadText_customFont);
-        setCustomFont(ctx, "fonts/" + customFont);
+        setCustomFont(ctx,  customFont);
         a.recycle();
     }
 
