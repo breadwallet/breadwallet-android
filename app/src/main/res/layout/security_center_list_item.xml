@@ -8,7 +8,8 @@
                 android:orientation="horizontal"
     >
 
-    <TextView
+    <com.breadwallet.presenter.customviews.BreadText
+        app:customFont="CircularPro-Bold.otf"
         android:id="@+id/item_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -19,7 +20,7 @@
         android:textColor="@color/almost_black"
         android:textStyle="bold"/>
 
-    <TextView
+    <com.breadwallet.presenter.customviews.BreadText
         android:id="@+id/item_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
