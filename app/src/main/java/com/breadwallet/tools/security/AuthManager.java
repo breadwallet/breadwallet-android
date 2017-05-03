@@ -85,9 +85,21 @@ public class AuthManager {
         return pass != null && tempPass.equals(pass);
     }
 
-    public void authSuccess(Context app) {
-        AuthManager.getInstance().setTotalLimit(app, BRWalletManager.getInstance().getTotalSent()
-                + KeyStoreManager.getSpendLimit(app));
+    public void authSuccess(final Context app) {
+        //put the new total limit in 3 seconds, leave some time for the core to register any new tx
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                AuthManager.getInstance().setTotalLimit(app, BRWalletManager.getInstance().getTotalSent()
+                        + KeyStoreManager.getSpendLimit(app));
+            }
+        }).start();
+
         KeyStoreManager.putFailCount(0, app);
         KeyStoreManager.putLastPinUsedTime(System.currentTimeMillis(), app);
     }
@@ -146,7 +158,7 @@ public class AuthManager {
                 public void run() {
                     long totalSpent = BRWalletManager.getInstance().getTotalSent();
                     long totalLimit = totalSpent + KeyStoreManager.getSpendLimit(activity);
-                    KeyStoreManager.putTotalLimit(totalLimit, activity);
+                    setTotalLimit(activity, totalLimit);
                 }
             }).start();
 

@@ -2,27 +2,21 @@ package com.breadwallet.presenter.activities.settings;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.SeekBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.ActivityUTILS;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.KeyStoreManager;
-import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRExchange;
+import com.breadwallet.wallet.BRWalletManager;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
-import static com.breadwallet.R.id.step;
-import static com.breadwallet.tools.util.BRExchange.getAmountFromSatoshis;
+import static com.breadwallet.tools.util.BRConstants.ONE_BITCOIN;
 
 
 public class SpendLimitActivity extends AppCompatActivity {
@@ -33,7 +27,6 @@ public class SpendLimitActivity extends AppCompatActivity {
     private SeekBar seekBar;
     private TextView label;
     //    private Spinner curSpiner;
-    private static final long MAX_AMOUNT_SATOSHIS = 1000000000; //10 BTC
 
     public static SpendLimitActivity getApp() {
         return app;
@@ -66,7 +59,9 @@ public class SpendLimitActivity extends AppCompatActivity {
 //                updateText(0);
 //            }
 //        });
-        updateText(getStepFromLimit(KeyStoreManager.getSpendLimit(this)));
+        int progress = getStepFromLimit(KeyStoreManager.getSpendLimit(this));
+        updateText(progress);
+        seekBar.setProgress(progress);
         seekBar.setMax(3);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
@@ -100,6 +95,12 @@ public class SpendLimitActivity extends AppCompatActivity {
         String string = String.format("%s (%s)", BRCurrency.getFormattedCurrencyString(this, "BTC", amount), BRCurrency.getFormattedCurrencyString(this, iso, curAmount));
         label.setText(string);
         KeyStoreManager.putSpendLimit(satoshis.longValue(), this);
+        updateTotalLimit();
+    }
+
+    private void updateTotalLimit() {
+        AuthManager.getInstance().setTotalLimit(app, BRWalletManager.getInstance().getTotalSent()
+                + KeyStoreManager.getSpendLimit(app));
     }
 
     //satoshis
@@ -107,20 +108,20 @@ public class SpendLimitActivity extends AppCompatActivity {
         BigDecimal result;
         switch (step) {
             case 0:
-                result = new BigDecimal(1000000);//   0.01 BTC
+                result = new BigDecimal(ONE_BITCOIN / 100);//   0.01 BTC
                 break;
             case 1:
-                result = new BigDecimal(10000000);//   0.1 BTC
+                result = new BigDecimal(ONE_BITCOIN / 10);//   0.1 BTC
                 break;
             case 2:
-                result = new BigDecimal(100000000);//   1 BTC
+                result = new BigDecimal(ONE_BITCOIN);//   1 BTC
                 break;
             case 3:
-                result = new BigDecimal(1000000000);//   10 BTC
+                result = new BigDecimal(ONE_BITCOIN * 10);//   10 BTC
                 break;
 
             default:
-                result = new BigDecimal(100000000);//   1 BTC Default
+                result = new BigDecimal(ONE_BITCOIN);//   1 BTC Default
                 break;
         }
         return result;
@@ -128,16 +129,16 @@ public class SpendLimitActivity extends AppCompatActivity {
 
     private int getStepFromLimit(long limit) {
         switch ((int) limit) {
-            case 1000000://   0.01 BTC
+            case ONE_BITCOIN / 100:
                 return 0;
-            case 10000000://   0.1 BTC
+            case ONE_BITCOIN / 10:
                 return 1;
-            case 100000000://   1 BTC
+            case ONE_BITCOIN:
                 return 2;
-            case 1000000000://   10 BTC
+            case ONE_BITCOIN * 10:
                 return 3;
             default:
-                return 2;//   1 BTC Default
+                return 2; //1 BTC Default
         }
     }
 
