@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_intro_recover"
+    android:background="@color/extra_light_blue_background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.breadwallet.presenter.activities.IntroRecoverActivity">

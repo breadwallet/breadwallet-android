@@ -187,7 +187,13 @@ public class FragmentSend extends Fragment {
                                 });
 
                             } else {
-                                addressEdit.setText(finalAddress);
+                                app.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        addressEdit.setText(finalAddress);
+
+                                    }
+                                });
                             }
                         }
                     }).start();

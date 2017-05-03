@@ -20,10 +20,11 @@
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
           android:id="@android:id/text1"
           style="?android:attr/spinnerItemStyle"
-          android:maxLines="1"
           android:layout_width="match_parent"
-          android:textColor="@color/light_gray"
-          android:textStyle="bold"
           android:layout_height="wrap_content"
+          android:background="@color/extra_light_blue_background"
           android:ellipsize="marquee"
-          android:textAlignment="inherit"/>
+          android:maxLines="1"
+          android:textAlignment="inherit"
+          android:textColor="@color/light_gray"
+          android:textStyle="bold"/>

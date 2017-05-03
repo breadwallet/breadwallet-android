@@ -6,6 +6,7 @@
     android:id="@+id/activity_write_down"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/extra_light_blue_background"
     tools:context="com.breadwallet.presenter.activities.IntroWriteDownActivity">
 
     <LinearLayout

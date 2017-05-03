@@ -6,6 +6,7 @@
     android:id="@+id/activity_intro_recover"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/extra_light_blue_background"
     tools:context="com.breadwallet.presenter.activities.IntroRecoverActivity">
 
     <Button
@@ -123,9 +124,9 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="32dp"
-        android:textColor="@color/almost_black"
         android:layout_marginTop="0dp"
         android:text="You will no longer be able to access your current Bread wallet from this device."
+        android:textColor="@color/almost_black"
         android:textSize="18sp"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toRightOf="@+id/imageView8"

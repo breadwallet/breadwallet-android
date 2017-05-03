@@ -5,6 +5,7 @@
     android:id="@+id/activity_write_down"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/extra_light_blue_background"
     tools:context="com.breadwallet.presenter.activities.IntroWriteDownActivity">
 
     <FrameLayout
@@ -29,10 +30,10 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:elevation="4dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="80dp"
-                android:background="@drawable/ic_paper_phrase"/>
+            android:background="@drawable/ic_paper_phrase"
+            android:elevation="4dp"/>
 
         <ImageView
             android:layout_width="wrap_content"
@@ -40,8 +41,8 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginStart="32dp"
             android:layout_marginTop="78dp"
-            android:elevation="8dp"
-            android:background="@drawable/ic_pen"/>
+            android:background="@drawable/ic_pen"
+            android:elevation="8dp"/>
 
     </FrameLayout>
 
