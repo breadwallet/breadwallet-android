@@ -9,7 +9,8 @@
     android:layout_height="match_parent"
     tools:context="com.breadwallet.presenter.activities.IntroSetPitActivity">
 
-    <TextView
+    <com.breadwallet.presenter.customviews.BreadText
+        app:customFont="CircularPro-Bold.otf"
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
