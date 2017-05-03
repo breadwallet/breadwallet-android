@@ -19,7 +19,7 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"/>
 
-    <TextView
+    <com.breadwallet.presenter.customviews.BreadText
         android:layout_width="wrap_content"
         android:id="@+id/description_text"
         android:layout_centerHorizontal="true"
