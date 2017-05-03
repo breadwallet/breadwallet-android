@@ -30,8 +30,8 @@ import com.google.firebase.crash.FirebaseCrash;
 import java.util.Locale;
 
 
-public class IntroPhraseCheckActivity extends Activity {
-    private static final String TAG = IntroPhraseCheckActivity.class.getName();
+public class PaperKeyActivity extends Activity {
+    private static final String TAG = PaperKeyActivity.class.getName();
     private ViewPager wordViewPager;
     private Button nextButton;
     private Button previousButton;
@@ -39,16 +39,16 @@ public class IntroPhraseCheckActivity extends Activity {
     private TextView itemIndexText;
     private SparseArray<String> wordMap;
     public static boolean appVisible = false;
-    private static IntroPhraseCheckActivity app;
+    private static PaperKeyActivity app;
 
-    public static IntroPhraseCheckActivity getApp() {
+    public static PaperKeyActivity getApp() {
         return app;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_phrase_check);
+        setContentView(R.layout.activity_paper_key);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
 
         wordViewPager = (ViewPager) findViewById(R.id.phrase_words_pager);
