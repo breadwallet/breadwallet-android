@@ -10,12 +10,11 @@ model {
             applicationId = 'com.breadwallet'
             minSdkVersion.apiLevel = 23
             targetSdkVersion.apiLevel = 25
-            versionCode = 37
-            versionName = "37"
+            versionCode = 38
+            versionName = "38"
         }
 
         productFlavors.with {
-
             create("bread") {
                 applicationId "com.breadwallet"
                 resValues.with {
