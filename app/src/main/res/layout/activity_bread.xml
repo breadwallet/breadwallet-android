@@ -225,7 +225,8 @@
             tools:layout_constraintRight_creator="1"
             tools:layout_constraintTop_creator="1">
 
-            <TextView
+            <com.breadwallet.presenter.customviews.BreadText
+                app:customFont="CircularPro-Bold.otf"
                 android:id="@+id/loading_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
