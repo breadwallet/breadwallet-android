@@ -63,15 +63,10 @@ public class BreadButton extends Button {
     private void init(Context ctx, AttributeSet attrs) {
         TypedArray a = ctx.obtainStyledAttributes(attrs, R.styleable.BreadText);
         String customFont = a.getString(R.styleable.BreadText_customFont);
-        setCustomFont(ctx,  customFont);
+        TypefacesManager.setCustomFont(ctx, this, customFont);
         a.recycle();
     }
 
-    public boolean setCustomFont(Context ctx, String asset) {
-        Typeface tf = TypefacesManager.get(ctx, asset);
 
-        setTypeface(tf);
-        return true;
-    }
 
 }

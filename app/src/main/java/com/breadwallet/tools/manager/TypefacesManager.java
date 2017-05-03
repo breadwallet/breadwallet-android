@@ -2,6 +2,10 @@ package com.breadwallet.tools.manager;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.view.View;
+import android.widget.TextView;
+
+import com.breadwallet.tools.util.Utils;
 
 import java.util.Hashtable;
 
@@ -33,9 +37,9 @@ public class TypefacesManager {
 
     private static final Hashtable<String, Typeface> cache = new Hashtable<>();
 
-    public static Typeface get(Context c, String name){
-        synchronized(cache){
-            if(!cache.containsKey(name)){
+    public static Typeface get(Context c, String name) {
+        synchronized (cache) {
+            if (!cache.containsKey(name)) {
                 Typeface t = Typeface.createFromAsset(
                         c.getAssets(),
                         String.format("fonts/%s", name)
@@ -44,5 +48,12 @@ public class TypefacesManager {
             }
             return cache.get(name);
         }
+    }
+
+    public static boolean setCustomFont(Context ctx, TextView v, String asset) {
+        //make CircularPro-Book.otf default
+        Typeface tf = TypefacesManager.get(ctx, Utils.isNullOrEmpty(asset) ? "CircularPro-Book.otf" : asset);
+        v.setTypeface(tf);
+        return true;
     }
 }
