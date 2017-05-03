@@ -10,13 +10,12 @@
     tools:context="com.breadwallet.presenter.activities.DisabledActivity">
 
 
-    <Button
+    <com.breadwallet.presenter.customviews.BreadButton
         android:id="@+id/reset_button"
         android:layout_width="200dp"
         android:layout_height="60dp"
         android:layout_marginBottom="33dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginRight="32dp"
+        android:layout_marginEnd="32dp"
         android:background="@drawable/button_reset_pin"
         android:includeFontPadding="false"
         android:minHeight="20dp"
@@ -27,7 +26,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
 
-    <TextView
+    <com.breadwallet.presenter.customviews.BreadText
         android:id="@+id/disabled"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -44,7 +43,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.499"/>
 
-    <TextView
+    <com.breadwallet.presenter.customviews.BreadText
         android:id="@+id/until_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -58,7 +57,7 @@
         app:layout_constraintRight_toRightOf="@+id/disabled"
         app:layout_constraintTop_toBottomOf="@+id/disabled"/>
 
-    <TextView
+    <com.breadwallet.presenter.customviews.BreadText
         android:id="@+id/attempts_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
