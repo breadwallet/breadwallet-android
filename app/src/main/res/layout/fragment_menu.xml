@@ -1,6 +1,7 @@
 <com.breadwallet.presenter.customviews.BRLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                                                       android:layout_width="match_parent"
                                                       android:layout_height="match_parent"
+                                                      xmlns:app="http://schemas.android.com/apk/res-auto"
                                                       android:id="@+id/layout"
                                                       android:background="@android:color/transparent"
                                                       android:filterTouchesWhenObscured="true"
@@ -16,7 +17,8 @@
         android:background="@drawable/menu_layout"
         android:orientation="vertical">
 
-        <TextView
+        <com.breadwallet.presenter.customviews.BreadText
+            app:customFont="CircularPro-Bold.otf"
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
