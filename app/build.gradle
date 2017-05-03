@@ -95,7 +95,7 @@ model {
                     create() {
                         type = "boolean"
                         name = "BITCOIN_TESTNET"
-                        value = "true" //todo make sure this is true if it's testnet
+                        value = "true"
                     }
                 }
                 ndk {

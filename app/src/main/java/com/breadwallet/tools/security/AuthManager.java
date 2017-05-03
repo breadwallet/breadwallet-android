@@ -22,9 +22,12 @@ import com.breadwallet.presenter.fragments.FragmentPin;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.util.concurrent.TimeUnit;
+
+import static android.R.attr.mode;
 
 /**
  * BreadWallet
@@ -136,21 +139,21 @@ public class AuthManager {
 
     private void setSpendingLimitIfNotSet(final Activity activity) {
         if (activity == null) return;
-        long limit = KeyStoreManager.getSpendLimit(activity);
+        long limit = AuthManager.getInstance().getTotalLimit(activity);
         if (limit == 0) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     long totalSpent = BRWalletManager.getInstance().getTotalSent();
-                    long spendLimit = totalSpent + AuthManager.getInstance().getTotalLimit(activity);
-                    KeyStoreManager.putSpendLimit(spendLimit, activity);
+                    long totalLimit = totalSpent + KeyStoreManager.getSpendLimit(activity);
+                    KeyStoreManager.putTotalLimit(totalLimit, activity);
                 }
             }).start();
 
         }
     }
 
-    public void updateDots(Context context, int pinLimit, String pin, View dot1, View dot2, View dot3, View dot4, View dot5, View dot6, int emptyPinRes,final OnPinSuccess onPinSuccess) {
+    public void updateDots(Context context, int pinLimit, String pin, View dot1, View dot2, View dot3, View dot4, View dot5, View dot6, int emptyPinRes, final OnPinSuccess onPinSuccess) {
         if (dot1 == null) return;
         int selectedDots = pin.length();
 
@@ -196,27 +199,16 @@ public class AuthManager {
         KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Activity.KEYGUARD_SERVICE);
 
         boolean useFingerPrint = isFingerPrintAvailable(context);
-//        if (mode == BRConstants.AUTH_FOR_PAY) {
-//            long limit = KeyStoreManager.getSpendLimit(context);
-//            long totalSent = BRWalletManager.getInstance().getTotalSent();
-//
-//            if (requestEntity != null)
-//                if (limit <= totalSent + requestEntity.amount) {
-//                    useFingerPrint = false;
-//                }
-//        }
-//
-//        if (mode == BRConstants.AUTH_FOR_LIMIT || mode == BRConstants.AUTH_FOR_PHRASE) {
-//            useFingerPrint = false;
-//        }
 
         if (KeyStoreManager.getFailCount(context) != 0) {
             useFingerPrint = false;
         }
         long passTime = KeyStoreManager.getLastPasscodeUsedTime(context);
+
         if (passTime + TimeUnit.MILLISECONDS.convert(2, TimeUnit.DAYS) <= System.currentTimeMillis()) {
             useFingerPrint = false;
         }
+
         if (forcePin)
             useFingerPrint = false;
 
@@ -224,6 +216,7 @@ public class AuthManager {
 
         FingerprintFragment fingerprintFragment = (FingerprintFragment) app.getFragmentManager().findFragmentByTag(FingerprintFragment.class.getName());
         FragmentPin breadPin = (FragmentPin) app.getFragmentManager().findFragmentByTag(FragmentPin.class.getName());
+
         if (fingerprintFragment != null && fingerprintFragment.isAdded() || breadPin != null && breadPin.isAdded()) {
             Log.e(TAG, "authPrompt: auth fragment already added: F:" + fingerprintFragment + ", P:" + breadPin);
             return;

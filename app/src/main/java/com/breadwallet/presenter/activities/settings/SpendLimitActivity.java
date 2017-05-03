@@ -3,19 +3,25 @@ package com.breadwallet.presenter.activities.settings;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.SeekBar;
-import android.widget.Toast;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.ActivityUTILS;
-import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.animation.BreadDialog;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
-import com.breadwallet.wallet.BRPeerManager;
+import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.sqlite.CurrencyDataSource;
+import com.breadwallet.tools.util.BRCurrency;
+import com.breadwallet.tools.util.BRExchange;
 
-import static com.breadwallet.R.id.textView;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.breadwallet.tools.util.BRExchange.getSatoshisFromAmount;
+import static java.security.AccessController.getContext;
 
 public class SpendLimitActivity extends AppCompatActivity {
     private static final String TAG = SpendLimitActivity.class.getName();
@@ -23,6 +29,9 @@ public class SpendLimitActivity extends AppCompatActivity {
     public static boolean appVisible = false;
     private static SpendLimitActivity app;
     private SeekBar seekBar;
+    private TextView label;
+    private Spinner curSpiner;
+    private static final long MAX_AMOUNT_SATOSHIS = 1000000000; //10 BTC
 
     public static SpendLimitActivity getApp() {
         return app;
@@ -33,29 +42,62 @@ public class SpendLimitActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_spend_limit);
 
+        label = (TextView) findViewById(R.id.limit_label);
         seekBar = (SeekBar) findViewById(R.id.seekBar);
-        seekBar.setMax(200);
+        curSpiner = (Spinner) findViewById(R.id.cur_spinner);
+
+        final List<String> curList = new ArrayList<>();
+        curList.add("BTC");
+        curList.addAll(CurrencyDataSource.getInstance(this).getAllISOs());
+
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.bread_spinner_item, curList);
+        curSpiner.setAdapter(adapter);
+        curSpiner.setAdapter(adapter);
+        curSpiner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                updateText(0);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                updateText(0);
+            }
+        });
+
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            int progress = 0;
+            public int progress = 0;
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) {
-                progress = progresValue;
-                Toast.makeText(getApplicationContext(), "Changing seekbar's progress", Toast.LENGTH_SHORT).show();
+                progress = progresValue / 100 * 100;
+
+                updateText(progress);
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-                Toast.makeText(getApplicationContext(), "Started tracking seekbar", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-//                textView.setText("Covered: " + progress + "/" + seekBar.getMax());
-                Toast.makeText(getApplicationContext(), "Stopped tracking seekbar", Toast.LENGTH_SHORT).show();
             }
         });
 
+    }
+
+    private int getMax(String iso) {
+        BigDecimal result = BRExchange.getAmountFromSatoshis(this, iso, new BigDecimal(MAX_AMOUNT_SATOSHIS));
+        return result.intValue();
+    }
+
+    private void updateText(int progress) {
+        String iso = (String) curSpiner.getSelectedItem();
+        seekBar.setMax(getMax(iso));
+        BigDecimal amount = new BigDecimal(progress);
+        label.setText(BRCurrency.getFormattedCurrencyString(this, iso, amount));
+        BigDecimal satoshis = BRExchange.getSatoshisFromAmount(this, iso, amount);
+        KeyStoreManager.putSpendLimit(satoshis.longValue(), this);
     }
 
     @Override

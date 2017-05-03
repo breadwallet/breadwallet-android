@@ -283,25 +283,11 @@ public class FragmentSend extends Fragment {
 
         final List<String> curList = new ArrayList<>();
         curList.add("BTC");
-        spinner.setAdapter(new ArrayAdapter<>(getContext(), R.layout.bread_spinner_item, curList));
-        Log.e(TAG, "spinner took: " + (System.currentTimeMillis() - start));
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if (getActivity() == null) return;
-                curList.addAll(CurrencyDataSource.getInstance(getActivity()).getAllISOs());
-                if (getActivity() == null) return;
-                final ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.bread_spinner_item, curList);
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        spinner.setAdapter(adapter);
+        if (getActivity() == null) return;
+        curList.addAll(CurrencyDataSource.getInstance(getActivity()).getAllISOs());
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.bread_spinner_item, curList);
+        spinner.setAdapter(adapter);
 
-                    }
-                });
-
-            }
-        }).start();
 
     }
 

@@ -259,10 +259,12 @@ public class TransactionManager {
         } else {
             minOutput = BRWalletManager.getInstance().getMinOutputAmount();
         }
+
         //amount can't be less than the min
         if (request.amount < minOutput) {
             final String bitcoinMinMessage = String.format(Locale.getDefault(), ctx.getString(R.string.bitcoin_payment_cant_be_less),
                     BRConstants.bitcoinLowercase + new BigDecimal(minOutput).divide(new BigDecimal("100")));
+
 
             ((Activity) ctx).runOnUiThread(new Runnable() {
                 @Override
@@ -278,7 +280,8 @@ public class TransactionManager {
             return;
         }
         boolean forcePin = false;
-        if(BRWalletManager.getInstance().getTotalSent() + request.amount > AuthManager.getInstance().getTotalLimit(ctx)){
+
+        if (BRWalletManager.getInstance().getTotalSent() + request.amount > AuthManager.getInstance().getTotalLimit(ctx)) {
             forcePin = true;
         }
 

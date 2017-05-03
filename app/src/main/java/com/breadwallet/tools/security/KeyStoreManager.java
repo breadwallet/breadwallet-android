@@ -13,7 +13,10 @@ import android.util.Log;
 
 import com.breadwallet.R;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
+import com.breadwallet.presenter.customviews.BRDialogView;
+import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BytesUtil;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.wallet.BRWalletManager;
@@ -122,7 +125,7 @@ public class KeyStoreManager {
     private static final String TOKEN_FILENAME = "my_token";
     private static final String PASS_TIME_FILENAME = "my_pass_time";
 
-    public static final int AUTH_DURATION_SEC = 300; //todo put this back to 300
+    public static final int AUTH_DURATION_SEC = 300;
 
     static {
         aliasObjectMap = new HashMap<>();
@@ -315,7 +318,6 @@ public class KeyStoreManager {
     }
 
     private static void showKeyStoreFailedToLoad(final Context context) {
-        //todo finish
 //        showKeyStoreDialog(context,"KeyStore Error", "Failed to load KeyStore. Please try again later or enter your phrase to recover your Breadwallet now.", "recover now", "try later",
 //                context instanceof IntroActivity ?
 //                        new DialogInterface.OnClickListener() {
@@ -330,6 +332,17 @@ public class KeyStoreManager {
 //                    }
 //                },
 //                null);
+        BreadDialog.showCustomDialog(context, "KeyStore Error", "Failed to load KeyStore. Please try again later.", "close", null, new BRDialogView.BROnClickListener() {
+            @Override
+            public void onClick(BRDialogView brDialogView) {
+                ((Activity) context).finish();
+            }
+        }, null, new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                ((Activity) context).finish();
+            }
+        }, 0);
     }
 
     public static boolean putKeyStorePhrase(byte[] strToStore, Context context, int requestCode) throws BRKeystoreErrorException {
@@ -523,6 +536,7 @@ public class KeyStoreManager {
     }
 
     public static boolean putSpendLimit(long spendLimit, Context context) {
+        Log.e(TAG, "putSpendLimit: " + spendLimit);
         AliasObject obj = aliasObjectMap.get(SPEND_LIMIT_ALIAS);
         byte[] bytesToStore = TypesConverter.long2byteArray(spendLimit);
         try {
@@ -542,7 +556,7 @@ public class KeyStoreManager {
             e.printStackTrace();
         }
 
-        return result.length > 0 ? TypesConverter.byteArray2long(result) : 0;
+        return result.length > 0 ? TypesConverter.byteArray2long(result) : BRConstants.ONE_BITCOIN;
     }
 
     // WARNING use AuthManager to get the limit

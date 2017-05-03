@@ -209,7 +209,6 @@ public class IntroActivity extends FragmentActivity implements Serializable {
     }
 
     public void startTheWalletIfExists() {
-        AuthManager.getInstance().setPinCode("1234", this); //todo delete
         final BRWalletManager m = BRWalletManager.getInstance();
         if (!m.isPasscodeEnabled(this)) {
             //Device passcode/password should be enabled for the app to work

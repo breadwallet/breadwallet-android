@@ -54,7 +54,6 @@ public class DisabledActivity extends Activity {
             public void onClick(View v) {
                 if (AuthManager.getInstance().isWalletDisabled(DisabledActivity.this)) {
                     SpringAnimator.failShakeAnimation(DisabledActivity.this, disabled);
-//                    AuthManager.getInstance().authSuccess(DisabledActivity.this);//todo DELETE
                 } else {
                     BRAnimator.startBreadActivity(DisabledActivity.this, true);
                 }
@@ -86,7 +85,6 @@ public class DisabledActivity extends Activity {
     public void onBackPressed() {
         if (AuthManager.getInstance().isWalletDisabled(DisabledActivity.this)) {
             SpringAnimator.failShakeAnimation(DisabledActivity.this, disabled);
-//                    AuthManager.getInstance().authSuccess(DisabledActivity.this);//todo DELETE
         } else {
             BRAnimator.startBreadActivity(DisabledActivity.this, true);
         }

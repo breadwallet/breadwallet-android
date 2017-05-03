@@ -32,6 +32,19 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/limit_label"/>
 
+    <Spinner
+        android:id="@+id/cur_spinner"
+        android:layout_width="64dp"
+        android:layout_height="40dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginTop="0dp"
+        android:background="@drawable/button_secondary_gray_stroke"
+        android:elevation="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/limit_label"
+        app:layout_constraintBottom_toBottomOf="@+id/limit_label"
+        android:layout_marginBottom="0dp"/>
+
 
     <TextView
         android:id="@+id/limit_label"

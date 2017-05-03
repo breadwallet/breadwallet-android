@@ -168,7 +168,6 @@ public class PostAuthenticationProcessor {
 
     }
 
-
     //BLOCKS
     public void onPublishTxAuth(final Context app, boolean authAsked) {
 
