@@ -9,19 +9,20 @@
     android:background="@drawable/bread_gradient"
     tools:context="com.breadwallet.presenter.activities.PinActivity">
 
-    <TextView
+    <com.breadwallet.presenter.customviews.BreadText
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="96dp"
         android:gravity="center_horizontal"
+        app:customFont="Celevenia.otf"
         android:text="bread"
         android:textColor="@color/white"
         android:textSize="30sp"
         android:textStyle="normal|bold"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toTopOf="@+id/unlocked_text"/>
 
     <LinearLayout
         android:id="@+id/pinLayout"
