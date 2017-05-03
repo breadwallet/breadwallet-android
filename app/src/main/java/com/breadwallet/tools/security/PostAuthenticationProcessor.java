@@ -4,18 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.security.keystore.UserNotAuthenticatedException;
-import android.support.v4.content.IntentCompat;
 import android.util.Log;
 
-import com.breadwallet.BreadWalletApp;
 import com.breadwallet.R;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.activities.IntroActivity;
-import com.breadwallet.presenter.activities.IntroPhraseCheckActivity;
+import com.breadwallet.presenter.activities.PaperKeyActivity;
 import com.breadwallet.presenter.activities.IntroPhraseProveActivity;
-import com.breadwallet.presenter.activities.IntroReEnterPinActivity;
-import com.breadwallet.presenter.activities.IntroSetPitActivity;
 import com.breadwallet.presenter.activities.IntroWriteDownActivity;
 import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
@@ -26,11 +21,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.wallet.BRWalletManager;
 
-import java.security.Key;
 import java.util.Arrays;
-
-import static com.breadwallet.presenter.activities.IntroSetPitActivity.introSetPitActivity;
-import static com.breadwallet.wallet.BRWalletManager.getSeedFromPhrase;
 
 /**
  * BreadWallet
@@ -106,7 +97,7 @@ public class PostAuthenticationProcessor {
             e.printStackTrace();
             return;
         }
-        Intent intent = new Intent(app, IntroPhraseCheckActivity.class);
+        Intent intent = new Intent(app, PaperKeyActivity.class);
         intent.putExtra("phrase", cleanPhrase);
         app.startActivity(intent);
         app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
