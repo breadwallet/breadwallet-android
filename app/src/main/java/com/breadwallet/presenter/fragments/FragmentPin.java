@@ -91,6 +91,13 @@ public class FragmentPin extends Fragment {
         dialogLayout = (RelativeLayout) rootView.findViewById(R.id.pin_dialog);
         mainLayout = (BRLockScreenConstraintLayout) rootView.findViewById(R.id.activity_pin);
 
+        mainLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().getFragmentManager().beginTransaction().remove(FragmentPin.this).commit();
+            }
+        });
+
         dot1 = rootView.findViewById(R.id.dot1);
         dot2 = rootView.findViewById(R.id.dot2);
         dot3 = rootView.findViewById(R.id.dot3);
