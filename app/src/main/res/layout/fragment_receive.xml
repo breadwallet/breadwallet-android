@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:id="@+id/background_layout"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
@@ -19,7 +20,8 @@
         android:padding="0dp"
         >
 
-        <TextView
+        <com.breadwallet.presenter.customviews.BreadText
+            app:customFont="CircularPro-Bold.otf"
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -57,7 +59,7 @@
             android:src="@drawable/ic_check_mark_grey"
             />
 
-        <TextView
+        <com.breadwallet.presenter.customviews.BreadText
             android:id="@+id/address_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -71,7 +73,7 @@
             android:textColor="@color/light_gray"
             />
 
-        <Button
+        <com.breadwallet.presenter.customviews.BreadButton
             android:id="@+id/share_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -110,7 +112,7 @@
             android:orientation="horizontal"
             android:weightSum="2.0">
 
-            <Button
+            <com.breadwallet.presenter.customviews.BreadButton
                 android:id="@+id/share_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -127,7 +129,7 @@
                 android:textSize="14sp"
                 android:textStyle="bold"/>
 
-            <Button
+            <com.breadwallet.presenter.customviews.BreadButton
                 android:id="@+id/share_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -146,7 +148,7 @@
 
         </LinearLayout>
 
-        <Button
+        <com.breadwallet.presenter.customviews.BreadButton
             android:id="@+id/request_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
