@@ -89,7 +89,6 @@ public class TransactionManager {
                 } catch (FeeNeedsAdjust feeNeedsAdjust) {
                     //offer to change amount, so it would be enough for fee
                     tryAdjustFee(app, request);
-
                     return;
                 }
 
@@ -280,6 +279,11 @@ public class TransactionManager {
             return;
         }
         boolean forcePin = false;
+
+        Log.e(TAG, "confirmPay: totalSent: " + BRWalletManager.getInstance().getTotalSent());
+        Log.e(TAG, "confirmPay: request.amount: " + request.amount);
+        Log.e(TAG, "confirmPay: total limit: " + AuthManager.getInstance().getTotalLimit(ctx));
+        Log.e(TAG, "confirmPay: limit: " + KeyStoreManager.getSpendLimit(ctx));
 
         if (BRWalletManager.getInstance().getTotalSent() + request.amount > AuthManager.getInstance().getTotalLimit(ctx)) {
             forcePin = true;
