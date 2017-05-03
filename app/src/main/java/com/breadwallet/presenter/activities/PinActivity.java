@@ -385,4 +385,8 @@ public class PinActivity extends Activity {
         }
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+    }
+
 }

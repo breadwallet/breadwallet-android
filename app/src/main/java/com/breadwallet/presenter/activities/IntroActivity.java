@@ -230,4 +230,5 @@ public class IntroActivity extends FragmentActivity implements Serializable {
 
         }
     }
+
 }

@@ -46,13 +46,17 @@ public class ShareDataActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-         appVisible = false;
+        appVisible = false;
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
     }
 
 }

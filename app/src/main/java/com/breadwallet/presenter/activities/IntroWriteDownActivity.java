@@ -81,4 +81,8 @@ public class IntroWriteDownActivity extends Activity {
         }
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+    }
+
 }

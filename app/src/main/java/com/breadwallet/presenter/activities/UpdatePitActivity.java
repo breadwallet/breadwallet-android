@@ -202,4 +202,8 @@ public class UpdatePitActivity extends Activity {
         description.setText(text);
         SpringAnimator.springView(description);
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+    }
 }

@@ -90,4 +90,8 @@ public class DisabledActivity extends Activity {
         }
         overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+    }
 }
