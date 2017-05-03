@@ -7,6 +7,7 @@ import android.graphics.Typeface;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.breadwallet.R;
@@ -37,24 +38,24 @@ import com.breadwallet.tools.manager.TypefacesManager;
  * THE SOFTWARE.
  */
 @SuppressLint("AppCompatCustomView") // we don't need to support older versions
-public class BreadText extends TextView {
-    private static final String TAG = BreadText.class.getName();
+public class BreadButton extends Button {
+    private static final String TAG = BreadButton.class.getName();
 
-    public BreadText(Context context) {
+    public BreadButton(Context context) {
         super(context);
     }
 
-    public BreadText(Context context, @Nullable AttributeSet attrs) {
+    public BreadButton(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);
     }
 
-    public BreadText(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public BreadButton(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs);
     }
 
-    public BreadText(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public BreadButton(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init(context, attrs);
     }
@@ -67,7 +68,6 @@ public class BreadText extends TextView {
     }
 
     public boolean setCustomFont(Context ctx, String asset) {
-
         Typeface tf = TypefacesManager.get(ctx, asset);
 
         setTypeface(tf);
