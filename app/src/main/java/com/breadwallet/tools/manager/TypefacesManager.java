@@ -52,7 +52,7 @@ public class TypefacesManager {
 
     public static boolean setCustomFont(Context ctx, TextView v, String asset) {
         //make CircularPro-Book.otf default
-        Typeface tf = TypefacesManager.get(ctx, Utils.isNullOrEmpty(asset) ? "CircularPro-Book.otf" : asset);
+        Typeface tf = TypefacesManager.get(ctx,  asset);
         v.setTypeface(tf);
         return true;
     }

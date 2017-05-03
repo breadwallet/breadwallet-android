@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.tools.manager.TypefacesManager;
+import com.breadwallet.tools.util.Utils;
 
 /**
  * BreadWallet
@@ -63,7 +64,7 @@ public class BreadButton extends Button {
     private void init(Context ctx, AttributeSet attrs) {
         TypedArray a = ctx.obtainStyledAttributes(attrs, R.styleable.BreadText);
         String customFont = a.getString(R.styleable.BreadText_customFont);
-        TypefacesManager.setCustomFont(ctx, this, customFont);
+        TypefacesManager.setCustomFont(ctx, this, Utils.isNullOrEmpty(customFont) ? "CircularPro-Medium.otf" : customFont);
         a.recycle();
     }
 
