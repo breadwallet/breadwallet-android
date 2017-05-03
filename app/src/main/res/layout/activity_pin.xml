@@ -13,16 +13,16 @@
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
         android:gravity="center_horizontal"
-        app:customFont="Celevenia.otf"
         android:text="bread"
         android:textColor="@color/white"
-        android:textSize="30sp"
+        android:textSize="34sp"
         android:textStyle="normal|bold"
+        app:customFont="Celevenia.otf"
+        app:layout_constraintBottom_toTopOf="@+id/unlocked_text"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginBottom="32dp"
-        app:layout_constraintBottom_toTopOf="@+id/unlocked_text"/>
+        app:layout_constraintRight_toRightOf="parent"/>
 
     <LinearLayout
         android:id="@+id/pinLayout"
@@ -81,12 +81,13 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
 
-    <TextView
+    <com.breadwallet.presenter.customviews.BreadText
         android:id="@+id/enter_pin_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:text="Enter Pin"
+        app:customFont="CircularPro-Book.otf"
         app:layout_constraintBottom_toTopOf="@+id/pinLayout"
         app:layout_constraintLeft_toLeftOf="@+id/pinLayout"
         app:layout_constraintRight_toRightOf="@+id/pinLayout"/>
@@ -107,7 +108,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <Button
+        <com.breadwallet.presenter.customviews.BreadButton
             android:id="@+id/left_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -115,9 +116,10 @@
             android:background="@drawable/button_half_left"
             android:text="My address"
             android:textColor="@color/white"
+            app:customFont="CircularPro-Medium.otf"
             />
 
-        <Button
+        <com.breadwallet.presenter.customviews.BreadButton
             android:id="@+id/right_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -125,6 +127,7 @@
             android:background="@drawable/button_half_right"
             android:text="Scan"
             android:textColor="@color/white"
+            app:customFont="CircularPro-Medium.otf"
             />
     </LinearLayout>
 
@@ -143,17 +146,18 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
-    <TextView
+    <com.breadwallet.presenter.customviews.BreadText
         android:id="@+id/unlocked_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="8dp"
         android:alpha="0"
         android:text="Wallet Unlocked"
         android:textColor="@color/white"
         android:textSize="18sp"
+        app:customFont="CircularPro-Medium.otf"
         app:layout_constraintBottom_toTopOf="@+id/unlocked_image"
         app:layout_constraintHorizontal_bias="0.461"
         app:layout_constraintLeft_toLeftOf="@+id/unlocked_image"
@@ -164,10 +168,10 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginBottom="16dp"
-        android:background="@android:color/transparent"
         android:layout_marginEnd="15dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/fingerprint_icon"
         app:layout_constraintBottom_toTopOf="@+id/brkeyboard"
-        app:layout_constraintRight_toRightOf="parent"
-        android:src="@drawable/fingerprint_icon"/>
+        app:layout_constraintRight_toRightOf="parent"/>
 
 </com.breadwallet.presenter.customviews.BRLockScreenConstraintLayout>
