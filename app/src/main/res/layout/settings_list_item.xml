@@ -8,7 +8,8 @@
                 android:orientation="horizontal"
     >
 
-    <TextView
+    <com.breadwallet.presenter.customviews.BreadText
+
         android:id="@+id/item_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -19,7 +20,8 @@
         android:textColor="@color/almost_black"
         />
 
-    <TextView
+    <com.breadwallet.presenter.customviews.BreadText
+        app:customFont="CircularPro-Medium.otf"
         android:id="@+id/item_addon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -27,7 +29,7 @@
         android:layout_centerVertical="true"
         android:layout_marginEnd="24dp"
         android:text="TextView"
-        android:textColor="@color/dark_gray"
+        android:textColor="@color/gray"
         android:visibility="gone"/>
 
 
