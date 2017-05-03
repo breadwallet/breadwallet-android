@@ -37,7 +37,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <TextView
+                <com.breadwallet.presenter.customviews.BreadText
                     android:id="@+id/wallet_name_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -47,10 +47,11 @@
                     android:textColor="@color/white"
                     android:textSize="22sp"
                     android:textStyle="bold"
+                    app:customFont="CircularPro-Bold.otf"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent"/>
 
-                <TextView
+                <com.breadwallet.presenter.customviews.BreadText
                     android:id="@+id/primary_price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -60,10 +61,11 @@
                     android:textColor="@color/white"
                     android:textSize="26sp"
                     android:textStyle="bold"
+                    app:customFont="CircularPro-Book.otf"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"/>
 
-                <TextView
+                <com.breadwallet.presenter.customviews.BreadText
                     android:id="@+id/secondary_price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -72,20 +74,22 @@
                     android:text="= b0"
                     android:textColor="@color/almost_black"
                     android:textSize="16sp"
+                    app:customFont="CircularPro-Book.otf"
                     app:layout_constraintBottom_toBottomOf="@+id/primary_price"
                     app:layout_constraintLeft_toRightOf="@+id/primary_price"/>
 
-                <TextView
+                <com.breadwallet.presenter.customviews.BreadText
                     android:id="@+id/price_change_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text=""
                     android:textColor="@color/almost_black"
                     android:textSize="16sp"
+                    app:customFont="CircularPro-Book.otf"
                     app:layout_constraintLeft_toLeftOf="@+id/primary_price"
                     app:layout_constraintTop_toBottomOf="@+id/primary_price"/>
 
-                <TextView
+                <com.breadwallet.presenter.customviews.BreadText
                     android:id="@+id/manage_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -95,6 +99,7 @@
                     android:textColor="@color/white"
                     android:textSize="18sp"
                     android:textStyle="bold"
+                    app:customFont="CircularPro-Bold.otf"
                     app:layout_constraintBottom_toBottomOf="@+id/wallet_name_text"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/wallet_name_text"/>
@@ -273,17 +278,18 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:keepScreenOn="true"
             android:layout_marginTop="16dp"
             android:animateLayoutChanges="true"
             android:background="@drawable/syncing_rounded"
             android:elevation="8dp"
+            android:keepScreenOn="true"
             android:visibility="visible"
             tools:layout_constraintLeft_creator="1"
             tools:layout_constraintRight_creator="1"
             tools:layout_constraintTop_creator="1">
 
-            <TextView
+            <com.breadwallet.presenter.customviews.BreadText
+                app:customFont="CircularPro-Book.otf"
                 android:id="@+id/sync_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -294,7 +300,8 @@
                 app:layout_constraintLeft_toLeftOf="@+id/syncing_label"
                 app:layout_constraintTop_toBottomOf="@+id/sync_progress"/>
 
-            <TextView
+            <com.breadwallet.presenter.customviews.BreadText
+                app:customFont="CircularPro-Bold.otf"
                 android:id="@+id/syncing_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -341,7 +348,8 @@
 
     </LinearLayout>
 
-    <TextView
+    <com.breadwallet.presenter.customviews.BreadText
+        app:customFont="CircularPro-Book.otf"
         android:id="@+id/empty_tx_tip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -386,14 +394,15 @@
                 android:layout_marginTop="8dp"
                 android:src="@drawable/ic_send"/>
 
-            <TextView
+            <com.breadwallet.presenter.customviews.BreadText
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_margin="4dp"
                 android:layout_weight="1"
                 android:text="SEND"
                 android:textColor="@color/pin_pad_text"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                app:customFont="CircularPro-Medium.otf"/>
         </LinearLayout>
 
         <LinearLayout
@@ -412,14 +421,15 @@
                 android:layout_weight="1"
                 android:src="@drawable/ic_receive"/>
 
-            <TextView
+            <com.breadwallet.presenter.customviews.BreadText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
                 android:layout_weight="1"
                 android:text="RECEIVE"
                 android:textColor="@color/pin_pad_text"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                app:customFont="CircularPro-Medium.otf"/>
         </LinearLayout>
 
         <LinearLayout
@@ -438,16 +448,16 @@
                 android:layout_weight="1"
                 android:src="@drawable/ic_menu"/>
 
-            <TextView
+            <com.breadwallet.presenter.customviews.BreadText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
                 android:layout_weight="1"
                 android:text="MENU"
                 android:textColor="@color/pin_pad_text"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                app:customFont="CircularPro-Medium.otf"/>
         </LinearLayout>
-
 
     </LinearLayout>
 

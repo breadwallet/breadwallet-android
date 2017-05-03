@@ -38,7 +38,7 @@ public class TypefacesManager {
             if(!cache.containsKey(name)){
                 Typeface t = Typeface.createFromAsset(
                         c.getAssets(),
-                        String.format("fonts/%s.ttf", name)
+                        String.format("fonts/%s", name)
                 );
                 cache.put(name, t);
             }
