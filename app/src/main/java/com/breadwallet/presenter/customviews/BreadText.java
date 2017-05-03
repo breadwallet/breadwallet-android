@@ -67,5 +67,4 @@ public class BreadText extends TextView {
         a.recycle();
     }
 
-
 }
