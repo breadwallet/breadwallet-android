@@ -2,29 +2,23 @@ package com.breadwallet.presenter.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.exceptions.BRKeystoreErrorException;
-import com.breadwallet.presenter.activities.settings.DefaultCurrencyActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
-import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.tools.util.WordsReader;
-import com.breadwallet.wallet.BRWalletManager;
 import com.google.firebase.crash.FirebaseCrash;
 
 import java.io.IOException;
@@ -32,8 +26,8 @@ import java.util.List;
 import java.util.Random;
 
 
-public class IntroPhraseProveActivity extends Activity {
-    private static final String TAG = IntroPhraseProveActivity.class.getName();
+public class PaperKeyProveActivity extends Activity {
+    private static final String TAG = PaperKeyProveActivity.class.getName();
     private Button submit;
     private EditText wordEditFirst;
     private EditText wordEditSecond;
@@ -41,16 +35,16 @@ public class IntroPhraseProveActivity extends Activity {
     private TextView wordTextSecond;
     private SparseArray<String> sparseArrayWords = new SparseArray<>();
     public static boolean appVisible = false;
-    private static IntroPhraseProveActivity app;
+    private static PaperKeyProveActivity app;
 
-    public static IntroPhraseProveActivity getApp() {
+    public static PaperKeyProveActivity getApp() {
         return app;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_phrase_prove);
+        setContentView(R.layout.activity_paper_key_prove);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
 
         submit = (Button) findViewById(R.id.button_submit);
@@ -68,11 +62,11 @@ public class IntroPhraseProveActivity extends Activity {
 
                 if (edit1.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(0))) && edit2.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(1)))) {
                     Log.e(TAG, "onClick: Success!");
-                    SharedPreferencesManager.putPhraseWroteDown(IntroPhraseProveActivity.this, true);
-                    BRAnimator.showBreadSignal(IntroPhraseProveActivity.this, "Paper Key Set", "Awesome!", R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
+                    SharedPreferencesManager.putPhraseWroteDown(PaperKeyProveActivity.this, true);
+                    BRAnimator.showBreadSignal(PaperKeyProveActivity.this, "Paper Key Set", "Awesome!", R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
                         @Override
                         public void onComplete() {
-                            BRAnimator.startBreadActivity(IntroPhraseProveActivity.this, false);
+                            BRAnimator.startBreadActivity(PaperKeyProveActivity.this, false);
                             overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                         }
                     });
@@ -80,18 +74,18 @@ public class IntroPhraseProveActivity extends Activity {
                     String languageCode = getString(R.string.lang);
                     List<String> list;
                     try {
-                        list = WordsReader.getWordList(IntroPhraseProveActivity.this, languageCode);
+                        list = WordsReader.getWordList(PaperKeyProveActivity.this, languageCode);
                     } catch (IOException e) {
                         e.printStackTrace();
                         throw new NullPointerException("No word list");
                     }
                     Log.e(TAG, "onClick: FAIL");
                     if (!list.contains(edit1) || edit1.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(0)))) {
-                        SpringAnimator.failShakeAnimation(IntroPhraseProveActivity.this, wordTextFirst);
+                        SpringAnimator.failShakeAnimation(PaperKeyProveActivity.this, wordTextFirst);
                     }
 
                     if (!list.contains(edit2) || edit2.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(1)))) {
-                        SpringAnimator.failShakeAnimation(IntroPhraseProveActivity.this, wordTextSecond);
+                        SpringAnimator.failShakeAnimation(PaperKeyProveActivity.this, wordTextSecond);
                     }
                 }
 

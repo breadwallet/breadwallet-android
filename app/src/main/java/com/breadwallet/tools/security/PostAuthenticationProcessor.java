@@ -10,7 +10,7 @@ import com.breadwallet.R;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.PaperKeyActivity;
-import com.breadwallet.presenter.activities.IntroPhraseProveActivity;
+import com.breadwallet.presenter.activities.PaperKeyProveActivity;
 import com.breadwallet.presenter.activities.IntroWriteDownActivity;
 import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
@@ -111,7 +111,7 @@ public class PostAuthenticationProcessor {
             e.printStackTrace();
             return;
         }
-        Intent intent = new Intent(app, IntroPhraseProveActivity.class);
+        Intent intent = new Intent(app, PaperKeyProveActivity.class);
         intent.putExtra("phrase", cleanPhrase);
         app.startActivity(intent);
         app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);

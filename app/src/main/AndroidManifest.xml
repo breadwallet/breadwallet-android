@@ -160,7 +160,7 @@
             android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name=".presenter.activities.IntroPhraseProveActivity"
+            android:name=".presenter.activities.PaperKeyProveActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait">
         </activity>
