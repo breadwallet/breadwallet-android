@@ -2,6 +2,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_write_down"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -15,13 +16,13 @@
         android:background="@drawable/write_phrase_gradient"
         >
 
-        <TextView
+        <com.breadwallet.presenter.customviews.BreadText
+            app:customFont="CircularPro-Bold.otf"
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_margin="24dp"
-            android:layout_weight="1"
             android:text="Paper Key"
             android:textAlignment="center"
             android:textColor="@color/white"
@@ -46,7 +47,7 @@
 
     </FrameLayout>
 
-    <TextView
+    <com.breadwallet.presenter.customviews.BreadText
         android:id="@+id/textView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -57,7 +58,7 @@
         android:text="Protect your wallet against theft and ensure you can recover your wallet after replacing your phone or updating it's software"
         android:textSize="20sp"/>
 
-    <Button
+    <com.breadwallet.presenter.customviews.BreadButton
         android:id="@+id/button_write_down"
         android:layout_width="match_parent"
         android:layout_height="60dp"
