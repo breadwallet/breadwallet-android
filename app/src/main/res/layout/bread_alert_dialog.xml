@@ -1,9 +1,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:id="@+id/main_layout"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_gravity="center"
-              android:id="@+id/main_layout"
               android:background="@drawable/bread_dialog_rounded"
               android:filterTouchesWhenObscured="true"
               android:orientation="vertical"
@@ -12,52 +12,53 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:layout_marginBottom="8dp"
-        android:weightSum="2.0"
-        android:orientation="horizontal">
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        android:weightSum="2.0">
 
         <ImageView
             android:id="@+id/dialog_icon"
-            android:layout_weight="1.6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|center_horizontal"
             android:layout_margin="8dp"
-         />
+            android:layout_weight="1.6"
+            />
 
-        <TextView
+        <com.breadwallet.presenter.customviews.BreadText
             android:id="@+id/dialog_title"
-            android:layout_weight="0.4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
+            android:layout_weight="0.4"
             android:text="Hello"
             android:textSize="22sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            app:customFont="CircularPro-Bold.otf"/>
 
     </LinearLayout>
 
-    <TextView
+    <com.breadwallet.presenter.customviews.BreadText
         android:id="@+id/dialog_text"
         android:layout_width="match_parent"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
         android:gravity="center_horizontal|center_vertical"
-        android:text="TextView"/>
+        android:text="TextView"
+        android:textSize="18sp"/>
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
-        android:orientation="horizontal"
         android:layout_marginTop="16dp"
+        android:orientation="horizontal"
         android:weightSum="2.0">
 
-        <Button
+        <com.breadwallet.presenter.customviews.BreadButton
             android:id="@+id/neg_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -66,7 +67,7 @@
             android:text="Neg"
             android:textColor="@color/dark_blue"/>
 
-        <Button
+        <com.breadwallet.presenter.customviews.BreadButton
             android:id="@+id/pos_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

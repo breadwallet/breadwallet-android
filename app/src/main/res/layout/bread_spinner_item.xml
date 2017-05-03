@@ -17,14 +17,15 @@
 ** limitations under the License.
 */
 -->
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-          android:id="@android:id/text1"
-          style="?android:attr/spinnerItemStyle"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:background="@color/extra_light_blue_background"
-          android:ellipsize="marquee"
-          android:maxLines="1"
-          android:textAlignment="inherit"
-          android:textColor="@color/light_gray"
-          android:textStyle="bold"/>
+<com.breadwallet.presenter.customviews.BreadText
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/text1"
+    style="?android:attr/spinnerItemStyle"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/extra_light_blue_background"
+    android:ellipsize="marquee"
+    android:maxLines="1"
+    android:textAlignment="inherit"
+    android:textColor="@color/light_gray"
+    android:textStyle="bold"/>
