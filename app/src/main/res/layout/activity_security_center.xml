@@ -1,4 +1,5 @@
 <com.breadwallet.presenter.customviews.BRLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                      xmlns:app="http://schemas.android.com/apk/res-auto"
                                                       android:id="@+id/layout"
                                                       android:layout_width="match_parent"
                                                       android:layout_height="match_parent"
@@ -13,7 +14,8 @@
         android:background="@drawable/bread_gradient"
         android:orientation="vertical">
 
-        <TextView
+        <com.breadwallet.presenter.customviews.BreadText
+            app:customFont="CircularPro-Bold.otf"
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -35,7 +37,7 @@
 
     </LinearLayout>
 
-    <TextView
+    <com.breadwallet.presenter.customviews.BreadText
         android:id="@+id/textView10"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
