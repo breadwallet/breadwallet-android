@@ -213,4 +213,8 @@ public class PaperKeyActivity extends Activity {
                 break;
         }
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+    }
 }

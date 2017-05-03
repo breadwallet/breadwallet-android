@@ -208,4 +208,8 @@ public class IntroReEnterPinActivity extends FragmentActivity {
         }
 
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+    }
 }

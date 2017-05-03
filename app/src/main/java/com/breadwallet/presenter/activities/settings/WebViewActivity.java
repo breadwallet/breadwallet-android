@@ -106,4 +106,6 @@ public class WebViewActivity extends Activity {
         super.onPause();
         appVisible = false;
     }
+
+
 }

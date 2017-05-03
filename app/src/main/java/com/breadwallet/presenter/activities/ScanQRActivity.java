@@ -178,4 +178,8 @@ public class ScanQRActivity extends AppCompatActivity {
             }
         }
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+    }
 }

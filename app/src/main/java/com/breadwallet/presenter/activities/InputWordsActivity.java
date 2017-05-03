@@ -360,4 +360,8 @@ public class InputWordsActivity extends Activity {
         word12.setText("");
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+    }
+
 }

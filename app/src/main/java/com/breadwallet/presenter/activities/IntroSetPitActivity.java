@@ -149,4 +149,8 @@ public class IntroSetPitActivity extends Activity {
         }
 
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+    }
 }

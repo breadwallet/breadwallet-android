@@ -24,6 +24,10 @@ public class SyncBlockchainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sync_blockchain);
@@ -32,7 +36,7 @@ public class SyncBlockchainActivity extends AppCompatActivity {
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!BRAnimator.isClickAllowed()) return;
+                if (!BRAnimator.isClickAllowed()) return;
                 BreadDialog.showCustomDialog(SyncBlockchainActivity.this, "Sync with Blockchain?",
                         "You will not be able to send money while syncing.", "Sync", "Cancel",
                         new BRDialogView.BROnClickListener() {

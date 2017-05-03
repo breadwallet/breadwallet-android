@@ -26,7 +26,11 @@ public class SpendLimitActivity extends AppCompatActivity {
     private static SpendLimitActivity app;
     private SeekBar seekBar;
     private TextView label;
+
     //    private Spinner curSpiner;
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+    }
 
     public static SpendLimitActivity getApp() {
         return app;

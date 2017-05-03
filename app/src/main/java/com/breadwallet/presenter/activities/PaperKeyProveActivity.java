@@ -156,5 +156,7 @@ public class PaperKeyProveActivity extends Activity {
         wordTextSecond.setText("Word " + (sparseArrayWords.keyAt(1) + 1));
     }
 
-
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+    }
 }

@@ -236,6 +236,13 @@ public class FragmentPin extends Fragment {
         mainLayout.animate().alpha(0);
         if (!authSucceeded)
             completion.onCancel();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (getActivity() != null)
+                    getActivity().getFragmentManager().beginTransaction().remove(FragmentPin.this).commit();
+            }
+        }, 1000);
 
     }
 

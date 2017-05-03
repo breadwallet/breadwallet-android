@@ -174,6 +174,7 @@ public class SettingsActivity extends AppCompatActivity {
             }, false));
         }
 
+
         items.add(new BRSettingsItem("Default Currency", "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -224,6 +225,10 @@ public class SettingsActivity extends AppCompatActivity {
             }
         }, false));
 
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
     }
 
     @Override
