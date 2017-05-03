@@ -9,7 +9,8 @@
     android:layout_height="match_parent"
     tools:context="com.breadwallet.presenter.activities.IntroSetPitActivity">
 
-    <TextView
+    <com.breadwallet.presenter.customviews.BreadText
+        app:customFont="CircularPro-Bold.otf"
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -17,11 +18,11 @@
         android:layout_marginTop="64dp"
         android:text="Notifications"
         android:textSize="30sp"
-        android:textStyle="normal|bold"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
-    <TextView
+    <com.breadwallet.presenter.customviews.BreadText
+
         android:id="@+id/description"
         android:layout_width="296dp"
         android:layout_height="wrap_content"
@@ -48,7 +49,9 @@
         app:layout_constraintTop_toBottomOf="@+id/textView4"
         android:id="@+id/separator"/>
 
-    <TextView
+    <com.breadwallet.presenter.customviews.BreadText
+        app:customFont="CircularPro-Bold.otf"
+
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
