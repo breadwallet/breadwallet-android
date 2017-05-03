@@ -1,15 +1,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/toast_layout_root"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="bottom"
-    android:background="@drawable/toast_layout_orange"
-    android:filterTouchesWhenObscured="true"
-    android:orientation="horizontal"
-    android:padding="8dp"
-    android:showDividers="middle">
+              android:id="@+id/toast_layout_root"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="bottom"
+              android:background="@drawable/toast_layout_orange"
+              android:filterTouchesWhenObscured="true"
+              android:orientation="horizontal"
+              android:padding="8dp"
+              android:showDividers="middle">
 
-    <TextView
+    <com.breadwallet.presenter.customviews.BreadText
         android:id="@+id/toast_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
