@@ -34,7 +34,6 @@
             android:layout_weight="0.4"
             android:text="Hello"
             android:textSize="22sp"
-            android:textStyle="bold"
             app:customFont="CircularPro-Bold.otf"/>
 
     </LinearLayout>

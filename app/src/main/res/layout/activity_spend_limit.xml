@@ -18,7 +18,6 @@
         android:layout_marginTop="64dp"
         android:text="Fingerprint Limit"
         android:textSize="30sp"
-        android:textStyle="normal|bold"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
@@ -56,7 +55,6 @@
         android:layout_marginTop="24dp"
         android:text="---"
         android:textSize="20sp"
-        android:textStyle="bold"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="@+id/title"
         app:layout_constraintRight_toRightOf="parent"

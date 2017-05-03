@@ -18,6 +18,6 @@
         android:layout_toRightOf="@+id/check_mark"
         android:text="Test"
         android:textColor="@color/light_gray"
-        android:textStyle="bold"/>
+        />
 
 </RelativeLayout>

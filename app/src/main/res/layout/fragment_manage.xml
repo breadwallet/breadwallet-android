@@ -45,7 +45,7 @@
             android:text="Wallet Name"
             android:textColor="@color/light_gray"
             android:textSize="18sp"
-            android:textStyle="bold"/>
+            />
 
         <EditText
             android:id="@+id/wallet_name_label"
@@ -53,7 +53,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:text="My Bread"
-            android:textStyle="bold"
             android:textColor="@color/almost_black"
             android:textSize="18sp"/>
 

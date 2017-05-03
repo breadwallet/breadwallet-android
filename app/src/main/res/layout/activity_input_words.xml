@@ -19,7 +19,6 @@
         android:text="Recover Wallet"
         android:textColor="@color/almost_black"
         android:textSize="30sp"
-        android:textStyle="normal|bold"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
@@ -46,7 +45,6 @@
         android:text="Phrase Type"
         android:textColor="@color/almost_black"
         android:textSize="18sp"
-        android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="@+id/description"
         app:layout_constraintTop_toBottomOf="@+id/description"/>
 
@@ -72,7 +70,7 @@
             android:layout_weight="1.0"
             android:background="@drawable/button_half_left"
             android:text="12-Word"
-            android:textStyle="bold"/>
+/>
 
         <com.breadwallet.presenter.customviews.BreadButton
             android:id="@+id/right_button"
@@ -81,7 +79,7 @@
             android:layout_weight="1.0"
             android:background="@drawable/button_half_right"
             android:text="24-Word"
-            android:textStyle="bold"/>
+            />
     </LinearLayout>
 
     <com.breadwallet.presenter.customviews.BreadButton

@@ -92,7 +92,6 @@
             android:text="Import Wallet"
             android:textColor="@color/white"
             android:textSize="18sp"
-            android:textStyle="bold"
             tools:layout_constraintTop_creator="1"/>
 
         <ImageView

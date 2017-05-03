@@ -59,7 +59,7 @@
         android:layout_marginTop="64dp"
         android:text="Push Notifications"
         android:textColor="@color/almost_black"
-        android:textStyle="bold"
+
         app:layout_constraintLeft_toLeftOf="@+id/description"
         app:layout_constraintTop_toBottomOf="@+id/description"/>
 

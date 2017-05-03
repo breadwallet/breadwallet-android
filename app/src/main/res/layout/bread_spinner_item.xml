@@ -28,4 +28,4 @@
     android:maxLines="1"
     android:textAlignment="inherit"
     android:textColor="@color/light_gray"
-    android:textStyle="bold"/>
+   />
