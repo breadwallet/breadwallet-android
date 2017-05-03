@@ -99,8 +99,8 @@ public class SpendLimitActivity extends AppCompatActivity {
     }
 
     private void updateTotalLimit() {
-        AuthManager.getInstance().setTotalLimit(app, BRWalletManager.getInstance().getTotalSent()
-                + KeyStoreManager.getSpendLimit(app));
+        AuthManager.getInstance().setTotalLimit(this, BRWalletManager.getInstance().getTotalSent()
+                + KeyStoreManager.getSpendLimit(this));
     }
 
     //satoshis

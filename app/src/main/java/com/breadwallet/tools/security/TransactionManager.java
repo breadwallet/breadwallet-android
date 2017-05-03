@@ -11,6 +11,7 @@ import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.util.BRConstants;
@@ -294,6 +295,8 @@ public class TransactionManager {
             @Override
             public void onComplete() {
                 PostAuthenticationProcessor.getInstance().onPublishTxAuth(ctx, true);
+                BRAnimator.killAllFragments((Activity) ctx);
+                BRAnimator.startBreadIfNotStarted((Activity) ctx);
             }
 
             @Override

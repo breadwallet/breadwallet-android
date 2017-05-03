@@ -208,13 +208,6 @@ public class FragmentPin extends Fragment {
                 completion.onComplete();
                 AuthManager.getInstance().authSuccess(getActivity());
 
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        BRAnimator.killAllFragments(getActivity());
-                        BRAnimator.startBreadIfNotStarted(getActivity());
-                    }
-                });
             }
         }).start();
 

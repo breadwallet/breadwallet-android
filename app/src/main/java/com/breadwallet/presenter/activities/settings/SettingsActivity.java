@@ -21,6 +21,7 @@ import com.breadwallet.presenter.activities.ActivityUTILS;
 import com.breadwallet.presenter.activities.ImportActivity;
 import com.breadwallet.presenter.activities.RestoreActivity;
 import com.breadwallet.presenter.entities.BRSettingsItem;
+import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.security.AuthManager;
 import com.platform.HTTPServer;
@@ -155,9 +156,20 @@ public class SettingsActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Log.e(TAG, "onClick: FingerPrint Spending Limit");
-                    Intent intent = new Intent(SettingsActivity.this, SpendLimitActivity.class);
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                    AuthManager.getInstance().authPrompt(SettingsActivity.this, null, "Please enter your PIN to be able to change the limit.", true, new BRAuthCompletion() {
+                        @Override
+                        public void onComplete() {
+                            Intent intent = new Intent(SettingsActivity.this, SpendLimitActivity.class);
+                            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                            startActivity(intent);
+                        }
+
+                        @Override
+                        public void onCancel() {
+
+                        }
+                    });
+
                 }
             }, false));
         }
