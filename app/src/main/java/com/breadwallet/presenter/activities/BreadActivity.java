@@ -1,10 +1,7 @@
 package com.breadwallet.presenter.activities;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -19,19 +16,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.OvershootInterpolator;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.ViewFlipper;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.entities.TransactionListItem;
@@ -49,7 +41,6 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.tools.util.NetworkChangeReceiver;
-import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
@@ -114,7 +105,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     public ProgressBar syncProgressBar;
     private ConstraintLayout walletProgressLayout;
     private RecyclerView txList;
-    private TransactionListAdapter adapter;
+    public TransactionListAdapter adapter;
     private RelativeLayout mainLayout;
     private LinearLayout toolbarLayout;
     private ConstraintLayout syncingLayout;
@@ -123,13 +114,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     private int progress = 0;
     public static boolean appVisible = false;
     private ImageButton searchIcon;
-    private EditText searchEdit;
-    private BRSearchManager searchManager;
-    private LinearLayout filterButtonsLayout;
-    private Button sentFilter;
-    private Button receivedFilter;
-    private Button pendingFilter;
-    private Button completeFilter;
+    public ViewFlipper barFlipper;
 
     private static BreadActivity app;
 
@@ -168,8 +153,6 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         if (introActivity != null) introActivity.finish();
         if (introReEnterPinActivity != null) introReEnterPinActivity.finish();
 
-        searchManager = new BRSearchManager();
-        searchManager.init();
 
     }
 
@@ -178,7 +161,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     }
 
     //BLOCKS
-    private void updateTxList() {
+    public void updateTxList() {
         final TransactionListItem[] arr = BRWalletManager.getInstance().getTransactions();
         Log.e(TAG, "updateTxList: getTransactions().length: " + (arr == null ? 0 : arr.length));
         runOnUiThread(new Runnable() {
@@ -198,7 +181,6 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         });
 
     }
-
 
     private void setUrlHandler(Intent intent) {
         Uri data = intent.getData();
@@ -300,90 +282,11 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
             @Override
             public void onClick(View v) {
                 SpringAnimator.springView(v);
-                searchManager.animateSearchVisibility(searchEdit.getVisibility() != View.VISIBLE);
-            }
-        });
-        searchEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    searchManager.animateSearchVisibility(false);
-                } else {
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-                }
-            }
-        });
-
-        searchEdit.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (adapter != null)
-                    adapter.filterBy(s.toString(), searchManager.filterSwitches);
-                Log.e(TAG, "onTextChanged: " + s.toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
+                barFlipper.setDisplayedChild(1); //search bar
 
             }
         });
 
-        sentFilter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SpringAnimator.springView(v);
-                searchManager.filterSwitches[0] = !searchManager.filterSwitches[0];
-                updateFilterButtonsUI(searchManager.filterSwitches);
-
-            }
-        });
-
-        receivedFilter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SpringAnimator.springView(v);
-                searchManager.filterSwitches[1] = !searchManager.filterSwitches[1];
-                updateFilterButtonsUI(searchManager.filterSwitches);
-            }
-        });
-
-        pendingFilter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SpringAnimator.springView(v);
-                searchManager.filterSwitches[2] = !searchManager.filterSwitches[2];
-                updateFilterButtonsUI(searchManager.filterSwitches);
-            }
-        });
-
-        completeFilter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SpringAnimator.springView(v);
-                searchManager.filterSwitches[3] = !searchManager.filterSwitches[3];
-                updateFilterButtonsUI(searchManager.filterSwitches);
-            }
-        });
-
-    }
-
-    private void updateFilterButtonsUI(boolean[] switches) {
-        sentFilter.setBackgroundResource(switches[0] ? R.drawable.button_secondary_blue_stroke : R.drawable.button_secondary_gray_stroke);
-        sentFilter.setTextColor(switches[0] ? getColor(R.color.dark_blue) : getColor(R.color.light_gray));
-        receivedFilter.setBackgroundResource(switches[1] ? R.drawable.button_secondary_blue_stroke : R.drawable.button_secondary_gray_stroke);
-        receivedFilter.setTextColor(switches[1] ? getColor(R.color.dark_blue) : getColor(R.color.light_gray));
-        pendingFilter.setBackgroundResource(switches[2] ? R.drawable.button_secondary_blue_stroke : R.drawable.button_secondary_gray_stroke);
-        pendingFilter.setTextColor(switches[2] ? getColor(R.color.dark_blue) : getColor(R.color.light_gray));
-        completeFilter.setBackgroundResource(switches[3] ? R.drawable.button_secondary_blue_stroke : R.drawable.button_secondary_gray_stroke);
-        completeFilter.setTextColor(switches[3] ? getColor(R.color.dark_blue) : getColor(R.color.light_gray));
-        if (adapter != null)
-            adapter.filterBy(searchEdit.getText().toString(), searchManager.filterSwitches);
     }
 
     @Override
@@ -494,13 +397,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         syncingLayout = (ConstraintLayout) findViewById(R.id.syncing_layout);
         recyclerLayout = (LinearLayout) findViewById(R.id.recycler_layout);
         searchIcon = (ImageButton) findViewById(R.id.search_icon);
-        searchEdit = (EditText) findViewById(R.id.search_edit);
-        filterButtonsLayout = (LinearLayout) findViewById(R.id.filter_buttons_layout);
-
-        sentFilter = (Button) findViewById(R.id.sent_filter);
-        receivedFilter = (Button) findViewById(R.id.received_filter);
-        pendingFilter = (Button) findViewById(R.id.pending_filter);
-        completeFilter = (Button) findViewById(R.id.complete_filter);
+        barFlipper = (ViewFlipper) findViewById(R.id.tool_bar_flipper);
 
     }
 
@@ -754,136 +651,5 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         walletName.setText(name);
     }
 
-    private class BRSearchManager {
 
-        private float searchEditXScale;
-        private float primaryYScale;
-        private float secondaryYScale;
-        private float priceChangeYScale;
-        private float filterButtonsLayoutXScale;
-        public boolean[] filterSwitches = new boolean[4];
-
-        public void init() {
-            searchEditXScale = searchEdit.getScaleX();
-            primaryYScale = primaryPrice.getScaleY();
-            secondaryYScale = secondaryPrice.getScaleY();
-            priceChangeYScale = priceChange.getScaleY();
-            filterButtonsLayoutXScale = filterButtonsLayout.getScaleX();
-            filterButtonsLayout.setScaleX(0);
-            filterButtonsLayout.setVisibility(View.GONE);
-
-        }
-
-        public void clearSwitches() {
-            filterSwitches[0] = false;
-            filterSwitches[1] = false;
-            filterSwitches[2] = false;
-            filterSwitches[3] = false;
-        }
-
-        void animateSearchVisibility(boolean b) {
-            int duration = 300;
-            final int durationShort = 200;
-            if (b) {
-                searchIcon.setBackgroundResource(R.drawable.ic_close_black_24dp);
-                searchEdit.setVisibility(View.VISIBLE);
-                searchEdit.setText("");
-                searchEdit.setScaleX(0);
-                searchEdit.setPivotX(searchEdit.getX());
-                filterButtonsLayout.setVisibility(View.VISIBLE);
-                filterButtonsLayout.setPivotX(filterButtonsLayout.getX());
-
-                searchEdit.animate().scaleX(searchEditXScale).setDuration(duration).setInterpolator(new OvershootInterpolator(0.7f)).setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        searchEdit.setScaleX(searchEditXScale);
-                        searchEdit.requestFocus();
-                        filterButtonsLayout.animate().scaleX(filterButtonsLayoutXScale).setDuration(durationShort * 2).setListener(new AnimatorListenerAdapter() {
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-                                super.onAnimationEnd(animation);
-                                filterButtonsLayout.setScaleX(filterButtonsLayoutXScale);
-                            }
-                        });
-                        searchManager.clearSwitches();
-                        updateFilterButtonsUI(searchManager.filterSwitches);
-                    }
-                });
-                primaryPrice.animate().scaleY(0).setDuration(durationShort).setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        primaryPrice.setScaleY(0);
-                    }
-                });
-                secondaryPrice.animate().scaleY(0).setDuration(durationShort).setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        secondaryPrice.setScaleY(0);
-                    }
-                });
-                priceChange.animate().scaleY(0).setDuration(durationShort).setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        priceChange.setScaleY(0);
-                    }
-                });
-
-
-            } else {
-                searchIcon.setBackgroundResource(R.drawable.ic_search_black_24dp);
-                primaryPrice.setVisibility(View.VISIBLE);
-                secondaryPrice.setVisibility(View.VISIBLE);
-                priceChange.setVisibility(View.VISIBLE);
-                primaryPrice.animate().scaleY(primaryYScale).setDuration(duration).setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        primaryPrice.setScaleY(primaryYScale);
-                    }
-                });
-                secondaryPrice.animate().scaleY(secondaryYScale).setDuration(duration).setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        secondaryPrice.setScaleY(secondaryYScale);
-                    }
-                });
-                priceChange.animate().scaleY(priceChangeYScale).setDuration(duration).setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        priceChange.setScaleY(priceChangeYScale);
-                    }
-                });
-
-                searchEdit.animate().scaleX(0).setDuration(durationShort).setInterpolator(null).setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        searchEdit.setVisibility(View.GONE);
-                    }
-                });
-
-                filterButtonsLayout.animate().scaleX(0).setDuration(durationShort / 2).setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        filterButtonsLayout.setScaleX(0);
-                        filterButtonsLayout.setVisibility(View.GONE);
-                    }
-                });
-                Utils.hideKeyboard(app);
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        updateTxList();
-                    }
-                }).start();
-            }
-        }
-    }
 }
