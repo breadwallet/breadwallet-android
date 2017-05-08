@@ -120,6 +120,18 @@
                 </android.support.constraint.ConstraintLayout>
             </android.support.v7.widget.Toolbar>
 
+            <com.breadwallet.presenter.customviews.BRSearchBar
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/search_bar"
+                android:layout_width="match_parent"
+                android:layout_height="160dp"
+                android:background="@drawable/bread_gradient"
+                android:contentInsetLeft="0dp"
+                android:contentInsetStart="0dp"
+                app:contentInsetLeft="0dp"
+                app:contentInsetStart="0dp"
+                tools:layout_constraintTop_creator="1">
+            </com.breadwallet.presenter.customviews.BRSearchBar>
 
 
         </ViewFlipper>
