@@ -165,6 +165,7 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
             public void onClick(View v) {
                 SpringAnimator.springView(v);
                 filterSwitches[0] = !filterSwitches[0];
+                filterSwitches[1] = false;
                 updateFilterButtonsUI(filterSwitches);
 
             }
@@ -175,6 +176,7 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
             public void onClick(View v) {
                 SpringAnimator.springView(v);
                 filterSwitches[1] = !filterSwitches[1];
+                filterSwitches[0] = false;
                 updateFilterButtonsUI(filterSwitches);
             }
         });
@@ -184,6 +186,7 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
             public void onClick(View v) {
                 SpringAnimator.springView(v);
                 filterSwitches[2] = !filterSwitches[2];
+                filterSwitches[3] = false;
                 updateFilterButtonsUI(filterSwitches);
             }
         });
@@ -193,6 +196,7 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
             public void onClick(View v) {
                 SpringAnimator.springView(v);
                 filterSwitches[3] = !filterSwitches[3];
+                filterSwitches[2] = false;
                 updateFilterButtonsUI(filterSwitches);
             }
         });
@@ -209,6 +213,8 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
         final InputMethodManager keyboard = (InputMethodManager)
                 getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         if (b) {
+            clearSwitches();
+            updateFilterButtonsUI(filterSwitches);
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -216,7 +222,6 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
                     keyboard.showSoftInput(searchEdit, 0);
                 }
             }, 400);
-
         } else {
             keyboard.hideSoftInputFromWindow(searchEdit.getWindowToken(), 0);
         }
