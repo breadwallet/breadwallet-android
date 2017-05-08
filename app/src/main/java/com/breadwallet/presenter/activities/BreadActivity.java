@@ -2,6 +2,7 @@ package com.breadwallet.presenter.activities;
 
 import android.app.Activity;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -19,6 +20,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -27,6 +29,7 @@ import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.customviews.BRSearchBar;
 import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.presenter.fragments.FragmentManage;
 import com.breadwallet.presenter.fragments.FragmentMenu;
@@ -54,6 +57,7 @@ import static com.breadwallet.presenter.activities.IntroActivity.introActivity;
 import static com.breadwallet.presenter.activities.IntroReEnterPinActivity.introReEnterPinActivity;
 import static com.breadwallet.presenter.activities.IntroSetPitActivity.introSetPitActivity;
 import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
+import static java.security.AccessController.getContext;
 
 /**
  * BreadWallet
@@ -116,6 +120,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     public static boolean appVisible = false;
     private ImageButton searchIcon;
     public ViewFlipper barFlipper;
+    private BRSearchBar searchBar;
 
     private static BreadActivity app;
 
@@ -290,6 +295,8 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         barFlipper.setInAnimation(AnimationUtils.loadAnimation(this, R.anim.enter_from_top));
         barFlipper.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.exit_to_top));
 
+        barFlipper.addOnLayoutChangeListener(listener);
+
     }
 
     @Override
@@ -401,6 +408,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         recyclerLayout = (LinearLayout) findViewById(R.id.recycler_layout);
         searchIcon = (ImageButton) findViewById(R.id.search_icon);
         barFlipper = (ViewFlipper) findViewById(R.id.tool_bar_flipper);
+        searchBar = (BRSearchBar) findViewById(R.id.search_bar);
 
     }
 
@@ -648,6 +656,17 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         }
     }
 
+    View.OnLayoutChangeListener listener = new View.OnLayoutChangeListener() {
+        @Override
+        public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+            if (barFlipper.getDisplayedChild() == 1)
+                searchBar.onShow(true);
+            else
+                searchBar.onShow(false);
+
+
+        }
+    };
 
     @Override
     public void onNameChanged(String name) {

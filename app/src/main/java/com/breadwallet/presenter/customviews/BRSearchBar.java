@@ -1,6 +1,7 @@
 package com.breadwallet.presenter.customviews;
 
 import android.content.Context;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -118,17 +119,17 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
     }
 
     private void setListeners() {
-//        searchEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-//            @Override
-//            public void onFocusChange(View v, boolean hasFocus) {
-//                if (!hasFocus) {
-//                    searchManager.animateSearchVisibility(false);
-//                } else {
-//                    InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-//                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-//                }
-//            }
-//        });
+        searchEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    if (breadActivity.barFlipper != null) {
+                        breadActivity.barFlipper.setDisplayedChild(0);
+                        clearSwitches();
+                    }
+                }
+            }
+        });
 
         cancelButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -204,5 +205,21 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
         filterSwitches[3] = false;
     }
 
+    public void onShow(boolean b) {
+        final InputMethodManager keyboard = (InputMethodManager)
+                getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (b) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    searchEdit.requestFocus();
+                    keyboard.showSoftInput(searchEdit, 0);
+                }
+            }, 400);
+
+        } else {
+            keyboard.hideSoftInputFromWindow(searchEdit.getWindowToken(), 0);
+        }
+    }
 
 }
