@@ -71,7 +71,7 @@ public class PaperKeyProveActivity extends Activity {
                         }
                     });
                 } else {
-                    String languageCode = getString(R.string.lang);
+                    String languageCode = getString(R.string.lang_Android);
                     List<String> list;
                     try {
                         list = WordsReader.getWordList(PaperKeyProveActivity.this, languageCode);
@@ -104,14 +104,14 @@ public class PaperKeyProveActivity extends Activity {
         String wordArray[] = cleanPhrase.split(" ");
 
         if (wordArray.length == 12 && cleanPhrase.charAt(cleanPhrase.length() - 1) == '\0') {
-            BreadDialog.showCustomDialog(this, getString(R.string.warning),
-                    getString(R.string.phrase_error), getString(R.string.ok), null, new BRDialogView.BROnClickListener() {
+            BreadDialog.showCustomDialog(this, getString(R.string.JailbreakWarnings_title),
+                    getString(R.string.RecoveryPhrase_paperKeyError_Android), getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                         @Override
                         public void onClick(BRDialogView brDialogView) {
                             brDialogView.dismissWithAnimation();
                         }
                     }, null, null, 0);
-            FirebaseCrash.report(new IllegalArgumentException(getString(R.string.phrase_error)));
+            FirebaseCrash.report(new IllegalArgumentException(getString(R.string.RecoveryPhrase_paperKeyError_Android)));
 
         } else {
             randomWordsSetUp(wordArray);

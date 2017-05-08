@@ -268,7 +268,7 @@ public class KeyStoreManager {
             } else if (e instanceof KeyPermanentlyInvalidatedException) {
                 FirebaseCrash.report(new RuntimeException("KeyStore Error, Your Breadwallet encrypted data was recently invalidated because you disabled your Android lock screen. Please input your phrase to recover your Breadwallet now."));
                 showKeyStoreDialog(context, "KeyStore Error", "Your Breadwallet encrypted data was recently invalidated because you " +
-                                "disabled your Android lock screen. Please input your phrase to recover your Breadwallet now.", context.getString(R.string.ok), null,
+                                "disabled your Android lock screen. Please input your phrase to recover your Breadwallet now.", context.getString(R.string.Button_ok), null,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
@@ -689,7 +689,7 @@ public class KeyStoreManager {
         // Create the Confirm Credentials screen. You can customize the title and description. Or
         // we will provide a generic one for you if you leave it null
         KeyguardManager mKeyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
-        Intent intent = mKeyguardManager.createConfirmDeviceCredentialIntent(context.getString(R.string.auth_required), context.getString(R.string.auth_message));
+        Intent intent = mKeyguardManager.createConfirmDeviceCredentialIntent(context.getString(R.string.DeviceAuth_authRequired_Android), context.getString(R.string.DeviceAuth_authMessage_Android));
         if (intent != null) {
             ((Activity) context).startActivityForResult(intent, requestCode);
         } else {

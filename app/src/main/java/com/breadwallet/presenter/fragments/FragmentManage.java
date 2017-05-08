@@ -122,7 +122,7 @@ public class FragmentManage extends Fragment {
         // multiply by 1000, make it millis, since the Wallet creation time is seconds.
         String creationDate = Utils.formatTimeStamp(time, "MMM. dd, yyyy  ha");
 
-        creationTimeText.setText(String.format(getString(R.string.wallet_created_on), creationDate));
+        creationTimeText.setText(String.format(getString(R.string.ManageWallet_creationDatePrefix) + " %s", creationDate));
 
         layout.setOnClickListener(new View.OnClickListener() {
             @Override

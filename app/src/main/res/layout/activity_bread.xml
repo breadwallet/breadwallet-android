@@ -118,7 +118,7 @@
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
                     android:background="@drawable/search_background"
-                    android:hint="@string/search_hint"
+                    android:hint="@string/AccountHeader.searchHint_Android"
                     android:inputType="textPersonName"
                     android:maxEms="20"
                     android:maxLines="1"

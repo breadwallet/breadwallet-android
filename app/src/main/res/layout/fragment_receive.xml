@@ -84,7 +84,7 @@
             android:elevation="8dp"
             android:paddingEnd="64dp"
             android:paddingStart="64dp"
-            android:text="@string/share"
+            android:text="@string/Receive.share"
             android:textColor="@color/light_gray"
             android:textSize="18sp"
             />

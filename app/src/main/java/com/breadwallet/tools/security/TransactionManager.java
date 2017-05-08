@@ -23,8 +23,6 @@ import com.google.firebase.crash.FirebaseCrash;
 import java.math.BigDecimal;
 import java.util.Locale;
 
-import static com.breadwallet.R.string.syncing_in_progress;
-
 
 /**
  * BreadWallet
@@ -269,7 +267,7 @@ public class TransactionManager {
             ((Activity) ctx).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    BreadDialog.showCustomDialog(ctx, ctx.getString(R.string.payment_failed), bitcoinMinMessage, "Close", null, new BRDialogView.BROnClickListener() {
+                    BreadDialog.showCustomDialog(ctx, ctx.getString(R.string.could_not_make_payment), bitcoinMinMessage, "Close", null, new BRDialogView.BROnClickListener() {
                         @Override
                         public void onClick(BRDialogView brDialogView) {
                             brDialogView.dismiss();
@@ -392,7 +390,7 @@ public class TransactionManager {
         ((Activity) app).runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                BreadDialog.showCustomDialog(app, app.getString(syncing_in_progress), app.getString(R.string.wait_for_sync_to_finish), app.getString(R.string.ok), null, new BRDialogView.BROnClickListener() {
+                BreadDialog.showCustomDialog(app, app.getString(R.string.syncing_in_progress), app.getString(R.string.wait_for_sync_to_finish), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
                         brDialogView.dismissWithAnimation();

@@ -212,7 +212,7 @@ public class IntroActivity extends FragmentActivity implements Serializable {
         final BRWalletManager m = BRWalletManager.getInstance();
         if (!m.isPasscodeEnabled(this)) {
             //Device passcode/password should be enabled for the app to work
-            BreadDialog.showCustomDialog(this, "Warning", getString(R.string.encryption_needed_for_wallet), "close", null, new BRDialogView.BROnClickListener() {
+            BreadDialog.showCustomDialog(this, "Warning", getString(R.string.IntroScreen_encryption_needed_Android), "close", null, new BRDialogView.BROnClickListener() {
                 @Override
                 public void onClick(BRDialogView brDialogView) {
                     finish();
