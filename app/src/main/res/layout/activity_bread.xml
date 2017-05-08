@@ -20,199 +20,110 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <android.support.v7.widget.Toolbar
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/bread_bar"
-            android:layout_width="match_parent"
-            android:layout_height="160dp"
-            android:background="@drawable/bread_gradient"
-            android:contentInsetLeft="0dp"
-            android:contentInsetStart="0dp"
-            app:contentInsetLeft="0dp"
-            app:contentInsetStart="0dp"
-            tools:layout_constraintTop_creator="1">
+        <ViewFlipper
+            android:id="@+id/tool_bar_flipper"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
 
-            <android.support.constraint.ConstraintLayout
-                android:id="@+id/bread_toolbar"
+            <android.support.v7.widget.Toolbar
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/bread_bar"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="160dp"
+                android:background="@drawable/bread_gradient"
+                android:contentInsetLeft="0dp"
+                android:contentInsetStart="0dp"
+                app:contentInsetLeft="0dp"
+                app:contentInsetStart="0dp"
+                tools:layout_constraintTop_creator="1">
 
-                <com.breadwallet.presenter.customviews.BreadText
-                    android:id="@+id/wallet_name_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:text="My Bread"
-                    android:textColor="@color/white"
-                    android:textSize="22sp"
-                    app:customFont="CircularPro-Bold.otf"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"/>
+                <android.support.constraint.ConstraintLayout
+                    android:id="@+id/bread_toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-                <com.breadwallet.presenter.customviews.BreadText
-                    android:id="@+id/primary_price"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="40dp"
-                    android:layout_marginStart="16dp"
-                    android:text="$0"
-                    android:textColor="@color/white"
-                    android:textSize="26sp"
-                    app:customFont="CircularPro-Book.otf"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"/>
+                    <com.breadwallet.presenter.customviews.BreadText
+                        android:id="@+id/wallet_name_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:text="My Bread"
+                        android:textColor="@color/white"
+                        android:textSize="22sp"
+                        app:customFont="CircularPro-Bold.otf"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"/>
 
-                <com.breadwallet.presenter.customviews.BreadText
-                    android:id="@+id/secondary_price"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:layout_marginStart="4dp"
-                    android:text="= b0"
-                    android:textColor="@color/almost_black"
-                    android:textSize="16sp"
-                    app:customFont="CircularPro-Book.otf"
-                    app:layout_constraintBottom_toBottomOf="@+id/primary_price"
-                    app:layout_constraintLeft_toRightOf="@+id/primary_price"/>
+                    <com.breadwallet.presenter.customviews.BreadText
+                        android:id="@+id/primary_price"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="40dp"
+                        android:layout_marginStart="16dp"
+                        android:text="$0"
+                        android:textColor="@color/white"
+                        android:textSize="26sp"
+                        app:customFont="CircularPro-Book.otf"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"/>
 
-                <com.breadwallet.presenter.customviews.BreadText
-                    android:id="@+id/price_change_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="@color/almost_black"
-                    android:textSize="16sp"
-                    app:customFont="CircularPro-Book.otf"
-                    app:layout_constraintLeft_toLeftOf="@+id/primary_price"
-                    app:layout_constraintTop_toBottomOf="@+id/primary_price"/>
-
-                <com.breadwallet.presenter.customviews.BreadText
-                    android:id="@+id/manage_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginEnd="16dp"
-                    android:text="MANAGE"
-                    android:textColor="@color/white"
-                    android:textSize="18sp"
-                    app:customFont="CircularPro-Bold.otf"
-                    app:layout_constraintBottom_toBottomOf="@+id/wallet_name_text"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/wallet_name_text"/>
-
-                <ImageButton
-                    android:id="@+id/search_icon"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_marginEnd="16dp"
-                    android:background="@drawable/ic_search_black_24dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/primary_price"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/primary_price"/>
-
-                <EditText
-                    android:id="@+id/search_edit"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-                    android:background="@drawable/search_background"
-                    android:hint="@string/AccountHeader.searchHint_Android"
-                    android:inputType="textPersonName"
-                    android:maxEms="20"
-                    android:maxLines="1"
-                    android:padding="8dp"
-                    android:selectAllOnFocus="true"
-                    android:textColor="@color/dark_gray"
-                    android:textColorHint="@color/light_gray"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="@+id/search_icon"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toLeftOf="@+id/search_icon"
-                    app:layout_constraintTop_toTopOf="@+id/search_icon"/>
-
-                <LinearLayout
-                    android:id="@+id/filter_buttons_layout"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_marginBottom="0dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="0dp"
-                    android:orientation="horizontal"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/search_edit"
-                    app:layout_constraintVertical_bias="0.0">
-
-                    <com.breadwallet.presenter.customviews.BreadButton
-                        android:id="@+id/sent_filter"
+                    <com.breadwallet.presenter.customviews.BreadText
+                        android:id="@+id/secondary_price"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="4dp"
-                        android:background="@drawable/button_secondary_gray_stroke"
-                        android:elevation="8dp"
-                        android:paddingEnd="4dp"
-                        android:paddingStart="4dp"
-                        android:text="sent"
-                        android:textColor="@color/light_gray"
-                        app:customFont="CircularPro-Book.otf"/>
+                        android:layout_marginStart="4dp"
+                        android:text="= b0"
+                        android:textColor="@color/almost_black"
+                        android:textSize="16sp"
+                        app:customFont="CircularPro-Book.otf"
+                        app:layout_constraintBottom_toBottomOf="@+id/primary_price"
+                        app:layout_constraintLeft_toRightOf="@+id/primary_price"/>
 
-                    <com.breadwallet.presenter.customviews.BreadButton
-                        android:id="@+id/received_filter"
+                    <com.breadwallet.presenter.customviews.BreadText
+                        android:id="@+id/price_change_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="4dp"
-                        android:background="@drawable/button_secondary_gray_stroke"
-                        android:elevation="8dp"
-                        android:paddingEnd="4dp"
-                        android:paddingStart="4dp"
-                        android:text="received"
-                        android:textColor="@color/light_gray"
-                        app:customFont="CircularPro-Book.otf"/>
+                        android:text=""
+                        android:textColor="@color/almost_black"
+                        android:textSize="16sp"
+                        app:customFont="CircularPro-Book.otf"
+                        app:layout_constraintLeft_toLeftOf="@+id/primary_price"
+                        app:layout_constraintTop_toBottomOf="@+id/primary_price"/>
 
-                    <com.breadwallet.presenter.customviews.BreadButton
-                        android:id="@+id/pending_filter"
+                    <com.breadwallet.presenter.customviews.BreadText
+                        android:id="@+id/manage_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="4dp"
-                        android:background="@drawable/button_secondary_gray_stroke"
-                        android:elevation="8dp"
-                        android:paddingEnd="4dp"
-                        android:paddingStart="4dp"
-                        android:text="pending"
-                        android:textColor="@color/light_gray"
-                        app:customFont="CircularPro-Book.otf"/>
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginEnd="16dp"
+                        android:text="MANAGE"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        app:customFont="CircularPro-Bold.otf"
+                        app:layout_constraintBottom_toBottomOf="@+id/wallet_name_text"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/wallet_name_text"/>
 
-                    <com.breadwallet.presenter.customviews.BreadButton
-                        android:id="@+id/complete_filter"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="4dp"
-                        android:background="@drawable/button_secondary_gray_stroke"
-                        android:elevation="8dp"
-                        android:paddingEnd="4dp"
-                        android:paddingStart="4dp"
-                        android:text="complete"
-                        android:textColor="@color/light_gray"
-                        app:customFont="CircularPro-Book.otf"/>
+                    <ImageButton
+                        android:id="@+id/search_icon"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginEnd="16dp"
+                        android:background="@drawable/ic_search_black_24dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/primary_price"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/primary_price"/>
 
-                </LinearLayout>
 
-            </android.support.constraint.ConstraintLayout>
-        </android.support.v7.widget.Toolbar>
+                </android.support.constraint.ConstraintLayout>
+            </android.support.v7.widget.Toolbar>
+
+
+
+        </ViewFlipper>
+
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/loading_wallet_layout"

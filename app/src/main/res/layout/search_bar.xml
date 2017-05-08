@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.v7.widget.Toolbar
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/search_bar"
+    android:layout_width="match_parent"
+    android:layout_height="160dp"
+    android:background="@drawable/bread_gradient"
+    android:contentInsetLeft="0dp"
+    android:contentInsetStart="0dp"
+    app:contentInsetLeft="0dp"
+    app:contentInsetStart="0dp"
+    tools:layout_constraintTop_creator="1">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/search_bar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <EditText
+            android:id="@+id/search_edit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:background="@drawable/search_background"
+            android:hint="@string/AccountHeader.searchHint_Android"
+            android:inputType="textPersonName"
+            android:maxEms="20"
+            android:maxLines="1"
+            android:padding="8dp"
+            android:selectAllOnFocus="true"
+            android:textColor="@color/dark_gray"
+            android:textColorHint="@color/light_gray"
+            android:visibility="gone"
+        />
+
+        <LinearLayout
+            android:id="@+id/filter_buttons_layout"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="0dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="0dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/search_edit"
+            app:layout_constraintVertical_bias="0.0">
+
+            <com.breadwallet.presenter.customviews.BreadButton
+                android:id="@+id/sent_filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/button_secondary_gray_stroke"
+                android:elevation="8dp"
+                android:paddingEnd="4dp"
+                android:paddingStart="4dp"
+                android:text="sent"
+                android:textColor="@color/light_gray"
+                app:customFont="CircularPro-Book.otf"/>
+
+            <com.breadwallet.presenter.customviews.BreadButton
+                android:id="@+id/received_filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/button_secondary_gray_stroke"
+                android:elevation="8dp"
+                android:paddingEnd="4dp"
+                android:paddingStart="4dp"
+                android:text="received"
+                android:textColor="@color/light_gray"
+                app:customFont="CircularPro-Book.otf"/>
+
+            <com.breadwallet.presenter.customviews.BreadButton
+                android:id="@+id/pending_filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/button_secondary_gray_stroke"
+                android:elevation="8dp"
+                android:paddingEnd="4dp"
+                android:paddingStart="4dp"
+                android:text="pending"
+                android:textColor="@color/light_gray"
+                app:customFont="CircularPro-Book.otf"/>
+
+            <com.breadwallet.presenter.customviews.BreadButton
+                android:id="@+id/complete_filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/button_secondary_gray_stroke"
+                android:elevation="8dp"
+                android:paddingEnd="4dp"
+                android:paddingStart="4dp"
+                android:text="complete"
+                android:textColor="@color/light_gray"
+                app:customFont="CircularPro-Book.otf"/>
+
+        </LinearLayout>
+
+    </android.support.constraint.ConstraintLayout>
+</android.support.v7.widget.Toolbar>

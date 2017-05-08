@@ -165,6 +165,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                     return null;
                 }
             }
+
             allAddresses.delete(allAddresses.length() - 2, allAddresses.length());
 
             CustomLogger.logThis("Signature", String.valueOf(paymentRequest.signature.length),
