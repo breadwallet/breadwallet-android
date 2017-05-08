@@ -123,8 +123,8 @@ public class FingerprintFragment extends Fragment
                 closeMe();
             }
         });
-        mCancelButton.setText(R.string.cancel);
-        mSecondDialogButton.setText(R.string.use_passcode);
+        mCancelButton.setText(R.string.Button_cancel);
+        mSecondDialogButton.setText(R.string.Fingerprint_usePin_Android);
         mFingerprintContent.setVisibility(View.VISIBLE);
         mSecondDialogButton.setOnClickListener(new View.OnClickListener() {
             @Override

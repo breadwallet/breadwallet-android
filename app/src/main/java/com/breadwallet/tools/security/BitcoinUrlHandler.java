@@ -88,7 +88,7 @@ public class BitcoinUrlHandler {
         }
         if (requestObject == null) {
             if (app != null) {
-                BreadDialog.showCustomDialog(app, app.getString(R.string.warning), app.getString(R.string.invalid_address), app.getString(R.string.ok), null, new BRDialogView.BROnClickListener() {
+                BreadDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title), app.getString(R.string.invalid_address), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
                         brDialogView.dismissWithAnimation();
@@ -103,7 +103,7 @@ public class BitcoinUrlHandler {
             return tryBitcoinURL(url, app);
         } else {
             if (app != null) {
-                BreadDialog.showCustomDialog(app, app.getString(R.string.warning), app.getString(R.string.bad_payment_request), app.getString(R.string.ok), null, new BRDialogView.BROnClickListener() {
+                BreadDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title), app.getString(R.string.bad_payment_request), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
                         brDialogView.dismissWithAnimation();

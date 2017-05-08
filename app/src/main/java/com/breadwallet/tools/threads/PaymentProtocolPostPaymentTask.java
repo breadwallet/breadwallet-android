@@ -110,17 +110,17 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
                 }
             } else if (e instanceof FileNotFoundException) {
                 if (app != null) {
-                    pendingErrorMessages.put(TITLE, app.getString(R.string.warning));
+                    pendingErrorMessages.put(TITLE, app.getString(R.string.JailbreakWarnings_title));
                     pendingErrorMessages.put(MESSAGE, app.getString(R.string.bad_payment_request));
                 }
             } else if (e instanceof SocketTimeoutException) {
                 if (app != null) {
-                    pendingErrorMessages.put(TITLE, app.getString(R.string.warning));
+                    pendingErrorMessages.put(TITLE, app.getString(R.string.JailbreakWarnings_title));
                     pendingErrorMessages.put(MESSAGE, app.getString(R.string.connection_timed_out));
                 }
             } else {
                 if (app != null) {
-                    pendingErrorMessages.put(TITLE, app.getString(R.string.warning));
+                    pendingErrorMessages.put(TITLE, app.getString(R.string.JailbreakWarnings_title));
                     pendingErrorMessages.put(MESSAGE, app.getString(R.string.could_not_transmit_payment));
 //                    if (!((BreadWalletApp) app.getApplication()).hasInternetAccess())
 //                        BreadDialog.

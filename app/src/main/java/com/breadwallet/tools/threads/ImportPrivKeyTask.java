@@ -74,8 +74,8 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
             app.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    BreadDialog.showCustomDialog(app, app.getString(R.string.warning),
-                            app.getString(R.string.priv_key_empty), app.getString(R.string.ok), null, new BRDialogView.BROnClickListener() {
+                    BreadDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title),
+                            app.getString(R.string.priv_key_empty), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                                 @Override
                                 public void onClick(BRDialogView brDialogView) {
                                     brDialogView.dismissWithAnimation();
@@ -114,8 +114,8 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
                             app.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    BreadDialog.showCustomDialog(app, app.getString(R.string.warning),
-                                            app.getString(R.string.could_not_sweep_the_balance), app.getString(R.string.ok), null, new BRDialogView.BROnClickListener() {
+                                    BreadDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title),
+                                            app.getString(R.string.could_not_sweep_the_balance), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                                                 @Override
                                                 public void onClick(BRDialogView brDialogView) {
                                                     brDialogView.dismissWithAnimation();

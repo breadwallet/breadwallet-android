@@ -6,12 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
@@ -21,10 +18,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.tools.crypto.CryptoHelper;
-import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.BRConstants;
-import com.jniwrappers.BRBase58;
-import com.jniwrappers.BRKey;
 import com.platform.BRHTTPHelper;
 import com.platform.interfaces.Plugin;
 
@@ -40,22 +34,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
-import javax.servlet.AsyncContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static android.R.attr.key;
-import static android.R.attr.name;
-import static com.breadwallet.R.string.request;
 import static com.breadwallet.tools.util.BRConstants.REQUEST_IMAGE_CAPTURE;
-import static com.platform.APIClient.bundleFileName;
 
 /**
  * BreadWallet
@@ -131,7 +115,7 @@ public class CameraPlugin implements Plugin {
                         Manifest.permission.CAMERA)) {
                     Log.e(TAG, "handle: no camera access, showing instructions");
                     BRToast.showCustomToast(app,
-                            app.getString(R.string.allow_camera_access),
+                            app.getString(R.string.CameraPlugin_allowCameraAccess_Android),
                             BreadActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, R.drawable.toast_layout_blue);
                 } else {
                     // No explanation needed, we can request the permission.

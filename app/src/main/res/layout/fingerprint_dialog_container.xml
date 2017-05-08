@@ -87,7 +87,7 @@
                 android:layout_toEndOf="@+id/fingerprint_icon"
                 android:filterTouchesWhenObscured="true"
                 android:gravity="center_vertical"
-                android:text="@string/fingerprint_hint"
+                android:text="@string/Fingerprint.hint_Android"
                 android:textColor="@color/hint_color"/>
         </RelativeLayout>
 

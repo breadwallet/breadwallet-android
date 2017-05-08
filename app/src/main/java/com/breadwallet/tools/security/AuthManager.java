@@ -265,7 +265,7 @@ public class AuthManager {
                     transaction.commit();
             }
         } else {
-            BreadDialog.showCustomDialog(app, "", context.getString(R.string.encryption_needed_for_wallet), "close", null, new BRDialogView.BROnClickListener() {
+            BreadDialog.showCustomDialog(app, "", context.getString(R.string.IntroScreen_encryption_needed_Android), "close", null, new BRDialogView.BROnClickListener() {
                 @Override
                 public void onClick(BRDialogView brDialogView) {
                     app.finish();

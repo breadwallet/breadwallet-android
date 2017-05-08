@@ -128,7 +128,7 @@ public class BRWalletManager {
         String[] words = new String[0];
         List<String> list;
         try {
-            String languageCode = ctx.getString(R.string.lang);
+            String languageCode = ctx.getString(R.string.lang_Android);
             list = WordsReader.getWordList(ctx, languageCode);
             words = list.toArray(new String[list.size()]);
         } catch (IOException e) {
@@ -270,7 +270,7 @@ public class BRWalletManager {
                     }, 100);
 
                     // Set up the buttons
-                    builder.setPositiveButton(ctx.getString(R.string.ok), new DialogInterface.OnClickListener() {
+                    builder.setPositiveButton(ctx.getString(R.string.Button_ok), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 //                            if (!((BreadWalletApp) ((Activity) ctx).getApplication()).hasInternetAccess()) {
@@ -288,7 +288,7 @@ public class BRWalletManager {
                                 ((Activity) ctx).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        BRToast.showCustomToast(ctx, ctx.getString(R.string.checking_privkey_balance), 500, Toast.LENGTH_LONG, R.drawable.toast_layout_blue);
+                                        BRToast.showCustomToast(ctx, ctx.getString(R.string.BRWalletManager_checkingPrivKeyBalance_Android), 500, Toast.LENGTH_LONG, R.drawable.toast_layout_blue);
                                     }
                                 });
                             if (editText == null) {
@@ -316,7 +316,7 @@ public class BRWalletManager {
 
                         }
                     });
-                    builder.setNegativeButton(ctx.getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    builder.setNegativeButton(ctx.getString(R.string.Button_cancel), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.cancel();
@@ -521,11 +521,11 @@ public class BRWalletManager {
                     public void run() {
                         AlertDialog alert;
                         AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
-                        builder.setTitle(R.string.transaction_rejected);
+                        builder.setTitle(R.string.BRWalletManager_transactionRejected_Android);
 
-                        builder.setMessage(recommendRescan == 1 ? ctx.getString(R.string.wallet_out_of_sync_message) : "");
+                        builder.setMessage(recommendRescan == 1 ? ctx.getString(R.string.BRWalletManager_walletOutOfSync_Android) : "");
                         if (recommendRescan == 1)
-                            builder.setPositiveButton(R.string.rescan,
+                            builder.setPositiveButton(R.string.ReScan_alertAction,
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int which) {
 //                                            if (BRAnimator.checkTheMultipressingAvailability()) {
@@ -538,7 +538,7 @@ public class BRWalletManager {
 //                                            }
                                         }
                                     });
-                        builder.setNegativeButton(ctx.getString(R.string.cancel),
+                        builder.setNegativeButton(ctx.getString(R.string.Button_cancel),
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.dismiss();
@@ -562,7 +562,7 @@ public class BRWalletManager {
         String[] cleanWordList = null;
         try {
             boolean isLocal = true;
-            String languageCode = ctx.getString(R.string.lang);
+            String languageCode = ctx.getString(R.string.lang_Android);
             list = WordsReader.getWordList(ctx, languageCode);
 
             String[] phraseWords = phrase.split(" ");
@@ -676,7 +676,7 @@ public class BRWalletManager {
 
     public void offerToChangeTheAmount(final Context app, final PaymentItem item) {
         BreadDialog.showCustomDialog(app, app.getString(R.string.insufficient_funds), app.getString(R.string.change_payment_amount),
-                app.getString(R.string.change), app.getString(R.string.cancel), new BRDialogView.BROnClickListener() {
+                app.getString(R.string.change), app.getString(R.string.Button_cancel), new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
                         BRAnimator.showSendFragment((Activity) app, Utils.createBitcoinUrl(item.addresses[0], 0, null, null, null));

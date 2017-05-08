@@ -1,16 +1,8 @@
 package com.breadwallet.tools.crypto;
 
-import com.jniwrappers.BRBase58;
-
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import static android.R.attr.data;
-import static android.R.attr.name;
-import static com.breadwallet.R.string.request;
-import static com.breadwallet.R.string.to;
 
 /**
  * BreadWallet

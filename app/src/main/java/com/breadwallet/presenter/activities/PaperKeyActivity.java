@@ -103,14 +103,14 @@ public class PaperKeyActivity extends Activity {
         String wordArray[] = cleanPhrase.split(" ");
 
         if (wordArray.length == 12 && cleanPhrase.charAt(cleanPhrase.length() - 1) == '\0') {
-            BreadDialog.showCustomDialog(this, getString(R.string.warning),
-                    getString(R.string.phrase_error), getString(R.string.ok), null, new BRDialogView.BROnClickListener() {
+            BreadDialog.showCustomDialog(this, getString(R.string.JailbreakWarnings_title),
+                    getString(R.string.RecoveryPhrase_paperKeyError_Android), getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                         @Override
                         public void onClick(BRDialogView brDialogView) {
                             brDialogView.dismissWithAnimation();
                         }
                     }, null, null, 0);
-            FirebaseCrash.report(new IllegalArgumentException(getString(R.string.phrase_error)));
+            FirebaseCrash.report(new IllegalArgumentException(getString(R.string.RecoveryPhrase_paperKeyError_Android)));
 
         } else {
             WordPagerAdapter adapter = new WordPagerAdapter(getFragmentManager());

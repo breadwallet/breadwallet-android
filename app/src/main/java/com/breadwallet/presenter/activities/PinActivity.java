@@ -140,7 +140,7 @@ public class PinActivity extends Activity {
                         if (ActivityCompat.shouldShowRequestPermissionRationale(app,
                                 Manifest.permission.CAMERA)) {
                             BreadDialog.showCustomDialog(app, "Permission Required.",
-                                    app.getString(R.string.allow_camera_access), "close", null, new BRDialogView.BROnClickListener() {
+                                    app.getString(R.string.CameraPlugin_allowCameraAccess_Android), "close", null, new BRDialogView.BROnClickListener() {
                                         @Override
                                         public void onClick(BRDialogView brDialogView) {
                                             brDialogView.dismiss();

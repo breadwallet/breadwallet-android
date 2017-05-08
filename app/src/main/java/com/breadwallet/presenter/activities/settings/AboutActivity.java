@@ -1,5 +1,7 @@
 package com.breadwallet.presenter.activities.settings;
 
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
@@ -7,6 +9,8 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.ActivityUTILS;
+
+import java.util.Locale;
 
 public class AboutActivity extends AppCompatActivity {
     private static final String TAG = AboutActivity.class.getName();
@@ -33,11 +37,20 @@ public class AboutActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
-//        setStatusBarColor(android.R.color.transparent);
 
         infoText = (TextView) findViewById(R.id.info_text);
         termsText = (TextView) findViewById(R.id.terms_text);
         policyText = (TextView) findViewById(R.id.policy_text);
+
+        PackageInfo pInfo = null;
+        try {
+            pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        int verCode = pInfo != null ? pInfo.versionCode : 0;
+
+        infoText.setText(String.format(Locale.getDefault(), "%s %d", getString(R.string.About_footer), verCode));
 
         redditShare = (ImageView) findViewById(R.id.reddit_share_button);
         twitterShare = (ImageView) findViewById(R.id.twitter_share_button);
