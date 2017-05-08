@@ -7,12 +7,12 @@ import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.tools.animation.SpringAnimator;
-import com.breadwallet.tools.util.Utils;
 
 /**
  * BreadWallet
@@ -84,7 +84,17 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
 
         setListeners();
 
-        Utils.hideKeyboard(getContext());
+        searchEdit.requestFocus();
+        searchEdit.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                InputMethodManager keyboard = (InputMethodManager)
+                        getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                keyboard.showSoftInput(searchEdit, 0);
+            }
+        }, 200); //use 300 to make it run when coming back from lock screen
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -195,124 +205,4 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
     }
 
 
-//    private class BRSearchManager {
-//
-//        private float searchEditXScale;
-//        private float primaryYScale;
-//        private float secondaryYScale;
-//        private float priceChangeYScale;
-//        private float filterButtonsLayoutXScale;
-//
-//
-//        public void init() {
-//            searchEditXScale = searchEdit.getScaleX();
-//            primaryYScale = primaryPrice.getScaleY();
-//            secondaryYScale = secondaryPrice.getScaleY();
-//            priceChangeYScale = priceChange.getScaleY();
-//            filterButtonsLayoutXScale = filterButtonsLayout.getScaleX();
-//            filterButtonsLayout.setScaleX(0);
-//            filterButtonsLayout.setVisibility(View.GONE);
-//
-//        }
-//
-//
-//        void animateSearchVisibility(boolean b) {
-//            int duration = 300;
-//            final int durationShort = 200;
-//            if (b) {
-//                searchIcon.setBackgroundResource(R.drawable.ic_close_black_24dp);
-//                searchEdit.setVisibility(View.VISIBLE);
-//                searchEdit.setText("");
-//                searchEdit.setScaleX(0);
-//                searchEdit.setPivotX(searchEdit.getX());
-//                filterButtonsLayout.setVisibility(View.VISIBLE);
-//                filterButtonsLayout.setPivotX(filterButtonsLayout.getX());
-//
-//                searchEdit.animate().scaleX(searchEditXScale).setDuration(duration).setInterpolator(new OvershootInterpolator(0.7f)).setListener(new AnimatorListenerAdapter() {
-//                    @Override
-//                    public void onAnimationEnd(Animator animation) {
-//                        super.onAnimationEnd(animation);
-//                        searchEdit.setScaleX(searchEditXScale);
-//                        searchEdit.requestFocus();
-//                        filterButtonsLayout.animate().scaleX(filterButtonsLayoutXScale).setDuration(durationShort * 2).setListener(new AnimatorListenerAdapter() {
-//                            @Override
-//                            public void onAnimationEnd(Animator animation) {
-//                                super.onAnimationEnd(animation);
-//                                filterButtonsLayout.setScaleX(filterButtonsLayoutXScale);
-//                            }
-//                        });
-//                        searchManager.clearSwitches();
-//                        updateFilterButtonsUI(searchManager.filterSwitches);
-//                    }
-//                });
-//                primaryPrice.animate().scaleY(0).setDuration(durationShort).setListener(new AnimatorListenerAdapter() {
-//                    @Override
-//                    public void onAnimationEnd(Animator animation) {
-//                        super.onAnimationEnd(animation);
-//                        primaryPrice.setScaleY(0);
-//                    }
-//                });
-//                secondaryPrice.animate().scaleY(0).setDuration(durationShort).setListener(new AnimatorListenerAdapter() {
-//                    @Override
-//                    public void onAnimationEnd(Animator animation) {
-//                        super.onAnimationEnd(animation);
-//                        secondaryPrice.setScaleY(0);
-//                    }
-//                });
-//                priceChange.animate().scaleY(0).setDuration(durationShort).setListener(new AnimatorListenerAdapter() {
-//                    @Override
-//                    public void onAnimationEnd(Animator animation) {
-//                        super.onAnimationEnd(animation);
-//                        priceChange.setScaleY(0);
-//                    }
-//                });
-//
-//
-//            } else {
-//                searchIcon.setBackgroundResource(R.drawable.ic_search_black_24dp);
-//                primaryPrice.setVisibility(View.VISIBLE);
-//                secondaryPrice.setVisibility(View.VISIBLE);
-//                priceChange.setVisibility(View.VISIBLE);
-//                primaryPrice.animate().scaleY(primaryYScale).setDuration(duration).setListener(new AnimatorListenerAdapter() {
-//                    @Override
-//                    public void onAnimationEnd(Animator animation) {
-//                        super.onAnimationEnd(animation);
-//                        primaryPrice.setScaleY(primaryYScale);
-//                    }
-//                });
-//                secondaryPrice.animate().scaleY(secondaryYScale).setDuration(duration).setListener(new AnimatorListenerAdapter() {
-//                    @Override
-//                    public void onAnimationEnd(Animator animation) {
-//                        super.onAnimationEnd(animation);
-//                        secondaryPrice.setScaleY(secondaryYScale);
-//                    }
-//                });
-//                priceChange.animate().scaleY(priceChangeYScale).setDuration(duration).setListener(new AnimatorListenerAdapter() {
-//                    @Override
-//                    public void onAnimationEnd(Animator animation) {
-//                        super.onAnimationEnd(animation);
-//                        priceChange.setScaleY(priceChangeYScale);
-//                    }
-//                });
-//
-//                searchEdit.animate().scaleX(0).setDuration(durationShort).setInterpolator(null).setListener(new AnimatorListenerAdapter() {
-//                    @Override
-//                    public void onAnimationEnd(Animator animation) {
-//                        super.onAnimationEnd(animation);
-//                        searchEdit.setVisibility(View.GONE);
-//                    }
-//                });
-//
-//                filterButtonsLayout.animate().scaleX(0).setDuration(durationShort / 2).setListener(new AnimatorListenerAdapter() {
-//                    @Override
-//                    public void onAnimationEnd(Animator animation) {
-//                        super.onAnimationEnd(animation);
-//                        filterButtonsLayout.setScaleX(0);
-//                        filterButtonsLayout.setVisibility(View.GONE);
-//                    }
-//                });
-//
-//            }
-//        }
-//    }
 }

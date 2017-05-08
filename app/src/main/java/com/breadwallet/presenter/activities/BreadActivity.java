@@ -269,7 +269,6 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
             @Override
             public void onItemClick(View view, int position, float x, float y) {
                 Log.e(TAG, "onItemClick: " + position);
-
                 BRAnimator.showTransactionPager(BreadActivity.this, adapter.getItems(), position);
             }
 
