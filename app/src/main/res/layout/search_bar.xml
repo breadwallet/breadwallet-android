@@ -10,9 +10,9 @@
     android:background="@color/extra_light_blue_background"
     android:contentInsetLeft="0dp"
     android:contentInsetStart="0dp"
+    android:elevation="8dp"
     app:contentInsetLeft="0dp"
     app:contentInsetStart="0dp"
-    android:elevation="8dp"
     tools:layout_constraintTop_creator="1">
 
     <android.support.constraint.ConstraintLayout
