@@ -18,6 +18,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -286,6 +287,9 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
 
             }
         });
+
+        barFlipper.setInAnimation(AnimationUtils.loadAnimation(this, R.anim.enter_from_top));
+        barFlipper.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.exit_to_top));
 
     }
 
