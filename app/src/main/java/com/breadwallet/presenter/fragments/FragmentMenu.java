@@ -34,6 +34,7 @@ import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.entities.BRMenuItem;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
 import com.platform.HTTPServer;
@@ -153,6 +154,7 @@ public class FragmentMenu extends Fragment {
         mTitle = (TextView) rootView.findViewById(R.id.title);
         mListView = (ListView) rootView.findViewById(menu_listview);
         mListView.setAdapter(new MenuListAdapter(getContext(), R.layout.menu_list_item, itemList));
+        signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
 
         return rootView;
     }

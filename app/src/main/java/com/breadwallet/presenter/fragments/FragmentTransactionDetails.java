@@ -83,6 +83,8 @@ public class FragmentTransactionDetails extends Fragment {
         int pos = getArguments().getInt("pos");
         txViewPager.setCurrentItem(pos, false);
 
+
+
         return rootView;
     }
 

@@ -30,6 +30,7 @@ import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.presenter.entities.RequestObject;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
+import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
@@ -110,6 +111,8 @@ public class FragmentSend extends Fragment {
         balanceText = (TextView) rootView.findViewById(R.id.balance_text);
         setListeners();
         amountBuilder = new StringBuilder(0);
+
+        signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
 
         return rootView;
     }

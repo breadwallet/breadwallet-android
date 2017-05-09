@@ -14,10 +14,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.entities.TransactionListItem;
+import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRExchange;
@@ -67,6 +70,7 @@ public class FragmentTransactionItem extends Fragment {
     private TextView mDateText;
     private TextView mToFromBottom;
     private TransactionListItem item;
+    private LinearLayout signalLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -74,6 +78,7 @@ public class FragmentTransactionItem extends Fragment {
         // properly.
 
         View rootView = inflater.inflate(R.layout.transaction_details_item, container, false);
+        signalLayout = (LinearLayout) rootView.findViewById(R.id.signal_layout);
         mTitle = (TextView) rootView.findViewById(R.id.title);
         mDescriptionText = (TextView) rootView.findViewById(R.id.description_text);
         mCommentText = (TextView) rootView.findViewById(R.id.comment_text);
@@ -82,6 +87,15 @@ public class FragmentTransactionItem extends Fragment {
         mDateText = (TextView) rootView.findViewById(R.id.date_text);
         mToFromBottom = (TextView) rootView.findViewById(R.id.to_from);
         mConfirmationText = (TextView) rootView.findViewById(R.id.confirmation_text);
+
+        signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
+        rootView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!BRAnimator.isClickAllowed()) return;
+                getActivity().onBackPressed();
+            }
+        });
 
         return rootView;
     }
