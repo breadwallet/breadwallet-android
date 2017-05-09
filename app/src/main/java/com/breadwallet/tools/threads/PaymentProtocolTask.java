@@ -301,56 +301,63 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
         return (index != -1 && endIndex != -1) ? cleanCN : null;
     }
 
-    private void continueWithThePayment(final Activity app, String certification) {
+    private void continueWithThePayment(final Activity app, final String certification) {
 
-        StringBuilder allAddresses = new StringBuilder();
-        for (String s : paymentRequest.addresses) {
-            allAddresses.append(s + ", ");
-        }
-        allAddresses.delete(allAddresses.length() - 2, allAddresses.length());
-        String memo = (!paymentRequest.memo.isEmpty() ? "\n" : "") + paymentRequest.memo;
-        allAddresses = new StringBuilder();
-
-        //DecimalFormat decimalFormat = new DecimalFormat("0.00");
-        String iso = SharedPreferencesManager.getIso(app);
-        float rate = SharedPreferencesManager.getRate(app);
-        CurrencyManager cm = CurrencyManager.getInstance(app);
-
-        double minOutput = BRWalletManager.getInstance(app).getMinOutputAmount();
-        if (paymentRequest.amount < minOutput) {
-            final String bitcoinMinMessage = String.format(Locale.getDefault(), app.getString(R.string.bitcoin_payment_cant_be_less),
-                    BRConstants.bitcoinLowercase + new BigDecimal(minOutput).divide(new BigDecimal("100")));
-            app.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    new android.app.AlertDialog.Builder(app)
-                            .setTitle(app.getString(R.string.payment_failed))
-                            .setMessage(bitcoinMinMessage)
-                            .setPositiveButton(app.getString(R.string.ok), new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            })
-                            .setIcon(android.R.drawable.ic_dialog_alert)
-                            .show();
-                }
-            });
-
-            return;
-        }
-        final long total = paymentRequest.amount + paymentRequest.fee;
-        final PaymentRequestEntity request = new PaymentRequestEntity(paymentRequest.addresses, paymentRequest.amount, certName, paymentRequest.serializedTx, false);
-        final String message = certification + memo + allAddresses.toString() + "\n\n" + "amount: " + BRStringFormatter.getFormattedCurrencyString("BTC", paymentRequest.amount)
-                + " (" + BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(paymentRequest.amount), app) + ")" + "\nnetwork fee: +" + BRStringFormatter.getFormattedCurrencyString("BTC", paymentRequest.fee)
-                + " (" + BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(paymentRequest.fee), app) + ")" + "\ntotal: " + BRStringFormatter.getFormattedCurrencyString("BTC", total)
-                + " (" + BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(total), app) + ")";
-
-        app.runOnUiThread(new Runnable() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
-                ((BreadWalletApp) app.getApplicationContext()).promptForAuthentication(app, BRConstants.AUTH_FOR_PAYMENT_PROTOCOL, request, message, "", paymentRequest,false);
+                StringBuilder allAddresses = new StringBuilder();
+                for (String s : paymentRequest.addresses) {
+                    allAddresses.append(s + ", ");
+                }
+                allAddresses.delete(allAddresses.length() - 2, allAddresses.length());
+                String memo = (!paymentRequest.memo.isEmpty() ? "\n" : "") + paymentRequest.memo;
+                allAddresses = new StringBuilder();
+
+                //DecimalFormat decimalFormat = new DecimalFormat("0.00");
+                String iso = SharedPreferencesManager.getIso(app);
+                float rate = SharedPreferencesManager.getRate(app);
+                CurrencyManager cm = CurrencyManager.getInstance(app);
+
+                double minOutput = BRWalletManager.getInstance(app).getMinOutputAmount();
+                if (paymentRequest.amount < minOutput) {
+                    final String bitcoinMinMessage = String.format(Locale.getDefault(), app.getString(R.string.bitcoin_payment_cant_be_less),
+                            BRConstants.bitcoinLowercase + new BigDecimal(minOutput).divide(new BigDecimal("100")));
+                    app.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            new android.app.AlertDialog.Builder(app)
+                                    .setTitle(app.getString(R.string.payment_failed))
+                                    .setMessage(bitcoinMinMessage)
+                                    .setPositiveButton(app.getString(R.string.ok), new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    })
+                                    .setIcon(android.R.drawable.ic_dialog_alert)
+                                    .show();
+                        }
+                    });
+
+                    return;
+                }
+                final long total = paymentRequest.amount + paymentRequest.fee;
+                final PaymentRequestEntity request = new PaymentRequestEntity(paymentRequest.addresses, paymentRequest.amount, certName, paymentRequest.serializedTx, false);
+                final String message = certification + memo + allAddresses.toString() + "\n\n" + "amount: " + BRStringFormatter.getFormattedCurrencyString("BTC", paymentRequest.amount)
+                        + " (" + BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(paymentRequest.amount), app) + ")" + "\nnetwork fee: +" + BRStringFormatter.getFormattedCurrencyString("BTC", paymentRequest.fee)
+                        + " (" + BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(paymentRequest.fee), app) + ")" + "\ntotal: " + BRStringFormatter.getFormattedCurrencyString("BTC", total)
+                        + " (" + BRStringFormatter.getExchangeForAmount(rate, iso, new BigDecimal(total), app) + ")";
+
+                app.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((BreadWalletApp) app.getApplicationContext()).promptForAuthentication(app, BRConstants.AUTH_FOR_PAYMENT_PROTOCOL, request, message, "", paymentRequest,false);
+                    }
+                });
             }
-        });
+        }).start();
+
+
     }
 
 }

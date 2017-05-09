@@ -99,11 +99,17 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
                 .setMessage(message)
                 .setPositiveButton(String.format("%s (%s)", sentBits, sentExchange), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        boolean result = BRWalletManager.getInstance(app).confirmKeySweep(importPrivKeyEntity.getTx(), key);
-                        if (!result) {
-                            ((BreadWalletApp) app.getApplication()).showCustomDialog(app.getString(R.string.warning),
-                                    app.getString(R.string.could_not_sweep_the_balance), app.getString(R.string.ok));
-                        }
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                boolean result = BRWalletManager.getInstance(app).confirmKeySweep(importPrivKeyEntity.getTx(), key);
+                                if (!result) {
+                                    ((BreadWalletApp) app.getApplication()).showCustomDialog(app.getString(R.string.warning),
+                                            app.getString(R.string.could_not_sweep_the_balance), app.getString(R.string.ok));
+                                }
+                            }
+                        }).start();
+
                     }
                 })
                 .setIcon(android.R.drawable.ic_dialog_alert)

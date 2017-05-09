@@ -137,12 +137,12 @@ public class MainFragment extends Fragment {
         payAddressFromClipboardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog alert = null;
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                final AlertDialog[] alert = {null};
+                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 ((MainActivity) getActivity()).hideAllBubbles();
                 if (BRAnimator.checkTheMultipressingAvailability()) {
 
-                    String bitcoinUrl = BRClipboardManager.readFromClipboard(getActivity());
+                    final String bitcoinUrl = BRClipboardManager.readFromClipboard(getActivity());
                     String ifAddress = null;
                     RequestObject obj = RequestHandler.getRequestFromString(bitcoinUrl);
                     if (obj == null) {
@@ -154,8 +154,8 @@ public class MainFragment extends Fragment {
                                         dialog.dismiss();
                                     }
                                 });
-                        alert = builder.create();
-                        alert.show();
+                        alert[0] = builder.create();
+                        alert[0].show();
                         BRClipboardManager.copyToClipboard(getActivity(), "");
                         addressEditText.setText("");
                         return;
@@ -174,8 +174,8 @@ public class MainFragment extends Fragment {
                                         dialog.dismiss();
                                     }
                                 });
-                        alert = builder.create();
-                        alert.show();
+                        alert[0] = builder.create();
+                        alert[0].show();
                         BRClipboardManager.copyToClipboard(getActivity(), "");
                         addressEditText.setText("");
                         return;
@@ -190,47 +190,62 @@ public class MainFragment extends Fragment {
                     }
 
                     if (checkIfAddressIsValid(ifAddress)) {
-                        BRWalletManager m = BRWalletManager.getInstance(getActivity());
-                        if (m.addressContainedInWallet(ifAddress)) {
+                        final BRWalletManager m = BRWalletManager.getInstance(getActivity());
+                        final String finalIfAddress = ifAddress;
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                final boolean contained = m.addressContainedInWallet(finalIfAddress);
+                                final boolean used = m.addressIsUsed(finalIfAddress);
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (contained) {
 
-                            //builder.setTitle(getResources().getString(R.string.alert));
-                            builder.setMessage(getResources().getString(R.string.address_already_in_your_wallet));
-                            builder.setNeutralButton(getResources().getString(R.string.ok),
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dialog.dismiss();
-                                        }
-                                    });
-                            alert = builder.create();
-                            alert.show();
-                            BRClipboardManager.copyToClipboard(getActivity(), "");
-                            addressEditText.setText("");
-                        } else if (m.addressIsUsed(ifAddress)) {
-                            builder.setTitle(getResources().getString(R.string.warning));
+                                            //builder.setTitle(getResources().getString(R.string.alert));
+                                            builder.setMessage(getResources().getString(R.string.address_already_in_your_wallet));
+                                            builder.setNeutralButton(getResources().getString(R.string.ok),
+                                                    new DialogInterface.OnClickListener() {
+                                                        public void onClick(DialogInterface dialog, int which) {
+                                                            dialog.dismiss();
+                                                        }
+                                                    });
+                                            alert[0] = builder.create();
+                                            alert[0].show();
+                                            BRClipboardManager.copyToClipboard(getActivity(), "");
+                                            addressEditText.setText("");
 
-                            builder.setMessage(getResources().getString(R.string.address_already_used));
-                            final String finalIfAddress = ifAddress;
-                            builder.setPositiveButton(getResources().getString(R.string.ignore),
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dialog.dismiss();
-                                            FragmentScanResult.address = finalIfAddress;
-                                            BRAnimator.animateScanResultFragment();
-                                        }
-                                    });
-                            builder.setNegativeButton(getResources().getString(R.string.cancel),
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dialog.dismiss();
-                                        }
-                                    });
-                            alert = builder.create();
-                            alert.show();
-                        } else {
+
+                                        } else if (used) {
+                                            builder.setTitle(getResources().getString(R.string.warning));
+
+                                            builder.setMessage(getResources().getString(R.string.address_already_used));
+                                            builder.setPositiveButton(getResources().getString(R.string.ignore),
+                                                    new DialogInterface.OnClickListener() {
+                                                        public void onClick(DialogInterface dialog, int which) {
+                                                            dialog.dismiss();
+                                                            FragmentScanResult.address = finalIfAddress;
+                                                            BRAnimator.animateScanResultFragment();
+                                                        }
+                                                    });
+                                            builder.setNegativeButton(getResources().getString(R.string.cancel),
+                                                    new DialogInterface.OnClickListener() {
+                                                        public void onClick(DialogInterface dialog, int which) {
+                                                            dialog.dismiss();
+                                                        }
+                                                    });
+                                            alert[0] = builder.create();
+                                            alert[0].show();
+                                        } else {
 //                                FragmentScanResult.address = finalAddress;
 //                                BRAnimator.animateScanResultFragment();
-                            RequestHandler.processRequest((MainActivity) getActivity(), bitcoinUrl);
-                        }
+                                            RequestHandler.processRequest((MainActivity) getActivity(), bitcoinUrl);
+                                        }
+                                    }
+                                });
+                            }
+                        }).start();
+
                     } else {
                         //builder.setTitle(getResources().getString(R.string.alert));
                         builder.setMessage(getResources().getString(R.string.mainfragment_clipboard_invalid_data));
@@ -240,8 +255,8 @@ public class MainFragment extends Fragment {
                                         dialog.dismiss();
                                     }
                                 });
-                        alert = builder.create();
-                        alert.show();
+                        alert[0] = builder.create();
+                        alert[0].show();
                         BRClipboardManager.copyToClipboard(getActivity(), "");
                         addressEditText.setText("");
                     }

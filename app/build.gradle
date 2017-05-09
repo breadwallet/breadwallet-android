@@ -69,11 +69,11 @@ model {
                     create() {
                         type = "boolean"
                         name = "BITCOIN_TESTNET"
-                        value = "true"
+                        value = "false"
                     }
                 }
                 ndk {
-                    CFlags.addAll(['-DBITCOIN_TESTNET=1'])
+//                    CFlags.addAll(['-DBITCOIN_TESTNET=1'])
                     minifyEnabled = false
                     debuggable = true
                 }
@@ -101,13 +101,15 @@ dependencies {
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.22'
     //    compile 'org.apache.commons:commons-compress:1.8.1'
 
-    compile 'com.android.support:appcompat-v7:25.1.1'
-    compile 'com.android.support:support-v13:25.1.1'
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:support-v13:25.3.1'
+    compile 'com.android.support:support-compat:25.3.1'
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
     compile 'com.google.firebase:firebase-core:10.0.1'
     compile 'com.google.firebase:firebase-crash:10.0.1'
+    compile 'com.android.support:animated-vector-drawable:25.3.1'
     compile 'io.sigpipe:jbsdiff:1.0'
-    androidTestCompile 'com.android.support:support-annotations:25.1.1'
+    androidTestCompile 'com.android.support:support-v13:25.3.1'
     androidTestCompile 'com.android.support.test:runner:0.5'
     androidTestCompile 'com.android.support.test:rules:0.5'
     androidTestCompile 'junit:junit:4.12'

@@ -568,35 +568,42 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     public void request(View view) {
         SpringAnimator.showAnimation(view);
-        Intent intent;
-        String tempAmount = FragmentScanResult.instance.getBitcoinValue().value;
-        BRWalletManager m = BRWalletManager.getInstance(this);
-        int unit = BRConstants.CURRENT_UNIT_BITS;
-        Activity context = MainActivity.app;
-        String divideBy = "100";
-        if (context != null)
-            unit = SharedPreferencesManager.getCurrencyUnit(context);
-        if (unit == BRConstants.CURRENT_UNIT_MBITS) divideBy = "100000";
-        if (unit == BRConstants.CURRENT_UNIT_BITCOINS) divideBy = "100000000";
-        long minAmount = m.getMinOutputAmount();
-        if (new BigDecimal(tempAmount).multiply(new BigDecimal(divideBy)).doubleValue() < minAmount) {
-            String placeHolder = BRConstants.bitcoinLowercase + new BigDecimal(minAmount).divide(new BigDecimal(divideBy)).toString();
-            final String bitcoinMinMessage = String.format(Locale.getDefault(), getString(R.string.bitcoin_payment_cant_be_less), placeHolder);
-            ((BreadWalletApp) getApplication()).showCustomDialog(getString(R.string.amount_too_small),
-                    bitcoinMinMessage, getString(R.string.ok));
-            return;
-        }
-        String divideByForIntent = "1000000";
-        if (unit == BRConstants.CURRENT_UNIT_MBITS) divideByForIntent = "1000";
-        if (unit == BRConstants.CURRENT_UNIT_BITCOINS) divideByForIntent = "1";
-        String strAmount = String.valueOf(new BigDecimal(tempAmount).divide(new BigDecimal(divideByForIntent)).toString());
-        String address = SharedPreferencesManager.getReceiveAddress(this);
-        intent = new Intent(this, RequestQRActivity.class);
-        intent.putExtra(BRConstants.INTENT_EXTRA_REQUEST_AMOUNT, strAmount);
-        intent.putExtra(BRConstants.INTENT_EXTRA_REQUEST_ADDRESS, address);
-        startActivity(intent);
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-        BRAnimator.hideScanResultFragment();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent;
+                String tempAmount = FragmentScanResult.instance.getBitcoinValue().value;
+                BRWalletManager m = BRWalletManager.getInstance(MainActivity.this);
+                int unit = BRConstants.CURRENT_UNIT_BITS;
+                Activity context = MainActivity.app;
+                String divideBy = "100";
+                if (context != null)
+                    unit = SharedPreferencesManager.getCurrencyUnit(context);
+                if (unit == BRConstants.CURRENT_UNIT_MBITS) divideBy = "100000";
+                if (unit == BRConstants.CURRENT_UNIT_BITCOINS) divideBy = "100000000";
+
+                long minAmount = m.getMinOutputAmount();
+                if (new BigDecimal(tempAmount).multiply(new BigDecimal(divideBy)).doubleValue() < minAmount) {
+                    String placeHolder = BRConstants.bitcoinLowercase + new BigDecimal(minAmount).divide(new BigDecimal(divideBy)).toString();
+                    final String bitcoinMinMessage = String.format(Locale.getDefault(), getString(R.string.bitcoin_payment_cant_be_less), placeHolder);
+                    ((BreadWalletApp) getApplication()).showCustomDialog(getString(R.string.amount_too_small),
+                            bitcoinMinMessage, getString(R.string.ok));
+                    return;
+                }
+                String divideByForIntent = "1000000";
+                if (unit == BRConstants.CURRENT_UNIT_MBITS) divideByForIntent = "1000";
+                if (unit == BRConstants.CURRENT_UNIT_BITCOINS) divideByForIntent = "1";
+                String strAmount = String.valueOf(new BigDecimal(tempAmount).divide(new BigDecimal(divideByForIntent)).toString());
+                String address = SharedPreferencesManager.getReceiveAddress(MainActivity.this);
+                intent = new Intent(MainActivity.this, RequestQRActivity.class);
+                intent.putExtra(BRConstants.INTENT_EXTRA_REQUEST_AMOUNT, strAmount);
+                intent.putExtra(BRConstants.INTENT_EXTRA_REQUEST_ADDRESS, address);
+                startActivity(intent);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                BRAnimator.hideScanResultFragment();
+            }
+        }).start();
+
     }
 
     @Override
