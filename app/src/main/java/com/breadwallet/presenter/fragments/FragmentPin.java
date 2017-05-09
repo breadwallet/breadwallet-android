@@ -16,9 +16,8 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.customviews.BRLockScreenConstraintLayout;
-import com.breadwallet.presenter.customviews.BRSoftKeyboard;
+import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
-import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.DecelerateOvershootInterpolator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.AuthManager;
@@ -55,7 +54,7 @@ public class FragmentPin extends Fragment {
 
     private BRAuthCompletion completion;
 
-    private BRSoftKeyboard keyboard;
+    private BRKeyboard keyboard;
     private LinearLayout pinLayout;
     private View dot1;
     private View dot2;
@@ -81,7 +80,7 @@ public class FragmentPin extends Fragment {
         // properly.
 
         View rootView = inflater.inflate(R.layout.fragment_bread_pin, container, false);
-        keyboard = (BRSoftKeyboard) rootView.findViewById(R.id.brkeyboard);
+        keyboard = (BRKeyboard) rootView.findViewById(R.id.brkeyboard);
         pinLayout = (LinearLayout) rootView.findViewById(R.id.pinLayout);
 
         if (KeyStoreManager.getPinCode(getContext()).length() == 4) pinLimit = 4;
@@ -105,7 +104,7 @@ public class FragmentPin extends Fragment {
         dot5 = rootView.findViewById(R.id.dot5);
         dot6 = rootView.findViewById(R.id.dot6);
 
-        keyboard.addOnInsertListener(new BRSoftKeyboard.OnInsertListener() {
+        keyboard.addOnInsertListener(new BRKeyboard.OnInsertListener() {
             @Override
             public void onClick(String key) {
                 handleClick(key);

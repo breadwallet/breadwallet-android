@@ -25,7 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.customviews.BRSoftKeyboard;
+import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
@@ -71,7 +71,7 @@ import java.util.List;
 
 public class FragmentRequestAmount extends Fragment {
     private static final String TAG = FragmentRequestAmount.class.getName();
-    private BRSoftKeyboard keyboard;
+    private BRKeyboard keyboard;
     private Spinner spinner;
     private StringBuilder amountBuilder;
     private TextView isoText;
@@ -99,8 +99,8 @@ public class FragmentRequestAmount extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_request, container, false);
         backgroundLayout = (LinearLayout) rootView.findViewById(R.id.background_layout);
         signalLayout = (LinearLayout) rootView.findViewById(R.id.signal_layout);
-        keyboard = (BRSoftKeyboard) rootView.findViewById(R.id.keyboard);
-        keyboard.setBRButtonBackgroundColor(R.color.white);
+        keyboard = (BRKeyboard) rootView.findViewById(R.id.keyboard);
+        keyboard.setBRButtonBackgroundResId(R.drawable.keyboard_white_button);
         keyboard.setBRKeyboardColor(R.color.white);
         isoText = (TextView) rootView.findViewById(R.id.iso_text);
         spinner = (Spinner) rootView.findViewById(R.id.cur_spinner);
@@ -162,7 +162,7 @@ public class FragmentRequestAmount extends Fragment {
             }
         });
 
-        keyboard.addOnInsertListener(new BRSoftKeyboard.OnInsertListener()
+        keyboard.addOnInsertListener(new BRKeyboard.OnInsertListener()
 
         {
             @Override

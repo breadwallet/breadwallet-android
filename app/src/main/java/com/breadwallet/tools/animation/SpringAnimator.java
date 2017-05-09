@@ -67,6 +67,18 @@ public class SpringAnimator {
         view.startAnimation(trans);
 
     }
+    /**
+     * Shows the springy animation on views
+     */
+    public static void shortSpringView(final View view) {
+        if (view == null) return;
+        ScaleAnimation trans = new ScaleAnimation(0.9f, 1f, 0.9f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        trans.setDuration(200);
+        trans.setInterpolator(new DecelerateOvershootInterpolator(1.3f, 1.4f));
+        view.setVisibility(View.VISIBLE);
+        view.startAnimation(trans);
+
+    }
 
     /**
      * Shows the springy bubble animation on views

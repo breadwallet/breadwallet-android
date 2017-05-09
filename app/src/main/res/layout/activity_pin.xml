@@ -72,7 +72,7 @@
             android:background="@drawable/ic_pin_dot_white"/>
     </LinearLayout>
 
-    <com.breadwallet.presenter.customviews.BRSoftKeyboard
+    <com.breadwallet.presenter.customviews.BRKeyboard
         android:id="@+id/brkeyboard"
         android:layout_width="0dp"
         android:layout_height="240dp"

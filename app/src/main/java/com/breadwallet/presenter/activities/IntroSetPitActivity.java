@@ -6,18 +6,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.settings.DefaultCurrencyActivity;
-import com.breadwallet.presenter.customviews.BRSoftKeyboard;
-import com.breadwallet.tools.security.AuthManager;
+import com.breadwallet.presenter.customviews.BRKeyboard;
 
 public class IntroSetPitActivity extends Activity {
     private static final String TAG = IntroSetPitActivity.class.getName();
-    private BRSoftKeyboard keyboard;
+    private BRKeyboard keyboard;
     public static IntroSetPitActivity introSetPitActivity;
     private View dot1;
     private View dot2;
@@ -41,7 +37,7 @@ public class IntroSetPitActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pin_template);
 
-        keyboard = (BRSoftKeyboard) findViewById(R.id.brkeyboard);
+        keyboard = (BRKeyboard) findViewById(R.id.brkeyboard);
         title = (TextView) findViewById(R.id.title);
 
         dot1 = findViewById(R.id.dot1);
@@ -51,7 +47,7 @@ public class IntroSetPitActivity extends Activity {
         dot5 = findViewById(R.id.dot5);
         dot6 = findViewById(R.id.dot6);
 
-        keyboard.addOnInsertListener(new BRSoftKeyboard.OnInsertListener() {
+        keyboard.addOnInsertListener(new BRKeyboard.OnInsertListener() {
             @Override
             public void onClick(String key) {
                 handleClick(key);

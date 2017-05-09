@@ -6,19 +6,15 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.settings.DefaultCurrencyActivity;
-import com.breadwallet.presenter.customviews.BRSoftKeyboard;
+import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.AuthManager;
-import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
@@ -26,7 +22,7 @@ import com.breadwallet.wallet.BRWalletManager;
 
 public class IntroReEnterPinActivity extends FragmentActivity {
     private static final String TAG = IntroReEnterPinActivity.class.getName();
-    private BRSoftKeyboard keyboard;
+    private BRKeyboard keyboard;
     public static IntroReEnterPinActivity introReEnterPinActivity;
     private View dot1;
     private View dot2;
@@ -52,7 +48,7 @@ public class IntroReEnterPinActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pin_template);
 
-        keyboard = (BRSoftKeyboard) findViewById(R.id.brkeyboard);
+        keyboard = (BRKeyboard) findViewById(R.id.brkeyboard);
         pinLayout = (LinearLayout) findViewById(R.id.pinLayout);
 
         title = (TextView) findViewById(R.id.title);
@@ -71,7 +67,7 @@ public class IntroReEnterPinActivity extends FragmentActivity {
         dot5 = findViewById(R.id.dot5);
         dot6 = findViewById(R.id.dot6);
 
-        keyboard.addOnInsertListener(new BRSoftKeyboard.OnInsertListener() {
+        keyboard.addOnInsertListener(new BRKeyboard.OnInsertListener() {
             @Override
             public void onClick(String key) {
                 handleClick(key);
