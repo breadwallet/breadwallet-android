@@ -58,10 +58,12 @@ public class PaperKeyProveActivity extends Activity {
         wordTextFirst = (TextView) findViewById(R.id.word_number_first);
         wordTextSecond = (TextView) findViewById(R.id.word_number_second);
 
-        final InputMethodManager keyboard = (InputMethodManager)
-                getSystemService(Context.INPUT_METHOD_SERVICE);
-        wordEditFirst.requestFocus();
-        keyboard.showSoftInput(wordEditFirst, 0);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        }, 200);
 
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,7 +101,6 @@ public class PaperKeyProveActivity extends Activity {
                     }
                 }
 
-
             }
         });
         String cleanPhrase = null;
@@ -109,7 +110,7 @@ public class PaperKeyProveActivity extends Activity {
         if (Utils.isNullOrEmpty(cleanPhrase)) {
             throw new RuntimeException(TAG + ": cleanPhrase is null");
         }
-        Log.e(TAG, "onCreate: " + cleanPhrase);
+//        Log.e(TAG, "onCreate: " + cleanPhrase);
 
         String wordArray[] = cleanPhrase.split(" ");
 
