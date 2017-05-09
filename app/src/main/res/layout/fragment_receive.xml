@@ -20,7 +20,7 @@
         android:padding="0dp"
         >
 
-        <com.breadwallet.presenter.customviews.BreadText
+        <com.breadwallet.presenter.customviews.BRText
             app:customFont="CircularPro-Bold.otf"
             android:id="@+id/title"
             android:layout_width="wrap_content"
@@ -58,7 +58,7 @@
             android:src="@drawable/ic_check_mark_grey"
             />
 
-        <com.breadwallet.presenter.customviews.BreadText
+        <com.breadwallet.presenter.customviews.BRText
             android:id="@+id/address_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -72,7 +72,7 @@
             android:textColor="@color/light_gray"
             />
 
-        <com.breadwallet.presenter.customviews.BreadButton
+        <com.breadwallet.presenter.customviews.BRButton
             android:id="@+id/share_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -110,7 +110,7 @@
             android:orientation="horizontal"
             android:weightSum="2.0">
 
-            <com.breadwallet.presenter.customviews.BreadButton
+            <com.breadwallet.presenter.customviews.BRButton
                 android:id="@+id/share_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -127,7 +127,7 @@
                 android:textSize="14sp"
                 />
 
-            <com.breadwallet.presenter.customviews.BreadButton
+            <com.breadwallet.presenter.customviews.BRButton
                 android:id="@+id/share_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -146,7 +146,7 @@
 
         </LinearLayout>
 
-        <com.breadwallet.presenter.customviews.BreadButton
+        <com.breadwallet.presenter.customviews.BRButton
             android:id="@+id/request_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

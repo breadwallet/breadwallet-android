@@ -19,7 +19,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
-    <com.breadwallet.presenter.customviews.BreadText
+    <com.breadwallet.presenter.customviews.BRText
         app:customFont="Celevenia.otf"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -31,7 +31,7 @@
         app:layout_constraintRight_toRightOf="@+id/logo_view"
         app:layout_constraintTop_toBottomOf="@+id/logo_view"/>
 
-    <com.breadwallet.presenter.customviews.BreadButton
+    <com.breadwallet.presenter.customviews.BRButton
         android:id="@+id/button_new_wallet"
         android:layout_width="0dp"
         android:layout_height="60dp"
@@ -48,7 +48,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
 
-    <com.breadwallet.presenter.customviews.BreadButton
+    <com.breadwallet.presenter.customviews.BRButton
         android:id="@+id/button_recover_wallet"
         android:layout_width="0dp"
         android:layout_height="60dp"

@@ -3,10 +3,8 @@ package com.breadwallet.presenter.customviews;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Typeface;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.TextView;
 
 import com.breadwallet.R;
@@ -38,31 +36,31 @@ import com.breadwallet.tools.util.Utils;
  * THE SOFTWARE.
  */
 @SuppressLint("AppCompatCustomView") // we don't need to support older versions
-public class BreadText extends TextView {
-    private static final String TAG = BreadText.class.getName();
+public class BRText extends TextView {
+    private static final String TAG = BRText.class.getName();
 
-    public BreadText(Context context) {
+    public BRText(Context context) {
         super(context);
     }
 
-    public BreadText(Context context, @Nullable AttributeSet attrs) {
+    public BRText(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);
     }
 
-    public BreadText(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public BRText(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs);
     }
 
-    public BreadText(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public BRText(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init(context, attrs);
     }
 
     private void init(Context ctx, AttributeSet attrs) {
-        TypedArray a = ctx.obtainStyledAttributes(attrs, R.styleable.BreadText);
-        String customFont = a.getString(R.styleable.BreadText_customFont);
+        TypedArray a = ctx.obtainStyledAttributes(attrs, R.styleable.BRText);
+        String customFont = a.getString(R.styleable.BRText_customFont);
         TypefacesManager.setCustomFont(ctx, this, Utils.isNullOrEmpty(customFont) ? "CircularPro-Book.otf" : customFont);
         a.recycle();
     }

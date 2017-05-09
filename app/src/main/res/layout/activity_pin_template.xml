@@ -9,7 +9,7 @@
     android:layout_height="match_parent"
     tools:context="com.breadwallet.presenter.activities.IntroSetPitActivity">
 
-    <com.breadwallet.presenter.customviews.BreadText
+    <com.breadwallet.presenter.customviews.BRText
         app:customFont="CircularPro-Bold.otf"
         android:id="@+id/title"
         android:layout_width="wrap_content"
@@ -21,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginStart="32dp"/>
 
-    <com.breadwallet.presenter.customviews.BreadText
+    <com.breadwallet.presenter.customviews.BRText
         android:id="@+id/description"
         android:layout_width="296dp"
         android:layout_height="wrap_content"
@@ -94,7 +94,7 @@
         android:layout_height="240dp"
         android:id="@+id/brkeyboard"/>
 
-    <com.breadwallet.presenter.customviews.BreadText
+    <com.breadwallet.presenter.customviews.BRText
         android:text="Write down your PIN and store it in a place you can access even if your phone is broken or lost"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

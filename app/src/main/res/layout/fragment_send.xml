@@ -20,7 +20,7 @@
         android:clickable="true"
         android:padding="0dp">
 
-        <com.breadwallet.presenter.customviews.BreadText
+        <com.breadwallet.presenter.customviews.BRText
             app:customFont="CircularPro-Bold.otf"
             android:id="@+id/title"
             android:layout_width="wrap_content"
@@ -132,7 +132,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintHorizontal_bias="0.0"/>
 
-        <com.breadwallet.presenter.customviews.BreadText
+        <com.breadwallet.presenter.customviews.BRText
             android:id="@+id/textView14"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -143,7 +143,7 @@
             android:layout_marginLeft="0dp"
             app:layout_constraintLeft_toLeftOf="@+id/address_edit"/>
 
-        <com.breadwallet.presenter.customviews.BreadButton
+        <com.breadwallet.presenter.customviews.BRButton
             android:id="@+id/paste_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -160,7 +160,7 @@
             app:layout_constraintTop_toTopOf="@+id/share_text"
             android:layout_marginTop="0dp"/>
 
-        <com.breadwallet.presenter.customviews.BreadButton
+        <com.breadwallet.presenter.customviews.BRButton
             android:id="@+id/share_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -177,7 +177,7 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/view"/>
 
-        <com.breadwallet.presenter.customviews.BreadText
+        <com.breadwallet.presenter.customviews.BRText
             android:id="@+id/iso_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -219,7 +219,7 @@
             app:layout_constraintTop_toBottomOf="@+id/keyboard"
             />
 
-        <com.breadwallet.presenter.customviews.BreadButton
+        <com.breadwallet.presenter.customviews.BRButton
             android:id="@+id/send_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -264,7 +264,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintVertical_bias="0.545"/>
 
-        <com.breadwallet.presenter.customviews.BreadText
+        <com.breadwallet.presenter.customviews.BRText
             android:id="@+id/balance_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

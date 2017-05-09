@@ -17,7 +17,7 @@
                                                  android:filterTouchesWhenObscured="true">
 
 
-        <com.breadwallet.presenter.customviews.BreadText
+        <com.breadwallet.presenter.customviews.BRText
             app:customFont="CircularPro-Book.otf"
             android:id="@+id/sent_received"
             android:layout_width="wrap_content"
@@ -29,7 +29,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
-        <com.breadwallet.presenter.customviews.BreadText
+        <com.breadwallet.presenter.customviews.BRText
             app:customFont="CircularPro-Bold.otf"
             android:id="@+id/amount"
             android:layout_width="wrap_content"
@@ -43,7 +43,7 @@
             app:layout_constraintLeft_toRightOf="@+id/sent_received"
             app:layout_constraintTop_toTopOf="@+id/sent_received"/>
 
-        <com.breadwallet.presenter.customviews.BreadText
+        <com.breadwallet.presenter.customviews.BRText
             app:customFont="CircularPro-Book.otf"
             android:id="@+id/to_from"
             android:layout_width="wrap_content"
@@ -55,7 +55,7 @@
             android:layout_marginLeft="0dp"
             app:layout_constraintLeft_toLeftOf="@+id/sent_received"/>
 
-        <com.breadwallet.presenter.customviews.BreadText
+        <com.breadwallet.presenter.customviews.BRText
             app:customFont="CircularPro-Bold.otf"
             android:id="@+id/account"
             android:layout_width="wrap_content"
@@ -73,7 +73,7 @@
             app:layout_constraintTop_toTopOf="@+id/to_from"
             app:layout_constraintVertical_bias="0.0"/>
 
-        <com.breadwallet.presenter.customviews.BreadText
+        <com.breadwallet.presenter.customviews.BRText
             app:customFont="CircularPro-Book.otf"
             android:id="@+id/confirmation"
             android:layout_width="wrap_content"
@@ -87,7 +87,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/account"
             android:layout_marginBottom="0dp"/>
 
-        <com.breadwallet.presenter.customviews.BreadText
+        <com.breadwallet.presenter.customviews.BRText
             app:customFont="CircularPro-Medium.otf"
             android:id="@+id/timestamp"
             android:layout_width="wrap_content"
@@ -99,7 +99,7 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
-        <com.breadwallet.presenter.customviews.BreadText
+        <com.breadwallet.presenter.customviews.BRText
             app:customFont="CircularPro-Book.otf"
             android:id="@+id/comment"
             android:layout_width="wrap_content"

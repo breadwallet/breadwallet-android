@@ -16,7 +16,7 @@
         android:background="@drawable/menu_layout"
         android:orientation="vertical">
 
-        <com.breadwallet.presenter.customviews.BreadText
+        <com.breadwallet.presenter.customviews.BRText
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -63,7 +63,7 @@
             android:layout_marginTop="16dp"
             android:background="#c6c6c6"/>
 
-        <com.breadwallet.presenter.customviews.BreadText
+        <com.breadwallet.presenter.customviews.BRText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -73,7 +73,7 @@
             android:textSize="16sp"
             />
 
-        <com.breadwallet.presenter.customviews.BreadText
+        <com.breadwallet.presenter.customviews.BRText
             android:id="@+id/wallet_creation_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

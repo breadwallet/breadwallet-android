@@ -45,11 +45,11 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
 
     private EditText searchEdit;
     //    private LinearLayout filterButtonsLayout;
-    private BreadButton sentFilter;
-    private BreadButton receivedFilter;
-    private BreadButton pendingFilter;
-    private BreadButton completedFilter;
-    private BreadButton cancelButton;
+    private BRButton sentFilter;
+    private BRButton receivedFilter;
+    private BRButton pendingFilter;
+    private BRButton completedFilter;
+    private BRButton cancelButton;
     private BreadActivity breadActivity;
 
     public boolean[] filterSwitches = new boolean[4];
@@ -75,11 +75,11 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
         breadActivity = (BreadActivity) getContext();
         searchEdit = (EditText) findViewById(R.id.search_edit);
 //        filterButtonsLayout = (LinearLayout) findViewById(R.id.filter_buttons_layout);
-        sentFilter = (BreadButton) findViewById(R.id.sent_filter);
-        receivedFilter = (BreadButton) findViewById(R.id.received_filter);
-        pendingFilter = (BreadButton) findViewById(R.id.pending_filter);
-        completedFilter = (BreadButton) findViewById(R.id.complete_filter);
-        cancelButton = (BreadButton) findViewById(R.id.cancel_button);
+        sentFilter = (BRButton) findViewById(R.id.sent_filter);
+        receivedFilter = (BRButton) findViewById(R.id.received_filter);
+        pendingFilter = (BRButton) findViewById(R.id.pending_filter);
+        completedFilter = (BRButton) findViewById(R.id.complete_filter);
+        cancelButton = (BRButton) findViewById(R.id.cancel_button);
 
         clearSwitches();
 

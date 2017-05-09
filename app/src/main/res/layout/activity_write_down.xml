@@ -16,7 +16,7 @@
         android:background="@drawable/write_phrase_gradient"
         >
 
-        <com.breadwallet.presenter.customviews.BreadText
+        <com.breadwallet.presenter.customviews.BRText
             app:customFont="CircularPro-Bold.otf"
             android:id="@+id/title"
             android:layout_width="wrap_content"
@@ -47,7 +47,7 @@
 
     </FrameLayout>
 
-    <com.breadwallet.presenter.customviews.BreadText
+    <com.breadwallet.presenter.customviews.BRText
         android:id="@+id/textView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -58,7 +58,7 @@
         android:text="Protect your wallet against theft and ensure you can recover your wallet after replacing your phone or updating it's software"
         android:textSize="20sp"/>
 
-    <com.breadwallet.presenter.customviews.BreadButton
+    <com.breadwallet.presenter.customviews.BRButton
         android:id="@+id/button_write_down"
         android:layout_width="match_parent"
         android:layout_height="60dp"
