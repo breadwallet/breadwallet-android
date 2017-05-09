@@ -1,11 +1,14 @@
 package com.breadwallet.presenter.activities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -24,6 +27,8 @@ import com.google.firebase.crash.FirebaseCrash;
 import java.io.IOException;
 import java.util.List;
 import java.util.Random;
+
+import static java.security.AccessController.getContext;
 
 
 public class PaperKeyProveActivity extends Activity {
@@ -52,6 +57,11 @@ public class PaperKeyProveActivity extends Activity {
         wordEditSecond = (EditText) findViewById(R.id.word_edittext_second);
         wordTextFirst = (TextView) findViewById(R.id.word_number_first);
         wordTextSecond = (TextView) findViewById(R.id.word_number_second);
+
+        final InputMethodManager keyboard = (InputMethodManager)
+                getSystemService(Context.INPUT_METHOD_SERVICE);
+        wordEditFirst.requestFocus();
+        keyboard.showSoftInput(wordEditFirst, 0);
 
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
