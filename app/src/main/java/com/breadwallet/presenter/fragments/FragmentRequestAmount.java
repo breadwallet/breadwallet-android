@@ -28,6 +28,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
@@ -123,6 +124,8 @@ public class FragmentRequestAmount extends Fragment {
         layoutTransition.enableTransitionType(LayoutTransition.CHANGING);
         setListeners();
         keyboardPosition = signalLayout.indexOfChild(keyboard);
+
+        signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
 
         return rootView;
     }

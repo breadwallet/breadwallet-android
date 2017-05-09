@@ -1,6 +1,8 @@
 package com.breadwallet.tools.animation;
 
+import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -32,19 +34,28 @@ import android.view.View;
  */
 public class SlideDetector implements View.OnTouchListener {
 
+    private static final String TAG = SlideDetector.class.getName();
+
     private Context context;
     private View view;
+    private boolean moving;
 
     public SlideDetector(Context context, View view) {
         this.context = context;
         this.view = view;
+        moving = false;
     }
 
-    GestureDetector gestureDetector = new GestureDetector(context,
+    private GestureDetector gestureDetector = new GestureDetector(context,
             new GestureDetector.SimpleOnGestureListener() {
                 @Override
                 public boolean onScroll(MotionEvent start, MotionEvent event, float distanceX, float distanceY) {
+                    if (moving) return true;
                     view.setTranslationY(event.getY() - start.getY());
+                    if (event.getY() - start.getY() > 20) {
+                        moving = true;
+                        removeCurrentView();
+                    }
                     return true;
                 }
             });
@@ -52,6 +63,14 @@ public class SlideDetector implements View.OnTouchListener {
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         gestureDetector.onTouchEvent(event);  // here we pass events to detector above
+        if (event.getActionMasked() == MotionEvent.ACTION_UP && !moving) {
+            view.setTranslationY(0);
+        }
         return false;
+    }
+
+    private void removeCurrentView() {
+        Log.e(TAG, "removeCurrentView: ");
+        ((Activity) context).getFragmentManager().popBackStack();
     }
 }

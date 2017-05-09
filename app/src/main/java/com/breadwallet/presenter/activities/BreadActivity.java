@@ -35,6 +35,7 @@ import com.breadwallet.presenter.fragments.FragmentManage;
 import com.breadwallet.presenter.fragments.FragmentMenu;
 import com.breadwallet.tools.adapter.TransactionListAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
@@ -53,6 +54,7 @@ import com.platform.HTTPServer;
 import java.math.BigDecimal;
 import java.util.Arrays;
 
+import static com.breadwallet.R.id.view;
 import static com.breadwallet.presenter.activities.IntroActivity.introActivity;
 import static com.breadwallet.presenter.activities.IntroReEnterPinActivity.introReEnterPinActivity;
 import static com.breadwallet.presenter.activities.IntroSetPitActivity.introSetPitActivity;
