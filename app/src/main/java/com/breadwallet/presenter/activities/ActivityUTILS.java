@@ -43,11 +43,12 @@ public class ActivityUTILS {
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(app.getColor(color));
+
     }
 
     public static void init(Activity app) {
         //set status bar color
-        ActivityUTILS.setStatusBarColor(app, R.color.status_bar);
+        ActivityUTILS.setStatusBarColor(app, android.R.color.transparent);
         CurrencyFetchManager.getInstance().startTimer(app);
         BreadWalletApp.setBreadContext(app);
         //show wallet locked if it is
