@@ -83,7 +83,7 @@
             android:background="@drawable/ic_pin_dot_gray"/>
     </LinearLayout>
 
-    <com.breadwallet.presenter.customviews.BRSoftKeyboard
+    <com.breadwallet.presenter.customviews.BRKeyboard
         android:layout_width="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"

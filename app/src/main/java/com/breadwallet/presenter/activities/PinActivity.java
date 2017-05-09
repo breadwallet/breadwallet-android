@@ -23,7 +23,7 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.presenter.customviews.BRSoftKeyboard;
+import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
@@ -41,7 +41,7 @@ import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
 
 public class PinActivity extends Activity {
     private static final String TAG = PinActivity.class.getName();
-    private BRSoftKeyboard keyboard;
+    private BRKeyboard keyboard;
     private LinearLayout pinLayout;
     private View dot1;
     private View dot2;
@@ -87,7 +87,7 @@ public class PinActivity extends Activity {
 
         if (KeyStoreManager.getPinCode(this).length() == 4) pinLimit = 4;
 
-        keyboard = (BRSoftKeyboard) findViewById(R.id.brkeyboard);
+        keyboard = (BRKeyboard) findViewById(R.id.brkeyboard);
         pinLayout = (LinearLayout) findViewById(R.id.pinLayout);
         fingerPrint = (ImageButton) findViewById(R.id.fingerprint_icon);
 
@@ -103,13 +103,13 @@ public class PinActivity extends Activity {
         dot5 = findViewById(R.id.dot5);
         dot6 = findViewById(R.id.dot6);
 
-        keyboard.addOnInsertListener(new BRSoftKeyboard.OnInsertListener() {
+        keyboard.addOnInsertListener(new BRKeyboard.OnInsertListener() {
             @Override
             public void onClick(String key) {
                 handleClick(key);
             }
         });
-        keyboard.setBRButtonBackgroundColor(R.color.white_trans);
+        keyboard.setBRButtonBackgroundResId(R.drawable.keyboard_trans_button);
         keyboard.setBRButtonTextColor(R.color.white);
         keyboard.setShowDot(false);
 

@@ -25,7 +25,7 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.presenter.customviews.BRSoftKeyboard;
+import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.presenter.entities.RequestObject;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -77,7 +77,7 @@ public class FragmentSend extends Fragment {
     public LinearLayout backgroundLayout;
     public ConstraintLayout signalLayout;
     public static final int ANIMATION_DURATION = 300;
-    private BRSoftKeyboard keyboard;
+    private BRKeyboard keyboard;
     private EditText addressEdit;
     private Button scan;
     private Button paste;
@@ -96,8 +96,8 @@ public class FragmentSend extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_send, container, false);
         backgroundLayout = (LinearLayout) rootView.findViewById(R.id.background_layout);
         signalLayout = (ConstraintLayout) rootView.findViewById(R.id.signal_layout);
-        keyboard = (BRSoftKeyboard) rootView.findViewById(R.id.keyboard);
-        keyboard.setBRButtonBackgroundColor(R.color.white);
+        keyboard = (BRKeyboard) rootView.findViewById(R.id.keyboard);
+        keyboard.setBRButtonBackgroundResId(R.drawable.keyboard_white_button);
         keyboard.setBRKeyboardColor(R.color.white);
         isoText = (TextView) rootView.findViewById(R.id.iso_text);
         addressEdit = (EditText) rootView.findViewById(R.id.address_edit);
@@ -277,7 +277,7 @@ public class FragmentSend extends Fragment {
             }
         });
 
-        keyboard.addOnInsertListener(new BRSoftKeyboard.OnInsertListener()
+        keyboard.addOnInsertListener(new BRKeyboard.OnInsertListener()
 
         {
             @Override

@@ -2,17 +2,14 @@ package com.breadwallet.presenter.customviews;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.os.Handler;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import com.breadwallet.R;
-import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.SpringAnimator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,8 +39,8 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class BRSoftKeyboard extends LinearLayout implements View.OnClickListener {
-    public static final String TAG = BRSoftKeyboard.class.getName();
+public class BRKeyboard extends LinearLayout implements View.OnClickListener {
+    public static final String TAG = BRKeyboard.class.getName();
     List<OnInsertListener> listeners = new ArrayList<>();
     private Button num0;
     private Button num1;
@@ -58,22 +55,22 @@ public class BRSoftKeyboard extends LinearLayout implements View.OnClickListener
     private Button numDot;
     private ImageButton numDelete;
 
-    public BRSoftKeyboard(Context context) {
+    public BRKeyboard(Context context) {
         super(context);
         init();
     }
 
-    public BRSoftKeyboard(Context context, AttributeSet attrs) {
+    public BRKeyboard(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public BRSoftKeyboard(Context context, AttributeSet attrs, int defStyleAttr) {
+    public BRKeyboard(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
 
-    public BRSoftKeyboard(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public BRKeyboard(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init();
     }
@@ -153,22 +150,23 @@ public class BRSoftKeyboard extends LinearLayout implements View.OnClickListener
         num8.setTextColor(getContext().getColor(color));
         num9.setTextColor(getContext().getColor(color));
         numDot.setTextColor(getContext().getColor(color));
-        numDelete.setColorFilter(getContext().getColor(color));
+//        numDelete.setColorFilter(getContext().getColor(color));
         invalidate();
     }
 
-    public void setBRButtonBackgroundColor(int color) {
-        num0.setBackgroundColor(getContext().getColor(color));
-        num1.setBackgroundColor(getContext().getColor(color));
-        num2.setBackgroundColor(getContext().getColor(color));
-        num3.setBackgroundColor(getContext().getColor(color));
-        num4.setBackgroundColor(getContext().getColor(color));
-        num5.setBackgroundColor(getContext().getColor(color));
-        num6.setBackgroundColor(getContext().getColor(color));
-        num7.setBackgroundColor(getContext().getColor(color));
-        num8.setBackgroundColor(getContext().getColor(color));
-        num9.setBackgroundColor(getContext().getColor(color));
-        numDot.setBackgroundColor(getContext().getColor(color));
+    public void setBRButtonBackgroundResId(int resId) {
+        num0.setBackgroundResource(resId);
+        num1.setBackgroundResource(resId);
+        num2.setBackgroundResource(resId);
+        num3.setBackgroundResource(resId);
+        num4.setBackgroundResource(resId);
+        num5.setBackgroundResource(resId);
+        num6.setBackgroundResource(resId);
+        num7.setBackgroundResource(resId);
+        num8.setBackgroundResource(resId);
+        num9.setBackgroundResource(resId);
+        numDot.setBackgroundResource(resId);
+        numDelete.setBackgroundResource(resId);
         invalidate();
     }
 

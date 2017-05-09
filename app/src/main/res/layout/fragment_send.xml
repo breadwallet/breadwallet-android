@@ -97,7 +97,7 @@
             app:layout_constraintTop_toBottomOf="@+id/comment_edit"
             />
 
-        <com.breadwallet.presenter.customviews.BRSoftKeyboard
+        <com.breadwallet.presenter.customviews.BRKeyboard
             android:id="@+id/keyboard"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
