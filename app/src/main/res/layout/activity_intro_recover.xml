@@ -9,7 +9,7 @@
     android:layout_height="match_parent"
     tools:context="com.breadwallet.presenter.activities.IntroRecoverActivity">
 
-    <com.breadwallet.presenter.customviews.BreadButton
+    <com.breadwallet.presenter.customviews.BRButton
         android:id="@+id/send_button"
         android:layout_width="0dp"
         android:layout_height="60dp"
@@ -39,7 +39,7 @@
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1">
 
-        <com.breadwallet.presenter.customviews.BreadText
+        <com.breadwallet.presenter.customviews.BRText
             app:customFont="CircularPro-Bold.otf"
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
@@ -82,7 +82,7 @@
             android:src="@drawable/ic_arrow_body"/>
 
 
-        <com.breadwallet.presenter.customviews.BreadText
+        <com.breadwallet.presenter.customviews.BRText
             app:customFont="CircularPro-Medium.otf"
             android:id="@+id/textView3"
             android:layout_width="wrap_content"
@@ -107,7 +107,7 @@
     </RelativeLayout>
 
 
-    <com.breadwallet.presenter.customviews.BreadText
+    <com.breadwallet.presenter.customviews.BRText
         android:id="@+id/textView8"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

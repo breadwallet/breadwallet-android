@@ -16,7 +16,7 @@
         android:background="@drawable/write_phrase_gradient"
         android:orientation="vertical">
 
-        <com.breadwallet.presenter.customviews.BreadText
+        <com.breadwallet.presenter.customviews.BRText
             app:customFont="CircularPro-Bold.otf"
             android:id="@+id/title"
             android:layout_width="wrap_content"
@@ -31,7 +31,7 @@
             android:textColor="@color/white"
             android:textSize="18sp"/>
 
-        <com.breadwallet.presenter.customviews.BreadText
+        <com.breadwallet.presenter.customviews.BRText
             android:id="@+id/description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -63,7 +63,7 @@
         android:layout_marginBottom="32dp"
         android:weightSum="2.0">
 
-        <com.breadwallet.presenter.customviews.BreadButton
+        <com.breadwallet.presenter.customviews.BRButton
             android:id="@+id/button_previous"
             android:layout_width="0dp"
             android:layout_height="60dp"
@@ -80,7 +80,7 @@
             android:textSize="18sp"
             />
 
-        <com.breadwallet.presenter.customviews.BreadButton
+        <com.breadwallet.presenter.customviews.BRButton
             android:id="@+id/send_button"
             android:layout_width="0dp"
             android:layout_height="60dp"
@@ -97,7 +97,7 @@
 
     </LinearLayout>
 
-    <com.breadwallet.presenter.customviews.BreadText
+    <com.breadwallet.presenter.customviews.BRText
         app:customFont="CircularPro-Medium.otf"
         android:id="@+id/item_index_text"
         android:layout_width="wrap_content"

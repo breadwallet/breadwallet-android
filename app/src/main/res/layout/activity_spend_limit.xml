@@ -9,7 +9,7 @@
     android:background="@color/extra_light_blue_background"
     tools:context="com.breadwallet.presenter.activities.IntroSetPitActivity">
 
-    <com.breadwallet.presenter.customviews.BreadText
+    <com.breadwallet.presenter.customviews.BRText
         app:customFont="CircularPro-Bold.otf"
         android:id="@+id/title"
         android:layout_width="wrap_content"
@@ -46,7 +46,7 @@
         <!--android:layout_marginBottom="0dp"/>-->
 
 
-    <com.breadwallet.presenter.customviews.BreadText
+    <com.breadwallet.presenter.customviews.BRText
         app:customFont="CircularPro-Medium.otf"
         android:id="@+id/limit_label"
         android:layout_width="wrap_content"
@@ -60,7 +60,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title"/>
 
-    <com.breadwallet.presenter.customviews.BreadText
+    <com.breadwallet.presenter.customviews.BRText
         android:id="@+id/exchange_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

@@ -17,7 +17,7 @@
 ** limitations under the License.
 */
 -->
-<com.breadwallet.presenter.customviews.BreadText
+<com.breadwallet.presenter.customviews.BRText
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/text1"
     style="?android:attr/spinnerItemStyle"

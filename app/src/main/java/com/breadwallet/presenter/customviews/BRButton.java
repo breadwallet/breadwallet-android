@@ -3,12 +3,9 @@ package com.breadwallet.presenter.customviews;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Typeface;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.Button;
-import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.tools.manager.TypefacesManager;
@@ -39,31 +36,31 @@ import com.breadwallet.tools.util.Utils;
  * THE SOFTWARE.
  */
 @SuppressLint("AppCompatCustomView") // we don't need to support older versions
-public class BreadButton extends Button {
-    private static final String TAG = BreadButton.class.getName();
+public class BRButton extends Button {
+    private static final String TAG = BRButton.class.getName();
 
-    public BreadButton(Context context) {
+    public BRButton(Context context) {
         super(context);
     }
 
-    public BreadButton(Context context, @Nullable AttributeSet attrs) {
+    public BRButton(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);
     }
 
-    public BreadButton(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public BRButton(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs);
     }
 
-    public BreadButton(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public BRButton(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init(context, attrs);
     }
 
     private void init(Context ctx, AttributeSet attrs) {
-        TypedArray a = ctx.obtainStyledAttributes(attrs, R.styleable.BreadText);
-        String customFont = a.getString(R.styleable.BreadText_customFont);
+        TypedArray a = ctx.obtainStyledAttributes(attrs, R.styleable.BRText);
+        String customFont = a.getString(R.styleable.BRText_customFont);
         TypefacesManager.setCustomFont(ctx, this, Utils.isNullOrEmpty(customFont) ? "CircularPro-Medium.otf" : customFont);
         a.recycle();
     }

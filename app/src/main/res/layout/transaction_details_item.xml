@@ -20,7 +20,7 @@
         android:padding="0dp"
         >
 
-        <com.breadwallet.presenter.customviews.BreadText
+        <com.breadwallet.presenter.customviews.BRText
             app:customFont="CircularPro-Bold.otf"
 
             android:id="@+id/title"
@@ -45,7 +45,7 @@
             android:background="#c6c6c6"
             />
 
-        <com.breadwallet.presenter.customviews.BreadText
+        <com.breadwallet.presenter.customviews.BRText
             app:customFont="CircularPro-Bold.otf"
             android:id="@+id/date_text"
             android:layout_width="wrap_content"
@@ -58,7 +58,7 @@
             android:textColor="@color/light_gray"
           />
 
-        <com.breadwallet.presenter.customviews.BreadText
+        <com.breadwallet.presenter.customviews.BRText
             app:customFont="CircularPro-Bold.otf"
             android:id="@+id/description_text"
             android:layout_width="wrap_content"
@@ -72,7 +72,7 @@
             android:textColor="@color/almost_black"
             />
 
-        <com.breadwallet.presenter.customviews.BreadText
+        <com.breadwallet.presenter.customviews.BRText
             app:customFont="CircularPro-Bold.otf"
 
             android:layout_width="wrap_content"
@@ -83,7 +83,7 @@
             android:textColor="@color/light_gray"
             />
 
-        <com.breadwallet.presenter.customviews.BreadText
+        <com.breadwallet.presenter.customviews.BRText
             android:id="@+id/confirmation_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -100,7 +100,7 @@
             android:layout_marginTop="16dp"
             android:background="#c6c6c6"/>
 
-        <com.breadwallet.presenter.customviews.BreadText
+        <com.breadwallet.presenter.customviews.BRText
             app:customFont="CircularPro-Bold.otf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -110,7 +110,7 @@
             android:textColor="@color/light_gray"
        />
 
-        <com.breadwallet.presenter.customviews.BreadText
+        <com.breadwallet.presenter.customviews.BRText
             android:id="@+id/comment_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -127,7 +127,7 @@
             android:layout_marginTop="16dp"
             android:background="#c6c6c6"/>
 
-        <com.breadwallet.presenter.customviews.BreadText
+        <com.breadwallet.presenter.customviews.BRText
 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -137,7 +137,7 @@
             android:textColor="@color/light_gray"
             />
 
-        <com.breadwallet.presenter.customviews.BreadText
+        <com.breadwallet.presenter.customviews.BRText
             android:id="@+id/amount_text"
             android:layout_width="wrap_content"
             android:textIsSelectable="true"
@@ -154,7 +154,7 @@
             android:layout_marginTop="16dp"
             android:background="#c6c6c6"/>
 
-        <com.breadwallet.presenter.customviews.BreadText
+        <com.breadwallet.presenter.customviews.BRText
 
             android:layout_width="wrap_content"
             android:id="@+id/to_from"
@@ -165,7 +165,7 @@
             android:textColor="@color/light_gray"
      />
 
-        <com.breadwallet.presenter.customviews.BreadText
+        <com.breadwallet.presenter.customviews.BRText
 
             android:id="@+id/address_text"
             android:layout_width="wrap_content"
