@@ -215,18 +215,19 @@ public class QRScannerView extends FrameLayout implements Camera.PreviewCallback
                     });
                     return;
                 }
-                boolean isBitIdUri = RequestHandler.tryBitIdUri(app, resultedText, null);
-                if (isBitIdUri) {
-                    app.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            BRAnimator.hideDecoderFragment();
-                        }
-                    });
-                    return;
-                }
+//                boolean isBitIdUri = RequestHandler.tryBitIdUri(app, resultedText, null);
+//                if (isBitIdUri) {
+//                    app.runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            BRAnimator.hideDecoderFragment();
+//                        }
+//                    });
+//                    return;
+//                }
 
                 final String decoderText = validateResult(resultedText);
+
                 if (!Objects.equals(decoderText, BRConstants.TEXT_EMPTY)) {
                     app.runOnUiThread(new Runnable() {
                         @Override
@@ -308,6 +309,7 @@ public class QRScannerView extends FrameLayout implements Camera.PreviewCallback
     private String validateResult(String str) {
         RequestObject obj = null;
         obj = RequestHandler.getRequestFromString(str);
+
         if (obj == null) {
             return getContext().getResources().getString(R.string.fragmentdecoder_not_a_bitcoin_qr_code);
         }
