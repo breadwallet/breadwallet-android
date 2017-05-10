@@ -1,9 +1,9 @@
 package com.breadwallet.wallet;
 
 import android.app.Activity;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.RelativeLayout;
 
 import com.breadwallet.BreadWalletApp;
@@ -16,8 +16,10 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.sqlite.SQLiteManager;
+import com.breadwallet.tools.util.Utils;
 
 import java.text.DecimalFormat;
+
 
 /**
  * BreadWallet
@@ -49,6 +51,7 @@ public class BRPeerManager {
     private static BRPeerManager instance;
     private static SyncProgressTask syncTask;
     private static Activity ctx;
+
 
     private BRPeerManager() {
     }

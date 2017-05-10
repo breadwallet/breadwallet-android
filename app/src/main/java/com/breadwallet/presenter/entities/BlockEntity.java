@@ -30,7 +30,7 @@ public class BlockEntity {
     public static final String TAG = BlockEntity.class.getName();
 
     private byte[] blockBytes;
-    private int blockHeight;
+    public int blockHeight;
 
 
     public BlockEntity(byte[] blockBytes, int blockHeight) {

@@ -2,21 +2,31 @@ package com.breadwallet.tools.util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.breadwallet.presenter.activities.MainActivity;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -64,7 +74,7 @@ public class Utils {
     }
 
     public static boolean isUsingCustomInputMethod(Activity context) {
-        if(context == null) return false;
+        if (context == null) return false;
         InputMethodManager imm = (InputMethodManager) context.getSystemService(
                 Context.INPUT_METHOD_SERVICE);
         List<InputMethodInfo> mInputMethodProperties = imm.getEnabledInputMethodList();
@@ -124,11 +134,11 @@ public class Utils {
         return result;
     }
 
-    public static boolean isNullOrEmpty(String str){
+    public static boolean isNullOrEmpty(String str) {
         return str == null || str.isEmpty();
     }
 
-    public static boolean isNullOrEmpty(byte[] arr){
+    public static boolean isNullOrEmpty(byte[] arr) {
         return arr == null || arr.length == 0;
     }
 
@@ -136,7 +146,7 @@ public class Utils {
         return collection == null || collection.size() == 0;
     }
 
-    public static int getPixelsFromDps(Context context, int dps){
+    public static int getPixelsFromDps(Context context, int dps) {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (dps * scale + 0.5f);
     }
@@ -154,8 +164,67 @@ public class Utils {
         byte[] data = new byte[len / 2];
         for (int i = 0; i < len; i += 2) {
             data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
-                    + Character.digit(s.charAt(i+1), 16));
+                    + Character.digit(s.charAt(i + 1), 16));
         }
         return data;
+    }
+
+    public static void logsToEmailWithAttachment(Context context) {
+        //set a file
+        Date datum = new Date();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.ITALY);
+        String fullName = df.format(datum) + "appLog.log";
+        File file = new File(Environment.getExternalStorageDirectory(), fullName);
+
+        //clears a file
+        if (file.exists()) {
+            file.delete();
+        }
+
+        //write log to file
+        int pid = android.os.Process.myPid();
+        try {
+            String command = String.format("logcat -d -v threadtime *:*");
+            Process process = Runtime.getRuntime().exec(command);
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            StringBuilder result = new StringBuilder();
+            String currentLine = null;
+
+            while ((currentLine = reader.readLine()) != null) {
+                if (currentLine != null && currentLine.contains(String.valueOf(pid))) {
+                    result.append(currentLine);
+                    result.append("\n");
+                }
+            }
+
+            FileWriter out = new FileWriter(file);
+            out.write(result.toString());
+            out.close();
+
+            //Runtime.getRuntime().exec("logcat -d -v time -f "+file.getAbsolutePath());
+        } catch (IOException e) {
+            Toast.makeText(context.getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
+        }
+
+        //clear the log
+        try {
+            Runtime.getRuntime().exec("logcat -c");
+        } catch (IOException e) {
+            Toast.makeText(context.getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
+        }
+
+        Uri fileUri = Uri.fromFile(file);
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"mihail@breadwallet.com"});
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Syncing bug wallet logs");
+        intent.putExtra(Intent.EXTRA_TEXT, "The logs will be attached:");
+        if (!file.exists() || !file.canRead()) {
+            Toast.makeText(context, "Attachment Error", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        intent.putExtra(Intent.EXTRA_STREAM, fileUri);
+        context.startActivity(Intent.createChooser(intent, "Send email..."));
     }
 }
