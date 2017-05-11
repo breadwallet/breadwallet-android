@@ -326,13 +326,17 @@ public class RequestHandler {
     }
 
     public static RequestObject getRequestFromString(String str) {
-        Log.e(TAG, "getRequestFromString: " + str);
         if (str == null || str.isEmpty()) return null;
         RequestObject obj = new RequestObject();
 
         String tmp = str.trim().replaceAll("\n", "").replaceAll(" ", "%20");
-//        if (!URLUtil.isValidUrl(tmp)) return null;
-        URI uri = URI.create(tmp);
+        URI uri;
+        try {
+            uri = URI.create(tmp);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
 
         if (uri.getScheme() == null || !uri.getScheme().equals("bitcoin")) {
             tmp = "bitcoin://".concat(tmp);
