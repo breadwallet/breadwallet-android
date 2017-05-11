@@ -259,7 +259,6 @@ public class BRWalletManager {
     public boolean confirmSweep(final Activity activity, final String privKey) {
         if (activity == null) return false;
         if (isValidBitcoinBIP38Key(privKey)) {
-            Log.d(TAG, "isValidBitcoinBIP38Key true");
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -334,7 +333,7 @@ public class BRWalletManager {
             new ImportPrivKeyTask(activity).execute(privKey);
             return true;
         } else {
-            Log.e(TAG, "confirmSweep: !isValidBitcoinPrivateKey && !isValidBitcoinBIP38Key");
+//            Log.e(TAG, "confirmSweep: !isValidBitcoinPrivateKey && !isValidBitcoinBIP38Key");
             return false;
         }
     }
@@ -421,7 +420,7 @@ public class BRWalletManager {
 
     public static void onBalanceChanged(final long balance) {
 
-        Log.d(TAG, "onBalanceChanged:  " + balance);
+//        Log.d(TAG, "onBalanceChanged:  " + balance);
         if (ctx == null) ctx = app;
         ctx.runOnUiThread(new Runnable() {
             @Override
@@ -435,7 +434,7 @@ public class BRWalletManager {
     }
 
     public static void onTxAdded(byte[] tx, int blockHeight, long timestamp, final long amount, String hash) {
-        Log.d(TAG, "onTxAdded: " + String.format("tx.length: %d, blockHeight: %d, timestamp: %d, amount: %d, hash: %s", tx.length, blockHeight, timestamp, amount, hash));
+//        Log.d(TAG, "onTxAdded: " + String.format("tx.length: %d, blockHeight: %d, timestamp: %d, amount: %d, hash: %s", tx.length, blockHeight, timestamp, amount, hash));
         final RequestQRActivity requestApp = RequestQRActivity.requestApp;
         if (requestApp != null && !requestApp.activityIsInBackground) {
             requestApp.runOnUiThread(new Runnable() {
