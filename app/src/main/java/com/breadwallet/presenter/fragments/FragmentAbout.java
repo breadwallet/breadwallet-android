@@ -71,6 +71,8 @@ public class FragmentAbout extends Fragment {
                 R.layout.fragment_about, container, false);
         copyLogs = (Button) rootView.findViewById(R.id.copy_logs);
 
+        copyLogs.setVisibility(Utils.isEmulatorOrDebug(getActivity()) ? View.VISIBLE : View.GONE);
+
         copyLogs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
