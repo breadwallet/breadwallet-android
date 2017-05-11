@@ -167,7 +167,7 @@ public class FragmentSettings extends Fragment {
                                 public void run() {
                                     BRAnimator.goToMainActivity(fragmentSettings);
                                     BRPeerManager.getInstance(getActivity()).rescan();
-                                    SharedPreferencesManager.putStartHeight(getActivity(), BRPeerManager.getCurrentBlockHeight());
+                                    SharedPreferencesManager.putStartHeight(getActivity(), 0);
                                 }
                             }).start();
                         }
