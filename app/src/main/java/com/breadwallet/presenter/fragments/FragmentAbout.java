@@ -1,21 +1,36 @@
 package com.breadwallet.presenter.fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
+import com.breadwallet.tools.util.Utils;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -45,6 +60,7 @@ import java.util.Locale;
 
 public class FragmentAbout extends Fragment {
     private static final String TAG = FragmentAbout.class.getName();
+    private Button copyLogs;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -53,6 +69,21 @@ public class FragmentAbout extends Fragment {
 
         View rootView = inflater.inflate(
                 R.layout.fragment_about, container, false);
+        copyLogs = (Button) rootView.findViewById(R.id.copy_logs);
+
+        copyLogs.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String logs = Utils.getLogs(getActivity());
+                if (Utils.isNullOrEmpty(logs)) {
+                    Toast.makeText(getActivity().getApplicationContext(), "Logs are empty", Toast.LENGTH_SHORT).show();
+                } else {
+                    BRClipboardManager.copyToClipboard(getContext(), logs);
+                    Toast.makeText(getActivity().getApplicationContext(), "Logs are copied", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
         PackageInfo pInfo = null;
         int versionCode = 0;
         try {
@@ -95,6 +126,48 @@ public class FragmentAbout extends Fragment {
 
         return rootView;
     }
+
+//    public void sendLogs(Context context, String logs) {
+//        //set a file
+//        Date datum = new Date();
+//        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+//        String fullName = df.format(datum) + "appLog.txt";
+//        File file = new File(Environment.getExternalStorageDirectory() + File.separator + fullName);
+//
+//        try {//clears a file
+//
+//            boolean result = file.createNewFile();
+//            Log.e(TAG, "sendLogs: " + result);
+//            FileWriter out = new FileWriter(file);
+//            out.write(logs);
+//            out.close();
+////            //Runtime.getRuntime().exec("logcat -d -v time -f "+file.getAbsolutePath());
+//        } catch (IOException e) {
+//            Toast.makeText(context.getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+//
+//        //clear the log
+//        try {
+//            Runtime.getRuntime().exec("logcat -c");
+//        } catch (IOException e) {
+//            Toast.makeText(context.getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
+//        }
+//
+//        Uri fileUri = Uri.fromFile(file);
+//        Intent intent = new Intent(Intent.ACTION_SEND);
+//        intent.setType("text/plain");
+//        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"mihail@breadwallet.com"});
+//        intent.putExtra(Intent.EXTRA_SUBJECT, "Syncing bug wallet logs");
+//        intent.putExtra(Intent.EXTRA_TEXT, "The logs will be attached:");
+//        intent.putExtra("exit_on_sent", true);
+//        if (!file.exists() || !file.canRead()) {
+//            Toast.makeText(context, "Attachment Error", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+//        intent.putExtra(Intent.EXTRA_STREAM, fileUri);
+//        context.startActivity(Intent.createChooser(intent, "Send email..."));
+//    }
 
     @Override
     public void onResume() {

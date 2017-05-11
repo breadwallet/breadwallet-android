@@ -78,6 +78,7 @@ public class BRPeerManager {
     public static void syncStarted() {
         Log.d(TAG, "syncStarted");
         BRPeerManager.getInstance(ctx).refreshConnection();
+
     }
 
     public static void syncSucceeded() {

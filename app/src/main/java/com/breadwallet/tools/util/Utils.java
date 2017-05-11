@@ -15,6 +15,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
 
 import java.io.BufferedReader;
@@ -169,62 +170,23 @@ public class Utils {
         return data;
     }
 
-    public static void logsToEmailWithAttachment(Context context) {
-        //set a file
-        Date datum = new Date();
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.ITALY);
-        String fullName = df.format(datum) + "appLog.log";
-        File file = new File(Environment.getExternalStorageDirectory(), fullName);
-
-        //clears a file
-        if (file.exists()) {
-            file.delete();
-        }
-
-        //write log to file
-        int pid = android.os.Process.myPid();
+    public static String getLogs(Activity app) {
+        StringBuilder log = new StringBuilder();
         try {
-            String command = String.format("logcat -d -v threadtime *:*");
-            Process process = Runtime.getRuntime().exec(command);
+            Process process = Runtime.getRuntime().exec("logcat -d");
+            BufferedReader bufferedReader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream()));
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            StringBuilder result = new StringBuilder();
-            String currentLine = null;
 
-            while ((currentLine = reader.readLine()) != null) {
-                if (currentLine != null && currentLine.contains(String.valueOf(pid))) {
-                    result.append(currentLine);
-                    result.append("\n");
-                }
+            String line = "";
+            while ((line = bufferedReader.readLine()) != null) {
+                log.append(line);
+                log.append("\n");
             }
-
-            FileWriter out = new FileWriter(file);
-            out.write(result.toString());
-            out.close();
-
-            //Runtime.getRuntime().exec("logcat -d -v time -f "+file.getAbsolutePath());
-        } catch (IOException e) {
-            Toast.makeText(context.getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
+        } catch (IOException ignored) {
+            Toast.makeText(app.getApplicationContext(), ignored.toString(), Toast.LENGTH_SHORT).show();
         }
-
-        //clear the log
-        try {
-            Runtime.getRuntime().exec("logcat -c");
-        } catch (IOException e) {
-            Toast.makeText(context.getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
-        }
-
-        Uri fileUri = Uri.fromFile(file);
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"mihail@breadwallet.com"});
-        intent.putExtra(Intent.EXTRA_SUBJECT, "Syncing bug wallet logs");
-        intent.putExtra(Intent.EXTRA_TEXT, "The logs will be attached:");
-        if (!file.exists() || !file.canRead()) {
-            Toast.makeText(context, "Attachment Error", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        intent.putExtra(Intent.EXTRA_STREAM, fileUri);
-        context.startActivity(Intent.createChooser(intent, "Send email..."));
+        return log.toString();
     }
+
 }
