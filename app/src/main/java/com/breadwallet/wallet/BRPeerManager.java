@@ -77,8 +77,11 @@ public class BRPeerManager {
 
     public static void syncStarted() {
         Log.d(TAG, "syncStarted");
-        BRPeerManager.getInstance(ctx).refreshConnection();
+        int startHeight = SharedPreferencesManager.getStartHeight(ctx);
+        int lastHeight = SharedPreferencesManager.getLastBlockHeight(ctx);
+        if (startHeight > lastHeight) SharedPreferencesManager.putStartHeight(ctx, lastHeight);
 
+        BRPeerManager.getInstance(ctx).refreshConnection();
     }
 
     public static void syncSucceeded() {
