@@ -74,6 +74,10 @@ public class BRPeerManager {
     public static void syncStarted() {
         Log.d(TAG, "syncStarted");
 //        BRPeerManager.getInstance().refreshConnection();
+        Context ctx = BreadWalletApp.getBreadContext();
+        int startHeight = SharedPreferencesManager.getStartHeight(ctx);
+        int lastHeight = SharedPreferencesManager.getLastBlockHeight(ctx);
+        if (startHeight > lastHeight) SharedPreferencesManager.putStartHeight(ctx, lastHeight);
         startSyncingProgressThread();
     }
 
@@ -286,7 +290,7 @@ public class BRPeerManager {
                             if (tmp.syncProgressBar != null)
                                 tmp.syncProgressBar.setProgress((int) (progressStatus * 100));
                             if (tmp.syncDate != null)
-                                tmp.syncDate.setText(Utils.formatTimeStamp(lastBlockTimeStamp,"MMM. dd, yyyy  ha"));
+                                tmp.syncDate.setText(Utils.formatTimeStamp(lastBlockTimeStamp, "MMM. dd, yyyy  ha"));
                         }
                     });
                     try {
