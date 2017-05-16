@@ -34,7 +34,7 @@
             android:layout_height="96dp"
             android:layout_gravity="center_vertical|center_horizontal"
             android:layout_marginTop="40dp"
-            android:src="@drawable/fingerprint_icon"/>
+            android:src="@drawable/ic_fingerprint_large"/>
 
     </LinearLayout>
 
