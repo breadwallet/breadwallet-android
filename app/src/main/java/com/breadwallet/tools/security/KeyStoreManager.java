@@ -467,7 +467,6 @@ public class KeyStoreManager {
     }
 
     public static boolean putPinCode(String passcode, Context context) {
-        Log.e(TAG, "putPinCode: " + passcode);
         AliasObject obj = aliasObjectMap.get(PASS_CODE_ALIAS);
         byte[] bytesToStore = passcode.getBytes();
         try {
@@ -491,7 +490,6 @@ public class KeyStoreManager {
         try {
             int test = Integer.parseInt(passCode);
         } catch (Exception e) {
-            Log.e(TAG, "getPinCode: WARNING passcode isn't a number: " + passCode);
             passCode = "";
             putPinCode(passCode, context);
             KeyStoreManager.putFailCount(0, context);
@@ -508,7 +506,6 @@ public class KeyStoreManager {
     }
 
     public static boolean putFailCount(int failCount, Context context) {
-        Log.e(TAG, "putFailCount: " + failCount);
         AliasObject obj = aliasObjectMap.get(FAIL_COUNT_ALIAS);
         if (failCount >= 3) {
             long time = SharedPreferencesManager.getSecureTime(context);
@@ -536,7 +533,6 @@ public class KeyStoreManager {
     }
 
     public static boolean putSpendLimit(long spendLimit, Context context) {
-        Log.e(TAG, "putSpendLimit: " + spendLimit);
         AliasObject obj = aliasObjectMap.get(SPEND_LIMIT_ALIAS);
         byte[] bytesToStore = TypesConverter.long2byteArray(spendLimit);
         try {
@@ -733,7 +729,7 @@ public class KeyStoreManager {
                     fos.close();
                 }
             } catch (IOException ioe) {
-                System.out.println("Error while closing stream: " + ioe);
+                Log.e(TAG, "Error while closing stream: " + ioe);
             }
 
         }

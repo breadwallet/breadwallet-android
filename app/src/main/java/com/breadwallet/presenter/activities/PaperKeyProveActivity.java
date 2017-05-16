@@ -75,7 +75,6 @@ public class PaperKeyProveActivity extends Activity {
                 String edit2 = wordEditSecond.getText().toString().replaceAll("[^a-zA-Z]", "");
 
                 if (edit1.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(0))) && edit2.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(1)))) {
-                    Log.e(TAG, "onClick: Success!");
                     SharedPreferencesManager.putPhraseWroteDown(PaperKeyProveActivity.this, true);
                     BRAnimator.showBreadSignal(PaperKeyProveActivity.this, "Paper Key Set", "Awesome!", R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
                         @Override

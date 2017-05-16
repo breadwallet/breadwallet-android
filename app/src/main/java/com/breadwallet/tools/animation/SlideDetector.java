@@ -70,7 +70,6 @@ public class SlideDetector implements View.OnTouchListener {
     }
 
     private void removeCurrentView() {
-        Log.e(TAG, "removeCurrentView: ");
         ((Activity) context).getFragmentManager().popBackStack();
     }
 }

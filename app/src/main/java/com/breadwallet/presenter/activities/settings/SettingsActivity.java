@@ -122,7 +122,6 @@ public class SettingsActivity extends AppCompatActivity {
         items.add(new BRSettingsItem("Import Wallet", "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e(TAG, "onClick: Import Wallet");
                 Intent intent = new Intent(SettingsActivity.this, ImportActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
@@ -133,7 +132,6 @@ public class SettingsActivity extends AppCompatActivity {
         items.add(new BRSettingsItem("Restore Breadwallet", "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e(TAG, "onClick: Restore Breadwallet");
                 Intent intent = new Intent(SettingsActivity.this, RestoreActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
@@ -155,7 +153,6 @@ public class SettingsActivity extends AppCompatActivity {
             items.add(new BRSettingsItem("FingerPrint Spending Limit", "", new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.e(TAG, "onClick: FingerPrint Spending Limit");
                     AuthManager.getInstance().authPrompt(SettingsActivity.this, null, "Please enter your PIN to be able to change the limit.", true, new BRAuthCompletion() {
                         @Override
                         public void onComplete() {
@@ -174,17 +171,16 @@ public class SettingsActivity extends AppCompatActivity {
             }, false));
         }
 
-
         items.add(new BRSettingsItem("Default Currency", "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e(TAG, "onClick: Default Currency");
 
                 Intent intent = new Intent(SettingsActivity.this, DefaultCurrencyActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         }, false));
+
         items.add(new BRSettingsItem("Sync Blockchain", "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -199,7 +195,6 @@ public class SettingsActivity extends AppCompatActivity {
         items.add(new BRSettingsItem("Share Anonymous Data", "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e(TAG, "onClick: Share Anonymous Data");
                 Intent intent = new Intent(SettingsActivity.this, ShareDataActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
@@ -208,7 +203,6 @@ public class SettingsActivity extends AppCompatActivity {
         items.add(new BRSettingsItem("Join Early Access Program", "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e(TAG, "onClick: Join Early Access Program");
                 Intent intent = new Intent(SettingsActivity.this, WebViewActivity.class);
                 intent.putExtra("url", HTTPServer.URL_EA);
                 Activity app = SettingsActivity.this;
@@ -219,7 +213,6 @@ public class SettingsActivity extends AppCompatActivity {
         items.add(new BRSettingsItem("About", "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e(TAG, "onClick: About");
                 Intent intent = new Intent(SettingsActivity.this, AboutActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);

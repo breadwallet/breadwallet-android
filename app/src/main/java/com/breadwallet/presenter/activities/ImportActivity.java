@@ -111,7 +111,6 @@ public class ImportActivity extends Activity {
                         @Override
                         public void run() {
                             String result = data.getStringExtra("result");
-                            Log.e(TAG, "result is: " + result);
                             BitcoinUrlHandler.processRequest(ImportActivity.this, result);
                         }
                     }, 500);

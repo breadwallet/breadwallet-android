@@ -65,6 +65,4 @@ public class BRButton extends Button {
         a.recycle();
     }
 
-
-
 }

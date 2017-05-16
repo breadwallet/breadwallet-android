@@ -55,7 +55,6 @@ public class IntroReEnterPinActivity extends FragmentActivity {
         title.setText("Re-Enter PIN");
         firstPIN = getIntent().getExtras().getString("pin");
         if (Utils.isNullOrEmpty(firstPIN)) {
-            Log.e(TAG, "onCreate: " + firstPIN);
             throw new RuntimeException("first PIN is required");
         }
         introReEnterPinActivity = this;
