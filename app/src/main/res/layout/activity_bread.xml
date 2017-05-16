@@ -49,10 +49,11 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
-                        android:text="My Bread"
+                        android:text="bread"
                         android:textColor="@color/white"
-                        android:textSize="22sp"
-                        app:customFont="CircularPro-Bold.otf"
+                        android:textSize="36sp"
+                        android:textStyle="bold"
+                        app:customFont="Celevenia.otf"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toTopOf="parent"/>
 
@@ -98,8 +99,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
+                        android:visibility="gone"
                         android:layout_marginEnd="16dp"
                         android:text="MANAGE"
+
                         android:textColor="@color/white"
                         android:textSize="18sp"
                         app:customFont="CircularPro-Bold.otf"

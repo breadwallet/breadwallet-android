@@ -322,7 +322,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         if (PLATFORM_ON)
             APIClient.getInstance(this).updatePlatform();
 
-        walletName.setText(SharedPreferencesManager.getWalletName(this));
+//        walletName.setText(SharedPreferencesManager.getWalletName(this));
 
         if (mNetworkStateReceiver == null) mNetworkStateReceiver = new NetworkChangeReceiver();
         IntentFilter mNetworkStateFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
