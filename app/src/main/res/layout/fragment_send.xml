@@ -191,7 +191,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="@+id/cur_spinner"/>
 
-        <Spinner
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/cur_spinner"
             android:layout_width="64dp"
             android:layout_height="40dp"

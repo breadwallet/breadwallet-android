@@ -9,18 +9,17 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.OvershootInterpolator;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.breadwallet.R;
@@ -28,10 +27,12 @@ import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.presenter.entities.RequestObject;
+import com.breadwallet.tools.adapter.CurAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.listeners.RecyclerItemClickListener;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.security.TransactionManager;
@@ -83,15 +84,18 @@ public class FragmentSend extends Fragment {
     private Button scan;
     private Button paste;
     private Button send;
-    private Spinner spinner;
+    private RecyclerView currencyRecycler;
     private EditText commentEdit;
     private StringBuilder amountBuilder;
     private TextView isoText;
     private EditText amountEdit;
     private TextView balanceText;
     private long curBalance;
+    private String selectedIso;
+    private CurAdapter curAdapter;
 
     @Override
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_send, container, false);
@@ -106,7 +110,7 @@ public class FragmentSend extends Fragment {
         paste = (Button) rootView.findViewById(R.id.paste_button);
         send = (Button) rootView.findViewById(R.id.send_button);
         commentEdit = (EditText) rootView.findViewById(R.id.comment_edit);
-        spinner = (Spinner) rootView.findViewById(R.id.cur_spinner);
+        currencyRecycler = (RecyclerView) rootView.findViewById(R.id.cur_spinner);
         amountEdit = (EditText) rootView.findViewById(R.id.amount_edit);
         balanceText = (TextView) rootView.findViewById(R.id.balance_text);
         setListeners();
@@ -229,7 +233,7 @@ public class FragmentSend extends Fragment {
                 boolean allFilled = true;
                 String address = addressEdit.getText().toString();
                 String amountStr = amountEdit.getText().toString();
-                String iso = (String) spinner.getSelectedItem();
+                String iso = selectedIso;
 
                 //get amount in satoshis from any isos
                 BigDecimal bigAmount = new BigDecimal(Utils.isNullOrEmpty(amountStr) ? "0" : amountStr);
@@ -261,24 +265,45 @@ public class FragmentSend extends Fragment {
             }
         });
 
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        currencyRecycler.addOnItemTouchListener(new RecyclerItemClickListener(getContext(),
+                currencyRecycler, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String item = parent.getItemAtPosition(position).toString();
+            public void onItemClick(View view, int position, float x, float y) {
+                Log.e(TAG, "onItemClick: " + position);
+//                BRAnimator.showTransactionPager(BreadActivity.this, adapter.getItems(), position);
+                selectedIso = currencyRecycler.getChildAt(position).toString();
                 curBalance = BRWalletManager.getInstance().getBalance(getActivity());
-                Log.e(TAG, "onItemSelected: " + item);
-                isoText.setText(BRCurrency.getSymbolByIso(getActivity(), item));
+                Log.e(TAG, "onItemSelected: " + selectedIso);
+                isoText.setText(BRCurrency.getSymbolByIso(getActivity(), selectedIso));
                 SpringAnimator.springView(isoText);
                 updateText();
-
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                isoText.setText(BRCurrency.getSymbolByIso(getActivity(), "BTC"));
-                SpringAnimator.springView(isoText);
+            public void onLongItemClick(View view, int position) {
+
             }
-        });
+        }));
+
+
+//                setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                String item = parent.getItemAtPosition(position).toString();
+//                curBalance = BRWalletManager.getInstance().getBalance(getActivity());
+//                Log.e(TAG, "onItemSelected: " + item);
+//                isoText.setText(BRCurrency.getSymbolByIso(getActivity(), item));
+//                SpringAnimator.springView(isoText);
+//                updateText();
+//
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {
+//                isoText.setText(BRCurrency.getSymbolByIso(getActivity(), "BTC"));
+//                SpringAnimator.springView(isoText);
+//            }
+//        });
 
         keyboard.addOnInsertListener(new BRKeyboard.OnInsertListener()
 
@@ -294,9 +319,10 @@ public class FragmentSend extends Fragment {
         curList.add("BTC");
         if (getActivity() == null) return;
         curList.addAll(CurrencyDataSource.getInstance(getActivity()).getAllISOs());
-        final ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.bread_spinner_item, curList);
-        spinner.setAdapter(adapter);
-
+        curAdapter = new CurAdapter(getContext(), curList);
+        currencyRecycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        currencyRecycler.setAdapter(curAdapter);
+        selectedIso = curAdapter.getItemAtPos(0);
 
     }
 
@@ -410,7 +436,7 @@ public class FragmentSend extends Fragment {
 
     private void handleDigitClick(Integer dig) {
         String currAmount = amountBuilder.toString();
-        String iso = (String) spinner.getSelectedItem();
+        String iso = selectedIso;
         if (new BigDecimal(currAmount.concat(String.valueOf(dig))).doubleValue()
                 <= BRExchange.getMaxAmount(getActivity(), iso).doubleValue()) {
             //do not insert 0 if the balance is 0 now
@@ -424,7 +450,7 @@ public class FragmentSend extends Fragment {
 
     private void handleSeparatorClick() {
         String currAmount = amountBuilder.toString();
-        if (currAmount.contains(".") || BRCurrency.getMaxDecimalPlaces((String) spinner.getSelectedItem()) == 0)
+        if (currAmount.contains(".") || BRCurrency.getMaxDecimalPlaces(selectedIso) == 0)
             return;
         amountBuilder.append(".");
         updateText();
@@ -444,7 +470,7 @@ public class FragmentSend extends Fragment {
         String tmpAmount = amountBuilder.toString();
         amountEdit.setText(tmpAmount);
         String balanceString;
-        String iso = (String) spinner.getSelectedItem();
+        String iso = selectedIso;
         //Balance depending on ISO
         BigDecimal balanceForISO = BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(curBalance));
         //formattedBalance
@@ -474,7 +500,7 @@ public class FragmentSend extends Fragment {
             commentEdit.setText(obj.message);
         }
         if (obj.amount != null) {
-            String iso = ((String) spinner.getSelectedItem());
+            String iso = selectedIso;
             BigDecimal satoshiAmount = new BigDecimal(obj.amount).multiply(new BigDecimal(100000000));
             amountBuilder = new StringBuilder(BRExchange.getAmountFromSatoshis(getActivity(), iso, satoshiAmount).toPlainString());
 

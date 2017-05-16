@@ -80,7 +80,6 @@ public class DefaultCurrencyActivity extends AppCompatActivity {
         });
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-        Log.e(TAG, "onCreate: " + listView.getCount());
 
     }
 
