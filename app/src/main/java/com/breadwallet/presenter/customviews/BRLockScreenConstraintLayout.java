@@ -111,15 +111,6 @@ public class BRLockScreenConstraintLayout extends ConstraintLayout {
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-//        int width = getMeasuredWidth();
-//        int height = getMeasuredHeight();
-//
-//        trianglePath.moveTo(0, 0);
-//        trianglePath.lineTo(width, 0);
-//        trianglePath.lineTo(0, height / 4);
-//        trianglePath.lineTo(0, 0);
-//
-//        canvas.drawPath(trianglePath, trianglesPaint);
 
     }
 

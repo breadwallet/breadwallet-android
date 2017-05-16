@@ -73,7 +73,6 @@ public class AuthManager {
         String tempPass = passSequence.toString();
         if (!previousTry.equals(tempPass)) {
             int failCount = KeyStoreManager.getFailCount(context);
-            Log.e(TAG, "checkAuth: failCount: " + failCount);
             KeyStoreManager.putFailCount(failCount + 1, context);
         }
         previousTry = tempPass;
@@ -119,12 +118,10 @@ public class AuthManager {
     public void setWalletDisabled(Activity app) {
         int failCount = KeyStoreManager.getFailCount(app);
         long now = System.currentTimeMillis() / 1000;
-        Log.e(TAG, "setWalletDisabled: " + now);
         long secureTime = SharedPreferencesManager.getSecureTime(app);
         long failTimestamp = KeyStoreManager.getFailTimeStamp(app);
         double waitTimeMinutes = (failTimestamp + Math.pow(6, failCount - 3) * 60.0 - secureTime) / 60.0;
 
-        Log.e(TAG, "setWalletDisabled: " + waitTimeMinutes);
         ActivityUTILS.showWalletDisabled(app, waitTimeMinutes);
     }
 

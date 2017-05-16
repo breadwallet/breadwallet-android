@@ -131,7 +131,6 @@ public class IntroSetPitActivity extends Activity {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    Log.e(TAG, "updateDots: starting new activity: " + pin.toString());
                     Intent intent = new Intent(IntroSetPitActivity.this, IntroReEnterPinActivity.class);
                     intent.putExtra("pin", pin.toString());
                     intent.putExtra("noPin", getIntent().getBooleanExtra("noPin", false));

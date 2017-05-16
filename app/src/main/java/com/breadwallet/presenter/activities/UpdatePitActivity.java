@@ -144,7 +144,6 @@ public class UpdatePitActivity extends Activity {
     }
 
     private void goNext() {
-        Log.e(TAG, "goNext: mode: " + mode);
         switch (mode) {
             case ENTER_PIN:
                 if (AuthManager.getInstance().checkAuth(pin.toString(), this)) {
@@ -165,7 +164,6 @@ public class UpdatePitActivity extends Activity {
 
             case RE_ENTER_NEW_PIN:
                 if (curNewPin.equalsIgnoreCase(pin.toString())) {
-                    Log.e(TAG, "goNext: SUCCESS");
                     AuthManager.getInstance().setPinCode(pin.toString(), this);
                     BRAnimator.showBreadSignal(this, "PIN Set", "Use your PIN to login and send money.", R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
                         @Override

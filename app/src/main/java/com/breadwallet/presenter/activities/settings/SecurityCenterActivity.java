@@ -135,7 +135,7 @@ public class SecurityCenterActivity extends AppCompatActivity {
                 isPinSet ? R.drawable.ic_check_mark_blue : R.drawable.ic_check_mark_grey, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e(TAG, "onClick: 6-Digit PIN");
+                Log.d(TAG, "onClick: 6-Digit PIN");
                 Intent intent = new Intent(SecurityCenterActivity.this, UpdatePitActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
@@ -168,7 +168,10 @@ public class SecurityCenterActivity extends AppCompatActivity {
                 isFingerPrintAvailable ? R.drawable.ic_check_mark_blue : R.drawable.ic_check_mark_grey, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e(TAG, "onClick: Touch ID");
+                Log.d(TAG, "onClick: Touch ID");
+                Intent intent = new Intent(SecurityCenterActivity.this, FingerprintActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         }));
 
@@ -177,7 +180,7 @@ public class SecurityCenterActivity extends AppCompatActivity {
                 isPaperKeySet ? R.drawable.ic_check_mark_blue : R.drawable.ic_check_mark_grey, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e(TAG, "onClick: Paper Key");
+                Log.d(TAG, "onClick: Paper Key");
                 Intent intent = new Intent(SecurityCenterActivity.this, IntroWriteDownActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);

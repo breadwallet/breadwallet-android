@@ -161,7 +161,6 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         if (introActivity != null) introActivity.finish();
         if (introReEnterPinActivity != null) introReEnterPinActivity.finish();
 
-
     }
 
     @Override
@@ -171,7 +170,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
     //BLOCKS
     public void updateTxList() {
         final TransactionListItem[] arr = BRWalletManager.getInstance().getTransactions();
-        Log.e(TAG, "updateTxList: getTransactions().length: " + (arr == null ? 0 : arr.length));
+//        Log.e(TAG, "updateTxList: getTransactions().length: " + (arr == null ? 0 : arr.length));
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -275,7 +274,6 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
                 txList, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position, float x, float y) {
-                Log.e(TAG, "onItemClick: " + position);
                 BRAnimator.showTransactionPager(BreadActivity.this, adapter.getItems(), position);
             }
 

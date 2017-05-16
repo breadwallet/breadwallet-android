@@ -74,7 +74,6 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
         inflate(getContext(), R.layout.search_bar, this);
         breadActivity = (BreadActivity) getContext();
         searchEdit = (EditText) findViewById(R.id.search_edit);
-//        filterButtonsLayout = (LinearLayout) findViewById(R.id.filter_buttons_layout);
         sentFilter = (BRButton) findViewById(R.id.sent_filter);
         receivedFilter = (BRButton) findViewById(R.id.received_filter);
         pendingFilter = (BRButton) findViewById(R.id.pending_filter);
@@ -151,7 +150,6 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (breadActivity.adapter != null)
                     breadActivity.adapter.filterBy(s.toString(), filterSwitches);
-                Log.e(TAG, "onTextChanged: " + s.toString());
             }
 
             @Override
