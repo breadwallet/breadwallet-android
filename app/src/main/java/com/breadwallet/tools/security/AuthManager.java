@@ -287,6 +287,6 @@ public class AuthManager {
     }
 
     public interface OnPinSuccess {
-        public void onSuccess();
+        void onSuccess();
     }
 }
