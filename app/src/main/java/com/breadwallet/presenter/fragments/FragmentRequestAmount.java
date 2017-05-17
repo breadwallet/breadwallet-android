@@ -8,6 +8,8 @@ import android.animation.ValueAnimator;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,9 +29,11 @@ import android.widget.Toast;
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.customviews.BRToast;
+import com.breadwallet.tools.adapter.CurAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.listeners.RecyclerItemClickListener;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.qrcode.QRUtils;
@@ -73,7 +77,6 @@ import java.util.List;
 public class FragmentRequestAmount extends Fragment {
     private static final String TAG = FragmentRequestAmount.class.getName();
     private BRKeyboard keyboard;
-    private Spinner spinner;
     private StringBuilder amountBuilder;
     private TextView isoText;
     private EditText amountEdit;
@@ -93,6 +96,10 @@ public class FragmentRequestAmount extends Fragment {
     private LinearLayout shareButtonsLayout;
     private boolean shareButtonsShown = true;
     private int keyboardPosition = 0;
+    private String selectedIso;
+    private CurAdapter curAdapter;
+    private Button isoButton;
+    private RecyclerView currencyRecycler;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -104,10 +111,10 @@ public class FragmentRequestAmount extends Fragment {
         keyboard.setBRButtonBackgroundResId(R.drawable.keyboard_white_button);
         keyboard.setBRKeyboardColor(R.color.white);
         isoText = (TextView) rootView.findViewById(R.id.iso_text);
-        spinner = (Spinner) rootView.findViewById(R.id.cur_spinner);
         amountEdit = (EditText) rootView.findViewById(R.id.amount_edit);
         amountBuilder = new StringBuilder(0);
-
+        currencyRecycler = (RecyclerView) rootView.findViewById(R.id.cur_spinner);
+        isoButton = (Button) rootView.findViewById(R.id.iso_button);
         mTitle = (TextView) rootView.findViewById(R.id.title);
         mAddress = (TextView) rootView.findViewById(R.id.address_text);
         mQrImage = (ImageView) rootView.findViewById(R.id.qr_image);
@@ -123,6 +130,24 @@ public class FragmentRequestAmount extends Fragment {
         LayoutTransition layoutTransition = signalLayout.getLayoutTransition();
         layoutTransition.enableTransitionType(LayoutTransition.CHANGING);
         setListeners();
+
+        final List<String> curList = new ArrayList<>();
+        curList.add("BTC");
+        curList.addAll(CurrencyDataSource.getInstance(getActivity()).getAllISOs());
+        curAdapter = new CurAdapter(getContext(), curList);
+        currencyRecycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        currencyRecycler.setAdapter(curAdapter);
+        selectedIso = curAdapter.getItemAtPos(0);
+
+        signalLayout.removeView(currencyRecycler);
+
+        signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
+        signalLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeCurrencySelector();
+            }
+        });
         keyboardPosition = signalLayout.indexOfChild(keyboard);
 
         signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
@@ -140,23 +165,29 @@ public class FragmentRequestAmount extends Fragment {
             }
         });
 
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        currencyRecycler.addOnItemTouchListener(new RecyclerItemClickListener(getContext(),
+                currencyRecycler, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String item = parent.getItemAtPosition(position).toString();
-                isoText.setText(BRCurrency.getSymbolByIso(getActivity(), item));
+            public void onItemClick(View view, int position, float x, float y) {
+                Log.e(TAG, "onItemClick: " + position);
+//                BRAnimator.showTransactionPager(BreadActivity.this, adapter.getItems(), position);
+                SpringAnimator.springView(view);
+                selectedIso = curAdapter.getItemAtPos(position);
+
+                Log.e(TAG, "onItemSelected: " + selectedIso);
+//                isoText.setText(BRCurrency.getSymbolByIso(getActivity(), selectedIso));
                 SpringAnimator.springView(isoText);
                 updateText();
-                boolean generated = generateQrImage(receiveAddress, amountEdit.getText().toString(), (String) spinner.getSelectedItem());
-                if (!generated) throw new RuntimeException("failed to generate qr image for address");
+                boolean generated = generateQrImage(receiveAddress, amountEdit.getText().toString(), selectedIso);
+                if (!generated)
+                    throw new RuntimeException("failed to generate qr image for address");
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                isoText.setText(BRCurrency.getSymbolByIso(getActivity(), "BTC"));
-                SpringAnimator.springView(isoText);
+            public void onLongItemClick(View view, int position) {
+
             }
-        });
+        }));
 
         mQrImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -175,34 +206,14 @@ public class FragmentRequestAmount extends Fragment {
         });
 
 
-        final List<String> curList = new ArrayList<>();
-        curList.add("BTC");
-        spinner.setAdapter(new ArrayAdapter<>(getContext(), R.layout.bread_spinner_item, curList));
-        Log.e(TAG, "spinner took: " + (System.currentTimeMillis() - start));
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if (getActivity() == null) return;
-                curList.addAll(CurrencyDataSource.getInstance(getActivity()).getAllISOs());
-                final ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.bread_spinner_item, curList);
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        spinner.setAdapter(adapter);
-
-                    }
-                });
-
-            }
-        }).start();
-
         shareEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                removeCurrencySelector();
                 if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.springView(v);
                 showKeyboard(false);
-                String iso = (String) spinner.getSelectedItem();
+                String iso = selectedIso;
                 String strAmount = amountEdit.getText().toString();
                 BigDecimal bigAmount = new BigDecimal((Utils.isNullOrEmpty(strAmount) || strAmount.equalsIgnoreCase(".")) ? "0" : strAmount);
                 long amount = BRExchange.getSatoshisFromAmount(getActivity(), iso, bigAmount).longValue();
@@ -214,10 +225,11 @@ public class FragmentRequestAmount extends Fragment {
         shareTextMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                removeCurrencySelector();
                 if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.springView(v);
                 showKeyboard(false);
-                String iso = (String) spinner.getSelectedItem();
+                String iso = selectedIso;
                 String strAmount = amountEdit.getText().toString();
                 BigDecimal bigAmount = new BigDecimal((Utils.isNullOrEmpty(strAmount) || strAmount.equalsIgnoreCase(".")) ? "0" : strAmount);
                 long amount = BRExchange.getSatoshisFromAmount(getActivity(), iso, bigAmount).longValue();
@@ -228,6 +240,7 @@ public class FragmentRequestAmount extends Fragment {
         shareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                removeCurrencySelector();
                 if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.springView(v);
                 toggleShareButtonsVisibility();
@@ -237,6 +250,7 @@ public class FragmentRequestAmount extends Fragment {
         mAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                removeCurrencySelector();
                 if (!BRAnimator.isClickAllowed()) return;
                 BRClipboardManager.putClipboard(getContext(), mAddress.getText().toString());
                 BRToast.showCustomToast(getActivity(), "Copied to Clipboard.", (int) mAddress.getY(), Toast.LENGTH_SHORT, R.drawable.toast_layout_blue);
@@ -247,8 +261,21 @@ public class FragmentRequestAmount extends Fragment {
         backgroundLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                removeCurrencySelector();
                 if (!BRAnimator.isClickAllowed()) return;
                 getActivity().onBackPressed();
+            }
+        });
+
+        isoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SpringAnimator.springView(v);
+                try {
+                    signalLayout.addView(currencyRecycler);
+                } catch (IllegalStateException ex) {
+                    signalLayout.removeView(currencyRecycler);
+                }
             }
         });
 
@@ -296,7 +323,8 @@ public class FragmentRequestAmount extends Fragment {
                     public void run() {
                         mAddress.setText(receiveAddress);
                         boolean generated = generateQrImage(receiveAddress, "0", "BTC");
-                        if (!generated) throw new RuntimeException("failed to generate qr image for address");
+                        if (!generated)
+                            throw new RuntimeException("failed to generate qr image for address");
                     }
                 });
             }
@@ -379,13 +407,13 @@ public class FragmentRequestAmount extends Fragment {
             handleSeparatorClick();
         }
 
-        boolean generated = generateQrImage(receiveAddress, amountEdit.getText().toString(), (String) spinner.getSelectedItem());
+        boolean generated = generateQrImage(receiveAddress, amountEdit.getText().toString(), selectedIso);
         if (!generated) throw new RuntimeException("failed to generate qr image for address");
     }
 
     private void handleDigitClick(Integer dig) {
         String currAmount = amountBuilder.toString();
-        String iso = (String) spinner.getSelectedItem();
+        String iso = selectedIso;
         if (new BigDecimal(currAmount.concat(String.valueOf(dig))).doubleValue()
                 <= BRExchange.getMaxAmount(getActivity(), iso).doubleValue()) {
             //do not insert 0 if the balance is 0 now
@@ -399,7 +427,7 @@ public class FragmentRequestAmount extends Fragment {
 
     private void handleSeparatorClick() {
         String currAmount = amountBuilder.toString();
-        if (currAmount.contains(".") || BRCurrency.getMaxDecimalPlaces((String) spinner.getSelectedItem()) == 0)
+        if (currAmount.contains(".") || BRCurrency.getMaxDecimalPlaces(selectedIso) == 0)
             return;
         amountBuilder.append(".");
         updateText();
@@ -445,5 +473,15 @@ public class FragmentRequestAmount extends Fragment {
         }
         return BRWalletManager.getInstance().generateQR(getActivity(), "bitcoin:" + address + amountArg, mQrImage);
     }
+
+
+    private void removeCurrencySelector() {
+        try {
+            signalLayout.removeView(currencyRecycler);
+        } catch (IllegalStateException ignored) {
+
+        }
+    }
+
 
 }

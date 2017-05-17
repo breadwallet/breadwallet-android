@@ -22,7 +22,6 @@
         >
 
         <com.breadwallet.presenter.customviews.BRText
-            app:customFont="CircularPro-Bold.otf"
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -35,6 +34,7 @@
             android:text="Request an Amount"
             android:textColor="@color/almost_black"
             android:textSize="18sp"
+            app:customFont="CircularPro-Bold.otf"
             />
 
         <View
@@ -52,8 +52,6 @@
             android:orientation="horizontal">
 
             <com.breadwallet.presenter.customviews.BRText
-                app:customFont="CircularPro-Bold.otf"
-
                 android:id="@+id/iso_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -63,22 +61,23 @@
                 android:layout_marginTop="0dp"
                 android:text="$"
                 android:textSize="28sp"
+                app:customFont="CircularPro-Bold.otf"
                 />
 
             <EditText
                 android:id="@+id/amount_edit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_toLeftOf="@+id/cur_spinner"
-                android:layout_marginStart="8dp"
-                android:layout_toEndOf="@+id/iso_text"
                 android:layout_centerVertical="true"
                 android:layout_gravity="center_vertical"
                 android:layout_marginBottom="0dp"
+                android:layout_marginEnd="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="0dp"
+                android:layout_toEndOf="@+id/iso_text"
+                android:layout_toLeftOf="@+id/cur_spinner"
                 android:background="@android:color/transparent"
                 android:clickable="false"
                 android:cursorVisible="false"
@@ -91,20 +90,25 @@
                 android:textSize="24sp"
                 />
 
-            <Spinner
-                android:id="@+id/cur_spinner"
-                android:layout_centerVertical="true"
+            <com.breadwallet.presenter.customviews.BRButton
+                android:id="@+id/iso_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_width="64dp"
-                android:layout_height="40dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginBottom="8dp"
-                android:layout_marginEnd="24dp"
-                android:layout_marginTop="8dp"
+                android:layout_centerVertical="true"
+                android:layout_marginBottom="0dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="0dp"
                 android:background="@drawable/button_secondary_gray_stroke"
                 android:elevation="8dp"
+                android:minHeight="40dp"
+                android:padding="10dp"
+                android:text="iso"
+                android:textColor="@color/light_gray"
+                android:textSize="18sp"
                 />
         </RelativeLayout>
+
 
         <View
             android:id="@+id/view2"
@@ -112,6 +116,17 @@
             android:layout_height="1dp"
             android:layout_marginTop="16dp"
             android:background="#c6c6c6"
+            />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/cur_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/button_secondary_gray_stroke"
+            android:elevation="8dp"
             />
 
         <com.breadwallet.presenter.customviews.BRKeyboard
@@ -145,7 +160,6 @@
             />
 
         <com.breadwallet.presenter.customviews.BRText
-            app:customFont="CircularPro-Bold.otf"
             android:id="@+id/address_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -157,6 +171,7 @@
             android:layout_marginStart="8dp"
             android:text="----------------------------------"
             android:textColor="@color/light_gray"
+            app:customFont="CircularPro-Bold.otf"
             />
 
         <com.breadwallet.presenter.customviews.BRButton
