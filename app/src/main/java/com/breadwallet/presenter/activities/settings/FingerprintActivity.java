@@ -1,26 +1,44 @@
 package com.breadwallet.presenter.activities.settings;
 
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextPaint;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.ActivityUTILS;
-import com.breadwallet.presenter.entities.BRSecurityCenterItem;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.util.BRCurrency;
+import com.breadwallet.tools.util.BRExchange;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.math.BigDecimal;
+
+import static android.R.attr.label;
+
 
 public class FingerprintActivity extends AppCompatActivity {
     private static final String TAG = FingerprintActivity.class.getName();
 
-    public ListView mListView;
     public RelativeLayout layout;
-    public List<BRSecurityCenterItem> itemList;
     public static boolean appVisible = false;
     private static FingerprintActivity app;
+    private TextView limitExchange;
+    private TextView limitInfo;
+
+    private ToggleButton toggleButton;
 
     public static FingerprintActivity getApp() {
         return app;
@@ -34,10 +52,52 @@ public class FingerprintActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fingerprint);
+        toggleButton = (ToggleButton) findViewById(R.id.toggleButton);
+        limitExchange = (TextView) findViewById(R.id.limit_exchange);
+        limitInfo = (TextView) findViewById(R.id.limit_info);
 
-        itemList = new ArrayList<>();
-        mListView = (ListView) findViewById(R.id.menu_listview);
+        limitExchange.setText(getLimitText());
 
+        toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                KeyStoreManager. //todo finish (store the fingerprint enabled and use)
+            }
+        });
+        SpannableString ss = new SpannableString("You can customize your Fingerprint Spending Limit from the Fingerprint Spending Limit screen");
+        ClickableSpan clickableSpan = new ClickableSpan() {
+            @Override
+            public void onClick(View textView) {
+                Intent intent = new Intent(FingerprintActivity.this, SpendLimitActivity.class);
+                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                startActivity(intent);
+                finish();
+            }
+
+            @Override
+            public void updateDrawState(TextPaint ds) {
+                super.updateDrawState(ds);
+                ds.setUnderlineText(false);
+            }
+        };
+        ss.setSpan(clickableSpan, limitInfo.getText().length() - 33, limitInfo.getText().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        limitInfo.setText(ss);
+        limitInfo.setMovementMethod(LinkMovementMethod.getInstance());
+        limitInfo.setHighlightColor(Color.TRANSPARENT);
+
+    }
+
+    private String getLimitText() {
+        String iso = SharedPreferencesManager.getIso(this);
+        //amount in satoshis
+        BigDecimal satoshis = new BigDecimal(KeyStoreManager.getSpendLimit(this));
+        //amount in BTC, mBTC or bits
+        BigDecimal amount = BRExchange.getAmountFromSatoshis(this, "BTC", satoshis);
+        //amount in user preferred ISO (e.g. USD)
+        BigDecimal curAmount = BRExchange.getAmountFromSatoshis(this, iso, satoshis);
+        //formatted string for the label
+        return String.format("Spending Limit: %s (%s)", BRCurrency.getFormattedCurrencyString(this, "BTC", amount), BRCurrency.getFormattedCurrencyString(this, iso, curAmount));
     }
 
     @Override

@@ -28,21 +28,21 @@ import android.widget.RelativeLayout;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class BRLinearLayout extends RelativeLayout {
-    public static final String TAG = BRLinearLayout.class.getName();
+public class BRRelativeLayout extends RelativeLayout {
+    public static final String TAG = BRRelativeLayout.class.getName();
 
     private float mXfract = 0f;
     private float mYfract = 0f;
 
-    public BRLinearLayout(Context context) {
+    public BRRelativeLayout(Context context) {
         super(context);
     }
 
-    public BRLinearLayout(Context context, AttributeSet attrs) {
+    public BRRelativeLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public BRLinearLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public BRRelativeLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 

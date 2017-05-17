@@ -1,20 +1,19 @@
-<com.breadwallet.presenter.customviews.BRLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                      xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                      android:id="@+id/layout"
-                                                      android:layout_width="match_parent"
-                                                      android:layout_height="match_parent"
-                                                      android:background="@color/white"
-                                                      android:filterTouchesWhenObscured="true"
-                                                      android:orientation="vertical">
+<com.breadwallet.presenter.customviews.BRRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                        xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                        android:id="@+id/layout"
+                                                        android:layout_width="match_parent"
+                                                        android:layout_height="match_parent"
+                                                        android:background="@color/white"
+                                                        android:filterTouchesWhenObscured="true"
+                                                        android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="220dp"
-        android:background="@drawable/finger_gradient"
-        android:orientation="vertical"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true">
+        android:background="@drawable/finger_gradient"
+        android:orientation="vertical">
 
         <com.breadwallet.presenter.customviews.BRText
             android:id="@+id/title"
@@ -34,6 +33,7 @@
             android:layout_height="96dp"
             android:layout_gravity="center_vertical|center_horizontal"
             android:layout_marginTop="40dp"
+            android:elevation="8dp"
             android:src="@drawable/ic_fingerprint_large"/>
 
     </LinearLayout>
@@ -42,13 +42,74 @@
         android:id="@+id/textView10"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/linearLayout"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
         android:layout_marginLeft="32dp"
         android:layout_marginRight="32dp"
+        android:layout_marginTop="32dp"
         android:text="@string/TouchIdSettings.label"
         android:textColor="@color/almost_black"
         android:textSize="18sp"/>
 
+    <com.breadwallet.presenter.customviews.BRText
+        android:id="@+id/enable_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView10"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/TouchIdSettings.switchLabel"
+        android:textColor="@color/almost_black"
+        android:textSize="18sp"
+        app:customFont="CircularPro-Bold.otf"/>
 
-</com.breadwallet.presenter.customviews.BRLinearLayout>
+    <ToggleButton
+        android:id="@+id/toggleButton"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:layout_alignBottom="@+id/enable_label"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="32dp"
+        android:background="@drawable/bread_toggle"
+        android:text="ToggleButton"
+        android:textColor="@color/white"
+        />
+
+    <View
+        android:id="@+id/divider1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/enable_label"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/extra_light_gray"/>
+
+    <com.breadwallet.presenter.customviews.BRText
+        android:id="@+id/limit_exchange"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/divider1"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:layout_marginTop="16dp"
+        android:text="Spending Limit:"
+        android:textColor="@color/almost_black"
+        android:textSize="18sp"
+        />
+
+    <com.breadwallet.presenter.customviews.BRText
+        android:id="@+id/limit_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/limit_exchange"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:layout_marginTop="16dp"
+        android:text="You can customize your Fingerprint Spending Limit from the Fingerprint Spending Limit screen"
+        android:textColor="@color/almost_black"
+        android:textSize="18sp"
+        />
+
+</com.breadwallet.presenter.customviews.BRRelativeLayout>
