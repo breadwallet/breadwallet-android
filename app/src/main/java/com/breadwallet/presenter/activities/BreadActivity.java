@@ -468,12 +468,12 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
 
     @Override
     public void onBackPressed() {
-        if (getFragmentManager().getBackStackEntryCount() == 0) {
-            overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
-            this.finishAndRemoveTask();
-        } else {
+//        if (getFragmentManager().getBackStackEntryCount() == 0) {
+//            overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
+//            this.finishAndRemoveTask();
+//        } else {
             super.onBackPressed();
-        }
+//        }
     }
 
     public void updateUI() {
