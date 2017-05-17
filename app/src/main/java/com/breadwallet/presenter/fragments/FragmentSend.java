@@ -6,6 +6,7 @@ import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -16,10 +17,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.view.animation.OvershootInterpolator;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
@@ -297,7 +301,7 @@ public class FragmentSend extends Fragment {
 //                BRAnimator.showTransactionPager(BreadActivity.this, adapter.getItems(), position);
                 SpringAnimator.springView(view);
                 selectedIso = curAdapter.getItemAtPos(position);
-                curBalance = BRWalletManager.getInstance().getBalance(getActivity());
+
                 Log.e(TAG, "onItemSelected: " + selectedIso);
 //                isoText.setText(BRCurrency.getSymbolByIso(getActivity(), selectedIso));
                 SpringAnimator.springView(isoText);
@@ -497,6 +501,7 @@ public class FragmentSend extends Fragment {
         amountEdit.setText(tmpAmount);
         String balanceString;
         String iso = selectedIso;
+        curBalance = BRWalletManager.getInstance().getBalance(getActivity());
         isoText.setText(BRCurrency.getSymbolByIso(getActivity(), selectedIso));
         isoButton.setText(iso);
         //Balance depending on ISO
