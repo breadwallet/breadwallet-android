@@ -182,6 +182,7 @@ public class FragmentRequestAmount extends Fragment {
                 boolean generated = generateQrImage(receiveAddress, amountEdit.getText().toString(), selectedIso);
                 if (!generated)
                     throw new RuntimeException("failed to generate qr image for address");
+                removeCurrencySelector();
             }
 
             @Override
