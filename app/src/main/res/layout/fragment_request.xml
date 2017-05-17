@@ -1,13 +1,12 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:id="@+id/background_layout"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:layout_gravity="bottom"
-              android:animateLayoutChanges="true"
-              android:background="@color/black_trans"
-              android:filterTouchesWhenObscured="true"
-    >
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/background_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom"
+            android:animateLayoutChanges="true"
+            android:background="@color/black_trans"
+            android:filterTouchesWhenObscured="true">
 
     <LinearLayout
         android:id="@+id/signal_layout"
@@ -41,15 +40,15 @@
             android:id="@+id/view"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginBottom="16dp"
             android:layout_marginTop="16dp"
             android:background="#c6c6c6"
             />
 
         <RelativeLayout
             android:layout_width="wrap_content"
+            android:padding="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            >
 
             <com.breadwallet.presenter.customviews.BRText
                 android:id="@+id/iso_text"
@@ -70,14 +69,12 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_gravity="center_vertical"
-                android:layout_marginBottom="0dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="0dp"
                 android:layout_toEndOf="@+id/iso_text"
-                android:layout_toLeftOf="@+id/cur_spinner"
                 android:background="@android:color/transparent"
                 android:clickable="false"
                 android:cursorVisible="false"
@@ -96,13 +93,12 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:layout_marginBottom="0dp"
                 android:layout_marginEnd="16dp"
-                android:layout_marginTop="0dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
                 android:background="@drawable/button_secondary_gray_stroke"
                 android:elevation="8dp"
                 android:minHeight="40dp"
-                android:padding="10dp"
                 android:text="iso"
                 android:textColor="@color/light_gray"
                 android:textSize="18sp"
@@ -114,7 +110,6 @@
             android:id="@+id/view2"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginTop="16dp"
             android:background="#c6c6c6"
             />
 
@@ -124,7 +119,6 @@
             android:layout_height="60dp"
             android:layout_marginLeft="0dp"
             android:layout_marginRight="0dp"
-            android:layout_marginTop="8dp"
             android:background="@drawable/button_secondary_gray_stroke"
             android:elevation="8dp"
             />
@@ -134,7 +128,6 @@
             android:layout_width="match_parent"
             android:layout_height="240dp"
             android:background="@color/extra_light_gray"
-            android:paddingBottom="8dp"
             />
 
         <View
@@ -142,7 +135,6 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginBottom="16dp"
-            android:layout_marginTop="16dp"
             android:background="#c6c6c6"
             />
 
@@ -248,9 +240,7 @@
 
         </LinearLayout>
 
-
     </LinearLayout>
 
-
-</LinearLayout>
+</ScrollView>
 
