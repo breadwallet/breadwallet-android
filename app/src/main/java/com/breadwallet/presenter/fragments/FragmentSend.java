@@ -93,6 +93,7 @@ public class FragmentSend extends Fragment {
     private long curBalance;
     private String selectedIso;
     private CurAdapter curAdapter;
+    private Button isoButton;
 
     @Override
 
@@ -113,19 +114,27 @@ public class FragmentSend extends Fragment {
         currencyRecycler = (RecyclerView) rootView.findViewById(R.id.cur_spinner);
         amountEdit = (EditText) rootView.findViewById(R.id.amount_edit);
         balanceText = (TextView) rootView.findViewById(R.id.balance_text);
-        setListeners();
+        isoButton = (Button) rootView.findViewById(R.id.iso_button);
         amountBuilder = new StringBuilder(0);
+        setListeners();
+        signalLayout.removeView(currencyRecycler);
 
         signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
+        signalLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeCurrencySelector();
+            }
+        });
 
         return rootView;
     }
 
     private void setListeners() {
-        long start = System.currentTimeMillis();
         paste.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                removeCurrencySelector();
                 if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.springView(v);
                 String bitcoinUrl = BRClipboardManager.getClipboard(getActivity());
@@ -144,11 +153,11 @@ public class FragmentSend extends Fragment {
                 address = obj.address;
                 final BRWalletManager wm = BRWalletManager.getInstance();
 
-                if (wm.isValidBitcoinPrivateKey(address) || wm.isValidBitcoinBIP38Key(address)) {
-//                        wm.confirmSweep(getActivity(), address);
-//                        addressEdit.setText("");
-                    return;
-                }
+//                if (wm.isValidBitcoinPrivateKey(address) || wm.isValidBitcoinBIP38Key(address)) {
+////                        wm.confirmSweep(getActivity(), address);
+////                        addressEdit.setText("");
+//                    return;
+//                }
 
                 if (BRWalletManager.validateAddress(address)) {
                     final String finalAddress = address;
@@ -212,9 +221,22 @@ public class FragmentSend extends Fragment {
             }
         });
 
+        isoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SpringAnimator.springView(v);
+                try {
+                    signalLayout.addView(currencyRecycler);
+                } catch (IllegalStateException ex) {
+                    signalLayout.removeView(currencyRecycler);
+                }
+            }
+        });
+
         scan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                removeCurrencySelector();
                 if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.springView(v);
                 BRAnimator.openCamera(getActivity());
@@ -224,6 +246,7 @@ public class FragmentSend extends Fragment {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                removeCurrencySelector();
                 //not allowed now
                 if (!BRAnimator.isClickAllowed()) {
                     return;
@@ -260,6 +283,7 @@ public class FragmentSend extends Fragment {
         backgroundLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                removeCurrencySelector();
                 if (!BRAnimator.isClickAllowed()) return;
                 getActivity().onBackPressed();
             }
@@ -271,10 +295,11 @@ public class FragmentSend extends Fragment {
             public void onItemClick(View view, int position, float x, float y) {
                 Log.e(TAG, "onItemClick: " + position);
 //                BRAnimator.showTransactionPager(BreadActivity.this, adapter.getItems(), position);
-                selectedIso = currencyRecycler.getChildAt(position).toString();
+                SpringAnimator.springView(view);
+                selectedIso = curAdapter.getItemAtPos(position);
                 curBalance = BRWalletManager.getInstance().getBalance(getActivity());
                 Log.e(TAG, "onItemSelected: " + selectedIso);
-                isoText.setText(BRCurrency.getSymbolByIso(getActivity(), selectedIso));
+//                isoText.setText(BRCurrency.getSymbolByIso(getActivity(), selectedIso));
                 SpringAnimator.springView(isoText);
                 updateText();
             }
@@ -305,11 +330,10 @@ public class FragmentSend extends Fragment {
 //            }
 //        });
 
-        keyboard.addOnInsertListener(new BRKeyboard.OnInsertListener()
-
-        {
+        keyboard.addOnInsertListener(new BRKeyboard.OnInsertListener() {
             @Override
             public void onClick(String key) {
+                removeCurrencySelector();
                 handleClick(key);
             }
         });
@@ -323,6 +347,8 @@ public class FragmentSend extends Fragment {
         currencyRecycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         currencyRecycler.setAdapter(curAdapter);
         selectedIso = curAdapter.getItemAtPos(0);
+        updateText();
+
 
     }
 
@@ -471,6 +497,8 @@ public class FragmentSend extends Fragment {
         amountEdit.setText(tmpAmount);
         String balanceString;
         String iso = selectedIso;
+        isoText.setText(BRCurrency.getSymbolByIso(getActivity(), selectedIso));
+        isoButton.setText(iso);
         //Balance depending on ISO
         BigDecimal balanceForISO = BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(curBalance));
         //formattedBalance
@@ -509,5 +537,12 @@ public class FragmentSend extends Fragment {
         }
     }
 
+    private void removeCurrencySelector() {
+        try {
+            signalLayout.removeView(currencyRecycler);
+        } catch (IllegalStateException ignored) {
+
+        }
+    }
 
 }

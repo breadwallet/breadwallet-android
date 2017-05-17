@@ -119,7 +119,7 @@ public class BRCurrency {
         return index < 0 ? 0 : amount.length() - index - 1;
     }
 
-    public static String getSymbolByIso(Context app,String iso) {
+    public static String getSymbolByIso(Context app, String iso) {
         String symbol;
         if (Objects.equals(iso, "BTC")) {
             String currencySymbolString = BRConstants.bitcoinLowercase;
