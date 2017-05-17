@@ -98,6 +98,7 @@ public class FragmentSend extends Fragment {
     private String selectedIso;
     private CurAdapter curAdapter;
     private Button isoButton;
+    private int currencyRecyclerIndex;
 
     @Override
 
@@ -121,6 +122,7 @@ public class FragmentSend extends Fragment {
         isoButton = (Button) rootView.findViewById(R.id.iso_button);
         amountBuilder = new StringBuilder(0);
         setListeners();
+        currencyRecyclerIndex = signalLayout.indexOfChild(currencyRecycler);
         signalLayout.removeView(currencyRecycler);
 
         signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
@@ -230,7 +232,7 @@ public class FragmentSend extends Fragment {
             public void onClick(View v) {
                 SpringAnimator.springView(v);
                 try {
-                    signalLayout.addView(currencyRecycler);
+                    signalLayout.addView(currencyRecycler, currencyRecyclerIndex);
                 } catch (IllegalStateException ex) {
                     signalLayout.removeView(currencyRecycler);
                 }
