@@ -306,6 +306,8 @@ public class FragmentSend extends Fragment {
 //                isoText.setText(BRCurrency.getSymbolByIso(getActivity(), selectedIso));
                 SpringAnimator.springView(isoText);
                 updateText();
+                removeCurrencySelector();
+
             }
 
             @Override
