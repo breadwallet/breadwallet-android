@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,6 +48,8 @@ import com.breadwallet.wallet.BRWalletManager;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.breadwallet.R.id.iso;
 
 
 /**
@@ -83,7 +86,7 @@ public class FragmentRequestAmount extends Fragment {
     public TextView mTitle;
     public TextView mAddress;
     public ImageView mQrImage;
-    public LinearLayout backgroundLayout;
+    public ScrollView backgroundLayout;
     public LinearLayout signalLayout;
     public static final int ANIMATION_DURATION = 300;
     private String receiveAddress;
@@ -105,7 +108,7 @@ public class FragmentRequestAmount extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_request, container, false);
-        backgroundLayout = (LinearLayout) rootView.findViewById(R.id.background_layout);
+        backgroundLayout = (ScrollView) rootView.findViewById(R.id.background_layout);
         signalLayout = (LinearLayout) rootView.findViewById(R.id.signal_layout);
         keyboard = (BRKeyboard) rootView.findViewById(R.id.keyboard);
         keyboard.setBRButtonBackgroundResId(R.drawable.keyboard_white_button);
@@ -118,8 +121,6 @@ public class FragmentRequestAmount extends Fragment {
         mTitle = (TextView) rootView.findViewById(R.id.title);
         mAddress = (TextView) rootView.findViewById(R.id.address_text);
         mQrImage = (ImageView) rootView.findViewById(R.id.qr_image);
-        backgroundLayout = (LinearLayout) rootView.findViewById(R.id.background_layout);
-        signalLayout = (LinearLayout) rootView.findViewById(R.id.signal_layout);
         shareButton = (Button) rootView.findViewById(R.id.share_button);
         shareEmail = (Button) rootView.findViewById(R.id.share_email);
         shareTextMessage = (Button) rootView.findViewById(R.id.share_text);
@@ -149,18 +150,18 @@ public class FragmentRequestAmount extends Fragment {
             }
         });
         keyboardPosition = signalLayout.indexOfChild(keyboard);
-
+        updateText();
         signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
 
         return rootView;
     }
 
     private void setListeners() {
-        long start = System.currentTimeMillis();
 
         amountEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                removeCurrencySelector();
                 showKeyboard(true);
             }
         });
@@ -192,15 +193,15 @@ public class FragmentRequestAmount extends Fragment {
         mQrImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                removeCurrencySelector();
                 showKeyboard(false);
             }
         });
 
-        keyboard.addOnInsertListener(new BRKeyboard.OnInsertListener()
-
-        {
+        keyboard.addOnInsertListener(new BRKeyboard.OnInsertListener() {
             @Override
             public void onClick(String key) {
+                removeCurrencySelector();
                 handleClick(key);
             }
         });
@@ -272,7 +273,7 @@ public class FragmentRequestAmount extends Fragment {
             public void onClick(View v) {
                 SpringAnimator.springView(v);
                 try {
-                    signalLayout.addView(currencyRecycler);
+                    signalLayout.addView(currencyRecycler, 3);
                 } catch (IllegalStateException ex) {
                     signalLayout.removeView(currencyRecycler);
                 }
@@ -446,6 +447,8 @@ public class FragmentRequestAmount extends Fragment {
         if (getActivity() == null) return;
         String tmpAmount = amountBuilder.toString();
         amountEdit.setText(tmpAmount);
+        isoText.setText(BRCurrency.getSymbolByIso(getActivity(), selectedIso));
+        isoButton.setText(selectedIso);
 
     }
 
