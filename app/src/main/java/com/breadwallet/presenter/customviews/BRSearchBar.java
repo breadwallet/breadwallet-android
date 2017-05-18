@@ -136,7 +136,7 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
                 SpringAnimator.springView(v);
                 breadActivity.barFlipper.setDisplayedChild(0);
                 clearSwitches();
-
+                onShow(false);
             }
         });
 

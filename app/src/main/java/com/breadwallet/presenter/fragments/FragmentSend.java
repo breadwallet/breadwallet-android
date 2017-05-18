@@ -316,26 +316,6 @@ public class FragmentSend extends Fragment {
             }
         }));
 
-
-//                setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                String item = parent.getItemAtPosition(position).toString();
-//                curBalance = BRWalletManager.getInstance().getBalance(getActivity());
-//                Log.e(TAG, "onItemSelected: " + item);
-//                isoText.setText(BRCurrency.getSymbolByIso(getActivity(), item));
-//                SpringAnimator.springView(isoText);
-//                updateText();
-//
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parent) {
-//                isoText.setText(BRCurrency.getSymbolByIso(getActivity(), "BTC"));
-//                SpringAnimator.springView(isoText);
-//            }
-//        });
-
         keyboard.addOnInsertListener(new BRKeyboard.OnInsertListener() {
             @Override
             public void onClick(String key) {
@@ -343,7 +323,6 @@ public class FragmentSend extends Fragment {
                 handleClick(key);
             }
         });
-
 
         final List<String> curList = new ArrayList<>();
         curList.add("BTC");
@@ -367,7 +346,6 @@ public class FragmentSend extends Fragment {
         }, null, null, 0);
         BRClipboardManager.putClipboard(getActivity(), "");
     }
-
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {

@@ -19,6 +19,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
@@ -157,6 +158,8 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
 
         updateUI();
 
+        setUpBarFlipper();
+
         if (introSetPitActivity != null) introSetPitActivity.finish();
         if (introActivity != null) introActivity.finish();
         if (introReEnterPinActivity != null) introReEnterPinActivity.finish();
@@ -288,15 +291,17 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
             public void onClick(View v) {
                 SpringAnimator.springView(v);
                 barFlipper.setDisplayedChild(1); //search bar
+                searchBar.onShow(true);
 
             }
         });
 
+
+    }
+
+    private void setUpBarFlipper() {
         barFlipper.setInAnimation(AnimationUtils.loadAnimation(this, R.anim.enter_from_top));
         barFlipper.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.exit_to_top));
-
-        barFlipper.addOnLayoutChangeListener(listener);
-
     }
 
     @Override
@@ -472,7 +477,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
 //            overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
 //            this.finishAndRemoveTask();
 //        } else {
-            super.onBackPressed();
+        super.onBackPressed();
 //        }
     }
 
@@ -656,17 +661,18 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         }
     }
 
-    View.OnLayoutChangeListener listener = new View.OnLayoutChangeListener() {
-        @Override
-        public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-            if (barFlipper.getDisplayedChild() == 1)
-                searchBar.onShow(true);
-            else
-                searchBar.onShow(false);
-
-
-        }
-    };
+//    View.OnLayoutChangeListener listener = new View.OnLayoutChangeListener() {
+//        @Override
+//        public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+//            if (barFlipper.getDisplayedChild() == 1)
+//                searchBar.onShow(true);
+//            else
+//                searchBar.onShow(false);
+//            Log.e(TAG, "onLayoutChange: ");
+//
+//
+//        }
+//    };
 
     @Override
     public void onNameChanged(String name) {
