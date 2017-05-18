@@ -183,7 +183,7 @@ public class APIClient {
     }
 
     public Response buyBitcoinMe() {
-        if (ctx == null) ctx =  BreadWalletApp.getBreadContext();
+        if (ctx == null) ctx = BreadWalletApp.getBreadContext();
         if (ctx == null) return null;
         String strUtl = BASE_URL + ME;
         Request request = new Request.Builder()
@@ -316,7 +316,7 @@ public class APIClient {
 //            Log.e(TAG, "sendRequest: authValue: " + authValue);
             modifiedRequest = request.newBuilder();
 
-            request = modifiedRequest.header("Authorization", authValue).header("User-agent", Utils.getAgentString(ctx)).build();
+            request = modifiedRequest.header("Authorization", authValue).build();
 
         }
         Response response = null;
@@ -324,6 +324,7 @@ public class APIClient {
         try {
             OkHttpClient client = new OkHttpClient.Builder().followRedirects(false)/*.addInterceptor(new LoggingInterceptor())*/.build();
 //            Log.e(TAG, "sendRequest: before executing the request: " + request.headers().toString());
+            request = request.newBuilder().header("User-agent", Utils.getAgentString(ctx, "OkHttp/3.4.1")).build();
             response = client.newCall(request).execute();
             try {
                 data = response.body().bytes();
@@ -338,7 +339,7 @@ public class APIClient {
                 Uri newUri = Uri.parse(newLocation);
                 if (newUri == null) {
                     Log.e(TAG, "sendRequest: redirect uri is null");
-                } else if (!newUri.getHost().equalsIgnoreCase(HOST)  || !newUri.getScheme().equalsIgnoreCase(PROTO)) {
+                } else if (!newUri.getHost().equalsIgnoreCase(HOST) || !newUri.getScheme().equalsIgnoreCase(PROTO)) {
                     Log.e(TAG, "sendRequest: WARNING: redirect is NOT safe: " + newLocation);
                 } else {
                     Log.w(TAG, "redirecting: " + request.url() + " >>> " + newLocation);
@@ -504,7 +505,7 @@ public class APIClient {
 
     public boolean tryExtractTar(File inputFile) {
         Activity app = BreadWalletApp.getBreadContext();
-        if(app == null) {
+        if (app == null) {
             Log.e(TAG, "tryExtractTar: failed to extract, app is null");
             return false;
         }

@@ -26,6 +26,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
+import okhttp3.internal.Util;
+
 /**
  * BreadWallet
  * <p/>
@@ -200,7 +202,7 @@ public class Utils {
 
     }
 
-    public static String getAgentString(Context app){
+    public static String getAgentString(Context app, String cfnetwork) {
 
         int versionNumber = 0;
         if (app != null) {
@@ -218,7 +220,9 @@ public class Utils {
             stringId = app.getApplicationInfo().labelRes;
             appName = app.getString(stringId);
         }
-        return String.format(Locale.getDefault(), "%s/%d/%s", appName.isEmpty() ? "breadwallet" : appName, versionNumber, System.getProperty("http.agent"));
+        if (appName.isEmpty()) appName = "breadwallet";
+        String agent = System.getProperty("http.agent");
+        return String.format(Locale.getDefault(), "%s/%d %s %s", appName, versionNumber, cfnetwork, Util.toHumanReadableAscii(agent));
     }
 
 }
