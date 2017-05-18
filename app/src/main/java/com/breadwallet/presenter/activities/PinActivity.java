@@ -191,6 +191,7 @@ public class PinActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.e(TAG, "onResume: ");
         updateDots();
         appVisible = true;
         app = this;
@@ -278,8 +279,8 @@ public class PinActivity extends Activity {
         unlockedText.animate().alpha(1f);
     }
 
-
     private void showFailedToUnlock() {
+        Log.e(TAG, "showFailedToUnlock: ");
         SpringAnimator.failShakeAnimation(PinActivity.this, pinLayout);
         pin = new StringBuilder("");
         new Handler().postDelayed(new Runnable() {
@@ -291,10 +292,12 @@ public class PinActivity extends Activity {
     }
 
     private void updateDots() {
+        Log.e(TAG, "updateDots: " + pin.toString());
         AuthManager.getInstance().updateDots(this, pinLimit, pin.toString(), dot1, dot2, dot3, dot4, dot5, dot6, R.drawable.ic_pin_dot_white,
                 new AuthManager.OnPinSuccess() {
                     @Override
                     public void onSuccess() {
+                        Log.e(TAG, "onSuccess: ");
                         if (AuthManager.getInstance().checkAuth(pin.toString(), PinActivity.this)) {
                             AuthManager.getInstance().authSuccess(PinActivity.this);
                             unlockWallet();

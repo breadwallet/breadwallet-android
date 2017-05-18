@@ -73,7 +73,7 @@ public class DisabledActivity extends Activity {
     @Override
     protected void onStop() {
         super.onStop();
-
+        finish();
     }
 
     @Override
@@ -84,7 +84,7 @@ public class DisabledActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        finish();
+
     }
 
     @Override

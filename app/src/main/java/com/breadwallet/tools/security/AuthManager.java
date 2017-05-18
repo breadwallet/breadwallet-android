@@ -70,18 +70,23 @@ public class AuthManager {
     }
 
     public boolean checkAuth(CharSequence passSequence, Context context) {
+        Log.e(TAG, "checkAuth: ");
         String tempPass = passSequence.toString();
         if (!previousTry.equals(tempPass)) {
             int failCount = KeyStoreManager.getFailCount(context);
             KeyStoreManager.putFailCount(failCount + 1, context);
         }
         previousTry = tempPass;
-        if (KeyStoreManager.getFailCount(context) >= 3) {
-            setWalletDisabled((Activity) context);
-        }
-        String pass = KeyStoreManager.getPinCode(context);
 
-        return pass != null && tempPass.equals(pass);
+        String pass = KeyStoreManager.getPinCode(context);
+        boolean match = pass != null && tempPass.equals(pass);
+        if (!match) {
+            if (KeyStoreManager.getFailCount(context) >= 3) {
+                setWalletDisabled((Activity) context);
+            }
+        }
+
+        return match;
     }
 
     public void authSuccess(final Context app) {
