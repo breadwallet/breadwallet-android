@@ -316,7 +316,7 @@ public class APIClient {
 //            Log.e(TAG, "sendRequest: authValue: " + authValue);
             modifiedRequest = request.newBuilder();
 
-            request = modifiedRequest.header("Authorization", authValue).build();
+            request = modifiedRequest.header("Authorization", authValue).header("User-agent", Utils.getAgentString(ctx)).build();
 
         }
         Response response = null;

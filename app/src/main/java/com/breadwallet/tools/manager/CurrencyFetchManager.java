@@ -12,6 +12,7 @@ import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 import com.google.firebase.crash.FirebaseCrash;
 
@@ -35,6 +36,8 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask.message;
 
 /**
  * BreadWallet
@@ -244,26 +247,9 @@ public class CurrencyFetchManager {
         try {
             URL url = new URL(myURL);
             urlConn = (HttpURLConnection) url.openConnection();
-            int versionNumber = 0;
-            if (app != null) {
-                try {
-                    PackageInfo pInfo = null;
-                    pInfo = app.getPackageManager().getPackageInfo(app.getPackageName(), 0);
-                    versionNumber = pInfo.versionCode;
-                } catch (PackageManager.NameNotFoundException e) {
-                    e.printStackTrace();
-                }
-            }
-            int stringId = 0;
-            String appName = "";
-            if (app != null) {
-                stringId = app.getApplicationInfo().labelRes;
-                appName = app.getString(stringId);
-            }
-            String message = String.format(Locale.getDefault(), "%s/%d/%s", appName.isEmpty() ? "breadwallet" : appName, versionNumber, System.getProperty("http.agent"));
-            urlConn.setRequestProperty("User-agent", message);
-            urlConn.setReadTimeout(60 * 1000);
 
+            urlConn.setRequestProperty("User-agent", Utils.getAgentString(app));
+            urlConn.setReadTimeout(60 * 1000);
 
             String strDate = urlConn.getHeaderField("date");
 
