@@ -248,7 +248,8 @@ public class CurrencyFetchManager {
             URL url = new URL(myURL);
             urlConn = (HttpURLConnection) url.openConnection();
 
-            urlConn.setRequestProperty("User-agent", Utils.getAgentString(app));
+            Log.e(TAG, "user agent: " + Utils.getAgentString(app, "android/HttpURLConnection"));
+            urlConn.setRequestProperty("User-agent", Utils.getAgentString(app, "android/HttpURLConnection"));
             urlConn.setReadTimeout(60 * 1000);
 
             String strDate = urlConn.getHeaderField("date");
