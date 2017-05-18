@@ -319,6 +319,7 @@ public class APIClient {
             request = modifiedRequest.header("Authorization", authValue).build();
 
         }
+
         Response response = null;
         byte[] data = new byte[0];
         try {
