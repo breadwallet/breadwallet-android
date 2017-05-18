@@ -3,6 +3,8 @@ package com.breadwallet.tools.util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -196,6 +198,27 @@ public class Utils {
             }
         }
 
+    }
+
+    public static String getAgentString(Context app){
+
+        int versionNumber = 0;
+        if (app != null) {
+            try {
+                PackageInfo pInfo = null;
+                pInfo = app.getPackageManager().getPackageInfo(app.getPackageName(), 0);
+                versionNumber = pInfo.versionCode;
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        int stringId = 0;
+        String appName = "";
+        if (app != null) {
+            stringId = app.getApplicationInfo().labelRes;
+            appName = app.getString(stringId);
+        }
+        return String.format(Locale.getDefault(), "%s/%d/%s", appName.isEmpty() ? "breadwallet" : appName, versionNumber, System.getProperty("http.agent"));
     }
 
 }
