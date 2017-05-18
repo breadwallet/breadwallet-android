@@ -288,7 +288,8 @@
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="@+id/amount_edit"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/amount_edit"/>
+            app:layout_constraintTop_toTopOf="@+id/amount_edit"
+            android:layout_marginRight="24dp"/>
 
     </android.support.constraint.ConstraintLayout>
 
