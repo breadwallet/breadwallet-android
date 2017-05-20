@@ -1,6 +1,5 @@
 package com.breadwallet.tools.util;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetManager;
 
@@ -39,9 +38,9 @@ import java.util.List;
  * THE SOFTWARE.
  */
 
-public class WordsReader {
+public class Bip39Reader {
 
-    private static final String TAG = WordsReader.class.getName();
+    private static final String TAG = Bip39Reader.class.getName();
     private static final int WORD_LIST_SIZE = 2048;
 
     public static List<String> getWordList(Context context, String languageCode) throws IOException {

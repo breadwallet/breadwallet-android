@@ -22,14 +22,14 @@ import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.tools.util.WordsReader;
+import com.breadwallet.tools.util.Bip39Reader;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.util.List;
 
 import static com.breadwallet.R.color.dark_blue;
 import static com.breadwallet.R.color.extra_light_gray;
-import static com.breadwallet.tools.util.WordsReader.getAllWordLists;
+import static com.breadwallet.tools.util.Bip39Reader.getAllWordLists;
 
 public class InputWordsActivity extends Activity {
     private static final String TAG = InputWordsActivity.class.getName();
@@ -140,7 +140,7 @@ public class InputWordsActivity extends Activity {
 
                 String phraseToCheck = getPhrase();
                 if (phraseToCheck == null) return;
-                String cleanPhrase = WordsReader.cleanPhrase(app, phraseToCheck);
+                String cleanPhrase = Bip39Reader.cleanPhrase(app, phraseToCheck);
 
                 if (BRWalletManager.getInstance().validatePhrase(app, cleanPhrase) ) {
 
