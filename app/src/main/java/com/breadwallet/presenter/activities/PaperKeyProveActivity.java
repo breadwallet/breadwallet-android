@@ -21,14 +21,12 @@ import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.tools.util.WordsReader;
+import com.breadwallet.tools.util.Bip39Reader;
 import com.google.firebase.crash.FirebaseCrash;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Random;
-
-import static java.security.AccessController.getContext;
 
 
 public class PaperKeyProveActivity extends Activity {
@@ -87,7 +85,7 @@ public class PaperKeyProveActivity extends Activity {
                     String languageCode = getString(R.string.lang_Android);
                     List<String> list;
                     try {
-                        list = WordsReader.getWordList(PaperKeyProveActivity.this, languageCode);
+                        list = Bip39Reader.getWordList(PaperKeyProveActivity.this, languageCode);
                     } catch (IOException e) {
                         e.printStackTrace();
                         throw new NullPointerException("No word list");

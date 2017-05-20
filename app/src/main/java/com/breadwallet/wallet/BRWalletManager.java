@@ -48,7 +48,7 @@ import com.breadwallet.tools.manager.BRNotificationManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.tools.util.WordsReader;
+import com.breadwallet.tools.util.Bip39Reader;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.google.firebase.crash.FirebaseCrash;
 
@@ -129,7 +129,7 @@ public class BRWalletManager {
         List<String> list;
         try {
             String languageCode = ctx.getString(R.string.lang_Android);
-            list = WordsReader.getWordList(ctx, languageCode);
+            list = Bip39Reader.getWordList(ctx, languageCode);
             words = list.toArray(new String[list.size()]);
         } catch (IOException e) {
             e.printStackTrace();
@@ -563,21 +563,21 @@ public class BRWalletManager {
         try {
             boolean isLocal = true;
             String languageCode = ctx.getString(R.string.lang_Android);
-            list = WordsReader.getWordList(ctx, languageCode);
+            list = Bip39Reader.getWordList(ctx, languageCode);
 
             String[] phraseWords = phrase.split(" ");
             if (!list.contains(phraseWords[0])) {
                 isLocal = false;
             }
             if (!isLocal) {
-                String lang = WordsReader.getLang(ctx, phraseWords[0]);
+                String lang = Bip39Reader.getLang(ctx, phraseWords[0]);
                 if (lang != null) {
-                    list = WordsReader.getWordList(ctx, lang);
+                    list = Bip39Reader.getWordList(ctx, lang);
                 }
 
             }
             words = list.toArray(new String[list.size()]);
-            cleanWordList = WordsReader.cleanWordList(words);
+            cleanWordList = Bip39Reader.cleanWordList(words);
             if (cleanWordList == null) return false;
         } catch (IOException e) {
             e.printStackTrace();
