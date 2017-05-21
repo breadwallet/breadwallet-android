@@ -44,6 +44,8 @@ public class WordsReader {
     private static final String TAG = WordsReader.class.getName();
     private static final int WORD_LIST_SIZE = 2048;
 
+    private static final String BOM = "\uFEFF";
+
     public static List<String> getWordList(Context context, String languageCode) throws IOException {
 
         String fileName = "words/" + languageCode + "-BIP39Words.txt";
@@ -88,7 +90,7 @@ public class WordsReader {
                 String line;
 
                 while ((line = reader.readLine()) != null) {
-                    String word = line.trim().toLowerCase();
+                    String word = line.trim().toLowerCase().replace(BOM, "");
                     wordList.add(word);
                 }
             } catch (Exception ex) {
@@ -179,7 +181,7 @@ public class WordsReader {
                 String line;
 
                 while ((line = reader.readLine()) != null) {
-                    String word = line.trim().toLowerCase();
+                    String word = line.trim().toLowerCase().replace(BOM, "");
                     wordList.add(word);
                 }
             } catch (Exception ex) {
@@ -193,7 +195,7 @@ public class WordsReader {
                     e.printStackTrace();
                 }
             }
-            if (wordList.size() != WORD_LIST_SIZE){
+            if (wordList.size() != WORD_LIST_SIZE) {
                 RuntimeException ex = new IllegalArgumentException("The list should have " + WORD_LIST_SIZE + " items");
                 FirebaseCrash.report(ex);
                 throw ex;
