@@ -123,7 +123,7 @@ public class WordsReader {
         String[] result = new String[length];
 
         for (int i = 0; i < length; i++) {
-            result[i] = words[i].replace("　", "").replace(" ", "");
+            result[i] = Normalizer.normalize(words[i], Normalizer.Form.NFKD).replace("　", "").replace(" ", "").replace(BOM, "");
         }
         return result;
     }
