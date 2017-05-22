@@ -15,7 +15,9 @@ model {
         }
 
         ndk {
-            platformVersion = "23"
+            platformVersion = "24"
+            abiFilters.addAll(['x86', 'x86_64', 'armeabi', 'armeabi-v7a', 'arm64-v8a'])
+
             moduleName = "core"
             toolchain = "clang"
             CFlags.addAll(['-std=c99', '-g', '-DBITCOIN_TESTNET=0', '-I' + file('src/main/secp/secp256k1/include'),
