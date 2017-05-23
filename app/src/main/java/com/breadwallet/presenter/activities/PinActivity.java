@@ -28,6 +28,7 @@ import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.security.KeyStoreManager;
@@ -164,11 +165,11 @@ public class PinActivity extends Activity {
             }
         });
 
-        boolean isFingerPrintAvailable = AuthManager.isFingerPrintAvailable(this);
-        Log.e(TAG, "onCreate: isFingerPrintAvailable: " + isFingerPrintAvailable);
-        fingerPrint.setVisibility(isFingerPrintAvailable ? View.VISIBLE : View.GONE);
+        boolean useFingerprint = AuthManager.isFingerPrintAvailableAndSetup(this) && SharedPreferencesManager.getUseFingerprint(this);
+        Log.e(TAG, "onCreate: isFingerPrintAvailableAndSetup: " + useFingerprint);
+        fingerPrint.setVisibility(useFingerprint ? View.VISIBLE : View.GONE);
 
-        if (isFingerPrintAvailable)
+        if (useFingerprint)
             fingerPrint.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

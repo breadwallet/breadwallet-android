@@ -268,6 +268,20 @@ public class SharedPreferencesManager {
         editor.apply();
     }
 
+    //if the user prefers all in bitcoin units, not other currencies
+    public static boolean getUseFingerprint(Context activity) {
+        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getBoolean("useFingerprint", false);
+    }
+
+    //if the user prefers all in bitcoin units, not other currencies
+    public static void putUseFingerprint(Context activity, boolean use) {
+        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("useFingerprint", use);
+        editor.apply();
+    }
+
     public static boolean getFeatureEnabled(Context activity, String feature) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getBoolean(feature, false);

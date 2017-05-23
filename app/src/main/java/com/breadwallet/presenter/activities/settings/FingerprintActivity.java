@@ -1,14 +1,17 @@
 package com.breadwallet.presenter.activities.settings;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.hardware.fingerprint.FingerprintManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ListView;
@@ -18,11 +21,14 @@ import android.widget.ToggleButton;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.ActivityUTILS;
+import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRExchange;
+import com.breadwallet.tools.util.Utils;
 
 import java.math.BigDecimal;
 
@@ -56,12 +62,27 @@ public class FingerprintActivity extends AppCompatActivity {
         limitExchange = (TextView) findViewById(R.id.limit_exchange);
         limitInfo = (TextView) findViewById(R.id.limit_info);
 
+        toggleButton.setChecked(SharedPreferencesManager.getUseFingerprint(this));
+
         limitExchange.setText(getLimitText());
 
         toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                KeyStoreManager. //todo finish (store the fingerprint enabled and use)
+                Activity app = FingerprintActivity.this;
+                if (isChecked && !Utils.isFingerprintEnrolled(app)) {
+                    Log.e(TAG, "onCheckedChanged: fingerprint not setup");
+                    BreadDialog.showCustomDialog(app, "Fingerprint Not Setup", "You have not setup any fingerprints on this device. Go to Settings -> Security to setup a fingerprint.", "OK", null, new BRDialogView.BROnClickListener() {
+                        @Override
+                        public void onClick(BRDialogView brDialogView) {
+                            brDialogView.dismissWithAnimation();
+                        }
+                    }, null, null, 0);
+                    buttonView.setChecked(false);
+                    return;
+                }
+                SharedPreferencesManager.putUseFingerprint(app, isChecked);
+
             }
         });
         SpannableString ss = new SpannableString("You can customize your Fingerprint Spending Limit from the Fingerprint Spending Limit screen");

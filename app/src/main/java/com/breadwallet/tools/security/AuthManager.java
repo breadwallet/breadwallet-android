@@ -1,16 +1,12 @@
 package com.breadwallet.tools.security;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.pm.PackageManager;
-import android.hardware.fingerprint.FingerprintManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v13.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
 
@@ -22,12 +18,10 @@ import com.breadwallet.presenter.fragments.FragmentPin;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
-import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.util.concurrent.TimeUnit;
-
-import static android.R.attr.mode;
 
 /**
  * BreadWallet
@@ -212,7 +206,7 @@ public class AuthManager {
         }
         KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Activity.KEYGUARD_SERVICE);
 
-        boolean useFingerPrint = isFingerPrintAvailable(context);
+        boolean useFingerPrint = isFingerPrintAvailableAndSetup(context);
 
         if (KeyStoreManager.getFailCount(context) != 0) {
             useFingerPrint = false;
@@ -282,10 +276,8 @@ public class AuthManager {
 
     }
 
-    public static boolean isFingerPrintAvailable(Context context) {
-        FingerprintManager mFingerprintManager = (FingerprintManager) context.getSystemService(Context.FINGERPRINT_SERVICE);
-        return ActivityCompat.checkSelfPermission(context, Manifest.permission.USE_FINGERPRINT) ==
-                PackageManager.PERMISSION_GRANTED && mFingerprintManager.isHardwareDetected() && mFingerprintManager.hasEnrolledFingerprints();
+    public static boolean isFingerPrintAvailableAndSetup(Context context) {
+        return Utils.isFingerprintAvailable(context) && Utils.isFingerprintEnrolled(context);
     }
 
     public interface OnPinSuccess {
