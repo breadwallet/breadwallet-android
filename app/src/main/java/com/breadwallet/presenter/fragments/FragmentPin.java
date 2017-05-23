@@ -82,6 +82,7 @@ public class FragmentPin extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_bread_pin, container, false);
         keyboard = (BRKeyboard) rootView.findViewById(R.id.brkeyboard);
         pinLayout = (LinearLayout) rootView.findViewById(R.id.pinLayout);
+        Log.e(TAG, "onCreateView: ");
 
         if (KeyStoreManager.getPinCode(getContext()).length() == 4) pinLimit = 4;
 
@@ -213,6 +214,7 @@ public class FragmentPin extends Fragment {
                 authSucceeded = true;
                 completion.onComplete();
                 AuthManager.getInstance().authSuccess(getActivity());
+                getActivity().getFragmentManager().popBackStack();
 
             }
         }).start();
