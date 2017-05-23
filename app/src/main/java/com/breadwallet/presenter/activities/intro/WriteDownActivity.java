@@ -1,27 +1,25 @@
-package com.breadwallet.presenter.activities;
+package com.breadwallet.presenter.activities.intro;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.settings.DefaultCurrencyActivity;
+import com.breadwallet.presenter.activities.util.ActivityUTILS;
+import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.wallet.BRWalletManager;
 
-public class IntroWriteDownActivity extends Activity {
-    private static final String TAG = IntroWriteDownActivity.class.getName();
+public class WriteDownActivity extends BRActivity {
+    private static final String TAG = WriteDownActivity.class.getName();
     private Button writeButton;
     public static boolean appVisible = false;
-    private static IntroWriteDownActivity app;
+    private static WriteDownActivity app;
 
-    public static IntroWriteDownActivity getApp() {
+    public static WriteDownActivity getApp() {
         return app;
     }
 
@@ -36,7 +34,7 @@ public class IntroWriteDownActivity extends Activity {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
 
-                PostAuthenticationProcessor.getInstance().onPhraseCheckAuth(IntroWriteDownActivity.this, false);
+                PostAuthenticationProcessor.getInstance().onPhraseCheckAuth(WriteDownActivity.this, false);
             }
         });
     }
@@ -66,19 +64,6 @@ public class IntroWriteDownActivity extends Activity {
             getFragmentManager().popBackStack();
         }
 
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        switch (requestCode) {
-            case BRConstants.SHOW_PHRASE_REQUEST_CODE:
-                if (resultCode == RESULT_OK) {
-                    PostAuthenticationProcessor.getInstance().onPhraseCheckAuth(this, true);
-                }
-                break;
-        }
     }
 
     @Override

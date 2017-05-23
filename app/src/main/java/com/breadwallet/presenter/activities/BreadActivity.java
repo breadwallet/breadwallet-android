@@ -1,8 +1,6 @@
 package com.breadwallet.presenter.activities;
 
-import android.app.Activity;
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -13,15 +11,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
-import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -30,13 +24,14 @@ import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.util.ActivityUTILS;
+import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRSearchBar;
 import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.presenter.fragments.FragmentManage;
 import com.breadwallet.presenter.fragments.FragmentMenu;
 import com.breadwallet.tools.adapter.TransactionListAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
@@ -55,12 +50,10 @@ import com.platform.HTTPServer;
 import java.math.BigDecimal;
 import java.util.Arrays;
 
-import static com.breadwallet.R.id.view;
-import static com.breadwallet.presenter.activities.IntroActivity.introActivity;
-import static com.breadwallet.presenter.activities.IntroReEnterPinActivity.introReEnterPinActivity;
-import static com.breadwallet.presenter.activities.IntroSetPitActivity.introSetPitActivity;
+import static com.breadwallet.presenter.activities.intro.IntroActivity.introActivity;
+import static com.breadwallet.presenter.activities.ReEnterPinActivity.reEnterPinActivity;
+import static com.breadwallet.presenter.activities.SetPitActivity.introSetPitActivity;
 import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
-import static java.security.AccessController.getContext;
 
 /**
  * BreadWallet
@@ -87,7 +80,7 @@ import static java.security.AccessController.getContext;
  * THE SOFTWARE.
  */
 
-public class BreadActivity extends AppCompatActivity implements BRWalletManager.OnBalanceChanged,
+public class BreadActivity extends BRActivity implements BRWalletManager.OnBalanceChanged,
         BRPeerManager.OnTxStatusUpdate, SharedPreferencesManager.OnIsoChangedListener,
         TransactionDataSource.OnTxAddedListener, FragmentManage.OnNameChanged {
 
@@ -148,7 +141,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
         // Always cast your custom Toolbar here, and set it as the ActionBar.
         toolBar = (Toolbar) findViewById(R.id.bread_bar);
-        setSupportActionBar(toolBar);
+//        setSupportActionBar(toolBar);
 
         initializeViews();
 
@@ -162,7 +155,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
 
         if (introSetPitActivity != null) introSetPitActivity.finish();
         if (introActivity != null) introActivity.finish();
-        if (introReEnterPinActivity != null) introReEnterPinActivity.finish();
+        if (reEnterPinActivity != null) reEnterPinActivity.finish();
 
     }
 
@@ -520,43 +513,7 @@ public class BreadActivity extends AppCompatActivity implements BRWalletManager.
 
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
 
-        // 123 is the qrCode result
-        switch (requestCode) {
-            case 123:
-                if (resultCode == Activity.RESULT_OK) {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            String result = data.getStringExtra("result");
-                            BitcoinUrlHandler.processRequest(BreadActivity.this, result);
-                        }
-                    }, 500);
-
-                }
-                break;
-
-            case BRConstants.PAY_REQUEST_CODE:
-                if (resultCode == RESULT_OK) {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            PostAuthenticationProcessor.getInstance().onPublishTxAuth(BreadActivity.this, true);
-                        }
-                    }).start();
-
-                }
-                break;
-
-            case BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE:
-                if (resultCode == RESULT_OK) {
-                    PostAuthenticationProcessor.getInstance().onPaymentProtocolRequest(this, true);
-                }
-                break;
-        }
-    }
 
     @Override
     public void onStatusUpdate() {

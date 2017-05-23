@@ -1,4 +1,4 @@
-package com.breadwallet.presenter.activities;
+package com.breadwallet.presenter.activities.util;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -7,6 +7,9 @@ import android.view.WindowManager;
 
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.DisabledActivity;
+import com.breadwallet.presenter.activities.InputWordsActivity;
+import com.breadwallet.presenter.activities.SetPitActivity;
 import com.breadwallet.tools.manager.CurrencyFetchManager;
 import com.breadwallet.tools.security.AuthManager;
 
@@ -60,7 +63,7 @@ public class ActivityUTILS {
 
     //return true if the app does need to show the disabled wallet screen
     private static boolean isAppSafe(Activity app) {
-        return app instanceof IntroSetPitActivity || app instanceof InputWordsActivity;
+        return app instanceof SetPitActivity || app instanceof InputWordsActivity;
     }
 
     public static void showWalletDisabled(Activity app, double waitTimeMinutes) {

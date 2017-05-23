@@ -1,29 +1,22 @@
 package com.breadwallet.presenter.activities;
 
+import android.app.Activity;
 import android.content.Intent;
-import android.os.Handler;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.util.ActivityUTILS;
+import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRKeyboard;
-import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
-import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.animation.SpringAnimator;
-import com.breadwallet.tools.security.AuthManager;
-import com.breadwallet.tools.security.PostAuthenticationProcessor;
-import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.BRWalletManager;
 
-public class IntroReEnterPinActivity extends FragmentActivity {
-    private static final String TAG = IntroReEnterPinActivity.class.getName();
+public class SetPitActivity extends BRActivity {
+    private static final String TAG = SetPitActivity.class.getName();
     private BRKeyboard keyboard;
-    public static IntroReEnterPinActivity introReEnterPinActivity;
+    public static SetPitActivity introSetPitActivity;
     private View dot1;
     private View dot2;
     private View dot3;
@@ -31,15 +24,13 @@ public class IntroReEnterPinActivity extends FragmentActivity {
     private View dot5;
     private View dot6;
     private StringBuilder pin = new StringBuilder();
-    private TextView title;
     private int pinLimit = 6;
-    private String firstPIN;
-    private boolean isPressAllowed = true;
-    private LinearLayout pinLayout;
+    private boolean startingNextActivity;
+    private TextView title;
     public static boolean appVisible = false;
-    private static IntroReEnterPinActivity app;
+    private static SetPitActivity app;
 
-    public static IntroReEnterPinActivity getApp() {
+    public static SetPitActivity getApp() {
         return app;
     }
 
@@ -49,15 +40,7 @@ public class IntroReEnterPinActivity extends FragmentActivity {
         setContentView(R.layout.activity_pin_template);
 
         keyboard = (BRKeyboard) findViewById(R.id.brkeyboard);
-        pinLayout = (LinearLayout) findViewById(R.id.pinLayout);
-
         title = (TextView) findViewById(R.id.title);
-        title.setText("Re-Enter PIN");
-        firstPIN = getIntent().getExtras().getString("pin");
-        if (Utils.isNullOrEmpty(firstPIN)) {
-            throw new RuntimeException("first PIN is required");
-        }
-        introReEnterPinActivity = this;
 
         dot1 = findViewById(R.id.dot1);
         dot2 = findViewById(R.id.dot2);
@@ -73,12 +56,14 @@ public class IntroReEnterPinActivity extends FragmentActivity {
             }
         });
         keyboard.setShowDot(false);
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         updateDots();
+        introSetPitActivity = this;
         appVisible = true;
         app = this;
         ActivityUTILS.init(this);
@@ -91,7 +76,6 @@ public class IntroReEnterPinActivity extends FragmentActivity {
     }
 
     private void handleClick(String key) {
-        if (!isPressAllowed) return;
         if (key == null) {
             Log.e(TAG, "handleClick: key is null! ");
             return;
@@ -131,7 +115,6 @@ public class IntroReEnterPinActivity extends FragmentActivity {
 
     private void updateDots() {
         int selectedDots = pin.length();
-
         dot1.setBackground(getDrawable(selectedDots <= 0 ? R.drawable.ic_pin_dot_gray : R.drawable.ic_pin_dot_black));
         selectedDots--;
         dot2.setBackground(getDrawable(selectedDots <= 0 ? R.drawable.ic_pin_dot_gray : R.drawable.ic_pin_dot_black));
@@ -145,61 +128,21 @@ public class IntroReEnterPinActivity extends FragmentActivity {
         dot6.setBackground(getDrawable(selectedDots <= 0 ? R.drawable.ic_pin_dot_gray : R.drawable.ic_pin_dot_black));
 
         if (pin.length() == 6) {
-            verifyPin();
-        }
-
-    }
-
-    private void verifyPin() {
-        if (firstPIN.equalsIgnoreCase(pin.toString())) {
-            AuthManager.getInstance().authSuccess(this);
-            Log.e(TAG, "verifyPin: SUCCESS");
-            isPressAllowed = false;
+            if (startingNextActivity) return;
+            startingNextActivity = true;
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    Intent intent = new Intent(SetPitActivity.this, ReEnterPinActivity.class);
+                    intent.putExtra("pin", pin.toString());
+                    intent.putExtra("noPin", getIntent().getBooleanExtra("noPin", false));
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                     pin = new StringBuilder("");
-                    updateDots();
+                    startingNextActivity = false;
                 }
-            }, 200);
-            AuthManager.getInstance().setPinCode(pin.toString(), this);
-            if (getIntent().getBooleanExtra("noPin", false)) {
-                BRAnimator.startBreadActivity(this, false);
-            } else {
-                BRAnimator.showBreadSignal(this, "PIN Set", "Use your PIN to login and send money.", R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
-                    @Override
-                    public void onComplete() {
-                        PostAuthenticationProcessor.getInstance().onCreateWalletAuth(IntroReEnterPinActivity.this, false);
+            }, 100);
 
-                    }
-                });
-            }
-
-        } else {
-            AuthManager.getInstance().authFail(this);
-            Log.e(TAG, "verifyPin: FAIL: firs: " + firstPIN + ", reEnter: " + pin.toString());
-            title.setText("Wrong PIN,\nplease try again");
-            SpringAnimator.failShakeAnimation(this, pinLayout);
-            pin = new StringBuilder();
-        }
-
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        switch (requestCode) {
-            case BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE:
-                if (resultCode == RESULT_OK) {
-                    PostAuthenticationProcessor.getInstance().onCreateWalletAuth(this, true);
-                } else {
-                    Log.e(TAG, "WARNING: resultCode != RESULT_OK");
-                    BRWalletManager m = BRWalletManager.getInstance();
-                    m.wipeWalletButKeystore(this);
-                    finish();
-                }
-                break;
         }
 
     }

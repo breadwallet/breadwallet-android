@@ -7,7 +7,7 @@
     android:background="@color/extra_light_blue_background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.breadwallet.presenter.activities.IntroRecoverActivity">
+    tools:context="com.breadwallet.presenter.activities.intro.RecoverActivity">
 
     <com.breadwallet.presenter.customviews.BRButton
         app:customFont="CircularPro-Medium.otf"

@@ -15,11 +15,12 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.ActivityUTILS;
+import com.breadwallet.presenter.activities.util.ActivityUTILS;
+import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.util.Utils;
 
-public class WebViewActivity extends Activity {
+public class WebViewActivity extends BRActivity {
     private static final String TAG = WebViewActivity.class.getName();
     WebView webView;
     String theUrl;

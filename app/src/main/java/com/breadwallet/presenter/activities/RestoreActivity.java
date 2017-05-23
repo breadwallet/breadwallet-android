@@ -7,10 +7,12 @@ import android.view.View;
 import android.widget.Button;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.util.ActivityUTILS;
+import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 
-public class RestoreActivity extends Activity {
+public class RestoreActivity extends BRActivity {
     private Button nextButton;
     public static boolean appVisible = false;
     private static RestoreActivity app;

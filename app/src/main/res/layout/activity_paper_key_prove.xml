@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/extra_light_blue_background"
-    tools:context="com.breadwallet.presenter.activities.IntroWriteDownActivity">
+    tools:context="com.breadwallet.presenter.activities.intro.WriteDownActivity">
 
     <LinearLayout
         android:id="@+id/gradient_layout"

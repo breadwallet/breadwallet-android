@@ -16,6 +16,7 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
@@ -37,12 +38,10 @@ import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.breadwallet.tools.util.BRConstants.AUTH_FOR_BIT_ID;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static com.breadwallet.tools.util.BRConstants.REQUEST_PHRASE_BITID;
 
 /**
  * BreadWallet
@@ -91,7 +90,8 @@ public class BitcoinUrlHandler {
         }
         if (requestObject == null) {
             if (app != null) {
-                BreadDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title), app.getString(R.string.invalid_address), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                BreadDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title),
+                        app.getString(R.string.invalid_address), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
                         brDialogView.dismissWithAnimation();
@@ -106,7 +106,8 @@ public class BitcoinUrlHandler {
             return tryBitcoinURL(url, app);
         } else {
             if (app != null) {
-                BreadDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title), app.getString(R.string.bad_payment_request), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                BreadDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title),
+                        app.getString(R.string.bad_payment_request), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
                         brDialogView.dismissWithAnimation();
@@ -187,7 +188,9 @@ public class BitcoinUrlHandler {
                 }
                 final Uri tmpUri = Uri.parse(_bitUri);
                 try {
-                    phrase = KeyStoreManager.getKeyStorePhrase(app, REQUEST_PHRASE_BITID);
+
+
+                    phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.REQUEST_PHRASE_BITID);
                     app.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -233,7 +236,7 @@ public class BitcoinUrlHandler {
 
         final Uri uri = Uri.parse(_bitUri);
         try {
-            phrase = KeyStoreManager.getKeyStorePhrase(app, REQUEST_PHRASE_BITID);
+            phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.REQUEST_PHRASE_BITID);
         } catch (BRKeystoreErrorException e) {
             Log.e(TAG, "processBitIdResponse: failed to getKeyStorePhrase: " + e.getCause().getMessage());
             return;

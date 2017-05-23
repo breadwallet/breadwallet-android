@@ -11,7 +11,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.ActivityUTILS;
+import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.fragments.FingerprintFragment;
 import com.breadwallet.presenter.fragments.FragmentPin;

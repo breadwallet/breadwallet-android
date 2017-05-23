@@ -22,6 +22,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.util.ActivityUTILS;
+import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
@@ -40,7 +42,7 @@ import com.platform.APIClient;
 import static com.breadwallet.R.color.white;
 import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
 
-public class PinActivity extends Activity {
+public class PinActivity extends BRActivity {
     private static final String TAG = PinActivity.class.getName();
     private BRKeyboard keyboard;
     private LinearLayout pinLayout;
@@ -79,7 +81,7 @@ public class PinActivity extends Activity {
         setContentView(R.layout.activity_pin);
         String pin = KeyStoreManager.getPinCode(this);
         if (pin.isEmpty() || (pin.length() != 6 && pin.length() != 4)) {
-            Intent intent = new Intent(this, IntroSetPitActivity.class);
+            Intent intent = new Intent(this, SetPitActivity.class);
             intent.putExtra("noPin", true);
             startActivity(intent);
             if (!PinActivity.this.isDestroyed()) finish();
@@ -325,48 +327,6 @@ public class PinActivity extends Activity {
         rightDrawable.setStroke(stoke, activeColor, 0, 0);
         leftButton.setTextColor(activeColor);
         rightButton.setTextColor(activeColor);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
-
-        // 123 is the qrCode result
-        switch (requestCode) {
-            case 123:
-                if (resultCode == Activity.RESULT_OK) {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            Log.e(TAG, "run: result got back!");
-                            String result = data.getStringExtra("result");
-                            if (BitcoinUrlHandler.isBitcoinUrl(result))
-                                BitcoinUrlHandler.processRequest(PinActivity.this, result);
-                            else if (BitcoinUrlHandler.isBitId(result))
-                                BitcoinUrlHandler.tryBitIdUri(PinActivity.this, result, null);
-                            else
-                                Log.e(TAG, "onActivityResult: not bitcoin address NOR bitID");
-                        }
-                    }, 500);
-
-                }
-                break;
-            case BRConstants.PAY_REQUEST_CODE:
-                if (resultCode == RESULT_OK) {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            PostAuthenticationProcessor.getInstance().onPublishTxAuth(PinActivity.this, true);
-                        }
-                    }).start();
-                }
-                break;
-
-            case BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE:
-                if (resultCode == RESULT_OK) {
-                    PostAuthenticationProcessor.getInstance().onPaymentProtocolRequest(this, true);
-                }
-                break;
-        }
     }
 
     @Override

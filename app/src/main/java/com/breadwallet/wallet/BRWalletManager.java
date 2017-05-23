@@ -590,6 +590,30 @@ public class BRWalletManager {
         return validateRecoveryPhrase(cleanWordList, phrase);
     }
 
+    public void startTheWalletIfExists(final Activity app) {
+        final BRWalletManager m = BRWalletManager.getInstance();
+        if (!m.isPasscodeEnabled(app)) {
+            //Device passcode/password should be enabled for the app to work
+            BreadDialog.showCustomDialog(app, "Warning", app.getString(R.string.IntroScreen_encryption_needed_Android),
+                    "close", null, new BRDialogView.BROnClickListener() {
+                        @Override
+                        public void onClick(BRDialogView brDialogView) {
+                            app.finish();
+                        }
+                    }, null, new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            app.finish();
+                        }
+                    }, 0);
+        } else {
+            if (!m.noWallet(app)) {
+                BRAnimator.startBreadActivity(app, true);
+            }
+
+        }
+    }
+
     //BLOCKS
     public void setUpTheWallet(final Context ctx) {
         Log.d(TAG, "setUpTheWallet...");
