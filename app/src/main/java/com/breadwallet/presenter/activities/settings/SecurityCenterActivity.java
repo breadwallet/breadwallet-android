@@ -144,7 +144,8 @@ public class SecurityCenterActivity extends AppCompatActivity {
             }
         }));
 
-        int resId = Utils.isFingerprintEnrolled(SecurityCenterActivity.this) && SharedPreferencesManager.getUseFingerprint(SecurityCenterActivity.this)
+        int resId = Utils.isFingerprintEnrolled(SecurityCenterActivity.this)
+                && SharedPreferencesManager.getUseFingerprint(SecurityCenterActivity.this)
                 ? R.drawable.ic_check_mark_blue
                 : R.drawable.ic_check_mark_grey;
 

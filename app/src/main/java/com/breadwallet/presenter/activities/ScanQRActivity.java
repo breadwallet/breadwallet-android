@@ -48,7 +48,7 @@ public class ScanQRActivity extends AppCompatActivity {
     private SurfaceView mySurfaceView;
     private QRReader qrEader;
     private static final String TAG = ScanQRActivity.class.getName();
-    private boolean dataProcessing = false;
+    //    private boolean dataProcessing = false;
     private ImageView cameraGuide;
     private TextView descriptionText;
     private long lastUpdated;
@@ -81,7 +81,7 @@ public class ScanQRActivity extends AppCompatActivity {
             @Override
             public void onDetected(final String data) {
                 if (handlingCode) return;
-                if (BitcoinUrlHandler.isBitcoinUrl(data)) {
+                if (BitcoinUrlHandler.isBitcoinUrl(data) || BitcoinUrlHandler.isBitId(data)) {
                     Log.e(TAG, "onDetected: YES it is bitcoin URL");
                     runOnUiThread(new Runnable() {
                         @Override
@@ -94,7 +94,7 @@ public class ScanQRActivity extends AppCompatActivity {
 
                         }
                     });
-                } else {
+                }  else {
                     Log.e(TAG, "onDetected: NO it is NOT bitcoin URL");
                     runOnUiThread(new Runnable() {
                         @Override
@@ -152,7 +152,6 @@ public class ScanQRActivity extends AppCompatActivity {
         setResult(Activity.RESULT_OK, returnIntent);
         finish();
     }
-
 
     private class UIUpdateTask extends Thread {
         public boolean running = true;

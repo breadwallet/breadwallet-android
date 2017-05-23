@@ -4,12 +4,14 @@ import android.app.Activity;
 import android.net.Uri;
 import android.util.Log;
 
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.R;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.presenter.entities.RequestObject;
+import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
@@ -35,6 +37,7 @@ import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.breadwallet.tools.util.BRConstants.AUTH_FOR_BIT_ID;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -123,6 +126,17 @@ public class BitcoinUrlHandler {
                 || BRWalletManager.getInstance().isValidBitcoinPrivateKey(url));
     }
 
+    public static boolean isBitId( String uri) {
+        try {
+            URI bitIdUri = new URI(uri);
+            if ("bitid".equals(bitIdUri.getScheme())) {
+                return true;
+            }
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
     public static boolean tryBitIdUri(final Activity app, String uri, JSONObject jsonBody) {
         if (uri == null) return false;
@@ -158,32 +172,48 @@ public class BitcoinUrlHandler {
             _authString = "BitID Authentication Request";
         }
 
-//        Log.e(TAG, "tryBitIdUri: _bitUri: " + _bitUri);
-//        Log.e(TAG, "tryBitIdUri: _strToSign: " + _strToSign);
-//        Log.e(TAG, "tryBitIdUri: _index: " + _index);
+        Log.e(TAG, "tryBitIdUri: _bitUri: " + _bitUri);
+        Log.e(TAG, "tryBitIdUri: _strToSign: " + _strToSign);
+        Log.e(TAG, "tryBitIdUri: _index: " + _index);
 
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                byte[] phrase = null;
-//                try {
-//                    Thread.sleep(500);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//                Uri tmpUri = Uri.parse(_bitUri);
-//                try {
-//                    phrase = KeyStoreManager.getKeyStorePhrase(app, REQUEST_PHRASE_BITID);
-//                    ((BreadWalletApp) app.getApplicationContext()).authPrompt(app, AUTH_FOR_BIT_ID, null, tmpUri.getHost(), _authString, null, false);
-//                } catch (BRKeystoreErrorException e) {
-//                    //asked the system, no need for local auth
-//                    e.printStackTrace();
-//                } finally {
-//                    //free the phrase
-//                    if (phrase != null) Arrays.fill(phrase, (byte) 0);
-//                }
-//            }
-//        }).start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                byte[] phrase = null;
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                final Uri tmpUri = Uri.parse(_bitUri);
+                try {
+                    phrase = KeyStoreManager.getKeyStorePhrase(app, REQUEST_PHRASE_BITID);
+                    app.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            AuthManager.getInstance().authPrompt(app, _authString, tmpUri.getHost(), true, new BRAuthCompletion() {
+                                @Override
+                                public void onComplete() {
+                                    processBitIdResponse(app);
+                                }
+
+                                @Override
+                                public void onCancel() {
+
+                                }
+                            });
+                        }
+                    });
+
+                } catch (BRKeystoreErrorException e) {
+                    //asked the system, no need for local auth
+                    e.printStackTrace();
+                } finally {
+                    //free the phrase
+                    if (phrase != null) Arrays.fill(phrase, (byte) 0);
+                }
+            }
+        }).start();
         return isBitUri;
 
     }

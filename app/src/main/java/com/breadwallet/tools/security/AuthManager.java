@@ -246,7 +246,6 @@ public class AuthManager {
                 if (!app.isDestroyed())
                     transaction.commit();
             } else {
-
                 breadPin = new FragmentPin();
                 Bundle args = new Bundle();
                 args.putString("title", title);
@@ -257,8 +256,9 @@ public class AuthManager {
                 transaction.setCustomAnimations(0, 0, 0, R.animator.plain_300);
                 transaction.add(android.R.id.content, breadPin, breadPin.getClass().getName());
                 transaction.addToBackStack(null);
-                if (!app.isDestroyed())
+                if (!app.isDestroyed()) {
                     transaction.commit();
+                }
             }
         } else {
             BreadDialog.showCustomDialog(app, "", context.getString(R.string.IntroScreen_encryption_needed_Android), "close", null, new BRDialogView.BROnClickListener() {

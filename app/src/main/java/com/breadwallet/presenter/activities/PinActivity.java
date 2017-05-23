@@ -337,8 +337,14 @@ public class PinActivity extends Activity {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
+                            Log.e(TAG, "run: result got back!");
                             String result = data.getStringExtra("result");
-                            BitcoinUrlHandler.processRequest(PinActivity.this, result);
+                            if (BitcoinUrlHandler.isBitcoinUrl(result))
+                                BitcoinUrlHandler.processRequest(PinActivity.this, result);
+                            else if (BitcoinUrlHandler.isBitId(result))
+                                BitcoinUrlHandler.tryBitIdUri(PinActivity.this, result, null);
+                            else
+                                Log.e(TAG, "onActivityResult: not bitcoin address NOR bitID");
                         }
                     }, 500);
 
