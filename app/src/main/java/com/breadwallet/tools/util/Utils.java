@@ -10,6 +10,7 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
+import android.support.v4.hardware.fingerprint.FingerprintManagerCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodInfo;
@@ -189,6 +190,18 @@ public class Utils {
 
         return builder.build().toString().replaceFirst("/", "");
 
+    }
+
+    public static boolean isFingerprintEnrolled(Context app) {
+        FingerprintManagerCompat fingerprintManagerCompat = FingerprintManagerCompat.from(app);
+        // Device doesn't support fingerprint authentication
+        return fingerprintManagerCompat.isHardwareDetected() && fingerprintManagerCompat.hasEnrolledFingerprints();
+    }
+
+    public static boolean isFingerprintAvailable(Context app) {
+        FingerprintManagerCompat fingerprintManagerCompat = FingerprintManagerCompat.from(app);
+        // Device doesn't support fingerprint authentication
+        return fingerprintManagerCompat.isHardwareDetected();
     }
 
     public static void hideKeyboard(Context app) {

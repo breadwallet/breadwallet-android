@@ -29,7 +29,9 @@ import com.breadwallet.presenter.activities.UpdatePitActivity;
 import com.breadwallet.presenter.entities.BRSecurityCenterItem;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -142,38 +144,22 @@ public class SecurityCenterActivity extends AppCompatActivity {
             }
         }));
 
-        boolean isFingerPrintAvailable = false;
-        // Check if we're running on Android 6.0 (M) or higher
-        //Fingerprint API only available on from Android 6.0 (M)
-        FingerprintManager fingerprintManager = (FingerprintManager) getSystemService(Context.FINGERPRINT_SERVICE);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
-            //  Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            if (!fingerprintManager.isHardwareDetected()) {
-                // Device doesn't support fingerprint authentication
-            } else if (!fingerprintManager.hasEnrolledFingerprints()) {
-                // User hasn't enrolled any fingerprints to authenticate with
-            } else {
-                // Everything is ready for fingerprint authentication
-                isFingerPrintAvailable = true;
-            }
-        }
+        int resId = Utils.isFingerprintEnrolled(SecurityCenterActivity.this) && SharedPreferencesManager.getUseFingerprint(SecurityCenterActivity.this)
+                ? R.drawable.ic_check_mark_blue
+                : R.drawable.ic_check_mark_grey;
 
-        itemList.add(new BRSecurityCenterItem("FingerPrint", "Unlocks your Bread, authorizes send money to set limit.",
-                isFingerPrintAvailable ? R.drawable.ic_check_mark_blue : R.drawable.ic_check_mark_grey, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: Touch ID");
-                Intent intent = new Intent(SecurityCenterActivity.this, FingerprintActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-            }
-        }));
+        if (Utils.isFingerprintAvailable(this)) {
+            itemList.add(new BRSecurityCenterItem("FingerPrint", "Unlocks your Bread, authorizes send money to set limit.",
+                    resId, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d(TAG, "onClick: Touch ID");
+                    Intent intent = new Intent(SecurityCenterActivity.this, FingerprintActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                }
+            }));
+        }
 
         boolean isPaperKeySet = SharedPreferencesManager.getPhraseWroteDown(this);
         itemList.add(new BRSecurityCenterItem("Paper Key", "Restores your Bread on new devices and after software updates.",
