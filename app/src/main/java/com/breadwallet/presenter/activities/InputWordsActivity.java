@@ -12,6 +12,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.intro.IntroActivity;
+import com.breadwallet.presenter.activities.util.ActivityUTILS;
+import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
@@ -31,7 +34,7 @@ import static com.breadwallet.R.color.dark_blue;
 import static com.breadwallet.R.color.extra_light_gray;
 import static com.breadwallet.tools.util.Bip39Reader.getAllWordLists;
 
-public class InputWordsActivity extends Activity {
+public class InputWordsActivity extends BRActivity {
     private static final String TAG = InputWordsActivity.class.getName();
     private Button leftButton;
     private Button rightButton;
@@ -156,7 +159,7 @@ public class InputWordsActivity extends Activity {
                                 intent = new Intent(app, IntroActivity.class);
                             } else {
                                 AuthManager.getInstance().setPinCode("", InputWordsActivity.this);
-                                intent = new Intent(app, IntroSetPitActivity.class);
+                                intent = new Intent(app, SetPitActivity.class);
                                 intent.putExtra("noPin", true);
                             }
 

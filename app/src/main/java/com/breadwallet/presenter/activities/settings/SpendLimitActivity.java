@@ -6,7 +6,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.ActivityUTILS;
+import com.breadwallet.presenter.activities.util.ActivityUTILS;
+import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.KeyStoreManager;
@@ -19,7 +20,7 @@ import java.math.BigDecimal;
 import static com.breadwallet.tools.util.BRConstants.ONE_BITCOIN;
 
 
-public class SpendLimitActivity extends AppCompatActivity {
+public class SpendLimitActivity extends BRActivity {
     private static final String TAG = SpendLimitActivity.class.getName();
     //    private Button scanButton;
     public static boolean appVisible = false;

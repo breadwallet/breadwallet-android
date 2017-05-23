@@ -17,6 +17,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.util.ActivityUTILS;
+import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.fragments.FragmentPhraseWord;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -30,7 +32,7 @@ import com.google.firebase.crash.FirebaseCrash;
 import java.util.Locale;
 
 
-public class PaperKeyActivity extends Activity {
+public class PaperKeyActivity extends BRActivity {
     private static final String TAG = PaperKeyActivity.class.getName();
     private ViewPager wordViewPager;
     private Button nextButton;
@@ -199,19 +201,6 @@ public class PaperKeyActivity extends Activity {
             return words == null ? 0 : words.length;
         }
 
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        switch (requestCode) {
-            case BRConstants.PROVE_PHRASE_REQUEST:
-                if (resultCode == RESULT_OK) {
-                    PostAuthenticationProcessor.getInstance().onPhraseProveAuth(this, true);
-                }
-                break;
-        }
     }
 
     @Override

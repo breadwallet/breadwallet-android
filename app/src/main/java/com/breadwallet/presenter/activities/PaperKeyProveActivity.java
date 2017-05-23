@@ -14,6 +14,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.util.ActivityUTILS;
+import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -29,7 +31,7 @@ import java.util.List;
 import java.util.Random;
 
 
-public class PaperKeyProveActivity extends Activity {
+public class PaperKeyProveActivity extends BRActivity {
     private static final String TAG = PaperKeyProveActivity.class.getName();
     private Button submit;
     private EditText wordEditFirst;

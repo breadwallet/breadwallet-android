@@ -8,10 +8,10 @@ import android.util.Log;
 
 import com.breadwallet.R;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
-import com.breadwallet.presenter.activities.IntroActivity;
+import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.presenter.activities.PaperKeyActivity;
 import com.breadwallet.presenter.activities.PaperKeyProveActivity;
-import com.breadwallet.presenter.activities.IntroWriteDownActivity;
+import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -75,7 +75,7 @@ public class PostAuthenticationProcessor {
         boolean success = BRWalletManager.getInstance().generateRandomSeed(app);
         Log.e(TAG, "generateRandomSeed: took: " + (System.currentTimeMillis() - start));
         if (success) {
-            Intent intent = new Intent(app, IntroWriteDownActivity.class);
+            Intent intent = new Intent(app, WriteDownActivity.class);
             app.startActivity(intent);
             app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
 
@@ -251,13 +251,13 @@ public class PostAuthenticationProcessor {
         this.paymentRequest = paymentRequest;
     }
 
-    public void onCanaryCheck(final IntroActivity introActivity, boolean authAsked) {
+    public void onCanaryCheck(final Activity app, boolean authAsked) {
         String canary;
         try {
-            canary = KeyStoreManager.getKeyStoreCanary(introActivity, BRConstants.CANARY_REQUEST_CODE);
+            canary = KeyStoreManager.getKeyStoreCanary(app, BRConstants.CANARY_REQUEST_CODE);
         } catch (BRKeystoreErrorException e) {
             if (authAsked) {
-                showBugAuthLoopErrorMessage(introActivity);
+                showBugAuthLoopErrorMessage(app);
                 Log.e(TAG, "onCanaryCheck: !success && authAsked");
             }
             return;
@@ -267,7 +267,7 @@ public class PostAuthenticationProcessor {
             Log.e(TAG, "!canary.equalsIgnoreCase(BRConstants.CANARY_STRING)");
             byte[] phrase;
             try {
-                phrase = KeyStoreManager.getKeyStorePhrase(introActivity, BRConstants.CANARY_REQUEST_CODE);
+                phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.CANARY_REQUEST_CODE);
             } catch (BRKeystoreErrorException e) {
                 Log.e(TAG, "onCanaryCheck: error: " + e.getMessage());
                 return;
@@ -275,22 +275,22 @@ public class PostAuthenticationProcessor {
             String strPhrase = new String(phrase);
             if (strPhrase.isEmpty()) {
                 BRWalletManager m = BRWalletManager.getInstance();
-                m.wipeKeyStore(introActivity);
-                m.wipeWalletButKeystore(introActivity);
+                m.wipeKeyStore(app);
+                m.wipeWalletButKeystore(app);
             } else {
                 try {
-                    KeyStoreManager.putKeyStoreCanary(BRConstants.CANARY_STRING, introActivity, 0);
+                    KeyStoreManager.putKeyStoreCanary(BRConstants.CANARY_STRING, app, 0);
                 } catch (BRKeystoreErrorException e) {
                     e.printStackTrace();
                 }
             }
         }
-        introActivity.startTheWalletIfExists();
+        BRWalletManager.getInstance().startTheWalletIfExists(app);
     }
 
     private void showBugAuthLoopErrorMessage(final Activity app) {
         if (app != null) {
-            BRWalletManager m = BRWalletManager.getInstance();
+//            BRWalletManager m = BRWalletManager.getInstance();
 //            m.wipeKeyStore(app);
 //            m.wipeWalletButKeystore(app);
             KeyStoreManager.showKeyStoreDialog(app, "Keystore invalidated", "Disable lock screen and all fingerprints, and re-enable to continue.", app.getString(R.string.Button_ok), null,

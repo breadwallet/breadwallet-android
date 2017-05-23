@@ -1,16 +1,12 @@
 package com.breadwallet.presenter.activities.settings;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.hardware.fingerprint.FingerprintManager;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,20 +19,20 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.ActivityUTILS;
-import com.breadwallet.presenter.activities.IntroWriteDownActivity;
+import com.breadwallet.presenter.activities.util.ActivityUTILS;
+import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.presenter.activities.UpdatePitActivity;
+import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.entities.BRSecurityCenterItem;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
-import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SecurityCenterActivity extends AppCompatActivity {
+public class SecurityCenterActivity extends BRActivity {
     private static final String TAG = SecurityCenterActivity.class.getName();
 
     public ListView mListView;
@@ -168,7 +164,7 @@ public class SecurityCenterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: Paper Key");
-                Intent intent = new Intent(SecurityCenterActivity.this, IntroWriteDownActivity.class);
+                Intent intent = new Intent(SecurityCenterActivity.this, WriteDownActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }

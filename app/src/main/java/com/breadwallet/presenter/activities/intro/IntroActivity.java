@@ -1,5 +1,5 @@
 
-package com.breadwallet.presenter.activities;
+package com.breadwallet.presenter.activities.intro;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,12 +12,14 @@ import android.widget.Button;
 
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.SetPitActivity;
+import com.breadwallet.presenter.activities.util.ActivityUTILS;
+import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
-import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
@@ -52,7 +54,7 @@ import java.io.Serializable;
  * THE SOFTWARE.
  */
 
-public class IntroActivity extends FragmentActivity implements Serializable {
+public class IntroActivity extends BRActivity implements Serializable {
     private static final String TAG = IntroActivity.class.getName();
     public Button newWalletButton;
     public Button recoverWalletButton;
@@ -117,7 +119,7 @@ public class IntroActivity extends FragmentActivity implements Serializable {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.springView(v);
-                Intent intent = new Intent(IntroActivity.this, IntroSetPitActivity.class);
+                Intent intent = new Intent(IntroActivity.this, SetPitActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
 
@@ -129,7 +131,7 @@ public class IntroActivity extends FragmentActivity implements Serializable {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.springView(v);
-                Intent intent = new Intent(IntroActivity.this, IntroRecoverActivity.class);
+                Intent intent = new Intent(IntroActivity.this, RecoverActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
 
@@ -170,65 +172,9 @@ public class IntroActivity extends FragmentActivity implements Serializable {
 
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-//            case BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE:
-//                if (resultCode == RESULT_OK) {
-//                    PostAuthenticationProcessor.getInstance().onCreateWalletAuth(this, true);
-//                } else {
-//                    Log.e(TAG, "WARNING: resultCode != RESULT_OK");
-//                    BRWalletManager m = BRWalletManager.getInstance(this);
-//                    m.wipeWalletButKeystore(this);
-//                    BRAnimator.resetFragmentAnimator();
-//                    finish();
-//                }
-//                break;
-//            case BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE:
-//                if (resultCode == RESULT_OK) {
-//                    PostAuthenticationProcessor.getInstance().onRecoverWalletAuth(this, true);
-//                } else {
-//                    finish();
-//                }
-//                break;
-            case BRConstants.CANARY_REQUEST_CODE:
-                if (resultCode == RESULT_OK) {
-                    PostAuthenticationProcessor.getInstance().onCanaryCheck(this, true);
-                } else {
-                    finish();
-                }
-                break;
-
-        }
-
-    }
-
-    @Override
     public void onBackPressed() {
         super.onBackPressed();
 
-    }
-
-    public void startTheWalletIfExists() {
-        final BRWalletManager m = BRWalletManager.getInstance();
-        if (!m.isPasscodeEnabled(this)) {
-            //Device passcode/password should be enabled for the app to work
-            BreadDialog.showCustomDialog(this, "Warning", getString(R.string.IntroScreen_encryption_needed_Android), "close", null, new BRDialogView.BROnClickListener() {
-                @Override
-                public void onClick(BRDialogView brDialogView) {
-                    finish();
-                }
-            }, null, new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialog) {
-                    finish();
-                }
-            }, 0);
-        } else {
-            if (!m.noWallet(this)) {
-                BRAnimator.startBreadActivity(this, true);
-            }
-
-        }
     }
 
 }

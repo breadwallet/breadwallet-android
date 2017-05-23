@@ -6,18 +6,19 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.util.ActivityUTILS;
+import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
 
-public class ImportActivity extends Activity {
+public class ImportActivity extends BRActivity {
     private Button scan;
     private static final String TAG = ImportActivity.class.getName();
     public static boolean appVisible = false;
@@ -97,33 +98,6 @@ public class ImportActivity extends Activity {
 
             // other 'case' lines to check for other
             // permissions this app might request
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
-
-        // 123 is the qrCode result
-        switch (requestCode) {
-            case 123:
-                if (resultCode == Activity.RESULT_OK) {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            String result = data.getStringExtra("result");
-                            BitcoinUrlHandler.processRequest(ImportActivity.this, result);
-                        }
-                    }, 500);
-
-                }
-                break;
-
-            case BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE:
-                if (resultCode == RESULT_OK) {
-                    PostAuthenticationProcessor.getInstance().onPaymentProtocolRequest(this, true);
-                }
-                break;
-
         }
     }
 

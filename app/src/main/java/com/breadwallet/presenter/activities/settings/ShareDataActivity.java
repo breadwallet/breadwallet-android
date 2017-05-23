@@ -6,10 +6,11 @@ import android.widget.CompoundButton;
 import android.widget.ToggleButton;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.ActivityUTILS;
+import com.breadwallet.presenter.activities.util.ActivityUTILS;
+import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 
-public class ShareDataActivity extends AppCompatActivity {
+public class ShareDataActivity extends BRActivity {
     private static final String TAG = ShareDataActivity.class.getName();
     private ToggleButton toggleButton;
     public static boolean appVisible = false;

@@ -31,27 +31,6 @@ import java.util.concurrent.TimeUnit;
 public class BRConstants {
 
     /**
-     * RequestQRActivity
-     */
-    public static final String INTENT_EXTRA_REQUEST_AMOUNT = "request_amount";
-    public static final String INTENT_EXTRA_REQUEST_ADDRESS = "request_address";
-
-    /**
-     * Auth modes
-     */
-    public static final int AUTH_FOR_PHRASE = 11;
-    public static final int AUTH_FOR_PAY = 12;
-    public static final int AUTH_FOR_GENERAL = 13;
-    public static final int AUTH_FOR_LIMIT = 14;
-    public static final int AUTH_FOR_PAYMENT_PROTOCOL = 15;
-    public static final int AUTH_FOR_BIT_ID = 16;
-
-    /**
-     * BlockHeight prefs
-     */
-    public static final String BLOCK_HEIGHT = "blockHeight";
-
-    /**
      * Permissions
      */
     public static final int CAMERA_REQUEST_ID = 34;

@@ -64,7 +64,7 @@ public class FragmentPin extends Fragment {
     private View dot6;
     private StringBuilder pin = new StringBuilder();
     private int pinLimit = 6;
-    private boolean pinInsertAllowed;
+//    private boolean pinInsertAllowed;
 
     private TextView title;
     private TextView message;
@@ -82,7 +82,6 @@ public class FragmentPin extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_bread_pin, container, false);
         keyboard = (BRKeyboard) rootView.findViewById(R.id.brkeyboard);
         pinLayout = (LinearLayout) rootView.findViewById(R.id.pinLayout);
-        Log.e(TAG, "onCreateView: ");
 
         if (KeyStoreManager.getPinCode(getContext()).length() == 4) pinLimit = 4;
 

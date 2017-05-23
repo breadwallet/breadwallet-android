@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.util.ActivityUTILS;
+import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.AuthManager;
@@ -18,7 +20,7 @@ import com.breadwallet.tools.util.Utils;
 import java.util.Locale;
 
 
-public class DisabledActivity extends Activity {
+public class DisabledActivity extends BRActivity {
 
     private TextView untilLabel;
     private TextView disabled;

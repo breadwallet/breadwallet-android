@@ -2,14 +2,14 @@ package com.breadwallet.presenter.activities.settings;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.ActivityUTILS;
+import com.breadwallet.presenter.activities.util.ActivityUTILS;
+import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.adapter.CurrencyListAdapter;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
@@ -19,7 +19,7 @@ import com.breadwallet.tools.util.BRCurrency;
 import java.math.BigDecimal;
 
 
-public class DefaultCurrencyActivity extends AppCompatActivity {
+public class DefaultCurrencyActivity extends BRActivity {
     private static final String TAG = DefaultCurrencyActivity.class.getName();
     private TextView exchangeText;
     private ListView listView;

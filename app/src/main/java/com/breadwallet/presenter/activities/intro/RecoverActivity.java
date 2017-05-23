@@ -1,21 +1,23 @@
-package com.breadwallet.presenter.activities;
+package com.breadwallet.presenter.activities.intro;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.InputWordsActivity;
+import com.breadwallet.presenter.activities.util.ActivityUTILS;
+import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 
-public class IntroRecoverActivity extends Activity {
+public class RecoverActivity extends BRActivity {
     private Button nextButton;
     public static boolean appVisible = false;
-    private static IntroRecoverActivity app;
+    private static RecoverActivity app;
 
-    public static IntroRecoverActivity getApp() {
+    public static RecoverActivity getApp() {
         return app;
     }
 
@@ -32,7 +34,7 @@ public class IntroRecoverActivity extends Activity {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.springView(v);
-                Intent intent = new Intent(IntroRecoverActivity.this, InputWordsActivity.class);
+                Intent intent = new Intent(RecoverActivity.this, InputWordsActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }

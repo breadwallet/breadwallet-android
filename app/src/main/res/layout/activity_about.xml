@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/extra_light_blue_background"
-    tools:context="com.breadwallet.presenter.activities.IntroSetPitActivity">
+    tools:context="com.breadwallet.presenter.activities.SetPitActivity">
 
     <View
         android:id="@+id/view3"

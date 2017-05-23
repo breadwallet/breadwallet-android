@@ -8,11 +8,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.ActivityUTILS;
+import com.breadwallet.presenter.activities.util.ActivityUTILS;
+import com.breadwallet.presenter.activities.util.BRActivity;
 
 import java.util.Locale;
 
-public class AboutActivity extends AppCompatActivity {
+public class AboutActivity extends BRActivity {
     private static final String TAG = AboutActivity.class.getName();
     private TextView termsText;
     private TextView policyText;
