@@ -92,11 +92,11 @@ public class BitcoinUrlHandler {
             if (app != null) {
                 BreadDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title),
                         app.getString(R.string.invalid_address), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
-                    @Override
-                    public void onClick(BRDialogView brDialogView) {
-                        brDialogView.dismissWithAnimation();
-                    }
-                }, null, null, 0);
+                            @Override
+                            public void onClick(BRDialogView brDialogView) {
+                                brDialogView.dismissWithAnimation();
+                            }
+                        }, null, null, 0);
             }
             return false;
         }
@@ -108,11 +108,11 @@ public class BitcoinUrlHandler {
             if (app != null) {
                 BreadDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title),
                         app.getString(R.string.bad_payment_request), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
-                    @Override
-                    public void onClick(BRDialogView brDialogView) {
-                        brDialogView.dismissWithAnimation();
-                    }
-                }, null, null, 0);
+                            @Override
+                            public void onClick(BRDialogView brDialogView) {
+                                brDialogView.dismissWithAnimation();
+                            }
+                        }, null, null, 0);
             }
             return false;
         }
@@ -127,7 +127,7 @@ public class BitcoinUrlHandler {
                 || BRWalletManager.getInstance().isValidBitcoinPrivateKey(url));
     }
 
-    public static boolean isBitId( String uri) {
+    public static boolean isBitId(String uri) {
         try {
             URI bitIdUri = new URI(uri);
             if ("bitid".equals(bitIdUri.getScheme())) {
@@ -180,41 +180,31 @@ public class BitcoinUrlHandler {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                byte[] phrase = null;
+//                byte[] phrase = null;
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 final Uri tmpUri = Uri.parse(_bitUri);
-                try {
 
+                app.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        AuthManager.getInstance().authPrompt(app, _authString, tmpUri.getHost(), true, new BRAuthCompletion() {
+                            @Override
+                            public void onComplete() {
+                                PostAuthenticationProcessor.getInstance().onBitIDAuth(app);
+                            }
 
-                    phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.REQUEST_PHRASE_BITID);
-                    app.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            AuthManager.getInstance().authPrompt(app, _authString, tmpUri.getHost(), true, new BRAuthCompletion() {
-                                @Override
-                                public void onComplete() {
-                                    processBitIdResponse(app);
-                                }
+                            @Override
+                            public void onCancel() {
 
-                                @Override
-                                public void onCancel() {
+                            }
+                        });
+                    }
+                });
 
-                                }
-                            });
-                        }
-                    });
-
-                } catch (BRKeystoreErrorException e) {
-                    //asked the system, no need for local auth
-                    e.printStackTrace();
-                } finally {
-                    //free the phrase
-                    if (phrase != null) Arrays.fill(phrase, (byte) 0);
-                }
             }
         }).start();
         return isBitUri;
@@ -238,7 +228,7 @@ public class BitcoinUrlHandler {
         try {
             phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.REQUEST_PHRASE_BITID);
         } catch (BRKeystoreErrorException e) {
-            Log.e(TAG, "processBitIdResponse: failed to getKeyStorePhrase: " + e.getCause().getMessage());
+            Log.e(TAG, "processBitIdResponse: failed to getKeyStorePhrase: " + e.getMessage());
             return;
         }
         nulTermPhrase = TypesConverter.getNullTerminatedPhrase(phrase);

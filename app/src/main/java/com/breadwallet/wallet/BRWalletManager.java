@@ -176,7 +176,7 @@ public class BRWalletManager {
     }
 
     /**
-     * true if keychain is available and we know that no wallet exists on it
+     * true if keystore is available and we know that no wallet exists on it
      */
     public boolean noWallet(Context ctx) {
         byte[] pubkey = KeyStoreManager.getMasterPublicKey(ctx);
@@ -185,6 +185,7 @@ public class BRWalletManager {
             byte[] phrase;
             try {
                 phrase = KeyStoreManager.getKeyStorePhrase(ctx, 0);
+                //if not authenticated, an error will be thrown and returned false, so no worry about mistakenly removing the wallet
                 if (phrase == null || phrase.length == 0) {
                     return true;
                 }

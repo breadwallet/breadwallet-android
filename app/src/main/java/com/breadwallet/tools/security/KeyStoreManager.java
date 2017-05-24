@@ -318,20 +318,6 @@ public class KeyStoreManager {
     }
 
     private static void showKeyStoreFailedToLoad(final Context context) {
-//        showKeyStoreDialog(context,"KeyStore Error", "Failed to load KeyStore. Please try again later or enter your phrase to recover your Breadwallet now.", "recover now", "try later",
-//                context instanceof IntroActivity ?
-//                        new DialogInterface.OnClickListener() {
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                if (BRAnimator.checkTheMultipressingAvailability()) {
-////                                    ((IntroActivity) context).showRecoverWalletFragment();
-//                                }
-//                            }
-//                        } : null, new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        context.finish();
-//                    }
-//                },
-//                null);
         BreadDialog.showCustomDialog(context, "KeyStore Error", "Failed to load KeyStore. Please try again later.", "close", null, new BRDialogView.BROnClickListener() {
             @Override
             public void onClick(BRDialogView brDialogView) {

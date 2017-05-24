@@ -54,6 +54,12 @@ public class BRActivity extends Activity {
 
                 }
                 break;
+            case BRConstants.REQUEST_PHRASE_BITID:
+                if (resultCode == RESULT_OK) {
+                    PostAuthenticationProcessor.getInstance().onBitIDAuth(BRActivity.this);
+
+                }
+                break;
 
             case BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
