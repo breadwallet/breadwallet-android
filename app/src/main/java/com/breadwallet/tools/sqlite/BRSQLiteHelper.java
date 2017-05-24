@@ -44,7 +44,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     }
 
     private static final String DATABASE_NAME = "breadwallet.db";
-    private static final int DATABASE_VERSION = 11;
+    private static final int DATABASE_VERSION = 12;
 
     /**
      * MerkleBlock table
@@ -122,6 +122,10 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TX_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + PEER_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + CURRENCY_TABLE_NAME);
+        db.execSQL(MB_DATABASE_CREATE);
+        db.execSQL(TX_DATABASE_CREATE);
+        db.execSQL(PEER_DATABASE_CREATE);
+        db.execSQL(CURRENCY_DATABASE_CREATE);
 
     }
 }
