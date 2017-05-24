@@ -228,14 +228,11 @@ public class Utils {
             }
         }
         int stringId = 0;
-        String appName = "";
         if (app != null) {
             stringId = app.getApplicationInfo().labelRes;
-            appName = app.getString(stringId);
         }
-        if (appName.isEmpty()) appName = "breadwallet";
         String agent = System.getProperty("http.agent");
-        return String.format(Locale.getDefault(), "%s/%d %s %s", appName, versionNumber, cfnetwork, Util.toHumanReadableAscii(agent));
+        return String.format(Locale.getDefault(), "%s/%d %s %s", "breadwallet", versionNumber, cfnetwork, Util.toHumanReadableAscii(agent));
     }
 
 }
