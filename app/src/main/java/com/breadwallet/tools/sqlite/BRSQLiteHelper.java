@@ -82,8 +82,6 @@ class BRSQLiteHelper extends SQLiteOpenHelper {
             PEER_PORT + " blob," +
             PEER_TIMESTAMP + " blob );";
 
-
-
     public BRSQLiteHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
