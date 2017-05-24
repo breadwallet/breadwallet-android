@@ -117,6 +117,10 @@ public class PostAuthenticationProcessor {
         app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
     }
 
+    public void onBitIDAuth(Activity app){
+        BitcoinUrlHandler.processBitIdResponse(app);
+    }
+
 
     public void onRecoverWalletAuth(Activity app, boolean authAsked) {
         if (phraseForKeyStore == null) return;
