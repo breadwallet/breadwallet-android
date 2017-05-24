@@ -5,9 +5,6 @@ import android.content.Intent;
 import android.os.Handler;
 import android.util.Log;
 
-import com.breadwallet.presenter.activities.BreadActivity;
-import com.breadwallet.presenter.activities.ImportActivity;
-import com.breadwallet.presenter.activities.PinActivity;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;

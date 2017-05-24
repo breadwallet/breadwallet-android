@@ -67,6 +67,7 @@
                 android:paddingStart="4dp"
                 android:text="sent"
                 android:textColor="@color/light_gray"
+                android:textSize="12sp"
                 app:customFont="CircularPro-Book.otf"/>
 
             <com.breadwallet.presenter.customviews.BRButton
@@ -83,6 +84,7 @@
                 android:paddingStart="4dp"
                 android:text="received"
                 android:textColor="@color/light_gray"
+                android:textSize="12sp"
                 app:customFont="CircularPro-Book.otf"/>
 
             <com.breadwallet.presenter.customviews.BRButton
@@ -99,6 +101,7 @@
                 android:paddingStart="4dp"
                 android:text="pending"
                 android:textColor="@color/light_gray"
+                android:textSize="12sp"
                 app:customFont="CircularPro-Book.otf"/>
 
             <com.breadwallet.presenter.customviews.BRButton
@@ -115,6 +118,7 @@
                 android:paddingStart="4dp"
                 android:text="complete"
                 android:textColor="@color/light_gray"
+                android:textSize="12sp"
                 app:customFont="CircularPro-Book.otf"/>
 
         </LinearLayout>
