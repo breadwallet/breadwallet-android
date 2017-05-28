@@ -83,7 +83,7 @@ class BRSQLiteHelper extends SQLiteOpenHelper {
             PEER_TIMESTAMP + " blob );";
 
     /**
-     * Peer table
+     * Singleton instance of BRSQLiteHelper
      */
     private static BRSQLiteHelper instance;
 
