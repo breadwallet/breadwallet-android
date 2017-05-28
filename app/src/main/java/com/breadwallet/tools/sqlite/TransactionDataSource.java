@@ -28,7 +28,6 @@ package com.breadwallet.tools.sqlite;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
@@ -53,7 +52,7 @@ public class TransactionDataSource {
 
 
     public TransactionDataSource(Context context) {
-        dbHelper = new BRSQLiteHelper(context);
+        dbHelper = BRSQLiteHelper.getInstance(context);
     }
 
     public BRTransactionEntity createTransaction(BRTransactionEntity transactionEntity) {
@@ -82,7 +81,6 @@ public class TransactionDataSource {
             database.endTransaction();
         }
         return null;
-
 
     }
 

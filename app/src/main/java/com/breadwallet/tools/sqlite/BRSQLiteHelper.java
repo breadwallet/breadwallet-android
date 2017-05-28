@@ -82,7 +82,25 @@ class BRSQLiteHelper extends SQLiteOpenHelper {
             PEER_PORT + " blob," +
             PEER_TIMESTAMP + " blob );";
 
-    public BRSQLiteHelper(Context context) {
+    /**
+     * Peer table
+     */
+    private static BRSQLiteHelper instance;
+
+    public static synchronized BRSQLiteHelper getInstance(Context context) {
+        if (instance == null) {
+            // Use the application context to make sure that we don't accidentally
+            // leak an Activity's context
+            instance = new BRSQLiteHelper(context.getApplicationContext());
+        }
+        return instance;
+    }
+
+    /**
+     * Constructor made private to prevent direct instantiation.
+     * Use getInstance() to get the static instance instead.
+     */
+    private BRSQLiteHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
