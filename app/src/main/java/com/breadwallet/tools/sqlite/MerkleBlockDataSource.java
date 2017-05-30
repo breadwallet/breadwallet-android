@@ -54,7 +54,7 @@ class MerkleBlockDataSource {
     };
 
     public MerkleBlockDataSource(Context context) {
-        dbHelper = new BRSQLiteHelper(context);
+        dbHelper = BRSQLiteHelper.getInstance(context);
     }
 
     public void putMerkleBlocks(BlockEntity[] blockEntities) {

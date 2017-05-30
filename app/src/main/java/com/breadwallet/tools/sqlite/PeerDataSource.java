@@ -53,7 +53,7 @@ class PeerDataSource {
     };
 
     public PeerDataSource(Context context) {
-        dbHelper = new BRSQLiteHelper(context);
+        dbHelper = BRSQLiteHelper.getInstance(context);
     }
 
     public void putPeers(PeerEntity[] peerEntities) {
