@@ -383,11 +383,11 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
 
     private boolean isDigitInsertingLegal(String tmp) {
         int maxDig = getMaxFractionDigits();
-        long limit = 21000000000000L;
+        long limit = 84000000000000L;
         if (unit == BRConstants.CURRENT_UNIT_MBITS)
-            limit = 21000000000L;
+            limit = 84000000000L;
         if (unit == BRConstants.CURRENT_UNIT_BITCOINS)
-            limit = 21000000L;
+            limit = 84000000L;
 
         if (rightValue.isBitcoin) {
             maxDig = BRConstants.MAX_DIGITS_AFTER_SEPARATOR_BITS;
