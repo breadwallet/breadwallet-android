@@ -141,8 +141,10 @@ public class FingerprintDialogFragment extends DialogFragment
     private void goToBackup() {
 
         // Fingerprint is not used anymore. Stop listening for it.
+        Activity app = getActivity();
         if (getDialog() != null)
             getDialog().cancel();
+        if (app == null) return;
         PasswordDialogFragment passwordDialogFragment = new PasswordDialogFragment();
         passwordDialogFragment.setMode(mode);
         passwordDialogFragment.setPaymentRequestEntity(request, paymentRequest);
@@ -175,11 +177,11 @@ public class FingerprintDialogFragment extends DialogFragment
                 app.fragmentPhraseFlow2.setPhrase(FragmentPhraseFlow1.phrase);
             }
         } else if (mode == BRConstants.AUTH_FOR_PAY && request != null) {
-            PostAuthenticationProcessor.getInstance().onPublishTxAuth((MainActivity) getActivity(),false);
+            PostAuthenticationProcessor.getInstance().onPublishTxAuth((MainActivity) getActivity(), false);
         } else if (mode == BRConstants.AUTH_FOR_PAYMENT_PROTOCOL && paymentRequest != null) {
             if (paymentRequest.paymentURL == null || paymentRequest.paymentURL.isEmpty()) return;
             new PaymentProtocolPostPaymentTask(paymentRequest).execute();
-        } else if (mode == AUTH_FOR_BIT_ID){
+        } else if (mode == AUTH_FOR_BIT_ID) {
             RequestHandler.processBitIdResponse(getActivity());
         }
         dismiss();
