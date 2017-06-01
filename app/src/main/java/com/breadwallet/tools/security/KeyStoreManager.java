@@ -235,10 +235,10 @@ public class KeyStoreManager {
             SecretKey secretKey = (SecretKey)
                     keyStore.getKey(alias, null);
             if (secretKey == null) {
-                /** no such key, the key is just simply not there */
+                /* no such key, the key is just simply not there */
                 boolean fileExists = new File(encryptedDataFilePath).exists();
                 Log.e(TAG, "_getData: " + alias + " file exist: " + fileExists);
-                if (!fileExists) return result; /** file also not there, fine then */
+                if (!fileExists) return result; /* file also not there, fine then */
                 showKeyStoreFailedToLoad(context);
                 throw new BRKeystoreErrorException("no key but the phrase is there");
             }
@@ -310,7 +310,6 @@ public class KeyStoreManager {
         } catch (UnrecoverableKeyException | InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchPaddingException e) {
             /** if for any other reason the keystore fails, crash! */
             Log.e(TAG, "getData: error: " + e.getClass().getSuperclass().getName());
-            FirebaseCrash.report(e);
             throw new RuntimeException(e.getMessage() + " | class: " + e.getClass().getName());
         }
     }

@@ -176,7 +176,8 @@ public class IntroActivity extends FragmentActivity {
         for (Fragment f : fragments) {
             fragmentTransaction.show(f);
         }
-        fragmentTransaction.commitAllowingStateLoss();
+        if (!isDestroyed())
+            fragmentTransaction.commitAllowingStateLoss();
     }
 
     private void setStatusBarColor(int mode) {
