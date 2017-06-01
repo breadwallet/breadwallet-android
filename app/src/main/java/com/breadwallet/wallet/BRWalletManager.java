@@ -888,16 +888,22 @@ public class BRWalletManager {
                     confirmPay(new PaymentRequestEntity(new String[]{addressHolder}, bigDecimalAmount.longValue(), cn, tmpTx, isAmountRequested));
                 } else {
                     Log.d(TAG, "pay: FAIL: insufficient funds");
-                    AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
-                    builder.setMessage(ctx.getString(R.string.insufficient_funds))
-                            .setCancelable(false)
-                            .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.cancel();
-                                }
-                            });
-                    AlertDialog alert = builder.create();
-                    alert.show();
+                    ctx.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+                            builder.setMessage(ctx.getString(R.string.insufficient_funds))
+                                    .setCancelable(false)
+                                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.cancel();
+                                        }
+                                    });
+                            AlertDialog alert = builder.create();
+                            alert.show();
+                        }
+                    });
+
                 }
             }
         }).start();
