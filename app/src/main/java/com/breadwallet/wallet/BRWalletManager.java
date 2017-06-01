@@ -1053,24 +1053,30 @@ public class BRWalletManager {
         return null;
     }
 
-    public void offerToChangeTheAmount(Activity app, String title) {
+    public void offerToChangeTheAmount(final Activity app, final String title) {
 
-        new AlertDialog.Builder(app)
-                .setTitle(title)
-                .setMessage(R.string.change_payment_amount)
-                .setPositiveButton(R.string.change, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        BRAnimator.animateScanResultFragment();
-                    }
-                }).setNegativeButton(app.getString(R.string.cancel), new DialogInterface.OnClickListener() {
+        app.runOnUiThread(new Runnable() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
+            public void run() {
+                new AlertDialog.Builder(app)
+                        .setTitle(title)
+                        .setMessage(R.string.change_payment_amount)
+                        .setPositiveButton(R.string.change, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                BRAnimator.animateScanResultFragment();
+                            }
+                        }).setNegativeButton(app.getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
             }
-        })
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
+        });
+
     }
 
     public void animateSavePhraseFlow() {

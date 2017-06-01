@@ -128,7 +128,7 @@ public class JsonParser {
                 }
             }
             int stringId = 0;
-            String appName = "";
+            String appName = "Bread";
             if (app != null) {
                 stringId = app.getApplicationInfo().labelRes;
                 appName = app.getString(stringId);
