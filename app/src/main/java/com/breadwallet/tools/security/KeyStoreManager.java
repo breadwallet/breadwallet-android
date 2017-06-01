@@ -243,10 +243,13 @@ public class KeyStoreManager {
                 throw new BRKeystoreErrorException("no key but the phrase is there");
             }
 
-            if (!new File(getEncryptedDataFilePath(alias_iv, context)).exists() ||
-                    !new File(getEncryptedDataFilePath(alias_file, context)).exists()) {
+            boolean ivExists = new File(getEncryptedDataFilePath(alias_iv, context)).exists();
+            boolean aliasExists = new File(getEncryptedDataFilePath(alias_file, context)).exists();
+            if (!ivExists || !aliasExists) {
                 removeAliasAndFiles(alias, context);
-                FirebaseCrash.report(new IllegalArgumentException("removed alias and file: " + alias));
+                //report it if one exists and not the other.
+                if (ivExists != aliasExists)
+                    FirebaseCrash.report(new IllegalArgumentException("alias or iv isn't on the disk: " + alias));
                 return result;
             }
 
