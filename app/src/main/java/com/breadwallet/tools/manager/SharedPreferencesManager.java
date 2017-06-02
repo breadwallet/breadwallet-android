@@ -62,7 +62,14 @@ public class SharedPreferencesManager {
 
     public static String getIso(Activity context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
-        return settingsToGet.getString(BRConstants.CURRENT_CURRENCY, Currency.getInstance(Locale.getDefault()).getCurrencyCode());
+        Currency currency;
+        try {
+            currency = Currency.getInstance(Locale.getDefault());
+        } catch (IllegalArgumentException e) {
+            currency = Currency.getInstance(Locale.ENGLISH);
+        }
+        String defaultIso = currency.getCurrencyCode();
+        return settingsToGet.getString(BRConstants.CURRENT_CURRENCY, defaultIso);
     }
 
     public static void putIso(Activity context, String code) {
