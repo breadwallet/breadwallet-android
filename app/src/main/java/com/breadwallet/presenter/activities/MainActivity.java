@@ -346,7 +346,7 @@ public class MainActivity extends FragmentActivity implements Observer {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(30000);
+                    Thread.sleep(500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
