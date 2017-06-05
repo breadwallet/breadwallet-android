@@ -493,7 +493,7 @@ public class FragmentScanResult extends Fragment implements View.OnClickListener
         }
     }
 
-    public String getFormattedCurrencyStringForKeyboard(String isoCurrencyCode, String amount, boolean rightItem) {
+    public String   getFormattedCurrencyStringForKeyboard(String isoCurrencyCode, String amount, boolean rightItem) {
         Activity app = getActivity();
         if (amount == null || app == null) {
             FirebaseCrash.report(new NullPointerException("getFormattedCurrencyStringForKeyboard: AMOUNT == null"));

@@ -144,6 +144,7 @@ public class PhraseFlowActivity extends Activity {
     }
 
     public void showHideFragments(Fragment... fragments) {
+        if(fragments.length == 0) return;
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.hide(fragmentPhraseFlow1);
