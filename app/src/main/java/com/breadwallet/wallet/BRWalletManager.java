@@ -641,7 +641,9 @@ public class BRWalletManager {
                         if (maxAmountDouble == -1) {
                             RuntimeException ex = new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL");
                             FirebaseCrash.report(ex);
-                            throw ex;
+                            BRWalletManager.getInstance(ctx).setUpTheWallet(ctx);
+                            return;
+//                            throw ex;
                         }
                         if (maxAmountDouble == 0) {
                             ctx.runOnUiThread(new Runnable() {
