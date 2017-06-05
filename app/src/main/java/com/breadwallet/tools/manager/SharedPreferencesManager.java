@@ -59,7 +59,6 @@ import static com.breadwallet.tools.util.BRConstants.GEO_PERMISSIONS_REQUESTED;
 public class SharedPreferencesManager {
     public static final String TAG = SharedPreferencesManager.class.getName();
 
-
     public static String getIso(Activity context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         Currency currency;

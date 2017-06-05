@@ -291,6 +291,7 @@ public class KeyStoreManager {
                 Log.e(TAG, "_getData: InvalidKeyException", e);
                 FirebaseCrash.report(e);
                 showKeyStoreFailedToLoad(context);
+                Assert.fail();
                 throw new BRKeystoreErrorException("Key store error");
             }
         } catch (IOException | CertificateException | KeyStoreException e) {

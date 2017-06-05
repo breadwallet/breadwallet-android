@@ -921,7 +921,7 @@ public class BRWalletManager {
 
     }
 
-    public void setUpTheWallet() {
+    public void setUpTheWallet(final Activity ctx) {
         Log.d(TAG, "setUpTheWallet...");
         Assert.assertNotNull(ctx);
         if (ctx == null) return;

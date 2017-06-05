@@ -350,7 +350,7 @@ public class MainActivity extends FragmentActivity implements Observer {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                BRWalletManager.getInstance(app).setUpTheWallet();
+                BRWalletManager.getInstance(app).setUpTheWallet(MainActivity.this);
             }
         }).start();
 
