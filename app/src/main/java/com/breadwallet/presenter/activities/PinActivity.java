@@ -116,7 +116,8 @@ public class PinActivity extends BRActivity {
         keyboard.setBRButtonTextColor(R.color.white);
         keyboard.setShowDot(false);
         keyboard.setBreadground(getDrawable(R.drawable.bread_gradient));
-        keyboard.setCustomButtonBackground(10, getColor(android.R.color.transparent));
+        keyboard.setCustomButtonBackgroundColor(10, getColor(android.R.color.transparent));
+        keyboard.setDeleteImage(getDrawable(R.drawable.ic_delete_white));
 
         leftButton = (Button) findViewById(R.id.left_button);
         rightButton = (Button) findViewById(R.id.right_button);
