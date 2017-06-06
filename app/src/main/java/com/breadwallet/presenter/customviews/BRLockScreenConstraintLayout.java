@@ -69,7 +69,7 @@ public class BRLockScreenConstraintLayout extends ConstraintLayout {
         Log.e(TAG, "init: ");
         trianglesPaintBlack = new Paint();
         trianglesPaint = new Paint();
-        setLayerType(View.LAYER_TYPE_SOFTWARE, trianglesPaintBlack);
+//        setLayerType(View.LAYER_TYPE_SOFTWARE, trianglesPaintBlack);
 //        trianglesPaintBlack.setShadowLayer(14f, 0, 0, getContext().getColor(R.color.dark_gray));
 //        trianglesPaintBlack.setAntiAlias(true);
         trianglesPaintBlack.setStyle(Paint.Style.FILL);
