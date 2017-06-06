@@ -61,6 +61,7 @@ public class PinActivity extends BRActivity {
 
     private ImageButton fingerPrint;
     public static boolean appVisible = false;
+    private boolean inputAllowed = true;
 
     private Button leftButton;
     private Button rightButton;
@@ -199,6 +200,7 @@ public class PinActivity extends BRActivity {
         updateDots();
         appVisible = true;
         app = this;
+        inputAllowed = true;
         ActivityUTILS.init(this);
         if (!BRWalletManager.getInstance().isCreated()) {
             new Thread(new Runnable() {
@@ -219,6 +221,10 @@ public class PinActivity extends BRActivity {
     }
 
     private void handleClick(String key) {
+        if(!inputAllowed) {
+            Log.e(TAG, "handleClick: input not allowed");
+            return;
+        }
         if (key == null) {
             Log.e(TAG, "handleClick: key is null! ");
             return;
@@ -285,17 +291,20 @@ public class PinActivity extends BRActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                inputAllowed = true;
                 updateDots();
             }
         }, 1000);
     }
 
     private void updateDots() {
+
         AuthManager.getInstance().updateDots(this, pinLimit, pin.toString(), dot1, dot2, dot3, dot4, dot5, dot6, R.drawable.ic_pin_dot_white,
                 new AuthManager.OnPinSuccess() {
                     @Override
                     public void onSuccess() {
                         Log.e(TAG, "onSuccess: ");
+                        inputAllowed = false;
                         if (AuthManager.getInstance().checkAuth(pin.toString(), PinActivity.this)) {
                             AuthManager.getInstance().authSuccess(PinActivity.this);
                             unlockWallet();
