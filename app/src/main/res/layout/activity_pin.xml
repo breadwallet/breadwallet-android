@@ -86,7 +86,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:textSize="18sp"
-        android:text="Enter Pin"
+        android:text="@string/LoginScreen.subheader"
         app:customFont="CircularPro-Book.otf"
         android:textColor="@color/almost_black"
         app:layout_constraintBottom_toTopOf="@+id/pinLayout"
