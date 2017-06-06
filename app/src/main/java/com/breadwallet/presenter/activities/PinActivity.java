@@ -32,9 +32,7 @@ import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.AuthManager;
-import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.security.KeyStoreManager;
-import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
@@ -225,15 +223,11 @@ public class PinActivity extends BRActivity {
             Log.e(TAG, "handleClick: key is null! ");
             return;
         }
-        if (key.length() > 1) {
-            Log.e(TAG, "handleClick: key is longer: " + key);
-            return;
-        }
 
         if (key.isEmpty()) {
             handleDeleteClick();
         } else if (Character.isDigit(key.charAt(0))) {
-            handleDigitClick(Integer.parseInt(key));
+            handleDigitClick(Integer.parseInt(key.substring(0, 1)));
         } else {
             Log.e(TAG, "handleClick: oops: " + key);
         }
@@ -286,7 +280,6 @@ public class PinActivity extends BRActivity {
     }
 
     private void showFailedToUnlock() {
-        Log.e(TAG, "showFailedToUnlock: ");
         SpringAnimator.failShakeAnimation(PinActivity.this, pinLayout);
         pin = new StringBuilder("");
         new Handler().postDelayed(new Runnable() {
@@ -298,7 +291,6 @@ public class PinActivity extends BRActivity {
     }
 
     private void updateDots() {
-        Log.e(TAG, "updateDots: " + pin.toString());
         AuthManager.getInstance().updateDots(this, pinLimit, pin.toString(), dot1, dot2, dot3, dot4, dot5, dot6, R.drawable.ic_pin_dot_white,
                 new AuthManager.OnPinSuccess() {
                     @Override
