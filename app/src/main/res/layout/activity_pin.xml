@@ -85,8 +85,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
+        android:textSize="18sp"
         android:text="Enter Pin"
         app:customFont="CircularPro-Book.otf"
+        android:textColor="@color/almost_black"
         app:layout_constraintBottom_toTopOf="@+id/pinLayout"
         app:layout_constraintLeft_toLeftOf="@+id/pinLayout"
         app:layout_constraintRight_toRightOf="@+id/pinLayout"/>
@@ -115,6 +117,7 @@
             android:background="@drawable/button_half_left"
             android:text="@string/LoginScreen.myAddress"
             android:textColor="@color/white"
+            android:textSize="14sp"
             app:customFont="CircularPro-Medium.otf"
             />
 
@@ -126,6 +129,7 @@
             android:background="@drawable/button_half_right"
             android:text="@string/LoginScreen.scan"
             android:textColor="@color/white"
+            android:textSize="14sp"
             app:customFont="CircularPro-Medium.otf"
             />
     </LinearLayout>
@@ -150,13 +154,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
-        android:layout_marginStart="0dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginStart="0dp"
         android:alpha="0"
         android:text="Wallet Unlocked"
         android:textColor="@color/white"
         android:textSize="18sp"
-        app:customFont="CircularPro-Medium.otf"
+        app:customFont="CircularPro-Book.otf"
         app:layout_constraintBottom_toTopOf="@+id/unlocked_image"
         app:layout_constraintHorizontal_bias="0.461"
         app:layout_constraintLeft_toLeftOf="@+id/unlocked_image"
