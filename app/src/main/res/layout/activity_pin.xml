@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
         android:gravity="center_horizontal"
-        android:text="bread"
+        android:text="@string/LoginScreen.header"
         android:textColor="@color/white"
         android:textSize="48sp"
         app:customFont="Celevenia.otf"
@@ -75,7 +75,7 @@
     <com.breadwallet.presenter.customviews.BRKeyboard
         android:id="@+id/brkeyboard"
         android:layout_width="0dp"
-        android:layout_height="240dp"
+        android:layout_height="280dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>

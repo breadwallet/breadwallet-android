@@ -3,7 +3,11 @@ package com.breadwallet.presenter.customviews;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.text.SpannableString;
+import android.text.TextUtils;
+import android.text.style.RelativeSizeSpan;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -105,6 +109,56 @@ public class BRKeyboard extends LinearLayout implements View.OnClickListener {
         numDot.setOnClickListener(this);
         numDelete.setOnClickListener(this);
 
+        num0.setText(getText(0));
+        num1.setText(getText(1));
+        num2.setText(getText(2));
+        num3.setText(getText(3));
+        num4.setText(getText(4));
+        num5.setText(getText(5));
+        num6.setText(getText(6));
+        num7.setText(getText(7));
+        num8.setText(getText(8));
+        num9.setText(getText(9));
+
+    }
+
+    private CharSequence getText(int index) {
+        SpannableString span1 = new SpannableString(String.valueOf(index));
+        SpannableString span2;
+        switch (index) {
+            case 2:
+                span2 = new SpannableString("ABC");
+                break;
+            case 3:
+                span2 = new SpannableString("DEF");
+                break;
+            case 4:
+                span2 = new SpannableString("GHI");
+                break;
+            case 5:
+                span2 = new SpannableString("JKL");
+                break;
+            case 6:
+                span2 = new SpannableString("MNO");
+                break;
+            case 7:
+                span2 = new SpannableString("PQRS");
+                break;
+            case 8:
+                span2 = new SpannableString("TUV");
+                break;
+            case 9:
+                span2 = new SpannableString("WXYZ");
+                break;
+            default:
+                span2 = new SpannableString(" ");
+                break;
+        }
+
+
+        span1.setSpan(new RelativeSizeSpan(1f), 0, 1, 0);
+        span2.setSpan(new RelativeSizeSpan(0.35f), 0, span2.length(), 0);
+        return TextUtils.concat(span1, "\n", span2);
     }
 
     @Override
@@ -183,11 +237,12 @@ public class BRKeyboard extends LinearLayout implements View.OnClickListener {
 
     /**
      * Change the background of a specific button
-     * @param index the index of the button (10 - delete, 11 - dot)
-     * @param drawable  the drawable to be used
+     *
+     * @param index    the index of the button (10 - delete, 11 - dot)
+     * @param drawable the drawable to be used
      */
-    public void setCustomButtonBackgroundDrawable(int index, Drawable drawable){
-        switch (index){
+    public void setCustomButtonBackgroundDrawable(int index, Drawable drawable) {
+        switch (index) {
             case 0:
                 num0.setBackground(drawable);
                 break;
@@ -226,13 +281,15 @@ public class BRKeyboard extends LinearLayout implements View.OnClickListener {
                 break;
         }
     }
+
     /**
      * Change the background of a specific button
+     *
      * @param index the index of the button (10 - delete, 11 - dot)
-     * @param color  the color to be used
+     * @param color the color to be used
      */
-    public void setCustomButtonBackgroundColor(int index, int color){
-        switch (index){
+    public void setCustomButtonBackgroundColor(int index, int color) {
+        switch (index) {
             case 0:
                 num0.setBackgroundColor(color);
                 break;
@@ -272,7 +329,7 @@ public class BRKeyboard extends LinearLayout implements View.OnClickListener {
         }
     }
 
-    public void setDeleteImage(Drawable res){
+    public void setDeleteImage(Drawable res) {
         numDelete.setImageDrawable(res);
     }
 

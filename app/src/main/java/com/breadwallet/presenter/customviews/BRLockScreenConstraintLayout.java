@@ -66,11 +66,12 @@ public class BRLockScreenConstraintLayout extends ConstraintLayout {
     }
 
     private void init() {
+        Log.e(TAG, "init: ");
         trianglesPaintBlack = new Paint();
         trianglesPaint = new Paint();
         setLayerType(View.LAYER_TYPE_SOFTWARE, trianglesPaintBlack);
 //        trianglesPaintBlack.setShadowLayer(14f, 0, 0, getContext().getColor(R.color.dark_gray));
-        trianglesPaintBlack.setAntiAlias(true);
+//        trianglesPaintBlack.setAntiAlias(true);
         trianglesPaintBlack.setStyle(Paint.Style.FILL);
 //        trianglesPaintBlack.setColor(getContext().getColor(R.color.light_gray));
         pathBlack = new Path();
@@ -81,25 +82,27 @@ public class BRLockScreenConstraintLayout extends ConstraintLayout {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        width = w;
-        height = h;
 
         if (w != 0 && !created) {
+            created = true;
+            width = w;
+            height = h;
             Log.e(TAG, "onSizeChanged: creating: " + w + ", " + h);
             createTriangles(w, h);
 
             trianglesPaint.setShader(new LinearGradient(0, 0, w, 0, getContext().getColor(R.color.logo_gradient_start),
                     getContext().getColor(R.color.logo_gradient_end), Shader.TileMode.MIRROR));
-            created = true;
+            trianglesPaintBlack.setShadowLayer(10.0f, 5f, 5f, getContext().getColor(R.color.gray_shadow));
+
+            invalidate();
         }
 //        trianglesPaintBlack.setShader(new LinearGradient(0, 0, w, 0, getContext().getColor(R.color.logo_gradient_start),
 //                getContext().getColor(R.color.logo_gradient_end), Shader.TileMode.MIRROR));
 
-        invalidate();
-
     }
 
     private void createTriangles(int w, int h) {
+        Log.e(TAG, "createTriangles: ");
         pathBlack.moveTo(0, 0);
         path.moveTo(0, 0);
 
@@ -139,20 +142,25 @@ public class BRLockScreenConstraintLayout extends ConstraintLayout {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        long start = System.currentTimeMillis();
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int width = MeasureSpec.getSize(widthMeasureSpec);
         int height = MeasureSpec.getSize(heightMeasureSpec);
         // Correct any translations set before the measure was set
         setTranslationX(mXfract * width);
         setTranslationY(mYfract * height);
+        Log.e(TAG, "onMeasure: took: " + (System.currentTimeMillis() - start));
     }
 
     @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        trianglesPaintBlack.setShadowLayer(10.0f, 5f, 5f, getContext().getColor(R.color.gray_shadow));
+        long start = System.currentTimeMillis();
         canvas.drawPath(pathBlack, trianglesPaintBlack);
+        long startSecond = System.currentTimeMillis();
         canvas.drawPath(path, trianglesPaint);
+        Log.e(TAG, "onDraw: " + (System.currentTimeMillis() - start));
+        Log.e(TAG, "onDraw: path:" + (System.currentTimeMillis() - startSecond));
 
     }
 
