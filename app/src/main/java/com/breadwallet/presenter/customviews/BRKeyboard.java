@@ -2,6 +2,7 @@ package com.breadwallet.presenter.customviews;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
@@ -174,5 +175,102 @@ public class BRKeyboard extends LinearLayout implements View.OnClickListener {
         numDot.setVisibility(b ? VISIBLE : GONE);
         invalidate();
     }
+
+    public void setBreadground(Drawable drawable) {
+        setBackground(drawable);
+        invalidate();
+    }
+
+    /**
+     * Change the background of a specific button
+     * @param index the index of the button (10 - delete, 11 - dot)
+     * @param drawable  the drawable to be used
+     */
+    public void setCustomButtonBackgroundDrawable(int index, Drawable drawable){
+        switch (index){
+            case 0:
+                num0.setBackground(drawable);
+                break;
+            case 1:
+                num1.setBackground(drawable);
+                break;
+            case 2:
+                num2.setBackground(drawable);
+                break;
+            case 3:
+                num3.setBackground(drawable);
+                break;
+            case 4:
+                num4.setBackground(drawable);
+                break;
+            case 5:
+                num5.setBackground(drawable);
+                break;
+            case 6:
+                num6.setBackground(drawable);
+                break;
+            case 7:
+                num7.setBackground(drawable);
+                break;
+            case 8:
+                num8.setBackground(drawable);
+                break;
+            case 9:
+                num9.setBackground(drawable);
+                break;
+            case 10:
+                numDelete.setBackground(drawable);
+                break;
+            case 11:
+                numDot.setBackground(drawable);
+                break;
+        }
+    }
+    /**
+     * Change the background of a specific button
+     * @param index the index of the button (10 - delete, 11 - dot)
+     * @param color  the color to be used
+     */
+    public void setCustomButtonBackgroundColor(int index, int color){
+        switch (index){
+            case 0:
+                num0.setBackgroundColor(color);
+                break;
+            case 1:
+                num1.setBackgroundColor(color);
+                break;
+            case 2:
+                num2.setBackgroundColor(color);
+                break;
+            case 3:
+                num3.setBackgroundColor(color);
+                break;
+            case 4:
+                num4.setBackgroundColor(color);
+                break;
+            case 5:
+                num5.setBackgroundColor(color);
+                break;
+            case 6:
+                num6.setBackgroundColor(color);
+                break;
+            case 7:
+                num7.setBackgroundColor(color);
+                break;
+            case 8:
+                num8.setBackgroundColor(color);
+                break;
+            case 9:
+                num9.setBackgroundColor(color);
+                break;
+            case 10:
+                numDelete.setBackgroundColor(color);
+                break;
+            case 11:
+                numDot.setBackgroundColor(color);
+                break;
+        }
+    }
+
 
 }
