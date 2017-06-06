@@ -174,7 +174,7 @@
         android:layout_row="3"
         android:background="@android:color/transparent"
         android:gravity="center"
-        android:src="@drawable/ic_delete"
+        android:src="@drawable/ic_delete_gray"
         android:text=""
         android:textColor="@color/pin_pad_text"
         android:textSize="@dimen/pin_par_text_size"

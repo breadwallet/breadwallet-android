@@ -272,5 +272,8 @@ public class BRKeyboard extends LinearLayout implements View.OnClickListener {
         }
     }
 
+    public void setDeleteImage(Drawable res){
+        numDelete.setImageDrawable(res);
+    }
 
 }
