@@ -147,7 +147,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
 
         setListeners();
 
-        setWalletLoading();
+//        setWalletLoading();
 
         updateUI();
 
