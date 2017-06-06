@@ -18,6 +18,8 @@
     <LinearLayout
         android:id="@+id/toolbar_layout"
         android:layout_width="match_parent"
+        android:elevation="8dp"
+        android:background="@drawable/shadow_back"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
@@ -49,7 +51,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
-                        android:text="bread"
+                        android:text="@string/LoginScreen.header"
                         android:textColor="@color/white"
                         android:textSize="36sp"
                         android:textStyle="bold"
@@ -65,7 +67,7 @@
                         android:layout_marginStart="16dp"
                         android:text="$0"
                         android:textColor="@color/white"
-                        android:textSize="26sp"
+                        android:textSize="34sp"
                         app:customFont="CircularPro-Book.otf"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintLeft_toLeftOf="parent"/>
@@ -140,7 +142,6 @@
 
         </ViewFlipper>
 
-
         <android.support.constraint.ConstraintLayout
             android:id="@+id/loading_wallet_layout"
             android:layout_width="match_parent"
@@ -189,7 +190,6 @@
         </android.support.constraint.ConstraintLayout>
 
     </LinearLayout>
-
 
     <LinearLayout
         android:id="@+id/recycler_layout"
