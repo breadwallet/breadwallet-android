@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,8 +16,8 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
-import com.breadwallet.presenter.customviews.BRLockScreenConstraintLayout;
 import com.breadwallet.presenter.customviews.BRKeyboard;
+import com.breadwallet.presenter.customviews.BRLockScreenConstraintLayout;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.DecelerateOvershootInterpolator;
 import com.breadwallet.tools.animation.SpringAnimator;
@@ -69,7 +70,7 @@ public class FragmentPin extends Fragment {
     private TextView title;
     private TextView message;
     private RelativeLayout dialogLayout;
-    BRLockScreenConstraintLayout mainLayout;
+    ConstraintLayout mainLayout;
     private boolean authSucceeded;
     private String customTitle;
     private String customMessage;
