@@ -32,6 +32,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
+        android:lineSpacingMultiplier="1.5"
         android:layout_marginTop="16dp"
         android:text="Restoring a Bread wallet allows you to access and manage a different Bread wallet on this device."
         android:textColor="@color/almost_black"
@@ -46,6 +47,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="32dp"
+        android:lineSpacingMultiplier="1.4"
         android:layout_marginTop="0dp"
         android:text="You will no longer be able to access your current Bread wallet from this device."
         android:textColor="@color/almost_black"
@@ -89,23 +91,23 @@
             android:layout_marginTop="32dp"
             android:text="Restore Bread Wallet"
             android:textColor="@color/white"
-            android:textSize="18sp"
+            android:textSize="20sp"
             app:customFont="CircularPro-Bold.otf"
             tools:layout_constraintTop_creator="1"/>
 
         <ImageView
             android:id="@+id/imageView10"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="160dp"
+            android:layout_height="160dp"
             android:src="@drawable/restore_image"
             android:layout_below="@+id/textView2"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="46dp"/>
+            android:layout_marginTop="32dp"/>
 
         <ImageView
             android:id="@+id/imageView11"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:src="@drawable/faq_question_white"
             android:layout_marginEnd="15dp"
             android:layout_alignBottom="@+id/textView2"
