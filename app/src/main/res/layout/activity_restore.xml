@@ -65,7 +65,7 @@
         android:layout_marginTop="32dp"
         app:layout_constraintLeft_toLeftOf="@+id/textView8"
         app:layout_constraintTop_toBottomOf="@+id/textView8"
-        app:srcCompat="@drawable/icon_delete_cirlce_grey"/>
+        android:src="@drawable/icon_delete_cirlce_grey"/>
 
     <RelativeLayout
         android:id="@+id/relativeLayout"
