@@ -1,16 +1,25 @@
 package com.breadwallet.tools.animation;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.animation.OvershootInterpolator;
+import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
@@ -24,6 +33,7 @@ import com.breadwallet.presenter.fragments.FragmentRequestAmount;
 import com.breadwallet.presenter.fragments.FragmentSend;
 import com.breadwallet.presenter.fragments.FragmentTransactionDetails;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 
@@ -240,6 +250,73 @@ public class BRAnimator {
         if (!from.isDestroyed()) {
             from.finish();
         }
+    }
+
+    public static void swapPriceTexts(final Context ctx, final TextView t1, final TextView t2) {
+        SharedPreferencesManager.putPreferredBTC(ctx, !SharedPreferencesManager.getPreferredBTC(ctx));
+
+        String t1Text = t1.getText().toString();
+        String t2Text = t2.getText().toString();
+        String eq = " = ";
+        if (!t2Text.substring(0, 3).equalsIgnoreCase(eq))
+            throw new RuntimeException("secondaryPrice does not start with | = | ");
+        t1.setText(t2Text.substring(3));
+        t2.setText(TextUtils.concat(eq, t1Text));
+
+        final float t1Size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 34, ctx.getResources().getDisplayMetrics());
+        final float t2Size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, ctx.getResources().getDisplayMetrics());
+        final float t1X = t1.getTranslationX();
+        final float t2X = t2.getTranslationX();
+        final float t2W = t2.getWidth();
+
+        Log.e(TAG, "swapPriceTexts: t1X: " + t1X + ", t2W: " + t2W + ",  t2X:" + t2X);
+
+        ColorStateList t1Colors = t1.getTextColors();
+        ColorStateList t2Colors = t2.getTextColors();
+        t1.setTextColor(t2Colors);
+        t2.setTextColor(t1Colors);
+
+        final int ANIMATION_DURATION = 1000;
+        //Animate the first text
+//        ValueAnimator an1 = ValueAnimator.ofFloat(t1Size, t2Size);
+//        an1.setDuration(ANIMATION_DURATION);
+//        an1.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+//            @Override
+//            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+//                float animatedValue = (float) valueAnimator.getAnimatedValue();
+//                t1.setTextSize(animatedValue);
+//            }
+//        });
+
+        final float newX = t1X + t2W;
+        t1.animate().translationX(newX).setInterpolator(new OvershootInterpolator()).setDuration(ANIMATION_DURATION).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+//                t1.setX(newX);
+            }
+        });
+
+        //Animate the second text
+//        ValueAnimator an2 = ValueAnimator.ofFloat(t2Size, t1Size);
+//        an2.setDuration(ANIMATION_DURATION);
+//        an2.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+//            @Override
+//            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+//                float animatedValue = (float) valueAnimator.getAnimatedValue();
+//                t2.setTextSize(animatedValue);
+//            }
+//        });
+
+        t2.animate().translationX(t1X).setInterpolator(new OvershootInterpolator()).setDuration(ANIMATION_DURATION).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+//                t2.setX(t1X);
+            }
+        });
+
+
     }
 
 }
