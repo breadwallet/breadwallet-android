@@ -396,15 +396,11 @@ public class FragmentRequestAmount extends Fragment {
             Log.e(TAG, "handleClick: key is null! ");
             return;
         }
-        if (key.length() > 1) {
-            Log.e(TAG, "handleClick: key is longer: " + key);
-            return;
-        }
 
         if (key.isEmpty()) {
             handleDeleteClick();
         } else if (Character.isDigit(key.charAt(0))) {
-            handleDigitClick(Integer.parseInt(key));
+            handleDigitClick(Integer.parseInt(key.substring(0, 1)));
         } else if (key.charAt(0) == '.') {
             handleSeparatorClick();
         }

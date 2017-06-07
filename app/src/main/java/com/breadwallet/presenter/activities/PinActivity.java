@@ -256,6 +256,8 @@ public class PinActivity extends BRActivity {
     public void onBackPressed() {
         if (getFragmentManager().getBackStackEntryCount() > 0) {
             super.onBackPressed();
+        } else {
+            finishAffinity();
         }
     }
 
