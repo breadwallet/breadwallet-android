@@ -14,11 +14,13 @@ import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.View;
 import android.view.animation.OvershootInterpolator;
 import android.widget.TextView;
 
@@ -258,8 +260,8 @@ public class BRAnimator {
 
         final float t1Size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 34, ctx.getResources().getDisplayMetrics());
         final float t2Size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, ctx.getResources().getDisplayMetrics());
-        final float t1X = t1.getTranslationX();
-        final float t2X = t2.getTranslationX();
+        final float t1X = getRelativeX(t1);
+        final float t2X = getRelativeX(t2);
         final float t1W = t1.getWidth();
         final float t2W = t2.getWidth();
 
@@ -280,32 +282,52 @@ public class BRAnimator {
         t1.setTextColor(t2Colors);
         t2.setTextColor(t1Colors);
 
-        final int ANIMATION_DURATION = 1000;
+        final int ANIMATION_DURATION = 200;
+
+
         //Animate the first text
-//        ValueAnimator an1 = ValueAnimator.ofFloat(t1Size, t2Size);
-//        an1.setDuration(ANIMATION_DURATION);
-//        an1.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-//            @Override
-//            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-//                float animatedValue = (float) valueAnimator.getAnimatedValue();
-//                t1.setTextSize(animatedValue);
-//            }
-//        });
+        ValueAnimator an1 = ValueAnimator.ofFloat(t1Size, t2Size);
+        an1.setDuration(ANIMATION_DURATION);
+        an1.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                float animatedValue = (float) valueAnimator.getAnimatedValue();
+                t1.setTextSize(animatedValue);
+            }
+        });
 
-        t1.animate().translationX(marLeft + t2W + marLeft).setInterpolator(new OvershootInterpolator()).setDuration(ANIMATION_DURATION);
+        t1.animate().x(t2W).setInterpolator(new DecelerateOvershootInterpolator(0.5f, 0.5f)).setDuration(ANIMATION_DURATION);
         //Animate the second text
-//        ValueAnimator an2 = ValueAnimator.ofFloat(t2Size, t1Size);
-//        an2.setDuration(ANIMATION_DURATION);
-//        an2.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-//            @Override
-//            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-//                float animatedValue = (float) valueAnimator.getAnimatedValue();
-//                t2.setTextSize(animatedValue);
-//            }
-//        });
+        Log.e(TAG, "swapPriceTexts: t1Size: " + t1Size);
+        Log.e(TAG, "swapPriceTexts: t2Size: " + t2Size);
+        ValueAnimator an2 = ValueAnimator.ofFloat(t2Size, t1Size);
+        an2.setDuration(ANIMATION_DURATION);
+        an2.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                float animatedValue = (float) valueAnimator.getAnimatedValue();
+                t2.setTextSize(animatedValue);
+            }
+        });
 
-        t2.animate().translationX(0).setInterpolator(new OvershootInterpolator()).setDuration(ANIMATION_DURATION);
+        t2.animate().x(marLeft).setInterpolator(new OvershootInterpolator()).setDuration(ANIMATION_DURATION);
 
+    }
+
+    //returns x-pos relative to root layout
+    private static float getRelativeX(View myView) {
+        if (myView.getParent() == myView.getRootView())
+            return myView.getX();
+        else
+            return myView.getX() + getRelativeX((View) myView.getParent());
+    }
+
+    //returns y-pos relative to root layout
+    private static float getRelativeY(View myView) {
+        if (myView.getParent() == myView.getRootView())
+            return myView.getY();
+        else
+            return myView.getY() + getRelativeY((View) myView.getParent());
     }
 
 }
