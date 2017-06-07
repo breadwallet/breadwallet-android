@@ -1,6 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@color/button_secondary"/>
-    <stroke android:color="@color/extra_light_gray" android:width="1dp"/>
-    <corners android:radius="5dp" />
-</shape>
+
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <layer-list>
+            <!--&lt;!&ndash; SHADOW LAYER &ndash;&gt;-->
+            <item android:left="4dp" android:right="4dp" android:top="4dp">
+                <shape
+                    android:shape="rectangle">
+                    <gradient android:endColor="@color/extra_light_blue_background"
+                              android:gradientRadius="100%"
+                              android:startColor="@color/light_gray" android:type="radial"/>
+                </shape>
+            </item>
+            <!-- CONTENT LAYER -->
+            <item android:bottom="8dp">
+                <shape xmlns:android="http://schemas.android.com/apk/res/android">
+                    <solid android:color="@color/button_secondary"/>
+                    <stroke android:width="1dp" android:color="@color/extra_light_gray"/>
+                    <corners android:radius="4dp"/>
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+</selector>
