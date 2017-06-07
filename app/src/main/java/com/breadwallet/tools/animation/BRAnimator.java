@@ -258,12 +258,16 @@ public class BRAnimator {
     public static void swapPriceTexts(final Context ctx, final TextView t1, final TextView t2) {
         SharedPreferencesManager.putPreferredBTC(ctx, !SharedPreferencesManager.getPreferredBTC(ctx));
 
-        final float t1Size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 34, ctx.getResources().getDisplayMetrics());
-        final float t2Size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, ctx.getResources().getDisplayMetrics());
+        final float t1Size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 34, ctx.getResources().getDisplayMetrics());
+        final float t2Size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 16, ctx.getResources().getDisplayMetrics());
         final float t1X = getRelativeX(t1);
         final float t2X = getRelativeX(t2);
+        t2.setTextSize(TypedValue.COMPLEX_UNIT_PX, t1Size);//make it the size it should be after animation to get the X
+        t1.setTextSize(TypedValue.COMPLEX_UNIT_PX, t2Size);//make it the size it should be after animation to get the X
         final float t1W = t1.getWidth();
         final float t2W = t2.getWidth();
+        t2.setTextSize(TypedValue.COMPLEX_UNIT_PX, t2Size);//make it back the original size
+        t1.setTextSize(TypedValue.COMPLEX_UNIT_PX, t1Size);//make it back the original size
 
         String t1Text = t1.getText().toString();
         String t2Text = t2.getText().toString();
@@ -292,9 +296,10 @@ public class BRAnimator {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 float animatedValue = (float) valueAnimator.getAnimatedValue();
-                t1.setTextSize(animatedValue);
+                t1.setTextSize(TypedValue.COMPLEX_UNIT_PX, animatedValue);
             }
         });
+        an1.start();
 
         t1.animate().x(t2W).setInterpolator(new DecelerateOvershootInterpolator(0.5f, 0.5f)).setDuration(ANIMATION_DURATION);
         //Animate the second text
@@ -306,11 +311,12 @@ public class BRAnimator {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 float animatedValue = (float) valueAnimator.getAnimatedValue();
-                t2.setTextSize(animatedValue);
+                t2.setTextSize(TypedValue.COMPLEX_UNIT_PX, animatedValue);
             }
         });
+        an2.start();
 
-        t2.animate().x(marLeft).setInterpolator(new OvershootInterpolator()).setDuration(ANIMATION_DURATION);
+        t2.animate().x(marLeft).setInterpolator(new DecelerateOvershootInterpolator(0.5f, 0.5f)).setDuration(ANIMATION_DURATION);
 
     }
 
