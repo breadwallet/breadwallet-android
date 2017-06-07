@@ -42,6 +42,8 @@ import com.breadwallet.tools.util.Utils;
 
 import java.util.List;
 
+import static android.support.v4.view.ViewCompat.getX;
+
 
 /**
  * BreadWallet
@@ -260,14 +262,22 @@ public class BRAnimator {
 
         final float t1Size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 34, ctx.getResources().getDisplayMetrics());
         final float t2Size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 16, ctx.getResources().getDisplayMetrics());
-        final float t1X = getRelativeX(t1);
-        final float t2X = getRelativeX(t2);
-        t2.setTextSize(TypedValue.COMPLEX_UNIT_PX, t1Size);//make it the size it should be after animation to get the X
-        t1.setTextSize(TypedValue.COMPLEX_UNIT_PX, t2Size);//make it the size it should be after animation to get the X
+        Log.e(TAG, "swapPriceTexts: t1Size: " + t1Size);
+        Log.e(TAG, "swapPriceTexts: t2Size: " + t2Size);
+
+
+//        t2.setTextSize(TypedValue.COMPLEX_UNIT_PX, t1Size);//make it the size it should be after animation to get the X
+//        t1.setTextSize(TypedValue.COMPLEX_UNIT_PX, t2Size);//make it the size it should be after animation to get the X
+//        t2.setText(t2.getText() + "\n");
+//        t1.setText(t1.getText() + "\n");
         final float t1W = t1.getWidth();
         final float t2W = t2.getWidth();
-        t2.setTextSize(TypedValue.COMPLEX_UNIT_PX, t2Size);//make it back the original size
-        t1.setTextSize(TypedValue.COMPLEX_UNIT_PX, t1Size);//make it back the original size
+        final float t1X = t1.getX();
+        final float t2X = t2.getX();
+//        t2.setTextSize(TypedValue.COMPLEX_UNIT_PX, t2Size);//make it back the original size
+//        t1.setTextSize(TypedValue.COMPLEX_UNIT_PX, t1Size);//make it back the original size
+//        t2.setText(t2.getText() + "\n");
+//        t1.setText(t1.getText() + "\n");
 
         String t1Text = t1.getText().toString();
         String t2Text = t2.getText().toString();
@@ -286,8 +296,7 @@ public class BRAnimator {
         t1.setTextColor(t2Colors);
         t2.setTextColor(t1Colors);
 
-        final int ANIMATION_DURATION = 200;
-
+        final int ANIMATION_DURATION = 400;
 
         //Animate the first text
         ValueAnimator an1 = ValueAnimator.ofFloat(t1Size, t2Size);
@@ -301,10 +310,9 @@ public class BRAnimator {
         });
         an1.start();
 
-        t1.animate().x(t2W).setInterpolator(new DecelerateOvershootInterpolator(0.5f, 0.5f)).setDuration(ANIMATION_DURATION);
+        t1.animate().x(t2W * 2).setInterpolator(new DecelerateOvershootInterpolator(0.5f, 0.5f)).setDuration(ANIMATION_DURATION);
         //Animate the second text
-        Log.e(TAG, "swapPriceTexts: t1Size: " + t1Size);
-        Log.e(TAG, "swapPriceTexts: t2Size: " + t2Size);
+
         ValueAnimator an2 = ValueAnimator.ofFloat(t2Size, t1Size);
         an2.setDuration(ANIMATION_DURATION);
         an2.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -320,20 +328,5 @@ public class BRAnimator {
 
     }
 
-    //returns x-pos relative to root layout
-    private static float getRelativeX(View myView) {
-        if (myView.getParent() == myView.getRootView())
-            return myView.getX();
-        else
-            return myView.getX() + getRelativeX((View) myView.getParent());
-    }
-
-    //returns y-pos relative to root layout
-    private static float getRelativeY(View myView) {
-        if (myView.getParent() == myView.getRootView())
-            return myView.getY();
-        else
-            return myView.getY() + getRelativeY((View) myView.getParent());
-    }
 
 }
