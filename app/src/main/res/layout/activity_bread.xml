@@ -5,12 +5,12 @@
                 android:id="@+id/main_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:fitsSystemWindows="true"
                 android:animateLayoutChanges="true"
                 android:background="@color/extra_light_blue_background"
                 android:clipToPadding="false"
                 android:descendantFocusability="beforeDescendants"
                 android:filterTouchesWhenObscured="true"
+                android:fitsSystemWindows="true"
                 android:focusableInTouchMode="true"
                 android:orientation="vertical"
                 tools:context="com.breadwallet.presenter.activities.BreadActivity">
@@ -18,9 +18,9 @@
     <LinearLayout
         android:id="@+id/toolbar_layout"
         android:layout_width="match_parent"
-        android:elevation="8dp"
-        android:background="@drawable/shadow_back"
         android:layout_height="wrap_content"
+        android:background="@drawable/shadow_back"
+        android:elevation="8dp"
         android:orientation="vertical">
 
         <ViewFlipper
@@ -34,6 +34,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="160dp"
                 android:background="@drawable/bread_gradient"
+                android:clipChildren="false"
+                android:clipToPadding="false"
                 android:contentInsetLeft="0dp"
                 android:contentInsetStart="0dp"
                 app:contentInsetLeft="0dp"
@@ -43,7 +45,9 @@
                 <android.support.constraint.ConstraintLayout
                     android:id="@+id/bread_toolbar"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:clipChildren="false"
+                    android:clipToPadding="false">
 
                     <com.breadwallet.presenter.customviews.BRText
                         android:id="@+id/wallet_name_text"
@@ -99,12 +103,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
-                        android:visibility="gone"
                         android:layout_marginEnd="16dp"
                         android:text="MANAGE"
-
                         android:textColor="@color/white"
+
                         android:textSize="18sp"
+                        android:visibility="gone"
                         app:customFont="CircularPro-Bold.otf"
                         app:layout_constraintBottom_toBottomOf="@+id/wallet_name_text"
                         app:layout_constraintRight_toRightOf="parent"
