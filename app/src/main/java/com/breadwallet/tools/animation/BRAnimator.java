@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
@@ -255,6 +256,13 @@ public class BRAnimator {
     public static void swapPriceTexts(final Context ctx, final TextView t1, final TextView t2) {
         SharedPreferencesManager.putPreferredBTC(ctx, !SharedPreferencesManager.getPreferredBTC(ctx));
 
+        final float t1Size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 34, ctx.getResources().getDisplayMetrics());
+        final float t2Size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, ctx.getResources().getDisplayMetrics());
+        final float t1X = t1.getTranslationX();
+        final float t2X = t2.getTranslationX();
+        final float t1W = t1.getWidth();
+        final float t2W = t2.getWidth();
+
         String t1Text = t1.getText().toString();
         String t2Text = t2.getText().toString();
         String eq = " = ";
@@ -263,11 +271,7 @@ public class BRAnimator {
         t1.setText(t2Text.substring(3));
         t2.setText(TextUtils.concat(eq, t1Text));
 
-        final float t1Size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 34, ctx.getResources().getDisplayMetrics());
-        final float t2Size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, ctx.getResources().getDisplayMetrics());
-        final float t1X = t1.getTranslationX();
-        final float t2X = t2.getTranslationX();
-        final float t2W = t2.getWidth();
+        float marLeft = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, ctx.getResources().getDisplayMetrics());
 
         Log.e(TAG, "swapPriceTexts: t1X: " + t1X + ", t2W: " + t2W + ",  t2X:" + t2X);
 
@@ -288,15 +292,7 @@ public class BRAnimator {
 //            }
 //        });
 
-        final float newX = t1X + t2W;
-        t1.animate().translationX(newX).setInterpolator(new OvershootInterpolator()).setDuration(ANIMATION_DURATION).setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-//                t1.setX(newX);
-            }
-        });
-
+        t1.animate().translationX(marLeft + t2W + marLeft).setInterpolator(new OvershootInterpolator()).setDuration(ANIMATION_DURATION);
         //Animate the second text
 //        ValueAnimator an2 = ValueAnimator.ofFloat(t2Size, t1Size);
 //        an2.setDuration(ANIMATION_DURATION);
@@ -308,14 +304,7 @@ public class BRAnimator {
 //            }
 //        });
 
-        t2.animate().translationX(t1X).setInterpolator(new OvershootInterpolator()).setDuration(ANIMATION_DURATION).setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-//                t2.setX(t1X);
-            }
-        });
-
+        t2.animate().translationX(marLeft).setInterpolator(new OvershootInterpolator()).setDuration(ANIMATION_DURATION);
 
     }
 
