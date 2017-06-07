@@ -304,7 +304,7 @@ public class BRAnimator {
 //            }
 //        });
 
-        t2.animate().translationX(marLeft).setInterpolator(new OvershootInterpolator()).setDuration(ANIMATION_DURATION);
+        t2.animate().translationX(0).setInterpolator(new OvershootInterpolator()).setDuration(ANIMATION_DURATION);
 
     }
 
