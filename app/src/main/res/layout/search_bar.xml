@@ -33,6 +33,7 @@
             android:inputType="textPersonName"
             android:maxEms="20"
             android:maxLines="1"
+            android:drawableStart="@drawable/ic_search_gray_24dp"
             android:padding="8dp"
             android:selectAllOnFocus="true"
             android:textColor="@color/dark_gray"
