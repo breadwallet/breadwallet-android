@@ -67,7 +67,6 @@
                         android:layout_marginStart="16dp"
                         android:text="$0"
                         android:textColor="@color/white"
-                        android:textSize="34sp"
                         app:customFont="CircularPro-Book.otf"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintLeft_toLeftOf="parent"/>
@@ -80,7 +79,6 @@
                         android:layout_marginStart="4dp"
                         android:text="= b0"
                         android:textColor="@color/almost_black"
-                        android:textSize="16sp"
                         app:customFont="CircularPro-Book.otf"
                         app:layout_constraintBottom_toBottomOf="@+id/primary_price"
                         app:layout_constraintLeft_toRightOf="@+id/primary_price"/>

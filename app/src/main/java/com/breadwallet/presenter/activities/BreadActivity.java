@@ -1,9 +1,11 @@
 package com.breadwallet.presenter.activities;
 
+import android.animation.ValueAnimator;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.net.Uri;
@@ -14,8 +16,10 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.AnimationUtils;
+import android.view.animation.OvershootInterpolator;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -36,7 +40,6 @@ import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
-import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
@@ -117,6 +120,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     private ImageButton searchIcon;
     public ViewFlipper barFlipper;
     private BRSearchBar searchBar;
+    private boolean isSwapped;
 
     private static BreadActivity app;
 
@@ -148,6 +152,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         setListeners();
 
 //        setWalletLoading();
+        toolbarLayout.removeView(walletProgressLayout);
 
         updateUI();
 
@@ -254,14 +259,18 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                togglePriceTexts();
+                BRAnimator.swapPriceTexts(BreadActivity.this, !isSwapped ? primaryPrice : secondaryPrice, !isSwapped ? secondaryPrice : primaryPrice);
+                isSwapped = !isSwapped;
+                updateUI();
             }
         });
         secondaryPrice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                togglePriceTexts();
+                BRAnimator.swapPriceTexts(BreadActivity.this, !isSwapped ? primaryPrice : secondaryPrice, !isSwapped ? secondaryPrice : primaryPrice);
+                isSwapped = !isSwapped;
+                updateUI();
             }
         });
 
@@ -368,10 +377,10 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     protected void onDestroy() {
         super.onDestroy();
 
-        //sync the kv stores
 
         unregisterReceiver(mNetworkStateReceiver);
 
+        //sync the kv stores
         if (PLATFORM_ON) {
             new Thread(new Runnable() {
                 @Override
@@ -410,22 +419,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
 
     }
 
-    private void togglePriceTexts() {
-        SharedPreferencesManager.putPreferredBTC(this, !SharedPreferencesManager.getPreferredBTC(this));
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                updateUI();
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        updateTxList();
-                    }
-                }).start();
-
-            }
-        }, 100);
-    }
 
     //returns x-pos relative to root layout
     private float getRelativeX(View myView) {
@@ -454,12 +447,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     @Override
     public void onBalanceChanged(final long balance) {
         updateUI();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                updateTxList();
-            }
-        }).start();
 
 
     }
@@ -479,11 +466,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
             @Override
             public void run() {
                 //sleep a little in order to make sure all the commits are finished (like SharePreferences commits)
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
                 String iso = SharedPreferencesManager.getIso(BreadActivity.this);
 
                 //current amount in satoshis
@@ -501,18 +483,22 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                     @Override
                     public void run() {
                         boolean preferredBtc = SharedPreferencesManager.getPreferredBTC(BreadActivity.this);
-                        primaryPrice.setText(preferredBtc ? formattedBTCAmount : formattedCurAmount);
-                        secondaryPrice.setText(preferredBtc ? formattedCurAmount : formattedBTCAmount);
-                        SpringAnimator.springView(primaryPrice);
-                        SpringAnimator.springView(secondaryPrice);
+                        if (!isSwapped) {
+                            primaryPrice.setText(preferredBtc ? formattedBTCAmount : formattedCurAmount);
+                            secondaryPrice.setText(String.format(" = %s", (preferredBtc ? formattedCurAmount : formattedBTCAmount)));
+                        } else {
+                            primaryPrice.setText(String.format(" = %s", preferredBtc ? formattedCurAmount : formattedBTCAmount));
+                            secondaryPrice.setText((preferredBtc ? formattedBTCAmount : formattedCurAmount));
+                        }
 
                     }
                 });
+
+                updateTxList();
             }
         }).start();
 
     }
-
 
 
     @Override
@@ -529,12 +515,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     @Override
     public void onIsoChanged(String iso) {
         updateUI();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                updateTxList();
-            }
-        }).start();
     }
 
     @Override
