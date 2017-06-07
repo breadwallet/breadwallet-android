@@ -26,85 +26,6 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
 
-    <RelativeLayout
-        android:id="@+id/relativeLayout"
-        android:layout_width="0dp"
-        android:layout_height="260dp"
-        android:background="@drawable/restore_gradient"
-        app:layout_constraintBaseline_toBaselineOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        tools:layout_constraintBaseline_creator="1"
-        tools:layout_constraintLeft_creator="1"
-        tools:layout_constraintRight_creator="1">
-
-        <com.breadwallet.presenter.customviews.BRText
-            app:customFont="CircularPro-Bold.otf"
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="32dp"
-            android:text="Restore Bread Wallet"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            tools:layout_constraintTop_creator="1"/>
-
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/imageView4"
-            android:layout_centerHorizontal="true"
-            android:elevation="4dp"
-            android:src="@drawable/ic_white_wallet"/>
-
-        <ImageView
-            android:id="@+id/imageView4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:elevation="4dp"
-            android:src="@drawable/ic_black_wallet"/>
-
-        <ImageView
-            android:id="@+id/imageView5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/imageView4"
-            android:layout_marginTop="9dp"
-            android:layout_toStartOf="@+id/imageView2"
-            android:elevation="4dp"
-            android:src="@drawable/ic_arrow_body"/>
-
-        <com.breadwallet.presenter.customviews.BRText
-            app:customFont="CircularPro-Medium.otf"
-            android:id="@+id/textView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="22dp"
-            android:elevation="4dp"
-            android:text="Your Bread on this Device "
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            />
-
-        <ImageView
-            android:id="@+id/imageView7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/imageView5"
-            android:layout_alignStart="@+id/textView3"
-            android:src="@drawable/ic_arrow_head"/>
-
-    </RelativeLayout>
-
     <com.breadwallet.presenter.customviews.BRText
         android:id="@+id/textView8"
         android:layout_width="0dp"
@@ -143,5 +64,55 @@
         app:layout_constraintLeft_toLeftOf="@+id/textView8"
         app:layout_constraintTop_toBottomOf="@+id/textView8"
         app:srcCompat="@drawable/icon_delete_cirlce_grey"/>
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="0dp"
+        android:layout_height="260dp"
+        android:background="@drawable/restore_gradient"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:layout_constraintBaseline_creator="1"
+        tools:layout_constraintLeft_creator="1"
+        tools:layout_constraintRight_creator="1"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="0dp">
+
+        <com.breadwallet.presenter.customviews.BRText
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
+            android:text="Restore Bread Wallet"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            app:customFont="CircularPro-Bold.otf"
+            tools:layout_constraintTop_creator="1"/>
+
+        <ImageView
+            android:id="@+id/imageView10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/restore_image"
+            android:layout_below="@+id/textView2"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="46dp"/>
+
+        <ImageView
+            android:id="@+id/imageView11"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/faq_question_white"
+            android:layout_marginEnd="15dp"
+            android:layout_alignBottom="@+id/textView2"
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@+id/textView2"/>
+
+
+    </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>
