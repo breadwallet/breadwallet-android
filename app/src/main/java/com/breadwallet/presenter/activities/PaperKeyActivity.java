@@ -13,6 +13,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -42,6 +43,7 @@ public class PaperKeyActivity extends BRActivity {
     private SparseArray<String> wordMap;
     public static boolean appVisible = false;
     private static PaperKeyActivity app;
+    private ImageButton close;
 
     public static PaperKeyActivity getApp() {
         return app;
@@ -75,6 +77,7 @@ public class PaperKeyActivity extends BRActivity {
 
         nextButton = (Button) findViewById(R.id.send_button);
         previousButton = (Button) findViewById(R.id.button_previous);
+        close = (ImageButton) findViewById(R.id.close_button);
         itemIndexText = (TextView) findViewById(R.id.item_index_text);
         buttonsLayout = (LinearLayout) findViewById(R.id.buttons_layout);
 
@@ -84,6 +87,14 @@ public class PaperKeyActivity extends BRActivity {
                 if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.springView(v);
                 updateWordView(true);
+            }
+        });
+
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BRAnimator.startBreadActivity(PaperKeyActivity.this, false);
+                if (!isDestroyed()) finish();
             }
         });
         previousButton.setOnClickListener(new View.OnClickListener() {
@@ -175,7 +186,7 @@ public class PaperKeyActivity extends BRActivity {
 
     @Override
     public void onBackPressed() {
-        BRAnimator.startBreadActivity(this, false);
+        super.onBackPressed();
 
     }
 
