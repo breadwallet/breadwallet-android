@@ -99,7 +99,7 @@ public class FragmentMenu extends Fragment {
         itemList = new ArrayList<>();
         boolean buyBitcoinEnabled = APIClient.getInstance(getActivity()).isFeatureEnabled(APIClient.FeatureFlags.BUY_BITCOIN.toString());
 //        if (buyBitcoinEnabled) //todo comment that for now
-        itemList.add(new BRMenuItem("Buy Bitcoin", 0, new View.OnClickListener() {
+        itemList.add(new BRMenuItem("Buy Bitcoin", R.drawable.buy_bitcoin, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.e(TAG, "onClick: Lock Wallet");
@@ -151,20 +151,6 @@ public class FragmentMenu extends Fragment {
                 });
             }
         }));
-        boolean buyBitcoinEnabled = APIClient.getInstance(getActivity()).isFeatureEnabled(APIClient.FeatureFlags.BUY_BITCOIN.toString());
-//        if (buyBitcoinEnabled) //todo comment that for now
-            itemList.add(new BRMenuItem("Buy Bitcoin", 0, new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Log.e(TAG, "onClick: Lock Wallet");
-                    Intent intent = new Intent(getActivity(), WebViewActivity.class);
-                    intent.putExtra("url", HTTPServer.URL_BUY_BITCOIN);
-                    Activity app = getActivity();
-                    app.startActivity(intent);
-                    app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
-
-                }
-            }));
         mTitle = (TextView) rootView.findViewById(R.id.title);
         mListView = (ListView) rootView.findViewById(menu_listview);
         mListView.setAdapter(new MenuListAdapter(getContext(), R.layout.menu_list_item, itemList));
