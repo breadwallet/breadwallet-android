@@ -13,6 +13,7 @@ import com.breadwallet.presenter.activities.SetPitActivity;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
 
@@ -37,6 +38,7 @@ public class WriteDownActivity extends BRActivity {
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                SpringAnimator.springView(v);
                 close();
             }
         });
