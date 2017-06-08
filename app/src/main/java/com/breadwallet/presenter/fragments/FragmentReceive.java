@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.OvershootInterpolator;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -76,6 +77,7 @@ public class FragmentReceive extends Fragment {
     private LinearLayout shareButtonsLayout;
     private boolean shareButtonsShown = true;
     private boolean isReceive;
+    private ImageButton close;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -95,6 +97,7 @@ public class FragmentReceive extends Fragment {
         requestButton = (Button) rootView.findViewById(R.id.request_button);
         shareSeparator = rootView.findViewById(R.id.share_separator);
         separator = rootView.findViewById(R.id.separator);
+        close = (ImageButton) rootView.findViewById(R.id.close_button);
         LayoutTransition layoutTransition = signalLayout.getLayoutTransition();
         layoutTransition.enableTransitionType(LayoutTransition.CHANGING);
         setListeners();
@@ -159,6 +162,15 @@ public class FragmentReceive extends Fragment {
                 getActivity().onBackPressed();
             }
         });
+
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Activity app = getActivity();
+                if (app != null)
+                    app.getFragmentManager().popBackStack();
+            }
+        });
     }
 
     private void toggleShareButtonsVisibility() {
@@ -214,7 +226,8 @@ public class FragmentReceive extends Fragment {
                         receiveAddress = SharedPreferencesManager.getReceiveAddress(getActivity());
                         mAddress.setText(receiveAddress);
                         boolean generated = BRWalletManager.getInstance().generateQR(getActivity(), "bitcoin:" + receiveAddress, mQrImage);
-                        if (!generated) throw new RuntimeException("failed to generate qr image for address");
+                        if (!generated)
+                            throw new RuntimeException("failed to generate qr image for address");
                     }
                 });
             }

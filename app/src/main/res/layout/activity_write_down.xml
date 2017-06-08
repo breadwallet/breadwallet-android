@@ -51,7 +51,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="24dp"
             android:background="@android:color/transparent"
-            android:src="@drawable/ic_close_black_24dp"/>
+            android:src="@drawable/ic_close_white_24dp"/>
 
         <ImageButton
             android:id="@+id/imageButton2"
