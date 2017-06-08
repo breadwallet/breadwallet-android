@@ -80,6 +80,7 @@ public class ReEnterPinActivity extends BRActivity {
         appVisible = true;
         app = this;
         ActivityUTILS.init(this);
+        isPressAllowed = true;
     }
 
     @Override
