@@ -36,8 +36,8 @@ import static com.breadwallet.tools.util.Bip39Reader.getAllWordLists;
 
 public class InputWordsActivity extends BRActivity {
     private static final String TAG = InputWordsActivity.class.getName();
-    private Button leftButton;
-    private Button rightButton;
+//    private Button leftButton;
+//    private Button rightButton;
     private Button nextButton;
 
     private EditText word1;
@@ -71,8 +71,8 @@ public class InputWordsActivity extends BRActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_input_words);
 
-        leftButton = (Button) findViewById(R.id.left_button);
-        rightButton = (Button) findViewById(R.id.right_button);
+//        leftButton = (Button) findViewById(R.id.left_button);
+//        rightButton = (Button) findViewById(R.id.right_button);
         nextButton = (Button) findViewById(R.id.send_button);
 
         title = (TextView) findViewById(R.id.title);
@@ -113,23 +113,23 @@ public class InputWordsActivity extends BRActivity {
             }
         });
 
-        chooseWordsSize(true);
+//        chooseWordsSize(true);
 
-        leftButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
-                chooseWordsSize(true);
-            }
-        });
-
-        rightButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
-                chooseWordsSize(false);
-            }
-        });
+//        leftButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (!BRAnimator.isClickAllowed()) return;
+//                chooseWordsSize(true);
+//            }
+//        });
+//
+//        rightButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (!BRAnimator.isClickAllowed()) return;
+//                chooseWordsSize(false);
+//            }
+//        });
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -216,31 +216,31 @@ public class InputWordsActivity extends BRActivity {
     }
 
 
-    private void chooseWordsSize(boolean isLeft) {
-        int activeColor = getColor(dark_blue);
-        int nonActiveColor = getColor(extra_light_gray);
-        GradientDrawable leftDrawable = (GradientDrawable) leftButton.getBackground().getCurrent();
-        GradientDrawable rightDrawable = (GradientDrawable) rightButton.getBackground().getCurrent();
-
-        int rad = 30;
-        int stoke = 3;
-
-        leftDrawable.setCornerRadii(new float[]{rad, rad, 0, 0, 0, 0, rad, rad});
-        rightDrawable.setCornerRadii(new float[]{0, 0, rad, rad, rad, rad, 0, 0});
-
-        if (isLeft) {
-            leftDrawable.setStroke(stoke, activeColor, 0, 0);
-            rightDrawable.setStroke(stoke, nonActiveColor, 0, 0);
-            leftButton.setTextColor(activeColor);
-            rightButton.setTextColor(nonActiveColor);
-        } else {
-            leftDrawable.setStroke(stoke, nonActiveColor, 0, 0);
-            rightDrawable.setStroke(stoke, activeColor, 0, 0);
-            leftButton.setTextColor(nonActiveColor);
-            rightButton.setTextColor(activeColor);
-        }
-
-    }
+//    private void chooseWordsSize(boolean isLeft) {
+//        int activeColor = getColor(dark_blue);
+//        int nonActiveColor = getColor(extra_light_gray);
+//        GradientDrawable leftDrawable = (GradientDrawable) leftButton.getBackground().getCurrent();
+//        GradientDrawable rightDrawable = (GradientDrawable) rightButton.getBackground().getCurrent();
+//
+//        int rad = 30;
+//        int stoke = 3;
+//
+//        leftDrawable.setCornerRadii(new float[]{rad, rad, 0, 0, 0, 0, rad, rad});
+//        rightDrawable.setCornerRadii(new float[]{0, 0, rad, rad, rad, rad, 0, 0});
+//
+//        if (isLeft) {
+//            leftDrawable.setStroke(stoke, activeColor, 0, 0);
+//            rightDrawable.setStroke(stoke, nonActiveColor, 0, 0);
+//            leftButton.setTextColor(activeColor);
+//            rightButton.setTextColor(nonActiveColor);
+//        } else {
+//            leftDrawable.setStroke(stoke, nonActiveColor, 0, 0);
+//            rightDrawable.setStroke(stoke, activeColor, 0, 0);
+//            leftButton.setTextColor(nonActiveColor);
+//            rightButton.setTextColor(activeColor);
+//        }
+//
+//    }
 
     @Override
     protected void onResume() {
