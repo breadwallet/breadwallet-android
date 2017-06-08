@@ -281,7 +281,7 @@ public class PinActivity extends BRActivity {
                             PinActivity.this.finish();
                         }
                     }
-                }, 700);
+                }, 400);
             }
         });
         unlockedText.animate().alpha(1f);

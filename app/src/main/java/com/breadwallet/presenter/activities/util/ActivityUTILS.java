@@ -51,7 +51,7 @@ public class ActivityUTILS {
 
     public static void init(Activity app) {
         //set status bar color
-        ActivityUTILS.setStatusBarColor(app, R.color.almost_black);
+        ActivityUTILS.setStatusBarColor(app, android.R.color.transparent);
         CurrencyFetchManager.getInstance().startTimer(app);
         BreadWalletApp.setBreadContext(app);
         //show wallet locked if it is
