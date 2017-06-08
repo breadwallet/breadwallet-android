@@ -8,6 +8,8 @@ import android.widget.Button;
 import android.widget.ImageButton;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.ReEnterPinActivity;
+import com.breadwallet.presenter.activities.SetPitActivity;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -64,8 +66,10 @@ public class WriteDownActivity extends BRActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
+        Intent intent = new Intent(WriteDownActivity.this, SetPitActivity.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+        finish();
 
     }
 
