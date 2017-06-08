@@ -23,6 +23,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.TextView;
 
@@ -334,7 +335,7 @@ public class BRAnimator {
         float translationY = signalLayout.getTranslationY();
         float signalHeight = signalLayout.getHeight();
         signalLayout.setTranslationY(reverse ? translationY : translationY + signalHeight);
-        signalLayout.animate().translationY(reverse ? 2600 : translationY).setDuration(SLIDE_ANIMATION_DURATION).setInterpolator(new OvershootInterpolator(0.7f)).setListener(new AnimatorListenerAdapter() {
+        signalLayout.animate().translationY(reverse ? 2600 : translationY).setDuration(SLIDE_ANIMATION_DURATION).setInterpolator(reverse? new DecelerateInterpolator() : new OvershootInterpolator(0.7f)).setListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
