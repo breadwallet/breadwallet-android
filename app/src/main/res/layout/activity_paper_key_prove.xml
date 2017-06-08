@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -9,91 +9,103 @@
     android:background="@color/extra_light_blue_background"
     tools:context="com.breadwallet.presenter.activities.intro.WriteDownActivity">
 
-    <LinearLayout
+    <android.support.constraint.ConstraintLayout
         android:id="@+id/gradient_layout"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="160dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="0dp"
         android:background="@drawable/write_down_gradient"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <com.breadwallet.presenter.customviews.BRText
-            app:customFont="CircularPro-Bold.otf"
-
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="16dp"
             android:layout_marginTop="24dp"
             android:layout_weight="0.5"
-            android:text="Paper Key"
+            android:text="@string/SecurityCenter.paperKeyTitle"
             android:textAlignment="center"
             android:textColor="@color/white"
-            android:textSize="18sp"/>
+            android:textSize="20sp"
+            app:customFont="CircularPro-Bold.otf"
+            app:layout_constraintLeft_toLeftOf="@+id/description"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <com.breadwallet.presenter.customviews.BRText
-
             android:id="@+id/description"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="8dp"
             android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:layout_weight="0.5"
-            android:text="Prove you wrote down your paper key by answering the following questions."
-            android:textAlignment="center"
+            android:lineSpacingMultiplier="1.3"
+            android:text="@string/ConfirmPaperPhrase.label"
+            android:textAlignment="textStart"
             android:textColor="@color/white"
-            android:textSize="18sp"/>
-    </LinearLayout>
-
-    <android.support.constraint.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <android.support.v4.view.ViewPager
-            android:id="@+id/phrase_words_pager"
-            android:layout_width="0dp"
-            android:layout_height="160dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:focusable="false"
-            android:orientation="horizontal"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:layout_constraintLeft_creator="1"
-            tools:layout_constraintRight_creator="1"
-            tools:layout_constraintTop_creator="1"/>
+            app:layout_constraintTop_toBottomOf="@+id/title"/>
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="0dp"
+        android:animateLayoutChanges="true"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gradient_layout">
 
 
         <com.breadwallet.presenter.customviews.BRButton
             android:id="@+id/button_submit"
             android:layout_width="0dp"
             android:layout_height="60dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="32dp"
             android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
             android:background="@drawable/button_create_wallet"
             android:elevation="8dp"
             android:padding="10dp"
-            android:text="Submit"
+            android:text="@string/Button.submit"
             android:textColor="@color/white"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"/>
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/line2"/>
 
         <com.breadwallet.presenter.customviews.BRText
             android:id="@+id/word_number_first"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="24dp"
+            android:lineSpacingMultiplier="1.3"
             android:text="TextView"
+            android:textColor="@color/light_gray"
+            android:textSize="18sp"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/phrase_words_pager"/>
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <com.breadwallet.presenter.customviews.BREdit
             android:id="@+id/word_edittext_first"
@@ -101,6 +113,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="0dp"
             android:background="@android:color/transparent"
             android:ems="10"
             android:inputType="textPersonName"
@@ -111,8 +124,8 @@
         <View
             android:id="@+id/textView7"
             android:layout_width="0dp"
-            android:layout_height="1px"
-            android:background="@color/light_gray"
+            android:layout_height="1dp"
+            android:background="@color/extra_light_gray"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/word_edittext_first"/>
@@ -121,9 +134,12 @@
             android:id="@+id/word_number_second"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="24dp"
             android:text="TextView"
+            android:textColor="@color/light_gray"
+            android:textSize="18sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView7"/>
 
@@ -135,6 +151,8 @@
             android:layout_marginStart="16dp"
             android:background="@android:color/transparent"
             android:ems="10"
+            android:imeOptions="actionSend"
+            android:imeActionId="@+id/submit"
             android:inputType="textPersonName"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -143,13 +161,14 @@
         <View
             android:id="@+id/line2"
             android:layout_width="0dp"
-            android:layout_height="1px"
-            android:background="@color/light_gray"
+            android:layout_height="1dp"
+            android:background="@color/extra_light_gray"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/word_edittext_second"
-            tools:layout_editor_absoluteX="146dp"/>
+            />
+
     </android.support.constraint.ConstraintLayout>
 
 
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>
