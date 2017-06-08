@@ -187,7 +187,7 @@ public class PaperKeyActivity extends BRActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-
+        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
     }
 
     private class WordPagerAdapter extends FragmentPagerAdapter {
