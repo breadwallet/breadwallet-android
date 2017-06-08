@@ -38,7 +38,7 @@
     <item name="import_gradient_start" type="color">#76b0fd</item>
     <item name="import_gradient_end" type="color">#4C98FD</item>
 
-    <item name="write_phrase_gradient_start" type="color">#B3FD5394</item>
+    <item name="write_phrase_gradient_start" type="color">#D9FD5394</item>
     <item name="write_phrase_gradient_end" type="color">#FD5394</item>
 
     <item name="pin_pad_text" type="color">#A3A8AE</item>
