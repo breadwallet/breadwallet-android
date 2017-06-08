@@ -101,7 +101,7 @@
 
                 >
 
-                <EditText
+                <com.breadwallet.presenter.customviews.BREdit
                     android:id="@+id/word1"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -139,7 +139,7 @@
 
                 >
 
-                <EditText
+                <com.breadwallet.presenter.customviews.BREdit
                     android:id="@+id/word2"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -173,7 +173,7 @@
 
                 >
 
-                <EditText
+                <com.breadwallet.presenter.customviews.BREdit
                     android:id="@+id/word3"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -215,7 +215,7 @@
 
                 >
 
-                <EditText
+                <com.breadwallet.presenter.customviews.BREdit
                     android:id="@+id/word4"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -249,7 +249,7 @@
 
                 >
 
-                <EditText
+                <com.breadwallet.presenter.customviews.BREdit
                     android:id="@+id/word5"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
