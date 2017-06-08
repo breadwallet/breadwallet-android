@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
             android:background="@android:color/transparent"
-            android:src="@drawable/ic_close_black_24dp"
+            android:src="@drawable/ic_close_white_24dp"
             app:layout_constraintTop_toTopOf="@+id/title"
             android:layout_marginTop="0dp"
             app:layout_constraintBottom_toBottomOf="@+id/title"
