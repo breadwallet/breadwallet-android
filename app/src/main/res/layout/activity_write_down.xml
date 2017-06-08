@@ -13,7 +13,7 @@
         android:id="@+id/gradient_layout"
         android:layout_width="match_parent"
         android:layout_height="240dp"
-        android:background="@drawable/write_phrase_gradient"
+        android:background="@drawable/write_down_gradient"
         >
 
         <com.breadwallet.presenter.customviews.BRText
