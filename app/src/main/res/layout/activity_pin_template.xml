@@ -38,55 +38,6 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title"/>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="64dp"
-        android:orientation="horizontal"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/description"
-        android:id="@+id/pinLayout">
-
-        <View
-            android:id="@+id/dot1"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:background="@drawable/ic_pin_dot_gray"/>
-
-        <View
-            android:id="@+id/dot2"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:background="@drawable/ic_pin_dot_gray"/>
-
-        <View
-            android:id="@+id/dot3"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:background="@drawable/ic_pin_dot_gray"/>
-
-        <View
-            android:id="@+id/dot4"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:background="@drawable/ic_pin_dot_gray"/>
-
-        <View
-            android:id="@+id/dot5"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:background="@drawable/ic_pin_dot_gray"/>
-
-        <View
-            android:id="@+id/dot6"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:background="@drawable/ic_pin_dot_gray"/>
-    </LinearLayout>
-
     <com.breadwallet.presenter.customviews.BRKeyboard
         android:layout_width="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -125,5 +76,55 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@+id/title"
         app:srcCompat="@drawable/faq_question_black"/>
+
+    <LinearLayout
+        android:id="@+id/pinLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="64dp"
+        android:orientation="horizontal"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/description">
+
+        <View
+            android:id="@+id/dot1"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/ic_pin_dot_gray"/>
+
+        <View
+            android:id="@+id/dot2"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/ic_pin_dot_gray"/>
+
+        <View
+            android:id="@+id/dot3"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/ic_pin_dot_gray"/>
+
+        <View
+            android:id="@+id/dot4"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/ic_pin_dot_gray"/>
+
+        <View
+            android:id="@+id/dot5"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/ic_pin_dot_gray"/>
+
+        <View
+            android:id="@+id/dot6"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/ic_pin_dot_gray"/>
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
