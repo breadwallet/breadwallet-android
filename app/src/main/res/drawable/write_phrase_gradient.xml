@@ -4,7 +4,7 @@
 
     <gradient
         android:endColor="@color/write_phrase_gradient_end"
-        android:gradientRadius="400dp"
+        android:gradientRadius="240dp"
         android:startColor="@color/write_phrase_gradient_start"
         android:type="radial"/>
 </shape>
