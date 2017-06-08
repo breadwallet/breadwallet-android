@@ -95,7 +95,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/phrase_words_pager"/>
 
-        <EditText
+        <com.breadwallet.presenter.customviews.BREdit
             android:id="@+id/word_edittext_first"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -127,7 +127,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView7"/>
 
-        <EditText
+        <com.breadwallet.presenter.customviews.BREdit
             android:id="@+id/word_edittext_second"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

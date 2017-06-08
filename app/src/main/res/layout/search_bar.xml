@@ -20,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <EditText
+        <com.breadwallet.presenter.customviews.BREdit
             android:id="@+id/search_edit"
             android:layout_width="0dp"
             android:layout_height="40dp"
