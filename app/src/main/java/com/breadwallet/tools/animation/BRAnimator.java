@@ -3,6 +3,7 @@ package com.breadwallet.tools.animation;
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.FragmentManager;
@@ -21,6 +22,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.OvershootInterpolator;
 import android.widget.TextView;
 
@@ -74,7 +76,7 @@ public class BRAnimator {
     private static final String TAG = BRAnimator.class.getName();
     private static FragmentSignal fragmentSignal;
     private static boolean clickAllowed = true;
-
+    public static final int SLIDE_ANIMATION_DURATION = 300;
 
     public static void showBreadSignal(Activity activity, String title, String iconDescription, int drawableId, BROnSignalCompletion completion) {
         fragmentSignal = new FragmentSignal();
@@ -328,5 +330,42 @@ public class BRAnimator {
 
     }
 
+    public static void animateSignalSlide(ViewGroup signalLayout, final boolean reverse, final OnSlideAnimationEnd listener) {
+        float translationY = signalLayout.getTranslationY();
+        float signalHeight = signalLayout.getHeight();
+        signalLayout.setTranslationY(reverse ? translationY : translationY + signalHeight);
+        signalLayout.animate().translationY(reverse ? 2600 : translationY).setDuration(SLIDE_ANIMATION_DURATION).setInterpolator(new OvershootInterpolator(0.7f)).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                if (listener != null)
+                    listener.onAnimationEnd();
+            }
+        });
+
+    }
+
+    public static void animateBackgroundDim(final ViewGroup backgroundLayout, boolean reverse) {
+        int transColor = reverse ? R.color.black_trans : android.R.color.transparent;
+        int blackTransColor = reverse ? android.R.color.transparent : R.color.black_trans;
+
+        ValueAnimator anim = new ValueAnimator();
+        anim.setIntValues(transColor, blackTransColor);
+        anim.setEvaluator(new ArgbEvaluator());
+        anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                backgroundLayout.setBackgroundColor((Integer) valueAnimator.getAnimatedValue());
+            }
+        });
+
+        anim.setDuration(SLIDE_ANIMATION_DURATION);
+        anim.start();
+    }
+
+
+    public interface OnSlideAnimationEnd {
+        void onAnimationEnd();
+    }
 
 }

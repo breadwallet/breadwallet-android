@@ -117,11 +117,11 @@ final class MultiFinderPatternFinder extends FinderPatternFinder {
      */
     if (size == 3) {
       return new FinderPattern[][]{
-          new FinderPattern[]{
-              possibleCenters.get(0),
-              possibleCenters.get(1),
-              possibleCenters.get(2)
-          }
+              new FinderPattern[]{
+                      possibleCenters.get(0),
+                      possibleCenters.get(1),
+                      possibleCenters.get(2)
+              }
       };
     }
 
@@ -140,10 +140,10 @@ final class MultiFinderPatternFinder extends FinderPatternFinder {
      * counterintuitive at first, but the performance penalty is not that big. At this point,
      * we cannot make a good quality decision whether the three finders actually represent
      * a QR code, or are just by chance layouted so it looks like there might be a QR code there.
-     * So, if the layout seems right, lets have the decoder try to decode.     
+     * So, if the layout seems right, lets have the decoder try to decode.
      */
 
-     List<FinderPattern[]> results = new ArrayList<>(); // holder for the results
+    List<FinderPattern[]> results = new ArrayList<>(); // holder for the results
 
     for (int i1 = 0; i1 < (size - 2); i1++) {
       FinderPattern p1 = possibleCenters.get(i1);
@@ -159,7 +159,7 @@ final class MultiFinderPatternFinder extends FinderPatternFinder {
 
         // Compare the expected module sizes; if they are really off, skip
         float vModSize12 = (p1.getEstimatedModuleSize() - p2.getEstimatedModuleSize()) /
-            Math.min(p1.getEstimatedModuleSize(), p2.getEstimatedModuleSize());
+                Math.min(p1.getEstimatedModuleSize(), p2.getEstimatedModuleSize());
         float vModSize12A = Math.abs(p1.getEstimatedModuleSize() - p2.getEstimatedModuleSize());
         if (vModSize12A > DIFF_MODSIZE_CUTOFF && vModSize12 >= DIFF_MODSIZE_CUTOFF_PERCENT) {
           // break, since elements are ordered by the module size deviation there cannot be
@@ -175,7 +175,7 @@ final class MultiFinderPatternFinder extends FinderPatternFinder {
 
           // Compare the expected module sizes; if they are really off, skip
           float vModSize23 = (p2.getEstimatedModuleSize() - p3.getEstimatedModuleSize()) /
-              Math.min(p2.getEstimatedModuleSize(), p3.getEstimatedModuleSize());
+                  Math.min(p2.getEstimatedModuleSize(), p3.getEstimatedModuleSize());
           float vModSize23A = Math.abs(p2.getEstimatedModuleSize() - p3.getEstimatedModuleSize());
           if (vModSize23A > DIFF_MODSIZE_CUTOFF && vModSize23 >= DIFF_MODSIZE_CUTOFF_PERCENT) {
             // break, since elements are ordered by the module size deviation there cannot be
@@ -195,7 +195,7 @@ final class MultiFinderPatternFinder extends FinderPatternFinder {
           // Check the sizes
           float estimatedModuleCount = (dA + dB) / (p1.getEstimatedModuleSize() * 2.0f);
           if (estimatedModuleCount > MAX_MODULE_COUNT_PER_EDGE ||
-              estimatedModuleCount < MIN_MODULE_COUNT_PER_EDGE) {
+                  estimatedModuleCount < MIN_MODULE_COUNT_PER_EDGE) {
             continue;
           }
 

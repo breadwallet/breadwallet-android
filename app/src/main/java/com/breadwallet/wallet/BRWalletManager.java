@@ -688,7 +688,7 @@ public class BRWalletManager {
         int width = point.x;
         int height = point.y;
         int smallerDimension = width < height ? width : height;
-        smallerDimension = (int) (smallerDimension * 0.5f);
+        smallerDimension = (int) (smallerDimension * 0.65f);
         Bitmap bitmap = null;
         bitmap = QRUtils.encodeAsBitmap(bitcoinURL, smallerDimension);
         //qrcode.setPadding(1, 1, 1, 1);

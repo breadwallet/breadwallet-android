@@ -1,53 +1,24 @@
 package com.breadwallet.presenter.fragments;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ArgbEvaluator;
-import android.animation.ValueAnimator;
-import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.text.format.DateUtils;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.animation.OvershootInterpolator;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.breadwallet.BreadWalletApp;
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.BreadActivity;
-import com.breadwallet.presenter.activities.settings.SecurityCenterActivity;
-import com.breadwallet.presenter.activities.settings.SettingsActivity;
-import com.breadwallet.presenter.entities.BRMenuItem;
-import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.BRWalletManager;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.breadwallet.R.id.menu_listview;
-import static com.breadwallet.presenter.fragments.FragmentSend.ANIMATION_DURATION;
 
 /**
  * BreadWallet
@@ -146,51 +117,24 @@ public class FragmentManage extends Fragment {
             @Override
             public void onGlobalLayout() {
                 observer.removeGlobalOnLayoutListener(this);
-                animateBackgroundDim(false);
-                animateSignalSlide(false);
+                BRAnimator.animateBackgroundDim(layout, false);
+                BRAnimator.animateSignalSlide(signalLayout, false, null);
             }
         });
-    }
-
-    private void animateSignalSlide(final boolean reverse) {
-        float translationY = signalLayout.getTranslationY();
-        float signalHeight = signalLayout.getHeight();
-        signalLayout.setTranslationY(reverse ? translationY : translationY + signalHeight);
-        signalLayout.animate().translationY(reverse ? 2000 : translationY).setDuration(ANIMATION_DURATION).setInterpolator(new OvershootInterpolator(0.7f)).setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                if (reverse && getActivity() != null)
-                    getActivity().getFragmentManager().popBackStack();
-            }
-        });
-
-    }
-
-    private void animateBackgroundDim(boolean reverse) {
-        int transColor = reverse ? R.color.black_trans : android.R.color.transparent;
-        int blackTransColor = reverse ? android.R.color.transparent : R.color.black_trans;
-
-        ValueAnimator anim = new ValueAnimator();
-        anim.setIntValues(transColor, blackTransColor);
-        anim.setEvaluator(new ArgbEvaluator());
-        anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                layout.setBackgroundColor((Integer) valueAnimator.getAnimatedValue());
-            }
-        });
-
-        anim.setDuration(ANIMATION_DURATION);
-        anim.start();
     }
 
 
     @Override
     public void onStop() {
         super.onStop();
-        animateBackgroundDim(true);
-        animateSignalSlide(true);
+        BRAnimator.animateBackgroundDim(layout, true);
+        BRAnimator.animateSignalSlide(signalLayout, true, new BRAnimator.OnSlideAnimationEnd() {
+            @Override
+            public void onAnimationEnd() {
+                if (getActivity() != null)
+                    getActivity().getFragmentManager().popBackStack();
+            }
+        });
     }
 
     @Override

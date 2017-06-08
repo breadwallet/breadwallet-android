@@ -82,7 +82,6 @@ public class FragmentSend extends Fragment {
     private static final String TAG = FragmentSend.class.getName();
     public LinearLayout backgroundLayout;
     public ConstraintLayout signalLayout;
-    public static final int ANIMATION_DURATION = 300;
     private BRKeyboard keyboard;
     private EditText addressEdit;
     private Button scan;
@@ -356,62 +355,36 @@ public class FragmentSend extends Fragment {
             @Override
             public void onGlobalLayout() {
                 observer.removeGlobalOnLayoutListener(this);
-                animateBackgroundDim(false);
-                animateSignalSlide(false);
-            }
-        });
-
-    }
-
-    private void animateSignalSlide(final boolean reverse) {
-        float translationY = signalLayout.getTranslationY();
-        float signalHeight = signalLayout.getHeight();
-        signalLayout.setTranslationY(reverse ? translationY : translationY + signalHeight);
-        signalLayout.animate().translationY(reverse ? 2600 : translationY).setDuration(ANIMATION_DURATION).setInterpolator(new OvershootInterpolator(0.7f)).setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                if (reverse && getActivity() != null) {
-                    try {
-                        getActivity().getFragmentManager().popBackStack();
-                    } catch (Exception ex) {
-
+                BRAnimator.animateBackgroundDim(backgroundLayout, false);
+                BRAnimator.animateSignalSlide(signalLayout, false, new BRAnimator.OnSlideAnimationEnd() {
+                    @Override
+                    public void onAnimationEnd() {
+                        Bundle bundle = getArguments();
+                        if (bundle != null && bundle.getString("url") != null)
+                            setUrl(bundle.getString("url"));
                     }
-                }
-
-                if (!reverse) {
-                    Bundle bundle = getArguments();
-                    if (bundle != null && bundle.getString("url") != null)
-                        setUrl(bundle.getString("url"));
-                }
+                });
             }
         });
 
-    }
-
-    private void animateBackgroundDim(boolean reverse) {
-        int transColor = reverse ? R.color.black_trans : android.R.color.transparent;
-        int blackTransColor = reverse ? android.R.color.transparent : R.color.black_trans;
-
-        ValueAnimator anim = new ValueAnimator();
-        anim.setIntValues(transColor, blackTransColor);
-        anim.setEvaluator(new ArgbEvaluator());
-        anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                backgroundLayout.setBackgroundColor((Integer) valueAnimator.getAnimatedValue());
-            }
-        });
-
-        anim.setDuration(ANIMATION_DURATION);
-        anim.start();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        animateBackgroundDim(true);
-        animateSignalSlide(true);
+        BRAnimator.animateBackgroundDim(backgroundLayout, true);
+        BRAnimator.animateSignalSlide(signalLayout, true, new BRAnimator.OnSlideAnimationEnd() {
+            @Override
+            public void onAnimationEnd() {
+                if (getActivity() != null) {
+                    try {
+                        getActivity().getFragmentManager().popBackStack();
+                    } catch (Exception ignored) {
+
+                    }
+                }
+            }
+        });
     }
 
     @Override

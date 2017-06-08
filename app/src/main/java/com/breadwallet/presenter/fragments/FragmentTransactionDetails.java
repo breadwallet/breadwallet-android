@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.tools.adapter.TransactionPagerAdapter;
+import com.breadwallet.tools.animation.BRAnimator;
 
 import java.util.List;
 
@@ -84,10 +85,8 @@ public class FragmentTransactionDetails extends Fragment {
         txViewPager.setCurrentItem(pos, false);
 
 
-
         return rootView;
     }
-
 
 
     @Override
@@ -99,51 +98,25 @@ public class FragmentTransactionDetails extends Fragment {
             @Override
             public void onGlobalLayout() {
                 observer.removeGlobalOnLayoutListener(this);
-                animateBackgroundDim(false);
-                animateSignalSlide(false);
+                BRAnimator.animateBackgroundDim(backgroundLayout, false);
+                BRAnimator.animateSignalSlide(txViewPager, false, null);
             }
         });
 
     }
 
-    private void animateSignalSlide(final boolean reverse) {
-        float translationY = txViewPager.getTranslationY();
-        float signalHeight = txViewPager.getHeight();
-        txViewPager.setTranslationY(reverse ? translationY : translationY + signalHeight);
-        txViewPager.animate().translationY(reverse ? 2000 : translationY).setDuration(ANIMATION_DURATION).setInterpolator(new OvershootInterpolator(0.7f)).setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                if (reverse && getActivity() != null)
-                    getActivity().getFragmentManager().popBackStack();
-            }
-        });
-
-    }
-
-    private void animateBackgroundDim(boolean reverse) {
-        int transColor = reverse ? R.color.black_trans : android.R.color.transparent;
-        int blackTransColor = reverse ? android.R.color.transparent : R.color.black_trans;
-
-        ValueAnimator anim = new ValueAnimator();
-        anim.setIntValues(transColor, blackTransColor);
-        anim.setEvaluator(new ArgbEvaluator());
-        anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                backgroundLayout.setBackgroundColor((Integer) valueAnimator.getAnimatedValue());
-            }
-        });
-
-        anim.setDuration(ANIMATION_DURATION);
-        anim.start();
-    }
 
     @Override
     public void onStop() {
         super.onStop();
-        animateBackgroundDim(true);
-        animateSignalSlide(true);
+        BRAnimator.animateBackgroundDim(backgroundLayout, true);
+        BRAnimator.animateSignalSlide(txViewPager, true, new BRAnimator.OnSlideAnimationEnd() {
+            @Override
+            public void onAnimationEnd() {
+                if (getActivity() != null)
+                    getActivity().getFragmentManager().popBackStack();
+            }
+        });
     }
 
     @Override
