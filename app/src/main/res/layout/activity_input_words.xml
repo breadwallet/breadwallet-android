@@ -107,7 +107,6 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="fill_horizontal"
                     android:layout_weight="0.5"
-                    app:customFont="CircularPro-Medium.otf"
                     android:backgroundTint="@color/dark_blue"
                     android:hint="First word"
                     android:imeOptions="actionNext"
@@ -118,6 +117,7 @@
                     android:textColor="@color/almost_black"
                     android:textColorHint="@color/extra_light_gray"
                     android:textCursorDrawable="@null"
+                    app:customFont="CircularPro-Medium.otf"
                     />
 
                 <com.breadwallet.presenter.customviews.BRText
@@ -283,7 +283,7 @@
 
                 >
 
-                <EditText
+                <com.breadwallet.presenter.customviews.BREdit
                     android:id="@+id/word6"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -325,7 +325,7 @@
 
                 >
 
-                <EditText
+                <com.breadwallet.presenter.customviews.BREdit
                     android:id="@+id/word7"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -359,7 +359,7 @@
 
                 >
 
-                <EditText
+                <com.breadwallet.presenter.customviews.BREdit
                     android:id="@+id/word8"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -393,7 +393,7 @@
 
                 >
 
-                <EditText
+                <com.breadwallet.presenter.customviews.BREdit
                     android:id="@+id/word9"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -436,7 +436,7 @@
 
                 >
 
-                <EditText
+                <com.breadwallet.presenter.customviews.BREdit
                     android:id="@+id/word10"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -470,7 +470,7 @@
 
                 >
 
-                <EditText
+                <com.breadwallet.presenter.customviews.BREdit
                     android:id="@+id/word11"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -504,7 +504,7 @@
 
                 >
 
-                <EditText
+                <com.breadwallet.presenter.customviews.BREdit
                     android:id="@+id/word12"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -530,7 +530,6 @@
             </LinearLayout>
 
         </LinearLayout>
-
 
     </GridLayout>
 

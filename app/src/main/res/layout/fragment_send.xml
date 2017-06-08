@@ -111,7 +111,7 @@
             app:layout_constraintTop_toBottomOf="@+id/view3"
             app:layout_constraintVertical_bias="0.0"/>
 
-        <EditText
+        <com.breadwallet.presenter.customviews.BREdit
             android:id="@+id/address_edit"
             android:layout_width="wrap_content"
             android:layout_height="32dp"
@@ -199,7 +199,7 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/balance_text"/>
 
-        <EditText
+        <com.breadwallet.presenter.customviews.BREdit
             android:id="@+id/comment_edit"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -236,7 +236,7 @@
             app:layout_constraintTop_toBottomOf="@+id/view5"
             app:layout_constraintVertical_bias="0.0"/>
 
-        <EditText
+        <com.breadwallet.presenter.customviews.BREdit
             android:id="@+id/amount_edit"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

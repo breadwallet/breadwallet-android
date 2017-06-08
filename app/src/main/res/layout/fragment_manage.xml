@@ -47,7 +47,7 @@
             android:textSize="18sp"
             />
 
-        <EditText
+        <com.breadwallet.presenter.customviews.BREdit
             android:id="@+id/wallet_name_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
