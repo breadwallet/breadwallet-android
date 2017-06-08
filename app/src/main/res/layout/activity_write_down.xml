@@ -51,7 +51,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="24dp"
             android:background="@android:color/transparent"
-            app:srcCompat="@drawable/ic_close_black_24dp"/>
+            android:src="@drawable/ic_close_black_24dp"/>
 
         <ImageButton
             android:id="@+id/imageButton2"
@@ -60,7 +60,7 @@
             android:layout_margin="24dp"
             android:layout_gravity="end"
             android:background="@android:color/transparent"
-            app:srcCompat="@drawable/faq_question_white"/>
+            android:src="@drawable/faq_question_white"/>
 
     </FrameLayout>
 
