@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_write_down"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -17,16 +17,16 @@
         >
 
         <com.breadwallet.presenter.customviews.BRText
-            app:customFont="CircularPro-Bold.otf"
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_margin="24dp"
-            android:text="Paper Key"
+            android:text="@string/SecurityCenter.paperKeyTitle"
             android:textAlignment="center"
             android:textColor="@color/white"
-            android:textSize="18sp"/>
+            android:textSize="20sp"
+            app:customFont="CircularPro-Bold.otf"/>
 
         <ImageView
             android:layout_width="wrap_content"
@@ -45,6 +45,23 @@
             android:background="@drawable/ic_pen"
             android:elevation="8dp"/>
 
+        <ImageButton
+            android:id="@+id/close_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="24dp"
+            android:background="@android:color/transparent"
+            app:srcCompat="@drawable/ic_close_black_24dp"/>
+
+        <ImageButton
+            android:id="@+id/imageButton2"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_margin="24dp"
+            android:layout_gravity="end"
+            android:background="@android:color/transparent"
+            app:srcCompat="@drawable/faq_question_white"/>
+
     </FrameLayout>
 
     <com.breadwallet.presenter.customviews.BRText
@@ -55,7 +72,9 @@
         android:layout_centerHorizontal="true"
         android:layout_margin="32dp"
         android:layout_marginTop="51dp"
-        android:text="Protect your wallet against theft and ensure you can recover your wallet after replacing your phone or updating it's software"
+        android:lineSpacingMultiplier="1.3"
+        android:text="@string/StartPaperPhrase.body"
+        android:textColor="@color/almost_black"
         android:textSize="20sp"/>
 
     <com.breadwallet.presenter.customviews.BRButton
@@ -69,7 +88,7 @@
         android:background="@drawable/button_create_wallet"
         android:elevation="8dp"
         android:padding="10dp"
-        android:text="Write Down Paper Key"
+        android:text="@string/StartPaperPhrase.buttonTitle"
         android:textColor="@color/white"
         android:textSize="18sp"/>
 
