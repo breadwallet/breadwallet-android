@@ -2,6 +2,7 @@ package com.breadwallet.presenter.activities;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
@@ -9,6 +10,7 @@ import android.support.constraint.ConstraintSet;
 import android.support.transition.TransitionManager;
 import android.util.Log;
 import android.util.SparseArray;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -70,33 +72,38 @@ public class PaperKeyProveActivity extends BRActivity {
         resetConstraintSet.clone(constraintLayout);
         applyConstraintSet.clone(constraintLayout);
 
-        wordEditFirst.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        new Handler().postDelayed(new Runnable() {
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                TransitionManager.beginDelayedTransition(constraintLayout);
-                if (hasFocus) {
-                    applyConstraintSet.setMargin(R.id.word_number_first, ConstraintSet.TOP, 8);
-                    applyConstraintSet.setMargin(R.id.word_edittext_first, ConstraintSet.TOP, 16);
-                    applyConstraintSet.applyTo(constraintLayout);
-                } else {
-                    resetConstraintSet.applyTo(constraintLayout);
-                }
-            }
-        });
+            public void run() {
 
-        wordEditSecond.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
+                TransitionManager.beginDelayedTransition(constraintLayout);
+//                applyConstraintSet.constrainMinHeight();
+//                int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics());
+                applyConstraintSet.setMargin(R.id.word_number_first, ConstraintSet.TOP, 8);
+                applyConstraintSet.setMargin(R.id.line1, ConstraintSet.TOP, 16);
+                applyConstraintSet.setMargin(R.id.line2, ConstraintSet.TOP, 16);
+                applyConstraintSet.setMargin(R.id.word_number_second, ConstraintSet.TOP, 8);
+                applyConstraintSet.applyTo(constraintLayout);
+
 //                TransitionManager.beginDelayedTransition(constraintLayout);
-                if (hasFocus) {
-                    applyConstraintSet.setMargin(R.id.word_number_second, ConstraintSet.TOP, 8);
-                    applyConstraintSet.setMargin(R.id.word_edittext_second, ConstraintSet.TOP, 16);
-                    applyConstraintSet.applyTo(constraintLayout);
-                } else {
-                    resetConstraintSet.applyTo(constraintLayout);
-                }
+//                resetConstraintSet.applyTo(constraintLayout);
+
             }
-        });
+        }, 500);
+
+//        wordEditSecond.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View v, boolean hasFocus) {
+//                TransitionManager.beginDelayedTransition(constraintLayout);
+//                if (hasFocus) {
+//                    applyConstraintSet.setMargin(R.id.word_number_second, ConstraintSet.TOP, 8);
+//                    applyConstraintSet.setMargin(R.id.word_edittext_second, ConstraintSet.TOP, 16);
+//                    applyConstraintSet.applyTo(constraintLayout);
+//                } else {
+//                    resetConstraintSet.applyTo(constraintLayout);
+//                }
+//            }
+//        });
 
         wordEditSecond.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override

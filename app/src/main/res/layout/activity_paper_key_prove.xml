@@ -66,7 +66,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginLeft="0dp"
         android:layout_marginRight="0dp"
-        android:layout_marginTop="0dp"
+        android:layout_marginTop="-10dp"
         android:animateLayoutChanges="true"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -99,7 +99,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="16dp"
             android:lineSpacingMultiplier="1.3"
             android:text="TextView"
             android:textColor="@color/light_gray"
@@ -122,7 +122,7 @@
             app:layout_constraintTop_toBottomOf="@+id/word_number_first"/>
 
         <View
-            android:id="@+id/textView7"
+            android:id="@+id/line1"
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:background="@color/extra_light_gray"
@@ -136,12 +136,12 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="16dp"
             android:text="TextView"
             android:textColor="@color/light_gray"
             android:textSize="18sp"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView7"/>
+            app:layout_constraintTop_toBottomOf="@+id/line1"/>
 
         <com.breadwallet.presenter.customviews.BREdit
             android:id="@+id/word_edittext_second"
