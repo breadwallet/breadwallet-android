@@ -97,6 +97,20 @@ public class FragmentMenu extends Fragment {
         });
 
         itemList = new ArrayList<>();
+        boolean buyBitcoinEnabled = APIClient.getInstance(getActivity()).isFeatureEnabled(APIClient.FeatureFlags.BUY_BITCOIN.toString());
+//        if (buyBitcoinEnabled) //todo comment that for now
+        itemList.add(new BRMenuItem("Buy Bitcoin", 0, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e(TAG, "onClick: Lock Wallet");
+                Intent intent = new Intent(getActivity(), WebViewActivity.class);
+                intent.putExtra("url", HTTPServer.URL_BUY_BITCOIN);
+                Activity app = getActivity();
+                app.startActivity(intent);
+                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
+
+            }
+        }));
         itemList.add(new BRMenuItem("Security Center", R.drawable.ic_shield, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
