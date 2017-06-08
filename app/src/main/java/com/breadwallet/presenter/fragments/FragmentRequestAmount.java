@@ -88,7 +88,6 @@ public class FragmentRequestAmount extends Fragment {
     public ImageView mQrImage;
     public ScrollView backgroundLayout;
     public LinearLayout signalLayout;
-    public static final int ANIMATION_DURATION = 300;
     private String receiveAddress;
     private View shareSeparator;
     private View separator;
@@ -306,8 +305,8 @@ public class FragmentRequestAmount extends Fragment {
             @Override
             public void onGlobalLayout() {
                 observer.removeGlobalOnLayoutListener(this);
-                animateBackgroundDim(false);
-                animateSignalSlide(false);
+                BRAnimator.animateBackgroundDim(backgroundLayout, false);
+                BRAnimator.animateSignalSlide(signalLayout, false, null);
                 toggleShareButtonsVisibility();
             }
         });
@@ -334,50 +333,22 @@ public class FragmentRequestAmount extends Fragment {
 
     }
 
-    private void animateSignalSlide(final boolean reverse) {
-        float translationY = signalLayout.getTranslationY();
-        float signalHeight = signalLayout.getHeight();
-        signalLayout.setTranslationY(reverse ? translationY : translationY + signalHeight);
-        signalLayout.animate().translationY(reverse ? 2000 : translationY).setDuration(ANIMATION_DURATION).setInterpolator(new OvershootInterpolator(0.7f)).setListener(new AnimatorListenerAdapter() {
+    @Override
+    public void onStop() {
+        super.onStop();
+        BRAnimator.animateBackgroundDim(backgroundLayout, true);
+        BRAnimator.animateSignalSlide(signalLayout, true, new BRAnimator.OnSlideAnimationEnd() {
             @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                if (reverse && getActivity() != null) {
+            public void onAnimationEnd() {
+                if (getActivity() != null) {
                     try {
                         getActivity().getFragmentManager().popBackStack();
                     } catch (Exception ignored) {
 
                     }
                 }
-
             }
         });
-
-    }
-
-    private void animateBackgroundDim(boolean reverse) {
-        int transColor = reverse ? R.color.black_trans : android.R.color.transparent;
-        int blackTransColor = reverse ? android.R.color.transparent : R.color.black_trans;
-
-        ValueAnimator anim = new ValueAnimator();
-        anim.setIntValues(transColor, blackTransColor);
-        anim.setEvaluator(new ArgbEvaluator());
-        anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                backgroundLayout.setBackgroundColor((Integer) valueAnimator.getAnimatedValue());
-            }
-        });
-
-        anim.setDuration(ANIMATION_DURATION);
-        anim.start();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        animateBackgroundDim(true);
-        animateSignalSlide(true);
     }
 
     @Override

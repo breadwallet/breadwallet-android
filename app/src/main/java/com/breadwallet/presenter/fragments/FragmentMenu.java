@@ -1,25 +1,18 @@
 package com.breadwallet.presenter.fragments;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ArgbEvaluator;
-import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.animation.OvershootInterpolator;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -35,7 +28,6 @@ import com.breadwallet.presenter.entities.BRMenuItem;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SlideDetector;
-import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
 import com.platform.HTTPServer;
 
@@ -43,7 +35,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.breadwallet.R.id.menu_listview;
-import static com.breadwallet.presenter.fragments.FragmentSend.ANIMATION_DURATION;
 
 /**
  * BreadWallet
@@ -75,7 +66,7 @@ public class FragmentMenu extends Fragment {
 
     public TextView mTitle;
     public ListView mListView;
-    public RelativeLayout layout;
+    public RelativeLayout background;
     public List<BRMenuItem> itemList;
     public LinearLayout signalLayout;
 
@@ -86,9 +77,9 @@ public class FragmentMenu extends Fragment {
         // properly.
 
         View rootView = inflater.inflate(R.layout.fragment_menu, container, false);
-        layout = (RelativeLayout) rootView.findViewById(R.id.layout);
+        background = (RelativeLayout) rootView.findViewById(R.id.layout);
         signalLayout = (LinearLayout) rootView.findViewById(R.id.signal_layout);
-        layout.setOnClickListener(new View.OnClickListener() {
+        background.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
@@ -168,47 +159,15 @@ public class FragmentMenu extends Fragment {
             @Override
             public void onGlobalLayout() {
                 observer.removeGlobalOnLayoutListener(this);
-                animateBackgroundDim(false);
-                animateSignalSlide(false);
+                BRAnimator.animateBackgroundDim(background, false);
+                BRAnimator.animateSignalSlide(signalLayout, false, null);
             }
         });
     }
 
-    private void animateSignalSlide(final boolean reverse) {
-        float translationY = signalLayout.getTranslationY();
-        float signalHeight = signalLayout.getHeight();
-        signalLayout.setTranslationY(reverse ? translationY : translationY + signalHeight);
-        signalLayout.animate().translationY(reverse ? 2600 : translationY).setDuration(ANIMATION_DURATION).setInterpolator(new OvershootInterpolator(0.7f)).setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                if (reverse && getActivity() != null)
-                    getActivity().getFragmentManager().popBackStack();
-            }
-        });
-
-    }
-
-    private void animateBackgroundDim(boolean reverse) {
-        int transColor = reverse ? R.color.black_trans : android.R.color.transparent;
-        int blackTransColor = reverse ? android.R.color.transparent : R.color.black_trans;
-
-        ValueAnimator anim = new ValueAnimator();
-        anim.setIntValues(transColor, blackTransColor);
-        anim.setEvaluator(new ArgbEvaluator());
-        anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                layout.setBackgroundColor((Integer) valueAnimator.getAnimatedValue());
-            }
-        });
-
-        anim.setDuration(ANIMATION_DURATION);
-        anim.start();
-    }
 
     public RelativeLayout getMainLayout() {
-        return layout;
+        return background;
     }
 
     public class MenuListAdapter extends ArrayAdapter<BRMenuItem> {
@@ -229,7 +188,7 @@ public class FragmentMenu extends Fragment {
 
 //            Log.e(TAG, "getView: pos: " + position + ", item: " + items.get(position));
             if (convertView == null) {
-                // inflate the layout
+                // inflate the background
                 LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
                 convertView = inflater.inflate(defaultLayoutResource, parent, false);
             }
@@ -253,8 +212,14 @@ public class FragmentMenu extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        animateBackgroundDim(true);
-        animateSignalSlide(true);
+        BRAnimator.animateBackgroundDim(background, true);
+        BRAnimator.animateSignalSlide(signalLayout, true, new BRAnimator.OnSlideAnimationEnd() {
+            @Override
+            public void onAnimationEnd() {
+                if (getActivity() != null)
+                    getActivity().getFragmentManager().popBackStack();
+            }
+        });
 
     }
 
