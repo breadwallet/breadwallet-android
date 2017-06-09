@@ -105,6 +105,12 @@ public class FragmentReceive extends Fragment {
         layoutTransition.enableTransitionType(LayoutTransition.CHANGING);
         setListeners();
         signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
+        BRWalletManager.getInstance().addBalanceChangedListener(new BRWalletManager.OnBalanceChanged() {
+            @Override
+            public void onBalanceChanged(long balance) {
+                updateQr();
+            }
+        });
 
         return rootView;
     }
@@ -221,21 +227,25 @@ public class FragmentReceive extends Fragment {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                boolean success = BRWalletManager.refreshAddress(getActivity());
-                if (!success) throw new RuntimeException("failed to retrieve address");
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        receiveAddress = SharedPreferencesManager.getReceiveAddress(getActivity());
-                        mAddress.setText(receiveAddress);
-                        boolean generated = BRWalletManager.getInstance().generateQR(getActivity(), "bitcoin:" + receiveAddress, mQrImage);
-                        if (!generated)
-                            throw new RuntimeException("failed to generate qr image for address");
-                    }
-                });
+                updateQr();
             }
         }).start();
 
+    }
+
+    private void updateQr(){
+        boolean success = BRWalletManager.refreshAddress(getActivity());
+        if (!success) throw new RuntimeException("failed to retrieve address");
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                receiveAddress = SharedPreferencesManager.getReceiveAddress(getActivity());
+                mAddress.setText(receiveAddress);
+                boolean generated = BRWalletManager.getInstance().generateQR(getActivity(), "bitcoin:" + receiveAddress, mQrImage);
+                if (!generated)
+                    throw new RuntimeException("failed to generate qr image for address");
+            }
+        });
     }
 
 
