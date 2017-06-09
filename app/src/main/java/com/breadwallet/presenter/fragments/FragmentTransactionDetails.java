@@ -8,6 +8,7 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,6 +82,8 @@ public class FragmentTransactionDetails extends Fragment {
         });
         txPagerAdapter = new TransactionPagerAdapter(getChildFragmentManager(), items);
         txViewPager.setAdapter(txPagerAdapter);
+        int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24 * 2, getResources().getDisplayMetrics());
+        txViewPager.setPageMargin(-margin);
         int pos = getArguments().getInt("pos");
         txViewPager.setCurrentItem(pos, false);
 
