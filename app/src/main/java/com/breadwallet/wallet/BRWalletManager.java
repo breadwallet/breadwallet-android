@@ -221,7 +221,10 @@ public class BRWalletManager {
 
     //BLOCKS
     public static boolean refreshAddress(Context ctx) {
-        if (ctx == null) return false;
+        if (ctx == null) {
+            Log.e(TAG, "refreshAddress: ctx is null");
+            return false;
+        }
         String address = getReceiveAddress();
         if (Utils.isNullOrEmpty(address)) return false;
         SharedPreferencesManager.putReceiveAddress(ctx, address);

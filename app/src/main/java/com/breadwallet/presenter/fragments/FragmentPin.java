@@ -89,7 +89,7 @@ public class FragmentPin extends Fragment {
         title = (TextView) rootView.findViewById(R.id.title);
         message = (TextView) rootView.findViewById(R.id.message);
         dialogLayout = (RelativeLayout) rootView.findViewById(R.id.pin_dialog);
-        mainLayout = (BRLockScreenConstraintLayout) rootView.findViewById(R.id.activity_pin);
+        mainLayout = (ConstraintLayout) rootView.findViewById(R.id.activity_pin);
 
         mainLayout.setOnClickListener(new View.OnClickListener() {
             @Override
