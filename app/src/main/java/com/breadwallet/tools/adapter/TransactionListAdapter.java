@@ -107,8 +107,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
 
         TransactionListItem item = itemFeed.get(position);
 
-
         boolean received = item.getSent() == 0;
+        convertView.mainLayout.setBackgroundResource(getResourceByPos(position));
         convertView.sentReceived.setText(received ? "Received" : "Sent");
         convertView.toFrom.setText(received ? "from" : "to");
         int blockHeight = item.getBlockHeight();
@@ -141,6 +141,18 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
 
         convertView.timestamp.setText(timeSpan);
 
+    }
+
+    private int getResourceByPos(int pos) {
+        if (itemFeed != null && itemFeed.size() == 1) {
+            return R.drawable.tx_rounded;
+        } else if (pos == 0) {
+            return R.drawable.tx_rounded_up;
+        } else if (itemFeed != null && pos == itemFeed.size() - 1) {
+            return R.drawable.tx_rounded_down;
+        } else {
+            return R.drawable.tx_rounded;
+        }
     }
 
     public void filterBy(String query, boolean[] switches) {
