@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
@@ -106,6 +107,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
 
         TransactionListItem item = itemFeed.get(position);
 
+
         boolean received = item.getSent() == 0;
         convertView.sentReceived.setText(received ? "Received" : "Sent");
         convertView.toFrom.setText(received ? "from" : "to");
@@ -192,6 +194,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
     }
 
     class CustomViewHolder extends RecyclerView.ViewHolder {
+        public RelativeLayout mainLayout;
         public TextView sentReceived;
         public TextView amount;
         public TextView toFrom;
@@ -202,6 +205,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
 
         public CustomViewHolder(View view) {
             super(view);
+            mainLayout = (RelativeLayout) view.findViewById(R.id.watch_list_layout);
             sentReceived = (TextView) view.findViewById(R.id.sent_received);
             amount = (TextView) view.findViewById(R.id.amount);
             toFrom = (TextView) view.findViewById(R.id.to_from);
