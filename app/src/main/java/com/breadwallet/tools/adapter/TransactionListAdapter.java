@@ -18,6 +18,7 @@ import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.tools.util.BRCurrency;
+import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
@@ -25,6 +26,7 @@ import com.breadwallet.wallet.BRWalletManager;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import static android.text.format.DateUtils.MINUTE_IN_MILLIS;
@@ -137,7 +139,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
 
         //if it's 0 we use the current time.
         long timeStamp = item.getTimeStamp() == 0 ? System.currentTimeMillis() : item.getTimeStamp() * 1000;
-        CharSequence timeSpan = DateUtils.getRelativeTimeSpanString(timeStamp, System.currentTimeMillis(), MINUTE_IN_MILLIS);
+        CharSequence timeSpan = BRDateUtil.getCustomSpan(new Date(timeStamp));
 
         convertView.timestamp.setText(timeSpan);
 
@@ -151,7 +153,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         } else if (itemFeed != null && pos == itemFeed.size() - 1) {
             return R.drawable.tx_rounded_down;
         } else {
-            return R.drawable.tx_rounded;
+            return R.drawable.tx_not_rounded;
         }
     }
 
