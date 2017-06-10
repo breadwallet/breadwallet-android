@@ -11,6 +11,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -77,10 +78,24 @@ public class BRButton extends Button {
         TypedArray a = ctx.obtainStyledAttributes(attrs, R.styleable.BRText);
         String customFont = a.getString(R.styleable.BRText_customFont);
         TypefacesManager.setCustomFont(ctx, this, Utils.isNullOrEmpty(customFont) ? "CircularPro-Medium.otf" : customFont);
-        a.recycle();
         float px16 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics());
-        setPadding(0, 0, 0, (int) px16);
+        //check attributes you need, for example all paddings
+        int[] attributes = new int[]{android.R.attr.paddingLeft, android.R.attr.paddingTop, android.R.attr.paddingRight, android.R.attr.paddingBottom};
+        //then obtain typed array
+        TypedArray arr = ctx.obtainStyledAttributes(attrs, attributes);
+        //You can check if attribute exists (in this examle checking paddingRight)
+        int paddingLeft = arr.hasValue(0) ? arr.getDimensionPixelOffset(0, -1) : 0;
+        int paddingTop = arr.hasValue(1) ? arr.getDimensionPixelOffset(1, -1) : 0;
+        int paddingRight = arr.hasValue(2) ? arr.getDimensionPixelOffset(2, -1) : 0;
+        int paddingBottom = arr.hasValue(3) ? arr.getDimensionPixelOffset(3, -1) : (int) px16;
+        Log.e(TAG, "init: paddingLeft: " + paddingLeft);
+        Log.e(TAG, "init: paddingTop: " + paddingTop);
+        Log.e(TAG, "init: paddingRight: " + paddingRight);
+        Log.e(TAG, "init: paddingBottom: " + paddingBottom);
+        setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
         setElevation(0);
+        a.recycle();
+        arr.recycle();
     }
 
     @Override

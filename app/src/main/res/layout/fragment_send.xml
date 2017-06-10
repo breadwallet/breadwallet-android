@@ -52,7 +52,7 @@
             android:id="@+id/separator"
             android:layout_width="0dp"
             android:layout_height="1dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="0dp"
             android:background="@color/extra_light_gray"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -117,8 +117,8 @@
             android:layout_height="32dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="16dp"
-            android:ellipsize="middle"
             android:background="@android:color/transparent"
+            android:ellipsize="middle"
             android:ems="10"
             android:hint="address"
             android:inputType="textPersonName"
@@ -142,7 +142,7 @@
 
         <com.breadwallet.presenter.customviews.BRButton
             android:id="@+id/paste_button"
-            android:layout_width="wrap_content"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:layout_marginTop="0dp"
@@ -150,9 +150,9 @@
             android:background="@drawable/button_secondary_gray_stroke"
             android:elevation="8dp"
             android:minHeight="40dp"
-            android:text="Paste"
+            android:text="@string/Send.pasteLabel"
             android:textColor="@color/light_gray"
-            android:textSize="14sp"
+            android:textSize="16sp"
             app:layout_constraintRight_toLeftOf="@+id/share_text"
             app:layout_constraintTop_toTopOf="@+id/share_text"/>
 
@@ -162,14 +162,14 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="24dp"
             android:layout_marginRight="24dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="16dp"
             android:layout_weight="1.0"
             android:background="@drawable/button_secondary_gray_stroke"
             android:elevation="8dp"
             android:minHeight="40dp"
-            android:text="Scan"
+            android:text="@string/Send.scanLabel"
             android:textColor="@color/light_gray"
-            android:textSize="14sp"
+            android:textSize="16sp"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/view"/>
 
@@ -221,7 +221,7 @@
             android:id="@+id/send_button"
             android:layout_width="0dp"
             android:layout_height="@dimen/big_button_height"
-            android:layout_marginBottom="25dp"
+            android:layout_marginBottom="8dp"
             android:layout_marginEnd="24dp"
             android:layout_marginStart="24dp"
             android:layout_marginTop="16dp"
@@ -230,7 +230,7 @@
             android:padding="10dp"
             android:text="@string/Send.sendLabel"
             android:textColor="@color/white"
-            android:textSize="18sp"
+            android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -275,22 +275,20 @@
 
         <com.breadwallet.presenter.customviews.BRButton
             android:id="@+id/iso_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="0dp"
-            android:layout_marginEnd="16dp"
+            android:layout_width="70dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="24dp"
             android:layout_marginTop="0dp"
             android:background="@drawable/button_secondary_gray_stroke"
+            android:drawableEnd="@drawable/caret_right"
             android:elevation="8dp"
             android:minHeight="40dp"
-            android:padding="10dp"
+            android:paddingRight="8dp"
             android:text="iso"
             android:textColor="@color/light_gray"
             android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="@+id/amount_edit"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/amount_edit"
-            android:layout_marginRight="24dp"/>
+            app:layout_constraintTop_toTopOf="@+id/amount_edit"/>
 
     </android.support.constraint.ConstraintLayout>
 
