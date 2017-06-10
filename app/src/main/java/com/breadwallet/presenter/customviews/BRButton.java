@@ -2,12 +2,16 @@ package com.breadwallet.presenter.customviews;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
@@ -74,10 +78,9 @@ public class BRButton extends Button {
         String customFont = a.getString(R.styleable.BRText_customFont);
         TypefacesManager.setCustomFont(ctx, this, Utils.isNullOrEmpty(customFont) ? "CircularPro-Medium.otf" : customFont);
         a.recycle();
-    }
-
-    public void setIsBreadButton(boolean b) {
-        isBreadButton = b;
+        float px16 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics());
+        setPadding(0, 0, 0, (int) px16);
+        setElevation(0);
     }
 
     @Override
@@ -88,7 +91,6 @@ public class BRButton extends Button {
                 if (getParent() != null) {
                     getParent().requestDisallowInterceptTouchEvent(true);
                 }
-
 
                 ScaleAnimation scaleAnim = new ScaleAnimation(
                         1f, 0.8f,
@@ -118,4 +120,5 @@ public class BRButton extends Button {
         }
 
     }
+
 }
