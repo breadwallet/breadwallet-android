@@ -34,11 +34,11 @@
     <com.breadwallet.presenter.customviews.BRButton
         android:id="@+id/button_new_wallet"
         android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:layout_marginBottom="24dp"
+        android:layout_height="@dimen/big_button_height"
+        android:layout_marginBottom="8dp"
         android:layout_marginEnd="24dp"
         android:layout_marginStart="24dp"
-        android:background="@drawable/button_create_wallet"
+        android:background="@drawable/button_primary_blue"
         android:elevation="8dp"
         android:padding="10dp"
         android:text="Create New Wallet"
@@ -51,7 +51,7 @@
     <com.breadwallet.presenter.customviews.BRButton
         android:id="@+id/button_recover_wallet"
         android:layout_width="0dp"
-        android:layout_height="60dp"
+        android:layout_height="@dimen/big_button_height"
         android:layout_marginBottom="32dp"
         android:layout_marginEnd="24dp"
         android:layout_marginStart="24dp"
