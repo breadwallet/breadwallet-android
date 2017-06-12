@@ -112,6 +112,7 @@
         <com.breadwallet.presenter.customviews.BRButton
             android:id="@+id/left_button"
             android:layout_width="match_parent"
+            android:paddingBottom="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1.0"
             android:background="@drawable/button_half_left"
@@ -128,6 +129,7 @@
             android:layout_weight="1.0"
             android:background="@drawable/button_half_right"
             android:text="@string/LoginScreen.scan"
+            android:paddingBottom="0dp"
             android:textColor="@color/white"
             android:textSize="14sp"
             app:customFont="CircularPro-Medium.otf"
