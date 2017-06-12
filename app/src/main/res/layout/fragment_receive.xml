@@ -131,8 +131,7 @@
             android:layout_marginStart="72dp"
             android:background="@drawable/button_secondary_gray_stroke"
             android:drawableStart="@drawable/ic_share_vertical_gray"
-            android:paddingEnd="64dp"
-            android:paddingStart="64dp"
+
             android:text="@string/Receive.share"
             android:textColor="@color/light_gray"
             android:textSize="18sp"

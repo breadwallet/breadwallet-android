@@ -88,10 +88,6 @@ public class BRButton extends Button {
         int paddingTop = arr.hasValue(1) ? arr.getDimensionPixelOffset(1, -1) : 0;
         int paddingRight = arr.hasValue(2) ? arr.getDimensionPixelOffset(2, -1) : 0;
         int paddingBottom = arr.hasValue(3) ? arr.getDimensionPixelOffset(3, -1) : (int) px16;
-        Log.e(TAG, "init: paddingLeft: " + paddingLeft);
-        Log.e(TAG, "init: paddingTop: " + paddingTop);
-        Log.e(TAG, "init: paddingRight: " + paddingRight);
-        Log.e(TAG, "init: paddingBottom: " + paddingBottom);
         setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
         setElevation(0);
         a.recycle();
