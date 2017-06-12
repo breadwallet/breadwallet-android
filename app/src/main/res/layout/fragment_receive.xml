@@ -49,7 +49,7 @@
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:layout_marginTop="16dp"
-                android:background="#c6c6c6"
+                android:background="@color/separator_gray"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
@@ -142,16 +142,16 @@
             android:id="@+id/separator"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#c6c6c6"/>
+            android:background="@color/separator_gray"/>
 
         <View
             android:id="@+id/share_separator"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#c6c6c6"
+            android:background="@color/separator_gray"
             />
 
-        <LinearLayout
+        <com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret
             android:id="@+id/share_buttons_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -193,7 +193,7 @@
                 android:textSize="14sp"
                 />
 
-        </LinearLayout>
+        </com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret>
 
         <com.breadwallet.presenter.customviews.BRButton
             android:id="@+id/request_button"

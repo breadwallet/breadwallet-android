@@ -7,6 +7,7 @@
     <item name="black" type="color">#ff000000</item>
     <item name="gray" type="color">#ff787878</item>
     <item name="light_gray" type="color">#ff9d9d9d</item>
+    <item name="separator_gray" type="color">#c6c6c6</item>
     <item name="gray_shadow" type="color">#41484848</item>
     <item name="page_indicator_gray" type="color">#ff9d9d9d</item>
     <item name="extra_light_gray" type="color">#D6DAE1</item>
