@@ -41,7 +41,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="16dp"
-            android:background="#c6c6c6"
+            android:background="@color/separator_gray"
             />
 
         <RelativeLayout
@@ -110,7 +110,7 @@
             android:id="@+id/view2"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#c6c6c6"
+            android:background="@color/separator_gray"
             />
 
         <android.support.v7.widget.RecyclerView
@@ -135,7 +135,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginBottom="16dp"
-            android:background="#c6c6c6"
+            android:background="@color/separator_gray"
             />
 
         <ImageView
@@ -187,13 +187,13 @@
             android:id="@+id/separator"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#c6c6c6"/>
+            android:background="@color/separator_gray"/>
 
         <View
             android:id="@+id/share_separator"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#c6c6c6"
+            android:background="@color/separator_gray"
             />
 
         <LinearLayout

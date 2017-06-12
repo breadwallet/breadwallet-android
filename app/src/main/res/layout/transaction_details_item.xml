@@ -44,7 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="16dp"
-            android:background="#c6c6c6"
+            android:background="@color/separator_gray"
             />
 
         <com.breadwallet.presenter.customviews.BRText
@@ -100,7 +100,7 @@
             android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:background="#c6c6c6"/>
+            android:background="@color/separator_gray"/>
 
         <com.breadwallet.presenter.customviews.BRText
             app:customFont="CircularPro-Bold.otf"
@@ -127,7 +127,7 @@
             android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:background="#c6c6c6"/>
+            android:background="@color/separator_gray"/>
 
         <com.breadwallet.presenter.customviews.BRText
 
@@ -154,7 +154,7 @@
             android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:background="#c6c6c6"/>
+            android:background="@color/separator_gray"/>
 
         <com.breadwallet.presenter.customviews.BRText
 
@@ -182,7 +182,7 @@
             android:layout_height="1dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="32dp"
-            android:background="#c6c6c6"/>
+            android:background="@color/separator_gray"/>
 
     </LinearLayout>
 

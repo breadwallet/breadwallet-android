@@ -47,7 +47,7 @@
             android:layout_marginBottom="0dp"
             android:layout_marginLeft="0dp"
             android:layout_marginRight="0dp"
-            android:background="#c6c6c6"
+            android:background="@color/separator_gray"
             app:layout_constraintBottom_toTopOf="@+id/menu_listview"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="@+id/menu_listview"

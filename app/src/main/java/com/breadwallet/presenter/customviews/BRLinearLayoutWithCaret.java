@@ -2,14 +2,15 @@ package com.breadwallet.presenter.customviews;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Shader;
-import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.View;
+import android.util.TypedValue;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
 
@@ -37,79 +38,32 @@ import com.breadwallet.R;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class BRLockScreenConstraintLayout extends ConstraintLayout {
-    public static final String TAG = BRLockScreenConstraintLayout.class.getName();
-    private Paint trianglesPaintBlack;
-    private Path pathBlack;
-    private Paint trianglesPaint;
-    private Path path;
+public class BRLinearLayoutWithCaret extends LinearLayout {
+    public static final String TAG = BRLinearLayoutWithCaret.class.getName();
+
     private float mXfract = 0f;
     private float mYfract = 0f;
+
+    private Paint paint;
+    private Path path;
 
     private int width;
     private int height;
     private boolean created;
 
-    public BRLockScreenConstraintLayout(Context context) {
+    public BRLinearLayoutWithCaret(Context context) {
         super(context);
         init();
     }
 
-    public BRLockScreenConstraintLayout(Context context, AttributeSet attrs) {
+    public BRLinearLayoutWithCaret(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public BRLockScreenConstraintLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public BRLinearLayoutWithCaret(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
-    }
-
-    private void init() {
-        Log.e(TAG, "init: ");
-        trianglesPaintBlack = new Paint();
-        trianglesPaint = new Paint();
-        trianglesPaintBlack.setStyle(Paint.Style.FILL);
-        pathBlack = new Path();
-        path = new Path();
-
-    }
-
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-
-        if (w != 0 && !created) {
-            created = true;
-            width = w;
-            height = h;
-            createTriangles(w, h);
-
-            trianglesPaint.setShader(new LinearGradient(0, 0, w, 0, getContext().getColor(R.color.logo_gradient_start),
-                    getContext().getColor(R.color.logo_gradient_end), Shader.TileMode.MIRROR));
-            trianglesPaintBlack.setShadowLayer(10.0f, 5f, 5f, getContext().getColor(R.color.gray_shadow));
-
-            invalidate();
-        }
-
-    }
-
-    private void createTriangles(int w, int h) {
-        pathBlack.moveTo(0, 0);
-        path.moveTo(0, 0);
-
-        pathBlack.lineTo(w, 0);
-        path.lineTo(w + 1, 0);
-
-        pathBlack.lineTo(-1, h / 4);
-        pathBlack.lineTo(0, h / 4 + 2);
-        path.lineTo(0, h / 4 + 1);
-
-        pathBlack.lineTo(w-1, h / 2 - h / 8);
-        path.lineTo(w, h / 2 - h / 8 - 1);
-
-        pathBlack.lineTo(0, h-1);
-        path.lineTo(1, h);
     }
 
     public void setYFraction(final float fraction) {
@@ -134,7 +88,6 @@ public class BRLockScreenConstraintLayout extends ConstraintLayout {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        long start = System.currentTimeMillis();
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int width = MeasureSpec.getSize(widthMeasureSpec);
         int height = MeasureSpec.getSize(heightMeasureSpec);
@@ -143,12 +96,40 @@ public class BRLockScreenConstraintLayout extends ConstraintLayout {
         setTranslationY(mYfract * height);
     }
 
-    @Override
-    public void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        canvas.drawPath(pathBlack, trianglesPaintBlack);
-        canvas.drawPath(path, trianglesPaint);
-
+    private void init() {
+        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setStyle(Paint.Style.STROKE);
+        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, getResources().getDisplayMetrics());
+        paint.setStrokeWidth(px);
+        paint.setColor(getContext().getColor(R.color.light_gray));
+        path = new Path();
     }
 
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        if (w != 0 && !created) {
+            created = true;
+            width = w;
+            height = h;
+
+            int caretHeight = h / 6;
+            int caretWidth = caretHeight * 2;
+
+            path.moveTo(0, caretHeight);
+            path.lineTo(width / 2 - caretWidth / 2, caretHeight);
+            path.lineTo(width / 2, 0);
+            path.lineTo(width / 2 + caretWidth /2, caretHeight);
+            path.lineTo(width, caretHeight);
+
+            invalidate();
+        }
+    }
+
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        canvas.drawPath(path, paint);
+    }
 }
