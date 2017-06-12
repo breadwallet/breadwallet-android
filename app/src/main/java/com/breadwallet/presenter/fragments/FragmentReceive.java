@@ -71,7 +71,7 @@ public class FragmentReceive extends Fragment {
     public LinearLayout signalLayout;
 
     private String receiveAddress;
-    private View shareSeparator;
+//    private View shareSeparator;
     private View separator;
     private Button shareButton;
     private Button shareEmail;
@@ -98,7 +98,7 @@ public class FragmentReceive extends Fragment {
         shareTextMessage = (Button) rootView.findViewById(R.id.share_text);
         shareButtonsLayout = (LinearLayout) rootView.findViewById(R.id.share_buttons_layout);
         requestButton = (Button) rootView.findViewById(R.id.request_button);
-        shareSeparator = rootView.findViewById(R.id.share_separator);
+//        shareSeparator = rootView.findViewById(R.id.share_separator);
         separator = rootView.findViewById(R.id.separator);
         close = (ImageButton) rootView.findViewById(R.id.close_button);
         LayoutTransition layoutTransition = signalLayout.getLayoutTransition();
@@ -188,12 +188,12 @@ public class FragmentReceive extends Fragment {
 //            shareButton.setBackground(getResources().getDrawable(R.drawable.button_secondary_gray_stroke));
 //            shareButton.setCompoundDrawables(getResources().getDrawable(R.drawable.ic_share_vertical_gray), null, null, null);
             signalLayout.removeView(shareButtonsLayout);
-            signalLayout.removeView(shareSeparator);
+//            signalLayout.removeView(shareSeparator);
             shareButtonsShown = false;
         } else {
 //            shareButton.setBackground(getResources().getDrawable(R.drawable.button_secondary_blue_stroke));
 //            shareButton.setCompoundDrawables(getResources().getDrawable(R.drawable.ic_share_vertical_blue), null, null, null);
-            signalLayout.addView(shareSeparator, isReceive ? signalLayout.getChildCount() - 2 : signalLayout.getChildCount());
+//            signalLayout.addView(shareSeparator, isReceive ? signalLayout.getChildCount() - 2 : signalLayout.getChildCount());
             signalLayout.addView(shareButtonsLayout, isReceive ? signalLayout.getChildCount() - 2 : signalLayout.getChildCount());
 
             shareButtonsShown = true;

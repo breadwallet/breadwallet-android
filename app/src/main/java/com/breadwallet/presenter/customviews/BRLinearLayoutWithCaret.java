@@ -1,18 +1,30 @@
 package com.breadwallet.presenter.customviews;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Shader;
+import android.support.annotation.ColorInt;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
+import com.breadwallet.tools.manager.TypefacesManager;
+import com.breadwallet.tools.util.Utils;
+
+import static android.R.attr.background;
+import static android.R.attr.paddingLeft;
+import static android.R.attr.paddingRight;
+import static android.R.attr.paddingTop;
+import static com.breadwallet.R.attr.customFont;
 
 /**
  * BreadWallet
@@ -45,7 +57,9 @@ public class BRLinearLayoutWithCaret extends LinearLayout {
     private float mYfract = 0f;
 
     private Paint paint;
+    private Paint backgroundPaint;
     private Path path;
+    private int caretHeight;
 
     private int width;
     private int height;
@@ -53,17 +67,17 @@ public class BRLinearLayoutWithCaret extends LinearLayout {
 
     public BRLinearLayoutWithCaret(Context context) {
         super(context);
-        init();
+        init(null);
     }
 
     public BRLinearLayoutWithCaret(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
+        init(attrs);
     }
 
     public BRLinearLayoutWithCaret(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
+        init(attrs);
     }
 
     public void setYFraction(final float fraction) {
@@ -96,13 +110,30 @@ public class BRLinearLayoutWithCaret extends LinearLayout {
         setTranslationY(mYfract * height);
     }
 
-    private void init() {
+    private void init(AttributeSet attrs) {
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setStyle(Paint.Style.STROKE);
         float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, getResources().getDisplayMetrics());
         paint.setStrokeWidth(px);
-        paint.setColor(getContext().getColor(R.color.light_gray));
+        paint.setColor(getContext().getColor(R.color.separator_gray));
         path = new Path();
+
+        backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        backgroundPaint.setStyle(Paint.Style.FILL);
+        backgroundPaint.setColor(getContext().getColor(R.color.red));
+
+        if (attrs != null) {
+            TypedValue typedValue = new TypedValue();
+            Resources.Theme theme = getContext().getTheme();
+            theme.resolveAttribute(R.attr.background, typedValue, true);
+            @ColorInt int color = typedValue.data;
+
+            backgroundPaint.setColor(color);
+        } else {
+            Log.e(TAG, "init: attr is null");
+        }
+        setBackgroundColor(getContext().getColor(android.R.color.transparent));
+
     }
 
     @Override
@@ -113,13 +144,13 @@ public class BRLinearLayoutWithCaret extends LinearLayout {
             width = w;
             height = h;
 
-            int caretHeight = h / 6;
+            caretHeight = h / 10;
             int caretWidth = caretHeight * 2;
 
             path.moveTo(0, caretHeight);
             path.lineTo(width / 2 - caretWidth / 2, caretHeight);
             path.lineTo(width / 2, 0);
-            path.lineTo(width / 2 + caretWidth /2, caretHeight);
+            path.lineTo(width / 2 + caretWidth / 2, caretHeight);
             path.lineTo(width, caretHeight);
 
             invalidate();
@@ -130,6 +161,7 @@ public class BRLinearLayoutWithCaret extends LinearLayout {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        canvas.drawRect(0, caretHeight, width, height, backgroundPaint);
         canvas.drawPath(path, paint);
     }
 }
