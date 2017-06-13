@@ -70,7 +70,6 @@
                 android:id="@+id/close_button"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:layout_marginLeft="16dp"
                 android:layout_marginStart="16dp"
                 android:background="@android:color/transparent"
                 android:src="@drawable/ic_close_black_24dp"
@@ -80,7 +79,6 @@
                 app:layout_constraintVertical_bias="0.055"/>
 
         </android.support.constraint.ConstraintLayout>
-
 
         <ImageView
             android:id="@+id/qr_image"
@@ -149,13 +147,6 @@
             android:textSize="18sp"
             app:isBreadButton="true"
             />
-
-        <!--<View-->
-        <!--android:id="@+id/share_separator"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="1dp"-->
-        <!--android:background="@color/separator_gray"-->
-        <!--/>-->
 
         <com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret
             xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -229,8 +220,6 @@
             android:textSize="18sp"
             app:isBreadButton="true"/>
 
-
     </LinearLayout>
-
 
 </LinearLayout>
