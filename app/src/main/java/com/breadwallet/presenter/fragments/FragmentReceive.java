@@ -8,6 +8,7 @@ import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret;
 import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SlideDetector;
@@ -36,6 +38,7 @@ import com.breadwallet.tools.qrcode.QRUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 
+import static com.breadwallet.R.id.view;
 import static com.breadwallet.tools.animation.BRAnimator.animateBackgroundDim;
 import static com.breadwallet.tools.animation.BRAnimator.animateSignalSlide;
 
@@ -81,10 +84,12 @@ public class FragmentReceive extends Fragment {
     private Button shareEmail;
     private Button shareTextMessage;
     private Button requestButton;
-    private LinearLayout shareButtonsLayout;
+    private BRLinearLayoutWithCaret shareButtonsLayout;
+    private BRLinearLayoutWithCaret copiedLayout;
     private boolean shareButtonsShown = false;
     private boolean isReceive;
     private ImageButton close;
+    private Handler copyCloseHandler = new Handler();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -100,7 +105,8 @@ public class FragmentReceive extends Fragment {
         shareButton = (Button) rootView.findViewById(R.id.share_button);
         shareEmail = (Button) rootView.findViewById(R.id.share_email);
         shareTextMessage = (Button) rootView.findViewById(R.id.share_text);
-        shareButtonsLayout = (LinearLayout) rootView.findViewById(R.id.share_buttons_layout);
+        shareButtonsLayout = (BRLinearLayoutWithCaret) rootView.findViewById(R.id.share_buttons_layout);
+        copiedLayout = (BRLinearLayoutWithCaret) rootView.findViewById(R.id.copied_layout);
         requestButton = (Button) rootView.findViewById(R.id.request_button);
 //        shareSeparator = rootView.findViewById(R.id.share_separator);
         separator = rootView.findViewById(R.id.separator);
@@ -126,6 +132,7 @@ public class FragmentReceive extends Fragment {
 //        scaleUp.setInterpolator(new OvershootInterpolator());
 
         signalLayout.removeView(shareButtonsLayout);
+        signalLayout.removeView(copiedLayout);
 
         LayoutTransition itemLayoutTransition = new LayoutTransition();
         itemLayoutTransition.setStartDelay(LayoutTransition.APPEARING, 0);
@@ -178,8 +185,8 @@ public class FragmentReceive extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                BRClipboardManager.putClipboard(getContext(), mAddress.getText().toString());
-                BRToast.showCustomToast(getActivity(), "Copied to Clipboard.", (int) mAddress.getY(), Toast.LENGTH_SHORT, R.drawable.toast_layout_blue);
+                copyText();
+//                BRToast.showCustomToast(getActivity(), "Copied to Clipboard.", (int) mAddress.getY(), Toast.LENGTH_SHORT, R.drawable.toast_layout_blue);
             }
         });
         requestButton.setOnClickListener(new View.OnClickListener() {
@@ -201,6 +208,13 @@ public class FragmentReceive extends Fragment {
                 getActivity().onBackPressed();
             }
         });
+        mQrImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!BRAnimator.isClickAllowed()) return;
+                copyText();
+            }
+        });
 
         close.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -217,7 +231,29 @@ public class FragmentReceive extends Fragment {
             signalLayout.removeView(shareButtonsLayout);
         } else {
             signalLayout.addView(shareButtonsLayout, isReceive ? signalLayout.getChildCount() - 2 : signalLayout.getChildCount());
+            showCopiedLayout(false);
+        }
+    }
 
+    private void showCopiedLayout(boolean b) {
+        if (!b) {
+            signalLayout.removeView(copiedLayout);
+            copyCloseHandler.removeCallbacksAndMessages(null);
+        } else {
+            if (signalLayout.indexOfChild(copiedLayout) == -1) {
+                signalLayout.addView(copiedLayout, signalLayout.indexOfChild(shareButton));
+                showShareButtons(false);
+                shareButtonsShown = false;
+                copyCloseHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        signalLayout.removeView(copiedLayout);
+                    }
+                }, 2000);
+            } else {
+                copyCloseHandler.removeCallbacksAndMessages(null);
+                signalLayout.removeView(copiedLayout);
+            }
         }
     }
 
@@ -266,6 +302,11 @@ public class FragmentReceive extends Fragment {
                     throw new RuntimeException("failed to generate qr image for address");
             }
         });
+    }
+
+    private void copyText() {
+        BRClipboardManager.putClipboard(getContext(), mAddress.getText().toString());
+        showCopiedLayout(true);
     }
 
 
