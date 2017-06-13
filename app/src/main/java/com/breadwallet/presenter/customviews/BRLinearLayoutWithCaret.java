@@ -24,6 +24,7 @@ import static android.R.attr.background;
 import static android.R.attr.paddingLeft;
 import static android.R.attr.paddingRight;
 import static android.R.attr.paddingTop;
+import static android.R.attr.path;
 import static com.breadwallet.R.attr.customFont;
 
 /**
@@ -56,10 +57,12 @@ public class BRLinearLayoutWithCaret extends LinearLayout {
     private float mXfract = 0f;
     private float mYfract = 0f;
 
-    private Paint paint;
+    private Paint strokePaint;
     private Paint backgroundPaint;
-    private Path path;
+    private Path path_stroke;
+    private Path path_background;
     private int caretHeight;
+    private boolean withStroke;
 
     private int width;
     private int height;
@@ -111,28 +114,40 @@ public class BRLinearLayoutWithCaret extends LinearLayout {
     }
 
     private void init(AttributeSet attrs) {
-        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setStyle(Paint.Style.STROKE);
+        strokePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        strokePaint.setStyle(Paint.Style.STROKE);
         float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, getResources().getDisplayMetrics());
-        paint.setStrokeWidth(px);
-        paint.setColor(getContext().getColor(R.color.separator_gray));
-        path = new Path();
+        strokePaint.setStrokeWidth(px);
+        strokePaint.setColor(getContext().getColor(R.color.separator_gray));
+
+        path_stroke = new Path();
+        path_background = new Path();
 
         backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         backgroundPaint.setStyle(Paint.Style.FILL);
-        backgroundPaint.setColor(getContext().getColor(R.color.red));
+        backgroundPaint.setColor(getContext().getColor(R.color.extra_light_blue_background));
 
-        if (attrs != null) {
-            TypedValue typedValue = new TypedValue();
-            Resources.Theme theme = getContext().getTheme();
-            theme.resolveAttribute(R.attr.background, typedValue, true);
-            @ColorInt int color = typedValue.data;
-
-            backgroundPaint.setColor(color);
-        } else {
-            Log.e(TAG, "init: attr is null");
-        }
         setBackgroundColor(getContext().getColor(android.R.color.transparent));
+        TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.BRLinearLayoutWithCaret);
+        final int N = a.getIndexCount();
+        for (int i = 0; i < N; ++i) {
+            int attr = a.getIndex(i);
+            switch (attr) {
+                case R.styleable.BRLinearLayoutWithCaret_strokeColor:
+                    @ColorInt int strokeColor = a.getColor(attr, 0);
+                    if (strokeColor != 0) strokePaint.setColor(strokeColor);
+                    break;
+
+                case R.styleable.BRLinearLayoutWithCaret_backgroundColor:
+                    @ColorInt int bgColor = a.getColor(attr, 0);
+                    if (bgColor != 0) backgroundPaint.setColor(bgColor);
+                    break;
+                case R.styleable.BRLinearLayoutWithCaret_withStroke:
+                    withStroke = a.getBoolean(attr, false);
+                    break;
+            }
+        }
+        a.recycle();
 
     }
 
@@ -147,21 +162,47 @@ public class BRLinearLayoutWithCaret extends LinearLayout {
             caretHeight = h / 10;
             int caretWidth = caretHeight * 2;
 
-            path.moveTo(0, caretHeight);
-            path.lineTo(width / 2 - caretWidth / 2, caretHeight);
-            path.lineTo(width / 2, 0);
-            path.lineTo(width / 2 + caretWidth / 2, caretHeight);
-            path.lineTo(width, caretHeight);
+            path_stroke.moveTo(0, caretHeight);
+            path_stroke.lineTo(width / 2 - caretWidth / 2, caretHeight);
+            path_stroke.lineTo(width / 2, 0);
+            path_stroke.lineTo(width / 2 + caretWidth / 2, caretHeight);
+            path_stroke.lineTo(width, caretHeight);
+
+
+            path_background.moveTo(0, caretHeight);
+            path_background.lineTo(width / 2 - caretWidth / 2, caretHeight);//   ____
+            path_background.lineTo(width / 2, 0);//   ____/
+            path_background.lineTo(width / 2 + caretWidth / 2, caretHeight);  //   ____/\
+            path_background.lineTo(width, caretHeight);//   ____/\____
+            path_background.lineTo(width, height);
+            path_background.lineTo(0, height);
+            path_background.lineTo(0, 0);
+
 
             invalidate();
         }
     }
 
-
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.drawRect(0, caretHeight, width, height, backgroundPaint);
-        canvas.drawPath(path, paint);
+
+        canvas.drawPath(path_background, backgroundPaint);
+        if (withStroke) {
+            canvas.drawPath(path_stroke, strokePaint);
+        }
+
+    }
+
+    public void setBgColor(@ColorInt int backgroundColor) {
+        backgroundPaint.setColor(backgroundColor);
+    }
+
+    public void setStrokeColor(@ColorInt int strokeColor) {
+        strokePaint.setColor(strokeColor);
+    }
+
+    public void setWithStroke(boolean withStroke) {
+        this.withStroke = withStroke;
     }
 }
