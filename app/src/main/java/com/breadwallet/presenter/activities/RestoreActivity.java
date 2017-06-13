@@ -31,7 +31,6 @@ public class RestoreActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                SpringAnimator.springView(v);
                 Intent intent = new Intent(RestoreActivity.this, InputWordsActivity.class);
                 intent.putExtra("restore", true);
                 startActivity(intent);

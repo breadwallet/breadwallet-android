@@ -43,7 +43,6 @@ public class DisabledActivity extends BRActivity {
         resetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            SpringAnimator.springView(v);
                 Intent intent = new Intent(DisabledActivity.this, InputWordsActivity.class);
                 intent.putExtra("resetPin", true);
                 startActivity(intent);

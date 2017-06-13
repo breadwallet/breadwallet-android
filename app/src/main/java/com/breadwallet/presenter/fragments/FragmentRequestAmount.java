@@ -171,12 +171,10 @@ public class FragmentRequestAmount extends Fragment {
             public void onItemClick(View view, int position, float x, float y) {
                 Log.e(TAG, "onItemClick: " + position);
 //                BRAnimator.showTransactionPager(BreadActivity.this, adapter.getItems(), position);
-                SpringAnimator.springView(view);
                 selectedIso = curAdapter.getItemAtPos(position);
 
                 Log.e(TAG, "onItemSelected: " + selectedIso);
 //                isoText.setText(BRCurrency.getSymbolByIso(getActivity(), selectedIso));
-                SpringAnimator.springView(isoText);
                 updateText();
                 boolean generated = generateQrImage(receiveAddress, amountEdit.getText().toString(), selectedIso);
                 if (!generated)
@@ -212,7 +210,6 @@ public class FragmentRequestAmount extends Fragment {
             public void onClick(View v) {
                 removeCurrencySelector();
                 if (!BRAnimator.isClickAllowed()) return;
-                SpringAnimator.springView(v);
                 showKeyboard(false);
                 String iso = selectedIso;
                 String strAmount = amountEdit.getText().toString();
@@ -228,7 +225,6 @@ public class FragmentRequestAmount extends Fragment {
             public void onClick(View v) {
                 removeCurrencySelector();
                 if (!BRAnimator.isClickAllowed()) return;
-                SpringAnimator.springView(v);
                 showKeyboard(false);
                 String iso = selectedIso;
                 String strAmount = amountEdit.getText().toString();
@@ -243,7 +239,6 @@ public class FragmentRequestAmount extends Fragment {
             public void onClick(View v) {
                 removeCurrencySelector();
                 if (!BRAnimator.isClickAllowed()) return;
-                SpringAnimator.springView(v);
                 toggleShareButtonsVisibility();
                 showKeyboard(false);
             }
@@ -271,7 +266,6 @@ public class FragmentRequestAmount extends Fragment {
         isoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SpringAnimator.springView(v);
                 try {
                     signalLayout.addView(currencyRecycler, 3);
                 } catch (IllegalStateException ex) {

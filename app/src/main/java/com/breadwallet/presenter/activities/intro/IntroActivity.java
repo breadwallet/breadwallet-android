@@ -118,7 +118,6 @@ public class IntroActivity extends BRActivity implements Serializable {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                SpringAnimator.springView(v);
                 Intent intent = new Intent(IntroActivity.this, SetPitActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
@@ -130,7 +129,6 @@ public class IntroActivity extends BRActivity implements Serializable {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                SpringAnimator.springView(v);
                 Intent intent = new Intent(IntroActivity.this, RecoverActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);

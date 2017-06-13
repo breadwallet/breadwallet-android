@@ -132,7 +132,6 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
         cancelButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                SpringAnimator.springView(v);
                 breadActivity.barFlipper.setDisplayedChild(0);
                 clearSwitches();
                 onShow(false);
@@ -160,7 +159,6 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
         sentFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SpringAnimator.springView(v);
                 filterSwitches[0] = !filterSwitches[0];
                 filterSwitches[1] = false;
                 updateFilterButtonsUI(filterSwitches);
@@ -171,7 +169,6 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
         receivedFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SpringAnimator.springView(v);
                 filterSwitches[1] = !filterSwitches[1];
                 filterSwitches[0] = false;
                 updateFilterButtonsUI(filterSwitches);
@@ -181,7 +178,6 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
         pendingFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SpringAnimator.springView(v);
                 filterSwitches[2] = !filterSwitches[2];
                 filterSwitches[3] = false;
                 updateFilterButtonsUI(filterSwitches);
@@ -191,7 +187,6 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
         completedFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SpringAnimator.springView(v);
                 filterSwitches[3] = !filterSwitches[3];
                 filterSwitches[2] = false;
                 updateFilterButtonsUI(filterSwitches);

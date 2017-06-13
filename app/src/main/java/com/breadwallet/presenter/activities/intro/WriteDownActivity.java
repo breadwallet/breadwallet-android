@@ -38,7 +38,6 @@ public class WriteDownActivity extends BRActivity {
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SpringAnimator.springView(v);
                 close();
             }
         });

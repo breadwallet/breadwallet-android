@@ -217,7 +217,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
             public void onClick(View v) {
 
                 if (!BRAnimator.isClickAllowed()) return;
-                SpringAnimator.springView(v);
                 BRAnimator.showSendFragment(BreadActivity.this, null);
 
             }
@@ -227,7 +226,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                SpringAnimator.springView(v);
                 BRAnimator.showReceiveFragment(BreadActivity.this, true);
             }
         });
@@ -238,7 +236,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                 if (!BRAnimator.isClickAllowed()) return;
                 //start the server for Buy Bitcoin
 
-                SpringAnimator.springView(v);
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(0, 0, 0, R.animator.plain_300);
                 transaction.add(android.R.id.content, new FragmentMenu(), FragmentMenu.class.getName());
@@ -250,7 +247,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                SpringAnimator.springView(v);
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(0, 0, 0, R.animator.plain_300);
                 FragmentManage fragmentManage = new FragmentManage();
@@ -296,7 +292,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         searchIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SpringAnimator.springView(v);
                 barFlipper.setDisplayedChild(1); //search bar
                 searchBar.onShow(true);
 
