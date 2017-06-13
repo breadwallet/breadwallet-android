@@ -85,7 +85,6 @@ public class PaperKeyActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                SpringAnimator.springView(v);
                 updateWordView(true);
             }
         });
@@ -101,7 +100,6 @@ public class PaperKeyActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                if (wordViewPager.getCurrentItem() > 0) SpringAnimator.springView(v);
                 updateWordView(false);
 
             }

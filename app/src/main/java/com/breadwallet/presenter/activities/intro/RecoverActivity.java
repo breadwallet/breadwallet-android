@@ -33,7 +33,6 @@ public class RecoverActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                SpringAnimator.springView(v);
                 Intent intent = new Intent(RecoverActivity.this, InputWordsActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);

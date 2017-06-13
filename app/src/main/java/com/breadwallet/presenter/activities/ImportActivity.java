@@ -44,7 +44,6 @@ public class ImportActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                SpringAnimator.springView(v);
 
                 BRAnimator.openCamera(ImportActivity.this);
             }

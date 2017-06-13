@@ -135,7 +135,6 @@ public class InputWordsActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                SpringAnimator.springView(v);
 //                if (alertDialog.isShowing()) {
 //                    alertDialog.dismiss();
 //                }
