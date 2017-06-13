@@ -57,7 +57,7 @@
         android:layout_height="@dimen/big_button_height"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
-        android:background="@drawable/button_primary_blue"
+        android:background="@drawable/b_blue"
         android:elevation="8dp"
         android:padding="10dp"
         android:text="Next"
@@ -65,7 +65,8 @@
         android:textSize="18sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        tools:layout_editor_absoluteY="469dp"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="8dp"/>
 
     <GridLayout
         android:layout_width="0dp"
