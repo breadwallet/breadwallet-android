@@ -111,16 +111,25 @@
             android:textSize="17sp"
             />
 
-        <com.breadwallet.presenter.customviews.BRText
-            android:id="@+id/copied_view"
+        <com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_gravity="center"
+            android:layout_height="60dp"
+            android:id="@+id/copied_layout"
             android:layout_marginBottom="8dp"
-            android:background="@color/dark_blue"
-            android:gravity="center"
-            android:text="@string/Receive.copied"
-            android:textColor="@color/white"/>
+            app:backgroundColor="@color/dark_blue"
+            app:withStroke="false">
+
+            <com.breadwallet.presenter.customviews.BRText
+                android:id="@+id/copied_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:text="@string/Receive.copied"
+                android:textColor="@color/white"/>
+        </com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret>
 
         <com.breadwallet.presenter.customviews.BRButton
             android:id="@+id/share_button"
