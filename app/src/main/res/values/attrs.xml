@@ -3,4 +3,10 @@
     <declare-styleable name="BRText">
         <attr name="customFont" format="string"/>
     </declare-styleable>
+
+    <declare-styleable name="BRLinearLayoutWithCaret">
+        <attr name="strokeColor" format="color"/>
+        <attr name="backgroundColor" format="color"/>
+        <attr name="withStroke" format="boolean"/>
+    </declare-styleable>
 </resources>
