@@ -9,4 +9,7 @@
         <attr name="backgroundColor" format="color"/>
         <attr name="withStroke" format="boolean"/>
     </declare-styleable>
+    <declare-styleable name="BRButton">
+        <attr name="isBreadButton" format="boolean"/>
+    </declare-styleable>
 </resources>
