@@ -137,7 +137,6 @@ public class BRLinearLayoutWithCaret extends LinearLayout {
                     @ColorInt int strokeColor = a.getColor(attr, 0);
                     if (strokeColor != 0) strokePaint.setColor(strokeColor);
                     break;
-
                 case R.styleable.BRLinearLayoutWithCaret_backgroundColor:
                     @ColorInt int bgColor = a.getColor(attr, 0);
                     if (bgColor != 0) backgroundPaint.setColor(bgColor);
@@ -177,7 +176,6 @@ public class BRLinearLayoutWithCaret extends LinearLayout {
             path_background.lineTo(width, height);
             path_background.lineTo(0, height);
             path_background.lineTo(0, 0);
-
 
             invalidate();
         }

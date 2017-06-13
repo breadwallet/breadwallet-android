@@ -1,23 +1,27 @@
 package com.breadwallet.presenter.fragments;
 
 import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ArgbEvaluator;
 import android.animation.LayoutTransition;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.animation.Animation;
 import android.view.animation.OvershootInterpolator;
+import android.view.animation.Transformation;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -71,14 +75,14 @@ public class FragmentReceive extends Fragment {
     public LinearLayout signalLayout;
 
     private String receiveAddress;
-//    private View shareSeparator;
+    //    private View shareSeparator;
     private View separator;
     private Button shareButton;
     private Button shareEmail;
     private Button shareTextMessage;
     private Button requestButton;
     private LinearLayout shareButtonsLayout;
-    private boolean shareButtonsShown = true;
+    private boolean shareButtonsShown = false;
     private boolean isReceive;
     private ImageButton close;
 
@@ -101,8 +105,8 @@ public class FragmentReceive extends Fragment {
 //        shareSeparator = rootView.findViewById(R.id.share_separator);
         separator = rootView.findViewById(R.id.separator);
         close = (ImageButton) rootView.findViewById(R.id.close_button);
-        LayoutTransition layoutTransition = signalLayout.getLayoutTransition();
-        layoutTransition.enableTransitionType(LayoutTransition.CHANGING);
+//        LayoutTransition layoutTransition = signalLayout.getLayoutTransition();
+//        layoutTransition.enableTransitionType(LayoutTransition.CHANGING);
         setListeners();
         signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
         BRWalletManager.getInstance().addBalanceChangedListener(new BRWalletManager.OnBalanceChanged() {
@@ -111,6 +115,31 @@ public class FragmentReceive extends Fragment {
                 updateQr();
             }
         });
+
+//        Animator scaleDown = ObjectAnimator.ofPropertyValuesHolder((Object) null, PropertyValuesHolder.ofFloat("scaleX", 1, 1), PropertyValuesHolder.ofFloat("scaleY", 1, 0));
+//        scaleDown.setStartDelay(0);
+//        scaleDown.setupEndValues();
+//        scaleDown.setInterpolator(new OvershootInterpolator());
+//
+//        Animator scaleUp = ObjectAnimator.ofPropertyValuesHolder((Object) null, PropertyValuesHolder.ofFloat("scaleX", 1, 1), PropertyValuesHolder.ofFloat("scaleY", 0, 1));
+//        scaleUp.setStartDelay(0);
+//        scaleUp.setInterpolator(new OvershootInterpolator());
+
+        signalLayout.removeView(shareButtonsLayout);
+
+        LayoutTransition itemLayoutTransition = new LayoutTransition();
+        itemLayoutTransition.setStartDelay(LayoutTransition.APPEARING, 0);
+        itemLayoutTransition.setStartDelay(LayoutTransition.DISAPPEARING, 0);
+        itemLayoutTransition.setStartDelay(LayoutTransition.CHANGE_APPEARING, 0);
+        itemLayoutTransition.setStartDelay(LayoutTransition.CHANGE_DISAPPEARING, 0);
+        itemLayoutTransition.setStartDelay(LayoutTransition.CHANGING, 0);
+        itemLayoutTransition.setDuration(100);
+        itemLayoutTransition.setInterpolator(LayoutTransition.CHANGING, new OvershootInterpolator(2f));
+        itemLayoutTransition.setAnimator(LayoutTransition.APPEARING, null);
+        itemLayoutTransition.setAnimator(LayoutTransition.DISAPPEARING, null);
+        itemLayoutTransition.enableTransitionType(LayoutTransition.CHANGING);
+
+        signalLayout.setLayoutTransition(itemLayoutTransition);
 
         return rootView;
     }
@@ -141,7 +170,8 @@ public class FragmentReceive extends Fragment {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 SpringAnimator.springView(v);
-                toggleShareButtonsVisibility();
+                shareButtonsShown = !shareButtonsShown;
+                showShareButtons(shareButtonsShown);
             }
         });
         mAddress.setOnClickListener(new View.OnClickListener() {
@@ -182,23 +212,13 @@ public class FragmentReceive extends Fragment {
         });
     }
 
-    private void toggleShareButtonsVisibility() {
-
-        if (shareButtonsShown) {
-//            shareButton.setBackground(getResources().getDrawable(R.drawable.button_secondary_gray_stroke));
-//            shareButton.setCompoundDrawables(getResources().getDrawable(R.drawable.ic_share_vertical_gray), null, null, null);
+    private void showShareButtons(boolean b) {
+        if (!b) {
             signalLayout.removeView(shareButtonsLayout);
-//            signalLayout.removeView(shareSeparator);
-            shareButtonsShown = false;
         } else {
-//            shareButton.setBackground(getResources().getDrawable(R.drawable.button_secondary_blue_stroke));
-//            shareButton.setCompoundDrawables(getResources().getDrawable(R.drawable.ic_share_vertical_blue), null, null, null);
-//            signalLayout.addView(shareSeparator, isReceive ? signalLayout.getChildCount() - 2 : signalLayout.getChildCount());
             signalLayout.addView(shareButtonsLayout, isReceive ? signalLayout.getChildCount() - 2 : signalLayout.getChildCount());
 
-            shareButtonsShown = true;
         }
-
     }
 
     @Override
@@ -212,7 +232,7 @@ public class FragmentReceive extends Fragment {
                 observer.removeGlobalOnLayoutListener(this);
                 animateBackgroundDim(backgroundLayout, false);
                 animateSignalSlide(signalLayout, false, null);
-                toggleShareButtonsVisibility();
+//                showShareButtons(false);
             }
         });
 
@@ -233,7 +253,7 @@ public class FragmentReceive extends Fragment {
 
     }
 
-    private void updateQr(){
+    private void updateQr() {
         boolean success = BRWalletManager.refreshAddress(getActivity());
         if (!success) throw new RuntimeException("failed to retrieve address");
         getActivity().runOnUiThread(new Runnable() {
@@ -253,7 +273,7 @@ public class FragmentReceive extends Fragment {
     public void onStop() {
         super.onStop();
         animateBackgroundDim(backgroundLayout, true);
-        animateSignalSlide( signalLayout, true, new BRAnimator.OnSlideAnimationEnd() {
+        animateSignalSlide(signalLayout, true, new BRAnimator.OnSlideAnimationEnd() {
             @Override
             public void onAnimationEnd() {
                 if (getActivity() != null)
