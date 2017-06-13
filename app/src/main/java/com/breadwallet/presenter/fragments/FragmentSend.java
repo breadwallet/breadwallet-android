@@ -110,7 +110,7 @@ public class FragmentSend extends Fragment {
         keyboard.setBRKeyboardColor(R.color.white);
         isoText = (TextView) rootView.findViewById(R.id.iso_text);
         addressEdit = (EditText) rootView.findViewById(R.id.address_edit);
-        scan = (Button) rootView.findViewById(R.id.share_text);
+        scan = (Button) rootView.findViewById(R.id.scan);
         paste = (Button) rootView.findViewById(R.id.paste_button);
         send = (Button) rootView.findViewById(R.id.send_button);
         commentEdit = (EditText) rootView.findViewById(R.id.comment_edit);
@@ -139,7 +139,6 @@ public class FragmentSend extends Fragment {
             public void onClick(View v) {
                 removeCurrencySelector();
                 if (!BRAnimator.isClickAllowed()) return;
-                SpringAnimator.springView(v);
                 String bitcoinUrl = BRClipboardManager.getClipboard(getActivity());
                 if (Utils.isNullOrEmpty(bitcoinUrl)) {
                     showClipboardError();
@@ -227,7 +226,6 @@ public class FragmentSend extends Fragment {
         isoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SpringAnimator.springView(v);
                 try {
                     signalLayout.addView(currencyRecycler);
                 } catch (IllegalStateException ex) {
@@ -241,7 +239,6 @@ public class FragmentSend extends Fragment {
             public void onClick(View v) {
                 removeCurrencySelector();
                 if (!BRAnimator.isClickAllowed()) return;
-                SpringAnimator.springView(v);
                 BRAnimator.openCamera(getActivity());
 
             }
@@ -255,7 +252,6 @@ public class FragmentSend extends Fragment {
                     return;
                 }
 
-                SpringAnimator.springView(v);
                 boolean allFilled = true;
                 String address = addressEdit.getText().toString();
                 String amountStr = amountEdit.getText().toString();
@@ -298,12 +294,10 @@ public class FragmentSend extends Fragment {
             public void onItemClick(View view, int position, float x, float y) {
                 Log.e(TAG, "onItemClick: " + position);
 //                BRAnimator.showTransactionPager(BreadActivity.this, adapter.getItems(), position);
-                SpringAnimator.springView(view);
                 selectedIso = curAdapter.getItemAtPos(position);
 
                 Log.e(TAG, "onItemSelected: " + selectedIso);
 //                isoText.setText(BRCurrency.getSymbolByIso(getActivity(), selectedIso));
-                SpringAnimator.springView(isoText);
                 updateText();
                 removeCurrencySelector();
 
