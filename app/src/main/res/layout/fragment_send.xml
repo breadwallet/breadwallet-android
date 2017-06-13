@@ -57,7 +57,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/share_text"/>
+            app:layout_constraintTop_toBottomOf="@+id/scan"/>
 
         <View
             android:id="@+id/view3"
@@ -122,11 +122,11 @@
             android:ems="10"
             android:hint="address"
             android:inputType="textPersonName"
-            app:layout_constraintBottom_toBottomOf="@+id/share_text"
+            app:layout_constraintBottom_toBottomOf="@+id/scan"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/paste_button"
-            app:layout_constraintTop_toTopOf="@+id/share_text"
+            app:layout_constraintTop_toTopOf="@+id/scan"
             app:layout_constraintVertical_bias="0.625"/>
 
         <com.breadwallet.presenter.customviews.BRText
@@ -146,26 +146,29 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:layout_marginTop="0dp"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp"
             android:layout_weight="1.0"
-            android:background="@drawable/b_gray_stroke"
-            android:elevation="8dp"
+            app:isBreadButton="true"
+            android:background="@drawable/selector_gray_stroke"
             android:minHeight="40dp"
             android:text="@string/Send.pasteLabel"
             android:textColor="@color/light_gray"
             android:textSize="16sp"
-            app:layout_constraintRight_toLeftOf="@+id/share_text"
-            app:layout_constraintTop_toTopOf="@+id/share_text"/>
+            app:layout_constraintRight_toLeftOf="@+id/scan"
+            app:layout_constraintTop_toTopOf="@+id/scan"/>
 
         <com.breadwallet.presenter.customviews.BRButton
-            android:id="@+id/share_text"
+            android:id="@+id/scan"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="24dp"
-            android:layout_marginRight="24dp"
+            android:layout_marginRight="24dp"android:paddingBottom="8dp"
+            android:paddingTop="8dp"
+            app:isBreadButton="true"
             android:layout_marginTop="16dp"
             android:layout_weight="1.0"
-            android:background="@drawable/b_gray_stroke"
-            android:elevation="8dp"
+            android:background="@drawable/selector_gray_stroke"
             android:minHeight="40dp"
             android:text="@string/Send.scanLabel"
             android:textColor="@color/light_gray"
@@ -225,12 +228,12 @@
             android:layout_marginEnd="24dp"
             android:layout_marginStart="24dp"
             android:layout_marginTop="16dp"
-            android:background="@drawable/b_blue"
-            android:elevation="8dp"
+            android:background="@drawable/selector_blue"
             android:padding="10dp"
             android:text="@string/Send.sendLabel"
             android:textColor="@color/white"
             android:textSize="20sp"
+            app:isBreadButton="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -279,14 +282,14 @@
             android:layout_height="50dp"
             android:layout_marginEnd="24dp"
             android:layout_marginTop="0dp"
-            android:background="@drawable/b_gray_stroke"
+            android:background="@drawable/selector_gray_stroke"
             android:drawableEnd="@drawable/caret_right"
-            android:elevation="8dp"
             android:minHeight="40dp"
             android:paddingRight="8dp"
             android:text="iso"
             android:textColor="@color/light_gray"
             android:textSize="18sp"
+            app:isBreadButton="true"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="@+id/amount_edit"/>
 
