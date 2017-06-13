@@ -136,10 +136,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            app:isBreadButton="true"
             android:layout_marginEnd="72dp"
             android:layout_marginStart="72dp"
-            android:background="@drawable/button_secondary_gray_stroke"
+            android:background="@drawable/selector_gray_stroke"
             android:drawableStart="@drawable/ic_share_vertical_gray"
             android:paddingBottom="12dp"
             android:paddingLeft="48dp"
@@ -148,6 +147,7 @@
             android:text="@string/Receive.share"
             android:textColor="@color/light_gray"
             android:textSize="18sp"
+            app:isBreadButton="true"
             />
 
         <!--<View-->
@@ -177,12 +177,13 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="32dp"
                 android:layout_weight="1.0"
-                android:background="@drawable/button_secondary_gray_stroke"
+                android:background="@drawable/selector_gray_stroke"
                 android:paddingBottom="12dp"
                 android:paddingTop="12dp"
                 android:text="Email"
                 android:textColor="@color/light_gray"
                 android:textSize="14sp"
+                app:isBreadButton="true"
                 />
 
             <com.breadwallet.presenter.customviews.BRButton
@@ -194,12 +195,13 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="32dp"
                 android:layout_weight="1.0"
-                android:background="@drawable/button_secondary_gray_stroke"
+                android:background="@drawable/selector_gray_stroke"
                 android:paddingBottom="12dp"
                 android:paddingTop="12dp"
                 android:text="Text Message"
                 android:textColor="@color/light_gray"
                 android:textSize="14sp"
+                app:isBreadButton="true"
                 />
 
         </com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret>
@@ -220,12 +222,12 @@
             android:layout_marginRight="8dp"
             android:layout_marginStart="24dp"
             android:layout_marginTop="16dp"
-            android:background="@drawable/button_secondary_gray_stroke"
-            android:elevation="8dp"
+            android:background="@drawable/selector_gray_stroke"
             android:padding="10dp"
             android:text="Request an Amount"
             android:textColor="@color/almost_black"
-            android:textSize="18sp"/>
+            android:textSize="18sp"
+            app:isBreadButton="true"/>
 
 
     </LinearLayout>

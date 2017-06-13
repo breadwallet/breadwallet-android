@@ -1,34 +1,24 @@
 package com.breadwallet.presenter.fragments;
 
-import android.animation.Animator;
 import android.animation.LayoutTransition;
-import android.animation.ObjectAnimator;
-import android.animation.PropertyValuesHolder;
-import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.animation.Animation;
 import android.view.animation.OvershootInterpolator;
-import android.view.animation.Transformation;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret;
-import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.animation.SpringAnimator;
@@ -38,7 +28,6 @@ import com.breadwallet.tools.qrcode.QRUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 
-import static com.breadwallet.R.id.view;
 import static com.breadwallet.tools.animation.BRAnimator.animateBackgroundDim;
 import static com.breadwallet.tools.animation.BRAnimator.animateSignalSlide;
 
@@ -157,7 +146,6 @@ public class FragmentReceive extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                SpringAnimator.springView(v);
                 String bitcoinUri = Utils.createBitcoinUrl(receiveAddress, 0, null, null, null);
                 QRUtils.share("mailto:", getActivity(), bitcoinUri);
 
@@ -167,7 +155,6 @@ public class FragmentReceive extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                SpringAnimator.springView(v);
                 String bitcoinUri = Utils.createBitcoinUrl(receiveAddress, 0, null, null, null);
                 QRUtils.share("sms:", getActivity(), bitcoinUri);
             }
@@ -176,7 +163,6 @@ public class FragmentReceive extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-//                SpringAnimator.springView(v);
                 shareButtonsShown = !shareButtonsShown;
                 showShareButtons(shareButtonsShown);
             }
@@ -193,7 +179,6 @@ public class FragmentReceive extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                SpringAnimator.springView(v);
                 Activity app = getActivity();
                 app.onBackPressed();
                 BRAnimator.showRequestFragment(app, receiveAddress);
@@ -229,11 +214,11 @@ public class FragmentReceive extends Fragment {
     private void showShareButtons(boolean b) {
         if (!b) {
             signalLayout.removeView(shareButtonsLayout);
-            shareButton.setBackgroundResource(R.drawable.button_secondary_gray_stroke);
+            shareButton.setBackgroundResource(R.drawable.selector_gray_stroke);
             shareButton.setTextColor(getContext().getColor(R.color.light_gray));
         } else {
             signalLayout.addView(shareButtonsLayout, isReceive ? signalLayout.getChildCount() - 2 : signalLayout.getChildCount());
-            shareButton.setBackgroundResource(R.drawable.button_secondary_blue_stroke);
+            shareButton.setBackgroundResource(R.drawable.selector_blue_stroke);
             shareButton.setTextColor(getContext().getColor(R.color.dark_blue));
             showCopiedLayout(false);
         }
