@@ -5,6 +5,7 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:layout_gravity="bottom"
+              android:animateLayoutChanges="true"
               android:background="@color/black_trans"
               android:filterTouchesWhenObscured="true"
     >
@@ -14,7 +15,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:animateLayoutChanges="true"
         android:background="@drawable/receive_layout"
         android:clickable="true"
         android:orientation="vertical"
@@ -138,12 +138,6 @@
             android:textSize="18sp"
             />
 
-        <View
-            android:id="@+id/separator"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/separator_gray"/>
-
         <!--<View-->
         <!--android:id="@+id/share_separator"-->
         <!--android:layout_width="match_parent"-->
@@ -172,8 +166,6 @@
                 android:layout_marginTop="32dp"
                 android:layout_weight="1.0"
                 android:background="@drawable/button_secondary_gray_stroke"
-                android:elevation="8dp"
-                android:minHeight="40dp"
                 android:text="Email"
                 android:textColor="@color/light_gray"
                 android:textSize="14sp"
@@ -189,14 +181,18 @@
                 android:layout_marginTop="32dp"
                 android:layout_weight="1.0"
                 android:background="@drawable/button_secondary_gray_stroke"
-                android:elevation="8dp"
-                android:minHeight="40dp"
                 android:text="Text Message"
                 android:textColor="@color/light_gray"
                 android:textSize="14sp"
                 />
 
         </com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret>
+
+        <View
+            android:id="@+id/separator"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/separator_gray"/>
 
         <com.breadwallet.presenter.customviews.BRButton
             android:id="@+id/request_button"
