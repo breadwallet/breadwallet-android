@@ -229,8 +229,12 @@ public class FragmentReceive extends Fragment {
     private void showShareButtons(boolean b) {
         if (!b) {
             signalLayout.removeView(shareButtonsLayout);
+            shareButton.setBackgroundResource(R.drawable.button_secondary_gray_stroke);
+            shareButton.setTextColor(getContext().getColor(R.color.light_gray));
         } else {
             signalLayout.addView(shareButtonsLayout, isReceive ? signalLayout.getChildCount() - 2 : signalLayout.getChildCount());
+            shareButton.setBackgroundResource(R.drawable.button_secondary_blue_stroke);
+            shareButton.setTextColor(getContext().getColor(R.color.dark_blue));
             showCopiedLayout(false);
         }
     }
