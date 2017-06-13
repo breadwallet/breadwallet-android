@@ -80,55 +80,56 @@ public class BRButton extends Button {
         TypefacesManager.setCustomFont(ctx, this, Utils.isNullOrEmpty(customFont) ? "CircularPro-Medium.otf" : customFont);
         float px16 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics());
         //check attributes you need, for example all paddings
-        int[] attributes = new int[]{android.R.attr.paddingLeft, android.R.attr.paddingTop, android.R.attr.paddingRight, android.R.attr.paddingBottom};
+        int[] attributes = new int[]{android.R.attr.paddingLeft, android.R.attr.paddingTop, android.R.attr.paddingRight, android.R.attr.paddingBottom, R.attr.isBreadButton};
         //then obtain typed array
         TypedArray arr = ctx.obtainStyledAttributes(attrs, attributes);
         //You can check if attribute exists (in this examle checking paddingRight)
         int paddingLeft = arr.hasValue(0) ? arr.getDimensionPixelOffset(0, -1) : 0;
         int paddingTop = arr.hasValue(1) ? arr.getDimensionPixelOffset(1, -1) : 0;
         int paddingRight = arr.hasValue(2) ? arr.getDimensionPixelOffset(2, -1) : 0;
-        int paddingBottom = arr.hasValue(3) ? arr.getDimensionPixelOffset(3, -1) : (int) px16;
+        int paddingBottom = arr.hasValue(3) ? arr.getDimensionPixelOffset(3, -1) + (int) px16 : (int) px16;
+        isBreadButton = arr.getBoolean(4, false);
         setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
-        setElevation(0);
         a.recycle();
         arr.recycle();
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (isBreadButton) {
-
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                if (getParent() != null) {
-                    getParent().requestDisallowInterceptTouchEvent(true);
-                }
-
-                ScaleAnimation scaleAnim = new ScaleAnimation(
-                        1f, 0.8f,
-                        1f, 0.8f,
-                        Animation.RELATIVE_TO_SELF, 1,
-                        Animation.RELATIVE_TO_SELF, 1);
-                scaleAnim.setDuration(ANIMATION_DURATION);
-                scaleAnim.setRepeatCount(0);
-                scaleAnim.setInterpolator(new AccelerateDecelerateInterpolator());
-                scaleAnim.setFillAfter(true);
-                scaleAnim.setFillBefore(true);
-                scaleAnim.setFillEnabled(true);
-
-                startAnimation(scaleAnim);
-//        else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-//            if (clicked_on_image) {
-//                //do stuff, drag the image or whatever
+//        if (isBreadButton) {
+//            Log.e(TAG, "onTouchEvent: touched!" );
+//
+//            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+//                if (getParent() != null) {
+//                    getParent().requestDisallowInterceptTouchEvent(true);
+//                }
+//
+//                ScaleAnimation scaleAnim = new ScaleAnimation(
+//                        1f, 0.8f,
+//                        1f, 0.8f,
+//                        Animation.RELATIVE_TO_SELF, 1,
+//                        Animation.RELATIVE_TO_SELF, 1);
+//                scaleAnim.setDuration(ANIMATION_DURATION);
+//                scaleAnim.setRepeatCount(0);
+//                scaleAnim.setInterpolator(new AccelerateDecelerateInterpolator());
+//                scaleAnim.setFillAfter(true);
+//                scaleAnim.setFillBefore(true);
+//                scaleAnim.setFillEnabled(true);
+//
+//                startAnimation(scaleAnim);
+////        else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+////            if (clicked_on_image) {
+////                //do stuff, drag the image or whatever
+////            }
+////        }
+//                return super.onTouchEvent(event);
+//            } else if (event.getAction() == MotionEvent.ACTION_UP) {
+////            clicked_on_image = false;
 //            }
+//            return true;
+//        } else {
+        return super.onTouchEvent(event);
 //        }
-                return super.onTouchEvent(event);
-            } else if (event.getAction() == MotionEvent.ACTION_UP) {
-//            clicked_on_image = false;
-            }
-            return true;
-        } else {
-            return super.onTouchEvent(event);
-        }
 
     }
 

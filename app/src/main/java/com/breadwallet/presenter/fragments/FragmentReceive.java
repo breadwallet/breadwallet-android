@@ -176,7 +176,7 @@ public class FragmentReceive extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                SpringAnimator.springView(v);
+//                SpringAnimator.springView(v);
                 shareButtonsShown = !shareButtonsShown;
                 showShareButtons(shareButtonsShown);
             }
