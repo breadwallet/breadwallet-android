@@ -10,6 +10,7 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="pin_par_text_size">32sp</dimen>
-    <dimen name="big_button_height">70sp</dimen>
+    <dimen name="big_button_height">80dp</dimen>
+    <dimen name="bread_margin">16dp</dimen>
 
 </resources>

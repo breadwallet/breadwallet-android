@@ -8,6 +8,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.util.SparseArray;
 import android.util.TypedValue;
 import android.view.View;
@@ -84,7 +85,6 @@ public class PaperKeyActivity extends BRActivity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
                 updateWordView(true);
             }
         });
@@ -99,7 +99,6 @@ public class PaperKeyActivity extends BRActivity {
         previousButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
                 updateWordView(false);
 
             }
