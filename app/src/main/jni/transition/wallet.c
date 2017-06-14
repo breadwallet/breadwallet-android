@@ -322,7 +322,8 @@ JNIEXPORT jstring JNICALL Java_com_breadwallet_wallet_BRWalletManager_getReceive
     if (!_wallet) return NULL;
 
     BRAddress receiveAddress = BRWalletReceiveAddress(_wallet);
-
+    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "receiveAddress: %s",
+                        receiveAddress.s);
     return (*env)->NewStringUTF(env, receiveAddress.s);
 }
 

@@ -226,7 +226,10 @@ public class BRWalletManager {
             return false;
         }
         String address = getReceiveAddress();
-        if (Utils.isNullOrEmpty(address)) return false;
+        if (Utils.isNullOrEmpty(address)) {
+            Log.e(TAG, "refreshAddress: WARNING, retrieved address:" + address);
+            return false;
+        }
         SharedPreferencesManager.putReceiveAddress(ctx, address);
         return true;
 

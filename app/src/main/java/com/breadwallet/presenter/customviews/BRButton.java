@@ -127,10 +127,9 @@ public class BRButton extends Button {
                 startAnimation(scaleAnim);
 
             }
-            return super.onTouchEvent(event);
-        } else {
-            return super.onTouchEvent(event);
         }
+
+        return super.onTouchEvent(event);
 
     }
 

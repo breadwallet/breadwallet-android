@@ -9,6 +9,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.customviews.BRButton;
+import com.breadwallet.tools.util.BRCurrency;
+import com.breadwallet.tools.util.BRExchange;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,17 +92,17 @@ public class CurAdapter extends RecyclerView.Adapter<CurAdapter.CustomViewHolder
     private void setTexts(CustomViewHolder convertView, int position) {
 
         String item = itemFeed.get(position);
-        convertView.iso.setText(item);
+        convertView.button.setText(String.format("%s(%s)", item, BRCurrency.getSymbolByIso(mContext, item)));
 
     }
 
 
     class CustomViewHolder extends RecyclerView.ViewHolder {
-        public TextView iso;
+        public BRButton button;
 
         public CustomViewHolder(View view) {
             super(view);
-            iso = (TextView) view.findViewById(R.id.iso);
+            button = (BRButton) view.findViewById(R.id.watch_list_layout);
         }
     }
 
