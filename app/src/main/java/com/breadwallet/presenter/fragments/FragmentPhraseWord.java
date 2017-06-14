@@ -14,6 +14,8 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 
+import org.w3c.dom.Text;
+
 
 /**
  * BreadWallet
@@ -49,12 +51,11 @@ public class FragmentPhraseWord extends Fragment {
 
 
         View rootView = inflater.inflate(R.layout.fragment_word_item, container, false);
-        Button b = (Button) rootView.findViewById(R.id.word_button);
+        TextView b = (TextView) rootView.findViewById(R.id.word_button);
         b.setText(getArguments().getString("text"));
 
         return rootView;
     }
-
 
     public static FragmentPhraseWord newInstance(String text) {
 
