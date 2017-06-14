@@ -17,7 +17,6 @@
         android:layout_marginEnd="24dp"
         android:layout_marginStart="24dp"
         android:background="@drawable/b_blue"
-        android:elevation="8dp"
         android:padding="10dp"
         android:text="Scan"
         android:textColor="@color/white"
