@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
                                              xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             xmlns:tools="http://schemas.android.com/tools"
                                              android:id="@+id/intro_layout"
-                                             android:background="@color/extra_light_blue_background"
                                              android:layout_width="match_parent"
                                              android:layout_height="match_parent"
+                                             android:background="@color/extra_light_blue_background"
                                              android:orientation="vertical">
 
     <View
         android:id="@+id/logo_view"
-        android:layout_width="96dp"
-        android:layout_height="96dp"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="128dp"
@@ -20,13 +21,15 @@
         app:layout_constraintTop_toTopOf="parent"/>
 
     <com.breadwallet.presenter.customviews.BRText
-        app:customFont="Celevenia.otf"
+        android:id="@+id/BRText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Bread"
         android:textColor="@color/black"
-        android:textSize="22sp"
+        android:textSize="30sp"
+        app:customFont="Celevenia.otf"
+        app:layout_constraintHorizontal_bias="0.487"
         app:layout_constraintLeft_toLeftOf="@+id/logo_view"
         app:layout_constraintRight_toRightOf="@+id/logo_view"
         app:layout_constraintTop_toBottomOf="@+id/logo_view"/>
@@ -37,9 +40,9 @@
         android:layout_height="@dimen/big_button_height"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="24dp"
+        app:isBreadButton="true"
         android:layout_marginStart="24dp"
-        android:background="@drawable/b_blue"
-        android:elevation="8dp"
+        android:background="@drawable/selector_blue"
         android:padding="10dp"
         android:text="Create New Wallet"
         android:textColor="@color/white"
@@ -55,14 +58,43 @@
         android:layout_marginBottom="32dp"
         android:layout_marginEnd="24dp"
         android:layout_marginStart="24dp"
-        android:background="@drawable/b_gray_stroke"
-        android:elevation="8dp"
+        android:background="@drawable/selector_gray_stroke"
         android:padding="10dp"
         android:text="Recover Wallet"
         android:textColor="@color/button_secondary_text"
         android:textSize="18sp"
+        app:isBreadButton="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
+
+    <com.breadwallet.presenter.customviews.BRText
+        android:id="@+id/textView7"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="24dp"
+        android:text="The most secure and safe way to use bitcoin."
+        android:textAlignment="center"
+        android:textColor="@color/almost_black"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:customFont="CircularPro-Bold.otf"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/BRText"/>
+
+    <ImageButton
+        android:id="@+id/imageButton"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/faq_question_black"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
 </android.support.constraint.ConstraintLayout>
