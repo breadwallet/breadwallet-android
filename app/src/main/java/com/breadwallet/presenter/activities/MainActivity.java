@@ -54,6 +54,7 @@ import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
+import com.breadwallet.wallet.BreadLibs;
 import com.google.firebase.crash.FirebaseCrash;
 import com.platform.APIClient;
 import com.platform.middlewares.plugins.CameraPlugin;
@@ -127,15 +128,16 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     public static boolean appInBackground = false;
 
-    static {
-        System.loadLibrary("core");
-    }
+//    static {
+//        System.loadLibrary("core");
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 //        if (savedInstanceState != null)
 //            savedInstanceState.clear();
         super.onCreate(null);
+        BreadLibs.initNativeLib(this);
 
         setContentView(R.layout.activity_main);
         app = this;

@@ -35,6 +35,7 @@ import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
+import com.breadwallet.wallet.BreadLibs;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -77,10 +78,11 @@ public class IntroActivity extends FragmentActivity {
 
     private int newRecoverNoneFlag = 0;//0 - in IntroNewRecoverFragment, 1 - in IntroNewWalletFragment, 2 - IntroRecoverWalletFragment
 
-    //loading the native library
-    static {
-        System.loadLibrary("core");
-    }
+//    //loading the native library
+//    static {
+//        System.loadLibrary("core");
+//
+//    }
 
     private boolean backNotAllowed = false;
     private IntroWelcomeFragment introWelcomeFragment;
@@ -100,6 +102,7 @@ public class IntroActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
+        BreadLibs.initNativeLib(this);
         app = this;
 
         if (!BuildConfig.DEBUG && KeyStoreManager.AUTH_DURATION_SEC != 300) {
