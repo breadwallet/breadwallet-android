@@ -137,7 +137,7 @@ public class MainActivity extends FragmentActivity implements Observer {
 //        if (savedInstanceState != null)
 //            savedInstanceState.clear();
         super.onCreate(null);
-        BreadLibs.initNativeLib(this);
+        BreadLibs.initNativeLib(this, "libCore.so");
 
         setContentView(R.layout.activity_main);
         app = this;

@@ -126,14 +126,13 @@ public class BreadLibs {
         bos.close();
     }
 
-    public static void initNativeLib(Context context) {
+    public static void initNativeLib(Context context, String libName) {
         try {
             // Try loading our native lib, see if it works...
             System.loadLibrary("core");
         } catch (UnsatisfiedLinkError er) {
             Log.e(TAG, "initNativeLib: ");
             ApplicationInfo appInfo = context.getApplicationInfo();
-            String libName = "libCore.so";
             String destPath = context.getFilesDir().toString();
             try {
                 String soName = destPath + File.separator + libName;
@@ -154,6 +153,11 @@ public class BreadLibs {
                 } catch (IOException e2) {
                     Log.e(TAG, "Exception in InstallInfo.init(): " + e);
                     e.printStackTrace();
+
+                    //try again
+                    if (libName.equalsIgnoreCase("libCore.so")) {
+                        initNativeLib(context, "libcore.so");
+                    }
                 }
             }
         }

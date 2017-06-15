@@ -102,7 +102,7 @@ public class IntroActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
-        BreadLibs.initNativeLib(this);
+        BreadLibs.initNativeLib(this, "libCore.so");
         app = this;
 
         if (!BuildConfig.DEBUG && KeyStoreManager.AUTH_DURATION_SEC != 300) {
