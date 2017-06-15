@@ -1,5 +1,6 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/background_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -20,29 +21,53 @@
         android:padding="0dp"
         >
 
-        <com.breadwallet.presenter.customviews.BRText
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:text="Request an Amount"
-            android:textColor="@color/almost_black"
-            android:textSize="18sp"
-            app:customFont="CircularPro-Bold.otf"
-            />
-
-        <View
-            android:id="@+id/view"
+        <RelativeLayout
+            android:id="@+id/title_layout"
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="16dp"
-            android:background="@color/separator_gray"
-            />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            tools:layout_editor_absoluteX="8dp"
+            tools:layout_editor_absoluteY="81dp">
+
+            <ImageButton
+                android:id="@+id/close_button"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_margin="@dimen/bread_margin"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_close_black_24dp"
+                tools:layout_editor_absoluteX="0dp"
+                tools:layout_editor_absoluteY="81dp"/>
+
+            <com.breadwallet.presenter.customviews.BRText
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginEnd="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:text="Request an Amount"
+                android:textColor="@color/almost_black"
+                android:textSize="18sp"
+                app:customFont="CircularPro-Bold.otf"
+                />
+
+            <ImageButton
+                android:id="@+id/imageButton3"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentEnd="true"
+                android:layout_margin="@dimen/bread_margin"
+                android:background="@drawable/faq_question_black"
+                tools:layout_editor_absoluteX="0dp"
+                tools:layout_editor_absoluteY="81dp"/>
+
+
+        </RelativeLayout>
+
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -126,7 +151,7 @@
         <com.breadwallet.presenter.customviews.BRKeyboard
             android:id="@+id/keyboard"
             android:layout_width="match_parent"
-            android:layout_height="240dp"
+            android:layout_height="400dp"
             android:background="@color/extra_light_gray"
             />
 
