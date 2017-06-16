@@ -1,8 +1,10 @@
 package com.breadwallet.presenter.customviews;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.ColorInt;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.RelativeSizeSpan;
@@ -59,29 +61,43 @@ public class BRKeyboard extends LinearLayout implements View.OnClickListener {
     private Button num9;
     private Button numDot;
     private ImageButton numDelete;
+    private boolean showAlphabet;
 
     public BRKeyboard(Context context) {
         super(context);
-        init();
+        init(null);
     }
 
     public BRKeyboard(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
+        init(attrs);
     }
 
     public BRKeyboard(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
+        init(attrs);
     }
 
     public BRKeyboard(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        init();
+        init(attrs);
     }
 
-    private void init() {
+    private void init(AttributeSet attrs) {
         View root = inflate(getContext(), R.layout.pin_pad, this);
+
+        TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.BRKeyboard);
+        final int N = a.getIndexCount();
+        for (int i = 0; i < N; ++i) {
+            int attr = a.getIndex(i);
+            switch (attr) {
+                case R.styleable.BRKeyboard_showAlphabet:
+                    showAlphabet = a.getBoolean(attr, false);
+                    break;
+            }
+        }
+        a.recycle();
+
         this.setWillNotDraw(false);
         num0 = (Button) root.findViewById(R.id.num0);
         num1 = (Button) root.findViewById(R.id.num1);
@@ -124,41 +140,45 @@ public class BRKeyboard extends LinearLayout implements View.OnClickListener {
 
     private CharSequence getText(int index) {
         SpannableString span1 = new SpannableString(String.valueOf(index));
-        SpannableString span2;
-        switch (index) {
-            case 2:
-                span2 = new SpannableString("ABC");
-                break;
-            case 3:
-                span2 = new SpannableString("DEF");
-                break;
-            case 4:
-                span2 = new SpannableString("GHI");
-                break;
-            case 5:
-                span2 = new SpannableString("JKL");
-                break;
-            case 6:
-                span2 = new SpannableString("MNO");
-                break;
-            case 7:
-                span2 = new SpannableString("PQRS");
-                break;
-            case 8:
-                span2 = new SpannableString("TUV");
-                break;
-            case 9:
-                span2 = new SpannableString("WXYZ");
-                break;
-            default:
-                span2 = new SpannableString(" ");
-                break;
+        if (showAlphabet) {
+
+            SpannableString span2;
+            switch (index) {
+                case 2:
+                    span2 = new SpannableString("ABC");
+                    break;
+                case 3:
+                    span2 = new SpannableString("DEF");
+                    break;
+                case 4:
+                    span2 = new SpannableString("GHI");
+                    break;
+                case 5:
+                    span2 = new SpannableString("JKL");
+                    break;
+                case 6:
+                    span2 = new SpannableString("MNO");
+                    break;
+                case 7:
+                    span2 = new SpannableString("PQRS");
+                    break;
+                case 8:
+                    span2 = new SpannableString("TUV");
+                    break;
+                case 9:
+                    span2 = new SpannableString("WXYZ");
+                    break;
+                default:
+                    span2 = new SpannableString(" ");
+                    break;
+            }
+
+            span1.setSpan(new RelativeSizeSpan(1f), 0, 1, 0);
+            span2.setSpan(new RelativeSizeSpan(0.35f), 0, span2.length(), 0);
+            return TextUtils.concat(span1, "\n", span2);
+        } else {
+            return span1;
         }
-
-
-        span1.setSpan(new RelativeSizeSpan(1f), 0, 1, 0);
-        span2.setSpan(new RelativeSizeSpan(0.35f), 0, span2.length(), 0);
-        return TextUtils.concat(span1, "\n", span2);
     }
 
     @Override

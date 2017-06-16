@@ -12,4 +12,7 @@
     <declare-styleable name="BRButton">
         <attr name="isBreadButton" format="boolean"/>
     </declare-styleable>
+    <declare-styleable name="BRKeyboard">
+        <attr name="showAlphabet" format="boolean"/>
+    </declare-styleable>
 </resources>
