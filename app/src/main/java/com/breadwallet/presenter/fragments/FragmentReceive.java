@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SlideDetector;
@@ -28,6 +29,7 @@ import com.breadwallet.tools.qrcode.QRUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 
+import static com.breadwallet.R.id.keyboard;
 import static com.breadwallet.tools.animation.BRAnimator.animateBackgroundDim;
 import static com.breadwallet.tools.animation.BRAnimator.animateSignalSlide;
 
@@ -79,6 +81,7 @@ public class FragmentReceive extends Fragment {
     private boolean isReceive;
     private ImageButton close;
     private Handler copyCloseHandler = new Handler();
+    private BRKeyboard keyboard;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -97,11 +100,11 @@ public class FragmentReceive extends Fragment {
         shareButtonsLayout = (BRLinearLayoutWithCaret) rootView.findViewById(R.id.share_buttons_layout);
         copiedLayout = (BRLinearLayoutWithCaret) rootView.findViewById(R.id.copied_layout);
         requestButton = (Button) rootView.findViewById(R.id.request_button);
-//        shareSeparator = rootView.findViewById(R.id.share_separator);
+        keyboard = (BRKeyboard) rootView.findViewById(R.id.keyboard);
+        keyboard.setBRButtonBackgroundResId(R.drawable.keyboard_white_button);
+        keyboard.setBRKeyboardColor(R.color.white);
         separator = rootView.findViewById(R.id.separator);
         close = (ImageButton) rootView.findViewById(R.id.close_button);
-//        LayoutTransition layoutTransition = signalLayout.getLayoutTransition();
-//        layoutTransition.enableTransitionType(LayoutTransition.CHANGING);
         setListeners();
         signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
         BRWalletManager.getInstance().addBalanceChangedListener(new BRWalletManager.OnBalanceChanged() {
@@ -110,15 +113,6 @@ public class FragmentReceive extends Fragment {
                 updateQr();
             }
         });
-
-//        Animator scaleDown = ObjectAnimator.ofPropertyValuesHolder((Object) null, PropertyValuesHolder.ofFloat("scaleX", 1, 1), PropertyValuesHolder.ofFloat("scaleY", 1, 0));
-//        scaleDown.setStartDelay(0);
-//        scaleDown.setupEndValues();
-//        scaleDown.setInterpolator(new OvershootInterpolator());
-//
-//        Animator scaleUp = ObjectAnimator.ofPropertyValuesHolder((Object) null, PropertyValuesHolder.ofFloat("scaleX", 1, 1), PropertyValuesHolder.ofFloat("scaleY", 0, 1));
-//        scaleUp.setStartDelay(0);
-//        scaleUp.setInterpolator(new OvershootInterpolator());
 
         signalLayout.removeView(shareButtonsLayout);
         signalLayout.removeView(copiedLayout);

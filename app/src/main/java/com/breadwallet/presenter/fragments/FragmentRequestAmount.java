@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -84,11 +85,9 @@ public class FragmentRequestAmount extends Fragment {
     public TextView mTitle;
     public TextView mAddress;
     public ImageView mQrImage;
-    public ScrollView backgroundLayout;
+    public LinearLayout backgroundLayout;
     public LinearLayout signalLayout;
     private String receiveAddress;
-    private View shareSeparator;
-    private View separator;
     private View keyboardSeparator;
     private Button shareButton;
     private Button shareEmail;
@@ -100,13 +99,22 @@ public class FragmentRequestAmount extends Fragment {
     private CurAdapter curAdapter;
     private Button isoButton;
     private RecyclerView currencyRecycler;
+    private LinearLayout keyboardLayout;
+    private RelativeLayout amountLayout;
+    private Button request;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_request, container, false);
-        backgroundLayout = (ScrollView) rootView.findViewById(R.id.background_layout);
+        View rootView = inflater.inflate(R.layout.fragment_receive, container, false);
+        backgroundLayout = (LinearLayout) rootView.findViewById(R.id.background_layout);
         signalLayout = (LinearLayout) rootView.findViewById(R.id.signal_layout);
+        request = (Button) rootView.findViewById(R.id.request_button);
+        request.setVisibility(View.INVISIBLE);
+        keyboardLayout = (LinearLayout) rootView.findViewById(R.id.keyboard_layout);
+        keyboardLayout.setVisibility(View.VISIBLE);
+        amountLayout = (RelativeLayout) rootView.findViewById(R.id.amount_layout);
+        amountLayout.setVisibility(View.VISIBLE);
         keyboard = (BRKeyboard) rootView.findViewById(R.id.keyboard);
         keyboard.setBRButtonBackgroundResId(R.drawable.keyboard_white_button);
         keyboard.setBRKeyboardColor(R.color.white);
@@ -122,8 +130,6 @@ public class FragmentRequestAmount extends Fragment {
         shareEmail = (Button) rootView.findViewById(R.id.share_email);
         shareTextMessage = (Button) rootView.findViewById(R.id.share_text);
         shareButtonsLayout = (LinearLayout) rootView.findViewById(R.id.share_buttons_layout);
-        shareSeparator = rootView.findViewById(R.id.share_separator);
-        separator = rootView.findViewById(R.id.separator);
         keyboardSeparator = rootView.findViewById(R.id.view2);
         LayoutTransition layoutTransition = signalLayout.getLayoutTransition();
         layoutTransition.enableTransitionType(LayoutTransition.CHANGING);
@@ -149,6 +155,20 @@ public class FragmentRequestAmount extends Fragment {
         keyboardPosition = signalLayout.indexOfChild(keyboard);
         updateText();
         signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
+
+        LayoutTransition itemLayoutTransition = new LayoutTransition();
+        itemLayoutTransition.setStartDelay(LayoutTransition.APPEARING, 0);
+        itemLayoutTransition.setStartDelay(LayoutTransition.DISAPPEARING, 0);
+        itemLayoutTransition.setStartDelay(LayoutTransition.CHANGE_APPEARING, 0);
+        itemLayoutTransition.setStartDelay(LayoutTransition.CHANGE_DISAPPEARING, 0);
+        itemLayoutTransition.setStartDelay(LayoutTransition.CHANGING, 0);
+        itemLayoutTransition.setDuration(100);
+        itemLayoutTransition.setInterpolator(LayoutTransition.CHANGING, new OvershootInterpolator(2f));
+        itemLayoutTransition.setAnimator(LayoutTransition.APPEARING, null);
+        itemLayoutTransition.setAnimator(LayoutTransition.DISAPPEARING, null);
+        itemLayoutTransition.enableTransitionType(LayoutTransition.CHANGING);
+
+        signalLayout.setLayoutTransition(itemLayoutTransition);
 
         return rootView;
     }
@@ -278,11 +298,9 @@ public class FragmentRequestAmount extends Fragment {
 
         if (shareButtonsShown) {
             signalLayout.removeView(shareButtonsLayout);
-            signalLayout.removeView(shareSeparator);
             shareButtonsShown = false;
         } else {
             signalLayout.addView(shareButtonsLayout, signalLayout.getChildCount());
-            signalLayout.addView(shareSeparator, signalLayout.getChildCount());
             shareButtonsShown = true;
         }
 
