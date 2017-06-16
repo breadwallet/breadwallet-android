@@ -21,7 +21,7 @@ model {
                     create() {
                         type = "string"
                         name = "app_name"
-                        value = "ƀreadwallet"
+                        value = "bread"
                     }
                 }
             }
