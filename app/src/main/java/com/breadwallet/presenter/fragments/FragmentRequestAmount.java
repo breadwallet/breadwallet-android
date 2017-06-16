@@ -1,12 +1,10 @@
 package com.breadwallet.presenter.fragments;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ArgbEvaluator;
 import android.animation.LayoutTransition;
-import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,20 +14,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.OvershootInterpolator;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRKeyboard;
+import com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret;
 import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.tools.adapter.CurAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -92,16 +88,22 @@ public class FragmentRequestAmount extends Fragment {
     private Button shareButton;
     private Button shareEmail;
     private Button shareTextMessage;
-    private LinearLayout shareButtonsLayout;
     private boolean shareButtonsShown = true;
     private int keyboardPosition = 0;
     private String selectedIso;
     private CurAdapter curAdapter;
     private Button isoButton;
     private RecyclerView currencyRecycler;
+    private Handler copyCloseHandler = new Handler();
     private LinearLayout keyboardLayout;
     private RelativeLayout amountLayout;
     private Button request;
+    private LinearLayout currencyListLayout;
+    private BRLinearLayoutWithCaret shareButtonsLayout;
+    private BRLinearLayoutWithCaret copiedLayout;
+    private int keyboardIndex;
+    private int currListIndex;
+    private ImageButton close;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -109,8 +111,11 @@ public class FragmentRequestAmount extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_receive, container, false);
         backgroundLayout = (LinearLayout) rootView.findViewById(R.id.background_layout);
         signalLayout = (LinearLayout) rootView.findViewById(R.id.signal_layout);
+        shareButtonsLayout = (BRLinearLayoutWithCaret) rootView.findViewById(R.id.share_buttons_layout);
+        copiedLayout = (BRLinearLayoutWithCaret) rootView.findViewById(R.id.copied_layout);
+        currencyListLayout = (LinearLayout) rootView.findViewById(R.id.cur_spinner_layout);
+        currencyListLayout.setVisibility(View.VISIBLE);
         request = (Button) rootView.findViewById(R.id.request_button);
-        request.setVisibility(View.INVISIBLE);
         keyboardLayout = (LinearLayout) rootView.findViewById(R.id.keyboard_layout);
         keyboardLayout.setVisibility(View.VISIBLE);
         amountLayout = (RelativeLayout) rootView.findViewById(R.id.amount_layout);
@@ -129,11 +134,22 @@ public class FragmentRequestAmount extends Fragment {
         shareButton = (Button) rootView.findViewById(R.id.share_button);
         shareEmail = (Button) rootView.findViewById(R.id.share_email);
         shareTextMessage = (Button) rootView.findViewById(R.id.share_text);
-        shareButtonsLayout = (LinearLayout) rootView.findViewById(R.id.share_buttons_layout);
+        shareButtonsLayout = (BRLinearLayoutWithCaret) rootView.findViewById(R.id.share_buttons_layout);
         keyboardSeparator = rootView.findViewById(R.id.view2);
-        LayoutTransition layoutTransition = signalLayout.getLayoutTransition();
-        layoutTransition.enableTransitionType(LayoutTransition.CHANGING);
+        close = (ImageButton) rootView.findViewById(R.id.close_button);
+
+        currListIndex = signalLayout.indexOfChild(currencyListLayout);
+        keyboardIndex = signalLayout.indexOfChild(keyboardLayout);
+
+        mTitle.setText(getString(R.string.RequestAnAmoutn_title));
         setListeners();
+
+        signalLayout.removeView(shareButtonsLayout);
+        signalLayout.removeView(copiedLayout);
+        signalLayout.removeView(request);
+
+        showKeyboard(false);
+        showCurrencyList(false);
 
         final List<String> curList = new ArrayList<>();
         curList.add("BTC");
@@ -142,8 +158,6 @@ public class FragmentRequestAmount extends Fragment {
         currencyRecycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         currencyRecycler.setAdapter(curAdapter);
         selectedIso = curAdapter.getItemAtPos(0);
-
-        signalLayout.removeView(currencyRecycler);
 
         signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
         signalLayout.setOnClickListener(new View.OnClickListener() {
@@ -167,6 +181,7 @@ public class FragmentRequestAmount extends Fragment {
         itemLayoutTransition.setAnimator(LayoutTransition.APPEARING, null);
         itemLayoutTransition.setAnimator(LayoutTransition.DISAPPEARING, null);
         itemLayoutTransition.enableTransitionType(LayoutTransition.CHANGING);
+
 
         signalLayout.setLayoutTransition(itemLayoutTransition);
 
@@ -206,11 +221,27 @@ public class FragmentRequestAmount extends Fragment {
             }
         }));
 
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Activity app = getActivity();
+                if (app != null)
+                    app.getFragmentManager().popBackStack();
+            }
+        });
+
         mQrImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 removeCurrencySelector();
                 showKeyboard(false);
+            }
+        });
+
+        isoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showCurrencyList(true);
             }
         });
 
@@ -255,9 +286,9 @@ public class FragmentRequestAmount extends Fragment {
         shareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removeCurrencySelector();
                 if (!BRAnimator.isClickAllowed()) return;
-                toggleShareButtonsVisibility();
+                shareButtonsShown = !shareButtonsShown;
+                showShareButtons(shareButtonsShown);
                 showKeyboard(false);
             }
         });
@@ -284,11 +315,7 @@ public class FragmentRequestAmount extends Fragment {
         isoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    signalLayout.addView(currencyRecycler, 3);
-                } catch (IllegalStateException ex) {
-                    signalLayout.removeView(currencyRecycler);
-                }
+                showCurrencyList(true);
             }
         });
 
@@ -431,15 +458,16 @@ public class FragmentRequestAmount extends Fragment {
     }
 
     private void showKeyboard(boolean b) {
-        try {
-            if (b) {
-                signalLayout.addView(keyboard, keyboardPosition);
-                signalLayout.addView(keyboardSeparator, keyboardPosition + 1);
-            } else {
-                signalLayout.removeView(keyboard);
-                signalLayout.removeView(keyboardSeparator);
-            }
-        } catch (Exception ignored) {
+
+        int curIndex =  signalLayout.indexOfChild(currencyListLayout) == -1 ? keyboardIndex - 1 : keyboardIndex;
+
+        if (!b) {
+            signalLayout.removeView(keyboardLayout);
+        } else {
+            if (signalLayout.indexOfChild(keyboardLayout) == -1)
+                signalLayout.addView(keyboardLayout, curIndex);
+            else
+                signalLayout.removeView(keyboardLayout);
 
         }
     }
@@ -460,6 +488,57 @@ public class FragmentRequestAmount extends Fragment {
         try {
             signalLayout.removeView(currencyRecycler);
         } catch (IllegalStateException ignored) {
+
+        }
+    }
+
+    private void showShareButtons(boolean b) {
+        if (!b) {
+            signalLayout.removeView(shareButtonsLayout);
+            shareButton.setBackgroundResource(R.drawable.selector_gray_stroke);
+            shareButton.setTextColor(getContext().getColor(R.color.light_gray));
+        } else {
+            signalLayout.addView(shareButtonsLayout,signalLayout.getChildCount() - 1);
+            shareButton.setBackgroundResource(R.drawable.selector_blue_stroke);
+            shareButton.setTextColor(getContext().getColor(R.color.dark_blue));
+            showCopiedLayout(false);
+        }
+    }
+
+
+
+    private void showCopiedLayout(boolean b) {
+        if (!b) {
+            signalLayout.removeView(copiedLayout);
+            copyCloseHandler.removeCallbacksAndMessages(null);
+        } else {
+            if (signalLayout.indexOfChild(copiedLayout) == -1) {
+                signalLayout.addView(copiedLayout, signalLayout.indexOfChild(shareButton));
+                showShareButtons(false);
+                shareButtonsShown = false;
+                copyCloseHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        signalLayout.removeView(copiedLayout);
+                    }
+                }, 2000);
+            } else {
+                copyCloseHandler.removeCallbacksAndMessages(null);
+                signalLayout.removeView(copiedLayout);
+            }
+        }
+    }
+
+    private void showCurrencyList(boolean b) {
+        Log.e(TAG, "showCurrencyList: " + currListIndex);
+
+        if (!b) {
+            signalLayout.removeView(currencyListLayout);
+        } else {
+            if (signalLayout.indexOfChild(currencyListLayout) == -1)
+                signalLayout.addView(currencyListLayout, currListIndex);
+            else
+                signalLayout.removeView(currencyListLayout);
 
         }
     }
