@@ -296,9 +296,7 @@ public class FragmentRequestAmount extends Fragment {
             @Override
             public void onClick(View v) {
                 removeCurrencySelector();
-                if (!BRAnimator.isClickAllowed()) return;
-                BRClipboardManager.putClipboard(getContext(), mAddress.getText().toString());
-                BRToast.showCustomToast(getActivity(), "Copied to Clipboard.", (int) mAddress.getY(), Toast.LENGTH_SHORT, R.drawable.toast_layout_blue);
+                copyText();
                 showKeyboard(false);
             }
         });
@@ -319,6 +317,11 @@ public class FragmentRequestAmount extends Fragment {
             }
         });
 
+    }
+
+    private void copyText() {
+        BRClipboardManager.putClipboard(getContext(), mAddress.getText().toString());
+        showCopiedLayout(true);
     }
 
     private void toggleShareButtonsVisibility() {
