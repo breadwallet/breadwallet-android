@@ -161,14 +161,14 @@ public class FragmentReceive extends Fragment {
                 showShareButtons(shareButtonsShown);
             }
         });
-//        mAddress.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (!BRAnimator.isClickAllowed()) return;
-//                copyText();
-////                BRToast.showCustomToast(getActivity(), "Copied to Clipboard.", (int) mAddress.getY(), Toast.LENGTH_SHORT, R.drawable.toast_layout_blue);
-//            }
-//        });
+        mAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!BRAnimator.isClickAllowed()) return;
+                copyText();
+//                BRToast.showCustomToast(getActivity(), "Copied to Clipboard.", (int) mAddress.getY(), Toast.LENGTH_SHORT, R.drawable.toast_layout_blue);
+            }
+        });
         requestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
