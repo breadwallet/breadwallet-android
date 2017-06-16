@@ -1,11 +1,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
-              xmlns:tools="http://schemas.android.com/tools"
               android:id="@+id/background_layout"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:layout_gravity="bottom"
-              android:animateLayoutChanges="true"
               android:background="@color/black_trans"
               android:filterTouchesWhenObscured="true"
     >
@@ -34,7 +32,7 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
-                android:text="Receive"
+                android:text="@string/Receive.title"
                 android:textColor="@color/almost_black"
                 android:textSize="20sp"
                 app:customFont="CircularPro-Bold.otf"
@@ -133,15 +131,38 @@
                 app:isBreadButton="true"
                 />
 
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/cur_spinner_layout"
+            android:layout_width="match_parent"
+            android:visibility="gone"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
             <View
-                android:id="@+id/separator2"
+                android:id="@+id/separator5"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_below="@id/iso_button"
                 android:background="@color/extra_light_gray"
                 />
 
-        </RelativeLayout>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/cur_spinner"
+                android:layout_gravity="center_vertical"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="@color/button_secondary"
+                />
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/separator2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/extra_light_gray"
+            />
 
         <LinearLayout
             android:id="@+id/keyboard_layout"
@@ -192,7 +213,7 @@
             android:layout_marginStart="8dp"
             android:text="----------------------------------"
             android:textColor="@color/light_gray"
-            android:textSize="17sp"
+            android:textSize="16sp"
             />
 
         <com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret
@@ -257,7 +278,7 @@
                 android:background="@drawable/selector_gray_stroke"
                 android:paddingBottom="12dp"
                 android:paddingTop="12dp"
-                android:text="Email"
+                android:text="@string/Receive.emailButton"
                 android:textColor="@color/light_gray"
                 android:textSize="14sp"
                 app:isBreadButton="true"
@@ -275,7 +296,7 @@
                 android:background="@drawable/selector_gray_stroke"
                 android:paddingBottom="12dp"
                 android:paddingTop="12dp"
-                android:text="Text Message"
+                android:text="@string/Receive.textButton"
                 android:textColor="@color/light_gray"
                 android:textSize="14sp"
                 app:isBreadButton="true"
@@ -301,7 +322,7 @@
             android:layout_marginTop="16dp"
             android:background="@drawable/selector_gray_stroke"
             android:padding="10dp"
-            android:text="Request an Amount"
+            android:text="@string/Receive.request"
             android:textColor="@color/almost_black"
             android:textSize="18sp"
             app:isBreadButton="true"/>
