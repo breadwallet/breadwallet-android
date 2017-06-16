@@ -78,17 +78,18 @@
         android:layout_height="280dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
+        app:layout_constraintRight_toRightOf="parent"
+        app:showAlphabet="true"/>
 
     <com.breadwallet.presenter.customviews.BRText
         android:id="@+id/enter_pin_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:textSize="18sp"
         android:text="@string/LoginScreen.subheader"
-        app:customFont="CircularPro-Book.otf"
         android:textColor="@color/almost_black"
+        android:textSize="18sp"
+        app:customFont="CircularPro-Book.otf"
         app:layout_constraintBottom_toTopOf="@+id/pinLayout"
         app:layout_constraintLeft_toLeftOf="@+id/pinLayout"
         app:layout_constraintRight_toRightOf="@+id/pinLayout"/>
@@ -112,10 +113,11 @@
         <com.breadwallet.presenter.customviews.BRButton
             android:id="@+id/left_button"
             android:layout_width="match_parent"
-            android:paddingBottom="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1.0"
             android:background="@drawable/b_half_left"
+            android:padding="8dp"
+            android:paddingBottom="0dp"
             android:text="@string/LoginScreen.myAddress"
             android:textColor="@color/white"
             android:textSize="14sp"
@@ -128,8 +130,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1.0"
             android:background="@drawable/b_half_right"
-            android:text="@string/LoginScreen.scan"
+            android:padding="8dp"
             android:paddingBottom="0dp"
+            android:text="@string/LoginScreen.scan"
             android:textColor="@color/white"
             android:textSize="14sp"
             app:customFont="CircularPro-Medium.otf"
