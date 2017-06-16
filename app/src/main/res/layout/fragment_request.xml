@@ -48,6 +48,7 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
+                android:layout_centerHorizontal="true"
                 android:layout_marginTop="16dp"
                 android:text="Request an Amount"
                 android:textColor="@color/almost_black"
@@ -191,22 +192,6 @@
             app:customFont="CircularPro-Bold.otf"
             />
 
-        <com.breadwallet.presenter.customviews.BRButton
-            android:id="@+id/share_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            android:layout_marginEnd="64dp"
-            android:layout_marginStart="64dp"
-            android:background="@drawable/b_gray_stroke"
-            android:drawableStart="@drawable/ic_share_vertical_gray"
-            android:elevation="8dp"
-            android:paddingEnd="64dp"
-            android:paddingStart="64dp"
-            android:text="@string/Receive.share"
-            android:textColor="@color/light_gray"
-            android:textSize="18sp"
-            />
 
         <View
             android:id="@+id/separator"
@@ -214,56 +199,73 @@
             android:layout_height="1dp"
             android:background="@color/separator_gray"/>
 
-        <View
-            android:id="@+id/share_separator"
+        <com.breadwallet.presenter.customviews.BRButton
+            android:id="@+id/share_button"
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/separator_gray"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="72dp"
+            android:layout_marginStart="72dp"
+            android:background="@drawable/selector_gray_stroke"
+            android:drawableStart="@drawable/ic_share_vertical_gray"
+            android:paddingBottom="12dp"
+            android:paddingLeft="48dp"
+            android:paddingRight="48dp"
+            android:paddingTop="12dp"
+            android:text="@string/Receive.share"
+            android:textColor="@color/light_gray"
+            android:textSize="18sp"
+            app:isBreadButton="true"
             />
 
-        <LinearLayout
+        <com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret
+            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/share_buttons_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/extra_light_blue_background"
             android:orientation="horizontal"
-            android:weightSum="2.0">
+            android:weightSum="2.0"
+            app:backgroundColor="@color/extra_light_blue_background"
+            app:strokeColor="@color/extra_light_gray"
+            app:withStroke="true">
 
             <com.breadwallet.presenter.customviews.BRButton
                 android:id="@+id/share_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
+                android:layout_marginBottom="16dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="32dp"
                 android:layout_weight="1.0"
-                android:background="@drawable/b_gray_stroke"
-                android:elevation="8dp"
-                android:minHeight="40dp"
+                android:background="@drawable/selector_gray_stroke"
+                android:paddingBottom="12dp"
+                android:paddingTop="12dp"
                 android:text="Email"
                 android:textColor="@color/light_gray"
                 android:textSize="14sp"
+                app:isBreadButton="true"
                 />
 
             <com.breadwallet.presenter.customviews.BRButton
                 android:id="@+id/share_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
+                android:layout_marginBottom="16dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="32dp"
                 android:layout_weight="1.0"
-                android:background="@drawable/b_gray_stroke"
-                android:elevation="8dp"
-                android:minHeight="40dp"
+                android:background="@drawable/selector_gray_stroke"
+                android:paddingBottom="12dp"
+                android:paddingTop="12dp"
                 android:text="Text Message"
                 android:textColor="@color/light_gray"
                 android:textSize="14sp"
+                app:isBreadButton="true"
                 />
 
-        </LinearLayout>
+        </com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret>
 
     </LinearLayout>
 
