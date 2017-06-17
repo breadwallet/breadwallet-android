@@ -10,16 +10,17 @@ model {
             applicationId = 'com.breadwallet'
             minSdkVersion.apiLevel = 23
             targetSdkVersion.apiLevel = 25
-            versionCode = 42
-            versionName = "42"
+            versionCode = 43
+            versionName = "43"
         }
 
         ndk {
-            platformVersion = "24"
+            platformVersion = "23"
             abiFilters.addAll(['x86', 'x86_64', 'armeabi', 'armeabi-v7a', 'arm64-v8a'])
 
             moduleName = "core"
             toolchain = "clang"
+
             CFlags.addAll(['-std=c99', '-g', '-DBITCOIN_TESTNET=0', '-I' + file('src/main/secp/secp256k1/include'),
                            '-I' + file('src/main/secp/secp256k1'), '-I' + file('src/main/secp'), '-I' + file('src/main/jni/breadwallet-core'),
                            '-I' + file('src/main/jni/transition'), '-Wno-trigraphs', /**'-Wmissing',*/

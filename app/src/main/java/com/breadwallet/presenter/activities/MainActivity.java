@@ -128,16 +128,18 @@ public class MainActivity extends FragmentActivity implements Observer {
 
     public static boolean appInBackground = false;
 
-//    static {
-//        System.loadLibrary("core");
-//    }
+    //loading the native library
+    static {
+        System.loadLibrary("core");
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 //        if (savedInstanceState != null)
 //            savedInstanceState.clear();
         super.onCreate(null);
-        BreadLibs.initNativeLib(this, "libCore.so");
+//        BreadLibs.initNativeLib(this, "libCore.so");
 
         setContentView(R.layout.activity_main);
         app = this;

@@ -78,11 +78,11 @@ public class IntroActivity extends FragmentActivity {
 
     private int newRecoverNoneFlag = 0;//0 - in IntroNewRecoverFragment, 1 - in IntroNewWalletFragment, 2 - IntroRecoverWalletFragment
 
-//    //loading the native library
-//    static {
-//        System.loadLibrary("core");
-//
-//    }
+    //loading the native library
+    static {
+        System.loadLibrary("core");
+
+    }
 
     private boolean backNotAllowed = false;
     private IntroWelcomeFragment introWelcomeFragment;
@@ -102,7 +102,7 @@ public class IntroActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
-        BreadLibs.initNativeLib(this, "libCore.so");
+//        BreadLibs.initNativeLib(this, "libCore.so");
         app = this;
 
         if (!BuildConfig.DEBUG && KeyStoreManager.AUTH_DURATION_SEC != 300) {
