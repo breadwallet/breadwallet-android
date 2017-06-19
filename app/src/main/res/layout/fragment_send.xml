@@ -86,6 +86,7 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="16dp"
                 android:background="@android:color/transparent"
+                android:maxLines="1"
                 android:ellipsize="middle"
                 android:ems="10"
                 android:hint="To"
