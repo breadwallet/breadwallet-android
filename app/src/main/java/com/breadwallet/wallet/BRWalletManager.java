@@ -235,6 +235,10 @@ public class BRWalletManager {
 
     }
 
+    public boolean isPaperKeyWritten(Context context){
+        return SharedPreferencesManager.getPhraseWroteDown(context);
+    }
+
     public void wipeWalletButKeystore(final Context ctx) {
         Log.e(TAG, "wipeWalletButKeystore");
         new Thread(new Runnable() {

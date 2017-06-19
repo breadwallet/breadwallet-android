@@ -1,25 +1,22 @@
 package com.breadwallet.presenter.activities;
 
-import android.animation.ValueAnimator;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
 import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.AnimationUtils;
-import android.view.animation.OvershootInterpolator;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -31,6 +28,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRSearchBar;
+import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.presenter.fragments.FragmentManage;
 import com.breadwallet.presenter.fragments.FragmentMenu;
@@ -40,6 +38,7 @@ import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
+import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
@@ -94,11 +93,15 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     private LinearLayout menuButton;
     public static final Point screenParametersPoint = new Point();
 
-    NetworkChangeReceiver mNetworkStateReceiver;
+    private NetworkChangeReceiver mNetworkStateReceiver;
 
     private TextView primaryPrice;
     private TextView secondaryPrice;
     private TextView priceChange;
+
+    private BRText infoCartTitle;
+    private BRText infoCartDesc;
+    private ImageButton infoCartClose;
 
     private TextView manageText;
     private TextView walletName;
@@ -113,6 +116,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     private RelativeLayout mainLayout;
     private LinearLayout toolbarLayout;
     private ConstraintLayout syncingLayout;
+    private ConstraintLayout infoCardLayout;
     private LinearLayout recyclerLayout;
     private Toolbar toolBar;
     private int progress = 0;
@@ -298,6 +302,14 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
             }
         });
 
+        infoCartClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e(TAG, "onClick: ");
+                showInfoCard(false, null, null, null);
+            }
+        });
+        showInfoCard(false, null, null, null);
 
     }
 
@@ -327,7 +339,17 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         if (PLATFORM_ON)
             APIClient.getInstance(this).updatePlatform();
 
-//        walletName.setText(SharedPreferencesManager.getWalletName(this));
+        if (!BRWalletManager.getInstance().isPaperKeyWritten(this)) {
+            showInfoCard(true, "Paper Key not Saved", "This wallet's paper key hasn't been written down.\nTap here to view.", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.e(TAG, "onClick: ");
+                    PostAuthenticationProcessor.getInstance().onPhraseCheckAuth(BreadActivity.this, false);
+                }
+            });
+        } else {
+            showInfoCard(false, null, null, null);
+        }
 
         if (mNetworkStateReceiver == null) mNetworkStateReceiver = new NetworkChangeReceiver();
         IntentFilter mNetworkStateFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
@@ -377,7 +399,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     protected void onDestroy() {
         super.onDestroy();
 
-
         unregisterReceiver(mNetworkStateReceiver);
 
         //sync the kv stores
@@ -416,9 +437,12 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         searchIcon = (ImageButton) findViewById(R.id.search_icon);
         barFlipper = (ViewFlipper) findViewById(R.id.tool_bar_flipper);
         searchBar = (BRSearchBar) findViewById(R.id.search_bar);
+        infoCardLayout = (ConstraintLayout) findViewById(R.id.info_card);
+        infoCartTitle = (BRText) findViewById(R.id.info_title);
+        infoCartDesc = (BRText) findViewById(R.id.info_description);
+        infoCartClose = (ImageButton) findViewById(R.id.info_close_button);
 
     }
-
 
     //returns x-pos relative to root layout
     private float getRelativeX(View myView) {
@@ -448,17 +472,11 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     public void onBalanceChanged(final long balance) {
         updateUI();
 
-
     }
 
     @Override
     public void onBackPressed() {
-//        if (getFragmentManager().getBackStackEntryCount() == 0) {
-//            overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
-//            this.finishAndRemoveTask();
-//        } else {
         super.onBackPressed();
-//        }
     }
 
     public void updateUI() {
@@ -563,12 +581,27 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         try {
             if (show) {
                 recyclerLayout.addView(syncingLayout, 0);
-//                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             } else {
                 recyclerLayout.removeView(syncingLayout);
-//                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             }
         } catch (Exception ignored) {
+        }
+    }
+
+    public void showInfoCard(boolean show, String title, String desc, final View.OnClickListener onInfoCardClick) {
+        try {
+            if (show) {
+                infoCartTitle.setText(title);
+                infoCartDesc.setText(desc);
+                if (onInfoCardClick != null)
+                    infoCardLayout.setOnClickListener(onInfoCardClick);
+                recyclerLayout.addView(infoCardLayout, 0);
+            } else {
+                recyclerLayout.removeView(infoCardLayout);
+            }
+
+        } catch (Exception ignored) {
+
         }
     }
 
@@ -616,5 +649,8 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         walletName.setText(name);
     }
 
+    private interface OnInfoCardClick {
+        void onClick();
+    }
 
 }
