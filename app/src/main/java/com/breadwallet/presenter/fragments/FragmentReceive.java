@@ -273,7 +273,7 @@ public class FragmentReceive extends Fragment {
     }
 
     private void updateQr() {
-        boolean success = BRWalletManager.refreshAddress(getActivity());
+        boolean success = BRWalletManager.refreshAddress(getContext());
         if (!success) throw new RuntimeException("failed to retrieve address");
         getActivity().runOnUiThread(new Runnable() {
             @Override
