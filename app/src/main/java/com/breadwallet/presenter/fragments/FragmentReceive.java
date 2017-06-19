@@ -33,7 +33,6 @@ import static com.breadwallet.R.id.keyboard;
 import static com.breadwallet.tools.animation.BRAnimator.animateBackgroundDim;
 import static com.breadwallet.tools.animation.BRAnimator.animateSignalSlide;
 
-
 /**
  * BreadWallet
  * <p>
@@ -292,7 +291,6 @@ public class FragmentReceive extends Fragment {
         showCopiedLayout(true);
     }
 
-
     @Override
     public void onStop() {
         super.onStop();
@@ -315,6 +313,5 @@ public class FragmentReceive extends Fragment {
     public void onPause() {
         super.onPause();
     }
-
 
 }
