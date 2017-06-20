@@ -7,13 +7,12 @@
               android:filterTouchesWhenObscured="true">
 
     <android.support.v4.view.ViewPager
-        android:orientation="horizontal"
         android:id="@+id/tx_list_pager"
         android:layout_width="match_parent"
-        android:focusable="false"
-        android:layout_gravity="bottom"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/gradient_layout"
+        android:layout_gravity="bottom"
+        android:focusable="false"
+        android:orientation="horizontal"
         />
 
 </LinearLayout>
