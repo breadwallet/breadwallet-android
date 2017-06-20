@@ -116,7 +116,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         int blockHeight = item.getBlockHeight();
         int confirms = blockHeight == Integer.MAX_VALUE ? 0 : SharedPreferencesManager.getLastBlockHeight(mContext) - blockHeight + 1;
         if (!item.isValid())
-            convertView.confirmation.setText("INVALID");
+            convertView.status.setText("INVALID");
         else if (confirms < 6) {
             if (blockHeight == Integer.MAX_VALUE || confirms < 0)
                 convertView.confirmation.setText("Waiting to be confirmed");
@@ -213,7 +213,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         public TextView amount;
         public TextView toFrom;
         public TextView account;
-        public TextView confirmation;
+        public TextView status;
+        public TextView status_2;
         public TextView timestamp;
         public TextView comment;
 
@@ -224,7 +225,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
             amount = (TextView) view.findViewById(R.id.amount);
             toFrom = (TextView) view.findViewById(R.id.to_from);
             account = (TextView) view.findViewById(R.id.account);
-            confirmation = (TextView) view.findViewById(R.id.confirmation);
+            status = (TextView) view.findViewById(R.id.status);
+            status_2 = (TextView) view.findViewById(R.id.status_2);
             timestamp = (TextView) view.findViewById(R.id.timestamp);
             comment = (TextView) view.findViewById(R.id.comment);
         }
