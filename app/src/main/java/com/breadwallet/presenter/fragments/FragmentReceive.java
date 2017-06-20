@@ -68,7 +68,6 @@ public class FragmentReceive extends Fragment {
     public LinearLayout signalLayout;
 
     private String receiveAddress;
-    //    private View shareSeparator;
     private View separator;
     private Button shareButton;
     private Button shareEmail;
@@ -165,7 +164,6 @@ public class FragmentReceive extends Fragment {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 copyText();
-//                BRToast.showCustomToast(getActivity(), "Copied to Clipboard.", (int) mAddress.getY(), Toast.LENGTH_SHORT, R.drawable.toast_layout_blue);
             }
         });
         requestButton.setOnClickListener(new View.OnClickListener() {
