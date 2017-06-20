@@ -1,5 +1,7 @@
 package com.breadwallet.presenter.activities;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -15,8 +17,12 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.animation.AnimationUtils;
+import android.view.animation.OvershootInterpolator;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -139,7 +145,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_bread);
         BRWalletManager.getInstance().addBalanceChangedListener(this);
         BRPeerManager.getInstance().addStatusUpdateListener(this);
@@ -154,6 +159,8 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         initializeViews();
 
         setListeners();
+
+        setupSlideHandler();
 
 //        setWalletLoading();
         toolbarLayout.removeView(walletProgressLayout);
@@ -651,6 +658,77 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
 
     private interface OnInfoCardClick {
         void onClick();
+    }
+
+    private void setupSlideHandler() {
+        new InfoSlider().init(infoCardLayout);
+    }
+
+    private class InfoSlider {
+
+        ViewGroup _root;
+        float origX;
+        float viewWidth;
+        float dX;
+
+        public void init(final ViewGroup view) {
+            _root = view;
+            final ViewTreeObserver observer = view.getViewTreeObserver();
+            observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    origX = view.getX();
+                    viewWidth = view.getWidth();
+                }
+            });
+
+            infoCardLayout.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent event) {
+                    switch (event.getAction()) {
+
+                        case MotionEvent.ACTION_DOWN:
+                            dX = _root.getX() - event.getRawX();
+                            break;
+
+                        case MotionEvent.ACTION_MOVE:
+                            _root.animate()
+                                    .x(event.getRawX() + dX)
+                                    .setDuration(0)
+                                    .start();
+                            break;
+                        case MotionEvent.ACTION_UP:
+                            Log.e(TAG, "onTouch: origX: " + origX);
+                            if (event.getRawX() > viewWidth / 2 + origX) {
+                                _root.animate()
+                                        .x(viewWidth * 2)
+                                        .setDuration(200)
+                                        .setInterpolator(new OvershootInterpolator(0.5f))
+                                        .setListener(new AnimatorListenerAdapter() {
+                                            @Override
+                                            public void onAnimationEnd(Animator animation) {
+                                                super.onAnimationEnd(animation);
+                                                showInfoCard(false, null, null, null);
+                                            }
+                                        })
+                                        .start();
+                            } else {
+                                _root.animate()
+                                        .x(origX)
+                                        .setDuration(100)
+                                        .setInterpolator(new OvershootInterpolator(0.5f))
+                                        .start();
+                            }
+
+                            break;
+                        default:
+                            return false;
+                    }
+                    return true;
+                }
+            });
+        }
+
     }
 
 }
