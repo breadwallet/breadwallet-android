@@ -221,10 +221,6 @@ public class BRWalletManager {
 
     //BLOCKS
     public static boolean refreshAddress(Context ctx) {
-        if (ctx == null) {
-            Log.e(TAG, "refreshAddress: ctx is null");
-            return false;
-        }
         String address = getReceiveAddress();
         if (Utils.isNullOrEmpty(address)) {
             Log.e(TAG, "refreshAddress: WARNING, retrieved address:" + address);

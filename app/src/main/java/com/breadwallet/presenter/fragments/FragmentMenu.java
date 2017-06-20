@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -70,6 +71,7 @@ public class FragmentMenu extends Fragment {
     public RelativeLayout background;
     public List<BRMenuItem> itemList;
     public ConstraintLayout signalLayout;
+    private ImageButton close;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -87,6 +89,7 @@ public class FragmentMenu extends Fragment {
                 getActivity().onBackPressed();
             }
         });
+        close = (ImageButton) rootView.findViewById(R.id.close_button);
 
         itemList = new ArrayList<>();
         boolean buyBitcoinEnabled = APIClient.getInstance(getActivity()).isFeatureEnabled(APIClient.FeatureFlags.BUY_BITCOIN.toString());
@@ -143,6 +146,15 @@ public class FragmentMenu extends Fragment {
                 });
             }
         }));
+
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Activity app = getActivity();
+                if (app != null)
+                    app.getFragmentManager().popBackStack();
+            }
+        });
         mTitle = (TextView) rootView.findViewById(R.id.title);
         mListView = (ListView) rootView.findViewById(menu_listview);
         mListView.setAdapter(new MenuListAdapter(getContext(), R.layout.menu_list_item, itemList));
