@@ -159,7 +159,6 @@ public class FragmentRequestAmount extends Fragment {
         currencyRecycler.setAdapter(curAdapter);
         selectedIso = curAdapter.getItemAtPos(0);
 
-        signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
         signalLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -168,7 +167,7 @@ public class FragmentRequestAmount extends Fragment {
         });
         keyboardPosition = signalLayout.indexOfChild(keyboard);
         updateText();
-        signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
+
 
         LayoutTransition itemLayoutTransition = new LayoutTransition();
         itemLayoutTransition.setStartDelay(LayoutTransition.APPEARING, 0);
@@ -182,8 +181,9 @@ public class FragmentRequestAmount extends Fragment {
         itemLayoutTransition.setAnimator(LayoutTransition.DISAPPEARING, null);
         itemLayoutTransition.enableTransitionType(LayoutTransition.CHANGING);
 
-
         signalLayout.setLayoutTransition(itemLayoutTransition);
+
+        signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
 
         return rootView;
     }
@@ -462,7 +462,7 @@ public class FragmentRequestAmount extends Fragment {
 
     private void showKeyboard(boolean b) {
 
-        int curIndex =  signalLayout.indexOfChild(currencyListLayout) == -1 ? keyboardIndex - 1 : keyboardIndex;
+        int curIndex = signalLayout.indexOfChild(currencyListLayout) == -1 ? keyboardIndex - 1 : keyboardIndex;
 
         if (!b) {
             signalLayout.removeView(keyboardLayout);
@@ -501,13 +501,12 @@ public class FragmentRequestAmount extends Fragment {
             shareButton.setBackgroundResource(R.drawable.selector_gray_stroke);
             shareButton.setTextColor(getContext().getColor(R.color.light_gray));
         } else {
-            signalLayout.addView(shareButtonsLayout,signalLayout.getChildCount() - 1);
+            signalLayout.addView(shareButtonsLayout, signalLayout.getChildCount() - 1);
             shareButton.setBackgroundResource(R.drawable.selector_blue_stroke);
             shareButton.setTextColor(getContext().getColor(R.color.dark_blue));
             showCopiedLayout(false);
         }
     }
-
 
 
     private void showCopiedLayout(boolean b) {

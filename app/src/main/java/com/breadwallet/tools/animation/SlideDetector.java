@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.OvershootInterpolator;
 
+
 /**
  * BreadWallet
  * <p/>
@@ -41,24 +42,11 @@ public class SlideDetector implements View.OnTouchListener {
     private Context context;
     private View _root;
     float origY;
-    float viewHeight;
     float dY;
 
     public SlideDetector(Context context, final View view) {
         this.context = context;
         _root = view;
-        final ViewTreeObserver observer = view.getViewTreeObserver();
-
-        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                origY = view.getY();
-                viewHeight = view.getHeight();
-                Log.e(TAG, "onGlobalLayout: viewHeight:" + viewHeight);
-            }
-
-        });
     }
 
     @Override
@@ -67,22 +55,20 @@ public class SlideDetector implements View.OnTouchListener {
             case MotionEvent.ACTION_DOWN:
                 Log.e(TAG, "onTouch dY: " + dY);
                 Log.e(TAG, "onTouch origY: " + origY);
+                origY = _root.getY();
                 dY = _root.getY() - event.getRawY();
                 break;
 
             case MotionEvent.ACTION_MOVE:
-//                Log.e(TAG, "onTouch dY: " + dY);
-//                Log.e(TAG, "onTouch origY: " + origY);
-//                Log.e(TAG, "onTouch event.getRawY(): " + event.getRawY());
                 _root.animate()
                         .y(event.getRawY() + dY)
                         .setDuration(0)
                         .start();
                 break;
             case MotionEvent.ACTION_UP:
-                if (event.getRawY() > viewHeight / 2 + origY) {
+                if (_root.getY() > origY + _root.getHeight() / 2) {
                     _root.animate()
-                            .y(viewHeight * 2)
+                            .y(_root.getHeight() * 2)
                             .setDuration(200)
                             .setInterpolator(new OvershootInterpolator(0.5f))
                             .setListener(new AnimatorListenerAdapter() {
