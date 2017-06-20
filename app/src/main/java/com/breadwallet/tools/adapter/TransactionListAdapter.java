@@ -190,6 +190,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
             convertView.status.setText(String.format("%s - %s", sentReceived, percentage));
         }
 
+        if (!item.isValid())
+            convertView.status.setText("INVALID");
 
         long satoshisAmount = received ? item.getReceived() : (item.getSent() - item.getReceived());
 
