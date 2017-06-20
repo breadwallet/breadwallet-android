@@ -150,12 +150,10 @@ public class FragmentTransactionItem extends Fragment {
 
         int relayCount = BRPeerManager.getRelayCount(item.getHexId());
 
-//        if (!item.isValid())
-//            convertView.status.setText("INVALID");
-//        else
         int level = 0;
         Log.e(TAG, "setTexts: confirms: " + confirms);
         Log.e(TAG, "setTexts: relayCount: " + relayCount);
+
         if (confirms <= 0) {
             if (relayCount <= 0)
                 level = 0;
@@ -212,6 +210,9 @@ public class FragmentTransactionItem extends Fragment {
         } else {
             mConfirmationText.setText(String.format("%s - %s", sentReceived, percentage));
         }
+
+        if (!item.isValid())
+            mConfirmationText.setText("INVALID");
 
         mToFromBottom.setText(sent ? "from" : "to");
         mDateText.setText(getFormattedDate(item.getTimeStamp()));
