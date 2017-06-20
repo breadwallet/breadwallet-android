@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
                 android:id="@+id/watch_list_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:elevation="4dp"
                 android:layout_marginBottom="1dp"
+                android:elevation="4dp"
     >
 
     <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -45,13 +46,15 @@
             android:id="@+id/to_from"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="0dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginBottom="0dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="0dp"
             android:text="to"
             android:textColor="@color/almost_black"
             app:customFont="CircularPro-Book.otf"
-            app:layout_constraintLeft_toLeftOf="@+id/sent_received"
-            app:layout_constraintTop_toBottomOf="@+id/sent_received"/>
+            app:layout_constraintBottom_toBottomOf="@+id/sent_received"
+            app:layout_constraintLeft_toRightOf="@+id/amount"
+            app:layout_constraintTop_toTopOf="@+id/sent_received"/>
 
         <com.breadwallet.presenter.customviews.BRText
             android:id="@+id/account"
@@ -71,19 +74,34 @@
             app:layout_constraintTop_toTopOf="@+id/to_from"
             app:layout_constraintVertical_bias="0.0"/>
 
+
         <com.breadwallet.presenter.customviews.BRText
-            android:id="@+id/confirmation"
+            android:id="@+id/status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="0dp"
-            android:layout_marginRight="0dp"
-            android:layout_marginTop="0dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="8dp"
             android:text="Completed"
             android:textColor="@color/almost_black"
             app:customFont="CircularPro-Book.otf"
-            app:layout_constraintBottom_toBottomOf="@+id/account"
-            app:layout_constraintRight_toRightOf="@+id/timestamp"
-            app:layout_constraintTop_toTopOf="@+id/account"/>
+            app:layout_constraintLeft_toLeftOf="@+id/comment"
+            app:layout_constraintTop_toBottomOf="@+id/comment"
+            />
+
+        <com.breadwallet.presenter.customviews.BRText
+            android:id="@+id/status_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="8dp"
+            android:text="Available to Spend"
+            android:textColor="#48F0B8"
+            app:customFont="CircularPro-Bold.otf"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="@+id/comment"
+            app:layout_constraintTop_toBottomOf="@+id/status"
+            app:layout_constraintVertical_bias="0.0"/>
 
         <com.breadwallet.presenter.customviews.BRText
             android:id="@+id/timestamp"
@@ -101,15 +119,13 @@
             android:id="@+id/comment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
             android:layout_marginLeft="0dp"
-            android:layout_marginTop="23dp"
+            android:layout_marginTop="8dp"
             android:text="For Love"
             android:textColor="@color/almost_black"
             app:customFont="CircularPro-Book.otf"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="@+id/sent_received"
-            app:layout_constraintTop_toBottomOf="@+id/confirmation"
-            app:layout_constraintVertical_bias="0.0"/>
+            app:layout_constraintTop_toBottomOf="@+id/sent_received"
+            />
     </android.support.constraint.ConstraintLayout>
 </RelativeLayout>
