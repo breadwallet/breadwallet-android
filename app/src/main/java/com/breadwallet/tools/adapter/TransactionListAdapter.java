@@ -126,8 +126,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
 //            convertView.status.setText("INVALID");
 //        else
         int level = 0;
-        Log.e(TAG, "setTexts: confirms: " + confirms);
-        Log.e(TAG, "setTexts: relayCount: " + relayCount);
         if (confirms <= 0) {
             if (relayCount <= 0)
                 level = 0;

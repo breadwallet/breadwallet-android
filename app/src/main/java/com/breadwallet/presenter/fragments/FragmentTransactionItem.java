@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintSet;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -11,6 +12,7 @@ import android.text.format.DateFormat;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +26,7 @@ import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRExchange;
+import com.breadwallet.wallet.BRPeerManager;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -64,6 +67,7 @@ public class FragmentTransactionItem extends Fragment {
     public TextView mTitle;
     private TextView mDescriptionText;
     private TextView mConfirmationText;
+    private TextView mAvailableSpend;
     private TextView mCommentText;
     private TextView mAmountText;
     private TextView mAddressText;
@@ -87,6 +91,7 @@ public class FragmentTransactionItem extends Fragment {
         mDateText = (TextView) rootView.findViewById(R.id.date_text);
         mToFromBottom = (TextView) rootView.findViewById(R.id.to_from);
         mConfirmationText = (TextView) rootView.findViewById(R.id.confirmation_text);
+        mAvailableSpend = (TextView) rootView.findViewById(R.id.available_spend);
 
         signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
         rootView.setOnClickListener(new View.OnClickListener() {
@@ -143,21 +148,70 @@ public class FragmentTransactionItem extends Fragment {
         addr.setSpan(new RelativeSizeSpan(0.65f), 0, addr.length(), 0);
 
 
-        if (!item.isValid())
-            mConfirmationText.setText("INVALID");
-        else if (confirms < 6 ) {
-            if (blockHeight == Integer.MAX_VALUE || confirms < 0)
-                mConfirmationText.setText("Waiting to be confirmed. Some merchants require confirmation to complete a transaction.  Estimated time: 1-2 hours.");
-            else if (confirms == 0)
-                mConfirmationText.setText(getActivity().getString(R.string.nr_confirmations0));
-            else if (confirms == 1)
-                mConfirmationText.setText(getActivity().getString(R.string.nr_confirmations1));
+        int relayCount = BRPeerManager.getRelayCount(item.getHexId());
+
+//        if (!item.isValid())
+//            convertView.status.setText("INVALID");
+//        else
+        int level = 0;
+        Log.e(TAG, "setTexts: confirms: " + confirms);
+        Log.e(TAG, "setTexts: relayCount: " + relayCount);
+        if (confirms <= 0) {
+            if (relayCount <= 0)
+                level = 0;
+            else if (relayCount == 1)
+                level = 1;
             else
-                mConfirmationText.setText(String.format(getActivity().getString(R.string.nr_confirmations), confirms));
+                level = 2;
         } else {
-            mConfirmationText.setText("Completed");
+            if (confirms == 1)
+                level = 3;
+            else if (confirms == 2)
+                level = 4;
+            else if (confirms == 3)
+                level = 5;
+            else
+                level = 6;
+        }
+        boolean availableForSpend = false;
+        String sentReceived = !sent ? "Receiving" : "Sending";
+        String percentage = "";
+        switch (level) {
+            case 0:
+                percentage = "0%";
+                break;
+            case 1:
+                percentage = "20%";
+                break;
+            case 2:
+                percentage = "40%";
+                availableForSpend = true;
+                break;
+            case 3:
+                percentage = "60%";
+                availableForSpend = true;
+                break;
+            case 4:
+                percentage = "80%";
+                availableForSpend = true;
+                break;
+            case 5:
+                percentage = "100%";
+                availableForSpend = true;
+                break;
         }
 
+        if (availableForSpend) {
+            mAvailableSpend.setText("Available to Spend");
+        } else {
+            signalLayout.removeView(mAvailableSpend);
+        }
+
+        if (level == 6) {
+            mConfirmationText.setText(getString(R.string.Transaction_complete));
+        } else {
+            mConfirmationText.setText(String.format("%s - %s", sentReceived, percentage));
+        }
 
         mToFromBottom.setText(sent ? "from" : "to");
         mDateText.setText(getFormattedDate(item.getTimeStamp()));
