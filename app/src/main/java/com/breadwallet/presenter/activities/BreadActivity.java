@@ -57,6 +57,7 @@ import com.platform.HTTPServer;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Calendar;
 
 import static com.breadwallet.presenter.activities.intro.IntroActivity.introActivity;
 import static com.breadwallet.presenter.activities.ReEnterPinActivity.reEnterPinActivity;
@@ -670,6 +671,8 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         float origX;
         float viewWidth;
         float dX;
+        private static final int MAX_CLICK_DURATION = 200;
+        private long startClickTime;
 
         public void init(final ViewGroup view) {
             _root = view;
@@ -688,6 +691,8 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                     switch (event.getAction()) {
 
                         case MotionEvent.ACTION_DOWN:
+                            startClickTime = Calendar.getInstance().getTimeInMillis();
+
                             dX = _root.getX() - event.getRawX();
                             break;
 
@@ -699,7 +704,14 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                             break;
                         case MotionEvent.ACTION_UP:
                             Log.e(TAG, "onTouch: origX: " + origX);
-                            if (event.getRawX() > viewWidth / 2 + origX) {
+                            long clickDuration = Calendar.getInstance().getTimeInMillis() - startClickTime;
+
+                            if (clickDuration < MAX_CLICK_DURATION) {
+                                //click event has occurred
+                                infoCardLayout.performClick();
+                                return true;
+                            }
+                            if (view.getX() > viewWidth / 2 + origX) {
                                 _root.animate()
                                         .x(viewWidth * 2)
                                         .setDuration(200)
