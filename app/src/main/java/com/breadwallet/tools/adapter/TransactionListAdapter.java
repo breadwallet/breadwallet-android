@@ -2,9 +2,13 @@ package com.breadwallet.tools.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.entities.BRPeerEntity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
@@ -21,6 +26,7 @@ import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.math.BigDecimal;
@@ -29,7 +35,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import static android.text.format.DateUtils.MINUTE_IN_MILLIS;
 import static android.widget.Adapter.IGNORE_ITEM_VIEW_TYPE;
 
 
@@ -115,20 +120,78 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         convertView.toFrom.setText(received ? "from" : "to");
         int blockHeight = item.getBlockHeight();
         int confirms = blockHeight == Integer.MAX_VALUE ? 0 : SharedPreferencesManager.getLastBlockHeight(mContext) - blockHeight + 1;
-        if (!item.isValid())
-            convertView.status.setText("INVALID");
-        else if (confirms < 6) {
-            if (blockHeight == Integer.MAX_VALUE || confirms < 0)
-                convertView.confirmation.setText("Waiting to be confirmed");
-            else if (confirms == 0)
-                convertView.confirmation.setText(mContext.getString(R.string.nr_confirmations0));
-            else if (confirms == 1)
-                convertView.confirmation.setText(mContext.getString(R.string.nr_confirmations1));
+        int relayCount = BRPeerManager.getRelayCount(item.getHexId());
+
+//        if (!item.isValid())
+//            convertView.status.setText("INVALID");
+//        else
+        int level = 0;
+        Log.e(TAG, "setTexts: confirms: " + confirms);
+        Log.e(TAG, "setTexts: relayCount: " + relayCount);
+        if (confirms <= 0) {
+            if (relayCount <= 0)
+                level = 0;
+            else if (relayCount == 1)
+                level = 1;
             else
-                convertView.confirmation.setText(String.format(mContext.getString(R.string.nr_confirmations), confirms));
+                level = 2;
         } else {
-            convertView.confirmation.setText("Completed");
+            if (confirms == 1)
+                level = 3;
+            else if (confirms == 2)
+                level = 4;
+            else if (confirms == 3)
+                level = 5;
+            else
+                level = 6;
         }
+        boolean availableForSpend = false;
+        String sentReceived = received ? "Receiving" : "Sending";
+        String percentage = "";
+        switch (level) {
+            case 0:
+                percentage = "0%";
+                break;
+            case 1:
+                percentage = "20%";
+                break;
+            case 2:
+                percentage = "40%";
+                availableForSpend = true;
+                break;
+            case 3:
+                percentage = "60%";
+                availableForSpend = true;
+                break;
+            case 4:
+                percentage = "80%";
+                availableForSpend = true;
+                break;
+            case 5:
+                percentage = "100%";
+                availableForSpend = true;
+                break;
+        }
+
+        if (availableForSpend) {
+            convertView.status_2.setText("Available to Spend");
+        } else {
+            convertView.constraintLayout.removeView(convertView.status_2);
+            ConstraintSet set = new ConstraintSet();
+            set.clone(convertView.constraintLayout);
+            int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, mContext.getResources().getDisplayMetrics());
+
+            set.connect(R.id.status, ConstraintSet.BOTTOM, convertView.constraintLayout.getId(), ConstraintSet.BOTTOM,  px);
+            // Apply the changes
+            set.applyTo(convertView.constraintLayout);
+        }
+
+        if (level == 6) {
+            convertView.status.setText(mContext.getString(R.string.Transaction_complete));
+        } else {
+            convertView.status.setText(String.format("%s - %s", sentReceived, percentage));
+        }
+
 
         long satoshisAmount = received ? item.getReceived() : (item.getSent() - item.getReceived());
 
@@ -209,6 +272,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
 
     class CustomViewHolder extends RecyclerView.ViewHolder {
         public RelativeLayout mainLayout;
+        public ConstraintLayout constraintLayout;
         public TextView sentReceived;
         public TextView amount;
         public TextView toFrom;
@@ -221,6 +285,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         public CustomViewHolder(View view) {
             super(view);
             mainLayout = (RelativeLayout) view.findViewById(R.id.watch_list_layout);
+            constraintLayout = (ConstraintLayout) view.findViewById(R.id.constraintLayout);
             sentReceived = (TextView) view.findViewById(R.id.sent_received);
             amount = (TextView) view.findViewById(R.id.amount);
             toFrom = (TextView) view.findViewById(R.id.to_from);
