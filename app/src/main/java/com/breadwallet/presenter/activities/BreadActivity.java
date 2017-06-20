@@ -132,6 +132,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     public ViewFlipper barFlipper;
     private BRSearchBar searchBar;
     private boolean isSwapped;
+    private float origX;
 
     private static BreadActivity app;
 
@@ -604,6 +605,11 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                 if (onInfoCardClick != null)
                     infoCardLayout.setOnClickListener(onInfoCardClick);
                 recyclerLayout.addView(infoCardLayout, 0);
+
+                infoCardLayout.animate()
+                        .x(origX)
+                        .setDuration(0)
+                        .start();
             } else {
                 recyclerLayout.removeView(infoCardLayout);
             }
@@ -668,10 +674,9 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     private class InfoSlider {
 
         ViewGroup _root;
-        float origX;
         float viewWidth;
         float dX;
-        private static final int MAX_CLICK_DURATION = 200;
+        private static final int MAX_CLICK_DURATION = 100;
         private long startClickTime;
 
         public void init(final ViewGroup view) {
@@ -703,7 +708,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                                     .start();
                             break;
                         case MotionEvent.ACTION_UP:
-                            Log.e(TAG, "onTouch: origX: " + origX);
                             long clickDuration = Calendar.getInstance().getTimeInMillis() - startClickTime;
 
                             if (clickDuration < MAX_CLICK_DURATION) {
