@@ -55,8 +55,8 @@
 
             <ImageButton
                 android:id="@+id/imageButton3"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginRight="16dp"
                 android:background="@drawable/faq_question_black"
@@ -66,11 +66,10 @@
 
             <ImageButton
                 android:id="@+id/close_button"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@drawable/ic_close_black_24dp"
                 android:layout_marginStart="16dp"
-                android:background="@android:color/transparent"
-                android:src="@drawable/ic_close_black_24dp"
                 app:layout_constraintBottom_toTopOf="@+id/view"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/title"
