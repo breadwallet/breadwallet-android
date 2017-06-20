@@ -406,6 +406,8 @@ public class BRPeerManager {
 
     public native static int getCurrentBlockHeight();
 
+    public native static int getRelayCount();
+
     public native static int getEstimatedBlockHeight();
 
     public native boolean isCreated();

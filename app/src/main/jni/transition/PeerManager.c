@@ -383,6 +383,16 @@ JNIEXPORT jint JNICALL Java_com_breadwallet_wallet_BRPeerManager_getCurrentBlock
     return (jint) BRPeerManagerLastBlockHeight(_peerManager);
 }
 
+JNIEXPORT jint JNICALL Java_com_breadwallet_wallet_BRPeerManager_getRelayCount(JNIEnv *env,
+                                                                               jobject thiz,
+                                                                               jstring txHash) {
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "getCurrentBlockHeight");
+    if (!_peerManager) return 0;
+    const char *rawTxHash = (*env)->GetStringUTFChars(env, txHash, 0);
+    UInt256 theHash = u256_hex_decode(rawTxHash);
+    return (jint) BRPeerManagerRelayCount(_peerManager, theHash);
+}
+
 JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRPeerManager_isCreated(JNIEnv *env,
                                                                                jobject obj) {
     __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "peerManager isCreated %s",
@@ -402,6 +412,7 @@ JNIEXPORT jint JNICALL Java_com_breadwallet_wallet_BRPeerManager_getEstimatedBlo
     if (!_peerManager || !_wallet) return 0;
     return (jint) BRPeerManagerEstimatedBlockHeight(_peerManager);
 }
+
 JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRPeerManager_getLastBlockTimestamp(
         JNIEnv *env, jobject thiz) {
 //    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "getLastBlockTimestamp");
