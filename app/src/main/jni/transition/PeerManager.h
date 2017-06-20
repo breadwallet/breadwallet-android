@@ -89,6 +89,10 @@ JNIEXPORT void JNICALL Java_com_breadwallet_presenter_activities_IntroActivity_t
 JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRPeerManager_isConnected(JNIEnv *env,
                                                                                  jobject obj);
 
+JNIEXPORT jint JNICALL Java_com_breadwallet_wallet_BRPeerManager_getRelayCount(JNIEnv *env,
+                                                                               jobject thiz,
+                                                                               jstring txHash);
+
 #ifdef __cplusplus
 }
 #endif
