@@ -231,7 +231,7 @@ public class BRWalletManager {
 
     }
 
-    public boolean isPaperKeyWritten(Context context){
+    public boolean isPaperKeyWritten(Context context) {
         return SharedPreferencesManager.getPhraseWroteDown(context);
     }
 
@@ -765,6 +765,8 @@ public class BRWalletManager {
     public native boolean addressIsUsed(String address);
 
     public native int feeForTransaction(String addressHolder, long amountHolder);
+
+    public native int feeForTransactionAmount( long amountHolder);
 
     public native long getMinOutputAmount();
 
