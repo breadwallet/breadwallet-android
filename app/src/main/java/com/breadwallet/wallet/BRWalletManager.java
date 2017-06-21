@@ -766,7 +766,7 @@ public class BRWalletManager {
 
     public native int feeForTransaction(String addressHolder, long amountHolder);
 
-    public native int feeForTransactionAmount( long amountHolder);
+    public native int feeForTransactionAmount(long amountHolder);
 
     public native long getMinOutputAmount();
 

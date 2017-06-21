@@ -362,7 +362,7 @@ public class FragmentSend extends Fragment {
 
     private void showKeyboard(boolean b) {
 
-        int curIndex =  signalLayout.indexOfChild(currencyListLayout) == -1 ? keyboardIndex - 1 : keyboardIndex;
+        int curIndex = signalLayout.indexOfChild(currencyListLayout) == -1 ? keyboardIndex - 1 : keyboardIndex;
 
         if (!b) {
             signalLayout.removeView(keyboardLayout);
@@ -510,6 +510,11 @@ public class FragmentSend extends Fragment {
         BigDecimal balanceForISO = BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(curBalance));
         //formattedBalance
         String formattedBalance = BRCurrency.getFormattedCurrencyString(getActivity(), iso, balanceForISO);
+        //Balance depending on ISO
+        long fee = BRWalletManager.getInstance().feeForTransactionAmount(curBalance);
+        BigDecimal feeForISO = BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(fee));
+        //formattedBalance
+        String aproxFee = BRCurrency.getFormattedCurrencyString(getActivity(), iso, feeForISO);
         if (new BigDecimal((tmpAmount.isEmpty() || tmpAmount.equalsIgnoreCase(".")) ? "0" : tmpAmount).doubleValue() > balanceForISO.doubleValue()) {
             balanceString = String.format("Insufficient funds. Try an amount below your current balance: %s", formattedBalance);
             balanceText.setTextColor(getContext().getColor(R.color.warning_color));
@@ -521,7 +526,7 @@ public class FragmentSend extends Fragment {
             amountEdit.setTextColor(getContext().getColor(R.color.almost_black));
             isoText.setTextColor(getContext().getColor(R.color.almost_black));
         }
-        balanceText.setText(balanceString);
+        balanceText.setText(String.format("%s, Fee: %s", balanceString, aproxFee));
 
     }
 
