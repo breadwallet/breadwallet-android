@@ -1,5 +1,6 @@
 package com.breadwallet.presenter.fragments;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -33,7 +35,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-
 
 
 /**
@@ -66,6 +67,7 @@ public class FragmentTransactionItem extends Fragment {
 
     public TextView mTitle;
     private TextView mDescriptionText;
+    private TextView mSubHeader;
     private TextView mConfirmationText;
     private TextView mAvailableSpend;
     private TextView mCommentText;
@@ -73,8 +75,10 @@ public class FragmentTransactionItem extends Fragment {
     private TextView mAddressText;
     private TextView mDateText;
     private TextView mToFromBottom;
+    private TextView mTxHash;
     private TransactionListItem item;
     private LinearLayout signalLayout;
+    private ImageButton close;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -85,6 +89,7 @@ public class FragmentTransactionItem extends Fragment {
         signalLayout = (LinearLayout) rootView.findViewById(R.id.signal_layout);
         mTitle = (TextView) rootView.findViewById(R.id.title);
         mDescriptionText = (TextView) rootView.findViewById(R.id.description_text);
+        mSubHeader = (TextView) rootView.findViewById(R.id.sub_header);
         mCommentText = (TextView) rootView.findViewById(R.id.comment_text);
         mAmountText = (TextView) rootView.findViewById(R.id.amount_text);
         mAddressText = (TextView) rootView.findViewById(R.id.address_text);
@@ -92,13 +97,25 @@ public class FragmentTransactionItem extends Fragment {
         mToFromBottom = (TextView) rootView.findViewById(R.id.to_from);
         mConfirmationText = (TextView) rootView.findViewById(R.id.confirmation_text);
         mAvailableSpend = (TextView) rootView.findViewById(R.id.available_spend);
+        mTxHash = (TextView) rootView.findViewById(R.id.tx_hash);
+        close = (ImageButton) rootView.findViewById(R.id.close_button);
 
         signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
+
         rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 getActivity().onBackPressed();
+            }
+        });
+
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Activity app = getActivity();
+                if (app != null)
+                    app.getFragmentManager().popBackStack();
             }
         });
 
@@ -133,20 +150,21 @@ public class FragmentTransactionItem extends Fragment {
         //description (Sent $24.32 ....)
         Spannable descriptionString = sent ? new SpannableString("Sent " + amountWithFee) : new SpannableString("Received " + amountWithFee);
 
-        String startingBalance = BRCurrency.getFormattedCurrencyString(getActivity(), iso, BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(sent? item.getBalanceAfterTx() +  txAmount.longValue() : item.getBalanceAfterTx() - txAmount.longValue())));
+        String startingBalance = BRCurrency.getFormattedCurrencyString(getActivity(), iso, BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(sent ? item.getBalanceAfterTx() + txAmount.longValue() : item.getBalanceAfterTx() - txAmount.longValue())));
         String endingBalance = BRCurrency.getFormattedCurrencyString(getActivity(), iso, BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(item.getBalanceAfterTx())));
         String commentString = "For Love";
-        String amountString = String.format("%s %s\n\nStarting Balance: %s\nEnding Balance:  %s\n\nExchange Rate on Day-Of-Transaction\n%s", amount, item.getFee() == -1 ? "" : String.format("(%s)", fee), startingBalance, endingBalance, "none for now");
+        String amountString = String.format("%s %s\n\nStarting Balance: %s\nEnding Balance:  %s", amount, item.getFee() == -1 ? "" : String.format("(%s)", fee), startingBalance, endingBalance);
 
 
         SpannableString addr = sent ? new SpannableString(item.getTo()[0]) : new SpannableString(item.getFrom()[0]);
         SpannableString toFrom = sent ? new SpannableString("to") : new SpannableString("from");
-        toFrom.setSpan(new RelativeSizeSpan(0.80f), 0, toFrom.length(), 0);
+        toFrom.setSpan(new RelativeSizeSpan(1f), 0, toFrom.length(), 0);
         //span a piece of text to be smaller size (the address)
         final StyleSpan norm = new StyleSpan(Typeface.NORMAL);
         addr.setSpan(norm, 0, addr.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-        addr.setSpan(new RelativeSizeSpan(0.65f), 0, addr.length(), 0);
+        addr.setSpan(new RelativeSizeSpan(0.8f), 0, addr.length(), 0);
 
+        mTxHash.setText(item.getHexId());
 
         int relayCount = BRPeerManager.getRelayCount(item.getHexId());
 
@@ -214,9 +232,10 @@ public class FragmentTransactionItem extends Fragment {
         if (!item.isValid())
             mConfirmationText.setText("INVALID");
 
-        mToFromBottom.setText(sent ? "from" : "to");
+        mToFromBottom.setText(sent ? "From" : "To");
         mDateText.setText(getFormattedDate(item.getTimeStamp()));
-        mDescriptionText.setText(TextUtils.concat(descriptionString, "\n", toFrom, ": ", addr));
+        mDescriptionText.setText(TextUtils.concat(descriptionString));
+        mSubHeader.setText(TextUtils.concat(toFrom, " ", addr));
         mCommentText.setText(commentString);
         mAmountText.setText(amountString);
         mAddressText.setText(sent ? item.getFrom()[0] : item.getTo()[0]);
