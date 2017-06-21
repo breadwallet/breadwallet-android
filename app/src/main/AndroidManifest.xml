@@ -39,7 +39,7 @@
         android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:windowSoftInputMode="adjustPan"
+        android:windowSoftInputMode="adjustPan|adjustResize"
         >
         <activity
             android:name=".presenter.activities.intro.IntroActivity"
