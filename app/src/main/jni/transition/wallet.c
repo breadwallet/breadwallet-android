@@ -352,7 +352,8 @@ JNIEXPORT jobjectArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTr
     for (int i = 0; i < txCount; i++) {
         if (!_wallet) return NULL;
         BRTransaction *tempTx = transactions_sqlite[i];
-        jboolean isValid = (jboolean) ((BRWalletTransactionIsValid(_wallet, tempTx) == 1) ? JNI_TRUE : JNI_FALSE);
+        jboolean isValid = (jboolean) ((BRWalletTransactionIsValid(_wallet, tempTx) == 1) ? JNI_TRUE
+                                                                                          : JNI_FALSE);
 
         jlong JtimeStamp = tempTx->timestamp;
         jint JblockHeight = tempTx->blockHeight;
@@ -506,6 +507,17 @@ Java_com_breadwallet_wallet_BRWalletManager_feeForTransaction(JNIEnv *env, jobje
     BRTransaction *tx = BRWalletCreateTransaction(_wallet, (uint64_t) amount, rawAddress);
 
     return tx ? (jint) BRWalletFeeForTx(_wallet, tx) : 0;
+}
+
+JNIEXPORT jlong JNICALL
+Java_com_breadwallet_wallet_BRWalletManager_feeForTransactionAmount(JNIEnv *env, jobject obj,
+                                                                    jlong amount) {
+    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "feeForTransaction");
+    if (!_wallet) return 0;
+
+    uint64_t fee = BRWalletFeeForTxAmount(_wallet, (uint64_t) amount);
+
+    return (jlong) fee;
 }
 
 JNIEXPORT jbyteArray JNICALL
