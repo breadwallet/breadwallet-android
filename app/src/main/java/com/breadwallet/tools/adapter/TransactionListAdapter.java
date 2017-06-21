@@ -2,9 +2,11 @@ package com.breadwallet.tools.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -107,7 +109,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         return itemFeed.size();
     }
 
-    private void setTexts(CustomViewHolder convertView, int position) {
+    private void setTexts(final CustomViewHolder convertView, int position) {
 
         TransactionListItem item = itemFeed.get(position);
 
@@ -115,13 +117,22 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         convertView.mainLayout.setBackgroundResource(getResourceByPos(position));
         convertView.sentReceived.setText(received ? "Received" : "Sent");
         convertView.toFrom.setText(received ? "from" : "to");
+        final String addr = received ? item.getFrom()[0] : item.getTo()[0];
+        convertView.account.setText(TextUtils.concat(addr.substring(0, 5), "…", addr.substring(addr.length() - 5)));
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (convertView.account.getX() + convertView.account.getWidth() > convertView.timestamp.getX()) {
+                    convertView.account.setText(TextUtils.concat(addr.substring(0, 5), "…\n", "…", addr.substring(addr.length() - 5)));
+                }
+            }
+        }, 50);
+
         int blockHeight = item.getBlockHeight();
         int confirms = blockHeight == Integer.MAX_VALUE ? 0 : SharedPreferencesManager.getLastBlockHeight(mContext) - blockHeight + 1;
         int relayCount = BRPeerManager.getRelayCount(item.getHexId());
 
-//        if (!item.isValid())
-//            convertView.status.setText("INVALID");
-//        else
         int level = 0;
         if (confirms <= 0) {
             if (relayCount <= 0)
@@ -176,7 +187,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
             set.clone(convertView.constraintLayout);
             int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, mContext.getResources().getDisplayMetrics());
 
-            set.connect(R.id.status, ConstraintSet.BOTTOM, convertView.constraintLayout.getId(), ConstraintSet.BOTTOM,  px);
+            set.connect(R.id.status, ConstraintSet.BOTTOM, convertView.constraintLayout.getId(), ConstraintSet.BOTTOM, px);
             // Apply the changes
             set.applyTo(convertView.constraintLayout);
         }
