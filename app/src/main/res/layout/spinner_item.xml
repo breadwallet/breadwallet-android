@@ -12,7 +12,7 @@
     android:background="@drawable/selector_gray_stroke"
     android:padding="0dp"
     android:textColor="@color/light_gray"
-    app:isBreadButton="true"
+    app:isBreadButton="false"
     >
 
     <!--<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"-->

@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
@@ -16,6 +17,8 @@ import android.widget.Button;
 import com.breadwallet.R;
 import com.breadwallet.tools.manager.TypefacesManager;
 import com.breadwallet.tools.util.Utils;
+
+import java.lang.reflect.Field;
 
 /**
  * BreadWallet
@@ -131,6 +134,37 @@ public class BRButton extends Button {
 
         return super.onTouchEvent(event);
 
+    }
+
+    //Used for new ListenerInfo class structure used beginning with API 14 (ICS)
+    private View.OnClickListener getOnClickListener() {
+        View.OnClickListener retrievedListener = null;
+        String viewStr = "android.view.View";
+        String lInfoStr = "android.view.View$ListenerInfo";
+
+        try {
+            Field listenerField = Class.forName(viewStr).getDeclaredField("mListenerInfo");
+            Object listenerInfo = null;
+
+            if (listenerField != null) {
+                listenerField.setAccessible(true);
+                listenerInfo = listenerField.get(this);
+            }
+
+            Field clickListenerField = Class.forName(lInfoStr).getDeclaredField("mOnClickListener");
+
+            if (clickListenerField != null && listenerInfo != null) {
+                retrievedListener = (View.OnClickListener) clickListenerField.get(listenerInfo);
+            }
+        } catch (NoSuchFieldException ex) {
+            Log.e("Reflection", "No Such Field.");
+        } catch (IllegalAccessException ex) {
+            Log.e("Reflection", "Illegal Access.");
+        } catch (ClassNotFoundException ex) {
+            Log.e("Reflection", "Class Not Found.");
+        }
+
+        return retrievedListener;
     }
 
 }
