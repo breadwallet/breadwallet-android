@@ -116,12 +116,13 @@
             android:layout_height="wrap_content"
             android:layout_weight="1.0"
             android:background="@drawable/b_half_left"
-            android:padding="8dp"
             android:paddingBottom="0dp"
+            android:paddingTop="8dp"
             android:text="@string/LoginScreen.myAddress"
             android:textColor="@color/white"
             android:textSize="14sp"
             app:customFont="CircularPro-Medium.otf"
+            app:isBreadButton="false"
             />
 
         <com.breadwallet.presenter.customviews.BRButton
@@ -130,8 +131,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1.0"
             android:background="@drawable/b_half_right"
-            android:padding="8dp"
             android:paddingBottom="0dp"
+            android:paddingTop="8dp"
             android:text="@string/LoginScreen.scan"
             android:textColor="@color/white"
             android:textSize="14sp"
