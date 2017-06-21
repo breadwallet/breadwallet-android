@@ -512,20 +512,21 @@ public class FragmentSend extends Fragment {
         String formattedBalance = BRCurrency.getFormattedCurrencyString(getActivity(), iso, balanceForISO);
         //Balance depending on ISO
         long fee = BRWalletManager.getInstance().feeForTransactionAmount(curBalance);
-        BigDecimal feeForISO = BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(fee));
+        BigDecimal feeForISO = BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(curBalance == 0 ? 0 : fee));
         //formattedBalance
         String aproxFee = BRCurrency.getFormattedCurrencyString(getActivity(), iso, feeForISO);
         if (new BigDecimal((tmpAmount.isEmpty() || tmpAmount.equalsIgnoreCase(".")) ? "0" : tmpAmount).doubleValue() > balanceForISO.doubleValue()) {
-            balanceString = String.format("Insufficient funds. Try an amount below your current balance: %s", formattedBalance);
+//            balanceString = String.format("Insufficient funds. Try an amount below your current balance: %s", formattedBalance);
             balanceText.setTextColor(getContext().getColor(R.color.warning_color));
             amountEdit.setTextColor(getContext().getColor(R.color.warning_color));
             isoText.setTextColor(getContext().getColor(R.color.warning_color));
         } else {
-            balanceString = String.format("Current Balance: %s", formattedBalance);
+//            balanceString = String.format("Current Balance: %s", formattedBalance);
             balanceText.setTextColor(getContext().getColor(R.color.light_gray));
             amountEdit.setTextColor(getContext().getColor(R.color.almost_black));
             isoText.setTextColor(getContext().getColor(R.color.almost_black));
         }
+        balanceString = String.format("Current Balance: %s", formattedBalance);
         balanceText.setText(String.format("%s, Fee: %s", balanceString, aproxFee));
 
     }
