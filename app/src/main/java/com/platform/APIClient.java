@@ -119,7 +119,7 @@ public class APIClient {
 
     public static HTTPServer server;
 
-    private Activity ctx;
+    private Context ctx;
 
     public enum FeatureFlags {
         BUY_BITCOIN("buy-bitcoin"),
@@ -143,13 +143,13 @@ public class APIClient {
         }
     }
 
-    public static synchronized APIClient getInstance(Activity context) {
+    public static synchronized APIClient getInstance(Context context) {
 
         if (ourInstance == null) ourInstance = new APIClient(context);
         return ourInstance;
     }
 
-    private APIClient(Activity context) {
+    private APIClient(Context context) {
         ctx = context;
         if (0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)) {
             BREAD_BUY = "bread-buy-staging";
