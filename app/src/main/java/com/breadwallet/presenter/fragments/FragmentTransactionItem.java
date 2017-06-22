@@ -152,7 +152,7 @@ public class FragmentTransactionItem extends Fragment {
         String startingBalance = BRCurrency.getFormattedCurrencyString(getActivity(), iso, BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(sent ? item.getBalanceAfterTx() + txAmount.longValue() : item.getBalanceAfterTx() - txAmount.longValue())));
         String endingBalance = BRCurrency.getFormattedCurrencyString(getActivity(), iso, BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(item.getBalanceAfterTx())));
         String commentString = "For Love";
-        String amountString = String.format("%s %s\n\nStarting Balance: %s\nEnding Balance:  %s", amount, item.getFee() == -1 ? "" : String.format("(%s)", fee), startingBalance, endingBalance);
+        String amountString = String.format("%s %s\n\nStarting Balance: %s\nEnding Balance:  %s", amount, item.getFee() == -1 ? "" : String.format("(%s fee)", fee), startingBalance, endingBalance);
 
 
         SpannableString addr = sent ? new SpannableString(item.getTo()[0]) : new SpannableString(item.getFrom()[0]);
