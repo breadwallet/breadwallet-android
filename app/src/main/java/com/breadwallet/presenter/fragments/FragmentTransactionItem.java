@@ -109,7 +109,6 @@ public class FragmentTransactionItem extends Fragment {
                 getActivity().onBackPressed();
             }
         });
-
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

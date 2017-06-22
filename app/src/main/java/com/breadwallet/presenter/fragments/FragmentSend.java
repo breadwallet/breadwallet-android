@@ -41,8 +41,11 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static com.breadwallet.tools.security.BitcoinUrlHandler.getRequestFromString;
 
@@ -276,7 +279,7 @@ public class FragmentSend extends Fragment {
 
                 boolean allFilled = true;
                 String address = addressEdit.getText().toString();
-                String amountStr = amountEdit.getText().toString();
+                String amountStr = amountBuilder.toString();
                 String iso = selectedIso;
 
                 //get amount in satoshis from any isos
@@ -500,7 +503,7 @@ public class FragmentSend extends Fragment {
     private void updateText() {
         if (getActivity() == null) return;
         String tmpAmount = amountBuilder.toString();
-        amountEdit.setText(tmpAmount);
+        setAmount();
         String balanceString;
         String iso = selectedIso;
         curBalance = BRWalletManager.getInstance().getBalance(getActivity());
@@ -556,6 +559,23 @@ public class FragmentSend extends Fragment {
         } catch (IllegalStateException ignored) {
 
         }
+    }
+
+    private void setAmount() {
+        String tmpAmount = amountBuilder.toString();
+        int divider = tmpAmount.length();
+        if (tmpAmount.contains(".")) {
+            divider = tmpAmount.indexOf(".");
+        }
+        Log.e(TAG, "setAmount: " + divider);
+        StringBuilder newAmount = new StringBuilder();
+        for (int i = 0; i < tmpAmount.length(); i++) {
+            newAmount.append(tmpAmount.charAt(i));
+            if (divider > 3 && divider - 1 != i && divider > i  && ((divider - i - 1) % 3 == 0)) {
+                newAmount.append(",");
+            }
+        }
+        amountEdit.setText(newAmount.toString());
     }
 
 }
