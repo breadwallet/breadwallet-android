@@ -672,9 +672,14 @@ public class BRWalletManager {
             Log.d(TAG, "blocksCount before connecting: " + blocksCount);
             Log.d(TAG, "peersCount before connecting: " + peersCount);
 
-            int walletTimeString = KeyStoreManager.getWalletCreationTime(ctx);
-            Log.e(TAG, "setUpTheWallet: walletTimeString: " + walletTimeString);
-            pm.create(walletTimeString, blocksCount, peersCount);
+            int walletTime = KeyStoreManager.getWalletCreationTime(ctx);
+            if (walletTime == 0) {
+                WalletInfo info = KVStoreManager.getInstance().getWalletInfo(ctx);
+                if (info != null)
+                    walletTime = info.creationDate;
+            }
+            Log.e(TAG, "setUpTheWallet: walletTimeString: " + walletTime);
+            pm.create(walletTime, blocksCount, peersCount);
 
         }
         pm.connect();
