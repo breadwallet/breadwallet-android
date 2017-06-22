@@ -1,5 +1,12 @@
 package com.platform.tools;
 
+import android.content.Context;
+
+import com.platform.APIClient;
+import com.platform.entities.WalletInfo;
+import com.platform.kvstore.RemoteKVStore;
+import com.platform.kvstore.ReplicatedKVStore;
+
 /**
  * BreadWallet
  * <p/>
@@ -34,5 +41,10 @@ public class KVStoreManager {
     public static KVStoreManager getInstance() {
         if (instance == null) instance = new KVStoreManager();
         return instance;
+    }
+
+    public WalletInfo getWalletInfo(Context app){
+        RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
+        ReplicatedKVStore kvStore = new ReplicatedKVStore(ctx, remoteKVStore);
     }
 }
