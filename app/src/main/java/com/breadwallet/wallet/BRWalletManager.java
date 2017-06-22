@@ -51,6 +51,8 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.tools.util.Bip39Reader;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.google.firebase.crash.FirebaseCrash;
+import com.platform.entities.WalletInfo;
+import com.platform.tools.KVStoreManager;
 
 import junit.framework.Assert;
 
