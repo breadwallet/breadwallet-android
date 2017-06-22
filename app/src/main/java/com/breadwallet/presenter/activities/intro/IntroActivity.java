@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
@@ -61,6 +62,7 @@ public class IntroActivity extends BRActivity implements Serializable {
     public static IntroActivity introActivity;
     public static boolean appVisible = false;
     private static IntroActivity app;
+    private View splashScreen;
 
     public static IntroActivity getApp() {
         return app;
@@ -84,6 +86,7 @@ public class IntroActivity extends BRActivity implements Serializable {
         setContentView(R.layout.activity_intro);
         newWalletButton = (Button) findViewById(R.id.button_new_wallet);
         recoverWalletButton = (Button) findViewById(R.id.button_recover_wallet);
+        splashScreen = findViewById(R.id.splash_screen);
         setListeners();
 
         if (!BuildConfig.DEBUG && KeyStoreManager.AUTH_DURATION_SEC != 300) {
@@ -109,6 +112,12 @@ public class IntroActivity extends BRActivity implements Serializable {
         }
 
         PostAuthenticationProcessor.getInstance().onCanaryCheck(this, false);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                splashScreen.setVisibility(View.GONE);
+            }
+        },1000);
 
     }
 
