@@ -1,11 +1,18 @@
 package com.platform.tools;
 
 import android.content.Context;
+import android.util.Log;
 
+import com.breadwallet.tools.util.BRCompressor;
 import com.platform.APIClient;
+import com.platform.entities.TxMetaData;
 import com.platform.entities.WalletInfo;
+import com.platform.kvstore.CompletionObject;
 import com.platform.kvstore.RemoteKVStore;
 import com.platform.kvstore.ReplicatedKVStore;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * BreadWallet
@@ -32,8 +39,10 @@ import com.platform.kvstore.ReplicatedKVStore;
  * THE SOFTWARE.
  */
 public class KVStoreManager {
+    private static final String TAG = KVStoreManager.class.getName();
 
     private static KVStoreManager instance;
+    String walletInfoKey = "wallet-info";
 
     private KVStoreManager() {
     }
@@ -43,8 +52,51 @@ public class KVStoreManager {
         return instance;
     }
 
-    public WalletInfo getWalletInfo(Context app){
+    public WalletInfo getWalletInfo(Context app) {
+        WalletInfo result = new WalletInfo();
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
-        ReplicatedKVStore kvStore = new ReplicatedKVStore(ctx, remoteKVStore);
+        ReplicatedKVStore kvStore = new ReplicatedKVStore(app, remoteKVStore);
+        long ver = kvStore.remoteVersion(walletInfoKey);
+        CompletionObject obj = kvStore.get(walletInfoKey, ver);
+        if (obj.value == null) {
+            Log.e(TAG, "getWalletInfo: value is null for key: " + obj.key);
+            return null;
+        }
+        byte[] uncompressed = BRCompressor.bz2Extract(obj.value);
+        JSONObject json;
+        try {
+            json = new JSONObject(new String(uncompressed));
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        //todo finish
+        Log.e(TAG, "getWalletInfo: " + json);
+        return result;
+    }
+
+    public TxMetaData getTxMetaData(Context app, String txHash) {
+        String key = "txn-" + txHash;
+        TxMetaData result = new TxMetaData();
+        RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
+        ReplicatedKVStore kvStore = new ReplicatedKVStore(app, remoteKVStore);
+        long ver = kvStore.remoteVersion(key);
+        CompletionObject obj = kvStore.get(key, ver);
+        if (obj.value == null) {
+            Log.e(TAG, "getTxMetaData: value is null for key: " + obj.key);
+            return null;
+        }
+        byte[] uncompressed = BRCompressor.bz2Extract(obj.value);
+        JSONObject json;
+        try {
+            json = new JSONObject(new String(uncompressed));
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+        //todo finish
+        Log.e(TAG, "getTxMetaData: " + json);
+        return result;
     }
 }

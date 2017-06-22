@@ -54,6 +54,8 @@ import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
 import com.platform.HTTPServer;
+import com.platform.entities.WalletInfo;
+import com.platform.tools.KVStoreManager;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -161,6 +163,9 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         initializeViews();
 
         setListeners();
+
+        WalletInfo info = KVStoreManager.getInstance().getWalletInfo(this);
+        assert (info != null);
 
         setupSlideHandler();
 
