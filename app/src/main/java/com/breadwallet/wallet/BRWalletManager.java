@@ -163,7 +163,12 @@ public class BRWalletManager {
             throw ex;
         }
         KeyStoreManager.putAuthKey(authKey, ctx);
-        KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), ctx);
+        int walletCreationTime = (int) (System.currentTimeMillis() / 1000);
+        KeyStoreManager.putWalletCreationTime(walletCreationTime, ctx);
+        WalletInfo info = new WalletInfo();
+        info.creationDate = walletCreationTime;
+        KVStoreManager.getInstance().putWalletInfo(ctx, info); //push the creation time to the kv store
+
         byte[] strBytes = TypesConverter.getNullTerminatedPhrase(strPhrase);
         byte[] pubKey = BRWalletManager.getInstance().getMasterPubKey(strBytes);
         KeyStoreManager.putMasterPublicKey(pubKey, ctx);

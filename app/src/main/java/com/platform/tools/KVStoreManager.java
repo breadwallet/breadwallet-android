@@ -76,6 +76,23 @@ public class KVStoreManager {
         return result;
     }
 
+    public void putWalletInfo(Context app, WalletInfo info) {
+
+        WalletInfo old = getWalletInfo(app);
+        if (old == null) old = new WalletInfo(); //create new one if it's null
+
+        //add all the params that we want to change
+        if (info.classVersion != 0) old.classVersion = info.classVersion;
+        if (info.creationDate != 0) old.creationDate = info.creationDate;
+        if (info.currentCurrency != null) old.currentCurrency = info.currentCurrency;
+        if (info.name != null) old.name = info.name;
+
+        JSONObject obj = new JSONObject();
+//        obj.put
+        //todo finish
+
+    }
+
     public TxMetaData getTxMetaData(Context app, String txHash) {
         String key = "txn-" + txHash;
         TxMetaData result = new TxMetaData();
@@ -98,5 +115,9 @@ public class KVStoreManager {
         //todo finish
         Log.e(TAG, "getTxMetaData: " + json);
         return result;
+    }
+
+    public void putTxMetaData(Context app, TxMetaData data) {
+        //todo finish
     }
 }
