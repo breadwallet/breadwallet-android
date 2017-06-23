@@ -10,7 +10,6 @@ import com.platform.entities.WalletInfo;
 import com.platform.kvstore.CompletionObject;
 import com.platform.kvstore.RemoteKVStore;
 import com.platform.kvstore.ReplicatedKVStore;
-import com.platform.sqlite.KVEntity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
