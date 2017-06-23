@@ -2,6 +2,8 @@ package com.breadwallet.presenter.activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -10,6 +12,7 @@ import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -60,6 +63,7 @@ import com.platform.tools.KVStoreManager;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 import static com.breadwallet.presenter.activities.intro.IntroActivity.introActivity;
 import static com.breadwallet.presenter.activities.ReEnterPinActivity.reEnterPinActivity;
@@ -135,6 +139,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     private BRSearchBar searchBar;
     private boolean isSwapped;
     private float origX;
+    private Fragment savedFragment;
 
     private static BreadActivity app;
 
@@ -393,13 +398,14 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
 
             }
         }).start();
+        restoreFragment();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         appVisible = false;
-
+        saveVisibleFragment();
 
     }
 
@@ -674,6 +680,31 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
 
     private void setupSlideHandler() {
         new InfoSlider().init(infoCardLayout);
+    }
+
+    public void saveVisibleFragment() {
+        if (getFragmentManager().getBackStackEntryCount() == 0) {
+            return;
+        }
+
+        String tag = getFragmentManager().getBackStackEntryAt(getFragmentManager().getBackStackEntryCount() - 1).getName();
+        Fragment tmp = getFragmentManager().findFragmentByTag(tag);
+        if (tmp != null && tmp.isVisible()) {
+            savedFragment = tmp;
+        }
+    }
+
+    public void restoreFragment() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.e(TAG, "restoreFragment: savedFragment: " + savedFragment);
+
+                if (savedFragment == null) return;
+                getFragmentManager().beginTransaction().attach(savedFragment).commit();
+            }
+        }, 5000);
+
     }
 
     private class InfoSlider {
