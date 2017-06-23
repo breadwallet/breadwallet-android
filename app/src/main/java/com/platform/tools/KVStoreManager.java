@@ -111,7 +111,9 @@ public class KVStoreManager {
             obj.put("creationDate", old.creationDate);
             obj.put("name", old.name);
             obj.put("currentCurrency", old.currentCurrency);
-            result = obj.toString().getBytes("utf-8");
+            byte[] rawBytes = obj.toString().getBytes("utf-8");
+            result = BRCompressor.bz2Compress(rawBytes);
+
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e(TAG, "putWalletInfo: FAILED to create json");
