@@ -158,12 +158,12 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
         // Always cast your custom Toolbar here, and set it as the ActionBar.
         toolBar = (Toolbar) findViewById(R.id.bread_bar);
-//        setSupportActionBar(toolBar);
 
         initializeViews();
 
         setListeners();
 
+        //todo delete this testing
         WalletInfo info = KVStoreManager.getInstance().getWalletInfo(this);
         assert (info != null);
 
