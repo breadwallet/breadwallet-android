@@ -33,7 +33,7 @@ import com.platform.kvstore.CompletionObject;
 public class KVEntity {
     public static final String TAG = KVEntity.class.getName();
 
-    public  long version;
+    public long version;
     public long remoteVersion;
     public String key;
     public byte[] value;
@@ -50,6 +50,7 @@ public class KVEntity {
         this.deleted = deleted;
         this.err = err;
     }
+
     public KVEntity(long version, long remoteVersion, String key, byte[] value, long time, int deleted) {
         this.version = version;
         this.remoteVersion = remoteVersion;
@@ -59,7 +60,7 @@ public class KVEntity {
         this.deleted = deleted;
     }
 
-    public void printValues(){
+    public void printValues() {
         Log.e(TAG, "KVEntity values:");
         Log.e(TAG, "version: " + version);
         Log.e(TAG, "remoteVersion: " + remoteVersion);
@@ -73,9 +74,10 @@ public class KVEntity {
     }
 
 
-    public CompletionObject.RemoteKVStoreError getErr(){
+    public CompletionObject.RemoteKVStoreError getErr() {
         return err;
     }
+
     public long getVersion() {
         return version;
     }

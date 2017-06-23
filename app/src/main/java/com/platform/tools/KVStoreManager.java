@@ -10,9 +10,12 @@ import com.platform.entities.WalletInfo;
 import com.platform.kvstore.CompletionObject;
 import com.platform.kvstore.RemoteKVStore;
 import com.platform.kvstore.ReplicatedKVStore;
+import com.platform.sqlite.KVEntity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
 
 /**
  * BreadWallet
@@ -71,7 +74,17 @@ public class KVStoreManager {
             return null;
         }
 
-        //todo finish
+        try {
+            result.classVersion = json.getInt("classVersion");
+            result.creationDate = json.getInt("creationDate");
+            result.name = json.getString("name");
+            result.currentCurrency = json.getString("currentCurrency");
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e(TAG, "getWalletInfo: FAILED to get json value");
+        }
+
         Log.e(TAG, "getWalletInfo: " + json);
         return result;
     }
@@ -87,9 +100,40 @@ public class KVStoreManager {
         if (info.currentCurrency != null) old.currentCurrency = info.currentCurrency;
         if (info.name != null) old.name = info.name;
 
+        //sanity check
+        if (old.classVersion == 0) old.classVersion = 1;
+        if (old.name != null) old.name = "My Bread";
+
         JSONObject obj = new JSONObject();
-//        obj.put
-        //todo finish
+        byte[] result = new byte[0];
+        try {
+            obj.put("classVersion", old.classVersion);
+            obj.put("creationDate", old.creationDate);
+            obj.put("name", old.name);
+            obj.put("currentCurrency", old.currentCurrency);
+            result = obj.toString().getBytes("utf-8");
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e(TAG, "putWalletInfo: FAILED to create json");
+            return;
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            Log.e(TAG, "putWalletInfo: FAILED to get bytes from json");
+        }
+
+        if (result.length == 0) {
+            Log.e(TAG, "putWalletInfo: FAILED: result is empty");
+            return;
+        }
+
+        RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
+        ReplicatedKVStore kvStore = new ReplicatedKVStore(app, remoteKVStore);
+        long localVer = kvStore.localVersion(walletInfoKey);
+        long removeVer = kvStore.remoteVersion(walletInfoKey);
+        CompletionObject compObj = kvStore.set(localVer, removeVer, walletInfoKey, result, System.currentTimeMillis(), 0);
+        if (compObj.err != null) {
+            Log.e(TAG, "putWalletInfo: Error setting value for key: " + walletInfoKey + ", err: " + compObj.err);
+        }
 
     }
 
