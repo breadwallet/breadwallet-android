@@ -12,7 +12,6 @@ import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -40,11 +39,8 @@ import com.breadwallet.presenter.customviews.BRSearchBar;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.presenter.fragments.FragmentManage;
-import com.breadwallet.presenter.fragments.FragmentMenu;
-import com.breadwallet.presenter.fragments.FragmentSend;
 import com.breadwallet.tools.adapter.TransactionListAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
@@ -140,7 +136,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     private BRSearchBar searchBar;
     private boolean isSwapped;
     private float origX;
-    private String savedFragmentTaG;
+    private String savedFragmentTag;
 
     private static BreadActivity app;
 
@@ -191,11 +187,12 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         if (introActivity != null) introActivity.finish();
         if (reEnterPinActivity != null) reEnterPinActivity.finish();
 
+
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-//        super.onSaveInstanceState(outState);
+        //leave it empty, avoiding the os bug
     }
 
     //BLOCKS
@@ -260,12 +257,8 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 //start the server for Buy Bitcoin
+                BRAnimator.showMenuFragment(BreadActivity.this);
 
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.setCustomAnimations(0, 0, 0, R.animator.plain_300);
-                transaction.add(android.R.id.content, new FragmentMenu(), FragmentMenu.class.getName());
-                transaction.addToBackStack(null);
-                transaction.commit();
             }
         });
         manageText.setOnClickListener(new View.OnClickListener() {
@@ -400,8 +393,10 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
 
             }
         }).start();
-        restoreFragment();
+        BRAnimator.showFragmentByTag(this, savedFragmentTag);
+        savedFragmentTag = null;
     }
+
 
     @Override
     protected void onPause() {
@@ -464,6 +459,14 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         infoCartDesc = (BRText) findViewById(R.id.info_description);
         infoCartClose = (ImageButton) findViewById(R.id.info_close_button);
 
+    }
+
+    private void saveVisibleFragment() {
+        if (getFragmentManager().getBackStackEntryCount() == 0) {
+            return;
+        }
+        savedFragmentTag = getFragmentManager().getBackStackEntryAt(getFragmentManager().getBackStackEntryCount() - 1).getName();
+        Log.e(TAG, "saveVisibleFragment: saving the tag|" + savedFragmentTag);
     }
 
     //returns x-pos relative to root layout
@@ -658,18 +661,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         }
     }
 
-//    View.OnLayoutChangeListener listener = new View.OnLayoutChangeListener() {
-//        @Override
-//        public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-//            if (barFlipper.getDisplayedChild() == 1)
-//                searchBar.onShow(true);
-//            else
-//                searchBar.onShow(false);
-//            Log.e(TAG, "onLayoutChange: ");
-//
-//
-//        }
-//    };
 
     @Override
     public void onNameChanged(String name) {
@@ -684,36 +675,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         new InfoSlider().init(infoCardLayout);
     }
 
-    public void saveVisibleFragment() {
-        if (getFragmentManager().getBackStackEntryCount() == 0) {
-            return;
-        }
-
-        String tag = getFragmentManager().getBackStackEntryAt(getFragmentManager().getBackStackEntryCount() - 1).getName();
-        Fragment tmp = getFragmentManager().findFragmentByTag(tag);
-        if (tmp != null && tmp.isVisible()) {
-            savedFragmentTaG = tag;
-        }
-    }
-
-    public void restoreFragment() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Log.e(TAG, "restoreFragment: savedFragment: " + savedFragmentTaG);
-
-                if (savedFragmentTaG == null) return;
-                Fragment fragment = getFragmentManager().findFragmentByTag(savedFragmentTaG);
-                Log.e(TAG, "run: attaching....");
-                if(fragment == null) {
-                    Log.e(TAG, "run: fragment is null");
-                    return;
-                }
-                getFragmentManager().beginTransaction().attach(fragment).commit();
-            }
-        }, 5000);
-
-    }
 
     private class InfoSlider {
 

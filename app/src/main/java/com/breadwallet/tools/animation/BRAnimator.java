@@ -33,6 +33,7 @@ import com.breadwallet.presenter.activities.PinActivity;
 import com.breadwallet.presenter.activities.ScanQRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.TransactionListItem;
+import com.breadwallet.presenter.fragments.FragmentMenu;
 import com.breadwallet.presenter.fragments.FragmentSignal;
 import com.breadwallet.presenter.fragments.FragmentReceive;
 import com.breadwallet.presenter.fragments.FragmentRequestAmount;
@@ -42,10 +43,12 @@ import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.BRWalletManager;
 
 import java.util.List;
 
 import static android.support.v4.view.ViewCompat.getX;
+import static com.breadwallet.R.string.show;
 
 
 /**
@@ -94,6 +97,22 @@ public class BRAnimator {
         transaction.commit();
     }
 
+    public static void showFragmentByTag(Activity app, String tag) {
+        Log.e(TAG, "showFragmentByTag: " + tag);
+        if (tag == null) return;
+        if (tag.equalsIgnoreCase(FragmentSend.class.getName())) {
+            showSendFragment(app, null);
+        } else if (tag.equalsIgnoreCase(FragmentReceive.class.getName())) {
+            showReceiveFragment(app, false);
+        } else if (tag.equalsIgnoreCase(FragmentRequestAmount.class.getName())) {
+            showRequestFragment(app, SharedPreferencesManager.getReceiveAddress(app));
+        } else if (tag.equalsIgnoreCase(FragmentMenu.class.getName())) {
+            showMenuFragment(app);
+        } else {
+            Log.e(TAG, "showFragmentByTag: error, no such tag: " + tag);
+        }
+
+    }
 
     public static void showSendFragment(Activity app, final String bitcoinUrl) {
         if (app == null) {
@@ -105,7 +124,6 @@ public class BRAnimator {
             fragmentSend.setUrl(bitcoinUrl);
             return;
         }
-
 
         fragmentSend = new FragmentSend();
         if (bitcoinUrl != null && !bitcoinUrl.isEmpty()) {
@@ -225,6 +243,19 @@ public class BRAnimator {
 
     }
 
+    public static void showMenuFragment(Activity app) {
+        if (app == null) {
+            Log.e(TAG, "showReceiveFragment: app is null");
+            return;
+        }
+        FragmentTransaction transaction = app.getFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(0, 0, 0, R.animator.plain_300);
+        transaction.add(android.R.id.content, new FragmentMenu(), FragmentMenu.class.getName());
+        transaction.addToBackStack(FragmentMenu.class.getName());
+        transaction.commit();
+
+    }
+
     public static boolean isClickAllowed() {
         if (clickAllowed) {
             clickAllowed = false;
@@ -335,7 +366,7 @@ public class BRAnimator {
         float translationY = signalLayout.getTranslationY();
         float signalHeight = signalLayout.getHeight();
         signalLayout.setTranslationY(reverse ? translationY : translationY + signalHeight);
-        signalLayout.animate().translationY(reverse ? 2600 : translationY).setDuration(SLIDE_ANIMATION_DURATION).setInterpolator(reverse? new DecelerateInterpolator() : new OvershootInterpolator(0.7f)).setListener(new AnimatorListenerAdapter() {
+        signalLayout.animate().translationY(reverse ? 2600 : translationY).setDuration(SLIDE_ANIMATION_DURATION).setInterpolator(reverse ? new DecelerateInterpolator() : new OvershootInterpolator(0.7f)).setListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
