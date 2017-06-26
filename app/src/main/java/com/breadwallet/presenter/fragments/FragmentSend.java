@@ -514,7 +514,7 @@ public class FragmentSend extends Fragment {
         //formattedBalance
         String formattedBalance = BRCurrency.getFormattedCurrencyString(getActivity(), iso, balanceForISO);
         //Balance depending on ISO
-        long fee = BRWalletManager.getInstance().feeForTransactionAmount(curBalance);
+        long fee = curBalance == 0 ? 0 : BRWalletManager.getInstance().feeForTransactionAmount(curBalance);
         BigDecimal feeForISO = BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(curBalance == 0 ? 0 : fee));
         //formattedBalance
         String aproxFee = BRCurrency.getFormattedCurrencyString(getActivity(), iso, feeForISO);
@@ -571,7 +571,7 @@ public class FragmentSend extends Fragment {
         StringBuilder newAmount = new StringBuilder();
         for (int i = 0; i < tmpAmount.length(); i++) {
             newAmount.append(tmpAmount.charAt(i));
-            if (divider > 3 && divider - 1 != i && divider > i  && ((divider - i - 1) % 3 == 0)) {
+            if (divider > 3 && divider - 1 != i && divider > i && ((divider - i - 1) % 3 == 0)) {
                 newAmount.append(",");
             }
         }
