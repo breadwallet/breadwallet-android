@@ -51,6 +51,7 @@ public class RemoteKVStore implements KVStoreAdaptor {
 
     private static RemoteKVStore instance;
     private APIClient apiClient;
+    private int retryCount = 0;
 
     public static RemoteKVStore getInstance(APIClient apiClient) {
         if (instance == null)
@@ -70,7 +71,7 @@ public class RemoteKVStore implements KVStoreAdaptor {
                 .head()
                 .build();
         Response res = null;
-        res = apiClient.sendRequest(request, true, 0);
+        res = apiClient.sendRequest(request, true, retryCount);
         if (res == null) {
             Log.d(TAG, "ver: [KV] PUT key=" + key + ", err= response is null (maybe auth challenge)");
             return new CompletionObject(0, 0, unknown);
@@ -96,7 +97,7 @@ public class RemoteKVStore implements KVStoreAdaptor {
                 .addHeader("Content-Type", "application/octet-stream")
                 .addHeader("Content-Length", String.valueOf(value.length))
                 .build();
-        Response res = apiClient.sendRequest(request, true, 1);
+        Response res = apiClient.sendRequest(request, true, retryCount);
         if (res == null) {
             Log.d(TAG, "ver: [KV] PUT key=" + key + ", err= response is null (maybe auth challenge)");
             return new CompletionObject(0, 0, unknown);
@@ -120,7 +121,7 @@ public class RemoteKVStore implements KVStoreAdaptor {
                 .addHeader("If-None-Match", String.valueOf(version))
                 .build();
         Response res = null;
-        res = apiClient.sendRequest(request, true, 0);
+        res = apiClient.sendRequest(request, true, retryCount);
         if (res == null) {
             Log.d(TAG, "ver: [KV] PUT key=" + key + ", err= response is null (maybe auth challenge)");
             return new CompletionObject(0, 0, unknown);
@@ -144,7 +145,7 @@ public class RemoteKVStore implements KVStoreAdaptor {
                 .addHeader("If-None-Match", String.valueOf(version))
                 .build();
         Response res = null;
-        res = apiClient.sendRequest(request, true, 0);
+        res = apiClient.sendRequest(request, true, retryCount);
         if (res == null) {
             Log.d(TAG, "ver: [KV] PUT key=" + key + ", err= response is null (maybe auth challenge)");
             return new CompletionObject(0, 0, unknown);
@@ -173,7 +174,7 @@ public class RemoteKVStore implements KVStoreAdaptor {
                 .get()
                 .build();
         Response res = null;
-        res = apiClient.sendRequest(request, true, 0);
+        res = apiClient.sendRequest(request, true, retryCount);
         if (res == null) {
             Log.d(TAG, "ver: [KV] PUT key=" + key + ", err= response is null (maybe auth challenge)");
             return new CompletionObject(0, 0, unknown);

@@ -83,6 +83,7 @@ public class FragmentReceive extends Fragment {
     private ImageButton close;
     private Handler copyCloseHandler = new Handler();
     private BRKeyboard keyboard;
+    private View separator2;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -106,6 +107,8 @@ public class FragmentReceive extends Fragment {
         keyboard.setBRKeyboardColor(R.color.white);
         separator = rootView.findViewById(R.id.separator);
         close = (ImageButton) rootView.findViewById(R.id.close_button);
+        separator2 = rootView.findViewById(R.id.separator2);
+        separator2.setVisibility(View.GONE);
         setListeners();
         BRWalletManager.getInstance().addBalanceChangedListener(new BRWalletManager.OnBalanceChanged() {
             @Override
@@ -275,7 +278,7 @@ public class FragmentReceive extends Fragment {
 
     private void updateQr() {
         Context ctx = getContext();
-        if(ctx == null) ctx = BreadWalletApp.getBreadContext();
+        if (ctx == null) ctx = BreadWalletApp.getBreadContext();
         final Context finalCtx = ctx;
         new Thread(new Runnable() {
             @Override

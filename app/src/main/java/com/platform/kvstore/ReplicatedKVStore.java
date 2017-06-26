@@ -58,7 +58,7 @@ public class ReplicatedKVStore {
     private static final String KEY_REGEX = "^[^_][\\w-]{1,255}$";
 
     public boolean encrypted = true;
-    public boolean encryptedReplication = false;
+    public boolean encryptedReplication = true;
     private boolean syncRunning = false;
     private KVStoreAdaptor remoteKvStore;
     private Context context;
