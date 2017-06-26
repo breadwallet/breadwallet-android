@@ -96,7 +96,7 @@ public class RemoteKVStore implements KVStoreAdaptor {
                 .addHeader("Content-Type", "application/octet-stream")
                 .addHeader("Content-Length", String.valueOf(value.length))
                 .build();
-        Response res = apiClient.sendRequest(request, true, 0);
+        Response res = apiClient.sendRequest(request, true, 1);
         if (res == null) {
             Log.d(TAG, "ver: [KV] PUT key=" + key + ", err= response is null (maybe auth challenge)");
             return new CompletionObject(0, 0, unknown);

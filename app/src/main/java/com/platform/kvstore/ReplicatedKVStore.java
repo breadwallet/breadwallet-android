@@ -579,6 +579,7 @@ public class ReplicatedKVStore {
     public long remoteVersion(String key) {
         long version = 0;
         Cursor cursor = null;
+        database = dbHelper.getReadableDatabase();
         if (isKeyValid(key)) {
             try {
                 String selectQuery = "SELECT " + PlatformSqliteHelper.KV_REMOTE_VERSION + " FROM " + PlatformSqliteHelper.KV_STORE_TABLE_NAME + " WHERE key = ? ORDER BY version DESC LIMIT 1";

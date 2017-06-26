@@ -111,7 +111,7 @@ public class APIClient {
 
     public static final String BUNDLES = "bundles";
     //    public static final String BREAD_BUY = "bread-buy-staging";
-    public static String BREAD_BUY = "bread-buy-staging";
+    public static String BREAD_BUY = "bread-buy";
 
     public static String bundlesFileName = String.format("/%s", BUNDLES);
     public static String bundleFileName = String.format("/%s/%s.tar", BUNDLES, BREAD_BUY);
@@ -152,7 +152,7 @@ public class APIClient {
     private APIClient(Context context) {
         ctx = context;
         if (0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)) {
-            BREAD_BUY = "bread-buy-staging";
+//            BREAD_BUY = "bread-buy-staging";
         }
     }
 
