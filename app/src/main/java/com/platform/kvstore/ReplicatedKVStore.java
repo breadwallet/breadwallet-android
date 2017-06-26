@@ -105,6 +105,7 @@ public class ReplicatedKVStore {
     }
 
     public CompletionObject set(KVEntity kv) {
+        Log.e(TAG, "set: " + kv.getKey());
         database = dbHelper.getWritableDatabase();
         try {
             if (isKeyValid(kv.getKey())) {
