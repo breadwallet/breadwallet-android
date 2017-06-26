@@ -41,6 +41,7 @@ import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.presenter.fragments.FragmentManage;
 import com.breadwallet.presenter.fragments.FragmentMenu;
+import com.breadwallet.presenter.fragments.FragmentSend;
 import com.breadwallet.tools.adapter.TransactionListAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
@@ -139,7 +140,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     private BRSearchBar searchBar;
     private boolean isSwapped;
     private float origX;
-    private Fragment savedFragment;
+    private String savedFragmentTaG;
 
     private static BreadActivity app;
 
@@ -194,6 +195,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+//        super.onSaveInstanceState(outState);
     }
 
     //BLOCKS
@@ -690,7 +692,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         String tag = getFragmentManager().getBackStackEntryAt(getFragmentManager().getBackStackEntryCount() - 1).getName();
         Fragment tmp = getFragmentManager().findFragmentByTag(tag);
         if (tmp != null && tmp.isVisible()) {
-            savedFragment = tmp;
+            savedFragmentTaG = tag;
         }
     }
 
@@ -698,10 +700,16 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Log.e(TAG, "restoreFragment: savedFragment: " + savedFragment);
+                Log.e(TAG, "restoreFragment: savedFragment: " + savedFragmentTaG);
 
-                if (savedFragment == null) return;
-                getFragmentManager().beginTransaction().attach(savedFragment).commit();
+                if (savedFragmentTaG == null) return;
+                Fragment fragment = getFragmentManager().findFragmentByTag(savedFragmentTaG);
+                Log.e(TAG, "run: attaching....");
+                if(fragment == null) {
+                    Log.e(TAG, "run: fragment is null");
+                    return;
+                }
+                getFragmentManager().beginTransaction().attach(fragment).commit();
             }
         }, 5000);
 
