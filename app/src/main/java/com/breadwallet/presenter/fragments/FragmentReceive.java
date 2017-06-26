@@ -3,6 +3,7 @@ package com.breadwallet.presenter.fragments;
 import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -17,7 +18,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -258,7 +261,7 @@ public class FragmentReceive extends Fragment {
         if (!isReceive) {
             signalLayout.removeView(separator);
             signalLayout.removeView(requestButton);
-            mTitle.setText("My Address");
+            mTitle.setText(getString(R.string.LoginScreen_myAddress));
         }
 
         new Thread(new Runnable() {
@@ -271,10 +274,13 @@ public class FragmentReceive extends Fragment {
     }
 
     private void updateQr() {
+        Context ctx = getContext();
+        if(ctx == null) ctx = BreadWalletApp.getBreadContext();
+        final Context finalCtx = ctx;
         new Thread(new Runnable() {
             @Override
             public void run() {
-                boolean success = BRWalletManager.refreshAddress(getContext());
+                boolean success = BRWalletManager.refreshAddress(finalCtx);
                 if (!success) throw new RuntimeException("failed to retrieve address");
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
