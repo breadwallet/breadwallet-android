@@ -159,6 +159,7 @@
                 android:background="@drawable/bread_gradient"
                 android:contentInsetLeft="0dp"
                 android:contentInsetStart="0dp"
+                app:breadText="No internet connection found.\nCheck your connection and try again."
                 app:contentInsetLeft="0dp"
                 app:contentInsetStart="0dp"
                 tools:layout_constraintTop_creator="1">

@@ -43,15 +43,9 @@ public class BRNotificationBar extends android.support.v7.widget.Toolbar {
 
     private static final String TAG = BRNotificationBar.class.getName();
 
-    private EditText searchEdit;
-    //    private LinearLayout filterButtonsLayout;
-    private BRButton sentFilter;
-    private BRButton receivedFilter;
-    private BRButton pendingFilter;
-    private BRButton completedFilter;
-    private BRButton cancelButton;
     private BreadActivity breadActivity;
     private BRText description;
+    private BRButton close;
 
     public boolean[] filterSwitches = new boolean[4];
 
@@ -74,8 +68,9 @@ public class BRNotificationBar extends android.support.v7.widget.Toolbar {
         inflate(getContext(), R.layout.notification_bar, this);
         breadActivity = (BreadActivity) getContext();
         description = (BRText) findViewById(R.id.description);
+        close = (BRButton) findViewById(R.id.cancel_button);
 
-        TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.BRLinearLayoutWithCaret);
+        TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.BRNotificationBar);
         final int N = a.getIndexCount();
         for (int i = 0; i < N; ++i) {
             int attr = a.getIndex(i);
@@ -87,151 +82,14 @@ public class BRNotificationBar extends android.support.v7.widget.Toolbar {
             }
         }
         a.recycle();
-//        searchEdit = (EditText) findViewById(R.id.search_edit);
-//        sentFilter = (BRButton) findViewById(R.id.sent_filter);
-//        receivedFilter = (BRButton) findViewById(R.id.received_filter);
-//        pendingFilter = (BRButton) findViewById(R.id.pending_filter);
-//        completedFilter = (BRButton) findViewById(R.id.complete_filter);
-//        cancelButton = (BRButton) findViewById(R.id.cancel_button);
 
-//        clearSwitches();
-//
-//        setListeners();
-//
-//        searchEdit.requestFocus();
-//        searchEdit.postDelayed(new Runnable() {
-//
-//            @Override
-//            public void run() {
-//                InputMethodManager keyboard = (InputMethodManager)
-//                        getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-//                keyboard.showSoftInput(searchEdit, 0);
-//            }
-//        }, 200); //use 300 to make it run when coming back from lock screen
-//
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                breadActivity.updateTxList();
-//            }
-//        }).start();
-
-    }
-
-    private void updateFilterButtonsUI(boolean[] switches) {
-        sentFilter.setBackgroundResource(switches[0] ? R.drawable.selector_blue_stroke : R.drawable.selector_gray_stroke);
-        sentFilter.setTextColor(switches[0] ? getContext().getColor(R.color.dark_blue) : getContext().getColor(R.color.light_gray));
-        receivedFilter.setBackgroundResource(switches[1] ? R.drawable.selector_blue_stroke : R.drawable.selector_gray_stroke);
-        receivedFilter.setTextColor(switches[1] ? getContext().getColor(R.color.dark_blue) : getContext().getColor(R.color.light_gray));
-        pendingFilter.setBackgroundResource(switches[2] ? R.drawable.selector_blue_stroke : R.drawable.selector_gray_stroke);
-        pendingFilter.setTextColor(switches[2] ? getContext().getColor(R.color.dark_blue) : getContext().getColor(R.color.light_gray));
-        completedFilter.setBackgroundResource(switches[3] ? R.drawable.selector_blue_stroke : R.drawable.selector_gray_stroke);
-        completedFilter.setTextColor(switches[3] ? getContext().getColor(R.color.dark_blue) : getContext().getColor(R.color.light_gray));
-        if (breadActivity.adapter != null)
-            breadActivity.adapter.filterBy(searchEdit.getText().toString(), filterSwitches);
-    }
-
-    private void setListeners() {
-        searchEdit.setOnFocusChangeListener(new OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    if (breadActivity.barFlipper != null) {
-                        breadActivity.barFlipper.setDisplayedChild(0);
-                        clearSwitches();
-                    }
-                }
-            }
-        });
-
-        cancelButton.setOnClickListener(new OnClickListener() {
+        close.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 breadActivity.barFlipper.setDisplayedChild(0);
-                clearSwitches();
-                onShow(false);
             }
         });
 
-        searchEdit.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (breadActivity.adapter != null)
-                    breadActivity.adapter.filterBy(s.toString(), filterSwitches);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-
-        sentFilter.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                filterSwitches[0] = !filterSwitches[0];
-                filterSwitches[1] = false;
-                updateFilterButtonsUI(filterSwitches);
-
-            }
-        });
-
-        receivedFilter.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                filterSwitches[1] = !filterSwitches[1];
-                filterSwitches[0] = false;
-                updateFilterButtonsUI(filterSwitches);
-            }
-        });
-
-        pendingFilter.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                filterSwitches[2] = !filterSwitches[2];
-                filterSwitches[3] = false;
-                updateFilterButtonsUI(filterSwitches);
-            }
-        });
-
-        completedFilter.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                filterSwitches[3] = !filterSwitches[3];
-                filterSwitches[2] = false;
-                updateFilterButtonsUI(filterSwitches);
-            }
-        });
-    }
-
-    public void clearSwitches() {
-        filterSwitches[0] = false;
-        filterSwitches[1] = false;
-        filterSwitches[2] = false;
-        filterSwitches[3] = false;
-    }
-
-    public void onShow(boolean b) {
-        final InputMethodManager keyboard = (InputMethodManager)
-                getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (b) {
-            clearSwitches();
-            updateFilterButtonsUI(filterSwitches);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    searchEdit.requestFocus();
-                    keyboard.showSoftInput(searchEdit, 0);
-                }
-            }, 400);
-        } else {
-            keyboard.hideSoftInputFromWindow(searchEdit.getWindowToken(), 0);
-        }
     }
 
 }
