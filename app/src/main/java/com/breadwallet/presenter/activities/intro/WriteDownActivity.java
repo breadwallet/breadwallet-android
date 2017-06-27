@@ -10,10 +10,14 @@ import android.widget.ImageButton;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.ReEnterPinActivity;
 import com.breadwallet.presenter.activities.SetPitActivity;
+import com.breadwallet.presenter.activities.settings.SettingsActivity;
+import com.breadwallet.presenter.activities.settings.SpendLimitActivity;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
 
@@ -45,8 +49,18 @@ public class WriteDownActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
+                AuthManager.getInstance().authPrompt(WriteDownActivity.this, null, "Please enter your PIN to continue.", true, new BRAuthCompletion() {
+                    @Override
+                    public void onComplete() {
+                        PostAuthenticationProcessor.getInstance().onPhraseCheckAuth(WriteDownActivity.this, false);
+                    }
 
-                PostAuthenticationProcessor.getInstance().onPhraseCheckAuth(WriteDownActivity.this, false);
+                    @Override
+                    public void onCancel() {
+
+                    }
+                });
+
             }
         });
     }
