@@ -10,6 +10,9 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.DisabledActivity;
 import com.breadwallet.presenter.activities.InputWordsActivity;
 import com.breadwallet.presenter.activities.SetPitActivity;
+import com.breadwallet.presenter.activities.intro.IntroActivity;
+import com.breadwallet.presenter.activities.intro.RecoverActivity;
+import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.tools.manager.CurrencyFetchManager;
 import com.breadwallet.tools.security.AuthManager;
 
@@ -52,7 +55,8 @@ public class ActivityUTILS {
     public static void init(Activity app) {
         //set status bar color
         ActivityUTILS.setStatusBarColor(app, android.R.color.transparent);
-        CurrencyFetchManager.getInstance().startTimer(app);
+        if (!(app instanceof IntroActivity || app instanceof RecoverActivity || app instanceof WriteDownActivity))
+            CurrencyFetchManager.getInstance().startTimer(app);
         BreadWalletApp.setBreadContext(app);
         //show wallet locked if it is
         if (!isAppSafe(app))

@@ -305,7 +305,9 @@ public class APIClient {
             String requestString = createRequest(request.method(), base58Body,
                     request.header("Content-Type"), request.header("Date"), request.url().encodedPath()
                             + ((queryString != null && !queryString.isEmpty()) ? ("?" + queryString) : ""));
+            Log.e(TAG, "requestString: " + requestString);
             String signedRequest = signRequest(requestString);
+            Log.e(TAG, "signedRequest: " + signedRequest);
             String token = new String(KeyStoreManager.getToken(ctx));
             if (token.isEmpty()) token = getToken();
             if (token == null || token.isEmpty()) {
