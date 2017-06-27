@@ -9,10 +9,16 @@
         <attr name="backgroundColor" format="color"/>
         <attr name="withStroke" format="boolean"/>
     </declare-styleable>
+
     <declare-styleable name="BRButton">
         <attr name="isBreadButton" format="boolean"/>
     </declare-styleable>
+
     <declare-styleable name="BRKeyboard">
         <attr name="showAlphabet" format="boolean"/>
+    </declare-styleable>
+
+    <declare-styleable name="BRNotificationBar">
+        <attr name="breadText" format="string"/>
     </declare-styleable>
 </resources>
