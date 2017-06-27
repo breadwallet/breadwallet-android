@@ -12,6 +12,7 @@ import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -162,6 +163,13 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         toolBar = (Toolbar) findViewById(R.id.bread_bar);
 
         initializeViews();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                barFlipper.setDisplayedChild(2);
+            }
+        }, 3000);
 
         setListeners();
 
