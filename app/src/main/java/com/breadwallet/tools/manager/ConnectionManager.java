@@ -66,17 +66,17 @@ public class ConnectionManager{
     }
 
     private void startNetworkJob(Context context){
-        JobScheduler js =
+        JobScheduler js1 =
                 (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        JobInfo job = new JobInfo.Builder(
+        JobInfo job1 = new JobInfo.Builder(
                 MY_BACKGROUND_JOB,
                 new ComponentName(context, NetworkChangeService.class))
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
                 .setRequiresCharging(false)
                 .build();
-        js.schedule(job);
-    }
+        js1.schedule(job1);
 
+    }
 
     public boolean isConnected() {
         ConnectivityManager
