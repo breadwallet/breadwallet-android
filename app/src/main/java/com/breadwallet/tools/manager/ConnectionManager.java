@@ -72,7 +72,7 @@ public class ConnectionManager{
                 MY_BACKGROUND_JOB,
                 new ComponentName(context, NetworkChangeService.class))
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
-                .setRequiresCharging(true)
+                .setRequiresCharging(false)
                 .build();
         js.schedule(job);
     }

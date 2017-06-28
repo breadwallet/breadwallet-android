@@ -7,6 +7,8 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.breadwallet.tools.manager.ConnectionManager;
+
 /**
  * BreadWallet
  * <p/>
@@ -43,7 +45,10 @@ public class NetworkChangeService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         // Let it continue running until it is stopped.
-        Toast.makeText(this, "Service Started", Toast.LENGTH_LONG).show();
+        Log.e(TAG, "onStartCommand: ");
+        for(ConnectionManager.ConnectionReceiverListener listener : ConnectionManager.connectionReceiverListeners){
+            listener.
+        }
         return START_STICKY;
     }
 
