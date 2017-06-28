@@ -691,9 +691,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
 
     }
 
-//    private interface OnInfoCardClick {
-//        void onClick();
-//    }
 
     private void setupSlideHandler() {
         new InfoSlider().init(infoCardLayout);
