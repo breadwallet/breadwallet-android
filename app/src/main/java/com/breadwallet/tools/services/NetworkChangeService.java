@@ -46,8 +46,8 @@ public class NetworkChangeService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         // Let it continue running until it is stopped.
         Log.e(TAG, "onStartCommand: ");
-        for(ConnectionManager.ConnectionReceiverListener listener : ConnectionManager.connectionReceiverListeners){
-            listener.
+        for (ConnectionManager.ConnectionReceiverListener listener : ConnectionManager.connectionReceiverListeners) {
+            listener.onNetworkConnectionChanged(true);
         }
         return START_STICKY;
     }
