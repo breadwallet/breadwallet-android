@@ -52,7 +52,6 @@ public class ConnectionManager{
 
     }
 
-
     public static ConnectionManager getInstance() {
 
         if (instance == null) {
@@ -65,7 +64,7 @@ public class ConnectionManager{
         connectionReceiverListeners.add(listener);
     }
 
-    private void startNetworkJob(Context context){
+    public void startNetworkJob(Context context){
         JobScheduler js1 =
                 (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
         JobInfo job1 = new JobInfo.Builder(
