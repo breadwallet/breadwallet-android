@@ -43,6 +43,7 @@ import com.breadwallet.presenter.fragments.FragmentManage;
 import com.breadwallet.tools.adapter.TransactionListAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
+import com.breadwallet.tools.manager.ConnectionManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
@@ -95,7 +96,7 @@ import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
 
 public class BreadActivity extends BRActivity implements BRWalletManager.OnBalanceChanged,
         BRPeerManager.OnTxStatusUpdate, SharedPreferencesManager.OnIsoChangedListener,
-        TransactionDataSource.OnTxAddedListener, FragmentManage.OnNameChanged {
+        TransactionDataSource.OnTxAddedListener, FragmentManage.OnNameChanged, ConnectionManager.ConnectionReceiverListener {
 
     private static final String TAG = BreadActivity.class.getName();
 
@@ -373,9 +374,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
             showInfoCard(false, null, null, null);
         }
 
-        if (mNetworkStateReceiver == null) mNetworkStateReceiver = new NetworkChangeReceiver();
-        IntentFilter mNetworkStateFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(mNetworkStateReceiver, mNetworkStateFilter);
+        setupNetworking();
 
         if (!BRWalletManager.getInstance().isCreated()) {
             new Thread(new Runnable() {
@@ -403,6 +402,13 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         }).start();
         BRAnimator.showFragmentByTag(this, savedFragmentTag);
         savedFragmentTag = null;
+    }
+
+    private void setupNetworking(){
+        if (mNetworkStateReceiver == null) mNetworkStateReceiver = new NetworkChangeReceiver();
+        IntentFilter mNetworkStateFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(mNetworkStateReceiver, mNetworkStateFilter);
+        ConnectionManager.addConnectionListener(this);
     }
 
 
@@ -673,6 +679,11 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     @Override
     public void onNameChanged(String name) {
         walletName.setText(name);
+    }
+
+    @Override
+    public void onNetworkConnectionChanged(boolean isConnected) {
+        Log.e(TAG, "onNetworkConnectionChanged: " + isConnected);
     }
 
     private interface OnInfoCardClick {
