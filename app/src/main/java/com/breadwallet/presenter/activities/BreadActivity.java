@@ -682,11 +682,23 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                 if (barFlipper.getDisplayedChild() == 2)
                     barFlipper.setDisplayedChild(0);
             }
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+
+                    final double progress = BRPeerManager.syncProgress(SharedPreferencesManager.getStartHeight(BreadActivity.this));
+                    Log.e(TAG, "run: " + progress);
+                    if (progress < 1 && progress > 0) {
+                        BRPeerManager.startSyncingProgressThread();
+                    }
+                }
+            }).start();
+
             showSyncing(true);
         } else {
             if (barFlipper != null)
                 barFlipper.setDisplayedChild(2);
-            showSyncing(false);
+            BRPeerManager.stopSyncingProgressThread();
         }
 
     }

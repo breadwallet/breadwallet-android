@@ -1,6 +1,5 @@
 package com.breadwallet.platform;
 
-import android.net.Uri;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
@@ -23,22 +22,18 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URI;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.List;
 
 import io.sigpipe.jbsdiff.InvalidHeaderException;
 import io.sigpipe.jbsdiff.Patch;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
 
 import static com.platform.APIClient.BREAD_BUY;
 import static com.platform.APIClient.BUNDLES;
-import static com.platform.APIClient.bundleFileName;
-import static com.platform.APIClient.extractedFolder;
+import static com.platform.APIClient.BUY_FILE;
+import static com.platform.APIClient.BUY_EXTRACTED_FOLDER;
 
 /**
  * BreadWallet
@@ -103,7 +98,7 @@ public class PlatformTests {
 
     @Test
     public void bundleExtractTest() {
-        File bundleFile = new File(mActivityRule.getActivity().getFilesDir().getAbsolutePath() + bundleFileName);
+        File bundleFile = new File(mActivityRule.getActivity().getFilesDir().getAbsolutePath() + BUY_FILE);
         Request request = new Request.Builder()
                 .url(String.format("%s/assets/bundles/%s/download", BASE_URL, BREAD_BUY))
                 .get().build();
@@ -112,8 +107,8 @@ public class PlatformTests {
         APIClient apiClient = APIClient.getInstance(mActivityRule.getActivity());
         response = apiClient.sendRequest(request, false, 0);
         apiClient.writeBundleToFile(response, bundleFile);
-        apiClient.tryExtractTar(bundleFile);
-        String extractFolderName = BreadActivity.getApp().getFilesDir() + "/" + BUNDLES + "/" + extractedFolder;
+        String extractFolderName = BreadActivity.getApp().getFilesDir() + "/" + BUNDLES + "/" + BUY_EXTRACTED_FOLDER;
+        apiClient.tryExtractTar(bundleFile, extractFolderName);
         File temp = new File(extractFolderName);
         int filesExtracted = temp.listFiles().length;
         Log.e(TAG, "bundleExtractTest: filesExtracted: " + filesExtracted);
@@ -134,9 +129,9 @@ public class PlatformTests {
                 .get()
                 .url("https://s3.amazonaws.com/breadwallet-assets/bread-buy/7f5bc5c6cc005df224a6ea4567e508491acaffdc2e4769e5262a52f5b785e261.tar").build();
         Response response = apiClient.sendRequest(request, false, 0);
-        File bundleFile = new File(mActivityRule.getActivity().getFilesDir().getAbsolutePath() + bundleFileName);
+        File bundleFile = new File(mActivityRule.getActivity().getFilesDir().getAbsolutePath() + BUY_FILE);
         apiClient.writeBundleToFile(response, bundleFile);
-        String latestVersion = apiClient.getLatestVersion();
+        String latestVersion = apiClient.getLatestVersion(BREAD_BUY);
         Assert.assertNotNull(latestVersion);
         String currentTarVersion = getCurrentVersion(bundleFile);
         Log.e(TAG, "bundleUpdateTest: latestVersion: " + latestVersion + ", currentTarVersion: " + currentTarVersion);

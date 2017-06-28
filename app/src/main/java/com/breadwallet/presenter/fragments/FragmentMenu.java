@@ -120,6 +120,11 @@ public class FragmentMenu extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.e(TAG, "onClick: Support");
+                Intent intent = new Intent(getActivity(), WebViewActivity.class);
+                intent.putExtra("url", HTTPServer.URL_SUPPORT);
+                Activity app = getActivity();
+                app.startActivity(intent);
+                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
             }
         }));
         itemList.add(new BRMenuItem("Settings", R.drawable.ic_settings, new View.OnClickListener() {
