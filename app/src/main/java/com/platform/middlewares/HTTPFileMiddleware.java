@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.util.Log;
 
 import com.breadwallet.BreadWalletApp;
-import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
@@ -14,8 +13,6 @@ import com.platform.interfaces.Middleware;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.eclipse.jetty.http.MimeTypes;
-import org.eclipse.jetty.server.Response;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import static com.platform.APIClient.BUNDLES;
-import static com.platform.APIClient.extractedFolder;
+import static com.platform.APIClient.BUY_EXTRACTED_FOLDER;
+import static com.platform.APIClient.SUPPORT_EXTRACTED_FOLDER;
 
 /**
  * BreadWallet
@@ -61,13 +59,14 @@ public class HTTPFileMiddleware implements Middleware {
         if (target.equals("/favicon.ico")) {
             return BRHTTPHelper.handleSuccess(200, null, baseRequest, response, null);
         }
-        Activity app =  BreadWalletApp.getBreadContext();
-        if(app == null) {
+        Activity app = BreadWalletApp.getBreadContext();
+        if (app == null) {
             Log.e(TAG, "handle: app is null!");
             return true;
         }
 
-        String requestedFile = app.getFilesDir() + "/" + BUNDLES + "/" + extractedFolder + target;
+        //try buy
+        String requestedFile = app.getFilesDir() + "/" + BUNDLES + "/" + BUY_EXTRACTED_FOLDER + target;
         File temp = new File(requestedFile);
         if (!temp.exists()) {
             return false;

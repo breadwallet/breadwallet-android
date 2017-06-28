@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.util.Log;
 
 import com.breadwallet.BreadWalletApp;
-import com.breadwallet.presenter.activities.BreadActivity;
 import com.platform.BRHTTPHelper;
 import com.platform.interfaces.Middleware;
 
@@ -15,16 +14,11 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import okhttp3.Request;
-import okhttp3.Response;
-
-import static android.R.attr.path;
 import static com.platform.APIClient.BUNDLES;
-import static com.platform.APIClient.extractedFolder;
+import static com.platform.APIClient.BUY_EXTRACTED_FOLDER;
 
 /**
  * BreadWallet
@@ -61,7 +55,7 @@ public class HTTPIndexMiddleware implements Middleware {
             Log.e(TAG, "handle: app is null!");
             return true;
         }
-        String indexFile = app.getFilesDir() + "/" + BUNDLES + "/" + extractedFolder + "/index.html";
+        String indexFile = app.getFilesDir() + "/" + BUNDLES + "/" + BUY_EXTRACTED_FOLDER + "/index.html";
 
         File temp = new File(indexFile);
         if (!temp.exists()) {

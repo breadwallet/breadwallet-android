@@ -9,20 +9,16 @@ import android.util.Log;
 
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.BuildConfig;
-import com.breadwallet.R;
-import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.tools.crypto.Base58;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
-import com.jniwrappers.BRBase58;
 import com.jniwrappers.BRKey;
 import com.platform.kvstore.RemoteKVStore;
 import com.platform.kvstore.ReplicatedKVStore;
 
-import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
@@ -38,10 +34,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -94,9 +87,9 @@ public class APIClient {
     // proto is the transport protocol to use for talking to the API (either http or https)
     private static final String PROTO = "https";
     // host is the server(s) on which the API is hosted
-    private static final String HOST = "api.breadwallet.com";
+    private static  String HOST = "api.breadwallet.com";
     // convenience getter for the API endpoint
-    public static final String BASE_URL = PROTO + "://" + HOST;
+    public static  String BASE_URL = PROTO + "://" + HOST;
     //feePerKb url
     private static final String FEE_PER_KB_URL = "/v1/fee-per-kb";
     //token
@@ -112,10 +105,14 @@ public class APIClient {
     public static final String BUNDLES = "bundles";
     //    public static final String BREAD_BUY = "bread-buy-staging";
     public static String BREAD_BUY = "bread-buy";
+    public static String BREAD_SUPPORT = "bread-support";
 
-    public static String bundlesFileName = String.format("/%s", BUNDLES);
-    public static String bundleFileName = String.format("/%s/%s.tar", BUNDLES, BREAD_BUY);
-    public static String extractedFolder = String.format("%s-extracted", BREAD_BUY);
+    public static final String BUNDLES_FILE = String.format("/%s", BUNDLES);
+
+    public static final String BUY_FILE = String.format("/%s/%s.tar", BUNDLES, BREAD_BUY);
+    public static final String BUY_EXTRACTED_FOLDER = String.format("%s-extracted", BREAD_BUY);
+    public static final String SUPPORT_FILE = String.format("/%s/%s.tar", BUNDLES, BREAD_SUPPORT);
+    public static final String SUPPORT_EXTRACTED_FOLDER = String.format("%s-extracted", BREAD_SUPPORT);
 
     public static HTTPServer server;
 
@@ -152,7 +149,11 @@ public class APIClient {
     private APIClient(Context context) {
         ctx = context;
         if (0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)) {
-//            BREAD_BUY = "bread-buy-staging";
+            BREAD_BUY = "bread-buy-staging";
+            BREAD_SUPPORT = "bread-support-staging";
+            HOST = "stage.breadwallet.com";
+            // convenience getter for the API endpoint
+            BASE_URL = PROTO + "://" + HOST;
         }
     }
 
@@ -182,6 +183,7 @@ public class APIClient {
         return 0;
     }
 
+    //only for testing
     public Response buyBitcoinMe() {
         if (ctx == null) ctx = BreadWalletApp.getBreadContext();
         if (ctx == null) return null;
@@ -272,7 +274,7 @@ public class APIClient {
     public Response sendRequest(Request locRequest, boolean needsAuth, int retryCount) {
         if (retryCount > 1)
             throw new RuntimeException("sendRequest: Warning retryCount is: " + retryCount);
-        boolean isTestVersion = BREAD_BUY.equalsIgnoreCase("bread-buy-staging");
+        boolean isTestVersion = BREAD_BUY.equalsIgnoreCase("staging") || BREAD_SUPPORT.contains("staging");
         boolean isTestNet = BuildConfig.BITCOIN_TESTNET;
         Request request = locRequest.newBuilder().header("X-Testflight", isTestVersion ? "1" : "0").header("X-Bitcoin-Testnet", isTestNet ? "1" : "0").build();
         if (needsAuth) {
@@ -287,8 +289,8 @@ public class APIClient {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    String bodyString = sink.buffer().readUtf8();
-                    base58Body = CryptoHelper.base58ofSha256(bodyString.getBytes());
+                    byte[] bytes = sink.buffer().readByteArray();
+                    base58Body = CryptoHelper.base58ofSha256(bytes);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -374,11 +376,11 @@ public class APIClient {
         return response.newBuilder().body(postReqBody).build();
     }
 
-    public void updateBundle() {
-        File bundleFile = new File(ctx.getFilesDir().getAbsolutePath() + bundleFileName);
+    public void updateBundle(String bundleName, String fileName, String extractedFolder) {
+        File bundleFile = new File(ctx.getFilesDir().getAbsolutePath() + fileName);
 
         if (bundleFile.exists()) {
-            Log.d(TAG, "updateBundle: exists");
+            Log.d(TAG, bundleName + ": updateBundle: exists");
 
             byte[] bFile = new byte[0];
             try {
@@ -387,50 +389,50 @@ public class APIClient {
                 e.printStackTrace();
             }
 
-            String latestVersion = getLatestVersion();
+            String latestVersion = getLatestVersion(bundleName);
             String currentTarVersion = null;
             byte[] hash = CryptoHelper.sha256(bFile);
 
             currentTarVersion = Utils.bytesToHex(hash);
-            Log.e(TAG, "updateBundle: version of the current tar: " + currentTarVersion);
+            Log.e(TAG, bundleName + ": updateBundle: version of the current tar: " + currentTarVersion);
 
             if (latestVersion != null) {
                 if (latestVersion.equals(currentTarVersion)) {
-                    Log.d(TAG, "updateBundle: have the latest version");
-                    tryExtractTar(bundleFile);
+                    Log.d(TAG, bundleName + ": updateBundle: have the latest version");
+                    tryExtractTar(bundleFile, extractedFolder);
                 } else {
-                    Log.d(TAG, "updateBundle: don't have the most recent version, download diff");
-                    downloadDiff(bundleFile, currentTarVersion);
-                    tryExtractTar(bundleFile);
+                    Log.d(TAG, bundleName + ": updateBundle: don't have the most recent version, download diff");
+                    downloadDiff(bundleFile, bundleName, currentTarVersion);
+                    tryExtractTar(bundleFile, extractedFolder);
 
                 }
             } else {
-                Log.d(TAG, "updateBundle: latestVersion is null");
+                Log.d(TAG, bundleName + ": updateBundle: latestVersion is null");
             }
 
         } else {
-            Log.d(TAG, "updateBundle: bundle doesn't exist, downloading new copy");
+            Log.d(TAG, bundleName + ": updateBundle: bundle doesn't exist, downloading new copy");
             long startTime = System.currentTimeMillis();
             Request request = new Request.Builder()
-                    .url(String.format("%s/assets/bundles/%s/download", BASE_URL, BREAD_BUY))
+                    .url(String.format("%s/assets/bundles/%s/download", BASE_URL, bundleName))
                     .get().build();
             Response response = null;
             response = sendRequest(request, false, 0);
-            Log.d(TAG, "updateBundle: Downloaded, took: " + (System.currentTimeMillis() - startTime));
+            Log.d(TAG, bundleName + ": updateBundle: Downloaded, took: " + (System.currentTimeMillis() - startTime));
             writeBundleToFile(response, bundleFile);
 
-            tryExtractTar(bundleFile);
+            tryExtractTar(bundleFile, extractedFolder);
         }
 
     }
 
-    public String getLatestVersion() {
+    public String getLatestVersion(String bundleName) {
         String latestVersion = null;
         String response = null;
         try {
             response = sendRequest(new Request.Builder()
                     .get()
-                    .url(String.format("%s/assets/bundles/%s/versions", BASE_URL, BREAD_BUY))
+                    .url(String.format("%s/assets/bundles/%s/versions", BASE_URL, bundleName))
                     .build(), false, 0).body().string();
         } catch (IOException e) {
             e.printStackTrace();
@@ -449,9 +451,9 @@ public class APIClient {
         return latestVersion;
     }
 
-    public void downloadDiff(File bundleFile, String currentTarVersion) {
+    public void downloadDiff(File bundleFile, String bundleName, String currentTarVersion) {
         Request diffRequest = new Request.Builder()
-                .url(String.format("%s/assets/bundles/%s/diff/%s", BASE_URL, BREAD_BUY, currentTarVersion))
+                .url(String.format("%s/assets/bundles/%s/diff/%s", BASE_URL, bundleName, currentTarVersion))
                 .get().build();
         Response diffResponse = sendRequest(diffRequest, false, 0);
         File patchFile = null;
@@ -506,13 +508,13 @@ public class APIClient {
         return null;
     }
 
-    public boolean tryExtractTar(File inputFile) {
+    public boolean tryExtractTar(File inputFile, String extractedFolder) {
         Activity app = BreadWalletApp.getBreadContext();
         if (app == null) {
             Log.e(TAG, "tryExtractTar: failed to extract, app is null");
             return false;
         }
-        String extractFolderName = app.getFilesDir().getAbsolutePath() + bundlesFileName + "/" + extractedFolder;
+        String extractFolderName = app.getFilesDir().getAbsolutePath() + BUNDLES_FILE + "/" + extractedFolder;
         boolean result = false;
         TarArchiveInputStream debInputStream = null;
         try {
@@ -627,7 +629,8 @@ public class APIClient {
                 @Override
                 public void run() {
                     APIClient apiClient = APIClient.getInstance(ctx);
-                    apiClient.updateBundle(); //bread-buy-staging
+                    apiClient.updateBundle(BREAD_BUY, BUY_FILE, BUY_EXTRACTED_FOLDER); //bread-buy-staging
+                    apiClient.updateBundle(BREAD_SUPPORT, SUPPORT_FILE, SUPPORT_EXTRACTED_FOLDER); //bread-support-staging
                     apiClient.updateFeatureFlag();
                     apiClient.syncKvStore();
                     long endTime = System.currentTimeMillis();
