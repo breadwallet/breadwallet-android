@@ -10,6 +10,7 @@ import android.net.NetworkInfo;
 import android.os.Handler;
 
 import com.breadwallet.BreadWalletApp;
+import com.breadwallet.tools.services.NetworkChangeService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,7 +76,7 @@ public class ConnectionManager{
                 (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
         JobInfo job = new JobInfo.Builder(
                 MY_BACKGROUND_JOB,
-                new ComponentName(context, MyJobService.class))
+                new ComponentName(context, NetworkChangeService.class))
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
                 .setRequiresCharging(true)
                 .build();
