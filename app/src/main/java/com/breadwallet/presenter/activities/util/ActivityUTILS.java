@@ -56,7 +56,7 @@ public class ActivityUTILS {
     public static void init(Activity app) {
         //set status bar color
         ActivityUTILS.setStatusBarColor(app, android.R.color.transparent);
-        ConnectionManager.getInstance().startNetworkJob(app);
+        ConnectionManager.getInstance();
         if (!(app instanceof IntroActivity || app instanceof RecoverActivity || app instanceof WriteDownActivity))
             CurrencyFetchManager.getInstance().startTimer(app);
         BreadWalletApp.setBreadContext(app);
