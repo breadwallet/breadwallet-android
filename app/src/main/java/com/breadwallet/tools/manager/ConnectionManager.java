@@ -1,14 +1,10 @@
 package com.breadwallet.tools.manager;
 
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
-import android.content.ComponentName;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import com.breadwallet.BreadWalletApp;
-import com.breadwallet.tools.services.NetworkChangeService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,18 +60,18 @@ public class ConnectionManager{
         connectionReceiverListeners.add(listener);
     }
 
-    public void startNetworkJob(Context context){
-        JobScheduler js1 =
-                (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        JobInfo job1 = new JobInfo.Builder(
-                MY_BACKGROUND_JOB,
-                new ComponentName(context, NetworkChangeService.class))
-                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
-                .setRequiresCharging(false)
-                .build();
-        js1.schedule(job1);
-
-    }
+//    public void startNetworkJob(Context context){
+//        JobScheduler js1 =
+//                (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+//        JobInfo job1 = new JobInfo.Builder(
+//                MY_BACKGROUND_JOB,
+//                new ComponentName(context, NetworkChangeService.class))
+//                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
+//                .setRequiresCharging(false)
+//                .build();
+//        js1.schedule(job1);
+//
+//    }
 
     public boolean isConnected() {
         ConnectivityManager

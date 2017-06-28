@@ -165,13 +165,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
 
         initializeViews();
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                barFlipper.setDisplayedChild(2);
-            }
-        }, 3000);
-
         setListeners();
 
         //todo delete this testing
@@ -404,7 +397,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         savedFragmentTag = null;
     }
 
-    private void setupNetworking(){
+    private void setupNetworking() {
         if (mNetworkStateReceiver == null) mNetworkStateReceiver = new NetworkChangeReceiver();
         IntentFilter mNetworkStateFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(mNetworkStateReceiver, mNetworkStateFilter);
@@ -684,11 +677,23 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     @Override
     public void onNetworkConnectionChanged(boolean isConnected) {
         Log.e(TAG, "onNetworkConnectionChanged: " + isConnected);
+        if (isConnected) {
+            if (barFlipper != null) {
+                if (barFlipper.getDisplayedChild() == 2)
+                    barFlipper.setDisplayedChild(0);
+            }
+            showSyncing(true);
+        } else {
+            if (barFlipper != null)
+                barFlipper.setDisplayedChild(2);
+            showSyncing(false);
+        }
+
     }
 
-    private interface OnInfoCardClick {
-        void onClick();
-    }
+//    private interface OnInfoCardClick {
+//        void onClick();
+//    }
 
     private void setupSlideHandler() {
         new InfoSlider().init(infoCardLayout);

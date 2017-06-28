@@ -40,18 +40,20 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
+        boolean connected = false;
 
         if (intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
             NetworkInfo networkInfo = intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
             if (networkInfo != null && networkInfo.getDetailedState() == NetworkInfo.DetailedState.CONNECTED) {
-                Log.d("Network", "Internet YAY");
-//                BRPeerManager.getInstance().networkChanged(true);
+                connected = true;
+                BRPeerManager.getInstance().networkChanged(true);
             } else if (networkInfo != null && networkInfo.getDetailedState() == NetworkInfo.DetailedState.DISCONNECTED) {
-                Log.d("Network", "No internet :(");
-//                BRPeerManager.getInstance().networkChanged(false);
-                for (ConnectionManager.ConnectionReceiverListener listener : ConnectionManager.connectionReceiverListeners) {
-                    listener.onNetworkConnectionChanged(false);
-                }
+                BRPeerManager.getInstance().networkChanged(false);
+                connected = false;
+            }
+
+            for (ConnectionManager.ConnectionReceiverListener listener : ConnectionManager.connectionReceiverListeners) {
+                listener.onNetworkConnectionChanged(connected);
             }
         }
     }
