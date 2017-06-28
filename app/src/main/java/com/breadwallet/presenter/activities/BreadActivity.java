@@ -50,7 +50,6 @@ import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRExchange;
-import com.breadwallet.tools.util.NetworkChangeReceiver;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
@@ -104,7 +103,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     private LinearLayout menuButton;
     public static final Point screenParametersPoint = new Point();
 
-    private NetworkChangeReceiver mNetworkStateReceiver;
+//    private NetworkChangeReceiver mNetworkStateReceiver;
 
     private TextView primaryPrice;
     private TextView secondaryPrice;
@@ -373,9 +372,9 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
             showInfoCard(false, null, null, null);
         }
 
-        if (mNetworkStateReceiver == null) mNetworkStateReceiver = new NetworkChangeReceiver();
-        IntentFilter mNetworkStateFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(mNetworkStateReceiver, mNetworkStateFilter);
+//        if (mNetworkStateReceiver == null) mNetworkStateReceiver = new NetworkChangeReceiver();
+//        IntentFilter mNetworkStateFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+//        registerReceiver(mNetworkStateReceiver, mNetworkStateFilter);
 
         if (!BRWalletManager.getInstance().isCreated()) {
             new Thread(new Runnable() {
@@ -424,7 +423,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     protected void onDestroy() {
         super.onDestroy();
 
-        unregisterReceiver(mNetworkStateReceiver);
+//        unregisterReceiver(mNetworkStateReceiver);
 
         //sync the kv stores
         if (PLATFORM_ON) {

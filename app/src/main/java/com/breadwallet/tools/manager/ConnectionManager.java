@@ -4,18 +4,14 @@ import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Handler;
 
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.tools.services.NetworkChangeService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 
 /**
@@ -46,13 +42,14 @@ import java.util.TimerTask;
 public class ConnectionManager{
 
     private static final String TAG = ConnectionManager.class.getName();
+    public static List<ConnectionReceiverListener> connectionReceiverListeners;
 
     private static ConnectionManager instance;
     public static final int MY_BACKGROUND_JOB = 0;
 
     private ConnectionManager() {
         connectionReceiverListeners = new ArrayList<>();
-        startNetworkJob();
+
     }
 
 
@@ -63,9 +60,6 @@ public class ConnectionManager{
         }
         return instance;
     }
-
-    public static List<ConnectionReceiverListener> connectionReceiverListeners;
-
 
     public static void addConnectionListener(ConnectionReceiverListener listener) {
         connectionReceiverListeners.add(listener);
