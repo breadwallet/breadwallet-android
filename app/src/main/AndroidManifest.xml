@@ -42,6 +42,8 @@
         android:windowSoftInputMode="adjustPan|adjustResize"
         >
 
+        <service android:name=".tools.services.NetworkChangeService"/>
+
         <activity
             android:name=".presenter.activities.intro.IntroActivity"
             android:label="@string/app_name"
