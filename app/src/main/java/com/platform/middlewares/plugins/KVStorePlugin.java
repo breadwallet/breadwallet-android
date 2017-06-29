@@ -83,10 +83,10 @@ public class KVStorePlugin implements Plugin {
                         Log.e(TAG, "handle: kv store does not contain the kv: " + key);
                         return BRHTTPHelper.handleError(400, null, baseRequest, response);
                     }
-                    byte[] decompressedData = BRCompressor.bz2Extract(kv.getValue());
-                    Assert.assertNotNull(decompressedData);
+//                    byte[] decompressedData = BRCompressor.bz2Extract(kv.getValue());
+//                    Assert.assertNotNull(decompressedData);
                     try {
-                        JSONObject test = new JSONObject(new String(decompressedData)); //just check for validity
+                        JSONObject test = new JSONObject(new String(kv.getValue())); //just check for validity
                     } catch (JSONException e) {
                         e.printStackTrace();
                         Log.e(TAG, "handle: the json is not valid: " + target + " " + baseRequest.getMethod());
@@ -102,7 +102,7 @@ public class KVStorePlugin implements Plugin {
                         Log.w(TAG, "handle: the key is gone: " + target + " " + baseRequest.getMethod());
                         return BRHTTPHelper.handleError(410, "Gone", baseRequest, response);
                     }
-                    return BRHTTPHelper.handleSuccess(200, decompressedData, baseRequest, response, "application/json");
+                    return BRHTTPHelper.handleSuccess(200, kv.getValue(), baseRequest, response, "application/json");
                 case "PUT":
                     Log.i(TAG, "handle:" + target + " " + baseRequest.getMethod() + ", key: " + key);
                     // Read from request
@@ -132,10 +132,10 @@ public class KVStorePlugin implements Plugin {
 
                     long version = Long.valueOf(strVersion);
 
-                    byte[] compressedData = BRCompressor.bz2Compress(rawData);
-                    assert (compressedData != null);
+//                    byte[] compressedData = BRCompressor.bz2Compress(rawData);
+//                    assert (compressedData != null);
 
-                    CompletionObject setObj = store.set(new KVEntity(version, 0, key, compressedData, System.currentTimeMillis(), 0));
+                    CompletionObject setObj = store.set(new KVEntity(version, 0, key, rawData, System.currentTimeMillis(), 0));
                     if (setObj.err != null) {
                         Log.e(TAG, "handle: error setting the key: " + key + ", err: " + setObj.err);
                         int errCode = transformErrorToResponseCode(setObj.err);

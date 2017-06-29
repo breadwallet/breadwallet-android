@@ -64,10 +64,10 @@ public class KVStoreManager {
             Log.e(TAG, "getWalletInfo: value is null for key: " + obj.key);
             return null;
         }
-        byte[] uncompressed = BRCompressor.bz2Extract(obj.value);
+
         JSONObject json;
         try {
-            json = new JSONObject(new String(uncompressed));
+            json = new JSONObject(new String(obj.value));
         } catch (JSONException e) {
             e.printStackTrace();
             return null;
@@ -110,16 +110,12 @@ public class KVStoreManager {
             obj.put("creationDate", old.creationDate);
             obj.put("name", old.name);
             obj.put("currentCurrency", old.currentCurrency);
-            byte[] rawBytes = obj.toString().getBytes("utf-8");
-            result = BRCompressor.bz2Compress(rawBytes);
+            result = obj.toString().getBytes();
 
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e(TAG, "putWalletInfo: FAILED to create json");
             return;
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            Log.e(TAG, "putWalletInfo: FAILED to get bytes from json");
         }
 
         if (result.length == 0) {
@@ -149,10 +145,10 @@ public class KVStoreManager {
             Log.e(TAG, "getTxMetaData: value is null for key: " + obj.key);
             return null;
         }
-        byte[] uncompressed = BRCompressor.bz2Extract(obj.value);
+//        byte[] uncompressed = BRCompressor.bz2Extract(obj.value);
         JSONObject json;
         try {
-            json = new JSONObject(new String(uncompressed));
+            json = new JSONObject(new String(obj.value));
         } catch (JSONException e) {
             e.printStackTrace();
             return null;
