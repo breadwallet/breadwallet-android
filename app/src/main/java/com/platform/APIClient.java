@@ -36,10 +36,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import static android.R.attr.key;
 import io.sigpipe.jbsdiff.InvalidHeaderException;
 import io.sigpipe.jbsdiff.ui.FileUI;
 import okhttp3.Interceptor;
@@ -87,9 +89,9 @@ public class APIClient {
     // proto is the transport protocol to use for talking to the API (either http or https)
     private static final String PROTO = "https";
     // host is the server(s) on which the API is hosted
-    private static  String HOST = "api.breadwallet.com";
+    private static String HOST = "api.breadwallet.com";
     // convenience getter for the API endpoint
-    public static  String BASE_URL = PROTO + "://" + HOST;
+    public static String BASE_URL = PROTO + "://" + HOST;
     //feePerKb url
     private static final String FEE_PER_KB_URL = "/v1/fee-per-kb";
     //token
@@ -151,9 +153,9 @@ public class APIClient {
         if (0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)) {
             BREAD_BUY = "bread-buy-staging";
             BREAD_SUPPORT = "bread-support-staging";
-            HOST = "stage.breadwallet.com";
-            // convenience getter for the API endpoint
-            BASE_URL = PROTO + "://" + HOST;
+//            HOST = "stage.breadwallet.com";
+//            // convenience getter for the API endpoint
+//            BASE_URL = PROTO + "://" + HOST;
         }
     }
 
@@ -265,7 +267,9 @@ public class APIClient {
 
     public String signRequest(String request) {
         byte[] doubleSha256 = CryptoHelper.doubleSha256(request.getBytes(StandardCharsets.UTF_8));
-        BRKey key = new BRKey(KeyStoreManager.getAuthKey(ctx));
+        byte[] authKey = KeyStoreManager.getAuthKey(ctx);
+        Log.e(TAG, "signRequest: authKey:" + Arrays.toString(authKey));
+        BRKey key = new BRKey(authKey);
         byte[] signedBytes = key.compactSign(doubleSha256);
         return Base58.encode(signedBytes);
 
@@ -337,7 +341,7 @@ public class APIClient {
                 e.printStackTrace();
             }
             if (!response.isSuccessful())
-                Log.e(TAG, "sendRequest: " + String.format(Locale.getDefault(), "url (%s), code (%d), mess (%s), body (%s)",
+                Log.e(TAG, "sendRequest: " + String.format(Locale.getDefault(), "(%s)%s, code (%d), mess (%s), body (%s)", request.method(),
                         request.url(), response.code(), response.message(), new String(data)));
             if (response.isRedirect()) {
                 String newLocation = request.url().scheme() + "://" + request.url().host() + response.header("location");

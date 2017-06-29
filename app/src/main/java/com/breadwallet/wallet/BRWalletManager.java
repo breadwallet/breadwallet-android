@@ -59,6 +59,7 @@ import junit.framework.Assert;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -136,14 +137,14 @@ public class BRWalletManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        byte[] keyBytes = sr.generateSeed(16);
+        byte[] randomSeed = sr.generateSeed(16);
         if (words.length < 2000) {
             RuntimeException ex = new IllegalArgumentException("the list is wrong, size: " + words.length);
             FirebaseCrash.report(ex);
             throw ex;
         }
-        if (keyBytes.length == 0) throw new NullPointerException("failed to create the seed");
-        byte[] strPhrase = encodeSeed(keyBytes, words);
+        if (randomSeed.length == 0) throw new NullPointerException("failed to create the seed");
+        byte[] strPhrase = encodeSeed(randomSeed, words);
         if (strPhrase == null || strPhrase.length == 0) {
             RuntimeException ex = new NullPointerException("failed to encodeSeed");
             FirebaseCrash.report(ex);
@@ -156,7 +157,22 @@ public class BRWalletManager {
             e.printStackTrace();
         }
         if (!success) return false;
-        byte[] authKey = getAuthPrivKeyForAPI(keyBytes);
+        byte[] phrase;
+        try {
+            phrase = KeyStoreManager.getKeyStorePhrase(ctx, 0);
+        } catch (BRKeystoreErrorException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to retrieve the phrase even though at this point the system auth was asked for sure.");
+        }
+        Log.e(TAG, "generateRandomSeed phrase:" + Arrays.toString(phrase));
+        byte[] nulTermPhrase = TypesConverter.getNullTerminatedPhrase(phrase);
+        if (nulTermPhrase == null || nulTermPhrase.length == 0)
+            throw new RuntimeException("nulTermPhrase is null");
+        byte[] seed = getSeedFromPhrase(nulTermPhrase);
+        if (seed == null || seed.length == 0) throw new RuntimeException("seed is null");
+        Log.e(TAG, "generateRandomSeed seed:" + Arrays.toString(seed));
+        byte[] authKey = getAuthPrivKeyForAPI(seed);
+        Log.e(TAG, "generateRandomSeed authKey:" + Arrays.toString(authKey));
         if (authKey == null || authKey.length == 0) {
             RuntimeException ex = new IllegalArgumentException("authKey is invalid");
             FirebaseCrash.report(ex);
@@ -171,7 +187,6 @@ public class BRWalletManager {
             @Override
             public void run() {
                 KVStoreManager.getInstance().putWalletInfo(ctx, info); //push the creation time to the kv store
-
             }
         }).start();
 

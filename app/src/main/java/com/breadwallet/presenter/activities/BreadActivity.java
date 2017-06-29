@@ -167,10 +167,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
 
         setListeners();
 
-        //todo delete this testing
-        WalletInfo info = KVStoreManager.getInstance().getWalletInfo(this);
-        assert (info != null);
-
         setupSlideHandler();
 
 //        setWalletLoading();

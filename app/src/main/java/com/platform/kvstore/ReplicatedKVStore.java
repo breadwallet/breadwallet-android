@@ -36,6 +36,7 @@ import android.util.Log;
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.util.BRCompressor;
 import com.jniwrappers.BRKey;
 import com.platform.interfaces.KVStoreAdaptor;
 import com.platform.sqlite.KVEntity;
@@ -150,7 +151,8 @@ public class ReplicatedKVStore {
             return new CompletionObject(0, 0, CompletionObject.RemoteKVStoreError.conflict);
         }
         newVer = curVer + 1;
-        byte[] encryptionData = encrypted ? encrypt(kv.getValue()) : kv.getValue();
+        byte[] result = BRCompressor.bz2Compress(kv.getValue());
+        byte[] encryptionData = encrypted ? encrypt(result) : result;
 
         boolean success = insert(new KVEntity(newVer, 0, key, encryptionData, kv.getTime(), kv.getDeleted()));
         assert (success);
@@ -217,8 +219,10 @@ public class ReplicatedKVStore {
                     kv = cursorToKv(cursor);
                 }
 
-                if (encrypted && kv != null)
+                if (encrypted && kv != null) {
                     kv.value = decrypt(kv.getValue());
+                    kv.value = BRCompressor.bz2Extract(kv.getValue());
+                }
                 database.setTransactionSuccessful();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -415,7 +419,7 @@ public class ReplicatedKVStore {
         }
 
         if (completionObject.err == null) {
-            locVal = encryptedReplication ? encrypt(localKv.getValue()) : localKv.getValue();
+            locVal = localKv.getValue();
             localKv.value = locVal;
         }
 
@@ -486,7 +490,7 @@ public class ReplicatedKVStore {
                         Log.e(TAG, String.format("Error fetching the remote value for key %s, error: %s", key, err));
                         return false;
                     }
-                    byte[] decryptedValue = encryptedReplication ? decrypt(kv.getValue()) : kv.getValue();
+                    byte[] decryptedValue = kv.getValue();
                     CompletionObject setObj = new CompletionObject(0, 0, CompletionObject.RemoteKVStoreError.unknown);
                     database.beginTransaction();
                     try {
@@ -551,7 +555,7 @@ public class ReplicatedKVStore {
                 boolean success = _syncKey(k.getKey(), k.getRemoteVersion(), k.getTime(), k.getErr());
                 if (!success) failures++;
             }
-            Log.i(TAG, String.format("Finished syncing in %d, with failures: %d)", (System.currentTimeMillis() - startTime), failures));
+            Log.i(TAG, String.format("Finished syncing in %d, with failures: %d", (System.currentTimeMillis() - startTime), failures));
             return true;
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -740,7 +744,7 @@ public class ReplicatedKVStore {
      */
     public byte[] encrypt(byte[] data) {
         Context app = context;
-        if (app == null)  app = BreadWalletApp.getBreadContext();
+        if (app == null) app = BreadWalletApp.getBreadContext();
         if (app == null) return null;
         BRKey key = new BRKey(KeyStoreManager.getAuthKey(app));
         byte[] nonce = getNonce();
@@ -757,7 +761,7 @@ public class ReplicatedKVStore {
      */
     public byte[] decrypt(byte[] data) {
         Context app = context;
-        if (app == null)  app = BreadWalletApp.getBreadContext();
+        if (app == null) app = BreadWalletApp.getBreadContext();
         if (app == null) return null;
         BRKey key = new BRKey(KeyStoreManager.getAuthKey((Activity) app));
         //12 bytes is the nonce
