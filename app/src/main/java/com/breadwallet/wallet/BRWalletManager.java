@@ -125,7 +125,7 @@ public class BRWalletManager {
         return instance;
     }
 
-    public boolean generateRandomSeed(Context ctx) {
+    public boolean generateRandomSeed(final Context ctx) {
         SecureRandom sr = new SecureRandom();
         String[] words = new String[0];
         List<String> list;
@@ -165,9 +165,15 @@ public class BRWalletManager {
         KeyStoreManager.putAuthKey(authKey, ctx);
         int walletCreationTime = (int) (System.currentTimeMillis() / 1000);
         KeyStoreManager.putWalletCreationTime(walletCreationTime, ctx);
-        WalletInfo info = new WalletInfo();
+        final WalletInfo info = new WalletInfo();
         info.creationDate = walletCreationTime;
-        KVStoreManager.getInstance().putWalletInfo(ctx, info); //push the creation time to the kv store
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                KVStoreManager.getInstance().putWalletInfo(ctx, info); //push the creation time to the kv store
+
+            }
+        }).start();
 
         byte[] strBytes = TypesConverter.getNullTerminatedPhrase(strPhrase);
         byte[] pubKey = BRWalletManager.getInstance().getMasterPubKey(strBytes);
