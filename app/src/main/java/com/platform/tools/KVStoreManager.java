@@ -59,7 +59,7 @@ public class KVStoreManager {
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
         ReplicatedKVStore kvStore = new ReplicatedKVStore(app, remoteKVStore);
         long ver = kvStore.remoteVersion(walletInfoKey);
-        CompletionObject obj = kvStore.get(walletInfoKey, ver);
+        CompletionObject obj = remoteKVStore.get(walletInfoKey, ver);
         if (obj.value == null) {
             Log.e(TAG, "getWalletInfo: value is null for key: " + obj.key);
             return null;
