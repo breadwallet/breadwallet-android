@@ -89,7 +89,7 @@ public class APIClient {
     // proto is the transport protocol to use for talking to the API (either http or https)
     private static final String PROTO = "https";
     // host is the server(s) on which the API is hosted
-    private static String HOST = "api.breadwallet.com";
+    private static String HOST = "prod.breadwallet.com";
     // convenience getter for the API endpoint
     public static String BASE_URL = PROTO + "://" + HOST;
     //feePerKb url

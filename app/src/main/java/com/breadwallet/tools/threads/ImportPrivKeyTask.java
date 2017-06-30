@@ -53,7 +53,7 @@ import java.nio.charset.Charset;
 
 public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
     public static final String TAG = ImportPrivKeyTask.class.getName();
-    public static final String UNSPENT_URL = BuildConfig.BITCOIN_TESTNET ? "https://test-insight.bitpay.com/api/addrs/" : "https://api.breadwallet.com/q/addr/";
+    public static final String UNSPENT_URL = BuildConfig.BITCOIN_TESTNET ? "https://test-insight.bitpay.com/api/addrs/" : "https://prod.breadwallet.com/q/addr/";
     private Activity app;
     private String key;
     private ImportPrivKeyEntity importPrivKeyEntity;

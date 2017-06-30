@@ -186,7 +186,7 @@ public class CurrencyFetchManager {
 
 
     public static JSONArray getJSonArray(Activity activity) {
-        String jsonString = callURL(activity, "https://api.breadwallet.com/rates");
+        String jsonString = callURL(activity, "https://prod.breadwallet.com/rates");
         JSONArray jsonArray = null;
         if (jsonString == null) return null;
         try {
@@ -219,7 +219,7 @@ public class CurrencyFetchManager {
     }
 
     public static void updateFeePerKb(Activity activity) {
-        String jsonString = callURL(activity, "https://api.breadwallet.com/fee-per-kb");
+        String jsonString = callURL(activity, "https://prod.breadwallet.com/fee-per-kb");
         if (jsonString == null || jsonString.isEmpty()) {
             Log.e(TAG, "updateFeePerKb: failed to update fee, response string: " + jsonString);
             return;
