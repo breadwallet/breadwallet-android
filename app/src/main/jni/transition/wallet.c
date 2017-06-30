@@ -858,12 +858,13 @@ JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getAuth
         jobject thiz,
         jbyteArray seed) {
     __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "getAuthPrivKeyForAPI");
-    jbyte *bytePhrase = (*env)->GetByteArrayElements(env, seed, 0);
+    jbyte *bytesSeed = (*env)->GetByteArrayElements(env, seed, 0);
     size_t seedLen = (size_t) (*env)->GetArrayLength(env, seed);
     BRKey key;
-    BRBIP32APIAuthKey(&key, bytePhrase, seedLen);
+    BRBIP32APIAuthKey(&key, bytesSeed, seedLen);
     char rawKey[BRKeyPrivKey(&key, NULL, 0)];
     BRKeyPrivKey(&key, rawKey, sizeof(rawKey));
+//    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "rawKey: %s", rawKey);
     jbyteArray result = (*env)->NewByteArray(env, (jsize) sizeof(rawKey));
     (*env)->SetByteArrayRegion(env, result, 0, (jsize) sizeof(rawKey), (jbyte *) rawKey);
     return result;
