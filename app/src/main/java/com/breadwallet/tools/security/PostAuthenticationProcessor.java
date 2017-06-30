@@ -19,6 +19,7 @@ import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.TypesConverter;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.util.Arrays;
@@ -146,6 +147,7 @@ public class PostAuthenticationProcessor {
                     bytePhrase = TypesConverter.getNullTerminatedPhrase(phraseForKeyStore.getBytes());
                     byte[] seed = BRWalletManager.getSeedFromPhrase(bytePhrase);
                     byte[] authKey = BRWalletManager.getAuthPrivKeyForAPI(seed);
+                    Log.e(TAG, "onRecoverWallet authKey:" + Utils.bytesToHex(authKey)); //todo delete
                     KeyStoreManager.putAuthKey(authKey, app);
                     byte[] pubKey = BRWalletManager.getInstance().getMasterPubKey(bytePhrase);
                     KeyStoreManager.putMasterPublicKey(pubKey, app);

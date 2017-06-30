@@ -164,15 +164,13 @@ public class BRWalletManager {
             e.printStackTrace();
             throw new RuntimeException("Failed to retrieve the phrase even though at this point the system auth was asked for sure.");
         }
-        Log.e(TAG, "generateRandomSeed phrase:" + Arrays.toString(phrase));
         byte[] nulTermPhrase = TypesConverter.getNullTerminatedPhrase(phrase);
         if (nulTermPhrase == null || nulTermPhrase.length == 0)
             throw new RuntimeException("nulTermPhrase is null");
         byte[] seed = getSeedFromPhrase(nulTermPhrase);
         if (seed == null || seed.length == 0) throw new RuntimeException("seed is null");
-        Log.e(TAG, "generateRandomSeed seed:" + Arrays.toString(seed));
         byte[] authKey = getAuthPrivKeyForAPI(seed);
-        Log.e(TAG, "generateRandomSeed authKey:" + Arrays.toString(authKey));
+        Log.e(TAG, "generateRandomSeed authKey:" + Utils.bytesToHex(authKey)); //todo delete
         if (authKey == null || authKey.length == 0) {
             RuntimeException ex = new IllegalArgumentException("authKey is invalid");
             FirebaseCrash.report(ex);

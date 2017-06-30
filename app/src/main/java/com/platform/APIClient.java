@@ -268,7 +268,7 @@ public class APIClient {
     public String signRequest(String request) {
         byte[] doubleSha256 = CryptoHelper.doubleSha256(request.getBytes(StandardCharsets.UTF_8));
         byte[] authKey = KeyStoreManager.getAuthKey(ctx);
-        Log.e(TAG, "signRequest: authKey:" + Arrays.toString(authKey));
+        Log.e(TAG, "signRequest: authKey:" + Utils.bytesToHex(authKey));
         BRKey key = new BRKey(authKey);
         byte[] signedBytes = key.compactSign(doubleSha256);
         return Base58.encode(signedBytes);

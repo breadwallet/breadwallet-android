@@ -60,6 +60,7 @@ public class ReplicatedKVStore {
 
     public boolean encrypted = true;
     public boolean encryptedReplication = true;
+    public boolean syncImmediately = false;
     private boolean syncRunning = false;
     private KVStoreAdaptor remoteKvStore;
     private Context context;
@@ -120,12 +121,12 @@ public class ReplicatedKVStore {
                 } finally {
                     database.endTransaction();
                 }
-//                if (syncImmediately && obj.err == null) {
-//                    if (!syncRunning) {
-//                        syncKey(kv.getKey(), 0, 0, null);
-//                        Log.e(TAG, "set: key synced: " + kv.getKey());
-//                    }
-//                }
+                if (syncImmediately && obj.err == null) {
+                    if (!syncRunning) {
+                        syncKey(kv.getKey(), 0, 0, null);
+                        Log.e(TAG, "set: key synced: " + kv.getKey());
+                    }
+                }
                 return obj;
             }
         } catch (SQLException e) {
@@ -151,8 +152,7 @@ public class ReplicatedKVStore {
             return new CompletionObject(0, 0, CompletionObject.RemoteKVStoreError.conflict);
         }
         newVer = curVer + 1;
-        byte[] result = BRCompressor.bz2Compress(kv.getValue());
-        byte[] encryptionData = encrypted ? encrypt(result) : result;
+        byte[] encryptionData = encrypted ? encrypt(kv.getValue()) : kv.getValue();
 
         boolean success = insert(new KVEntity(newVer, 0, key, encryptionData, kv.getTime(), kv.getDeleted()));
         assert (success);
@@ -220,8 +220,7 @@ public class ReplicatedKVStore {
                 }
 
                 if (encrypted && kv != null) {
-                    kv.value = decrypt(kv.getValue());
-                    kv.value = BRCompressor.bz2Extract(kv.getValue());
+                    kv.value = encrypted? decrypt(kv.getValue()) : kv.getValue();
                 }
                 database.setTransactionSuccessful();
             } catch (Exception e) {
@@ -419,7 +418,7 @@ public class ReplicatedKVStore {
         }
 
         if (completionObject.err == null) {
-            locVal = localKv.getValue();
+            locVal = encryptedReplication ? encrypt(localKv.getValue()) : localKv.getValue();
             localKv.value = locVal;
         }
 
@@ -490,7 +489,7 @@ public class ReplicatedKVStore {
                         Log.e(TAG, String.format("Error fetching the remote value for key %s, error: %s", key, err));
                         return false;
                     }
-                    byte[] decryptedValue = kv.getValue();
+                    byte[] decryptedValue = encryptedReplication ? decrypt(kv.getValue()) : kv.getValue();
                     CompletionObject setObj = new CompletionObject(0, 0, CompletionObject.RemoteKVStoreError.unknown);
                     database.beginTransaction();
                     try {
