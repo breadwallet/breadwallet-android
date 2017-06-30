@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.net.Uri;
 import android.util.Log;
 
-import com.breadwallet.BreadWalletApp;
 import com.breadwallet.R;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.customviews.BRDialogView;

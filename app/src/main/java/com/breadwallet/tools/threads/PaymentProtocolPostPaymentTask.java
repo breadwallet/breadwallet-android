@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.breadwallet.BreadWalletApp;
+import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.customviews.BRToast;
@@ -102,7 +102,7 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
 //            PostAuthenticationProcessor.getInstance().setTmpPaymentRequest(paymentRequest);
 //            PostAuthenticationProcessor.getInstance().onPaymentProtocolRequest(app,false);
         } catch (Exception e) {
-            Activity app = BreadWalletApp.getBreadContext();
+            Activity app = BreadApp.getBreadContext();
             if (e instanceof java.net.UnknownHostException) {
                 if (app != null) {
                     pendingErrorMessages.put(TITLE, app.getString(R.string.error));
@@ -122,7 +122,7 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
                 if (app != null) {
                     pendingErrorMessages.put(TITLE, app.getString(R.string.JailbreakWarnings_title));
                     pendingErrorMessages.put(MESSAGE, app.getString(R.string.could_not_transmit_payment));
-//                    if (!((BreadWalletApp) app.getApplication()).hasInternetAccess())
+//                    if (!((BreadApp) app.getApplication()).hasInternetAccess())
 //                        BreadDialog.
 //                                showCustomDialog(app,app.getString(R.string.could_not_make_payment), app.getString(R.string.not_connected_network), app.getString(R.string.ok));
 
@@ -146,7 +146,7 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
     }
 
     public static void handleMessage() {
-        Activity app = BreadWalletApp.getBreadContext();
+        Activity app = BreadApp.getBreadContext();
         if (app != null && message != null) {
             if (!message.isEmpty()) {
                 BRToast.

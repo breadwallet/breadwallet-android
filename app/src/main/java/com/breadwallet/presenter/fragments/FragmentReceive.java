@@ -18,21 +18,18 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.breadwallet.BreadWalletApp;
+import com.breadwallet.BreadApp;
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SlideDetector;
-import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.qrcode.QRUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 
-import static com.breadwallet.R.id.keyboard;
 import static com.breadwallet.tools.animation.BRAnimator.animateBackgroundDim;
 import static com.breadwallet.tools.animation.BRAnimator.animateSignalSlide;
 
@@ -278,7 +275,7 @@ public class FragmentReceive extends Fragment {
 
     private void updateQr() {
         Context ctx = getContext();
-        if (ctx == null) ctx = BreadWalletApp.getBreadContext();
+        if (ctx == null) ctx = BreadApp.getBreadContext();
         final Context finalCtx = ctx;
         new Thread(new Runnable() {
             @Override

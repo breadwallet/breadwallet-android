@@ -10,11 +10,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.breadwallet.BreadWalletApp;
+import com.breadwallet.BreadApp;
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.BreadActivity;
-
-import static com.breadwallet.R.layout.toast;
 
 /**
  * BreadWallet
@@ -54,7 +51,7 @@ public class BRToast {
     public static void showCustomToast(Context app, String message, int yOffSet, int duration, int layoutDrawable) {
         if (app == null) return;
         if (toast == null) toast = new Toast(app);
-        if (!BreadWalletApp.isAnyActivityOn()) return;
+        if (!BreadApp.isAnyActivityOn()) return;
 
         if (customToastAvailable || !oldMessage.equals(message)) {
             oldMessage = message;

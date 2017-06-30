@@ -86,7 +86,7 @@ public class BRConstants {
     public static final long MAX_FEE_PER_KB = (100100 * 1000 + 190) / 191;
 
     /**
-     * BreadWalletApp
+     * BreadApp
      */
     public static final int BREAD_WALLET_IMAGE = 0;
     public static final int BREAD_WALLET_TEXT = 1;

@@ -2,29 +2,18 @@ package com.platform.middlewares.plugins;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.location.Address;
-import android.location.Geocoder;
 import android.net.Uri;
 import android.util.Log;
 
-import com.breadwallet.BreadWalletApp;
-import com.breadwallet.presenter.activities.BreadActivity;
+import com.breadwallet.BreadApp;
 import com.google.firebase.crash.FirebaseCrash;
 import com.platform.BRHTTPHelper;
 import com.platform.interfaces.Plugin;
 
-import junit.framework.Assert;
-
 import org.eclipse.jetty.server.Request;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import static android.R.attr.handle;
 
 /**
  * BreadWallet
@@ -59,7 +48,7 @@ public class LinkPlugin implements Plugin {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
             String url = request.getParameter("url");
 
-            Activity app =  BreadWalletApp.getBreadContext();
+            Activity app =  BreadApp.getBreadContext();
             if (app == null) {
                 Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
@@ -76,7 +65,7 @@ public class LinkPlugin implements Plugin {
             return true;
         } else if (target.startsWith("/_open_maps")) {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
-            Activity app =  BreadWalletApp.getBreadContext();
+            Activity app =  BreadApp.getBreadContext();
             if (app == null) {
                 Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);

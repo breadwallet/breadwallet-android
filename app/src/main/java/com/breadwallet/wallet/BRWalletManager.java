@@ -22,8 +22,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.R;
-import com.breadwallet.BreadWalletApp;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
@@ -59,7 +59,6 @@ import junit.framework.Assert;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -306,7 +305,7 @@ public class BRWalletManager {
                     builder.setPositiveButton(ctx.getString(R.string.Button_ok), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-//                            if (!((BreadWalletApp) ((Activity) ctx).getApplication()).hasInternetAccess()) {
+//                            if (!((BreadApp) ((Activity) ctx).getApplication()).hasInternetAccess()) {
 //                                ((Activity) ctx).runOnUiThread(new Runnable() {
 //                                    @Override
 //                                    public void run() {
@@ -425,7 +424,7 @@ public class BRWalletManager {
      */
     public static void publishCallback(final String message, final int error) {
         Log.e(TAG, "publishCallback: " + message + ", err:" + error);
-        final Activity app = BreadWalletApp.getBreadContext();
+        final Activity app = BreadApp.getBreadContext();
         app.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -466,7 +465,7 @@ public class BRWalletManager {
 
     public static void onBalanceChanged(final long balance) {
         Log.d(TAG, "onBalanceChanged:  " + balance);
-        Activity app = BreadWalletApp.getBreadContext();
+        Activity app = BreadApp.getBreadContext();
         BRWalletManager.getInstance().setBalance(app, balance);
 
     }
@@ -489,7 +488,7 @@ public class BRWalletManager {
 //            });
 //
 //        }
-        Activity ctx = BreadWalletApp.getBreadContext();
+        Activity ctx = BreadApp.getBreadContext();
         if (ctx != null)
             TransactionDataSource.getInstance(ctx).putTransaction(new BRTransactionEntity(tx, blockHeight, timestamp, hash));
         else
@@ -509,7 +508,7 @@ public class BRWalletManager {
                             if (temp == messageId) {
                                 if (BRToast.isToastShown()) {
                                     BRToast.showCustomToast(ctx, message,
-                                            BreadWalletApp.DISPLAY_HEIGHT_PX / 2, Toast.LENGTH_LONG, R.drawable.toast_layout_black);
+                                            BreadApp.DISPLAY_HEIGHT_PX / 2, Toast.LENGTH_LONG, R.drawable.toast_layout_black);
                                     AudioManager audioManager = (AudioManager) ctx.getSystemService(Context.AUDIO_SERVICE);
                                     if (audioManager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL) {
                                         final MediaPlayer mp = MediaPlayer.create(ctx, R.raw.coinflip);
@@ -534,7 +533,7 @@ public class BRWalletManager {
 
     public static void onTxUpdated(String hash, int blockHeight, int timeStamp) {
         Log.d(TAG, "onTxUpdated: " + String.format("hash: %s, blockHeight: %d, timestamp: %d", hash, blockHeight, timeStamp));
-        Activity ctx = BreadWalletApp.getBreadContext();
+        Activity ctx = BreadApp.getBreadContext();
         if (ctx != null) {
             TransactionDataSource.getInstance(ctx).updateTxBlockHeight(hash, blockHeight, timeStamp);
 
@@ -545,7 +544,7 @@ public class BRWalletManager {
 
     public static void onTxDeleted(String hash, int notifyUser, final int recommendRescan) {
         Log.e(TAG, "onTxDeleted: " + String.format("hash: %s, notifyUser: %d, recommendRescan: %d", hash, notifyUser, recommendRescan));
-        final Activity ctx = BreadWalletApp.getBreadContext();
+        final Activity ctx = BreadApp.getBreadContext();
         if (ctx != null) {
             TransactionDataSource.getInstance(ctx).deleteTxByHash(hash);
             if (notifyUser == 1) {

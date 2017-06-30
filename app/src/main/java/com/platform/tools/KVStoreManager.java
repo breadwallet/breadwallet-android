@@ -66,8 +66,10 @@ public class KVStoreManager {
         }
 
         JSONObject json;
+
         try {
-            json = new JSONObject(new String(obj.value));
+            byte[] decompressed = BRCompressor.bz2Extract(obj.value);
+            json = new JSONObject(new String(decompressed));
         } catch (JSONException e) {
             e.printStackTrace();
             return null;
@@ -122,12 +124,12 @@ public class KVStoreManager {
             Log.e(TAG, "putWalletInfo: FAILED: result is empty");
             return;
         }
-
+        byte[] compressed = BRCompressor.bz2Extract(result);
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
         ReplicatedKVStore kvStore = new ReplicatedKVStore(app, remoteKVStore);
         long localVer = kvStore.localVersion(walletInfoKey);
         long removeVer = kvStore.remoteVersion(walletInfoKey);
-        CompletionObject compObj = kvStore.set(localVer, removeVer, walletInfoKey, result, System.currentTimeMillis(), 0);
+        CompletionObject compObj = kvStore.set(localVer, removeVer, walletInfoKey, compressed, System.currentTimeMillis(), 0);
         if (compObj.err != null) {
             Log.e(TAG, "putWalletInfo: Error setting value for key: " + walletInfoKey + ", err: " + compObj.err);
         }

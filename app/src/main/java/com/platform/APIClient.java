@@ -7,7 +7,7 @@ import android.content.pm.ApplicationInfo;
 import android.net.Uri;
 import android.util.Log;
 
-import com.breadwallet.BreadWalletApp;
+import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.tools.crypto.Base58;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
@@ -36,12 +36,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import static android.R.attr.key;
 import io.sigpipe.jbsdiff.InvalidHeaderException;
 import io.sigpipe.jbsdiff.ui.FileUI;
 import okhttp3.Interceptor;
@@ -88,10 +86,9 @@ public class APIClient {
 
     // proto is the transport protocol to use for talking to the API (either http or https)
     private static final String PROTO = "https";
-    // host is the server(s) on which the API is hosted
-    private static String HOST = "prod.breadwallet.com";
+
     // convenience getter for the API endpoint
-    public static String BASE_URL = PROTO + "://" + HOST;
+    public static String BASE_URL = PROTO + "://" + BreadApp.HOST;
     //feePerKb url
     private static final String FEE_PER_KB_URL = "/v1/fee-per-kb";
     //token
@@ -153,13 +150,7 @@ public class APIClient {
         if (0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)) {
             BREAD_BUY = "bread-buy-staging";
             BREAD_SUPPORT = "bread-support-staging";
-//            HOST = "stage.breadwallet.com";
-//            // convenience getter for the API endpoint
-//            BASE_URL = PROTO + "://" + HOST;
         }
-    }
-
-    private APIClient() {
     }
 
     //returns the fee per kb or 0 if something went wrong
@@ -187,7 +178,7 @@ public class APIClient {
 
     //only for testing
     public Response buyBitcoinMe() {
-        if (ctx == null) ctx = BreadWalletApp.getBreadContext();
+        if (ctx == null) ctx = BreadApp.getBreadContext();
         if (ctx == null) return null;
         String strUtl = BASE_URL + ME;
         Request request = new Request.Builder()
@@ -213,7 +204,7 @@ public class APIClient {
     }
 
     public String getToken() {
-        if (ctx == null) ctx = BreadWalletApp.getBreadContext();
+        if (ctx == null) ctx = BreadApp.getBreadContext();
         if (ctx == null) return null;
         try {
             String strUtl = BASE_URL + TOKEN;
@@ -348,7 +339,7 @@ public class APIClient {
                 Uri newUri = Uri.parse(newLocation);
                 if (newUri == null) {
                     Log.e(TAG, "sendRequest: redirect uri is null");
-                } else if (!newUri.getHost().equalsIgnoreCase(HOST) || !newUri.getScheme().equalsIgnoreCase(PROTO)) {
+                } else if (!newUri.getHost().equalsIgnoreCase(BreadApp.HOST) || !newUri.getScheme().equalsIgnoreCase(PROTO)) {
                     Log.e(TAG, "sendRequest: WARNING: redirect is NOT safe: " + newLocation);
                 } else {
                     Log.w(TAG, "redirecting: " + request.url() + " >>> " + newLocation);
@@ -513,7 +504,7 @@ public class APIClient {
     }
 
     public boolean tryExtractTar(File inputFile, String extractedFolder) {
-        Activity app = BreadWalletApp.getBreadContext();
+        Activity app = BreadApp.getBreadContext();
         if (app == null) {
             Log.e(TAG, "tryExtractTar: failed to extract, app is null");
             return false;

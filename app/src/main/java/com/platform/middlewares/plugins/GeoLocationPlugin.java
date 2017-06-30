@@ -4,16 +4,12 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
-import com.breadwallet.BreadWalletApp;
-import com.breadwallet.presenter.activities.BreadActivity;
+import com.breadwallet.BreadApp;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.platform.BRHTTPHelper;
@@ -23,18 +19,13 @@ import com.platform.interfaces.Plugin;
 import org.eclipse.jetty.continuation.Continuation;
 import org.eclipse.jetty.continuation.ContinuationSupport;
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.Response;
-import org.eclipse.jetty.server.session.SessionHandler;
-import org.eclipse.jetty.websocket.api.Session;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 
-import javax.servlet.AsyncContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 /**
  * BreadWallet
@@ -105,7 +96,7 @@ public class GeoLocationPlugin implements Plugin {
     public boolean handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
         if (target.startsWith("/_permissions/geo")) {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
-            Activity app =  BreadWalletApp.getBreadContext();
+            Activity app =  BreadApp.getBreadContext();
             if (app == null) {
                 Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
@@ -184,7 +175,7 @@ public class GeoLocationPlugin implements Plugin {
             // "description" = "a string representation of this object"
             // "timestamp" = "ISO-8601 timestamp of when this location was generated"
             // "horizontal_accuracy" = double
-            Activity app =  BreadWalletApp.getBreadContext();
+            Activity app =  BreadApp.getBreadContext();
             if (app == null) {                    Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
             }

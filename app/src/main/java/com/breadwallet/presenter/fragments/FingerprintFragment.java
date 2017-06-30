@@ -206,10 +206,10 @@ public class FingerprintFragment extends Fragment
         closeMe();
 
 //
-//        ((BreadWalletApp) getActivity().getApplicationContext()).setUnlocked(true);
+//        ((BreadApp) getActivity().getApplicationContext()).setUnlocked(true);
 //        FragmentSettingsAll.refreshUI();
 //        MiddleViewAdapter.resetMiddleView(getActivity(), null);
-//        ((BreadWalletApp) getActivity().getApplicationContext()).allowKeyStoreAccessForSeconds();
+//        ((BreadApp) getActivity().getApplicationContext()).allowKeyStoreAccessForSeconds();
 //        getDialog().dismiss();
 //        if (mode == BRConstants.AUTH_FOR_PHRASE) {
 //            PhraseFlowActivity app = ((PhraseFlowActivity) getActivity());
