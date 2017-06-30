@@ -737,6 +737,7 @@ public class ReplicatedKVStore {
      * encrypt some data using self.key
      */
     public byte[] encrypt(byte[] data) {
+        if(data == null) return null;
         Context app = context;
         if (app == null) app = BreadApp.getBreadContext();
         if (app == null) return null;

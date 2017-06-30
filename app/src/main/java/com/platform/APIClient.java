@@ -331,9 +331,14 @@ public class APIClient {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            String log = String.format(Locale.getDefault(), "(%s)%s, code (%d), mess (%s), body (%s)", request.method(),
+                    request.url(), response.code(), response.message(), new String(data));
             if (!response.isSuccessful())
-                Log.e(TAG, "sendRequest: " + String.format(Locale.getDefault(), "(%s)%s, code (%d), mess (%s), body (%s)", request.method(),
-                        request.url(), response.code(), response.message(), new String(data)));
+                Log.e(TAG, "sendRequest: " + log);
+            else
+                Log.d(TAG, "sendRequest: " + log);
+
+
             if (response.isRedirect()) {
                 String newLocation = request.url().scheme() + "://" + request.url().host() + response.header("location");
                 Uri newUri = Uri.parse(newLocation);
@@ -618,20 +623,41 @@ public class APIClient {
 
     public void updatePlatform() {
         if (BuildConfig.DEBUG) {
-            final long startTime = System.currentTimeMillis();
             Log.d(TAG, "updatePlatform: updating platform...");
+
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     APIClient apiClient = APIClient.getInstance(ctx);
                     apiClient.updateBundle(BREAD_BUY, BUY_FILE, BUY_EXTRACTED_FOLDER); //bread-buy-staging
+                }
+            }).start();
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    APIClient apiClient = APIClient.getInstance(ctx);
                     apiClient.updateBundle(BREAD_SUPPORT, SUPPORT_FILE, SUPPORT_EXTRACTED_FOLDER); //bread-support-staging
+                }
+            }).start();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    APIClient apiClient = APIClient.getInstance(ctx);
                     apiClient.updateFeatureFlag();
+                }
+            }).start();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    final long startTime = System.currentTimeMillis();
+                    APIClient apiClient = APIClient.getInstance(ctx);
                     apiClient.syncKvStore();
                     long endTime = System.currentTimeMillis();
                     Log.e(TAG, "updatePlatform: DONE in " + (endTime - startTime) + "ms");
                 }
             }).start();
+
         }
 
     }

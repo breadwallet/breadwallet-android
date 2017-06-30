@@ -69,6 +69,10 @@ public class KVStoreManager {
 
         try {
             byte[] decompressed = BRCompressor.bz2Extract(obj.value);
+            if(decompressed == null) {
+                Log.e(TAG, "getWalletInfo: decompressed value is null");
+                return null;
+            }
             json = new JSONObject(new String(decompressed));
         } catch (JSONException e) {
             e.printStackTrace();
@@ -124,7 +128,7 @@ public class KVStoreManager {
             Log.e(TAG, "putWalletInfo: FAILED: result is empty");
             return;
         }
-        byte[] compressed = BRCompressor.bz2Extract(result);
+        byte[] compressed = BRCompressor.bz2Compress(result);
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
         ReplicatedKVStore kvStore = new ReplicatedKVStore(app, remoteKVStore);
         long localVer = kvStore.localVersion(walletInfoKey);
