@@ -1,26 +1,24 @@
 package com.breadwallet.tools.util;
 
+import android.provider.MediaStore;
+
 import com.google.firebase.crash.FirebaseCrash;
 
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.eclipse.jetty.util.IO;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
+import java.io.OutputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import static android.R.attr.data;
-
-/**
+    /**
  * BreadWallet
  * <p/>
  * Created by Mihail Gutan on <mihail@breadwallet.com> 12/11/16.
