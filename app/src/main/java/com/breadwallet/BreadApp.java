@@ -3,6 +3,7 @@ package com.breadwallet;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.graphics.Point;
 import android.hardware.fingerprint.FingerprintManager;
 import android.view.Display;
@@ -34,17 +35,22 @@ import android.view.WindowManager;
  * THE SOFTWARE.
  */
 
-public class BreadWalletApp extends Application {
-    private static final String TAG = BreadWalletApp.class.getName();
+public class BreadApp extends Application {
+    private static final String TAG = BreadApp.class.getName();
     public static int DISPLAY_HEIGHT_PX;
     FingerprintManager mFingerprintManager;
+    // host is the server(s) on which the API is hosted
+    public static String HOST = "prod.breadwallet.com";
 
     private static Activity currentActivity;
-
 
     @Override
     public void onCreate() {
         super.onCreate();
+
+        if (0 != (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)) {
+            HOST = "stage.breadwallet.com";
+        }
 
         WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();

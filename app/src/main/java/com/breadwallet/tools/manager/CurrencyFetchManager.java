@@ -2,13 +2,11 @@ package com.breadwallet.tools.manager;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
 
-import com.breadwallet.BreadWalletApp;
+import com.breadwallet.BreadApp;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.util.BRConstants;
@@ -32,12 +30,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import static com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask.message;
 
 /**
  * BreadWallet
@@ -134,7 +129,7 @@ public class CurrencyFetchManager {
 
         @Override
         protected Object doInBackground(Object[] params) {
-            if (!BreadWalletApp.isAnyActivityOn()) {
+            if (!BreadApp.isAnyActivityOn()) {
                 Log.e(TAG, "doInBackground: Stopping timer, no activity on.");
                 CurrencyFetchManager.getInstance().stopTimerTask();
             }
@@ -186,7 +181,7 @@ public class CurrencyFetchManager {
 
 
     public static JSONArray getJSonArray(Activity activity) {
-        String jsonString = callURL(activity, "https://prod.breadwallet.com/rates");
+        String jsonString = callURL(activity, String.format("https://%s/rates", BreadApp.HOST));
         JSONArray jsonArray = null;
         if (jsonString == null) return null;
         try {
@@ -219,7 +214,7 @@ public class CurrencyFetchManager {
     }
 
     public static void updateFeePerKb(Activity activity) {
-        String jsonString = callURL(activity, "https://prod.breadwallet.com/fee-per-kb");
+        String jsonString = callURL(activity, String.format("https://%s/fee-per-kb", BreadApp.HOST));
         if (jsonString == null || jsonString.isEmpty()) {
             Log.e(TAG, "updateFeePerKb: failed to update fee, response string: " + jsonString);
             return;

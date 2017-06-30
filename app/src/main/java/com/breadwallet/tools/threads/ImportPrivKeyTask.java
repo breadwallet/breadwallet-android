@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRDialogView;
@@ -53,13 +54,14 @@ import java.nio.charset.Charset;
 
 public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
     public static final String TAG = ImportPrivKeyTask.class.getName();
-    public static final String UNSPENT_URL = BuildConfig.BITCOIN_TESTNET ? "https://test-insight.bitpay.com/api/addrs/" : "https://prod.breadwallet.com/q/addr/";
+    public static String UNSPENT_URL;
     private Activity app;
     private String key;
     private ImportPrivKeyEntity importPrivKeyEntity;
 
     public ImportPrivKeyTask(Activity activity) {
         app = activity;
+        UNSPENT_URL = BuildConfig.BITCOIN_TESTNET ? "https://test-insight.bitpay.com/api/addrs/" : String.format("https://%s/q/addr/", BreadApp.HOST);
     }
 
     @Override

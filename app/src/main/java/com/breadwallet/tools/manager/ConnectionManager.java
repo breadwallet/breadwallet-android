@@ -4,7 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import com.breadwallet.BreadWalletApp;
+import com.breadwallet.BreadApp;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,7 +75,7 @@ public class ConnectionManager{
 
     public boolean isConnected() {
         ConnectivityManager
-                cm = (ConnectivityManager) BreadWalletApp.getBreadContext().getApplicationContext()
+                cm = (ConnectivityManager) BreadApp.getBreadContext().getApplicationContext()
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null

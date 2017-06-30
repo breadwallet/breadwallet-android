@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.breadwallet.BreadWalletApp;
+import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.DisabledActivity;
 import com.breadwallet.presenter.activities.InputWordsActivity;
@@ -59,7 +59,7 @@ public class ActivityUTILS {
         ConnectionManager.getInstance();
         if (!(app instanceof IntroActivity || app instanceof RecoverActivity || app instanceof WriteDownActivity))
             CurrencyFetchManager.getInstance().startTimer(app);
-        BreadWalletApp.setBreadContext(app);
+        BreadApp.setBreadContext(app);
         //show wallet locked if it is
         if (!isAppSafe(app))
             if (AuthManager.getInstance().isWalletDisabled(app))

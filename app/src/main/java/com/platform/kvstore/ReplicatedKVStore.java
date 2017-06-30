@@ -33,10 +33,8 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.breadwallet.BreadWalletApp;
-import com.breadwallet.presenter.activities.BreadActivity;
+import com.breadwallet.BreadApp;
 import com.breadwallet.tools.security.KeyStoreManager;
-import com.breadwallet.tools.util.BRCompressor;
 import com.jniwrappers.BRKey;
 import com.platform.interfaces.KVStoreAdaptor;
 import com.platform.sqlite.KVEntity;
@@ -49,9 +47,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static android.R.attr.data;
-import static android.R.attr.key;
 
 public class ReplicatedKVStore {
     private static final String TAG = ReplicatedKVStore.class.getName();
@@ -220,7 +215,7 @@ public class ReplicatedKVStore {
                 }
 
                 if (encrypted && kv != null) {
-                    kv.value = encrypted? decrypt(kv.getValue()) : kv.getValue();
+                    kv.value = encrypted ? decrypt(kv.getValue()) : kv.getValue();
                 }
                 database.setTransactionSuccessful();
             } catch (Exception e) {
@@ -672,12 +667,12 @@ public class ReplicatedKVStore {
                 } finally {
                     database.endTransaction();
                 }
-//                if (syncImmediately && obj.err == null) {
-//                    if (!syncRunning) {
-//                        syncKey(key, 0, 0, null);
-//                        Log.e(TAG, "set: key synced: " + key);
-//                    }
-//                }
+                if (syncImmediately && obj.err == null) {
+                    if (!syncRunning) {
+                        syncKey(key, 0, 0, null);
+                        Log.e(TAG, "set: key synced: " + key);
+                    }
+                }
                 return obj;
             }
         } catch (SQLException e) {
@@ -743,7 +738,7 @@ public class ReplicatedKVStore {
      */
     public byte[] encrypt(byte[] data) {
         Context app = context;
-        if (app == null) app = BreadWalletApp.getBreadContext();
+        if (app == null) app = BreadApp.getBreadContext();
         if (app == null) return null;
         BRKey key = new BRKey(KeyStoreManager.getAuthKey(app));
         byte[] nonce = getNonce();
@@ -760,7 +755,7 @@ public class ReplicatedKVStore {
      */
     public byte[] decrypt(byte[] data) {
         Context app = context;
-        if (app == null) app = BreadWalletApp.getBreadContext();
+        if (app == null) app = BreadApp.getBreadContext();
         if (app == null) return null;
         BRKey key = new BRKey(KeyStoreManager.getAuthKey((Activity) app));
         //12 bytes is the nonce
