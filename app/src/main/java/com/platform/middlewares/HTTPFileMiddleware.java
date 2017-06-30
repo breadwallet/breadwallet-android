@@ -16,7 +16,9 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -51,6 +53,13 @@ import static com.platform.APIClient.SUPPORT_EXTRACTED_FOLDER;
  */
 public class HTTPFileMiddleware implements Middleware {
     public static final String TAG = HTTPFileMiddleware.class.getName();
+    public static final List<String> BUNDLE_LIST;
+
+    static {
+        BUNDLE_LIST = new ArrayList<>();
+        BUNDLE_LIST.add("/" + BUNDLES + "/" + BUY_EXTRACTED_FOLDER);
+        BUNDLE_LIST.add("/" + BUNDLES + "/" + SUPPORT_EXTRACTED_FOLDER);
+    }
 
 
     @Override
@@ -65,12 +74,22 @@ public class HTTPFileMiddleware implements Middleware {
             return true;
         }
 
-        //try buy
-        String requestedFile = app.getFilesDir() + "/" + BUNDLES + "/" + BUY_EXTRACTED_FOLDER + target;
-        File temp = new File(requestedFile);
-        if (!temp.exists()) {
+        boolean found = false;
+        File temp = null;
+        for (String bundlePath : BUNDLE_LIST) {
+            String requestedFile = app.getFilesDir() + bundlePath + target;
+            temp = new File(requestedFile);
+            if (temp.exists()) {
+                found = true;
+                Log.e(TAG, "handle: found bundle for:" + target);
+                break;
+            }
+        }
+        if (!found) {
+            Log.e(TAG, "handle: no bundle found for: " + target);
             return false;
         }
+
         Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
         boolean modified = true;
         byte[] md5 = CryptoHelper.md5(TypesConverter.long2byteArray(temp.lastModified()));
