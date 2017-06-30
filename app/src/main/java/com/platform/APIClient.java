@@ -628,23 +628,32 @@ public class APIClient {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    final long startTime = System.currentTimeMillis();
                     APIClient apiClient = APIClient.getInstance(ctx);
                     apiClient.updateBundle(BREAD_BUY, BUY_FILE, BUY_EXTRACTED_FOLDER); //bread-buy-staging
+                    long endTime = System.currentTimeMillis();
+                    Log.e(TAG, "updateBundle " + BREAD_BUY + ": DONE in " + (endTime - startTime) + "ms");
                 }
             }).start();
 
             new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    final long startTime = System.currentTimeMillis();
                     APIClient apiClient = APIClient.getInstance(ctx);
                     apiClient.updateBundle(BREAD_SUPPORT, SUPPORT_FILE, SUPPORT_EXTRACTED_FOLDER); //bread-support-staging
+                    long endTime = System.currentTimeMillis();
+                    Log.e(TAG, "updateBundle " + BREAD_SUPPORT + ": DONE in " + (endTime - startTime) + "ms");
                 }
             }).start();
             new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    final long startTime = System.currentTimeMillis();
                     APIClient apiClient = APIClient.getInstance(ctx);
                     apiClient.updateFeatureFlag();
+                    long endTime = System.currentTimeMillis();
+                    Log.e(TAG, "updateFeatureFlag: DONE in " + (endTime - startTime) + "ms");
                 }
             }).start();
             new Thread(new Runnable() {
