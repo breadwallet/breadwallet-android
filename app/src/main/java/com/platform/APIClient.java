@@ -39,6 +39,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import io.sigpipe.jbsdiff.InvalidHeaderException;
 import io.sigpipe.jbsdiff.ui.FileUI;
@@ -112,6 +113,9 @@ public class APIClient {
     public static final String BUY_EXTRACTED_FOLDER = String.format("%s-extracted", BREAD_BUY);
     public static final String SUPPORT_FILE = String.format("/%s/%s.tar", BUNDLES, BREAD_SUPPORT);
     public static final String SUPPORT_EXTRACTED_FOLDER = String.format("%s-extracted", BREAD_SUPPORT);
+
+    private boolean platformUpdating = false;
+    private AtomicInteger itemsLeftToUpdate = new AtomicInteger(0);
 
     public static HTTPServer server;
 
@@ -259,7 +263,7 @@ public class APIClient {
     public String signRequest(String request) {
         byte[] doubleSha256 = CryptoHelper.doubleSha256(request.getBytes(StandardCharsets.UTF_8));
         byte[] authKey = KeyStoreManager.getAuthKey(ctx);
-        Log.e(TAG, "signRequest: authKey:" + Utils.bytesToHex(authKey));
+//        Log.e(TAG, "signRequest: authKey:" + Utils.bytesToHex(authKey));
         BRKey key = new BRKey(authKey);
         byte[] signedBytes = key.compactSign(doubleSha256);
         return Base58.encode(signedBytes);
@@ -302,9 +306,7 @@ public class APIClient {
             String requestString = createRequest(request.method(), base58Body,
                     request.header("Content-Type"), request.header("Date"), request.url().encodedPath()
                             + ((queryString != null && !queryString.isEmpty()) ? ("?" + queryString) : ""));
-            Log.e(TAG, "requestString: " + requestString);
             String signedRequest = signRequest(requestString);
-            Log.e(TAG, "signedRequest: " + signedRequest);
             String token = new String(KeyStoreManager.getToken(ctx));
             if (token.isEmpty()) token = getToken();
             if (token == null || token.isEmpty()) {
@@ -331,13 +333,9 @@ public class APIClient {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            String log = String.format(Locale.getDefault(), "(%s)%s, code (%d), mess (%s), body (%s)", request.method(),
-                    request.url(), response.code(), response.message(), new String(data));
             if (!response.isSuccessful())
-                Log.e(TAG, "sendRequest: " + log);
-            else
-                Log.d(TAG, "sendRequest: " + log);
-
+                Log.e(TAG, "sendRequest: " + String.format(Locale.getDefault(), "(%s)%s, code (%d), mess (%s), body (%s)", request.method(),
+                        request.url(), response.code(), response.message(), new String(data)));
 
             if (response.isRedirect()) {
                 String newLocation = request.url().scheme() + "://" + request.url().host() + response.header("location");
@@ -624,7 +622,8 @@ public class APIClient {
     public void updatePlatform() {
         if (BuildConfig.DEBUG) {
             Log.d(TAG, "updatePlatform: updating platform...");
-
+            if (platformUpdating) return;
+            platformUpdating = true;
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -633,6 +632,8 @@ public class APIClient {
                     apiClient.updateBundle(BREAD_BUY, BUY_FILE, BUY_EXTRACTED_FOLDER); //bread-buy-staging
                     long endTime = System.currentTimeMillis();
                     Log.e(TAG, "updateBundle " + BREAD_BUY + ": DONE in " + (endTime - startTime) + "ms");
+                    itemFinished();
+
                 }
             }).start();
 
@@ -644,6 +645,7 @@ public class APIClient {
                     apiClient.updateBundle(BREAD_SUPPORT, SUPPORT_FILE, SUPPORT_EXTRACTED_FOLDER); //bread-support-staging
                     long endTime = System.currentTimeMillis();
                     Log.e(TAG, "updateBundle " + BREAD_SUPPORT + ": DONE in " + (endTime - startTime) + "ms");
+                    itemFinished();
                 }
             }).start();
             new Thread(new Runnable() {
@@ -654,6 +656,7 @@ public class APIClient {
                     apiClient.updateFeatureFlag();
                     long endTime = System.currentTimeMillis();
                     Log.e(TAG, "updateFeatureFlag: DONE in " + (endTime - startTime) + "ms");
+                    itemFinished();
                 }
             }).start();
             new Thread(new Runnable() {
@@ -664,6 +667,7 @@ public class APIClient {
                     apiClient.syncKvStore();
                     long endTime = System.currentTimeMillis();
                     Log.e(TAG, "updatePlatform: DONE in " + (endTime - startTime) + "ms");
+                    itemFinished();
                 }
             }).start();
 
@@ -671,16 +675,21 @@ public class APIClient {
 
     }
 
+    private void itemFinished() {
+        int items = itemsLeftToUpdate.incrementAndGet();
+        if (items >= 4) {
+            Log.e(TAG, "PLATFORM ALL UPDATED: " + items);
+            platformUpdating = false;
+            itemsLeftToUpdate.set(0);
+        }
+    }
+
     public void syncKvStore() {
         final APIClient client = this;
-        final long startTime = System.currentTimeMillis();
-        Log.d(TAG, "syncKvStore: DEBUG, syncing kv store...");
         //sync the kv stores
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(client);
         ReplicatedKVStore kvStore = new ReplicatedKVStore(ctx, remoteKVStore);
         kvStore.syncAllKeys();
-        long endTime = System.currentTimeMillis();
-        Log.d(TAG, "syncKvStore: DONE in " + (endTime - startTime) + "ms");
     }
 
 }

@@ -35,10 +35,13 @@ import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.util.BRCompressor;
 import com.jniwrappers.BRKey;
 import com.platform.interfaces.KVStoreAdaptor;
 import com.platform.sqlite.KVEntity;
 import com.platform.sqlite.PlatformSqliteHelper;
+
+import junit.framework.Assert;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -479,16 +482,18 @@ public class ReplicatedKVStore {
                 } else {
                     Log.i(TAG, String.format("Remote key %s is newer, fetching...", key));
                     CompletionObject remoteGet = remoteKvStore.get(key, remoteVersion);
-                    KVEntity kv = remoteGet.kv;
+//                    KVEntity kv = remoteGet.kv;
                     if (remoteGet.err != null) {
                         Log.e(TAG, String.format("Error fetching the remote value for key %s, error: %s", key, err));
                         return false;
                     }
-                    byte[] decryptedValue = encryptedReplication ? decrypt(kv.getValue()) : kv.getValue();
+                    byte[] decryptedValue = encryptedReplication ? decrypt(remoteGet.value) : remoteGet.value;
                     CompletionObject setObj = new CompletionObject(0, 0, CompletionObject.RemoteKVStoreError.unknown);
+//                    byte[] decompressed = BRCompressor.bz2Extract(decryptedValue);
+//                    Assert.assertNotNull(decompressed);
                     database.beginTransaction();
                     try {
-                        setObj = _set(new KVEntity(localKv.getVersion(), kv.getVersion(), key, decryptedValue, kv.getTime(), localKv.getDeleted()));
+                        setObj = _set(new KVEntity(localKv.getVersion(), remoteGet.version, key, decryptedValue, remoteGet.time, localKv.getDeleted()));
                         database.setTransactionSuccessful();
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -496,7 +501,7 @@ public class ReplicatedKVStore {
                         database.endTransaction();
                     }
                     if (setObj.err == null) {
-                        boolean success = setRemoteVersion(key, kv.getVersion(), kv.getRemoteVersion()).err == null;
+                        boolean success = setRemoteVersion(key, remoteGet.version, remoteGet.version).err == null;
                         if (!success) return false;
                     }
                 }
@@ -737,7 +742,7 @@ public class ReplicatedKVStore {
      * encrypt some data using self.key
      */
     public byte[] encrypt(byte[] data) {
-        if(data == null) return null;
+        if (data == null) return null;
         Context app = context;
         if (app == null) app = BreadApp.getBreadContext();
         if (app == null) return null;
