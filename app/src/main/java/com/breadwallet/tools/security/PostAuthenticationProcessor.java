@@ -8,6 +8,8 @@ import android.util.Log;
 
 import com.breadwallet.R;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
+import com.breadwallet.presenter.activities.InputWordsActivity;
+import com.breadwallet.presenter.activities.SetPitActivity;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.presenter.activities.PaperKeyActivity;
 import com.breadwallet.presenter.activities.PaperKeyProveActivity;
@@ -118,7 +120,7 @@ public class PostAuthenticationProcessor {
         app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
     }
 
-    public void onBitIDAuth(Activity app){
+    public void onBitIDAuth(Activity app) {
         BitcoinUrlHandler.processBitIdResponse(app);
     }
 
@@ -151,9 +153,13 @@ public class PostAuthenticationProcessor {
                     KeyStoreManager.putAuthKey(authKey, app);
                     byte[] pubKey = BRWalletManager.getInstance().getMasterPubKey(bytePhrase);
                     KeyStoreManager.putMasterPublicKey(pubKey, app);
-//                    app.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                    BRAnimator.startBreadActivity(app, false);
+                    app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                    Intent intent = new Intent(app, SetPitActivity.class);
+                    intent.putExtra("noPin", true);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    app.startActivity(intent);
                     if (!app.isDestroyed()) app.finish();
+//                    BRAnimator.startBreadActivity(app, false);
                     phraseForKeyStore = null;
                 }
 

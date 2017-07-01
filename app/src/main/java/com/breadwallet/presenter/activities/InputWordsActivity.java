@@ -139,8 +139,8 @@ public class InputWordsActivity extends BRActivity {
 //                    alertDialog.dismiss();
 //                }
                 final Activity app = InputWordsActivity.this;
-
                 String phraseToCheck = getPhrase();
+                phraseToCheck = "horror column sunset pumpkin car say art float sadness print solar limb"; //todo delete this testing
                 if (phraseToCheck == null) return;
                 String cleanPhrase = Bip39Reader.cleanPhrase(app, phraseToCheck);
 
