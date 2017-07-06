@@ -7,6 +7,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -258,6 +259,7 @@ public class FragmentReceive extends Fragment {
 
         Bundle extras = getArguments();
         isReceive = extras.getBoolean("receive");
+        Log.e(TAG, "onViewCreated isReceive: " + isReceive);
         if (!isReceive) {
             signalLayout.removeView(separator);
             signalLayout.removeView(requestButton);

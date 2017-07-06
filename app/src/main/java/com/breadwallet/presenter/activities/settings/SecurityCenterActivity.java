@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -40,6 +41,7 @@ public class SecurityCenterActivity extends BRActivity {
     public List<BRSecurityCenterItem> itemList;
     public static boolean appVisible = false;
     private static SecurityCenterActivity app;
+    private ImageButton close;
 
     public static SecurityCenterActivity getApp() {
         return app;
@@ -56,6 +58,17 @@ public class SecurityCenterActivity extends BRActivity {
 
         itemList = new ArrayList<>();
         mListView = (ListView) findViewById(R.id.menu_listview);
+        mListView.addFooterView(new View(this), null, true);
+        mListView.addHeaderView(new View(this), null, true);
+        mListView.setVerticalScrollBarEnabled(false);
+        mListView.setClickable(false);
+        close = (ImageButton) findViewById(R.id.close_button);
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
         updateList();
 
     }
