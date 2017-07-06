@@ -77,7 +77,7 @@ public class KVStorePlugin implements Plugin {
 
                     if (kv == null) {
                         Log.e(TAG, "handle: kv store does not contain the kv: " + key);
-                        return BRHTTPHelper.handleError(400, null, baseRequest, response);
+                        return BRHTTPHelper.handleError(404, null, baseRequest, response);
                     }
 //                    byte[] decompressedData = BRCompressor.bz2Extract(kv.getValue());
 //                    Assert.assertNotNull(decompressedData);

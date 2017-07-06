@@ -1,7 +1,6 @@
 package com.breadwallet.presenter.activities.settings;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.pm.ApplicationInfo;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -19,6 +18,8 @@ import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.util.Utils;
+import com.platform.HTTPServer;
+
 
 public class WebViewActivity extends BRActivity {
     private static final String TAG = WebViewActivity.class.getName();
@@ -56,6 +57,8 @@ public class WebViewActivity extends BRActivity {
         });
 
         theUrl = getIntent().getStringExtra("url");
+        setupServerMode(theUrl);
+        String navigate = getIntent().getStringExtra("navigate");
         if (Utils.isNullOrEmpty(theUrl)) throw new IllegalArgumentException("No url extra!");
 
         WebSettings webSettings = webView.getSettings();
@@ -66,7 +69,23 @@ public class WebViewActivity extends BRActivity {
         webSettings.setDomStorageEnabled(true);
         webSettings.setJavaScriptEnabled(true);
 
+        if (navigate != null && !navigate.isEmpty())
+            theUrl = theUrl + "/" + navigate;
+
+        Log.e(TAG, "onCreate: theUrl: " + theUrl);
         webView.loadUrl(theUrl);
+    }
+
+    private void setupServerMode(String url) {
+        if (url.equalsIgnoreCase(HTTPServer.URL_BUY)) {
+            HTTPServer.mode = HTTPServer.ServerMode.BUY;
+        } else if (url.equalsIgnoreCase(HTTPServer.URL_SUPPORT)) {
+            HTTPServer.mode = HTTPServer.ServerMode.SUPPORT;
+        } else if (url.equalsIgnoreCase(HTTPServer.URL_EA)) {
+            HTTPServer.mode = HTTPServer.ServerMode.EA;
+        } else {
+            throw new RuntimeException("unknown url: " + url);
+        }
     }
 
     @Override
@@ -84,9 +103,7 @@ public class WebViewActivity extends BRActivity {
         public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
             Log.e(TAG, "onJsAlert: " + message + ", url: " + url);
             return super.onJsAlert(view, url, message, result);
-
         }
-
     }
 
     @Override

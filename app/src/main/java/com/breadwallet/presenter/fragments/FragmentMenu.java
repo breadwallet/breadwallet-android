@@ -17,7 +17,6 @@ import android.view.ViewTreeObserver;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -99,7 +98,7 @@ public class FragmentMenu extends Fragment {
             public void onClick(View v) {
                 Log.e(TAG, "onClick: Lock Wallet");
                 Intent intent = new Intent(getActivity(), WebViewActivity.class);
-                intent.putExtra("url", HTTPServer.URL_BUY_BITCOIN);
+                intent.putExtra("url", HTTPServer.URL_BUY);
                 Activity app = getActivity();
                 app.startActivity(intent);
                 app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
@@ -122,6 +121,7 @@ public class FragmentMenu extends Fragment {
                 Log.e(TAG, "onClick: Support");
                 Intent intent = new Intent(getActivity(), WebViewActivity.class);
                 intent.putExtra("url", HTTPServer.URL_SUPPORT);
+//                intent.putExtra("navigate", "support");
                 Activity app = getActivity();
                 app.startActivity(intent);
                 app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);

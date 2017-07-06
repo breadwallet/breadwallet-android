@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.platform.BRHTTPHelper;
+import com.platform.HTTPServer;
 import com.platform.interfaces.Middleware;
 
 import junit.framework.Assert;
@@ -17,8 +18,6 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static com.platform.APIClient.BUNDLES;
-import static com.platform.APIClient.BUY_EXTRACTED_FOLDER;
 
 /**
  * BreadWallet
@@ -51,11 +50,14 @@ public class HTTPIndexMiddleware implements Middleware {
     public boolean handle(String target, org.eclipse.jetty.server.Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
         Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
         Activity app = BreadApp.getBreadContext();
-        if(app == null) {
+        if (app == null) {
             Log.e(TAG, "handle: app is null!");
             return true;
         }
-        String indexFile = app.getFilesDir() + "/" + BUNDLES + "/" + BUY_EXTRACTED_FOLDER + "/index.html";
+        String bundlePath = HTTPServer.getBundlePath();
+        if (bundlePath == null) return false;
+
+        String indexFile = app.getFilesDir() + bundlePath + "/index.html";
 
         File temp = new File(indexFile);
         if (!temp.exists()) {
