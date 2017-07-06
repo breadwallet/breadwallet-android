@@ -53,17 +53,15 @@ public class SlideDetector implements View.OnTouchListener {
     public boolean onTouch(View v, MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                Log.e(TAG, "onTouch dY: " + dY);
-                Log.e(TAG, "onTouch origY: " + origY);
                 origY = _root.getY();
                 dY = _root.getY() - event.getRawY();
                 break;
-
             case MotionEvent.ACTION_MOVE:
-                _root.animate()
-                        .y(event.getRawY() + dY)
-                        .setDuration(0)
-                        .start();
+                if (event.getRawY() + dY > origY)
+                    _root.animate()
+                            .y(event.getRawY() + dY)
+                            .setDuration(0)
+                            .start();
                 break;
             case MotionEvent.ACTION_UP:
                 if (_root.getY() > origY + _root.getHeight() / 2) {
