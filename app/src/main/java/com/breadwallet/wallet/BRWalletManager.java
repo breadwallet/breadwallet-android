@@ -492,64 +492,54 @@ public class BRWalletManager {
 //        }
 
         final Activity ctx = BreadApp.getBreadContext();
-        if (ctx != null) {
+        if (amount > 0)
+            if (ctx != null) {
+                ctx.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        String strToShow =
+                                (String.format(ctx.getString(R.string.received_amount),
+                                        BRCurrency.getFormattedCurrencyString(ctx, "BTC", new BigDecimal(amount)),
+                                        BRCurrency.getFormattedCurrencyString(ctx, SharedPreferencesManager.getIso(ctx), new BigDecimal(amount))));
 
-            ctx.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    long absAmount = (amount > 0 ? amount : amount * -1);
-                    String strToShow = amount > 0 ?
-                            (String.format(ctx.getString(R.string.received_amount),
-                                    BRCurrency.getFormattedCurrencyString(ctx, "BTC", new BigDecimal(absAmount)),
-                                    BRCurrency.getFormattedCurrencyString(ctx, SharedPreferencesManager.getIso(ctx), new BigDecimal(absAmount)))) :
-                            ctx.getString(R.string.sent_exclaimed);
+                        showToast(ctx, strToShow);
+                    }
 
-                    showSentReceivedToast(ctx, strToShow);
-                }
+                });
 
-            });
-
-        }
+            }
         if (ctx != null)
             TransactionDataSource.getInstance(ctx).putTransaction(new BRTransactionEntity(tx, blockHeight, timestamp, hash));
         else
             Log.e(TAG, "onTxAdded: ctx is null!");
     }
 
-    private static void showSentReceivedToast(final Context ctx, final String message) {
-//        messageId++;
-        Log.e(TAG, "showSentReceivedToast: ");
+    private static void showToast(Context ctx, final String message) {
+        if (ctx == null) ctx = BreadApp.getBreadContext();
         if (ctx != null) {
-            ((Activity) ctx).runOnUiThread(new Runnable() {
+            final Context finalCtx = ctx;
+            new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-//                    final int temp = messageId;
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-//                            if (temp == messageId) {
-                            if (BRToast.isToastShown()) {
-                                BRToast.showCustomToast(ctx, message,
-                                        BreadApp.DISPLAY_HEIGHT_PX / 2, Toast.LENGTH_LONG, R.drawable.toast_layout_black);
-                                AudioManager audioManager = (AudioManager) ctx.getSystemService(Context.AUDIO_SERVICE);
-                                if (audioManager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL) {
-                                    final MediaPlayer mp = MediaPlayer.create(ctx, R.raw.coinflip);
-                                    mp.start();
+                    if (!BRToast.isToastShown()) {
+                        BRToast.showCustomToast(finalCtx, message,
+                                BreadApp.DISPLAY_HEIGHT_PX / 2, Toast.LENGTH_LONG, R.drawable.toast_layout_black);
+                        AudioManager audioManager = (AudioManager) finalCtx.getSystemService(Context.AUDIO_SERVICE);
+                        if (audioManager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL) {
+                            final MediaPlayer mp = MediaPlayer.create(finalCtx, R.raw.coinflip);
+                            mp.start();
 
-                                }
-//                                    messageId = 0;
-                                if (!BreadActivity.appVisible)
-                                    BRNotificationManager.sendNotification(ctx, R.drawable.notification_icon, ctx.getString(R.string.app_name), message, 1);
-                            }
-//                            }
                         }
-                    }, 1000);
 
+                        if (!BreadActivity.appVisible && SharedPreferencesManager.getShowNotification(finalCtx))
+                            BRNotificationManager.sendNotification(finalCtx, R.drawable.notification_icon, finalCtx.getString(R.string.app_name), message, 1);
+                    }
                 }
-            });
+            }, 1000);
+
 
         } else {
-            Log.e(TAG, "showSentReceivedToast: failed, ctx is null");
+            Log.e(TAG, "showToast: failed, ctx is null");
         }
     }
 
