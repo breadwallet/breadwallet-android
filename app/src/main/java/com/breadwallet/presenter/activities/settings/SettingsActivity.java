@@ -50,12 +50,9 @@ public class SettingsActivity extends BRActivity {
         setContentView(R.layout.activity_settings);
 
         listView = (ListView) findViewById(R.id.settings_list);
-        items = new ArrayList<>();
 
-        populateItems();
-
-        listView.setAdapter(new SettingsListAdapter(this, R.layout.settings_list_item, items));
     }
+
 
     public class SettingsListAdapter extends ArrayAdapter<String> {
 
@@ -108,6 +105,13 @@ public class SettingsActivity extends BRActivity {
         appVisible = true;
         app = this;
         ActivityUTILS.init(this);
+        if (items == null)
+            items = new ArrayList<>();
+        items.clear();
+
+        populateItems();
+
+        listView.setAdapter(new SettingsListAdapter(this, R.layout.settings_list_item, items));
     }
 
 
@@ -125,23 +129,23 @@ public class SettingsActivity extends BRActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(SettingsActivity.this, ImportActivity.class);
                 startActivity(intent);
-                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
 
             }
         }, false));
 
-        items.add(new BRSettingsItem("Restore Breadwallet", "", new View.OnClickListener() {
+        items.add(new BRSettingsItem("Start/Recover Another Wallet", "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(SettingsActivity.this, RestoreActivity.class);
                 startActivity(intent);
-                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
             }
         }, false));
 
         items.add(new BRSettingsItem("Manage", "", null, true));
 
-        items.add(new BRSettingsItem("Notifications", SharedPreferencesManager.getShowNotification(this)? "On" : "Off", new View.OnClickListener() {
+        items.add(new BRSettingsItem("Notifications", SharedPreferencesManager.getShowNotification(this) ? "On" : "Off", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(SettingsActivity.this, NotificationActivity.class);
@@ -150,6 +154,7 @@ public class SettingsActivity extends BRActivity {
 
             }
         }, false));
+
         if (AuthManager.isFingerPrintAvailableAndSetup(this)) {
             items.add(new BRSettingsItem("FingerPrint Spending Limit", "", new View.OnClickListener() {
                 @Override
@@ -207,7 +212,7 @@ public class SettingsActivity extends BRActivity {
                 intent.putExtra("url", HTTPServer.URL_EA);
                 Activity app = SettingsActivity.this;
                 app.startActivity(intent);
-                app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
             }
         }, false));
         items.add(new BRSettingsItem("About", "", new View.OnClickListener() {

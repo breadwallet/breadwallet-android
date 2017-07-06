@@ -108,7 +108,9 @@ public class WebViewActivity extends BRActivity {
 
     @Override
     public void onBackPressed() {
-        BRAnimator.startBreadActivity(this, false);
+//        BRAnimator.startBreadActivity(this, false);
+        super.onBackPressed();
+        overridePendingTransition(R.anim.fade_up, R.anim.exit_to_bottom);
     }
 
     @Override

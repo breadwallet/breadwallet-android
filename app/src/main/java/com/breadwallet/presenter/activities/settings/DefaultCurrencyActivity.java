@@ -23,7 +23,6 @@ public class DefaultCurrencyActivity extends BRActivity {
     private static final String TAG = DefaultCurrencyActivity.class.getName();
     private TextView exchangeText;
     private ListView listView;
-
     private CurrencyListAdapter adapter;
     private String ISO;
     private float rate;

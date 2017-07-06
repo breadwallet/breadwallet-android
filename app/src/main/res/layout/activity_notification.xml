@@ -5,30 +5,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_intro_set_pit"
     android:layout_width="match_parent"
-    android:background="@color/extra_light_blue_background"
     android:layout_height="match_parent"
+    android:background="@color/extra_light_blue_background"
     tools:context="com.breadwallet.presenter.activities.SetPitActivity">
 
     <com.breadwallet.presenter.customviews.BRText
-        app:customFont="CircularPro-Bold.otf"
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="64dp"
-        android:text="Notifications"
+        android:layout_marginStart="@dimen/bread_margin"
+        android:layout_marginTop="32dp"
+        android:text="@string/PushNotifications.title"
+        android:textColor="@color/almost_black"
         android:textSize="30sp"
+        app:customFont="CircularPro-Bold.otf"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
     <com.breadwallet.presenter.customviews.BRText
-
         android:id="@+id/description"
         android:layout_width="296dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
-        android:layout_marginTop="32dp"
-        android:text="Get notified when money you’ve received is available for spending."
+        android:textColor="@color/almost_black"
+        android:layout_marginTop="@dimen/bread_margin"
+        android:text="@string/PushNotifications.body"
         android:textSize="18sp"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="@+id/title"
@@ -36,28 +36,28 @@
         app:layout_constraintTop_toBottomOf="@+id/title"/>
 
     <View
+        android:id="@+id/separator"
         android:layout_width="0dp"
-        android:layout_margin="16dp"
-        android:background="@color/extra_light_gray"
         android:layout_height="1dp"
-        android:layout_marginRight="16dp"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginLeft="16dp"
-        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="32dp"
+        android:background="@color/extra_light_gray"
         app:layout_constraintHorizontal_bias="0.0"
-        android:layout_marginTop="0dp"
-        app:layout_constraintTop_toBottomOf="@+id/textView4"
-        android:id="@+id/separator"/>
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView4"/>
 
     <com.breadwallet.presenter.customviews.BRText
-        app:customFont="CircularPro-Bold.otf"
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="0dp"
-        android:layout_marginTop="64dp"
-        android:text="Push Notifications"
+        android:layout_marginTop="40dp"
+        android:text="@string/PushNotifications.label"
+        android:textSize="16sp"
         android:textColor="@color/almost_black"
+        app:customFont="CircularPro-Bold.otf"
         app:layout_constraintLeft_toLeftOf="@+id/description"
         app:layout_constraintTop_toBottomOf="@+id/description"/>
 
@@ -65,14 +65,13 @@
         android:id="@+id/toggleButton"
         android:layout_width="wrap_content"
         android:layout_height="24dp"
-        android:text="ToggleButton"
-        android:textColor="@color/white"
-        android:background="@drawable/bread_toggle"
-        app:layout_constraintTop_toTopOf="@+id/textView4"
-        android:layout_marginTop="0dp"
-        app:layout_constraintBottom_toBottomOf="@+id/textView4"
         android:layout_marginBottom="0dp"
-        android:layout_marginRight="32dp"
-        app:layout_constraintRight_toRightOf="parent"/>
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="0dp"
+        android:background="@drawable/bread_toggle"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/textView4"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/textView4"/>
 
 </android.support.constraint.ConstraintLayout>

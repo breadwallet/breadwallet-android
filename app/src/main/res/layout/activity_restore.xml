@@ -12,16 +12,17 @@
     <com.breadwallet.presenter.customviews.BRButton
         android:id="@+id/send_button"
         android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:layout_marginBottom="64dp"
+        android:layout_height="@dimen/big_button_height"
+        android:layout_marginBottom="32dp"
         android:layout_marginEnd="24dp"
         android:layout_marginStart="24dp"
-        android:background="@drawable/b_blue"
+        android:background="@drawable/selector_blue"
         android:elevation="8dp"
         android:padding="10dp"
-        android:text="Next"
+        android:text="@string/RecoverWallet.next"
         android:textColor="@color/white"
         android:textSize="18sp"
+        app:isBreadButton="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
@@ -32,8 +33,8 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:lineSpacingMultiplier="1.5"
         android:layout_marginTop="16dp"
+        android:lineSpacingMultiplier="1.5"
         android:text="Restoring a Bread wallet allows you to access and manage a different Bread wallet on this device."
         android:textColor="@color/almost_black"
         android:textSize="18sp"
@@ -45,10 +46,10 @@
         android:id="@+id/textView12"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="32dp"
-        android:lineSpacingMultiplier="1.4"
+        android:layout_marginEnd="32dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="0dp"
+        android:lineSpacingMultiplier="1.4"
         android:text="You will no longer be able to access your current Bread wallet from this device."
         android:textColor="@color/almost_black"
         android:textSize="18sp"
@@ -63,23 +64,23 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="0dp"
         android:layout_marginTop="32dp"
+        android:src="@drawable/icon_delete_cirlce_grey"
         app:layout_constraintLeft_toLeftOf="@+id/textView8"
-        app:layout_constraintTop_toBottomOf="@+id/textView8"
-        android:src="@drawable/icon_delete_cirlce_grey"/>
+        app:layout_constraintTop_toBottomOf="@+id/textView8"/>
 
     <RelativeLayout
         android:id="@+id/relativeLayout"
         android:layout_width="0dp"
         android:layout_height="260dp"
+        android:layout_marginTop="0dp"
         android:background="@drawable/restore_gradient"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:layout_constraintBaseline_creator="1"
         tools:layout_constraintLeft_creator="1"
-        tools:layout_constraintRight_creator="1"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="0dp">
+        tools:layout_constraintRight_creator="1">
 
         <com.breadwallet.presenter.customviews.BRText
             android:id="@+id/textView2"
@@ -89,7 +90,7 @@
             android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="32dp"
-            android:text="Restore Bread Wallet"
+            android:text="Start/Recover Another Wallet"
             android:textColor="@color/white"
             android:textSize="20sp"
             app:customFont="CircularPro-Bold.otf"
@@ -99,21 +100,31 @@
             android:id="@+id/imageView10"
             android:layout_width="160dp"
             android:layout_height="160dp"
-            android:src="@drawable/restore_image"
             android:layout_below="@+id/textView2"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="32dp"/>
+            android:layout_marginTop="@dimen/bread_margin"
+            android:src="@drawable/restore_image"/>
 
         <ImageView
             android:id="@+id/imageView11"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/faq_question_white"
-            android:layout_marginEnd="15dp"
             android:layout_alignBottom="@+id/textView2"
             android:layout_alignParentEnd="true"
-            android:layout_alignTop="@+id/textView2"/>
+            android:layout_alignTop="@+id/textView2"
+            android:layout_marginEnd="15dp"
+            android:src="@drawable/faq_question_white"/>
 
+        <ImageButton
+            android:id="@+id/close_button"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="@android:color/transparent"
+            android:layout_alignBottom="@+id/textView2"
+            android:layout_alignParentStart="true"
+            android:layout_alignTop="@+id/textView2"
+            android:layout_marginStart="16dp"
+            android:src="@drawable/ic_close_white_24dp"/>
 
     </RelativeLayout>
 

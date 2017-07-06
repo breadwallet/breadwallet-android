@@ -4,22 +4,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_intro_recover"
-    android:background="@color/extra_light_blue_background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/extra_light_blue_background"
     tools:context="com.breadwallet.presenter.activities.intro.RecoverActivity">
 
     <com.breadwallet.presenter.customviews.BRButton
         android:id="@+id/scan_button"
         android:layout_width="0dp"
         android:layout_height="@dimen/big_button_height"
-        android:layout_marginBottom="64dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginStart="24dp"
-        android:background="@drawable/b_blue"
+        android:layout_margin="@dimen/bread_margin"
+        android:background="@drawable/selector_blue"
         android:padding="10dp"
-        android:text="Scan"
+        android:text="Scan Private Key"
         android:textColor="@color/white"
+        app:isBreadButton="true"
         android:textSize="18sp"
         app:customFont="CircularPro-Medium.otf"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -32,7 +31,8 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="9dp"
+        android:lineSpacingMultiplier="1.3"
+        android:layout_marginTop="16dp"
         android:text="Importing a wallet transfers all your money into your Bread wallet in a single transaction."
         android:textColor="@color/almost_black"
         android:textSize="18sp"
@@ -51,6 +51,7 @@
         android:text="Import wallet does not include transaction history or meta data."
         android:textColor="@color/almost_black"
         android:textSize="18sp"
+        android:lineSpacingMultiplier="1.3"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toRightOf="@+id/imageView8"
         app:layout_constraintRight_toRightOf="parent"
@@ -60,11 +61,10 @@
         android:id="@+id/imageView8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
+        android:src="@drawable/icon_delete_cirlce_grey"
         app:layout_constraintLeft_toLeftOf="@+id/textView8"
-        app:layout_constraintTop_toBottomOf="@+id/textView8"
-        app:srcCompat="@drawable/icon_delete_cirlce_grey"/>
+        app:layout_constraintTop_toBottomOf="@+id/textView8"/>
 
     <RelativeLayout
         android:id="@+id/relativeLayout"
@@ -80,18 +80,37 @@
         tools:layout_constraintRight_creator="1">
 
         <com.breadwallet.presenter.customviews.BRText
-            app:customFont="CircularPro-Bold.otf"
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="32dp"
-            android:text="Import Wallet"
+            android:layout_margin="@dimen/bread_margin"
+            android:text="@string/Settings.importTitle"
             android:textColor="@color/white"
             android:textSize="18sp"
+            app:customFont="CircularPro-Bold.otf"
             tools:layout_constraintTop_creator="1"/>
+
+
+        <ImageButton
+            android:id="@+id/close_button"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_margin="@dimen/bread_margin"
+            android:background="@drawable/ic_close_white_24dp"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="81dp"/>
+
+
+        <ImageButton
+            android:id="@+id/imageButton3"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="@dimen/bread_margin"
+            android:background="@drawable/faq_question_white"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="81dp"/>
 
         <ImageView
             android:id="@+id/imageView9"
@@ -99,7 +118,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/textView2"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="@dimen/bread_margin"
             android:src="@drawable/import_symbol"/>
 
     </RelativeLayout>
