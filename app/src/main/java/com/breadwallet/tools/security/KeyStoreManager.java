@@ -21,6 +21,8 @@ import com.breadwallet.tools.util.BytesUtil;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.wallet.BRWalletManager;
 import com.google.firebase.crash.FirebaseCrash;
+import com.platform.entities.WalletInfo;
+import com.platform.tools.KVStoreManager;
 
 import junit.framework.Assert;
 
@@ -449,7 +451,15 @@ public class KeyStoreManager {
         } catch (BRKeystoreErrorException e) {
             e.printStackTrace();
         }
-        return result.length > 0 ? TypesConverter.bytesToInt(result) : 0;
+        int time = result.length > 0 ? TypesConverter.bytesToInt(result) : 0;
+        if (time == 0) {
+            Log.e(TAG, "getWalletCreationTime: time is 0, checking kv store");
+            WalletInfo info = KVStoreManager.getInstance().getWalletInfo(context);
+            if (info != null)
+                time = info.creationDate;
+            Log.e(TAG, "getWalletCreationTime: time from kv: " + time);
+        }
+        return time;
     }
 
     public static boolean putPinCode(String passcode, Context context) {
