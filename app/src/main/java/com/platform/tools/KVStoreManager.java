@@ -61,7 +61,7 @@ public class KVStoreManager {
         long ver = kvStore.localVersion(walletInfoKey);
         CompletionObject obj = kvStore.get(walletInfoKey, ver);
         if (obj.kv == null) {
-            Log.e(TAG, "getWalletInfo: value is null for key: " + obj.kv.getKey());
+            Log.e(TAG, "getWalletInfo: value is null for key: " + obj.key);
             return null;
         }
 
