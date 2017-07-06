@@ -1,21 +1,16 @@
 package com.breadwallet.presenter.activities;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.animation.SpringAnimator;
-import com.breadwallet.tools.security.BitcoinUrlHandler;
-import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
 
 public class ImportActivity extends BRActivity {
@@ -23,6 +18,7 @@ public class ImportActivity extends BRActivity {
     private static final String TAG = ImportActivity.class.getName();
     public static boolean appVisible = false;
     private static ImportActivity app;
+    private ImageButton close;
 
     public static ImportActivity getApp() {
         return app;
@@ -37,8 +33,14 @@ public class ImportActivity extends BRActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_import);
 
-
         scan = (Button) findViewById(R.id.scan_button);
+        close = (ImageButton) findViewById(R.id.close_button);
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
         scan.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,7 +73,7 @@ public class ImportActivity extends BRActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
+        overridePendingTransition(R.anim.fade_up, R.anim.exit_to_bottom);
     }
 
     @Override

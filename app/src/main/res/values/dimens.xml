@@ -12,5 +12,7 @@
     <dimen name="pin_par_text_size">32sp</dimen>
     <dimen name="big_button_height">80dp</dimen>
     <dimen name="bread_margin">16dp</dimen>
+    <dimen name="faq_dimen">24dp</dimen>
+    <dimen name="close_dimen">24dp</dimen>
 
 </resources>

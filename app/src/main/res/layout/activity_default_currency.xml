@@ -13,9 +13,10 @@
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="64dp"
-        android:text="Default Currency"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/DefaultCurrency.title"
+        android:textColor="@color/almost_black"
         android:textSize="30sp"
         app:customFont="CircularPro-Bold.otf"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -27,8 +28,8 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
         android:layout_marginTop="24dp"
-        android:text="Exchange Rate"
-        android:textColor="@color/extra_light_gray"
+        android:text="@string/DefaultCurrency.rateLabel"
+        android:textColor="@color/light_gray"
         android:textSize="16sp"
         app:customFont="CircularPro-Bold.otf"
         app:layout_constraintHorizontal_bias="0.0"
@@ -41,9 +42,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
-        android:layout_marginRight="32dp"
         android:text="--- = 1 btc"
         android:textColor="@color/almost_black"
+        android:textSize="18sp"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="@+id/description"
         app:layout_constraintRight_toRightOf="parent"
@@ -61,5 +62,17 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/exchange_text"/>
+
+    <ImageButton
+        android:id="@+id/imageButton4"
+        android:layout_width="@dimen/faq_dimen"
+        android:layout_height="@dimen/faq_dimen"
+        android:layout_marginBottom="0dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="0dp"
+        android:background="@drawable/faq_question_black"
+        app:layout_constraintBottom_toBottomOf="@+id/title"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/title"/>
 
 </android.support.constraint.ConstraintLayout>
