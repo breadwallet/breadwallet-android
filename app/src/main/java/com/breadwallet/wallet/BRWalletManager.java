@@ -46,6 +46,7 @@ import com.breadwallet.tools.threads.ImportPrivKeyTask;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.manager.BRNotificationManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.tools.util.Bip39Reader;
@@ -57,6 +58,7 @@ import com.platform.tools.KVStoreManager;
 import junit.framework.Assert;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
@@ -112,7 +114,7 @@ public class BRWalletManager {
         return SharedPreferencesManager.getCatchedBalance(context);
     }
 
-    private static int messageId = 0;
+//    private static int messageId = 0;
 
     private BRWalletManager() {
         balanceListeners = new ArrayList<>();
@@ -488,7 +490,26 @@ public class BRWalletManager {
 //            });
 //
 //        }
-        Activity ctx = BreadApp.getBreadContext();
+
+        final Activity ctx = BreadApp.getBreadContext();
+        if (ctx != null) {
+
+            ctx.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    long absAmount = (amount > 0 ? amount : amount * -1);
+                    String strToShow = amount > 0 ?
+                            (String.format(ctx.getString(R.string.received_amount),
+                                    BRCurrency.getFormattedCurrencyString(ctx, "BTC", new BigDecimal(absAmount)),
+                                    BRCurrency.getFormattedCurrencyString(ctx, SharedPreferencesManager.getIso(ctx), new BigDecimal(absAmount)))) :
+                            ctx.getString(R.string.sent_exclaimed);
+
+                    showSentReceivedToast(ctx, strToShow);
+                }
+
+            });
+
+        }
         if (ctx != null)
             TransactionDataSource.getInstance(ctx).putTransaction(new BRTransactionEntity(tx, blockHeight, timestamp, hash));
         else
@@ -496,30 +517,31 @@ public class BRWalletManager {
     }
 
     private static void showSentReceivedToast(final Context ctx, final String message) {
-        messageId++;
+//        messageId++;
+        Log.e(TAG, "showSentReceivedToast: ");
         if (ctx != null) {
             ((Activity) ctx).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    final int temp = messageId;
+//                    final int temp = messageId;
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            if (temp == messageId) {
-                                if (BRToast.isToastShown()) {
-                                    BRToast.showCustomToast(ctx, message,
-                                            BreadApp.DISPLAY_HEIGHT_PX / 2, Toast.LENGTH_LONG, R.drawable.toast_layout_black);
-                                    AudioManager audioManager = (AudioManager) ctx.getSystemService(Context.AUDIO_SERVICE);
-                                    if (audioManager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL) {
-                                        final MediaPlayer mp = MediaPlayer.create(ctx, R.raw.coinflip);
-                                        mp.start();
+//                            if (temp == messageId) {
+                            if (BRToast.isToastShown()) {
+                                BRToast.showCustomToast(ctx, message,
+                                        BreadApp.DISPLAY_HEIGHT_PX / 2, Toast.LENGTH_LONG, R.drawable.toast_layout_black);
+                                AudioManager audioManager = (AudioManager) ctx.getSystemService(Context.AUDIO_SERVICE);
+                                if (audioManager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL) {
+                                    final MediaPlayer mp = MediaPlayer.create(ctx, R.raw.coinflip);
+                                    mp.start();
 
-                                    }
-                                    messageId = 0;
-                                    if (!BreadActivity.appVisible)
-                                        BRNotificationManager.sendNotification(ctx, R.drawable.notification_icon, ctx.getString(R.string.app_name), message, 1);
                                 }
+//                                    messageId = 0;
+                                if (!BreadActivity.appVisible)
+                                    BRNotificationManager.sendNotification(ctx, R.drawable.notification_icon, ctx.getString(R.string.app_name), message, 1);
                             }
+//                            }
                         }
                     }, 1000);
 
