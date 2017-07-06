@@ -23,6 +23,7 @@ import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.entities.BRSettingsItem;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.AuthManager;
 import com.platform.HTTPServer;
 
@@ -53,7 +54,7 @@ public class SettingsActivity extends BRActivity {
 
         populateItems();
 
-        listView.setAdapter(new SettingsListAdapter(this, settings_list_item, items));
+        listView.setAdapter(new SettingsListAdapter(this, R.layout.settings_list_item, items));
     }
 
     public class SettingsListAdapter extends ArrayAdapter<String> {
@@ -140,7 +141,7 @@ public class SettingsActivity extends BRActivity {
 
         items.add(new BRSettingsItem("Manage", "", null, true));
 
-        items.add(new BRSettingsItem("Notifications", "", new View.OnClickListener() {
+        items.add(new BRSettingsItem("Notifications", SharedPreferencesManager.getShowNotification(this)? "On" : "Off", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(SettingsActivity.this, NotificationActivity.class);
@@ -171,10 +172,9 @@ public class SettingsActivity extends BRActivity {
             }, false));
         }
 
-        items.add(new BRSettingsItem("Default Currency", "", new View.OnClickListener() {
+        items.add(new BRSettingsItem("Default Currency", SharedPreferencesManager.getIso(this), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Intent intent = new Intent(SettingsActivity.this, DefaultCurrencyActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
