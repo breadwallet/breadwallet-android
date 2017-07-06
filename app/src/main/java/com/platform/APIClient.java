@@ -34,6 +34,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -99,15 +100,11 @@ public class APIClient {
     //singleton instance
     private static APIClient ourInstance;
 
-    private static final String GET = "GET";
-    private static final String POST = "POST";
-
     public static final String BUNDLES = "bundles";
-    //    public static final String BREAD_BUY = "bread-buy-staging";
     public static String BREAD_BUY = "bread-buy";
     public static String BREAD_SUPPORT = "bread-support";
 
-    public static final String BUNDLES_FILE = String.format("/%s", BUNDLES);
+    public static final String BUNDLES_FOLDER = String.format("/%s", BUNDLES);
 
     public static final String BUY_FILE = String.format("/%s/%s.tar", BUNDLES, BREAD_BUY);
     public static final String BUY_EXTRACTED_FOLDER = String.format("%s-extracted", BREAD_BUY);
@@ -262,9 +259,7 @@ public class APIClient {
 
     public String signRequest(String request) {
         byte[] doubleSha256 = CryptoHelper.doubleSha256(request.getBytes(StandardCharsets.UTF_8));
-        byte[] authKey = KeyStoreManager.getAuthKey(ctx);
-//        Log.e(TAG, "signRequest: authKey:" + Utils.bytesToHex(authKey));
-        BRKey key = new BRKey(authKey);
+        BRKey key = new BRKey(KeyStoreManager.getAuthKey(ctx));
         byte[] signedBytes = key.compactSign(doubleSha256);
         return Base58.encode(signedBytes);
 
@@ -333,9 +328,6 @@ public class APIClient {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if (!response.isSuccessful())
-                Log.e(TAG, "sendRequest: " + String.format(Locale.getDefault(), "(%s)%s, code (%d), mess (%s), body (%s)", request.method(),
-                        request.url(), response.code(), response.message(), new String(data)));
 
             if (response.isRedirect()) {
                 String newLocation = request.url().scheme() + "://" + request.url().host() + response.header("location");
@@ -359,9 +351,22 @@ public class APIClient {
             Log.d(TAG, "sendRequest: the content is gzip, unzipping");
             byte[] decompressed = gZipExtract(data);
             ResponseBody postReqBody = ResponseBody.create(null, decompressed);
-
+            try {
+                Log.e(TAG, "sendRequest: " + String.format(Locale.getDefault(), "(%s)%s, code (%d), mess (%s), body (%s)", request.method(),
+                        request.url(), response.code(), response.message(), new String(decompressed, "utf-8")));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
             return response.newBuilder().body(postReqBody).build();
+        } else {
+            try {
+                Log.d(TAG, "sendRequest: " + String.format(Locale.getDefault(), "(%s)%s, code (%d), mess (%s), body (%s)", request.method(),
+                        request.url(), response.code(), response.message(), new String(data, "utf-8")));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
         }
+
         ResponseBody postReqBody = ResponseBody.create(null, data);
         if (needsAuth && isBreadChallenge(response)) {
             Log.e(TAG, "sendRequest: got authentication challenge from API - will attempt to get token");
@@ -458,13 +463,13 @@ public class APIClient {
         File tempFile = null;
         byte[] patchBytes = null;
         try {
-            patchFile = new File(String.format("/%s/%s.diff", BUNDLES, "patch"));
+            patchFile = new File(String.format("/%s/%s.diff", BUNDLES, bundleName + "-patch"));
             patchBytes = diffResponse.body().bytes();
             FileUtils.writeByteArrayToFile(patchFile, patchBytes);
 
             String compression = System.getProperty("jbsdiff.compressor", "tar");
             compression = compression.toLowerCase();
-            tempFile = new File(String.format("/%s/%s.tar", BUNDLES, "temp"));
+            tempFile = new File(String.format("/%s/%s.tar", BUNDLES, bundleName + "-temp"));
             FileUI.diff(bundleFile, tempFile, patchFile, compression);
 
             byte[] updatedBundleBytes = IOUtils.toByteArray(new FileInputStream(tempFile));
@@ -512,7 +517,7 @@ public class APIClient {
             Log.e(TAG, "tryExtractTar: failed to extract, app is null");
             return false;
         }
-        String extractFolderName = app.getFilesDir().getAbsolutePath() + BUNDLES_FILE + "/" + extractedFolder;
+        String extractFolderName = app.getFilesDir().getAbsolutePath() + BUNDLES_FOLDER + "/" + extractedFolder;
         boolean result = false;
         TarArchiveInputStream debInputStream = null;
         try {

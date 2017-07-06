@@ -8,6 +8,7 @@ import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.platform.BRHTTPHelper;
+import com.platform.HTTPServer;
 import com.platform.interfaces.Middleware;
 
 
@@ -16,16 +17,12 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static com.platform.APIClient.BUNDLES;
-import static com.platform.APIClient.BUY_EXTRACTED_FOLDER;
-import static com.platform.APIClient.SUPPORT_EXTRACTED_FOLDER;
 
 /**
  * BreadWallet
@@ -53,14 +50,6 @@ import static com.platform.APIClient.SUPPORT_EXTRACTED_FOLDER;
  */
 public class HTTPFileMiddleware implements Middleware {
     public static final String TAG = HTTPFileMiddleware.class.getName();
-    public static final List<String> BUNDLE_LIST;
-
-    static {
-        BUNDLE_LIST = new ArrayList<>();
-        BUNDLE_LIST.add("/" + BUNDLES + "/" + BUY_EXTRACTED_FOLDER);
-        BUNDLE_LIST.add("/" + BUNDLES + "/" + SUPPORT_EXTRACTED_FOLDER);
-    }
-
 
     @Override
     public boolean handle(String target, org.eclipse.jetty.server.Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
@@ -74,18 +63,16 @@ public class HTTPFileMiddleware implements Middleware {
             return true;
         }
 
-        boolean found = false;
-        File temp = null;
-        for (String bundlePath : BUNDLE_LIST) {
-            String requestedFile = app.getFilesDir() + bundlePath + target;
-            temp = new File(requestedFile);
-            if (temp.exists()) {
-                found = true;
-                Log.e(TAG, "handle: found bundle for:" + target);
-                break;
-            }
-        }
-        if (!found) {
+        String bundlePath = HTTPServer.getBundlePath();
+
+        if (bundlePath == null) return false;
+
+        File temp;
+        String requestedFile = app.getFilesDir() + bundlePath + target;
+        temp = new File(requestedFile);
+        if (temp.exists()) {
+            Log.d(TAG, "handle: found bundle for:" + target);
+        } else {
             Log.e(TAG, "handle: no bundle found for: " + target);
             return false;
         }
