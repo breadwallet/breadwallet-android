@@ -97,7 +97,6 @@ public class RemoteKVStore implements KVStoreAdaptor {
                 .addHeader("Content-Type", "application/octet-stream")
                 .addHeader("Content-Length", String.valueOf(value.length))
                 .build();
-        Log.e(TAG, "put: " + url);
         Response res = apiClient.sendRequest(request, true, retryCount);
         if (res == null) {
             Log.d(TAG, "ver: [KV] PUT key=" + key + ", err= response is null (maybe auth challenge)");
@@ -191,7 +190,6 @@ public class RemoteKVStore implements KVStoreAdaptor {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Log.e(TAG, "kvs: reqData: " + Arrays.toString(reqData));
 
         if (reqData == null) return new CompletionObject(0, 0, unknown);
         ByteBuffer buffer = ByteBuffer.wrap(reqData).order(java.nio.ByteOrder.LITTLE_ENDIAN);
@@ -227,7 +225,6 @@ public class RemoteKVStore implements KVStoreAdaptor {
             e.printStackTrace();
             return new CompletionObject(0, 0, unknown);
         }
-        Log.e(TAG, "kvs: " + keys.size());
         return new CompletionObject(keys, null);
     }
 
