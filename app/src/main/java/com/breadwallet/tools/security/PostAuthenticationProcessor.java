@@ -103,7 +103,7 @@ public class PostAuthenticationProcessor {
         Intent intent = new Intent(app, PaperKeyActivity.class);
         intent.putExtra("phrase", cleanPhrase);
         app.startActivity(intent);
-        app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+        app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
     }
 
     public void onPhraseProveAuth(Activity app, boolean authAsked) {
