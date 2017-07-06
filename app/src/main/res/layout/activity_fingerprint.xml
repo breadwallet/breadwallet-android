@@ -15,18 +15,43 @@
         android:background="@drawable/finger_gradient"
         android:orientation="vertical">
 
-        <com.breadwallet.presenter.customviews.BRText
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
+
+        <RelativeLayout
+            android:id="@+id/title_layout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:text="Fingerprint"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            app:customFont="CircularPro-Bold.otf"/>
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@+id/view"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            >
+
+
+            <com.breadwallet.presenter.customviews.BRText
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="Fingerprint"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                app:customFont="CircularPro-Bold.otf"/>
+
+            <ImageButton
+                android:id="@+id/imageButton3"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentEnd="true"
+                android:layout_margin="@dimen/bread_margin"
+                android:background="@drawable/faq_question_white"
+                />
+
+
+        </RelativeLayout>
 
         <ImageView
             android:layout_width="96dp"
@@ -44,9 +69,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/linearLayout"
         android:layout_centerHorizontal="true"
-        android:layout_marginLeft="32dp"
-        android:layout_marginRight="32dp"
-        android:layout_marginTop="32dp"
+        android:layout_margin="@dimen/bread_margin"
+        android:lineSpacingMultiplier="1.3"
         android:text="@string/TouchIdSettings.label"
         android:textColor="@color/almost_black"
         android:textSize="18sp"/>
@@ -56,10 +80,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textView10"
-        android:layout_marginLeft="32dp"
-        android:layout_marginRight="32dp"
-        android:layout_marginTop="32dp"
-        android:text="@string/TouchIdSettings.switchLabel"
+        android:layout_margin="@dimen/bread_margin"
+        android:text="@string/TouchIdSettings.switchLabel_Android"
         android:textColor="@color/almost_black"
         android:textSize="18sp"
         app:customFont="CircularPro-Bold.otf"/>
@@ -72,7 +94,6 @@
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="32dp"
         android:background="@drawable/bread_toggle"
-        android:text="ToggleButton"
         android:textColor="@color/white"
         />
 
@@ -91,10 +112,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/divider1"
-        android:layout_marginLeft="32dp"
-        android:layout_marginRight="32dp"
-        android:layout_marginTop="16dp"
-        android:text="Spending Limit:"
+        android:layout_margin="@dimen/bread_margin"
         android:textColor="@color/almost_black"
         android:textSize="18sp"
         />
@@ -103,10 +121,9 @@
         android:id="@+id/limit_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:lineSpacingMultiplier="1.2"
         android:layout_below="@+id/limit_exchange"
-        android:layout_marginLeft="32dp"
-        android:layout_marginRight="32dp"
-        android:layout_marginTop="16dp"
+        android:layout_margin="@dimen/bread_margin"
         android:text="You can customize your Fingerprint Spending Limit from the Fingerprint Spending Limit screen"
         android:textColor="@color/almost_black"
         android:textSize="18sp"

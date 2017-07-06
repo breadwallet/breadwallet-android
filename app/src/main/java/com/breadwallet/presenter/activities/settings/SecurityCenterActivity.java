@@ -179,7 +179,7 @@ public class SecurityCenterActivity extends BRActivity {
                 Log.d(TAG, "onClick: Paper Key");
                 Intent intent = new Intent(SecurityCenterActivity.this, WriteDownActivity.class);
                 startActivity(intent);
-                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
             }
         }));
 
