@@ -103,7 +103,7 @@ public class BRAnimator {
         if (tag.equalsIgnoreCase(FragmentSend.class.getName())) {
             showSendFragment(app, null);
         } else if (tag.equalsIgnoreCase(FragmentReceive.class.getName())) {
-            showReceiveFragment(app, false);
+            showReceiveFragment(app, true);
         } else if (tag.equalsIgnoreCase(FragmentRequestAmount.class.getName())) {
             showRequestFragment(app, SharedPreferencesManager.getReceiveAddress(app));
         } else if (tag.equalsIgnoreCase(FragmentMenu.class.getName())) {

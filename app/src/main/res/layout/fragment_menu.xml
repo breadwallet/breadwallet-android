@@ -72,7 +72,7 @@
             android:id="@+id/view"
             android:layout_width="0dp"
             android:layout_height="1dp"
-            android:background="@color/separator_gray"
+            android:background="@color/extra_light_gray"
             app:layout_constraintBottom_toTopOf="@+id/menu_listview"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="@+id/menu_listview"
