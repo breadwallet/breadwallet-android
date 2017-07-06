@@ -298,6 +298,8 @@
     <string name="TouchIdSettings.label">Login to your Bread wallet and send money using just your finger print to a set limit.</string>
     <!-- Touch id switch label. -->
     <string name="TouchIdSettings.switchLabel">Enable Touch ID for Bread</string>
+
+    <string name="TouchIdSettings.switchLabel_Android">Enable Fingerprint for Bread</string>
     <!-- Touch ID settings view title -->
     <string name="TouchIdSettings.title">Touch ID</string>
     <!-- Touch ID unavailable alert message -->
