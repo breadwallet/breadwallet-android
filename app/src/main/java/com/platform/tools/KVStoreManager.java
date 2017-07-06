@@ -60,15 +60,15 @@ public class KVStoreManager {
         ReplicatedKVStore kvStore = new ReplicatedKVStore(app, remoteKVStore);
         long ver = kvStore.localVersion(walletInfoKey);
         CompletionObject obj = kvStore.get(walletInfoKey, ver);
-        if (obj.value == null) {
-            Log.e(TAG, "getWalletInfo: value is null for key: " + obj.key);
+        if (obj.kv == null) {
+            Log.e(TAG, "getWalletInfo: value is null for key: " + obj.kv.getKey());
             return null;
         }
 
         JSONObject json;
 
         try {
-            byte[] decompressed = BRCompressor.bz2Extract(obj.value);
+            byte[] decompressed = BRCompressor.bz2Extract(obj.kv.getValue());
             if (decompressed == null) {
                 Log.e(TAG, "getWalletInfo: decompressed value is null");
                 return null;
@@ -83,7 +83,7 @@ public class KVStoreManager {
             result.classVersion = json.getInt("classVersion");
             result.creationDate = json.getInt("creationDate");
             result.name = json.getString("name");
-            result.currentCurrency = json.getString("currentCurrency");
+//            result.currentCurrency = json.getString("currentCurrency");
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -102,7 +102,6 @@ public class KVStoreManager {
         //add all the params that we want to change
         if (info.classVersion != 0) old.classVersion = info.classVersion;
         if (info.creationDate != 0) old.creationDate = info.creationDate;
-        if (info.currentCurrency != null) old.currentCurrency = info.currentCurrency;
         if (info.name != null) old.name = info.name;
 
         //sanity check
@@ -115,7 +114,6 @@ public class KVStoreManager {
             obj.put("classVersion", old.classVersion);
             obj.put("creationDate", old.creationDate);
             obj.put("name", old.name);
-            obj.put("currentCurrency", old.currentCurrency);
             result = obj.toString().getBytes();
 
         } catch (JSONException e) {

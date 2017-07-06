@@ -43,6 +43,5 @@ public class WalletInfo {
     public int classVersion;
     public int creationDate;
     public String name;
-    public String currentCurrency;
 
 }
