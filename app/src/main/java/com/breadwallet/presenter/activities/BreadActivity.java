@@ -2,8 +2,6 @@ package com.breadwallet.presenter.activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -12,7 +10,6 @@ import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -56,17 +53,14 @@ import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
 import com.platform.HTTPServer;
-import com.platform.entities.WalletInfo;
-import com.platform.tools.KVStoreManager;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.List;
 
 import static com.breadwallet.presenter.activities.intro.IntroActivity.introActivity;
 import static com.breadwallet.presenter.activities.ReEnterPinActivity.reEnterPinActivity;
-import static com.breadwallet.presenter.activities.SetPitActivity.introSetPitActivity;
+import static com.breadwallet.presenter.activities.SetPinActivity.introSetPitActivity;
 import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
 
 /**

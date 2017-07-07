@@ -3,7 +3,6 @@ package com.breadwallet.presenter.activities;
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.GradientDrawable;
@@ -80,7 +79,7 @@ public class PinActivity extends BRActivity {
         setContentView(R.layout.activity_pin);
         String pin = KeyStoreManager.getPinCode(this);
         if (pin.isEmpty() || (pin.length() != 6 && pin.length() != 4)) {
-            Intent intent = new Intent(this, SetPitActivity.class);
+            Intent intent = new Intent(this, SetPinActivity.class);
             intent.putExtra("noPin", true);
             startActivity(intent);
             if (!PinActivity.this.isDestroyed()) finish();

@@ -164,6 +164,31 @@ public class BRConstants {
     public static final boolean PLATFORM_ON = true;
     public static final RoundingMode ROUNDING_MODE= RoundingMode.HALF_EVEN;
 
+
+    /**
+     * Support Center article ids.
+     */
+    public static final String defaultCurrency = "default-currency";
+    public static final String recoverWallet = "recover-wallet";
+    public static final String reScan = "re-scan";
+    public static final String securityCenter = "security-center";
+    public static final String paperPhrase = "paper-phrase";
+    public static final String enableTouchId = "enable-touch-id";
+    public static final String touchIdSpendingLimit = "touch-id-spending-limit";
+    public static final String transactionDetails = "transaction-details";
+    public static final String manageWallet = "manage-wallet";
+    public static final String receive = "receive";
+    public static final String requestAmount = "request-amount";
+    public static final String send = "send";
+    public static final String walletDisabled = "wallet-disabled";
+    public static final String resetPinWithPaperKey = "reset-pin-paper-key";
+    public static final String setPin = "set-pin";
+    public static final String importWallet = "import-wallet";
+    public static final String writePhrase = "write-phrase";
+    public static final String confirmPhrase = "confirm-phrase";
+    public static final String startView = "start-view";
+    public static final String wipeWallet = "wipe-wallet";
+
     private BRConstants() {
     }
 
