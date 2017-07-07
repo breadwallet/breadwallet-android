@@ -1,36 +1,41 @@
 package com.breadwallet.presenter.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRKeyboard;
+import com.breadwallet.tools.util.BRConstants;
+import com.platform.HTTPServer;
 
-public class SetPitActivity extends BRActivity {
-    private static final String TAG = SetPitActivity.class.getName();
+public class SetPinActivity extends BRActivity {
+    private static final String TAG = SetPinActivity.class.getName();
     private BRKeyboard keyboard;
-    public static SetPitActivity introSetPitActivity;
+    public static SetPinActivity introSetPitActivity;
     private View dot1;
     private View dot2;
     private View dot3;
     private View dot4;
     private View dot5;
     private View dot6;
+
+    private ImageButton faq;
     private StringBuilder pin = new StringBuilder();
     private int pinLimit = 6;
     private boolean startingNextActivity;
     private TextView title;
     public static boolean appVisible = false;
-    private static SetPitActivity app;
+    private static SetPinActivity app;
 
-    public static SetPitActivity getApp() {
+    public static SetPinActivity getApp() {
         return app;
     }
 
@@ -41,6 +46,18 @@ public class SetPitActivity extends BRActivity {
 
         keyboard = (BRKeyboard) findViewById(R.id.brkeyboard);
         title = (TextView) findViewById(R.id.title);
+        faq = (ImageButton) findViewById(R.id.faq_button);
+
+        faq.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SetPinActivity.this, WebViewActivity.class);
+                intent.putExtra("url", HTTPServer.URL_SUPPORT);
+                intent.putExtra("articleId", BRConstants.setPin);
+                app.startActivity(intent);
+                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
+            }
+        });
 
         dot1 = findViewById(R.id.dot1);
         dot2 = findViewById(R.id.dot2);
@@ -129,7 +146,7 @@ public class SetPitActivity extends BRActivity {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    Intent intent = new Intent(SetPitActivity.this, ReEnterPinActivity.class);
+                    Intent intent = new Intent(SetPinActivity.this, ReEnterPinActivity.class);
                     intent.putExtra("pin", pin.toString());
                     intent.putExtra("noPin", getIntent().getBooleanExtra("noPin", false));
                     startActivity(intent);

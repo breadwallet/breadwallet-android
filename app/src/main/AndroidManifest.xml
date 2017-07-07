@@ -79,7 +79,7 @@
                 android:resource="@xml/searchable"/>
         </activity>
         <activity
-            android:name=".presenter.activities.SetPitActivity"
+            android:name=".presenter.activities.SetPinActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait">
         </activity>

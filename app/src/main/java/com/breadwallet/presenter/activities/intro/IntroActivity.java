@@ -1,33 +1,36 @@
 
 package com.breadwallet.presenter.activities.intro;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.SetPitActivity;
+import com.breadwallet.presenter.activities.SetPinActivity;
+import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
-import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.animation.BreadDialog;
-import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.BRWalletManager;
 import com.google.firebase.crash.FirebaseCrash;
+import com.platform.APIClient;
+import com.platform.HTTPServer;
 
 import java.io.Serializable;
+
+import static com.platform.APIClient.BREAD_SUPPORT;
+import static com.platform.APIClient.SUPPORT_EXTRACTED_FOLDER;
+import static com.platform.APIClient.SUPPORT_FILE;
 
 
 /**
@@ -63,6 +66,7 @@ public class IntroActivity extends BRActivity implements Serializable {
     public static boolean appVisible = false;
     private static IntroActivity app;
     private View splashScreen;
+    private ImageButton faq;
 
     public static IntroActivity getApp() {
         return app;
@@ -88,6 +92,26 @@ public class IntroActivity extends BRActivity implements Serializable {
         recoverWalletButton = (Button) findViewById(R.id.button_recover_wallet);
         splashScreen = findViewById(R.id.splash_screen);
         setListeners();
+        updateBundles();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HTTPServer.startServer();
+            }
+        }).start();
+
+        faq = (ImageButton) findViewById(R.id.faq_button);
+
+        faq.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(IntroActivity.this, WebViewActivity.class);
+                intent.putExtra("url", HTTPServer.URL_SUPPORT);
+                intent.putExtra("articleId", BRConstants.startView);
+                app.startActivity(intent);
+                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
+            }
+        });
 
         if (!BuildConfig.DEBUG && KeyStoreManager.AUTH_DURATION_SEC != 300) {
             Log.e(TAG, "onCreate: KeyStoreManager.AUTH_DURATION_SEC != 300");
@@ -121,13 +145,26 @@ public class IntroActivity extends BRActivity implements Serializable {
 
     }
 
+    private void updateBundles(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final long startTime = System.currentTimeMillis();
+                APIClient apiClient = APIClient.getInstance(IntroActivity.this);
+                apiClient.updateBundle(BREAD_SUPPORT, SUPPORT_FILE, SUPPORT_EXTRACTED_FOLDER);
+                long endTime = System.currentTimeMillis();
+                Log.e(TAG, "updateBundle " + BREAD_SUPPORT + ": DONE in " + (endTime - startTime) + "ms");
+            }
+        }).start();
+    }
+
 
     private void setListeners() {
         newWalletButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                Intent intent = new Intent(IntroActivity.this, SetPitActivity.class);
+                Intent intent = new Intent(IntroActivity.this, SetPinActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
 

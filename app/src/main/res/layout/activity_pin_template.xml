@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:background="@color/extra_light_blue_background"
     android:layout_height="match_parent"
-    tools:context="com.breadwallet.presenter.activities.SetPitActivity">
+    tools:context="com.breadwallet.presenter.activities.SetPinActivity">
 
     <com.breadwallet.presenter.customviews.BRText
         android:id="@+id/title"
@@ -67,7 +67,7 @@
         app:layout_constraintVertical_bias="0.73"/>
 
     <ImageView
-        android:id="@+id/imageView12"
+        android:id="@+id/faq_button"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_marginBottom="0dp"

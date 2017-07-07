@@ -1,6 +1,5 @@
 package com.breadwallet.presenter.activities.intro;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -8,18 +7,13 @@ import android.widget.Button;
 import android.widget.ImageButton;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.ReEnterPinActivity;
-import com.breadwallet.presenter.activities.SetPitActivity;
-import com.breadwallet.presenter.activities.settings.SettingsActivity;
-import com.breadwallet.presenter.activities.settings.SpendLimitActivity;
+import com.breadwallet.presenter.activities.SetPinActivity;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
-import com.breadwallet.tools.util.BRConstants;
 
 public class WriteDownActivity extends BRActivity {
     private static final String TAG = WriteDownActivity.class.getName();
@@ -81,7 +75,7 @@ public class WriteDownActivity extends BRActivity {
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(WriteDownActivity.this, SetPitActivity.class);
+        Intent intent = new Intent(WriteDownActivity.this, SetPinActivity.class);
         startActivity(intent);
         overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
         finish();

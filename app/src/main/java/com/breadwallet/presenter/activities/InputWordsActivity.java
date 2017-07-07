@@ -2,7 +2,6 @@ package com.breadwallet.presenter.activities;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -30,8 +29,6 @@ import com.breadwallet.wallet.BRWalletManager;
 
 import java.util.List;
 
-import static com.breadwallet.R.color.dark_blue;
-import static com.breadwallet.R.color.extra_light_gray;
 import static com.breadwallet.tools.util.Bip39Reader.getAllWordLists;
 
 public class InputWordsActivity extends BRActivity {
@@ -159,7 +156,7 @@ public class InputWordsActivity extends BRActivity {
                                 intent = new Intent(app, IntroActivity.class);
                             } else {
                                 AuthManager.getInstance().setPinCode("", InputWordsActivity.this);
-                                intent = new Intent(app, SetPitActivity.class);
+                                intent = new Intent(app, SetPinActivity.class);
                                 intent.putExtra("noPin", true);
                             }
 

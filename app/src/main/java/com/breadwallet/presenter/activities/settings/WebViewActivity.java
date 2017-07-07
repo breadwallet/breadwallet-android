@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.webkit.ConsoleMessage;
 import android.webkit.JsResult;
+import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
@@ -19,6 +20,8 @@ import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.util.Utils;
 import com.platform.HTTPServer;
+
+import static com.breadwallet.R.string.error;
 
 
 public class WebViewActivity extends BRActivity {
@@ -58,7 +61,7 @@ public class WebViewActivity extends BRActivity {
 
         theUrl = getIntent().getStringExtra("url");
         setupServerMode(theUrl);
-        String navigate = getIntent().getStringExtra("navigate");
+        String articleId = getIntent().getStringExtra("articleId");
         if (Utils.isNullOrEmpty(theUrl)) throw new IllegalArgumentException("No url extra!");
 
         WebSettings webSettings = webView.getSettings();
@@ -69,11 +72,23 @@ public class WebViewActivity extends BRActivity {
         webSettings.setDomStorageEnabled(true);
         webSettings.setJavaScriptEnabled(true);
 
-        if (navigate != null && !navigate.isEmpty())
-            theUrl = theUrl + "/" + navigate;
+        if (articleId != null && !articleId.isEmpty())
+            theUrl = theUrl + "/" + articleId;
 
         Log.e(TAG, "onCreate: theUrl: " + theUrl);
         webView.loadUrl(theUrl);
+        if (articleId != null && !articleId.isEmpty())
+            navigate(articleId);
+    }
+
+    private void navigate(String to) {
+        String js = String.format("window.location = \'%s\';", to);
+        webView.evaluateJavascript(js, new ValueCallback<String>() {
+            @Override
+            public void onReceiveValue(String value) {
+                Log.e(TAG, "onReceiveValue: " + value);
+            }
+        });
     }
 
     private void setupServerMode(String url) {

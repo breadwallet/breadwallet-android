@@ -9,7 +9,7 @@ import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.DisabledActivity;
 import com.breadwallet.presenter.activities.InputWordsActivity;
-import com.breadwallet.presenter.activities.SetPitActivity;
+import com.breadwallet.presenter.activities.SetPinActivity;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.presenter.activities.intro.RecoverActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
@@ -69,7 +69,7 @@ public class ActivityUTILS {
 
     //return true if the app does need to show the disabled wallet screen
     private static boolean isAppSafe(Activity app) {
-        return app instanceof SetPitActivity || app instanceof InputWordsActivity;
+        return app instanceof SetPinActivity || app instanceof InputWordsActivity;
     }
 
     public static void showWalletDisabled(Activity app, double waitTimeMinutes) {
