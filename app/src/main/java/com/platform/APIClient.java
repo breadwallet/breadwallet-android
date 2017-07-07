@@ -381,7 +381,7 @@ public class APIClient {
 
     public void updateBundle(String bundleName, String fileName, String extractedFolder) {
         File bundleFile = new File(ctx.getFilesDir().getAbsolutePath() + fileName);
-
+        logFiles("updateBundle before", ctx);
         if (bundleFile.exists()) {
             Log.d(TAG, bundleName + ": updateBundle: exists");
 
@@ -426,6 +426,8 @@ public class APIClient {
 
             tryExtractTar(bundleFile, extractedFolder);
         }
+
+        logFiles("updateBundle after", ctx);
 
     }
 
@@ -483,6 +485,8 @@ public class APIClient {
             if (tempFile != null)
                 tempFile.delete();
         }
+
+//        logFiles("downloadDiff", ctx);
     }
 
     public byte[] writeBundleToFile(Response response, File bundleFile) {
@@ -508,6 +512,7 @@ public class APIClient {
                 e.printStackTrace();
             }
         }
+
         return null;
     }
 
@@ -518,6 +523,7 @@ public class APIClient {
             return false;
         }
         String extractFolderName = app.getFilesDir().getAbsolutePath() + BUNDLES_FOLDER + "/" + extractedFolder;
+        Log.e(TAG, "tryExtractTar: " + extractFolderName);
         boolean result = false;
         TarArchiveInputStream debInputStream = null;
         try {
@@ -544,6 +550,7 @@ public class APIClient {
                 e.printStackTrace();
             }
         }
+//        logFiles("tryExtractTar", ctx);
         return result;
 
     }
@@ -695,6 +702,19 @@ public class APIClient {
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(client);
         ReplicatedKVStore kvStore = new ReplicatedKVStore(ctx, remoteKVStore);
         kvStore.syncAllKeys();
+    }
+
+    public void logFiles(String tag, Context ctx) {
+//        Log.e(TAG, "logFiles " + tag + " : START LOGGING");
+//        String path = ctx.getFilesDir().getAbsolutePath() + "/" + BUNDLES + "/" + SUPPORT_EXTRACTED_FOLDER;
+//
+//        File directory = new File(path);
+//        File[] files = directory.listFiles();
+//        Log.e("Files", "Path: " + path + ", size: " + (files == null ? 0 : files.length));
+//        for (int i = 0; files != null && i < files.length; i++) {
+//            Log.e("Files", "FileName:" + files[i].getName());
+//        }
+//        Log.e(TAG, "logFiles " + tag + " : START LOGGING");
     }
 
 }

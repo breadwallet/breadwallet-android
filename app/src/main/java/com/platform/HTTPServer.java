@@ -225,7 +225,7 @@ public class HTTPServer {
 
     public static String getBundlePath() {
         String bundlePath = null;
-        if (HTTPServer.mode == HTTPServer.ServerMode.BUY) {
+        if (HTTPServer.mode == HTTPServer.ServerMode.BUY || HTTPServer.mode == HTTPServer.ServerMode.EA) {
             bundlePath = "/" + BUNDLES + "/" + BUY_EXTRACTED_FOLDER;
         } else if (HTTPServer.mode == HTTPServer.ServerMode.SUPPORT) {
             bundlePath = "/" + BUNDLES + "/" + SUPPORT_EXTRACTED_FOLDER;
