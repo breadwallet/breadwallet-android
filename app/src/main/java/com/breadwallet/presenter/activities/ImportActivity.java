@@ -1,17 +1,23 @@
 package com.breadwallet.presenter.activities;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.util.BRConstants;
+
+import static com.platform.HTTPServer.URL_SUPPORT;
 
 public class ImportActivity extends BRActivity {
     private Button scan;
@@ -39,6 +45,20 @@ public class ImportActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 onBackPressed();
+            }
+        });
+
+        ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
+
+        faq.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Activity app = ImportActivity.this;
+                Intent intent = new Intent(app, WebViewActivity.class);
+                intent.putExtra("url", URL_SUPPORT);
+                intent.putExtra("articleId", BRConstants.importWallet);
+                app.startActivity(intent);
+                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
             }
         });
 

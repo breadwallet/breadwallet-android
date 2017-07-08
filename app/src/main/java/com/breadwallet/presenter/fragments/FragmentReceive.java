@@ -4,6 +4,7 @@ import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -28,11 +30,13 @@ import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.qrcode.QRUtils;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 
 import static com.breadwallet.tools.animation.BRAnimator.animateBackgroundDim;
 import static com.breadwallet.tools.animation.BRAnimator.animateSignalSlide;
+import static com.platform.HTTPServer.URL_SUPPORT;
 
 /**
  * BreadWallet
@@ -112,6 +116,24 @@ public class FragmentReceive extends Fragment {
             @Override
             public void onBalanceChanged(long balance) {
                 updateQr();
+            }
+        });
+
+        ImageButton faq = (ImageButton) rootView.findViewById(R.id.faq_button);
+
+        faq.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Activity app = getActivity();
+                if (app == null) {
+                    Log.e(TAG, "onClick: app is null, can't start the webview with url: " + URL_SUPPORT);
+                    return;
+                }
+                Intent intent = new Intent(app, WebViewActivity.class);
+                intent.putExtra("url", URL_SUPPORT);
+                intent.putExtra("articleId", BRConstants.receive);
+                app.startActivity(intent);
+                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
             }
         });
 

@@ -3,15 +3,18 @@ package com.breadwallet.presenter.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
+import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
@@ -30,6 +33,7 @@ import com.breadwallet.wallet.BRWalletManager;
 import java.util.List;
 
 import static com.breadwallet.tools.util.Bip39Reader.getAllWordLists;
+import static com.platform.HTTPServer.URL_SUPPORT;
 
 public class InputWordsActivity extends BRActivity {
     private static final String TAG = InputWordsActivity.class.getName();
@@ -71,6 +75,20 @@ public class InputWordsActivity extends BRActivity {
 //        leftButton = (Button) findViewById(R.id.left_button);
 //        rightButton = (Button) findViewById(R.id.right_button);
         nextButton = (Button) findViewById(R.id.send_button);
+
+        ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
+
+        faq.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Activity app = InputWordsActivity.this;
+                Intent intent = new Intent(app, WebViewActivity.class);
+                intent.putExtra("url", URL_SUPPORT);
+                intent.putExtra("articleId", BRConstants.confirmPhrase);
+                app.startActivity(intent);
+                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
+            }
+        });
 
         title = (TextView) findViewById(R.id.title);
         description = (TextView) findViewById(R.id.description);

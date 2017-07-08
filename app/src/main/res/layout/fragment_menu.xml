@@ -55,15 +55,15 @@
                 tools:layout_editor_absoluteX="0dp"
                 tools:layout_editor_absoluteY="81dp"/>
 
-            <ImageButton
-                android:id="@+id/imageButton3"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_alignParentEnd="true"
-                android:layout_margin="@dimen/bread_margin"
-                android:background="@drawable/faq_question_black"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="81dp"/>
+            <!--<ImageButton-->
+                <!--android:id="@+id/faq_button"-->
+                <!--android:layout_width="@dimen/faq_dimen"-->
+                <!--android:layout_height="@dimen/faq_dimen"-->
+                <!--android:layout_alignParentEnd="true"-->
+                <!--android:layout_margin="@dimen/bread_margin"-->
+                <!--android:background="@drawable/faq_question_black"-->
+                <!--tools:layout_editor_absoluteX="0dp"-->
+                <!--tools:layout_editor_absoluteY="81dp"/>-->
 
 
         </RelativeLayout>

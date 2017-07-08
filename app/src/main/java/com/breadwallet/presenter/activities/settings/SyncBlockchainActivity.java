@@ -1,9 +1,12 @@
 package com.breadwallet.presenter.activities.settings;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
@@ -12,7 +15,10 @@ import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.BRPeerManager;
+
+import static com.platform.HTTPServer.URL_SUPPORT;
 
 public class SyncBlockchainActivity extends BRActivity {
     private static final String TAG = SyncBlockchainActivity.class.getName();
@@ -32,6 +38,20 @@ public class SyncBlockchainActivity extends BRActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sync_blockchain);
+
+        ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
+
+        faq.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Activity app = SyncBlockchainActivity.this;
+                Intent intent = new Intent(app, WebViewActivity.class);
+                intent.putExtra("url", URL_SUPPORT);
+                intent.putExtra("articleId", BRConstants.reScan);
+                app.startActivity(intent);
+                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
+            }
+        });
 
         scanButton = (Button) findViewById(R.id.button_scan);
         scanButton.setOnClickListener(new View.OnClickListener() {

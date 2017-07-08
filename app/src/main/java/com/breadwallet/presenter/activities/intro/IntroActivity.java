@@ -93,12 +93,6 @@ public class IntroActivity extends BRActivity implements Serializable {
         splashScreen = findViewById(R.id.splash_screen);
         setListeners();
         updateBundles();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                HTTPServer.startServer();
-            }
-        }).start();
 
         faq = (ImageButton) findViewById(R.id.faq_button);
 

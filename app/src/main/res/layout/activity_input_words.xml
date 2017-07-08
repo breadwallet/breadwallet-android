@@ -24,9 +24,9 @@
 
 
     <ImageButton
-        android:id="@+id/imageButton"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:id="@+id/faq_button"
+        android:layout_width="@dimen/faq_dimen"
+        android:layout_height="@dimen/faq_dimen"
         android:layout_marginEnd="@dimen/bread_margin"
         android:layout_marginTop="@dimen/bread_margin"
         android:background="@drawable/faq_question_black"

@@ -336,12 +336,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         appVisible = true;
         app = this;
         ActivityUTILS.init(this);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                HTTPServer.stopServer();
-            }
-        }).start();
         if (PLATFORM_ON)
             APIClient.getInstance(this).updatePlatform();
 
