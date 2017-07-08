@@ -1,7 +1,11 @@
 package com.breadwallet.presenter.activities.settings;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -11,6 +15,7 @@ import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.wallet.BRWalletManager;
@@ -18,6 +23,7 @@ import com.breadwallet.wallet.BRWalletManager;
 import java.math.BigDecimal;
 
 import static com.breadwallet.tools.util.BRConstants.ONE_BITCOIN;
+import static com.platform.HTTPServer.URL_SUPPORT;
 
 
 public class SpendLimitActivity extends BRActivity {
@@ -44,6 +50,20 @@ public class SpendLimitActivity extends BRActivity {
 
         label = (TextView) findViewById(R.id.limit_label);
         seekBar = (SeekBar) findViewById(R.id.seekBar);
+
+        ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
+
+        faq.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Activity app = SpendLimitActivity.this;
+                Intent intent = new Intent(app, WebViewActivity.class);
+                intent.putExtra("url", URL_SUPPORT);
+                intent.putExtra("articleId", BRConstants.touchIdSpendingLimit);
+                app.startActivity(intent);
+                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
+            }
+        });
 //        curSpiner = (Spinner) findViewById(R.id.cur_spinner);
 
 //        final List<String> curList = new ArrayList<>();
