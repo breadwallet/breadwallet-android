@@ -76,7 +76,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/imageView4"
-            android:layout_marginTop="9dp"
             android:layout_toStartOf="@+id/imageView2"
             android:elevation="4dp"
             android:src="@drawable/ic_arrow_body"/>
@@ -117,15 +116,15 @@
         android:text="@string/RecoverWallet.intro"
         android:lineSpacingMultiplier="1.3"
         android:textColor="@color/almost_black"
-        android:textSize="18sp"
+        android:textSize="20sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/relativeLayout"/>
 
     <ImageButton
-        android:id="@+id/imageButton"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:id="@+id/faq_button"
+        android:layout_width="@dimen/faq_dimen"
+        android:layout_height="@dimen/faq_dimen"
         android:layout_marginEnd="@dimen/bread_margin"
         android:layout_marginTop="@dimen/bread_margin"
         android:background="@drawable/faq_question_white"

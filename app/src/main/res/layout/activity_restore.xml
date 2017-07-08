@@ -106,9 +106,9 @@
             android:src="@drawable/restore_image"/>
 
         <ImageView
-            android:id="@+id/imageView11"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:id="@+id/faq_button"
+            android:layout_width="@dimen/faq_dimen"
+            android:layout_height="@dimen/faq_dimen"
             android:layout_alignBottom="@+id/textView2"
             android:layout_alignParentEnd="true"
             android:layout_alignTop="@+id/textView2"

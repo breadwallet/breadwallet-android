@@ -1,5 +1,6 @@
 package com.breadwallet.presenter.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.media.Image;
 import android.os.Bundle;
@@ -8,9 +9,13 @@ import android.widget.Button;
 import android.widget.ImageButton;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.util.BRConstants;
+
+import static com.platform.HTTPServer.URL_SUPPORT;
 
 public class RestoreActivity extends BRActivity {
     private Button nextButton;
@@ -29,6 +34,20 @@ public class RestoreActivity extends BRActivity {
 
         nextButton = (Button) findViewById(R.id.send_button);
         close = (ImageButton) findViewById(R.id.close_button);
+
+        ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
+
+        faq.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Activity app = RestoreActivity.this;
+                Intent intent = new Intent(app, WebViewActivity.class);
+                intent.putExtra("url", URL_SUPPORT);
+                intent.putExtra("articleId", BRConstants.wipeWallet);
+                app.startActivity(intent);
+                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
+            }
+        });
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,6 +87,7 @@ public class RestoreActivity extends BRActivity {
         super.onBackPressed();
         overridePendingTransition(R.anim.fade_up, R.anim.exit_to_bottom);
     }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
     }

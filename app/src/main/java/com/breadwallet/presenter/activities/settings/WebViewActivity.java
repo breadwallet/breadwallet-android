@@ -75,10 +75,11 @@ public class WebViewActivity extends BRActivity {
         if (articleId != null && !articleId.isEmpty())
             theUrl = theUrl + "/" + articleId;
 
-        Log.e(TAG, "onCreate: theUrl: " + theUrl);
+        Log.e(TAG, "onCreate: theUrl: " + theUrl + ", articleId: " + articleId);
         webView.loadUrl(theUrl);
         if (articleId != null && !articleId.isEmpty())
             navigate(articleId);
+
     }
 
     private void navigate(String to) {

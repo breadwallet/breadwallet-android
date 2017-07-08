@@ -28,10 +28,13 @@ import com.breadwallet.presenter.entities.BRSecurityCenterItem;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.platform.HTTPServer.URL_SUPPORT;
 
 public class SecurityCenterActivity extends BRActivity {
     private static final String TAG = SecurityCenterActivity.class.getName();
@@ -70,6 +73,21 @@ public class SecurityCenterActivity extends BRActivity {
             }
         });
         updateList();
+
+
+        ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
+
+        faq.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Activity app = SecurityCenterActivity.this;
+                Intent intent = new Intent(app, WebViewActivity.class);
+                intent.putExtra("url", URL_SUPPORT);
+                intent.putExtra("articleId", BRConstants.securityCenter);
+                app.startActivity(intent);
+                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
+            }
+        });
 
     }
 

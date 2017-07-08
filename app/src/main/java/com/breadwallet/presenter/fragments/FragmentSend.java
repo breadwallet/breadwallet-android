@@ -3,6 +3,7 @@ package com.breadwallet.presenter.fragments;
 import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,6 +22,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.entities.PaymentItem;
@@ -35,6 +37,7 @@ import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.security.TransactionManager;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.Utils;
@@ -48,6 +51,7 @@ import java.util.List;
 import java.util.Locale;
 
 import static com.breadwallet.tools.security.BitcoinUrlHandler.getRequestFromString;
+import static com.platform.HTTPServer.URL_SUPPORT;
 
 
 /**
@@ -135,6 +139,24 @@ public class FragmentSend extends Fragment {
         });
         currListIndex = signalLayout.indexOfChild(currencyListLayout);
         keyboardIndex = signalLayout.indexOfChild(keyboardLayout);
+
+        ImageButton faq = (ImageButton) rootView.findViewById(R.id.faq_button);
+
+        faq.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Activity app = getActivity();
+                if (app == null) {
+                    Log.e(TAG, "onClick: app is null, can't start the webview with url: " + URL_SUPPORT);
+                    return;
+                }
+                Intent intent = new Intent(app, WebViewActivity.class);
+                intent.putExtra("url", URL_SUPPORT);
+                intent.putExtra("articleId", BRConstants.send);
+                app.startActivity(intent);
+                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
+            }
+        });
 
         showKeyboard(false);
         showCurrencyList(false);

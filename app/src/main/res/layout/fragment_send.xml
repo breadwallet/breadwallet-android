@@ -45,7 +45,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_gravity="center_horizontal"
                 android:layout_margin="@dimen/bread_margin"
-                android:text="Send Money"
+                android:text="@string/Send.modalTitle"
                 android:textColor="@color/almost_black"
                 android:textSize="18sp"
                 app:customFont="CircularPro-Bold.otf"
@@ -53,9 +53,9 @@
                 tools:layout_editor_absoluteY="81dp"/>
 
             <ImageButton
-                android:id="@+id/imageButton3"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:id="@+id/faq_button"
+                android:layout_width="@dimen/faq_dimen"
+                android:layout_height="@dimen/faq_dimen"
                 android:layout_alignParentEnd="true"
                 android:layout_margin="@dimen/bread_margin"
                 android:background="@drawable/faq_question_black"
@@ -88,7 +88,7 @@
                 android:maxLines="1"
                 android:ellipsize="middle"
                 android:ems="10"
-                android:hint="To"
+                android:hint="@string/Send.toLabel"
                 android:inputType="textPersonName"
                 />
 
