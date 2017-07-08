@@ -1,13 +1,16 @@
 package com.breadwallet.presenter.activities;
 
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRKeyboard;
@@ -16,7 +19,9 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
+import com.platform.HTTPServer;
 
 public class ReEnterPinActivity extends BRActivity {
     private static final String TAG = ReEnterPinActivity.class.getName();
@@ -48,6 +53,19 @@ public class ReEnterPinActivity extends BRActivity {
 
         keyboard = (BRKeyboard) findViewById(R.id.brkeyboard);
         pinLayout = (LinearLayout) findViewById(R.id.pinLayout);
+
+        ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
+
+        faq.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ReEnterPinActivity.this, WebViewActivity.class);
+                intent.putExtra("url", HTTPServer.URL_SUPPORT);
+                intent.putExtra("articleId", BRConstants.setPin);
+                app.startActivity(intent);
+                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
+            }
+        });
 
         title = (TextView) findViewById(R.id.title);
         title.setText("Re-Enter PIN");

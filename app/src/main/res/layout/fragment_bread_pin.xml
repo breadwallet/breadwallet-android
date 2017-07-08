@@ -95,7 +95,9 @@
     <com.breadwallet.presenter.customviews.BRKeyboard
         android:id="@+id/brkeyboard"
         android:layout_width="0dp"
-        android:layout_height="240dp"
+        android:paddingTop="8dp"
+        app:showAlphabet="true"
+        android:layout_height="wrap_content"
         android:background="@color/extra_light_blue_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"

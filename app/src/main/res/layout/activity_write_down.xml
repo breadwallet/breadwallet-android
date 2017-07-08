@@ -54,13 +54,12 @@
             android:src="@drawable/ic_close_white_24dp"/>
 
         <ImageButton
-            android:id="@+id/imageButton2"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_margin="@dimen/bread_margin"
+            android:id="@+id/faq_button"
+            android:layout_width="@dimen/faq_dimen"
+            android:layout_height="@dimen/faq_dimen"
             android:layout_gravity="end"
-            android:background="@android:color/transparent"
-            android:src="@drawable/faq_question_white"/>
+            android:layout_margin="@dimen/bread_margin"
+            android:background="@drawable/faq_question_white"/>
 
     </FrameLayout>
 
@@ -83,13 +82,13 @@
         android:layout_height="@dimen/big_button_height"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="48dp"
-        android:layout_marginStart="@dimen/bread_margin"
         android:layout_marginEnd="@dimen/bread_margin"
-        app:isBreadButton="true"
+        android:layout_marginStart="@dimen/bread_margin"
         android:background="@drawable/selector_blue"
         android:padding="10dp"
         android:text="@string/StartPaperPhrase.buttonTitle"
         android:textColor="@color/white"
-        android:textSize="18sp"/>
+        android:textSize="18sp"
+        app:isBreadButton="true"/>
 
 </RelativeLayout>

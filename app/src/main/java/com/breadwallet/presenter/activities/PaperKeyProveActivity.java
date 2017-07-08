@@ -35,6 +35,7 @@ import com.google.firebase.crash.FirebaseCrash;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 
@@ -224,8 +225,8 @@ public class PaperKeyProveActivity extends BRActivity {
 
         sparseArrayWords.append(n, words[n]);
 
-        wordTextFirst.setText("Word " + (sparseArrayWords.keyAt(0) + 1));
-        wordTextSecond.setText("Word " + (sparseArrayWords.keyAt(1) + 1));
+        wordTextFirst.setText(String.format(Locale.getDefault(), "Word #%d", (sparseArrayWords.keyAt(0) + 1)));
+        wordTextSecond.setText(String.format(Locale.getDefault(), "Word #%d", (sparseArrayWords.keyAt(1) + 1)));
     }
 
     @Override
