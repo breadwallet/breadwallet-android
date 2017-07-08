@@ -140,7 +140,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
         android:text="1 of 12"
-        android:textColor="@color/dark_gray"
+        android:textColor="@color/light_gray"
         app:customFont="CircularPro-Medium.otf"/>
 
 

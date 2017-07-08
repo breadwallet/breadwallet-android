@@ -1,23 +1,21 @@
 <com.breadwallet.presenter.customviews.BRRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                        xmlns:app="http://schemas.android.com/apk/res-auto"
                                                         android:layout_width="match_parent"
                                                         android:layout_height="match_parent"
-                                                        xmlns:app="http://schemas.android.com/apk/res-auto"
                                                         android:background="@android:color/transparent"
                                                         android:filterTouchesWhenObscured="true"
                                                         android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/signal_layout"
         android:layout_width="match_parent"
         android:layout_height="300dp"
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
-        android:id="@+id/signal_layout"
         android:background="@drawable/signal_layout"
         android:orientation="vertical">
 
         <com.breadwallet.presenter.customviews.BRText
-            app:customFont="CircularPro-Bold.otf"
-
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -27,8 +25,9 @@
             android:layout_marginTop="16dp"
             android:text="TextView"
             android:textColor="@color/white"
+            android:textSize="18sp"
+            app:customFont="CircularPro-Bold.otf"
             />
-
 
         <View
             android:id="@+id/view"
@@ -59,6 +58,7 @@
             android:layout_marginTop="32dp"
             android:text="TextView"
             android:textColor="@color/white"
+            android:textSize="16sp"
             />
 
     </LinearLayout>

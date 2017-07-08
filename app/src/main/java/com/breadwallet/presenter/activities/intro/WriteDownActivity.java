@@ -8,12 +8,15 @@ import android.widget.ImageButton;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.SetPinActivity;
+import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
+import com.breadwallet.tools.util.BRConstants;
+import com.platform.HTTPServer;
 
 public class WriteDownActivity extends BRActivity {
     private static final String TAG = WriteDownActivity.class.getName();
@@ -37,6 +40,17 @@ public class WriteDownActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 close();
+            }
+        });
+        ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
+        faq.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(WriteDownActivity.this, WebViewActivity.class);
+                intent.putExtra("url", HTTPServer.URL_SUPPORT);
+                intent.putExtra("articleId", BRConstants.paperPhrase);
+                app.startActivity(intent);
+                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
             }
         });
         writeButton.setOnClickListener(new View.OnClickListener() {
