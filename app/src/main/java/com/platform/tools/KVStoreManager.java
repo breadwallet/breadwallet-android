@@ -3,7 +3,10 @@ package com.platform.tools;
 import android.content.Context;
 import android.util.Log;
 
+import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.util.BRCompressor;
+import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
 import com.platform.entities.TxMetaData;
 import com.platform.entities.WalletInfo;
@@ -15,6 +18,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
+
+import static android.R.attr.key;
 
 /**
  * BreadWallet
@@ -139,26 +145,52 @@ public class KVStoreManager {
     }
 
     public TxMetaData getTxMetaData(Context app, String txHash) {
-        String key = "txn-" + txHash;
+        String key = "txn-" + BRWalletManager.getInstance().txHashSha256Hex(txHash);
+
+        Log.e(TAG, "getTxMetaData: txMetaData: " + key);
+
         TxMetaData result = new TxMetaData();
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
         ReplicatedKVStore kvStore = new ReplicatedKVStore(app, remoteKVStore);
         long ver = kvStore.remoteVersion(key);
         CompletionObject obj = kvStore.get(key, ver);
         if (obj.value == null) {
-            Log.e(TAG, "getTxMetaData: value is null for key: " + obj.key);
+            Log.e(TAG, "getTxMetaData: value is null for key: " + key);
             return null;
         }
-//        byte[] uncompressed = BRCompressor.bz2Extract(obj.value);
+
         JSONObject json;
+
         try {
-            json = new JSONObject(new String(obj.value));
+//            byte[] decompressed = BRCompressor.bz2Extract(obj.kv.getValue());
+//            if (decompressed == null) {
+//                Log.e(TAG, "getWalletInfo: decompressed value is null");
+//                return null;
+//            }
+            json = new JSONObject(new String(obj.kv.getValue()));
         } catch (JSONException e) {
             e.printStackTrace();
             return null;
         }
-        //todo finish
-        Log.e(TAG, "getTxMetaData: " + json);
+
+        try {
+            result.classVersion = json.getInt("classVersion");
+            result.blockHeight = json.getInt("bh");
+            result.exchangeRate = json.getDouble("er");
+            result.exchangeCurrency = json.getString("erc");
+            result.fee = json.getLong("fr");
+            result.txSize = json.getInt("s");
+            result.creationTime = json.getInt("c");
+            result.deviceId = json.getString("dId");
+            result.comment = json.getString("comment");
+            result.label = json.getString("label");
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e(TAG, "getWalletInfo: FAILED to get json value");
+        }
+
+        Log.e(TAG, "getWalletInfo: " + json);
         return result;
     }
 

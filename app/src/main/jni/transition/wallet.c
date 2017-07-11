@@ -29,6 +29,8 @@
 #include "BRBase58.h"
 #include <assert.h>
 #include <BRBIP38Key.h>
+#include <BRInt.h>
+#include <BRTransaction.h>
 
 static JavaVM *_jvmW;
 BRWallet *_wallet;
@@ -358,8 +360,11 @@ JNIEXPORT jobjectArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTr
         jlong JtimeStamp = tempTx->timestamp;
         jint JblockHeight = tempTx->blockHeight;
         UInt256 txid = tempTx->txHash;
+//        char *reversed = u256_hex_encode(UInt256Reverse(txid));
         jstring JtxHash = (*env)->NewStringUTF(env, u256_hex_encode(txid));
-//        __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "tx: %s is valid: %d", u256_hex_encode(txid), BRWalletTransactionIsValid(_wallet, tempTx));
+        __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "tx: %s is valid: %d",
+                            u256_hex_encode(txid), BRWalletTransactionIsValid(_wallet, tempTx));
+//        __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "tx reversed: %s", reversed);
         jlong Jsent = (jlong) BRWalletAmountSentByTx(_wallet, tempTx);
         jlong Jreceived = (jlong) BRWalletAmountReceivedFromTx(_wallet, tempTx);
         jlong Jfee = (jlong) BRWalletFeeForTx(_wallet, tempTx);
@@ -845,9 +850,24 @@ Java_com_breadwallet_wallet_BRWalletManager_reverseTxHash(JNIEnv *env, jobject t
     return (*env)->NewStringUTF(env, u256_hex_encode(reversedHash));
 }
 
+JNIEXPORT jstring JNICALL
+Java_com_breadwallet_wallet_BRWalletManager_txHashSha256Hex(JNIEnv *env, jobject thiz,
+                                                            jstring txHash) {
+    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "reverseTxHash");
+
+    const char *rawString = (*env)->GetStringUTFChars(env, txHash, 0);
+    UInt256 theHash = u256_hex_decode(rawString);
+
+    UInt256 sha256Hash;
+    BRSHA256(&sha256Hash, theHash.u8, sizeof(UInt256));
+
+//    UInt256 reversedHash = UInt256Reverse(sha256Hash);
+    return (*env)->NewStringUTF(env, u256_hex_encode(sha256Hash));
+}
+
 JNIEXPORT jint JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTxCount(JNIEnv *env,
                                                                               jobject thiz) {
-    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "reverseTxHash");
+    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "getTxCoun");
     if (!_wallet) return 0;
     return (jint) BRWalletTransactions(_wallet, NULL, 0);
 }

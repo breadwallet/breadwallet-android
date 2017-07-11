@@ -32,6 +32,9 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.wallet.BRPeerManager;
+import com.breadwallet.wallet.BRWalletManager;
+import com.platform.entities.TxMetaData;
+import com.platform.tools.KVStoreManager;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -156,6 +159,8 @@ public class FragmentTransactionItem extends Fragment {
 //        Log.e(TAG, "fillTexts hash: " + item.getHexId());
         //get the current iso
         String iso = SharedPreferencesManager.getPreferredBTC(getActivity()) ? "BTC" : SharedPreferencesManager.getIso(getContext());
+        TxMetaData txMetaData = KVStoreManager.getInstance().getTxMetaData(getContext(), item.getHexId());
+
         //get the tx amount
         BigDecimal txAmount = new BigDecimal(item.getReceived() - item.getSent()).abs();
         //see if it was sent
@@ -174,7 +179,7 @@ public class FragmentTransactionItem extends Fragment {
 
         String startingBalance = BRCurrency.getFormattedCurrencyString(getActivity(), iso, BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(sent ? item.getBalanceAfterTx() + txAmount.longValue() : item.getBalanceAfterTx() - txAmount.longValue())));
         String endingBalance = BRCurrency.getFormattedCurrencyString(getActivity(), iso, BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(item.getBalanceAfterTx())));
-        String commentString = "For Love";
+        String commentString = txMetaData == null? "" : txMetaData.comment;
         String amountString = String.format("%s %s\n\nStarting Balance: %s\nEnding Balance:  %s", amount, item.getFee() == -1 ? "" : String.format("(%s fee)", fee), startingBalance, endingBalance);
 
 
@@ -186,9 +191,9 @@ public class FragmentTransactionItem extends Fragment {
         addr.setSpan(norm, 0, addr.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
         addr.setSpan(new RelativeSizeSpan(0.8f), 0, addr.length(), 0);
 
-        mTxHash.setText(item.getHexId());
+        mTxHash.setText(BRWalletManager.getInstance().reverseTxHash(item.getHexId()));
 
-        int relayCount = BRPeerManager.getRelayCount(item.getHexId());
+        int relayCount = BRPeerManager.getRelayCount(item.getHexId() );
 
         int level = 0;
         Log.e(TAG, "setTexts: confirms: " + confirms);

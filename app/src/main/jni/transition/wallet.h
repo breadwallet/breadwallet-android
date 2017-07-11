@@ -203,6 +203,10 @@ JNIEXPORT jlong JNICALL
 Java_com_breadwallet_wallet_BRWalletManager_feeForTransactionAmount(JNIEnv *env, jobject obj,
                                                                     jlong amount);
 
+JNIEXPORT jstring JNICALL
+Java_com_breadwallet_wallet_BRWalletManager_txHashSha256Hex(JNIEnv *env, jobject thiz,
+                                                            jstring txHash);
+
 #ifdef __cplusplus
 }
 #endif

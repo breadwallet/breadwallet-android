@@ -588,7 +588,10 @@ public class ReplicatedKVStore {
                 String selectQuery = "SELECT " + PlatformSqliteHelper.KV_REMOTE_VERSION + " FROM " + PlatformSqliteHelper.KV_STORE_TABLE_NAME + " WHERE key = ? ORDER BY version DESC LIMIT 1";
                 cursor = database.rawQuery(selectQuery, new String[]{key});
                 cursor.moveToNext();
-                version = cursor.getLong(0);
+                if (!cursor.isAfterLast())
+                    version = cursor.getLong(0);
+                else
+                    Log.e(TAG, "remoteVersion: cursor is null for: " + selectQuery);
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
