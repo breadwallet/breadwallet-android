@@ -291,8 +291,8 @@ public class KeyStoreManager {
                 Log.e(TAG, "_getData: InvalidKeyException", e);
                 FirebaseCrash.report(e);
                 showKeyStoreFailedToLoad(context);
-                Assert.fail();
-                throw new BRKeystoreErrorException("Key store error");
+//                Assert.fail();
+                throw new BRKeystoreErrorException("Key store error: " + e.getMessage());
             }
         } catch (IOException | CertificateException | KeyStoreException e) {
             /** keyStore.load(null) threw the Exception, meaning the keystore is unavailable */
@@ -649,7 +649,7 @@ public class KeyStoreManager {
         // we will provide a generic one for you if you leave it null
         KeyguardManager mKeyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
         Intent intent = mKeyguardManager.createConfirmDeviceCredentialIntent(context.getString(R.string.auth_required), context.getString(R.string.auth_message));
-        Assert.assertTrue(intent != null);
+//        Assert.assertTrue(intent != null);
         if (intent != null) {
             context.startActivityForResult(intent, requestCode);
         } else {
