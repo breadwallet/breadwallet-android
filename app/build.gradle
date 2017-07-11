@@ -10,8 +10,8 @@ model {
             applicationId = 'com.breadwallet'
             minSdkVersion.apiLevel = 23
             targetSdkVersion.apiLevel = 25
-            versionCode = 44
-            versionName = "44"
+            versionCode = 45
+            versionName = "45"
         }
 
         ndk {
