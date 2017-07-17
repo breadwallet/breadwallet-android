@@ -91,7 +91,7 @@ JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRPeerManager_isConnected
 
 JNIEXPORT jint JNICALL Java_com_breadwallet_wallet_BRPeerManager_getRelayCount(JNIEnv *env,
                                                                                jobject thiz,
-                                                                               jstring txHash);
+                                                                               jbyteArray txHash);
 
 #ifdef __cplusplus
 }

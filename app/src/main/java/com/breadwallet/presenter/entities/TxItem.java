@@ -1,6 +1,8 @@
 package com.breadwallet.presenter.entities;
 
 
+import com.breadwallet.tools.util.Utils;
+
 /**
  * BreadWallet
  * <p>
@@ -26,11 +28,11 @@ package com.breadwallet.presenter.entities;
  * THE SOFTWARE.
  */
 
-public class TransactionListItem {
-    public static final String TAG = TransactionListItem.class.getName();
+public class TxItem {
+    public static final String TAG = TxItem.class.getName();
     private long timeStamp;
     private int blockHeight;
-    private String hash;
+    private byte[] txHash;
     private long sent;
     private long received;
     private long fee;
@@ -40,15 +42,15 @@ public class TransactionListItem {
     private long outAmounts[];
     private boolean isValid;
 
-    private TransactionListItem() {
+    private TxItem() {
     }
 
-    public TransactionListItem(long timeStamp, int blockHeight, String hash, long sent,
-                               long received, long fee, String to[], String from[],
-                               long balanceAfterTx, long[] outAmounts, boolean isValid) {
+    public TxItem(long timeStamp, int blockHeight, byte[] hash, long sent,
+                  long received, long fee, String to[], String from[],
+                  long balanceAfterTx, long[] outAmounts, boolean isValid) {
         this.timeStamp = timeStamp;
         this.blockHeight = blockHeight;
-        this.hash = hash;
+        this.txHash = hash;
         this.sent = sent;
         this.received = received;
         this.fee = fee;
@@ -71,8 +73,12 @@ public class TransactionListItem {
         return from;
     }
 
-    public String getHexId() {
-        return hash;
+    public byte[] getTxHash() {
+        return txHash;
+    }
+
+    public String getTxHashHexReversed(){
+        return Utils.reverseHex(Utils.bytesToHex(txHash));
     }
 
     public long getReceived() {

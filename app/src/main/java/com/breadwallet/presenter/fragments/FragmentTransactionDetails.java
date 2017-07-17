@@ -1,9 +1,5 @@
 package com.breadwallet.presenter.fragments;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ArgbEvaluator;
-import android.animation.ValueAnimator;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,12 +9,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.animation.OvershootInterpolator;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.entities.TransactionListItem;
+import com.breadwallet.presenter.entities.TxItem;
 import com.breadwallet.tools.adapter.TransactionPagerAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
 
@@ -58,7 +53,7 @@ public class FragmentTransactionDetails extends Fragment {
     public static final int ANIMATION_DURATION = 300;
     private ViewPager txViewPager;
     private TransactionPagerAdapter txPagerAdapter;
-    private List<TransactionListItem> items;
+    private List<TxItem> items;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -132,7 +127,7 @@ public class FragmentTransactionDetails extends Fragment {
     }
 
 
-    public void setItems(List<TransactionListItem> items) {
+    public void setItems(List<TxItem> items) {
         this.items = items;
     }
 }

@@ -33,7 +33,7 @@ import com.breadwallet.presenter.entities.BRPeerEntity;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.presenter.entities.ImportPrivKeyEntity;
 import com.breadwallet.presenter.entities.PaymentItem;
-import com.breadwallet.presenter.entities.TransactionListItem;
+import com.breadwallet.presenter.entities.TxItem;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
@@ -794,7 +794,7 @@ public class BRWalletManager {
 
     public static native String getReceiveAddress();
 
-    public native TransactionListItem[] getTransactions();
+    public native TxItem[] getTransactions();
 
     public static native boolean validateAddress(String address);
 
@@ -852,9 +852,9 @@ public class BRWalletManager {
 
     public native String decryptBip38Key(String privKey, String pass);
 
-    public native String reverseTxHash(String txHash);
-
-    public native String txHashSha256Hex(String txHash);
+//    public native String reverseTxHash(String txHash);
+//
+//    public native String txHashSha256Hex(String txHash);
 
     public native int getTxCount();
 

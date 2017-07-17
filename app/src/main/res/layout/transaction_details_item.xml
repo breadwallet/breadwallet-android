@@ -44,7 +44,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_gravity="center_horizontal"
                 android:layout_margin="@dimen/bread_margin"
-                android:text="Send Money"
+                android:text="@string/TransactionDetails.title"
                 android:textColor="@color/almost_black"
                 android:textSize="18sp"
                 app:customFont="CircularPro-Bold.otf"
