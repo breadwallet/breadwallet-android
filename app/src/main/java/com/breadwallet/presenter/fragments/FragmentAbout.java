@@ -228,7 +228,25 @@ public class FragmentAbout extends Fragment {
     }
 
 
+    private boolean isValid(String input) {
+        try {
+            if (input == null || input.length() == 0) return false;
+            for (int i = 0; i < input.length(); i++) {
+                char c = input.charAt(i);
+                if (!Character.isDigit(c) || c != '.') return false;
+            }
+            String[] nums = input.split(".");
+            if (nums.length != 4) return false;
+            for (int i = 0; i < nums.length; i++) {
+                int slice = Integer.parseInt(nums[i]);
+                if (slice < 0 || slice > 255) return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
 
+        return true;
+    }
 
     @Override
     public void onResume() {
