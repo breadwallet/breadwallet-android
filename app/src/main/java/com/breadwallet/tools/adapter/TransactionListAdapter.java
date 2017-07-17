@@ -15,22 +15,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.entities.BRPeerEntity;
-import com.breadwallet.presenter.entities.CurrencyEntity;
-import com.breadwallet.presenter.entities.TransactionListItem;
+import com.breadwallet.presenter.entities.TxItem;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
-import com.breadwallet.tools.sqlite.CurrencyDataSource;
-import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.BRExchange;
-import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
-import com.breadwallet.wallet.BRWalletManager;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -67,10 +60,10 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
 
     private final Context mContext;
     private final int layoutResourceId;
-    private List<TransactionListItem> backUpFeed;
-    private List<TransactionListItem> itemFeed;
+    private List<TxItem> backUpFeed;
+    private List<TxItem> itemFeed;
 
-    public TransactionListAdapter(Context mContext, List<TransactionListItem> items) {
+    public TransactionListAdapter(Context mContext, List<TxItem> items) {
         itemFeed = items;
         backUpFeed = items;
         if (itemFeed == null) itemFeed = new ArrayList<>();
@@ -78,11 +71,11 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         this.mContext = mContext;
     }
 
-    public TransactionListItem getItemAtPos(int pos) {
+    public TxItem getItemAtPos(int pos) {
         return itemFeed.get(pos);
     }
 
-    public List<TransactionListItem> getItems() {
+    public List<TxItem> getItems() {
         return itemFeed;
     }
 
@@ -111,7 +104,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
 
     private void setTexts(final CustomViewHolder convertView, int position) {
 
-        TransactionListItem item = itemFeed.get(position);
+        TxItem item = itemFeed.get(position);
 
         boolean received = item.getSent() == 0;
         convertView.mainLayout.setBackgroundResource(getResourceByPos(position));
@@ -131,7 +124,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
 
         int blockHeight = item.getBlockHeight();
         int confirms = blockHeight == Integer.MAX_VALUE ? 0 : SharedPreferencesManager.getLastBlockHeight(mContext) - blockHeight + 1;
-        int relayCount = BRPeerManager.getRelayCount(item.getHexId());
+        int relayCount = BRPeerManager.getRelayCount(item.getTxHash());
 
         int level = 0;
         if (confirms <= 0) {
@@ -238,10 +231,10 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         int switchesON = 0;
         for (boolean i : switches) if (i) switchesON++;
 
-        List<TransactionListItem> filteredList = new ArrayList<>();
-        for (TransactionListItem item : backUpFeed) {
+        List<TxItem> filteredList = new ArrayList<>();
+        for (TxItem item : backUpFeed) {
 
-            if (item.getHexId().toLowerCase().contains(lowerQuery)
+            if (item.getTxHashHexReversed().toLowerCase().contains(lowerQuery)
                     || item.getFrom()[0].toLowerCase().contains(lowerQuery)
                     || item.getTo()[0].toLowerCase().contains(lowerQuery)) {
                 if (switchesON == 0) {

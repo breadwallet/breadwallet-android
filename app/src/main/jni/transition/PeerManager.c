@@ -385,11 +385,12 @@ JNIEXPORT jint JNICALL Java_com_breadwallet_wallet_BRPeerManager_getCurrentBlock
 
 JNIEXPORT jint JNICALL Java_com_breadwallet_wallet_BRPeerManager_getRelayCount(JNIEnv *env,
                                                                                jobject thiz,
-                                                                               jstring txHash) {
+                                                                               jbyteArray txHash) {
 //    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "getCurrentBlockHeight");
     if (!_peerManager) return 0;
-    const char *rawTxHash = (*env)->GetStringUTFChars(env, txHash, 0);
-    UInt256 theHash = u256_hex_decode(rawTxHash);
+    jbyte *byteTxHash = (*env)->GetByteArrayElements(env, txHash, 0);
+//    const char *rawTxHash = (*env)->GetStringUTFChars(env, txHash, 0);
+    UInt256 theHash = *(UInt256 *)byteTxHash;
     return (jint) BRPeerManagerRelayCount(_peerManager, theHash);
 }
 

@@ -35,7 +35,7 @@ import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRSearchBar;
 import com.breadwallet.presenter.customviews.BRText;
-import com.breadwallet.presenter.entities.TransactionListItem;
+import com.breadwallet.presenter.entities.TxItem;
 import com.breadwallet.presenter.fragments.FragmentManage;
 import com.breadwallet.tools.adapter.TransactionListAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -52,7 +52,6 @@ import com.breadwallet.tools.util.NetworkChangeReceiver;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
-import com.platform.HTTPServer;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -189,7 +188,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
 
     //BLOCKS
     public void updateTxList() {
-        final TransactionListItem[] arr = BRWalletManager.getInstance().getTransactions();
+        final TxItem[] arr = BRWalletManager.getInstance().getTransactions();
 //        Log.e(TAG, "updateTxList: getTransactions().length: " + (arr == null ? 0 : arr.length));
         runOnUiThread(new Runnable() {
             @Override

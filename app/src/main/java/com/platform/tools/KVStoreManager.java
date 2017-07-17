@@ -144,10 +144,11 @@ public class KVStoreManager {
 
     }
 
-    public TxMetaData getTxMetaData(Context app, String txHash) {
-        String key = "txn-" + BRWalletManager.getInstance().txHashSha256Hex(txHash);
-
-        Log.e(TAG, "getTxMetaData: txMetaData: " + key);
+    public TxMetaData getTxMetaData(Context app, byte[] txHash) {
+        Log.e(TAG, "txHash hex: " + Utils.bytesToHex(txHash));
+        String hex = Utils.bytesToHex(CryptoHelper.sha256(txHash));
+        String key = "txn-" + hex;
+//        Log.e(TAG, "getTxMetaData: txMetaData: " + key);
 
         TxMetaData result = new TxMetaData();
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));

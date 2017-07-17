@@ -235,4 +235,13 @@ public class Utils {
         return String.format(Locale.getDefault(), "%s/%d %s %s", "breadwallet", versionNumber, cfnetwork, Util.toHumanReadableAscii(agent));
     }
 
+    public static String reverseHex(String hex) {
+        if (hex == null) return null;
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i <= hex.length() - 2; i = i + 2) {
+            result.append(new StringBuilder(hex.substring(i, i + 2)).reverse());
+        }
+       return result.reverse().toString();
+    }
+
 }

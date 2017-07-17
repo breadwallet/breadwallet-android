@@ -6,15 +6,12 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintSet;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
-import android.text.format.DateFormat;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +21,7 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
-import com.breadwallet.presenter.entities.TransactionListItem;
+import com.breadwallet.presenter.entities.TxItem;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
@@ -38,7 +35,6 @@ import com.platform.tools.KVStoreManager;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -84,7 +80,7 @@ public class FragmentTransactionItem extends Fragment {
     private TextView mDateText;
     private TextView mToFromBottom;
     private TextView mTxHash;
-    private TransactionListItem item;
+    private TxItem item;
     private LinearLayout signalLayout;
     private ImageButton close;
 
@@ -159,7 +155,7 @@ public class FragmentTransactionItem extends Fragment {
 //        Log.e(TAG, "fillTexts hash: " + item.getHexId());
         //get the current iso
         String iso = SharedPreferencesManager.getPreferredBTC(getActivity()) ? "BTC" : SharedPreferencesManager.getIso(getContext());
-        TxMetaData txMetaData = KVStoreManager.getInstance().getTxMetaData(getContext(), item.getHexId());
+        TxMetaData txMetaData = KVStoreManager.getInstance().getTxMetaData(getContext(), item.getTxHash());
 
         //get the tx amount
         BigDecimal txAmount = new BigDecimal(item.getReceived() - item.getSent()).abs();
@@ -175,13 +171,12 @@ public class FragmentTransactionItem extends Fragment {
         //calculated and formatted fee for iso
         String fee = BRCurrency.getFormattedCurrencyString(getActivity(), iso, BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(item.getFee())));
         //description (Sent $24.32 ....)
-        Spannable descriptionString = sent ? new SpannableString("Sent " + amountWithFee) : new SpannableString("Received " + amountWithFee);
+        Spannable descriptionString = sent ? new SpannableString("Sent " + amountWithFee) : new SpannableString("Received " + amount);
 
         String startingBalance = BRCurrency.getFormattedCurrencyString(getActivity(), iso, BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(sent ? item.getBalanceAfterTx() + txAmount.longValue() : item.getBalanceAfterTx() - txAmount.longValue())));
         String endingBalance = BRCurrency.getFormattedCurrencyString(getActivity(), iso, BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(item.getBalanceAfterTx())));
-        String commentString = txMetaData == null? "" : txMetaData.comment;
+        String commentString = txMetaData == null || txMetaData.comment == null ? "" : txMetaData.comment;
         String amountString = String.format("%s %s\n\nStarting Balance: %s\nEnding Balance:  %s", amount, item.getFee() == -1 ? "" : String.format("(%s fee)", fee), startingBalance, endingBalance);
-
 
         SpannableString addr = sent ? new SpannableString(item.getTo()[0]) : new SpannableString(item.getFrom()[0]);
         SpannableString toFrom = sent ? new SpannableString("to") : new SpannableString("from");
@@ -191,9 +186,9 @@ public class FragmentTransactionItem extends Fragment {
         addr.setSpan(norm, 0, addr.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
         addr.setSpan(new RelativeSizeSpan(0.8f), 0, addr.length(), 0);
 
-        mTxHash.setText(BRWalletManager.getInstance().reverseTxHash(item.getHexId()));
+        mTxHash.setText(item.getTxHashHexReversed());
 
-        int relayCount = BRPeerManager.getRelayCount(item.getHexId() );
+        int relayCount = BRPeerManager.getRelayCount(item.getTxHash());
 
         int level = 0;
         Log.e(TAG, "setTexts: confirms: " + confirms);
@@ -283,7 +278,7 @@ public class FragmentTransactionItem extends Fragment {
         super.onPause();
     }
 
-    public static FragmentTransactionItem newInstance(TransactionListItem item) {
+    public static FragmentTransactionItem newInstance(TxItem item) {
 
         FragmentTransactionItem f = new FragmentTransactionItem();
         f.setItem(item);
@@ -291,7 +286,7 @@ public class FragmentTransactionItem extends Fragment {
         return f;
     }
 
-    public void setItem(TransactionListItem item) {
+    public void setItem(TxItem item) {
         this.item = item;
 
     }

@@ -12,16 +12,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
@@ -32,7 +29,7 @@ import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.activities.PinActivity;
 import com.breadwallet.presenter.activities.ScanQRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.presenter.entities.TransactionListItem;
+import com.breadwallet.presenter.entities.TxItem;
 import com.breadwallet.presenter.fragments.FragmentMenu;
 import com.breadwallet.presenter.fragments.FragmentSignal;
 import com.breadwallet.presenter.fragments.FragmentReceive;
@@ -43,12 +40,8 @@ import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.BRWalletManager;
 
 import java.util.List;
-
-import static android.support.v4.view.ViewCompat.getX;
-import static com.breadwallet.R.string.show;
 
 
 /**
@@ -138,7 +131,7 @@ public class BRAnimator {
 
     }
 
-    public static void showTransactionPager(Activity app, List<TransactionListItem> items, int position) {
+    public static void showTransactionPager(Activity app, List<TxItem> items, int position) {
         if (app == null) {
             Log.e(TAG, "showSendFragment: app is null");
             return;

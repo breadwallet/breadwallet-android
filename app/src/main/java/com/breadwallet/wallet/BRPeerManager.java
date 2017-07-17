@@ -405,7 +405,7 @@ public class BRPeerManager {
 
     public native static int getCurrentBlockHeight();
 
-    public native static int getRelayCount(String hash);
+    public native static int getRelayCount(byte[] hash);
 
     public native static int getEstimatedBlockHeight();
 
