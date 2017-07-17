@@ -27,9 +27,11 @@ import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRClipboardManager;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.BRPeerManager;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -215,9 +217,11 @@ public class FragmentAbout extends Fragment {
         alertDialog.setNegativeButton("trust",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        if (isValid(input.getText().toString())) {
+                        String str = input.getText().toString();
+                        if (isValid(str)) {
                             alertDialog.setMessage("");
-                            ...
+                            SharedPreferencesManager.putTrustNode(app, str);
+                            BRPeerManager.
                         } else {
                             alertDialog.setMessage("Invalid node");
                         }

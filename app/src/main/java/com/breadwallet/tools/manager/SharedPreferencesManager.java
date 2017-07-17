@@ -138,6 +138,17 @@ public class SharedPreferencesManager {
         editor.putString(BRConstants.FIRST_ADDRESS, firstAddress);
         editor.apply();
     }
+    public static String getTrustNode(Activity context) {
+        SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString("trustNode", "");
+    }
+
+    public static void putTrustNode(Activity context, String trustNode) {
+        SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("trustNode", trustNode);
+        editor.apply();
+    }
 
     public static long getFeePerKb(Activity context) {
         SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);

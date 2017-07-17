@@ -403,6 +403,13 @@ JNIEXPORT jint JNICALL Java_com_breadwallet_wallet_BRPeerManager_getEstimatedBlo
     return (jint) BRPeerManagerEstimatedBlockHeight(_peerManager);
 }
 
+JNIEXPORT void JNICALL Java_com_breadwallet_wallet_BRPeerManager_setFixedPeer(
+        JNIEnv *env, jobject thiz, jstring node, jint port) {
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "getEstimatedBlockHeight");
+//    if (!_peerManager || !_wallet) return 0;
+//    return (jint) BRPeerManagerEstimatedBlockHeight(_peerManager);
+}
+
 JNIEXPORT void JNICALL Java_com_breadwallet_wallet_BRPeerManager_peerManagerFreeEverything(
         JNIEnv *env, jobject thiz) {
     __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "peerManagerFreeEverything");
