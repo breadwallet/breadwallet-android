@@ -1,6 +1,9 @@
 package com.breadwallet.presenter.fragments;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -14,11 +17,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
@@ -32,6 +39,8 @@ import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+
+import static android.R.attr.password;
 
 /**
  * BreadWallet
@@ -61,6 +70,7 @@ import java.util.Locale;
 public class FragmentAbout extends Fragment {
     private static final String TAG = FragmentAbout.class.getName();
     private Button copyLogs;
+    private Button trustNode;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -70,8 +80,15 @@ public class FragmentAbout extends Fragment {
         View rootView = inflater.inflate(
                 R.layout.fragment_about, container, false);
         copyLogs = (Button) rootView.findViewById(R.id.copy_logs);
+        trustNode = (Button) rootView.findViewById(R.id.trust_node);
 
         copyLogs.setVisibility(Utils.isEmulatorOrDebug(getActivity()) ? View.VISIBLE : View.GONE);
+        trustNode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showNodeInputDialog();
+            }
+        });
 
         copyLogs.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -170,6 +187,48 @@ public class FragmentAbout extends Fragment {
 //        intent.putExtra(Intent.EXTRA_STREAM, fileUri);
 //        context.startActivity(Intent.createChooser(intent, "Send email..."));
 //    }
+
+    private void showNodeInputDialog() {
+        final Activity app = getActivity();
+        if (app == null) return;
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(app);
+        alertDialog.setTitle("set a trusted node");
+//        alertDialog.setMessage("Enter Password");
+
+        final EditText input = new EditText(app);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+        int pix = Utils.getPixelsFromDps(app, 24);
+        lp.setMargins(pix, 0, pix, 0);
+        input.setLayoutParams(lp);
+        alertDialog.setView(input);
+//        alertDialog.setIcon(R.drawable.key);
+
+        alertDialog.setPositiveButton("cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+        alertDialog.setNegativeButton("trust",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (isValid(input.getText().toString())) {
+                            alertDialog.setMessage("");
+                            ...
+                        } else {
+                            alertDialog.setMessage("Invalid node");
+                        }
+                    }
+                });
+
+        alertDialog.show();
+    }
+
+
+
 
     @Override
     public void onResume() {
