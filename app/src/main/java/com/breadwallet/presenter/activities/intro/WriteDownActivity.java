@@ -1,5 +1,7 @@
 package com.breadwallet.presenter.activities.intro;
 
+import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -16,6 +18,7 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.wallet.BRWalletManager;
 import com.platform.HTTPServer;
 
 public class WriteDownActivity extends BRActivity {
@@ -89,15 +92,13 @@ public class WriteDownActivity extends BRActivity {
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(WriteDownActivity.this, SetPinActivity.class);
-        startActivity(intent);
-        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-        finish();
+        close();
 
     }
 
     private void close() {
         BRAnimator.startBreadActivity(this, false);
+        overridePendingTransition(R.anim.fade_up, R.anim.exit_to_bottom);
         if (!isDestroyed()) finish();
         //additional code
     }
