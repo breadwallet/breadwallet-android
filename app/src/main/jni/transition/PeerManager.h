@@ -71,6 +71,9 @@ JNIEXPORT jdouble JNICALL
 Java_com_breadwallet_wallet_BRPeerManager_syncProgress(JNIEnv *env, jobject thiz,
                                                        int startHeight);
 
+JNIEXPORT jstring JNICALL Java_com_breadwallet_wallet_BRPeerManager_getCurrentPeerName(
+        JNIEnv *env, jobject thiz);
+
 JNIEXPORT jint JNICALL Java_com_breadwallet_wallet_BRPeerManager_getCurrentBlockHeight(JNIEnv *env,
                                                                                        jobject thiz);
 
