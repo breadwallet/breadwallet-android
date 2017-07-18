@@ -66,6 +66,21 @@ public class FragmentAbout extends Fragment {
     private Button copyLogs;
     private Button trustNode;
     AlertDialog mDialog;
+    private int mInterval = 3000;
+    private Handler mHandler;
+
+    Runnable mStatusChecker = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                updateStatus(); //this function can change value of mInterval.
+            } finally {
+                // 100% guarantee that this always happens, even if
+                // your update method throws an exception
+                mHandler.postDelayed(mStatusChecker, mInterval);
+            }
+        }
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -144,6 +159,10 @@ public class FragmentAbout extends Fragment {
             });
 
         return rootView;
+    }
+
+    private void updateStatus(){
+
     }
 
 //    public void sendLogs(Context context, String logs) {
@@ -299,5 +318,22 @@ public class FragmentAbout extends Fragment {
     public void onResume() {
         super.onResume();
         MiddleViewAdapter.resetMiddleView(getActivity(), null);
+
+        mHandler = new Handler();
+        startRepeatingTask();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        stopRepeatingTask();
+    }
+
+    void startRepeatingTask() {
+        mStatusChecker.run();
+    }
+
+    void stopRepeatingTask() {
+        mHandler.removeCallbacks(mStatusChecker);
     }
 }
