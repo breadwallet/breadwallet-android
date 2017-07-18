@@ -68,6 +68,7 @@ public class FragmentAbout extends Fragment {
     AlertDialog mDialog;
     private int mInterval = 3000;
     private Handler mHandler;
+    private TextView nodeLabel;
 
     Runnable mStatusChecker = new Runnable() {
         @Override
@@ -93,6 +94,7 @@ public class FragmentAbout extends Fragment {
         trustNode = (Button) rootView.findViewById(R.id.trust_node);
 
         copyLogs.setVisibility(Utils.isEmulatorOrDebug(getActivity()) ? View.VISIBLE : View.GONE);
+        nodeLabel = (TextView) rootView.findViewById(R.id.node_label);
         trustNode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -162,7 +164,7 @@ public class FragmentAbout extends Fragment {
     }
 
     private void updateStatus(){
-
+        nodeLabel.setText();
     }
 
 //    public void sendLogs(Context context, String logs) {
