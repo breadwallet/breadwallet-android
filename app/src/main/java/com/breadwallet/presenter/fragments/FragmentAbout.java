@@ -267,13 +267,13 @@ public class FragmentAbout extends Fragment {
                 if (!Character.isDigit(c) && c != '.' && c != ':') return false;
             }
             String host;
-            int port;
             if (input.contains(":")) {
-                host = input.split(":")[0];
-                port = Integer.parseInt(input.split(":")[1]);
+                String[] pieces = input.split(":");
+                if (pieces.length > 2) return false;
+                host = pieces[0];
+                int port = Integer.parseInt(pieces[1]); //just try to see if it's a number
             } else {
                 host = input;
-                port = 0;
             }
             String[] nums = host.split(".");
             if (nums.length != 4) return false;
