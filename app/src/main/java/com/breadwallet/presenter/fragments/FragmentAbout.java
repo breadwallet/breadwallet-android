@@ -43,6 +43,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import static android.R.attr.password;
+import static android.R.attr.port;
 
 /**
  * BreadWallet
@@ -73,6 +74,7 @@ public class FragmentAbout extends Fragment {
     private static final String TAG = FragmentAbout.class.getName();
     private Button copyLogs;
     private Button trustNode;
+    AlertDialog mDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -193,6 +195,7 @@ public class FragmentAbout extends Fragment {
     private void showNodeInputDialog() {
         final Activity app = getActivity();
         if (app == null) return;
+
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(app);
         alertDialog.setTitle("set a trusted node");
 //        alertDialog.setMessage("Enter Password");
@@ -219,27 +222,60 @@ public class FragmentAbout extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
                         String str = input.getText().toString();
                         if (isValid(str)) {
-                            alertDialog.setMessage("");
+                            mDialog.setMessage("");
                             SharedPreferencesManager.putTrustNode(app, str);
-                            BRPeerManager.
+                            String host = getNodeHost(str);
+                            int port = getNodePort(str);
+                            Log.e(TAG, "trust onClick: host:" + host);
+                            Log.e(TAG, "trust onClick: host:" + port);
+                            if (Utils.isNullOrEmpty(host)) return;
+                            BRPeerManager.getInstance(app).setFixedPeer(host, port);
                         } else {
-                            alertDialog.setMessage("Invalid node");
+                            mDialog.setMessage("Invalid node");
+
                         }
                     }
                 });
 
-        alertDialog.show();
+        mDialog = alertDialog.show();
     }
 
+    private String getNodeHost(String input) {
+        if (input.contains(":")) {
+            return input.split(":")[0];
+        }
+        return input;
+    }
+
+    private int getNodePort(String input) {
+        int port = 0;
+        if (input.contains(":")) {
+            try {
+                port = Integer.parseInt(input.split(":")[1]);
+            } catch (Exception e) {
+
+            }
+        }
+        return port;
+    }
 
     private boolean isValid(String input) {
         try {
             if (input == null || input.length() == 0) return false;
             for (int i = 0; i < input.length(); i++) {
                 char c = input.charAt(i);
-                if (!Character.isDigit(c) || c != '.') return false;
+                if (!Character.isDigit(c) && c != '.' && c != ':') return false;
             }
-            String[] nums = input.split(".");
+            String host;
+            int port;
+            if (input.contains(":")) {
+                host = input.split(":")[0];
+                port = Integer.parseInt(input.split(":")[1]);
+            } else {
+                host = input;
+                port = 0;
+            }
+            String[] nums = host.split(".");
             if (nums.length != 4) return false;
             for (int i = 0; i < nums.length; i++) {
                 int slice = Integer.parseInt(nums[i]);

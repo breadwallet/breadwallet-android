@@ -383,7 +383,7 @@ public class BRPeerManager {
 
     public native void createPeerArrayWithCount(int count);
 
-    public native void setFixedPeer(String node, int port);
+    public native boolean setFixedPeer(String node, int port);
 
     public native void putBlock(byte[] block, int blockHeight);
 
