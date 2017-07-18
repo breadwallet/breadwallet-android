@@ -227,7 +227,7 @@ public class FragmentAbout extends Fragment {
         if (app == null) return;
 
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(app);
-        TextView customTitle = new TextView(getContext());
+        final TextView customTitle = new TextView(getContext());
 
         customTitle.setGravity(Gravity.CENTER);
         customTitle.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
@@ -238,18 +238,16 @@ public class FragmentAbout extends Fragment {
         customTitle.setTypeface(null, Typeface.BOLD);
         alertDialog.setCustomTitle(customTitle);
 
-//        alertDialog.setMessage("");
-
         final EditText input = new EditText(app);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT);
         int pix = Utils.getPixelsFromDps(app, 24);
-        lp.setMargins(pix, 0, pix, 0);
+
+        input.setPadding(pix, 0, pix, pix);
         input.setLayoutParams(lp);
         if (mode == 1)
             alertDialog.setView(input);
-//        alertDialog.setIcon(R.drawable.key);
 
         alertDialog.setNegativeButton("cancel",
                 new DialogInterface.OnClickListener() {
@@ -258,7 +256,7 @@ public class FragmentAbout extends Fragment {
                     }
                 });
 
-        alertDialog.setPositiveButton(mode == 1? "trust" : "clear",
+        alertDialog.setPositiveButton(mode == 1 ? "trust" : "clear",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
 
@@ -280,18 +278,18 @@ public class FragmentAbout extends Fragment {
                         BRPeerManager.getInstance(app).updateFixedPeer();
                         mDialog.dismiss();
                     } else {
-                        mDialog.setTitle("invalid node");
+                        customTitle.setText("invalid node");
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                if (mDialog != null)
-                                    mDialog.setTitle("set a trusted node");
+                                customTitle.setText("set a trusted node");
                             }
-                        }, 400);
+                        }, 1000);
                     }
                 } else {
                     SharedPreferencesManager.putTrustNode((Activity) getContext(), "");
                     BRPeerManager.getInstance((Activity) getContext()).updateFixedPeer();
+                    mDialog.dismiss();
                 }
             }
         });

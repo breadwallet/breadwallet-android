@@ -399,14 +399,14 @@ JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRPeerManager_isConnected
 
 JNIEXPORT jint JNICALL Java_com_breadwallet_wallet_BRPeerManager_getEstimatedBlockHeight(
         JNIEnv *env, jobject thiz) {
-//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "getEstimatedBlockHeight");
+//    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "getEstimatedBlockHeight");
     if (!_peerManager || !_wallet) return 0;
     return (jint) BRPeerManagerEstimatedBlockHeight(_peerManager);
 }
 
 JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRPeerManager_setFixedPeer(
         JNIEnv *env, jobject thiz, jstring node, jint port) {
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "updateFixedPeer");
+    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "updateFixedPeer");
     if (!_peerManager) return JNI_FALSE;
     const char *host = (*env)->GetStringUTFChars(env, node, NULL);
     UInt128 address = UINT128_ZERO;
@@ -421,7 +421,7 @@ JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRPeerManager_setFixedPee
         _port = 0;
     }
 
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "BRPeerManagerSetFixedPeer: %s:%d",
+    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "BRPeerManagerSetFixedPeer: %s:%d",
                         host, _port);
     BRPeerManagerSetFixedPeer(_peerManager, address, _port);
     return JNI_TRUE;

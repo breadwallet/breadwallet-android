@@ -971,6 +971,8 @@ public class BRWalletManager {
             pm.create(walletTimeString, blocksCount, peersCount);
 
         }
+
+        BRPeerManager.getInstance(ctx).updateFixedPeer();
         pm.connect();
         if (SharedPreferencesManager.getStartHeight(ctx) == 0)
             new Thread(new Runnable() {
@@ -979,7 +981,7 @@ public class BRWalletManager {
                     SharedPreferencesManager.putStartHeight(ctx, BRPeerManager.getCurrentBlockHeight());
                 }
             }).start();
-        BRPeerManager.getInstance(ctx).updateFixedPeer();
+
 
     }
 

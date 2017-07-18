@@ -374,10 +374,11 @@ public class BRPeerManager {
         String node = SharedPreferencesManager.getTrustNode(ctx);
         String host = TrustedNode.getNodeHost(node);
         int port = TrustedNode.getNodePort(node);
-        Log.e(TAG, "trust onClick: host:" + host);
-        Log.e(TAG, "trust onClick: port:" + port);
+//        Log.e(TAG, "trust onClick: host:" + host);
+//        Log.e(TAG, "trust onClick: port:" + port);
         boolean success = setFixedPeer(host, port);
         if (!success) Log.e(TAG, "updateFixedPeer: Failed to updateFixedPeer with input: " + node);
+        BRPeerManager.getInstance(ctx).connect();
     }
 
     public static void updateLastBlockHeight(int blockHeight) {
