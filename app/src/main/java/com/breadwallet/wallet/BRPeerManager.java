@@ -16,6 +16,7 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.sqlite.SQLiteManager;
+import com.breadwallet.tools.util.TrustedNode;
 import com.breadwallet.tools.util.Utils;
 
 import java.text.DecimalFormat;
@@ -367,6 +368,16 @@ public class BRPeerManager {
 
         }
 
+    }
+
+    public void updateFixedPeer() {
+        String node = SharedPreferencesManager.getTrustNode(ctx);
+        String host = TrustedNode.getNodeHost(node);
+        int port = TrustedNode.getNodePort(node);
+        Log.e(TAG, "trust onClick: host:" + host);
+        Log.e(TAG, "trust onClick: port:" + port);
+        boolean success = setFixedPeer(host, port);
+        if (!success) Log.e(TAG, "updateFixedPeer: Failed to updateFixedPeer with input: " + node);
     }
 
     public static void updateLastBlockHeight(int blockHeight) {

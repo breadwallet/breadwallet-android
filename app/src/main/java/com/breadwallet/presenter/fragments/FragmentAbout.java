@@ -2,17 +2,17 @@ package com.breadwallet.presenter.fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.net.Uri;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.os.Environment;
-import android.util.Log;
+import android.os.Handler;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,27 +23,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.adapter.MiddleViewAdapter;
+import com.breadwallet.tools.util.TrustedNode;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Locale;
 
-import static android.R.attr.password;
-import static android.R.attr.port;
+import static android.R.id.input;
 
 /**
  * BreadWallet
@@ -90,7 +81,12 @@ public class FragmentAbout extends Fragment {
         trustNode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showNodeInputDialog();
+                if (!SharedPreferencesManager.getTrustNode((Activity) getContext()).isEmpty()) {
+                    createDialog(2);
+                } else {
+                    createDialog(1);
+                }
+
             }
         });
 
@@ -192,13 +188,57 @@ public class FragmentAbout extends Fragment {
 //        context.startActivity(Intent.createChooser(intent, "Send email..."));
 //    }
 
-    private void showNodeInputDialog() {
+
+//    private void askToClearTrustedNode() {
+//        final Activity app = getActivity();
+//        if (app == null) return;
+//
+//        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(app);
+//        TextView customTitle = new TextView(getContext());
+//        customTitle.setGravity(Gravity.CENTER);
+//        int pad = Utils.getPixelsFromDps(app, 32);
+//        customTitle.setPadding(pad, pad, pad, pad);
+//        customTitle.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+//        customTitle.setText("clear trusted node?");
+//        alertDialog.setCustomTitle(customTitle);
+//
+//        alertDialog.setNegativeButton("cancel",
+//                new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        dialog.cancel();
+//                    }
+//                });
+//
+//        alertDialog.setPositiveButton("clear",
+//                new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        SharedPreferencesManager.putTrustNode((Activity) getContext(), "");
+//                        BRPeerManager.getInstance((Activity) getContext()).updateFixedPeer();
+//                    }
+//                });
+//
+//        mDialog = alertDialog.show();
+//
+//    }
+
+    private void createDialog(final int mode) {
+
         final Activity app = getActivity();
         if (app == null) return;
 
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(app);
-        alertDialog.setTitle("set a trusted node");
-//        alertDialog.setMessage("Enter Password");
+        TextView customTitle = new TextView(getContext());
+
+        customTitle.setGravity(Gravity.CENTER);
+        customTitle.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        int pad = Utils.getPixelsFromDps(app, 32);
+        customTitle.setPadding(pad, pad, pad, pad);
+        customTitle.setText(mode == 1 ? "set a trusted node" : "clear trusted node?");
+        customTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+        customTitle.setTypeface(null, Typeface.BOLD);
+        alertDialog.setCustomTitle(customTitle);
+
+//        alertDialog.setMessage("");
 
         final EditText input = new EditText(app);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
@@ -207,85 +247,54 @@ public class FragmentAbout extends Fragment {
         int pix = Utils.getPixelsFromDps(app, 24);
         lp.setMargins(pix, 0, pix, 0);
         input.setLayoutParams(lp);
-        alertDialog.setView(input);
+        if (mode == 1)
+            alertDialog.setView(input);
 //        alertDialog.setIcon(R.drawable.key);
 
-        alertDialog.setPositiveButton("cancel",
+        alertDialog.setNegativeButton("cancel",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
                     }
                 });
 
-        alertDialog.setNegativeButton("trust",
+        alertDialog.setPositiveButton(mode == 1? "trust" : "clear",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        String str = input.getText().toString();
-                        if (isValid(str)) {
-                            mDialog.setMessage("");
-                            SharedPreferencesManager.putTrustNode(app, str);
-                            String host = getNodeHost(str);
-                            int port = getNodePort(str);
-                            Log.e(TAG, "trust onClick: host:" + host);
-                            Log.e(TAG, "trust onClick: host:" + port);
-                            if (Utils.isNullOrEmpty(host)) return;
-                            BRPeerManager.getInstance(app).setFixedPeer(host, port);
-                        } else {
-                            mDialog.setMessage("Invalid node");
 
-                        }
                     }
                 });
 
         mDialog = alertDialog.show();
-    }
 
-    private String getNodeHost(String input) {
-        if (input.contains(":")) {
-            return input.split(":")[0];
-        }
-        return input;
-    }
 
-    private int getNodePort(String input) {
-        int port = 0;
-        if (input.contains(":")) {
-            try {
-                port = Integer.parseInt(input.split(":")[1]);
-            } catch (Exception e) {
-
+        //Overriding the handler immediately after show is probably a better approach than OnShowListener as described below
+        mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mode == 1) {
+                    String str = input.getText().toString();
+                    if (TrustedNode.isValid(str)) {
+                        mDialog.setMessage("");
+                        SharedPreferencesManager.putTrustNode(app, str);
+                        BRPeerManager.getInstance(app).updateFixedPeer();
+                        mDialog.dismiss();
+                    } else {
+                        mDialog.setTitle("invalid node");
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (mDialog != null)
+                                    mDialog.setTitle("set a trusted node");
+                            }
+                        }, 400);
+                    }
+                } else {
+                    SharedPreferencesManager.putTrustNode((Activity) getContext(), "");
+                    BRPeerManager.getInstance((Activity) getContext()).updateFixedPeer();
+                }
             }
-        }
-        return port;
-    }
-
-    private boolean isValid(String input) {
-        try {
-            if (input == null || input.length() == 0) return false;
-            for (int i = 0; i < input.length(); i++) {
-                char c = input.charAt(i);
-                if (!Character.isDigit(c) && c != '.' && c != ':') return false;
-            }
-            String host;
-            if (input.contains(":")) {
-                String[] pieces = input.split(":");
-                if (pieces.length > 2) return false;
-                host = pieces[0];
-                int port = Integer.parseInt(pieces[1]); //just try to see if it's a number
-            } else {
-                host = input;
-            }
-            String[] nums = host.split(".");
-            if (nums.length != 4) return false;
-            for (int i = 0; i < nums.length; i++) {
-                int slice = Integer.parseInt(nums[i]);
-                if (slice < 0 || slice > 255) return false;
-            }
-        } catch (Exception e) {
-            return false;
-        }
-
-        return true;
+        });
     }
 
     @Override

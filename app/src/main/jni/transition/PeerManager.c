@@ -406,7 +406,7 @@ JNIEXPORT jint JNICALL Java_com_breadwallet_wallet_BRPeerManager_getEstimatedBlo
 
 JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRPeerManager_setFixedPeer(
         JNIEnv *env, jobject thiz, jstring node, jint port) {
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "setFixedPeer");
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "updateFixedPeer");
     if (!_peerManager) return JNI_FALSE;
     const char *host = (*env)->GetStringUTFChars(env, node, NULL);
     UInt128 address = UINT128_ZERO;
@@ -416,10 +416,13 @@ JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRPeerManager_setFixedPee
         if (inet_pton(AF_INET, host, &addr) != 1) return JNI_FALSE;
         address.u16[5] = 0xffff;
         address.u32[3] = addr.s_addr;
+        if (port == 0) _port = STANDARD_PORT;
+    } else {
+        _port = 0;
     }
 
-    if (port == 0) _port = STANDARD_PORT;
-
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "BRPeerManagerSetFixedPeer: %s:%d",
+                        host, _port);
     BRPeerManagerSetFixedPeer(_peerManager, address, _port);
     return JNI_TRUE;
 }

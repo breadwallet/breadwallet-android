@@ -2,7 +2,6 @@ package com.breadwallet.wallet;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.FragmentManager;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -38,7 +37,6 @@ import com.breadwallet.presenter.entities.TransactionListItem;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.presenter.fragments.FragmentSettingsAll;
 import com.breadwallet.presenter.fragments.MainFragmentQR;
-import com.breadwallet.presenter.fragments.PasswordDialogFragment;
 import com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.manager.BRNotificationManager;
@@ -60,23 +58,18 @@ import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
-import com.jniwrappers.BRKey;
 
 import junit.framework.Assert;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.security.Key;
 import java.security.SecureRandom;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import static android.R.attr.mode;
-import static android.R.attr.theme;
 import static com.breadwallet.presenter.activities.MainActivity.app;
-import static com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask.message;
 
 /**
  * BreadWallet
@@ -986,6 +979,8 @@ public class BRWalletManager {
                     SharedPreferencesManager.putStartHeight(ctx, BRPeerManager.getCurrentBlockHeight());
                 }
             }).start();
+        BRPeerManager.getInstance(ctx).updateFixedPeer();
+
     }
 
     public void generateQR(String bitcoinURL, ImageView qrcode) {
