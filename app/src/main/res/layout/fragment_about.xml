@@ -143,13 +143,13 @@
                     android:text="copy logs"/>
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/node_label"
-                android:layout_width="wrap_content"
-                android:text="node..."
-                android:textSize="16sp"
-                android:layout_margin="16dp"
-                android:layout_height="wrap_content"/>
+            <!--<TextView-->
+                <!--android:id="@+id/node_label"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:text="node..."-->
+                <!--android:textSize="16sp"-->
+                <!--android:layout_margin="16dp"-->
+                <!--android:layout_height="wrap_content"/>-->
 
 
         </LinearLayout>

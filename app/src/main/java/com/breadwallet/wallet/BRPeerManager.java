@@ -413,5 +413,7 @@ public class BRPeerManager {
 
     public native void peerManagerFreeEverything();
 
+    public native String getCurrentPeerName();
+
     public native void rescan();
 }
