@@ -1,5 +1,14 @@
 package com.breadwallet.tools.manager;
 
+import android.content.Context;
+
+import com.breadwallet.tools.security.KeyStoreManager;
+
+import static com.breadwallet.tools.manager.PromptManager.PromptItem.FINGER_PRINT;
+import static com.breadwallet.tools.manager.PromptManager.PromptItem.PAPER_KEY;
+import static com.breadwallet.tools.manager.PromptManager.PromptItem.RECOMMEND_RESCAN;
+import static com.breadwallet.tools.manager.PromptManager.PromptItem.UPGRADE_PIN;
+
 /**
  * BreadWallet
  * <p/>
@@ -26,10 +35,35 @@ package com.breadwallet.tools.manager;
  */
 public class PromptManager {
 
-    public enum PromptList{
+    public enum PromptItem {
         FINGER_PRINT,
         PAPER_KEY,
         UPGRADE_PIN,
         RECOMMEND_RESCAN
     }
+
+    public boolean shouldPrompt(Context app, PromptItem item) {
+        assert (app != null);
+        switch (item) {
+            case FINGER_PRINT:
+                return !SharedPreferencesManager.getUseFingerprint(app);
+            case PAPER_KEY:
+                return !SharedPreferencesManager.getPhraseWroteDown(app);
+            case UPGRADE_PIN:
+                return KeyStoreManager.getPinCode(app).length() != 6;
+            case RECOMMEND_RESCAN:
+                return false; //todo add code to this
+
+        }
+        return false;
+    }
+
+    public PromptItem nextPrompt(Context app) {
+        if (shouldPrompt(app, RECOMMEND_RESCAN)) return RECOMMEND_RESCAN;
+        if (shouldPrompt(app, UPGRADE_PIN)) return UPGRADE_PIN;
+        if (shouldPrompt(app, PAPER_KEY)) return PAPER_KEY;
+        if (shouldPrompt(app, FINGER_PRINT)) return FINGER_PRINT;
+        return null;
+    }
+
 }
