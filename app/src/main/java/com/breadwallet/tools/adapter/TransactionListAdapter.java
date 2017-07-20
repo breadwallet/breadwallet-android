@@ -253,12 +253,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     private void setPrompt(final PromptHolder prompt) {
-        prompt.close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TxManager.getInstance().showInfoCard(false, null);
-            }
-        });
 
         if (TxManager.getInstance().promptInfo == null) {
             throw new RuntimeException("can't happen, showing prompt with null PromptInfo");
