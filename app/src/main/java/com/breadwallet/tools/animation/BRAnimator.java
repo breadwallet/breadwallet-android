@@ -141,7 +141,7 @@ public class BRAnimator {
             Log.e(TAG, "showTransactionPager: Already showing");
             return;
         }
-
+        Log.e(TAG, "showTransactionPager: " + position);
         fragmentTransactionDetails = new FragmentTransactionDetails();
         fragmentTransactionDetails.setItems(items);
         Bundle bundle = new Bundle();

@@ -53,6 +53,7 @@ public class BRPeerManager {
     private static List<OnTxStatusUpdate> statusUpdateListeners;
     private static OnSyncSucceeded onSyncFinished;
     public boolean running;
+    private final Object lock = new Object();
 
     private BRPeerManager() {
         statusUpdateListeners = new ArrayList<>();
@@ -77,7 +78,7 @@ public class BRPeerManager {
      */
 
     public static void syncStarted() {
-        Log.d(TAG, "syncStarted");
+        Log.d(TAG, "syncStarted: " + Thread.currentThread().getName());
 //        BRPeerManager.getInstance().refreshConnection();
         Context ctx = BreadApp.getBreadContext();
         int startHeight = SharedPreferencesManager.getStartHeight(ctx);
@@ -186,7 +187,7 @@ public class BRPeerManager {
 
     }
 
-    public synchronized void startSyncingProgressThread() {
+    public void startSyncingProgressThread() {
         Log.d(TAG, "startSyncingProgressThread:" + Thread.currentThread().getName());
 
         try {
@@ -204,7 +205,6 @@ public class BRPeerManager {
         } catch (IllegalThreadStateException ex) {
             ex.printStackTrace();
         }
-
 
     }
 
@@ -225,7 +225,7 @@ public class BRPeerManager {
         }
     }
 
-    private  class SyncProgressTask extends Thread {
+    private class SyncProgressTask extends Thread {
         public double progressStatus = 0;
         private BreadActivity app;
 
@@ -235,8 +235,8 @@ public class BRPeerManager {
 
         @Override
         public void run() {
+            if (running) return;
             try {
-                Log.e(TAG, "run: " + Thread.currentThread().getName());
                 app = BreadActivity.getApp();
                 progressStatus = 0;
                 running = true;
@@ -265,11 +265,11 @@ public class BRPeerManager {
                             continue;
                         }
                         final long lastBlockTimeStamp = BRPeerManager.getInstance().getLastBlockTimestamp() * 1000;
-
+                        Log.e(TAG, "run: changing the progress to: " + progressStatus + ": " + Thread.currentThread().getName());
                         app.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Log.e(TAG, "run: changing the progress to: " + progressStatus);
+
                                 if (TxManager.getInstance().currentPrompt != PromptManager.PromptItem.SYNCING) {
                                     Log.e(TAG, "run: currentPrompt != SYNCING, showPrompt(SYNCING) ....");
                                     TxManager.getInstance().showPrompt(app, PromptManager.PromptItem.SYNCING);
@@ -290,7 +290,7 @@ public class BRPeerManager {
                     try {
                         Thread.sleep(300);
                     } catch (InterruptedException e) {
-                        Log.e(TAG, "run: Thread.sleep was Interrupted", e);
+                        Log.e(TAG, "run: Thread.sleep was Interrupted:" + Thread.currentThread().getName(), e);
                     }
 
                 }
