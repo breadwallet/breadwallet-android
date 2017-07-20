@@ -35,7 +35,7 @@ import java.util.List;
  * THE SOFTWARE.
  */
 
-public class ConnectionManager{
+public class ConnectionManager {
 
     private static final String TAG = ConnectionManager.class.getName();
     public static List<ConnectionReceiverListener> connectionReceiverListeners;
@@ -57,7 +57,8 @@ public class ConnectionManager{
     }
 
     public static void addConnectionListener(ConnectionReceiverListener listener) {
-        connectionReceiverListeners.add(listener);
+        if (!connectionReceiverListeners.contains(listener))
+            connectionReceiverListeners.add(listener);
     }
 
 //    public void startNetworkJob(Context context){

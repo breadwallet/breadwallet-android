@@ -13,6 +13,7 @@ import android.widget.EditText;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.manager.TxManager;
 
 /**
  * BreadWallet
@@ -52,7 +53,6 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
     private BreadActivity breadActivity;
 
     public boolean[] filterSwitches = new boolean[4];
-
 
     public BRSearchBar(Context context) {
         super(context);
@@ -97,7 +97,7 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                breadActivity.updateTxList();
+                TxManager.getInstance().updateTxList(breadActivity);
             }
         }).start();
 
@@ -112,8 +112,8 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
         pendingFilter.setTextColor(switches[2] ? getContext().getColor(R.color.dark_blue) : getContext().getColor(R.color.light_gray));
         completedFilter.setBackgroundResource(switches[3] ? R.drawable.selector_blue_stroke : R.drawable.selector_gray_stroke);
         completedFilter.setTextColor(switches[3] ? getContext().getColor(R.color.dark_blue) : getContext().getColor(R.color.light_gray));
-        if (breadActivity.adapter != null)
-            breadActivity.adapter.filterBy(searchEdit.getText().toString(), filterSwitches);
+        if (TxManager.getInstance().adapter != null)
+            TxManager.getInstance().adapter.filterBy(searchEdit.getText().toString(), filterSwitches);
     }
 
     private void setListeners() {
@@ -146,8 +146,8 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (breadActivity.adapter != null)
-                    breadActivity.adapter.filterBy(s.toString(), filterSwitches);
+                if (TxManager.getInstance().adapter != null)
+                    TxManager.getInstance().adapter.filterBy(s.toString(), filterSwitches);
             }
 
             @Override

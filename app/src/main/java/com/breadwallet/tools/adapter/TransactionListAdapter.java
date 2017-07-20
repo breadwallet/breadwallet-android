@@ -1,5 +1,7 @@
 package com.breadwallet.tools.adapter;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
@@ -7,16 +9,23 @@ import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.BreadActivity;
+import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.presenter.entities.TxItem;
+import com.breadwallet.tools.manager.PromptManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.BRExchange;
@@ -26,8 +35,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import static android.widget.Adapter.IGNORE_ITEM_VIEW_TYPE;
 
 
 /**
@@ -55,56 +62,92 @@ import static android.widget.Adapter.IGNORE_ITEM_VIEW_TYPE;
  * THE SOFTWARE.
  */
 
-public class TransactionListAdapter extends RecyclerView.Adapter<TransactionListAdapter.CustomViewHolder> {
+public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public static final String TAG = TransactionListAdapter.class.getName();
 
     private final Context mContext;
-    private final int layoutResourceId;
+    private final int txResId;
+    private final int syncingResId;
+    private final int promptResId;
     private List<TxItem> backUpFeed;
     private List<TxItem> itemFeed;
+    private final int txType = 0;
+    private final int promptType = 1;
+    private final int syncingType = 2;
 
     public TransactionListAdapter(Context mContext, List<TxItem> items) {
         itemFeed = items;
         backUpFeed = items;
         if (itemFeed == null) itemFeed = new ArrayList<>();
-        this.layoutResourceId = R.layout.tx_list_item;
+        this.txResId = R.layout.tx_item;
+        this.syncingResId = R.layout.syncing_item;
+        this.promptResId = R.layout.prompt_item;
         this.mContext = mContext;
     }
 
-    public TxItem getItemAtPos(int pos) {
-        return itemFeed.get(pos);
+    public void setItems(List<TxItem> items) {
+        if (items == null) items = new ArrayList<>();
+        this.itemFeed = items;
+        this.backUpFeed = items;
     }
 
     public List<TxItem> getItems() {
         return itemFeed;
     }
 
-    @Override
-    public CustomViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        // inflate the layout
-        LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
-        View convertView = inflater.inflate(layoutResourceId, parent, false);
-        return new CustomViewHolder(convertView);
-    }
 
     @Override
-    public void onBindViewHolder(CustomViewHolder holder, int position) {
-        setTexts(holder, position);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        // inflate the layout
+        LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
+        if (viewType == txType)
+            return new TxHolder(inflater.inflate(txResId, parent, false));
+        else if (viewType == promptType)
+            return new PromptHolder(inflater.inflate(promptResId, parent, false));
+        else if (viewType == syncingType)
+            return new SyncingHolder(inflater.inflate(syncingResId, parent, false));
+        return null;
+    }
+
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+//        Log.e(TAG, "onBindViewHolder: holder.getItemViewType:" + holder.getItemViewType() + " ,pos:" + position + ", current: " + currentPrompt + ", holder: " + holder);
+        switch (holder.getItemViewType()) {
+            case txType:
+                setTexts((TxHolder) holder, position);
+                break;
+            case promptType:
+                setPrompt((PromptHolder) holder);
+                break;
+            case syncingType:
+                setSyncing((SyncingHolder) holder);
+                break;
+        }
+
     }
 
     @Override
     public int getItemViewType(int position) {
-        return IGNORE_ITEM_VIEW_TYPE;
+        if (position == 0 && TxManager.getInstance().currentPrompt == PromptManager.PromptItem.SYNCING) {
+            return syncingType;
+        } else if (position == 0 && TxManager.getInstance().currentPrompt != null) {
+            return promptType;
+        } else {
+            return txType;
+        }
     }
 
     @Override
     public int getItemCount() {
-        return itemFeed.size();
+        return TxManager.getInstance().currentPrompt == null ? itemFeed.size() : itemFeed.size() + 1;
     }
 
-    private void setTexts(final CustomViewHolder convertView, int position) {
+    private void setTexts(final TxHolder convertView, int position) {
 
-        TxItem item = itemFeed.get(position);
+//        new InfoSlider().init(infoCardLayout);.....
+
+        TxItem item = itemFeed.get(TxManager.getInstance().currentPrompt == null ? position : position - 1);
 
         boolean received = item.getSent() == 0;
         convertView.mainLayout.setBackgroundResource(getResourceByPos(position));
@@ -209,7 +252,33 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
 
     }
 
+    private void setPrompt(final PromptHolder prompt) {
+        prompt.close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TxManager.getInstance().showInfoCard(false, null);
+            }
+        });
+
+        if (TxManager.getInstance().promptInfo == null) {
+            throw new RuntimeException("can't happen, showing prompt with null PromptInfo");
+        }
+
+        prompt.mainLayout.setOnClickListener(TxManager.getInstance().promptInfo.listener);
+        prompt.mainLayout.setBackgroundResource(R.drawable.tx_rounded);
+        prompt.title.setText(TxManager.getInstance().promptInfo.title);
+        prompt.description.setText(TxManager.getInstance().promptInfo.description);
+
+    }
+
+    private void setSyncing(final SyncingHolder syncing) {
+//        Log.e(TAG, "setSyncing: " + syncing);
+        TxManager.getInstance().syncingHolder = syncing;
+        syncing.mainLayout.setBackgroundResource(R.drawable.tx_rounded);
+    }
+
     private int getResourceByPos(int pos) {
+        if (TxManager.getInstance().currentPrompt != null) pos--;
         if (itemFeed != null && itemFeed.size() == 1) {
             return R.drawable.tx_rounded;
         } else if (pos == 0) {
@@ -271,7 +340,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         notifyDataSetChanged();
     }
 
-    class CustomViewHolder extends RecyclerView.ViewHolder {
+    private class TxHolder extends RecyclerView.ViewHolder {
         public RelativeLayout mainLayout;
         public ConstraintLayout constraintLayout;
         public TextView sentReceived;
@@ -283,9 +352,9 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
         public TextView timestamp;
         public TextView comment;
 
-        public CustomViewHolder(View view) {
+        public TxHolder(View view) {
             super(view);
-            mainLayout = (RelativeLayout) view.findViewById(R.id.watch_list_layout);
+            mainLayout = (RelativeLayout) view.findViewById(R.id.main_layout);
             constraintLayout = (ConstraintLayout) view.findViewById(R.id.constraintLayout);
             sentReceived = (TextView) view.findViewById(R.id.sent_received);
             amount = (TextView) view.findViewById(R.id.amount);
@@ -297,5 +366,41 @@ public class TransactionListAdapter extends RecyclerView.Adapter<TransactionList
             comment = (TextView) view.findViewById(R.id.comment);
         }
     }
+
+    public class PromptHolder extends RecyclerView.ViewHolder {
+        public RelativeLayout mainLayout;
+        public ConstraintLayout constraintLayout;
+        public BRText title;
+        public BRText description;
+        public ImageButton close;
+
+        public PromptHolder(View view) {
+            super(view);
+            mainLayout = (RelativeLayout) view.findViewById(R.id.main_layout);
+            constraintLayout = (ConstraintLayout) view.findViewById(R.id.prompt_layout);
+            title = (BRText) view.findViewById(R.id.info_title);
+            description = (BRText) view.findViewById(R.id.info_description);
+            close = (ImageButton) view.findViewById(R.id.info_close_button);
+        }
+    }
+
+    public class SyncingHolder extends RecyclerView.ViewHolder {
+        public RelativeLayout mainLayout;
+        public ConstraintLayout constraintLayout;
+        public BRText date;
+        public BRText label;
+        public ProgressBar progress;
+
+        public SyncingHolder(View view) {
+            super(view);
+            mainLayout = (RelativeLayout) view.findViewById(R.id.main_layout);
+            constraintLayout = (ConstraintLayout) view.findViewById(R.id.syncing_layout);
+            date = (BRText) view.findViewById(R.id.sync_date);
+            label = (BRText) view.findViewById(R.id.syncing_label);
+            progress = (ProgressBar) view.findViewById(R.id.sync_progress);
+        }
+    }
+
+
 
 }

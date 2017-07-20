@@ -1,8 +1,23 @@
 package com.breadwallet.tools.manager;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.ProviderInfo;
+import android.util.Log;
+import android.view.View;
 
+import com.breadwallet.R;
+import com.breadwallet.presenter.activities.BreadActivity;
+import com.breadwallet.presenter.activities.UpdatePitActivity;
+import com.breadwallet.presenter.activities.intro.WriteDownActivity;
+import com.breadwallet.presenter.activities.settings.FingerprintActivity;
+import com.breadwallet.presenter.activities.settings.SecurityCenterActivity;
+import com.breadwallet.presenter.activities.settings.SyncBlockchainActivity;
+import com.breadwallet.tools.adapter.TransactionListAdapter;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.wallet.BRPeerManager;
 
 import static com.breadwallet.tools.manager.PromptManager.PromptItem.FINGER_PRINT;
 import static com.breadwallet.tools.manager.PromptManager.PromptItem.PAPER_KEY;
@@ -35,11 +50,40 @@ import static com.breadwallet.tools.manager.PromptManager.PromptItem.UPGRADE_PIN
  */
 public class PromptManager {
 
+    private PromptManager() {
+    }
+
+    private static PromptManager instance;
+
+    public static PromptManager getInstance() {
+        if (instance == null) instance = new PromptManager();
+        return instance;
+    }
+
     public enum PromptItem {
+        SYNCING,
         FINGER_PRINT,
         PAPER_KEY,
         UPGRADE_PIN,
         RECOMMEND_RESCAN
+    }
+
+    public class PromptInfo {
+        public String title;
+        public String description;
+        public View.OnClickListener listener;
+
+        private PromptInfo() {
+        }
+
+        public PromptInfo(String title, String description, View.OnClickListener listener) {
+            assert (title != null);
+            assert (description != null);
+            assert (listener != null);
+            this.title = title;
+            this.description = description;
+            this.listener = listener;
+        }
     }
 
     public boolean shouldPrompt(Context app, PromptItem item) {
@@ -63,6 +107,55 @@ public class PromptManager {
         if (shouldPrompt(app, UPGRADE_PIN)) return UPGRADE_PIN;
         if (shouldPrompt(app, PAPER_KEY)) return PAPER_KEY;
         if (shouldPrompt(app, FINGER_PRINT)) return FINGER_PRINT;
+        return null;
+    }
+
+    public PromptInfo promptInfo(final Activity app, PromptItem item) {
+        switch (item) {
+            case FINGER_PRINT:
+                return new PromptInfo(app.getString(R.string.Prompts_TouchId_title), app.getString(R.string.Prompts_TouchId_body), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(app, FingerprintActivity.class);
+                        app.startActivity(intent);
+                        app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                    }
+                }); //todo make it fingerprint, not touch id
+            case PAPER_KEY:
+                return new PromptInfo(app.getString(R.string.Prompts_PaperKey_title), app.getString(R.string.Prompts_PaperKey_body), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(app, WriteDownActivity.class);
+                        app.startActivity(intent);
+                        app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
+                    }
+                });
+            case UPGRADE_PIN:
+                return new PromptInfo(app.getString(R.string.Prompts_UpgradePin_title), app.getString(R.string.Prompts_UpgradePin_body), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(app, UpdatePitActivity.class);
+                        app.startActivity(intent);
+                        app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                    }
+                });
+            case RECOMMEND_RESCAN:
+                return new PromptInfo(app.getString(R.string.Prompts_UpgradePin_title), app.getString(R.string.Prompts_UpgradePin_body), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                SharedPreferencesManager.putStartHeight(app, 0);
+                                BRPeerManager.getInstance().rescan();
+//                                BRAnimator.startBreadActivity(app, false);
+
+                            }
+                        }).start();
+                    }
+                });
+
+        }
         return null;
     }
 
