@@ -1,5 +1,7 @@
 package com.breadwallet.tools.manager;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
@@ -71,6 +73,27 @@ public class TxManager {
             public void onItemClick(View view, int position, float x, float y) {
                 if (currentPrompt == null || position > 0)
                     BRAnimator.showTransactionPager(app, adapter.getItems(), position);
+                else {
+                    //clicked on the  x (close)
+                    Log.e(TAG, "onItemClick: x:" + x + ", y:" + y + ",view: " + view.getWidth());
+                    if (x > view.getWidth() - 100 && y < 100) {
+                        view.animate().setDuration(150).translationX(BreadActivity.screenParametersPoint.x).setListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                super.onAnimationEnd(animation);
+                                hidePrompt(app, null);
+                            }
+                        });
+
+                    } else { //clicked on the prompt
+                        if (currentPrompt != PromptManager.PromptItem.SYNCING) {
+                            PromptManager.PromptInfo info = PromptManager.getInstance().promptInfo(app, currentPrompt);
+                            if (info != null)
+                                info.listener.onClick(view);
+                        }
+                    }
+                }
+
 
             }
 
@@ -97,7 +120,7 @@ public class TxManager {
                 app.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (progress > 0 && progress < 1){
+                        if (progress > 0 && progress < 1) {
                             currentPrompt = PromptManager.PromptItem.SYNCING;
                         } else {
                             showNextPrompt(app);
