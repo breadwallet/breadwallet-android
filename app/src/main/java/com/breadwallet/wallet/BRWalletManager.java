@@ -660,9 +660,11 @@ public class BRWalletManager {
 
     //BLOCKS
     public void setUpTheWallet(final Context ctx) {
-        Log.d(TAG, "setUpTheWallet...");
-        Assert.assertNotNull(ctx);
-        if (ctx == null) return;
+        Log.d(TAG, "setUpTheWallet:" + Thread.currentThread().getName());
+        if (ctx == null) {
+            Log.e(TAG, "setUpTheWallet: ctx is null");
+            return;
+        }
         BRWalletManager m = BRWalletManager.getInstance();
         final BRPeerManager pm = BRPeerManager.getInstance();
 

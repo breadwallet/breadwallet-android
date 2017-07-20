@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+
 /**
  * BreadWallet
  * <p/>
@@ -72,10 +73,9 @@ public class TxManager {
             @Override
             public void onItemClick(View view, int position, float x, float y) {
                 if (currentPrompt == null || position > 0)
-                    BRAnimator.showTransactionPager(app, adapter.getItems(), position);
+                    BRAnimator.showTransactionPager(app, adapter.getItems(), currentPrompt == null ? position : position - 1);
                 else {
                     //clicked on the  x (close)
-                    Log.e(TAG, "onItemClick: x:" + x + ", y:" + y + ",view: " + view.getWidth());
                     if (x > view.getWidth() - 100 && y < 100) {
                         view.animate().setDuration(150).translationX(BreadActivity.screenParametersPoint.x).setListener(new AnimatorListenerAdapter() {
                             @Override
@@ -90,6 +90,7 @@ public class TxManager {
                             PromptManager.PromptInfo info = PromptManager.getInstance().promptInfo(app, currentPrompt);
                             if (info != null)
                                 info.listener.onClick(view);
+                            currentPrompt = null;
                         }
                     }
                 }
@@ -111,7 +112,6 @@ public class TxManager {
     }
 
     public void onResume(final Activity app) {
-        Log.e(TAG, "TxManager onResume: " + currentPrompt);
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -135,35 +135,32 @@ public class TxManager {
     }
 
     public void showPrompt(Activity app, PromptManager.PromptItem item) {
-        Log.e(TAG, "showPrompt: " + item);
         if (item == null) throw new RuntimeException("can't be null");
         if (currentPrompt != PromptManager.PromptItem.SYNCING) {
             currentPrompt = item;
         }
-        Log.d(TAG, "setCurrentPrompt: try: " + item + ", SET to: " + currentPrompt);
         updateCard(app);
     }
 
     public void hidePrompt(final Activity app, final PromptManager.PromptItem item) {
-        Log.e(TAG, "hidePrompt: " + item);
-
-        app.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (item == PromptManager.PromptItem.SYNCING) {
+        currentPrompt = null;
+        updateCard(app);
+        if (item == PromptManager.PromptItem.SYNCING) {
+            app.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             showNextPrompt(app);
+                            updateCard(app);
                         }
                     }, 1000);
 
                 }
-            }
-        });
+            });
+        }
 
-        currentPrompt = null;
-        updateCard(app);
     }
 
     public void showInfoCard(boolean show, PromptManager.PromptInfo info) {
@@ -176,16 +173,15 @@ public class TxManager {
     }
 
     private void showNextPrompt(Activity app) {
-
         PromptManager.PromptItem toShow = PromptManager.getInstance().nextPrompt(app);
         if (toShow != null) {
-            Log.e(TAG, "showNextPrompt: " + toShow);
+            Log.d(TAG, "showNextPrompt: " + toShow);
             currentPrompt = toShow;
             PromptManager.PromptInfo info = PromptManager.getInstance().promptInfo(app, currentPrompt);
             showInfoCard(true, info);
             updateCard(app);
         } else {
-            Log.e(TAG, "showNextPrompt: nothing to show");
+            Log.i(TAG, "showNextPrompt: nothing to show");
         }
     }
 
@@ -197,8 +193,8 @@ public class TxManager {
             public void run() {
                 List<TxItem> items = arr == null ? null : new LinkedList<>(Arrays.asList(arr));
                 adapter.setItems(items);
-                txList.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
+                txList.swapAdapter(adapter, true);
+//                adapter.notifyDataSetChanged();
             }
         });
 
@@ -212,6 +208,7 @@ public class TxManager {
 //                adapter.notifyItemChanged(0);
 //            }
 //        });
+//        txList.getRecycledViewPool().clear();
         updateTxList(app);
     }
 
@@ -239,4 +236,5 @@ public class TxManager {
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         itemTouchHelper.attachToRecyclerView(txList);
     }
+
 }
