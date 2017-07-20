@@ -1,7 +1,5 @@
 package com.breadwallet.presenter.activities;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -12,20 +10,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.animation.AnimationUtils;
-import android.view.animation.OvershootInterpolator;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
@@ -34,16 +25,12 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRSearchBar;
-import com.breadwallet.presenter.customviews.BRText;
-import com.breadwallet.presenter.entities.TxItem;
 import com.breadwallet.presenter.fragments.FragmentManage;
-import com.breadwallet.tools.adapter.TransactionListAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.listeners.RecyclerItemClickListener;
 import com.breadwallet.tools.manager.ConnectionManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
-import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
@@ -54,8 +41,6 @@ import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Calendar;
 
 import static com.breadwallet.presenter.activities.intro.IntroActivity.introActivity;
 import static com.breadwallet.presenter.activities.ReEnterPinActivity.reEnterPinActivity;
@@ -104,25 +89,13 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     private TextView secondaryPrice;
     private TextView priceChange;
 
-    private BRText infoCartTitle;
-    private BRText infoCartDesc;
-    private ImageButton infoCartClose;
-
     private TextView manageText;
     private TextView walletName;
     private TextView emptyTip;
-    private TextView syncLabel;
-    public TextView syncDate;
-    private ProgressBar loadProgressBar;
-    public ProgressBar syncProgressBar;
     private ConstraintLayout walletProgressLayout;
-    private RecyclerView txList;
-    public TransactionListAdapter adapter;
+
     private RelativeLayout mainLayout;
     private LinearLayout toolbarLayout;
-    private ConstraintLayout syncingLayout;
-    private ConstraintLayout infoCardLayout;
-    private LinearLayout recyclerLayout;
     private Toolbar toolBar;
     private int progress = 0;
     public static boolean appVisible = false;
@@ -130,7 +103,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     public ViewFlipper barFlipper;
     private BRSearchBar searchBar;
     private boolean isSwapped;
-    private float origX;
+
     private String savedFragmentTag;
 
     private static BreadActivity app;
@@ -149,6 +122,12 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         setContentView(R.layout.activity_bread);
         BRWalletManager.getInstance().addBalanceChangedListener(this);
         BRPeerManager.getInstance().addStatusUpdateListener(this);
+        BRPeerManager.setOnSyncFinished(new BRPeerManager.OnSyncSucceeded() {
+            @Override
+            public void onFinished() {
+                //put some here
+            }
+        });
         SharedPreferencesManager.addIsoChangedListener(this);
 
         app = this;
@@ -160,12 +139,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
 
         setListeners();
 
-        setupSlideHandler();
-
-//        setWalletLoading();
         toolbarLayout.removeView(walletProgressLayout);
-
-        updateUI();
 
         setUpBarFlipper();
 
@@ -178,34 +152,15 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         if (introActivity != null) introActivity.finish();
         if (reEnterPinActivity != null) reEnterPinActivity.finish();
 
+        updateUI();
+
+        TxManager.getInstance().init(this);
 
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         //leave it empty, avoiding the os bug
-    }
-
-    //BLOCKS
-    public void updateTxList() {
-        final TxItem[] arr = BRWalletManager.getInstance().getTransactions();
-//        Log.e(TAG, "updateTxList: getTransactions().length: " + (arr == null ? 0 : arr.length));
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (arr == null) {
-                    txList.setVisibility(View.GONE);
-                    emptyTip.setVisibility(View.VISIBLE);
-                } else {
-                    txList.setVisibility(View.VISIBLE);
-                    emptyTip.setVisibility(View.GONE);
-                    adapter = new TransactionListAdapter(BreadActivity.this, Arrays.asList(arr));
-                    txList.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();
-                }
-            }
-        });
-
     }
 
     private void setUrlHandler(Intent intent) {
@@ -284,20 +239,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
             }
         });
 
-        txList.setLayoutManager(new LinearLayoutManager(this));
-        txList.addOnItemTouchListener(new RecyclerItemClickListener(this,
-                txList, new RecyclerItemClickListener.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position, float x, float y) {
-                BRAnimator.showTransactionPager(BreadActivity.this, adapter.getItems(), position);
-            }
-
-            @Override
-            public void onLongItemClick(View view, int position) {
-
-            }
-        }));
-
         searchIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -307,14 +248,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
             }
         });
 
-        infoCartClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.e(TAG, "onClick: ");
-                showInfoCard(false, null, null, null);
-            }
-        });
-        showInfoCard(false, null, null, null);
 
     }
 
@@ -338,18 +271,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         if (PLATFORM_ON)
             APIClient.getInstance(this).updatePlatform();
 
-        if (!BRWalletManager.getInstance().isPaperKeyWritten(this)) {
-            showInfoCard(true, "Paper Key not Saved", "This wallet's paper key hasn't been written down.\nTap here to view.", new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Log.e(TAG, "onClick: ");
-                    PostAuthenticationProcessor.getInstance().onPhraseCheckAuth(BreadActivity.this, false);
-                }
-            });
-        } else {
-            showInfoCard(false, null, null, null);
-        }
-
         setupNetworking();
 
         if (!BRWalletManager.getInstance().isCreated()) {
@@ -361,23 +282,15 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
             }).start();
 
         }
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                updateTxList();
-                double progress = BRPeerManager.syncProgress(SharedPreferencesManager.getStartHeight(BreadActivity.this));
-                if (progress <= 0 || progress >= 1)
-                    BreadActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            showSyncing(false);
-                        }
-                    });
 
-            }
-        }).start();
+
         BRAnimator.showFragmentByTag(this, savedFragmentTag);
         savedFragmentTag = null;
+
+
+        TxManager.getInstance().onResume(BreadActivity.this);
+
+
     }
 
     private void setupNetworking() {
@@ -432,23 +345,19 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         secondaryPrice = (TextView) findViewById(R.id.secondary_price);
         priceChange = (TextView) findViewById(R.id.price_change_text);
         emptyTip = (TextView) findViewById(R.id.empty_tx_tip);
-        syncLabel = (TextView) findViewById(R.id.syncing_label);
-        syncDate = (TextView) findViewById(R.id.sync_date);
-        loadProgressBar = (ProgressBar) findViewById(R.id.load_wallet_progress);
-        syncProgressBar = (ProgressBar) findViewById(R.id.sync_progress);
+//        syncLabel = (TextView) findViewById(R.id.syncing_label);
+//        syncDate = (TextView) findViewById(R.id.sync_date);
+//        loadProgressBar = (ProgressBar) findViewById(R.id.load_wallet_progress);
+//        syncProgressBar = (ProgressBar) findViewById(R.id.sync_progress);
         walletProgressLayout = (ConstraintLayout) findViewById(R.id.loading_wallet_layout);
-        txList = (RecyclerView) findViewById(R.id.tx_list);
+
         mainLayout = (RelativeLayout) findViewById(R.id.main_layout);
         toolbarLayout = (LinearLayout) findViewById(R.id.toolbar_layout);
-        syncingLayout = (ConstraintLayout) findViewById(R.id.syncing_layout);
-        recyclerLayout = (LinearLayout) findViewById(R.id.recycler_layout);
+//        syncingLayout = (ConstraintLayout) findViewById(R.id.syncing_layout);
+//        recyclerLayout = (LinearLayout) findViewById(R.id.recycler_layout);
         searchIcon = (ImageButton) findViewById(R.id.search_icon);
         barFlipper = (ViewFlipper) findViewById(R.id.tool_bar_flipper);
         searchBar = (BRSearchBar) findViewById(R.id.search_bar);
-        infoCardLayout = (ConstraintLayout) findViewById(R.id.info_card);
-        infoCartTitle = (BRText) findViewById(R.id.info_title);
-        infoCartDesc = (BRText) findViewById(R.id.info_description);
-        infoCartClose = (ImageButton) findViewById(R.id.info_close_button);
 
     }
 
@@ -528,7 +437,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                     }
                 });
 
-                updateTxList();
+                TxManager.getInstance().updateTxList(BreadActivity.this);
             }
         }).start();
 
@@ -540,7 +449,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         new Thread(new Runnable() {
             @Override
             public void run() {
-                updateTxList();
+                TxManager.getInstance().updateTxList(BreadActivity.this);
             }
         }).start();
 
@@ -556,76 +465,43 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         new Thread(new Runnable() {
             @Override
             public void run() {
-                updateTxList();
+                TxManager.getInstance().updateTxList(BreadActivity.this);
             }
         }).start();
     }
 
-    private void setWalletLoading() {
-        loadProgressBar.setProgress(progress);
-
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                while (loadProgressBar.getProgress() < 100) {
-                    try {
-                        Thread.sleep(60);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    loadProgressBar.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            progress += 5;
-                            loadProgressBar.setProgress(progress);
-                        }
-                    });
-
-                }
-                walletProgressLayout.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        toolbarLayout.removeView(walletProgressLayout);
-                    }
-                });
-            }
-        }).start();
-    }
-
-    public void showSyncing(boolean show) {
-        try {
-            if (show) {
-                recyclerLayout.addView(syncingLayout, 0);
-            } else {
-                recyclerLayout.removeView(syncingLayout);
-            }
-        } catch (Exception ignored) {
-        }
-    }
-
-    public void showInfoCard(boolean show, String title, String desc, final View.OnClickListener onInfoCardClick) {
-        try {
-            if (show) {
-                infoCartTitle.setText(title);
-                infoCartDesc.setText(desc);
-                if (onInfoCardClick != null)
-                    infoCardLayout.setOnClickListener(onInfoCardClick);
-                recyclerLayout.addView(infoCardLayout, 0);
-
-                infoCardLayout.animate()
-                        .x(origX)
-                        .setDuration(0)
-                        .start();
-            } else {
-                recyclerLayout.removeView(infoCardLayout);
-            }
-
-        } catch (Exception ignored) {
-
-        }
-    }
-
+    //    private void setWalletLoading() {
+//        loadProgressBar.setProgress(progress);
+//
+//        new Thread(new Runnable() {
+//
+//            @Override
+//            public void run() {
+//                while (loadProgressBar.getProgress() < 100) {
+//                    try {
+//                        Thread.sleep(60);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                    loadProgressBar.post(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            progress += 5;
+//                            loadProgressBar.setProgress(progress);
+//                        }
+//                    });
+//
+//                }
+//                walletProgressLayout.post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        toolbarLayout.removeView(walletProgressLayout);
+//                    }
+//                });
+//            }
+//        }).start();
+//    }
+//
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -652,7 +528,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         }
     }
 
-
     @Override
     public void onNameChanged(String name) {
         walletName.setText(name);
@@ -673,100 +548,18 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                     final double progress = BRPeerManager.syncProgress(SharedPreferencesManager.getStartHeight(BreadActivity.this));
                     Log.e(TAG, "run: " + progress);
                     if (progress < 1 && progress > 0) {
-                        BRPeerManager.startSyncingProgressThread();
+                        BRPeerManager.getInstance().startSyncingProgressThread();
                     }
                 }
             }).start();
 
-            showSyncing(true);
         } else {
             if (barFlipper != null)
                 barFlipper.setDisplayedChild(2);
-            BRPeerManager.stopSyncingProgressThread();
+            BRPeerManager.getInstance().stopSyncingProgressThread();
         }
 
     }
 
-
-    private void setupSlideHandler() {
-        new InfoSlider().init(infoCardLayout);
-    }
-
-
-    private class InfoSlider {
-
-        ViewGroup _root;
-        float viewWidth;
-        float dX;
-        private static final int MAX_CLICK_DURATION = 100;
-        private long startClickTime;
-
-        public void init(final ViewGroup view) {
-            _root = view;
-            final ViewTreeObserver observer = view.getViewTreeObserver();
-            observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    origX = view.getX();
-                    viewWidth = view.getWidth();
-                }
-            });
-
-            infoCardLayout.setOnTouchListener(new View.OnTouchListener() {
-                public boolean onTouch(View v, MotionEvent event) {
-                    switch (event.getAction()) {
-
-                        case MotionEvent.ACTION_DOWN:
-                            startClickTime = Calendar.getInstance().getTimeInMillis();
-
-                            dX = _root.getX() - event.getRawX();
-                            break;
-
-                        case MotionEvent.ACTION_MOVE:
-                            _root.animate()
-                                    .x(event.getRawX() + dX)
-                                    .setDuration(0)
-                                    .start();
-                            break;
-                        case MotionEvent.ACTION_UP:
-                            long clickDuration = Calendar.getInstance().getTimeInMillis() - startClickTime;
-
-                            if (clickDuration < MAX_CLICK_DURATION) {
-                                //click event has occurred
-                                infoCardLayout.performClick();
-                                return true;
-                            }
-                            if (view.getX() > viewWidth / 2 + origX) {
-                                _root.animate()
-                                        .x(viewWidth * 2)
-                                        .setDuration(200)
-                                        .setInterpolator(new OvershootInterpolator(0.5f))
-                                        .setListener(new AnimatorListenerAdapter() {
-                                            @Override
-                                            public void onAnimationEnd(Animator animation) {
-                                                super.onAnimationEnd(animation);
-                                                showInfoCard(false, null, null, null);
-                                            }
-                                        })
-                                        .start();
-                            } else {
-                                _root.animate()
-                                        .x(origX)
-                                        .setDuration(100)
-                                        .setInterpolator(new OvershootInterpolator(0.5f))
-                                        .start();
-                            }
-
-                            break;
-                        default:
-                            return false;
-                    }
-                    return true;
-                }
-            });
-        }
-
-    }
 
 }

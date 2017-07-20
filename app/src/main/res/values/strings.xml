@@ -377,4 +377,21 @@
     <!-- Eg. 1 of 3 -->
     <string name="WritePaperPhrase.step">%1$d of %2$d</string>
 
+    <!-- Paper key not save prompt body -->
+    <string name="Prompts.PaperKey.body">This wallet\'s paper key hasn\'t been written down. Tap here to view.</string>
+    <!-- Paper Key not saved prompt title (as in "the paper key has not been saved yet") -->
+    <string name="Prompts.PaperKey.title">Paper Key Not Saved</string>
+    <!-- Transaction rejected prompt body -->
+    <string name="Prompts.RecommendRescan.body">Your wallet may be out of sync. This can often be fixed by rescanning the blockchain.</string>
+    <!-- Transaction rejected prompt title -->
+    <string name="Prompts.RecommendRescan.title">Transaction Rejected</string>
+    <!-- Enable touch ID prompt body -->
+    <string name="Prompts.TouchId.body">Tap here to enable Touch ID</string>
+    <!-- Enable touch ID prompt title -->
+    <string name="Prompts.TouchId.title">Enable Touch ID</string>
+    <!-- Upgrade PIN prompt body. -->
+    <string name="Prompts.UpgradePin.body">Bread has upgraded to using a 6-digit PIN. Tap here to upgrade.</string>
+    <!-- Upgrade PIN prompt title. -->
+    <string name="Prompts.UpgradePin.title">Upgrade PIN</string>
+
 </resources>
