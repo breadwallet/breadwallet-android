@@ -239,7 +239,7 @@ public class FragmentTransactionItem extends Fragment {
                 break;
         }
 
-        if (availableForSpend) {
+        if (availableForSpend && !sent) {
             mAvailableSpend.setText("Available to Spend");
         } else {
             signalLayout.removeView(mAvailableSpend);

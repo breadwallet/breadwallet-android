@@ -215,7 +215,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 break;
         }
 
-        if (availableForSpend) {
+        if (availableForSpend && received) {
             convertView.status_2.setText("Available to Spend");
         } else {
             convertView.constraintLayout.removeView(convertView.status_2);
