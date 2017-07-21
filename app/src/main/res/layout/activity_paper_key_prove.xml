@@ -82,7 +82,7 @@
             android:layout_marginEnd="@dimen/bread_margin"
             android:layout_marginStart="@dimen/bread_margin"
             android:layout_marginTop="32dp"
-            android:background="@drawable/selector_blue"
+            app:buttonType="1"
             android:elevation="8dp"
             android:padding="10dp"
             android:text="@string/Button.submit"

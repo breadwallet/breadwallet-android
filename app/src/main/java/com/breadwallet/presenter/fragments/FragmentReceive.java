@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
+import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -74,7 +75,7 @@ public class FragmentReceive extends Fragment {
 
     private String receiveAddress;
     private View separator;
-    private Button shareButton;
+    private BRButton shareButton;
     private Button shareEmail;
     private Button shareTextMessage;
     private Button requestButton;
@@ -98,7 +99,7 @@ public class FragmentReceive extends Fragment {
         mQrImage = (ImageView) rootView.findViewById(R.id.qr_image);
         backgroundLayout = (LinearLayout) rootView.findViewById(R.id.background_layout);
         signalLayout = (LinearLayout) rootView.findViewById(R.id.signal_layout);
-        shareButton = (Button) rootView.findViewById(R.id.share_button);
+        shareButton = (BRButton) rootView.findViewById(R.id.share_button);
         shareEmail = (Button) rootView.findViewById(R.id.share_email);
         shareTextMessage = (Button) rootView.findViewById(R.id.share_text);
         shareButtonsLayout = (BRLinearLayoutWithCaret) rootView.findViewById(R.id.share_buttons_layout);
@@ -232,12 +233,10 @@ public class FragmentReceive extends Fragment {
     private void showShareButtons(boolean b) {
         if (!b) {
             signalLayout.removeView(shareButtonsLayout);
-            shareButton.setBackgroundResource(R.drawable.selector_gray_stroke);
-            shareButton.setTextColor(getContext().getColor(R.color.light_gray));
+            shareButton.setType(2);
         } else {
             signalLayout.addView(shareButtonsLayout, isReceive ? signalLayout.getChildCount() - 2 : signalLayout.getChildCount());
-            shareButton.setBackgroundResource(R.drawable.selector_blue_stroke);
-            shareButton.setTextColor(getContext().getColor(R.color.dark_blue));
+            shareButton.setType(3);
             showCopiedLayout(false);
         }
     }

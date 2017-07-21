@@ -1,14 +1,20 @@
 package com.breadwallet.presenter.customviews;
 
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
-import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
@@ -17,8 +23,6 @@ import android.widget.Button;
 import com.breadwallet.R;
 import com.breadwallet.tools.manager.TypefacesManager;
 import com.breadwallet.tools.util.Utils;
-
-import java.lang.reflect.Field;
 
 /**
  * BreadWallet
@@ -47,7 +51,18 @@ import java.lang.reflect.Field;
 @SuppressLint("AppCompatCustomView") // we don't need to support older versions
 public class BRButton extends Button {
     private static final String TAG = BRButton.class.getName();
-    private final int ANIMATION_DURATION = 50;
+    private final int ANIMATION_DURATION = 30;
+    private Bitmap shadow;
+    private Rect shadowRect;
+    private RectF bRect;
+    private int width;
+    private int height;
+    private Paint bPaint;
+    private Paint bPaintStroke;
+    private int type;
+    private float shadowOffSet = 1;
+    private AttributeSet attrs;
+    private Context ctx;
     //    private int currentX = 0;
 //    private int currentY = 0;
     private boolean isBreadButton; //meaning is has the special animation and shadow
@@ -72,20 +87,35 @@ public class BRButton extends Button {
     }
 
     private void init(Context ctx, AttributeSet attrs) {
+        this.ctx = ctx;
+        this.attrs = attrs;
+        shadow = BitmapFactory.decodeResource(getResources(), R.drawable.shadow);
+        bPaint = new Paint();
+        bPaintStroke = new Paint();
+
+        shadowRect = new Rect(0, 0, 100, 100);
+        bRect = new RectF(0, 0, 100, 100);
         TypedArray a = ctx.obtainStyledAttributes(attrs, R.styleable.BRText);
         String customFont = a.getString(R.styleable.BRText_customFont);
         TypefacesManager.setCustomFont(ctx, this, Utils.isNullOrEmpty(customFont) ? "CircularPro-Medium.otf" : customFont);
         float px16 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics());
         //check attributes you need, for example all paddings
-        int[] attributes = new int[]{android.R.attr.paddingLeft, android.R.attr.paddingTop, android.R.attr.paddingRight, android.R.attr.paddingBottom, R.attr.isBreadButton};
+        int[] attributes = new int[]{android.R.attr.paddingLeft, android.R.attr.paddingTop, android.R.attr.paddingRight, android.R.attr.paddingBottom, R.attr.isBreadButton, R.attr.buttonType};
         //then obtain typed array
         TypedArray arr = ctx.obtainStyledAttributes(attrs, attributes);
-        //You can check if attribute exists (in this examle checking paddingRight)
+        //You can check if attribute exists (in this example checking paddingRight)
         int paddingLeft = arr.hasValue(0) ? arr.getDimensionPixelOffset(0, -1) : 0;
         int paddingTop = arr.hasValue(1) ? arr.getDimensionPixelOffset(1, -1) : 0;
         int paddingRight = arr.hasValue(2) ? arr.getDimensionPixelOffset(2, -1) : 0;
         int paddingBottom = arr.hasValue(3) ? arr.getDimensionPixelOffset(3, -1) + (int) px16 : (int) px16;
         isBreadButton = arr.getBoolean(4, false);
+        setType(arr.getInteger(5, 0));
+
+        bPaint.setAntiAlias(true);
+        bPaintStroke.setAntiAlias(true);
+
+        if (isBreadButton) setBackground(getResources().getDrawable(R.drawable.shadow_trans));
+
         setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
         a.recycle();
         arr.recycle();
@@ -94,15 +124,14 @@ public class BRButton extends Button {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (isBreadButton) {
-
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 if (getParent() != null) {
                     getParent().requestDisallowInterceptTouchEvent(true);
                 }
 
                 ScaleAnimation scaleAnim = new ScaleAnimation(
-                        1f, 0.9f,
-                        1f, 0.9f,
+                        1f, 0.96f,
+                        1f, 0.96f,
                         Animation.RELATIVE_TO_SELF, 0.5f,
                         Animation.RELATIVE_TO_SELF, 1f);
                 scaleAnim.setDuration(ANIMATION_DURATION);
@@ -112,12 +141,24 @@ public class BRButton extends Button {
                 scaleAnim.setFillBefore(true);
                 scaleAnim.setFillEnabled(true);
 
+                ValueAnimator shadowAnim = ValueAnimator.ofFloat(1f, 0.9f);
+                shadowAnim.setDuration(ANIMATION_DURATION);
+                shadowAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animation) {
+                        shadowOffSet = (float) animation.getAnimatedValue();
+                        invalidate();
+                    }
+                });
+
                 startAnimation(scaleAnim);
+                shadowAnim.start();
+
             } else if (event.getAction() == MotionEvent.ACTION_UP) {
 //            clicked_on_image = false;
                 ScaleAnimation scaleAnim = new ScaleAnimation(
-                        0.9f, 1f,
-                        0.9f, 1f,
+                        0.96f, 1f,
+                        0.96f, 1f,
                         Animation.RELATIVE_TO_SELF, 0.5f,
                         Animation.RELATIVE_TO_SELF, 1f);
                 scaleAnim.setDuration(ANIMATION_DURATION);
@@ -128,6 +169,18 @@ public class BRButton extends Button {
                 scaleAnim.setFillEnabled(true);
 
                 startAnimation(scaleAnim);
+
+                ValueAnimator shadowAnim = ValueAnimator.ofFloat(0.9f, 1f);
+                shadowAnim.setDuration(ANIMATION_DURATION);
+                shadowAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animation) {
+                        shadowOffSet = (float) animation.getAnimatedValue();
+                        invalidate();
+                    }
+                });
+
+                shadowAnim.start();
 
             }
         }
@@ -136,35 +189,47 @@ public class BRButton extends Button {
 
     }
 
-    //Used for new ListenerInfo class structure used beginning with API 14 (ICS)
-    private View.OnClickListener getOnClickListener() {
-        View.OnClickListener retrievedListener = null;
-        String viewStr = "android.view.View";
-        String lInfoStr = "android.view.View$ListenerInfo";
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        width = w;
+        height = h;
 
-        try {
-            Field listenerField = Class.forName(viewStr).getDeclaredField("mListenerInfo");
-            Object listenerInfo = null;
-
-            if (listenerField != null) {
-                listenerField.setAccessible(true);
-                listenerInfo = listenerField.get(this);
-            }
-
-            Field clickListenerField = Class.forName(lInfoStr).getDeclaredField("mOnClickListener");
-
-            if (clickListenerField != null && listenerInfo != null) {
-                retrievedListener = (View.OnClickListener) clickListenerField.get(listenerInfo);
-            }
-        } catch (NoSuchFieldException ex) {
-            Log.e("Reflection", "No Such Field.");
-        } catch (IllegalAccessException ex) {
-            Log.e("Reflection", "Illegal Access.");
-        } catch (ClassNotFoundException ex) {
-            Log.e("Reflection", "Class Not Found.");
-        }
-
-        return retrievedListener;
     }
 
+    @Override
+    protected void onDraw(Canvas canvas) {
+        if (isBreadButton) {
+            shadowRect.set(5, height / 4, width - 5, (int) (height * shadowOffSet));
+            bRect.set(5, 5, width - 5, height - height / 4);
+            canvas.drawBitmap(shadow, null, shadowRect, null);
+            canvas.drawRoundRect(bRect, 16, 16, bPaint);
+            if (type == 2 || type == 3) canvas.drawRoundRect(bRect, 16, 16, bPaintStroke);
+        }
+        super.onDraw(canvas);
+
+    }
+
+    public void setType(int type) {
+        this.type = type;
+        if (type == 1) { //blue
+            bPaint.setColor(getContext().getColor(R.color.button_primary_normal));
+            setTextColor(getContext().getColor(R.color.white));
+        } else if (type == 2) { //gray stroke
+            bPaintStroke.setColor(getContext().getColor(R.color.extra_light_gray));
+            bPaintStroke.setStyle(Paint.Style.STROKE);
+            bPaintStroke.setStrokeWidth(Utils.getPixelsFromDps(getContext(), 1));
+            setTextColor(getContext().getColor(R.color.button_secondary_text));
+            bPaint.setColor(getContext().getColor(R.color.button_secondary));
+            bPaint.setStyle(Paint.Style.FILL);
+        } else if (type == 3) { //blue stroke
+            bPaintStroke.setColor(getContext().getColor(R.color.button_primary_normal));
+            bPaintStroke.setStyle(Paint.Style.STROKE);
+            bPaintStroke.setStrokeWidth(Utils.getPixelsFromDps(getContext(), 1));
+            setTextColor(getContext().getColor(R.color.button_primary_normal));
+            bPaint.setColor(getContext().getColor(R.color.button_secondary));
+            bPaint.setStyle(Paint.Style.FILL);
+        }
+        invalidate();
+    }
 }
