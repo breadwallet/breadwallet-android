@@ -157,7 +157,6 @@ public class BRButton extends Button {
     }
 
     public void setType(int type) {
-        Log.e(TAG, "setType: ");
         if (type == 3) press(1);
         this.type = type;
 
@@ -183,7 +182,6 @@ public class BRButton extends Button {
     }
 
     private void press(int duration) {
-        Log.e(TAG, "press: ");
         ScaleAnimation scaleAnim = new ScaleAnimation(
                 1f, 0.96f,
                 1f, 0.96f,
@@ -212,7 +210,6 @@ public class BRButton extends Button {
     }
 
     private void unPress(int duration) {
-        Log.e(TAG, "unPress: ");
         ScaleAnimation scaleAnim = new ScaleAnimation(
                 0.96f, 1f,
                 0.96f, 1f,
