@@ -129,7 +129,8 @@ public class FingerprintActivity extends BRActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        BRAnimator.startBreadActivity(this, false);
+//        BRAnimator.startBreadActivity(this, false);
+        overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
     }
 
     @Override
