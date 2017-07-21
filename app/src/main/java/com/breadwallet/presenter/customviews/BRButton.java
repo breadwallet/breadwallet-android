@@ -12,7 +12,6 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -51,7 +50,7 @@ import com.breadwallet.tools.util.Utils;
 @SuppressLint("AppCompatCustomView") // we don't need to support older versions
 public class BRButton extends Button {
     private static final String TAG = BRButton.class.getName();
-    private final int ANIMATION_DURATION = 30;
+    private static final int ANIMATION_DURATION = 30;
     private Bitmap shadow;
     private Rect shadowRect;
     private RectF bRect;
@@ -60,11 +59,9 @@ public class BRButton extends Button {
     private Paint bPaint;
     private Paint bPaintStroke;
     private int type;
-    private float shadowOffSet = 1;
-    private AttributeSet attrs;
-    private Context ctx;
-    //    private int currentX = 0;
-//    private int currentY = 0;
+    private static final float SHADOW_PRESSED = 0.88f;
+    private static final float SHADOW_UNPRESSED = 0.95f;
+    private float shadowOffSet = SHADOW_UNPRESSED;
     private boolean isBreadButton; //meaning is has the special animation and shadow
 
     public BRButton(Context context) {
@@ -87,8 +84,6 @@ public class BRButton extends Button {
     }
 
     private void init(Context ctx, AttributeSet attrs) {
-        this.ctx = ctx;
-        this.attrs = attrs;
         shadow = BitmapFactory.decodeResource(getResources(), R.drawable.shadow);
         bPaint = new Paint();
         bPaintStroke = new Paint();
@@ -141,7 +136,7 @@ public class BRButton extends Button {
                 scaleAnim.setFillBefore(true);
                 scaleAnim.setFillEnabled(true);
 
-                ValueAnimator shadowAnim = ValueAnimator.ofFloat(1f, 0.9f);
+                ValueAnimator shadowAnim = ValueAnimator.ofFloat(SHADOW_UNPRESSED, SHADOW_PRESSED);
                 shadowAnim.setDuration(ANIMATION_DURATION);
                 shadowAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                     @Override
@@ -170,7 +165,7 @@ public class BRButton extends Button {
 
                 startAnimation(scaleAnim);
 
-                ValueAnimator shadowAnim = ValueAnimator.ofFloat(0.9f, 1f);
+                ValueAnimator shadowAnim = ValueAnimator.ofFloat(SHADOW_PRESSED, SHADOW_UNPRESSED);
                 shadowAnim.setDuration(ANIMATION_DURATION);
                 shadowAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                     @Override
