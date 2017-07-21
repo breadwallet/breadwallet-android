@@ -12,6 +12,7 @@
 
     <declare-styleable name="BRButton">
         <attr name="isBreadButton" format="boolean"/>
+        <attr name="buttonType" format="integer"/>
     </declare-styleable>
 
     <declare-styleable name="BRKeyboard">

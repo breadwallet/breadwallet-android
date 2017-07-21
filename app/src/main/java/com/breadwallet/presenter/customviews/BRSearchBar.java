@@ -104,14 +104,10 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
     }
 
     private void updateFilterButtonsUI(boolean[] switches) {
-        sentFilter.setBackgroundResource(switches[0] ? R.drawable.selector_blue_stroke : R.drawable.selector_gray_stroke);
-        sentFilter.setTextColor(switches[0] ? getContext().getColor(R.color.dark_blue) : getContext().getColor(R.color.light_gray));
-        receivedFilter.setBackgroundResource(switches[1] ? R.drawable.selector_blue_stroke : R.drawable.selector_gray_stroke);
-        receivedFilter.setTextColor(switches[1] ? getContext().getColor(R.color.dark_blue) : getContext().getColor(R.color.light_gray));
-        pendingFilter.setBackgroundResource(switches[2] ? R.drawable.selector_blue_stroke : R.drawable.selector_gray_stroke);
-        pendingFilter.setTextColor(switches[2] ? getContext().getColor(R.color.dark_blue) : getContext().getColor(R.color.light_gray));
-        completedFilter.setBackgroundResource(switches[3] ? R.drawable.selector_blue_stroke : R.drawable.selector_gray_stroke);
-        completedFilter.setTextColor(switches[3] ? getContext().getColor(R.color.dark_blue) : getContext().getColor(R.color.light_gray));
+        sentFilter.setType(switches[0] ? 3 : 2);
+        receivedFilter.setType(switches[1] ? 3 : 2);
+        pendingFilter.setType(switches[2] ? 3 : 2);
+        completedFilter.setType(switches[3] ? 3 : 2);
         if (TxManager.getInstance().adapter != null)
             TxManager.getInstance().adapter.filterBy(searchEdit.getText().toString(), filterSwitches);
     }

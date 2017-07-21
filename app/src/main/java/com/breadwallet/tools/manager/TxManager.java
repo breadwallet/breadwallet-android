@@ -194,7 +194,7 @@ public class TxManager {
                 List<TxItem> items = arr == null ? null : new LinkedList<>(Arrays.asList(arr));
                 adapter.setItems(items);
                 txList.swapAdapter(adapter, true);
-//                adapter.notifyDataSetChanged();
+                adapter.notifyDataSetChanged();
             }
         });
 

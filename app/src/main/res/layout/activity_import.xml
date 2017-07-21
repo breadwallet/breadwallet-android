@@ -14,7 +14,7 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/big_button_height"
         android:layout_margin="@dimen/bread_margin"
-        android:background="@drawable/selector_blue"
+        app:buttonType="1"
         android:padding="10dp"
         android:text="Scan Private Key"
         android:textColor="@color/white"
