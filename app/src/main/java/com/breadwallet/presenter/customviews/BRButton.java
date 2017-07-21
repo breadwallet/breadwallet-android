@@ -12,6 +12,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -50,7 +51,7 @@ import com.breadwallet.tools.util.Utils;
 @SuppressLint("AppCompatCustomView") // we don't need to support older versions
 public class BRButton extends Button {
     private static final String TAG = BRButton.class.getName();
-    private static final int ANIMATION_DURATION = 30;
+    private static int ANIMATION_DURATION = 30;
     private Bitmap shadow;
     private Rect shadowRect;
     private RectF bRect;
@@ -123,60 +124,10 @@ public class BRButton extends Button {
                 if (getParent() != null) {
                     getParent().requestDisallowInterceptTouchEvent(true);
                 }
-
-                ScaleAnimation scaleAnim = new ScaleAnimation(
-                        1f, 0.96f,
-                        1f, 0.96f,
-                        Animation.RELATIVE_TO_SELF, 0.5f,
-                        Animation.RELATIVE_TO_SELF, 1f);
-                scaleAnim.setDuration(ANIMATION_DURATION);
-                scaleAnim.setRepeatCount(0);
-                scaleAnim.setInterpolator(new AccelerateDecelerateInterpolator());
-                scaleAnim.setFillAfter(true);
-                scaleAnim.setFillBefore(true);
-                scaleAnim.setFillEnabled(true);
-
-                ValueAnimator shadowAnim = ValueAnimator.ofFloat(SHADOW_UNPRESSED, SHADOW_PRESSED);
-                shadowAnim.setDuration(ANIMATION_DURATION);
-                shadowAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator animation) {
-                        shadowOffSet = (float) animation.getAnimatedValue();
-                        invalidate();
-                    }
-                });
-
-                startAnimation(scaleAnim);
-                shadowAnim.start();
-
+                if (type != 3)
+                    press(ANIMATION_DURATION);
             } else if (event.getAction() == MotionEvent.ACTION_UP) {
-//            clicked_on_image = false;
-                ScaleAnimation scaleAnim = new ScaleAnimation(
-                        0.96f, 1f,
-                        0.96f, 1f,
-                        Animation.RELATIVE_TO_SELF, 0.5f,
-                        Animation.RELATIVE_TO_SELF, 1f);
-                scaleAnim.setDuration(ANIMATION_DURATION);
-                scaleAnim.setRepeatCount(0);
-                scaleAnim.setInterpolator(new AccelerateDecelerateInterpolator());
-                scaleAnim.setFillAfter(true);
-                scaleAnim.setFillBefore(true);
-                scaleAnim.setFillEnabled(true);
-
-                startAnimation(scaleAnim);
-
-                ValueAnimator shadowAnim = ValueAnimator.ofFloat(SHADOW_PRESSED, SHADOW_UNPRESSED);
-                shadowAnim.setDuration(ANIMATION_DURATION);
-                shadowAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator animation) {
-                        shadowOffSet = (float) animation.getAnimatedValue();
-                        invalidate();
-                    }
-                });
-
-                shadowAnim.start();
-
+                unPress(ANIMATION_DURATION);
             }
         }
 
@@ -206,7 +157,10 @@ public class BRButton extends Button {
     }
 
     public void setType(int type) {
+        Log.e(TAG, "setType: ");
+        if (type == 3) press(1);
         this.type = type;
+
         if (type == 1) { //blue
             bPaint.setColor(getContext().getColor(R.color.button_primary_normal));
             setTextColor(getContext().getColor(R.color.white));
@@ -226,5 +180,62 @@ public class BRButton extends Button {
             bPaint.setStyle(Paint.Style.FILL);
         }
         invalidate();
+    }
+
+    private void press(int duration) {
+        Log.e(TAG, "press: ");
+        ScaleAnimation scaleAnim = new ScaleAnimation(
+                1f, 0.96f,
+                1f, 0.96f,
+                Animation.RELATIVE_TO_SELF, 0.5f,
+                Animation.RELATIVE_TO_SELF, 1f);
+        scaleAnim.setDuration(duration);
+        scaleAnim.setRepeatCount(0);
+        scaleAnim.setInterpolator(new AccelerateDecelerateInterpolator());
+        scaleAnim.setFillAfter(true);
+        scaleAnim.setFillBefore(true);
+        scaleAnim.setFillEnabled(true);
+
+        ValueAnimator shadowAnim = ValueAnimator.ofFloat(SHADOW_UNPRESSED, SHADOW_PRESSED);
+        shadowAnim.setDuration(duration);
+        shadowAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                shadowOffSet = (float) animation.getAnimatedValue();
+                invalidate();
+            }
+        });
+
+        startAnimation(scaleAnim);
+        shadowAnim.start();
+
+    }
+
+    private void unPress(int duration) {
+        Log.e(TAG, "unPress: ");
+        ScaleAnimation scaleAnim = new ScaleAnimation(
+                0.96f, 1f,
+                0.96f, 1f,
+                Animation.RELATIVE_TO_SELF, 0.5f,
+                Animation.RELATIVE_TO_SELF, 1f);
+        scaleAnim.setDuration(duration);
+        scaleAnim.setRepeatCount(0);
+        scaleAnim.setInterpolator(new AccelerateDecelerateInterpolator());
+        scaleAnim.setFillAfter(true);
+        scaleAnim.setFillBefore(true);
+        scaleAnim.setFillEnabled(true);
+
+        ValueAnimator shadowAnim = ValueAnimator.ofFloat(SHADOW_PRESSED, SHADOW_UNPRESSED);
+        shadowAnim.setDuration(duration);
+        shadowAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                shadowOffSet = (float) animation.getAnimatedValue();
+                invalidate();
+            }
+        });
+
+        startAnimation(scaleAnim);
+        shadowAnim.start();
     }
 }
