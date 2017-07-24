@@ -96,7 +96,6 @@ public class CurAdapter extends RecyclerView.Adapter<CurAdapter.CustomViewHolder
 
     }
 
-
     class CustomViewHolder extends RecyclerView.ViewHolder {
         public BRButton button;
 
