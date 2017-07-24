@@ -122,7 +122,7 @@ public class BRButton extends Button {
         if (isBreadButton) {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 if (getParent() != null) {
-                    getParent().requestDisallowInterceptTouchEvent(true);
+                    getParent().requestDisallowInterceptTouchEvent(false);
                 }
                 if (type != 3)
                     press(ANIMATION_DURATION);
