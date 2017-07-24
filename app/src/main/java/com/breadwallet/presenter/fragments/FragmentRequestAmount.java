@@ -3,6 +3,7 @@ package com.breadwallet.presenter.fragments;
 import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.OvershootInterpolator;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -203,12 +205,7 @@ public class FragmentRequestAmount extends Fragment {
                 currencyRecycler, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position, float x, float y) {
-                Log.e(TAG, "onItemClick: " + position);
-//                BRAnimator.showTransactionPager(BreadActivity.this, adapter.getItems(), position);
                 selectedIso = curAdapter.getItemAtPos(position);
-
-                Log.e(TAG, "onItemSelected: " + selectedIso);
-//                isoText.setText(BRCurrency.getSymbolByIso(getActivity(), selectedIso));
                 updateText();
                 boolean generated = generateQrImage(receiveAddress, amountEdit.getText().toString(), selectedIso);
                 if (!generated)

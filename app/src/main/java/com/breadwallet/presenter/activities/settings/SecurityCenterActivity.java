@@ -100,11 +100,10 @@ public class SecurityCenterActivity extends BRActivity {
         ActivityUTILS.init(this);
     }
 
-
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
+        overridePendingTransition(R.anim.fade_up, R.anim.exit_to_bottom);
     }
 
     public RelativeLayout getMainLayout() {
