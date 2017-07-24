@@ -186,12 +186,12 @@ public class FragmentRequestAmount extends Fragment {
         signalLayout.setLayoutTransition(itemLayoutTransition);
 
         signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                showKeyboard(true);
-            }
-        }, 300);
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                showKeyboard(true);
+//            }
+//        }, 300);
 
         return rootView;
     }
@@ -464,7 +464,7 @@ public class FragmentRequestAmount extends Fragment {
     }
 
     private void showKeyboard(boolean b) {
-
+        Log.e(TAG, "showKeyboard: " + b);
         int curIndex = signalLayout.indexOfChild(currencyListLayout) == -1 ? keyboardIndex - 1 : keyboardIndex;
 
         if (!b) {
@@ -476,6 +476,13 @@ public class FragmentRequestAmount extends Fragment {
                 signalLayout.removeView(keyboardLayout);
 
         }
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                signalLayout.scrollTo(5, 10);
+            }
+        }, 2000);
+
     }
 
     private boolean generateQrImage(String address, String strAmount, String iso) {
