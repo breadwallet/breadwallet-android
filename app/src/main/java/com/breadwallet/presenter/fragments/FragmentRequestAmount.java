@@ -151,7 +151,6 @@ public class FragmentRequestAmount extends Fragment {
         signalLayout.removeView(copiedLayout);
         signalLayout.removeView(request);
 
-        showKeyboard(true);
         showCurrencyList(false);
 
         final List<String> curList = new ArrayList<>();
@@ -187,6 +186,12 @@ public class FragmentRequestAmount extends Fragment {
         signalLayout.setLayoutTransition(itemLayoutTransition);
 
         signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                showKeyboard(true);
+            }
+        }, 300);
 
         return rootView;
     }

@@ -8,323 +8,331 @@
               android:filterTouchesWhenObscured="true"
     >
 
-    <LinearLayout
-        android:id="@+id/signal_layout"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:background="@drawable/receive_layout"
-        android:clickable="true"
-        android:orientation="vertical"
-        android:padding="0dp"
-        >
+        android:layout_height="match_parent"
+        android:layout_marginTop="24dp">
 
-        <android.support.constraint.ConstraintLayout
+        <LinearLayout
+            android:id="@+id/signal_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@drawable/receive_layout"
+            android:clickable="true"
+            android:orientation="vertical"
+            android:padding="0dp"
+            >
 
-            <com.breadwallet.presenter.customviews.BRText
-                android:id="@+id/title"
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.breadwallet.presenter.customviews.BRText
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/Receive.title"
+                    android:textColor="@color/almost_black"
+                    android:textSize="20sp"
+                    app:customFont="CircularPro-Bold.otf"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintHorizontal_bias="0.498"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+                <View
+                    android:id="@+id/view"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@color/separator_gray"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/title"/>
+
+                <ImageButton
+                    android:id="@+id/faq_button"
+                    android:layout_width="@dimen/faq_dimen"
+                    android:layout_height="@dimen/faq_dimen"
+                    android:layout_marginEnd="16dp"
+                    android:background="@drawable/faq_question_black"
+                    app:layout_constraintBottom_toBottomOf="@+id/title"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/title"/>
+
+                <ImageButton
+                    android:id="@+id/close_button"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/ic_close_black_24dp"
+                    app:layout_constraintBottom_toTopOf="@+id/view"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/title"
+                    app:layout_constraintVertical_bias="0.055"/>
+
+            </android.support.constraint.ConstraintLayout>
+
+            <RelativeLayout
+                android:id="@+id/amount_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                >
+
+                <com.breadwallet.presenter.customviews.BRText
+                    android:id="@+id/iso_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="@dimen/bread_margin"
+                    android:text="$"
+                    android:textSize="28sp"
+                    />
+
+                <com.breadwallet.presenter.customviews.BREdit
+                    android:id="@+id/amount_edit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_toEndOf="@id/iso_text"
+                    android:background="@android:color/transparent"
+                    android:clickable="false"
+                    android:cursorVisible="false"
+                    android:ems="10"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:hint="0"
+                    android:inputType="numberDecimal"
+                    android:textIsSelectable="false"
+                    android:textSize="24sp"
+                    />
+
+                <com.breadwallet.presenter.customviews.BRButton
+                    android:id="@+id/iso_button"
+                    android:layout_width="70dp"
+                    android:layout_height="50dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="@dimen/bread_margin"
+                    android:layout_marginTop="16dp"
+                    android:drawablePadding="4dp"
+                    android:minHeight="40dp"
+                    android:text="iso"
+                    android:textColor="@color/light_gray"
+                    android:textSize="18sp"
+                    app:buttonType="2"
+                    app:isBreadButton="true"
+                    />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/cur_spinner_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <View
+                    android:id="@+id/separator5"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/extra_light_gray"
+                    />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/cur_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@color/button_secondary"
+                    />
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/separator2"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/extra_light_gray"
+                />
+
+            <LinearLayout
+                android:id="@+id/keyboard_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <com.breadwallet.presenter.customviews.BRKeyboard
+                    android:id="@+id/keyboard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/extra_light_gray"
+                    android:paddingTop="8dp"
+                    />
+
+                <View
+                    android:id="@+id/separator3"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/extra_light_gray"
+                    />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/qr_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
-                android:text="@string/Receive.title"
-                android:textColor="@color/almost_black"
-                android:textSize="20sp"
-                app:customFont="CircularPro-Bold.otf"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHorizontal_bias="0.498"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
-
-            <View
-                android:id="@+id/view"
-                android:layout_width="0dp"
-                android:layout_height="1dp"
                 android:layout_marginTop="16dp"
-                android:background="@color/separator_gray"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/title"/>
-
-            <ImageButton
-                android:id="@+id/faq_button"
-                android:layout_width="@dimen/faq_dimen"
-                android:layout_height="@dimen/faq_dimen"
-                android:layout_marginEnd="16dp"
-                android:background="@drawable/faq_question_black"
-                app:layout_constraintBottom_toBottomOf="@+id/title"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/title"/>
-
-            <ImageButton
-                android:id="@+id/close_button"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="@drawable/ic_close_black_24dp"
-                android:layout_marginStart="16dp"
-                app:layout_constraintBottom_toTopOf="@+id/view"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/title"
-                app:layout_constraintVertical_bias="0.055"/>
-
-        </android.support.constraint.ConstraintLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:visibility="gone"
-            android:id="@+id/amount_layout"
-            android:layout_height="wrap_content"
-            >
+                android:src="@drawable/ic_check_mark_grey"
+                />
 
             <com.breadwallet.presenter.customviews.BRText
-                android:id="@+id/iso_text"
+                android:id="@+id/address_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="@dimen/bread_margin"
-                android:text="$"
-                android:textSize="28sp"
-                />
-
-            <com.breadwallet.presenter.customviews.BREdit
-                android:id="@+id/amount_edit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="8dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginStart="4dp"
-                android:layout_toEndOf="@id/iso_text"
-                android:background="@android:color/transparent"
-                android:clickable="false"
-                android:cursorVisible="false"
-                android:ems="10"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:hint="0"
-                android:inputType="numberDecimal"
-                android:textIsSelectable="false"
-                android:textSize="24sp"
-                />
-
-            <com.breadwallet.presenter.customviews.BRButton
-                android:id="@+id/iso_button"
-                android:layout_width="70dp"
-                android:layout_height="50dp"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="@dimen/bread_margin"
-                android:layout_marginTop="16dp"
-                app:buttonType="2"
-                android:drawablePadding="4dp"
-                android:minHeight="40dp"
-                android:text="iso"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginStart="8dp"
+                android:text="----------------------------------"
                 android:textColor="@color/light_gray"
-                android:textSize="18sp"
-                app:isBreadButton="true"
+                android:textSize="16sp"
                 />
 
-        </RelativeLayout>
-
-        <LinearLayout
-            android:id="@+id/cur_spinner_layout"
-            android:layout_width="match_parent"
-            android:visibility="gone"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <View
-                android:id="@+id/separator5"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/extra_light_gray"
-                />
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/cur_spinner"
-                android:layout_gravity="center_vertical"
+            <com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret
+                android:id="@+id/copied_layout"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:background="@color/button_secondary"
-                />
+                android:layout_marginBottom="8dp"
+                app:backgroundColor="@color/dark_blue"
+                app:withStroke="false">
 
-        </LinearLayout>
+                <com.breadwallet.presenter.customviews.BRText
+                    android:id="@+id/copied_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginTop="16dp"
+                    android:gravity="center"
+                    android:text="@string/Receive.copied"
+                    android:textColor="@color/white"/>
+            </com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret>
 
-        <View
-            android:id="@+id/separator2"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/extra_light_gray"
-            />
-
-        <LinearLayout
-            android:id="@+id/keyboard_layout"
-            android:layout_width="match_parent"
-            android:visibility="gone"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <com.breadwallet.presenter.customviews.BRKeyboard
-                android:id="@+id/keyboard"
+            <com.breadwallet.presenter.customviews.BRButton
+                android:id="@+id/share_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/extra_light_gray"
-                android:paddingTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="72dp"
+                android:layout_marginStart="72dp"
+                android:drawableStart="@drawable/ic_share_vertical_gray"
+                android:paddingBottom="12dp"
+                android:paddingLeft="48dp"
+                android:paddingRight="48dp"
+                android:paddingTop="12dp"
+                android:text="@string/Receive.share"
+                android:textColor="@color/light_gray"
+                android:textSize="18sp"
+                app:buttonType="2"
+                app:isBreadButton="true"
                 />
+
+            <com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/share_buttons_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2.0"
+                app:backgroundColor="@color/extra_light_blue_background"
+                app:strokeColor="@color/extra_light_gray"
+                app:withStroke="true">
+
+                <com.breadwallet.presenter.customviews.BRButton
+                    android:id="@+id/share_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="32dp"
+                    android:layout_weight="1.0"
+                    android:paddingBottom="12dp"
+                    android:paddingTop="12dp"
+                    android:text="@string/Receive.emailButton"
+                    android:textColor="@color/light_gray"
+                    android:textSize="14sp"
+                    app:buttonType="2"
+                    app:isBreadButton="true"
+                    />
+
+                <com.breadwallet.presenter.customviews.BRButton
+                    android:id="@+id/share_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="32dp"
+                    android:layout_weight="1.0"
+                    android:paddingBottom="12dp"
+                    android:paddingTop="12dp"
+                    android:text="@string/Receive.textButton"
+                    android:textColor="@color/light_gray"
+                    android:textSize="14sp"
+                    app:buttonType="2"
+                    app:isBreadButton="true"
+                    />
+
+            </com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret>
 
             <View
-                android:id="@+id/separator3"
+                android:id="@+id/separator"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/extra_light_gray"
-                />
+                android:background="@color/separator_gray"/>
+
+            <com.breadwallet.presenter.customviews.BRButton
+                android:id="@+id/request_button"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/big_button_height"
+                android:layout_marginBottom="32dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="16dp"
+                android:padding="10dp"
+                android:text="@string/Receive.request"
+                android:textColor="@color/almost_black"
+                android:textSize="18sp"
+                app:buttonType="2"
+                app:isBreadButton="true"/>
+
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/qr_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:src="@drawable/ic_check_mark_grey"
-            />
+    </ScrollView>
 
-        <com.breadwallet.presenter.customviews.BRText
-            android:id="@+id/address_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginStart="8dp"
-            android:text="----------------------------------"
-            android:textColor="@color/light_gray"
-            android:textSize="16sp"
-            />
-
-        <com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret
-            android:id="@+id/copied_layout"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginBottom="8dp"
-            app:backgroundColor="@color/dark_blue"
-            app:withStroke="false">
-
-            <com.breadwallet.presenter.customviews.BRText
-                android:id="@+id/copied_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginBottom="16dp"
-                android:layout_marginTop="16dp"
-                android:gravity="center"
-                android:text="@string/Receive.copied"
-                android:textColor="@color/white"/>
-        </com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret>
-
-        <com.breadwallet.presenter.customviews.BRButton
-            android:id="@+id/share_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="72dp"
-            android:layout_marginStart="72dp"
-            app:buttonType="2"
-            android:drawableStart="@drawable/ic_share_vertical_gray"
-            android:paddingBottom="12dp"
-            android:paddingLeft="48dp"
-            android:paddingRight="48dp"
-            android:paddingTop="12dp"
-            android:text="@string/Receive.share"
-            android:textColor="@color/light_gray"
-            android:textSize="18sp"
-            app:isBreadButton="true"
-            />
-
-        <com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/share_buttons_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="2.0"
-            app:backgroundColor="@color/extra_light_blue_background"
-            app:strokeColor="@color/extra_light_gray"
-            app:withStroke="true">
-
-            <com.breadwallet.presenter.customviews.BRButton
-                android:id="@+id/share_email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="32dp"
-                android:layout_weight="1.0"
-                app:buttonType="2"
-                android:paddingBottom="12dp"
-                android:paddingTop="12dp"
-                android:text="@string/Receive.emailButton"
-                android:textColor="@color/light_gray"
-                android:textSize="14sp"
-                app:isBreadButton="true"
-                />
-
-            <com.breadwallet.presenter.customviews.BRButton
-                android:id="@+id/share_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="32dp"
-                android:layout_weight="1.0"
-                app:buttonType="2"
-                android:paddingBottom="12dp"
-                android:paddingTop="12dp"
-                android:text="@string/Receive.textButton"
-                android:textColor="@color/light_gray"
-                android:textSize="14sp"
-                app:isBreadButton="true"
-                />
-
-        </com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret>
-
-        <View
-            android:id="@+id/separator"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/separator_gray"/>
-
-        <com.breadwallet.presenter.customviews.BRButton
-            android:id="@+id/request_button"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/big_button_height"
-            android:layout_marginBottom="32dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="16dp"
-            app:buttonType="2"
-            android:padding="10dp"
-            android:text="@string/Receive.request"
-            android:textColor="@color/almost_black"
-            android:textSize="18sp"
-            app:isBreadButton="true"/>
-
-    </LinearLayout>
 
 </LinearLayout>

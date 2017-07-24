@@ -72,7 +72,6 @@ public class FragmentReceive extends Fragment {
     public ImageView mQrImage;
     public LinearLayout backgroundLayout;
     public LinearLayout signalLayout;
-
     private String receiveAddress;
     private View separator;
     private BRButton shareButton;
