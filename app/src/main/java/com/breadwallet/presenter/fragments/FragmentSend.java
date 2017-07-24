@@ -297,7 +297,7 @@ public class FragmentSend extends Fragment {
                 BigDecimal satoshiAmount = BRExchange.getSatoshisFromAmount(getActivity(), iso, bigAmount);
 //                long amount = BRExchange.getAmountFromSatoshis(getActivity(), iso, satoshiAmount).longValue();
 
-                if (address.isEmpty()) {
+                if (address.isEmpty() || !BRWalletManager.validateAddress(address)) {
                     allFilled = false;
                     SpringAnimator.failShakeAnimation(getActivity(), addressEdit);
                 }
