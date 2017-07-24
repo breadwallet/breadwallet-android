@@ -1,6 +1,9 @@
 package com.breadwallet.presenter.fragments;
 
+import android.animation.Animator;
 import android.animation.LayoutTransition;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
@@ -15,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.OvershootInterpolator;
+import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -179,19 +183,18 @@ public class FragmentRequestAmount extends Fragment {
         itemLayoutTransition.setStartDelay(LayoutTransition.CHANGING, 0);
         itemLayoutTransition.setDuration(100);
         itemLayoutTransition.setInterpolator(LayoutTransition.CHANGING, new OvershootInterpolator(2f));
-        itemLayoutTransition.setAnimator(LayoutTransition.APPEARING, null);
+        Animator scaleUp = ObjectAnimator.ofPropertyValuesHolder((Object) null, PropertyValuesHolder.ofFloat(View.SCALE_X, 1, 1), PropertyValuesHolder.ofFloat(View.SCALE_Y, 0, 1));
+        scaleUp.setDuration(50);
+        scaleUp.setStartDelay(50);
+        Animator scaleDown = ObjectAnimator.ofPropertyValuesHolder((Object) null, PropertyValuesHolder.ofFloat(View.SCALE_X, 1, 1), PropertyValuesHolder.ofFloat(View.SCALE_Y, 1, 0));
+        scaleDown.setDuration(2);
+        itemLayoutTransition.setAnimator(LayoutTransition.APPEARING, scaleUp);
         itemLayoutTransition.setAnimator(LayoutTransition.DISAPPEARING, null);
         itemLayoutTransition.enableTransitionType(LayoutTransition.CHANGING);
 
         signalLayout.setLayoutTransition(itemLayoutTransition);
 
         signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                showKeyboard(true);
-//            }
-//        }, 300);
 
         return rootView;
     }
@@ -464,7 +467,6 @@ public class FragmentRequestAmount extends Fragment {
     }
 
     private void showKeyboard(boolean b) {
-        Log.e(TAG, "showKeyboard: " + b);
         int curIndex = signalLayout.indexOfChild(currencyListLayout) == -1 ? keyboardIndex - 1 : keyboardIndex;
 
         if (!b) {
