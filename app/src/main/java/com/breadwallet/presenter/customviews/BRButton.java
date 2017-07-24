@@ -59,7 +59,7 @@ public class BRButton extends Button {
     private int height;
     private Paint bPaint;
     private Paint bPaintStroke;
-    private int type;
+    private int type = 2;
     private static final float SHADOW_PRESSED = 0.88f;
     private static final float SHADOW_UNPRESSED = 0.95f;
     private float shadowOffSet = SHADOW_UNPRESSED;

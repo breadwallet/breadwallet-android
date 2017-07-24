@@ -151,7 +151,7 @@ public class FragmentRequestAmount extends Fragment {
         signalLayout.removeView(copiedLayout);
         signalLayout.removeView(request);
 
-        showKeyboard(false);
+        showKeyboard(true);
         showCurrencyList(false);
 
         final List<String> curList = new ArrayList<>();
