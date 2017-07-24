@@ -174,9 +174,6 @@ public class FragmentRequestAmount extends Fragment {
         keyboardPosition = signalLayout.indexOfChild(keyboard);
         updateText();
 
-
-
-
         signalLayout.setLayoutTransition(BRAnimator.getDefaultTransition());
 
         signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
@@ -485,11 +482,12 @@ public class FragmentRequestAmount extends Fragment {
 
 
     private void removeCurrencySelector() {
-        try {
-            signalLayout.removeView(currencyRecycler);
-        } catch (IllegalStateException ignored) {
+        showCurrencyList(false);
+//        try {
+//            signalLayout.removeView(currencyRecycler);
+//        } catch (IllegalStateException ignored) {
+//        }
 
-        }
     }
 
     private void showShareButtons(boolean b) {
