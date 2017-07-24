@@ -140,19 +140,8 @@ public class FragmentReceive extends Fragment {
         signalLayout.removeView(shareButtonsLayout);
         signalLayout.removeView(copiedLayout);
 
-        LayoutTransition itemLayoutTransition = new LayoutTransition();
-        itemLayoutTransition.setStartDelay(LayoutTransition.APPEARING, 0);
-        itemLayoutTransition.setStartDelay(LayoutTransition.DISAPPEARING, 0);
-        itemLayoutTransition.setStartDelay(LayoutTransition.CHANGE_APPEARING, 0);
-        itemLayoutTransition.setStartDelay(LayoutTransition.CHANGE_DISAPPEARING, 0);
-        itemLayoutTransition.setStartDelay(LayoutTransition.CHANGING, 0);
-        itemLayoutTransition.setDuration(100);
-        itemLayoutTransition.setInterpolator(LayoutTransition.CHANGING, new OvershootInterpolator(2f));
-        itemLayoutTransition.setAnimator(LayoutTransition.APPEARING, null);
-        itemLayoutTransition.setAnimator(LayoutTransition.DISAPPEARING, null);
-        itemLayoutTransition.enableTransitionType(LayoutTransition.CHANGING);
 
-        signalLayout.setLayoutTransition(itemLayoutTransition);
+        signalLayout.setLayoutTransition(BRAnimator.getDefaultTransition());
 
         signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
 

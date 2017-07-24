@@ -4,6 +4,9 @@ import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
+import android.animation.LayoutTransition;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.FragmentManager;
@@ -19,6 +22,7 @@ import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
@@ -188,6 +192,26 @@ public class BRAnimator {
             e.printStackTrace();
         }
 
+    }
+
+    public static LayoutTransition getDefaultTransition(){
+        LayoutTransition itemLayoutTransition = new LayoutTransition();
+        itemLayoutTransition.setStartDelay(LayoutTransition.APPEARING, 0);
+        itemLayoutTransition.setStartDelay(LayoutTransition.DISAPPEARING, 0);
+        itemLayoutTransition.setStartDelay(LayoutTransition.CHANGE_APPEARING, 0);
+        itemLayoutTransition.setStartDelay(LayoutTransition.CHANGE_DISAPPEARING, 0);
+        itemLayoutTransition.setStartDelay(LayoutTransition.CHANGING, 0);
+        itemLayoutTransition.setDuration(100);
+        itemLayoutTransition.setInterpolator(LayoutTransition.CHANGING, new OvershootInterpolator(2f));
+        Animator scaleUp = ObjectAnimator.ofPropertyValuesHolder((Object) null, PropertyValuesHolder.ofFloat(View.SCALE_X, 1, 1), PropertyValuesHolder.ofFloat(View.SCALE_Y, 0, 1));
+        scaleUp.setDuration(50);
+        scaleUp.setStartDelay(50);
+        Animator scaleDown = ObjectAnimator.ofPropertyValuesHolder((Object) null, PropertyValuesHolder.ofFloat(View.SCALE_X, 1, 1), PropertyValuesHolder.ofFloat(View.SCALE_Y, 1, 0));
+        scaleDown.setDuration(2);
+        itemLayoutTransition.setAnimator(LayoutTransition.APPEARING, scaleUp);
+        itemLayoutTransition.setAnimator(LayoutTransition.DISAPPEARING, null);
+        itemLayoutTransition.enableTransitionType(LayoutTransition.CHANGING);
+        return itemLayoutTransition;
     }
 
     public static void showRequestFragment(Activity app, String address) {
