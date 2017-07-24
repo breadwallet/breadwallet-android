@@ -5,15 +5,18 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.OvershootInterpolator;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -22,6 +25,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRKeyboard;
@@ -173,6 +177,7 @@ public class FragmentSend extends Fragment {
                 showKeyboard(true);
             }
         });
+
         paste.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -352,6 +357,22 @@ public class FragmentSend extends Fragment {
 
             }
         }));
+
+        addressEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE) || (actionId == EditorInfo.IME_ACTION_NEXT)) {
+                    Utils.hideKeyboard(getActivity());
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            showKeyboard(true);
+                        }
+                    }, 500);
+
+                }
+                return false;
+            }
+        });
 
         keyboard.addOnInsertListener(new BRKeyboard.OnInsertListener() {
             @Override
