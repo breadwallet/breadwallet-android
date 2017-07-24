@@ -95,7 +95,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         return itemFeed;
     }
 
-
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // inflate the layout
@@ -112,7 +111,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-//        Log.e(TAG, "onBindViewHolder: holder.getItemViewType:" + holder.getItemViewType() + " ,pos:" + position + ", current: " + currentPrompt + ", holder: " + holder);
         switch (holder.getItemViewType()) {
             case txType:
                 setTexts((TxHolder) holder, position);

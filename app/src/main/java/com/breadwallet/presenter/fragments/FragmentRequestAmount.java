@@ -483,11 +483,6 @@ public class FragmentRequestAmount extends Fragment {
 
     private void removeCurrencySelector() {
         showCurrencyList(false);
-//        try {
-//            signalLayout.removeView(currencyRecycler);
-//        } catch (IllegalStateException ignored) {
-//        }
-
     }
 
     private void showShareButtons(boolean b) {
