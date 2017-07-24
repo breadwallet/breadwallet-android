@@ -240,7 +240,7 @@ public class BRPeerManager {
                 app = BreadActivity.getApp();
                 progressStatus = 0;
                 running = true;
-                Log.e(TAG, "run: starting: " + progressStatus);
+                Log.d(TAG, "run: starting: " + progressStatus);
 
                 if (app != null) {
                     final long lastBlockTimeStamp = BRPeerManager.getInstance().getLastBlockTimestamp() * 1000;
@@ -265,7 +265,7 @@ public class BRPeerManager {
                             continue;
                         }
                         final long lastBlockTimeStamp = BRPeerManager.getInstance().getLastBlockTimestamp() * 1000;
-                        Log.e(TAG, "run: changing the progress to: " + progressStatus + ": " + Thread.currentThread().getName());
+//                        Log.e(TAG, "run: changing the progress to: " + progressStatus + ": " + Thread.currentThread().getName());
                         app.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -283,7 +283,7 @@ public class BRPeerManager {
                         });
 
                     } else {
-                        Log.e(TAG, "run: app is null");
+//                        Log.e(TAG, "run: app is null");
                         app = BreadActivity.getApp();
                     }
 
@@ -295,7 +295,7 @@ public class BRPeerManager {
 
                 }
 
-                Log.e(TAG, "run: SyncProgress task finished:" + Thread.currentThread().getName());
+                Log.d(TAG, "run: SyncProgress task finished:" + Thread.currentThread().getName());
             } finally {
                 if (progressStatus != 1) {
                     throw new RuntimeException("didn't finish");
@@ -360,7 +360,6 @@ public class BRPeerManager {
 
     public void addStatusUpdateListener(OnTxStatusUpdate listener) {
         if (statusUpdateListeners == null) {
-            Log.e(TAG, "addBalanceChangedListener: statusUpdateListeners is null");
             return;
         }
         if (!statusUpdateListeners.contains(listener))
@@ -369,7 +368,6 @@ public class BRPeerManager {
 
     public void removeListener(OnTxStatusUpdate listener) {
         if (statusUpdateListeners == null) {
-            Log.e(TAG, "addBalanceChangedListener: statusUpdateListeners is null");
             return;
         }
         statusUpdateListeners.remove(listener);
