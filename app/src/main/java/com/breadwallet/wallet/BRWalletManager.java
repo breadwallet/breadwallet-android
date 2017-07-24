@@ -105,6 +105,7 @@ public class BRWalletManager {
     private static final int BLACK = 0xFF000000;
 
     private static int messageId = 0;
+    private boolean walletCreated;
 
     private BRWalletManager() {
     }
@@ -634,7 +635,6 @@ public class BRWalletManager {
                         if (maxAmountDouble == -1) {
                             RuntimeException ex = new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL");
                             FirebaseCrash.report(ex);
-                            BRWalletManager.getInstance(ctx).setUpTheWallet(ctx);
                             return;
 //                            throw ex;
                         }
@@ -918,62 +918,61 @@ public class BRWalletManager {
 
     public void setUpTheWallet(final Activity ctx) {
         Log.d(TAG, "setUpTheWallet...");
+        synchronized (this) {
+            if (walletCreated) return; //return if the wallet was already created
+        }
         Assert.assertNotNull(ctx);
-        if (ctx == null) return;
         BRWalletManager m = BRWalletManager.getInstance(ctx);
         final BRPeerManager pm = BRPeerManager.getInstance(ctx);
 
         SQLiteManager sqLiteManager = SQLiteManager.getInstance(ctx);
 
-        if (!m.isCreated()) {
-            List<BRTransactionEntity> transactions = sqLiteManager.getTransactions();
-            int transactionsCount = transactions.size();
-            if (transactionsCount > 0) {
-                m.createTxArrayWithCount(transactionsCount);
-                for (BRTransactionEntity entity : transactions) {
-                    m.putTransaction(entity.getBuff(), entity.getBlockheight(), entity.getTimestamp());
-                }
+        List<BRTransactionEntity> transactions = sqLiteManager.getTransactions();
+        int transactionsCount = transactions.size();
+        if (transactionsCount > 0) {
+            m.createTxArrayWithCount(transactionsCount);
+            for (BRTransactionEntity entity : transactions) {
+                m.putTransaction(entity.getBuff(), entity.getBlockheight(), entity.getTimestamp());
             }
-
-            byte[] pubkeyEncoded = KeyStoreManager.getMasterPublicKey(ctx);
-
-            //Save the first address for future check
-            m.createWallet(transactionsCount, pubkeyEncoded);
-            String firstAddress = BRWalletManager.getFirstAddress(pubkeyEncoded);
-            SharedPreferencesManager.putFirstAddress(ctx, firstAddress);
-            long fee = SharedPreferencesManager.getFeePerKb(ctx);
-            if (fee == 0) fee = BRConstants.DEFAULT_FEE_PER_KB;
-            BRWalletManager.getInstance(ctx).setFeePerKb(fee);
         }
 
-        if (!pm.isCreated()) {
-            List<BRMerkleBlockEntity> blocks = sqLiteManager.getBlocks();
-            List<BRPeerEntity> peers = sqLiteManager.getPeers();
-            final int blocksCount = blocks.size();
-            final int peersCount = peers.size();
-            if (blocksCount > 0) {
-                pm.createBlockArrayWithCount(blocksCount);
-                for (BRMerkleBlockEntity entity : blocks) {
-                    pm.putBlock(entity.getBuff(), entity.getBlockHeight());
-                }
-            }
-            if (peersCount > 0) {
-                pm.createPeerArrayWithCount(peersCount);
-                for (BRPeerEntity entity : peers) {
-                    pm.putPeer(entity.getAddress(), entity.getPort(), entity.getTimeStamp());
-                }
-            }
-            Log.d(TAG, "blocksCount before connecting: " + blocksCount);
-            Log.d(TAG, "peersCount before connecting: " + peersCount);
+        byte[] pubkeyEncoded = KeyStoreManager.getMasterPublicKey(ctx);
 
-            int walletTimeString = KeyStoreManager.getWalletCreationTime(ctx);
-            Log.e(TAG, "setUpTheWallet: walletTimeString: " + walletTimeString);
-            pm.create(walletTimeString, blocksCount, peersCount);
+        //Save the first address for future check
+        m.createWallet(transactionsCount, pubkeyEncoded);
+        String firstAddress = BRWalletManager.getFirstAddress(pubkeyEncoded);
+        SharedPreferencesManager.putFirstAddress(ctx, firstAddress);
+        long fee = SharedPreferencesManager.getFeePerKb(ctx);
+        if (fee == 0) fee = BRConstants.DEFAULT_FEE_PER_KB;
+        BRWalletManager.getInstance(ctx).setFeePerKb(fee);
 
+        List<BRMerkleBlockEntity> blocks = sqLiteManager.getBlocks();
+        List<BRPeerEntity> peers = sqLiteManager.getPeers();
+        final int blocksCount = blocks.size();
+        final int peersCount = peers.size();
+        if (blocksCount > 0) {
+            pm.createBlockArrayWithCount(blocksCount);
+            for (BRMerkleBlockEntity entity : blocks) {
+                pm.putBlock(entity.getBuff(), entity.getBlockHeight());
+            }
         }
+        if (peersCount > 0) {
+            pm.createPeerArrayWithCount(peersCount);
+            for (BRPeerEntity entity : peers) {
+                pm.putPeer(entity.getAddress(), entity.getPort(), entity.getTimeStamp());
+            }
+        }
+        Log.d(TAG, "blocksCount before connecting: " + blocksCount);
+        Log.d(TAG, "peersCount before connecting: " + peersCount);
+
+        int walletTimeString = KeyStoreManager.getWalletCreationTime(ctx);
+        Log.e(TAG, "setUpTheWallet: walletTimeString: " + walletTimeString);
+        pm.create(walletTimeString, blocksCount, peersCount);
+
 
         BRPeerManager.getInstance(ctx).updateFixedPeer();
         pm.connect();
+        setWalletCreated(true);
         if (SharedPreferencesManager.getStartHeight(ctx) == 0)
             new Thread(new Runnable() {
                 @Override
@@ -1112,6 +1111,15 @@ public class BRWalletManager {
         });
     }
 
+    public boolean isWalletCreated() {
+        return walletCreated;
+    }
+
+    public void setWalletCreated(boolean walletCreated) {
+        Log.e(TAG, "setWalletCreated to " + walletCreated);
+        this.walletCreated = walletCreated;
+    }
+
     private native byte[] encodeSeed(byte[] seed, String[] wordList);
 
     public native void createWallet(int transactionCount, byte[] pubkey);
@@ -1138,7 +1146,7 @@ public class BRWalletManager {
 
     public native long getMaxOutputAmount();
 
-    public native boolean isCreated();
+//    public native boolean isCreated();
 
     public native boolean transactionIsVerified(String txHash);
 
