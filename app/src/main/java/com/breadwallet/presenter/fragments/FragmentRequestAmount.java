@@ -175,24 +175,9 @@ public class FragmentRequestAmount extends Fragment {
         updateText();
 
 
-        LayoutTransition itemLayoutTransition = new LayoutTransition();
-        itemLayoutTransition.setStartDelay(LayoutTransition.APPEARING, 0);
-        itemLayoutTransition.setStartDelay(LayoutTransition.DISAPPEARING, 0);
-        itemLayoutTransition.setStartDelay(LayoutTransition.CHANGE_APPEARING, 0);
-        itemLayoutTransition.setStartDelay(LayoutTransition.CHANGE_DISAPPEARING, 0);
-        itemLayoutTransition.setStartDelay(LayoutTransition.CHANGING, 0);
-        itemLayoutTransition.setDuration(100);
-        itemLayoutTransition.setInterpolator(LayoutTransition.CHANGING, new OvershootInterpolator(2f));
-        Animator scaleUp = ObjectAnimator.ofPropertyValuesHolder((Object) null, PropertyValuesHolder.ofFloat(View.SCALE_X, 1, 1), PropertyValuesHolder.ofFloat(View.SCALE_Y, 0, 1));
-        scaleUp.setDuration(50);
-        scaleUp.setStartDelay(50);
-        Animator scaleDown = ObjectAnimator.ofPropertyValuesHolder((Object) null, PropertyValuesHolder.ofFloat(View.SCALE_X, 1, 1), PropertyValuesHolder.ofFloat(View.SCALE_Y, 1, 0));
-        scaleDown.setDuration(2);
-        itemLayoutTransition.setAnimator(LayoutTransition.APPEARING, scaleUp);
-        itemLayoutTransition.setAnimator(LayoutTransition.DISAPPEARING, null);
-        itemLayoutTransition.enableTransitionType(LayoutTransition.CHANGING);
 
-        signalLayout.setLayoutTransition(itemLayoutTransition);
+
+        signalLayout.setLayoutTransition(BRAnimator.getDefaultTransition());
 
         signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
 
