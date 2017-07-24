@@ -418,6 +418,7 @@ public class MainActivity extends FragmentActivity implements Observer {
         //sync the kv stores
         if (PLATFORM_ON)
             APIClient.getInstance(this).syncKvStore();
+
         BRWalletManager.getInstance(this).setWalletCreated(false);
 
     }
