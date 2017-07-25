@@ -4,6 +4,7 @@ import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -23,6 +24,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
@@ -395,12 +397,13 @@ public class FragmentSend extends Fragment {
     }
 
     private void showKeyboard(boolean b) {
-
         int curIndex = signalLayout.indexOfChild(currencyListLayout) == -1 ? keyboardIndex - 1 : keyboardIndex;
 
         if (!b) {
             signalLayout.removeView(keyboardLayout);
+
         } else {
+            Utils.hideKeyboard(getActivity());
             if (signalLayout.indexOfChild(keyboardLayout) == -1)
                 signalLayout.addView(keyboardLayout, curIndex);
             else
@@ -607,6 +610,19 @@ public class FragmentSend extends Fragment {
             }
         }
         amountEdit.setText(newAmount.toString());
+    }
+
+    // from the link above
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        // Checks whether a hardware keyboard is available
+        if (newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_NO) {
+            showKeyboard(true);
+        } else if (newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES) {
+            showKeyboard(false);
+        }
     }
 
 }
