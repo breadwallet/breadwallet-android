@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <set xmlns:android="http://schemas.android.com/apk/res/android"
-     android:shareInterpolator="false"
-     android:startOffset="175"
+     android:shareInterpolator="true"
+     android:startOffset="100"
      >
     <scale
-        android:duration="175"
+        android:duration="100"
         android:fromXScale="1.0"
         android:fromYScale="0.0"
         android:pivotX="50%"
