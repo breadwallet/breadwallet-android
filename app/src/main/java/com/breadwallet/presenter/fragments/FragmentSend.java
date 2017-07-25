@@ -186,7 +186,7 @@ public class FragmentSend extends Fragment {
                 removeCurrencySelector();
                 if (!BRAnimator.isClickAllowed()) return;
                 String bitcoinUrl = BRClipboardManager.getClipboard(getActivity());
-                if (Utils.isNullOrEmpty(bitcoinUrl)) {
+                if (Utils.isNullOrEmpty(bitcoinUrl) || !isInputValid(bitcoinUrl)) {
                     showClipboardError();
                     return;
                 }
@@ -610,6 +610,10 @@ public class FragmentSend extends Fragment {
             }
         }
         amountEdit.setText(newAmount.toString());
+    }
+
+    private boolean isInputValid(String input) {
+        return input.matches("[a-zA-Z0-9]*");
     }
 
     // from the link above
