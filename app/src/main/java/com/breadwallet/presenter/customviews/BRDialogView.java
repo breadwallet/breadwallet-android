@@ -73,7 +73,7 @@ public class BRDialogView extends DialogFragment {
         positiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!BRAnimator.isClickAllowed()) return;
+                if (!BRAnimator.isClickAllowed()) return;
                 posListener.onClick(BRDialogView.this);
             }
         });
@@ -81,7 +81,7 @@ public class BRDialogView extends DialogFragment {
         negativeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!BRAnimator.isClickAllowed()) return;
+                if (!BRAnimator.isClickAllowed()) return;
                 negListener.onClick(BRDialogView.this);
             }
         });
@@ -90,9 +90,16 @@ public class BRDialogView extends DialogFragment {
 
         builder.setView(view);
 //        builder.setPositiveButton()
-        builder.setOnDismissListener(dismissListener);
+//        builder.setOnDismissListener(dismissListener);
         // Create the AlertDialog object and return it
         return builder.create();
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        if (dismissListener != null)
+            dismissListener.onDismiss(dialog);
     }
 
     @Override
