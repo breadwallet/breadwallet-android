@@ -128,6 +128,7 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
         cancelButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                searchEdit.setText("");
                 breadActivity.barFlipper.setDisplayedChild(0);
                 clearSwitches();
                 onShow(false);
