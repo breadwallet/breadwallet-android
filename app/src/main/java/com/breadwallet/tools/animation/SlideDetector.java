@@ -64,7 +64,7 @@ public class SlideDetector implements View.OnTouchListener {
                             .start();
                 break;
             case MotionEvent.ACTION_UP:
-                if (_root.getY() > origY + _root.getHeight() / 2) {
+                if (_root.getY() > origY + _root.getHeight() / 5) {
                     _root.animate()
                             .y(_root.getHeight() * 2)
                             .setDuration(200)
