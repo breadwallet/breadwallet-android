@@ -485,6 +485,7 @@ public class FragmentSend extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        Utils.hideKeyboard(getActivity());
     }
 
 
