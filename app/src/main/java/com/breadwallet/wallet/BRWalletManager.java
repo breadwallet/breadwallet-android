@@ -44,6 +44,7 @@ import com.breadwallet.tools.util.BRStringFormatter;
 import com.breadwallet.tools.manager.CurrencyManager;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.util.TypesConverter;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.tools.util.WordsReader;
 import com.breadwallet.tools.adapter.CustomPagerAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -64,6 +65,7 @@ import junit.framework.Assert;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.security.SecureRandom;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Locale;
@@ -159,11 +161,14 @@ public class BRWalletManager {
         KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), ctx);
         byte[] strBytes = TypesConverter.getNullTerminatedPhrase(strPhrase);
         byte[] pubKey = BRWalletManager.getInstance(ctx).getMasterPubKey(strBytes);
+        if (Utils.isNullOrEmpty(pubKey))
+            throw new RuntimeException("pubkey is malformed: " + Arrays.toString(pubKey));
         KeyStoreManager.putMasterPublicKey(pubKey, ctx);
 
         return true;
 
     }
+
 
     public boolean wipeKeyStore(Context context) {
         Log.e(TAG, "wipeKeyStore");
@@ -214,6 +219,7 @@ public class BRWalletManager {
                 public void run() {
                     final MainFragmentQR mainFragmentQR = CustomPagerAdapter.adapter == null ? null : CustomPagerAdapter.adapter.mainFragmentQR;
                     final String tmpAddr = getReceiveAddress();
+                    Log.e(TAG, "run: got address: " + tmpAddr);
                     if (tmpAddr == null || tmpAddr.isEmpty()) return;
                     SharedPreferencesManager.putReceiveAddress(ctx, tmpAddr);
                     if (mainFragmentQR == null) return;
@@ -937,6 +943,8 @@ public class BRWalletManager {
         }
 
         byte[] pubkeyEncoded = KeyStoreManager.getMasterPublicKey(ctx);
+        if (pubkeyEncoded == null || pubkeyEncoded.length == 0)
+            throw new RuntimeException("pubkey is malformed: " + Arrays.toString(pubkeyEncoded));
 
         //Save the first address for future check
         m.createWallet(transactionsCount, pubkeyEncoded);
@@ -962,8 +970,8 @@ public class BRWalletManager {
                 pm.putPeer(entity.getAddress(), entity.getPort(), entity.getTimeStamp());
             }
         }
-        Log.d(TAG, "blocksCount before connecting: " + blocksCount);
-        Log.d(TAG, "peersCount before connecting: " + peersCount);
+//        Log.d(TAG, "blocksCount before connecting: " + blocksCount);
+//        Log.d(TAG, "peersCount before connecting: " + peersCount);
 
         int walletTimeString = KeyStoreManager.getWalletCreationTime(ctx);
         Log.e(TAG, "setUpTheWallet: walletTimeString: " + walletTimeString);
@@ -980,7 +988,6 @@ public class BRWalletManager {
                     SharedPreferencesManager.putStartHeight(ctx, BRPeerManager.getCurrentBlockHeight());
                 }
             }).start();
-
 
     }
 

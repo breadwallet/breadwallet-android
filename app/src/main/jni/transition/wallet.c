@@ -66,8 +66,7 @@ void callback(void *info, int error) {
     if (error) {
         __android_log_print(ANDROID_LOG_ERROR, "Message from callback: ", "publishing Failed: %s",
                             strerror(error));
-    }
-    else {
+    } else {
         __android_log_print(ANDROID_LOG_DEBUG, "Message from callback: ", "publishing Succeeded!");
     }
 
@@ -112,8 +111,7 @@ static void txAdded(void *info, BRTransaction *tx) {
 //    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "fee: %d", (int)fee);
     if (BRWalletAmountSentByTx(_wallet, tx) == 0) {
         amount = (jlong) BRWalletAmountReceivedFromTx(_wallet, tx);
-    }
-    else {
+    } else {
         amount = (jlong) (
                 (BRWalletAmountSentByTx(_wallet, tx) - BRWalletAmountReceivedFromTx(_wallet, tx) -
                  fee) * -1);
@@ -239,8 +237,7 @@ Java_com_breadwallet_wallet_BRWalletManager_createWallet(JNIEnv *env, jobject th
             free(_transactions);
             _transactions = NULL;
         }
-    }
-    else {
+    } else {
         w = BRWalletNew(NULL, 0, pubKey);
     }
 
@@ -321,6 +318,8 @@ JNIEXPORT jstring JNICALL Java_com_breadwallet_wallet_BRWalletManager_getReceive
     if (!_wallet) return NULL;
 
     BRAddress receiveAddress = BRWalletReceiveAddress(_wallet);
+    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "getReceiveAddress:%s",
+                        receiveAddress.s);
 
     return (*env)->NewStringUTF(env, receiveAddress.s);
 }
@@ -377,8 +376,8 @@ JNIEXPORT jobjectArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTr
                     (*env)->DeleteLocalRef(env, str);
                 }
 
-            }
-            else if (BRWalletContainsAddress(_wallet, transactions_sqlite[i]->outputs[j].address)) {
+            } else if (BRWalletContainsAddress(_wallet,
+                                               transactions_sqlite[i]->outputs[j].address)) {
                 jstring str = (*env)->NewStringUTF(env, transactions_sqlite[i]->outputs[j].address);
                 (*env)->SetObjectArrayElement(env, JtoAddresses, outCountAfterFilter, str);
                 (*env)->SetLongArrayRegion(env, JoutAmounts, outCountAfterFilter++, 1,
@@ -398,8 +397,7 @@ JNIEXPORT jobjectArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTr
 
                 (*env)->SetObjectArrayElement(env, JfromAddresses, inCountAfterFilter++, str);
                 (*env)->DeleteLocalRef(env, str);
-            }
-            else {
+            } else {
                 jstring str = (*env)->NewStringUTF(env, transactions_sqlite[i]->inputs[j].address);
 
                 (*env)->SetObjectArrayElement(env, JfromAddresses, inCountAfterFilter++, str);
@@ -727,8 +725,7 @@ Java_com_breadwallet_wallet_BRWalletManager_decryptBip38Key(JNIEnv *env, jobject
 
         BRKeyPrivKey(&key, pk, sizeof(pk));
         return (*env)->NewStringUTF(env, pk);
-    }
-    else return (*env)->NewStringUTF(env, "");
+    } else return (*env)->NewStringUTF(env, "");
 }
 
 JNIEXPORT void JNICALL Java_com_breadwallet_wallet_BRWalletManager_createInputArray(JNIEnv *env,

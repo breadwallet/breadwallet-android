@@ -220,8 +220,6 @@ public class PostAuthenticationProcessor {
     }
 
     public void onCanaryCheck(final IntroActivity introActivity, boolean authAsked) {
-
-
         String canary;
         try {
             canary = KeyStoreManager.getKeyStoreCanary(introActivity, BRConstants.CANARY_REQUEST_CODE);
