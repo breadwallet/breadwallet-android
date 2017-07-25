@@ -252,8 +252,9 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     }
 
     private void setUpBarFlipper() {
-        barFlipper.setInAnimation(AnimationUtils.loadAnimation(this, R.anim.enter_from_top));
-        barFlipper.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.exit_to_top));
+        barFlipper.setInAnimation(AnimationUtils.loadAnimation(this, R.anim.flipper_enter));
+
+        barFlipper.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.flipper_exit));
     }
 
     @Override

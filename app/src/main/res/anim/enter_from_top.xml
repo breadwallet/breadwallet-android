@@ -4,7 +4,7 @@
      android:shareInterpolator="false">
 
     <translate
-        android:duration="500"
+        android:duration="350"
         android:fromXDelta="0%"
         android:fromYDelta="-100%"
         android:interpolator="@anim/overshoot_interpolator"
