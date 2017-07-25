@@ -137,6 +137,7 @@ public class FragmentSend extends Fragment {
         setListeners();
 
         signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
+
         signalLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
