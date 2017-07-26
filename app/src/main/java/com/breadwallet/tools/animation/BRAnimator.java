@@ -78,6 +78,8 @@ public class BRAnimator {
     private static FragmentSignal fragmentSignal;
     private static boolean clickAllowed = true;
     public static final int SLIDE_ANIMATION_DURATION = 300;
+    public static float t1Size;
+    public static float t2Size;
 
     public static void showBreadSignal(Activity activity, String title, String iconDescription, int drawableId, BROnSignalCompletion completion) {
         fragmentSignal = new FragmentSignal();
@@ -92,6 +94,12 @@ public class BRAnimator {
         transaction.add(android.R.id.content, fragmentSignal, fragmentSignal.getClass().getName());
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    public static void init(Activity app) {
+        if (app == null) return;
+        t1Size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 30, app.getResources().getDisplayMetrics());
+        t2Size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 16, app.getResources().getDisplayMetrics());
     }
 
     public static void showFragmentByTag(Activity app, String tag) {
@@ -194,7 +202,7 @@ public class BRAnimator {
 
     }
 
-    public static LayoutTransition getDefaultTransition(){
+    public static LayoutTransition getDefaultTransition() {
         LayoutTransition itemLayoutTransition = new LayoutTransition();
         itemLayoutTransition.setStartDelay(LayoutTransition.APPEARING, 0);
         itemLayoutTransition.setStartDelay(LayoutTransition.DISAPPEARING, 0);
@@ -311,8 +319,8 @@ public class BRAnimator {
     public static void swapPriceTexts(final Context ctx, final TextView t1, final TextView t2) {
         SharedPreferencesManager.putPreferredBTC(ctx, !SharedPreferencesManager.getPreferredBTC(ctx));
 
-        final float t1Size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 34, ctx.getResources().getDisplayMetrics());
-        final float t2Size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 16, ctx.getResources().getDisplayMetrics());
+        final float t1Size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 30, ctx.getResources().getDisplayMetrics());
+        final float t2Size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 14, ctx.getResources().getDisplayMetrics());
         Log.e(TAG, "swapPriceTexts: t1Size: " + t1Size);
         Log.e(TAG, "swapPriceTexts: t2Size: " + t2Size);
 
