@@ -75,8 +75,9 @@ public class FragmentTransactionDetails extends Fragment {
                 // Check if this is the page you want.
             }
         });
-        txPagerAdapter = new TransactionPagerAdapter(getChildFragmentManager(), items);
+        txPagerAdapter = new TransactionPagerAdapter(getFragmentManager(), items);
         txViewPager.setAdapter(txPagerAdapter);
+        txViewPager.setOffscreenPageLimit(5);
         int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16 * 2, getResources().getDisplayMetrics());
         txViewPager.setPageMargin(-margin);
         int pos = getArguments().getInt("pos");
