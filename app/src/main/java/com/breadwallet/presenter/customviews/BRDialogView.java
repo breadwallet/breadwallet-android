@@ -89,7 +89,6 @@ public class BRDialogView extends DialogFragment {
             icon.setImageResource(iconRes);
 
         builder.setView(view);
-//        builder.setPositiveButton()
 //        builder.setOnDismissListener(dismissListener);
         // Create the AlertDialog object and return it
         return builder.create();
