@@ -171,7 +171,6 @@ public class BRWalletManager {
         byte[] seed = getSeedFromPhrase(nulTermPhrase);
         if (seed == null || seed.length == 0) throw new RuntimeException("seed is null");
         byte[] authKey = getAuthPrivKeyForAPI(seed);
-        Log.e(TAG, "generateRandomSeed authKey:" + Utils.bytesToHex(authKey)); //todo delete
         if (authKey == null || authKey.length == 0) {
             RuntimeException ex = new IllegalArgumentException("authKey is invalid");
             FirebaseCrash.report(ex);

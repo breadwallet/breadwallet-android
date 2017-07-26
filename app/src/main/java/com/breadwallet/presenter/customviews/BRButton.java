@@ -96,7 +96,7 @@ public class BRButton extends Button {
         TypefacesManager.setCustomFont(ctx, this, Utils.isNullOrEmpty(customFont) ? "CircularPro-Medium.otf" : customFont);
         float px16 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics());
         //check attributes you need, for example all paddings
-        int[] attributes = new int[]{android.R.attr.paddingLeft, android.R.attr.paddingTop, android.R.attr.paddingRight, android.R.attr.paddingBottom, R.attr.isBreadButton, R.attr.buttonType};
+        int[] attributes = new int[]{android.R.attr.paddingStart, android.R.attr.paddingTop, android.R.attr.paddingEnd, android.R.attr.paddingBottom, R.attr.isBreadButton, R.attr.buttonType};
         //then obtain typed array
         TypedArray arr = ctx.obtainStyledAttributes(attrs, attributes);
         //You can check if attribute exists (in this example checking paddingRight)

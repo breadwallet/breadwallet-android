@@ -33,8 +33,8 @@
                 android:id="@+id/close_button"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:background="@drawable/ic_close_black_24dp"
                 android:layout_margin="@dimen/bread_margin"
+                android:background="@drawable/ic_close_black_24dp"
                 tools:layout_editor_absoluteX="0dp"
                 tools:layout_editor_absoluteY="81dp"/>
 
@@ -74,7 +74,8 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
+            android:weightSum="2"
             android:orientation="horizontal">
 
             <com.breadwallet.presenter.customviews.BREdit
@@ -85,52 +86,53 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="16dp"
                 android:background="@android:color/transparent"
-                android:maxLines="1"
                 android:ellipsize="middle"
                 android:ems="10"
+                android:layout_weight="0.6"
                 android:hint="@string/Send.toLabel"
                 android:inputType="textPersonName"
+                android:maxLines="1"
                 />
 
             <com.breadwallet.presenter.customviews.BRButton
                 android:id="@+id/paste_button"
-                android:layout_width="@dimen/big_button_height"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="@dimen/bread_margin"
                 android:layout_marginTop="8dp"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:layout_weight="1.0"
-                app:buttonType="2"
-                android:minHeight="40dp"
-                android:paddingBottom="12dp"
+                android:layout_weight="0.7"
                 android:background="@android:color/transparent"
+                android:minHeight="50dp"
+                android:paddingBottom="12dp"
+                android:paddingEnd="8dp"
+                android:paddingStart="8dp"
                 android:paddingTop="12dp"
                 android:text="@string/Send.pasteLabel"
                 android:textColor="@color/light_gray"
                 android:textSize="16sp"
+                app:buttonType="2"
                 app:isBreadButton="true"
                 />
 
             <com.breadwallet.presenter.customviews.BRButton
                 android:id="@+id/scan"
-                android:layout_width="@dimen/big_button_height"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="@dimen/bread_margin"
                 android:layout_marginTop="8dp"
-                android:layout_weight="1.0"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                app:buttonType="2"
-                android:minHeight="40dp"
-                android:paddingBottom="12dp"
+                android:layout_weight="0.7"
                 android:background="@android:color/transparent"
+                android:minHeight="50dp"
+                android:paddingBottom="12dp"
+                android:paddingEnd="8dp"
+                android:paddingStart="8dp"
                 android:paddingTop="12dp"
                 android:text="@string/Send.scanLabel"
                 android:textColor="@color/light_gray"
                 android:textSize="16sp"
+                app:buttonType="2"
                 app:isBreadButton="true"
                 />
 
@@ -200,12 +202,12 @@
                 android:layout_marginEnd="@dimen/bread_margin"
                 android:layout_marginTop="16dp"
                 android:background="@android:color/transparent"
-                app:buttonType="2"
                 android:drawablePadding="4dp"
                 android:minHeight="40dp"
                 android:text="iso"
                 android:textColor="@color/light_gray"
                 android:textSize="18sp"
+                app:buttonType="2"
                 app:isBreadButton="true"
                 />
 
@@ -227,9 +229,9 @@
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/cur_spinner"
-                android:layout_gravity="center_vertical"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
+                android:layout_gravity="center_vertical"
                 android:background="@color/button_secondary"
                 />
 
@@ -275,9 +277,9 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:background="@android:color/transparent"
-            android:maxLength="250"
             android:hint="Memo"
             android:inputType="textPersonName"
+            android:maxLength="250"
             />
 
         <View
@@ -296,11 +298,11 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="16dp"
             android:background="@android:color/transparent"
-            app:buttonType="1"
             android:padding="10dp"
             android:text="@string/Send.sendLabel"
             android:textColor="@color/white"
             android:textSize="20sp"
+            app:buttonType="1"
             app:isBreadButton="true"
             />
 
