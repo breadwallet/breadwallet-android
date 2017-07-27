@@ -1,9 +1,11 @@
 package com.breadwallet.presenter.fragments;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,7 +52,6 @@ public class FragmentTransactionDetails extends Fragment {
 
     public TextView mTitle;
     public LinearLayout backgroundLayout;
-    public static final int ANIMATION_DURATION = 300;
     private ViewPager txViewPager;
     private TransactionPagerAdapter txPagerAdapter;
     private List<TxItem> items;
@@ -59,7 +60,6 @@ public class FragmentTransactionDetails extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // The last two arguments ensure LayoutParams are inflated
         // properly.
-
         View rootView = inflater.inflate(R.layout.fragment_transaction_details, container, false);
         mTitle = (TextView) rootView.findViewById(R.id.title);
         backgroundLayout = (LinearLayout) rootView.findViewById(R.id.background_layout);
@@ -75,7 +75,7 @@ public class FragmentTransactionDetails extends Fragment {
                 // Check if this is the page you want.
             }
         });
-        txPagerAdapter = new TransactionPagerAdapter(getFragmentManager(), items);
+        txPagerAdapter = new TransactionPagerAdapter(getChildFragmentManager(), items);
         txViewPager.setAdapter(txPagerAdapter);
         txViewPager.setOffscreenPageLimit(5);
         int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16 * 2, getResources().getDisplayMetrics());
@@ -107,12 +107,15 @@ public class FragmentTransactionDetails extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+        final Activity app = getActivity();
         BRAnimator.animateBackgroundDim(backgroundLayout, true);
         BRAnimator.animateSignalSlide(txViewPager, true, new BRAnimator.OnSlideAnimationEnd() {
             @Override
             public void onAnimationEnd() {
-                if (getActivity() != null)
-                    getActivity().getFragmentManager().popBackStack();
+                if (app != null)
+                    app.getFragmentManager().popBackStack();
+                else
+                    Log.e(TAG, "onAnimationEnd: app is null");
             }
         });
     }
@@ -126,7 +129,6 @@ public class FragmentTransactionDetails extends Fragment {
     public void onPause() {
         super.onPause();
     }
-
 
     public void setItems(List<TxItem> items) {
         this.items = items;

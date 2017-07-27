@@ -321,22 +321,11 @@ public class BRAnimator {
 
         final float t1Size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 30, ctx.getResources().getDisplayMetrics());
         final float t2Size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 14, ctx.getResources().getDisplayMetrics());
-        Log.e(TAG, "swapPriceTexts: t1Size: " + t1Size);
-        Log.e(TAG, "swapPriceTexts: t2Size: " + t2Size);
 
-
-//        t2.setTextSize(TypedValue.COMPLEX_UNIT_PX, t1Size);//make it the size it should be after animation to get the X
-//        t1.setTextSize(TypedValue.COMPLEX_UNIT_PX, t2Size);//make it the size it should be after animation to get the X
-//        t2.setText(t2.getText() + "\n");
-//        t1.setText(t1.getText() + "\n");
         final float t1W = t1.getWidth();
         final float t2W = t2.getWidth();
         final float t1X = t1.getX();
         final float t2X = t2.getX();
-//        t2.setTextSize(TypedValue.COMPLEX_UNIT_PX, t2Size);//make it back the original size
-//        t1.setTextSize(TypedValue.COMPLEX_UNIT_PX, t1Size);//make it back the original size
-//        t2.setText(t2.getText() + "\n");
-//        t1.setText(t1.getText() + "\n");
 
         String t1Text = t1.getText().toString();
         String t2Text = t2.getText().toString();
@@ -348,7 +337,6 @@ public class BRAnimator {
 
         float marLeft = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, ctx.getResources().getDisplayMetrics());
 
-        Log.e(TAG, "swapPriceTexts: t1X: " + t1X + ", t2W: " + t2W + ",  t2X:" + t2X);
 
         ColorStateList t1Colors = t1.getTextColors();
         ColorStateList t2Colors = t2.getTextColors();
@@ -391,14 +379,16 @@ public class BRAnimator {
         float translationY = signalLayout.getTranslationY();
         float signalHeight = signalLayout.getHeight();
         signalLayout.setTranslationY(reverse ? translationY : translationY + signalHeight);
-        signalLayout.animate().translationY(reverse ? 2600 : translationY).setDuration(SLIDE_ANIMATION_DURATION).setInterpolator(reverse ? new DecelerateInterpolator() : new OvershootInterpolator(0.7f)).setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                if (listener != null)
-                    listener.onAnimationEnd();
-            }
-        });
+        signalLayout.animate().translationY(reverse ? 2600 : translationY).setDuration(SLIDE_ANIMATION_DURATION)
+                .setInterpolator(reverse ? new DecelerateInterpolator() : new OvershootInterpolator(0.7f))
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        if (listener != null)
+                            listener.onAnimationEnd();
+                    }
+                });
 
     }
 
