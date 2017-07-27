@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -15,11 +16,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.entities.TxItem;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -28,6 +32,7 @@ import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRExchange;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.entities.TxMetaData;
@@ -89,7 +94,7 @@ public class FragmentTransactionItem extends Fragment {
         // The last two arguments ensure LayoutParams are inflated
         // properly.
 
-        View rootView = inflater.inflate(R.layout.transaction_details_item, container, false);
+        final View rootView = inflater.inflate(R.layout.transaction_details_item, container, false);
         signalLayout = (LinearLayout) rootView.findViewById(R.id.signal_layout);
         mTitle = (TextView) rootView.findViewById(R.id.title);
         mDescriptionText = (TextView) rootView.findViewById(R.id.description_text);
@@ -139,6 +144,7 @@ public class FragmentTransactionItem extends Fragment {
                     app.getFragmentManager().popBackStack();
             }
         });
+        signalLayout.getViewTreeObserver().addOnGlobalLayoutListener(new OnViewGlobalLayoutListener(signalLayout));
 
         return rootView;
     }
@@ -302,6 +308,22 @@ public class FragmentTransactionItem extends Fragment {
         String str2 = date2.format(currentLocalTime);
 
         return str1 + " at " + str2;
+    }
+
+    private static class OnViewGlobalLayoutListener implements ViewTreeObserver.OnGlobalLayoutListener {
+        private final static int maxHeight = 130;
+        private View view;
+
+        public OnViewGlobalLayoutListener(View view) {
+            this.view = view;
+        }
+
+        @Override
+        public void onGlobalLayout() {
+            if (view.getHeight() > maxHeight)
+                view.getLayoutParams().height = maxHeight;
+            view.requestLayout();
+        }
     }
 
 
