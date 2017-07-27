@@ -132,10 +132,11 @@ public class Utils {
     }
 
     public static String formatTimeStamp(long time, String pattern) {
-        SimpleDateFormat formatter = new SimpleDateFormat(pattern, Locale.getDefault());
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(time);
-        return formatter.format(calendar.getTime());
+//        SimpleDateFormat formatter = new SimpleDateFormat(pattern, Locale.getDefault());
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.setTimeInMillis(time);
+        return android.text.format.DateFormat.format(
+                pattern, time).toString();
     }
 
     public static boolean isNullOrEmpty(String str) {
