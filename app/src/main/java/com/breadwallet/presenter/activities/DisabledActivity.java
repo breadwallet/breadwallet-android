@@ -123,8 +123,10 @@ public class DisabledActivity extends BRActivity {
                     public void run() {
                         refresh();
                     }
-                }, 1000);
-
+                }, 2000);
+                long durationSeconds = 0;
+                untilLabel.setText(String.format(Locale.getDefault(),"%02d:%02d:%02d", durationSeconds / 3600,
+                        (durationSeconds % 3600) / 60, (durationSeconds % 60)));
             }
         }.start();
     }
