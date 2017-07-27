@@ -107,6 +107,7 @@ public class BRCurrency {
         decimalFormatSymbols.setCurrencySymbol(symbol);
 //        currencyFormat.setMaximumFractionDigits(decimalPoints);
         currencyFormat.setGroupingUsed(true);
+        currencyFormat.setMaximumFractionDigits(SharedPreferencesManager.getCurrencyUnit(app) == BRConstants.CURRENT_UNIT_BITCOINS ? 8 : 2);
         currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
         currencyFormat.setNegativePrefix(decimalFormatSymbols.getCurrencySymbol() + "-");
         currencyFormat.setNegativeSuffix("");
