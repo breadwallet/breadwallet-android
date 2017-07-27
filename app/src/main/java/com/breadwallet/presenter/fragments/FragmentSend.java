@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -178,6 +179,16 @@ public class FragmentSend extends Fragment {
             @Override
             public void onClick(View v) {
                 showKeyboard(true);
+                if (!amountEdit.getHint().toString().equalsIgnoreCase("0")) { //only first time
+                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) isoText.getLayoutParams();
+                    params.width = RecyclerView.LayoutParams.WRAP_CONTENT;
+                    isoText.setLayoutParams(params);
+                    amountEdit.setHint("0");
+                    amountEdit.setTextSize(24);
+                    isoText.requestLayout();
+                    balanceText.setVisibility(View.VISIBLE);
+                }
+
             }
         });
 
