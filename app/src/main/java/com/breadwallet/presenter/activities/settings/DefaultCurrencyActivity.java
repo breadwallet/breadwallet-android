@@ -32,8 +32,8 @@ public class DefaultCurrencyActivity extends BRActivity {
     private TextView exchangeText;
     private ListView listView;
     private CurrencyListAdapter adapter;
-    private String ISO;
-    private float rate;
+    //    private String ISO;
+//    private float rate;
     public static boolean appVisible = false;
     private static DefaultCurrencyActivity app;
     private Button leftButton;
@@ -86,31 +86,24 @@ public class DefaultCurrencyActivity extends BRActivity {
             }
         });
 
-        //set the rate from the last saved
-        String iso = SharedPreferencesManager.getIso(this);
-        CurrencyEntity entity = CurrencyDataSource.getInstance(this).getCurrencyByIso(iso);
-        if (entity != null) {
-            String finalExchangeRate = BRCurrency.getFormattedCurrencyString(DefaultCurrencyActivity.this, SharedPreferencesManager.getIso(this), new BigDecimal(entity.rate));
-            exchangeText.setText(finalExchangeRate + " = 1BTC");
+        int unit = SharedPreferencesManager.getCurrencyUnit(this);
+        if (unit == BRConstants.CURRENT_UNIT_BITS) {
+            setButton(true);
+        } else {
+            setButton(false);
         }
-
+        updateExchangeRate();
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
                 TextView currencyItemText = (TextView) view.findViewById(R.id.currency_item_text);
                 final String selectedCurrency = currencyItemText.getText().toString();
-                ISO = selectedCurrency.substring(0, 3);
-//                lastItemsPosition = position;
-                CurrencyEntity item = adapter.getItem(position);
-                rate = item == null ? 0 : item.rate;
-                SharedPreferencesManager.putIso(DefaultCurrencyActivity.this, ISO);
+                String iso = selectedCurrency.substring(0, 3);
+                SharedPreferencesManager.putIso(DefaultCurrencyActivity.this, iso);
                 SharedPreferencesManager.putCurrencyListPosition(DefaultCurrencyActivity.this, position);
-//                SharedPreferencesManager.putRate(app, rate);
-                String finalExchangeRate = BRCurrency.getFormattedCurrencyString(DefaultCurrencyActivity.this, ISO, new BigDecimal(rate));
-                exchangeText.setText(finalExchangeRate + " = 1BTC");
-//                MiddleViewAdapter.resetMiddleView(app, finalExchangeRate);
-                adapter.notifyDataSetChanged();
+
+                updateExchangeRate();
 
             }
 
@@ -120,12 +113,34 @@ public class DefaultCurrencyActivity extends BRActivity {
 
     }
 
+    private void updateExchangeRate() {
+        //set the rate from the last saved
+        String iso = SharedPreferencesManager.getIso(this);
+        CurrencyEntity entity = CurrencyDataSource.getInstance(this).getCurrencyByIso(iso);
+        if (entity != null) {
+            String finalExchangeRate = BRCurrency.getFormattedCurrencyString(DefaultCurrencyActivity.this, SharedPreferencesManager.getIso(this), new BigDecimal(entity.rate));
+            boolean bits = SharedPreferencesManager.getCurrencyUnit(this) == BRConstants.CURRENT_UNIT_BITS;
+            exchangeText.setText(BRCurrency.getFormattedCurrencyString(this, "BTC", new BigDecimal(bits ? 1000000 : 1)) + " = " + finalExchangeRate);
+        }
+        adapter.notifyDataSetChanged();
+    }
+
     private void setButton(boolean left) {
         if (left) {
-
+            SharedPreferencesManager.putCurrencyUnit(this, BRConstants.CURRENT_UNIT_BITS);
+            leftButton.setTextColor(getColor(R.color.white));
+            leftButton.setBackground(getDrawable(R.drawable.b_half_left_blue));
+            rightButton.setTextColor(getColor(R.color.dark_blue));
+            rightButton.setBackground(getDrawable(R.drawable.b_half_right_blue_stroke));
         } else {
-
+            SharedPreferencesManager.putCurrencyUnit(this, BRConstants.CURRENT_UNIT_BITCOINS);
+            leftButton.setTextColor(getColor(R.color.dark_blue));
+            leftButton.setBackground(getDrawable(R.drawable.b_half_left_blue_stroke));
+            rightButton.setTextColor(getColor(R.color.white));
+            rightButton.setBackground(getDrawable(R.drawable.b_half_right_blue));
         }
+        updateExchangeRate();
+
     }
 
     @Override
