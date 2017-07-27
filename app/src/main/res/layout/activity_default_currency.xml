@@ -85,7 +85,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1.0"
-            android:background="@drawable/b_half_right_blue"
+            android:background="@drawable/b_half_right_blue_stroke"
             android:text="BTC (Ƀ)"
             android:padding="0dp"
             android:textColor="@color/dark_blue"
