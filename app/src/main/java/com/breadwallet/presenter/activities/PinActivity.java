@@ -265,7 +265,7 @@ public class PinActivity extends BRActivity {
         offlineButtonsLayout.animate().translationY(-600).setInterpolator(new AccelerateInterpolator());
         pinLayout.animate().translationY(-2000).setInterpolator(new AccelerateInterpolator());
         enterPinLabel.animate().translationY(-1800).setInterpolator(new AccelerateInterpolator());
-        keyboard.animate().translationY(1000).setInterpolator(new AccelerateInterpolator());
+        keyboard.animate().translationY(2000).setInterpolator(new AccelerateInterpolator());
         unlockedImage.animate().alpha(1f).setListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
