@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -35,6 +36,8 @@ public class DefaultCurrencyActivity extends BRActivity {
     private float rate;
     public static boolean appVisible = false;
     private static DefaultCurrencyActivity app;
+    private Button leftButton;
+    private Button rightButton;
 
     public static DefaultCurrencyActivity getApp() {
         return app;
@@ -67,6 +70,21 @@ public class DefaultCurrencyActivity extends BRActivity {
         listView = (ListView) findViewById(R.id.currency_list_view);
         adapter = new CurrencyListAdapter(this);
         adapter.addAll(CurrencyDataSource.getInstance(this).getAllCurrencies());
+        leftButton = (Button) findViewById(R.id.left_button);
+        rightButton = (Button) findViewById(R.id.right_button);
+        leftButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setButton(true);
+            }
+        });
+
+        rightButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setButton(false);
+            }
+        });
 
         //set the rate from the last saved
         String iso = SharedPreferencesManager.getIso(this);
@@ -100,6 +118,14 @@ public class DefaultCurrencyActivity extends BRActivity {
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
+    }
+
+    private void setButton(boolean left) {
+        if (left) {
+
+        } else {
+
+        }
     }
 
     @Override
