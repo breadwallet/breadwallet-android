@@ -149,6 +149,8 @@ public class BRWalletManager {
             success = KeyStoreManager.putKeyStorePhrase(strPhrase, ctx, BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE);
         } catch (BRKeystoreErrorException e) {
             e.printStackTrace();
+            showSentReceivedToast(e.getMessage());
+            return false;
         }
         if (!success) return false;
         byte[] authKey = getAuthPrivKeyForAPI(keyBytes);

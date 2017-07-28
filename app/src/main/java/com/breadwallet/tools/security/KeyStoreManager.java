@@ -212,8 +212,8 @@ public class KeyStoreManager {
                 InvalidAlgorithmParameterException | NoSuchProviderException | IOException e) {
             FirebaseCrash.report(e);
             e.printStackTrace();
+            throw new BRKeystoreErrorException(e.getMessage());
         }
-        return false;
     }
 
     private static byte[] _getData(final Activity context, String alias, String alias_file, String alias_iv, int request_code)
