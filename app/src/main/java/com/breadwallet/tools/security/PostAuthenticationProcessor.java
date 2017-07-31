@@ -17,6 +17,7 @@ import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.TypesConverter;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.security.Key;
@@ -109,6 +110,8 @@ public class PostAuthenticationProcessor {
                     byte[] authKey = BRWalletManager.getAuthPrivKeyForAPI(seed);
                     KeyStoreManager.putAuthKey(authKey, app);
                     byte[] pubKey = BRWalletManager.getInstance(app).getMasterPubKey(bytePhrase);
+                    if (Utils.isNullOrEmpty(pubKey))
+                        throw new RuntimeException("pubkey is malformed: " + Arrays.toString(pubKey));
                     KeyStoreManager.putMasterPublicKey(pubKey, app);
                     app.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                     app.startMainActivity();
