@@ -230,6 +230,8 @@ public class PostAuthenticationProcessor {
             if (authAsked) {
                 showBugAuthLoopErrorMessage(introActivity);
                 Log.e(TAG, "onPublishTxAuth,!success && authAsked");
+            } else {
+                Log.e(TAG, "onCanaryCheck: ", e);
             }
             return;
         }

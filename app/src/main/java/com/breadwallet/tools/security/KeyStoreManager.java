@@ -21,7 +21,9 @@ import com.breadwallet.tools.util.ByteReader;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.wallet.BRWalletManager;
+import com.google.android.gms.tasks.RuntimeExecutionException;
 import com.google.firebase.crash.FirebaseCrash;
+import com.jniwrappers.BRKey;
 
 import junit.framework.Assert;
 
@@ -51,6 +53,7 @@ import javax.crypto.CipherOutputStream;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
 
 import static android.content.Context.ACTIVITY_SERVICE;
@@ -83,12 +86,10 @@ import static android.content.Context.ACTIVITY_SERVICE;
 public class KeyStoreManager {
     private static final String TAG = KeyStoreManager.class.getName();
 
-    public static final String CIPHER_ALGORITHM = "AES/CBC/PKCS7Padding";
-    public static final String PADDING = KeyProperties.ENCRYPTION_PADDING_PKCS7;
-    public static final String BLOCK_MODE = KeyProperties.BLOCK_MODE_CBC;
-    public static final String ANDROID_KEY_STORE = "AndroidKeyStore";
+    private static final String AES_MODE = "AES/GCM/NoPadding";
+    private static final String ANDROID_KEY_STORE = "AndroidKeyStore";
 
-    public static Map<String, AliasObject> aliasObjectMap;
+    private static Map<String, AliasObject> aliasObjectMap;
 
     private static final String PHRASE_IV = "ivphrase";
     private static final String CANARY_IV = "ivcanary";
@@ -127,6 +128,7 @@ public class KeyStoreManager {
     private static final String PASS_TIME_FILENAME = "my_pass_time";
 
     public static final int AUTH_DURATION_SEC = 300;
+    private static final int KEY_SIZE = 128;
 
     static {
         aliasObjectMap = new HashMap<>();
@@ -147,13 +149,12 @@ public class KeyStoreManager {
         Assert.assertEquals(AUTH_DURATION_SEC, 300);
     }
 
-    private static android.app.AlertDialog dialog;
-
-    private static boolean _setData(Activity context, byte[] data, String alias, String alias_file, String alias_iv, int request_code, boolean auth_required) throws BRKeystoreErrorException {
+    private synchronized static boolean _setData(Activity context, byte[] data, String alias, String alias_file, String alias_iv,
+                                                 int request_code, boolean auth_required) throws BRKeystoreErrorException, IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException, NoSuchProviderException, KeyStoreException {
 //        Log.e(TAG, "_setData: " + alias);
         if (alias.equals(alias_file) || alias.equals(alias_iv) || alias_file.equals(alias_iv)) {
-            RuntimeException ex = new IllegalArgumentException("mistake in parameters!");
-            FirebaseCrash.report(ex);
+            RuntimeException ex = new IllegalArgumentException("_setData:mistake in parameters");
+            KSErrorPipe.parseError(context, ex, true);
             throw ex;
         }
 
@@ -169,22 +170,22 @@ public class KeyStoreManager {
                 // and the constrains (purposes) in the constructor of the Builder
                 keyGenerator.init(new KeyGenParameterSpec.Builder(alias,
                         KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
-                        .setBlockModes(BLOCK_MODE)
-                        .setKeySize(256)
+                        .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+                        .setKeySize(KEY_SIZE)
                         .setUserAuthenticationRequired(auth_required)
                         .setUserAuthenticationValidityDurationSeconds(AUTH_DURATION_SEC)
                         .setRandomizedEncryptionRequired(false)
-                        .setEncryptionPaddings(PADDING)
+                        .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
                         .build());
                 SecretKey key = keyGenerator.generateKey();
-
             }
 
             String encryptedDataFilePath = getEncryptedDataFilePath(alias_file, context);
 
             SecretKey secret = (SecretKey) keyStore.getKey(alias, null);
-            if (secret == null) return false;
-            Cipher inCipher = Cipher.getInstance(CIPHER_ALGORITHM);
+            if (secret == null)
+                throw new BRKeystoreErrorException("secret is null on _setData: " + alias);
+            Cipher inCipher = Cipher.getInstance(AES_MODE);
             inCipher.init(Cipher.ENCRYPT_MODE, secret);
             byte[] iv = inCipher.getIV();
             String path = getEncryptedDataFilePath(alias_iv, context);
@@ -206,23 +207,21 @@ public class KeyStoreManager {
         } catch (UserNotAuthenticatedException e) {
             Log.e(TAG, "setData: User not Authenticated, requesting..." + alias + ", err(" + e.getMessage() + ")");
             showAuthenticationScreen(context, request_code);
-            throw new BRKeystoreErrorException(e.getMessage());
-        } catch (CertificateException | NoSuchAlgorithmException | InvalidKeyException | NullPointerException
-                | NoSuchPaddingException | KeyStoreException | UnrecoverableKeyException |
-                InvalidAlgorithmParameterException | NoSuchProviderException | IOException e) {
-            FirebaseCrash.report(e);
+            throw e;
+        } catch (Exception e) {
+            KSErrorPipe.parseError(context, e, true);
             e.printStackTrace();
-            throw new BRKeystoreErrorException(e.getMessage());
+            throw e;
         }
     }
 
-    private static byte[] _getData(final Activity context, String alias, String alias_file, String alias_iv, int request_code)
-            throws BRKeystoreErrorException {
+    private synchronized static byte[] _getData(final Activity context, String alias, String alias_file, String alias_iv, int request_code)
+            throws BRKeystoreErrorException, InvalidKeyException, CertificateException, KeyStoreException, IOException, UnrecoverableKeyException, NoSuchAlgorithmException, NoSuchPaddingException {
 //        Log.e(TAG, "_getData: " + alias);
 
         if (alias.equals(alias_file) || alias.equals(alias_iv) || alias_file.equals(alias_iv)) {
-            RuntimeException ex = new IllegalArgumentException("mistake in parameters!");
-            FirebaseCrash.report(ex);
+            RuntimeException ex = new IllegalArgumentException("_getData:mistake in parameters!");
+            KSErrorPipe.parseError(context, ex, true);
             throw ex;
         }
         KeyStore keyStore;
@@ -232,15 +231,16 @@ public class KeyStoreManager {
         try {
             keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
             keyStore.load(null);
-            SecretKey secretKey = (SecretKey)
-                    keyStore.getKey(alias, null);
+            SecretKey secretKey = (SecretKey) keyStore.getKey(alias, null);
             if (secretKey == null) {
                 /* no such key, the key is just simply not there */
                 boolean fileExists = new File(encryptedDataFilePath).exists();
                 Log.e(TAG, "_getData: " + alias + " file exist: " + fileExists);
-                if (!fileExists) return result; /* file also not there, fine then */
-                showKeyStoreFailedToLoad(context);
-                throw new BRKeystoreErrorException("no key but the phrase is there");
+                if (!fileExists)
+                    throw new BRKeystoreErrorException("!fileExists: " + encryptedDataFilePath); /* file also not there, fine then */
+                BRKeystoreErrorException ex = new BRKeystoreErrorException("Phrase is present but the key is gone.");
+                KSErrorPipe.parseError(context, ex, true);
+                throw ex;
             }
 
             boolean ivExists = new File(getEncryptedDataFilePath(alias_iv, context)).exists();
@@ -248,70 +248,66 @@ public class KeyStoreManager {
             if (!ivExists || !aliasExists) {
                 removeAliasAndFiles(alias, context);
                 //report it if one exists and not the other.
-                if (ivExists != aliasExists)
-                    FirebaseCrash.report(new IllegalArgumentException("alias or iv isn't on the disk: " + alias));
-                return result;
+                if (ivExists != aliasExists) {
+                    BRKeystoreErrorException ex = new BRKeystoreErrorException("alias or iv isn't on the disk: " + alias + ", aliasExists:" + aliasExists);
+                    KSErrorPipe.parseError(context, ex, true);
+                    throw ex;
+                } else {
+                    throw new BRKeystoreErrorException("!ivExists && !aliasExists");
+                }
             }
 
             byte[] iv = readBytesFromFile(getEncryptedDataFilePath(alias_iv, context));
             Cipher outCipher;
-            outCipher = Cipher.getInstance(CIPHER_ALGORITHM);
-            outCipher.init(Cipher.DECRYPT_MODE, secretKey, new IvParameterSpec(iv));
+
+            try {
+                outCipher = Cipher.getInstance(AES_MODE);
+                outCipher.init(Cipher.DECRYPT_MODE, secretKey, new GCMParameterSpec(KEY_SIZE, iv));
+            } catch (InvalidAlgorithmParameterException ignored) {
+                /** means the keys are created with the old algorithm */
+                outCipher = Cipher.getInstance("AES/CBC/PKCS7Padding");
+                try {
+                    outCipher.init(Cipher.DECRYPT_MODE, secretKey, new GCMParameterSpec(KEY_SIZE, iv));
+                } catch (InvalidAlgorithmParameterException e) {
+                    e.printStackTrace();
+                    KSErrorPipe.parseError(context, e, true);
+                    throw new BRKeystoreErrorException("outCipher.init failed with:" + e.getMessage());
+                }
+            }
 
             CipherInputStream cipherInputStream = new CipherInputStream(
                     new FileInputStream(encryptedDataFilePath), outCipher);
             return ByteReader.readBytesFromStream(cipherInputStream);
         } catch (InvalidKeyException e) {
-            Log.e(TAG, "_getData: InvalidKeyException");
+            Log.e(TAG, "_getData: InvalidKeyException", e);
             if (e instanceof UserNotAuthenticatedException) {
-                /**user not authenticated, ask the system for authentication*/
-                Log.e(TAG, "_getData: USER NOT AUTHENTICATED, ASKING SYSTEM FOR AUTH: " + alias);
+                /** user not authenticated, ask the system for authentication */
                 showAuthenticationScreen(context, request_code);
-                throw new BRKeystoreErrorException(e.getMessage());
-            } else if (e instanceof KeyPermanentlyInvalidatedException) {
-                FirebaseCrash.report(new RuntimeException("KeyStore Error, Your Breadwallet encrypted data was recently invalidated because you disabled your Android lock screen. Please input your phrase to recover your Breadwallet now."));
-                showKeyStoreDialog("KeyStore Error", "Your Breadwallet encrypted data was recently invalidated because you " +
-                                "disabled your Android lock screen. Please input your phrase to recover your Breadwallet now.", context.getString(R.string.ok), null,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        }, null, new DialogInterface.OnDismissListener() {
-                            @Override
-                            public void onDismiss(DialogInterface dialogInterface) {
-                                if (context instanceof IntroActivity) {
-                                    if (BRAnimator.checkTheMultipressingAvailability()) {
-                                        ((IntroActivity) context).showRecoverWalletFragment();
-                                    }
-                                }
-                            }
-                        });
-                throw new BRKeystoreErrorException("KeyPermanentlyInvalidatedException");
+                throw e;
             } else {
-                Log.e(TAG, "_getData: InvalidKeyException", e);
-                FirebaseCrash.report(e);
-                showKeyStoreFailedToLoad(context);
-//                Assert.fail();
-                throw new BRKeystoreErrorException("Key store error: " + e.getMessage());
+                KSErrorPipe.parseError(context, e, true);
+                throw e;
             }
         } catch (IOException | CertificateException | KeyStoreException e) {
             /** keyStore.load(null) threw the Exception, meaning the keystore is unavailable */
             Log.e(TAG, "_getData: keyStore.load(null) threw the Exception, meaning the keystore is unavailable", e);
+            FirebaseCrash.report(e);
             if (e instanceof FileNotFoundException) {
                 Log.e(TAG, "_getData: File not found exception", e);
-                RuntimeException ex = new RuntimeException("the key is present but the phrase on the disk no???");
-                FirebaseCrash.report(ex);
+
+                RuntimeException ex = new RuntimeException("the key is present but the phrase on the disk no");
+                KSErrorPipe.parseError(context, ex, true);
                 throw ex;
             } else {
-                showKeyStoreFailedToLoad(context);
-                FirebaseCrash.report(new RuntimeException("Failed to load KeyStore, showKeyStoreFailedToLoad"));
-                throw new BRKeystoreErrorException("Failed to load KeyStore");
+                KSErrorPipe.parseError(context, e, true);
+                throw e;
             }
 
-        } catch (UnrecoverableKeyException | InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchPaddingException e) {
+        } catch (UnrecoverableKeyException | NoSuchAlgorithmException | NoSuchPaddingException e) {
             /** if for any other reason the keystore fails, crash! */
             Log.e(TAG, "getData: error: " + e.getClass().getSuperclass().getName());
-            throw new RuntimeException(e.getMessage() + " | class: " + e.getClass().getName());
+            KSErrorPipe.parseError(context, e, true);
+            throw e;
         }
     }
 
@@ -320,35 +316,18 @@ public class KeyStoreManager {
         return filesDirectory + File.separator + fileName;
     }
 
-    private static void showKeyStoreFailedToLoad(final Activity context) {
-        showKeyStoreDialog("KeyStore Error", "Failed to load KeyStore. Please try again later or enter your phrase to recover your Breadwallet now.", "recover now", "try later",
-                context instanceof IntroActivity ?
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                if (BRAnimator.checkTheMultipressingAvailability()) {
-                                    ((IntroActivity) context).showRecoverWalletFragment();
-                                }
-                            }
-                        } : null, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        context.finish();
-                    }
-                },
-                null);
-    }
-
-    public static boolean putKeyStorePhrase(byte[] strToStore, Activity context, int requestCode) throws BRKeystoreErrorException {
+    public static boolean putKeyStorePhrase(byte[] strToStore, Activity context, int requestCode) throws BRKeystoreErrorException, IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException, KeyStoreException, NoSuchProviderException {
         AliasObject obj = aliasObjectMap.get(PHRASE_ALIAS);
         return !(strToStore == null || strToStore.length == 0) && _setData(context, strToStore, obj.alias, obj.datafileName, obj.ivFileName, requestCode, true);
     }
 
     public static byte[] getKeyStorePhrase(final Activity context, int requestCode)
-            throws BRKeystoreErrorException {
+            throws BRKeystoreErrorException, CertificateException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, NoSuchPaddingException, InvalidKeyException, IOException {
         AliasObject obj = aliasObjectMap.get(PHRASE_ALIAS);
         return _getData(context, obj.alias, obj.datafileName, obj.ivFileName, requestCode);
     }
 
-    public static boolean putKeyStoreCanary(String strToStore, Activity context, int requestCode) throws BRKeystoreErrorException {
+    public static boolean putKeyStoreCanary(String strToStore, Activity context, int requestCode) throws BRKeystoreErrorException, IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException, KeyStoreException, NoSuchProviderException {
         if (strToStore == null || strToStore.isEmpty()) return false;
         AliasObject obj = aliasObjectMap.get(CANARY_ALIAS);
         byte[] strBytes = new byte[0];
@@ -361,7 +340,7 @@ public class KeyStoreManager {
     }
 
     public static String getKeyStoreCanary(final Activity context, int requestCode)
-            throws BRKeystoreErrorException {
+            throws BRKeystoreErrorException, CertificateException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, NoSuchPaddingException, InvalidKeyException, IOException {
         AliasObject obj = aliasObjectMap.get(CANARY_ALIAS);
         byte[] data = _getData(context, obj.alias, obj.datafileName, obj.ivFileName, requestCode);
         String result = null;
@@ -377,7 +356,7 @@ public class KeyStoreManager {
         AliasObject obj = aliasObjectMap.get(PUB_KEY_ALIAS);
         try {
             return masterPubKey != null && masterPubKey.length != 0 && _setData(context, masterPubKey, obj.alias, obj.datafileName, obj.ivFileName, 0, false);
-        } catch (BRKeystoreErrorException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
@@ -388,7 +367,7 @@ public class KeyStoreManager {
         AliasObject obj = aliasObjectMap.get(PUB_KEY_ALIAS);
         try {
             result = _getData(context, obj.alias, obj.datafileName, obj.ivFileName, 0);
-        } catch (BRKeystoreErrorException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return result;
@@ -398,7 +377,7 @@ public class KeyStoreManager {
         AliasObject obj = aliasObjectMap.get(AUTH_KEY_ALIAS);
         try {
             return authKey != null && authKey.length != 0 && _setData(context, authKey, obj.alias, obj.datafileName, obj.ivFileName, 0, false);
-        } catch (BRKeystoreErrorException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
@@ -409,7 +388,7 @@ public class KeyStoreManager {
         byte[] result = new byte[0];
         try {
             result = _getData(context, obj.alias, obj.datafileName, obj.ivFileName, 0);
-        } catch (BRKeystoreErrorException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return result;
@@ -419,7 +398,7 @@ public class KeyStoreManager {
         AliasObject obj = aliasObjectMap.get(TOKEN_ALIAS);
         try {
             return token != null && token.length != 0 && _setData(context, token, obj.alias, obj.datafileName, obj.ivFileName, 0, false);
-        } catch (BRKeystoreErrorException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
@@ -430,7 +409,7 @@ public class KeyStoreManager {
         byte[] result = new byte[0];
         try {
             result = _getData(context, obj.alias, obj.datafileName, obj.ivFileName, 0);
-        } catch (BRKeystoreErrorException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return result;
@@ -441,7 +420,7 @@ public class KeyStoreManager {
         byte[] bytesToStore = TypesConverter.intToBytes(creationTime);
         try {
             return bytesToStore.length != 0 && _setData(context, bytesToStore, obj.alias, obj.datafileName, obj.ivFileName, 0, false);
-        } catch (BRKeystoreErrorException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
@@ -452,7 +431,7 @@ public class KeyStoreManager {
         byte[] result = new byte[0];
         try {
             result = _getData(context, obj.alias, obj.datafileName, obj.ivFileName, 0);
-        } catch (BRKeystoreErrorException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return result.length > 0 ? TypesConverter.bytesToInt(result) : 0;
@@ -463,7 +442,7 @@ public class KeyStoreManager {
         byte[] bytesToStore = passcode.getBytes();
         try {
             return _setData(context, bytesToStore, obj.alias, obj.datafileName, obj.ivFileName, 0, false);
-        } catch (BRKeystoreErrorException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
@@ -474,7 +453,7 @@ public class KeyStoreManager {
         byte[] result = new byte[0];
         try {
             result = _getData(context, obj.alias, obj.datafileName, obj.ivFileName, 0);
-        } catch (BRKeystoreErrorException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         String passCode = new String(result);
@@ -503,7 +482,7 @@ public class KeyStoreManager {
         byte[] bytesToStore = TypesConverter.intToBytes(failCount);
         try {
             return bytesToStore.length != 0 && _setData(context, bytesToStore, obj.alias, obj.datafileName, obj.ivFileName, 0, false);
-        } catch (BRKeystoreErrorException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
@@ -514,7 +493,7 @@ public class KeyStoreManager {
         byte[] result = new byte[0];
         try {
             result = _getData(context, obj.alias, obj.datafileName, obj.ivFileName, 0);
-        } catch (BRKeystoreErrorException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -526,7 +505,7 @@ public class KeyStoreManager {
         byte[] bytesToStore = TypesConverter.long2byteArray(spendLimit);
         try {
             return bytesToStore.length != 0 && _setData(context, bytesToStore, obj.alias, obj.datafileName, obj.ivFileName, 0, false);
-        } catch (BRKeystoreErrorException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
@@ -537,7 +516,7 @@ public class KeyStoreManager {
         byte[] result = new byte[0];
         try {
             result = _getData(context, obj.alias, obj.datafileName, obj.ivFileName, 0);
-        } catch (BRKeystoreErrorException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -549,7 +528,7 @@ public class KeyStoreManager {
         byte[] bytesToStore = TypesConverter.long2byteArray(spendLimit);
         try {
             return bytesToStore.length != 0 && _setData(context, bytesToStore, obj.alias, obj.datafileName, obj.ivFileName, 0, false);
-        } catch (BRKeystoreErrorException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
@@ -560,7 +539,7 @@ public class KeyStoreManager {
         byte[] result = new byte[0];
         try {
             result = _getData(context, obj.alias, obj.datafileName, obj.ivFileName, 0);
-        } catch (BRKeystoreErrorException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -572,7 +551,7 @@ public class KeyStoreManager {
         byte[] bytesToStore = TypesConverter.long2byteArray(time);
         try {
             return bytesToStore.length != 0 && _setData(context, bytesToStore, obj.alias, obj.datafileName, obj.ivFileName, 0, false);
-        } catch (BRKeystoreErrorException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
@@ -583,7 +562,7 @@ public class KeyStoreManager {
         byte[] result = new byte[0];
         try {
             result = _getData(context, obj.alias, obj.datafileName, obj.ivFileName, 0);
-        } catch (BRKeystoreErrorException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return result.length > 0 ? TypesConverter.byteArray2long(result) : 0;
@@ -700,39 +679,6 @@ public class KeyStoreManager {
         return false;
     }
 
-    public static void showKeyStoreDialog(final String title, final String message, final String posButton, final String negButton,
-                                          final DialogInterface.OnClickListener posButtonListener,
-                                          final DialogInterface.OnClickListener negButtonListener,
-                                          final DialogInterface.OnDismissListener dismissListener) {
-        Activity app = MainActivity.app;
-        if (app == null) app = IntroActivity.app;
-        if (app == null) {
-            return;
-        }
-        final Activity finalApp = app;
-        if (finalApp != null)
-            finalApp.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (finalApp != null) {
-                        if (dialog != null && dialog.isShowing()) {
-                            if (dialog.getOwnerActivity() != null && !dialog.getOwnerActivity().isDestroyed())
-                                dialog.dismiss();
-                            else
-                                return;
-                        }
-                        dialog = new android.app.AlertDialog.Builder(finalApp).
-                                setTitle(title)
-                                .setMessage(message)
-                                .setPositiveButton(posButton, posButtonListener)
-                                .setNegativeButton(negButton, negButtonListener)
-                                .setOnDismissListener(dismissListener)
-                                .setIcon(android.R.drawable.ic_dialog_alert)
-                                .show();
-                    }
-                }
-            });
-    }
 
     public static class AliasObject {
         public String alias;
@@ -746,5 +692,6 @@ public class KeyStoreManager {
         }
 
     }
+
 
 }
