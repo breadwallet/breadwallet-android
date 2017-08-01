@@ -10,8 +10,8 @@ model {
             applicationId = 'com.breadwallet'
             minSdkVersion.apiLevel = 23
             targetSdkVersion.apiLevel = 25
-            versionCode = 47
-            versionName = "47"
+            versionCode = 83
+            versionName = "83"
         }
 
         ndk {
@@ -73,11 +73,11 @@ model {
                     create() {
                         type = "boolean"
                         name = "BITCOIN_TESTNET"
-                        value = "false"
+                        value = "true"
                     }
                 }
                 ndk {
-//                    CFlags.addAll(['-DBITCOIN_TESTNET=1'])
+                    CFlags.addAll(['-DBITCOIN_TESTNET=1'])
                     minifyEnabled = false
                     debuggable = true
                 }
