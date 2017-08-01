@@ -53,7 +53,7 @@ public class KeyStoreTests {
         //set get phrase
         byte[] phrase = "axis husband project any sea patch drip tip spirit tide bring belt".getBytes();
         try {
-            KeyStoreManager.putKeyStorePhrase(phrase, mActivityRule.getActivity(), 0);
+            KeyStoreManager.putPhrase(phrase, mActivityRule.getActivity(), 0);
         } catch (BRKeystoreErrorException e) {
             e.printStackTrace();
             Assert.fail();
@@ -62,7 +62,7 @@ public class KeyStoreTests {
 
         byte[] freshGet = new byte[0];
         try {
-            freshGet = KeyStoreManager.getKeyStorePhrase(mActivityRule.getActivity(), 0);
+            freshGet = KeyStoreManager.getPhrase(mActivityRule.getActivity(), 0);
         } catch (BRKeystoreErrorException e) {
             e.printStackTrace();
         }
@@ -71,7 +71,7 @@ public class KeyStoreTests {
         //set get Japaneese phrase
         byte[] japPhrase = "こせき　ぎじにってい　けっこん　せつぞく　うんどう　ふこう　にっすう　こせい　きさま　なまみ　たきび　はかい".getBytes();
         try {
-            KeyStoreManager.putKeyStorePhrase(japPhrase, mActivityRule.getActivity(), 0);
+            KeyStoreManager.putPhrase(japPhrase, mActivityRule.getActivity(), 0);
         } catch (BRKeystoreErrorException e) {
             e.printStackTrace();
             Assert.fail();
@@ -79,7 +79,7 @@ public class KeyStoreTests {
         assertFilesExist(KeyStoreManager.PHRASE_ALIAS);
         byte[] freshJapGet = new byte[0];
         try {
-            freshJapGet = KeyStoreManager.getKeyStorePhrase(mActivityRule.getActivity(), 0);
+            freshJapGet = KeyStoreManager.getPhrase(mActivityRule.getActivity(), 0);
         } catch (BRKeystoreErrorException e) {
             e.printStackTrace();
         }
@@ -91,7 +91,7 @@ public class KeyStoreTests {
     public void setGetCanary() {
         String canary = "canary";
         try {
-            KeyStoreManager.putKeyStoreCanary(canary, mActivityRule.getActivity(), 0);
+            KeyStoreManager.putCanary(canary, mActivityRule.getActivity(), 0);
         } catch (BRKeystoreErrorException e) {
             e.printStackTrace();
             Assert.fail();
@@ -99,7 +99,7 @@ public class KeyStoreTests {
         assertFilesExist(KeyStoreManager.CANARY_ALIAS);
         String freshGet = "";
         try {
-            freshGet = KeyStoreManager.getKeyStoreCanary(mActivityRule.getActivity(), 0);
+            freshGet = KeyStoreManager.getCanary(mActivityRule.getActivity(), 0);
         } catch (BRKeystoreErrorException e) {
             e.printStackTrace();
         }
@@ -218,13 +218,13 @@ public class KeyStoreTests {
     @Test
     public void testClearKeyStore() {
         try {
-            KeyStoreManager.putKeyStorePhrase("axis husband project any sea patch drip tip spirit tide bring belt".getBytes(), mActivityRule.getActivity(), 0);
+            KeyStoreManager.putPhrase("axis husband project any sea patch drip tip spirit tide bring belt".getBytes(), mActivityRule.getActivity(), 0);
         } catch (BRKeystoreErrorException e) {
             e.printStackTrace();
             Assert.fail();
         }
         try {
-            KeyStoreManager.putKeyStoreCanary("canary", mActivityRule.getActivity(), 0);
+            KeyStoreManager.putCanary("canary", mActivityRule.getActivity(), 0);
         } catch (BRKeystoreErrorException e) {
             e.printStackTrace();
             Assert.fail();
@@ -252,7 +252,7 @@ public class KeyStoreTests {
 
         byte[] phrase = "some".getBytes();
         try {
-            phrase = KeyStoreManager.getKeyStorePhrase(mActivityRule.getActivity(), 0);
+            phrase = KeyStoreManager.getPhrase(mActivityRule.getActivity(), 0);
         } catch (BRKeystoreErrorException e) {
             e.printStackTrace();
         }
@@ -260,7 +260,7 @@ public class KeyStoreTests {
         String canary = "some";
 
         try {
-            canary = KeyStoreManager.getKeyStoreCanary(mActivityRule.getActivity(), 0);
+            canary = KeyStoreManager.getCanary(mActivityRule.getActivity(), 0);
         } catch (BRKeystoreErrorException e) {
             e.printStackTrace();
         }

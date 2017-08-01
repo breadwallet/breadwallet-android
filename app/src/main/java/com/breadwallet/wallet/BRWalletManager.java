@@ -146,7 +146,7 @@ public class BRWalletManager {
         }
         boolean success = false;
         try {
-            success = KeyStoreManager.putKeyStorePhrase(strPhrase, ctx, BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE);
+            success = KeyStoreManager.putPhrase(strPhrase, ctx, BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE);
         } catch (BRKeystoreErrorException e) {
             e.printStackTrace();
             showSentReceivedToast(e.getMessage());
@@ -186,7 +186,7 @@ public class BRWalletManager {
         if (pubkey == null || pubkey.length == 0) {
             byte[] phrase;
             try {
-                phrase = KeyStoreManager.getKeyStorePhrase(ctx, 0);
+                phrase = KeyStoreManager.getPhrase(ctx, 0);
                 if (phrase == null || phrase.length == 0) {
                     return true;
                 }

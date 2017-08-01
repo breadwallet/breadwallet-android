@@ -80,7 +80,7 @@ public class KSErrorPipe {
         } else {
             showKeyStoreDialog(context,
                     "KeyStore Error",
-                    "Failed to load KeyStore:\n" + e.getClass().getName() + "\n" + e.getMessage(),
+                    "Failed to load KeyStore:\n" + e.getClass().getSimpleName() + "\n" + e.getMessage(),
                     "Close", null,
                     new DialogInterface.OnClickListener() {
                         @Override

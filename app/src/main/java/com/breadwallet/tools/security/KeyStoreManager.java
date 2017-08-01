@@ -238,7 +238,7 @@ public class KeyStoreManager {
                 Log.e(TAG, "_getData: " + alias + " file exist: " + fileExists);
                 if (!fileExists)
                     throw new BRKeystoreErrorException("!fileExists: " + encryptedDataFilePath); /* file also not there, fine then */
-                BRKeystoreErrorException ex = new BRKeystoreErrorException("Phrase is present but the key is gone.");
+                BRKeystoreErrorException ex = new BRKeystoreErrorException("file is present but the key is gone: " + alias);
                 KSErrorPipe.parseError(context, ex, true);
                 throw ex;
             }
@@ -267,7 +267,7 @@ public class KeyStoreManager {
                 /** means the keys are created with the old algorithm */
                 outCipher = Cipher.getInstance("AES/CBC/PKCS7Padding");
                 try {
-                    outCipher.init(Cipher.DECRYPT_MODE, secretKey, new GCMParameterSpec(KEY_SIZE, iv));
+                    outCipher.init(Cipher.DECRYPT_MODE, secretKey, new IvParameterSpec(iv));
                 } catch (InvalidAlgorithmParameterException e) {
                     e.printStackTrace();
                     KSErrorPipe.parseError(context, e, true);
@@ -316,18 +316,55 @@ public class KeyStoreManager {
         return filesDirectory + File.separator + fileName;
     }
 
-    public static boolean putKeyStorePhrase(byte[] strToStore, Activity context, int requestCode) throws BRKeystoreErrorException, IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException, KeyStoreException, NoSuchProviderException {
+    public static boolean putPhrase(byte[] strToStore, Activity context, int requestCode) throws BRKeystoreErrorException {
         AliasObject obj = aliasObjectMap.get(PHRASE_ALIAS);
-        return !(strToStore == null || strToStore.length == 0) && _setData(context, strToStore, obj.alias, obj.datafileName, obj.ivFileName, requestCode, true);
+        try {
+            return !(strToStore == null || strToStore.length == 0) && _setData(context, strToStore, obj.alias, obj.datafileName, obj.ivFileName, requestCode, true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (UnrecoverableKeyException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (InvalidAlgorithmParameterException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        } catch (NoSuchProviderException e) {
+            e.printStackTrace();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
-    public static byte[] getKeyStorePhrase(final Activity context, int requestCode)
-            throws BRKeystoreErrorException, CertificateException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, NoSuchPaddingException, InvalidKeyException, IOException {
+    public static byte[] getPhrase(final Activity context, int requestCode) throws BRKeystoreErrorException {
         AliasObject obj = aliasObjectMap.get(PHRASE_ALIAS);
-        return _getData(context, obj.alias, obj.datafileName, obj.ivFileName, requestCode);
+        try {
+            return _getData(context, obj.alias, obj.datafileName, obj.ivFileName, requestCode);
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (UnrecoverableKeyException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
-    public static boolean putKeyStoreCanary(String strToStore, Activity context, int requestCode) throws BRKeystoreErrorException, IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException, KeyStoreException, NoSuchProviderException {
+    public static boolean putCanary(String strToStore, Activity context, int requestCode) throws BRKeystoreErrorException {
         if (strToStore == null || strToStore.isEmpty()) return false;
         AliasObject obj = aliasObjectMap.get(CANARY_ALIAS);
         byte[] strBytes = new byte[0];
@@ -336,13 +373,51 @@ public class KeyStoreManager {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        return strBytes.length != 0 && _setData(context, strBytes, obj.alias, obj.datafileName, obj.ivFileName, requestCode, true);
+        try {
+            return strBytes.length != 0 && _setData(context, strBytes, obj.alias, obj.datafileName, obj.ivFileName, requestCode, true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (UnrecoverableKeyException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (InvalidAlgorithmParameterException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        } catch (NoSuchProviderException e) {
+            e.printStackTrace();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
-    public static String getKeyStoreCanary(final Activity context, int requestCode)
-            throws BRKeystoreErrorException, CertificateException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, NoSuchPaddingException, InvalidKeyException, IOException {
+    public static String getCanary(final Activity context, int requestCode)
+            throws BRKeystoreErrorException {
         AliasObject obj = aliasObjectMap.get(CANARY_ALIAS);
-        byte[] data = _getData(context, obj.alias, obj.datafileName, obj.ivFileName, requestCode);
+        byte[] data = new byte[0];
+        try {
+            data = _getData(context, obj.alias, obj.datafileName, obj.ivFileName, requestCode);
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (UnrecoverableKeyException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        }
         String result = null;
         try {
             result = new String(data, "UTF-8");
@@ -679,7 +754,6 @@ public class KeyStoreManager {
         return false;
     }
 
-
     public static class AliasObject {
         public String alias;
         public String datafileName;
@@ -692,6 +766,5 @@ public class KeyStoreManager {
         }
 
     }
-
 
 }

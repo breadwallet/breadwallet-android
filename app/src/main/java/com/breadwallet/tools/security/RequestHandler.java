@@ -1,11 +1,9 @@
 package com.breadwallet.tools.security;
 
 import android.app.Activity;
-import android.content.Context;
 import android.net.Uri;
 import android.os.Handler;
 import android.util.Log;
-import android.webkit.URLUtil;
 
 import com.breadwallet.R;
 import com.breadwallet.BreadWalletApp;
@@ -35,14 +33,9 @@ import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
-import java.security.Key;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
-import okhttp3.HttpUrl;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -158,7 +151,7 @@ public class RequestHandler {
                 }
                 Uri tmpUri = Uri.parse(_bitUri);
                 try {
-                    phrase = KeyStoreManager.getKeyStorePhrase(app, REQUEST_PHRASE_BITID);
+                    phrase = KeyStoreManager.getPhrase(app, REQUEST_PHRASE_BITID);
                     ((BreadWalletApp) app.getApplicationContext()).promptForAuthentication(app, AUTH_FOR_BIT_ID, null, tmpUri.getHost(), _authString, null, false);
                 } catch (BRKeystoreErrorException e) {
                     //asked the system, no need for local auth
@@ -188,9 +181,9 @@ public class RequestHandler {
 
         final Uri uri = Uri.parse(_bitUri);
         try {
-            phrase = KeyStoreManager.getKeyStorePhrase(app, REQUEST_PHRASE_BITID);
+            phrase = KeyStoreManager.getPhrase(app, REQUEST_PHRASE_BITID);
         } catch (BRKeystoreErrorException e) {
-            Log.e(TAG, "processBitIdResponse: failed to getKeyStorePhrase: " + e.getCause().getMessage());
+            Log.e(TAG, "processBitIdResponse: failed to getPhrase: " + e.getCause().getMessage());
             return;
         }
         nulTermPhrase = TypesConverter.getNullTerminatedPhrase(phrase);

@@ -2,10 +2,8 @@ package com.breadwallet.tools.security;
 
 import android.app.Activity;
 import android.content.DialogInterface;
-import android.security.keystore.UserNotAuthenticatedException;
 import android.util.Log;
 
-import com.breadwallet.BreadWalletApp;
 import com.breadwallet.R;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.activities.IntroActivity;
@@ -20,10 +18,7 @@ import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 
-import java.security.Key;
 import java.util.Arrays;
-
-import static com.breadwallet.wallet.BRWalletManager.getSeedFromPhrase;
 
 /**
  * BreadWallet
@@ -91,7 +86,7 @@ public class PostAuthenticationProcessor {
         try {
             boolean success = false;
             try {
-                success = KeyStoreManager.putKeyStorePhrase(phraseForKeyStore.getBytes(),
+                success = KeyStoreManager.putPhrase(phraseForKeyStore.getBytes(),
                         app, BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE);
             } catch (BRKeystoreErrorException e) {
                 e.printStackTrace();
@@ -131,7 +126,7 @@ public class PostAuthenticationProcessor {
     public void onShowPhraseFlowAuth(PhraseFlowActivity app, boolean authAsked) {
         byte[] phrase;
         try {
-            phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.SHOW_PHRASE_REQUEST_CODE);
+            phrase = KeyStoreManager.getPhrase(app, BRConstants.SHOW_PHRASE_REQUEST_CODE);
             app.showHideFragments(app.fragmentPhraseFlow1);
             app.fragmentPhraseFlow1.setPhrase(phrase);
         } catch (BRKeystoreErrorException e) {
@@ -148,7 +143,7 @@ public class PostAuthenticationProcessor {
         BRWalletManager walletManager = BRWalletManager.getInstance(app);
         byte[] rawSeed;
         try {
-            rawSeed = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAY_REQUEST_CODE);
+            rawSeed = KeyStoreManager.getPhrase(app, BRConstants.PAY_REQUEST_CODE);
         } catch (BRKeystoreErrorException e) {
             if (authAsked) {
                 showBugAuthLoopErrorMessage(app);
@@ -183,7 +178,7 @@ public class PostAuthenticationProcessor {
 
         byte[] rawSeed;
         try {
-            rawSeed = KeyStoreManager.getKeyStorePhrase(app, BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE);
+            rawSeed = KeyStoreManager.getPhrase(app, BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE);
         } catch (BRKeystoreErrorException e) {
             if (authAsked) {
                 showBugAuthLoopErrorMessage(app);
@@ -225,13 +220,14 @@ public class PostAuthenticationProcessor {
     public void onCanaryCheck(final IntroActivity introActivity, boolean authAsked) {
         String canary;
         try {
-            canary = KeyStoreManager.getKeyStoreCanary(introActivity, BRConstants.CANARY_REQUEST_CODE);
+            canary = KeyStoreManager.getCanary(introActivity, BRConstants.CANARY_REQUEST_CODE);
         } catch (BRKeystoreErrorException e) {
             if (authAsked) {
                 showBugAuthLoopErrorMessage(introActivity);
                 Log.e(TAG, "onPublishTxAuth,!success && authAsked");
             } else {
                 Log.e(TAG, "onCanaryCheck: ", e);
+                KSErrorPipe.parseError(introActivity, e, true);
             }
             return;
         }
@@ -240,7 +236,7 @@ public class PostAuthenticationProcessor {
             Log.e(TAG, "!canary.equalsIgnoreCase(BRConstants.CANARY_STRING)");
             byte[] phrase;
             try {
-                phrase = KeyStoreManager.getKeyStorePhrase(introActivity, BRConstants.CANARY_REQUEST_CODE);
+                phrase = KeyStoreManager.getPhrase(introActivity, BRConstants.CANARY_REQUEST_CODE);
             } catch (BRKeystoreErrorException e) {
                 Log.e(TAG, "onCanaryCheck: error: " + e.getMessage());
                 return;
@@ -253,7 +249,7 @@ public class PostAuthenticationProcessor {
                 BRAnimator.resetFragmentAnimator();
             } else {
                 try {
-                    KeyStoreManager.putKeyStoreCanary(BRConstants.CANARY_STRING, introActivity, 0);
+                    KeyStoreManager.putCanary(BRConstants.CANARY_STRING, introActivity, 0);
                 } catch (BRKeystoreErrorException e) {
                     e.printStackTrace();
                 }
@@ -268,7 +264,7 @@ public class PostAuthenticationProcessor {
             m.wipeKeyStore(app);
             m.wipeWalletButKeystore(app);
             BRAnimator.resetFragmentAnimator();
-            KeyStoreManager.showKeyStoreDialog("Keystore invalidated", "Disable lock screen and all fingerprints, and re-enable to continue.", app.getString(R.string.ok), null,
+            KSErrorPipe.showKeyStoreDialog(app, "Keystore invalidated", "Disable lock screen and all fingerprints, and re-enable to continue.", app.getString(R.string.ok), null,
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.cancel();
