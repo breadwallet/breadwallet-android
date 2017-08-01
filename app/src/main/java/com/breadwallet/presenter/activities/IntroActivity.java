@@ -105,6 +105,8 @@ public class IntroActivity extends FragmentActivity {
             throw ex;
         }
 
+        KeyStoreManager.putLastPasscodeUsedTime(System.currentTimeMillis(), this);
+
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
         leftButton = (Button) findViewById(R.id.intro_left_button);
         leftButton.setVisibility(View.GONE);

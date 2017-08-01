@@ -74,10 +74,12 @@ import javax.crypto.spec.IvParameterSpec;
 public class KeyStoreManager {
     private static final String TAG = KeyStoreManager.class.getName();
 
-    private static final String AES_MODE = "AES/GCM/NoPadding";
-    private static final String ANDROID_KEY_STORE = "AndroidKeyStore";
+    public static final String CIPHER_ALGORITHM = "AES/CBC/PKCS7Padding";
+    public static final String PADDING = KeyProperties.ENCRYPTION_PADDING_PKCS7;
+    public static final String BLOCK_MODE = KeyProperties.BLOCK_MODE_CBC;
+    public static final String ANDROID_KEY_STORE = "AndroidKeyStore";
 
-    private static Map<String, AliasObject> aliasObjectMap;
+    public static Map<String, AliasObject> aliasObjectMap;
 
     private static final String PHRASE_IV = "ivphrase";
     private static final String CANARY_IV = "ivcanary";
@@ -116,7 +118,6 @@ public class KeyStoreManager {
     private static final String PASS_TIME_FILENAME = "my_pass_time";
 
     public static final int AUTH_DURATION_SEC = 300;
-    private static final int KEY_SIZE = 128;
 
     static {
         aliasObjectMap = new HashMap<>();
@@ -158,12 +159,12 @@ public class KeyStoreManager {
                 // and the constrains (purposes) in the constructor of the Builder
                 keyGenerator.init(new KeyGenParameterSpec.Builder(alias,
                         KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
-                        .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
-                        .setKeySize(KEY_SIZE)
+                        .setBlockModes(BLOCK_MODE)
+                        .setKeySize(256)
                         .setUserAuthenticationRequired(auth_required)
                         .setUserAuthenticationValidityDurationSeconds(AUTH_DURATION_SEC)
                         .setRandomizedEncryptionRequired(false)
-                        .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+                        .setEncryptionPaddings(PADDING)
                         .build());
                 SecretKey key = keyGenerator.generateKey();
             }
@@ -176,8 +177,22 @@ public class KeyStoreManager {
                 BRErrorPipe.parseKeyStoreError(context, ex, alias, true);
                 return false;
             }
-            Cipher inCipher = Cipher.getInstance(AES_MODE);
+            Cipher inCipher = Cipher.getInstance(CIPHER_ALGORITHM);
+//            try {
             inCipher.init(Cipher.ENCRYPT_MODE, secret);
+//            } catch (InvalidKeyException ex) {
+//                /** store this data with the new algorithm */
+//                Log.e(TAG, "_setData: Old algorithm, clearing...");
+//                boolean deleteIv = new File(getEncryptedDataFilePath(alias_iv, context)).delete();
+//                boolean deleteData = new File(getEncryptedDataFilePath(alias_file, context)).delete();
+//                if (deleteIv && deleteData) {
+//                    keyStore.deleteEntry(alias);
+//                    boolean needsAuth = alias.equalsIgnoreCase(CANARY_ALIAS) || alias.equalsIgnoreCase(PHRASE_ALIAS);
+//                    return _setData(context, data, alias, alias_file, alias_iv, request_code, needsAuth);
+//                } else {
+//                    Log.e(TAG, "_setData: deleteIv:" + deleteIv + ", deleteData: " + deleteData);
+//                }
+//            }
             byte[] iv = inCipher.getIV();
             String path = getEncryptedDataFilePath(alias_iv, context);
             boolean success = writeBytesToFile(path, iv);
@@ -253,27 +268,44 @@ public class KeyStoreManager {
 
             byte[] iv = readBytesFromFile(getEncryptedDataFilePath(alias_iv, context));
             Cipher outCipher;
-
-            try {
-                outCipher = Cipher.getInstance(AES_MODE);
-                outCipher.init(Cipher.DECRYPT_MODE, secretKey, new GCMParameterSpec(KEY_SIZE, iv));
-            } catch (InvalidAlgorithmParameterException ignored) {
-                /** means the keys are created with the old algorithm */
-                Log.e(TAG, "_getData: found old keys");
-                outCipher = Cipher.getInstance("AES/CBC/PKCS7Padding");
-                try {
-                    outCipher.init(Cipher.DECRYPT_MODE, secretKey, new IvParameterSpec(iv));
-                    Log.e(TAG, "_getData: recovered old keys");
-                } catch (InvalidAlgorithmParameterException e) {
-                    e.printStackTrace();
-                    BRErrorPipe.parseKeyStoreError(context, e, alias, true);
-                    return null;
-                }
-            }
+//            boolean isOldAlgorithm = false;
+//            try {
+            outCipher = Cipher.getInstance(CIPHER_ALGORITHM);
+            outCipher.init(Cipher.DECRYPT_MODE, secretKey, new IvParameterSpec(iv));
+//            } catch (InvalidAlgorithmParameterException ignored) {
+//                /** means the keys are created with the old algorithm */
+//                Log.e(TAG, "_getData: found old keys");
+//                outCipher = Cipher.getInstance("AES/CBC/PKCS7Padding");
+//                try {
+//                    outCipher.init(Cipher.DECRYPT_MODE, secretKey, new IvParameterSpec(iv));
+//                    isOldAlgorithm = true;
+//                    Log.e(TAG, "_getData: recovered old keys");
+//                } catch (InvalidAlgorithmParameterException e) {
+//                    e.printStackTrace();
+//                    BRErrorPipe.parseKeyStoreError(context, e, alias, true);
+//                    return null;
+//                }
+//            }
 
             CipherInputStream cipherInputStream = new CipherInputStream(
                     new FileInputStream(encryptedDataFilePath), outCipher);
-            return ByteReader.readBytesFromStream(cipherInputStream);
+            byte[] data = ByteReader.readBytesFromStream(cipherInputStream);
+
+//            if (isOldAlgorithm) {
+//                /** store this data with the new algorithm */
+//
+//                boolean deleteIv = new File(getEncryptedDataFilePath(alias_iv, context)).delete();
+//                boolean deleteData = new File(getEncryptedDataFilePath(alias_file, context)).delete();
+//                if (deleteIv && deleteData) {
+//                    keyStore.deleteEntry(alias);
+//                    boolean needsAuth = alias.equalsIgnoreCase(CANARY_ALIAS) || alias.equalsIgnoreCase(PHRASE_ALIAS);
+//                    _setData(context, data, alias, alias_file, alias_iv, request_code, needsAuth);
+//                } else {
+//                    Log.e(TAG, "_getData: deleteIv:" + deleteIv + ", deleteData: " + deleteData);
+//                }
+//            }
+
+            return data;
         } catch (InvalidKeyException e) {
             Log.e(TAG, "_getData: InvalidKeyException", e);
             if (e instanceof UserNotAuthenticatedException) {
@@ -299,7 +331,7 @@ public class KeyStoreManager {
                 return null;
             }
 
-        } catch (UnrecoverableKeyException | NoSuchAlgorithmException | NoSuchPaddingException e) {
+        } catch (UnrecoverableKeyException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidAlgorithmParameterException e) {
             /** if for any other reason the keystore fails, crash! */
             Log.e(TAG, "getData: error: " + e.getClass().getSuperclass().getName());
             BRErrorPipe.parseKeyStoreError(context, e, alias, true);
@@ -677,6 +709,7 @@ public class KeyStoreManager {
         }
         return false;
     }
+
 
     public static class AliasObject {
         public String alias;
