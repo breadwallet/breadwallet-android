@@ -3,6 +3,7 @@ package com.breadwallet.tools.security;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Handler;
+import android.security.keystore.UserNotAuthenticatedException;
 import android.util.Log;
 
 import com.breadwallet.R;
@@ -153,9 +154,8 @@ public class RequestHandler {
                 try {
                     phrase = KeyStoreManager.getPhrase(app, REQUEST_PHRASE_BITID);
                     ((BreadWalletApp) app.getApplicationContext()).promptForAuthentication(app, AUTH_FOR_BIT_ID, null, tmpUri.getHost(), _authString, null, false);
-                } catch (BRKeystoreErrorException e) {
+                } catch (UserNotAuthenticatedException e) {
                     //asked the system, no need for local auth
-                    e.printStackTrace();
                 } finally {
                     //free the phrase
                     if (phrase != null) Arrays.fill(phrase, (byte) 0);
@@ -182,8 +182,7 @@ public class RequestHandler {
         final Uri uri = Uri.parse(_bitUri);
         try {
             phrase = KeyStoreManager.getPhrase(app, REQUEST_PHRASE_BITID);
-        } catch (BRKeystoreErrorException e) {
-            Log.e(TAG, "processBitIdResponse: failed to getPhrase: " + e.getCause().getMessage());
+        } catch (UserNotAuthenticatedException e) {
             return;
         }
         nulTermPhrase = TypesConverter.getNullTerminatedPhrase(phrase);

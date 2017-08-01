@@ -12,6 +12,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.security.keystore.UserNotAuthenticatedException;
 import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
@@ -147,9 +148,7 @@ public class BRWalletManager {
         boolean success = false;
         try {
             success = KeyStoreManager.putPhrase(strPhrase, ctx, BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE);
-        } catch (BRKeystoreErrorException e) {
-            e.printStackTrace();
-            showSentReceivedToast(e.getMessage());
+        } catch (UserNotAuthenticatedException e) {
             return false;
         }
         if (!success) return false;
@@ -178,7 +177,7 @@ public class BRWalletManager {
     }
 
     /**
-     * true if keychain is available and we know that no wallet exists on it
+     * true if keystore is available and we know that no wallet exists on it
      */
     public boolean noWallet(Activity ctx) {
         byte[] pubkey = KeyStoreManager.getMasterPublicKey(ctx);
@@ -190,7 +189,7 @@ public class BRWalletManager {
                 if (phrase == null || phrase.length == 0) {
                     return true;
                 }
-            } catch (BRKeystoreErrorException e) {
+            } catch (UserNotAuthenticatedException e) {
                 e.printStackTrace();
                 return false;
             }

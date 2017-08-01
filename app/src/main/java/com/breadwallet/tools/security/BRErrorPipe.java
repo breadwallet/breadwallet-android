@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.security.keystore.KeyPermanentlyInvalidatedException;
 
 import com.breadwallet.R;
-import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -38,15 +37,15 @@ import java.security.InvalidKeyException;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class KSErrorPipe {
+public class BRErrorPipe {
 
     private static android.app.AlertDialog dialog;
 
-    public static void parseError(final Context context, Exception e, boolean report) {
+    public static void parseKeyStoreError(final Context context, Exception e, String alias, boolean report) {
         if (report) FirebaseCrash.report(e);
 
         if (e instanceof KeyPermanentlyInvalidatedException) {
-            KSErrorPipe.showKeyStoreDialog(context, "KeyStore Error", "Your Breadwallet encrypted data was recently invalidated because you " +
+            BRErrorPipe.showKeyStoreDialog(context, "KeyStore Error: " + alias, "Your Breadwallet encrypted data was recently invalidated because you " +
                             "disabled your Android lock screen. Please input your phrase to recover your Breadwallet now.", context.getString(R.string.ok), null,
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
@@ -97,6 +96,30 @@ public class KSErrorPipe {
                         }
                     });
         }
+    }
+
+    public static void parseError(final Context context, String message, Exception ex, final boolean critical) {
+        FirebaseCrash.report(ex);
+        showKeyStoreDialog(context,
+                "Internal error:",
+                message,
+                "Close", null,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        if (critical)
+                            ((Activity) context).finish();
+                    }
+                },
+                null,
+                new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        if (critical)
+                            ((Activity) context).finish();
+                    }
+                });
     }
 
     public static void showKeyStoreDialog(Context context, final String title, final String message, final String posButton, final String negButton,
