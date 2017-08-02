@@ -3,19 +3,12 @@ package com.breadwallet.tools.manager;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ProviderInfo;
-import android.util.Log;
 import android.view.View;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.activities.UpdatePitActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.presenter.activities.settings.FingerprintActivity;
-import com.breadwallet.presenter.activities.settings.SecurityCenterActivity;
-import com.breadwallet.presenter.activities.settings.SyncBlockchainActivity;
-import com.breadwallet.tools.adapter.TransactionListAdapter;
-import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.wallet.BRPeerManager;
 
@@ -90,9 +83,9 @@ public class PromptManager {
         assert (app != null);
         switch (item) {
             case FINGER_PRINT:
-                return !SharedPreferencesManager.getUseFingerprint(app);
+                return !BRSharedPrefs.getUseFingerprint(app);
             case PAPER_KEY:
-                return !SharedPreferencesManager.getPhraseWroteDown(app);
+                return !BRSharedPrefs.getPhraseWroteDown(app);
             case UPGRADE_PIN:
                 return KeyStoreManager.getPinCode(app).length() != 6;
             case RECOMMEND_RESCAN:
@@ -146,7 +139,7 @@ public class PromptManager {
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                SharedPreferencesManager.putStartHeight(app, 0);
+                                BRSharedPrefs.putStartHeight(app, 0);
                                 BRPeerManager.getInstance().rescan();
 //                                BRAnimator.startBreadActivity(app, false);
 

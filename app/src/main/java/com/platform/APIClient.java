@@ -10,7 +10,7 @@ import android.util.Log;
 import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.tools.crypto.Base58;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.Utils;
@@ -213,7 +213,7 @@ public class APIClient {
             JSONObject requestMessageJSON = new JSONObject();
             String base58PubKey = BRWalletManager.getAuthPublicKeyForAPI(KeyStoreManager.getAuthKey(ctx));
             requestMessageJSON.put("pubKey", base58PubKey);
-            requestMessageJSON.put("deviceID", SharedPreferencesManager.getDeviceId(ctx));
+            requestMessageJSON.put("deviceID", BRSharedPrefs.getDeviceId(ctx));
 
             final MediaType JSON
                     = MediaType.parse("application/json; charset=utf-8");
@@ -586,7 +586,7 @@ public class APIClient {
                     String description = obj.getString("description");
                     boolean selected = obj.getBoolean("selected");
                     boolean enabled = obj.getBoolean("enabled");
-                    SharedPreferencesManager.putFeatureEnabled(ctx, enabled, name);
+                    BRSharedPrefs.putFeatureEnabled(ctx, enabled, name);
                 } catch (Exception e) {
                     Log.e(TAG, "malformed feature at position: " + i + ", whole json: " + j, e);
                 }
@@ -605,7 +605,7 @@ public class APIClient {
     }
 
     public boolean isFeatureEnabled(String feature) {
-        return SharedPreferencesManager.getFeatureEnabled(ctx, feature);
+        return BRSharedPrefs.getFeatureEnabled(ctx, feature);
     }
 
     public String buildUrl(String path) {

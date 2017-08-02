@@ -29,7 +29,7 @@ import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.BRConstants;
@@ -168,7 +168,7 @@ public class PinActivity extends BRActivity {
             }
         });
 
-        boolean useFingerprint = AuthManager.isFingerPrintAvailableAndSetup(this) && SharedPreferencesManager.getUseFingerprint(this);
+        boolean useFingerprint = AuthManager.isFingerPrintAvailableAndSetup(this) && BRSharedPrefs.getUseFingerprint(this);
         Log.e(TAG, "onCreate: isFingerPrintAvailableAndSetup: " + useFingerprint);
         fingerPrint.setVisibility(useFingerprint ? View.VISIBLE : View.GONE);
 

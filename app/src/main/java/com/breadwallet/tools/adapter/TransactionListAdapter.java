@@ -1,7 +1,5 @@
 package com.breadwallet.tools.adapter;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
@@ -9,7 +7,6 @@ import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,11 +17,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.presenter.entities.TxItem;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.PromptManager;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRDateUtil;
@@ -164,7 +160,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }, 50);
 
         int blockHeight = item.getBlockHeight();
-        int confirms = blockHeight == Integer.MAX_VALUE ? 0 : SharedPreferencesManager.getLastBlockHeight(mContext) - blockHeight + 1;
+        int confirms = blockHeight == Integer.MAX_VALUE ? 0 : BRSharedPrefs.getLastBlockHeight(mContext) - blockHeight + 1;
         int relayCount = BRPeerManager.getRelayCount(item.getTxHash());
 
         int level = 0;
@@ -237,8 +233,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         long satoshisAmount = received ? item.getReceived() : (item.getSent() - item.getReceived());
 
-        boolean isBTCPreferred = SharedPreferencesManager.getPreferredBTC(mContext);
-        String iso = isBTCPreferred ? "BTC" : SharedPreferencesManager.getIso(mContext);
+        boolean isBTCPreferred = BRSharedPrefs.getPreferredBTC(mContext);
+        String iso = isBTCPreferred ? "BTC" : BRSharedPrefs.getIso(mContext);
 
         convertView.amount.setText(BRCurrency.getFormattedCurrencyString(mContext, iso, BRExchange.getAmountFromSatoshis(mContext, iso, new BigDecimal(satoshisAmount))));
 
@@ -311,7 +307,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                         willAdd = false;
                     }
 
-                    int confirms = item.getBlockHeight() == Integer.MAX_VALUE ? 0 : SharedPreferencesManager.getLastBlockHeight(mContext) - item.getBlockHeight() + 1;
+                    int confirms = item.getBlockHeight() == Integer.MAX_VALUE ? 0 : BRSharedPrefs.getLastBlockHeight(mContext) - item.getBlockHeight() + 1;
                     //filter by pending and this is complete
                     if (switches[2] && confirms >= 6) {
                         willAdd = false;

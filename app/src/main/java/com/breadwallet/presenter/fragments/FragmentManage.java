@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.Utils;
 
@@ -69,7 +69,7 @@ public class FragmentManage extends Fragment {
 
         layout.clearFocus();
 
-        walletNameText.setText(SharedPreferencesManager.getWalletName(getContext()));
+        walletNameText.setText(BRSharedPrefs.getWalletName(getContext()));
 
         walletNameText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -80,7 +80,7 @@ public class FragmentManage extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (onNameChanged != null) onNameChanged.onNameChanged(s.toString());
-                SharedPreferencesManager.putWalletName(getActivity(), s.toString());
+                BRSharedPrefs.putWalletName(getActivity(), s.toString());
             }
 
             @Override
@@ -145,7 +145,7 @@ public class FragmentManage extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        SharedPreferencesManager.putWalletName(getActivity(), walletNameText.getText().toString());
+        BRSharedPrefs.putWalletName(getActivity(), walletNameText.getText().toString());
         Utils.hideKeyboard(getActivity());
 
     }

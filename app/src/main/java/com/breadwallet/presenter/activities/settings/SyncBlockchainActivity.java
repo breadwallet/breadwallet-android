@@ -3,7 +3,6 @@ package com.breadwallet.presenter.activities.settings;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -14,7 +13,7 @@ import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.BRPeerManager;
 
@@ -67,7 +66,7 @@ public class SyncBlockchainActivity extends BRActivity {
                                 new Thread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        SharedPreferencesManager.putStartHeight(SyncBlockchainActivity.this, 0);
+                                        BRSharedPrefs.putStartHeight(SyncBlockchainActivity.this, 0);
                                         BRPeerManager.getInstance().rescan();
                                         BRAnimator.startBreadActivity(SyncBlockchainActivity.this, false);
 

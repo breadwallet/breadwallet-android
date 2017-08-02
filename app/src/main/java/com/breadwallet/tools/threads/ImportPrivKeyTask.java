@@ -1,9 +1,7 @@
 package com.breadwallet.tools.threads;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
@@ -11,7 +9,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.ImportPrivKeyEntity;
 import com.breadwallet.tools.animation.BreadDialog;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.wallet.BRWalletManager;
@@ -95,7 +93,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
             return;
         }
 
-        String iso = SharedPreferencesManager.getIso(app);
+        String iso = BRSharedPrefs.getIso(app);
         String sentBits = BRCurrency.getFormattedCurrencyString(app, "BTC", BRExchange.getAmountFromSatoshis(app, "BTC", new BigDecimal(importPrivKeyEntity.getAmount())));
 
         String sentExchange = BRCurrency.getFormattedCurrencyString(app, iso, BRExchange.getAmountFromSatoshis(app, iso, new BigDecimal(importPrivKeyEntity.getAmount())));

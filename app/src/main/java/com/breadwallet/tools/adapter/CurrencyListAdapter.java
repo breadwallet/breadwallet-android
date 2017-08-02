@@ -13,13 +13,10 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.entities.CurrencyEntity;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.Utils;
 
 import java.util.Currency;
-import java.util.Locale;
-
-import static android.R.attr.checkMark;
 
 
 /**
@@ -68,7 +65,7 @@ public class CurrencyListAdapter extends ArrayAdapter<CurrencyEntity> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        final int tmp = SharedPreferencesManager.getCurrencyListPosition(mContext);
+        final int tmp = BRSharedPrefs.getCurrencyListPosition(mContext);
         if (convertView == null) {
             // inflate the layout
             LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();

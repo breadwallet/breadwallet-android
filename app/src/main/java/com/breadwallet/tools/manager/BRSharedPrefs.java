@@ -1,29 +1,17 @@
 package com.breadwallet.tools.manager;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.util.Base64;
-import android.util.Base64InputStream;
-import android.util.Base64OutputStream;
 import android.util.Log;
 
-import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.util.BRConstants;
 
 import org.json.JSONArray;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 import java.util.UUID;
 
 import static com.breadwallet.tools.util.BRConstants.GEO_PERMISSIONS_REQUESTED;
@@ -53,8 +41,8 @@ import static com.breadwallet.tools.util.BRConstants.GEO_PERMISSIONS_REQUESTED;
  * THE SOFTWARE.
  */
 
-public class SharedPreferencesManager {
-    public static final String TAG = SharedPreferencesManager.class.getName();
+public class BRSharedPrefs {
+    public static final String TAG = BRSharedPrefs.class.getName();
 
     public static List<OnIsoChangedListener> isoChangedListeners = new ArrayList<>();
 

@@ -3,7 +3,6 @@ package com.breadwallet.presenter.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -21,7 +20,7 @@ import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
@@ -199,7 +198,7 @@ public class InputWordsActivity extends BRActivity {
                         m.wipeKeyStore(app);
                         PostAuthenticationProcessor.getInstance().setPhraseForKeyStore(cleanPhrase);
                         PostAuthenticationProcessor.getInstance().onRecoverWalletAuth(app, false);
-                        SharedPreferencesManager.putAllowSpend(app, false);
+                        BRSharedPrefs.putAllowSpend(app, false);
                     }
 
                 } else {

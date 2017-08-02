@@ -13,7 +13,7 @@ import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRExchange;
@@ -130,7 +130,7 @@ public class TransactionManager {
         final long maxOutputAmount = BRWalletManager.getInstance().getMaxOutputAmount();
 
         // check if spending is allowed
-        if (!SharedPreferencesManager.getAllowSpend(app)) {
+        if (!BRSharedPrefs.getAllowSpend(app)) {
             throw new SpendingNotAllowed();
         }
 
@@ -193,7 +193,7 @@ public class TransactionManager {
         final long maxOutputAmount = BRWalletManager.getInstance().getMaxOutputAmount();
         final BRWalletManager m = BRWalletManager.getInstance();
         final long amountToReduce = request.amount - maxOutputAmount;
-        String iso = SharedPreferencesManager.getIso(app);
+        String iso = BRSharedPrefs.getIso(app);
         final String reduceBits = BRCurrency.getFormattedCurrencyString(app, "BTC", BRExchange.getAmountFromSatoshis(app, "BTC", new BigDecimal(amountToReduce)));
         final String reduceCurrency = BRCurrency.getFormattedCurrencyString(app, iso, BRExchange.getAmountFromSatoshis(app, iso, new BigDecimal(amountToReduce)));
         final String reduceBitsMinus = BRCurrency.getFormattedCurrencyString(app, "BTC", BRExchange.getAmountFromSatoshis(app, "BTC", new BigDecimal(amountToReduce).negate()));
@@ -308,7 +308,7 @@ public class TransactionManager {
     public String createConfirmation(Context ctx, PaymentItem request) {
         String receiver = getReceiver(request);
 
-        String iso = SharedPreferencesManager.getIso(ctx);
+        String iso = BRSharedPrefs.getIso(ctx);
 
         BRWalletManager m = BRWalletManager.getInstance();
         long feeForTx = m.feeForTransaction(request.addresses[0], request.amount);

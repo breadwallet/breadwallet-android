@@ -10,7 +10,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRConstants;
 import com.platform.BRHTTPHelper;
 import com.platform.GeoLocationManager;
@@ -119,7 +119,7 @@ public class GeoLocationPlugin implements Plugin {
                     JSONObject jsonResult = new JSONObject();
                     String status;
                     boolean enabled;
-                    boolean permRequested = SharedPreferencesManager.getGeoPermissionsRequested(app);
+                    boolean permRequested = BRSharedPrefs.getGeoPermissionsRequested(app);
                     int permissionCheck = ContextCompat.checkSelfPermission(app, Manifest.permission.ACCESS_FINE_LOCATION);
                     if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
                         status = "always";
@@ -153,7 +153,7 @@ public class GeoLocationPlugin implements Plugin {
                         Log.e(TAG, "handle: requesting permissions: " + target + " " + baseRequest.getMethod());
                         ActivityCompat.requestPermissions(app, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, BRConstants.GEO_REQUEST_ID);
                     }
-                    SharedPreferencesManager.putGeoPermissionsRequested(app, true);
+                    BRSharedPrefs.putGeoPermissionsRequested(app, true);
                     continuation = ContinuationSupport.getContinuation(request);
                     continuation.suspend(response);
                     globalBaseRequest = baseRequest;

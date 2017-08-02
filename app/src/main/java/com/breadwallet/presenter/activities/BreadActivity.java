@@ -27,8 +27,8 @@ import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRSearchBar;
 import com.breadwallet.presenter.fragments.FragmentManage;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.ConnectionManager;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
@@ -73,7 +73,7 @@ import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
  */
 
 public class BreadActivity extends BRActivity implements BRWalletManager.OnBalanceChanged,
-        BRPeerManager.OnTxStatusUpdate, SharedPreferencesManager.OnIsoChangedListener,
+        BRPeerManager.OnTxStatusUpdate, BRSharedPrefs.OnIsoChangedListener,
         TransactionDataSource.OnTxAddedListener, FragmentManage.OnNameChanged, ConnectionManager.ConnectionReceiverListener {
 
     private static final String TAG = BreadActivity.class.getName();
@@ -128,7 +128,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                 //put some here
             }
         });
-        SharedPreferencesManager.addIsoChangedListener(this);
+        BRSharedPrefs.addIsoChangedListener(this);
 
         app = this;
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
@@ -407,10 +407,10 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
             @Override
             public void run() {
                 //sleep a little in order to make sure all the commits are finished (like SharePreferences commits)
-                String iso = SharedPreferencesManager.getIso(BreadActivity.this);
+                String iso = BRSharedPrefs.getIso(BreadActivity.this);
 
                 //current amount in satoshis
-                final BigDecimal amount = new BigDecimal(SharedPreferencesManager.getCatchedBalance(BreadActivity.this));
+                final BigDecimal amount = new BigDecimal(BRSharedPrefs.getCatchedBalance(BreadActivity.this));
 
                 //amount in BTC units
                 BigDecimal btcAmount = BRExchange.getBitcoinForSatoshis(BreadActivity.this, amount);
@@ -423,7 +423,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        boolean preferredBtc = SharedPreferencesManager.getPreferredBTC(BreadActivity.this);
+                        boolean preferredBtc = BRSharedPrefs.getPreferredBTC(BreadActivity.this);
                         if (!isSwapped) {
                             primaryPrice.setText(preferredBtc ? formattedBTCAmount : formattedCurAmount);
                             secondaryPrice.setText(String.format(" = %s", (preferredBtc ? formattedCurAmount : formattedBTCAmount)));
@@ -543,7 +543,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                 @Override
                 public void run() {
 
-                    final double progress = BRPeerManager.syncProgress(SharedPreferencesManager.getStartHeight(BreadActivity.this));
+                    final double progress = BRPeerManager.syncProgress(BRSharedPrefs.getStartHeight(BreadActivity.this));
                     Log.e(TAG, "run: " + progress);
                     if (progress < 1 && progress > 0) {
                         BRPeerManager.getInstance().startSyncingProgressThread();

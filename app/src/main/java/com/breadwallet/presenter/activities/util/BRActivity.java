@@ -56,7 +56,7 @@ public class BRActivity extends Activity {
                 break;
             case BRConstants.REQUEST_PHRASE_BITID:
                 if (resultCode == RESULT_OK) {
-                    PostAuthenticationProcessor.getInstance().onBitIDAuth(BRActivity.this);
+                    PostAuthenticationProcessor.getInstance().onBitIDAuth(BRActivity.this, true);
 
                 }
                 break;

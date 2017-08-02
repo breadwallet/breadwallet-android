@@ -3,16 +3,13 @@ package com.breadwallet.wallet;
 import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
-import android.view.View;
-import android.widget.RelativeLayout;
 
 import com.breadwallet.BreadApp;
-import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.entities.BlockEntity;
 import com.breadwallet.presenter.entities.PeerEntity;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.PromptManager;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.PeerDataSource;
@@ -81,9 +78,9 @@ public class BRPeerManager {
         Log.d(TAG, "syncStarted: " + Thread.currentThread().getName());
 //        BRPeerManager.getInstance().refreshConnection();
         Context ctx = BreadApp.getBreadContext();
-        int startHeight = SharedPreferencesManager.getStartHeight(ctx);
-        int lastHeight = SharedPreferencesManager.getLastBlockHeight(ctx);
-        if (startHeight > lastHeight) SharedPreferencesManager.putStartHeight(ctx, lastHeight);
+        int startHeight = BRSharedPrefs.getStartHeight(ctx);
+        int lastHeight = BRSharedPrefs.getLastBlockHeight(ctx);
+        if (startHeight > lastHeight) BRSharedPrefs.putStartHeight(ctx, lastHeight);
         getInstance().startSyncingProgressThread();
     }
 
@@ -91,12 +88,12 @@ public class BRPeerManager {
         Log.d(TAG, "syncSucceeded");
         final Activity app = BreadApp.getBreadContext();
         if (app == null) return;
-        SharedPreferencesManager.putAllowSpend(app, true);
+        BRSharedPrefs.putAllowSpend(app, true);
         getInstance().stopSyncingProgressThread();
         new Thread(new Runnable() {
             @Override
             public void run() {
-                SharedPreferencesManager.putStartHeight(app, getCurrentBlockHeight());
+                BRSharedPrefs.putStartHeight(app, getCurrentBlockHeight());
             }
         }).start();
         if (onSyncFinished != null) onSyncFinished.onFinished();
@@ -257,7 +254,7 @@ public class BRPeerManager {
 
                 while (running) {
                     if (app != null) {
-                        int startHeight = SharedPreferencesManager.getStartHeight(app);
+                        int startHeight = BRSharedPrefs.getStartHeight(app);
                         progressStatus = syncProgress(startHeight);
 //                    Log.e(TAG, "run: progressStatus: " + progressStatus);
                         if (progressStatus == 1) {
@@ -337,7 +334,7 @@ public class BRPeerManager {
 //            new Thread(new Runnable() {
 //                @Override
 //                public void run() {
-//                    final double progress = BRPeerManager.syncProgress(SharedPreferencesManager.getStartHeight(ctx));
+//                    final double progress = BRPeerManager.syncProgress(BRSharedPrefs.getStartHeight(ctx));
 //                    ctx.runOnUiThread(new Runnable() {
 //                        @Override
 //                        public void run() {
@@ -389,7 +386,7 @@ public class BRPeerManager {
     public static void updateLastBlockHeight(int blockHeight) {
         final Activity ctx = BreadApp.getBreadContext();
         if (ctx == null) return;
-        SharedPreferencesManager.putLastBlockHeight(ctx, blockHeight);
+        BRSharedPrefs.putLastBlockHeight(ctx, blockHeight);
     }
 
     public native void create(int earliestKeyTime, int blockCount, int peerCount);

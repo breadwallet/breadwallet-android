@@ -24,7 +24,7 @@ import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.entities.TxItem;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SlideDetector;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRExchange;
@@ -153,7 +153,7 @@ public class FragmentTransactionItem extends Fragment {
 //        Log.e(TAG, "fillTexts fee: " + item.getFee());
 //        Log.e(TAG, "fillTexts hash: " + item.getHexId());
         //get the current iso
-        String iso = SharedPreferencesManager.getPreferredBTC(getActivity()) ? "BTC" : SharedPreferencesManager.getIso(getContext());
+        String iso = BRSharedPrefs.getPreferredBTC(getActivity()) ? "BTC" : BRSharedPrefs.getIso(getContext());
         TxMetaData txMetaData = KVStoreManager.getInstance().getTxMetaData(getContext(), item.getTxHash());
 
         //get the tx amount
@@ -162,7 +162,7 @@ public class FragmentTransactionItem extends Fragment {
         boolean sent = item.getReceived() - item.getSent() < 0;
 
         int blockHeight = item.getBlockHeight();
-        int confirms = blockHeight == Integer.MAX_VALUE ? 0 : SharedPreferencesManager.getLastBlockHeight(getContext()) - blockHeight + 1;
+        int confirms = blockHeight == Integer.MAX_VALUE ? 0 : BRSharedPrefs.getLastBlockHeight(getContext()) - blockHeight + 1;
 
         //calculated and formatted amount for iso
         String amountWithFee = BRCurrency.getFormattedCurrencyString(getActivity(), iso, BRExchange.getAmountFromSatoshis(getActivity(), iso, txAmount));

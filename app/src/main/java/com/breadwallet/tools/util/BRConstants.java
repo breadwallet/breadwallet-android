@@ -131,7 +131,7 @@ public class BRConstants {
     public static final int DIGITS_LIMIT = 12;
 
     /**
-     * SharedPreferencesManager
+     * BRSharedPrefs
      */
     public static final String PREFS_NAME = "MyPrefsFile";
     public static final String RECEIVE_ADDRESS = "receive_address";

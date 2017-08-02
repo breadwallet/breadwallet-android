@@ -17,7 +17,7 @@ import com.breadwallet.presenter.fragments.FingerprintFragment;
 import com.breadwallet.presenter.fragments.FragmentPin;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BreadDialog;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 
@@ -108,7 +108,7 @@ public class AuthManager {
 
     public boolean isWalletDisabled(Activity app) {
         int failCount = KeyStoreManager.getFailCount(app);
-        long secureTime = SharedPreferencesManager.getSecureTime(app);
+        long secureTime = BRSharedPrefs.getSecureTime(app);
         long failTimestamp = KeyStoreManager.getFailTimeStamp(app);
         return failCount >= 3 && secureTime < failTimestamp + Math.pow(6, failCount - 3) * 60.0;
 
@@ -117,7 +117,7 @@ public class AuthManager {
     public void setWalletDisabled(Activity app) {
         int failCount = KeyStoreManager.getFailCount(app);
         long now = System.currentTimeMillis() / 1000;
-        long secureTime = SharedPreferencesManager.getSecureTime(app);
+        long secureTime = BRSharedPrefs.getSecureTime(app);
         long failTimestamp = KeyStoreManager.getFailTimeStamp(app);
         double waitTimeMinutes = (failTimestamp + Math.pow(6, failCount - 3) * 60.0 - secureTime) / 60.0;
 
@@ -162,7 +162,7 @@ public class AuthManager {
     }
 
     public void updateDots(Context context, int pinLimit, String pin, View dot1, View dot2, View dot3, View dot4, View dot5, View dot6, int emptyPinRes, final OnPinSuccess onPinSuccess) {
-        if (dot1 == null) return;
+        if (dot1 == null || context == null) return;
         int selectedDots = pin.length();
 
         if (pinLimit == 6) {

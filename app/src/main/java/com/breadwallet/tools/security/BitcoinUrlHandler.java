@@ -13,7 +13,7 @@ import com.breadwallet.presenter.entities.RequestObject;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.TypesConverter;
@@ -210,7 +210,7 @@ public class BitcoinUrlHandler {
 
     }
 
-    public static void processBitIdResponse(final Activity app) {
+    public static void processBitIdResponse(final Activity app, boolean authenticated) {
         final byte[] phrase;
         final byte[] nulTermPhrase;
         final byte[] seed;
@@ -350,14 +350,14 @@ public class BitcoinUrlHandler {
     public static String newNonce(Activity app, String nonceKey) {
         // load previous nonces. we save all nonces generated for each service
         // so they are not used twice from the same device
-        List<Integer> existingNonces = SharedPreferencesManager.getBitIdNonces(app, nonceKey);
+        List<Integer> existingNonces = BRSharedPrefs.getBitIdNonces(app, nonceKey);
 
         String nonce = "";
         while (existingNonces.contains(Integer.valueOf(nonce))) {
             nonce = String.valueOf(System.currentTimeMillis() / 1000);
         }
         existingNonces.add(Integer.valueOf(nonce));
-        SharedPreferencesManager.putBitIdNonces(app, existingNonces, nonceKey);
+        BRSharedPrefs.putBitIdNonces(app, existingNonces, nonceKey);
 
         return nonce;
     }

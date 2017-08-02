@@ -1,6 +1,5 @@
 package com.breadwallet.presenter.fragments;
 
-import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
@@ -13,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.animation.OvershootInterpolator;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -29,7 +27,7 @@ import com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.manager.BRClipboardManager;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.qrcode.QRUtils;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
@@ -297,7 +295,7 @@ public class FragmentReceive extends Fragment {
                 finalCtx1.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        receiveAddress = SharedPreferencesManager.getReceiveAddress(finalCtx1);
+                        receiveAddress = BRSharedPrefs.getReceiveAddress(finalCtx1);
                         mAddress.setText(receiveAddress);
                         boolean generated = BRWalletManager.getInstance().generateQR(finalCtx1, "bitcoin:" + receiveAddress, mQrImage);
                         if (!generated)

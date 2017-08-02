@@ -115,7 +115,7 @@ public class TxManager {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                final double progress = BRPeerManager.syncProgress(SharedPreferencesManager.getStartHeight(app));
+                final double progress = BRPeerManager.syncProgress(BRSharedPrefs.getStartHeight(app));
 
                 app.runOnUiThread(new Runnable() {
                     @Override

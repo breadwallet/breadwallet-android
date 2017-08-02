@@ -28,13 +28,11 @@ package com.breadwallet.tools.sqlite;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
 import com.breadwallet.presenter.entities.BlockEntity;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.ArrayList;
