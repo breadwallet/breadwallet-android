@@ -2,7 +2,7 @@ package com.breadwallet.tools.util;
 
 import android.content.Context;
 
-import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -70,8 +70,8 @@ public class BRCurrency {
 
 //    public static String getCurrentBalanceText(Activity ctx) {
 //        CurrencyFetchManager cm = CurrencyFetchManager.getInstance(ctx);
-//        String iso = SharedPreferencesManager.getIso(ctx);
-//        double rate = SharedPreferencesManager.getRate(ctx);
+//        String iso = BRSharedPrefs.getIso(ctx);
+//        double rate = BRSharedPrefs.getRate(ctx);
 //        long exchange = BRWalletManager.getInstance().localAmount(BRWalletManager.getInstance().getCatchedBalance(),
 //                new BigDecimal(String.valueOf(rate)).multiply(new BigDecimal("100")).doubleValue());
 //
@@ -107,7 +107,7 @@ public class BRCurrency {
         decimalFormatSymbols.setCurrencySymbol(symbol);
 //        currencyFormat.setMaximumFractionDigits(decimalPoints);
         currencyFormat.setGroupingUsed(true);
-        currencyFormat.setMaximumFractionDigits(SharedPreferencesManager.getCurrencyUnit(app) == BRConstants.CURRENT_UNIT_BITCOINS ? 8 : 2);
+        currencyFormat.setMaximumFractionDigits(BRSharedPrefs.getCurrencyUnit(app) == BRConstants.CURRENT_UNIT_BITCOINS ? 8 : 2);
         currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
         currencyFormat.setNegativePrefix(decimalFormatSymbols.getCurrencySymbol() + "-");
         currencyFormat.setNegativeSuffix("");
@@ -125,7 +125,7 @@ public class BRCurrency {
         if (Objects.equals(iso, "BTC")) {
             String currencySymbolString = BRConstants.bitcoinLowercase;
             if (app != null) {
-                int unit = SharedPreferencesManager.getCurrencyUnit(app);
+                int unit = BRSharedPrefs.getCurrencyUnit(app);
                 switch (unit) {
                     case CURRENT_UNIT_BITS:
                         currencySymbolString = BRConstants.bitcoinLowercase;

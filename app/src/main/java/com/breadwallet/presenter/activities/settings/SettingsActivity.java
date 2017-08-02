@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +22,7 @@ import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.entities.BRSettingsItem;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.platform.HTTPServer;
 
@@ -145,7 +144,7 @@ public class SettingsActivity extends BRActivity {
 
         items.add(new BRSettingsItem("Manage", "", null, true));
 
-        items.add(new BRSettingsItem("Notifications", SharedPreferencesManager.getShowNotification(this) ? "On" : "Off", new View.OnClickListener() {
+        items.add(new BRSettingsItem("Notifications", BRSharedPrefs.getShowNotification(this) ? "On" : "Off", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(SettingsActivity.this, NotificationActivity.class);
@@ -177,7 +176,7 @@ public class SettingsActivity extends BRActivity {
             }, false));
         }
 
-        items.add(new BRSettingsItem("Default Currency", SharedPreferencesManager.getIso(this), new View.OnClickListener() {
+        items.add(new BRSettingsItem("Default Currency", BRSharedPrefs.getIso(this), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(SettingsActivity.this, DefaultCurrencyActivity.class);

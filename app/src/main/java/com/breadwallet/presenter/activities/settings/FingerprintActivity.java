@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -21,9 +20,8 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRExchange;
@@ -59,7 +57,7 @@ public class FingerprintActivity extends BRActivity {
         limitExchange = (TextView) findViewById(R.id.limit_exchange);
         limitInfo = (TextView) findViewById(R.id.limit_info);
 
-        toggleButton.setChecked(SharedPreferencesManager.getUseFingerprint(this));
+        toggleButton.setChecked(BRSharedPrefs.getUseFingerprint(this));
 
         limitExchange.setText(getLimitText());
 
@@ -78,7 +76,7 @@ public class FingerprintActivity extends BRActivity {
                     buttonView.setChecked(false);
                     return;
                 }
-                SharedPreferencesManager.putUseFingerprint(app, isChecked);
+                BRSharedPrefs.putUseFingerprint(app, isChecked);
 
             }
         });
@@ -107,7 +105,7 @@ public class FingerprintActivity extends BRActivity {
     }
 
     private String getLimitText() {
-        String iso = SharedPreferencesManager.getIso(this);
+        String iso = BRSharedPrefs.getIso(this);
         //amount in satoshis
         BigDecimal satoshis = new BigDecimal(KeyStoreManager.getSpendLimit(this));
         //amount in BTC, mBTC or bits

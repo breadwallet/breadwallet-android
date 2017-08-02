@@ -17,7 +17,7 @@ import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
@@ -178,7 +178,7 @@ public class IntroActivity extends BRActivity implements Serializable {
     }
 
     public boolean checkFirstAddress(byte[] mpk) {
-        String addressFromPrefs = SharedPreferencesManager.getFirstAddress(this);
+        String addressFromPrefs = BRSharedPrefs.getFirstAddress(this);
         String generatedAddress = BRWalletManager.getFirstAddress(mpk);
         return addressFromPrefs.equals(generatedAddress);
     }

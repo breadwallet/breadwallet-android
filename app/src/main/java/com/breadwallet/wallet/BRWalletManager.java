@@ -38,6 +38,7 @@ import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.qrcode.QRUtils;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.PeerDataSource;
@@ -45,7 +46,6 @@ import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.tools.threads.ImportPrivKeyTask;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.manager.BRNotificationManager;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
@@ -54,8 +54,6 @@ import com.breadwallet.tools.security.KeyStoreManager;
 import com.google.firebase.crash.FirebaseCrash;
 import com.platform.entities.WalletInfo;
 import com.platform.tools.KVStoreManager;
-
-import junit.framework.Assert;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -102,7 +100,7 @@ public class BRWalletManager {
             Log.e(TAG, "setBalance: FAILED TO SET THE BALANCE");
             return;
         }
-        SharedPreferencesManager.putCatchedBalance(context, balance);
+        BRSharedPrefs.putCatchedBalance(context, balance);
 
         refreshAddress(context);
         for (OnBalanceChanged listener : balanceListeners) {
@@ -111,7 +109,7 @@ public class BRWalletManager {
     }
 
     public long getBalance(Context context) {
-        return SharedPreferencesManager.getCatchedBalance(context);
+        return BRSharedPrefs.getCatchedBalance(context);
     }
 
 //    private static int messageId = 0;
@@ -252,13 +250,13 @@ public class BRWalletManager {
             Log.e(TAG, "refreshAddress: WARNING, retrieved address:" + address);
             return false;
         }
-        SharedPreferencesManager.putReceiveAddress(ctx, address);
+        BRSharedPrefs.putReceiveAddress(ctx, address);
         return true;
 
     }
 
     public boolean isPaperKeyWritten(Context context) {
-        return SharedPreferencesManager.getPhraseWroteDown(context);
+        return BRSharedPrefs.getPhraseWroteDown(context);
     }
 
     public void wipeWalletButKeystore(final Context ctx) {
@@ -274,7 +272,7 @@ public class BRWalletManager {
         TransactionDataSource.getInstance(ctx).deleteAllTransactions();
         MerkleBlockDataSource.getInstance(ctx).deleteAllBlocks();
         PeerDataSource.getInstance(ctx).deleteAllPeers();
-        SharedPreferencesManager.clearAllPrefs(ctx);
+        BRSharedPrefs.clearAllPrefs(ctx);
     }
 
     public boolean confirmSweep(final Context ctx, final String privKey) {
@@ -376,17 +374,17 @@ public class BRWalletManager {
 //            ((Activity) ctx).runOnUiThread(new Runnable() {
 //                @Override
 //                public void run() {
-//                    boolean phraseWroteDown = SharedPreferencesManager.getPhraseWroteDown(ctx);
+//                    boolean phraseWroteDown = BRSharedPrefs.getPhraseWroteDown(ctx);
 //                    if (phraseWroteDown) return;
 //                    long now = System.currentTimeMillis() / 1000;
-//                    long lastMessageShow = SharedPreferencesManager.getPhraseWarningTime(ctx);
+//                    long lastMessageShow = BRSharedPrefs.getPhraseWarningTime(ctx);
 //                    if (lastMessageShow == 0 || (!firstTime && lastMessageShow > (now - 36 * 60 * 60)))
 //                        return;//36 * 60 * 60//
-//                    if (BRWalletManager.getInstance().getBalance(ctx) > SharedPreferencesManager.getTotalLimit(ctx)) {
+//                    if (BRWalletManager.getInstance().getBalance(ctx) > BRSharedPrefs.getTotalLimit(ctx)) {
 ////                        getInstance(ctx).animateSavePhraseFlow();
 //                        return;
 //                    }
-//                    SharedPreferencesManager.putPhraseWarningTime(ctx, System.currentTimeMillis() / 1000);
+//                    BRSharedPrefs.putPhraseWarningTime(ctx, System.currentTimeMillis() / 1000);
 //                    AlertDialog alert;
 //                    AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
 //                    builder.setTitle(ctx.getString(R.string.you_received_bitcoin));
@@ -475,7 +473,7 @@ public class BRWalletManager {
         Log.d(TAG, "onTxAdded: " + String.format("tx.length: %d, blockHeight: %d, timestamp: %d, amount: %d, hash: %s", tx.length, blockHeight, timestamp, amount, hash));
 
 //        if (getInstance().getTxCount() <= 1) {
-//            SharedPreferencesManager.putPhraseWarningTime(ctx, System.currentTimeMillis() / 1000);
+//            BRSharedPrefs.putPhraseWarningTime(ctx, System.currentTimeMillis() / 1000);
 //            ctx.runOnUiThread(new Runnable() {
 //                @Override
 //                public void run() {
@@ -499,7 +497,7 @@ public class BRWalletManager {
                         String strToShow =
                                 (String.format(ctx.getString(R.string.received_amount),
                                         BRCurrency.getFormattedCurrencyString(ctx, "BTC", new BigDecimal(amount)),
-                                        BRCurrency.getFormattedCurrencyString(ctx, SharedPreferencesManager.getIso(ctx), new BigDecimal(amount))));
+                                        BRCurrency.getFormattedCurrencyString(ctx, BRSharedPrefs.getIso(ctx), new BigDecimal(amount))));
 
                         showToast(ctx, strToShow);
                     }
@@ -530,7 +528,7 @@ public class BRWalletManager {
 
                         }
 
-                        if (!BreadActivity.appVisible && SharedPreferencesManager.getShowNotification(finalCtx))
+                        if (!BreadActivity.appVisible && BRSharedPrefs.getShowNotification(finalCtx))
                             BRNotificationManager.sendNotification(finalCtx, R.drawable.notification_icon, finalCtx.getString(R.string.app_name), message, 1);
                     }
                 }
@@ -682,8 +680,8 @@ public class BRWalletManager {
             //Save the first address for future check
             m.createWallet(transactionsCount, pubkeyEncoded);
             String firstAddress = BRWalletManager.getFirstAddress(pubkeyEncoded);
-            SharedPreferencesManager.putFirstAddress(ctx, firstAddress);
-            long fee = SharedPreferencesManager.getFeePerKb(ctx);
+            BRSharedPrefs.putFirstAddress(ctx, firstAddress);
+            long fee = BRSharedPrefs.getFeePerKb(ctx);
             if (fee == 0) fee = BRConstants.DEFAULT_FEE_PER_KB;
             BRWalletManager.getInstance().setFeePerKb(fee);
         }
@@ -715,11 +713,11 @@ public class BRWalletManager {
 
         }
         pm.connect();
-        if (SharedPreferencesManager.getStartHeight(ctx) == 0)
+        if (BRSharedPrefs.getStartHeight(ctx) == 0)
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    SharedPreferencesManager.putStartHeight(ctx, BRPeerManager.getCurrentBlockHeight());
+                    BRSharedPrefs.putStartHeight(ctx, BRPeerManager.getCurrentBlockHeight());
                 }
             }).start();
     }

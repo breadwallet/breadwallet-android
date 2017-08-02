@@ -213,7 +213,7 @@ public class FingerprintFragment extends Fragment
 //        getDialog().dismiss();
 //        if (mode == BRConstants.AUTH_FOR_PHRASE) {
 //            PhraseFlowActivity app = ((PhraseFlowActivity) getActivity());
-//            if (SharedPreferencesManager.getPhraseWroteDown(app)) {
+//            if (BRSharedPrefs.getPhraseWroteDown(app)) {
 ////                app.animateSlide(app.fragmentPhraseFlow1, app.fragmentRecoveryPhrase, IntroActivity.RIGHT);
 ////                app.fragmentRecoveryPhrase.setPhrase(FragmentPhraseFlow1.phrase);
 //            } else {

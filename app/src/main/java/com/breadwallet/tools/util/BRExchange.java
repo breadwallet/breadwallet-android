@@ -1,11 +1,9 @@
 package com.breadwallet.tools.util;
 
-import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 
 import com.breadwallet.presenter.entities.CurrencyEntity;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.wallet.BRWalletManager;
 
@@ -54,7 +52,7 @@ public class BRExchange {
     // amount in satoshis
     public static BigDecimal getBitcoinForSatoshis(Context app, BigDecimal amount) {
         BigDecimal result = new BigDecimal(0);
-        int unit = SharedPreferencesManager.getCurrencyUnit(app);
+        int unit = BRSharedPrefs.getCurrencyUnit(app);
         switch (unit) {
             case CURRENT_UNIT_BITS:
                 result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100"), 2, ROUNDING_MODE);
@@ -71,7 +69,7 @@ public class BRExchange {
 
     public static BigDecimal getSatoshisForBitcoin(Context app, BigDecimal amount) {
         BigDecimal result = new BigDecimal(0);
-        int unit = SharedPreferencesManager.getCurrencyUnit(app);
+        int unit = BRSharedPrefs.getCurrencyUnit(app);
         switch (unit) {
             case CURRENT_UNIT_BITS:
                 result = new BigDecimal(String.valueOf(amount)).multiply(new BigDecimal("100"));
@@ -89,7 +87,7 @@ public class BRExchange {
     public static String getBitcoinSymbol(Context app) {
         String currencySymbolString = BRConstants.bitcoinLowercase;
         if (app != null) {
-            int unit = SharedPreferencesManager.getCurrencyUnit(app);
+            int unit = BRSharedPrefs.getCurrencyUnit(app);
             switch (unit) {
                 case CURRENT_UNIT_BITS:
                     currencySymbolString = BRConstants.bitcoinLowercase;

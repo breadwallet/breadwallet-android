@@ -15,7 +15,7 @@ import com.breadwallet.R;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.animation.BreadDialog;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BytesUtil;
 import com.breadwallet.tools.util.TypesConverter;
@@ -504,7 +504,7 @@ public class KeyStoreManager {
     public static boolean putFailCount(int failCount, Context context) {
         AliasObject obj = aliasObjectMap.get(FAIL_COUNT_ALIAS);
         if (failCount >= 3) {
-            long time = SharedPreferencesManager.getSecureTime(context);
+            long time = BRSharedPrefs.getSecureTime(context);
             putFailTimeStamp(time, context);
         }
         byte[] bytesToStore = TypesConverter.intToBytes(failCount);

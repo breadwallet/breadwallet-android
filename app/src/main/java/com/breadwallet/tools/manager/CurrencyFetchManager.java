@@ -95,13 +95,13 @@ public class CurrencyFetchManager {
                         tmp.name = tmpObj.getString("name");
                         tmp.code = tmpObj.getString("code");
                         tmp.rate = (float) tmpObj.getDouble("rate");
-                        String selectedISO = SharedPreferencesManager.getIso(context);
+                        String selectedISO = BRSharedPrefs.getIso(context);
 //                        Log.e(TAG,"selectedISO: " + selectedISO);
                         if (tmp.code.equalsIgnoreCase(selectedISO)) {
 //                            Log.e(TAG, "theIso : " + theIso);
 //                                Log.e(TAG, "Putting the shit in the shared preffs");
-                            SharedPreferencesManager.putIso(context, tmp.code);
-                            SharedPreferencesManager.putCurrencyListPosition(context, i - 1);
+                            BRSharedPrefs.putIso(context, tmp.code);
+                            BRSharedPrefs.putCurrencyListPosition(context, i - 1);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -206,7 +206,7 @@ public class CurrencyFetchManager {
 //            String secureDate = headers.getString("Date");
 //            @SuppressWarnings("deprecation") long date = Date.parse(secureDate) / 1000;
 
-//            SharedPreferencesManager.putSecureTime(activity, date);
+//            BRSharedPrefs.putSecureTime(activity, date);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -225,7 +225,7 @@ public class CurrencyFetchManager {
             fee = obj.getLong("fee_per_kb");
             if (fee != 0 && fee < BRConstants.MAX_FEE_PER_KB) {
 
-                SharedPreferencesManager.putFeePerKb(activity, fee);
+                BRSharedPrefs.putFeePerKb(activity, fee);
                 BRWalletManager.getInstance().setFeePerKb(fee);
             }
         } catch (JSONException e) {
@@ -253,7 +253,7 @@ public class CurrencyFetchManager {
                 Log.e(TAG, "callURL: strDate == null!!!");
             } else {
                 @SuppressWarnings("deprecation") long date = Date.parse(strDate) / 1000;
-                SharedPreferencesManager.putSecureTime(app, date);
+                BRSharedPrefs.putSecureTime(app, date);
                 Assert.assertTrue(date != 0);
             }
 

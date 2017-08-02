@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,8 +24,7 @@ import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.presenter.activities.UpdatePitActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.entities.BRSecurityCenterItem;
-import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
@@ -171,7 +169,7 @@ public class SecurityCenterActivity extends BRActivity {
         }));
 
         int resId = Utils.isFingerprintEnrolled(SecurityCenterActivity.this)
-                && SharedPreferencesManager.getUseFingerprint(SecurityCenterActivity.this)
+                && BRSharedPrefs.getUseFingerprint(SecurityCenterActivity.this)
                 ? R.drawable.ic_check_mark_blue
                 : R.drawable.ic_check_mark_grey;
 
@@ -188,7 +186,7 @@ public class SecurityCenterActivity extends BRActivity {
             }));
         }
 
-        boolean isPaperKeySet = SharedPreferencesManager.getPhraseWroteDown(this);
+        boolean isPaperKeySet = BRSharedPrefs.getPhraseWroteDown(this);
         itemList.add(new BRSecurityCenterItem("Paper Key", "Restores your Bread on new devices and after software updates.",
                 isPaperKeySet ? R.drawable.ic_check_mark_blue : R.drawable.ic_check_mark_grey, new View.OnClickListener() {
             @Override

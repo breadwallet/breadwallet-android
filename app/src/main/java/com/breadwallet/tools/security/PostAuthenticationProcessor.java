@@ -14,7 +14,7 @@ import com.breadwallet.presenter.activities.PaperKeyProveActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.TypesConverter;
@@ -117,10 +117,9 @@ public class PostAuthenticationProcessor {
         app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
     }
 
-    public void onBitIDAuth(Activity app) {
-        BitcoinUrlHandler.processBitIdResponse(app);
+    public void onBitIDAuth(Activity app, boolean authenticated) {
+        BitcoinUrlHandler.processBitIdResponse(app, authenticated );
     }
-
 
     public void onRecoverWalletAuth(Activity app, boolean authAsked) {
         if (phraseForKeyStore == null) return;
@@ -142,7 +141,7 @@ public class PostAuthenticationProcessor {
                 }
             } else {
                 if (phraseForKeyStore.length() != 0) {
-                    SharedPreferencesManager.putPhraseWroteDown(app, true);
+                    BRSharedPrefs.putPhraseWroteDown(app, true);
                     bytePhrase = TypesConverter.getNullTerminatedPhrase(phraseForKeyStore.getBytes());
                     byte[] seed = BRWalletManager.getSeedFromPhrase(bytePhrase);
                     byte[] authKey = BRWalletManager.getAuthPrivKeyForAPI(seed);

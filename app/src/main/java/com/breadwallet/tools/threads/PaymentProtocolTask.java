@@ -13,7 +13,7 @@ import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.exceptions.CertificateChainNotFound;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BreadDialog;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
@@ -323,7 +323,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
         final String memo = (!paymentRequest.memo.isEmpty() ? "\n" : "") + paymentRequest.memo;
         allAddresses = new StringBuilder();
 
-        final String iso = SharedPreferencesManager.getIso(app);
+        final String iso = BRSharedPrefs.getIso(app);
         final StringBuilder finalAllAddresses = allAddresses;
         new Thread(new Runnable() {
             @Override

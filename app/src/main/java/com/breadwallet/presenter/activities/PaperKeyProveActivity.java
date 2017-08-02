@@ -1,8 +1,5 @@
 package com.breadwallet.presenter.activities;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
@@ -10,12 +7,10 @@ import android.support.constraint.ConstraintSet;
 import android.support.transition.TransitionManager;
 import android.util.Log;
 import android.util.SparseArray;
-import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -28,7 +23,7 @@ import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.tools.util.Bip39Reader;
 import com.google.firebase.crash.FirebaseCrash;
@@ -135,7 +130,7 @@ public class PaperKeyProveActivity extends BRActivity {
 
                 if (edit1.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(0))) && edit2.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(1)))) {
                     Utils.hideKeyboard(PaperKeyProveActivity.this);
-                    SharedPreferencesManager.putPhraseWroteDown(PaperKeyProveActivity.this, true);
+                    BRSharedPrefs.putPhraseWroteDown(PaperKeyProveActivity.this, true);
                     BRAnimator.showBreadSignal(PaperKeyProveActivity.this, "Paper Key Set", "Awesome!", R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
                         @Override
                         public void onComplete() {

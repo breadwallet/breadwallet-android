@@ -3,7 +3,6 @@ package com.breadwallet.presenter.activities.settings;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
@@ -12,7 +11,7 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.BRConstants;
@@ -109,7 +108,7 @@ public class SpendLimitActivity extends BRActivity {
 
     private void updateText(int progress) {
         //user preferred ISO
-        String iso = SharedPreferencesManager.getIso(this);
+        String iso = BRSharedPrefs.getIso(this);
         //amount in satoshis
         BigDecimal satoshis = getAmountBySte(progress);
         //amount in BTC, mBTC or bits

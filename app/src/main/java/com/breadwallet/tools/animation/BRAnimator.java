@@ -41,7 +41,7 @@ import com.breadwallet.presenter.fragments.FragmentRequestAmount;
 import com.breadwallet.presenter.fragments.FragmentSend;
 import com.breadwallet.presenter.fragments.FragmentTransactionDetails;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 
@@ -110,7 +110,7 @@ public class BRAnimator {
         } else if (tag.equalsIgnoreCase(FragmentReceive.class.getName())) {
             showReceiveFragment(app, true);
         } else if (tag.equalsIgnoreCase(FragmentRequestAmount.class.getName())) {
-            showRequestFragment(app, SharedPreferencesManager.getReceiveAddress(app));
+            showRequestFragment(app, BRSharedPrefs.getReceiveAddress(app));
         } else if (tag.equalsIgnoreCase(FragmentMenu.class.getName())) {
             showMenuFragment(app);
         } else {
@@ -317,7 +317,7 @@ public class BRAnimator {
     }
 
     public static void swapPriceTexts(final Context ctx, final TextView t1, final TextView t2) {
-        SharedPreferencesManager.putPreferredBTC(ctx, !SharedPreferencesManager.getPreferredBTC(ctx));
+        BRSharedPrefs.putPreferredBTC(ctx, !BRSharedPrefs.getPreferredBTC(ctx));
 
         final float t1Size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 30, ctx.getResources().getDisplayMetrics());
         final float t2Size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 14, ctx.getResources().getDisplayMetrics());

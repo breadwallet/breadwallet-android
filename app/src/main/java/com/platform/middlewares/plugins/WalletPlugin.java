@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
@@ -69,33 +71,43 @@ public class WalletPlugin implements Plugin {
             BRWalletManager wm = BRWalletManager.getInstance();
             JSONObject jsonResp = new JSONObject();
             try {
+                /**whether or not the users wallet is set up yet, or is currently locked*/
                 jsonResp.put("no_wallet", wm.noWalletForPlatform(app));
-                jsonResp.put("watch_only", false);
+
+//                jsonResp.put("watch_only", false);
+
+                /**the current receive address*/
                 jsonResp.put("receive_address", BRWalletManager.getReceiveAddress());
+
+                /**how digits after the decimal point. 2 = bits 8 = btc 6 = mbtc*/
+                jsonResp.put("btc_denomiation_digits", BRSharedPrefs.getCurrencyUnit(app) == BRConstants.CURRENT_UNIT_BITCOINS ? 8 : 2);
                 return BRHTTPHelper.handleSuccess(200, jsonResp.toString().getBytes(), baseRequest, response, null);
             } catch (JSONException e) {
                 e.printStackTrace();
                 Log.e(TAG, "handle: json error: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "json error", baseRequest, response);
             }
+        }
 
-        } else if (target.startsWith("/_wallet/format") && request.getMethod().equalsIgnoreCase("get")) {
-            Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
-            String amount = request.getParameter("amount");
-            if (Utils.isNullOrEmpty(amount)) {
-                Log.e(TAG, "handle: amount is not specified: " + target + " " + baseRequest.getMethod());
-                return BRHTTPHelper.handleError(400, null, baseRequest, response);
-            }
-            long satAmount;
-
-            if (amount.contains(".")) {
-                // assume full bitcoins
-                satAmount = new BigDecimal(amount).multiply(new BigDecimal("100000000")).longValue();
-            } else {
-                satAmount = Long.valueOf(amount);
-            }
-            return BRHTTPHelper.handleSuccess(200, BRCurrency.getFormattedCurrencyString(app,Locale.getDefault().getISO3Language(), new BigDecimal(satAmount)).getBytes(), baseRequest, response, null);
-        } else if (target.startsWith("/_wallet/sign_bitid") && request.getMethod().equalsIgnoreCase("post")) {
+        /**DEPRECIATED This used to be used to format a currency string but the web app should now handle that.*/
+//        else if (target.startsWith("/_wallet/format") && request.getMethod().equalsIgnoreCase("get")) {
+//            Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
+//            String amount = request.getParameter("amount");
+//            if (Utils.isNullOrEmpty(amount)) {
+//                Log.e(TAG, "handle: amount is not specified: " + target + " " + baseRequest.getMethod());
+//                return BRHTTPHelper.handleError(400, null, baseRequest, response);
+//            }
+//            long satAmount;
+//
+//            if (amount.contains(".")) {
+//                // assume full bitcoins
+//                satAmount = new BigDecimal(amount).multiply(new BigDecimal("100000000")).longValue();
+//            } else {
+//                satAmount = Long.valueOf(amount);
+//            }
+//            return BRHTTPHelper.handleSuccess(200, BRCurrency.getFormattedCurrencyString(app, Locale.getDefault().getISO3Language(), new BigDecimal(satAmount)).getBytes(), baseRequest, response, null);
+//        }
+        else if (target.startsWith("/_wallet/sign_bitid") && request.getMethod().equalsIgnoreCase("post")) {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
             /**
              * POST /_wallet/sign_bitid
@@ -155,20 +167,31 @@ public class WalletPlugin implements Plugin {
     }
 
 
-    public static void handleBitId(final JSONObject restJson) {
-        if (restJson == null) {
-            Log.e(TAG, "handleBitId: WARNING restJson is null");
-            return;
-        }
+    public static void handleBitId(final JSONObject restJson, final boolean authenticated) {
+
         new Thread(new Runnable() {
             @Override
             public void run() {
-                if (continuation == null) {
-                    Log.e(TAG, "handleBitId: WARNING continuation is null");
-                    return;
-                }
-
                 try {
+                    if (!authenticated) {
+                        try {
+                            ((HttpServletResponse) continuation.getServletResponse()).sendError(401);
+                        } catch (IOException e) {
+                            Log.e(TAG, "handleBitId: failed to send error 401: ", e);
+                            e.printStackTrace();
+                        }
+                        return;
+                    }
+                    if (restJson == null) {
+                        Log.e(TAG, "handleBitId: WARNING restJson is null");
+                        return;
+                    }
+                    if (continuation == null) {
+                        Log.e(TAG, "handleBitId: WARNING continuation is null");
+                        return;
+                    }
+
+
                     try {
                         continuation.getServletResponse().getWriter().write(restJson.toString());
                     } catch (IOException e) {

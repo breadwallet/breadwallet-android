@@ -1,14 +1,13 @@
 package com.breadwallet.presenter.activities.settings;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.CompoundButton;
 import android.widget.ToggleButton;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 
 public class ShareDataActivity extends BRActivity {
     private static final String TAG = ShareDataActivity.class.getName();
@@ -26,11 +25,11 @@ public class ShareDataActivity extends BRActivity {
         setContentView(R.layout.activity_share_data);
 
         toggleButton = (ToggleButton) findViewById(R.id.toggleButton);
-        toggleButton.setChecked(SharedPreferencesManager.getShareData(this));
+        toggleButton.setChecked(BRSharedPrefs.getShareData(this));
         toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                SharedPreferencesManager.putShareData(ShareDataActivity.this, isChecked);
+                BRSharedPrefs.putShareData(ShareDataActivity.this, isChecked);
             }
         });
 

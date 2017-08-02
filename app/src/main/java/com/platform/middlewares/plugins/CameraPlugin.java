@@ -92,7 +92,7 @@ public class CameraPlugin implements Plugin {
             if (app == null) {
                 Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
 
-                return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
+                return BRHTTPHelper.handleError(404, "context is null", baseRequest, response);
             }
 
             if (globalBaseRequest != null) {
@@ -105,7 +105,7 @@ public class CameraPlugin implements Plugin {
 
             if (!pm.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
                 Log.e(TAG, "handle: no camera available: ");
-                return BRHTTPHelper.handleError(402, null, baseRequest, response);
+                return BRHTTPHelper.handleError(404, null, baseRequest, response);
             }
             if (ContextCompat.checkSelfPermission(app,
                     Manifest.permission.CAMERA)
@@ -140,7 +140,7 @@ public class CameraPlugin implements Plugin {
             final Activity app = BreadApp.getBreadContext();
             if (app == null) {
                 Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
-                return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
+                return BRHTTPHelper.handleError(404, "context is null", baseRequest, response);
             }
             String id = target.replace("/_camera/picture/", "");
             byte[] pictureBytes = readPictureForId(app, id);
@@ -170,11 +170,17 @@ public class CameraPlugin implements Plugin {
             @Override
             public void run() {
                 if (globalBaseRequest == null || continuation == null) {
+                    //shit should now happen
                     Log.e(TAG, "handleCameraImageTaken: WARNING: " + continuation + " " + globalBaseRequest);
+                    globalBaseRequest.setHandled(true);
+                    ((HttpServletResponse) continuation.getServletResponse()).setStatus(500);
+                    continuation.complete();
+                    continuation = null;
                     return;
                 }
                 try {
                     if (img == null) {
+                        //no image
                         globalBaseRequest.setHandled(true);
                         ((HttpServletResponse) continuation.getServletResponse()).setStatus(204);
                         continuation.complete();
