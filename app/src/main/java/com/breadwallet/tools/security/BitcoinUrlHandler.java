@@ -193,12 +193,12 @@ public class BitcoinUrlHandler {
                         AuthManager.getInstance().authPrompt(app, _authString, tmpUri.getHost(), true, new BRAuthCompletion() {
                             @Override
                             public void onComplete() {
-                                PostAuthenticationProcessor.getInstance().onBitIDAuth(app);
+                                PostAuthenticationProcessor.getInstance().onBitIDAuth(app, true);
                             }
 
                             @Override
                             public void onCancel() {
-
+                                PostAuthenticationProcessor.getInstance().onBitIDAuth(app, false);
                             }
                         });
                     }
@@ -214,6 +214,10 @@ public class BitcoinUrlHandler {
         final byte[] phrase;
         final byte[] nulTermPhrase;
         final byte[] seed;
+        if (!authenticated) {
+            WalletPlugin.handleBitId(null, false);
+            return;
+        }
         if (app == null) {
             Log.e(TAG, "processBitIdResponse: app is null");
             return;
@@ -328,7 +332,7 @@ public class BitcoinUrlHandler {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        WalletPlugin.handleBitId(postJson);
+                        WalletPlugin.handleBitId(postJson, true);
                     }
 
                 } finally {
