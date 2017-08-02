@@ -118,7 +118,7 @@ public class PostAuthenticationProcessor {
     }
 
     public void onBitIDAuth(Activity app, boolean authenticated) {
-        BitcoinUrlHandler.processBitIdResponse(app, authenticated );
+        BitcoinUrlHandler.processBitIdResponse(app, authenticated);
     }
 
     public void onRecoverWalletAuth(Activity app, boolean authAsked) {
