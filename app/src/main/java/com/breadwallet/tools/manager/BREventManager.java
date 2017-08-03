@@ -1,5 +1,6 @@
 package com.breadwallet.tools.manager;
 
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -40,7 +41,22 @@ public class BREventManager {
         return instance;
     }
 
+    public void pushEvent(String eventName, Map<String, String> attribuets) {
+        Event event = new Event(sessionId, System.currentTimeMillis() * 1000, eventName, attribuets);
+
+    }
+
     public class Event {
         public String sessionId;
+        public long time;
+        public String eventName;
+        public Map<String, String> attributes;
+
+        public Event(String sessionId, long time, String eventName, Map<String, String> attributes) {
+            this.sessionId = sessionId;
+            this.time = time;
+            this.eventName = eventName;
+            this.attributes = attributes;
+        }
     }
 }
