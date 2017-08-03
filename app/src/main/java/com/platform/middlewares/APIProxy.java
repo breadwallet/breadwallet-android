@@ -88,7 +88,11 @@ public class APIProxy implements Middleware {
         boolean auth = false;
         Request req = mapToOkHttpRequest(baseRequest, path, request);
         String authHeader = baseRequest.getHeader(SHOULD_AUTHENTICATE);
-        if (authHeader != null && authHeader.toLowerCase().equals("yes")) auth = true;
+
+        if (authHeader != null && (authHeader.toLowerCase().equals("yes") || authHeader.toLowerCase().equals("true"))) {
+          auth = true;
+        }
+
         Response res = apiInstance.sendRequest(req, auth, 0);
 
         if (res.code() == 599) {
