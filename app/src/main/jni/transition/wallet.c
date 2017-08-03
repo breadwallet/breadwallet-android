@@ -822,7 +822,7 @@ Java_com_breadwallet_wallet_BRWalletManager_confirmKeySweep(JNIEnv *env, jobject
     BRKey key;
 
     BRKeySetPrivKey(&key, rawString);
-    BRTransactionSign(tmpTx, &key, 1);
+    BRTransactionSign(tmpTx, &key, 1, 0);
     if (!tmpTx || !BRTransactionIsSigned(tmpTx)) return JNI_FALSE;
 
     uint8_t buf[BRTransactionSerialize(tmpTx, NULL, 0)];
