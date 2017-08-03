@@ -193,13 +193,14 @@ public class WalletPlugin implements Plugin {
                         return;
                     }
 
-
                     try {
                         continuation.getServletResponse().setContentType("application/json");
                         continuation.getServletResponse().setCharacterEncoding("UTF-8");
                         continuation.getServletResponse().getWriter().print(restJson);
-                    } catch (IOException e) {
+                        Log.d(TAG, "handleBitId: finished with writing to the response: " + restJson);
+                    } catch (Exception e) {
                         e.printStackTrace();
+                        Log.e(TAG, "handleBitId Failed to send json: ", e);
                     }
                     ((HttpServletResponse) continuation.getServletResponse()).setStatus(200);
                 } finally {
