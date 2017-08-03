@@ -661,7 +661,7 @@ Java_com_breadwallet_wallet_BRWalletManager_publishSerializedTransaction(JNIEnv 
 
     size_t seedSize = sizeof(key);
 
-    BRWalletSignTransaction(_wallet, tmpTx, key.u8, seedSize);
+    BRWalletSignTransaction(_wallet, tmpTx, 0, key.u8, seedSize);
     assert(BRTransactionIsSigned(tmpTx));
     if (!tmpTx) return JNI_FALSE;
     BRPeerManagerPublishTx(_peerManager, tmpTx, NULL, callback);

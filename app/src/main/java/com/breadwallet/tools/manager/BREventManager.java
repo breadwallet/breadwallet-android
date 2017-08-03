@@ -39,4 +39,8 @@ public class BREventManager {
         if (instance == null) instance = new BREventManager();
         return instance;
     }
+
+    public class Event {
+        public String sessionId;
+    }
 }
