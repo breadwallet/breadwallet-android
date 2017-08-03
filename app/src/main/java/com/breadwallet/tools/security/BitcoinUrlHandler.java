@@ -2,6 +2,7 @@ package com.breadwallet.tools.security;
 
 import android.app.Activity;
 import android.net.Uri;
+import android.os.Handler;
 import android.util.Log;
 
 import com.breadwallet.R;
@@ -78,7 +79,7 @@ public class BitcoinUrlHandler {
     private static String _strToSign = null;
     private static String _authString = null;
     private static int _index = 0;
-    private Map<String, String> bitIdKeys = new HashMap<>();
+    private volatile static Map<String, String> bitIdKeys = new HashMap<>();
 
     public static synchronized boolean processRequest(Activity app, String url) {
         if (url == null) {
@@ -151,6 +152,23 @@ public class BitcoinUrlHandler {
             if ("bitid".equals(bitIdUri.getScheme())) isBitUri = true;
         } catch (URISyntaxException e) {
             e.printStackTrace();
+            Log.e(TAG, "tryBitIdUri: returning false: ", e);
+            return false;
+        }
+
+        final String biUri = bitIdUri.getHost() == null ? bitIdUri.toString() : bitIdUri.getHost();
+        if (bitIdKeys.containsKey(biUri)) {
+            String sig = bitIdKeys.get(biUri);
+            if (sig == null) throw new NullPointerException("cannot be null");
+            //means we still have a valid key
+            JSONObject postJson = new JSONObject();
+            try {
+                postJson.put("signature", sig);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            WalletPlugin.handleBitId(postJson, true);
+            return true;
         }
 
         _bitUri = uri;
@@ -231,6 +249,7 @@ public class BitcoinUrlHandler {
         }
 
         final Uri uri = Uri.parse(_bitUri);
+
         try {
             phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.REQUEST_PHRASE_BITID);
         } catch (BRKeystoreErrorException e) {
@@ -317,7 +336,7 @@ public class BitcoinUrlHandler {
                         }
                     } else {
                         //meaning its the wallet plugin, glidera auth
-                        String biUri = uri.getHost() == null ? uri.toString() : uri.getHost();
+                        final String biUri = uri.getHost() == null ? uri.toString() : uri.getHost();
                         final byte[] key = BRBIP32Sequence.getInstance().bip32BitIDKey(seed, _index, biUri);
                         if (key == null) {
                             Log.d(TAG, "processBitIdResponse: key is null!");
@@ -335,6 +354,22 @@ public class BitcoinUrlHandler {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+                        //save the signature for about 60 seconds.
+                        bitIdKeys.put(biUri, sig);
+                        Log.d(TAG, "run: saved temporary sig for key: " + biUri);
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    Thread.sleep(60000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                Log.d(TAG, "run: removed temporary sig for key: " + biUri);
+                                if (bitIdKeys != null)
+                                    bitIdKeys.remove(biUri);
+                            }
+                        }).start();
                         WalletPlugin.handleBitId(postJson, true);
                     }
 

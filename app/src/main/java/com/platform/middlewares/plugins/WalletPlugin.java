@@ -184,8 +184,8 @@ public class WalletPlugin implements Plugin {
                         }
                         return;
                     }
-                    if (restJson == null) {
-                        Log.e(TAG, "handleBitId: WARNING restJson is null");
+                    if (restJson == null || restJson.isNull("signature")) {
+                        Log.e(TAG, "handleBitId: WARNING restJson is null: " + restJson);
                         return;
                     }
                     if (continuation == null) {
@@ -195,7 +195,9 @@ public class WalletPlugin implements Plugin {
 
 
                     try {
-                        continuation.getServletResponse().getWriter().write(restJson.toString());
+                        continuation.getServletResponse().setContentType("application/json");
+                        continuation.getServletResponse().setCharacterEncoding("UTF-8");
+                        continuation.getServletResponse().getWriter().print(restJson);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -208,7 +210,6 @@ public class WalletPlugin implements Plugin {
                 }
             }
         }).start();
-
 
     }
 }
