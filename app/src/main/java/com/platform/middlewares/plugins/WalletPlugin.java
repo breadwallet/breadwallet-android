@@ -22,7 +22,9 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -81,7 +83,7 @@ public class WalletPlugin implements Plugin {
 
                 /**how digits after the decimal point. 2 = bits 8 = btc 6 = mbtc*/
                 jsonResp.put("btc_denomiation_digits", BRSharedPrefs.getCurrencyUnit(app) == BRConstants.CURRENT_UNIT_BITCOINS ? 8 : 2);
-                return BRHTTPHelper.handleSuccess(200, jsonResp.toString().getBytes(), baseRequest, response, null);
+                return BRHTTPHelper.handleSuccess(200, jsonResp.toString().getBytes(), baseRequest, response, "application/json");
             } catch (JSONException e) {
                 e.printStackTrace();
                 Log.e(TAG, "handle: json error: " + target + " " + baseRequest.getMethod());

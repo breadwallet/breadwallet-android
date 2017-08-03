@@ -35,7 +35,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -76,6 +78,7 @@ public class BitcoinUrlHandler {
     private static String _strToSign = null;
     private static String _authString = null;
     private static int _index = 0;
+    private Map<String, String> bitIdKeys = new HashMap<>();
 
     public static synchronized boolean processRequest(Activity app, String url) {
         if (url == null) {
@@ -286,11 +289,11 @@ public class BitcoinUrlHandler {
 //                    Log.e(TAG, "run: uriWithNonce: " + uriWithNonce);
 
                         final String sig = BRBitId.signMessage(_strToSign == null ? uriWithNonce : _strToSign, new BRKey(key));
-                        final String address = new BRKey(key).address();
+//                        final String address = new BRKey(key).address();
 
                         JSONObject postJson = new JSONObject();
                         try {
-                            postJson.put("address", address);
+//                            postJson.put("address", address);
                             postJson.put("signature", sig);
                             if (_strToSign == null)
                                 postJson.put("uri", uriWithNonce);
@@ -323,11 +326,11 @@ public class BitcoinUrlHandler {
 
 //                    Log.e(TAG, "run: uriWithNonce: " + uriWithNonce);
                         final String sig = BRBitId.signMessage(_strToSign, new BRKey(key));
-                        final String address = new BRKey(key).address();
+//                        final String address = new BRKey(key).address();
 
                         JSONObject postJson = new JSONObject();
                         try {
-                            postJson.put("address", address);
+//                            postJson.put("address", address);
                             postJson.put("signature", sig);
                         } catch (JSONException e) {
                             e.printStackTrace();
