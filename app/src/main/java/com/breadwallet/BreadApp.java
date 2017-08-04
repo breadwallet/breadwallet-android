@@ -1,13 +1,20 @@
 package com.breadwallet;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Application;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.graphics.Point;
 import android.hardware.fingerprint.FingerprintManager;
+import android.os.Handler;
+import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -41,6 +48,8 @@ public class BreadApp extends Application {
     FingerprintManager mFingerprintManager;
     // host is the server(s) on which the API is hosted
     public static String HOST = "prod.breadwallet.com";
+    private static List<OnAppBackgrounded> listeners;
+
 
     private static Activity currentActivity;
 
@@ -62,19 +71,54 @@ public class BreadApp extends Application {
 
     }
 
+
     public static Activity getBreadContext() {
 //        Log.e(TAG, "getBreadContext: " + currentActivity.getClass().getName());
         return currentActivity;
     }
 
     public static void setBreadContext(Activity app) {
-//        Log.e(TAG, "setBreadContext: " + app.getClass().getName());
+        Log.e(TAG, "setBreadContext: " + (app == null ? null : app.getClass().getName()));
         currentActivity = app;
+        if (app == null) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (isApplicationSentToBackground(currentActivity)) fireListeners();
+                }
+            }, 500);
+        }
+    }
+
+    public static void fireListeners() {
+        for (OnAppBackgrounded lis : listeners) lis.onBackgrounded();
+    }
+
+    public static void addOnBackgroundedListener(OnAppBackgrounded listener) {
+        if (listeners == null) listeners = new ArrayList<>();
+        if (!listeners.contains(listener)) listeners.add(listener);
+    }
+
+    public static boolean isApplicationSentToBackground(final Context context) {
+        if (context == null) return true;
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningTaskInfo> tasks = am.getRunningTasks(1);
+        if (!tasks.isEmpty()) {
+            ComponentName topActivity = tasks.get(0).topActivity;
+            if (!topActivity.getPackageName().equals(context.getPackageName())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public static boolean isAnyActivityOn() {
-        boolean on = getBreadContext() != null;
-//        if(!on) Log.e(TAG, "isAnyActivityOn: NO ACTIVITY ON");
-        return on;
+        //        if(!on) Log.e(TAG, "isAnyActivityOn: NO ACTIVITY ON");
+        return getBreadContext() != null;
+    }
+
+    public interface OnAppBackgrounded {
+        void onBackgrounded();
     }
 }
