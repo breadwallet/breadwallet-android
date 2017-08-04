@@ -14,6 +14,7 @@ import com.breadwallet.presenter.entities.RequestObject;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
+import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
 import com.breadwallet.tools.util.BRConstants;
@@ -30,10 +31,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.UTFDataFormatException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -86,6 +89,23 @@ public class BitcoinUrlHandler {
             Log.e(TAG, "processRequest: url is null");
             return false;
         }
+
+        //            saveEvent("send.handleURL", attributes: [
+//            "scheme" : url.scheme ?? C.null,
+//                    "host" : url.host ?? C.null,
+//                    "path" : url.path
+//        ])
+        Map<String, String> attr = new HashMap<>();
+        URI uri = null;
+        try {
+            uri = new URI(url);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        attr.put("scheme", uri == null ? "null" : uri.getScheme());
+        attr.put("host", uri == null ? "null" : uri.getHost());
+        attr.put("path", uri == null ? "null" : uri.getPath());
+        BREventManager.getInstance().pushEvent("send.handleURL", attr);
 
         RequestObject requestObject = getRequestFromString(url);
         if (BRWalletManager.getInstance().confirmSweep(app, url)) {

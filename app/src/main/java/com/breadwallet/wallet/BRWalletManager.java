@@ -38,6 +38,7 @@ import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.qrcode.QRUtils;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
@@ -682,7 +683,10 @@ public class BRWalletManager {
             String firstAddress = BRWalletManager.getFirstAddress(pubkeyEncoded);
             BRSharedPrefs.putFirstAddress(ctx, firstAddress);
             long fee = BRSharedPrefs.getFeePerKb(ctx);
-            if (fee == 0) fee = BRConstants.DEFAULT_FEE_PER_KB;
+            if (fee == 0) {
+                fee = BRConstants.DEFAULT_FEE_PER_KB;
+                BREventManager.getInstance().pushEvent("wallet.didUseDefaultFeePerKB");
+            }
             BRWalletManager.getInstance().setFeePerKb(fee);
         }
 

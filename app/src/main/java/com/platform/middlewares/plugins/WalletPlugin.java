@@ -89,10 +89,8 @@ public class WalletPlugin implements Plugin {
                 Log.e(TAG, "handle: json error: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "json error", baseRequest, response);
             }
-        }
-
-        /**DEPRECIATED This used to be used to format a currency string but the web app should now handle that.*/
-//        else if (target.startsWith("/_wallet/format") && request.getMethod().equalsIgnoreCase("get")) {
+        } else if (target.startsWith("/_event") && request.getMethod().equalsIgnoreCase("get")) {
+            //todo refactor this for events
 //            Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
 //            String amount = request.getParameter("amount");
 //            if (Utils.isNullOrEmpty(amount)) {
@@ -108,8 +106,7 @@ public class WalletPlugin implements Plugin {
 //                satAmount = Long.valueOf(amount);
 //            }
 //            return BRHTTPHelper.handleSuccess(200, BRCurrency.getFormattedCurrencyString(app, Locale.getDefault().getISO3Language(), new BigDecimal(satAmount)).getBytes(), baseRequest, response, null);
-//        }
-        else if (target.startsWith("/_wallet/sign_bitid") && request.getMethod().equalsIgnoreCase("post")) {
+        }  else if (target.startsWith("/_wallet/sign_bitid") && request.getMethod().equalsIgnoreCase("post")) {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
             /**
              * POST /_wallet/sign_bitid
