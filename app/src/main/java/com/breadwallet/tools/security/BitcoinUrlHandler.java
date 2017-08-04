@@ -158,11 +158,21 @@ public class BitcoinUrlHandler {
 
         final String biUri = bitIdUri.getHost() == null ? bitIdUri.toString() : bitIdUri.getHost();
         if (bitIdKeys.containsKey(biUri)) {
-            String sig = bitIdKeys.get(biUri);
-            if (sig == null) throw new NullPointerException("cannot be null");
+            String sigAndAddress = bitIdKeys.get(biUri);
+
+            if (sigAndAddress == null) throw new NullPointerException("cannot be null");
+            String[] parts = sigAndAddress.split(" ");
+            if (parts.length != 2)
+                throw new IllegalArgumentException("cannot happen, sigAndAddress split byt a space does not give 2 strings");
+            if (Utils.isNullOrEmpty(parts[0]) || Utils.isNullOrEmpty(parts[1]))
+                throw new IllegalArgumentException("one of the parts is empty");
+
+            final String sig = parts[0];
+            final String address = parts[1];
             //means we still have a valid key
             JSONObject postJson = new JSONObject();
             try {
+                postJson.put("address", address);
                 postJson.put("signature", sig);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -308,11 +318,11 @@ public class BitcoinUrlHandler {
 //                    Log.e(TAG, "run: uriWithNonce: " + uriWithNonce);
 
                         final String sig = BRBitId.signMessage(_strToSign == null ? uriWithNonce : _strToSign, new BRKey(key));
-//                        final String address = new BRKey(key).address();
+                        final String address = new BRKey(key).address();
 
                         JSONObject postJson = new JSONObject();
                         try {
-//                            postJson.put("address", address);
+                            postJson.put("address", address);
                             postJson.put("signature", sig);
                             if (_strToSign == null)
                                 postJson.put("uri", uriWithNonce);
@@ -345,17 +355,17 @@ public class BitcoinUrlHandler {
 
 //                    Log.e(TAG, "run: uriWithNonce: " + uriWithNonce);
                         final String sig = BRBitId.signMessage(_strToSign, new BRKey(key));
-//                        final String address = new BRKey(key).address();
+                        final String address = new BRKey(key).address();
 
                         JSONObject postJson = new JSONObject();
                         try {
-//                            postJson.put("address", address);
+                            postJson.put("address", address);
                             postJson.put("signature", sig);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                         //save the signature for about 60 seconds.
-                        bitIdKeys.put(biUri, sig);
+                        bitIdKeys.put(biUri, sig + " " + address);
                         Log.d(TAG, "run: saved temporary sig for key: " + biUri);
                         new Thread(new Runnable() {
                             @Override
