@@ -90,11 +90,6 @@ public class BitcoinUrlHandler {
             return false;
         }
 
-        //            saveEvent("send.handleURL", attributes: [
-//            "scheme" : url.scheme ?? C.null,
-//                    "host" : url.host ?? C.null,
-//                    "path" : url.path
-//        ])
         Map<String, String> attr = new HashMap<>();
         URI uri = null;
         try {

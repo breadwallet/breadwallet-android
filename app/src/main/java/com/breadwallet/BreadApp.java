@@ -109,7 +109,6 @@ public class BreadApp extends Application {
                 return true;
             }
         }
-
         return false;
     }
 
