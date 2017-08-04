@@ -58,16 +58,15 @@ public class PromptManager {
         FINGER_PRINT,
         PAPER_KEY,
         UPGRADE_PIN,
-        RECOMMEND_RESCAN
+        RECOMMEND_RESCAN,
+        NO_PASSCODE,
+        SHARE_DATA
     }
 
     public class PromptInfo {
         public String title;
         public String description;
         public View.OnClickListener listener;
-
-        private PromptInfo() {
-        }
 
         public PromptInfo(String title, String description, View.OnClickListener listener) {
             assert (title != null);
@@ -147,6 +146,33 @@ public class PromptManager {
                         }).start();
                     }
                 });
+
+        }
+        return null;
+    }
+
+    /**
+     * touchIdPrompt - Shown to the user to enable biometric authentication for purchases under a certain amount.
+     * paperKeyPrompt - Shown to the user if they have not yet written down their paper key. This is a persistent prompt and shows up until the user has gone through the paper key flow.
+     * upgradePinPrompt - Shown to recommend to the user they should upgrade their PIN from 4 digits to 6. Only shown once. If the user dismisses do not show again.
+     * recommendRescanPrompt - Shown when the user should rescan the blockchain
+     * noPasscodePrompt - Shown when the user does not have a passcode set up for their device.
+     * shareDataPrompt - Shown when asking the user if they wish to share anonymous data. Lowest priority prompt. Only show once and if they dismiss do not show again.
+     */
+    public String getPromptName(PromptItem prompt) {
+        switch (prompt){
+            case FINGER_PRINT:
+                return "touchIdPrompt";
+            case PAPER_KEY:
+                return "paperKeyPrompt";
+            case UPGRADE_PIN:
+                return "upgradePinPrompt";
+            case RECOMMEND_RESCAN:
+                return "recommendRescanPrompt";
+            case NO_PASSCODE:
+                return "noPasscodePrompt";
+            case SHARE_DATA:
+                return "shareDataPrompt";
 
         }
         return null;

@@ -27,6 +27,7 @@ import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRSearchBar;
 import com.breadwallet.presenter.fragments.FragmentManage;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.ConnectionManager;
 import com.breadwallet.tools.manager.TxManager;
@@ -41,6 +42,8 @@ import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.breadwallet.presenter.activities.intro.IntroActivity.introActivity;
 import static com.breadwallet.presenter.activities.ReEnterPinActivity.reEnterPinActivity;

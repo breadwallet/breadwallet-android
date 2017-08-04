@@ -86,6 +86,7 @@ public class TxManager {
                         });
 
                     } else { //clicked on the prompt
+                        BREventManager.getInstance().pushEvent("prompt." + PromptManager.getInstance().getPromptName(currentPrompt) + ".trigger");
                         if (currentPrompt != PromptManager.PromptItem.SYNCING) {
                             PromptManager.PromptInfo info = PromptManager.getInstance().promptInfo(app, currentPrompt);
                             if (info != null)
@@ -136,6 +137,7 @@ public class TxManager {
 
     public void showPrompt(Activity app, PromptManager.PromptItem item) {
         if (item == null) throw new RuntimeException("can't be null");
+        BREventManager.getInstance().pushEvent("prompt." + PromptManager.getInstance().getPromptName(item) + ".displayed");
         if (currentPrompt != PromptManager.PromptItem.SYNCING) {
             currentPrompt = item;
         }
@@ -159,6 +161,8 @@ public class TxManager {
 
                 }
             });
+        } else {
+            BREventManager.getInstance().pushEvent("prompt." + PromptManager.getInstance().getPromptName(item) + ".dismissed");
         }
 
     }

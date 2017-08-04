@@ -7,6 +7,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
+import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.ConnectionManager;
 import com.breadwallet.wallet.BRPeerManager;
 
@@ -51,7 +52,7 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
                 BRPeerManager.getInstance().networkChanged(false);
                 connected = false;
             }
-
+            BREventManager.getInstance().pushEvent(connected ? "reachability.isReachble" : "reachability.isNotReachable");
             for (ConnectionManager.ConnectionReceiverListener listener : ConnectionManager.connectionReceiverListeners) {
                 listener.onNetworkConnectionChanged(connected);
             }

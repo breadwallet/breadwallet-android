@@ -73,7 +73,14 @@ public class BREventManager implements BreadApp.OnAppBackgrounded {
     }
 
     public void pushEvent(String eventName, Map<String, String> attributes) {
+        Log.d(TAG, "pushEvent: " + eventName);
         Event event = new Event(sessionId, System.currentTimeMillis() * 1000, eventName, attributes);
+        events.add(event);
+    }
+
+    public void pushEvent(String eventName) {
+        Log.d(TAG, "pushEvent: " + eventName);
+        Event event = new Event(sessionId, System.currentTimeMillis() * 1000, eventName, null);
         events.add(event);
     }
 
@@ -116,6 +123,7 @@ public class BREventManager implements BreadApp.OnAppBackgrounded {
     }
 
     private void pushToServer() {
+        Log.d(TAG, "pushToServer");
         Context app = BreadApp.getBreadContext();
         if (app != null) {
             List<JSONArray> arrs = getEventsFromDisk(app);
@@ -197,7 +205,7 @@ public class BREventManager implements BreadApp.OnAppBackgrounded {
     }
 
     //returns the list of JSONArray which consist of Event arrays
-    public static List<JSONArray> getEventsFromDisk(Context context) {
+    private static List<JSONArray> getEventsFromDisk(Context context) {
         List<JSONArray> result = new ArrayList<>();
         File dir = new File(context.getFilesDir().getAbsolutePath() + "/events/");
         for (File f : dir.listFiles()) {
