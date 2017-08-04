@@ -121,7 +121,7 @@ public class APIProxy implements Middleware {
             return BRHTTPHelper.handleSuccess(res.code(), bodyBytes, baseRequest, response, null);
         } else {
             Log.e(TAG, "RES IS NOT SUCCESSFUL: " + res.request().url() + ": " + res.code() + "(" + res.message() + ")");
-            return BRHTTPHelper.handleError(res.code(), null, baseRequest, response);
+            return BRHTTPHelper.handleError(res.code(), resString, baseRequest, response);
         }
 
     }
