@@ -162,7 +162,8 @@ public class TxManager {
                 }
             });
         } else {
-            BREventManager.getInstance().pushEvent("prompt." + PromptManager.getInstance().getPromptName(item) + ".dismissed");
+            if (item != null)
+                BREventManager.getInstance().pushEvent("prompt." + PromptManager.getInstance().getPromptName(item) + ".dismissed");
         }
 
     }
