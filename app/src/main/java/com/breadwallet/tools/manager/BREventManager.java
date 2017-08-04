@@ -92,6 +92,7 @@ public class BREventManager implements BreadApp.OnAppBackgrounded {
     }
 
     private void saveEvents() {
+        Log.d(TAG, "saveEvents: ");
         JSONArray array = new JSONArray();
         for (Event event : events) {
             JSONObject obj = new JSONObject();
