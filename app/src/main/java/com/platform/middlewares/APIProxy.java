@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.tools.util.Utils;
 import com.platform.APIClient;
 import com.platform.BRHTTPHelper;
 import com.platform.interfaces.Middleware;
@@ -71,7 +72,7 @@ public class APIProxy implements Middleware {
 
     public APIProxy() {
         Activity app = BreadApp.getBreadContext();
-        if(app == null) {
+        if (app == null) {
             Log.e(TAG, "APIProxy: app is null!");
         }
         apiInstance = APIClient.getInstance(app);
@@ -90,15 +91,15 @@ public class APIProxy implements Middleware {
         String authHeader = baseRequest.getHeader(SHOULD_AUTHENTICATE);
 
         if (authHeader != null && (authHeader.toLowerCase().equals("yes") || authHeader.toLowerCase().equals("true"))) {
-          auth = true;
+            auth = true;
         }
 
         Response res = apiInstance.sendRequest(req, auth, 0);
 
-        if (res.code() == 599) {
-            Log.e(TAG, "handle: code 599: " + target + " " + baseRequest.getMethod());
-            return BRHTTPHelper.handleError(599, null, baseRequest, response);
-        }
+//        if (res.code() == 599) {
+//            Log.e(TAG, "handle: code 599: " + target + " " + baseRequest.getMethod());
+//            return BRHTTPHelper.handleError(599, null, baseRequest, response);
+//        }
         ResponseBody body = res.body();
         String cType = body.contentType() == null ? null : body.contentType().toString();
         String resString = null;
@@ -117,12 +118,22 @@ public class APIProxy implements Middleware {
             response.addHeader(s, res.header(s));
         }
         response.setContentLength(bodyBytes.length);
-        if (res.isSuccessful()) {
-            return BRHTTPHelper.handleSuccess(res.code(), bodyBytes, baseRequest, response, null);
-        } else {
+
+        if (!res.isSuccessful()) {
             Log.e(TAG, "RES IS NOT SUCCESSFUL: " + res.request().url() + ": " + res.code() + "(" + res.message() + ")");
-            return BRHTTPHelper.handleError(res.code(), resString, baseRequest, response);
+//            return BRHTTPHelper.handleSuccess(res.code(), bodyBytes, baseRequest, response, null);
         }
+
+        try {
+            response.setStatus(res.code());
+            if (cType != null && !cType.isEmpty())
+                response.setContentType(cType);
+            response.getOutputStream().write(bodyBytes);
+            baseRequest.setHandled(true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return true;
 
     }
 

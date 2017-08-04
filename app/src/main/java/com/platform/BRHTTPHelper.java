@@ -1,11 +1,9 @@
 package com.platform;
 
-import android.util.Log;
 
 import com.breadwallet.tools.util.Utils;
 
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.util.StringUtil;
 
 import java.io.IOException;
 
