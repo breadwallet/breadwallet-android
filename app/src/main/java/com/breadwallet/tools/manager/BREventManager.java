@@ -41,8 +41,8 @@ public class BREventManager {
         return instance;
     }
 
-    public void pushEvent(String eventName, Map<String, String> attribuets) {
-        Event event = new Event(sessionId, System.currentTimeMillis() * 1000, eventName, attribuets);
+    public void pushEvent(String eventName, Map<String, String> attributes) {
+        Event event = new Event(sessionId, System.currentTimeMillis() * 1000, eventName, attributes);
 
     }
 
