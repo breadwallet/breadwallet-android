@@ -126,7 +126,7 @@ public class BRPeerManager {
 
     }
 
-    public static void saveBlocks(final BlockEntity[] blockEntities) {
+    public static void saveBlocks(final BlockEntity[] blockEntities, final boolean replace) {
         Log.d(TAG, "saveBlocks: " + blockEntities.length);
 
         final Activity ctx = BreadApp.getBreadContext();
@@ -134,19 +134,21 @@ public class BRPeerManager {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                if (replace) MerkleBlockDataSource.getInstance(ctx).deleteAllBlocks();
                 MerkleBlockDataSource.getInstance(ctx).putMerkleBlocks(blockEntities);
             }
         }).start();
 
     }
 
-    public static void savePeers(final PeerEntity[] peerEntities) {
+    public static void savePeers(final PeerEntity[] peerEntities, final boolean replace) {
         Log.d(TAG, "savePeers: " + peerEntities.length);
         final Activity ctx = BreadApp.getBreadContext();
         if (ctx == null) return;
         new Thread(new Runnable() {
             @Override
             public void run() {
+                if (replace) PeerDataSource.getInstance(ctx).deleteAllPeers();
                 PeerDataSource.getInstance(ctx).putPeers(peerEntities);
             }
         }).start();
