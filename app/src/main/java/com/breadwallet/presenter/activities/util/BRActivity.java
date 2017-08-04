@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.util.Log;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
@@ -36,6 +37,18 @@ import com.breadwallet.wallet.BRWalletManager;
  */
 public class BRActivity extends Activity {
     private final String TAG = this.getClass().getName();
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+//        BreadApp.setBreadContext(null);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        BreadApp.setBreadContext(this);
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {

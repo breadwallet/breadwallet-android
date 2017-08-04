@@ -189,7 +189,7 @@ static void savePeers(void *info, int replace, const BRPeer peers[], size_t coun
 
 //    //call java methods
 //    if (count != 1) {
-////        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "deleting %d peers", count);
+//        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "deleting %d peers", count);
 //        mid = (*env)->GetStaticMethodID(env, _peerManagerClass, "deletePeers", "()V");
 //        (*env)->CallStaticVoidMethod(env, _peerManagerClass, mid);
 //    }

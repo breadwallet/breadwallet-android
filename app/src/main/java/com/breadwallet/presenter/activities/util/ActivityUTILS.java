@@ -66,7 +66,6 @@ public class ActivityUTILS {
         ConnectionManager.getInstance();
         if (!(app instanceof IntroActivity || app instanceof RecoverActivity || app instanceof WriteDownActivity))
             CurrencyFetchManager.getInstance().startTimer(app);
-        BreadApp.setBreadContext(app);
         //show wallet locked if it is
         if (!isAppSafe(app))
             if (AuthManager.getInstance().isWalletDisabled(app))
