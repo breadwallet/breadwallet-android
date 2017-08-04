@@ -21,6 +21,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Locale;
@@ -91,6 +92,15 @@ public class WalletPlugin implements Plugin {
             }
         } else if (target.startsWith("/_event") && request.getMethod().equalsIgnoreCase("get")) {
             //todo refactor this for events
+            Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
+            byte[] rawData = null;
+            try {
+                InputStream body = request.getInputStream();
+                rawData = IOUtils.toByteArray(body);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Log.e(TAG, "handle: body: " + new String(rawData != null ? rawData : "null".getBytes()));
 //            Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
 //            String amount = request.getParameter("amount");
 //            if (Utils.isNullOrEmpty(amount)) {
@@ -106,7 +116,7 @@ public class WalletPlugin implements Plugin {
 //                satAmount = Long.valueOf(amount);
 //            }
 //            return BRHTTPHelper.handleSuccess(200, BRCurrency.getFormattedCurrencyString(app, Locale.getDefault().getISO3Language(), new BigDecimal(satAmount)).getBytes(), baseRequest, response, null);
-        }  else if (target.startsWith("/_wallet/sign_bitid") && request.getMethod().equalsIgnoreCase("post")) {
+        } else if (target.startsWith("/_wallet/sign_bitid") && request.getMethod().equalsIgnoreCase("post")) {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
             /**
              * POST /_wallet/sign_bitid
