@@ -40,6 +40,12 @@ static uint64_t _privKeyBalance;
 static size_t _transactionsCounter = 0;
 jclass _walletManagerClass;
 
+//#if BITCOIN_TESTNET
+//#error don't know bcash testnet fork height
+//#else // mainnet
+#define BCASH_FORKHEIGHT 478559
+//#endif
+
 static JNIEnv *getEnv() {
     __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "getEnv Wallet");
     if (!_jvmW) return NULL;
@@ -972,6 +978,23 @@ JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getSeed
 JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRWalletManager_isTestNet(JNIEnv *env,
                                                                                  jobject thiz) {
     return BITCOIN_TESTNET ? JNI_TRUE : JNI_FALSE;
+}
+
+// returns an unsigned transaction that sweeps all wallet UTXOs as of block height 478559 to addr
+// transaction must be signed using a forkId of 0x40
+static BRTransaction *BRWalletBCashSweepTx(BRWallet *wallet, BRMasterPubKey mpk, const char *addr, uint64_t feePerKb)
+{
+    size_t txCount = BRWalletTransactions(wallet, NULL, 0) -
+                     BRWalletTxUnconfirmedBefore(wallet, NULL, 0, BCASH_FORKHEIGHT);
+    BRTransaction *transactions[txCount], *tx;
+    BRWallet *w;
+
+    txCount = BRWalletTransactions(wallet, transactions, txCount);
+    w = BRWalletNew(transactions, txCount, mpk);
+    BRWalletSetFeePerKb(w, feePerKb);
+    tx = BRWalletCreateTransaction(w, BRWalletMaxOutputAmount(w), addr);
+    BRWalletFree(w);
+    return tx;
 }
 
 
