@@ -123,7 +123,7 @@ static void txStatusUpdate(void *info) {
     (*env)->CallStaticVoidMethod(env, _peerManagerClass, mid);
 }
 
-static void saveBlocks(void *info, BRMerkleBlock *blocks[], size_t count) {
+static void saveBlocks(void *info, int replace, BRMerkleBlock *blocks[], size_t count) {
     __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "saveBlocks");
     if (!_peerManager) return;
 
@@ -164,7 +164,7 @@ static void saveBlocks(void *info, BRMerkleBlock *blocks[], size_t count) {
     (*env)->CallStaticVoidMethod(env, _peerManagerClass, mid, blockObjectArray);
 }
 
-static void savePeers(void *info, const BRPeer peers[], size_t count) {
+static void savePeers(void *info, int replace, const BRPeer peers[], size_t count) {
     __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "savePeers");
     if (!_peerManager) return;
 
@@ -277,7 +277,7 @@ Java_com_breadwallet_wallet_BRPeerManager_create(JNIEnv *env, jobject thiz,
         _peerManager = BRPeerManagerNew(_wallet, (uint32_t) earliestKeyTime, _blocks,
                                         (size_t) blocksCount,
                                         _peers, (size_t) peersCount);
-        BRPeerManagerSetCallbacks(_peerManager, NULL, syncStarted, syncSucceeded, syncFailed,
+        BRPeerManagerSetCallbacks(_peerManager,  syncStarted, syncSucceeded, syncFailed,
                                   txStatusUpdate,
                                   saveBlocks, savePeers, networkIsReachable, threadCleanup);
     }
