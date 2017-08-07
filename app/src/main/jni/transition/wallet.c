@@ -778,7 +778,7 @@ JNIEXPORT jobject JNICALL Java_com_breadwallet_wallet_BRWalletManager_getPrivKey
 
     jclass importPrivKeyClass = (*env)->FindClass(env,
                                                   "com/breadwallet/presenter/entities/ImportPrivKeyEntity");
-    BRAddress address = BRWalletChangeAddress(_wallet);
+    BRAddress address = BRWalletReceiveAddress(_wallet);
     uint8_t script[BRAddressScriptPubKey(NULL, 0, address.s)];
     size_t scriptLen = BRAddressScriptPubKey(script, sizeof(script), address.s);
 
