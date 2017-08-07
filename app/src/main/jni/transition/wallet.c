@@ -542,6 +542,55 @@ Java_com_breadwallet_wallet_BRWalletManager_tryTransaction(JNIEnv *env, jobject 
     return result;
 }
 
+JNIEXPORT jbyteArray JNICALL
+Java_com_breadwallet_wallet_BRWalletManager_createBCHTx(JNIEnv *env, jobject obj,
+                                                        jstring jAddress) {
+    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "createBCHTx");
+    if (!_wallet) return 0;
+
+    const char *rawAddress = (*env)->GetStringUTFChars(env, jAddress, NULL);
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "createBCHTx: address:%s",
+                        rawAddress);
+//    BRTransaction *tx = BRWalletCreateTransaction(_wallet, (uint64_t) jAmount, rawAddress);
+
+    if (BRWalletTransactions(_wallet, NULL, 0) == 0) {
+        __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "createBCHTx: 0 txs");
+        return NULL;
+    }
+
+    //Retrieve the txs array
+    size_t txCount = BRWalletTransactions(_wallet, NULL, 0);
+    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "createBCHTx: txCount:%d",
+                        (int) txCount);
+    BRTransaction *allTxs[txCount];
+
+    BRTransaction *tmpTxs[txCount];
+
+    int index = 0;
+
+    txCount = BRWalletTransactions(_wallet, allTxs, txCount);
+
+    for (size_t i = 0; allTxs && i < txCount; i++) {
+        if (allTxs[i]->blockHeight < 478559) tmpTxs[index++] = allTxs[i];
+    }
+
+    BRTransaction *bchTxs[index];
+    memcpy(&bchTxs, &tmpTxs, (size_t) index);
+
+//    if (!tx) return NULL;
+//
+//    size_t len = BRTransactionSerialize(tx, NULL, 0);
+//    uint8_t *buf = malloc(len);
+//
+//    len = BRTransactionSerialize(tx, buf, len);
+//
+//    jbyteArray result = (*env)->NewByteArray(env, (jsize) len);
+//
+//    (*env)->SetByteArrayRegion(env, result, 0, (jsize) len, (jbyte *) buf);
+//    free(buf);
+    return result;
+}
+
 JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRWalletManager_isCreated(JNIEnv *env,
                                                                                  jobject obj) {
     __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "wallet isCreated %s",
