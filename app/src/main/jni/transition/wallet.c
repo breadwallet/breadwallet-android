@@ -930,3 +930,26 @@ JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_getBCashBala
 //
     return balance;
 }
+
+JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRWalletManager_sweepBCash(JNIEnv *env,
+                                                                               jobject thiz,
+                                                                               jbyteArray bytePubKey,
+                                                                               jstring address, jbyteArray phrase) {
+    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "getSeedFromPhrase");
+
+    jbyte *pubKeyBytes = (*env)->GetByteArrayElements(env, bytePubKey, 0);
+    BRMasterPubKey pubKey = *(BRMasterPubKey *) pubKeyBytes;
+    const char *rawAddress = (*env)->GetStringUTFChars(env, address, NULL);
+
+    size_t txCount = BRWalletTransactions(_wallet, NULL, 0) -
+                     BRWalletTxUnconfirmedBefore(_wallet, NULL, 0, BCASH_FORKHEIGHT);
+    BRTransaction *transactions[txCount], *tx;
+    BRWallet *w;
+
+    txCount = BRWalletTransactions(_wallet, transactions, txCount);
+    w = BRWalletNew(transactions, txCount, pubKey);
+    jlong balance = (jlong) BRWalletBalance(w);
+    BRWalletFree(w);
+//
+    return balance;
+}
