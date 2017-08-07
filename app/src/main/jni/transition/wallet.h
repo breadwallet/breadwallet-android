@@ -204,11 +204,10 @@ JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_getBCashBala
         jobject thiz,
         jbyteArray bytePubKey);
 
-JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRWalletManager_sweepBCash(JNIEnv *env,
-                                                                                  jobject thiz,
-                                                                                  jbyteArray bytePubKey,
-                                                                                  jstring address,
-                                                                                  jbyteArray phrase);
+JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_sweepBCash(JNIEnv *env,
+                                                                                    jobject thiz,
+                                                                                    jbyteArray bytePubKey,
+                                                                                    jstring address, jbyteArray phrase);
 
 #ifdef __cplusplus
 }
