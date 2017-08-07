@@ -30,6 +30,8 @@
 #include <assert.h>
 #include <BRBIP38Key.h>
 
+#define BCASH_FORKHEIGHT 478559
+
 static JavaVM *_jvmW;
 BRWallet *_wallet;
 static BRTransaction **_transactions;
@@ -645,7 +647,7 @@ Java_com_breadwallet_wallet_BRWalletManager_publishSerializedTransaction(JNIEnv 
 
     size_t seedSize = sizeof(key);
 
-    BRWalletSignTransaction(_wallet, tmpTx, key.u8, seedSize);
+    BRWalletSignTransaction(_wallet, tmpTx, 0, key.u8, seedSize);
     assert(BRTransactionIsSigned(tmpTx));
     if (!tmpTx) return JNI_FALSE;
     BRPeerManagerPublishTx(_peerManager, tmpTx, NULL, callback);
@@ -806,7 +808,7 @@ Java_com_breadwallet_wallet_BRWalletManager_confirmKeySweep(JNIEnv *env, jobject
     BRKey key;
 
     BRKeySetPrivKey(&key, rawString);
-    BRTransactionSign(tmpTx, &key, 1);
+    BRTransactionSign(tmpTx, 0, &key, 1);
     if (!tmpTx || !BRTransactionIsSigned(tmpTx)) return JNI_FALSE;
 
     uint8_t buf[BRTransactionSerialize(tmpTx, NULL, 0)];
@@ -890,4 +892,19 @@ JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRWalletManager_isTestNet
     return BITCOIN_TESTNET ? JNI_TRUE : JNI_FALSE;
 }
 
+// returns an unsigned transaction that sweeps all wallet UTXOs as of block height 478559 to addr
+// transaction must be signed using a forkId of 0x40
+static BRTransaction *
+BRWalletBCashSweepTx(BRWallet *wallet, BRMasterPubKey mpk, const char *addr, uint64_t feePerKb) {
+    size_t txCount = BRWalletTransactions(wallet, NULL, 0) -
+                     BRWalletTxUnconfirmedBefore(wallet, NULL, 0, BCASH_FORKHEIGHT);
+    BRTransaction *transactions[txCount], *tx;
+    BRWallet *w;
 
+    txCount = BRWalletTransactions(wallet, transactions, txCount);
+    w = BRWalletNew(transactions, txCount, mpk);
+    BRWalletSetFeePerKb(w, feePerKb);
+    tx = BRWalletCreateTransaction(w, BRWalletMaxOutputAmount(w), addr);
+    BRWalletFree(w);
+    return tx;
+}
