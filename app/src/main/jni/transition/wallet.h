@@ -207,9 +207,15 @@ JNIEXPORT jstring JNICALL
 Java_com_breadwallet_wallet_BRWalletManager_txHashSha256Hex(JNIEnv *env, jobject thiz,
                                                             jstring txHash);
 
-JNIEXPORT jbyteArray JNICALL
-Java_com_breadwallet_wallet_BRWalletManager_createBCHTx(JNIEnv *env, jobject obj,
-                                                        jstring jAddress);
+JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_getBCashBalance(
+        JNIEnv *env,
+        jobject thiz,
+        jbyteArray bytePubKey);
+
+JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_sweepBCash(JNIEnv *env,
+                                                                                    jobject thiz,
+                                                                                    jbyteArray bytePubKey,
+                                                                                    jstring address, jbyteArray phrase);
 
 #ifdef __cplusplus
 }
