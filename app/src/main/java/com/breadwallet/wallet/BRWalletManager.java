@@ -1207,4 +1207,8 @@ public class BRWalletManager {
 
     public static native boolean isTestNet();
 
+    public static native byte[] sweepBCash(byte[] pubKey, String address, byte[] phrase);
+
+    public static native long getBCashBalance(byte[] pubKey);
+
 }
