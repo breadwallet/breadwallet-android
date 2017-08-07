@@ -96,7 +96,7 @@ Java_com_breadwallet_tools_security_RequestHandler_parsePaymentRequest(JNIEnv *e
     }
 
     //Create serialized paymentProtocolPayment
-    BRAddress changeAddress = BRWalletChangeAddress(_wallet);
+    BRAddress changeAddress = BRWalletReceiveAddress(_wallet);
     BRTransaction *tx = BRWalletCreateTxForOutputs(_wallet, nativeRequest->details->outputs,
                                                    nativeRequest->details->outCount);
 
