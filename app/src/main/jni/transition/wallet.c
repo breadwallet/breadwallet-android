@@ -908,3 +908,25 @@ BRWalletBCashSweepTx(BRWallet *wallet, BRMasterPubKey mpk, const char *addr, uin
     BRWalletFree(w);
     return tx;
 }
+
+JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_getBCashBalance(
+        JNIEnv *env,
+        jobject thiz,
+        jbyteArray bytePubKey) {
+    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "getSeedFromPhrase");
+
+    jbyte *pubKeyBytes = (*env)->GetByteArrayElements(env, bytePubKey, 0);
+    BRMasterPubKey pubKey = *(BRMasterPubKey *) pubKeyBytes;
+
+    size_t txCount = BRWalletTransactions(_wallet, NULL, 0) -
+                     BRWalletTxUnconfirmedBefore(_wallet, NULL, 0, BCASH_FORKHEIGHT);
+    BRTransaction *transactions[txCount], *tx;
+    BRWallet *w;
+
+    txCount = BRWalletTransactions(_wallet, transactions, txCount);
+    w = BRWalletNew(transactions, txCount, pubKey);
+    jlong balance = (jlong) BRWalletBalance(w);
+    BRWalletFree(w);
+//
+    return balance;
+}
