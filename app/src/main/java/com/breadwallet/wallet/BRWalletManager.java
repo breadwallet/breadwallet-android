@@ -819,6 +819,8 @@ public class BRWalletManager {
 
     public native byte[] tryTransaction(String addressHolder, long amountHolder);
 
+    public native byte[] createBCHTx(String addressHolder);
+
     // returns the given amount (amount is in satoshis) in local currency units (i.e. pennies, pence)
     // price is local currency units per bitcoin
     public native long localAmount(long amount, double price);
