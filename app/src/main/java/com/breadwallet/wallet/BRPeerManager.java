@@ -138,7 +138,7 @@ public class BRPeerManager {
 
     }
 
-    public static void saveBlocks(final BlockEntity[] blockEntities) {
+    public static void saveBlocks(final BlockEntity[] blockEntities, final boolean replace) {
         Log.d(TAG, "saveBlocks: " + blockEntities.length);
 
         if (ctx == null) ctx = MainActivity.app;
@@ -146,6 +146,7 @@ public class BRPeerManager {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    if (replace) SQLiteManager.getInstance(ctx).deleteBlocks();
                     SQLiteManager.getInstance(ctx).insertMerkleBlocks(blockEntities);
                 }
             }).start();
@@ -153,13 +154,14 @@ public class BRPeerManager {
 
     }
 
-    public static void savePeers(final PeerEntity[] peerEntities) {
+    public static void savePeers(final PeerEntity[] peerEntities, final boolean replace) {
         Log.d(TAG, "savePeers: " + peerEntities.length);
         if (ctx == null) ctx = MainActivity.app;
         if (ctx != null) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    if (replace) SQLiteManager.getInstance(ctx).deletePeers();
                     SQLiteManager.getInstance(ctx).insertPeer(peerEntities);
                 }
             }).start();
