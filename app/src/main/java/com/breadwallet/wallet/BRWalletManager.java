@@ -12,6 +12,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.security.keystore.UserNotAuthenticatedException;
 import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
@@ -148,10 +149,8 @@ public class BRWalletManager {
         }
         boolean success = false;
         try {
-            success = KeyStoreManager.putKeyStorePhrase(strPhrase, ctx, BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE);
-        } catch (BRKeystoreErrorException e) {
-            e.printStackTrace();
-            showSentReceivedToast(e.getMessage());
+            success = KeyStoreManager.putPhrase(strPhrase, ctx, BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE);
+        } catch (UserNotAuthenticatedException e) {
             return false;
         }
         if (!success) return false;
@@ -189,11 +188,11 @@ public class BRWalletManager {
         if (pubkey == null || pubkey.length == 0) {
             byte[] phrase;
             try {
-                phrase = KeyStoreManager.getKeyStorePhrase(ctx, 0);
+                phrase = KeyStoreManager.getPhrase(ctx, 0);
                 if (phrase == null || phrase.length == 0) {
                     return true;
                 }
-            } catch (BRKeystoreErrorException e) {
+            } catch (UserNotAuthenticatedException e) {
                 e.printStackTrace();
                 return false;
             }

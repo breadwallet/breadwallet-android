@@ -35,14 +35,7 @@ import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
-import com.breadwallet.wallet.BreadLibs;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crash.FirebaseCrash;
-
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 
 /**
  * BreadWallet
@@ -122,8 +115,12 @@ public class IntroActivity extends FragmentActivity {
                 onBackPressed();
             }
         });
-
-        byte[] masterPubKey = KeyStoreManager.getMasterPublicKey(this);
+        byte[] masterPubKey;
+        try {
+            masterPubKey = KeyStoreManager.getMasterPublicKey(this);
+        } catch (Exception e) {
+            return;
+        }
         boolean isFirstAddressCorrect = false;
         if (masterPubKey != null && masterPubKey.length != 0) {
             isFirstAddressCorrect = checkFirstAddress(masterPubKey);
