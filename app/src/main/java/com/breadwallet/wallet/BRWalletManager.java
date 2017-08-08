@@ -225,11 +225,13 @@ public class BRWalletManager {
         if (Utils.isNullOrEmpty(KeyStoreManager.getMasterPublicKey(ctx))) {
             Log.e(TAG, "patchIfNeeded: missing pubKey");
             KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), ctx);
-
             byte[] pubKey = BRWalletManager.getInstance(ctx).getMasterPubKey(strBytes);
             if (Utils.isNullOrEmpty(pubKey))
                 throw new RuntimeException("pubkey is malformed: " + Arrays.toString(pubKey));
             KeyStoreManager.putMasterPublicKey(pubKey, ctx);
+            SQLiteManager.getInstance(ctx).deleteBlocks();
+            SQLiteManager.getInstance(ctx).deleteTransactions();
+            SQLiteManager.getInstance(ctx).deletePeers();
         }
 
         if (Utils.isNullOrEmpty(KeyStoreManager.getAuthKey(ctx))) {
