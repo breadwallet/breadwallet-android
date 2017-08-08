@@ -182,6 +182,7 @@ public class BRWalletManager {
      * true if keystore is available and we know that no wallet exists on it
      */
     public boolean noWallet(Activity ctx) {
+        if (ctx == null) throw new NullPointerException("noWallet ctx is null");
         if (isKeyStoreCorrupt(ctx)) return true;
         byte[] pubkey = KeyStoreManager.getMasterPublicKey(ctx);
 
@@ -204,7 +205,10 @@ public class BRWalletManager {
     private boolean isKeyStoreCorrupt(Activity ctx) {
         try {
             String address = SharedPreferencesManager.getReceiveAddress(ctx);
-            if (Utils.isNullOrEmpty(address)) return true;
+            if (Utils.isNullOrEmpty(address)) {
+                Log.e(TAG, "isKeyStoreCorrupt: address corrupted:");
+                return true;
+            }
             List<String> aliases = new ArrayList<>();
             aliases.add(KeyStoreManager.PHRASE_ALIAS);
             aliases.add(KeyStoreManager.PUB_KEY_ALIAS);
@@ -214,7 +218,7 @@ public class BRWalletManager {
                 boolean fileExists = new File(KeyStoreManager.getEncryptedDataFilePath(obj.alias, ctx)).exists();
                 boolean ivExists = new File(KeyStoreManager.getEncryptedDataFilePath(obj.ivFileName, ctx)).exists();
                 if (!fileExists || !ivExists) {
-                    Log.e(TAG, "isKeyStoreCorrupt: KS corrupt for: " + alias);
+                    Log.e(TAG, "isKeyStoreCorrupt: KS corrupt for: " + alias + ", fileExists: " + fileExists + ", ivExists: " + ivExists);
                     return true;
                 }
             }

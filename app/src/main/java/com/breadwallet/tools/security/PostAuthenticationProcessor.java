@@ -157,7 +157,7 @@ public class PostAuthenticationProcessor {
             return;
         }
         if (Utils.isNullOrEmpty(phrase)) {
-            RuntimeException ex =  new RuntimeException("phrase is malformed: " + (phrase == null ? null : phrase.length));
+            RuntimeException ex = new RuntimeException("phrase is malformed: " + (phrase == null ? null : phrase.length));
             BRErrorPipe.parseError(app, "error 006", ex, true);
             return;
         }
@@ -244,47 +244,45 @@ public class PostAuthenticationProcessor {
     }
 
     public void onCanaryCheck(final IntroActivity introActivity, boolean authAsked) {
+        String canary = null;
         try {
-            String canary = null;
+            canary = KeyStoreManager.getCanary(introActivity, BRConstants.CANARY_REQUEST_CODE);
+        } catch (UserNotAuthenticatedException e) {
+            Log.e(TAG, "onCanaryCheck: getCanary with no auth");
+            return;
+        }
+
+        if (canary == null || !canary.equalsIgnoreCase(BRConstants.CANARY_STRING)) {
+            Log.e(TAG, "!canary.equalsIgnoreCase(BRConstants.CANARY_STRING)");
+            byte[] phrase;
             try {
-                canary = KeyStoreManager.getCanary(introActivity, BRConstants.CANARY_REQUEST_CODE);
+                phrase = KeyStoreManager.getPhrase(introActivity, BRConstants.CANARY_REQUEST_CODE);
             } catch (UserNotAuthenticatedException e) {
-                Log.e(TAG, "onCanaryCheck: getCanary with no auth");
+                Log.e(TAG, "onCanaryCheck: getPhrase with no auth");
                 return;
             }
-
-            if (canary == null || !canary.equalsIgnoreCase(BRConstants.CANARY_STRING)) {
-                Log.e(TAG, "!canary.equalsIgnoreCase(BRConstants.CANARY_STRING)");
-                byte[] phrase;
+            if (Utils.isNullOrEmpty(phrase)) phrase = new byte[0];
+            String strPhrase = new String(phrase);
+            if (strPhrase.isEmpty()) {
+                Log.e(TAG, "onCanaryCheck: strPhrase is empty, Clearing the wallet!");
+                BRWalletManager m = BRWalletManager.getInstance(introActivity);
+                m.wipeKeyStore(introActivity);
+                m.wipeWalletButKeystore(introActivity);
+                BRAnimator.resetFragmentAnimator();
+            } else {
+                boolean success;
                 try {
-                    phrase = KeyStoreManager.getPhrase(introActivity, BRConstants.CANARY_REQUEST_CODE);
+                    success = KeyStoreManager.putCanary(BRConstants.CANARY_STRING, introActivity, 0);
                 } catch (UserNotAuthenticatedException e) {
-                    Log.e(TAG, "onCanaryCheck: getPhrase with no auth");
                     return;
                 }
-                if (Utils.isNullOrEmpty(phrase)) return;
-                String strPhrase = new String(phrase);
-                if (strPhrase.isEmpty()) {
-                    BRWalletManager m = BRWalletManager.getInstance(introActivity);
-                    m.wipeKeyStore(introActivity);
-                    m.wipeWalletButKeystore(introActivity);
-                    BRAnimator.resetFragmentAnimator();
-                } else {
-                    boolean success;
-                    try {
-                        success = KeyStoreManager.putCanary(BRConstants.CANARY_STRING, introActivity, 0);
-                    } catch (UserNotAuthenticatedException e) {
-                        return;
-                    }
-                    if (!success) {
-                        BRKeystoreErrorException ex = new BRKeystoreErrorException("onCanaryCheck: failed to put canary");
-                        BRErrorPipe.parseError(introActivity, ex.getMessage(), ex, true);
-                    }
+                if (!success) {
+                    BRKeystoreErrorException ex = new BRKeystoreErrorException("onCanaryCheck: failed to put canary");
+                    BRErrorPipe.parseError(introActivity, ex.getMessage(), ex, true);
                 }
             }
-        } finally {
-            introActivity.startTheWalletIfExists();
         }
+        introActivity.startTheWalletIfExists();
 
     }
 
