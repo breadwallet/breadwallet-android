@@ -13,7 +13,9 @@ import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.fragments.FragmentCurrency;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
+import com.google.firebase.crash.FirebaseCrash;
 
 import org.json.JSONArray;
 
@@ -118,7 +120,14 @@ public class SharedPreferencesManager {
 
     public static String getReceiveAddress(Activity context) {
         SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
-        return prefs.getString(BRConstants.RECEIVE_ADDRESS, "");
+        String address = prefs.getString(BRConstants.RECEIVE_ADDRESS, "");
+        if (Utils.isNullOrEmpty(address)) address = BRWalletManager.getReceiveAddress();
+        if (Utils.isNullOrEmpty(address)) {
+            FirebaseCrash.report(new RuntimeException("Address is null"));
+        } else {
+            putReceiveAddress(context, address);
+        }
+        return address;
     }
 
     public static void putReceiveAddress(Activity ctx, String tmpAddr) {
@@ -138,6 +147,7 @@ public class SharedPreferencesManager {
         editor.putString(BRConstants.FIRST_ADDRESS, firstAddress);
         editor.apply();
     }
+
     public static String getTrustNode(Activity context) {
         SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getString("trustNode", "");
