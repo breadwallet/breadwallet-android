@@ -183,7 +183,8 @@ public class BRWalletManager {
             }
             Arrays.fill(keyBytes, (byte) 0);
             Arrays.fill(strBytes, (byte) 0);
-            Arrays.fill(authKey, (byte) 0);
+            if (authKey != null)
+                Arrays.fill(authKey, (byte) 0);
         }
 
         return true;
