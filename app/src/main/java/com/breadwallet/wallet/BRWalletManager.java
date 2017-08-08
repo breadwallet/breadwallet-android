@@ -138,7 +138,7 @@ public class BRWalletManager {
                 e.printStackTrace();
             }
             byte[] keyBytes = sr.generateSeed(16);
-            if (words.length < 2000) {
+            if (words.length != 2048) {
                 RuntimeException ex = new IllegalArgumentException("the list is wrong, size: " + words.length);
                 FirebaseCrash.report(ex);
                 throw ex;
@@ -150,12 +150,13 @@ public class BRWalletManager {
                 FirebaseCrash.report(ex);
                 throw ex;
             }
+            boolean b;
             try {
-                success = KeyStoreManager.putPhrase(strPhrase, ctx, BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE);
+                b = KeyStoreManager.putPhrase(strPhrase, ctx, BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE);
             } catch (UserNotAuthenticatedException e) {
                 return false;
             }
-            if (!success) return false;
+            if (!b) return false;
 
             KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), ctx);
             byte[] strBytes = TypesConverter.getNullTerminatedPhrase(strPhrase);
@@ -171,6 +172,7 @@ public class BRWalletManager {
                 throw ex;
             }
             KeyStoreManager.putAuthKey(authKey, ctx);
+            success = true;
         } finally {
             if (!success) {
                 KeyStoreManager.resetWalletKeyStore(ctx);
