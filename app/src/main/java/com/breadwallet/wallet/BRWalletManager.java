@@ -125,7 +125,9 @@ public class BRWalletManager {
 
     public boolean generateRandomSeed() {
         boolean success = false;
-
+        byte[] keyBytes = new byte[0];
+        byte[] strBytes = new byte[0];
+        byte[] authKey = new byte[0];
         try {
             SecureRandom sr = new SecureRandom();
             String[] words = new String[0];
@@ -137,7 +139,7 @@ public class BRWalletManager {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            byte[] keyBytes = sr.generateSeed(16);
+            keyBytes = sr.generateSeed(16);
             if (words.length != 2048) {
                 RuntimeException ex = new IllegalArgumentException("the list is wrong, size: " + words.length);
                 FirebaseCrash.report(ex);
@@ -159,25 +161,29 @@ public class BRWalletManager {
             if (!b) return false;
 
             KeyStoreManager.putWalletCreationTime((int) (System.currentTimeMillis() / 1000), ctx);
-            byte[] strBytes = TypesConverter.getNullTerminatedPhrase(strPhrase);
+            strBytes = TypesConverter.getNullTerminatedPhrase(strPhrase);
             byte[] pubKey = BRWalletManager.getInstance(ctx).getMasterPubKey(strBytes);
             if (Utils.isNullOrEmpty(pubKey))
                 throw new RuntimeException("pubkey is malformed: " + Arrays.toString(pubKey));
             KeyStoreManager.putMasterPublicKey(pubKey, ctx);
 
-            byte[] authKey = getAuthPrivKeyForAPI(keyBytes);
+            authKey = getAuthPrivKeyForAPI(keyBytes);
             if (authKey == null || authKey.length == 0) {
                 RuntimeException ex = new IllegalArgumentException("authKey is invalid");
                 FirebaseCrash.report(ex);
                 throw ex;
             }
             KeyStoreManager.putAuthKey(authKey, ctx);
+
             success = true;
         } finally {
             if (!success) {
                 KeyStoreManager.resetWalletKeyStore(ctx);
                 SharedPreferencesManager.clearAllPrefs(ctx);
             }
+            Arrays.fill(keyBytes, (byte) 0);
+            Arrays.fill(strBytes, (byte) 0);
+            Arrays.fill(authKey, (byte) 0);
         }
 
         return true;
