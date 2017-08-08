@@ -1,25 +1,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:filterTouchesWhenObscured="true"
-    android:paddingTop="60dp">
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:filterTouchesWhenObscured="true"
+              android:paddingTop="60dp">
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:filterTouchesWhenObscured="true">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:filterTouchesWhenObscured="true">
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:filterTouchesWhenObscured="true"
-            android:orientation="vertical">
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:filterTouchesWhenObscured="true"
+                      android:orientation="vertical">
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/separator_height"
                 android:background="@color/gray"
-                android:filterTouchesWhenObscured="true" />
+                android:filterTouchesWhenObscured="true"/>
 
             <RelativeLayout
                 android:id="@+id/about"
@@ -38,7 +38,7 @@
                     android:text="@string/about"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/gray"
-                    android:textSize="@dimen/text_size" />
+                    android:textSize="@dimen/text_size"/>
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -47,7 +47,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="20dp"
                     android:background="@drawable/chevron"
-                    android:filterTouchesWhenObscured="true" />
+                    android:filterTouchesWhenObscured="true"/>
 
 
             </RelativeLayout>
@@ -57,7 +57,7 @@
                 android:layout_height="@dimen/separator_height"
                 android:layout_marginStart="20dp"
                 android:background="@color/gray"
-                android:filterTouchesWhenObscured="true" />
+                android:filterTouchesWhenObscured="true"/>
 
             <RelativeLayout
                 android:id="@+id/recovery_phrase"
@@ -76,7 +76,7 @@
                     android:text="@string/recovery_phrase_label"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/gray"
-                    android:textSize="@dimen/text_size" />
+                    android:textSize="@dimen/text_size"/>
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -85,21 +85,21 @@
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="20dp"
                     android:background="@drawable/chevron"
-                    android:filterTouchesWhenObscured="true" />
+                    android:filterTouchesWhenObscured="true"/>
             </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/separator_height"
                 android:background="@color/gray"
-                android:filterTouchesWhenObscured="true" />
+                android:filterTouchesWhenObscured="true"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/separator_height"
                 android:layout_marginTop="30dp"
                 android:background="@color/gray"
-                android:filterTouchesWhenObscured="true" />
+                android:filterTouchesWhenObscured="true"/>
 
             <RelativeLayout
                 android:id="@+id/local_currency"
@@ -118,7 +118,7 @@
                     android:text="@string/local_currency"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/gray"
-                    android:textSize="@dimen/text_size" />
+                    android:textSize="@dimen/text_size"/>
 
                 <TextView
                     android:id="@+id/three_letters_currency"
@@ -130,7 +130,7 @@
                     android:filterTouchesWhenObscured="true"
                     android:text=""
                     android:textColor="@color/dark_blue"
-                    android:textSize="20sp" />
+                    android:textSize="20sp"/>
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -139,7 +139,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="20dp"
                     android:background="@drawable/chevron"
-                    android:filterTouchesWhenObscured="true" />
+                    android:filterTouchesWhenObscured="true"/>
 
             </RelativeLayout>
 
@@ -150,7 +150,7 @@
                 android:layout_height="@dimen/separator_height"
                 android:layout_marginStart="20dp"
                 android:background="@color/gray"
-                android:filterTouchesWhenObscured="true" />
+                android:filterTouchesWhenObscured="true"/>
 
             <RelativeLayout
                 android:id="@+id/fingerprint_limit"
@@ -169,7 +169,7 @@
                     android:text="@string/fingerprint_spend_limit"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/gray"
-                    android:textSize="@dimen/text_size" />
+                    android:textSize="@dimen/text_size"/>
 
                 <TextView
                     android:id="@+id/fingerprint_limit_text"
@@ -180,7 +180,7 @@
                     android:layout_marginEnd="50dp"
                     android:filterTouchesWhenObscured="true"
                     android:textColor="@color/dark_blue"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"/>
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -189,7 +189,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="20dp"
                     android:background="@drawable/chevron"
-                    android:filterTouchesWhenObscured="true" />
+                    android:filterTouchesWhenObscured="true"/>
 
             </RelativeLayout>
 
@@ -197,14 +197,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/separator_height"
                 android:background="@color/gray"
-                android:filterTouchesWhenObscured="true" />
+                android:filterTouchesWhenObscured="true"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/separator_height"
                 android:layout_marginTop="30dp"
                 android:background="@color/gray"
-                android:filterTouchesWhenObscured="true" />
+                android:filterTouchesWhenObscured="true"/>
 
             <RelativeLayout
                 android:id="@+id/change_password"
@@ -223,7 +223,7 @@
                     android:text="@string/change_passcode"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/dark_blue"
-                    android:textSize="@dimen/text_size" />
+                    android:textSize="@dimen/text_size"/>
 
             </RelativeLayout>
 
@@ -232,7 +232,7 @@
                 android:layout_height="@dimen/separator_height"
                 android:layout_marginStart="20dp"
                 android:background="@color/gray"
-                android:filterTouchesWhenObscured="true" />
+                android:filterTouchesWhenObscured="true"/>
 
             <RelativeLayout
                 android:id="@+id/start_recovery_wallet"
@@ -251,7 +251,7 @@
                     android:text="@string/start_recover_another_wallet"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/red"
-                    android:textSize="@dimen/text_size" />
+                    android:textSize="@dimen/text_size"/>
 
             </RelativeLayout>
 
@@ -260,7 +260,7 @@
                 android:layout_height="@dimen/separator_height"
                 android:layout_marginStart="20dp"
                 android:background="@color/gray"
-                android:filterTouchesWhenObscured="true" />
+                android:filterTouchesWhenObscured="true"/>
 
             <RelativeLayout
                 android:id="@+id/rescan_blockchain"
@@ -279,14 +279,14 @@
                     android:text="@string/rescan_blockchain"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/dark_blue"
-                    android:textSize="@dimen/text_size" />
+                    android:textSize="@dimen/text_size"/>
             </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/separator_height"
                 android:background="@color/gray"
-                android:filterTouchesWhenObscured="true" />
+                android:filterTouchesWhenObscured="true"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -297,7 +297,7 @@
                 android:filterTouchesWhenObscured="true"
                 android:text="@string/settingsall_rescan_instructions"
                 android:textColor="@color/gray"
-                android:textSize="12sp" />
+                android:textSize="12sp"/>
 
             <RelativeLayout
                 android:id="@+id/early_access_separator"
@@ -305,7 +305,7 @@
                 android:layout_height="@dimen/separator_height"
                 android:layout_marginTop="10dp"
                 android:background="@color/gray"
-                android:filterTouchesWhenObscured="true" />
+                android:filterTouchesWhenObscured="true"/>
 
             <RelativeLayout
                 android:id="@+id/early_access"
@@ -324,7 +324,7 @@
                     android:text="@string/early_access"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/dark_blue"
-                    android:textSize="@dimen/text_size" />
+                    android:textSize="@dimen/text_size"/>
             </RelativeLayout>
 
             <RelativeLayout
@@ -332,7 +332,51 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/separator_height"
                 android:background="@color/gray"
-                android:filterTouchesWhenObscured="true" />
+                android:filterTouchesWhenObscured="true"/>
+
+            <RelativeLayout
+                android:id="@+id/advanced_separator"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/separator_height"
+                android:layout_marginTop="10dp"
+                android:background="@color/gray"
+                android:filterTouchesWhenObscured="true"/>
+
+            <RelativeLayout
+                android:id="@+id/advanced"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/clickable_layout"
+                android:clickable="true"
+                android:filterTouchesWhenObscured="true">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="20dp"
+                    android:filterTouchesWhenObscured="true"
+                    android:text="advanced"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/gray"
+                    android:textSize="@dimen/text_size"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="20dp"
+                    android:background="@drawable/chevron"
+                    android:filterTouchesWhenObscured="true"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/advanced_separator2"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/separator_height"
+                android:background="@color/gray"
+                android:filterTouchesWhenObscured="true"/>
 
         </LinearLayout>
 

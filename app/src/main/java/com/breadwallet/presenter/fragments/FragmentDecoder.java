@@ -1,7 +1,9 @@
 package com.breadwallet.presenter.fragments;
 
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -10,10 +12,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
+import com.breadwallet.BreadWalletApp;
+import com.breadwallet.R;
+import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.qrcode.QRScannerView;
+import com.breadwallet.tools.security.BRErrorPipe;
 import com.breadwallet.tools.security.RequestHandler;
+import com.breadwallet.tools.util.Utils;
 import com.google.zxing.Result;
 
 /**
@@ -44,6 +51,7 @@ import com.google.zxing.Result;
 public class FragmentDecoder extends Fragment implements QRScannerView.ResultHandler {
     private QRScannerView mScannerView;
     public static final String TAG = FragmentDecoder.class.getName();
+    public static boolean withdrawingBCH;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -99,7 +107,10 @@ public class FragmentDecoder extends Fragment implements QRScannerView.ResultHan
             public void run() {
                 if (!text.isEmpty()) {
                     BRAnimator.hideDecoderFragment();
-                    RequestHandler.processRequest(app, text);
+                    if (withdrawingBCH) {
+                        setUrl(text);
+                    } else
+                        RequestHandler.processRequest(app, text);
 
                 }
             }
@@ -107,9 +118,36 @@ public class FragmentDecoder extends Fragment implements QRScannerView.ResultHan
 
     }
 
+    public static void setUrl(String url) {
+        Log.e(TAG, "setUrl: ");
+        BRAnimator.goToMainActivity(null);
+        boolean failed = false;
+        if (Utils.isNullOrEmpty(url)) {
+            failed = true;
+        }
+        Uri uri = null;
+        try {
+            uri = Uri.parse(url);
+        } catch (Exception e) {
+            failed = true;
+        }
+
+        if (failed) {
+            ((BreadWalletApp) MainActivity.app.getApplication()).showCustomDialog("Invalid address", url + " is not a valid address.", "close");
+        } else {
+            Log.e(TAG, "setUrl: " + uri);
+            String address = uri.getHost();
+            Log.e(TAG, "setUrl: " + address);
+
+            FragmentWithdrawBch.confirmSendingBCH(MainActivity.app, url);
+
+        }
+    }
+
     @Override
     public void onPause() {
         super.onPause();
         mScannerView.stopCamera();
+        withdrawingBCH = false;
     }
 }

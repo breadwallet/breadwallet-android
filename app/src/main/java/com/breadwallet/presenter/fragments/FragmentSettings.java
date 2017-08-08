@@ -81,6 +81,7 @@ public class FragmentSettings extends Fragment {
         RelativeLayout startRecoveryWallet = (RelativeLayout) rootView.findViewById(R.id.start_recovery_wallet);
         RelativeLayout fingerprintLimit = (RelativeLayout) rootView.findViewById(R.id.fingerprint_limit);
         RelativeLayout earlyAccess = (RelativeLayout) rootView.findViewById(R.id.early_access);
+        RelativeLayout advanced = (RelativeLayout) rootView.findViewById(R.id.advanced);
         RelativeLayout line5 = (RelativeLayout) rootView.findViewById(R.id.settings_line_5);
         TextView theLimit = (TextView) rootView.findViewById(R.id.fingerprint_limit_text);
         RelativeLayout rescan = (RelativeLayout) rootView.findViewById(R.id.rescan_blockchain);
@@ -97,6 +98,15 @@ public class FragmentSettings extends Fragment {
             fingerprintLimit.setVisibility(View.GONE);
             line5.setVisibility(View.GONE);
         }
+
+        advanced.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (BRAnimator.checkTheMultipressingAvailability()) {
+                    BRAnimator.animateSlideToLeft(app, new FragmentAdvanced(), fragmentSettings);
+                }
+            }
+        });
 
         fingerprintLimit.setOnClickListener(
                 new View.OnClickListener() {
