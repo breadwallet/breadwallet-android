@@ -215,7 +215,7 @@ public class BRWalletManager {
             aliases.add(KeyStoreManager.CANARY_ALIAS);
             for (String alias : aliases) {
                 KeyStoreManager.AliasObject obj = KeyStoreManager.aliasObjectMap.get(alias);
-                boolean fileExists = new File(KeyStoreManager.getEncryptedDataFilePath(obj.alias, ctx)).exists();
+                boolean fileExists = new File(KeyStoreManager.getEncryptedDataFilePath(obj.datafileName, ctx)).exists();
                 boolean ivExists = new File(KeyStoreManager.getEncryptedDataFilePath(obj.ivFileName, ctx)).exists();
                 if (!fileExists || !ivExists) {
                     Log.e(TAG, "isKeyStoreCorrupt: KS corrupt for: " + alias + ", fileExists: " + fileExists + ", ivExists: " + ivExists);
