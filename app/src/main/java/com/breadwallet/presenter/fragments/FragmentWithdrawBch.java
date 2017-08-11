@@ -31,11 +31,16 @@ import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRTipsManager;
 import com.breadwallet.tools.security.BRErrorPipe;
+import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.security.PassCodeManager;
+import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.security.RequestHandler;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.net.URI;
+
+import static com.breadwallet.tools.util.BRConstants.AUTH_FOR_BCH;
 
 /**
  * BreadWallet
@@ -66,6 +71,7 @@ public class FragmentWithdrawBch extends Fragment {
     private static final String TAG = FragmentWithdrawBch.class.getName();
     public EditText addressEditText;
     public RelativeLayout mainFragmentLayout;
+    public static String address;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -247,13 +253,19 @@ public class FragmentWithdrawBch extends Fragment {
         return rootView;
     }
 
-    public static void confirmSendingBCH(Activity app, String address) {
-        BRErrorPipe.showKeyStoreDialog(app, "Sending out BCH", address, "send", null,
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                }, null, null); //todo finish
+    public static void confirmSendingBCH(final Activity app, final String theAddress) {
+        address = theAddress;
+        if (BRWalletManager.getBCashBalance(KeyStoreManager.getMasterPublicKey(app)) == 0) {
+            BRErrorPipe.showKeyStoreDialog(app, "No balance", "You have 0 BCH", "close", null,
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    }, null, null);
+        } else {
+            ((BreadWalletApp) app.getApplication()).promptForAuthentication(app, AUTH_FOR_BCH, null, "", "Sending out BCH", null, true);
+        }
+
     }
 
     private boolean checkIfAddressIsValid(String str) {

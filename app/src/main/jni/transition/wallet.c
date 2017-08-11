@@ -767,7 +767,7 @@ Java_com_breadwallet_wallet_BRWalletManager_addInputToPrivKeyTx(JNIEnv *env, job
     jbyte *rawScript = (*env)->GetByteArrayElements(env, script, 0);
     UInt256 reversedHash = UInt256Reverse((*(UInt256 *) rawHash));
 
-    BRTransactionAddInput(_privKeyTx, reversedHash, (uint32_t) vout, (const uint8_t *) rawScript,
+    BRTransactionAddInput(_privKeyTx, reversedHash, (uint32_t) vout, (uint64_t) amount, (const uint8_t *) rawScript,
                           (size_t) scriptLength, NULL, 0, TXIN_SEQUENCE);
 }
 

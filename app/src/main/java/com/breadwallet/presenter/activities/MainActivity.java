@@ -259,9 +259,10 @@ public class MainActivity extends FragmentActivity implements Observer {
         burgerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.e(TAG, "onClick: ");
                 hideAllBubbles();
                 SpringAnimator.showAnimation(burgerButton);
-                if (BRAnimator.level > 1 || BRAnimator.scanResultFragmentOn || BRAnimator.decoderFragmentOn) {
+                if (BRAnimator.level > 1 || BRAnimator.scanResultFragmentOn || BRAnimator.decoderFragmentOn ) {
                     onBackPressed();
                 } else {
                     //check multi pressing availability here, because method onBackPressed does the checking as well.

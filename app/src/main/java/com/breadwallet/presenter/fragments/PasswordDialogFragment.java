@@ -69,6 +69,7 @@ import com.breadwallet.wallet.BRWalletManager;
 import java.util.Locale;
 
 import static com.breadwallet.tools.security.KeyStoreManager.putLastPasscodeUsedTime;
+import static com.breadwallet.tools.util.BRConstants.AUTH_FOR_BCH;
 import static com.breadwallet.tools.util.BRConstants.AUTH_FOR_BIT_ID;
 
 public class PasswordDialogFragment extends DialogFragment {
@@ -390,6 +391,8 @@ public class PasswordDialogFragment extends DialogFragment {
                     new PaymentProtocolPostPaymentTask(paymentRequest).execute();
                 } else if (mode == AUTH_FOR_BIT_ID) {
                     RequestHandler.processBitIdResponse(getActivity());
+                } else if (mode == AUTH_FOR_BCH) {
+                    PostAuthenticationProcessor.getInstance().onSendBch(getActivity(), false, FragmentWithdrawBch.address);
                 }
             } else {
                 SpringAnimator.failShakeAnimation(getActivity(), dialogFragment.getView());

@@ -18,8 +18,18 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
+import com.platform.APIClient;
 
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.Arrays;
+
+import static com.platform.APIClient.BASE_URL;
+import okhttp3.MediaType;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * BreadWallet
@@ -54,6 +64,7 @@ public class PostAuthenticationProcessor {
     private PaymentRequestWrapper paymentRequest;
     private String uri;
     private String label;
+    private String bchAddress;
 
     private static PostAuthenticationProcessor instance;
 
@@ -163,6 +174,61 @@ public class PostAuthenticationProcessor {
         }
         app.showHideFragments(app.fragmentPhraseFlow1);
         app.fragmentPhraseFlow1.setPhrase(phrase);
+    }
+
+    public void onSendBch(Activity app, boolean authAsked, String bchAddress) {
+        this.bchAddress = bchAddress;
+        byte[] phrase = null;
+        try {
+            phrase = KeyStoreManager.getPhrase(app, BRConstants.SEND_BCH_REQUEST);
+        } catch (UserNotAuthenticatedException e) {
+            Log.e(TAG, "onShowPhraseFlowAuth: getPhrase with no auth");
+            return;
+        }
+        if (Utils.isNullOrEmpty(phrase)) {
+            RuntimeException ex = new RuntimeException("phrase is malformed: " + (phrase == null ? null : phrase.length));
+            BRErrorPipe.parseError(app, "error 006", ex, true);
+            return;
+        }
+        String title = "Failed";
+        String message = "";
+        byte[] serializedTx = BRWalletManager.sweepBCash(KeyStoreManager.getMasterPublicKey(app), bchAddress, phrase);
+        message = serializedTx == null ? "null" : Arrays.toString(serializedTx);
+        assert (serializedTx != null);
+        if (serializedTx == null) {
+            Log.e(TAG, "onSendBch:serializedTx is null");
+        } else {
+            String strUtl = BASE_URL + "/bch/publish-transaction";
+
+//            final MediaType type
+//                    = MediaType.parse("application/bchdata");
+//            RequestBody requestBody = RequestBody.create(type, serializedTx);
+//            Request request = new Request.Builder()
+//                    .url(strUtl)
+//                    .header("Content-Type", "application/bchdata")
+//                    .post(requestBody).build();
+//            String strResponse = null;
+//            Response response = APIClient.getInstance(app).sendRequest(request, true, 0);
+//            if (response != null && response.isSuccessful()) {
+//                title = "Success";
+//                message = "";
+//            } else {
+//                title = "Failed to send";
+//                if (response == null) {
+//                    message = "Something went wrong";
+//                } else {
+//                    message = response.message();
+//                }
+//            }
+        }
+
+        BRErrorPipe.showKeyStoreDialog(app, title, message, "send", null,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                }, null, null);
+
     }
 
     public void onPublishTxAuth(MainActivity app, boolean authAsked) {

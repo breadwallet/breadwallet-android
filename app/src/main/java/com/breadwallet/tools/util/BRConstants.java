@@ -44,6 +44,7 @@ public class BRConstants {
     public static final int AUTH_FOR_LIMIT = 14;
     public static final int AUTH_FOR_PAYMENT_PROTOCOL = 15;
     public static final int AUTH_FOR_BIT_ID = 16;
+    public static final int AUTH_FOR_BCH = 17;
 
     /**
      * BlockHeight prefs
@@ -67,6 +68,7 @@ public class BRConstants {
     public static final int PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE = 115;
     public static final int PAYMENT_PROTOCOL_REQUEST_CODE = 116;
     public static final int REQUEST_PHRASE_BITID = 117;
+    public static final int SEND_BCH_REQUEST = 118;
 
     /**
      * Request codes for take picture
