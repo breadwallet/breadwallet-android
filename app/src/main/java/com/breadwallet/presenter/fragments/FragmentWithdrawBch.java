@@ -249,7 +249,6 @@ public class FragmentWithdrawBch extends Fragment {
 
         });
 
-
         return rootView;
     }
 

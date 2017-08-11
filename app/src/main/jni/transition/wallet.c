@@ -923,7 +923,7 @@ JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_getBCashBala
         JNIEnv *env,
         jobject thiz,
         jbyteArray bytePubKey) {
-    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "getSeedFromPhrase");
+    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "getBCashBalance");
 
     jbyte *pubKeyBytes = (*env)->GetByteArrayElements(env, bytePubKey, 0);
     BRMasterPubKey pubKey = *(BRMasterPubKey *) pubKeyBytes;
@@ -946,7 +946,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_sweepBC
                                                                                jobject thiz,
                                                                                jbyteArray bytePubKey,
                                                                                jstring address, jbyteArray phrase) {
-    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "getSeedFromPhrase");
+    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "sweepBCash");
 
     if(!_wallet) return NULL;
 

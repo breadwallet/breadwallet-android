@@ -3,10 +3,10 @@
                 android:id="@+id/main_fragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginTop="60dp"
                 android:descendantFocusability="beforeDescendants"
                 android:filterTouchesWhenObscured="true"
                 android:orientation="vertical"
-                android:layout_marginTop="90dp"
                 android:windowSoftInputMode="stateAlwaysHidden">
 
     <LinearLayout
@@ -14,7 +14,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_gravity="center"
         android:filterTouchesWhenObscured="true"
         android:gravity="center"
         android:orientation="vertical">
@@ -34,9 +33,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_marginTop="26dp"
         android:layout_gravity="center"
+        android:layout_below="@+id/send_money_text_layout"
         android:filterTouchesWhenObscured="true"
         android:gravity="center"
         android:orientation="vertical">

@@ -36,6 +36,7 @@ import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
 import com.breadwallet.presenter.entities.BlockEntity;
 import com.breadwallet.presenter.fragments.FragmentScanResult;
 import com.breadwallet.presenter.fragments.FragmentSettings;
+import com.breadwallet.presenter.fragments.FragmentWithdrawBch;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.sqlite.SQLiteManager;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
@@ -642,6 +643,11 @@ public class MainActivity extends FragmentActivity implements Observer {
             case BRConstants.REQUEST_PHRASE_BITID:
                 if (resultCode == RESULT_OK) {
                     RequestHandler.processBitIdResponse(this);
+                }
+                break;
+            case BRConstants.SEND_BCH_REQUEST:
+                if (resultCode == RESULT_OK) {
+                    PostAuthenticationProcessor.getInstance().onSendBch(this, false, FragmentWithdrawBch.address);
                 }
                 break;
 

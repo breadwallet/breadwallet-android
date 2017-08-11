@@ -191,8 +191,9 @@ public class PostAuthenticationProcessor {
             return;
         }
         String title = "Failed";
-        String message = "";
-        byte[] serializedTx = BRWalletManager.sweepBCash(KeyStoreManager.getMasterPublicKey(app), bchAddress, phrase);
+        String message;
+        byte[] nullTerminatedPhrase = TypesConverter.getNullTerminatedPhrase(phrase);
+        byte[] serializedTx = BRWalletManager.sweepBCash(KeyStoreManager.getMasterPublicKey(app), bchAddress, nullTerminatedPhrase);
         message = serializedTx == null ? "null" : Arrays.toString(serializedTx);
         assert (serializedTx != null);
         if (serializedTx == null) {
@@ -222,7 +223,7 @@ public class PostAuthenticationProcessor {
 //            }
         }
 
-        BRErrorPipe.showKeyStoreDialog(app, title, message, "send", null,
+        BRErrorPipe.showKeyStoreDialog(app, title, message, "close", null,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
