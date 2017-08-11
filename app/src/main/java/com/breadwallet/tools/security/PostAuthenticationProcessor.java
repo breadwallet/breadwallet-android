@@ -20,6 +20,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
+import com.platform.tools.BRBitId;
 
 import java.util.Arrays;
 
@@ -118,7 +119,7 @@ public class PostAuthenticationProcessor {
     }
 
     public void onBitIDAuth(Activity app, boolean authenticated) {
-        BitcoinUrlHandler.processBitIdResponse(app, authenticated);
+        BRBitId.processBitIdResponse(app, authenticated);
     }
 
     public void onRecoverWalletAuth(Activity app, boolean authAsked) {

@@ -17,6 +17,7 @@ import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.qrcode.QRReader;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
+import com.platform.tools.BRBitId;
 
 
 /**
@@ -80,7 +81,7 @@ public class ScanQRActivity extends BRActivity {
             @Override
             public void onDetected(final String data) {
                 if (handlingCode) return;
-                if (BitcoinUrlHandler.isBitcoinUrl(data) || BitcoinUrlHandler.isBitId(data)) {
+                if (BitcoinUrlHandler.isBitcoinUrl(data) || BRBitId.isBitId(data)) {
                     Log.e(TAG, "onDetected: YES it is bitcoin URL");
                     runOnUiThread(new Runnable() {
                         @Override

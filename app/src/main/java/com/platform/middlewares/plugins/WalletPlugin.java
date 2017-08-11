@@ -12,6 +12,7 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.BRHTTPHelper;
 import com.platform.interfaces.Plugin;
+import com.platform.tools.BRBitId;
 
 import org.apache.commons.compress.utils.IOUtils;
 import org.eclipse.jetty.continuation.Continuation;
@@ -161,7 +162,7 @@ public class WalletPlugin implements Plugin {
                 continuation = ContinuationSupport.getContinuation(request);
                 continuation.suspend(response);
                 globalBaseRequest = baseRequest;
-                BitcoinUrlHandler.tryBitIdUri(app, obj.getString("bitid_url"), obj);
+                BRBitId.tryBitIdUri(app, obj.getString("bitid_url"), obj);
             } catch (JSONException e) {
                 e.printStackTrace();
                 Log.e(TAG, "handle: Failed to parse Json request body: " + target + " " + baseRequest.getMethod());
@@ -211,8 +212,10 @@ public class WalletPlugin implements Plugin {
                     }
                     ((HttpServletResponse) continuation.getServletResponse()).setStatus(200);
                 } finally {
-                    globalBaseRequest.setHandled(true);
-                    continuation.complete();
+                    if (globalBaseRequest != null)
+                        globalBaseRequest.setHandled(true);
+                    if (continuation != null)
+                        continuation.complete();
                     continuation = null;
                     globalBaseRequest = null;
                 }

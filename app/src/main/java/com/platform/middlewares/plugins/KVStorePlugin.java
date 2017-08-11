@@ -71,34 +71,30 @@ public class KVStorePlugin implements Plugin {
             ReplicatedKVStore store = new ReplicatedKVStore(app, remote);
             switch (request.getMethod()) {
                 case "GET":
+
                     Log.i(TAG, "handle: " + target + " " + baseRequest.getMethod() + ", key: " + key);
                     CompletionObject getObj = store.get(key, 0);
                     KVEntity kv = getObj.kv;
 
-                    if (kv == null) {
+                    if (kv == null || kv.deleted > 0) {
                         Log.e(TAG, "handle: kv store does not contain the kv: " + key);
-                        return BRHTTPHelper.handleError(404, null, baseRequest, response);
+                        return BRHTTPHelper.handleError(404, null, baseRequest, decorateResponse(0, 0 , response));
                     }
-//                    byte[] decompressedData = BRCompressor.bz2Extract(kv.getValue());
-//                    Assert.assertNotNull(decompressedData);
                     try {
+
                         JSONObject test = new JSONObject(new String(kv.getValue())); //just check for validity
                     } catch (JSONException e) {
                         e.printStackTrace();
                         Log.e(TAG, "handle: the json is not valid: " + target + " " + baseRequest.getMethod());
 
-                        return BRHTTPHelper.handleError(500, null, baseRequest, response);
+                        return BRHTTPHelper.handleError(500, null, baseRequest, decorateResponse(kv.getVersion(), kv.getTime(), response));
                     }
-                    response.setHeader("ETag", String.valueOf(kv.getVersion()));
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss:SSS Z", Locale.getDefault());
-                    String date = dateFormat.format(kv.getTime());
-                    response.setHeader("Last-Modified", date);
 
                     if (kv.getDeleted() > 0) {
                         Log.w(TAG, "handle: the key is gone: " + target + " " + baseRequest.getMethod());
-                        return BRHTTPHelper.handleError(410, "Gone", baseRequest, response);
+                        return BRHTTPHelper.handleError(410, "Gone", baseRequest, decorateResponse(kv.getVersion(), kv.getTime() , response));
                     }
-                    return BRHTTPHelper.handleSuccess(200, kv.getValue(), baseRequest, response, "application/json");
+                    return BRHTTPHelper.handleSuccess(200, kv.getValue(), baseRequest, decorateResponse(kv.getVersion(), kv.getTime() , response), "application/json");
                 case "PUT":
                     Log.i(TAG, "handle:" + target + " " + baseRequest.getMethod() + ", key: " + key);
                     // Read from request
@@ -128,9 +124,6 @@ public class KVStorePlugin implements Plugin {
 
                     long version = Long.valueOf(strVersion);
 
-//                    byte[] compressedData = BRCompressor.bz2Compress(rawData);
-//                    assert (compressedData != null);
-
                     CompletionObject setObj = store.set(new KVEntity(version, 0, key, rawData, System.currentTimeMillis(), 0));
                     if (setObj.err != null) {
                         Log.e(TAG, "handle: error setting the key: " + key + ", err: " + setObj.err);
@@ -138,17 +131,14 @@ public class KVStorePlugin implements Plugin {
                         return BRHTTPHelper.handleError(errCode, null, baseRequest, response);
                     }
 
-                    response.setHeader("ETag", String.valueOf(setObj.version));
-                    dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss:SSS Z", Locale.getDefault());
-                    date = dateFormat.format(setObj.time);
-                    response.setHeader("Last-Modified", date);
-                    return BRHTTPHelper.handleSuccess(204, null, baseRequest, response, null);
+                    return BRHTTPHelper.handleSuccess(204, null, baseRequest, decorateResponse(setObj.version, setObj.time, response), null);
                 case "DELETE":
                     Log.i(TAG, "handle: : " + target + " " + baseRequest.getMethod() + ", key: " + key);
                     strVersion = request.getHeader("if-none-match");
                     Log.e(TAG, "handle: missing If-None-Match header: " + target + " " + baseRequest.getMethod());
 
                     if (strVersion == null) {
+                        Log.e(TAG, "handle: if-none-match is missing, sending 400");
                         return BRHTTPHelper.handleError(400, null, baseRequest, response);
                     }
 
@@ -171,15 +161,29 @@ public class KVStorePlugin implements Plugin {
                         return BRHTTPHelper.handleError(err, null, baseRequest, response);
                     }
                     response.setHeader("ETag", String.valueOf(delObj.version));
-                    dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss:SSS Z", Locale.getDefault());
-                    date = dateFormat.format(delObj.time);
-                    response.setHeader("Last-Modified", date);
+                    response.addHeader("Cache-Control", "max-age=0, must-revalidate");
+                    SimpleDateFormat dateFormat = new SimpleDateFormat(
+                            "EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
+                    String rfc1123 = dateFormat.format(delObj.time);
+                    response.setHeader("Last-Modified", rfc1123);
                     return BRHTTPHelper.handleSuccess(204, null, baseRequest, response, null);
 
             }
         }
 
         return false;
+    }
+
+    private HttpServletResponse decorateResponse(long ver, long time, HttpServletResponse response) {
+        response.addHeader("Cache-Control", "max-age=0, must-revalidate");
+        response.addHeader("ETag", String.valueOf(ver));
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat(
+                "EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
+        String rfc1123 = dateFormat.format(time);
+        response.setHeader("Content-Type", "application/json");
+        response.addHeader("Last-Modified", rfc1123);
+        return response;
     }
 
     private int transformErrorToResponseCode(CompletionObject.RemoteKVStoreError err) {
