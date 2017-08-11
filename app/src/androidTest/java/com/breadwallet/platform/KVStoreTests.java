@@ -132,7 +132,7 @@ public class KVStoreTests {
 
     @Before
     public void setUp() {
-//        mActivityRule.getActivity().deleteDatabase(PlatformSqliteHelper.DATABASE_NAME);
+        mActivityRule.getActivity().deleteDatabase(PlatformSqliteHelper.DATABASE_NAME);
         remote = new MockUpAdapter();
         ((MockUpAdapter) remote).putKv(new KVEntity(1, 1, "hello", "hello".getBytes(), System.currentTimeMillis(), 0));
         ((MockUpAdapter) remote).putKv(new KVEntity(1, 1, "removed", "removed".getBytes(), System.currentTimeMillis(), 1));

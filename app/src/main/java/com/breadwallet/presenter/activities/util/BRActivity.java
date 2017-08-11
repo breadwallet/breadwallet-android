@@ -10,6 +10,7 @@ import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.BRWalletManager;
+import com.platform.tools.BRBitId;
 
 /**
  * BreadWallet
@@ -108,8 +109,8 @@ public class BRActivity extends Activity {
                             String result = data.getStringExtra("result");
                             if (BitcoinUrlHandler.isBitcoinUrl(result))
                                 BitcoinUrlHandler.processRequest(BRActivity.this, result);
-                            else if (BitcoinUrlHandler.isBitId(result))
-                                BitcoinUrlHandler.tryBitIdUri(BRActivity.this, result, null);
+                            else if (BRBitId.isBitId(result))
+                                BRBitId.tryBitIdUri(BRActivity.this, result, null);
                             else
                                 Log.e(TAG, "onActivityResult: not bitcoin address NOR bitID");
                         }
