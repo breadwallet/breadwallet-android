@@ -44,6 +44,8 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,17 +54,17 @@ public class ReplicatedKVStore {
 
     private static final String KEY_REGEX = "^[^_][\\w-]{1,255}$";
 
-    private boolean readUsing;
-    private boolean writeUsing;
-
     public boolean encrypted = true;
     public boolean encryptedReplication = true;
+    private Lock readLock = new ReentrantLock();
+    private Lock writeLock = new ReentrantLock();
     public boolean syncImmediately = false;
     private boolean syncRunning = false;
     private KVStoreAdaptor remoteKvStore;
     private Context context;
     // Database fields
-    private SQLiteDatabase database;
+    private SQLiteDatabase readDB;
+    private SQLiteDatabase writeDB;
     private final PlatformSqliteHelper dbHelper;
     private final String[] allColumns = {
             PlatformSqliteHelper.KV_VERSION,
@@ -80,17 +82,18 @@ public class ReplicatedKVStore {
     }
 
     public void getWritable() {
-        writeUsing = true;
-        database = dbHelper.getWritableDatabase();
+        writeLock.lock();
+        writeDB = dbHelper.getWritableDatabase();
     }
 
     public void getReadable() {
-        readUsing = true;
-        database = dbHelper.getReadableDatabase();
+
+        readDB = dbHelper.getReadableDatabase();
     }
 
-    public void closeRead() {
-
+    public void closeDB() {
+        writeDB.close();
+        readDB.close();
     }
 
 
@@ -118,13 +121,13 @@ public class ReplicatedKVStore {
                 CompletionObject obj = new CompletionObject(0, 0, CompletionObject.RemoteKVStoreError.unknown);
 
                 try {
-                    database.beginTransaction();
+                    writeDB.beginTransaction();
                     obj = _set(kv);
-                    database.setTransactionSuccessful();
+                    writeDB.setTransactionSuccessful();
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
-                    database.endTransaction();
+                    writeDB.endTransaction();
                 }
                 if (syncImmediately && obj.err == null) {
                     if (!syncRunning) {
@@ -173,7 +176,7 @@ public class ReplicatedKVStore {
             values.put(PlatformSqliteHelper.KV_VALUE, kv.getValue());
             values.put(PlatformSqliteHelper.KV_TIME, kv.getTime());
             values.put(PlatformSqliteHelper.KV_DELETED, kv.getDeleted());
-            database.insert(PlatformSqliteHelper.KV_STORE_TABLE_NAME, null, values);
+            writeDB.insert(PlatformSqliteHelper.KV_STORE_TABLE_NAME, null, values);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -192,14 +195,14 @@ public class ReplicatedKVStore {
         try {
 
             try {
-                database.beginTransaction();
+                readDB.beginTransaction();
                 //if no version, fine the version
                 if (version == 0) {
                     curVer = localVersion(key);
                 } else {
                     curVer = version;
                     //if we have a version, check if it's correct
-                    cursor = database.query(PlatformSqliteHelper.KV_STORE_TABLE_NAME,
+                    cursor = readDB.query(PlatformSqliteHelper.KV_STORE_TABLE_NAME,
                             allColumns, "key = ? AND version = ?", new String[]{key, String.valueOf(curVer)},
                             null, null, "version DESC", "1");
 
@@ -217,7 +220,7 @@ public class ReplicatedKVStore {
                     return new CompletionObject(CompletionObject.RemoteKVStoreError.notFound);
                 }
 
-                cursor = database.query(PlatformSqliteHelper.KV_STORE_TABLE_NAME,
+                cursor = readDB.query(PlatformSqliteHelper.KV_STORE_TABLE_NAME,
                         allColumns, "key = ? AND version = ?", new String[]{key, String.valueOf(curVer)},
                         null, null, "version DESC", "1");
                 if (cursor.getCount() != 0) {
@@ -228,11 +231,11 @@ public class ReplicatedKVStore {
                 if (encrypted && kv != null) {
                     kv.value = encrypted ? decrypt(kv.getValue()) : kv.getValue();
                 }
-                database.setTransactionSuccessful();
+                readDB.setTransactionSuccessful();
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
-                database.endTransaction();
+                readDB.endTransaction();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -264,7 +267,7 @@ public class ReplicatedKVStore {
         getReadable();
         try {
             String selectQuery = "SELECT " + PlatformSqliteHelper.KV_VERSION + ", " + PlatformSqliteHelper.KV_TIME + " FROM " + PlatformSqliteHelper.KV_STORE_TABLE_NAME + " WHERE key = ? ORDER BY version DESC LIMIT 1";
-            cursor = database.rawQuery(selectQuery, new String[]{key});
+            cursor = readDB.rawQuery(selectQuery, new String[]{key});
             cursor.moveToNext();
             if (!cursor.isAfterLast())
                 version = cursor.getLong(0);
@@ -280,7 +283,7 @@ public class ReplicatedKVStore {
     public synchronized void deleteAllKVs() {
         getWritable();
         try {
-            database.delete(PlatformSqliteHelper.KV_STORE_TABLE_NAME, PlatformSqliteHelper.KV_TIME + " <> -1", null);
+            writeDB.delete(PlatformSqliteHelper.KV_STORE_TABLE_NAME, PlatformSqliteHelper.KV_TIME + " <> -1", null);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -301,7 +304,7 @@ public class ReplicatedKVStore {
                     "ON kvs.version = vermax.latest_version " +
                     "AND kvs.key = vermax.key";
 
-            cursor = database.rawQuery(selectQuery, null);
+            cursor = readDB.rawQuery(selectQuery, null);
             cursor.moveToNext();
 
 //            cursor = database.query(PlatformSqliteHelper.KV_STORE_TABLE_NAME,
@@ -474,13 +477,13 @@ public class ReplicatedKVStore {
                     CompletionObject obj = new CompletionObject(0, 0, CompletionObject.RemoteKVStoreError.unknown);
 
                     try {
-                        database.beginTransaction();
+                        writeDB.beginTransaction();
                         obj = _delete(key, localKv.getVersion());
-                        database.setTransactionSuccessful();
+                        writeDB.setTransactionSuccessful();
                     } catch (Exception e) {
                         e.printStackTrace();
                     } finally {
-                        database.endTransaction();
+                        writeDB.endTransaction();
                     }
                     if (obj.version != 0) {
                         boolean success = setRemoteVersion(key, obj.version, remoteVersion).err == null;
@@ -502,13 +505,13 @@ public class ReplicatedKVStore {
 //                    Assert.assertNotNull(decompressed);
 
                     try {
-                        database.beginTransaction();
+                        writeDB.beginTransaction();
                         setObj = _set(new KVEntity(localKv.getVersion(), remoteGet.version, key, decryptedValue, remoteGet.time, localKv.getDeleted()));
-                        database.setTransactionSuccessful();
+                        writeDB.setTransactionSuccessful();
                     } catch (Exception e) {
                         e.printStackTrace();
                     } finally {
-                        database.endTransaction();
+                        writeDB.endTransaction();
                     }
                     if (setObj.err == null) {
                         boolean success = setRemoteVersion(key, remoteGet.version, remoteGet.version).err == null;
@@ -569,7 +572,7 @@ public class ReplicatedKVStore {
         } catch (Exception ex) {
             ex.printStackTrace();
         } finally {
-            database.close();
+            writeDB.close();
             syncRunning = false;
         }
         return false;
@@ -597,7 +600,7 @@ public class ReplicatedKVStore {
         if (isKeyValid(key)) {
             try {
                 String selectQuery = "SELECT " + PlatformSqliteHelper.KV_REMOTE_VERSION + " FROM " + PlatformSqliteHelper.KV_STORE_TABLE_NAME + " WHERE key = ? ORDER BY version DESC LIMIT 1";
-                cursor = database.rawQuery(selectQuery, new String[]{key});
+                cursor = readDB.rawQuery(selectQuery, new String[]{key});
                 cursor.moveToNext();
                 if (!cursor.isAfterLast())
                     version = cursor.getLong(0);
@@ -625,7 +628,7 @@ public class ReplicatedKVStore {
 
             Cursor c = null;
             try {
-                database.beginTransaction();
+                writeDB.beginTransaction();
                 long newVer = 0;
                 long time = System.currentTimeMillis();
                 long curVer = localVersion(key);
@@ -635,7 +638,7 @@ public class ReplicatedKVStore {
                     return new CompletionObject(CompletionObject.RemoteKVStoreError.conflict);
                 }
                 newVer = curVer + 1;
-                c = database.query(true, PlatformSqliteHelper.KV_STORE_TABLE_NAME, allColumns, PlatformSqliteHelper.KV_KEY + "=? and " + PlatformSqliteHelper.KV_VERSION + "=?", new String[]{key, String.valueOf(curVer)}, null, null, "version DESC", "1");
+                c = writeDB.query(true, PlatformSqliteHelper.KV_STORE_TABLE_NAME, allColumns, PlatformSqliteHelper.KV_KEY + "=? and " + PlatformSqliteHelper.KV_VERSION + "=?", new String[]{key, String.valueOf(curVer)}, null, null, "version DESC", "1");
                 c.moveToNext();
                 KVEntity tmp = null;
                 if (!c.isAfterLast()) {
@@ -652,14 +655,14 @@ public class ReplicatedKVStore {
                 values.put(PlatformSqliteHelper.KV_VALUE, tmp.getValue());
                 values.put(PlatformSqliteHelper.KV_TIME, System.currentTimeMillis());
                 values.put(PlatformSqliteHelper.KV_DELETED, tmp.getDeleted());
-                database.insert(PlatformSqliteHelper.KV_STORE_TABLE_NAME, null, values);
+                writeDB.insert(PlatformSqliteHelper.KV_STORE_TABLE_NAME, null, values);
 
-                database.setTransactionSuccessful();
+                writeDB.setTransactionSuccessful();
                 return new CompletionObject(newVer, time, null);
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
-                database.endTransaction();
+                writeDB.endTransaction();
                 if (c != null) c.close();
             }
         } else {
@@ -679,13 +682,13 @@ public class ReplicatedKVStore {
             if (isKeyValid(key)) {
                 CompletionObject obj = new CompletionObject(0, 0, CompletionObject.RemoteKVStoreError.unknown);
                 try {
-                    database.beginTransaction();
+                    writeDB.beginTransaction();
                     obj = _delete(key, localVersion);
-                    database.setTransactionSuccessful();
+                    writeDB.setTransactionSuccessful();
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
-                    database.endTransaction();
+                    writeDB.endTransaction();
                 }
                 if (syncImmediately && obj.err == null) {
                     if (!syncRunning) {
@@ -714,7 +717,7 @@ public class ReplicatedKVStore {
             }
             Log.i(TAG, String.format("DEL key: %s ver: %d", key, curVer));
             newVer = curVer + 1;
-            cursor = database.query(PlatformSqliteHelper.KV_STORE_TABLE_NAME,
+            cursor = writeDB.query(PlatformSqliteHelper.KV_STORE_TABLE_NAME,
                     new String[]{PlatformSqliteHelper.KV_VALUE}, "key = ? AND version = ?", new String[]{key, String.valueOf(localVersion)},
                     null, null, "version DESC", "1");
             cursor.moveToNext();
@@ -726,7 +729,7 @@ public class ReplicatedKVStore {
             values.put(PlatformSqliteHelper.KV_VALUE, value);
             values.put(PlatformSqliteHelper.KV_TIME, time);
             values.put(PlatformSqliteHelper.KV_DELETED, 1);
-            database.insert(PlatformSqliteHelper.KV_STORE_TABLE_NAME, null, values);
+            writeDB.insert(PlatformSqliteHelper.KV_STORE_TABLE_NAME, null, values);
             return new CompletionObject(newVer, time, null);
         } catch (Exception e) {
             e.printStackTrace();
