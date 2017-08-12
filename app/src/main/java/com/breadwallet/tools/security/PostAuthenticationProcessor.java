@@ -196,6 +196,12 @@ public class PostAuthenticationProcessor {
 //        message = serializedTx == null ? "null" : Arrays.toString(serializedTx);
         assert (serializedTx != null);
         if (serializedTx == null) {
+            BRErrorPipe.showKeyStoreDialog(app, "No balance", "You have 0 BCH", "close", null,
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    }, null, null);
             Log.e(TAG, "onSendBch:serializedTx is null");
         } else {
             Log.e(TAG, "onSendBch:serializedTx is:" + serializedTx.length);
